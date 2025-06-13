@@ -1,6 +1,4 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// src/components/Button.tsx
-// ─────────────────────────────────────────────────────────────────────────────
+// src/components/Button.tsx | valet
 import React from 'react';
 import { styled } from '../css/createStyled';
 import { useTheme } from '../system/themeStore';

@@ -1,7 +1,4 @@
-// ─────────────────────────────────────────────────────────────
-// src/components/Box.tsx
-// valet Box – now supports `centered` prop cascading via CSS variable
-// ─────────────────────────────────────────────────────────────
+// src/components/Box.tsx | valet
 import React from 'react';
 import { styled } from '../css/createStyled';
 import { useTheme } from '../system/themeStore';

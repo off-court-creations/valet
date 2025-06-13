@@ -1,4 +1,4 @@
-// src/components/Parallax.tsx
+// src/components/Parallax.tsx | valet
 import React, {
     createContext,
     useContext,

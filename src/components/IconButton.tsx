@@ -1,6 +1,4 @@
-// ─────────────────────────────────────────────────────────────
-// src/components/IconButton.tsx
-// ─────────────────────────────────────────────────────────────
+// src/components/IconButton.tsx | valet
 import React, { ReactElement }  from 'react';
 import { styled }               from '../css/createStyled';
 import { useTheme }             from '../system/themeStore';

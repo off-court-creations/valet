@@ -1,6 +1,4 @@
-// ─────────────────────────────────────────────────────────────
-// src/components/Icon.tsx
-// ─────────────────────────────────────────────────────────────
+// src/components/Icon.tsx | valet
 import React, {
     ReactElement,
     isValidElement,

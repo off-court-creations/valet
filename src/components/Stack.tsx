@@ -1,7 +1,4 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// src/components/Stack.tsx
-// valet <Stack /> – hoisted styled component (no focus drop)
-// ─────────────────────────────────────────────────────────────────────────────
+// src/components/Stack.tsx | valet
 import React from 'react';
 import { styled } from '../css/createStyled';
 import { useTheme, Theme } from '../system/themeStore';

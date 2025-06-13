@@ -1,7 +1,4 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// src/css/createStyled.ts
-// valet – ultra-light CSS-in-JS with prop interpolation + ref forwarding
-// ─────────────────────────────────────────────────────────────────────────────
+// src/css/createStyled.ts | valet
 import React from 'react';
 import hash from '@emotion/hash';
 

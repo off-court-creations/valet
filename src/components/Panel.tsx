@@ -1,6 +1,4 @@
-// ─────────────────────────────────────────────────────────────
-// src/components/Panel.tsx
-// ─────────────────────────────────────────────────────────────
+// src/components/Panel.tsx | valet
 import React from 'react';
 import { styled } from '../css/createStyled';
 import { useTheme } from '../system/themeStore';

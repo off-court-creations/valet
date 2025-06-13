@@ -1,7 +1,4 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// src/components/RadioGroup.tsx
-// Theme-aware, accessible RadioGroup + Radio for valet (error-free version)
-// ─────────────────────────────────────────────────────────────────────────────
+// src/components/RadioGroup.tsx | valet
 import React, {
   ReactNode,
   forwardRef,

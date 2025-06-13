@@ -1,4 +1,4 @@
-// src/index.ts
+// src/index.ts | valet
 export * from './components/Box';
 export * from './components/Button';
 export * from './components/FormControl';
