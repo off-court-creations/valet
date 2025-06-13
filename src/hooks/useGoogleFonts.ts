@@ -1,4 +1,4 @@
-// src/hooks/useGoogleFonts.ts
+// src/hooks/useGoogleFonts.ts | valet
 import { useEffect } from 'react';
 
 const loadedFonts = new Set();

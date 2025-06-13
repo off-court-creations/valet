@@ -1,7 +1,4 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// src/components/TextField.tsx
-// valet <TextField /> – stable, ref-forwarding, no duplicate props
-// ─────────────────────────────────────────────────────────────────────────────
+// src/components/TextField.tsx | valet
 import React, {
   forwardRef,
   useId,

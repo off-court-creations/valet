@@ -7,9 +7,7 @@
     "types": "dist/index.d.ts",
     "scripts": {
         "build": "tsup src/index.ts --format esm,cjs --dts",
-        "dev": "tsup src/index.ts --format esm,cjs --watch --dts",
-        "styleguide": "styleguidist server",
-        "styleguide:build": "styleguidist build"
+        "dev": "tsup src/index.ts --format esm,cjs --watch --dts"
     },
     "dependencies": {
         "@emotion/hash": "^0.9.2",
@@ -27,8 +25,6 @@
         "@babel/preset-typescript": "^7.27.1",
         "@types/react": "^18.3.21",
         "babel-loader": "^10.0.0",
-        "react-docgen-typescript": "^2.2.2",
-        "react-styleguidist": "^13.1.4",
         "tsup": "^8.4.0",
         "typescript": "^5.8.3"
     },

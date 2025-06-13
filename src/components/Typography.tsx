@@ -1,4 +1,4 @@
-// src/components/Typography.tsx
+// src/components/Typography.tsx | valet
 
 import React from 'react';
 import { styled } from '../css/createStyled';

@@ -1,6 +1,4 @@
-// ─────────────────────────────────────────────────────────────
-// src/system/themeStore.ts
-// ─────────────────────────────────────────────────────────────
+// src/system/themeStore.ts | valet
 import { create } from 'zustand';
 
 export type Breakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
