@@ -6,23 +6,31 @@ import { useTheme } from '../system/themeStore';
 
 /*───────────────────────────────────────────────────────────────────*/
 type CSSFn = (theme: Theme) => string;
-const registry = new Map<string, string>();         // name → className
+const registry = new Map<string, string>(); // name → className
+
+function normalizeCSS(css: string): string {
+  return css.trim().replace(/\s+/g, ' ').replace(/; ?}/g, '}');
+}
+
+function injectPresetClass(className: string, css: string) {
+  if (styleCache.has(className)) return;
+  const style = document.createElement('style');
+  style.textContent = `.${className}{${css}}`;
+  document.head.appendChild(style);
+  styleCache.set(className, css);
+}
 
 export function definePreset(name: string, css: CSSFn) {
   if (registry.has(name)) {
     throw new Error(`Style preset “${name}” already exists`);
   }
-  const { theme } = useTheme.getState();            // access store without hook
-  const rawCSS    = css(theme);
-  const className = `zp-${hash(rawCSS)}`;
 
-  // one-time style injection
-  if (!styleCache.has(className)) {
-    const style = document.createElement('style');
-    style.textContent = `.${className}{${rawCSS}}`;
-    document.head.appendChild(style);
-    styleCache.set(className, rawCSS);
-  }
+  const { theme } = useTheme.getState();
+  const rawCSS = css(theme);
+  const normalized = normalizeCSS(rawCSS);
+  const className = `zp-${hash(normalized)}`;
+
+  injectPresetClass(className, normalized);
   registry.set(name, className);
 }
 
