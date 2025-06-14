@@ -1,47 +1,66 @@
-// src/css/stylePresets.ts | valet
-import hash from '@emotion/hash';
-import { Theme } from '../system/themeStore';
-import { styleCache } from './createStyled';
-import { useTheme } from '../system/themeStore';
+// src/css/stylePresets.ts
+import hash                 from '@emotion/hash';
+import { Theme, useTheme }  from '../system/themeStore';
+import { styleCache }       from './createStyled';
 
-/*───────────────────────────────────────────────────────────────────*/
 type CSSFn = (theme: Theme) => string;
-const registry = new Map<string, string>(); // name → className
 
-function normalizeCSS(css: string): string {
+interface PresetEntry {
+  cssFn   : CSSFn;
+  class   : string;
+  styleEl : HTMLStyleElement;
+}
+
+const registry  = new Map<string, PresetEntry>();   // name → entry
+let   subscribed = false;
+
+/* ─────────────────────────────────────────────── */
+function normalise(css: string) {
   return css.trim().replace(/\s+/g, ' ').replace(/; ?}/g, '}');
 }
 
-function injectPresetClass(className: string, css: string) {
-  if (styleCache.has(className)) return;
-  const style = document.createElement('style');
-  style.textContent = `.${className}{${css}}`;
-  document.head.appendChild(style);
-  styleCache.set(className, css);
+function ensureSubscription() {
+  if (subscribed) return;
+  subscribed = true;
+  /* Re-run every preset whenever the theme changes */
+  useTheme.subscribe(({ theme }) => {
+    for (const { cssFn, class: cls, styleEl } of registry.values()) {
+      const nextCSS = normalise(cssFn(theme));
+      styleEl.textContent = `.${cls}{${nextCSS}}`;
+    }
+  });
 }
 
-export function definePreset(name: string, css: CSSFn) {
+/* ─────────────────────────────────────────────── */
+export function definePreset(name: string, cssFn: CSSFn) {
   if (registry.has(name)) {
     throw new Error(`Style preset “${name}” already exists`);
   }
 
-  const { theme } = useTheme.getState();
-  const rawCSS = css(theme);
-  const normalized = normalizeCSS(rawCSS);
-  const className = `zp-${hash(normalized)}`;
+  ensureSubscription();
 
-  injectPresetClass(className, normalized);
-  registry.set(name, className);
+  /* Stable class name = hash of the preset name (not the CSS) */
+  const className = `zp-${hash(name)}`;
+
+  /* Initial render */
+  const { theme } = useTheme.getState();
+  const rawCSS    = normalise(cssFn(theme));
+
+  const styleEl   = document.createElement('style');
+  styleEl.textContent = `.${className}{${rawCSS}}`;
+  document.head.appendChild(styleEl);
+  styleCache.set(className, rawCSS);
+
+  registry.set(name, { cssFn, class: className, styleEl });
 }
 
-/** Return one or many classNames for manual composition. */
+/* One-liner helper to apply one or many presets */
 export function preset(names: string | string[]) {
-  const result = (Array.isArray(names) ? names : [names])
+  return (Array.isArray(names) ? names : [names])
     .map((n) => {
-      const cls = registry.get(n);
-      if (!cls) throw new Error(`Unknown style preset “${n}”`);
-      return cls;
+      const entry = registry.get(n);
+      if (!entry) throw new Error(`Unknown style preset “${n}”`);
+      return entry.class;
     })
     .join(' ');
-  return result;
 }

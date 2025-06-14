@@ -66,17 +66,17 @@ npm link valet
 
 ## Roadmap + Intended Components
 
-- The ability to center your divs (lol)
 - Everything related to being an AI "bridge"
 - As close to AAA accessibility support as possible
   - No compromises on getting to AA
-- Checkbox
+
+---
+
 - Select
 - Slider
 - Switch
 - List
 - Table
-- Tooltip
 - Modal
   - Alert
   - Dialog
@@ -90,3 +90,19 @@ npm link valet
 - Stepper
 - Speed Dial
 - Grid
+
+## Basic QC
+
+| Component          | Playground QC   | Comments |
+|--------------------|:---------------:|----------|
+| Box                | ✅             |----------|
+| Button             | ✅             |----------|
+| Checkbox           | ❌             | styling  |
+| FormControl        | ✅             |----------|
+| Icon               | ✅             |----------|
+| IconButton         | ✅             |----------|
+| Modal              | ❌             | styling  |
+| Panel              | ✅             |----------|
+| Radio Button       | ❌             | styling  |
+| Tooltip            | ✅             |----------|
+| Typography         | ✅             |----------|

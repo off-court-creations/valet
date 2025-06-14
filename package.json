@@ -24,6 +24,7 @@
         "@babel/preset-react": "^7.27.1",
         "@babel/preset-typescript": "^7.27.1",
         "@types/react": "^18.3.21",
+        "@types/react-dom": "^18.3.7",
         "babel-loader": "^10.0.0",
         "tsup": "^8.4.0",
         "typescript": "^5.8.3"
