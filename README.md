@@ -2,6 +2,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+[![GitHub](https://img.shields.io/badge/GitHub-valet-181717?logo=github&logoColor=white)](https://github.com/off-court-creations/valet)
+
 `valet` is a CSS-in-JS engine, a UI component kit, and an accessibility layer that treats all humans and their AI proxies as first class users.
 
 Please expect many breaking changes but feel free to check it out!
@@ -42,18 +44,24 @@ npm link valet
 
 ## Components
 
-- Box
-- Button
-- FormControl
-- Icon
-- IconButton
-- Panel
-- Parallax
-- Radio Group
-- Stack
-- Surface
-- Textfield
-- Typography
+These have been mostly tested in the [Valet Playground](https://github.com/off-court-creations/valet-playground).
+
+| Component          | Playground QC   | Comments |
+|--------------------|:---------------:|----------|
+| Accordion          | ✅             |----------|
+| Box                | ✅             |----------|
+| Button             | ✅             |----------|
+| Checkbox           | ❌             | styling  |
+| FormControl        | ✅             |----------|
+| Icon               | ✅             |----------|
+| IconButton         | ✅             |----------|
+| Modal              | ❌             | styling  |
+| Panel              | ✅             |----------|
+| Radio Button       | ❌             | styling  |
+| Switch             | ✅             |----------|
+| Tabs               | ✅             |----------|
+| Tooltip            | ✅             |----------|
+| Typography         | ✅             |----------|
 
 ## Hooks
 
@@ -74,35 +82,13 @@ npm link valet
 
 - Select
 - Slider
-- Switch
 - List
 - Table
-- Modal
-  - Alert
-  - Dialog
 - Progress
-- Accordion
 - App Bar
 - Breadcrumbs
 - Drawer
 - Pagination
-- Tabs
 - Stepper
 - Speed Dial
 - Grid
-
-## Basic QC
-
-| Component          | Playground QC   | Comments |
-|--------------------|:---------------:|----------|
-| Box                | ✅             |----------|
-| Button             | ✅             |----------|
-| Checkbox           | ❌             | styling  |
-| FormControl        | ✅             |----------|
-| Icon               | ✅             |----------|
-| IconButton         | ✅             |----------|
-| Modal              | ❌             | styling  |
-| Panel              | ✅             |----------|
-| Radio Button       | ❌             | styling  |
-| Tooltip            | ✅             |----------|
-| Typography         | ✅             |----------|
