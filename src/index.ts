@@ -13,6 +13,11 @@ export * from './components/Progress';
 export * from './components/RadioGroup';
 export * from './components/Slider';
 export * from './components/Stack';
+export { default as Select } from './components/Select';  // ← gives you `Select`
+export type {
+  SelectProps,
+  OptionProps as SelectOptionProps,
+} from './components/Select';
 export * from './components/Surface';
 export * from './components/Switch';
 export * from './components/Tabs';

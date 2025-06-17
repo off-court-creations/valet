@@ -58,9 +58,10 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 | Modal              | ❌             | styling  |
 | Panel              | ✅             |----------|
 | Parallax           | ✅             |----------|
-| Progress           | ✅             |----------|
+| Progress           | ❌             | styling  |
 | Radio Button       | ❌             | styling  |
 | Switch             | ✅             |----------|
+| Select             | ❌             | styling  |
 | Slider             | ✅             |----------|
 | Tabs               | ✅             |----------|
 | Tooltip            | ✅             |----------|
@@ -83,7 +84,6 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 
 ---
 
-- Select
 - List
 - Table
 - App Bar
