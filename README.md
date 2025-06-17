@@ -59,7 +59,7 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 | Panel              | ✅             |----------|
 | Parallax           | ✅             |----------|
 | Progress           | ❌             | styling  |
-| Radio Groupt       | ❌             | styling  |
+| Radio Group        | ❌             | styling  |
 | Select             | ❌             | styling  |
 | Slider             | ✅             |----------|
 | Surface            | ✅             |----------|
