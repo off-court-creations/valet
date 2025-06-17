@@ -7,6 +7,7 @@ export * from './components/FormControl';
 export * from './components/Icon';
 export * from './components/IconButton';
 export * from './components/Modal';
+export * from './components/Drawer';
 export * from './components/Panel';
 export * from './components/Parallax';
 export * from './components/Progress';
