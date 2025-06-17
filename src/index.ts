@@ -9,7 +9,8 @@ export * from './components/IconButton';
 export * from './components/Modal';
 export * from './components/Panel';
 export * from './components/Parallax';
-export * from './components/RadioGroup';
+export * from './components/RadioGroup'
+export * from './components/Slider';
 export * from './components/Stack';
 export * from './components/Surface';
 export * from './components/Switch';

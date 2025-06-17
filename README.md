@@ -59,6 +59,7 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 | Panel              | ✅             |----------|
 | Radio Button       | ❌             | styling  |
 | Switch             | ✅             |----------|
+| Slider             | ✅             |----------|
 | Tabs               | ✅             |----------|
 | Tooltip            | ✅             |----------|
 | Typography         | ✅             |----------|
@@ -81,7 +82,6 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 ---
 
 - Select
-- Slider
 - List
 - Table
 - Progress
