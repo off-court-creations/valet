@@ -59,14 +59,16 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 | Panel              | ✅             |----------|
 | Parallax           | ✅             |----------|
 | Progress           | ❌             | styling  |
-| Radio Button       | ❌             | styling  |
-| Switch             | ✅             |----------|
+| Radio Groupt       | ❌             | styling  |
 | Select             | ❌             | styling  |
 | Slider             | ✅             |----------|
+| Surface            | ✅             |----------|
+| Switch             | ✅             |----------|
+| Table              | ✅             |----------|
 | Tabs               | ✅             |----------|
+| Textfield          | ✅             |----------|
 | Tooltip            | ✅             |----------|
 | Typography         | ✅             |----------|
-| Table              | ✅             |----------|
 
 ## Hooks
 
@@ -93,3 +95,7 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 - Stepper
 - Speed Dial
 - Grid
+
+## Contributuing
+
+Add a pull request if you wish to help!
