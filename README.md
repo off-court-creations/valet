@@ -23,7 +23,7 @@ npm run styleguide
 To use `valet` in your project run:
 
 ```shell
-cd YourReactLibraryThatUses_valet
+cd your-project-using-valet
 npm install valet
 ```
 
@@ -57,6 +57,8 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 | IconButton         | ✅             |----------|
 | Modal              | ❌             | styling  |
 | Panel              | ✅             |----------|
+| Parallax           | ✅             |----------|
+| Progress           | ✅             |----------|
 | Radio Button       | ❌             | styling  |
 | Switch             | ✅             |----------|
 | Slider             | ✅             |----------|
@@ -84,7 +86,6 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 - Select
 - List
 - Table
-- Progress
 - App Bar
 - Breadcrumbs
 - Drawer
