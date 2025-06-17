@@ -66,6 +66,7 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 | Tabs               | ✅             |----------|
 | Tooltip            | ✅             |----------|
 | Typography         | ✅             |----------|
+| Table              | ✅             |----------|
 
 ## Hooks
 
@@ -85,7 +86,6 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 ---
 
 - List
-- Table
 - App Bar
 - Breadcrumbs
 - Drawer
