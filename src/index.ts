@@ -10,6 +10,7 @@ export * from './components/Modal';
 export * from './components/Drawer';
 export * from './components/Panel';
 export * from './components/Table';
+export * from './components/List';
 export * from './components/Parallax';
 export * from './components/Progress';
 export * from './components/RadioGroup';
