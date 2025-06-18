@@ -13,18 +13,11 @@ When `1.0.X` drops hop in and depend on that thing!
 `valet` is pronounced like the British attendant but pronouncing it like the car attendant is also very cool and encouraged.
 Unless you don't like `valet` in which case its pronounced like the British attendant and go make `valet2` and tell us about it.
 
-To read the docs, run:
-
-```shell
-npm install
-npm run styleguide
-```
-
 To use `valet` in your project run:
 
 ```shell
 cd your-project-using-valet
-npm install valet
+npm install @archway/valet
 ```
 
 To run a local dev server, run:
@@ -39,7 +32,7 @@ npm run dev
 
 ```shell
 cd YourReactLibraryThatUses_valet
-npm link valet
+npm link @archway/valet
 ```
 
 ## Components
