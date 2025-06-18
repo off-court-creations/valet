@@ -52,6 +52,7 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 | Box                | ✅             |----------|
 | Button             | ✅             |----------|
 | Checkbox           | ❌             | styling  |
+| Drawer             | ❌             |   WIP    |
 | FormControl        | ✅             |----------|
 | Icon               | ✅             |----------|
 | IconButton         | ✅             |----------|
@@ -62,6 +63,7 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 | Radio Group        | ❌             | styling  |
 | Select             | ❌             | styling  |
 | Slider             | ✅             |----------|
+| Stack              | ✅             |----------|
 | Surface            | ✅             |----------|
 | Switch             | ✅             |----------|
 | Table              | ✅             |----------|
@@ -72,20 +74,25 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 
 ## Hooks
 
-- useGoogleFonts
-- useTheme
+| Hook               | Playground QC   | Comments |
+|--------------------|:---------------:|----------|
+| useGoogleFonts     | ✅             |----------|
+| useTheme           | ✅             |----------|
 
 ## Utilities
 
-- createFormStore
+| Utility               | Playground QC   | Comments |
+|--------------------|:---------------:|----------|
+| createFormStore    | ✅             |----------|
+| definePreset       | ✅             |----------|
 
-## Roadmap + Intended Components
+## Roadmap
 
 - Everything related to being an AI "bridge"
 - As close to AAA accessibility support as possible
   - No compromises on getting to AA
 
----
+## Intended Components
 
 - List
 - App Bar
