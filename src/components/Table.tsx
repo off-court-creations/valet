@@ -1,6 +1,8 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // src/components/Table.tsx | valet
-// Minimal yet resilient Table – fool‑proof zebra striping & hover.
+// Minimal yet resilient Table – fool‑proof zebra striping & hover + fancy
+// sort‑column indicator that mirrors <Tabs> styling.
+// Heavily optimised colour helpers 💨
 // ─────────────────────────────────────────────────────────────────────────────
 import React, { useMemo, useState } from 'react';
 import { styled }                 from '../css/createStyled';
@@ -9,27 +11,57 @@ import { preset }                 from '../css/stylePresets';
 import type { Presettable }       from '../types';
 
 /*───────────────────────────────────────────────────────────*/
-/* Utility helpers                                           */
-const HEX_RE = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i;
-const toRgb  = (h: string) => {
-  const m = HEX_RE.exec(h);
-  return m ? { r: parseInt(m[1], 16), g: parseInt(m[2], 16), b: parseInt(m[3], 16) } : { r:0,g:0,b:0 };
+/* Ultra‑fast colour helpers                                 */
+type RGB = { r:number; g:number; b:number };
+
+// Hex ➜ RGB with bit‑trickery + memoisation
+const rgbCache = new Map<string, RGB>();
+const toRgb = (hex:string):RGB => {
+  if (rgbCache.has(hex)) return rgbCache.get(hex)!;
+  let s = hex.charAt(0)==='#' ? hex.slice(1) : hex;
+  if (s.length===3) s = s.replace(/./g,ch=>ch+ch);            // #abc ⇒ aabbcc
+
+  let rgb:RGB;
+  if (s.length===6 && !/[^a-f\d]/i.test(s)) {
+    const n = parseInt(s,16);
+    rgb = { r:(n>>16)&255, g:(n>>8)&255, b:n&255 };
+  } else {
+    rgb = { r:0, g:0, b:0 };                                  // defensive fallback
+  }
+  rgbCache.set(hex,rgb);
+  return rgb;
 };
-const mix = (a:{r:number,g:number,b:number}, b:{r:number,g:number,b:number}, w:number) => ({
-  r: Math.round(a.r*(1-w)+b.r*w),
-  g: Math.round(a.g*(1-w)+b.g*w),
-  b: Math.round(a.b*(1-w)+b.b*w),
-});
-const toHex = (c:{r:number,g:number,b:number}) => `#${[c.r,c.g,c.b].map(x=>x.toString(16).padStart(2,'0')).join('')}`;
-const stripe = (bg:string, txt:string) => toHex(mix(toRgb(bg), toRgb(txt), 0.1));
+
+// Blend two colours (clamped weight) – uses bit‑floor for perf
+const mix = (a:RGB, b:RGB, w:number):RGB => {
+  const t = w<=0 ? 0 : w>=1 ? 1 : w;                          // clamp once
+  return {
+    r: ((a.r*(1-t)+b.r*t)+0.5)|0,                             // |0 floors, +0.5 ≈ round
+    g: ((a.g*(1-t)+b.g*t)+0.5)|0,
+    b: ((a.b*(1-t)+b.b*t)+0.5)|0,
+  };
+};
+
+// RGB ➜ hex (#rrggbb) in a branch‑free single op
+const toHex = ({r,g,b}:RGB) => '#'+(((1<<24)|(r<<16)|(g<<8)|b).toString(16).slice(1));
+
+// Memoised zebra‑stripe colour (90% bg + 10% txt)
+const stripeCache = new Map<string,string>();
+const stripe = (bg:string, txt:string):string => {
+  const key = bg+'|'+txt;
+  if (stripeCache.has(key)) return stripeCache.get(key)!;
+  const val = toHex(mix(toRgb(bg),toRgb(txt),0.1));
+  stripeCache.set(key,val);
+  return val;
+};
 
 /*───────────────────────────────────────────────────────────*/
 /* Column definition                                          */
 export interface TableColumn<T> {
   header   : React.ReactNode;
-  accessor?: keyof T | ((row: T) => unknown);
-  render?  : (row: T, idx: number) => React.ReactNode;
-  align?   : 'left' | 'center' | 'right';
+  accessor?: keyof T | ((row:T)=>unknown);
+  render?  : (row:T,idx:number)=>React.ReactNode;
+  align?   : 'left'|'center'|'right';
   sortable?: boolean | ((a:T,b:T)=>number);
 }
 
@@ -59,11 +91,29 @@ const Root = styled('table')<{
   ${({$hover,$hoverBg})=>$hover&&`tbody tr:hover td{background:${$hoverBg};}`}
 `;
 
-const Th = styled('th')<{ $align:'left'|'center'|'right'; $sortable:boolean; $active:boolean; $primary:string;}>`
+const Th = styled('th')<{
+  $align:'left'|'center'|'right';
+  $sortable:boolean;
+  $active:boolean;
+  $primary:string;
+}>`
   text-align:${({$align})=>$align};
   ${({$sortable})=>$sortable&&'cursor:pointer; user-select:none;'}
-  color:${({$active,$primary})=>$active?$primary:'inherit'};
-  &:hover{${({$sortable,$primary})=>$sortable&&`color:${$primary};`}}
+  color: inherit; /* text colour never changes – underline conveys state */
+  position: relative;
+
+  &:hover {
+    ${({$sortable})=>$sortable&&'filter:brightness(0.9);'}
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: -1px;
+    height: 4px; /* doubled */
+    background: ${({$primary,$active})=>$active?$primary:'transparent'};
+    transition: background 150ms ease;
+  }
 `;
 
 const Td = styled('td')<{ $align:'left'|'center'|'right' }>`
