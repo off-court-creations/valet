@@ -2,7 +2,7 @@
 // src/components/Table.tsx | valet
 // Minimal yet resilient Table – fool‑proof zebra striping & hover + fancy
 // sort‑column indicator that mirrors <Tabs> styling.
-// Heavily optimised colour helpers 💨
+// Heavily optimised colour helpers 💨 – now with optional column dividers.
 // ─────────────────────────────────────────────────────────────────────────────
 import React, { useMemo, useState } from 'react';
 import { styled }                 from '../css/createStyled';
@@ -72,6 +72,7 @@ export interface TableProps<T> extends Omit<React.TableHTMLAttributes<HTMLTableE
   columns: TableColumn<T>[];
   striped?: boolean;
   hoverable?: boolean;
+  dividers?: boolean;                 // ⇦ NEW – minimal vertical lines between columns
   initialSort?: { index:number; desc?:boolean };
   onSortChange?: (index:number, desc:boolean)=>void;
 }
@@ -79,7 +80,8 @@ export interface TableProps<T> extends Omit<React.TableHTMLAttributes<HTMLTableE
 /*───────────────────────────────────────────────────────────*/
 /* Styled primitives                                          */
 const Root = styled('table')<{
-  $striped:boolean; $hover:boolean; $border:string; $stripe:string; $hoverBg:string;
+  $striped:boolean; $hover:boolean; $lines:boolean;
+  $border:string;  $stripe:string; $hoverBg:string;
 }>`
   width:100%;
   border-collapse:collapse;
@@ -89,6 +91,7 @@ const Root = styled('table')<{
 
   ${({$striped,$stripe})=>$striped&&`tbody tr:nth-of-type(odd) td{background:${$stripe};}`}
   ${({$hover,$hoverBg})=>$hover&&`tbody tr:hover td{background:${$hoverBg};}`}
+  ${({$lines,$border})=>$lines&&`th:not(:last-child),td:not(:last-child){border-right:1px solid ${$border};}`}
 `;
 
 const Th = styled('th')<{
@@ -127,6 +130,7 @@ export function Table<T>({
   columns,
   striped=false,
   hoverable=false,
+  dividers=false,
   initialSort,
   onSortChange,
   preset:p,
@@ -168,6 +172,7 @@ export function Table<T>({
       {...rest}
       $striped={striped}
       $hover={hoverable}
+      $lines={dividers}
       $border={theme.colors.backgroundAlt}
       $stripe={stripeColor}
       $hoverBg={hoverBg}
