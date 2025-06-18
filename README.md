@@ -49,6 +49,7 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 | FormControl        | ✅             |----------|
 | Icon               | ✅             |----------|
 | IconButton         | ✅             |----------|
+| List               | ❌             |   WIP    |
 | Modal              | ❌             | styling  |
 | Panel              | ✅             |----------|
 | Parallax           | ✅             |----------|
