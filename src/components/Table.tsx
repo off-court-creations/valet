@@ -1,6 +1,7 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// src/components/Table.tsx  —  strict‑optional compatible
-// ─────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// src/components/Table.tsx  | valet
+// strict‑optional compatible
+// ─────────────────────────────────────────────────────────────
 import React, { useMemo, useState, useEffect } from 'react';
 import { styled }                 from '../css/createStyled';
 import { useTheme }               from '../system/themeStore';

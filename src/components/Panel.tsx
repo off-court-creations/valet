@@ -1,5 +1,6 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/Panel.tsx  —  strict‑optional safe typings
+// src/components/Panel.tsx  | valet
+// strict‑optional safe typings
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
 import { styled }            from '../css/createStyled';

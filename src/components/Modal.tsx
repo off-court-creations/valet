@@ -1,9 +1,9 @@
-// ─────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
 // src/components/Modal.tsx | valet
 // Accessible, theme‑aware Modal component that supports both “dialog” and
 // “alert” semantics. Fully controlled/uncontrolled, focus‑trapping, backdrop &
 // ESC/Click dismissal, no external deps.
-// ─────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
 import React, {
     ReactNode,
     useCallback,

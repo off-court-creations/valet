@@ -1,4 +1,7 @@
-// src/components/Button.tsx | valet
+// ─────────────────────────────────────────────────────────────
+// src/components/Button.tsx  | valet
+// theme-aware button with variants and sizes
+// ─────────────────────────────────────────────────────────────
 import React from 'react';
 import { styled } from '../css/createStyled';
 import { useTheme } from '../system/themeStore';

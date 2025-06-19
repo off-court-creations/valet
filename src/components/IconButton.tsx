@@ -1,5 +1,6 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/IconButton.tsx  —  strict‑optional clean build
+// src/components/IconButton.tsx  | valet
+// strict‑optional clean build
 // ─────────────────────────────────────────────────────────────
 import React, { ReactElement } from 'react';
 import { styled }              from '../css/createStyled';

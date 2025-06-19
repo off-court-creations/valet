@@ -1,4 +1,7 @@
-// src/system/createFormStore.ts | valet
+// ─────────────────────────────────────────────────────────────
+// src/system/createFormStore.ts  | valet
+// factory creating typed Zustand stores for form state
+// ─────────────────────────────────────────────────────────────
 import { create } from 'zustand';
 
 /**

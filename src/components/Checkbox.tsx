@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// src/components/Checkbox.tsx
+// src/components/Checkbox.tsx  | valet
 // Theme-aware, accessible Checkbox for valet – self-contained, controlled /
 // uncontrolled, and FormControl-compatible.
 // ─────────────────────────────────────────────────────────────────────────────

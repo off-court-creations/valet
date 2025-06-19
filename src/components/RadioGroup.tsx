@@ -1,4 +1,7 @@
-// src/components/RadioGroup.tsx | valet
+// ─────────────────────────────────────────────────────────────
+// src/components/RadioGroup.tsx  | valet
+// grouped radio inputs managed via FormControl
+// ─────────────────────────────────────────────────────────────
 import React, {
   ReactNode,
   forwardRef,

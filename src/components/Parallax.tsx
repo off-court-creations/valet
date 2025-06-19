@@ -1,4 +1,7 @@
-// src/components/Parallax.tsx | valet
+// ─────────────────────────────────────────────────────────────
+// src/components/Parallax.tsx  | valet
+// simple scroll-aware container for parallax effects
+// ─────────────────────────────────────────────────────────────
 import React, {
     createContext,
     useContext,

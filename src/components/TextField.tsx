@@ -1,4 +1,7 @@
-// src/components/TextField.tsx | valet
+// ─────────────────────────────────────────────────────────────
+// src/components/TextField.tsx  | valet
+// controlled text input integrating with FormControl
+// ─────────────────────────────────────────────────────────────
 import React, {
   forwardRef,
   useId,

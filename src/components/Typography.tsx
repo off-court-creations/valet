@@ -1,4 +1,7 @@
-// src/components/Typography.tsx | valet
+// ─────────────────────────────────────────────────────────────
+// src/components/Typography.tsx  | valet
+// semantic text variants with responsive sizes
+// ─────────────────────────────────────────────────────────────
 
 import React from 'react';
 import { styled } from '../css/createStyled';
