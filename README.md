@@ -6,18 +6,30 @@
 
 `valet` is a CSS-in-JS engine, a UI component kit, and an accessibility layer that treats all humans and their AI proxies as first class users.
 
-Please expect many breaking changes but feel free to check it out!
+This library is currently pre-1.0 and the API may change without notice. It is released under the MIT license.
 
-When `1.0.X` drops hop in and depend on that thing!
+When version `1.0.x` arrives you can depend on a stable interface.
 
-`valet` is pronounced like the British attendant but pronouncing it like the car attendant is also very cool and encouraged.
-Unless you don't like `valet` in which case its pronounced like the British attendant and go make `valet2` and tell us about it.
 
 To use `valet` in your project run:
 
 ```shell
 cd your-project-using-valet
 npm install @archway/valet
+```
+
+Quick start example:
+
+```tsx
+import { Button, Surface } from '@archway/valet'
+
+export default function Example() {
+  return (
+    <Surface>
+      <Button>Click me</Button>
+    </Surface>
+  )
+}
 ```
 
 To run a local dev server, run:
@@ -35,36 +47,49 @@ cd YourReactLibraryThatUses_valet
 npm link @archway/valet
 ```
 
+### Build
+
+Run `npm run build` to generate the `dist` folder for publishing. Use `npm run dev` during development for a live rebuild.
+
+### Playground
+
+You can try every component in the [Valet Playground](https://github.com/off-court-creations/valet-playground). Clone that repository and run:
+
+```shell
+npm install
+npm run dev
+```
+
 ## Components
 
 These have been mostly tested in the [Valet Playground](https://github.com/off-court-creations/valet-playground).
 
-| Component          | Playground QC   | Comments |
-|--------------------|:---------------:|----------|
-| Accordion          | ✅             |----------|
-| Box                | ✅             |----------|
-| Button             | ✅             |----------|
-| Checkbox           | ❌             | styling  |
-| Drawer             | ❌             |   WIP    |
-| FormControl        | ✅             |----------|
-| Icon               | ✅             |----------|
-| IconButton         | ✅             |----------|
-| List               | ✅             |----------|
-| Modal              | ❌             | styling  |
-| Panel              | ✅             |----------|
-| Parallax           | ✅             |----------|
-| Progress           | ❌             | styling  |
-| Radio Group        | ❌             | styling  |
-| Select             | ❌             | styling  |
-| Slider             | ✅             |----------|
-| Stack              | ✅             |----------|
-| Surface            | ✅             |----------|
-| Switch             | ✅             |----------|
-| Table              | ✅             |----------|
-| Tabs               | ✅             |----------|
-| Textfield          | ✅             |----------|
-| Tooltip            | ✅             |----------|
-| Typography         | ✅             |----------|
+| Component          | Functional | Playground QC | Comments |
+|--------------------|:---------:|:-------------:|----------|
+| Accordion          | ✅        | ✅           |----------|
+| Box                | ✅        | ✅           |----------|
+| Button             | ✅        | ✅           |----------|
+| Checkbox           | ✅        | ❌           | styling  |
+| Drawer             | ❌        | ❌           |   WIP    |
+| FormControl        | ✅        | ✅           |----------|
+| Icon               | ✅        | ✅           |----------|
+| IconButton         | ✅        | ✅           |----------|
+| List               | ✅        | ✅           |----------|
+| Modal              | ✅        | ❌           | styling  |
+| Panel              | ✅        | ✅           |----------|
+| Parallax           | ✅        | ✅           |----------|
+| Progress           | ✅        | ❌           | styling  |
+| Radio Group        | ✅        | ❌           | styling  |
+| Select             | ✅        | ❌           | styling  |
+| Slider             | ✅        | ✅           |----------|
+| Stack              | ✅        | ✅           |----------|
+| Surface            | ✅        | ✅           |----------|
+| Switch             | ✅        | ✅           |----------|
+| Table              | ✅        | ✅           |----------|
+| Tabs               | ✅        | ✅           |----------|
+| Textfield          | ✅        | ✅           |----------|
+| Tooltip            | ✅        | ✅           |----------|
+| Typography         | ✅        | ✅           |----------|
 
 ## Hooks
 
@@ -82,7 +107,7 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 
 ## Roadmap
 
-- Everything related to being an AI "bridge"
+- Develop the AI "bridge" that lets proxies introspect component semantics and drive user interactions
 - As close to AAA accessibility support as possible
   - No compromises on getting to AA
 
@@ -97,6 +122,6 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 - Speed Dial
 - Grid
 
-## Contributuing
+## Contributing
 
-Add a pull request if you wish to help!
+We welcome issues and pull requests. Please read `AGENTS.md` for coding standards and open an issue before making large changes. Use the standard GitHub workflow at [valet issues](https://github.com/off-court-creations/valet/issues).
