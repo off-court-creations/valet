@@ -1,4 +1,7 @@
-// src/css/stylePresets.ts
+// ─────────────────────────────────────────────────────────────
+// src/css/stylePresets.ts  | valet
+// registry of reusable style presets via definePreset()
+// ─────────────────────────────────────────────────────────────
 import hash                 from '@emotion/hash';
 import { Theme, useTheme }  from '../system/themeStore';
 import { styleCache }       from './createStyled';

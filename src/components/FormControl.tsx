@@ -1,4 +1,7 @@
-// src/components/FormControl.tsx | valet
+// ─────────────────────────────────────────────────────────────
+// src/components/FormControl.tsx  | valet
+// form context provider wiring labels, errors and disabled state
+// ─────────────────────────────────────────────────────────────
 import React, { createContext, useContext } from 'react';
 import { preset } from '../css/stylePresets';
 import type { Presettable } from '../types';

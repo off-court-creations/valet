@@ -1,6 +1,8 @@
-// src/components/Drawer.tsx | valet
+// ─────────────────────────────────────────────────────────────
+// src/components/Drawer.tsx  | valet
 // Minimal sliding drawer component akin to MUI's Drawer.
 // Controlled/uncontrolled, with backdrop and escape handling.
+// ─────────────────────────────────────────────────────────────
 
 import React, { useCallback, useLayoutEffect, useState } from 'react';
 import { createPortal } from 'react-dom';

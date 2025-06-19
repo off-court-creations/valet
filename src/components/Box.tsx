@@ -1,5 +1,6 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/Box.tsx  —  patched for strict optional props
+// src/components/Box.tsx  | valet
+// patched for strict optional props
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
 import { styled } from '../css/createStyled';

@@ -1,4 +1,4 @@
-// ─────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
 // src/css/createStyled.ts | valet
 // Tiny CSS-in-JS helper powering Valet primitives. Now exports `styled` +
 // `keyframes`, giving our components Emotion-style animation ergonomics.
@@ -8,7 +8,7 @@
 // • Filters out `$prop` transient values so they never hit the DOM
 //
 // © 2025 Off-Court Creations – MIT licence
-// ─────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
 import React from 'react';
 import hash  from '@emotion/hash';
 

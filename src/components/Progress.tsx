@@ -1,6 +1,7 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// src/components/Progress.tsx  —  strict‑optional clean build
-// ─────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// src/components/Progress.tsx  | valet
+// strict‑optional clean build
+// ─────────────────────────────────────────────────────────────
 import React, { forwardRef } from 'react';
 import { styled, keyframes }           from '../css/createStyled';
 import { useTheme }                    from '../system/themeStore';

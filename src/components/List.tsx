@@ -1,8 +1,8 @@
-// ─────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
 // src/components/List.tsx | valet
 // Draggable list component – striped rows, hover highlight, customisable
 // title + subtitle rendering. Supports drag-and-drop reordering.
-// ─────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
 import React, { useEffect, useRef, useState } from 'react';
 import { styled }                 from '../css/createStyled';
 import { useTheme }               from '../system/themeStore';

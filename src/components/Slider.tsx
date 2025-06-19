@@ -1,10 +1,10 @@
-// ─────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
 // src/components/Slider.tsx | valet
 // Theme-aware, ultra-fast <Slider/> for @archway/valet
 // – Un/controlled, FormControl-aware, preset-friendly
 // – Optional min/max & live value labels, ticks, three snap modes
 // – NEW: `precision` prop - default 0 (integers only); specify decimals if needed
-// ─────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
 import React, {
     forwardRef,
     useCallback,

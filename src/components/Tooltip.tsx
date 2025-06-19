@@ -1,8 +1,8 @@
-// ─────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
 // src/components/Tooltip.tsx | valet
 // Theme-aware, accessible <Tooltip /> that mirrors MUI's feature-set.
 // No external runtime deps – leverages React portals + tiny placement maths.
-// ─────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
 import React, {
   ReactElement,
   ReactNode,

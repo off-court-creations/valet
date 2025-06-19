@@ -1,4 +1,7 @@
-// src/system/themeStore.ts | valet
+// ─────────────────────────────────────────────────────────────
+// src/system/themeStore.ts  | valet
+// Zustand store holding the current theme and mode
+// ─────────────────────────────────────────────────────────────
 import { create } from 'zustand';
 
 export type Breakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';

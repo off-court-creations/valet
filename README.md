@@ -93,17 +93,17 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 
 ## Hooks
 
-| Hook               | Playground QC   | Comments |
-|--------------------|:---------------:|----------|
-| useGoogleFonts     | ✅             |----------|
-| useTheme           | ✅             |----------|
+| Hook               | Functional | Playground QC   | Comments |
+|--------------------|:---------:|:---------------:|----------|
+| useGoogleFonts     | ✅        | ✅             |----------|
+| useTheme           | ✅        | ✅             |----------|
 
 ## Utilities
 
-| Utility               | Playground QC   | Comments |
-|--------------------|:---------------:|----------|
-| createFormStore    | ✅             |----------|
-| definePreset       | ✅             |----------|
+| Utility            | Functional | Playground QC   | Comments |
+|--------------------|:---------:|:---------------:|----------|
+| createFormStore    | ✅        | ✅             |----------|
+| definePreset       | ✅        | ✅             |----------|
 
 ## Roadmap
 

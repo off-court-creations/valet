@@ -1,4 +1,7 @@
-// src/hooks/useGoogleFonts.ts | valet
+// ─────────────────────────────────────────────────────────────
+// src/hooks/useGoogleFonts.ts  | valet
+// hook for dynamically loading Google Fonts once
+// ─────────────────────────────────────────────────────────────
 import { useEffect } from 'react';
 
 const loadedFonts = new Set();

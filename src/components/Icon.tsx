@@ -1,5 +1,6 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/Icon.tsx  —  strict‑optional safe typings
+// src/components/Icon.tsx  | valet
+// strict‑optional safe typings
 // ─────────────────────────────────────────────────────────────
 import React, {
   ReactElement,

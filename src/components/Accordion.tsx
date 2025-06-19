@@ -1,11 +1,11 @@
-// ─────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
 // src/components/Accordion.tsx | valet
 // Fully-typed, theme-aware <Accordion /> component
 // – Composition API (Accordion.Item / .Header / .Content)
 // – Controlled & uncontrolled modes, single- or multi-expand
 // – Seamless preset & theme integration, zero external deps
 // – A11y-optimised: roving tab-index, ARIA roles / ids, focus rings
-// ─────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
 import React, {
     createContext,
     ReactNode,

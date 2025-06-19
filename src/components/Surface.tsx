@@ -1,4 +1,7 @@
-// src/components/Surface.tsx | valet
+// ─────────────────────────────────────────────────────────────
+// src/components/Surface.tsx  | valet
+// top-level wrapper that applies theme backgrounds and breakpoints
+// ─────────────────────────────────────────────────────────────
 import React, {
   createContext,
   useContext,
