@@ -71,6 +71,12 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 | Button             | ✅        | ✅           |----------|
 | Checkbox           | ✅        | ❌           | styling  |
 | Drawer             | ❌        | ❌           |   WIP    |
+| App Bar            | 🟡        | ❌           |----------|
+| Breadcrumbs        | 🟡        | ❌           |----------|
+| Grid               | 🟡        | ❌           |----------|
+| Pagination         | 🟡        | ❌           |----------|
+| Speed Dial         | 🟡        | ❌           |----------|
+| Stepper            | 🟡        | ❌           |----------|
 | FormControl        | ✅        | ✅           |----------|
 | Icon               | ✅        | ✅           |----------|
 | IconButton         | ✅        | ✅           |----------|
@@ -113,14 +119,14 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 
 ## Intended Components
 
-- List
-- App Bar
-- Breadcrumbs
-- Drawer
-- Pagination
-- Stepper
-- Speed Dial
-- Grid
+- 🟡 List
+- 🟡 App Bar
+- 🟡 Breadcrumbs
+- 🟡 Drawer
+- 🟡 Pagination
+- 🟡 Stepper
+- 🟡 Speed Dial
+- 🟡 Grid
 
 ## Contributing
 
