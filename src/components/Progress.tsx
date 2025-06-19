@@ -1,22 +1,12 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// src/components/Progress.tsx | valet
-// A minimal, theme-aware Linear & Circular progress indicator that mirrors
-// MUI-7’s feature-set while preserving Valet’s atomic, opinionated style.
-// – Linear & Circular variants
-// – determinate, indeterminate, and buffer modes
-// – Size tokens (sm / md / lg) matched to Valet IconButton / Button geometry
-// – Optional numeric label inside circular variant
-// – Fully preset-able, 100 % CSS-driven (no re-paints on indeterminate)
-// – Accessible (role="progressbar", ARIA values)
-//
-// © 2025 Off-Court Creations – MIT licence
+// src/components/Progress.tsx  —  strict‑optional clean build
 // ─────────────────────────────────────────────────────────────────────────────
-import React, { forwardRef, useMemo } from 'react';
-import { styled, keyframes }         from '../css/createStyled';
-import { useTheme }                  from '../system/themeStore';
-import { preset }                    from '../css/stylePresets';
-import type { Presettable }          from '../types';
-import type { Theme }                from '../system/themeStore';
+import React, { forwardRef } from 'react';
+import { styled, keyframes }           from '../css/createStyled';
+import { useTheme }                    from '../system/themeStore';
+import { preset }                      from '../css/stylePresets';
+import type { Presettable }            from '../types';
+import type { Theme }                  from '../system/themeStore';
 
 /*───────────────────────────────────────────────────────────*/
 /* Public API                                                */
@@ -31,21 +21,29 @@ export interface ProgressProps
   variant?: ProgressVariant;
   /** determinate (default), indeterminate, or (linear-only) buffer. */
   mode?: ProgressMode;
-  /** 0 – 100 value for determinate / buffer foreground. */
+  /** 0 – 100 value for determinate / buffer foreground. */
   value?: number;
-  /** 0 – 100 secondary/buffer value (linear-buffer only). */
+  /** 0 – 100 secondary/buffer value (linear‑buffer only). */
   buffer?: number;
   /** sm (IconButton sm), md (default), or lg. */
   size?: ProgressSize;
   /** Show numeric % inside Circular centre. */
   showLabel?: boolean;
   /** Colour override (defaults to theme.primary). */
-  color?: string;
+  color?: string | undefined;
 }
 
 /*───────────────────────────────────────────────────────────*/
-/* Size tokens                                               */
-const geom = (t: Theme) => ({
+/* Size tokens, strongly typed                               */
+interface CircularToken { box: number; stroke: number }
+interface LinearToken   { h: number }
+
+type Tokens = {
+  circular: Record<ProgressSize, CircularToken>;
+  linear  : Record<ProgressSize, LinearToken>;
+};
+
+const geom = (_t: Theme): Tokens => ({
   circular: {
     sm: { box: 24, stroke: 3 },
     md: { box: 36, stroke: 4 },
@@ -98,9 +96,7 @@ const CircleWrap = styled('div')<{ $d: number }>`
 `;
 
 /* label inside circle */
-const CenterLabel = styled('span')<{
-  $font: string;
-}>`
+const CenterLabel = styled('span')<{ $font: string }>`
   position: absolute;
   top: 50%;
   left: 50%;
@@ -159,12 +155,11 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
   ) => {
     const { theme } = useTheme();
     const tokens    = geom(theme);
-    const primary   = color ?? theme.colors.primary;
+    const primary   = (color ?? theme.colors.primary) as string;
 
     /* preset → classes merge */
     const presetCls = p ? preset(p) : '';
-    const mergedCls =
-      [presetCls, className].filter(Boolean).join(' ') || undefined;
+    const mergedCls = [presetCls, className].filter(Boolean).join(' ') || undefined;
 
     /* accessibility roles / ARIA values */
     const ariaProps =
@@ -267,12 +262,9 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
         style={style}
       >
         <Track $h={h}>
-          {/* BUFFER BAR (behind) */}
+          {/* BUFFER BAR */}
           {mode === 'buffer' && (
-            <Bar
-              $color={primary + '55'}
-              style={bufferStyle}
-            />
+            <Bar $color={primary + '55'} style={bufferStyle} />
           )}
           {/* MAIN BAR */}
           {mode === 'indeterminate' ? (

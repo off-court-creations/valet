@@ -1,11 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// src/components/Table.tsx | valet
-// Minimal yet resilient Table – zebra striping, hover, sortable headers
-// * Column‑dividers toggle
-// * Primary‑colour underline on active sort column (Tabs‑style)
-// * Optional row‑selection (single / multi) with checkboxes that follow rows
-//   even when the table is re‑sorted.
-// * Hyper‑optimised colour helpers 💨
+// src/components/Table.tsx  —  strict‑optional compatible
 // ─────────────────────────────────────────────────────────────────────────────
 import React, { useMemo, useState, useEffect } from 'react';
 import { styled }                 from '../css/createStyled';
@@ -81,7 +75,8 @@ export interface TableProps<T> extends Omit<React.TableHTMLAttributes<HTMLTableE
   striped?: boolean;
   hoverable?: boolean;
   dividers?: boolean;                       // vertical lines between cols
-  selectable?: 'single' | 'multi';          // row‑selection mode
+  /** row‑selection mode */
+  selectable?: 'single' | 'multi' | undefined;
   initialSort?: { index:number; desc?:boolean };
   onSortChange?: (index:number, desc:boolean)=>void;
   onSelectionChange?: (selected:T[])=>void;
@@ -89,10 +84,7 @@ export interface TableProps<T> extends Omit<React.TableHTMLAttributes<HTMLTableE
 
 /*───────────────────────────────────────────────────────────*/
 /* Styled primitives                                          */
-const Root = styled('table')<{
-  $striped:boolean; $hover:boolean; $lines:boolean;
-  $border:string;  $stripe:string; $hoverBg:string;
-}>`
+const Root = styled('table')<{ $striped:boolean; $hover:boolean; $lines:boolean; $border:string;  $stripe:string; $hoverBg:string; }>`
   width:100%;
   border-collapse:collapse;
   border:1px solid ${({$border})=>$border};
@@ -108,12 +100,7 @@ const Root = styled('table')<{
   ${({$lines,$border})=>$lines&&`th:not(:last-child),td:not(:last-child){border-right:1px solid ${$border};}`}
 `;
 
-const Th = styled('th')<{
-  $align:'left'|'center'|'right';
-  $sortable:boolean;
-  $active:boolean;
-  $primary:string;
-}>`
+const Th = styled('th')<{ $align:'left'|'center'|'right'; $sortable:boolean; $active:boolean; $primary:string; }>`
   text-align:${({$align})=>$align};
   ${({$sortable})=>$sortable&&'cursor:pointer; user-select:none;'}
   color: inherit;
@@ -249,30 +236,32 @@ export function Table<T extends object>({
         </tr>
       </thead>
       <tbody>
-        {sorted.map((row,rIdx)=>(
-          <tr key={rIdx}>
-            {selectable && (
-              <Td $align="center">
-                <Checkbox
-                  name={`sel-${rIdx}`}
-                  size="sm"
-                  checked={selected.has(row)}
-                  onChange={(chk)=>toggleSelect(row,chk)}
-                  aria-label={`Select row ${rIdx+1}`}
-                />
-              </Td>
-            )}
-            {columns.map((c,cIdx)=>{
-              const getter = typeof c.accessor==='function'?c.accessor:(item:T)=>item[c.accessor as keyof T];
-              const content = c.render?c.render(row,rIdx):c.accessor!==undefined? (getter(row) as React.ReactNode):null;
-              return (
-                <Td key={cIdx} $align={c.align??'left'}>
-                  {content}
+        {sorted.map((row,rIdx)=>{
+          return (
+            <tr key={rIdx}>
+              {selectable && (
+                <Td $align="center">
+                  <Checkbox
+                    name={`sel-${rIdx}`}
+                    size="sm"
+                    checked={selected.has(row)}
+                    onChange={(chk)=>toggleSelect(row,chk)}
+                    aria-label={`Select row ${rIdx+1}`}
+                  />
                 </Td>
-              );
-            })}
-          </tr>
-        ))}
+              )}
+              {columns.map((c,cIdx)=>{
+                const getter = typeof c.accessor==='function'?c.accessor:(item:T)=>item[c.accessor as keyof T];
+                const content = c.render?c.render(row,rIdx):c.accessor!==undefined? (getter(row) as React.ReactNode):null;
+                return (
+                  <Td key={cIdx} $align={c.align??'left'}>
+                    {content}
+                  </Td>
+                );
+              })}
+            </tr>
+          );
+        })}
       </tbody>
     </Root>
   );

@@ -1,11 +1,13 @@
-// src/components/IconButton.tsx | valet
-import React, { ReactElement }  from 'react';
-import { styled }               from '../css/createStyled';
-import { useTheme }             from '../system/themeStore';
-import type { Theme }           from '../system/themeStore';
-import { preset }               from '../css/stylePresets';
-import type { Presettable }     from '../types';
-import { Icon }                 from './Icon';
+// ─────────────────────────────────────────────────────────────
+// src/components/IconButton.tsx  —  strict‑optional clean build
+// ─────────────────────────────────────────────────────────────
+import React, { ReactElement } from 'react';
+import { styled }              from '../css/createStyled';
+import { useTheme }            from '../system/themeStore';
+import type { Theme }          from '../system/themeStore';
+import { preset }              from '../css/stylePresets';
+import type { Presettable }    from '../types';
+import { Icon }                from './Icon';
 
 /*───────────────────────────────────────────────────────────*/
 /* Public API                                                */
@@ -19,16 +21,18 @@ export interface IconButtonProps
   size?: IconButtonSize;
   icon?: string;
   svg?: string | ReactElement<SVGSVGElement>;
-  iconColor?: string;
+  /** Colour override for the glyph */
+  iconColor?: string | undefined;
 }
 
 /*───────────────────────────────────────────────────────────*/
 /* Geometry map                                              */
-const geom = (t: Theme) => ({
+type Geometry = { d: string; icon: string };
+const geom: (t: Theme) => Record<IconButtonSize, Geometry> = () => ({
   sm: { d: '2.25rem', icon: '1rem'   },
   md: { d: '2.75rem', icon: '1.25rem'},
   lg: { d: '3.25rem', icon: '1.5rem' },
-} as const);
+});
 
 /*───────────────────────────────────────────────────────────*/
 /* Styled “skin” – colours, hover, ripple, **not** size      */
@@ -39,7 +43,6 @@ const Skin = styled('button')<{
   $primaryText: string;
   $ripple: string;
 }>`
-  /* layout already locked in inline style – keep only cosmetics here */
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -96,8 +99,8 @@ const Skin = styled('button')<{
 /*───────────────────────────────────────────────────────────*/
 /* Component                                                 */
 export const IconButton: React.FC<IconButtonProps> = ({
-  variant   = 'contained',
-  size      = 'md',
+  variant = 'contained',
+  size    = 'md',
   icon,
   svg,
   iconColor,
@@ -116,13 +119,12 @@ export const IconButton: React.FC<IconButtonProps> = ({
 
   const presetClasses = p ? preset(p) : '';
 
-  /* Inline geometry => guaranteed before paint */
   const geomStyle: React.CSSProperties = {
-    width      : diam,
-    height     : diam,
-    minWidth   : diam,
-    minHeight  : diam,
-    borderRadius: '50%',              // never see a square
+    width       : diam,
+    height      : diam,
+    minWidth    : diam,
+    minHeight   : diam,
+    borderRadius: '50%',
   };
 
   return (

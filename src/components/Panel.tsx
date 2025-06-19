@@ -1,9 +1,11 @@
-// src/components/Panel.tsx | valet
+// ─────────────────────────────────────────────────────────────
+// src/components/Panel.tsx  —  strict‑optional safe typings
+// ─────────────────────────────────────────────────────────────
 import React from 'react';
-import { styled } from '../css/createStyled';
-import { useTheme } from '../system/themeStore';
-import { preset } from '../css/stylePresets';
-import type { Presettable } from '../types';
+import { styled }            from '../css/createStyled';
+import { useTheme }          from '../system/themeStore';
+import { preset }            from '../css/stylePresets';
+import type { Presettable }  from '../types';
 
 /*───────────────────────────────────────────────────────────*/
 /* Public types                                              */
@@ -15,7 +17,7 @@ export interface PanelProps
   variant?: PanelVariant;
   fullWidth?: boolean;
   /** Explicit background override */
-  background?: string;
+  background?: string | undefined;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -23,7 +25,7 @@ export interface PanelProps
 const Base = styled('div')<{
   $variant: PanelVariant;
   $full?: boolean;
-  $outline: string;
+  $outline?: string;
   $bg?: string;
   $text?: string;
 }>`
@@ -42,9 +44,9 @@ const Base = styled('div')<{
       --valet-bg: ${$bg};
     `}
 
-  /* Variant “alt” gets a 1-px outline */
+  /* Variant “alt” gets a 1‑px outline */
   ${({ $variant, $outline }) =>
-    $variant === 'alt' ? `border: 1px solid ${$outline};` : ''}
+    $variant === 'alt' && $outline ? `border: 1px solid ${$outline};` : ''}
 
   ${({ $text }) =>
     $text &&
@@ -77,7 +79,7 @@ export const Panel: React.FC<PanelProps> = ({
    *   fall back to theme.colors.backgroundAlt.
    * – Otherwise leave undefined so presets can paint freely.
    */
-  const bg =
+  const bg: string | undefined =
     hasBgProp
       ? background!
       : !hasPreset && variant === 'main'

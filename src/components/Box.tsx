@@ -1,4 +1,6 @@
-// src/components/Box.tsx | valet
+// ─────────────────────────────────────────────────────────────
+// src/components/Box.tsx  —  patched for strict optional props
+// ─────────────────────────────────────────────────────────────
 import React from 'react';
 import { styled } from '../css/createStyled';
 import { useTheme } from '../system/themeStore';
@@ -11,9 +13,9 @@ export interface BoxProps
   extends React.ComponentProps<'div'>,
     Presettable {
   /** Explicit background override */
-  background?: string;
+  background?: string | undefined;
   /** Explicit text-colour override */
-  textColor?: string;
+  textColor?: string | undefined;
   /** Centre contents & propagate intent via CSS var */
   centered?: boolean;
 }
@@ -34,14 +36,13 @@ const Base = styled('div')<{
       align-items: center;
     `}
 
-  /* Only set when an override is supplied */
+  /* Only set when an override is supplied -------------------- */
   ${({ $bg })   => $bg   && `background: ${$bg}; --valet-bg: ${$bg};`}
   ${({ $text }) => $text && `color: ${$text}; --valet-text-color: ${$text};`}
 
   /* Propagate centred intent ---------------------------------- */
   ${({ $center }) =>
-    $center !== undefined &&
-    `--valet-centered: ${$center ? '1' : '0'};`}
+    $center !== undefined && `--valet-centered: ${$center ? '1' : '0'};`}
 `;
 
 /*───────────────────────────────────────────────────────────────*/
@@ -58,9 +59,8 @@ export const Box: React.FC<BoxProps> = ({
   const { theme } = useTheme();
   const presetClass = p ? preset(p) : '';
 
-  /* Resolve text colour only when caller gives us a cue */
-  let resolvedText: string | undefined = textColor;
-
+  /* Derive an accessible text colour when only bg is supplied */
+  let resolvedText = textColor;
   if (!resolvedText && background) {
     resolvedText =
       background === theme.colors.primary
@@ -69,7 +69,7 @@ export const Box: React.FC<BoxProps> = ({
         ? theme.colors.secondaryText
         : background === theme.colors.tertiary
         ? theme.colors.tertiaryText
-        : undefined; // let preset / cascade decide
+        : undefined; // defer to cascade / presets
   }
 
   return (
