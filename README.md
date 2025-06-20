@@ -81,10 +81,10 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 | List               | ✅       | ❌       |        ❌       | ✅         | ❌          | ❌            | Needs mobile support!            |
 | Modal              | 🟡       | 🟡       |        ❌       | 🟡         | 🟡          | 🟡            | styling                          |
 | Pagination         | ✅       | ✅       |        🟡       | ✅         | ✅          | ✅            | ----------                       |
-| Panel              | 🟡       | 🟡       |        ❌       | 🟡         | 🟡          | 🟡            | ----------                       |
+| Panel              | ✅       | ✅       |        🟡       | ✅         | ✅          | ✅            | ----------                       |
 | Parallax           | 🟡       | 🟡       |        ❌       | 🟡         | 🟡          | 🟡            | WIP                              |
 | Progress           | 🟡       | 🟡       |        ❌       | 🟡         | 🟡          | 🟡            | styling                          |
-| Radio Group        | 🟡       | 🟡       |        ❌       | 🟡         | 🟡          | 🟡            | styling                          |
+| Radio Group        | ✅       | ✅       |        🟡       | ✅         | ✅          | ✅            | ----------                       |
 | Select             | 🟡       | 🟡       |        ❌       | 🟡         | 🟡          | 🟡            | styling                          |
 | Slider             | ✅       | ✅       |        🟡       | ✅         | ✅          | ✅            | ----------                       |
 | Speed Dial         | ✅       | ✅       |        🟡       | ✅         | ✅          | ✅            | ----------                       |
@@ -93,7 +93,7 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 | Surface            | ✅       | ✅       |        ✅       | ✅         | ✅          | ✅            | ----------                       |
 | Switch             | 🟡       | 🟡       |        ❌       | 🟡         | 🟡          | 🟡            | ----------                       |
 | Table              | ✅       | ❌       |        ❌       | ✅         | ❌          | ❌            | Needs mobile support!            |
-| Tabs               | 🟡       | 🟡       |        ❌       | 🟡         | 🟡          | 🟡            | ----------                       |
+| Tabs               | ✅       | ✅       |        ✅       | ✅         | ✅          | ✅            | ----------                       |
 | Textfield          | 🟡       | 🟡       |        ❌       | 🟡         | 🟡          | 🟡            | ----------                       |
 | Tooltip            | 🟡       | 🟡       |        ❌       | 🟡         | 🟡          | 🟡            | ----------                       |
 | Typography         | ✅       | ✅       |        🟡       | ✅         | ✅          | ✅            | ----------                       |
