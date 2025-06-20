@@ -9,7 +9,7 @@ import { useTheme }               from '../system/themeStore';
 import { preset }                 from '../css/stylePresets';
 import { Typography }             from './Typography';
 import type { Presettable }       from '../types';
-import { stripe }                 from '../utilities/colors';
+import { stripe, toRgb, mix, toHex } from '../utilities/colors';
 
 export interface ListProps<T> extends Omit<React.HTMLAttributes<HTMLUListElement>, 'children'>, Presettable {
   data: T[];
@@ -73,7 +73,13 @@ export function List<T>({
   }, [data]);
 
   const stripeColor = stripe(theme.colors.background, theme.colors.text);
-  const hoverBg = `${theme.colors.primary}22`;
+  const hoverBg = toHex(
+    mix(
+      toRgb(theme.colors.background),
+      toRgb(theme.colors.primary),
+      0.12,
+    ),
+  );
 
   function handleDragStart(idx: number) {
     return () => {
