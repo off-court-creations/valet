@@ -77,7 +77,7 @@ export function List<T>({
     mix(
       toRgb(theme.colors.background),
       toRgb(theme.colors.primary),
-      0.12,
+      0.25,
     ),
   );
 

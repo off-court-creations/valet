@@ -117,7 +117,7 @@ export function Table<T extends object>({
     mix(
       toRgb(theme.colors.background),
       toRgb(theme.colors.primary),
-      0.12,
+      0.25,
     ),
   );
 
