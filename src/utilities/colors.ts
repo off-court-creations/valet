@@ -47,6 +47,8 @@ export const hoverColor = (
   accent:string,
   striped:boolean,
 ):string => {
-  const weight = striped ? 0.25 : 0.6;
-  return toHex(mix(toRgb(bg), toRgb(accent), weight));
+  const base = mix(toRgb(bg), toRgb(accent), striped ? 0.25 : 0.5);
+  return toHex(
+    striped ? base : mix(base, toRgb('#ffffff'), 0.35),
+  );
 };
