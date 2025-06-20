@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/Button.tsx  | valet
-// theme-aware button with variants and sizes
+// Theme-aware button with variants and sizes
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
 import { styled } from '../css/createStyled';
@@ -77,18 +77,23 @@ const BaseBtn = styled('button')<{
   transition: background 0.2s ease, color 0.2s ease,
     filter 0.2s ease, transform 0.1s ease;
 
+  /* Disable blue tap-highlight & text selection on mobile */
+  -webkit-tap-highlight-color: transparent;
   user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
 
-  &:hover:not(:disabled) {
-    ${({ $variant, $primary, $primaryText }) =>
-      $variant === 'contained'
-        ? 'filter: brightness(1.25);'
-        : `
-          background: ${$primary};
-          color: ${$primaryText};
-        `}
+  /* Hover tint – only on devices that actually support hover */
+  @media (hover: hover) {
+    &:hover:not(:disabled) {
+      ${({ $variant, $primary, $primaryText }) =>
+        $variant === 'contained'
+          ? 'filter: brightness(1.25);'
+          : `
+            background: ${$primary};
+            color: ${$primaryText};
+          `}
+    }
   }
 
   &:active:not(:disabled) { transform: scale(0.96); }
@@ -106,7 +111,7 @@ const BaseBtn = styled('button')<{
     transition: transform 0.3s ease, opacity 0.3s ease;
   }
 
-  /* Ripple now suppressed on disabled buttons */
+  /* Ripple now suppressed on disabled buttons */
   &:active:not(:disabled)::after { opacity: 1; transform: scale(1); }
 `;
 

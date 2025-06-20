@@ -1,15 +1,17 @@
 # valet
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![GitHub](https://img.shields.io/badge/GitHub-valet-181717?logo=github&logoColor=white)](https://github.com/off-court-creations/valet) [![GitHub](https://img.shields.io/badge/GitHub-valet--playground-181717?logo=github&logoColor=white)](https://github.com/off-court-creations/valet-playground)[![npm](https://img.shields.io/badge/npm-%40archway%2Fvalet-CB3837?logo=npm&logoColor=white)](https://www.npmjs.com/package/@archway/valet)
 
-[![GitHub](https://img.shields.io/badge/GitHub-valet-181717?logo=github&logoColor=white)](https://github.com/off-court-creations/valet)
 
 `valet` is a CSS-in-JS engine, a UI component kit, and an accessibility layer that treats all humans and their AI proxies as first class users.
+
+---
 
 This library is currently pre-1.0 and the API may change without notice. It is released under the MIT license.
 
 When version `1.0.x` arrives you can depend on a stable interface.
 
+---
 
 To use `valet` in your project run:
 
@@ -18,7 +20,7 @@ cd your-project-using-valet
 npm install @archway/valet
 ```
 
-Quick start example:
+## Quick start example:
 
 ```tsx
 import { Button, Surface } from '@archway/valet'
@@ -47,13 +49,13 @@ cd YourReactLibraryThatUses_valet
 npm link @archway/valet
 ```
 
-### Build
+## Build
 
 Run `npm run build` to generate the `dist` folder for publishing. Use `npm run dev` during development for a live rebuild.
 
-### Playground
+## Playground
 
-You can try every component in the [Valet Playground](https://github.com/off-court-creations/valet-playground). Clone that repository and run:
+You can try every component in the [Valet Playground](https://github.com/off-court-creations/valet-playground). ([Live Demo!](https://main.d3h9kmt4y5ma0a.amplifyapp.com/)) Clone that repository and run:
 
 ```shell
 npm install
@@ -62,40 +64,40 @@ npm run dev
 
 ## Components
 
-These have been mostly tested in the [Valet Playground](https://github.com/off-court-creations/valet-playground).
+These have been mostly tested in the [Valet Playground](https://github.com/off-court-creations/valet-playground). ([Live Demo!](https://main.d3h9kmt4y5ma0a.amplifyapp.com/))
 
-| Component          | Functional | Prod Style | Okay Style | Mobile Style | Playground QC | Comments                         |
-|--------------------|:---------:|:-----------:|:----------:|:------------:|:-------------:|----------------------------------|
-| Accordion          | ✅        | 🟡          | ✅         | ✅           | ✅            | ----------                       |
-| Box                | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
-| Button             | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
-| Checkbox           | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | styling                          |
-| Drawer             | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | WIP                              |
-| App Bar            | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
-| Breadcrumbs        | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
-| Grid               | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
-| Pagination         | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
-| Speed Dial         | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
-| Stepper            | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
-| FormControl        | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
-| Icon               | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
-| IconButton         | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
-| List               | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
-| Modal              | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | styling                          |
-| Panel              | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
-| Parallax           | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
-| Progress           | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | styling                          |
-| Radio Group        | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | styling                          |
-| Select             | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | styling                          |
-| Slider             | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
-| Stack              | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
-| Surface            | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
-| Switch             | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
-| Table              | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
-| Tabs               | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
-| Textfield          | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
-| Tooltip            | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
-| Typography         | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
+| Component          | Works 💻 | Works 📱 | Prod Style 💻📱 | Ok Style 💻| Ok Style 📱 | Playground QC | Comments                         |
+|--------------------|:--------:|:--------:|:---------------:|:----------:|:-----------:|:-------------:|----------------------------------|
+| Accordion          | ✅       | ✅       |        🟡       | ✅         | ✅          | ✅            | ----------                       |
+| App Bar            | 🟡       | 🟡       |        🟡       | 🟡         | 🟡          | 🟡            | WIP                              |
+| Box                | ✅       | ✅       |        ✅       | ✅         | ✅          | ✅            | ----------                       |
+| Button             | ✅       | ✅       |        🟡       | ✅         | ✅          | ✅            | ----------                       |
+| Checkbox           | ✅       | ✅       |        🟡       | ✅         | ✅          | ✅            | ----------                       |
+| Drawer             | 🟡       | 🟡       |        🟡       | 🟡         | 🟡          | 🟡            | WIP                              |
+| FormControl        | ✅       | ✅       |        🟡       | ✅         | ✅          | ✅            | ----------                       |
+| Grid               | ✅       | ✅       |        ✅       | ✅         | ✅          | ✅            | ----------                       |
+| Icon               | ✅       | ✅       |        ✅       | ✅         | ✅          | ✅            | ----------                       |
+| IconButton         | ✅       | ✅       |        ✅       | ✅         | ✅          | ✅            | ----------                       |
+| List               | ✅       | ❌       |        ❌       | ✅         | ❌          | ❌            | Needs mobile support!            |
+| Modal              | 🟡       | 🟡       |        ❌       | 🟡         | 🟡          | 🟡            | styling                          |
+| Pagination         | ✅       | ✅       |        🟡       | ✅         | ✅          | ✅            | ----------                       |
+| Panel              | ✅       | ✅       |        🟡       | ✅         | ✅          | ✅            | ----------                       |
+| Parallax           | ✅       | ✅       |        🟡       | ✅         | ✅          | ✅            | ----------                       |
+| Progress           | 🟡       | 🟡       |        ❌       | 🟡         | 🟡          | 🟡            | styling                          |
+| Radio Group        | ✅       | ✅       |        🟡       | ✅         | ✅          | ✅            | ----------                       |
+| Select             | 🟡       | 🟡       |        ❌       | 🟡         | 🟡          | 🟡            | styling                          |
+| Slider             | ✅       | ✅       |        🟡       | ✅         | ✅          | ✅            | ----------                       |
+| Speed Dial         | ✅       | ✅       |        🟡       | ✅         | ✅          | ✅            | ----------                       |
+| Stack              | ✅       | ✅       |        ✅       | ✅         | ✅          | ✅            | ----------                       |
+| Stepper            | 🟡       | 🟡       |        🟡       | 🟡         | 🟡          | 🟡            | WIP                              |
+| Surface            | ✅       | ✅       |        ✅       | ✅         | ✅          | ✅            | ----------                       |
+| Switch             | ✅       | ✅       |        ✅       | ✅         | ✅          | ✅            | ----------                       |
+| Table              | ✅       | ❌       |        ❌       | ✅         | ❌          | ❌            | Needs mobile support!            |
+| Tabs               | ✅       | ✅       |        ✅       | ✅         | ✅          | ✅            | ----------                       |
+| Textfield          | ✅       | ✅       |        🟡       | ✅         | ✅          | ✅            | ----------                       |
+| Tooltip            | ✅       | ❌       |        ❌       | ✅         | ❌          | ❌            | Needs mobile support!            |
+| Typography         | ✅       | ✅       |        🟡       | ✅         | ✅          | ✅            | ----------                       |
+
 
 
 ## Hooks
