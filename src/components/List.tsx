@@ -9,6 +9,7 @@ import { useTheme }               from '../system/themeStore';
 import { preset }                 from '../css/stylePresets';
 import { Typography }             from './Typography';
 import type { Presettable }       from '../types';
+import { stripe }                 from '../utilities/colors';
 
 export interface ListProps<T> extends Omit<React.HTMLAttributes<HTMLUListElement>, 'children'>, Presettable {
   data: T[];
@@ -139,41 +140,3 @@ export function List<T>({
 }
 
 export default List;
-
-function stripe(bg: string, txt: string): string {
-  const a = toRgb(bg);
-  const b = toRgb(txt);
-  const mixed = mix(a, b, 0.1);
-  return toHex(mixed);
-}
-
-interface RGB { r: number; g: number; b: number; }
-
-const rgbCache = new Map<string, RGB>();
-function toRgb(hex: string): RGB {
-  if (rgbCache.has(hex)) return rgbCache.get(hex)!;
-  let s = hex.charAt(0) === '#' ? hex.slice(1) : hex;
-  if (s.length === 3) s = s.replace(/./g, (ch) => ch + ch);
-  let rgb: RGB;
-  if (s.length === 6 && !/[^a-f\d]/i.test(s)) {
-    const n = parseInt(s, 16);
-    rgb = { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
-  } else {
-    rgb = { r: 0, g: 0, b: 0 };
-  }
-  rgbCache.set(hex, rgb);
-  return rgb;
-}
-
-function mix(a: RGB, b: RGB, w: number): RGB {
-  const t = w <= 0 ? 0 : w >= 1 ? 1 : w;
-  return {
-    r: ((a.r * (1 - t) + b.r * t) + 0.5) | 0,
-    g: ((a.g * (1 - t) + b.g * t) + 0.5) | 0,
-    b: ((a.b * (1 - t) + b.b * t) + 0.5) | 0,
-  };
-}
-
-function toHex({ r, g, b }: RGB) {
-  return '#' + (((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1));
-}
