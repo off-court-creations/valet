@@ -48,9 +48,7 @@ export const hoverColor = (
   striped: boolean,
   text: string,
 ): string => {
-  if (!striped) {
-    return stripe(bg, text);
-  }
-  const base = mix(toRgb(bg), toRgb(accent), 0.25);
-  return toHex(base);
+  const base = striped ? stripe(bg, text) : bg;
+  const ratio = striped ? 0.15 : 0.35;
+  return toHex(mix(toRgb(base), toRgb(accent), ratio));
 };
