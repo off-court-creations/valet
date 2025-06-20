@@ -1,8 +1,7 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/Typography.tsx  | valet
-// semantic text variants with responsive sizes
+// src/components/Typography.tsx | valet
+// Semantic text variants with responsive sizes + colour vars
 // ─────────────────────────────────────────────────────────────
-
 import React from 'react';
 import { styled } from '../css/createStyled';
 import { useTheme } from '../system/themeStore';
@@ -67,7 +66,8 @@ export const Typography: React.FC<TypographyProps> = ({
     $italic: boolean;
   }>`
     margin: 0;
-    color: ${({ $color }) => $color || 'var(--valet-text-color)'};
+    /* ─ honour colour prop, else inherit var (with fallback) ─ */
+    color: ${({ $color }) => $color || 'var(--valet-text-color, inherit)'};
     font-size: ${({ $size }) => $size};
     font-weight: ${({ $bold }) => ($bold ? 700 : 400)};
     font-style: ${({ $italic }) => ($italic ? 'italic' : 'normal')};

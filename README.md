@@ -98,8 +98,6 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 | Tooltip            | ✅       | ❌       |        ❌       | ✅         | ❌          | ❌            | Needs mobile support!            |
 | Typography         | ✅       | ✅       |        🟡       | ✅         | ✅          | ✅            | ----------                       |
 
-
-
 ## Hooks
 
 | Hook               | Functional | Playground QC   | Comments |
