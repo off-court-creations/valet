@@ -9,7 +9,6 @@ export * from './components/IconButton';
 export * from './components/Modal';
 export * from './components/Drawer';
 export * from './components/AppBar';
-export * from './components/Breadcrumbs';
 export * from './components/Panel';
 export * from './components/Pagination';
 export * from './components/Table';
