@@ -41,3 +41,12 @@ export const stripe = (bg:string, txt:string):string => {
   stripeCache.set(key,val);
   return val;
 };
+
+export const hoverColor = (
+  bg:string,
+  accent:string,
+  striped:boolean,
+):string => {
+  const weight = striped ? 0.25 : 0.6;
+  return toHex(mix(toRgb(bg), toRgb(accent), weight));
+};

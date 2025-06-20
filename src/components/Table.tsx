@@ -8,7 +8,7 @@ import { useTheme }               from '../system/themeStore';
 import { preset }                 from '../css/stylePresets';
 import { Checkbox }               from './Checkbox';
 import type { Presettable }       from '../types';
-import { stripe, toRgb, mix, toHex } from '../utilities/colors';
+import { stripe, hoverColor } from '../utilities/colors';
 
 /*───────────────────────────────────────────────────────────*/
 /* Column definition                                          */
@@ -113,12 +113,10 @@ export function Table<T extends object>({
 
   /* colour helpers */
   const stripeColor = stripe(theme.colors.background, theme.colors.text);
-  const hoverBg = toHex(
-    mix(
-      toRgb(theme.colors.background),
-      toRgb(theme.colors.primary),
-      0.25,
-    ),
+  const hoverBg = hoverColor(
+    theme.colors.background,
+    theme.colors.primary,
+    striped,
   );
 
   /* sorting toggle */
