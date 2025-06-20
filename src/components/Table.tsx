@@ -117,6 +117,7 @@ export function Table<T extends object>({
     theme.colors.background,
     theme.colors.primary,
     striped,
+    theme.colors.text,
   );
 
   /* sorting toggle */

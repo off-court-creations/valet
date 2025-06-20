@@ -77,6 +77,7 @@ export function List<T>({
     theme.colors.background,
     theme.colors.primary,
     striped,
+    theme.colors.text,
   );
 
   function handleDragStart(idx: number) {

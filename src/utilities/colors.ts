@@ -43,12 +43,14 @@ export const stripe = (bg:string, txt:string):string => {
 };
 
 export const hoverColor = (
-  bg:string,
-  accent:string,
-  striped:boolean,
-):string => {
-  const base = mix(toRgb(bg), toRgb(accent), striped ? 0.25 : 0.5);
-  return toHex(
-    striped ? base : mix(base, toRgb('#ffffff'), 0.35),
-  );
+  bg: string,
+  accent: string,
+  striped: boolean,
+  text: string,
+): string => {
+  if (!striped) {
+    return stripe(bg, text);
+  }
+  const base = mix(toRgb(bg), toRgb(accent), 0.25);
+  return toHex(base);
 };
