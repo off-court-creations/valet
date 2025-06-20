@@ -66,7 +66,7 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 
 | Component          | Functional | Prod Style | Okay Style | Mobile Style | Playground QC | Comments                         |
 |--------------------|:---------:|:-----------:|:----------:|:------------:|:-------------:|----------------------------------|
-| Accordion          | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
+| Accordion          | ✅        | 🟡          | ✅         | ✅           | ✅            | ----------                       |
 | Box                | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
 | Button             | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
 | Checkbox           | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | styling                          |
