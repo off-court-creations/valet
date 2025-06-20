@@ -51,7 +51,7 @@ const common: Omit<Theme, 'colors'> = {
 };
 
 const lightColors = {
-  primary:'#8bb392',   primaryText:'#F7F7F7',
+  primary:'#8bb392',   primaryText:'#090909',
   secondary:'#a7ccc4  ', secondaryText:'#090909',
   tertiary:'#d1e6dc',  tertiaryText:'#090909',
   background:'#FFF',
@@ -60,9 +60,9 @@ const lightColors = {
 } as const;
 
 const darkColors = {
-  primary:'#4d6652',   primaryText:'#F7F7F7',
-  secondary:'#EF8243', secondaryText:'#090909',
-  tertiary:'#4BD0D2',  tertiaryText:'#090909',
+  primary:'#608066',   primaryText:'#F7F7F7',
+  secondary:'#69807a', secondaryText:'#F7F7F7',
+  tertiary:'#5d6662',  tertiaryText:'#F7F7F7',
   background:'#222',
   backgroundAlt:'#444',
   text:'#F7F7F7',
