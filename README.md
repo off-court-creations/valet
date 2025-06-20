@@ -64,38 +64,39 @@ npm run dev
 
 These have been mostly tested in the [Valet Playground](https://github.com/off-court-creations/valet-playground).
 
-| Component          | Functional | Playground QC | Comments |
-|--------------------|:---------:|:-------------:|----------|
-| Accordion          | ✅        | ✅           |----------|
-| Box                | ✅        | ✅           |----------|
-| Button             | ✅        | ✅           |----------|
-| Checkbox           | ✅        | ❌           | styling  |
-| Drawer             | ❌        | ❌           |   WIP    |
-| App Bar            | 🟡        | ❌           |----------|
-| Breadcrumbs        | 🟡        | ❌           |----------|
-| Grid               | 🟡        | ❌           |----------|
-| Pagination         | 🟡        | ❌           |----------|
-| Speed Dial         | 🟡        | ❌           |----------|
-| Stepper            | 🟡        | ❌           |----------|
-| FormControl        | ✅        | ✅           |----------|
-| Icon               | ✅        | ✅           |----------|
-| IconButton         | ✅        | ✅           |----------|
-| List               | ✅        | ✅           |----------|
-| Modal              | ✅        | ❌           | styling  |
-| Panel              | ✅        | ✅           |----------|
-| Parallax           | ✅        | ✅           |----------|
-| Progress           | ✅        | ❌           | styling  |
-| Radio Group        | ✅        | ❌           | styling  |
-| Select             | ✅        | ❌           | styling  |
-| Slider             | ✅        | ✅           |----------|
-| Stack              | ✅        | ✅           |----------|
-| Surface            | ✅        | ✅           |----------|
-| Switch             | ✅        | ✅           |----------|
-| Table              | ✅        | ✅           |----------|
-| Tabs               | ✅        | ✅           |----------|
-| Textfield          | ✅        | ✅           |----------|
-| Tooltip            | ✅        | ✅           |----------|
-| Typography         | ✅        | ✅           |----------|
+| Component          | Functional | Prod Style | Okay Style | Mobile Style | Playground QC | Comments                         |
+|--------------------|:---------:|:-----------:|:----------:|:------------:|:-------------:|----------------------------------|
+| Accordion          | ✅        | 🟡          | ✅         | ✅           | ✅            | ----------                       |
+| Box                | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
+| Button             | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
+| Checkbox           | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | styling                          |
+| Drawer             | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | WIP                              |
+| App Bar            | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
+| Breadcrumbs        | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
+| Grid               | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
+| Pagination         | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
+| Speed Dial         | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
+| Stepper            | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
+| FormControl        | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
+| Icon               | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
+| IconButton         | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
+| List               | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
+| Modal              | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | styling                          |
+| Panel              | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
+| Parallax           | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
+| Progress           | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | styling                          |
+| Radio Group        | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | styling                          |
+| Select             | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | styling                          |
+| Slider             | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
+| Stack              | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
+| Surface            | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
+| Switch             | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
+| Table              | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
+| Tabs               | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
+| Textfield          | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
+| Tooltip            | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
+| Typography         | 🟡        | ❌          | 🟡         | 🟡           | 🟡            | ----------                       |
+
 
 ## Hooks
 
@@ -119,14 +120,7 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 
 ## Intended Components
 
-- 🟡 List
-- 🟡 App Bar
-- 🟡 Breadcrumbs
-- 🟡 Drawer
-- 🟡 Pagination
-- 🟡 Stepper
-- 🟡 Speed Dial
-- 🟡 Grid
+- TBD
 
 ## Contributing
 

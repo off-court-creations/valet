@@ -1,149 +1,118 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/Tooltip.tsx | valet
-// Theme-aware, accessible <Tooltip /> that mirrors MUI's feature-set.
-// No external runtime deps – leverages React portals + tiny placement maths.
+// Robust CSS-only tooltip (MUI-style API) – width-safe in flex columns
 // ─────────────────────────────────────────────────────────────
 import React, {
   ReactElement,
   ReactNode,
-  cloneElement,
-  useCallback,
   useEffect,
   useId,
-  useLayoutEffect,
   useRef,
   useState,
 } from 'react';
-import { createPortal } from 'react-dom';
-import { styled } from '../css/createStyled';
-import { useTheme } from '../system/themeStore';
-import { preset } from '../css/stylePresets';
+import { styled }    from '../css/createStyled';
+import { useTheme }  from '../system/themeStore';
+import { preset }    from '../css/stylePresets';
 import type { Presettable } from '../types';
 
 /*───────────────────────────────────────────────────────────*/
 /* Styled primitives                                         */
 
-const TooltipBubble = styled('div')<{
-  $bg?: string;
-  $text?: string;
-  $fade: boolean;
+type Placement = 'top' | 'bottom' | 'left' | 'right';
+const GAP = 8;
+
+const Wrapper = styled('span')`
+  position: relative;
+  display: inline-flex;
+  /* ----- critical: never stretch in a flex column -------- */
+  flex: 0 0 auto;
+  align-self: flex-start;
+`;
+
+const Bubble = styled('div')<{
+  $show: boolean;
+  $placement: Placement;
 }>`
-  position: fixed;
+  --gap: ${GAP}px;
+  position: absolute;
   z-index: 9999;
-  max-width: 20rem;
-  padding: 0.35rem 0.6rem;
+  max-width: 22rem;
+  padding: 0.4rem 0.7rem;
   border-radius: 4px;
-  ${({ $bg })   => $bg   && `background: ${$bg};`}
-  ${({ $text }) => $text && `color: ${$text};`}
+  background: var(--tt-bg, #000);
+  color: var(--tt-fg, #fff);
   font-size: 0.75rem;
   line-height: 1.3;
   pointer-events: none;
-  opacity: ${({ $fade }) => ($fade ? 0 : 1)};
-  transform: translateY(${({ $fade }) => ($fade ? '4px' : '0')});
-  transition: opacity 150ms ease, transform 150ms ease;
+
+  opacity: ${({ $show }) => ($show ? 1 : 0)};
+  transition: opacity 140ms ease, transform 140ms ease;
+
+  /* placement geometry + enter/leave slide */
+  ${({ $show, $placement }) =>
+    ({
+      top: `
+        bottom: calc(100% + var(--gap));
+        left: 50%;
+        transform-origin: bottom center;
+        transform: translate(-50%, ${$show ? '0' : '4px'});
+      `,
+      bottom: `
+        top: calc(100% + var(--gap));
+        left: 50%;
+        transform-origin: top center;
+        transform: translate(-50%, ${$show ? '0' : '-4px'});
+      `,
+      left: `
+        right: calc(100% + var(--gap));
+        top: 50%;
+        transform-origin: center right;
+        transform: translate(${ $show ? '0' : '4px'}, -50%);
+      `,
+      right: `
+        left: calc(100% + var(--gap));
+        top: 50%;
+        transform-origin: center left;
+        transform: translate(${ $show ? '0' : '-4px'}, -50%);
+      `,
+    } as Record<Placement, string>)[$placement]}
 `;
 
 const Arrow = styled('span')<{
-  $bg: string;
   $placement: Placement;
 }>`
+  --s: 8px;
   position: absolute;
-  width: 8px;
-  height: 8px;
-  background: ${({ $bg }) => $bg};
+  width: var(--s);
+  height: var(--s);
+  background: var(--tt-bg, #000);
   transform: rotate(45deg);
 
   ${({ $placement }) =>
-    $placement === 'top' &&
-    `bottom: -4px; left: 50%; transform: translateX(-50%) rotate(45deg);`}
-  ${({ $placement }) =>
-    $placement === 'bottom' &&
-    `top: -4px; left: 50%; transform: translateX(-50%) rotate(45deg);`}
-  ${({ $placement }) =>
-    $placement === 'left' &&
-    `right: -4px; top: 50%; transform: translateY(-50%) rotate(45deg);`}
-  ${({ $placement }) =>
-    $placement === 'right' &&
-    `left: -4px; top: 50%; transform: translateY(-50%) rotate(45deg);`}
+    ({
+      top   : `bottom: calc(-0.5 * var(--s)); left: 50%; transform: translateX(-50%) rotate(45deg);`,
+      bottom: `top:    calc(-0.5 * var(--s)); left: 50%; transform: translateX(-50%) rotate(45deg);`,
+      left  : `right:  calc(-0.5 * var(--s)); top: 50%; transform: translateY(-50%) rotate(45deg);`,
+      right : `left:   calc(-0.5 * var(--s)); top: 50%; transform: translateY(-50%) rotate(45deg);`,
+    } as Record<Placement, string>)[$placement]}
 `;
-
-/*───────────────────────────────────────────────────────────*/
-/* Utility helpers                                           */
-
-type Placement = 'top' | 'bottom' | 'left' | 'right';
-
-const SPACING = 8; // gap between anchor and bubble
-
-interface Coords {
-  top: number;
-  left: number;
-}
-
-const computeCoords = (
-  anchor: DOMRect,
-  bubble: { width: number; height: number },
-  placement: Placement,
-): Coords => {
-  switch (placement) {
-    case 'bottom':
-      return {
-        top: anchor.bottom + SPACING,
-        left: anchor.left + anchor.width / 2 - bubble.width / 2,
-      };
-    case 'left':
-      return {
-        top: anchor.top + anchor.height / 2 - bubble.height / 2,
-        left: anchor.left - bubble.width - SPACING,
-      };
-    case 'right':
-      return {
-        top: anchor.top + anchor.height / 2 - bubble.height / 2,
-        left: anchor.right + SPACING,
-      };
-    case 'top':
-    default:
-      return {
-        top: anchor.top - bubble.height - SPACING,
-        left: anchor.left + anchor.width / 2 - bubble.width / 2,
-      };
-  }
-};
-
-/** Merge two event handlers without losing either. */
-const mergeHandlers = <E extends React.SyntheticEvent<any>>(
-  theirs?: (e: E) => void,
-  ours?: (e: E) => void,
-) => (e: E) => {
-  theirs?.(e);
-  ours?.(e);
-};
 
 /*───────────────────────────────────────────────────────────*/
 /* Public API                                                */
 
 export interface TooltipProps extends Presettable {
-  /** Tooltip label / content. */
   title: ReactNode;
-  /** Position relative to anchor. */
   placement?: Placement;
-  /** Show arrow? Defaults to `true`. */
   arrow?: boolean;
-  /** Delay before showing (ms). */
   enterDelay?: number;
-  /** Delay before hiding (ms). */
   leaveDelay?: number;
-  /** Controlled visibility prop. */
   open?: boolean;
-  /** Uncontrolled default state. */
   defaultOpen?: boolean;
-  /** Disable specific interaction triggers. */
   disableHoverListener?: boolean;
   disableFocusListener?: boolean;
   disableTouchListener?: boolean;
-  /** Callbacks mirroring MUI. */
   onOpen?: () => void;
   onClose?: () => void;
-  /** Exactly **one** element that receives the tooltip. */
   children: ReactElement;
 }
 
@@ -156,7 +125,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
   arrow = true,
   enterDelay = 100,
   leaveDelay = 100,
-  open: controlledOpen,
+  open: controlled,
   defaultOpen = false,
   disableHoverListener = false,
   disableFocusListener = false,
@@ -167,131 +136,61 @@ export const Tooltip: React.FC<TooltipProps> = ({
   children,
 }) => {
   const { theme } = useTheme();
+  const id        = useId();
   const hasPreset = Boolean(presetKey);
 
-  /* ----- preset → utility class names ---------------------- */
-  const presetClasses = hasPreset ? preset(presetKey!) : '';
+  /* uncontrolled ↔ controlled gate */
+  const [internalShow, setInternalShow] = useState(defaultOpen);
+  const show = controlled ?? internalShow;
 
-  /* ----- refs & state -------------------------------------- */
-  const id = useId();
-  const anchorRef = useRef<HTMLElement | null>(null);
-  const bubbleRef = useRef<HTMLDivElement | null>(null);
+  /* timers */
+  const inT  = useRef<ReturnType<typeof setTimeout>>();
+  const outT = useRef<ReturnType<typeof setTimeout>>();
+  const clear = () => { clearTimeout(inT.current); clearTimeout(outT.current); };
 
-  const uncontrolled = controlledOpen === undefined;
-  const [openState, setOpenState] = useState(defaultOpen);
-  const open = uncontrolled ? openState : controlledOpen!;
-  const [coords, setCoords] = useState<Coords | null>(null);
+  const open  = () => { if (controlled === undefined) setInternalShow(true);  onOpen?.(); };
+  const close = () => { if (controlled === undefined) setInternalShow(false); onClose?.(); };
 
-  /* ----- timers for enter/leave delays --------------------- */
-  const enterTimer = useRef<ReturnType<typeof setTimeout>>();
-  const leaveTimer = useRef<ReturnType<typeof setTimeout>>();
+  /* listeners */
+  const handleEnter = () => { clear(); inT.current  = setTimeout(open,  enterDelay); };
+  const handleLeave = () => { clear(); outT.current = setTimeout(close, leaveDelay); };
 
-  const clearTimers = () => {
-    clearTimeout(enterTimer.current);
-    clearTimeout(leaveTimer.current);
-  };
+  useEffect(() => clear, []);
 
-  /* ----- open / close helpers ------------------------------ */
-  const doOpen = useCallback(() => {
-    if (open) return;
-    if (uncontrolled) setOpenState(true);
-    onOpen?.();
-  }, [open, uncontrolled, onOpen]);
-
-  const doClose = useCallback(() => {
-    if (!open) return;
-    if (uncontrolled) setOpenState(false);
-    onClose?.();
-  }, [open, uncontrolled, onClose]);
-
-  /* ----- event handlers ------------------------------------ */
-  const handleMouseEnter = () => {
-    clearTimers();
-    enterTimer.current = setTimeout(doOpen, enterDelay);
-  };
-  const handleMouseLeave = () => {
-    clearTimers();
-    leaveTimer.current = setTimeout(doClose, leaveDelay);
-  };
-  const handleFocus = handleMouseEnter;
-  const handleBlur = handleMouseLeave;
-  const handleTouchStart = handleMouseEnter;
-  const handleTouchEnd = handleMouseLeave;
-
-  /* ----- clone child with merged handlers ------------------ */
-  const childProps: any = {
-    ref: (node: HTMLElement | null) => {
-      anchorRef.current = node;
-      const { ref } = children as any;
-      if (typeof ref === 'function') ref(node);
-      else if (ref) (ref as React.MutableRefObject<any>).current = node;
-    },
-  };
-  if (!disableHoverListener) {
-    childProps.onMouseEnter = mergeHandlers(children.props.onMouseEnter, handleMouseEnter);
-    childProps.onMouseLeave = mergeHandlers(children.props.onMouseLeave, handleMouseLeave);
-  }
-  if (!disableFocusListener) {
-    childProps.onFocus = mergeHandlers(children.props.onFocus, handleFocus);
-    childProps.onBlur = mergeHandlers(children.props.onBlur, handleBlur);
-  }
-  if (!disableTouchListener) {
-    childProps.onTouchStart = mergeHandlers(children.props.onTouchStart, handleTouchStart);
-    childProps.onTouchEnd = mergeHandlers(children.props.onTouchEnd, handleTouchEnd);
-  }
-
-  const childWithProps = cloneElement(children, childProps);
-
-  /* ----- positioning --------------------------------------- */
-  useLayoutEffect(() => {
-    if (!open || !anchorRef.current || !bubbleRef.current) return;
-
-    const updatePosition = () => {
-      if (!anchorRef.current || !bubbleRef.current) return;
-      const anchorRect = anchorRef.current.getBoundingClientRect();
-      const bubbleRect = bubbleRef.current.getBoundingClientRect();
-      setCoords(computeCoords(anchorRect, bubbleRect, placement));
-    };
-
-    updatePosition();
-    window.addEventListener('scroll', updatePosition, true);
-    window.addEventListener('resize', updatePosition);
-    return () => {
-      window.removeEventListener('scroll', updatePosition, true);
-      window.removeEventListener('resize', updatePosition);
-    };
-  }, [open, placement]);
-
-  /* Ensure timers cleared on unmount */
-  useEffect(() => clearTimers, []);
-
-  /* ----- portal content ------------------------------------ */
-  const bubble = open ? (
-    <TooltipBubble
-      ref={bubbleRef}
-      role="tooltip"
-      id={`tooltip-${id}`}
-      $bg={hasPreset ? undefined : theme.colors.text}
-      $text={hasPreset ? undefined : theme.colors.background}
-      $fade={!coords}
-      className={presetClasses}
-      style={coords || undefined}
-    >
-      {title}
-      {arrow && (
-        <Arrow
-          $bg={hasPreset ? 'inherit' : theme.colors.text}
-          $placement={placement}
-        />
-      )}
-    </TooltipBubble>
-  ) : null;
+  /* preset classes */
+  const presetClasses = presetKey ? preset(presetKey) : '';
 
   return (
-    <>
-      {childWithProps}
-      {bubble && createPortal(bubble, document.body)}
-    </>
+    <Wrapper
+      onMouseEnter={!disableHoverListener ? handleEnter : undefined}
+      onMouseLeave={!disableHoverListener ? handleLeave : undefined}
+      onFocus={!disableFocusListener ? open : undefined}
+      onBlur={!disableFocusListener ? close : undefined}
+      onTouchStart={!disableTouchListener ? open : undefined}
+      onTouchEnd={!disableTouchListener ? close : undefined}
+      aria-describedby={show ? `tooltip-${id}` : undefined}
+    >
+      {children}
+
+      <Bubble
+        $show={show}
+        $placement={placement}
+        role="tooltip"
+        id={`tooltip-${id}`}
+        className={presetClasses}
+        style={
+          hasPreset
+            ? undefined
+            : ({
+                '--tt-bg': theme.colors.text,
+                '--tt-fg': theme.colors.background,
+              } as React.CSSProperties)
+        }
+      >
+        {title}
+        {arrow && <Arrow $placement={placement} />}
+      </Bubble>
+    </Wrapper>
   );
 };
 

@@ -51,21 +51,21 @@ const common: Omit<Theme, 'colors'> = {
 };
 
 const lightColors = {
-  primary:'#62AEE4',   primaryText:'#FFFFFF',
-  secondary:'#F7C0A1', secondaryText:'#111111',
-  tertiary:'#9AE5E6',  tertiaryText:'#111111',
-  background:'#FFFFFF',
-  backgroundAlt:'#CCCCCC',
-  text:'#111111',
+  primary:'#8bb392',   primaryText:'#090909',
+  secondary:'#a7ccc4  ', secondaryText:'#090909',
+  tertiary:'#d1e6dc',  tertiaryText:'#090909',
+  background:'#FFF',
+  backgroundAlt:'#CCC',
+  text:'#090909',
 } as const;
 
 const darkColors = {
-  primary:'#0D324D',   primaryText:'#FFFFFF',
-  secondary:'#EF8243', secondaryText:'#111111',
-  tertiary:'#4BD0D2',  tertiaryText:'#111111',
-  background:'#222222',
-  backgroundAlt:'#444444',
-  text:'#EEEEEE',
+  primary:'#608066',   primaryText:'#F7F7F7',
+  secondary:'#69807a', secondaryText:'#F7F7F7',
+  tertiary:'#5d6662',  tertiaryText:'#F7F7F7',
+  background:'#222',
+  backgroundAlt:'#444',
+  text:'#F7F7F7',
 } as const;
 
 export const useTheme = create<ThemeStore>((set, get) => ({
