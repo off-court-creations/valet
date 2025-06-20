@@ -53,7 +53,7 @@ Run `npm run build` to generate the `dist` folder for publishing. Use `npm run d
 
 ### Playground
 
-You can try every component in the [Valet Playground](https://github.com/off-court-creations/valet-playground). [Live Demo!](https://main.d3h9kmt4y5ma0a.amplifyapp.com/) Clone that repository and run:
+You can try every component in the [Valet Playground](https://github.com/off-court-creations/valet-playground). ([Live Demo!](https://main.d3h9kmt4y5ma0a.amplifyapp.com/)) Clone that repository and run:
 
 ```shell
 npm install
@@ -62,7 +62,7 @@ npm run dev
 
 ## Components
 
-These have been mostly tested in the [Valet Playground](https://github.com/off-court-creations/valet-playground).
+These have been mostly tested in the [Valet Playground](https://github.com/off-court-creations/valet-playground). ([Live Demo!](https://main.d3h9kmt4y5ma0a.amplifyapp.com/))
 
 | Component          | Functional 💻 | Functional 📱 | Prod Style | Okay Style | Mobile Style | Playground QC | Comments                         |
 |--------------------|:-------------:|:-------------:|:-----------:|:----------:|:------------:|:-------------:|----------------------------------|
