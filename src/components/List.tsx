@@ -1,30 +1,45 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/List.tsx | valet
-// Draggable list component – striped rows, hover highlight, customisable
-// title + subtitle rendering. Supports drag-and-drop reordering.
+// Zebra stripes, smart hover, invisible drag image,
+// and persistent drag highlight.
 // ─────────────────────────────────────────────────────────────
 import React, { useEffect, useRef, useState } from 'react';
 import { styled }                 from '../css/createStyled';
 import { useTheme }               from '../system/themeStore';
 import { preset }                 from '../css/stylePresets';
 import { Typography }             from './Typography';
+import { stripe, toRgb, mix, toHex } from '../helpers/color';
 import type { Presettable }       from '../types';
 
-export interface ListProps<T> extends Omit<React.HTMLAttributes<HTMLUListElement>, 'children'>, Presettable {
+/* 1 × 1 transparent GIF to suppress the default drag preview */
+const EMPTY_IMG = (() => {
+  const img = new Image();
+  img.src = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
+  return img;
+})();
+
+/*───────────────────────────────────────────────────────────*/
+/* Props                                                     */
+export interface ListProps<T>
+  extends Omit<React.HTMLAttributes<HTMLUListElement>, 'children'>,
+    Presettable {
   data: T[];
   getTitle: (item: T) => React.ReactNode;
   getSubtitle?: (item: T) => React.ReactNode;
   striped?: boolean;
+  /** If `undefined`, non-striped lists hover by default. */
   hoverable?: boolean;
   onReorder?: (items: T[]) => void;
 }
 
+/*───────────────────────────────────────────────────────────*/
+/* Styled primitive                                          */
 const Root = styled('ul')<{
-  $striped: boolean;
-  $hover: boolean;
-  $border: string;
-  $stripe: string;
-  $hoverBg: string;
+  $striped : boolean;
+  $hover   : boolean;
+  $border  : string;
+  $stripe  : string;
+  $hoverBg : string;
 }>`
   list-style: none;
   margin: 0;
@@ -39,24 +54,34 @@ const Root = styled('ul')<{
     border-bottom: 1px solid ${({ $border }) => $border};
     cursor: grab;
     user-select: none;
+    transition: background 120ms ease;
   }
+  li:last-child { border-bottom: none; }
 
-  li:last-child {
-    border-bottom: none;
-  }
-
+  /* Zebra stripes */
   ${({ $striped, $stripe }) =>
     $striped && `li:nth-of-type(odd){background:${$stripe};}`}
+
+  /* Hover + drag highlight (row AND its cells) */
   ${({ $hover, $hoverBg }) =>
-    $hover && `li:hover{background:${$hoverBg};}`}
+    $hover && `
+      li:hover,
+      li:hover > *,
+      li[data-dragging="true"],
+      li[data-dragging="true"] > * {
+        background:${$hoverBg};
+      }
+    `}
 `;
 
+/*───────────────────────────────────────────────────────────*/
+/* Component                                                 */
 export function List<T>({
   data,
   getTitle,
   getSubtitle,
-  striped = false,
-  hoverable = false,
+  striped   = false,
+  hoverable,
   onReorder,
   preset: p,
   className,
@@ -64,65 +89,79 @@ export function List<T>({
   ...rest
 }: ListProps<T>) {
   const { theme } = useTheme();
-  const [items, setItems] = useState<T[]>(data);
-  const dragIdx = useRef<number | null>(null);
 
-  useEffect(() => {
-    setItems(data);
-  }, [data]);
-
+  /* Colours */
   const stripeColor = stripe(theme.colors.background, theme.colors.text);
-  const hoverBg = `${theme.colors.primary}22`;
+  const hoverBg     = toHex(
+    mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.25),
+  );
 
-  function handleDragStart(idx: number) {
-    return () => {
-      dragIdx.current = idx;
+  /* Determine whether hover is enabled */
+  const enableHover =
+    hoverable !== undefined ? hoverable : !striped;
+
+  /* State */
+  const [items, setItems] = useState<T[]>(data);
+  const dragFrom = useRef<number | null>(null);
+  const [dragIdx, setDragIdx] = useState<number | null>(null);
+
+  useEffect(() => setItems(data), [data]);
+
+  /* Handlers -------------------------------------------------------------- */
+  const handleDragStart = (idx: number) =>
+    (e: React.DragEvent<HTMLLIElement>) => {
+      dragFrom.current = idx;
+      setDragIdx(idx);
+      e.dataTransfer.setDragImage(EMPTY_IMG, 0, 0); // hide ghost
+      e.dataTransfer.effectAllowed = 'move';
     };
-  }
 
-  function handleDragOver(idx: number) {
-    return (e: React.DragEvent<HTMLLIElement>) => {
+  const handleDragOver = (idx: number) =>
+    (e: React.DragEvent<HTMLLIElement>) => {
       e.preventDefault();
-      const from = dragIdx.current;
+      const from = dragFrom.current;
       if (from === null || from === idx) return;
-      setItems((prev) => {
+
+      setItems(prev => {
         const arr = [...prev];
         const [moved] = arr.splice(from, 1);
         arr.splice(idx, 0, moved);
-        dragIdx.current = idx;
+        dragFrom.current = idx;
         return arr;
       });
+      setDragIdx(idx); // keep highlight on moved row
     };
-  }
 
-  function handleDragEnd() {
-    if (dragIdx.current !== null) {
-      onReorder?.(items);
-    }
-    dragIdx.current = null;
-  }
+  const handleDragEnd = () => {
+    if (dragFrom.current !== null) onReorder?.(items);
+    dragFrom.current = null;
+    setDragIdx(null);
+  };
 
-  const cls = [p ? preset(p) : '', className].filter(Boolean).join(' ') || undefined;
+  /* Class merge */
+  const cls =
+    [p ? preset(p) : '', className].filter(Boolean).join(' ') || undefined;
 
+  /*─────────────────────────────────────────────────────────*/
   return (
     <Root
       {...rest}
       $striped={striped}
-      $hover={hoverable}
+      $hover={enableHover}
       $border={theme.colors.backgroundAlt}
       $stripe={stripeColor}
       $hoverBg={hoverBg}
-      style={style}
       className={cls}
+      style={style}
     >
       {items.map((item, idx) => (
         <li
           key={idx}
           draggable
+          data-dragging={dragIdx === idx || undefined}
           onDragStart={handleDragStart(idx)}
           onDragOver={handleDragOver(idx)}
           onDragEnd={handleDragEnd}
-          style={{ cursor: 'grab' }}
         >
           <Typography variant="body" bold>
             {getTitle(item)}
@@ -139,41 +178,3 @@ export function List<T>({
 }
 
 export default List;
-
-function stripe(bg: string, txt: string): string {
-  const a = toRgb(bg);
-  const b = toRgb(txt);
-  const mixed = mix(a, b, 0.1);
-  return toHex(mixed);
-}
-
-interface RGB { r: number; g: number; b: number; }
-
-const rgbCache = new Map<string, RGB>();
-function toRgb(hex: string): RGB {
-  if (rgbCache.has(hex)) return rgbCache.get(hex)!;
-  let s = hex.charAt(0) === '#' ? hex.slice(1) : hex;
-  if (s.length === 3) s = s.replace(/./g, (ch) => ch + ch);
-  let rgb: RGB;
-  if (s.length === 6 && !/[^a-f\d]/i.test(s)) {
-    const n = parseInt(s, 16);
-    rgb = { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
-  } else {
-    rgb = { r: 0, g: 0, b: 0 };
-  }
-  rgbCache.set(hex, rgb);
-  return rgb;
-}
-
-function mix(a: RGB, b: RGB, w: number): RGB {
-  const t = w <= 0 ? 0 : w >= 1 ? 1 : w;
-  return {
-    r: ((a.r * (1 - t) + b.r * t) + 0.5) | 0,
-    g: ((a.g * (1 - t) + b.g * t) + 0.5) | 0,
-    b: ((a.b * (1 - t) + b.b * t) + 0.5) | 0,
-  };
-}
-
-function toHex({ r, g, b }: RGB) {
-  return '#' + (((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1));
-}
