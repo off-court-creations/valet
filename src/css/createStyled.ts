@@ -98,8 +98,10 @@ export function styled<Tag extends keyof JSX.IntrinsicElements>(tag: Tag) {
             const rect = el.getBoundingClientRect()
             const sEl = surface.getState().element
             const sRect = sEl ? sEl.getBoundingClientRect() : { top: 0, left: 0 }
-            const top = rect.top - sRect.top
-            const left = rect.left - sRect.left
+            const scrollTop = sEl ? sEl.scrollTop : 0
+            const scrollLeft = sEl ? sEl.scrollLeft : 0
+            const top = rect.top - sRect.top + scrollTop
+            const left = rect.left - sRect.left + scrollLeft
             surface.getState().updateChild(id, {
               width: rect.width,
               height: rect.height,

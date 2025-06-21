@@ -137,12 +137,12 @@ export function Table<T extends object>({
       if (!surfEl) return;
       const rect = node.getBoundingClientRect();
       const sRect = surfEl.getBoundingClientRect();
-      const top = rect.top - sRect.top;
+      const top = rect.top - sRect.top + surfEl.scrollTop;
       surface.updateChild(uniqueId, {
         width: rect.width,
         height: rect.height,
         top,
-        left: rect.left - sRect.left,
+        left: rect.left - sRect.left + surfEl.scrollLeft,
       });
       setMaxHeight(Math.max(0, surface.height - top));
     };
