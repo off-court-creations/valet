@@ -1,13 +1,14 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/Button.tsx | valet
-// Theme-aware <Button /> – refined outlined-token behaviour
+// Theme-aware <Button /> – automatic Typography wrapping
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
-import { styled }          from '../css/createStyled';
-import { useTheme }        from '../system/themeStore';
-import type { Theme }      from '../system/themeStore';
-import { preset }          from '../css/stylePresets';
-import type { Presettable }from '../types';
+import { styled }           from '../css/createStyled';
+import { useTheme }         from '../system/themeStore';
+import type { Theme }       from '../system/themeStore';
+import { preset }           from '../css/stylePresets';
+import { Typography }       from './Typography';
+import type { Presettable } from '../types';
 
 /*───────────────────────────────────────────────────────────*/
 export type ButtonVariant = 'contained' | 'outlined';
@@ -17,26 +18,21 @@ export type ButtonToken   = 'primary' | 'secondary' | 'tertiary';
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     Presettable {
-  /** Background colour or token (affects hover for outlined) */
   color?     : ButtonToken | string;
-  /** Idle label / outline colour                             */
   textColor? : ButtonToken | string;
   variant?   : ButtonVariant;
   size?      : ButtonSize;
-  /** Stretch to container width                              */
   fullWidth? : boolean;
 }
 
 /*───────────────────────────────────────────────────────────*/
-/* Size map                                                  */
-const createSizeMap = (theme: Theme) => ({
-  sm: { padV: theme.spacing.sm, padH: theme.spacing.md, font: '0.75rem',  height: '2rem'  },
-  md: { padV: theme.spacing.sm, padH: theme.spacing.lg, font: '0.875rem', height: '2.5rem'},
-  lg: { padV: theme.spacing.md, padH: theme.spacing.lg, font: '1rem',     height: '3rem'  },
+const createSizeMap = (t: Theme) => ({
+  sm: { padV: t.spacing.sm, padH: t.spacing.md, font: '0.75rem',  height: '2rem'  },
+  md: { padV: t.spacing.sm, padH: t.spacing.lg, font: '0.875rem', height: '2.5rem'},
+  lg: { padV: t.spacing.md, padH: t.spacing.lg, font: '1rem',     height: '3rem'  },
 } as const);
 
 /*───────────────────────────────────────────────────────────*/
-/* Styled primitive                                          */
 const Root = styled('button')<{
   $variant    : ButtonVariant;
   $height     : string;
@@ -46,6 +42,7 @@ const Root = styled('button')<{
   $bg         : string;
   $label      : string;
   $hoverLabel : string;
+  $outline    : string;
   $ripple     : string;
   $full       : boolean;
 }>`
@@ -60,20 +57,17 @@ const Root = styled('button')<{
   padding  : ${({ $padRule }) => $padRule};
   box-sizing: border-box;
 
-  /* Stretch ------------------------------------------------*/
   align-self: ${({ $full }) => ($full ? 'stretch' : 'flex-start')};
   width     : ${({ $full }) => ($full ? '100%'   : 'auto')};
 
-  /* Visuals ------------------------------------------------*/
   border-radius: 4px;
-  border: ${({ $variant }) =>
-    $variant === 'outlined' ? '1px solid currentColor' : 'none'};
+  border: ${({ $variant, $outline }) =>
+    $variant === 'outlined' ? `1px solid ${$outline}` : 'none'};
 
   background: ${({ $variant, $bg }) =>
     $variant === 'contained' ? $bg : 'transparent'};
 
-  color: ${({ $label }) => $label};
-
+  color      : ${({ $label }) => $label};
   font-size  : ${({ $font }) => $font};
   font-weight: 600;
   line-height: 1;
@@ -87,7 +81,6 @@ const Root = styled('button')<{
   -webkit-tap-highlight-color: transparent;
   user-select: none;
 
-  /* Hover --------------------------------------------------*/
   @media (hover: hover) {
     &:hover:not(:disabled) {
       ${({ $variant, $bg, $hoverLabel }) =>
@@ -103,7 +96,6 @@ const Root = styled('button')<{
   &:active:not(:disabled) { transform: scale(0.96); }
   &:disabled              { opacity: 0.5; cursor: default; }
 
-  /* Ripple -------------------------------------------------*/
   &::after {
     content : '';
     position: absolute;
@@ -122,7 +114,6 @@ const Root = styled('button')<{
 `;
 
 /*───────────────────────────────────────────────────────────*/
-/* Component                                                 */
 export const Button: React.FC<ButtonProps> = ({
   variant   = 'contained',
   size      = 'md',
@@ -144,82 +135,77 @@ export const Button: React.FC<ButtonProps> = ({
 
   const minW = `calc(${height} * 2)`;
 
-  /* Helpers ------------------------------------------------*/
   const isToken = (v: any): v is ButtonToken =>
     v === 'primary' || v === 'secondary' || v === 'tertiary';
 
-  /* ------------------------------------------------------- */
-  /* Palette token resolution                                */
-  /* – If colour isn’t specified, default to “primary”.       */
-  /* ------------------------------------------------------- */
   const paletteToken: ButtonToken | null =
-    color === undefined          ? 'primary'          :
-    isToken(color)               ? color              :
-                                   null;
+    color === undefined ? 'primary'
+    : isToken(color)     ? color
+    : null;
 
-  /* ------------------------------------------------------- */
-  /* Background (contained or hover-fill for outlined)       */
-  /* ------------------------------------------------------- */
   const bg = paletteToken
     ? theme.colors[paletteToken]
     : color
       ? (isToken(color) ? theme.colors[color] : color)
       : theme.colors.primary;
 
-  /* ------------------------------------------------------- */
-  /* Idle label / outline colour                             */
-  /* ------------------------------------------------------- */
-  let label: string;
+  const outlineNeutral = mode === 'dark' ? '#eee' : '#111';
 
-  if (textColor) {
-    /* Explicit override ----------------------------------- */
-    label = isToken(textColor)
-      ? theme.colors[`${textColor}Text`]
-      : textColor;
+  const resolveText = (v: ButtonToken | string) =>
+    isToken(v) ? theme.colors[`${v}Text`] : v;
 
-  } else if (variant === 'outlined') {
-    /* Outlined idle state --------------------------------- */
-    if (color && isToken(color)) {
-      /* Token supplied → stay neutral                       */
-      label = mode === 'dark' ? '#eee' : '#111';
-    } else if (color) {
-      /* Custom hex → outline adopts that colour             */
-      label = isToken(color) ? theme.colors[color] : color;
-    } else {
-      /* Default neutral                                     */
-      label = mode === 'dark' ? '#eee' : '#111';
-    }
+  let labelColor: string;
 
-  } else if (paletteToken) {
-    /* Contained default label (contrast token text)         */
-    label = theme.colors[`${paletteToken}ButtonText`];
+  if (variant === 'outlined') {
+    labelColor = textColor
+      ? resolveText(textColor)
+      : outlineNeutral;
   } else {
-    label = theme.colors.text;
+    labelColor = textColor
+      ? resolveText(textColor)
+      : paletteToken
+        ? theme.colors[`${paletteToken}ButtonText`]
+        : theme.colors.text;
   }
 
-  /* ------------------------------------------------------- */
-  /* Hover label for outlined                                */
-  /* ------------------------------------------------------- */
-  const hoverLabel = variant === 'outlined' && paletteToken
-    ? theme.colors[`${paletteToken}ButtonText`]
-    : label;
+  const hoverLabel =
+    variant === 'outlined'
+      ? (textColor
+          ? resolveText(textColor)
+          : paletteToken
+            ? theme.colors[`${paletteToken}ButtonText`]
+            : '#fff')
+      : labelColor;
 
-  /* ------------------------------------------------------- */
-  /* Ripple tint                                             */
-  /* ------------------------------------------------------- */
   const ripple =
     variant === 'contained'
       ? 'rgba(255,255,255,0.25)'
       : paletteToken
-          ? `${theme.colors[paletteToken]}33` // ~20 % alpha
-          : 'rgba(0,0,0,0.1)';
+        ? `${theme.colors[paletteToken]}33`
+        : 'rgba(0,0,0,0.1)';
 
   const presetClasses = p ? preset(p) : '';
+
+  const isPrimitive =
+    typeof children === 'string' || typeof children === 'number';
+
+  const content = isPrimitive ? (
+    <Typography
+      variant="button"
+      bold
+      fontSize={font}
+      style={{ pointerEvents: 'none' }}
+    >
+      {children}
+    </Typography>
+  ) : (
+    children
+  );
 
   return (
     <Root
       {...rest}
-      style={{ '--valet-text-color': label } as React.CSSProperties}
+      style={{ '--valet-text-color': labelColor } as React.CSSProperties}
       className={[presetClasses, className].filter(Boolean).join(' ')}
       $variant={variant}
       $height={height}
@@ -227,12 +213,13 @@ export const Button: React.FC<ButtonProps> = ({
       $font={font}
       $minW={minW}
       $bg={bg}
-      $label={label}
+      $label={labelColor}
       $hoverLabel={hoverLabel}
+      $outline={outlineNeutral}
       $ripple={ripple}
       $full={fullWidth}
     >
-      {children}
+      {content}
     </Root>
   );
 };

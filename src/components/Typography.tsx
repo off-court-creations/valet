@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/Typography.tsx | valet
-// Semantic text variants with responsive sizes + colour vars
+// Semantic text variants with responsive sizes, colour vars
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
 import { styled } from '../css/createStyled';
@@ -11,7 +11,8 @@ import type { Presettable } from '../types';
 
 export type Variant =
   | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
-  | 'body' | 'subtitle';
+  | 'body' | 'subtitle'
+  | 'button';
 
 export interface TypographyProps
   extends React.HTMLAttributes<HTMLElement>,
@@ -30,6 +31,7 @@ const mapping: Record<Variant, keyof JSX.IntrinsicElements> = {
   h1: 'h1', h2: 'h2', h3: 'h3',
   h4: 'h4', h5: 'h5', h6: 'h6',
   body: 'p', subtitle: 'span',
+  button: 'span',
 };
 
 export const Typography: React.FC<TypographyProps> = ({
@@ -66,14 +68,20 @@ export const Typography: React.FC<TypographyProps> = ({
     $italic: boolean;
   }>`
     margin: 0;
-    /* ─ honour colour prop, else inherit var (with fallback) ─ */
     color: ${({ $color }) => $color || 'var(--valet-text-color, inherit)'};
     font-size: ${({ $size }) => $size};
     font-weight: ${({ $bold }) => ($bold ? 700 : 400)};
     font-style: ${({ $italic }) => ($italic ? 'italic' : 'normal')};
-    line-height: 1.4;
+    line-height: ${({ $variant }) => ($variant === 'button' ? 1 : 1.4)};
     font-family: ${({ $fontFamily, $variant }) =>
-      $fontFamily || `var(--valet-font-${$variant.startsWith('h') ? 'heading' : 'body'})`};
+      $fontFamily ||
+      `var(--valet-font-${
+        $variant === 'button'
+          ? 'mono'
+          : $variant.startsWith('h')
+          ? 'heading'
+          : 'body'
+      })`};
   `, [Tag]);
 
   return (

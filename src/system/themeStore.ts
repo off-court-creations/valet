@@ -1,6 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/system/themeStore.ts  | valet
-// Zustand store holding the current theme and mode
+// src/system/themeStore.ts | valet
 // ─────────────────────────────────────────────────────────────
 import { create } from 'zustand';
 
@@ -14,24 +13,27 @@ export interface Theme {
   typography: Record<string, Record<Breakpoint, string>>;
   fonts: {
     heading: string;
-    body   : string;
-    mono   : string;
+    body: string;
+    mono: string;
   };
 }
 
 interface ThemeStore {
-  mode      : ThemeMode;
-  theme     : Theme;
-  setMode   : (m: ThemeMode)        => void;
-  toggleMode: ()                    => void;
-  setTheme  : (p: Partial<Theme>)   => void;
+  mode: ThemeMode;
+  theme: Theme;
+
+  setMode: (m: ThemeMode) => void;
+  toggleMode: () => void;
+  setTheme: (patch: Partial<Theme>) => void;
 }
 
-/*───────────────────────────────────────────────────────────*/
-/* Shared scales, breakpoints, fonts …                       */
 const common: Omit<Theme, 'colors'> = {
-  spacing: { xs: '0.25rem', sm: '0.5rem', md: '1rem', lg: '1.5rem', xl: '2rem' },
-  breakpoints: { xs: 0, sm: 600, md: 960, lg: 1280, xl: 1920 },
+  spacing: {
+    xs: '0.25rem', sm: '0.5rem', md: '1rem', lg: '1.5rem', xl: '2rem',
+  },
+  breakpoints: {
+    xs: 0, sm: 600, md: 960, lg: 1280, xl: 1920,
+  },
   typography: {
     h1: { xs: '2rem',   sm: '2.5rem', md: '3rem',   lg: '3.5rem', xl: '4rem'  },
     h2: { xs: '1.5rem', sm: '2rem',   md: '2.5rem', lg: '3rem',   xl: '3.5rem'},
@@ -39,14 +41,17 @@ const common: Omit<Theme, 'colors'> = {
     h4: { xs: '1rem',   sm: '1.25rem',md: '1.5rem', lg: '2rem',   xl: '2.5rem'},
     h5: { xs: '0.875rem', sm: '1rem', md: '1.25rem',lg: '1.5rem', xl: '2rem'  },
     h6: { xs: '0.75rem', sm: '0.875rem',md: '1rem',lg: '1.25rem',xl: '1.5rem'},
-    body:      { xs: '0.875rem', sm: '1rem', md: '1rem', lg: '1rem', xl: '1rem' },
-    subtitle:  { xs: '0.75rem',  sm: '0.875rem', md: '0.875rem', lg: '1rem', xl: '1rem' },
+    body     : { xs: '0.875rem', sm: '1rem', md: '1rem', lg: '1rem', xl: '1rem' },
+    subtitle : { xs: '0.75rem',  sm: '0.875rem', md: '0.875rem', lg: '1rem', xl: '1rem' },
+    button   : { xs: '0.875rem', sm: '0.875rem', md: '0.875rem', lg: '1rem', xl: '1rem' },
   },
-  fonts: { heading: 'Roboto', body: 'Roboto Serif', mono: 'Roboto Mono' },
+  fonts: {
+    heading: 'Roboto',
+    body   : 'Roboto Serif',
+    mono   : 'Roboto Mono',
+  },
 };
 
-/*───────────────────────────────────────────────────────────*/
-/* Per-mode colour palettes                                  */
 const lightColors = {
   primary              : '#8bb392',
   primaryText          : '#090909',
@@ -54,7 +59,6 @@ const lightColors = {
   secondaryText        : '#090909',
   tertiary             : '#d1e6dc',
   tertiaryText         : '#090909',
-  /* NEW ▸ Dedicated contrast text for buttons */
   primaryButtonText    : '#090909',
   secondaryButtonText  : '#090909',
   tertiaryButtonText   : '#090909',
@@ -70,7 +74,6 @@ const darkColors = {
   secondaryText        : '#F7F7F7',
   tertiary             : '#5d6662',
   tertiaryText         : '#F7F7F7',
-  /* NEW ▸ Dedicated contrast text for buttons */
   primaryButtonText    : '#F7F7F7',
   secondaryButtonText  : '#F7F7F7',
   tertiaryButtonText   : '#F7F7F7',
@@ -80,10 +83,12 @@ const darkColors = {
 } as const;
 
 /*───────────────────────────────────────────────────────────*/
-/* Zustand theme store                                       */
 export const useTheme = create<ThemeStore>((set, get) => ({
   mode : 'dark',
-  theme: { ...common, colors: darkColors },
+  theme: {
+    ...common,
+    colors: darkColors,
+  },
 
   setMode: (mode) =>
     set((state) => ({
@@ -91,7 +96,7 @@ export const useTheme = create<ThemeStore>((set, get) => ({
       theme: {
         ...common,
         colors: mode === 'dark' ? darkColors : lightColors,
-        fonts : state.theme.fonts,          // preserve any runtime font changes
+        fonts : state.theme.fonts,
       },
     })),
 
