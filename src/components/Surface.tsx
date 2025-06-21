@@ -6,22 +6,28 @@ import React, {
   createContext,
   useContext,
   useEffect,
+  useLayoutEffect,
   useRef,
-  useState,
 } from 'react';
+import type { StoreApi, UseBoundStore } from 'zustand';
+import { create } from 'zustand';
 import { Breakpoint, useTheme } from '../system/themeStore';
 import { preset } from '../css/stylePresets';
 import type { Presettable } from '../types';
 
-/** Surface Context definition */
-export interface SurfaceContext {
+/** Surface store shape */
+export interface SurfaceState {
   width: number;
   height: number;
   breakpoint: Breakpoint;
   hasScrollbar: boolean;
+  children: Record<string, { width: number; height: number }>;
+  registerChild: (id: string, size: { width: number; height: number }) => void;
+  updateChild: (id: string, size: { width: number; height: number }) => void;
+  unregisterChild: (id: string) => void;
 }
 
-const SurfaceCtx = createContext<SurfaceContext | null>(null);
+const SurfaceCtx = createContext<UseBoundStore<StoreApi<SurfaceState>> | null>(null);
 
 /** Surface Props definition */
 export interface SurfaceProps
@@ -39,20 +45,43 @@ export const Surface: React.FC<SurfaceProps> = ({
   ...props
 }) => {
   const ref = useRef<HTMLDivElement>(null);
+  const parent = useContext(SurfaceCtx);
+  if (parent) throw new Error('<Surface> cannot be nested');
+
   const { theme } = useTheme();
   const presetClasses = p ? preset(p) : '';
 
-  /* Viewport metrics */
-  const [state, setState] = useState<SurfaceContext>({
-    width: 0,
-    height: 0,
-    breakpoint: 'xs',
-    hasScrollbar: false,
-  });
+  /* Zustand store per Surface */
+  const storeRef = useRef<UseBoundStore<StoreApi<SurfaceState>>>();
+  if (!storeRef.current) {
+    storeRef.current = create<SurfaceState>((set) => ({
+      width: 0,
+      height: 0,
+      breakpoint: 'xs',
+      hasScrollbar: false,
+      children: {},
+      registerChild: (id, size) =>
+        set((s) => ({ children: { ...s.children, [id]: size } })),
+      updateChild: (id, size) =>
+        set((s) => ({ children: { ...s.children, [id]: size } })),
+      unregisterChild: (id) =>
+        set((s) => {
+          const { [id]: _omit, ...rest } = s.children;
+          return { children: rest };
+        }),
+    }));
+  }
+  const store = storeRef.current;
+
+  const width = store((s) => s.width);
+  const height = store((s) => s.height);
+  const breakpoint = store((s) => s.breakpoint);
+  const hasScrollbar = store((s) => s.hasScrollbar);
 
   const bpFor = (w: number): Breakpoint =>
     (Object.entries(theme.breakpoints) as [Breakpoint, number][]).reduce<Breakpoint>(
-      (acc, [key, min]) => (w >= min ? key : acc), 'xs'
+      (acc, [key, min]) => (w >= min ? key : acc),
+      'xs'
     );
 
   useEffect(() => {
@@ -60,19 +89,19 @@ export const Surface: React.FC<SurfaceProps> = ({
     const node = ref.current;
 
     const ro = new ResizeObserver(([entry]) => {
-      const { width, height } = entry.contentRect;
-      setState({
-        width,
-        height,
+      const { width: w, height: h } = entry.contentRect;
+      store.setState({
+        width: w,
+        height: h,
         hasScrollbar:
           node.scrollHeight > node.clientHeight ||
           node.scrollWidth > node.clientWidth,
-        breakpoint: bpFor(width),
+        breakpoint: bpFor(w),
       });
     });
     ro.observe(node);
     return () => ro.disconnect();
-  }, [theme.breakpoints]);
+  }, [theme.breakpoints, store]);
 
   /* Restore defaults explicitly (critical fix) */
   const defaults: React.CSSProperties = {
@@ -87,6 +116,8 @@ export const Surface: React.FC<SurfaceProps> = ({
     '--valet-font-heading': theme.fonts.heading,
     '--valet-font-body': theme.fonts.body,
     '--valet-font-mono': theme.fonts.mono,
+    '--valet-screen-width': `${width}px`,
+    '--valet-screen-height': `${height}px`,
   } as any;
 
   const layoutStyles: React.CSSProperties = fullscreen
@@ -102,7 +133,7 @@ export const Surface: React.FC<SurfaceProps> = ({
     : { width: '100%', height: 'auto', position: 'relative' };
 
   return (
-    <SurfaceCtx.Provider value={state}>
+    <SurfaceCtx.Provider value={store}>
       <div
         ref={ref}
         className={[presetClasses, className].filter(Boolean).join(' ')}
