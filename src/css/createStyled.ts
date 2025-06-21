@@ -23,6 +23,7 @@ const supportsSheet =
   'adoptedStyleSheets' in document &&
   'replaceSync' in CSSStyleSheet.prototype;
 const sheet: CSSStyleSheet | null = supportsSheet ? new CSSStyleSheet() : null;
+let sheetText = '';
 if (sheet) {
   (document as any).adoptedStyleSheets = [
     ...(document as any).adoptedStyleSheets,
@@ -33,7 +34,8 @@ if (sheet) {
 function inject(cssId: string, css: string) {
   if (injected.has(cssId)) return;
   if (sheet) {
-    sheet.insertRule(css);
+    sheetText += css;
+    sheet.replaceSync(sheetText);
   } else {
     const style = document.createElement('style');
     style.textContent = css;
