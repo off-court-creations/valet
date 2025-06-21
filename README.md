@@ -49,6 +49,18 @@ cd YourReactLibraryThatUses_valet
 npm link @archway/valet
 ```
 
+## Surface state and child registry
+
+Each `<Surface>` instance now owns a Zustand store that tracks its screen size
+and every registered child element. Components created with `createStyled`
+register themselves automatically and expose `--valet-el-width` and
+`--valet-el-height` CSS variables. The surface exposes
+`--valet-screen-width` and `--valet-screen-height` on its root element.
+Nested `<Surface>` components are disallowed.
+
+Tables respect available height by default. Their content scrolls inside the
+component rather than the page. Pass `constrainHeight={false}` to opt out.
+
 ## Build
 
 Run `npm run build` to generate the `dist` folder for publishing. Use `npm run dev` during development for a live rebuild.
