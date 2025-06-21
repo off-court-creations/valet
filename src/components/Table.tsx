@@ -8,6 +8,7 @@ import { useTheme }               from '../system/themeStore';
 import { preset }                 from '../css/stylePresets';
 import { Checkbox }               from './Checkbox';
 import { stripe, toRgb, mix, toHex } from '../helpers/color';
+import { useSurface, useSurfaceStore } from './Surface';
 import type { Presettable }       from '../types';
 
 /*───────────────────────────────────────────────────────────*/
@@ -34,6 +35,7 @@ export interface TableProps<T>
   initialSort?: { index:number; desc?:boolean };
   onSortChange?: (index:number, desc:boolean)=>void;
   onSelectionChange?: (selected:T[])=>void;
+  fitSurface?: boolean;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -41,10 +43,13 @@ export interface TableProps<T>
 const Root = styled('table')<{
   $striped:boolean; $hover:boolean; $lines:boolean;
   $border:string; $stripe:string; $hoverBg:string;
+  $scroll:boolean; $maxH:number | undefined;
 }>`
   width:100%;
   border-collapse:collapse;
   border:1px solid ${({$border})=>$border};
+  ${({$scroll})=>$scroll&&'display:block; overflow-y:auto;'}
+  ${({$scroll,$maxH})=>$scroll&&$maxH!=null&&`max-height:${$maxH}px;`}
 
   th,td{
     padding:0.5rem 0.75rem;
@@ -111,12 +116,16 @@ export function Table<T extends object>({
   initialSort,
   onSortChange,
   onSelectionChange,
+  fitSurface = true,
   preset:p,
   className,
   style,
   ...rest
 }:TableProps<T>) {
   const { theme } = useTheme();
+  const { height: surfaceH } = useSurface();
+  const surfaceStore = useSurfaceStore();
+  const ref = React.useRef<HTMLTableElement>(null);
 
   /* sort state */
   const [sort,setSort] =
@@ -134,6 +143,28 @@ export function Table<T extends object>({
       return next;
     });
   },[data]);
+
+  /* register with surface for dynamic layout */
+  useEffect(() => {
+    if (!fitSurface || !ref.current) return;
+    const id = `tbl-${Math.random().toString(36).slice(2)}`;
+    const node = ref.current;
+    surfaceStore.getState().register(id, {
+      width: node.offsetWidth,
+      height: node.offsetHeight,
+    });
+    const ro = new ResizeObserver(([entry]) => {
+      surfaceStore.getState().update(id, {
+        width: entry.contentRect.width,
+        height: entry.contentRect.height,
+      });
+    });
+    ro.observe(node);
+    return () => {
+      ro.disconnect();
+      surfaceStore.getState().unregister(id);
+    };
+  }, [fitSurface, surfaceStore]);
 
   /* colours */
   const stripeColor = stripe(theme.colors.background, theme.colors.text);
@@ -190,10 +221,13 @@ export function Table<T extends object>({
   /*─────────────────────────────────────────────────────────*/
   return (
     <Root
+      ref={ref}
       {...rest}
       $striped={striped}
       $hover={hoverable}
       $lines={dividers}
+      $scroll={fitSurface}
+      $maxH={fitSurface ? surfaceH : undefined}
       $border={theme.colors.backgroundAlt}
       $stripe={stripeColor}
       $hoverBg={hoverBg}

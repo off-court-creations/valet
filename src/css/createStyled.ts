@@ -17,11 +17,27 @@ import hash  from '@emotion/hash';
 const styleCache = new Map<string, string>(); // normal rules
 const injected   = new Set<string>();         // injected IDs
 
+const supportsSheet =
+  typeof document !== 'undefined' &&
+  'adoptedStyleSheets' in document &&
+  'replaceSync' in CSSStyleSheet.prototype;
+const sheet: CSSStyleSheet | null = supportsSheet ? new CSSStyleSheet() : null;
+if (sheet) {
+  (document as any).adoptedStyleSheets = [
+    ...(document as any).adoptedStyleSheets,
+    sheet,
+  ];
+}
+
 function inject(cssId: string, css: string) {
   if (injected.has(cssId)) return;
-  const style = document.createElement('style');
-  style.textContent = css;
-  document.head.appendChild(style);
+  if (sheet) {
+    sheet.insertRule(css);
+  } else {
+    const style = document.createElement('style');
+    style.textContent = css;
+    document.head.appendChild(style);
+  }
   injected.add(cssId);
 }
 

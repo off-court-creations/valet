@@ -7,21 +7,19 @@ import React, {
   useContext,
   useEffect,
   useRef,
-  useState,
 } from 'react';
 import { Breakpoint, useTheme } from '../system/themeStore';
 import { preset } from '../css/stylePresets';
 import type { Presettable } from '../types';
+import {
+  createSurfaceStore,
+  SurfaceStore,
+} from '../system/createSurfaceStore';
 
 /** Surface Context definition */
-export interface SurfaceContext {
-  width: number;
-  height: number;
-  breakpoint: Breakpoint;
-  hasScrollbar: boolean;
-}
+export type SurfaceContext = SurfaceStore;
 
-const SurfaceCtx = createContext<SurfaceContext | null>(null);
+const SurfaceCtx = createContext<ReturnType<typeof createSurfaceStore> | null>(null);
 
 /** Surface Props definition */
 export interface SurfaceProps
@@ -42,13 +40,12 @@ export const Surface: React.FC<SurfaceProps> = ({
   const { theme } = useTheme();
   const presetClasses = p ? preset(p) : '';
 
-  /* Viewport metrics */
-  const [state, setState] = useState<SurfaceContext>({
-    width: 0,
-    height: 0,
-    breakpoint: 'xs',
-    hasScrollbar: false,
-  });
+  const storeRef = useRef<ReturnType<typeof createSurfaceStore>>();
+  if (!storeRef.current) storeRef.current = createSurfaceStore();
+  const store = storeRef.current;
+
+  /* subscribe to store to trigger rerender when metrics change */
+  store();
 
   const bpFor = (w: number): Breakpoint =>
     (Object.entries(theme.breakpoints) as [Breakpoint, number][]).reduce<Breakpoint>(
@@ -61,14 +58,13 @@ export const Surface: React.FC<SurfaceProps> = ({
 
     const ro = new ResizeObserver(([entry]) => {
       const { width, height } = entry.contentRect;
-      setState({
+      store.getState().setSize(
         width,
         height,
-        hasScrollbar:
-          node.scrollHeight > node.clientHeight ||
+        bpFor(width),
+        node.scrollHeight > node.clientHeight ||
           node.scrollWidth > node.clientWidth,
-        breakpoint: bpFor(width),
-      });
+      );
     });
     ro.observe(node);
     return () => ro.disconnect();
@@ -101,8 +97,10 @@ export const Surface: React.FC<SurfaceProps> = ({
       }
     : { width: '100%', height: 'auto', position: 'relative' };
 
+  store();
+
   return (
-    <SurfaceCtx.Provider value={state}>
+    <SurfaceCtx.Provider value={store}>
       <div
         ref={ref}
         className={[presetClasses, className].filter(Boolean).join(' ')}
@@ -123,8 +121,15 @@ export const Surface: React.FC<SurfaceProps> = ({
 export default Surface;
 
 export const useSurface = () => {
-  const ctx = useContext(SurfaceCtx);
-  if (!ctx)
+  const store = useContext(SurfaceCtx);
+  if (!store)
     throw new Error('useSurface must be used within a <Surface> component');
-  return ctx;
+  return store();
+};
+
+export const useSurfaceStore = () => {
+  const store = useContext(SurfaceCtx);
+  if (!store)
+    throw new Error('useSurfaceStore must be used within a <Surface> component');
+  return store;
 };
