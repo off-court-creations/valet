@@ -2,12 +2,14 @@
 // src/components/Table.tsx  | valet
 // Row-hover highlight fixed and now more saturated hover colour.
 // ─────────────────────────────────────────────────────────────
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, useRef } from 'react';
 import { styled }                 from '../css/createStyled';
 import { useTheme }               from '../system/themeStore';
 import { preset }                 from '../css/stylePresets';
 import { Checkbox }               from './Checkbox';
 import { stripe, toRgb, mix, toHex } from '../helpers/color';
+import { useSurface }             from './Surface';
+import type { SurfaceState }      from './Surface';
 import type { Presettable }       from '../types';
 
 /*───────────────────────────────────────────────────────────*/
@@ -34,6 +36,8 @@ export interface TableProps<T>
   initialSort?: { index:number; desc?:boolean };
   onSortChange?: (index:number, desc:boolean)=>void;
   onSelectionChange?: (selected:T[])=>void;
+  /** Limit height to available space and scroll internally */
+  constrainHeight?: boolean;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -75,6 +79,10 @@ const Root = styled('table')<{
   `}
 `;
 
+const Wrap = styled('div')`
+  width:100%;
+`;
+
 const Th = styled('th')<{
   $align:'left'|'center'|'right'; $sortable:boolean;
   $active:boolean; $primary:string;
@@ -114,6 +122,7 @@ export function Table<T extends object>({
   preset:p,
   className,
   style,
+  constrainHeight = true,
   ...rest
 }:TableProps<T>) {
   const { theme } = useTheme();
@@ -139,6 +148,27 @@ export function Table<T extends object>({
   const stripeColor = stripe(theme.colors.background, theme.colors.text);
   // Hover colour mixed at 25 % primary → background for extra saturation
   const hoverBg     = toHex(mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.25));
+
+  const surface = useSurface();
+  const surfaceHeight = surface((s: SurfaceState) => s.height);
+  const children = surface((s: SurfaceState) => s.children);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [wrapId, setWrapId] = useState<string>('');
+
+  useEffect(() => {
+    if (wrapRef.current) setWrapId(wrapRef.current.dataset.surfaceId || '');
+  }, []);
+
+  const availableHeight = useMemo(() => {
+    if (!wrapId) return surfaceHeight;
+    let used = 0;
+    for (const [id, size] of Object.entries(children) as Array<[
+      string,
+      { width: number; height: number }
+    ]>)
+      if (id !== wrapId) used += size.height;
+    return Math.max(surfaceHeight - used, 0);
+  }, [surfaceHeight, children, wrapId]);
 
   /* sort toggle */
   const toggleSort = (idx:number)=>{
@@ -189,17 +219,21 @@ export function Table<T extends object>({
 
   /*─────────────────────────────────────────────────────────*/
   return (
-    <Root
-      {...rest}
-      $striped={striped}
-      $hover={hoverable}
-      $lines={dividers}
-      $border={theme.colors.backgroundAlt}
-      $stripe={stripeColor}
-      $hoverBg={hoverBg}
-      className={cls}
-      style={style}
+    <Wrap
+      ref={wrapRef}
+      style={constrainHeight ? { maxHeight: availableHeight, overflow: 'auto' } : undefined}
     >
+      <Root
+        {...rest}
+        $striped={striped}
+        $hover={hoverable}
+        $lines={dividers}
+        $border={theme.colors.backgroundAlt}
+        $stripe={stripeColor}
+        $hoverBg={hoverBg}
+        className={cls}
+        style={style}
+      >
       <thead>
         <tr>
           {selectable && (
@@ -263,7 +297,8 @@ export function Table<T extends object>({
           </tr>
         ))}
       </tbody>
-    </Root>
+      </Root>
+    </Wrap>
   );
 }
 

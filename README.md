@@ -49,6 +49,15 @@ cd YourReactLibraryThatUses_valet
 npm link @archway/valet
 ```
 
+## Surface state
+
+`<Surface>` now creates its own Zustand store that tracks the screen size and
+the dimensions of all registered children. The store values are exposed via the
+`useSurface()` hook and CSS variables `--valet-screen-width` and
+`--valet-screen-height`. Every styled element registers itself and gets
+`--valet-el-width` and `--valet-el-height` applied automatically. Nesting
+`<Surface>` components will throw an error.
+
 ## Build
 
 Run `npm run build` to generate the `dist` folder for publishing. Use `npm run dev` during development for a live rebuild.
@@ -92,7 +101,8 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 | Stepper            | 🟡       | 🟡       |        🟡       | 🟡         | 🟡          | 🟡            | WIP                              |
 | Surface            | ✅       | ✅       |        ✅       | ✅         | ✅          | ✅            | ----------                       |
 | Switch             | ✅       | ✅       |        ✅       | ✅         | ✅          | ✅            | ----------                       |
-| Table              | ✅       | ❌       |        ❌       | ✅         | ❌          | ❌            | Needs mobile support!            |
+| Table              | ✅       | ❌       |        ❌       | ✅         | ❌          | ❌            | Uses internal scroll by default. |
+Table automatically fills remaining surface space. Pass `constrainHeight={false}` if you prefer page scrolling.
 | Tabs               | ✅       | ✅       |        ✅       | ✅         | ✅          | ✅            | ----------                       |
 | Textfield          | ✅       | ✅       |        🟡       | ✅         | ✅          | ✅            | ----------                       |
 | Tooltip            | ✅       | ❌       |        ❌       | ✅         | ❌          | ❌            | Needs mobile support!            |

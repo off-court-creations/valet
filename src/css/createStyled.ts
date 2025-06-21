@@ -9,8 +9,9 @@
 //
 // © 2025 Off-Court Creations – MIT licence
 // ─────────────────────────────────────────────────────────────
-import React from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 import hash  from '@emotion/hash';
+import { useSurface } from '../components/Surface';
 
 /*───────────────────────────────────────────────────────────*/
 /* Internal caches                                           */
@@ -61,6 +62,24 @@ export function styled<Tag extends keyof JSX.IntrinsicElements>(tag: Tag) {
 
     const StyledComponent = React.forwardRef<DomRef, StyledProps>(
       (props, ref) => {
+        const surface = (() => {
+          try {
+            return useSurface();
+          } catch {
+            return null;
+          }
+        })();
+
+        const localRef = useRef<DomRef | null>(null) as React.MutableRefObject<DomRef | null>;
+        const setRef = (node: DomRef | null) => {
+          localRef.current = node;
+          if (typeof ref === 'function') ref(node);
+          else if (ref && 'current' in ref)
+            (ref as any).current = node;
+        };
+
+        const idRef = useRef(`sc-${Math.random().toString(36).slice(2, 8)}`);
+
         /* Build raw CSS string (inc. interpolations) ------------------- */
         let rawCSS = '';
         for (let i = 0; i < strings.length; i++) {
@@ -85,10 +104,36 @@ export function styled<Tag extends keyof JSX.IntrinsicElements>(tag: Tag) {
         const merged = [className, props.className].filter(Boolean).join(' ');
         const domProps = filterStyledProps(props);
 
+        useLayoutEffect(() => {
+          const store = surface;
+          const node = localRef.current;
+          if (!store || !node) return;
+
+          const id = idRef.current;
+          node.dataset.surfaceId = id;
+          const { registerChild, updateChild, unregisterChild } = store.getState();
+
+          const update = () => {
+            const size = { width: node.offsetWidth, height: node.offsetHeight };
+            node.style.setProperty('--valet-el-width', `${size.width}px`);
+            node.style.setProperty('--valet-el-height', `${size.height}px`);
+            updateChild(id, size);
+          };
+
+          registerChild(id, { width: node.offsetWidth, height: node.offsetHeight });
+          update();
+          const ro = new ResizeObserver(update);
+          ro.observe(node);
+          return () => {
+            unregisterChild(id);
+            ro.disconnect();
+          };
+        }, [surface]);
+
         return React.createElement(tag, {
           ...domProps,
           className: merged,
-          ref,
+          ref: setRef,
         });
       },
     );
