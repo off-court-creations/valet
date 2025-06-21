@@ -10,6 +10,7 @@
 // © 2025 Off-Court Creations – MIT licence
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
+import { useMaybeSurfaceStore } from '../components/Surface';
 import hash  from '@emotion/hash';
 
 /*───────────────────────────────────────────────────────────*/
@@ -73,10 +74,17 @@ export function styled<Tag extends keyof JSX.IntrinsicElements>(tag: Tag) {
     type StyledProps = ExtraProps &
       JSX.IntrinsicElements[Tag] & {
         className?: string;
+        $observe?: boolean;
       };
 
     const StyledComponent = React.forwardRef<DomRef, StyledProps>(
       (props, ref) => {
+        const { $observe = true } = props as any;
+        const surfaceStore = useMaybeSurfaceStore();
+        const innerRef = React.useRef<DomRef | null>(null);
+        const idRef = React.useRef<string>();
+        if (!idRef.current) idRef.current = `sf-${Math.random().toString(36).slice(2)}`;
+
         /* Build raw CSS string (inc. interpolations) ------------------- */
         let rawCSS = '';
         for (let i = 0; i < strings.length; i++) {
@@ -101,10 +109,42 @@ export function styled<Tag extends keyof JSX.IntrinsicElements>(tag: Tag) {
         const merged = [className, props.className].filter(Boolean).join(' ');
         const domProps = filterStyledProps(props);
 
+        /* surface observation ----------------------------------------- */
+        React.useLayoutEffect(() => {
+          if (!$observe || !surfaceStore || !innerRef.current) return;
+          const node = innerRef.current as unknown as HTMLElement;
+          node.dataset.surfaceId = idRef.current!;
+          const st = surfaceStore.getState();
+          st.register(idRef.current!, {
+            width: node.offsetWidth,
+            height: node.offsetHeight,
+          });
+          const ro = new ResizeObserver(([entry]) => {
+            surfaceStore
+              .getState()
+              .update(idRef.current!, {
+                width: entry.contentRect.width,
+                height: entry.contentRect.height,
+              });
+          });
+          ro.observe(node);
+          return () => {
+            ro.disconnect();
+            surfaceStore.getState().unregister(idRef.current!);
+          };
+        }, [$observe, surfaceStore]);
+
+        const mergeRef = (node: DomRef | null) => {
+          innerRef.current = node;
+          if (typeof ref === 'function') ref(node);
+          else if (ref)
+            (ref as React.MutableRefObject<DomRef | null>).current = node;
+        };
+
         return React.createElement(tag, {
           ...domProps,
           className: merged,
-          ref,
+          ref: mergeRef,
         });
       },
     );

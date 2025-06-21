@@ -133,3 +133,7 @@ export const useSurfaceStore = () => {
     throw new Error('useSurfaceStore must be used within a <Surface> component');
   return store;
 };
+
+export const useMaybeSurfaceStore = () => {
+  return useContext(SurfaceCtx);
+};

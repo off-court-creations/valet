@@ -20,10 +20,11 @@ export interface SurfaceStore {
   register: (id: string, size: Size) => void;
   update: (id: string, size: Size) => void;
   unregister: (id: string) => void;
+  getAvailable: (id: string) => number;
 }
 
 export function createSurfaceStore() {
-  return create<SurfaceStore>((set) => ({
+  return create<SurfaceStore>((set, get) => ({
     width: 0,
     height: 0,
     breakpoint: 'xs',
@@ -40,5 +41,12 @@ export function createSurfaceStore() {
         const { [id]: _, ...rest } = s.children;
         return { children: rest };
       }),
+    getAvailable: (id) => {
+      const { height, children } = get();
+      let used = 0;
+      for (const key in children)
+        if (key !== id) used += children[key].height;
+      return Math.max(0, height - used);
+    },
   }));
 }

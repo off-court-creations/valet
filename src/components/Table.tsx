@@ -8,7 +8,7 @@ import { useTheme }               from '../system/themeStore';
 import { preset }                 from '../css/stylePresets';
 import { Checkbox }               from './Checkbox';
 import { stripe, toRgb, mix, toHex } from '../helpers/color';
-import { useSurface, useSurfaceStore } from './Surface';
+import { useSurfaceStore } from './Surface';
 import type { Presettable }       from '../types';
 
 /*───────────────────────────────────────────────────────────*/
@@ -123,9 +123,9 @@ export function Table<T extends object>({
   ...rest
 }:TableProps<T>) {
   const { theme } = useTheme();
-  const { height: surfaceH } = useSurface();
   const surfaceStore = useSurfaceStore();
   const ref = React.useRef<HTMLTableElement>(null);
+  const idRef = React.useRef<string | null>(null);
 
   /* sort state */
   const [sort,setSort] =
@@ -144,27 +144,11 @@ export function Table<T extends object>({
     });
   },[data]);
 
-  /* register with surface for dynamic layout */
   useEffect(() => {
-    if (!fitSurface || !ref.current) return;
-    const id = `tbl-${Math.random().toString(36).slice(2)}`;
-    const node = ref.current;
-    surfaceStore.getState().register(id, {
-      width: node.offsetWidth,
-      height: node.offsetHeight,
-    });
-    const ro = new ResizeObserver(([entry]) => {
-      surfaceStore.getState().update(id, {
-        width: entry.contentRect.width,
-        height: entry.contentRect.height,
-      });
-    });
-    ro.observe(node);
-    return () => {
-      ro.disconnect();
-      surfaceStore.getState().unregister(id);
-    };
-  }, [fitSurface, surfaceStore]);
+    if (ref.current && !idRef.current)
+      idRef.current = ref.current.dataset.surfaceId || null;
+  }, []);
+
 
   /* colours */
   const stripeColor = stripe(theme.colors.background, theme.colors.text);
@@ -216,6 +200,12 @@ export function Table<T extends object>({
     return sort.desc ? arr.reverse() : arr;
   },[data,columns,sort]);
 
+  surfaceStore();
+  const maxH =
+    fitSurface && idRef.current
+      ? surfaceStore.getState().getAvailable(idRef.current)
+      : undefined;
+
   const cls = [p?preset(p):'',className].filter(Boolean).join(' ')||undefined;
 
   /*─────────────────────────────────────────────────────────*/
@@ -227,7 +217,7 @@ export function Table<T extends object>({
       $hover={hoverable}
       $lines={dividers}
       $scroll={fitSurface}
-      $maxH={fitSurface ? surfaceH : undefined}
+      $maxH={maxH}
       $border={theme.colors.backgroundAlt}
       $stripe={stripeColor}
       $hoverBg={hoverBg}

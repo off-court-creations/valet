@@ -8,6 +8,7 @@ import { styled }                 from '../css/createStyled';
 import { useTheme }               from '../system/themeStore';
 import { preset }                 from '../css/stylePresets';
 import { Typography }             from './Typography';
+import { useSurfaceStore }       from './Surface';
 import { stripe, toRgb, mix, toHex } from '../helpers/color';
 import type { Presettable }       from '../types';
 
@@ -30,6 +31,7 @@ export interface ListProps<T>
   /** If `undefined`, non-striped lists hover by default. */
   hoverable?: boolean;
   onReorder?: (items: T[]) => void;
+  fitSurface?: boolean;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -40,11 +42,15 @@ const Root = styled('ul')<{
   $border  : string;
   $stripe  : string;
   $hoverBg : string;
+  $scroll  : boolean;
+  $maxH    : number | undefined;
 }>`
   list-style: none;
   margin: 0;
   padding: 0;
   border: 1px solid ${({ $border }) => $border};
+  ${({$scroll})=>$scroll&&'display:block; overflow-y:auto;'}
+  ${({$scroll,$maxH})=>$scroll&&$maxH!=null&&`max-height:${$maxH}px;`}
 
   li {
     display: flex;
@@ -83,12 +89,16 @@ export function List<T>({
   striped   = false,
   hoverable,
   onReorder,
+  fitSurface = true,
   preset: p,
   className,
   style,
   ...rest
 }: ListProps<T>) {
   const { theme } = useTheme();
+  const surfaceStore = useSurfaceStore();
+  const listRef = useRef<HTMLUListElement>(null);
+  const idRef = useRef<string | null>(null);
 
   /* Colours */
   const stripeColor = stripe(theme.colors.background, theme.colors.text);
@@ -106,6 +116,11 @@ export function List<T>({
   const [dragIdx, setDragIdx] = useState<number | null>(null);
 
   useEffect(() => setItems(data), [data]);
+
+  useEffect(() => {
+    if (listRef.current && !idRef.current)
+      idRef.current = listRef.current.dataset.surfaceId || null;
+  }, []);
 
   /* Handlers -------------------------------------------------------------- */
   const handleDragStart = (idx: number) =>
@@ -142,15 +157,24 @@ export function List<T>({
   const cls =
     [p ? preset(p) : '', className].filter(Boolean).join(' ') || undefined;
 
+  surfaceStore();
+  const maxH =
+    fitSurface && idRef.current
+      ? surfaceStore.getState().getAvailable(idRef.current)
+      : undefined;
+
   /*─────────────────────────────────────────────────────────*/
   return (
     <Root
+      ref={listRef}
       {...rest}
       $striped={striped}
       $hover={enableHover}
       $border={theme.colors.backgroundAlt}
       $stripe={stripeColor}
       $hoverBg={hoverBg}
+      $scroll={fitSurface}
+      $maxH={maxH}
       className={cls}
       style={style}
     >
