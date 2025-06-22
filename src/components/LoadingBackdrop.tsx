@@ -6,7 +6,11 @@ import React from 'react';
 import { useTheme } from '../system/themeStore';
 import { Progress } from './Progress';
 
-export const LoadingBackdrop: React.FC = () => {
+export interface LoadingBackdropProps {
+  fading?: boolean;
+}
+
+export const LoadingBackdrop: React.FC<LoadingBackdropProps> = ({ fading }) => {
   const { theme } = useTheme();
   return (
     <div
@@ -19,6 +23,8 @@ export const LoadingBackdrop: React.FC = () => {
         background: theme.colors.background,
         color: theme.colors.text,
         zIndex: 9999,
+        transition: 'opacity 250ms ease',
+        opacity: fading ? 0 : 1,
       }}
     >
       <Progress variant="circular" mode="indeterminate" />
