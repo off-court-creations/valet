@@ -80,6 +80,9 @@ const Root = styled('button')<{
 
   -webkit-tap-highlight-color: transparent;
   user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -webkit-touch-callout: none;
 
   @media (hover: hover) {
     &:hover:not(:disabled) {

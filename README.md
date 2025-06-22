@@ -107,7 +107,7 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 | Table              | ✅       | ❌       |        ❌       | ✅         | ❌          | ❌            | Needs mobile support!            |
 | Tabs               | ✅       | ✅       |        ✅       | ✅         | ✅          | ✅            | ----------                       |
 | Textfield          | ✅       | ✅       |        🟡       | ✅         | ✅          | ✅            | ----------                       |
-| Tooltip            | ✅       | ❌       |        ❌       | ✅         | ❌          | ❌            | Needs mobile support!            |
+| Tooltip            | ✅       | ❌       |        ❌       | ✅         | ❌          | ❌            | mobile long-press support        |
 | Typography         | ✅       | ✅       |        🟡       | ✅         | ✅          | ✅            | ----------                       |
 
 ## Hooks

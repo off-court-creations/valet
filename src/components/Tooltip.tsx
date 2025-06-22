@@ -5,6 +5,7 @@
 import React, {
   ReactElement,
   ReactNode,
+  useCallback,
   useEffect,
   useId,
   useRef,
@@ -14,6 +15,22 @@ import { styled }    from '../css/createStyled';
 import { useTheme }  from '../system/themeStore';
 import { preset }    from '../css/stylePresets';
 import type { Presettable } from '../types';
+
+/*───────────────────────────────────────────────────────────*/
+/* Global helpers                                            */
+
+const LONG_PRESS_MS = 600;
+
+let activeTooltip: (() => void) | null = null;
+
+const registerTooltip = (close: () => void) => {
+  if (activeTooltip && activeTooltip !== close) activeTooltip();
+  activeTooltip = close;
+};
+
+const unregisterTooltip = (close: () => void) => {
+  if (activeTooltip === close) activeTooltip = null;
+};
 
 /*───────────────────────────────────────────────────────────*/
 /* Styled primitives                                         */
@@ -138,36 +155,109 @@ export const Tooltip: React.FC<TooltipProps> = ({
   const { theme } = useTheme();
   const id        = useId();
   const hasPreset = Boolean(presetKey);
+  const wrapperRef = useRef<HTMLSpanElement>(null);
 
   /* uncontrolled ↔ controlled gate */
   const [internalShow, setInternalShow] = useState(defaultOpen);
   const show = controlled ?? internalShow;
 
   /* timers */
-  const inT  = useRef<ReturnType<typeof setTimeout>>();
-  const outT = useRef<ReturnType<typeof setTimeout>>();
+  const inT   = useRef<ReturnType<typeof setTimeout>>();
+  const outT  = useRef<ReturnType<typeof setTimeout>>();
   const clear = () => { clearTimeout(inT.current); clearTimeout(outT.current); };
 
-  const open  = () => { if (controlled === undefined) setInternalShow(true);  onOpen?.(); };
-  const close = () => { if (controlled === undefined) setInternalShow(false); onClose?.(); };
+  const close = useCallback(() => {
+    if (controlled === undefined) setInternalShow(false);
+    onClose?.();
+    unregisterTooltip(close);
+  }, [controlled, onClose]);
+
+  const open = useCallback(() => {
+    if (activeTooltip && activeTooltip !== close) activeTooltip();
+    if (controlled === undefined) setInternalShow(true);
+    onOpen?.();
+    registerTooltip(close);
+  }, [controlled, onOpen, close]);
+
+  const handleOutside = useCallback((e: PointerEvent) => {
+    if (!wrapperRef.current?.contains(e.target as Node)) {
+      close();
+    }
+  }, [close]);
 
   /* listeners */
-  const handleEnter = () => { clear(); inT.current  = setTimeout(open,  enterDelay); };
-  const handleLeave = () => { clear(); outT.current = setTimeout(close, leaveDelay); };
+  const handleEnter = () => {
+    clear();
+    inT.current = setTimeout(open, enterDelay);
+  };
+  const handleLeave = () => {
+    clear();
+    outT.current = setTimeout(close, leaveDelay);
+  };
 
-  useEffect(() => clear, []);
+  /* long press touch support */
+  const touchTimer = useRef<ReturnType<typeof setTimeout>>();
+  const wasOpen = useRef(false);
+
+  const handlePointerDown = (e: React.PointerEvent) => {
+    if (e.pointerType !== 'touch' || disableTouchListener) return;
+    wasOpen.current = show;
+    clearTimeout(touchTimer.current);
+    touchTimer.current = setTimeout(() => {
+      if (!show) open();
+    }, LONG_PRESS_MS);
+  };
+
+  const handlePointerUp = (e: React.PointerEvent) => {
+    if (e.pointerType !== 'touch' || disableTouchListener) return;
+    clearTimeout(touchTimer.current);
+    if (wasOpen.current) {
+      close();
+    }
+  };
+
+  const handlePointerCancel = (e: React.PointerEvent) => {
+    if (e.pointerType !== 'touch' || disableTouchListener) return;
+    clearTimeout(touchTimer.current);
+  };
+
+  useEffect(() => {
+    return () => {
+      clear();
+      clearTimeout(touchTimer.current);
+      unregisterTooltip(close);
+    };
+  }, [close]);
+
+  useEffect(() => {
+    if (controlled !== undefined) {
+      if (show) registerTooltip(close);
+      else unregisterTooltip(close);
+    }
+  }, [show, controlled, close]);
+
+  useEffect(() => {
+    if (!show) return;
+    document.addEventListener('pointerdown', handleOutside);
+    return () => {
+      document.removeEventListener('pointerdown', handleOutside);
+    };
+  }, [show, handleOutside]);
 
   /* preset classes */
   const presetClasses = presetKey ? preset(presetKey) : '';
 
   return (
     <Wrapper
+      ref={wrapperRef}
       onMouseEnter={!disableHoverListener ? handleEnter : undefined}
       onMouseLeave={!disableHoverListener ? handleLeave : undefined}
       onFocus={!disableFocusListener ? open : undefined}
       onBlur={!disableFocusListener ? close : undefined}
-      onTouchStart={!disableTouchListener ? open : undefined}
-      onTouchEnd={!disableTouchListener ? close : undefined}
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerCancel}
+      onPointerLeave={handlePointerCancel}
       aria-describedby={show ? `tooltip-${id}` : undefined}
     >
       {children}
