@@ -31,7 +31,6 @@ export function useGoogleFonts(extras: string[] = [], options?: GoogleFontOption
 
   useEffect(() => {
     let active = true;
-    start();
     (async () => {
       try {
         await waitForGoogleFonts(fonts);
@@ -42,5 +41,5 @@ export function useGoogleFonts(extras: string[] = [], options?: GoogleFontOption
     return () => {
       active = false;
     };
-  }, [fonts.join(','), start, finish]);
+  }, [fonts.join(','), finish]);
 }
