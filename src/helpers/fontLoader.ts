@@ -64,6 +64,8 @@ export async function waitForGoogleFonts(fonts: string[]): Promise<void> {
   }
   await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
   if (uncached) {
-    await new Promise((r) => setTimeout(r, 300));
+    await new Promise((r) => setTimeout(r, 500));
+  } else {
+    await new Promise((r) => setTimeout(r, 250));
   }
 }
