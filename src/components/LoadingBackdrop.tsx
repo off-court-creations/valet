@@ -8,9 +8,13 @@ import { Progress } from './Progress';
 
 export interface LoadingBackdropProps {
   fading?: boolean;
+  showSpinner?: boolean;
 }
 
-export const LoadingBackdrop: React.FC<LoadingBackdropProps> = ({ fading }) => {
+export const LoadingBackdrop: React.FC<LoadingBackdropProps> = ({
+  fading,
+  showSpinner,
+}) => {
   const { theme } = useTheme();
   return (
     <div
@@ -27,7 +31,14 @@ export const LoadingBackdrop: React.FC<LoadingBackdropProps> = ({ fading }) => {
         opacity: fading ? 0 : 1,
       }}
     >
-      <Progress variant="circular" mode="indeterminate" />
+      <div
+        style={{
+          transition: 'opacity 250ms ease',
+          opacity: showSpinner ? 1 : 0,
+        }}
+      >
+        <Progress variant="circular" mode="indeterminate" />
+      </div>
     </div>
   );
 };

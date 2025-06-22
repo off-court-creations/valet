@@ -40,6 +40,7 @@ export const Surface: React.FC<SurfaceProps> = ({
   const fontsReady = useFonts((s) => s.ready);
   const [showBackdrop, setShowBackdrop] = useState(!fontsReady);
   const [fade, setFade] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(false);
   const presetClasses = p ? preset(p) : '';
 
   const { width, height } = useStore((s) => ({ width: s.width, height: s.height }));
@@ -75,11 +76,21 @@ export const Surface: React.FC<SurfaceProps> = ({
     if (!fontsReady) {
       setShowBackdrop(true);
       setFade(false);
+      setShowSpinner(false);
       return;
     }
     setFade(true);
     const t = setTimeout(() => setShowBackdrop(false), 250);
+    setShowSpinner(false);
     return () => clearTimeout(t);
+  }, [fontsReady]);
+
+  useEffect(() => {
+    if (!fontsReady) {
+      const t = setTimeout(() => setShowSpinner(true), 1250);
+      return () => clearTimeout(t);
+    }
+    setShowSpinner(false);
   }, [fontsReady]);
 
   /* Restore defaults explicitly (critical fix) */
@@ -124,7 +135,9 @@ export const Surface: React.FC<SurfaceProps> = ({
         } as any}
         {...props}
       >
-        {showBackdrop && <LoadingBackdrop fading={fade} />}
+        {showBackdrop && (
+          <LoadingBackdrop fading={fade} showSpinner={showSpinner} />
+        )}
         <div style={{ visibility: fontsReady ? 'visible' : 'hidden' }}>{children}</div>
       </div>
     </SurfaceCtx.Provider>
