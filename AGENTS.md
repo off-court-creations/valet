@@ -74,7 +74,7 @@ Welcome to **@archway/valet**, a performant, AI-forward UI library designed as a
 - **src/system/createFormStore.ts** – factory creating typed Zustand stores for form state.
 
 ## Valet Best Practices
-1. Wrap your application in `<Surface>` at the highest level so theme colours and breakpoints propagate correctly.
+1. Wrap your application in `<Surface>` at each route so theme colours and breakpoints propagate correctly.
 2. Call `useGoogleFonts()` during initial render to load fonts defined in the theme.
 3. Use `<Stack>` and `<Panel>` to keep layouts consistent and responsive.
 4. Define shared styles with `definePreset()` and reference them via the `preset` prop.

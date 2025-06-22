@@ -1,6 +1,7 @@
 # valet
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![GitHub](https://img.shields.io/badge/GitHub-valet-181717?logo=github&logoColor=white)](https://github.com/off-court-creations/valet) [![GitHub](https://img.shields.io/badge/GitHub-valet--playground-181717?logo=github&logoColor=white)](https://github.com/off-court-creations/valet-playground)[![npm](https://img.shields.io/badge/npm-%40archway%2Fvalet-CB3837?logo=npm&logoColor=white)](https://www.npmjs.com/package/@archway/valet)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![GitHub](https://img.shields.io/badge/GitHub-valet-181717?logo=github&logoColor=white)](https://github.com/off-court-creations/valet) [![GitHub](https://img.shields.io/badge/GitHub-valet--playground-181717?logo=github&logoColor=white)](https://github.com/off-court-creations/valet-playground)[![npm](https://img.shields.io/badge/npm-%40archway%2Fvalet-CB3837?logo=npm&logoColor=white)](https://www.npmjs.com/package/@archway/valet) [![Live Demo!](https://img.shields.io/badge/Live%20Demo!-🚀-111)](https://main.d3h9kmt4y5ma0a.amplifyapp.com/)
+
 
 
 `valet` is a CSS-in-JS engine, a UI component kit, and an accessibility layer that treats all humans and their AI proxies as first class users.
@@ -117,10 +118,6 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 | useGoogleFonts     | ✅        | ✅             |----------|
 | useTheme           | ✅        | ✅             |----------|
 | useInitialTheme    | ✅        | ✅             | applies theme and waits for fonts |
-
-The loader hides content until Google Fonts are fully applied.
-If fonts aren't cached, it waits an extra ~300ms after load to
-avoid flashes of unstyled text.
 
 ## Utilities
 
