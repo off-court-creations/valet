@@ -12,7 +12,8 @@ import {
 } from '../helpers/fontLoader';
 
 export function useGoogleFonts(extras: string[] = [], options?: GoogleFontOptions) {
-  const setReady = useFonts((s) => s.setReady);
+  const start = useFonts((s) => s.start);
+  const finish = useFonts((s) => s.finish);
   const themeFonts = useTheme((s) => s.theme.fonts);
   const fonts = useMemo(
     () => Array.from(new Set([
@@ -24,22 +25,22 @@ export function useGoogleFonts(extras: string[] = [], options?: GoogleFontOption
     [themeFonts.heading, themeFonts.body, themeFonts.mono, extras.join(',')]
   );
   useInsertionEffect(() => {
-    setReady(false);
+    start();
     return injectGoogleFontLinks(fonts, options);
-  }, [fonts.join(','), options?.preload, setReady]);
+  }, [fonts.join(','), options?.preload, start]);
 
   useEffect(() => {
     let active = true;
-    setReady(false);
+    start();
     (async () => {
       try {
         await waitForGoogleFonts(fonts);
       } finally {
-        if (active) setReady(true);
+        if (active) finish();
       }
     })();
     return () => {
       active = false;
     };
-  }, [fonts.join(','), setReady]);
+  }, [fonts.join(','), start, finish]);
 }

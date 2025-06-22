@@ -116,7 +116,7 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 |--------------------|:---------:|:---------------:|----------|
 | useGoogleFonts     | ✅        | ✅             |----------|
 | useTheme           | ✅        | ✅             |----------|
-| useInitialTheme    | ✅        | ✅             | sets fonts and theme before paint |
+| useInitialTheme    | ✅        | ✅             | applies theme and waits for fonts |
 
 ## Utilities
 

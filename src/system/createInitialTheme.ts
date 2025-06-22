@@ -5,8 +5,7 @@
 import type { Theme } from './themeStore';
 import { useTheme } from './themeStore';
 import { useFonts } from './fontStore';
-import { useInsertionEffect } from 'react';
-import { useGoogleFonts } from '../hooks/useGoogleFonts';
+import { useEffect } from 'react';
 import {
   injectGoogleFontLinks,
   waitForGoogleFonts,
@@ -19,7 +18,7 @@ export async function createInitialTheme(
   options?: GoogleFontOptions
 ): Promise<void> {
   const { setTheme, theme } = useTheme.getState();
-  const { setReady } = useFonts.getState();
+  const { start, finish } = useFonts.getState();
   setTheme(patch);
   const fonts = Array.from(
     new Set([
@@ -30,9 +29,9 @@ export async function createInitialTheme(
     ])
   );
   injectGoogleFontLinks(fonts, options);
-  setReady(false);
+  start();
   await waitForGoogleFonts(fonts);
-  setReady(true);
+  finish();
 }
 
 export function useInitialTheme(
@@ -40,8 +39,7 @@ export function useInitialTheme(
   extras: string[] = [],
   options?: GoogleFontOptions
 ) {
-  useInsertionEffect(() => {
-    useTheme.getState().setTheme(patch);
+  useEffect(() => {
+    createInitialTheme(patch, extras, options);
   }, []);
-  useGoogleFonts(extras, options);
 }

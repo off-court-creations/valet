@@ -5,12 +5,21 @@
 import { create } from 'zustand';
 
 interface FontState {
+  loading: number;
   ready: boolean;
-  setReady: (ready: boolean) => void;
+  start: () => void;
+  finish: () => void;
 }
 
 export const useFonts = create<FontState>((set) => ({
+  loading: 0,
   ready: false,
-  setReady: (ready) => set({ ready }),
+  start: () =>
+    set((s) => ({ loading: s.loading + 1, ready: false })),
+  finish: () =>
+    set((s) => {
+      const loading = Math.max(0, s.loading - 1);
+      return { loading, ready: loading === 0 };
+    }),
 }));
 
