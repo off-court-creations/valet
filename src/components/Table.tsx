@@ -144,7 +144,9 @@ export function Table<T extends object>({
         top,
         left: rect.left - sRect.left + surfEl.scrollLeft,
       });
-      setMaxHeight(Math.max(0, surface.height - top));
+      const other = surfEl.scrollHeight - node.offsetHeight;
+      const available = surface.height - other;
+      setMaxHeight(Math.max(0, available));
     };
     surface.registerChild(uniqueId, { width: 0, height: 0, top: 0, left: 0 });
     const ro = new ResizeObserver(measure);
