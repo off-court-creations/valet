@@ -2,26 +2,17 @@
 // src/components/Surface.tsx  | valet
 // top-level wrapper that applies theme backgrounds and breakpoints
 // ─────────────────────────────────────────────────────────────
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Breakpoint, useTheme } from '../system/themeStore';
+import { useFonts } from '../system/fontStore';
+import LoadingBackdrop from './LoadingBackdrop';
+import {
+  createSurfaceStore,
+  SurfaceCtx,
+  useSurface as useSurfaceState,
+} from '../system/surfaceStore';
 import { preset } from '../css/stylePresets';
 import type { Presettable } from '../types';
-
-/** Surface Context definition */
-export interface SurfaceContext {
-  width: number;
-  height: number;
-  breakpoint: Breakpoint;
-  hasScrollbar: boolean;
-}
-
-const SurfaceCtx = createContext<SurfaceContext | null>(null);
 
 /** Surface Props definition */
 export interface SurfaceProps
@@ -39,16 +30,20 @@ export const Surface: React.FC<SurfaceProps> = ({
   ...props
 }) => {
   const ref = useRef<HTMLDivElement>(null);
+  const parent = useContext(SurfaceCtx);
+  if (parent) throw new Error('Nested <Surface> components are not allowed');
+
+  const storeRef = useRef<ReturnType<typeof createSurfaceStore>>();
+  if (!storeRef.current) storeRef.current = createSurfaceStore();
+  const useStore = storeRef.current;
   const { theme } = useTheme();
+  const fontsReady = useFonts((s) => s.ready);
+  const [showBackdrop, setShowBackdrop] = useState(!fontsReady);
+  const [fade, setFade] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(false);
   const presetClasses = p ? preset(p) : '';
 
-  /* Viewport metrics */
-  const [state, setState] = useState<SurfaceContext>({
-    width: 0,
-    height: 0,
-    breakpoint: 'xs',
-    hasScrollbar: false,
-  });
+  const { width, height } = useStore((s) => ({ width: s.width, height: s.height }));
 
   const bpFor = (w: number): Breakpoint =>
     (Object.entries(theme.breakpoints) as [Breakpoint, number][]).reduce<Breakpoint>(
@@ -56,23 +51,47 @@ export const Surface: React.FC<SurfaceProps> = ({
     );
 
   useEffect(() => {
-    if (!ref.current) return;
     const node = ref.current;
-
-    const ro = new ResizeObserver(([entry]) => {
-      const { width, height } = entry.contentRect;
-      setState({
-        width,
-        height,
+    if (!node) return;
+    useStore.setState((s) => ({ ...s, element: node }));
+    const measure = () => {
+      const rect = node.getBoundingClientRect();
+      useStore.setState((s) => ({
+        ...s,
+        width: rect.width,
+        height: rect.height,
         hasScrollbar:
           node.scrollHeight > node.clientHeight ||
           node.scrollWidth > node.clientWidth,
-        breakpoint: bpFor(width),
-      });
-    });
+        breakpoint: bpFor(rect.width),
+      }));
+    };
+    const ro = new ResizeObserver(measure);
     ro.observe(node);
+    measure();
     return () => ro.disconnect();
-  }, [theme.breakpoints]);
+  }, [theme.breakpoints, useStore]);
+
+  useEffect(() => {
+    if (!fontsReady) {
+      setShowBackdrop(true);
+      setFade(false);
+      setShowSpinner(false);
+      return;
+    }
+    setFade(true);
+    const t = setTimeout(() => setShowBackdrop(false), 200);
+    setShowSpinner(false);
+    return () => clearTimeout(t);
+  }, [fontsReady]);
+
+  useEffect(() => {
+    if (!fontsReady) {
+      const t = setTimeout(() => setShowSpinner(true), 1250);
+      return () => clearTimeout(t);
+    }
+    setShowSpinner(false);
+  }, [fontsReady]);
 
   /* Restore defaults explicitly (critical fix) */
   const defaults: React.CSSProperties = {
@@ -102,7 +121,7 @@ export const Surface: React.FC<SurfaceProps> = ({
     : { width: '100%', height: 'auto', position: 'relative' };
 
   return (
-    <SurfaceCtx.Provider value={state}>
+    <SurfaceCtx.Provider value={useStore}>
       <div
         ref={ref}
         className={[presetClasses, className].filter(Boolean).join(' ')}
@@ -110,11 +129,16 @@ export const Surface: React.FC<SurfaceProps> = ({
           ...layoutStyles, // first apply layout rules
           ...defaults,     // then explicitly apply default colors (critical fix)
           ...cssVars,      // then fonts and other variables
+          '--valet-screen-width': `${width}px`,
+          '--valet-screen-height': `${height}px`,
           ...style,        // finally allow external overrides
-        }}
+        } as any}
         {...props}
       >
-        {children}
+        {showBackdrop && (
+          <LoadingBackdrop fading={fade} showSpinner={showSpinner} />
+        )}
+        <div style={{ visibility: fontsReady ? 'visible' : 'hidden' }}>{children}</div>
       </div>
     </SurfaceCtx.Provider>
   );
@@ -122,9 +146,4 @@ export const Surface: React.FC<SurfaceProps> = ({
 
 export default Surface;
 
-export const useSurface = () => {
-  const ctx = useContext(SurfaceCtx);
-  if (!ctx)
-    throw new Error('useSurface must be used within a <Surface> component');
-  return ctx;
-};
+export { useSurfaceState as useSurface };

@@ -49,6 +49,18 @@ cd YourReactLibraryThatUses_valet
 npm link @archway/valet
 ```
 
+## Surface state and child registry
+
+Each `<Surface>` instance now owns a Zustand store that tracks its screen size
+and every registered child element. Components created with `createStyled`
+register themselves automatically and expose `--valet-el-width` and
+`--valet-el-height` CSS variables. The surface exposes
+`--valet-screen-width` and `--valet-screen-height` on its root element.
+Nested `<Surface>` components are disallowed.
+
+Tables respect available height by default. Their content scrolls inside the
+component rather than the page. Pass `constrainHeight={false}` to opt out.
+
 ## Build
 
 Run `npm run build` to generate the `dist` folder for publishing. Use `npm run dev` during development for a live rebuild.
@@ -95,10 +107,8 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 | Table              | ✅       | ❌       |        ❌       | ✅         | ❌          | ❌            | Needs mobile support!            |
 | Tabs               | ✅       | ✅       |        ✅       | ✅         | ✅          | ✅            | ----------                       |
 | Textfield          | ✅       | ✅       |        🟡       | ✅         | ✅          | ✅            | ----------                       |
-| Tooltip            | ✅       | ❌       |        ❌       | ✅         | ❌          | ❌            | Needs mobile support!            |
+| Tooltip            | ✅       | ❌       |        ❌       | ✅         | ❌          | ❌            | mobile long-press support        |
 | Typography         | ✅       | ✅       |        🟡       | ✅         | ✅          | ✅            | ----------                       |
-
-
 
 ## Hooks
 
@@ -106,6 +116,11 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 |--------------------|:---------:|:---------------:|----------|
 | useGoogleFonts     | ✅        | ✅             |----------|
 | useTheme           | ✅        | ✅             |----------|
+| useInitialTheme    | ✅        | ✅             | applies theme and waits for fonts |
+
+The loader hides content until Google Fonts are fully applied.
+If fonts aren't cached, it waits an extra ~300ms after load to
+avoid flashes of unstyled text.
 
 ## Utilities
 
@@ -113,6 +128,7 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 |--------------------|:---------:|:---------------:|----------|
 | createFormStore    | ✅        | ✅             |----------|
 | definePreset       | ✅        | ✅             |----------|
+| createInitialTheme | ✅        | ✅             | async preloader for theme & fonts |
 
 ## Roadmap
 

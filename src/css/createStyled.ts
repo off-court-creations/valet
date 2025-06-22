@@ -9,8 +9,9 @@
 //
 // © 2025 Off-Court Creations – MIT licence
 // ─────────────────────────────────────────────────────────────
-import React from 'react';
+import React, { useContext, useLayoutEffect, useRef } from 'react';
 import hash  from '@emotion/hash';
+import { SurfaceCtx } from '../system/surfaceStore';
 
 /*───────────────────────────────────────────────────────────*/
 /* Internal caches                                           */
@@ -61,6 +62,10 @@ export function styled<Tag extends keyof JSX.IntrinsicElements>(tag: Tag) {
 
     const StyledComponent = React.forwardRef<DomRef, StyledProps>(
       (props, ref) => {
+        const localRef = useRef<DomRef | null>(null)
+        const surface = useContext(SurfaceCtx)
+        const idRef = useRef(`el-${Math.random().toString(36).slice(2)}`)
+
         /* Build raw CSS string (inc. interpolations) ------------------- */
         let rawCSS = '';
         for (let i = 0; i < strings.length; i++) {
@@ -82,14 +87,54 @@ export function styled<Tag extends keyof JSX.IntrinsicElements>(tag: Tag) {
           styleCache.set(normalized, className);
         }
 
-        const merged = [className, props.className].filter(Boolean).join(' ');
-        const domProps = filterStyledProps(props);
+        const merged = [className, props.className].filter(Boolean).join(' ')
+        const domProps = filterStyledProps(props)
+
+        useLayoutEffect(() => {
+          const el = localRef.current
+          if (!surface || !el) return
+          const id = idRef.current
+          const measure = () => {
+            const rect = el.getBoundingClientRect()
+            const sEl = surface.getState().element
+            const sRect = sEl ? sEl.getBoundingClientRect() : { top: 0, left: 0 }
+            const scrollTop = sEl ? sEl.scrollTop : 0
+            const scrollLeft = sEl ? sEl.scrollLeft : 0
+            const top = rect.top - sRect.top + scrollTop
+            const left = rect.left - sRect.left + scrollLeft
+            surface.getState().updateChild(id, {
+              width: rect.width,
+              height: rect.height,
+              top,
+              left,
+            })
+            el.style.setProperty('--valet-el-width', `${rect.width}px`)
+            el.style.setProperty('--valet-el-height', `${rect.height}px`)
+          }
+          surface.getState().registerChild(id, {
+            width: 0,
+            height: 0,
+            top: 0,
+            left: 0,
+          })
+          const ro = new ResizeObserver(measure)
+          ro.observe(el)
+          measure()
+          return () => {
+            ro.disconnect()
+            surface.getState().unregisterChild(id)
+          }
+        }, [surface])
 
         return React.createElement(tag, {
           ...domProps,
           className: merged,
-          ref,
-        });
+          ref: (node: DomRef | null) => {
+            localRef.current = node
+            if (typeof ref === 'function') ref(node)
+            else if (ref) (ref as any).current = node
+          },
+        })
       },
     );
 

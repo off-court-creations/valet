@@ -2,9 +2,10 @@
 // src/components/Table.tsx  | valet
 // Row-hover highlight fixed and now more saturated hover colour.
 // ─────────────────────────────────────────────────────────────
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, useLayoutEffect, useRef, useId } from 'react';
 import { styled }                 from '../css/createStyled';
 import { useTheme }               from '../system/themeStore';
+import { useSurface }             from '../system/surfaceStore';
 import { preset }                 from '../css/stylePresets';
 import { Checkbox }               from './Checkbox';
 import { stripe, toRgb, mix, toHex } from '../helpers/color';
@@ -34,10 +35,15 @@ export interface TableProps<T>
   initialSort?: { index:number; desc?:boolean };
   onSortChange?: (index:number, desc:boolean)=>void;
   onSelectionChange?: (selected:T[])=>void;
+  constrainHeight?: boolean;
 }
 
 /*───────────────────────────────────────────────────────────*/
 /* Styled primitives                                          */
+const Wrapper = styled('div')`
+  width:100%;
+  display:block;
+`;
 const Root = styled('table')<{
   $striped:boolean; $hover:boolean; $lines:boolean;
   $border:string; $stripe:string; $hoverBg:string;
@@ -111,12 +117,46 @@ export function Table<T extends object>({
   initialSort,
   onSortChange,
   onSelectionChange,
+  constrainHeight = true,
   preset:p,
   className,
   style,
   ...rest
 }:TableProps<T>) {
   const { theme } = useTheme();
+  const surface = useSurface();
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const uniqueId = useId();
+  const [maxHeight,setMaxHeight] = useState<number>();
+
+  useLayoutEffect(() => {
+    if (!constrainHeight || !wrapRef.current) return;
+    const node = wrapRef.current;
+    const measure = () => {
+      const surfEl = surface.element;
+      if (!surfEl) return;
+      const rect = node.getBoundingClientRect();
+      const sRect = surfEl.getBoundingClientRect();
+      const top = rect.top - sRect.top + surfEl.scrollTop;
+      surface.updateChild(uniqueId, {
+        width: rect.width,
+        height: rect.height,
+        top,
+        left: rect.left - sRect.left + surfEl.scrollLeft,
+      });
+      const other = surfEl.scrollHeight - node.offsetHeight;
+      const available = surface.height - other;
+      setMaxHeight(Math.max(0, available));
+    };
+    surface.registerChild(uniqueId, { width: 0, height: 0, top: 0, left: 0 });
+    const ro = new ResizeObserver(measure);
+    ro.observe(node);
+    measure();
+    return () => {
+      ro.disconnect();
+      surface.unregisterChild(uniqueId);
+    };
+  }, [constrainHeight, surface.height]);
 
   /* sort state */
   const [sort,setSort] =
@@ -189,6 +229,14 @@ export function Table<T extends object>({
 
   /*─────────────────────────────────────────────────────────*/
   return (
+    <Wrapper
+      ref={wrapRef}
+      style={
+        constrainHeight
+          ? { overflow: 'auto', maxHeight }
+          : undefined
+      }
+    >
     <Root
       {...rest}
       $striped={striped}
@@ -264,6 +312,7 @@ export function Table<T extends object>({
         ))}
       </tbody>
     </Root>
+    </Wrapper>
   );
 }
 
