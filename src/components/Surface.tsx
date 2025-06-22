@@ -2,7 +2,7 @@
 // src/components/Surface.tsx  | valet
 // top-level wrapper that applies theme backgrounds and breakpoints
 // ─────────────────────────────────────────────────────────────
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Breakpoint, useTheme } from '../system/themeStore';
 import { useFonts } from '../system/fontStore';
 import LoadingBackdrop from './LoadingBackdrop';
@@ -38,6 +38,9 @@ export const Surface: React.FC<SurfaceProps> = ({
   const useStore = storeRef.current;
   const { theme } = useTheme();
   const fontsReady = useFonts((s) => s.ready);
+  const [showBackdrop, setShowBackdrop] = useState(!fontsReady);
+  const [fade, setFade] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(false);
   const presetClasses = p ? preset(p) : '';
 
   const { width, height } = useStore((s) => ({ width: s.width, height: s.height }));
@@ -68,6 +71,27 @@ export const Surface: React.FC<SurfaceProps> = ({
     measure();
     return () => ro.disconnect();
   }, [theme.breakpoints, useStore]);
+
+  useEffect(() => {
+    if (!fontsReady) {
+      setShowBackdrop(true);
+      setFade(false);
+      setShowSpinner(false);
+      return;
+    }
+    setFade(true);
+    const t = setTimeout(() => setShowBackdrop(false), 200);
+    setShowSpinner(false);
+    return () => clearTimeout(t);
+  }, [fontsReady]);
+
+  useEffect(() => {
+    if (!fontsReady) {
+      const t = setTimeout(() => setShowSpinner(true), 1250);
+      return () => clearTimeout(t);
+    }
+    setShowSpinner(false);
+  }, [fontsReady]);
 
   /* Restore defaults explicitly (critical fix) */
   const defaults: React.CSSProperties = {
@@ -111,7 +135,9 @@ export const Surface: React.FC<SurfaceProps> = ({
         } as any}
         {...props}
       >
-        {!fontsReady && <LoadingBackdrop />}
+        {showBackdrop && (
+          <LoadingBackdrop fading={fade} showSpinner={showSpinner} />
+        )}
         <div style={{ visibility: fontsReady ? 'visible' : 'hidden' }}>{children}</div>
       </div>
     </SurfaceCtx.Provider>
