@@ -2,12 +2,14 @@
 // src/hooks/useGoogleFonts.ts  | valet
 // hook for dynamically loading Google Fonts once
 // ─────────────────────────────────────────────────────────────
-import { useEffect } from 'react';
+import { useInsertionEffect, useEffect } from 'react';
+import { useFonts } from '../system/fontStore';
 
 const loadedFonts = new Set();
 
 export function useGoogleFonts(fonts: string[]) {
-  useEffect(() => {
+  const setReady = useFonts((s) => s.setReady);
+  useInsertionEffect(() => {
     if (!document.getElementById('valet-fonts-preconnect')) {
       const preconnect1 = document.createElement('link');
       preconnect1.id = 'valet-fonts-preconnect';
@@ -54,4 +56,11 @@ export function useGoogleFonts(fonts: string[]) {
       fonts.forEach(fontName => loadedFonts.delete(fontName));
     };
   }, [fonts.join(',')]);
+
+  useEffect(() => {
+    setReady(false);
+    Promise.all(fonts.map((f) => document.fonts.load(`400 1em ${f}`)))
+      .then(() => setReady(true))
+      .catch(() => setReady(true));
+  }, [fonts.join(','), setReady]);
 }
