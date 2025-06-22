@@ -82,6 +82,14 @@ export const Typography: React.FC<TypographyProps> = ({
           ? 'heading'
           : 'body'
       })`};
+    ${({ $variant }) =>
+      $variant === 'button'
+        ? `
+      user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+    `
+        : ''};
   `, [Tag]);
 
   return (
