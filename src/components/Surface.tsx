@@ -5,6 +5,7 @@
 import React, { useContext, useEffect, useRef } from 'react';
 import { Breakpoint, useTheme } from '../system/themeStore';
 import { useFonts } from '../system/fontStore';
+import LoadingBackdrop from './LoadingBackdrop';
 import {
   createSurfaceStore,
   SurfaceCtx,
@@ -106,12 +107,12 @@ export const Surface: React.FC<SurfaceProps> = ({
           ...cssVars,      // then fonts and other variables
           '--valet-screen-width': `${width}px`,
           '--valet-screen-height': `${height}px`,
-          visibility: fontsReady ? 'visible' : 'hidden',
           ...style,        // finally allow external overrides
         } as any}
         {...props}
       >
-        {children}
+        {!fontsReady && <LoadingBackdrop />}
+        <div style={{ visibility: fontsReady ? 'visible' : 'hidden' }}>{children}</div>
       </div>
     </SurfaceCtx.Provider>
   );

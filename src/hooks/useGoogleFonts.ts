@@ -58,9 +58,19 @@ export function useGoogleFonts(fonts: string[]) {
   }, [fonts.join(',')]);
 
   useEffect(() => {
+    let active = true;
     setReady(false);
-    Promise.all(fonts.map((f) => document.fonts.load(`400 1em ${f}`)))
-      .then(() => setReady(true))
-      .catch(() => setReady(true));
+    (async () => {
+      try {
+        await Promise.all(fonts.map((f) => document.fonts.load(`400 1em ${f}`)));
+        await (document as any).fonts.ready;
+        await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+      } finally {
+        if (active) setReady(true);
+      }
+    })();
+    return () => {
+      active = false;
+    };
   }, [fonts.join(','), setReady]);
 }

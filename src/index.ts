@@ -27,6 +27,7 @@ export type {
   OptionProps as SelectOptionProps,
 } from './components/Select';
 export * from './components/Surface';
+export * from './components/LoadingBackdrop';
 export * from './components/Switch';
 export * from './components/Tabs';
 export * from './components/TextField';
