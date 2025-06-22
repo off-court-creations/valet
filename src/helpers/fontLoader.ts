@@ -57,15 +57,10 @@ export function injectGoogleFontLinks(fonts: string[], options: GoogleFontOption
 }
 
 export async function waitForGoogleFonts(fonts: string[]): Promise<void> {
-  const uncached = fonts.some((f) => !document.fonts.check(`400 1em ${f}`));
   await Promise.all(fonts.map((f) => document.fonts.load(`400 1em ${f}`)));
   if ((document as any).fonts?.ready) {
     await (document as any).fonts.ready;
   }
   await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
-  if (uncached) {
-    await new Promise((r) => setTimeout(r, 500));
-  } else {
-    await new Promise((r) => setTimeout(r, 250));
-  }
+  await new Promise((r) => setTimeout(r, 100));
 }
