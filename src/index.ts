@@ -27,6 +27,7 @@ export type {
   OptionProps as SelectOptionProps,
 } from './components/Select';
 export * from './components/Surface';
+export * from './components/LoadingBackdrop';
 export * from './components/Switch';
 export * from './components/Tabs';
 export * from './components/TextField';
@@ -36,4 +37,6 @@ export * from './css/createStyled';
 export * from './css/stylePresets';
 export * from './system/createFormStore';
 export * from './system/themeStore';
+export * from './system/fontStore';
+export * from './system/createInitialTheme';
 export * from './hooks/useGoogleFonts';

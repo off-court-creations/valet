@@ -116,6 +116,11 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 |--------------------|:---------:|:---------------:|----------|
 | useGoogleFonts     | ✅        | ✅             |----------|
 | useTheme           | ✅        | ✅             |----------|
+| useInitialTheme    | ✅        | ✅             | applies theme and waits for fonts |
+
+The loader hides content until Google Fonts are fully applied.
+If fonts aren't cached, it waits an extra ~300ms after load to
+avoid flashes of unstyled text.
 
 ## Utilities
 
@@ -123,6 +128,7 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 |--------------------|:---------:|:---------------:|----------|
 | createFormStore    | ✅        | ✅             |----------|
 | definePreset       | ✅        | ✅             |----------|
+| createInitialTheme | ✅        | ✅             | async preloader for theme & fonts |
 
 ## Roadmap
 

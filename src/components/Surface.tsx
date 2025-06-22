@@ -4,6 +4,8 @@
 // ─────────────────────────────────────────────────────────────
 import React, { useContext, useEffect, useRef } from 'react';
 import { Breakpoint, useTheme } from '../system/themeStore';
+import { useFonts } from '../system/fontStore';
+import LoadingBackdrop from './LoadingBackdrop';
 import {
   createSurfaceStore,
   SurfaceCtx,
@@ -35,6 +37,7 @@ export const Surface: React.FC<SurfaceProps> = ({
   if (!storeRef.current) storeRef.current = createSurfaceStore();
   const useStore = storeRef.current;
   const { theme } = useTheme();
+  const fontsReady = useFonts((s) => s.ready);
   const presetClasses = p ? preset(p) : '';
 
   const { width, height } = useStore((s) => ({ width: s.width, height: s.height }));
@@ -108,7 +111,8 @@ export const Surface: React.FC<SurfaceProps> = ({
         } as any}
         {...props}
       >
-        {children}
+        {!fontsReady && <LoadingBackdrop />}
+        <div style={{ visibility: fontsReady ? 'visible' : 'hidden' }}>{children}</div>
       </div>
     </SurfaceCtx.Provider>
   );
