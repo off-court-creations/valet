@@ -88,6 +88,7 @@ export const Typography: React.FC<TypographyProps> = ({
       user-select: none;
       -webkit-user-select: none;
       -ms-user-select: none;
+      -webkit-touch-callout: none;
     `
         : ''};
   `, [Tag]);

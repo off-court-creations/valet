@@ -82,6 +82,7 @@ const Root = styled('button')<{
   user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
+  -webkit-touch-callout: none;
 
   @media (hover: hover) {
     &:hover:not(:disabled) {

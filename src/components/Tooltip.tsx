@@ -155,6 +155,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
   const { theme } = useTheme();
   const id        = useId();
   const hasPreset = Boolean(presetKey);
+  const wrapperRef = useRef<HTMLSpanElement>(null);
 
   /* uncontrolled ↔ controlled gate */
   const [internalShow, setInternalShow] = useState(defaultOpen);
@@ -177,6 +178,12 @@ export const Tooltip: React.FC<TooltipProps> = ({
     onOpen?.();
     registerTooltip(close);
   }, [controlled, onOpen, close]);
+
+  const handleOutside = useCallback((e: PointerEvent) => {
+    if (!wrapperRef.current?.contains(e.target as Node)) {
+      close();
+    }
+  }, [close]);
 
   /* listeners */
   const handleEnter = () => {
@@ -229,11 +236,20 @@ export const Tooltip: React.FC<TooltipProps> = ({
     }
   }, [show, controlled, close]);
 
+  useEffect(() => {
+    if (!show) return;
+    document.addEventListener('pointerdown', handleOutside);
+    return () => {
+      document.removeEventListener('pointerdown', handleOutside);
+    };
+  }, [show, handleOutside]);
+
   /* preset classes */
   const presetClasses = presetKey ? preset(presetKey) : '';
 
   return (
     <Wrapper
+      ref={wrapperRef}
       onMouseEnter={!disableHoverListener ? handleEnter : undefined}
       onMouseLeave={!disableHoverListener ? handleLeave : undefined}
       onFocus={!disableFocusListener ? open : undefined}
