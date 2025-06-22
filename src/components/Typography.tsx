@@ -5,7 +5,7 @@
 import React from 'react';
 import { styled } from '../css/createStyled';
 import { useTheme } from '../system/themeStore';
-import { useSurface } from './Surface';
+import { useSurface } from '../system/surfaceStore';
 import { preset } from '../css/stylePresets';
 import type { Presettable } from '../types';
 
