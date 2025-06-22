@@ -24,8 +24,9 @@ export function useGoogleFonts(extras: string[] = [], options?: GoogleFontOption
     [themeFonts.heading, themeFonts.body, themeFonts.mono, extras.join(',')]
   );
   useInsertionEffect(() => {
+    setReady(false);
     return injectGoogleFontLinks(fonts, options);
-  }, [fonts.join(','), options?.preload]);
+  }, [fonts.join(','), options?.preload, setReady]);
 
   useEffect(() => {
     let active = true;
