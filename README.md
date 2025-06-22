@@ -58,6 +58,9 @@ register themselves automatically and expose `--valet-el-width` and
 `--valet-screen-width` and `--valet-screen-height` on its root element.
 Nested `<Surface>` components are disallowed.
 
+Pass `scrollBox` to contain scrolling inside the surface rather than relying on
+the browser's page scrollbars.
+
 Tables respect available height by default. Their content scrolls inside the
 component rather than the page. Pass `constrainHeight={false}` to opt out.
 

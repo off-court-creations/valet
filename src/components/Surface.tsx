@@ -17,6 +17,7 @@ export interface SurfaceProps
   extends React.HTMLAttributes<HTMLDivElement>,
     Presettable {
   fullscreen?: boolean;
+  scrollBox?: boolean;
 }
 
 export const Surface: React.FC<SurfaceProps> = ({
@@ -25,9 +26,11 @@ export const Surface: React.FC<SurfaceProps> = ({
   preset: p,
   className,
   fullscreen = true,
+  scrollBox = false,
   ...props
 }) => {
-  const ref = useRef<HTMLDivElement>(null);
+  const outerRef = useRef<HTMLDivElement>(null);
+  const innerRef = useRef<HTMLDivElement>(null);
   const parent = useContext(SurfaceCtx);
   if (parent) throw new Error('Nested <Surface> components are not allowed');
 
@@ -45,26 +48,27 @@ export const Surface: React.FC<SurfaceProps> = ({
     );
 
   useEffect(() => {
-    const node = ref.current;
-    if (!node) return;
-    useStore.setState((s) => ({ ...s, element: node }));
+    const outer = outerRef.current;
+    const inner = scrollBox ? innerRef.current : outerRef.current;
+    if (!outer || !inner) return;
+    useStore.setState((s) => ({ ...s, element: inner }));
     const measure = () => {
-      const rect = node.getBoundingClientRect();
+      const rect = outer.getBoundingClientRect();
       useStore.setState((s) => ({
         ...s,
         width: rect.width,
         height: rect.height,
         hasScrollbar:
-          node.scrollHeight > node.clientHeight ||
-          node.scrollWidth > node.clientWidth,
+          inner.scrollHeight > inner.clientHeight ||
+          inner.scrollWidth > inner.clientWidth,
         breakpoint: bpFor(rect.width),
       }));
     };
     const ro = new ResizeObserver(measure);
-    ro.observe(node);
+    ro.observe(outer);
     measure();
     return () => ro.disconnect();
-  }, [theme.breakpoints, useStore]);
+  }, [theme.breakpoints, useStore, scrollBox]);
 
   /* Restore defaults explicitly (critical fix) */
   const defaults: React.CSSProperties = {
@@ -89,14 +93,14 @@ export const Surface: React.FC<SurfaceProps> = ({
         paddingRight: 'env(safe-area-inset-right)',
         paddingBottom: 'env(safe-area-inset-bottom)',
         paddingLeft: 'env(safe-area-inset-left)',
-        overflow: 'auto',
+        overflow: scrollBox ? 'hidden' : 'auto',
       }
-    : { width: '100%', height: 'auto', position: 'relative' };
+    : { width: '100%', height: 'auto', position: 'relative', overflow: scrollBox ? 'hidden' : undefined };
 
   return (
     <SurfaceCtx.Provider value={useStore}>
       <div
-        ref={ref}
+        ref={outerRef}
         className={[presetClasses, className].filter(Boolean).join(' ')}
         style={{
           ...layoutStyles, // first apply layout rules
@@ -108,7 +112,16 @@ export const Surface: React.FC<SurfaceProps> = ({
         } as any}
         {...props}
       >
-        {children}
+        {scrollBox ? (
+          <div
+            ref={innerRef}
+            style={{ width: '100%', height: '100%', overflow: 'auto' }}
+          >
+            {children}
+          </div>
+        ) : (
+          children
+        )}
       </div>
     </SurfaceCtx.Provider>
   );

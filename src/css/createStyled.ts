@@ -18,11 +18,31 @@ import { SurfaceCtx } from '../system/surfaceStore';
 const styleCache = new Map<string, string>(); // normal rules
 const injected   = new Set<string>();         // injected IDs
 
+let styleTag: HTMLStyleElement | null = null;
+
+function ensureTag(): HTMLStyleElement | null {
+  if (typeof document === 'undefined') return null;
+  if (!styleTag) {
+    styleTag = document.getElementById('valet-css') as HTMLStyleElement | null;
+    if (!styleTag) {
+      styleTag = document.createElement('style');
+      styleTag.id = 'valet-css';
+      document.head.appendChild(styleTag);
+    }
+  }
+  return styleTag;
+}
+
 function inject(cssId: string, css: string) {
   if (injected.has(cssId)) return;
-  const style = document.createElement('style');
-  style.textContent = css;
-  document.head.appendChild(style);
+  const tag = ensureTag();
+  if (!tag) return;
+  const sheet = tag.sheet as CSSStyleSheet;
+  try {
+    sheet.insertRule(css, sheet.cssRules.length);
+  } catch {
+    tag.appendChild(document.createTextNode(css));
+  }
   injected.add(cssId);
 }
 
