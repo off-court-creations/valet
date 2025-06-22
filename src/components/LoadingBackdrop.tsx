@@ -27,13 +27,13 @@ export const LoadingBackdrop: React.FC<LoadingBackdropProps> = ({
         background: theme.colors.background,
         color: theme.colors.text,
         zIndex: 9999,
-        transition: 'opacity 250ms ease',
+        transition: 'opacity 200ms ease',
         opacity: fading ? 0 : 1,
       }}
     >
       <div
         style={{
-          transition: 'opacity 250ms ease',
+          transition: 'opacity 200ms ease',
           opacity: showSpinner ? 1 : 0,
         }}
       >

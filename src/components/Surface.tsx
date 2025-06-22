@@ -80,7 +80,7 @@ export const Surface: React.FC<SurfaceProps> = ({
       return;
     }
     setFade(true);
-    const t = setTimeout(() => setShowBackdrop(false), 250);
+    const t = setTimeout(() => setShowBackdrop(false), 200);
     setShowSpinner(false);
     return () => clearTimeout(t);
   }, [fontsReady]);
