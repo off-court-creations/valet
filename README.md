@@ -116,6 +116,7 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 |--------------------|:---------:|:---------------:|----------|
 | useGoogleFonts     | ✅        | ✅             |----------|
 | useTheme           | ✅        | ✅             |----------|
+| useInitialTheme    | ✅        | ✅             | sets fonts and theme before paint |
 
 ## Utilities
 
@@ -123,6 +124,7 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 |--------------------|:---------:|:---------------:|----------|
 | createFormStore    | ✅        | ✅             |----------|
 | definePreset       | ✅        | ✅             |----------|
+| createInitialTheme | ✅        | ✅             | async preloader for theme & fonts |
 
 ## Roadmap
 

@@ -38,4 +38,5 @@ export * from './css/stylePresets';
 export * from './system/createFormStore';
 export * from './system/themeStore';
 export * from './system/fontStore';
+export * from './system/createInitialTheme';
 export * from './hooks/useGoogleFonts';
