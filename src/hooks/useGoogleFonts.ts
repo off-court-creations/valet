@@ -2,12 +2,12 @@
 // src/hooks/useGoogleFonts.ts  | valet
 // hook for dynamically loading Google Fonts once
 // ─────────────────────────────────────────────────────────────
-import { useEffect } from 'react';
+import { useInsertionEffect } from 'react';
 
 const loadedFonts = new Set();
 
 export function useGoogleFonts(fonts: string[]) {
-  useEffect(() => {
+  useInsertionEffect(() => {
     fonts.forEach(fontName => {
       if (!fontName || loadedFonts.has(fontName)) return;
 
