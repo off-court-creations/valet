@@ -99,7 +99,7 @@ export function styled<Tag extends keyof JSX.IntrinsicElements>(tag: Tag) {
           const id = idRef.current
           surface.getState().registerChild(id, el, (m) => {
             el.style.setProperty('--valet-el-width', `${m.width}px`)
-            el.style.setProperty('--valet-el-height', `${m.height}px`)
+            el.style.setProperty('--valet-el-height', `${Math.round(m.height)}px`)
           })
           return () => {
             surface.getState().unregisterChild(id)
