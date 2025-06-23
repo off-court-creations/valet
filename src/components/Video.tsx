@@ -40,8 +40,6 @@ export interface VideoProps extends Presettable {
   muted?: boolean;
   /** Loop video. */
   loop?: boolean;
-  /** Allow fullscreen toggle. Defaults to `true`. */
-  allowFullScreen?: boolean;
   /** CSS width value, e.g. `100%` or `640px`. */
   width?: string;
   /** CSS height value, e.g. `auto` or `360px`. */
@@ -84,17 +82,6 @@ const VideoWrapper = styled('div')<{ $w?: string; $h?: string; $fit: 'contain' |
   }
 `;
 
-const FullBtn = styled('button')`
-  position: absolute;
-  bottom: 0.5rem;
-  right: 0.5rem;
-  padding: 0.25rem 0.5rem;
-  background: rgba(0,0,0,0.6);
-  color: white;
-  border: none;
-  border-radius: 0.25rem;
-  cursor: pointer;
-`;
 
 /*───────────────────────────────────────────────────────────*/
 /* Component                                                 */
@@ -106,7 +93,6 @@ export const Video: React.FC<VideoProps> = ({
   autoPlay = true,
   muted = true,
   loop = false,
-  allowFullScreen = true,
   width,
   height,
   lazy,
@@ -162,12 +148,6 @@ export const Video: React.FC<VideoProps> = ({
 
   const presetCls = p ? preset(p) : '';
 
-  const goFullscreen = () => {
-    const vid = ref.current;
-    if (!vid || !vid.requestFullscreen) return;
-    vid.requestFullscreen().catch(() => void 0);
-  };
-
   return (
     <VideoWrapper
       $w={width}
@@ -176,7 +156,6 @@ export const Video: React.FC<VideoProps> = ({
       className={[presetCls, className].filter(Boolean).join(' ')}
       style={style}
     >
-      {allowFullScreen && <FullBtn onClick={goFullscreen} aria-label="Fullscreen">⤢</FullBtn>}
       <video
         ref={ref}
         controls={controls}
