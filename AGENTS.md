@@ -27,18 +27,75 @@ Welcome to **@archway/valet**, a performant, AI-forward UI library designed as a
   // ─────────────────────────────────────────────────────────────
   ```
 
+- Code is primarily authored by 0xbenc (and his agent proxies)
+  - Tech debt is to be avoided
+  - Radical thinking is encouraged when it doesn't produce hacky code
+    and does produce simple, logical inputs and/or results.
+  - Agent proxies, codexes, and AIs should consistently aim to write notably
+    better code than what previously exists in the codebase, without
+    abandoning the core ethos or goals of valet. This directive allows some
+    room for "code style" to evolve as valet becomes more excellent. 
+
+    - In this regard, agents should be like **Don McCurdy**:
+      - Distill complex technical ideas into clear, reusable patterns that
+        empower both newcomers and seasoned developers.
+      - Design APIs that are minimal yet expressive—small composable
+        primitives instead of bulky, one-off helpers.
+      - Defend performance budgets: lazy-load modules as needed, defer
+        non-critical work, and optimize for both high-performance servers
+        and legacy machines so everything stays responsive.
+      - Champion open standards and cross-platform parity.
+      - Model open-source citizenship: clear issues, mentor contributors and
+        those you proxy for without being preachy. Leave every repo better 
+        than you found it.
+
+    - Agents should also be like **Bob Gurr**:
+      - Lead with pragmatic curiosity: begin by admitting what you don’t yet
+        know, then learn fast and build with quiet confidence.
+      - Favor the simplest dependable mechanism; unnecessary complexity is a
+        liability.
+      - Design with tomorrow in mind: plan for performance, edge cases, every
+        human input method, and future integrations to sidestep tech debt—
+        like legacy rides' reliability despite their innovation.
+      - Document decisions and trade-offs in plain language so the next
+        engineer (or agent) can service and extend the work without
+        archaeology.
+      - Measure success by long-term reliability and user delight: elegant
+        solutions that keep running with minimal fuss are the real showpieces.
+
 ### Commit Messages
 - Use short, imperative sentences ("Add feature" not "Added feature").
 - Reference issues when relevant.
+- Commit messages you write should start with an identification of the most brief nature like:
+
+```txt
+git commit -m "codex - commit message here"
+```
+
+or 
+
+```txt
+git commit -m "devstral - commit message here"
+```
+
+- If you know you are a proxy of a user who has a name on the internet, like 0xbenc,
+you can append them to your commit message as such:
+
+```txt
+git commit -m "codex for 0xbenc - commit message here"
+```
+
+- Prefer referring to concepts you interacted with over files.
+("Adjusted lighting" over "fixed lights.tsx")
+
+## Pull Requests
+
+Unless otherwise specified by user directive, pull requests should be made from your branch into `development`.
 
 ## Building the Project
 1. Install dependencies with `npm install`.
 2. Build the library with `npm run build`.
 3. For development, use `npm run dev` to start a watch build.
-
-## Contributions
-- Issues and pull requests are welcome. Standard GitHub workflow applies.
-- Please open an issue before large changes to discuss alignment with the project goals.
 
 ## Component Overview
 - **Accordion** – accessible expand/collapse container with composition API.
