@@ -59,7 +59,7 @@ export const Surface: React.FC<SurfaceProps> = ({
       useStore.setState((s) => ({
         ...s,
         width: rect.width,
-        height: rect.height,
+        height: Math.round(rect.height),
         hasScrollbar:
           node.scrollHeight > node.clientHeight ||
           node.scrollWidth > node.clientWidth,
@@ -86,11 +86,14 @@ export const Surface: React.FC<SurfaceProps> = ({
   }, [fontsReady]);
 
   useEffect(() => {
-    if (!fontsReady) {
-      const t = setTimeout(() => setShowSpinner(true), 1250);
-      return () => clearTimeout(t);
+    if (fontsReady) {
+      setShowSpinner(false);
+      return;
     }
-    setShowSpinner(false);
+    const t = setTimeout(() => {
+      if (!useFonts.getState().ready) setShowSpinner(true);
+    }, 1250);
+    return () => clearTimeout(t);
   }, [fontsReady]);
 
   /* Restore defaults explicitly (critical fix) */
@@ -130,7 +133,7 @@ export const Surface: React.FC<SurfaceProps> = ({
           ...defaults,     // then explicitly apply default colors (critical fix)
           ...cssVars,      // then fonts and other variables
           '--valet-screen-width': `${width}px`,
-          '--valet-screen-height': `${height}px`,
+          '--valet-screen-height': `${Math.round(height)}px`,
           ...style,        // finally allow external overrides
         } as any}
         {...props}

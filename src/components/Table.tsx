@@ -132,30 +132,28 @@ export function Table<T extends object>({
   useLayoutEffect(() => {
     if (!constrainHeight || !wrapRef.current) return;
     const node = wrapRef.current;
-    const measure = () => {
+    const update = () => {
       const surfEl = surface.element;
       if (!surfEl) return;
-      const rect = node.getBoundingClientRect();
-      const sRect = surfEl.getBoundingClientRect();
-      const top = rect.top - sRect.top + surfEl.scrollTop;
-      surface.updateChild(uniqueId, {
-        width: rect.width,
-        height: rect.height,
-        top,
-        left: rect.left - sRect.left + surfEl.scrollLeft,
-      });
       const other = surfEl.scrollHeight - node.offsetHeight;
       const available = surface.height - other;
       setMaxHeight(Math.max(0, available));
     };
-    surface.registerChild(uniqueId, { width: 0, height: 0, top: 0, left: 0 });
-    const ro = new ResizeObserver(measure);
-    ro.observe(node);
-    measure();
+    surface.registerChild(uniqueId, node, update);
+    update();
     return () => {
-      ro.disconnect();
       surface.unregisterChild(uniqueId);
     };
+  }, [constrainHeight]);
+
+  useLayoutEffect(() => {
+    if (!constrainHeight || !wrapRef.current) return;
+    const node = wrapRef.current;
+    const surfEl = surface.element;
+    if (!surfEl) return;
+    const other = surfEl.scrollHeight - node.offsetHeight;
+    const available = surface.height - other;
+    setMaxHeight(Math.max(0, available));
   }, [constrainHeight, surface.height]);
 
   /* sort state */

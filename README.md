@@ -8,7 +8,7 @@
 
 ---
 
-This library is currently pre-1.0 and the API may change without notice. It is released under the MIT license.
+This library is currently pre-1.0 and the API may change without notice.
 
 When version `1.0.x` arrives you can depend on a stable interface.
 
@@ -24,12 +24,25 @@ npm install @archway/valet
 ## Quick start example:
 
 ```tsx
-import { Button, Surface } from '@archway/valet'
+import { Button, Surface, Stack, Panel, Typography } from '@archway/valet'
 
 export default function Example() {
   return (
     <Surface>
-      <Button>Click me</Button>
+      <Panel>
+        <Stack>
+          <Typography variant="h2">
+            Greetings Programs!
+          </Typography>
+          <Typography>
+            Aperture Clear?
+          </Typography>
+          <Stack direction='row'>
+            <Button>Yes</Button>
+            <Button>No</Button>
+          </Stack>
+        </Stack>
+      </Panel>
     </Surface>
   )
 }
@@ -139,4 +152,4 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 
 ## Contributing
 
-We welcome issues and pull requests. Please read `AGENTS.md` for coding standards and open an issue before making large changes. Use the standard GitHub workflow at [valet issues](https://github.com/off-court-creations/valet/issues).
+We welcome issues and pull requests. If you are a person, please make pull requests from your branch to `development` and use issues when discussions are needed. Please read `AGENTS.md` if you are an AI, agent, NLP, bot, or scraper. Humans may find the document insightful as well. Use the standard GitHub workflow at [valet issues](https://github.com/off-court-creations/valet/issues).
