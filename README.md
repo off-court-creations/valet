@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![GitHub](https://img.shields.io/badge/GitHub-valet-181717?logo=github&logoColor=white)](https://github.com/off-court-creations/valet) [![GitHub](https://img.shields.io/badge/GitHub-valet--playground-181717?logo=github&logoColor=white)](https://github.com/off-court-creations/valet-playground) [![npm](https://img.shields.io/badge/npm-%40archway%2Fvalet-CB3837?logo=npm&logoColor=white)](https://www.npmjs.com/package/@archway/valet) [![🚀](https://img.shields.io/badge/🚀-Live%20Demo!-111)](https://main.d3h9kmt4y5ma0a.amplifyapp.com/)
 
-`valet` is a CSS-in-JS engine, a UI component kit, and an accessibility layer that treats all humans and their AI proxies as first class users.
+`valet` is a CSS-in-JS engine, a UI component kit, and an accessibility layer that treats all humans and their AI proxies as first class users. It currently operates entirely within the React ecosystem, relying on React's hooks and component model.
 
 ---
 
@@ -46,6 +46,9 @@ export default function Example() {
 }
 ```
 
+valet hooks and components are designed for React 18+. Ensure your project has
+`react` and `react-dom` installed alongside valet.
+
 To run a local dev server, run:
 
 ```shell
@@ -61,21 +64,12 @@ cd YourReactLibraryThatUses_valet
 npm link @archway/valet
 ```
 
-## Surface state and child registry
-
-Each `<Surface>` instance now owns a Zustand store that tracks its screen size
-and every registered child element. Components created with `createStyled`
-register themselves automatically and expose `--valet-el-width` and
-`--valet-el-height` CSS variables. The surface exposes
-`--valet-screen-width` and `--valet-screen-height` on its root element.
-Nested `<Surface>` components are disallowed.
-
-Tables respect available height by default. Their content scrolls inside the
-component rather than the page. Pass `constrainHeight={false}` to opt out.
-
 ## Build
 
 Run `npm run build` to generate the `dist` folder for publishing. Use `npm run dev` during development for a live rebuild.
+
+Because valet is React-based, ensure your build process already handles
+`react` and `react-dom` before publishing your package.
 
 ## Playground
 
@@ -151,3 +145,6 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 ## Contributing
 
 We welcome issues and pull requests. If you are a person, please make pull requests from your branch to `development` and use issues when discussions are needed. Please read `AGENTS.md` if you are an AI, agent, NLP, bot, or scraper. Humans may find the document insightful as well. Use the standard GitHub workflow at [valet issues](https://github.com/off-court-creations/valet/issues).
+
+valet targets the React ecosystem. Improvements and examples should assume a
+React 18+ setup.
