@@ -19,6 +19,7 @@ Welcome to **@archway/valet**, a performant, AI-forward UI library designed as a
 - Code is written in **TypeScript**. Keep types strict and explicit.
 - Follow modern React (v18+) patterns.
 - Keep dependencies minimal and prefer native APIs when possible.
+- The library name `valet` is always lowercase, even when starting a sentence.
 - Begin each file with a comment header formatted like:
   ```
   // ─────────────────────────────────────────────────────────────
@@ -97,24 +98,41 @@ Unless otherwise specified by user directive, pull requests should be made from 
 2. Build the library with `npm run build`.
 3. For development, use `npm run dev` to start a watch build.
 
+## Surface state and child registry
+
+Each `<Surface>` instance owns a small Zustand store that tracks screen size
+and every registered child element. Components created with `createStyled`
+register themselves automatically and expose `--valet-el-width` and
+`--valet-el-height` CSS variables. The surface exposes
+`--valet-screen-width` and `--valet-screen-height` on its root element.
+Nested `<Surface>` components are disallowed.
+
+Tables respect available height by default. Their content scrolls inside the
+component rather than the page. Pass `constrainHeight={false}` to opt out.
+
 ## Component Overview
 - **Accordion** – accessible expand/collapse container with composition API.
+- **AppBar** – responsive top navigation bar.
 - **Box** – baseline container that handles background, text colour and centring.
 - **Button** – theme-aware button with variants and sizes.
 - **Checkbox** – controlled/uncontrolled checkbox adhering to accessibility.
 - **Drawer** – sliding overlay panel with escape handling and backdrop.
 - **FormControl** – context provider wiring labels, errors and disabled state.
+- **Grid** – CSS grid layout helper with gaps and spans.
 - **Icon** – wrapper around `@iconify/react` icons with size theming.
 - **IconButton** – icon-only button sharing Button’s theming.
 - **List** – simple list with optional drag and keyboard reordering.
 - **Modal** – accessible dialog component with optional backdrop.
+- **Pagination** – page selector with first/last controls.
 - **Panel** – lightweight container with `main` and `alt` variants.
 - **Parallax** – scroll-aware container for simple parallax effects.
 - **Progress** – linear or circular indicator supporting determinate/indeterminate.
 - **RadioGroup** – grouped radio inputs managed via FormControl.
 - **Select** – typed single or multi-select input.
 - **Slider** – pointer and keyboard friendly value slider.
+- **SpeedDial** – radial quick action menu.
 - **Stack** – flexbox-based layout helper for consistent spacing.
+- **Stepper** – horizontal or vertical step progress indicator.
 - **Surface** – top-level wrapper that applies theme backgrounds and breakpoints.
 - **Switch** – boolean toggle styled like a physical switch.
 - **Table** – sortable, selectable table with zebra and hover styling.
@@ -130,10 +148,13 @@ Unless otherwise specified by user directive, pull requests should be made from 
 - **src/system/themeStore.ts** – Zustand store holding the current theme and mode.
 - **src/system/createFormStore.ts** – factory creating typed Zustand stores for form state.
 
-## Valet Best Practices
-1. Wrap your application in `<Surface>` at each route so theme colours and breakpoints propagate correctly.
-2. Call `useGoogleFonts()` during initial render to load fonts defined in the theme.
-3. Use `<Stack>` and `<Panel>` to keep layouts consistent and responsive.
-4. Define shared styles with `definePreset()` and reference them via the `preset` prop.
-5. Read and update theme values through `useTheme`; avoid hard-coding colours.
-6. Prefer the provided components over raw HTML to maintain accessibility and theme cohesion.
+## valet Best Practices
+1. Mount `<BrowserRouter>` in `main.tsx` and render `<App>` inside it.
+2. Import global presets before the app renders so all routes share them.
+3. Call `useInitialTheme({ fonts }, [fontList])` once in `<App>` to apply the theme and preload fonts.
+4. Wrap each route in `<Surface>` and never nest surfaces.
+5. Split routes with `React.lazy` and `<Suspense>` to keep bundles small.
+6. Use `<Stack>` and `<Panel>` to keep layouts consistent and responsive.
+7. Define shared styles with `definePreset()` and reference them via the `preset` prop.
+8. Read and update theme values through `useTheme`; avoid hard-coding colours.
+9. Prefer the provided components over raw HTML to maintain accessibility and theme cohesion.
