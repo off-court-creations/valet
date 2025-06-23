@@ -6,13 +6,12 @@ import React, {
   useRef,
   useState,
   useEffect,
-  useCallback,
   KeyboardEvent,
 } from 'react';
 import { styled } from '../css/createStyled';
 import { preset } from '../css/stylePresets';
 import type { Presettable } from '../types';
-import useAdaptiveStreaming from '../hooks/useAdaptiveStreaming';
+import useAdaptiveStreaming from './useAdaptiveStreaming';
 
 /*───────────────────────────────────────────────────────────*/
 /* Public types                                               */
@@ -63,8 +62,11 @@ export interface VideoProps extends Presettable {
   className?: string;
   /** Style passthrough. */
   style?: React.CSSProperties;
-  /** Future adaptive streaming hook. */
-  adaptiveSources?: VideoSource[];
+  /** Optional HLS or DASH manifest sources. */
+  adaptiveSources?: Array<{
+    src: string;
+    type: 'application/vnd.apple.mpegurl' | 'application/dash+xml';
+  }>;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -120,11 +122,7 @@ export const Video: React.FC<VideoProps> = ({
 }) => {
   const ref = useRef<HTMLVideoElement>(null);
   const [ready, setReady] = useState(!lazy);
-  const { currentSources, attach } = useAdaptiveStreaming(adaptiveSources || sources);
-
-  useEffect(() => {
-    attach(ref.current);
-  }, [attach]);
+  useAdaptiveStreaming(adaptiveSources, ref);
 
   useEffect(() => {
     if (!lazy || ready || !('IntersectionObserver' in window)) return;
@@ -194,7 +192,7 @@ export const Video: React.FC<VideoProps> = ({
         onError={(e) => onError?.(e as unknown as ErrorEvent)}
         onKeyDown={handleKey}
       >
-        {ready && currentSources.map((s, i) => (
+        {ready && sources.map((s, i) => (
           <source key={i} src={s.src} type={s.type} />
         ))}
         {ready && tracks?.map((t, i) => (
