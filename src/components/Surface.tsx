@@ -86,11 +86,14 @@ export const Surface: React.FC<SurfaceProps> = ({
   }, [fontsReady]);
 
   useEffect(() => {
-    if (!fontsReady) {
-      const t = setTimeout(() => setShowSpinner(true), 1250);
-      return () => clearTimeout(t);
+    if (fontsReady) {
+      setShowSpinner(false);
+      return;
     }
-    setShowSpinner(false);
+    const t = setTimeout(() => {
+      if (!useFonts.getState().ready) setShowSpinner(true);
+    }, 1250);
+    return () => clearTimeout(t);
   }, [fontsReady]);
 
   /* Restore defaults explicitly (critical fix) */

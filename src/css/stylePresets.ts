@@ -4,14 +4,14 @@
 // ─────────────────────────────────────────────────────────────
 import hash                 from '@emotion/hash';
 import { Theme, useTheme }  from '../system/themeStore';
-import { styleCache }       from './createStyled';
+import { styleCache, globalSheet } from './createStyled';
 
 type CSSFn = (theme: Theme) => string;
 
 interface PresetEntry {
-  cssFn   : CSSFn;
-  class   : string;
-  styleEl : HTMLStyleElement;
+  cssFn : CSSFn;
+  class : string;
+  rule  : CSSStyleRule;
 }
 
 const registry  = new Map<string, PresetEntry>();   // name → entry
@@ -27,9 +27,9 @@ function ensureSubscription() {
   subscribed = true;
   /* Re-run every preset whenever the theme changes */
   useTheme.subscribe(({ theme }) => {
-    for (const { cssFn, class: cls, styleEl } of registry.values()) {
+    for (const { cssFn, class: cls, rule } of registry.values()) {
       const nextCSS = normalise(cssFn(theme));
-      styleEl.textContent = `.${cls}{${nextCSS}}`;
+      rule.style.cssText = nextCSS;
     }
   });
 }
@@ -49,12 +49,12 @@ export function definePreset(name: string, cssFn: CSSFn) {
   const { theme } = useTheme.getState();
   const rawCSS    = normalise(cssFn(theme));
 
-  const styleEl   = document.createElement('style');
-  styleEl.textContent = `.${className}{${rawCSS}}`;
-  document.head.appendChild(styleEl);
+  const ruleText = `.${className}{${rawCSS}}`;
+  const index    = globalSheet.insertRule(ruleText, globalSheet.cssRules.length);
+  const rule     = globalSheet.cssRules[index] as CSSStyleRule;
   styleCache.set(className, rawCSS);
 
-  registry.set(name, { cssFn, class: className, styleEl });
+  registry.set(name, { cssFn, class: className, rule });
 }
 
 /* One-liner helper to apply one or many presets */
