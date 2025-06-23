@@ -18,11 +18,14 @@ import { SurfaceCtx } from '../system/surfaceStore';
 const styleCache = new Map<string, string>(); // normal rules
 const injected   = new Set<string>();         // injected IDs
 
+/* Single global stylesheet for all rules ------------------------------ */
+const styleEl = document.createElement('style');
+document.head.appendChild(styleEl);
+const globalSheet = styleEl.sheet as CSSStyleSheet;
+
 function inject(cssId: string, css: string) {
   if (injected.has(cssId)) return;
-  const style = document.createElement('style');
-  style.textContent = css;
-  document.head.appendChild(style);
+  globalSheet.insertRule(css, globalSheet.cssRules.length);
   injected.add(cssId);
 }
 
@@ -94,34 +97,11 @@ export function styled<Tag extends keyof JSX.IntrinsicElements>(tag: Tag) {
           const el = localRef.current
           if (!surface || !el) return
           const id = idRef.current
-          const measure = () => {
-            const rect = el.getBoundingClientRect()
-            const sEl = surface.getState().element
-            const sRect = sEl ? sEl.getBoundingClientRect() : { top: 0, left: 0 }
-            const scrollTop = sEl ? sEl.scrollTop : 0
-            const scrollLeft = sEl ? sEl.scrollLeft : 0
-            const top = rect.top - sRect.top + scrollTop
-            const left = rect.left - sRect.left + scrollLeft
-            surface.getState().updateChild(id, {
-              width: rect.width,
-              height: rect.height,
-              top,
-              left,
-            })
-            el.style.setProperty('--valet-el-width', `${rect.width}px`)
-            el.style.setProperty('--valet-el-height', `${rect.height}px`)
-          }
-          surface.getState().registerChild(id, {
-            width: 0,
-            height: 0,
-            top: 0,
-            left: 0,
+          surface.getState().registerChild(id, el, (m) => {
+            el.style.setProperty('--valet-el-width', `${m.width}px`)
+            el.style.setProperty('--valet-el-height', `${Math.round(m.height)}px`)
           })
-          const ro = new ResizeObserver(measure)
-          ro.observe(el)
-          measure()
           return () => {
-            ro.disconnect()
             surface.getState().unregisterChild(id)
           }
         }, [surface])
@@ -171,4 +151,4 @@ export function keyframes(
 }
 
 /*───────────────────────────────────────────────────────────*/
-export { styleCache };
+export { styleCache, globalSheet };
