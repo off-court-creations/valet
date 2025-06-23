@@ -27,7 +27,8 @@ export function useAdaptiveStreaming(
     let cancelled = false;
 
     if (type === 'application/vnd.apple.mpegurl') {
-      import('hls.js')
+      const hlsMod = 'hls.js';
+      import(hlsMod)
         .then(({ default: Hls }) => {
           if (cancelled || !video) return;
           if (Hls.isSupported()) {
@@ -40,7 +41,8 @@ export function useAdaptiveStreaming(
         })
         .catch(() => void 0);
     } else if (type === 'application/dash+xml') {
-      import('dashjs')
+      const dashMod = 'dashjs';
+      import(dashMod)
         .then((dashjs) => {
           if (cancelled || !video) return;
           dash = dashjs.MediaPlayer().create();
