@@ -311,7 +311,8 @@ const MAX_BAR_SCALE = 2;       // ceiling scale for the tallest bar
       useLayoutEffect(() => {
         if (variant !== 'bars' || !barsRef.current) return;
         const node = barsRef.current;
-        const update = (m: { height: number }) => setMaxBarH(m.height);
+        const update = (m: { height: number }) =>
+          setMaxBarH((h) => (m.height > h ? m.height : h));
         surface.registerChild(barId, node, update as any);
         update({ height: node.offsetHeight });
         return () => { surface.unregisterChild(barId); };

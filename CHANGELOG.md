@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file. The format 
 - Active bars shorten uniformly so the plateau bar matches its neighbor
 - Smooth bar resizing during drag by measuring height via Surface and only
   adjusting the plateau bar
+- Locked bar wrap height after the first measurement to prevent jitter
 
 ## [v0.5.2]
 ### Other
