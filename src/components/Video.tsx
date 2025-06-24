@@ -11,7 +11,6 @@ import React, {
 import { styled } from '../css/createStyled';
 import { preset } from '../css/stylePresets';
 import type { Presettable } from '../types';
-import useAdaptiveStreaming from './useAdaptiveStreaming';
 
 /*───────────────────────────────────────────────────────────*/
 /* Public types                                               */
@@ -60,11 +59,6 @@ export interface VideoProps extends Presettable {
   className?: string;
   /** Style passthrough. */
   style?: React.CSSProperties;
-  /** Optional HLS or DASH manifest sources. */
-  adaptiveSources?: Array<{
-    src: string;
-    type: 'application/vnd.apple.mpegurl' | 'application/dash+xml';
-  }>;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -103,12 +97,10 @@ export const Video: React.FC<VideoProps> = ({
   onError,
   className,
   style,
-  adaptiveSources,
   preset: p,
 }) => {
   const ref = useRef<HTMLVideoElement>(null);
   const [ready, setReady] = useState(!lazy);
-  useAdaptiveStreaming(adaptiveSources, ref);
 
   useEffect(() => {
     if (!lazy || ready || !('IntersectionObserver' in window)) return;

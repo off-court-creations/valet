@@ -140,13 +140,12 @@ component rather than the page. Pass `constrainHeight={false}` to opt out.
 - **TextField** – controlled text input integrating with FormControl.
 - **Tooltip** – hover/focus tooltip with theme-aware styling.
 - **Typography** – semantic text variants with responsive sizes.
-- **Video** – multi-source video wrapper with lazy loading, fullscreen, caption tracks, and optional HLS/DASH support via `useAdaptiveStreaming`.
+- **Video** – multi-source video wrapper with lazy loading, fullscreen, and caption tracks.
 
 ## Internal Files
 - **src/css/createStyled.ts** – minimal CSS-in-JS engine exporting `styled` and `keyframes`.
 - **src/css/stylePresets.ts** – registry of reusable style presets via `definePreset` and `preset` helpers.
 - **src/hooks/useGoogleFonts.ts** – hook for dynamically loading Google Fonts once.
-- **src/components/useAdaptiveStreaming.ts** – hook enabling HLS/DASH support for `<Video>`.
 - **src/system/themeStore.ts** – Zustand store holding the current theme and mode.
 - **src/system/createFormStore.ts** – factory creating typed Zustand stores for form state.
 

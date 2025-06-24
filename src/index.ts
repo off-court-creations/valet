@@ -41,4 +41,3 @@ export * from './system/themeStore';
 export * from './system/fontStore';
 export * from './system/createInitialTheme';
 export * from './hooks/useGoogleFonts';
-export * from './components/useAdaptiveStreaming';
