@@ -9,6 +9,8 @@ All notable changes to this project will be documented in this file. The format 
 - Slider "bars" variant and theme-aware tweaks
 ### Changed
 - Refined slider bars to scale vertically when active and adjust bar count based on width
+### Fixed
+- Prevented update loop when registering slider bars with Surface
 
 ## [v0.5.2]
 ### Other

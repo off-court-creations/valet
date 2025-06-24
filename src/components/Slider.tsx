@@ -269,10 +269,11 @@ import React, {
           setBarCount(count);
         };
         surface.registerChild(barsId, node, update as any);
+        update({ width: node.getBoundingClientRect().width });
         return () => {
           surface.unregisterChild(barsId);
         };
-      }, [variant, surface, geom.trackH, barsId]);
+      }, [variant, geom.trackH, barsId]);
   
       /* optional FormControl binding -------------------------- */
       let form: ReturnType<typeof useForm<any>> | null = null;
