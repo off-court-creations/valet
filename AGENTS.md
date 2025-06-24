@@ -98,6 +98,13 @@ Unless otherwise specified by user directive, pull requests should be made from 
 2. Build the library with `npm run build`.
 3. For development, use `npm run dev` to start a watch build.
 
+## CHANGELOG
+- Follow [Keep&nbsp;a&nbsp;Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/) for `CHANGELOG.md`.
+- Include an `Unreleased` section at the top.
+- Use version headings like `## [vX.Y.Z] - YYYY-MM-DD`; omit the date if unknown.
+- Link each version to its GitHub release page.
+- Early tags (starting from 0.2.1) may simply contain a "vibe coded" bullet under `Other`.
+
 ## Surface state and child registry
 
 Each `<Surface>` instance owns a small Zustand store that tracks screen size
