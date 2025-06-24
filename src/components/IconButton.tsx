@@ -132,6 +132,7 @@ export const IconButton: React.FC<IconButtonProps> = ({
     <Skin
       type="button"
       {...rest}
+      onContextMenu={(e) => e.preventDefault()}
       $variant={variant}
       $primary={theme.colors.primary}
       $text={theme.colors.text}
