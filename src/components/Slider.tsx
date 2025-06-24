@@ -148,14 +148,12 @@ import React, {
     $neutral : string;
   }>`
     width: 100%;
-    height: ${({ $height }) => `${$height}px`};
+    height: ${({ $height, $active }) => `${$height * ($active ? 1.25 : 1)}px`};
     border-radius: 1px;
     background: ${({ $active, $primary, $neutral }) =>
       $active ? $primary : $neutral};
-    transform-origin: bottom;
-    transform: scaleY(${({ $active }) => ($active ? 1.25 : 1)});
     pointer-events: none;
-    transition: background 0.15s, transform 0.15s;
+    transition: background 0.15s, height 0.15s;
   `;
   
   /*───────────────────────────────────────────────────────────*/

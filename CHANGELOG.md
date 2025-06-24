@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file. The format 
 - Bars variant now shows 25 columns by default with consistent alignment
 ### Fixed
 - Prevented update loop when registering slider bars with Surface
+- Bars stay aligned along their bottom edge in the "bars" variant
 
 ## [v0.5.2]
 ### Other
