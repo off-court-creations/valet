@@ -44,6 +44,7 @@ import React, {
   });
 
   const DEFAULT_BAR_COUNT = 25;
+  const ACTIVE_SCALE = 1.25;
   
   /*───────────────────────────────────────────────────────────*/
   /* Styled primitives                                         */
@@ -148,7 +149,7 @@ import React, {
     $neutral : string;
   }>`
     width: 100%;
-    height: ${({ $height, $active }) => `${$height * ($active ? 1.25 : 1)}px`};
+    height: ${({ $height, $active }) => `${$height * ($active ? ACTIVE_SCALE : 1)}px`};
     border-radius: 1px;
     background: ${({ $active, $primary, $neutral }) =>
       $active ? $primary : $neutral};
@@ -255,6 +256,7 @@ import React, {
       const { theme } = useTheme();
       const geom      = createSizeMap(theme)[size];
       const barH      = geom.trackH * 5;
+      const maxBarH   = barH * ACTIVE_SCALE;
       const trackBg   = theme.colors.backgroundAlt;
       const barCount  = barCountProp ?? DEFAULT_BAR_COUNT;
   
@@ -404,24 +406,32 @@ import React, {
             </Track>
           ) : (
             <BarsWrap
-              $h={barH}
+              $h={maxBarH}
               $count={barCount}
               onPointerDown={onPointerDown}
               aria-hidden
             >
-              {Array.from({ length: barCount }, (_, i) => {
-                const base = ((i + 1) / barCount) * barH;
-                const active = i < (pctFor(current) / 100) * barCount;
-                return (
-                  <Bar
-                    key={i}
-                    $height={base}
-                    $active={active}
-                    $primary={theme.colors.primary}
-                    $neutral={trackBg}
-                  />
-                );
-              })}
+              {(() => {
+                const activeBars = (pctFor(current) / 100) * barCount;
+                const plateau    = activeBars >= 2 && activeBars < barCount;
+                const plateauIdx = Math.floor(activeBars) - 1;
+
+                return Array.from({ length: barCount }, (_, i) => {
+                  const base = ((i + 1) / barCount) * barH;
+                  const adjBase =
+                    plateau && i === plateauIdx ? (i / barCount) * barH : base;
+                  const active = i < activeBars;
+                  return (
+                    <Bar
+                      key={i}
+                      $height={adjBase}
+                      $active={active}
+                      $primary={theme.colors.primary}
+                      $neutral={trackBg}
+                    />
+                  );
+                });
+              })()}
             </BarsWrap>
           )}
   
@@ -441,7 +451,7 @@ import React, {
             onKeyDown={onKeyDown}
             onPointerDown={onPointerDown}
             style={{
-              top: variant === 'track' ? geom.trackH / 2 : barH,
+              top: variant === 'track' ? geom.trackH / 2 : maxBarH,
               visibility: variant === 'track' ? 'visible' : 'hidden',
             }}
           >

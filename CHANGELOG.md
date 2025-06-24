@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file. The format 
 ### Fixed
 - Prevented update loop when registering slider bars with Surface
 - Bars stay aligned along their bottom edge in the "bars" variant
+- Reserved space for tallest bar and leveled the last active bar when below max
 
 ## [v0.5.2]
 ### Other
