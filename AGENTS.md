@@ -3,12 +3,14 @@
 Welcome to **@archway/valet**, a performant, AI-forward UI library designed as a bridge between next-generation AI proxies and web frontends. The project emphasizes predictable UI primitives, mandatory accessibility, and tight TypeScript integration.
 
 ## Project Ethos
+
 - **Superb performance** with minimal bundle size.
 - **Opinionated UI approach** so developers can focus on UX.
 - **AI integration** exceeding previous solutions.
 - **Accessibility** and inclusive design baked into every component.
 
 ## Core Features & AI Goals
+
 - **Next-gen design language** with advanced runtime theming.
 - **Semantic Interface Layer** for component-level metadata and AI-driven behavior.
 - **Context Bridge for State** built on Zustand and typed JSON schemas.
@@ -16,12 +18,14 @@ Welcome to **@archway/valet**, a performant, AI-forward UI library designed as a
 - **Integrated AI-centric architecture** that unifies semantics, state, and actions.
 
 ## Coding Standards
+
 - Code is written in **TypeScript**. Keep types strict and explicit.
 - Follow modern React (v18+) patterns.
 - Keep dependencies minimal and prefer native APIs when possible.
 - The library name `valet` is always lowercase, even when starting a sentence.
 - Begin each file with a comment header formatted like:
-  ```
+
+  ```tsx
   // ─────────────────────────────────────────────────────────────
   // src/components/Box.tsx  | valet
   // patched for strict optional props
@@ -65,6 +69,7 @@ Welcome to **@archway/valet**, a performant, AI-forward UI library designed as a
         solutions that keep running with minimal fuss are the real showpieces.
 
 ### Commit Messages
+
 - Use short, imperative sentences ("Add feature" not "Added feature").
 - Reference issues when relevant.
 - Commit messages you write should start with an identification of the most brief nature like:
@@ -94,9 +99,19 @@ git commit -m "codex for 0xbenc - commit message here"
 Unless otherwise specified by user directive, pull requests should be made from your branch into `development`.
 
 ## Building the Project
+
 1. Install dependencies with `npm install`.
 2. Build the library with `npm run build`.
 3. For development, use `npm run dev` to start a watch build.
+
+## CHANGELOG
+
+- Follow [Keep&nbsp;a&nbsp;Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/) for `CHANGELOG.md`.
+- Include an `Unreleased` section at the top.
+- Use version headings like `## [vX.Y.Z] - YYYY-MM-DD`; omit the date if unknown.
+- Link each version to its GitHub release page.
+- Early tags (starting from 0.2.1) may simply contain a "vibe coded" bullet under `Other`.
+- If your changes are changelog worthy in a given dev commit add them to the `Unreleased section`
 
 ## Surface state and child registry
 
@@ -111,6 +126,7 @@ Tables respect available height by default. Their content scrolls inside the
 component rather than the page. Pass `constrainHeight={false}` to opt out.
 
 ## Component Overview
+
 - **Accordion** – accessible expand/collapse container with composition API.
 - **AppBar** – responsive top navigation bar.
 - **Box** – baseline container that handles background, text colour and centring.
@@ -143,6 +159,7 @@ component rather than the page. Pass `constrainHeight={false}` to opt out.
 - **Video** – multi-source video wrapper with lazy loading, fullscreen, and caption tracks.
 
 ## Internal Files
+
 - **src/css/createStyled.ts** – minimal CSS-in-JS engine exporting `styled` and `keyframes`.
 - **src/css/stylePresets.ts** – registry of reusable style presets via `definePreset` and `preset` helpers.
 - **src/hooks/useGoogleFonts.ts** – hook for dynamically loading Google Fonts once.
@@ -150,6 +167,7 @@ component rather than the page. Pass `constrainHeight={false}` to opt out.
 - **src/system/createFormStore.ts** – factory creating typed Zustand stores for form state.
 
 ## valet Best Practices
+
 1. Mount `<BrowserRouter>` in `main.tsx` and render `<App>` inside it.
 2. Import global presets before the app renders so all routes share them.
 3. Call `useInitialTheme({ fonts }, [fontList])` once in `<App>` to apply the theme and preload fonts.
