@@ -9,7 +9,6 @@ import React, {
     forwardRef,
     useCallback,
     useEffect,
-    useLayoutEffect,
     useId,
     useMemo,
     useRef,
@@ -20,7 +19,6 @@ import React, {
   } from 'react';
   import { styled }            from '../css/createStyled';
   import { useTheme }          from '../system/themeStore';
-  import { useSurface }        from '../system/surfaceStore';
   import { preset }            from '../css/stylePresets';
   import { useForm }           from './FormControl';
   import type { Theme }        from '../system/themeStore';
@@ -45,7 +43,7 @@ import React, {
     lg: { trackH: 8, thumb: 22, tickH: 10, font: '0.875rem'  },
   });
 
-  const DEFAULT_BAR_COUNT = 20;
+  const DEFAULT_BAR_COUNT = 25;
   
   /*───────────────────────────────────────────────────────────*/
   /* Styled primitives                                         */
@@ -220,6 +218,8 @@ import React, {
 
     size?: SliderSize;
     variant?: SliderVariant;
+    /** Number of bars for `bars` variant. */
+    barCount?: number;
     disabled?: boolean;
   }
   
@@ -244,6 +244,7 @@ import React, {
         name,
         size = 'md',
         variant = 'track',
+        barCount: barCountProp,
         disabled = false,
         preset: p,
         className,
@@ -257,23 +258,7 @@ import React, {
       const geom      = createSizeMap(theme)[size];
       const barH      = geom.trackH * 5;
       const trackBg   = theme.colors.backgroundAlt;
-      const surface   = useSurface();
-      const barsId    = useId();
-      const [barCount, setBarCount] = useState(DEFAULT_BAR_COUNT);
-
-      useLayoutEffect(() => {
-        if (variant !== 'bars' || !wrapRef.current) return;
-        const node = wrapRef.current;
-        const update = (m: { width: number }) => {
-          const count = Math.max(10, Math.floor(m.width / (geom.trackH * 1.5)));
-          setBarCount(count);
-        };
-        surface.registerChild(barsId, node, update as any);
-        update({ width: node.getBoundingClientRect().width });
-        return () => {
-          surface.unregisterChild(barsId);
-        };
-      }, [variant, geom.trackH, barsId]);
+      const barCount  = barCountProp ?? DEFAULT_BAR_COUNT;
   
       /* optional FormControl binding -------------------------- */
       let form: ReturnType<typeof useForm<any>> | null = null;
