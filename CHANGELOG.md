@@ -8,7 +8,7 @@ All notable changes to this project will be documented in this file. The format 
 - Initial changelog with historical versions
 - Slider "bars" variant and theme-aware tweaks
 ### Changed
-- Refined slider bars to use 20 narrow bars for smoother spacing
+- Refined slider bars to scale vertically when active and adjust bar count based on width
 
 ## [v0.5.2]
 ### Other

@@ -9,6 +9,7 @@ import React, {
     forwardRef,
     useCallback,
     useEffect,
+    useLayoutEffect,
     useId,
     useMemo,
     useRef,
@@ -19,6 +20,7 @@ import React, {
   } from 'react';
   import { styled }            from '../css/createStyled';
   import { useTheme }          from '../system/themeStore';
+  import { useSurface }        from '../system/surfaceStore';
   import { preset }            from '../css/stylePresets';
   import { useForm }           from './FormControl';
   import type { Theme }        from '../system/themeStore';
@@ -43,7 +45,7 @@ import React, {
     lg: { trackH: 8, thumb: 22, tickH: 10, font: '0.875rem'  },
   });
 
-  const BAR_COUNT = 20;
+  const DEFAULT_BAR_COUNT = 20;
   
   /*───────────────────────────────────────────────────────────*/
   /* Styled primitives                                         */
@@ -148,14 +150,14 @@ import React, {
     $neutral : string;
   }>`
     width: 100%;
-    height: ${({ $height, $active }) =>
-      `${$active ? $height + 4 : $height}px`};
+    height: ${({ $height }) => `${$height}px`};
     border-radius: 1px;
     background: ${({ $active, $primary, $neutral }) =>
       $active ? $primary : $neutral};
-    transform: scaleX(${({ $active }) => ($active ? 1.25 : 1)});
+    transform-origin: bottom;
+    transform: scaleY(${({ $active }) => ($active ? 1.25 : 1)});
     pointer-events: none;
-    transition: background 0.15s, height 0.15s, transform 0.15s;
+    transition: background 0.15s, transform 0.15s;
   `;
   
   /*───────────────────────────────────────────────────────────*/
@@ -255,6 +257,22 @@ import React, {
       const geom      = createSizeMap(theme)[size];
       const barH      = geom.trackH * 5;
       const trackBg   = theme.colors.backgroundAlt;
+      const surface   = useSurface();
+      const barsId    = useId();
+      const [barCount, setBarCount] = useState(DEFAULT_BAR_COUNT);
+
+      useLayoutEffect(() => {
+        if (variant !== 'bars' || !wrapRef.current) return;
+        const node = wrapRef.current;
+        const update = (m: { width: number }) => {
+          const count = Math.max(10, Math.floor(m.width / (geom.trackH * 1.5)));
+          setBarCount(count);
+        };
+        surface.registerChild(barsId, node, update as any);
+        return () => {
+          surface.unregisterChild(barsId);
+        };
+      }, [variant, surface, geom.trackH, barsId]);
   
       /* optional FormControl binding -------------------------- */
       let form: ReturnType<typeof useForm<any>> | null = null;
@@ -403,13 +421,13 @@ import React, {
           ) : (
             <BarsWrap
               $h={barH}
-              $count={BAR_COUNT}
+              $count={barCount}
               onPointerDown={onPointerDown}
               aria-hidden
             >
-              {Array.from({ length: BAR_COUNT }, (_, i) => {
-                const base = ((i + 1) / BAR_COUNT) * barH;
-                const active = i < (pctFor(current) / 100) * BAR_COUNT;
+              {Array.from({ length: barCount }, (_, i) => {
+                const base = ((i + 1) / barCount) * barH;
+                const active = i < (pctFor(current) / 100) * barCount;
                 return (
                   <Bar
                     key={i}
