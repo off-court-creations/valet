@@ -413,13 +413,14 @@ import React, {
             >
               {(() => {
                 const activeBars = (pctFor(current) / 100) * barCount;
-                const plateau    = activeBars >= 2 && activeBars < barCount;
-                const plateauIdx = Math.floor(activeBars) - 1;
+                const lastActive = Math.ceil(activeBars) - 1;
+                const plateau =
+                  lastActive > 0 && lastActive < barCount - 1;
 
                 return Array.from({ length: barCount }, (_, i) => {
                   const base = ((i + 1) / barCount) * barH;
                   const adjBase =
-                    plateau && i === plateauIdx ? (i / barCount) * barH : base;
+                    plateau && i === lastActive ? (i / barCount) * barH : base;
                   const active = i < activeBars;
                   return (
                     <Bar
