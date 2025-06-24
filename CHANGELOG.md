@@ -7,6 +7,8 @@ All notable changes to this project will be documented in this file. The format 
 - Keep a Changelog 1.1.0 rules in `AGENTS.md`
 - Initial changelog with historical versions
 - Slider "bars" variant and theme-aware tweaks
+### Changed
+- Refined slider bars to use 20 narrow bars for smoother spacing
 
 ## [v0.5.2]
 ### Other

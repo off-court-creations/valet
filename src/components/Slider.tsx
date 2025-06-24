@@ -42,6 +42,8 @@ import React, {
     md: { trackH: 6, thumb: 18, tickH: 8,  font: '0.75rem'   },
     lg: { trackH: 8, thumb: 22, tickH: 10, font: '0.875rem'  },
   });
+
+  const BAR_COUNT = 20;
   
   /*───────────────────────────────────────────────────────────*/
   /* Styled primitives                                         */
@@ -130,11 +132,12 @@ import React, {
     pointer-events: none;
   `;
 
-  const BarsWrap = styled('div')<{ $h: number }>`
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
+  const BarsWrap = styled('div')<{ $h: number; $count: number }>`
+    display: grid;
+    grid-template-columns: repeat(${({ $count }) => $count}, 1fr);
+    align-items: end;
     height: ${({ $h }) => $h}px;
+    gap: 2px;
     touch-action: none;
   `;
 
@@ -144,13 +147,15 @@ import React, {
     $primary : string;
     $neutral : string;
   }>`
-    width: ${({ $active }) => ($active ? 4 : 3)}px;
+    width: 100%;
     height: ${({ $height, $active }) =>
       `${$active ? $height + 4 : $height}px`};
     border-radius: 1px;
     background: ${({ $active, $primary, $neutral }) =>
       $active ? $primary : $neutral};
-    transition: background 0.15s, height 0.15s, width 0.15s;
+    transform: scaleX(${({ $active }) => ($active ? 1.25 : 1)});
+    pointer-events: none;
+    transition: background 0.15s, height 0.15s, transform 0.15s;
   `;
   
   /*───────────────────────────────────────────────────────────*/
@@ -396,10 +401,15 @@ import React, {
               />
             </Track>
           ) : (
-            <BarsWrap $h={barH} onPointerDown={onPointerDown} aria-hidden>
-              {Array.from({ length: 10 }, (_, i) => {
-                const base = ((i + 1) / 10) * barH;
-                const active = i < (pctFor(current) / 100) * 10;
+            <BarsWrap
+              $h={barH}
+              $count={BAR_COUNT}
+              onPointerDown={onPointerDown}
+              aria-hidden
+            >
+              {Array.from({ length: BAR_COUNT }, (_, i) => {
+                const base = ((i + 1) / BAR_COUNT) * barH;
+                const active = i < (pctFor(current) / 100) * BAR_COUNT;
                 return (
                   <Bar
                     key={i}
