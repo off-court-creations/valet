@@ -13,6 +13,7 @@ import React, {
     useMemo,
     useRef,
     useState,
+    useLayoutEffect,
     PointerEvent as PE,
     KeyboardEvent,
     MutableRefObject,
@@ -21,6 +22,7 @@ import React, {
   import { useTheme }          from '../system/themeStore';
   import { preset }            from '../css/stylePresets';
   import { useForm }           from './FormControl';
+  import { useSurface }        from '../system/surfaceStore';
   import type { Theme }        from '../system/themeStore';
   import type { Presettable }  from '../types';
   
@@ -256,9 +258,12 @@ const MAX_BAR_SCALE = 2;       // ceiling scale for the tallest bar
     ) => {
       /* theme + geom tokens ----------------------------------- */
       const { theme } = useTheme();
+      const surface   = useSurface();
       const geom      = createSizeMap(theme)[size];
-      const barH      = geom.trackH * 5;
-      const maxBarH   = barH * MAX_BAR_SCALE;
+      const [maxBarH, setMaxBarH] = useState(
+        geom.trackH * 5 * MAX_BAR_SCALE,
+      );
+      const barH      = maxBarH / MAX_BAR_SCALE;
       const trackBg   = theme.colors.backgroundAlt;
       const barCount  = barCountProp ?? DEFAULT_BAR_COUNT;
   
@@ -300,6 +305,17 @@ const MAX_BAR_SCALE = 2;       // ceiling scale for the tallest bar
       const wrapRef  = useRef<HTMLDivElement | null>(null);
       const fillRef  = useRef<HTMLDivElement | null>(null);
       const thumbRef = useRef<HTMLButtonElement | null>(null);
+      const barsRef  = useRef<HTMLDivElement | null>(null);
+      const barId    = useId();
+
+      useLayoutEffect(() => {
+        if (variant !== 'bars' || !barsRef.current) return;
+        const node = barsRef.current;
+        const update = (m: { height: number }) => setMaxBarH(m.height);
+        surface.registerChild(barId, node, update as any);
+        update({ height: node.offsetHeight });
+        return () => { surface.unregisterChild(barId); };
+      }, [variant, surface]);
   
       /* helper – % <-> value ---------------------------------- */
       const pctFor = (val: number) => ((val - min) / (max - min)) * 100;
@@ -408,6 +424,7 @@ const MAX_BAR_SCALE = 2;       // ceiling scale for the tallest bar
             </Track>
           ) : (
             <BarsWrap
+              ref={barsRef}
               $h={maxBarH}
               $count={barCount}
               onPointerDown={onPointerDown}
@@ -415,18 +432,21 @@ const MAX_BAR_SCALE = 2;       // ceiling scale for the tallest bar
             >
               {(() => {
                 const activeBars = (pctFor(current) / 100) * barCount;
-                const lastActive = Math.ceil(activeBars) - 1;
+                const lastActive = Math.floor(activeBars);
                 const plateau =
-                  !Number.isInteger(activeBars) &&
+                  activeBars % 1 > 0 &&
                   lastActive > 0 &&
                   lastActive < barCount - 1;
-                const scale = plateau
-                  ? (lastActive + 2) / (lastActive + 1)
-                  : ACTIVE_SCALE;
 
                 return Array.from({ length: barCount }, (_, i) => {
                   const base = ((i + 1) / barCount) * barH;
+                  let scale = 1;
                   const active = i < activeBars;
+                  if (active) scale = ACTIVE_SCALE;
+                  if (plateau && i === lastActive) {
+                    const nextBase = ((i + 2) / barCount) * barH;
+                    scale = nextBase / base;
+                  }
                   return (
                     <Bar
                       key={i}

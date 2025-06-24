@@ -14,6 +14,8 @@ All notable changes to this project will be documented in this file. The format 
 - Bars stay aligned along their bottom edge in the "bars" variant
 - Reserved space for tallest bar and leveled the last active bar when below max
 - Active bars shorten uniformly so the plateau bar matches its neighbor
+- Smooth bar resizing during drag by measuring height via Surface and only
+  adjusting the plateau bar
 
 ## [v0.5.2]
 ### Other
