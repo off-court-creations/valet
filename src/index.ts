@@ -33,6 +33,7 @@ export * from './components/Tabs';
 export * from './components/TextField';
 export * from './components/Tooltip';
 export * from './components/Typography';
+export * from './components/Video';
 export * from './css/createStyled';
 export * from './css/stylePresets';
 export * from './system/createFormStore';

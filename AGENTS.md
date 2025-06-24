@@ -140,6 +140,7 @@ component rather than the page. Pass `constrainHeight={false}` to opt out.
 - **TextField** – controlled text input integrating with FormControl.
 - **Tooltip** – hover/focus tooltip with theme-aware styling.
 - **Typography** – semantic text variants with responsive sizes.
+- **Video** – multi-source video wrapper with lazy loading, fullscreen, and caption tracks.
 
 ## Internal Files
 - **src/css/createStyled.ts** – minimal CSS-in-JS engine exporting `styled` and `keyframes`.
