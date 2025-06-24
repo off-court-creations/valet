@@ -315,8 +315,10 @@ const MAX_BAR_SCALE = 2;       // ceiling scale for the tallest bar
           setMaxBarH((h) => (m.height > h ? m.height : h));
         surface.registerChild(barId, node, update as any);
         update({ height: node.offsetHeight });
-        return () => { surface.unregisterChild(barId); };
-      }, [variant, surface]);
+        return () => {
+          surface.unregisterChild(barId);
+        };
+      }, [variant]);
   
       /* helper – % <-> value ---------------------------------- */
       const pctFor = (val: number) => ((val - min) / (max - min)) * 100;

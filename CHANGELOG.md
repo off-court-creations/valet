@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file. The format 
 ### Changed
 - Bars variant now shows 25 columns by default with consistent alignment
 ### Fixed
-- Prevented update loop when registering slider bars with Surface
+- Register bars with Surface only once to prevent nested updates
 - Bars stay aligned along their bottom edge in the "bars" variant
 - Reserved space for tallest bar and leveled the last active bar when below max
 - Active bars shorten uniformly so the plateau bar matches its neighbor
