@@ -27,6 +27,8 @@ import React, {
   /*───────────────────────────────────────────────────────────*/
   /* Size map                                                  */
   type SliderSize = 'sm' | 'md' | 'lg';
+
+  export type SliderVariant = 'track' | 'bars';
   
   interface SizeTokens {
     trackH : number;
@@ -43,17 +45,24 @@ import React, {
   
   /*───────────────────────────────────────────────────────────*/
   /* Styled primitives                                         */
-  const Wrapper = styled('div')`
+  const Wrapper = styled('div')<{ $disabled?: boolean }>`
     position: relative;
     width: 100%;
     touch-action: none;         /* prevent page pan while dragging */
     user-select: none;
+    ${({ $disabled }) =>
+      $disabled &&
+      `
+        opacity: 0.5;
+        cursor: default;
+        pointer-events: none;
+      `}
   `;
   
-  const Track = styled('div')<{ $h: number }>`
+  const Track = styled('div')<{ $h: number; $bg: string }>`
     position: relative;
     height: ${({ $h }) => $h}px;
-    background: #0003;
+    background: ${({ $bg }) => $bg};
     border-radius: 9999px;
     overflow: hidden;
   `;
@@ -120,6 +129,29 @@ import React, {
     background: currentColor;
     pointer-events: none;
   `;
+
+  const BarsWrap = styled('div')<{ $h: number }>`
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    height: ${({ $h }) => $h}px;
+    touch-action: none;
+  `;
+
+  const Bar = styled('span')<{
+    $height  : number;
+    $active  : boolean;
+    $primary : string;
+    $neutral : string;
+  }>`
+    width: ${({ $active }) => ($active ? 4 : 3)}px;
+    height: ${({ $height, $active }) =>
+      `${$active ? $height + 4 : $height}px`};
+    border-radius: 1px;
+    background: ${({ $active, $primary, $neutral }) =>
+      $active ? $primary : $neutral};
+    transition: background 0.15s, height 0.15s, width 0.15s;
+  `;
   
   /*───────────────────────────────────────────────────────────*/
   /* Helpers                                                   */
@@ -178,8 +210,9 @@ import React, {
   
     /** Optional FormControl binding. */
     name?: string;
-  
+
     size?: SliderSize;
+    variant?: SliderVariant;
     disabled?: boolean;
   }
   
@@ -203,6 +236,7 @@ import React, {
         ticks,
         name,
         size = 'md',
+        variant = 'track',
         disabled = false,
         preset: p,
         className,
@@ -214,6 +248,8 @@ import React, {
       /* theme + geom tokens ----------------------------------- */
       const { theme } = useTheme();
       const geom      = createSizeMap(theme)[size];
+      const barH      = geom.trackH * 5;
+      const trackBg   = theme.colors.backgroundAlt;
   
       /* optional FormControl binding -------------------------- */
       let form: ReturnType<typeof useForm<any>> | null = null;
@@ -345,18 +381,37 @@ import React, {
           ref={setWrapperRef}
           className={mergedCls}
           style={style}
+          $disabled={disabled}
         >
-          {/* track + fill */}
-          <Track
-            $h={geom.trackH}
-            onPointerDown={onPointerDown}
-            aria-hidden
-          >
-            <Fill
-              ref={fillRef}
-              $primary={theme.colors.primary}
-            />
-          </Track>
+          {variant === 'track' ? (
+            <Track
+              $h={geom.trackH}
+              $bg={trackBg}
+              onPointerDown={onPointerDown}
+              aria-hidden
+            >
+              <Fill
+                ref={fillRef}
+                $primary={theme.colors.primary}
+              />
+            </Track>
+          ) : (
+            <BarsWrap $h={barH} onPointerDown={onPointerDown} aria-hidden>
+              {Array.from({ length: 10 }, (_, i) => {
+                const base = ((i + 1) / 10) * barH;
+                const active = i < (pctFor(current) / 100) * 10;
+                return (
+                  <Bar
+                    key={i}
+                    $height={base}
+                    $active={active}
+                    $primary={theme.colors.primary}
+                    $neutral={trackBg}
+                  />
+                );
+              })}
+            </BarsWrap>
+          )}
   
           {/* thumb */}
           <Thumb
@@ -373,7 +428,10 @@ import React, {
             $primary={theme.colors.primary}
             onKeyDown={onKeyDown}
             onPointerDown={onPointerDown}
-            style={{ top: geom.trackH / 2 }}
+            style={{
+              top: variant === 'track' ? geom.trackH / 2 : barH,
+              visibility: variant === 'track' ? 'visible' : 'hidden',
+            }}
           >
             {showValue && (
               <ValueBubble $font={geom.font}>
@@ -406,7 +464,7 @@ import React, {
       );
     },
   );
-  
+
   Slider.displayName = 'Slider';
   export default Slider;
    

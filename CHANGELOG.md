@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file. The format 
 ### Added
 - Keep a Changelog 1.1.0 rules in `AGENTS.md`
 - Initial changelog with historical versions
+- Slider "bars" variant and theme-aware tweaks
 
 ## [v0.5.2]
 ### Other
