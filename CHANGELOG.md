@@ -3,65 +3,68 @@
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Keep a Changelog 1.1.0 rules in `AGENTS.md`
+- Initial changelog with historical versions
 
 ## [v0.5.2]
-### Added
+### Other
 - vibe coded
 
 ## [v0.5.1]
-### Added
+### Other
 - vibe coded
 
 ## [v0.5.0]
-### Added
+### Other
 - vibe coded
 
 ## [v0.4.2]
-### Added
+### Other
 - vibe coded
 
 ## [v0.4.1]
-### Added
+### Other
 - vibe coded
 
 ## [v0.4.0]
-### Added
+### Other
 - vibe coded
 
 ## [v0.3.3]
-### Added
+### Other
 - vibe coded
 
 ## [v0.3.2]
-### Added
+### Other
 - vibe coded
 
 ## [v0.3.1]
-### Added
+### Other
 - vibe coded
 
 ## [v0.3.0]
-### Added
+### Other
 - vibe coded
 
 ## [v0.2.5]
-### Added
+### Other
 - vibe coded
 
 ## [v0.2.4]
-### Added
+### Other
 - vibe coded
 
 ## [v0.2.3]
-### Added
+### Other
 - vibe coded
 
 ## [v0.2.2]
-### Added
+### Other
 - vibe coded
 
 ## [v0.2.1]
-### Added
+### Other
 - vibe coded
 
 [Unreleased]: https://github.com/off-court-creations/valet/compare/v0.5.2...HEAD
