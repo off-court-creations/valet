@@ -43,8 +43,9 @@ import React, {
     lg: { trackH: 8, thumb: 22, tickH: 10, font: '0.875rem'  },
   });
 
-  const DEFAULT_BAR_COUNT = 25;
-  const ACTIVE_SCALE = 1.25;
+const DEFAULT_BAR_COUNT = 25;
+const ACTIVE_SCALE = 1.25;
+const MAX_BAR_SCALE = 2;       // ceiling scale for the tallest bar
   
   /*───────────────────────────────────────────────────────────*/
   /* Styled primitives                                         */
@@ -145,11 +146,12 @@ import React, {
   const Bar = styled('span')<{
     $height  : number;
     $active  : boolean;
+    $scale   : number;
     $primary : string;
     $neutral : string;
   }>`
     width: 100%;
-    height: ${({ $height, $active }) => `${$height * ($active ? ACTIVE_SCALE : 1)}px`};
+    height: ${({ $height, $active, $scale }) => `${$height * ($active ? $scale : 1)}px`};
     border-radius: 1px;
     background: ${({ $active, $primary, $neutral }) =>
       $active ? $primary : $neutral};
@@ -256,7 +258,7 @@ import React, {
       const { theme } = useTheme();
       const geom      = createSizeMap(theme)[size];
       const barH      = geom.trackH * 5;
-      const maxBarH   = barH * ACTIVE_SCALE;
+      const maxBarH   = barH * MAX_BAR_SCALE;
       const trackBg   = theme.colors.backgroundAlt;
       const barCount  = barCountProp ?? DEFAULT_BAR_COUNT;
   
@@ -415,18 +417,22 @@ import React, {
                 const activeBars = (pctFor(current) / 100) * barCount;
                 const lastActive = Math.ceil(activeBars) - 1;
                 const plateau =
-                  lastActive > 0 && lastActive < barCount - 1;
+                  !Number.isInteger(activeBars) &&
+                  lastActive > 0 &&
+                  lastActive < barCount - 1;
+                const scale = plateau
+                  ? (lastActive + 2) / (lastActive + 1)
+                  : ACTIVE_SCALE;
 
                 return Array.from({ length: barCount }, (_, i) => {
                   const base = ((i + 1) / barCount) * barH;
-                  const adjBase =
-                    plateau && i === lastActive ? (i / barCount) * barH : base;
                   const active = i < activeBars;
                   return (
                     <Bar
                       key={i}
-                      $height={adjBase}
+                      $height={base}
                       $active={active}
+                      $scale={scale}
                       $primary={theme.colors.primary}
                       $neutral={trackBg}
                     />
