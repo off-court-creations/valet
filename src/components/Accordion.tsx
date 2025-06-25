@@ -233,6 +233,10 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
           aria-controls={panelId}
           disabled={disabled}
           onClick={() => toggle(index)}
+          onContextMenu={(e) => {
+            e.preventDefault();
+            if (!disabled) toggle(index);
+          }}
           $open={isOpen}
           $primary={theme.colors.primary}
           $disabledColor={disabledColor}
