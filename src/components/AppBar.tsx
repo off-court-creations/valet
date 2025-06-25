@@ -9,17 +9,17 @@ import { preset } from '../css/stylePresets';
 import type { Presettable } from '../types';
 
 /*───────────────────────────────────────────────────────────*/
+export type AppBarToken = 'primary' | 'secondary' | 'tertiary';
+
 export interface AppBarProps
   extends React.HTMLAttributes<HTMLElement>,
     Presettable {
-  position?: 'static' | 'fixed' | 'absolute' | 'sticky';
-  background?: string;
-  textColor?: string;
+  color?: AppBarToken | string;
+  textColor?: AppBarToken | string;
 }
 
 /*───────────────────────────────────────────────────────────*/
 const Bar = styled('header')<{
-  $pos: string;
   $bg: string;
   $text: string;
 }>`
@@ -28,7 +28,7 @@ const Bar = styled('header')<{
   align-items: center;
   justify-content: space-between;
   padding: 0.5rem 1rem;
-  position: ${({ $pos }) => $pos};
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
@@ -39,8 +39,7 @@ const Bar = styled('header')<{
 
 /*───────────────────────────────────────────────────────────*/
 export const AppBar: React.FC<AppBarProps> = ({
-  position = 'static',
-  background,
+  color,
   textColor,
   preset: p,
   className,
@@ -49,14 +48,28 @@ export const AppBar: React.FC<AppBarProps> = ({
   ...rest
 }) => {
   const { theme } = useTheme();
-  const bg = background ?? theme.colors.primary;
-  const text = textColor ?? theme.colors.primaryText;
+
+  const isToken = (v: any): v is AppBarToken =>
+    v === 'primary' || v === 'secondary' || v === 'tertiary';
+
+  const bg = color === undefined
+    ? theme.colors.primary
+    : isToken(color)
+      ? theme.colors[color]
+      : color;
+
+  const text = textColor === undefined
+    ? isToken(color)
+      ? theme.colors[`${color}Text`]
+      : theme.colors.text
+    : isToken(textColor)
+      ? theme.colors[`${textColor}Text`]
+      : textColor;
   const presetClass = p ? preset(p) : '';
 
   return (
     <Bar
       {...rest}
-      $pos={position}
       $bg={bg}
       $text={text}
       className={[presetClass, className].filter(Boolean).join(' ')}

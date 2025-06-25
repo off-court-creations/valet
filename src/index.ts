@@ -20,6 +20,7 @@ export * from './components/Parallax';
 export * from './components/Progress';
 export * from './components/RadioGroup';
 export * from './components/Slider';
+export * from './components/Snackbar';
 export * from './components/Stack';
 export { default as Select } from './components/Select';  // ← gives you `Select`
 export type {
@@ -33,6 +34,7 @@ export * from './components/Tabs';
 export * from './components/TextField';
 export * from './components/Tooltip';
 export * from './components/Typography';
+export * from './components/Video';
 export * from './css/createStyled';
 export * from './css/stylePresets';
 export * from './system/createFormStore';
