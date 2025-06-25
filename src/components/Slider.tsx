@@ -46,8 +46,8 @@ import React, {
   });
 
 const DEFAULT_BAR_COUNT = 25;
-const ACTIVE_SCALE = 1.25;
-const MAX_BAR_SCALE = 2;       // ceiling scale for the tallest bar
+const ACTIVE_WIDTH     = 2.5;   // scaleX for active bars
+const MAX_BAR_SCALE    = 2;     // ceiling scale for the tallest bar
   
   /*───────────────────────────────────────────────────────────*/
   /* Styled primitives                                         */
@@ -141,24 +141,25 @@ const MAX_BAR_SCALE = 2;       // ceiling scale for the tallest bar
     grid-template-columns: repeat(${({ $count }) => $count}, 1fr);
     align-items: end;
     height: ${({ $h }) => $h}px;
-    gap: 2px;
+    gap: 1px;
     touch-action: none;
+    overflow: hidden;
   `;
 
   const Bar = styled('span')<{
     $height  : number;
     $active  : boolean;
-    $scale   : number;
     $primary : string;
     $neutral : string;
   }>`
     width: 100%;
-    height: ${({ $height, $active, $scale }) => `${$height * ($active ? $scale : 1)}px`};
+    height: ${({ $height }) => `${$height}px`};
     border-radius: 1px;
     background: ${({ $active, $primary, $neutral }) =>
       $active ? $primary : $neutral};
+    transform-origin: left bottom;
     pointer-events: none;
-    transition: background 0.15s, height 0.15s;
+    transition: background 0.15s, transform 0.15s;
   `;
   
   /*───────────────────────────────────────────────────────────*/
@@ -436,28 +437,34 @@ const MAX_BAR_SCALE = 2;       // ceiling scale for the tallest bar
               {(() => {
                 const activeBars = (pctFor(current) / 100) * barCount;
                 const lastActive = Math.floor(activeBars);
-                const plateau =
-                  activeBars % 1 > 0 &&
-                  lastActive > 0 &&
-                  lastActive < barCount - 1;
+                const fraction   = activeBars - lastActive;
 
                 return Array.from({ length: barCount }, (_, i) => {
-                  const base = ((i + 1) / barCount) * barH;
-                  let scale = 1;
-                  const active = i < activeBars;
-                  if (active) scale = ACTIVE_SCALE;
-                  if (plateau && i === lastActive) {
-                    const nextBase = ((i + 2) / barCount) * barH;
-                    scale = nextBase / base;
+                  const base      = ((i + 1) / barCount) * barH;
+                  const nextRaw   = ((i + 2) / barCount) * barH;
+                  let next        = nextRaw;
+                  const active    = i < activeBars;
+
+                  if (i === lastActive) {
+                    next = base + (nextRaw - base) * fraction;
                   }
+
+                  const basePct = 100 - (base / maxBarH) * 100;
+                  const nextPct = 100 - (next / maxBarH) * 100;
+
                   return (
                     <Bar
                       key={i}
                       $height={base}
                       $active={active}
-                      $scale={scale}
                       $primary={theme.colors.primary}
                       $neutral={trackBg}
+                      style={{
+                        transform: active ? `scaleX(${ACTIVE_WIDTH})` : undefined,
+                        clipPath: active
+                          ? `polygon(0 100%, 100% 100%, 100% ${nextPct}%, 0 ${basePct}%)`
+                          : undefined,
+                      }}
                     />
                   );
                 });

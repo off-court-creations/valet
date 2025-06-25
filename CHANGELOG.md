@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file. The format 
 - Slider "bars" variant and theme-aware tweaks
 ### Changed
 - Bars variant now shows 25 columns by default with consistent alignment
+- Bars expand horizontally with a diagonal top so active bars merge into a solid triangle
 ### Fixed
 - Register bars with Surface only once to prevent nested updates
 - Bars stay aligned along their bottom edge in the "bars" variant
