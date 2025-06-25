@@ -127,7 +127,7 @@ export const Snackbar: React.FC<SnackbarProps> = ({
       })
     : null;
 
-  const offsetSpacing = theme.spacing.lg
+  const offsetSpacing = theme.spacing.lg;
 
       $offset={offsetSpacing}
     if (uncontrolled) setOpenState(false);
