@@ -2,7 +2,14 @@
 // src/components/Snackbar.tsx | valet
 // ephemeral bottom overlay message
 // ─────────────────────────────────────────────────────────────
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, {
+  Children,
+  isValidElement,
+  cloneElement,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from 'react';
 import { createPortal } from 'react-dom';
 import { styled } from '../css/createStyled';
 import { useTheme } from '../system/themeStore';
@@ -95,6 +102,23 @@ export const Snackbar: React.FC<SnackbarProps> = ({
     horizontal: anchor?.horizontal ?? 'center',
   };
 
+  const actionNode = action
+    ? Children.map(action, (child, idx) => {
+        if (idx === 0) {
+          if (isValidElement(child)) {
+            return cloneElement(child as React.ReactElement<any>, {
+              style: {
+                marginLeft: theme.spacing.sm,
+                ...((child as any).props?.style ?? {}),
+              },
+            });
+          }
+          return <span style={{ marginLeft: theme.spacing.sm }}>{child}</span>;
+        }
+        return child;
+      })
+    : null;
+
   const requestClose = () => {
     if (uncontrolled) setOpenState(false);
     onClose?.();
@@ -135,7 +159,7 @@ export const Snackbar: React.FC<SnackbarProps> = ({
       aria-live="polite"
     >
       <div style={{ flex: 1 }}>{message}</div>
-      {action && <div>{action}</div>}
+      {actionNode && <div>{actionNode}</div>}
     </Root>
   );
 

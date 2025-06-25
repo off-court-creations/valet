@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file. The format 
 - Snackbar component for ephemeral messages
 ### Changed
 - Snackbar now uses the theme background with a primary outline
+- Snackbar action elements automatically receive left spacing
 ### Fixed
 - Right clicking accordion headers now toggles them instead of showing the browser menu
 - Long pressing accordion headers on touch devices now toggles them
