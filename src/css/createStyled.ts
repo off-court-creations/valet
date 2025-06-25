@@ -10,7 +10,11 @@
 // © 2025 Off-Court Creations – MIT licence
 // ─────────────────────────────────────────────────────────────
 import React, { useContext, useLayoutEffect, useRef } from 'react';
-import hash  from '@emotion/hash';
+import { hashStr } from './hash';
+
+function labelize(raw: string) {
+  return raw.toLowerCase().replace(/[^a-z0-9_-]+/g, '') || 'el';
+}
 import { SurfaceCtx } from '../system/surfaceStore';
 
 /*───────────────────────────────────────────────────────────*/
@@ -85,7 +89,12 @@ export function styled<Tag extends keyof JSX.IntrinsicElements>(tag: Tag) {
         const normalized = normalizeCSS(rawCSS);
         let className = styleCache.get(normalized);
         if (!className) {
-          className = `z-${hash(normalized)}`;
+          const rawLabel =
+            typeof tag === 'string'
+              ? tag
+              : (tag as any).displayName || (tag as any).name || 'el';
+          const label = labelize(rawLabel);
+          className = `z-${label}-${hashStr(normalized)}`;
           inject(`.${className}`, `.${className}{${normalized}}`);
           styleCache.set(normalized, className);
         }
@@ -137,7 +146,7 @@ export function keyframes(
   }
 
   const normalized = normalizeCSS(rawCSS);
-  const animName   = `z-kf-${hash(normalized)}`;
+  const animName   = `z-kf-${hashStr(normalized)}`;
 
   /* Only inject once --------------------------------------------------- */
   if (!injected.has(animName)) {

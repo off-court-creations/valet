@@ -2,7 +2,7 @@
 // src/css/stylePresets.ts  | valet
 // registry of reusable style presets via definePreset()
 // ─────────────────────────────────────────────────────────────
-import hash                 from '@emotion/hash';
+import { hashStr }          from './hash';
 import { Theme, useTheme }  from '../system/themeStore';
 import { styleCache, globalSheet } from './createStyled';
 
@@ -42,8 +42,9 @@ export function definePreset(name: string, cssFn: CSSFn) {
 
   ensureSubscription();
 
-  /* Stable class name = hash of the preset name (not the CSS) */
-  const className = `zp-${hash(name)}`;
+  /* Stable class name = readable prefix + hash */
+  const prefix    = name.toLowerCase().replace(/[^a-z0-9_-]+/g, '');
+  const className = `zp-${prefix}-${hashStr(name)}`;
 
   /* Initial render */
   const { theme } = useTheme.getState();
