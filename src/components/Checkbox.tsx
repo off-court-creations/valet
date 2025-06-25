@@ -75,10 +75,10 @@ const HiddenInput = styled('input')`
 interface BoxProps {
   $size: string;
   $checked: boolean;
-  $primary: string;
   $text: string;
   $disabled: boolean;
   $disabledColor: string;
+  $checkUri: string;
 }
 
 const Box = styled('span')<BoxProps>`
@@ -95,13 +95,9 @@ const Box = styled('span')<BoxProps>`
     ${({ $disabled, $disabledColor, $text }) =>
       $disabled ? $disabledColor : $text};
 
-  /* Fill when checked, swap to disabled colour if disabled */
-  background: ${({ $checked, $disabled, $primary, $disabledColor }) =>
-    $checked
-      ? $disabled
-        ? $disabledColor
-        : $primary
-      : 'transparent'};
+  /* Fill grey when checked */
+  background: ${({ $checked, $disabledColor }) =>
+    $checked ? $disabledColor : 'transparent'};
 
   transition: background 120ms ease, border-color 120ms ease;
 
@@ -118,12 +114,7 @@ const Box = styled('span')<BoxProps>`
     margin: auto;
     opacity: ${({ $checked }) => ($checked ? 1 : 0)};
     transform: ${({ $checked }) => ($checked ? 'scale(1)' : 'scale(0.85)')};
-    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' " +
-                    "xmlns='http://www.w3.org/2000/svg' "          +
-                    "fill='none' stroke='%23fff' stroke-width='3' " +
-                    "stroke-linecap='round' stroke-linejoin='round'%3E" +
-                    "%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E")
-               center/contain no-repeat;
+    background: ${({ $checkUri }) => `${$checkUri} center/contain no-repeat`};
     transition: opacity 120ms ease, transform 120ms ease;
     /* Fade tick when disabled */
     filter: ${({ $disabled }) => ($disabled ? 'grayscale(1)' : 'none')};
@@ -162,6 +153,8 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
         0.4,
       ),
     );
+
+    const tickUri = `url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='none' stroke='${theme.colors.primary.replace('#', '%23')}' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E")`;
 
     /* Optional FormControl binding -------------------------------------- */
     let form: ReturnType<typeof useForm<any>> | null = null;
@@ -222,10 +215,10 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
         <Box
           $size={SZ.box}
           $checked={currentChecked}
-          $primary={theme.colors.primary}
           $text={theme.colors.text}
           $disabled={disabled}
           $disabledColor={disabledColor}
+          $checkUri={tickUri}
           aria-hidden
         />
         {label ?? children}
