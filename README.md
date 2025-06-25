@@ -140,7 +140,7 @@ These have been mostly tested in the [Valet Playground](https://github.com/off-c
 
 ## Intended Components
 
-- Video component - in progress
+- TBD
 
 ## Contributing
 
