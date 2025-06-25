@@ -9,7 +9,7 @@ All notable changes to this project will be documented in this file. The format 
 - Slider "bars" variant and theme-aware tweaks
 ### Changed
 - Bars variant now shows 25 columns by default with consistent alignment
-- Bars expand horizontally with a diagonal top so active bars merge into a solid triangle
+- Active bars scale vertically to create a diagonal wedge without overlapping
 ### Fixed
 - Register bars with Surface only once to prevent nested updates
 - Bars stay aligned along their bottom edge in the "bars" variant
@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file. The format 
 - Smooth bar resizing during drag by measuring height via Surface and only
   adjusting the plateau bar
 - Locked bar wrap height after the first measurement to prevent jitter
+- Bars now maintain the same maximum height when enabled or disabled
 
 ## [v0.5.2]
 ### Other

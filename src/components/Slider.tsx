@@ -46,8 +46,7 @@ import React, {
   });
 
 const DEFAULT_BAR_COUNT = 25;
-const ACTIVE_WIDTH     = 2.5;   // scaleX for active bars
-const MAX_BAR_SCALE    = 2;     // ceiling scale for the tallest bar
+const ACTIVE_SCALE     = 1.5;   // scaleY for active bars
   
   /*───────────────────────────────────────────────────────────*/
   /* Styled primitives                                         */
@@ -261,10 +260,8 @@ const MAX_BAR_SCALE    = 2;     // ceiling scale for the tallest bar
       const { theme } = useTheme();
       const surface   = useSurface();
       const geom      = createSizeMap(theme)[size];
-      const [maxBarH, setMaxBarH] = useState(
-        geom.trackH * 5 * MAX_BAR_SCALE,
-      );
-      const barH      = maxBarH / MAX_BAR_SCALE;
+      const [maxBarH, setMaxBarH] = useState(geom.trackH * 5);
+      const barH      = maxBarH;
       const trackBg   = theme.colors.backgroundAlt;
       const barCount  = barCountProp ?? DEFAULT_BAR_COUNT;
   
@@ -440,17 +437,18 @@ const MAX_BAR_SCALE    = 2;     // ceiling scale for the tallest bar
                 const fraction   = activeBars - lastActive;
 
                 return Array.from({ length: barCount }, (_, i) => {
-                  const base      = ((i + 1) / barCount) * barH;
-                  const nextRaw   = ((i + 2) / barCount) * barH;
-                  let next        = nextRaw;
-                  const active    = i < activeBars;
+                  const base    = ((i + 1) / barCount) * barH;
+                  const nextRaw = ((i + 2) / barCount) * barH;
+                  const active  = i < activeBars;
+                  let next      = nextRaw;
 
                   if (i === lastActive) {
                     next = base + (nextRaw - base) * fraction;
                   }
 
-                  const basePct = 100 - (base / maxBarH) * 100;
-                  const nextPct = 100 - (next / maxBarH) * 100;
+                  next = Math.min(next, maxBarH);
+
+                  const scale = active ? Math.min(next / base, ACTIVE_SCALE) : 1;
 
                   return (
                     <Bar
@@ -459,12 +457,7 @@ const MAX_BAR_SCALE    = 2;     // ceiling scale for the tallest bar
                       $active={active}
                       $primary={theme.colors.primary}
                       $neutral={trackBg}
-                      style={{
-                        transform: active ? `scaleX(${ACTIVE_WIDTH})` : undefined,
-                        clipPath: active
-                          ? `polygon(0 100%, 100% 100%, 100% ${nextPct}%, 0 ${basePct}%)`
-                          : undefined,
-                      }}
+                      style={{ transform: active ? `scaleY(${scale})` : undefined }}
                     />
                   );
                 });
