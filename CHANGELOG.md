@@ -11,6 +11,8 @@ All notable changes to this project will be documented in this file. The format 
 - Snackbar now uses the theme background with a primary outline
 - Snackbar outline width doubled for stronger emphasis
 - Snackbar action elements automatically receive left spacing
+- Snackbar now centers relative to its surface with theme-based offset
+- Snackbar fade duration matches surface (200ms)
 ### Fixed
 - Right clicking accordion headers now toggles them instead of showing the browser menu
 - Long pressing accordion headers on touch devices now toggles them

@@ -6,6 +6,7 @@ import React, {
   Children,
   isValidElement,
   cloneElement,
+  useContext,
   useEffect,
   useLayoutEffect,
   useState,
@@ -13,6 +14,7 @@ import React, {
 import { createPortal } from 'react-dom';
 import { styled } from '../css/createStyled';
 import { useTheme } from '../system/themeStore';
+import { SurfaceCtx } from '../system/surfaceStore';
 import { preset } from '../css/stylePresets';
 import type { Presettable } from '../types';
 
@@ -46,6 +48,7 @@ const Root = styled('div')<{
   $open: boolean;
   $anchor: Required<SnackbarAnchor>;
   $gap: string;
+  $offset: string;
 }>`
   position: fixed;
   display: flex;
@@ -57,17 +60,20 @@ const Root = styled('div')<{
   box-shadow: 0 2px 5px rgba(0,0,0,0.15);
   background: var(--snackbar-bg);
   color: var(--snackbar-fg);
-  border: 0.25rem solid var(--snackbar-outline);
-  z-index: 9999;
-  transition: transform 0.25s ease, opacity 0.25s ease;
+  transition: transform 200ms ease, opacity 200ms ease;
+  ${({ $anchor, $offset }) => `${$anchor.vertical}: ${$offset};`}
+      ? 'left: 50%;'
 
-  ${({ $anchor }) => `${$anchor.vertical}: 1rem;`}
-  ${({ $anchor }) =>
-    $anchor.horizontal === 'center'
-      ? 'left: 50%; translate: -50% 0;'
-      : `${$anchor.horizontal}: 1rem;`}
+    ${({ $anchor }) => ($anchor.horizontal === 'center' ? '-50%' : '0')},
+        ? '20px'
+        : '-20px'}
+  const surfaceCtx = useContext(SurfaceCtx);
+  const portalTarget = surfaceCtx?.getState().element ?? document.body;
 
-  opacity: ${({ $open }) => ($open ? 1 : 0)};
+      const t = setTimeout(() => setMount(false), 200);
+
+      $offset={theme.spacing.lg}
+  return createPortal(node, portalTarget);
   transform: translate(
     ${({ $anchor }) =>
       $anchor.horizontal === 'center' ? '-50%' : '0'},
