@@ -11,6 +11,7 @@ import React, {
   ReactNode,
   useCallback,
   useContext,
+  useRef,
   useMemo,
   useState,
 } from 'react';
@@ -204,6 +205,9 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   const { theme, mode }          = useTheme();
   const { open, toggle, headerTag } = useAccordion();
 
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const wasLongPress = useRef(false);
+
   const isOpen   = open.includes(index);
   const headerId = `acc-btn-${index}`;
   const panelId  = `acc-panel-${index}`;
@@ -235,7 +239,37 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
           onClick={() => toggle(index)}
           onContextMenu={(e) => {
             e.preventDefault();
-            if (!disabled) toggle(index);
+            if (!disabled && !wasLongPress.current) toggle(index);
+            wasLongPress.current = false;
+          }}
+          onPointerDown={(e) => {
+            if (e.pointerType === 'touch') {
+              longPressTimer.current = setTimeout(() => {
+                wasLongPress.current = true;
+                if (!disabled) toggle(index);
+              }, 500);
+            }
+          }}
+          onPointerUp={() => {
+            if (longPressTimer.current) {
+              clearTimeout(longPressTimer.current);
+              longPressTimer.current = null;
+            }
+            wasLongPress.current = false;
+          }}
+          onPointerLeave={() => {
+            if (longPressTimer.current) {
+              clearTimeout(longPressTimer.current);
+              longPressTimer.current = null;
+            }
+            wasLongPress.current = false;
+          }}
+          onPointerCancel={() => {
+            if (longPressTimer.current) {
+              clearTimeout(longPressTimer.current);
+              longPressTimer.current = null;
+            }
+            wasLongPress.current = false;
           }}
           $open={isOpen}
           $primary={theme.colors.primary}
