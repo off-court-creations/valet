@@ -45,10 +45,12 @@ export interface SnackbarProps extends Presettable {
 const Root = styled('div')<{
   $open: boolean;
   $anchor: Required<SnackbarAnchor>;
+  $gap: string;
 }>`
   position: fixed;
   display: flex;
   align-items: center;
+  gap: ${({ $gap }) => $gap};
   max-width: min(24rem, calc(100vw - 2rem));
   padding: 0.75rem 1rem;
   border-radius: 4px;
@@ -149,6 +151,7 @@ export const Snackbar: React.FC<SnackbarProps> = ({
     <Root
       $open={isOpen}
       $anchor={finalAnchor}
+      $gap={theme.spacing.sm}
       className={presetClasses}
       style={{
         '--snackbar-bg': theme.colors.background,

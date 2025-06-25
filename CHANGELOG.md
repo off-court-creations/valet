@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file. The format 
 ### Fixed
 - Right clicking accordion headers now toggles them instead of showing the browser menu
 - Long pressing accordion headers on touch devices now toggles them
+- Snackbar actions now align correctly in right-anchored positions
 
 ## [v0.5.2]
 ### Other
