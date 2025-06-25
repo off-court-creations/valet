@@ -127,7 +127,9 @@ export const Snackbar: React.FC<SnackbarProps> = ({
       })
     : null;
 
-  const requestClose = () => {
+  const offsetSpacing = theme.spacing.lg
+
+      $offset={offsetSpacing}
     if (uncontrolled) setOpenState(false);
     onClose?.();
   };

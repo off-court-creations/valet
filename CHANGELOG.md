@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file. The format 
 - Right clicking accordion headers now toggles them instead of showing the browser menu
 - Long pressing accordion headers on touch devices now toggles them
 - Snackbar actions now align correctly in right-anchored positions
+- Fix typing issue on `$offset` prop in Snackbar
 
 ## [v0.5.2]
 ### Other
