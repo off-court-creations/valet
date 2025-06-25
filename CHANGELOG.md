@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [v0.6.1]
+### Changed
+- Replaced @emotion/hash hashing with siphash
+- Adjusted CSS-in-JS:
+  - Updated the styled helper so each CSS rule’s class name uses a readable label and a siphash value
+  - Keyframe and preset class names now rely on the new hash function, including a sanitized prefix for presets
+
 ## [v0.6.0]
 ### Added
 - `Keep a Changelog` 1.1.0 rules in `AGENTS.md`
