@@ -48,6 +48,7 @@ const Root = styled('div')<{
   box-shadow: 0 2px 5px rgba(0,0,0,0.15);
   background: var(--snackbar-bg);
   color: var(--snackbar-fg);
+  border: 1px solid var(--snackbar-outline);
   z-index: 9999;
   transition: transform 0.25s ease, opacity 0.25s ease;
 
@@ -126,8 +127,9 @@ export const Snackbar: React.FC<SnackbarProps> = ({
       $anchor={finalAnchor}
       className={presetClasses}
       style={{
-        '--snackbar-bg': theme.colors.surface,
+        '--snackbar-bg': theme.colors.background,
         '--snackbar-fg': theme.colors.text,
+        '--snackbar-outline': theme.colors.primary,
       } as React.CSSProperties}
       role="status"
       aria-live="polite"

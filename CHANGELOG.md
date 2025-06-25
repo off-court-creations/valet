@@ -7,6 +7,8 @@ All notable changes to this project will be documented in this file. The format 
 - Keep a Changelog 1.1.0 rules in `AGENTS.md`
 - Initial changelog with historical versions
 - Snackbar component for ephemeral messages
+### Changed
+- Snackbar now uses the theme background with a primary outline
 ### Fixed
 - Right clicking accordion headers now toggles them instead of showing the browser menu
 - Long pressing accordion headers on touch devices now toggles them
