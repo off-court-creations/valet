@@ -9,7 +9,8 @@ All notable changes to this project will be documented in this file. The format 
 - Slider "bars" variant and theme-aware tweaks
 ### Changed
 - Bars variant now shows 25 columns by default with consistent alignment
-- Active bars scale vertically to create a diagonal wedge without overlapping
+- Active bars widen and connect with a diagonal wedge
+- Inactive bars leave a small gap for clarity
 ### Fixed
 - Register bars with Surface only once to prevent nested updates
 - Bars stay aligned along their bottom edge in the "bars" variant

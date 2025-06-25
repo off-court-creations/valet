@@ -46,7 +46,7 @@ import React, {
   });
 
 const DEFAULT_BAR_COUNT = 25;
-const ACTIVE_SCALE     = 1.5;   // scaleY for active bars
+const ACTIVE_WIDTH     = 1.6;   // scaleX for active bars
   
   /*───────────────────────────────────────────────────────────*/
   /* Styled primitives                                         */
@@ -140,25 +140,24 @@ const ACTIVE_SCALE     = 1.5;   // scaleY for active bars
     grid-template-columns: repeat(${({ $count }) => $count}, 1fr);
     align-items: end;
     height: ${({ $h }) => $h}px;
-    gap: 1px;
+    gap: 3px;
     touch-action: none;
     overflow: hidden;
   `;
 
   const Bar = styled('span')<{
-    $height  : number;
     $active  : boolean;
     $primary : string;
     $neutral : string;
   }>`
     width: 100%;
-    height: ${({ $height }) => `${$height}px`};
+    height: 100%;
     border-radius: 1px;
     background: ${({ $active, $primary, $neutral }) =>
       $active ? $primary : $neutral};
-    transform-origin: left bottom;
+    transform-origin: center bottom;
     pointer-events: none;
-    transition: background 0.15s, transform 0.15s;
+    transition: background 0.15s, transform 0.15s, clip-path 0.15s;
   `;
   
   /*───────────────────────────────────────────────────────────*/
@@ -448,16 +447,18 @@ const ACTIVE_SCALE     = 1.5;   // scaleY for active bars
 
                   next = Math.min(next, maxBarH);
 
-                  const scale = active ? Math.min(next / base, ACTIVE_SCALE) : 1;
+                  const clip = `polygon(0 ${maxBarH - base}px, 100% ${maxBarH - (active ? next : base)}px, 100% ${maxBarH}px, 0 ${maxBarH}px)`;
 
                   return (
                     <Bar
                       key={i}
-                      $height={base}
                       $active={active}
                       $primary={theme.colors.primary}
                       $neutral={trackBg}
-                      style={{ transform: active ? `scaleY(${scale})` : undefined }}
+                      style={{
+                        transform: active ? `scaleX(${ACTIVE_WIDTH})` : undefined,
+                        clipPath: clip,
+                      }}
                     />
                   );
                 });
