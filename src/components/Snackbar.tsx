@@ -57,7 +57,7 @@ const Root = styled('div')<{
   box-shadow: 0 2px 5px rgba(0,0,0,0.15);
   background: var(--snackbar-bg);
   color: var(--snackbar-fg);
-  border: 1px solid var(--snackbar-outline);
+  border: 0.125rem solid var(--snackbar-outline);
   z-index: 9999;
   transition: transform 0.25s ease, opacity 0.25s ease;
 
