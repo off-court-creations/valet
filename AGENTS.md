@@ -107,10 +107,7 @@ Unless otherwise specified by user directive, pull requests should be made from 
 ## CHANGELOG
 
 - Follow [Keep&nbsp;a&nbsp;Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/) for `CHANGELOG.md`.
-- Include an `Unreleased` section at the top.
-- Use version headings like `## [vX.Y.Z] - YYYY-MM-DD`; omit the date if unknown.
-- Link each version to its GitHub release page.
-- Early tags (starting from 0.2.1) may simply contain a "vibe coded" bullet under `Other`.
+- Use the `Unreleased` section at the top.
 - If your changes are changelog worthy in a given dev commit add them to the `Unreleased section`
 
 ## Surface state and child registry

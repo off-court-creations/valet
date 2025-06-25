@@ -20,6 +20,7 @@ export * from './components/Parallax';
 export * from './components/Progress';
 export * from './components/RadioGroup';
 export * from './components/Slider';
+export * from './components/Snackbar';
 export * from './components/Stack';
 export { default as Select } from './components/Select';  // ← gives you `Select`
 export type {
