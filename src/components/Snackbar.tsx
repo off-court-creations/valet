@@ -67,8 +67,8 @@ const Root = styled('div')<{
     ${({ $anchor }) => ($anchor.horizontal === 'center' ? '-50%' : '0')},
         ? '20px'
         : '-20px'}
-  const surfaceCtx = useContext(SurfaceCtx);
-  const portalTarget = surfaceCtx?.getState().element ?? document.body;
+export const Snackbar = React.forwardRef<HTMLDivElement, SnackbarProps>(function Snackbar({
+}, ref) {
 
       const t = setTimeout(() => setMount(false), 200);
 
@@ -131,7 +131,8 @@ export const Snackbar: React.FC<SnackbarProps> = ({
 
       $offset={offsetSpacing}
     if (uncontrolled) setOpenState(false);
-    onClose?.();
+      ref={ref}
+});
   };
 
   useLayoutEffect(() => {
