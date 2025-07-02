@@ -62,6 +62,7 @@ npm run dev
 ```shell
 cd YourReactLibraryThatUses_valet
 npm link @archway/valet
+npm run dev
 ```
 
 ## Build
