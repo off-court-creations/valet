@@ -5,8 +5,12 @@ Welcome to **@archway/valet**, a performant, AI-forward UI library designed as a
 ## Project Ethos
 
 - **Superb performance** with minimal bundle size.
-- **Opinionated UI approach** so developers can focus on UX.
-- **AI integration** exceeding previous solutions.
+- **Opinionated UI approach** so developers can focus on UX and functionality.
+- **AI integration** exceeding previous solutions. Systems we intend to draw from and surpass:
+  - NLWeb / MCP
+  - RAG
+  - Semantic Web
+  - IOT / Internet of Shit
 - **Accessibility** and inclusive design baked into every component.
 
 ## Core Features & AI Goals

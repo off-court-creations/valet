@@ -1,0 +1,31 @@
+{
+  // ---------------------------------------------------------------------------
+  //  Node-side tooling (Vite config, scripts, etc.) — *never shipped to browser*
+  // ---------------------------------------------------------------------------
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",                    // your package.json is `"type": "module"`
+    "moduleResolution": "bundler",
+    "lib": ["ES2020"],
+    "allowImportingTsExtensions": true,
+
+    /* Type safety ----------------------------------------------------------- */
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+
+    /* Build behaviour ------------------------------------------------------- */
+    "composite": false,
+    "noEmit": true,
+
+    /* Ambient types --------------------------------------------------------- */
+    "types": ["node"]
+  },
+
+  /* Files that live exclusively in a Node context -------------------------- */
+  "include": [
+    "vite.config.ts",
+    "scripts/**/*.ts"
+  ],
+  "exclude": ["node_modules"]
+}
