@@ -8,7 +8,10 @@ export type ThemeMode  = 'light' | 'dark';
 
 export interface Theme {
   colors: Record<string, string>;
-  spacing: Record<string, string>;
+  /** Returns a CSS length for the given number of spacing units */
+  spacing: (units: number) => string;
+  /** Base unit used by the spacing helper */
+  spacingUnit: string;
   breakpoints: Record<Breakpoint, number>;
   typography: Record<string, Record<Breakpoint, string>>;
   fonts: {
@@ -27,10 +30,11 @@ interface ThemeStore {
   setTheme: (patch: Partial<Theme>) => void;
 }
 
+const spacingUnit = '1rem';
+const unitSuffix = spacingUnit.replace(/^[0-9.]+/, '');
 const common: Omit<Theme, 'colors'> = {
-  spacing: {
-    xs: '0.25rem', sm: '0.5rem', md: '1rem', lg: '1.5rem', xl: '2rem',
-  },
+  spacing: (u: number) => `${u}${unitSuffix}`,
+  spacingUnit,
   breakpoints: {
     xs: 0, sm: 600, md: 960, lg: 1280, xl: 1920,
   },

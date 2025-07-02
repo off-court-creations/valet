@@ -15,7 +15,7 @@ export default function SpeedDialDemoPage() {
   return (
     <Surface>
       <Stack
-        spacing="lg"
+        spacing={3}
         preset="showcaseStack"
       >
         <Typography variant="h2" bold>SpeedDial Showcase</Typography>
@@ -25,7 +25,7 @@ export default function SpeedDialDemoPage() {
         <Typography variant="body">Click the fab to reveal actions.</Typography>
         <SpeedDial icon={<Icon icon="mdi:plus" />} actions={actions} />
 
-        <Stack direction="row" spacing="lg">
+        <Stack direction="row" spacing={3}>
           <Button variant="outlined" onClick={toggleMode}>Toggle light / dark</Button>
           <Button onClick={() => navigate(-1)}>← Back</Button>
         </Stack>

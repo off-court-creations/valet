@@ -33,7 +33,7 @@ export default function TabsDemoPage() {
   return (
     <Surface>
       <Stack
-        spacing="lg"
+        spacing={3}
         preset="showcaseStack"
       >
         <Typography variant="h2" bold>
@@ -129,7 +129,7 @@ export default function TabsDemoPage() {
         <Button
           size="lg"
           onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing['lg'] }}
+          style={{ marginTop: theme.spacing(3) }}
         >
           ← Back
         </Button>

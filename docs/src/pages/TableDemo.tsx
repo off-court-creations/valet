@@ -111,14 +111,14 @@ export default function TableDemoPage() {
   return (
     <Surface>
       <Stack
-        spacing="lg"
+        spacing={3}
         preset="showcaseStack"
       >
         {/* Header bar ------------------------------------------------------- */}
         <Panel variant="alt" fullWidth>
           <Stack
             direction="row"
-            spacing="lg"
+            spacing={3}
             style={{ alignItems: 'center', flexWrap: 'wrap' }}
           >
             <Typography variant="h2" bold>
@@ -137,7 +137,7 @@ export default function TableDemoPage() {
         <Panel variant="alt" fullWidth>
           <Stack
             direction="row"
-            spacing="xl"
+            spacing={4}
             style={{ flexWrap: 'wrap', alignItems: 'flex-end' }}
           >
             <TextField
@@ -220,7 +220,7 @@ export default function TableDemoPage() {
         <Button
           size="lg"
           onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing['lg'] }}
+          style={{ marginTop: theme.spacing(3) }}
         >
           ← Back
         </Button>

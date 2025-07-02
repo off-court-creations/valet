@@ -23,7 +23,7 @@ import { useNavigate } from 'react-router-dom';
 /* Style Presets                                                              */
 /*  Chip-style radios (pill background, hover/selected colour swap)           */
 definePreset('chipRadio', (t) => `
-  padding         : ${t.spacing['sm']} ${t.spacing['md']};
+  padding         : ${t.spacing(1)} ${t.spacing(2)};
   border-radius   : 9999px;
   background      : ${t.colors['backgroundAlt']};
   transition      : background 0.2s ease, color 0.2s ease, filter 0.2s ease;
@@ -63,7 +63,7 @@ export default function RadioGroupDemoPage() {
   return (
     <Surface>
       <Stack
-        spacing="lg"
+        spacing={3}
         preset="showcaseStack"
       >
         {/* Page header ----------------------------------------------------- */}
@@ -99,7 +99,7 @@ export default function RadioGroupDemoPage() {
 
         {/* 3. Sizes --------------------------------------------------------- */}
         <Typography variant="h3">3. Sizes</Typography>
-        <Stack direction="row" spacing="lg">
+        <Stack direction="row" spacing={3}>
           <RadioGroup defaultValue="sm" size="sm">
             <Radio value="sm" label="size='sm'" />
             <Radio value="sm2" label="size='sm'" />
@@ -146,7 +146,7 @@ export default function RadioGroupDemoPage() {
         <FormControl
           useStore={useSurveyForm}
           onSubmitValues={handleSubmit}
-          style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing['md'] }}
+          style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing(2) }}
         >
           <Typography bold>Favourite colour?</Typography>
           <RadioGroup name="color" row>
@@ -177,7 +177,7 @@ export default function RadioGroupDemoPage() {
         <Button
           size="lg"
           onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing['lg'] }}
+          style={{ marginTop: theme.spacing(3) }}
         >
           ← Back
         </Button>

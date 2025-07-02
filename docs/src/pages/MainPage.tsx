@@ -8,18 +8,18 @@ export default function MainPage() {
 
   return (
     <Surface>
-      <Box style={{ margin: theme.spacing['md'] }} centered>
+      <Box style={{ margin: theme.spacing(2) }} centered>
         <Typography variant="h1"><b>zeroui</b> Demo</Typography>
       </Box>
 
-      <Box style={{ margin: theme.spacing['md'] }} centered>
+      <Box style={{ margin: theme.spacing(2) }} centered>
         <Stack>
-          <Panel style={{ margin: theme.spacing['md'], padding: theme.spacing['md'] }} variant="alt">
+          <Panel style={{ margin: theme.spacing(2), padding: theme.spacing(2) }} variant="alt">
             <Box centered>
               <Typography variant="h2">Components</Typography>
             </Box>
 
-            <Stack direction="row" spacing="lg" style={{ marginTop: theme.spacing['lg'] }}>
+            <Stack direction="row" spacing={3} style={{ marginTop: theme.spacing(3) }}>
               <Button
                 size="lg"
                 onClick={() => navigate('/accordion-demo')}
@@ -211,10 +211,10 @@ export default function MainPage() {
             </Stack>
           </Panel>
 
-          <Panel style={{ margin: theme.spacing['md'], padding: theme.spacing['md'] }}>
+          <Panel style={{ margin: theme.spacing(2), padding: theme.spacing(2) }}>
             <Typography variant="h2">Demos</Typography>
 
-            <Stack direction="row" spacing="lg" style={{ marginTop: theme.spacing['lg'] }}>
+            <Stack direction="row" spacing={3} style={{ marginTop: theme.spacing(3) }}>
               <Button
                 size="lg"
                 onClick={() => navigate('/presets')}
@@ -246,13 +246,13 @@ export default function MainPage() {
           </Panel>
 
           <Box
-            style={{ margin: theme.spacing['md'] }}
+            style={{ margin: theme.spacing(2) }}
           >
             <Button
               size="lg"
               variant='outlined'
               onClick={toggleMode}
-              style={{ margin: theme.spacing['md'] }}
+              style={{ margin: theme.spacing(2) }}
             >
               Switch to {mode === 'light' ? 'dark' : 'light'} mode
             </Button>

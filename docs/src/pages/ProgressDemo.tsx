@@ -47,7 +47,7 @@ export default function ProgressDemoPage() {
   return (
     <Surface>
       <Stack
-        spacing="lg"
+        spacing={3}
         preset="showcaseStack"
       >
         {/* Page header ----------------------------------------------------- */}
@@ -60,7 +60,7 @@ export default function ProgressDemoPage() {
 
         {/* 1. Circular indeterminate -------------------------------------- */}
         <Typography variant="h3">1. Circular – indeterminate</Typography>
-        <Stack direction="row" spacing="md">
+        <Stack direction="row" spacing={2}>
           <Progress variant="circular" mode="indeterminate" />
           <Progress variant="circular" mode="indeterminate" size="lg" />
           <Progress
@@ -73,7 +73,7 @@ export default function ProgressDemoPage() {
 
         {/* 2. Circular determinate (controlled) --------------------------- */}
         <Typography variant="h3">2. Circular – determinate (controlled)</Typography>
-        <Stack direction="row" spacing="md" style={{ alignItems: 'center' }}>
+        <Stack direction="row" spacing={2} style={{ alignItems: 'center' }}>
           <Progress
             variant="circular"
             mode="determinate"
@@ -104,11 +104,11 @@ export default function ProgressDemoPage() {
 
         {/* 6. Interactive controls ---------------------------------------- */}
         <Typography variant="h3">6. Play with value</Typography>
-        <Stack spacing="md">
+        <Stack spacing={2}>
           <Box style={{ maxWidth: 480 }}>
             <Slider value={value} onChange={setValue} />
           </Box>
-          <Stack direction="row" spacing="md">
+          <Stack direction="row" spacing={2}>
             <Button onClick={() => setValue((v) => Math.max(0, v - 10))}>
               –10
             </Button>
@@ -128,7 +128,7 @@ export default function ProgressDemoPage() {
         <Button
           size="lg"
           onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing['lg'] }}
+          style={{ marginTop: theme.spacing(3) }}
         >
           ← Back
         </Button>

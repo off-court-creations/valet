@@ -9,33 +9,33 @@ export default function GridDemoPage() {
   return (
     <Surface>
       <Stack
-        spacing="lg"
+        spacing={3}
         preset="showcaseStack"
       >
         <Typography variant="h2" bold>Grid Showcase</Typography>
         <Typography variant="subtitle">Responsive column layout</Typography>
 
         <Typography variant="h3">1. Two columns</Typography>
-        <Grid columns={2} gap="md">
-          <Box style={{ background: theme.colors['primary'] as string, color: theme.colors['primaryText'] as string, padding: theme.spacing['md'] }}>A</Box>
-          <Box style={{ background: theme.colors['secondary'] as string, color: theme.colors['secondaryText'] as string, padding: theme.spacing['md'] }}>B</Box>
+        <Grid columns={2} gap={2}>
+          <Box style={{ background: theme.colors['primary'] as string, color: theme.colors['primaryText'] as string, padding: theme.spacing(2) }}>A</Box>
+          <Box style={{ background: theme.colors['secondary'] as string, color: theme.colors['secondaryText'] as string, padding: theme.spacing(2) }}>B</Box>
         </Grid>
 
         <Typography variant="h3">2. Four columns</Typography>
-        <Grid columns={4} gap="sm">
+        <Grid columns={4} gap={1}>
           {['1', '2', '3', '4', '5', '6', '7', '8'].map(n => (
-            <Box key={n} style={{ background: theme.colors['primary'] as string, color: theme.colors['primaryText'] as string, padding: theme.spacing['sm'], textAlign: 'center' }}>{n}</Box>
+            <Box key={n} style={{ background: theme.colors['primary'] as string, color: theme.colors['primaryText'] as string, padding: theme.spacing(1), textAlign: 'center' }}>{n}</Box>
           ))}
         </Grid>
 
         <Typography variant="h3">2. Eight columns</Typography>
-        <Grid columns={8} gap="sm">
+        <Grid columns={8} gap={1}>
           {['1', '2', '3', '4', '5', '6', '7', '8'].map(n => (
-            <Box key={n} style={{ background: theme.colors['primary'] as string, color: theme.colors['primaryText'] as string, padding: theme.spacing['sm'], textAlign: 'center' }}>{n}</Box>
+            <Box key={n} style={{ background: theme.colors['primary'] as string, color: theme.colors['primaryText'] as string, padding: theme.spacing(1), textAlign: 'center' }}>{n}</Box>
           ))}
         </Grid>
 
-        <Stack direction="row" spacing="lg">
+        <Stack direction="row" spacing={3}>
           <Button variant="outlined" onClick={toggleMode}>Toggle light / dark</Button>
           <Button onClick={() => navigate(-1)}>← Back</Button>
         </Stack>

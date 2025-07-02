@@ -40,7 +40,7 @@ export default function SnackbarDemoPage() {
 
   return (
     <Surface>
-      <Stack spacing="lg" preset="showcaseStack">
+      <Stack spacing={3} preset="showcaseStack">
         {/* Header --------------------------------------------------------- */}
         <Typography variant="h2" bold>
           Snackbar Showcase
@@ -76,7 +76,7 @@ export default function SnackbarDemoPage() {
           open={ctrlOpen}
           onClose={() => setCtrlOpen(false)}
         >
-          <Stack direction="row" spacing="sm" wrap={false}>
+          <Stack direction="row" spacing={1} wrap={false}>
             <Typography variant="body" autoSize>
               Draft saved – click to dismiss
             </Typography>
@@ -116,7 +116,7 @@ export default function SnackbarDemoPage() {
         <Button
           size="lg"
           onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing['lg'] }}
+          style={{ marginTop: theme.spacing(3) }}
         >
           ← Back
         </Button>

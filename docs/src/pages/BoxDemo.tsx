@@ -21,8 +21,8 @@ definePreset('fancyBox', (t) => `
     color        : ${t.colors['primaryText']};
     border-radius: 20px;
     box-shadow   : 0 6px 16px ${t.colors['text']}22;
-    padding      : ${t.spacing['lg']};
-    margin       : ${t.spacing['lg']};
+    padding      : ${t.spacing(3)};
+    margin       : ${t.spacing(3)};
   `);
 
 // Frosted-glass effect (needs backdrop-filter support)
@@ -30,7 +30,7 @@ definePreset('glassBox', (t) => `
     background      : ${t.colors['background']}CC;
     backdrop-filter : blur(6px) saturate(180%);
     border          : 1px solid ${t.colors['text']}22;
-    padding         : ${t.spacing['lg']};
+    padding         : ${t.spacing(3)};
     border-radius   : 12px;
   `);
 
@@ -52,7 +52,7 @@ export default function BoxDemoPage() {
   return (
     <Surface /* Surface already defaults to theme background */>
       <Stack
-        spacing="lg"
+        spacing={3}
         preset="showcaseStack"
       >
         {/* Page header ----------------------------------------------------- */}
@@ -71,7 +71,7 @@ export default function BoxDemoPage() {
 
         {/* 2. Background prop with auto-text detection --------------------- */}
         <Typography variant="h3">2. background&nbsp;prop</Typography>
-        <Stack spacing="md">
+        <Stack spacing={2}>
           <Box background={theme.colors['primary']}>
             <Typography variant="h4">{`background={theme.colors.primary}`}</Typography>
           </Box>
@@ -88,7 +88,7 @@ export default function BoxDemoPage() {
         <Box
           background={"#333333"}
           textColor={theme.colors['tertiary']}
-          style={{ padding: theme.spacing['md'] }}
+          style={{ padding: theme.spacing(2) }}
         >
           <Typography>
             Greetings Programs!
@@ -103,7 +103,7 @@ export default function BoxDemoPage() {
           background={theme.colors['tertiary']}
           style={{
             border: `2px dashed ${theme.colors['text']}`,
-            padding: theme.spacing['lg'],
+            padding: theme.spacing(3),
             borderRadius: 12,
           }}
         >
@@ -112,8 +112,8 @@ export default function BoxDemoPage() {
 
         {/* 5. Nested Boxes & CSS custom props ------------------------------ */}
         <Typography variant="h3">5. Nested Boxes</Typography>
-        <Box background={theme.colors['primary']} style={{ padding: theme.spacing['md'] }}>
-          <Box background={theme.colors['secondary']} style={{ padding: theme.spacing['sm'] }}>
+        <Box background={theme.colors['primary']} style={{ padding: theme.spacing(2) }}>
+          <Box background={theme.colors['secondary']} style={{ padding: theme.spacing(1) }}>
             <Typography>
               Child automatically receives&nbsp;
               <code style={{ color: 'var(--zero-text-color)' }}>--zero-text-color</code>
@@ -123,7 +123,7 @@ export default function BoxDemoPage() {
 
         {/* 6. Presets ------------------------------------------------------- */}
         <Typography variant="h3">6. Presets</Typography>
-        <Stack spacing="md">
+        <Stack spacing={2}>
           <Box preset="fancyBox">
             <Typography>preset="fancyBox"</Typography>
           </Box>
@@ -149,7 +149,7 @@ export default function BoxDemoPage() {
         <Button variant="outlined" onClick={toggleMode}>Toggle light / dark mode</Button>
 
         {/* Back nav -------------------------------------------------------- */}
-        <Button size="lg" onClick={() => navigate(-1)} style={{ marginTop: theme.spacing['lg'] }}>
+        <Button size="lg" onClick={() => navigate(-1)} style={{ marginTop: theme.spacing(3) }}>
           ← Back
         </Button>
       </Stack>

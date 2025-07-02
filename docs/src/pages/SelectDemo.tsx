@@ -43,7 +43,7 @@ export default function SelectDemoPage() {
   return (
     <Surface>
       <Stack
-        spacing="lg"
+        spacing={3}
         preset="showcaseStack"
       >
         <Typography variant="h2" bold>Select Playground</Typography>
@@ -61,7 +61,7 @@ export default function SelectDemoPage() {
 
         {/* ————————————————— Controlled single */}
         <Typography variant="h3">2. Controlled – single</Typography>
-        <Stack direction="row" spacing="md" style={{ alignItems: 'center' }}>
+        <Stack direction="row" spacing={2} style={{ alignItems: 'center' }}>
           <Select value={pet} onChange={(v) => setPet(v as string)}>
             <Select.Option value="cat">Cat</Select.Option>
             <Select.Option value="dog">Dog</Select.Option>
@@ -72,7 +72,7 @@ export default function SelectDemoPage() {
 
         {/* ————————————————— Controlled multiple */}
         <Typography variant="h3">3. Controlled – multiple</Typography>
-        <Stack direction="row" spacing="md" style={{ alignItems: 'center' }}>
+        <Stack direction="row" spacing={2} style={{ alignItems: 'center' }}>
           <Select
             multiple
             value={langs}
@@ -92,7 +92,7 @@ export default function SelectDemoPage() {
 
         {/* ————————————————— Sizes */}
         <Typography variant="h3">4. Size variants</Typography>
-        <Stack direction="row" spacing="md">
+        <Stack direction="row" spacing={2}>
           {(['sm', 'md', 'lg'] as const).map((s) => (
             <Select key={s} size={s} placeholder={s.toUpperCase()}>
               <Select.Option value="a">A</Select.Option>
@@ -103,7 +103,7 @@ export default function SelectDemoPage() {
 
         {/* ————————————————— Disabled / preset */}
         <Typography variant="h3">5. Disabled & preset</Typography>
-        <Stack direction="row" spacing="md">
+        <Stack direction="row" spacing={2}>
           <Select disabled placeholder="Disabled">
             <Select.Option value="x">X</Select.Option>
           </Select>
@@ -120,7 +120,7 @@ export default function SelectDemoPage() {
           useStore={useDemoForm}
           onSubmitValues={(vals) => setSubmitted(vals)}
         >
-          <Stack spacing="md">
+          <Stack spacing={2}>
             <Select
               name="country"
               placeholder="Country"
@@ -152,7 +152,7 @@ export default function SelectDemoPage() {
           <Box
             style={{
               background   : theme.colors['surfaceElevated'],
-              padding      : theme.spacing['md'],
+              padding      : theme.spacing(2),
               borderRadius : 6,
               whiteSpace   : 'pre',
               fontFamily   : 'monospace',
@@ -169,7 +169,7 @@ export default function SelectDemoPage() {
         <Button
           size="lg"
           onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing['lg'] }}
+          style={{ marginTop: theme.spacing(3) }}
         >
           ← Back
         </Button>
