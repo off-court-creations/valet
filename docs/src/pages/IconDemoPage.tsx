@@ -19,12 +19,12 @@ import { useNavigate } from 'react-router-dom';
 definePreset('iconCard', t => `
     background   : ${t.colors['secondary']};
     color        : ${t.colors['secondaryText']};
-    padding      : ${t.spacing['lg']};
+    padding      : ${t.spacing(1)};
     border-radius: 16px;
     box-shadow   : 0 4px 12px ${t.colors['text']}22;
     display      : inline-flex;
     align-items  : center;
-    gap          : ${t.spacing['md']};
+    gap          : ${t.spacing(1)};
   `);
 
 /*─────────────────────────────────────────────────────────────────────────────*/
@@ -47,7 +47,7 @@ export default function IconDemoPage() {
   return (
     <Surface>
       <Stack
-        spacing="lg"
+        spacing={1}
         preset="showcaseStack"
       >
         {/* Page header ----------------------------------------------------- */}
@@ -68,7 +68,7 @@ export default function IconDemoPage() {
 
         {/* 2. Sizing -------------------------------------------------------- */}
         <Typography variant="h3">2. Size prop</Typography>
-        <Stack direction="row" spacing="md">
+        <Stack direction="row" spacing={1}>
           <Icon icon="mdi:home" size={16} aria-label="home-sm" />
           <Icon icon="mdi:home" size="24px" aria-label="home-md" />
           <Icon icon="mdi:home" size="2.5rem" aria-label="home-lg" />
@@ -77,7 +77,7 @@ export default function IconDemoPage() {
 
         {/* 3. Color override ---------------------------------------------- */}
         <Typography variant="h3">3. Colour override</Typography>
-        <Stack direction="row" spacing="md">
+        <Stack direction="row" spacing={1}>
           <Icon icon="carbon:warning-filled" color={theme.colors['primary']} size={32} />
           <Icon icon="carbon:warning-filled" color="#ff6b6b" size={32} />
           <Icon icon="carbon:warning-filled" color="gold" size={32} />
@@ -98,7 +98,7 @@ export default function IconDemoPage() {
 
         {/* 7. Icon inside Button ------------------------------------------- */}
         <Typography variant="h3">6. Icon in other components</Typography>
-        <Stack direction="row" spacing="md">
+        <Stack direction="row" spacing={1}>
           <Button>
             <Icon icon="mdi:thumb-up" size={18} style={{ marginRight: 8 }} />
             Like
@@ -119,7 +119,7 @@ export default function IconDemoPage() {
         <Button
           size="lg"
           onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing['lg'] }}
+          style={{ marginTop: theme.spacing(1) }}
         >
           ← Back
         </Button>

@@ -32,7 +32,7 @@ const useContactForm = createFormStore<ContactValues>({
 definePreset('cardForm', (t) => `
   background:${t.colors['primary']};
   border-radius:16px;
-  padding:${t.spacing['lg']};
+  padding:${t.spacing(1)};
 `);
 
 definePreset('underlineField', (t) => `
@@ -53,7 +53,7 @@ export default function FormDemoPage() {
   return (
     <Surface style={{ backgroundColor: theme.colors['background'] }}>
       <Box preset="cardForm">
-        <Typography variant="h3" style={{ marginBottom: theme.spacing['lg'] }}>
+        <Typography variant="h3" style={{ marginBottom: theme.spacing(1) }}>
           Contact Form Demo
         </Typography>
 
@@ -65,7 +65,7 @@ export default function FormDemoPage() {
             setSubmitted(values);
           }}
         >
-          <Stack spacing="md">
+          <Stack spacing={1}>
             <TextField
               name="name"
               label="Name"
@@ -99,7 +99,7 @@ export default function FormDemoPage() {
 
       {/* Echo submitted payload */}
       {submitted && (
-        <Box style={{ padding: theme.spacing['lg'] }}>
+        <Box style={{ padding: theme.spacing(1) }}>
           <Typography variant="h4">Server Echo</Typography>
           <pre style={{ color: theme.colors['text'] }}>
             {JSON.stringify(submitted, null, 2)}
@@ -108,7 +108,7 @@ export default function FormDemoPage() {
       )}
 
       {/* Nav back */}
-      <Stack direction="row" spacing="md" style={{ padding: theme.spacing['md'] }}>
+      <Stack direction="row" spacing={1} style={{ padding: theme.spacing(1) }}>
         <Button variant="contained" size="lg" onClick={() => navigate(-1)}>
           Go Back
         </Button>

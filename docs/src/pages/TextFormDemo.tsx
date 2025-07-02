@@ -41,7 +41,7 @@ export default function TextFieldDemoPage() {
   return (
     <Surface>
       <Stack
-        spacing="lg"
+        spacing={1}
         preset="showcaseStack"
       >
         {/* Page header --------------------------------------------------- */}
@@ -54,7 +54,7 @@ export default function TextFieldDemoPage() {
 
         {/* 1. Basic stand-alone fields ---------------------------------- */}
         <Typography variant="h3">1. Stand-alone TextField</Typography>
-        <Stack spacing="md">
+        <Stack spacing={1}>
           {/* uncontrolled */}
           <TextField name="basic" placeholder="Uncontrolled" />
 
@@ -79,11 +79,11 @@ export default function TextFieldDemoPage() {
 
         {/* 2. TextFields inside a FormControl --------------------------- */}
         <Typography variant="h3">2. FormControl demo</Typography>
-        <Panel variant="alt" style={{ padding: theme.spacing['lg'] }}>
+        <Panel variant="alt" style={{ padding: theme.spacing(1) }}>
           <FormControl
             useStore={useContactForm}
             onSubmitValues={(vals) => alert(JSON.stringify(vals, null, 2))}
-            style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing['md'] }}
+            style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing(1) }}
           >
             <TextField name="name" label="Name" placeholder="Jane Doe" />
             <TextField
@@ -116,7 +116,7 @@ export default function TextFieldDemoPage() {
         <Button
           size="lg"
           onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing['lg'] }}
+          style={{ marginTop: theme.spacing(1) }}
         >
           ← Back
         </Button>

@@ -104,9 +104,28 @@ Unless otherwise specified by user directive, pull requests should be made from 
 
 ## Building the Project
 
-1. Install dependencies with `npm install`.
-2. Build the library with `npm run build`.
-3. For development, use `npm run dev` to start a watch build.
+1. Install dependencies with: 
+
+```shell
+cd valet
+npm install
+cd docs
+npm install
+```
+
+2. You can build the library and docs with `npm run build`.
+
+3. To test WIP changes in the components or system code using a page from the docs, use an NPM link:
+
+```shell
+cd valet
+npm link
+npm run dev
+# Second terminal emulator, or use TMUX
+cd valet
+cd docs
+npm link @archway/valet
+npm run dev
 
 ## CHANGELOG
 

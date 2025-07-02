@@ -49,7 +49,7 @@ export default function ListDemoPage() {
   return (
     <Surface>
       <Stack
-        spacing="lg"
+        spacing={1}
         preset="showcaseStack"
       >
         {/* Header --------------------------------------------------------- */}
@@ -68,8 +68,8 @@ export default function ListDemoPage() {
 
         {/* 2. striped & hoverable props ---------------------------------- */}
         <Typography variant="h3">2. <code>striped</code> & <code>hoverable</code></Typography>
-        <Panel variant="alt" style={{ padding: theme.spacing['md'] }}>
-          <Stack direction="row" spacing="md" wrap={false}>
+        <Panel variant="alt" style={{ padding: theme.spacing(1) }}>
+          <Stack direction="row" spacing={1} wrap={false}>
             <Checkbox
               label="striped"
               checked={striped}
@@ -128,7 +128,7 @@ export default function ListDemoPage() {
         <Button
           size="lg"
           onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing['lg'] }}
+          style={{ marginTop: theme.spacing(1) }}
         >
           ← Back
         </Button>

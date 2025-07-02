@@ -18,9 +18,9 @@ import {
     return (
       <Surface>
         <Stack
-          spacing="lg"
+          spacing={1}
           style={{
-            padding : theme.spacing['lg'],
+            padding : theme.spacing(1),
             maxWidth: 1024,
             margin  : '0 auto',
           }}

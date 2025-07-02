@@ -13,7 +13,7 @@ export interface GridProps
   extends React.HTMLAttributes<HTMLDivElement>,
     Presettable {
   columns?: number;
-  gap?: keyof ReturnType<typeof useTheme.getState>['theme']['spacing'] | string;
+  gap?: number | string;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -26,7 +26,7 @@ const Root = styled('div')<{ $cols: number; $gap: string }>`
 /*───────────────────────────────────────────────────────────*/
 export const Grid: React.FC<GridProps> = ({
   columns = 2,
-  gap = 'md',
+  gap = 2,
   preset: p,
   style,
   className,
@@ -36,8 +36,8 @@ export const Grid: React.FC<GridProps> = ({
   const { theme } = useTheme();
 
   let g: string;
-  if (typeof gap === 'string' && gap in theme.spacing) {
-    g = theme.spacing[gap as keyof typeof theme.spacing];
+  if (typeof gap === 'number') {
+    g = theme.spacing(gap);
   } else {
     g = String(gap);
   }

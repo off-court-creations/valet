@@ -22,7 +22,7 @@ definePreset('fancyPanel', (t) => `
   background   : ${t.colors['backgroundAlt']};
   border-radius: 16px;
   box-shadow   : 0 4px 14px ${t.colors['text']}22;
-  padding      : ${t.spacing['lg']};
+  padding      : ${t.spacing(1)};
 `);
 
 // Frosted glass (requires backdrop-filter support)
@@ -31,7 +31,7 @@ definePreset('glassPanel', (t) => `
   backdrop-filter : blur(8px) saturate(160%);
   border          : 1px solid ${t.colors['text']}33;
   border-radius   : 12px;
-  padding         : ${t.spacing['lg']};
+  padding         : ${t.spacing(1)};
 `);
 
 // Loud gradient banner
@@ -53,7 +53,7 @@ export default function PanelDemoPage() {
   return (
     <Surface /* Surface already defaults to theme background */>
       <Stack
-        spacing="lg"
+        spacing={1}
         preset="showcaseStack"
       >
         {/* Page header ----------------------------------------------------- */}
@@ -66,22 +66,22 @@ export default function PanelDemoPage() {
 
         {/* 1. Default Panel ------------------------------------------------- */}
         <Typography variant="h3">1. Default Panel (variant=&quot;main&quot;)</Typography>
-        <Panel style={{ padding: theme.spacing['md'] }}>
+        <Panel style={{ padding: theme.spacing(1) }}>
           <Typography>(no props) — inherits theme backgroundAlt &amp; text</Typography>
         </Panel>
 
         {/* 2. alt variant --------------------------------------------------- */}
         <Typography variant="h3">2. variant=&quot;alt&quot;</Typography>
-        <Panel variant="alt" style={{ padding: theme.spacing['md'] }}>
+        <Panel variant="alt" style={{ padding: theme.spacing(1) }}>
           <Typography>Transparent with outline by default</Typography>
         </Panel>
 
         {/* 3. background override ------------------------------------------ */}
         <Typography variant="h3">3. background&nbsp;prop</Typography>
-        <Stack spacing="md">
+        <Stack spacing={1}>
           <Panel
             background={theme.colors['primary']}
-            style={{ padding: theme.spacing['md'] }}
+            style={{ padding: theme.spacing(1) }}
           >
             <Typography>{`background=${theme.colors['primary']}`}</Typography>
           </Panel>
@@ -92,7 +92,7 @@ export default function PanelDemoPage() {
         <Panel
           fullWidth
           style={{
-            padding: theme.spacing['md'],
+            padding: theme.spacing(1),
             textAlign: 'center',
           }}
         >
@@ -103,7 +103,7 @@ export default function PanelDemoPage() {
         <Typography variant="h3">5. Inline style</Typography>
         <Panel
           style={{
-            padding      : theme.spacing['lg'],
+            padding      : theme.spacing(1),
             borderRadius : 12,
             border       : `2px dashed ${theme.colors['text']}`,
           }}
@@ -113,8 +113,8 @@ export default function PanelDemoPage() {
 
         {/* 6. Nested Panels & colour inheritance --------------------------- */}
         <Typography variant="h3">6. Nested Panels</Typography>
-        <Panel background={theme.colors['primary']} style={{ padding: theme.spacing['md'] }}>
-          <Panel variant="alt" fullWidth style={{ padding: theme.spacing['sm'] }}>
+        <Panel background={theme.colors['primary']} style={{ padding: theme.spacing(1) }}>
+          <Panel variant="alt" fullWidth style={{ padding: theme.spacing(1) }}>
             <Typography>
               Parent sets&nbsp;
               <code style={{ color: 'var(--zero-text-color)' }}>--zero-text-color</code>
@@ -125,7 +125,7 @@ export default function PanelDemoPage() {
 
         {/* 7. Preset demos -------------------------------------------------- */}
         <Typography variant="h3">7. Presets</Typography>
-        <Stack spacing="md">
+        <Stack spacing={1}>
           <Panel preset="fancyPanel">
             <Typography>preset=&quot;fancyPanel&quot;</Typography>
           </Panel>
@@ -156,7 +156,7 @@ export default function PanelDemoPage() {
         <Button
           size="lg"
           onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing['lg'] }}
+          style={{ marginTop: theme.spacing(1) }}
         >
           ← Back
         </Button>

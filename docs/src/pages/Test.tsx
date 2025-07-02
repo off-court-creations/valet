@@ -18,7 +18,7 @@ export default function TestPage() {
 
     return (
         <Surface style={{ backgroundColor: theme.colors['background'] }}>
-            <Stack direction="row" spacing="sm">
+            <Stack direction="row" spacing={1}>
                 <Button>
                     <Typography>
                         Really Long Button
@@ -43,7 +43,7 @@ export default function TestPage() {
 
             <br />
 
-            <Panel style={{ padding: theme.spacing['sm'], margin: theme.spacing['sm'], borderRadius: theme.spacing['sm'] }}>
+            <Panel style={{ padding: theme.spacing(1), margin: theme.spacing(1), borderRadius: theme.spacing(1) }}>
                 <RadioGroup
                     name="shipping"
                     value={method}
@@ -51,7 +51,7 @@ export default function TestPage() {
                     row
                     size="lg"
                 >
-                    <Stack direction="column" spacing="sm">
+                    <Stack direction="column" spacing={1}>
                         <Radio value="standard" label="Standard (3–5 days)" />
                         <Radio value="express" label="Express (1–2 days)" />
                         <Radio value="overnight" label="Overnight" disabled />

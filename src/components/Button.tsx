@@ -27,9 +27,9 @@ export interface ButtonProps
 
 /*───────────────────────────────────────────────────────────*/
 const createSizeMap = (t: Theme) => ({
-  sm: { padV: t.spacing.sm, padH: t.spacing.md, font: '0.75rem',  height: '2rem'  },
-  md: { padV: t.spacing.sm, padH: t.spacing.lg, font: '0.875rem', height: '2.5rem'},
-  lg: { padV: t.spacing.md, padH: t.spacing.lg, font: '1rem',     height: '3rem'  },
+  sm: { padV: t.spacing(1), padH: t.spacing(1), font: '1rem',  height: '2rem'  },
+  md: { padV: t.spacing(1), padH: t.spacing(1), font: '1rem', height: '2.5rem'},
+  lg: { padV: t.spacing(1), padH: t.spacing(1), font: '1rem',     height: '3rem'  },
 } as const);
 
 /*───────────────────────────────────────────────────────────*/

@@ -21,8 +21,8 @@ export default function DrawerDemoPage() {
   return (
     <Surface>
       <Stack
-        spacing="lg"
-        style={{ padding: theme.spacing['lg'], maxWidth: 980, margin: '0 auto' }}
+        spacing={1}
+        style={{ padding: theme.spacing(1), maxWidth: 980, margin: '0 auto' }}
       >
         <Typography variant="h2" bold>
           Drawer Showcase
@@ -35,7 +35,7 @@ export default function DrawerDemoPage() {
         <Typography variant="h3">1. Left drawer</Typography>
         <Button onClick={() => setLeftOpen(true)}>Open left drawer</Button>
         <Drawer open={leftOpen} onClose={() => setLeftOpen(false)}>
-          <Stack spacing="md" style={{ padding: theme.spacing['md'] }}>
+          <Stack spacing={1} style={{ padding: theme.spacing(1) }}>
             <Typography variant="h4" bold>
               Left Drawer
             </Typography>
@@ -45,12 +45,12 @@ export default function DrawerDemoPage() {
 
         {/* 2. Controlled right drawer */}
         <Typography variant="h3">2. Controlled right drawer</Typography>
-        <Stack direction="row" spacing="md">
+        <Stack direction="row" spacing={1}>
           <Button onClick={() => setRightOpen(true)}>Open</Button>
           <Button onClick={() => setRightOpen(false)}>Close</Button>
         </Stack>
         <Drawer anchor="right" open={rightOpen} onClose={() => setRightOpen(false)}>
-          <Stack spacing="md" style={{ padding: theme.spacing['md'] }}>
+          <Stack spacing={1} style={{ padding: theme.spacing(1) }}>
             <Typography variant="h4" bold>
               Controlled Drawer
             </Typography>
@@ -68,7 +68,7 @@ export default function DrawerDemoPage() {
           disableBackdropClick
           disableEscapeKeyDown
         >
-          <Stack spacing="md" style={{ padding: theme.spacing['md'] }}>
+          <Stack spacing={1} style={{ padding: theme.spacing(1) }}>
             <Typography variant="h4" bold>
               Can't close via backdrop or ESC
             </Typography>
@@ -77,7 +77,7 @@ export default function DrawerDemoPage() {
         </Drawer>
 
         {/* Theme toggle + back nav */}
-        <Stack direction="row" spacing="lg">
+        <Stack direction="row" spacing={1}>
           <Button variant="outlined" onClick={toggleMode}>
             Toggle light / dark
           </Button>

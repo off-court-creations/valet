@@ -4,7 +4,7 @@
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
 import { styled }            from '../css/createStyled';
-import { useTheme, Theme }   from '../system/themeStore';
+import { useTheme }   from '../system/themeStore';
 import { preset }            from '../css/stylePresets';
 import type { Presettable }  from '../types';
 
@@ -14,8 +14,8 @@ export interface StackProps
   extends React.HTMLAttributes<HTMLDivElement>,
     Presettable {
   direction?: 'row' | 'column';
-  /** Accepts a theme spacing token or any CSS length. */
-  spacing?: keyof Theme['spacing'] | string | undefined;
+  /** Number of spacing units or any CSS length. */
+  spacing?: number | string | undefined;
   /** If `true`, children wrap when they run out of space. Defaults to
    *  `true` for `row`, `false` for `column`. */
   wrap?: boolean;
@@ -48,12 +48,12 @@ export const Stack: React.FC<StackProps> = ({
 }) => {
   const { theme } = useTheme();
 
-  /* Resolve theme spacing token → actual CSS length */
+  /* Resolve number → theme spacing */
   let gap: string;
   if (spacing === undefined) {
     gap = '0';
-  } else if (typeof spacing === 'string' && spacing in theme.spacing) {
-    gap = theme.spacing[spacing as keyof Theme['spacing']];
+  } else if (typeof spacing === 'number') {
+    gap = theme.spacing(spacing);
   } else {
     gap = String(spacing);
   }

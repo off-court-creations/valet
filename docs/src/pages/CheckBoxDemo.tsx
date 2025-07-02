@@ -41,7 +41,7 @@ export default function CheckboxDemoPage() {
   return (
     <Surface /* Surface already defaults to theme background */>
       <Stack
-        spacing="lg"
+        spacing={1}
         preset="showcaseStack"
       >
         {/* Page header ----------------------------------------------------- */}
@@ -54,7 +54,7 @@ export default function CheckboxDemoPage() {
 
         {/* 1. Uncontrolled -------------------------------------------------- */}
         <Typography variant="h3">1. Uncontrolled</Typography>
-        <Stack spacing="md">
+        <Stack spacing={1}>
           <Checkbox name="uc1" label="Default unchecked" />
           <Checkbox
             name="uc2"
@@ -74,7 +74,7 @@ export default function CheckboxDemoPage() {
 
         {/* 3. Sizes --------------------------------------------------------- */}
         <Typography variant="h3">3. Sizes</Typography>
-        <Stack spacing="md">
+        <Stack spacing={1}>
           <Checkbox name="sm" size="sm" defaultChecked label="size='sm'" />
           <Checkbox name="md" size="md" defaultChecked label="size='md'" />
           <Checkbox name="lg" size="lg" defaultChecked label="size='lg'" />
@@ -82,7 +82,7 @@ export default function CheckboxDemoPage() {
 
         {/* 4. Disabled ------------------------------------------------------ */}
         <Typography variant="h3">4. Disabled</Typography>
-        <Stack spacing="md">
+        <Stack spacing={1}>
           <Checkbox
             name="d1"
             defaultChecked
@@ -97,7 +97,7 @@ export default function CheckboxDemoPage() {
         <FormControl
           useStore={useSignupForm}
           onSubmitValues={handleSubmit}
-          style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing['md'] }}
+          style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing(1) }}
         >
           <Checkbox
             name="terms"
@@ -123,7 +123,7 @@ export default function CheckboxDemoPage() {
         <Button
           size="lg"
           onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing['lg'] }}
+          style={{ marginTop: theme.spacing(1) }}
         >
           ← Back
         </Button>
