@@ -10,12 +10,12 @@ export default function MainPage() {
     <Surface>
       <Typography variant="h1" centered><b>zeroui</b> Demo</Typography>
 
-      <Box style={{ margin: theme.spacing(1) }} centered> 
-        <Stack>
-          <Panel style={{ margin: theme.spacing(1), padding: theme.spacing(1) }} variant="alt">
+      <Box centered style={{ margin: 0, padding: 0 }}>
+        <Stack style={{ margin: 0, padding: 0 }}>
+          <Panel variant="alt">
             <Typography variant="h2" centered>Components</Typography>
 
-            <Stack direction="row" spacing={1} style={{ marginTop: theme.spacing(1) }}>
+            <Stack direction="row" spacing={1}>
               <Button
                 size="md"
                 onClick={() => navigate('/accordion-demo')}
@@ -207,10 +207,10 @@ export default function MainPage() {
             </Stack>
           </Panel>
 
-          <Panel style={{ margin: theme.spacing(1), padding: theme.spacing(1) }}>
-            <Typography variant="h2">Demos</Typography>
+          <Panel>
+            <Typography centered variant="h2">Demos</Typography>
 
-            <Stack direction="row" spacing={1} style={{ marginTop: theme.spacing(1) }}>
+            <Stack direction="row" spacing={1} style={{ margin: 0, padding: 0 }}>
               <Button
                 size="md"
                 onClick={() => navigate('/presets')}
@@ -241,21 +241,17 @@ export default function MainPage() {
             </Stack>
           </Panel>
 
-          <Box
-            style={{ margin: theme.spacing(1) }}
-          >
+          <Box style={{margin: 0}}>
             <Button
-              size="md"
+              size="lg"
               variant='outlined'
               onClick={toggleMode}
-              style={{ margin: theme.spacing(1) }}
             >
               Switch to {mode === 'light' ? 'dark' : 'light'} mode
             </Button>
           </Box>
         </Stack>
       </Box>
-
     </Surface>
   );
 }

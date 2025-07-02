@@ -135,7 +135,6 @@ export const Surface: React.FC<SurfaceProps> = ({
           ...cssVars,      // then fonts and other variables
           '--valet-screen-width': `${width}px`,
           '--valet-screen-height': `${Math.round(height)}px`,
-          margin: gap,
           ...style,        // finally allow external overrides
         } as any}
         {...props}
