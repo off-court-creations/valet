@@ -9,7 +9,7 @@ export default function GridDemoPage() {
   return (
     <Surface>
       <Stack
-        spacing={3}
+        spacing={1}
         preset="showcaseStack"
       >
         <Typography variant="h2" bold>Grid Showcase</Typography>
@@ -17,8 +17,8 @@ export default function GridDemoPage() {
 
         <Typography variant="h3">1. Two columns</Typography>
         <Grid columns={2} gap={2}>
-          <Box style={{ background: theme.colors['primary'] as string, color: theme.colors['primaryText'] as string, padding: theme.spacing(2) }}>A</Box>
-          <Box style={{ background: theme.colors['secondary'] as string, color: theme.colors['secondaryText'] as string, padding: theme.spacing(2) }}>B</Box>
+          <Box style={{ background: theme.colors['primary'] as string, color: theme.colors['primaryText'] as string, padding: theme.spacing(1) }}>A</Box>
+          <Box style={{ background: theme.colors['secondary'] as string, color: theme.colors['secondaryText'] as string, padding: theme.spacing(1) }}>B</Box>
         </Grid>
 
         <Typography variant="h3">2. Four columns</Typography>
@@ -35,7 +35,7 @@ export default function GridDemoPage() {
           ))}
         </Grid>
 
-        <Stack direction="row" spacing={3}>
+        <Stack direction="row" spacing={1}>
           <Button variant="outlined" onClick={toggleMode}>Toggle light / dark</Button>
           <Button onClick={() => navigate(-1)}>← Back</Button>
         </Stack>

@@ -21,8 +21,8 @@ definePreset('cardBox', t => `
   background: ${t.colors['background']};
   border-radius: 20px;
   box-shadow: 0 6px 16px ${t.colors['text']}22;
-  padding: ${t.spacing(3)};
-  margin: ${t.spacing(3)};
+  padding: ${t.spacing(1)};
+  margin: ${t.spacing(1)};
 `);
 
 definePreset('accentText', t => `
@@ -38,7 +38,7 @@ definePreset('ghostButton', t => `
 definePreset('pillStack', t => `
   background: ${t.colors['tertiary']}33;
   border-radius: 9999px;
-  padding: ${t.spacing(2)};
+  padding: ${t.spacing(1)};
 `);
 
 /*───────────────────────────────────────────────────────────────*/
@@ -56,13 +56,13 @@ export default function PresetDemoPage() {
           Preset Showcase
         </Typography>
 
-        <Typography variant="body" style={{ marginBottom: theme.spacing(2) }}>
+        <Typography variant="body" style={{ marginBottom: theme.spacing(1) }}>
           Every component below uses a different <code>preset</code>.
         </Typography>
 
         {/* “Pill” Stack containing ghost buttons */}
-        <Stack direction="row" spacing={2} preset="pillStack">
-          <Button preset="ghostButton" size="md" style={{ marginLeft: theme.spacing(2) }}>
+        <Stack direction="row" spacing={1} preset="pillStack">
+          <Button preset="ghostButton" size="md" style={{ marginLeft: theme.spacing(1) }}>
             Ghost 1
           </Button>
           <Button preset="ghostButton" size="md">
@@ -72,12 +72,12 @@ export default function PresetDemoPage() {
       </Box>
 
       {/* Default-styled Box for contrast */}
-      <Box style={{ padding: theme.spacing(3) }}>
+      <Box style={{ padding: theme.spacing(1) }}>
         <Typography>Default Box (no preset)</Typography>
       </Box>
 
       {/* Navigation */}
-      <Stack direction="row" spacing={2} style={{ padding: theme.spacing(2) }}>
+      <Stack direction="row" spacing={1} style={{ padding: theme.spacing(1) }}>
         <Button variant="contained" size="lg" preset="ghostButton" onClick={() => navigate(-1)}>
           Go Back
         </Button>

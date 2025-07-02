@@ -40,7 +40,7 @@ export default function ModalDemoPage() {
   return (
     <Surface>
       <Stack
-        spacing={3}
+        spacing={1}
         preset="showcaseStack"
       >
         <Typography variant="h2" bold>
@@ -102,7 +102,7 @@ export default function ModalDemoPage() {
 
         {/* 3. Controlled modal -------------------------------------------- */}
         <Typography variant="h3">3. Controlled modal</Typography>
-        <Stack direction="row" spacing={2}>
+        <Stack direction="row" spacing={1}>
           <Button onClick={() => setControlledOpen(true)}>Open</Button>
           <Button onClick={() => setControlledOpen(false)}>Close</Button>
         </Stack>
@@ -135,7 +135,7 @@ export default function ModalDemoPage() {
 
         {/* 5. Size props --------------------------------------------------- */}
         <Typography variant="h3">5. maxWidth & fullWidth</Typography>
-        <Stack direction="row" spacing={2}>
+        <Stack direction="row" spacing={1}>
           <Button onClick={() => setDialogOpen(true)}>maxWidth (default)</Button>
           <Button onClick={() => setControlledOpen(true)}>fullWidth</Button>
         </Stack>
@@ -148,7 +148,7 @@ export default function ModalDemoPage() {
         </Button>
 
         {/* Back nav -------------------------------------------------------- */}
-        <Button size="lg" onClick={() => navigate(-1)} style={{ marginTop: theme.spacing(3) }}>
+        <Button size="lg" onClick={() => navigate(-1)} style={{ marginTop: theme.spacing(1) }}>
           ← Back
         </Button>
       </Stack>

@@ -35,7 +35,7 @@ export default function AccordionDemoPage() {
   return (
     <Surface>
       <Stack
-        spacing={3}
+        spacing={1}
         preset="showcaseStack"
       >
         {/* Header --------------------------------------------------------- */}
@@ -138,7 +138,7 @@ export default function AccordionDemoPage() {
         <Button
           size="lg"
           onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing(3) }}
+          style={{ marginTop: theme.spacing(1) }}
         >
           ← Back
         </Button>

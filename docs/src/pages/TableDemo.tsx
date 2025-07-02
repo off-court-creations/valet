@@ -111,14 +111,14 @@ export default function TableDemoPage() {
   return (
     <Surface>
       <Stack
-        spacing={3}
+        spacing={1}
         preset="showcaseStack"
       >
         {/* Header bar ------------------------------------------------------- */}
         <Panel variant="alt" fullWidth>
           <Stack
             direction="row"
-            spacing={3}
+            spacing={1}
             style={{ alignItems: 'center', flexWrap: 'wrap' }}
           >
             <Typography variant="h2" bold>
@@ -220,7 +220,7 @@ export default function TableDemoPage() {
         <Button
           size="lg"
           onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing(3) }}
+          style={{ marginTop: theme.spacing(1) }}
         >
           ← Back
         </Button>

@@ -42,7 +42,7 @@ interface StyledFieldProps {
 }
 
 const sharedFieldCSS = ({ theme, $error }: StyledFieldProps) => `
-  padding: ${theme.spacing(1)} ${theme.spacing(2)};
+  padding: ${theme.spacing(1)} ${theme.spacing(1)};
   border: 1px solid ${($error ? theme.colors.secondary : theme.colors.text) + '44'};
   border-radius: 4px;
   background: ${theme.colors.background};

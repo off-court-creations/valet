@@ -12,5 +12,5 @@ import { definePreset } from '@archway/valet';
 definePreset('showcaseStack', (t) => `
   max-width : 85%;
   margin    : 0 auto;
-  padding   : ${t.spacing(3)};
+  padding   : ${t.spacing(1)};
 `);

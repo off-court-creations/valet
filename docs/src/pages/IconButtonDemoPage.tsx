@@ -19,12 +19,12 @@ import { useNavigate } from 'react-router-dom';
 /* Style preset showcasing IconButton inside a card                            */
 definePreset('actionCard', t => `
     background   : ${t.colors['backgroundAlt']};
-    padding      : ${t.spacing(3)};
+    padding      : ${t.spacing(1)};
     border-radius: 16px;
     box-shadow   : 0 4px 12px ${t.colors['text']}22;
     display      : flex;
     align-items  : center;
-    gap          : ${t.spacing(2)};
+    gap          : ${t.spacing(1)};
   `);
 
 /*─────────────────────────────────────────────────────────────────────────────*/
@@ -46,7 +46,7 @@ export default function IconButtonDemoPage() {
   return (
     <Surface>
       <Stack
-        spacing={3}
+        spacing={1}
         preset="showcaseStack"
       >
         {/* Page header ----------------------------------------------------- */}
@@ -59,7 +59,7 @@ export default function IconButtonDemoPage() {
 
         {/* 1. Contained sizes --------------------------------------------- */}
         <Typography variant="h3">1. Contained sizes</Typography>
-        <Stack direction="row" spacing={2}>
+        <Stack direction="row" spacing={1}>
           <IconButton icon="mdi:play" size="sm" aria-label="Play small" />
           <IconButton icon="mdi:play" size="md" aria-label="Play medium" />
           <IconButton icon="mdi:play" size="lg" aria-label="Play large" />
@@ -67,7 +67,7 @@ export default function IconButtonDemoPage() {
 
         {/* 2. Outlined sizes ---------------------------------------------- */}
         <Typography variant="h3">2. Outlined sizes</Typography>
-        <Stack direction="row" spacing={2}>
+        <Stack direction="row" spacing={1}>
           <IconButton
             variant="outlined"
             icon="mdi:pause"
@@ -90,7 +90,7 @@ export default function IconButtonDemoPage() {
 
         {/* 3. Colour override --------------------------------------------- */}
         <Typography variant="h3">3. Icon colour override</Typography>
-        <Stack direction="row" spacing={2}>
+        <Stack direction="row" spacing={1}>
           <IconButton
             icon="mdi:heart"
             iconColor="#ff5e5e"
@@ -106,7 +106,7 @@ export default function IconButtonDemoPage() {
 
         {/* 4. Custom SVG --------------------------------------------------- */}
         <Typography variant="h3">4. Custom SVG graphics</Typography>
-        <Stack direction="row" spacing={2}>
+        <Stack direction="row" spacing={1}>
           <IconButton svg={HeartSvg} aria-label="Heart" />
         </Stack>
 
@@ -141,7 +141,7 @@ export default function IconButtonDemoPage() {
         <Button
           size="lg"
           onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing(3) }}
+          style={{ marginTop: theme.spacing(1) }}
         >
           ← Back
         </Button>

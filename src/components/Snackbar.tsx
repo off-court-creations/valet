@@ -3,7 +3,7 @@
 // Fully-typed, theme-aware snackbar with fade + auto-dismiss
 // – Uncontrolled or controlled (via `open` / `onClose`)
 // – 200 ms fade-in / fade-out to match font + surface loads
-// – Horizontal flex “stack” by default (gap = theme.spacing(2))
+// – Horizontal flex “stack” by default (gap = theme.spacing(1))
 // – `noStack` disables flex layout entirely
 // – Auto-hide (default 4 s) or user-managed lifetime
 // – Exposes `useSnackbar()` hook so nested buttons can dismiss
@@ -170,7 +170,7 @@ export const Snackbar: React.FC<SnackbarProps> = ({
         {...rest}
         $visible={!exiting && visible}
         $flex={!noStack}
-        $spacing={theme.spacing(2)}
+        $spacing={theme.spacing(1)}
         $outline={theme.colors.primary}
         $bg={theme.colors.background}
         className={classes}

@@ -34,7 +34,7 @@ interface RowProps {
 const Row = ({ label, control }: RowProps) => (
   <Stack
     direction="row"
-    spacing={2}
+    spacing={1}
     style={{ maxWidth: 360 }}
   >
     {control}
@@ -59,7 +59,7 @@ export default function SwitchDemoPage() {
   return (
     <Surface>
       <Stack
-        spacing={3}
+        spacing={1}
         preset="showcaseStack"
       >
         {/* Page header ----------------------------------------------------- */}
@@ -72,7 +72,7 @@ export default function SwitchDemoPage() {
 
         {/* 1. Uncontrolled -------------------------------------------------- */}
         <Typography variant="h3">1. Uncontrolled</Typography>
-        <Stack spacing={2}>
+        <Stack spacing={1}>
           <Row
             label="Default unchecked"
             control={<Switch name="uc1" />}
@@ -98,7 +98,7 @@ export default function SwitchDemoPage() {
 
         {/* 3. Sizes --------------------------------------------------------- */}
         <Typography variant="h3">3. Sizes</Typography>
-        <Stack spacing={2}>
+        <Stack spacing={1}>
           <Row
             label="size='sm'"
             control={<Switch name="sm" size="sm" defaultChecked />}
@@ -115,7 +115,7 @@ export default function SwitchDemoPage() {
 
         {/* 4. Disabled ------------------------------------------------------ */}
         <Typography variant="h3">4. Disabled</Typography>
-        <Stack spacing={2}>
+        <Stack spacing={1}>
           <Row
             label="disabled & checked"
             control={<Switch name="d1" defaultChecked disabled />}
@@ -134,7 +134,7 @@ export default function SwitchDemoPage() {
           style={{
             display      : 'flex',
             flexDirection: 'column',
-            gap          : theme.spacing(2),
+            gap          : theme.spacing(1),
           }}
         >
           <Row
@@ -160,7 +160,7 @@ export default function SwitchDemoPage() {
         <Button
           size="lg"
           onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing(3) }}
+          style={{ marginTop: theme.spacing(1) }}
         >
           ← Back
         </Button>

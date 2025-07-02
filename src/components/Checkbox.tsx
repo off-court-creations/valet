@@ -41,8 +41,8 @@ export interface CheckboxProps
 /* Size map helper                                                          */
 const createSizeMap = (t: Theme) => ({
   sm : { box: '16px', tick: '10px', gap: t.spacing(1) },
-  md : { box: '20px', tick: '12px', gap: t.spacing(2) },
-  lg : { box: '24px', tick: '14px', gap: t.spacing(3) },
+  md : { box: '20px', tick: '12px', gap: t.spacing(1) },
+  lg : { box: '24px', tick: '14px', gap: t.spacing(1) },
 } as const);
 
 /*───────────────────────────────────────────────────────────────────────────*/

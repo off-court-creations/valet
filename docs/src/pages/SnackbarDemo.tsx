@@ -40,7 +40,7 @@ export default function SnackbarDemoPage() {
 
   return (
     <Surface>
-      <Stack spacing={3} preset="showcaseStack">
+      <Stack spacing={1} preset="showcaseStack">
         {/* Header --------------------------------------------------------- */}
         <Typography variant="h2" bold>
           Snackbar Showcase
@@ -116,7 +116,7 @@ export default function SnackbarDemoPage() {
         <Button
           size="lg"
           onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing(3) }}
+          style={{ marginTop: theme.spacing(1) }}
         >
           ← Back
         </Button>
