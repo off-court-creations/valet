@@ -4,7 +4,7 @@ import { Surface, Button, Typography, Stack, useTheme, Box, Panel } from '@archw
 
 export default function MainPage() {
   const navigate = useNavigate();
-  const { theme, mode, toggleMode } = useTheme();
+  const { mode, toggleMode } = useTheme();
 
   return (
     <Surface>
@@ -210,30 +210,26 @@ export default function MainPage() {
           <Panel>
             <Typography centered variant="h2">Demos</Typography>
 
-            <Stack direction="row" spacing={1} compact>
+            <Stack direction="row" compact>
               <Button
-                size="md"
                 onClick={() => navigate('/presets')}
               >
                 Presets
               </Button>
 
               <Button
-                size="md"
                 onClick={() => navigate('/form')}
               >
                 Form
               </Button>
 
               <Button
-                size="md"
                 onClick={() => navigate('/parallax')}
               >
                 Parallax
               </Button>
 
               <Button
-                size="md"
                 onClick={() => navigate('/test')}
               >
                 Radio Button
@@ -241,7 +237,7 @@ export default function MainPage() {
             </Stack>
           </Panel>
 
-          <Box compact>
+          <Box>
             <Button
               size="lg"
               variant='outlined'

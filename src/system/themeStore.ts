@@ -30,14 +30,19 @@ interface ThemeStore {
   setTheme: (patch: Partial<Theme>) => void;
 }
 
-const spacingUnit = '1rem';
-const unitSuffix = spacingUnit.replace(/^[0-9.]+/, '');
+const spacingUnit = '0.5rem';
+
+/* ── extract “0.25” and “rem” ──────────────────────────────── */
+const [, baseStr, unitSuffix] =
+  spacingUnit.match(/^([0-9.]+)([a-zA-Z%]+)$/)!;  // e.g. ["0.25rem","0.25","rem"]
+
+const base = parseFloat(baseStr);                 // 0.25
+
+/* ── theme object with the fixed spacing helper ────────────── */
 const common: Omit<Theme, 'colors'> = {
-  spacing: (u: number) => `${u}${unitSuffix}`,
-  spacingUnit,
-  breakpoints: {
-    xs: 0, sm: 600, md: 960, lg: 1280, xl: 1920,
-  },
+  spacing    : (u: number) => `${u * base}${unitSuffix}`, // spacing(4) → "1rem"
+  spacingUnit: spacingUnit,
+  breakpoints: { xs: 0, sm: 600, md: 960, lg: 1280, xl: 1920 },
   typography: {
     h1: { xs: '2rem',   sm: '2.5rem', md: '3rem',   lg: '3.5rem', xl: '4rem'  },
     h2: { xs: '1.5rem', sm: '2rem',   md: '2.5rem', lg: '3rem',   xl: '3.5rem'},

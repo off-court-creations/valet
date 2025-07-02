@@ -10,7 +10,6 @@ import { definePreset } from '@archway/valet';
 /*───────────────────────────────────────────────────────────*/
 /* Shared layout preset – used by *many* demo pages          */
 definePreset('showcaseStack', (t) => `
-  max-width : 85%;
-  margin    : 0 auto;
+  margin    : ${t.spacing(1)};
   padding   : ${t.spacing(1)};
 `);
