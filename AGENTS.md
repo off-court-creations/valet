@@ -126,10 +126,11 @@ cd valet
 cd docs
 npm link @archway/valet
 npm run dev
+```
 
 ## CHANGELOG
 
-- Follow [Keep&nbsp;a&nbsp;Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/) for `CHANGELOG.md`.
+- Follow [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/) for `CHANGELOG.md`.
 - Use the `Unreleased` section at the top.
 - If your changes are changelog worthy in a given dev commit add them to the `Unreleased section`
 
