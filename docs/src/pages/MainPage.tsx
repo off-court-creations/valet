@@ -8,16 +8,12 @@ export default function MainPage() {
 
   return (
     <Surface>
-      <Box style={{ margin: theme.spacing(1) }} centered>
-        <Typography variant="h1"><b>zeroui</b> Demo</Typography>
-      </Box>
+      <Typography variant="h1" centered><b>zeroui</b> Demo</Typography>
 
       <Box style={{ margin: theme.spacing(1) }} centered> 
         <Stack>
           <Panel style={{ margin: theme.spacing(1), padding: theme.spacing(1) }} variant="alt">
-            <Box centered>
-              <Typography variant="h2">Components</Typography>
-            </Box>
+            <Typography variant="h2" centered>Components</Typography>
 
             <Stack direction="row" spacing={1} style={{ marginTop: theme.spacing(1) }}>
               <Button

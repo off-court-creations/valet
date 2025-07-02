@@ -38,6 +38,7 @@ import React, {
     $fade: boolean;
     $maxW?: string | number;
     $full: boolean;
+    $gap: string;
   }>`
     position: fixed;
     top: 50%;
@@ -49,6 +50,10 @@ import React, {
   
     max-width: ${({ $maxW, $full }) => ($full ? 'none' : $maxW || '32rem')};
     width: ${({ $full }) => ($full ? 'calc(100% - 2rem)' : 'auto')};
+    margin: ${({ $gap }) => $gap};
+    & > * {
+      padding: ${({ $gap }) => $gap};
+    }
   
     background: ${({ $bg }) => $bg};
     color: ${({ $text }) => $text};
@@ -220,6 +225,7 @@ import React, {
           $fade={fade}
           $maxW={maxWidth as any}
           $full={fullWidth}
+          $gap={theme.spacing(1)}
           className={presetClasses}
         >
           {title && <Header id={idTitle}>{title}</Header>}

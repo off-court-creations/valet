@@ -29,6 +29,7 @@ const Base = styled('div')<{
   $outline?: string;
   $bg?: string;
   $text?: string;
+  $gap: string;
 }>`
   box-sizing: border-box;
   vertical-align: top;
@@ -36,6 +37,10 @@ const Base = styled('div')<{
   display      : ${({ $full }) => ($full ? 'block' : 'inline-block')};
   width        : ${({ $full }) => ($full ? '100%'  : 'auto')};
   align-self   : ${({ $full }) => ($full ? 'stretch' : 'flex-start')};
+  margin       : ${({ $gap }) => $gap};
+  & > * {
+    padding: ${({ $gap }) => $gap};
+  }
 
   /* Only emit a background when we’ve actually been given one */
   ${({ $variant, $bg }) =>
@@ -98,6 +103,7 @@ export const Panel: React.FC<PanelProps> = ({
   }
 
   const presetClasses = p ? preset(p) : '';
+  const gap = theme.spacing(1);
 
   return (
     <Base
@@ -107,6 +113,7 @@ export const Panel: React.FC<PanelProps> = ({
       $outline={theme.colors.backgroundAlt}
       $bg={bg}
       $text={textColour}
+      $gap={gap}
       style={style}
       className={[presetClasses, className].filter(Boolean).join(' ')}
     >

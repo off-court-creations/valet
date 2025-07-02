@@ -40,9 +40,14 @@ const useTabs = () => {
 const Root = styled('div')<{
   $orientation: 'horizontal' | 'vertical';
   $placement : 'top' | 'bottom' | 'left' | 'right';
+  $gap: string;
 }>`
   width: 100%;
   display: grid;
+  margin: ${({ $gap }) => $gap};
+  & > * {
+    padding: ${({ $gap }) => $gap};
+  }
 
   ${({ $orientation, $placement }) =>
     $orientation === 'horizontal'
@@ -162,6 +167,7 @@ export const Tabs: React.FC<TabsProps> & {
   children,
   ...divProps
 }) => {
+  const { theme } = useTheme();
   const placement =
     placementProp ?? (orientation === 'horizontal' ? 'top' : 'left');
 
@@ -206,6 +212,7 @@ export const Tabs: React.FC<TabsProps> & {
   );
 
   const cls = [p ? preset(p) : '', className].filter(Boolean).join(' ');
+  const gap = theme.spacing(1);
   const stripFirst =
     (orientation === 'horizontal' && placement === 'top') ||
     (orientation === 'vertical'   && placement === 'left');
@@ -216,6 +223,7 @@ export const Tabs: React.FC<TabsProps> & {
         {...divProps}
         $orientation={orientation}
         $placement={placement}
+        $gap={gap}
         className={cls}
       >
         {stripFirst && <TabList $orientation={orientation}>{tabs}</TabList>}
