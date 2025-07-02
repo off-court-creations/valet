@@ -8,18 +8,18 @@ export default function MainPage() {
 
   return (
     <Surface>
-      <Box style={{ margin: theme.spacing(1) }} centered>
+      <Box centered>
         <Typography variant="h1"><b>zeroui</b> Demo</Typography>
       </Box>
 
-      <Box style={{ margin: theme.spacing(1) }} centered> 
+      <Box centered> 
         <Stack>
-          <Panel style={{ margin: theme.spacing(1), padding: theme.spacing(1) }} variant="alt">
+          <Panel fullWidth variant="alt">
             <Box centered>
               <Typography variant="h2">Components</Typography>
             </Box>
 
-            <Stack direction="row" spacing={1} style={{ marginTop: theme.spacing(1) }}>
+            <Stack direction="row" spacing={1}>
               <Button
                 size="md"
                 onClick={() => navigate('/accordion-demo')}
@@ -211,7 +211,7 @@ export default function MainPage() {
             </Stack>
           </Panel>
 
-          <Panel style={{ margin: theme.spacing(1), padding: theme.spacing(1) }}>
+          <Panel fullWidth style={{ margin: theme.spacing(1), padding: theme.spacing(1) }}>
             <Typography variant="h2">Demos</Typography>
 
             <Stack direction="row" spacing={1} style={{ marginTop: theme.spacing(1) }}>

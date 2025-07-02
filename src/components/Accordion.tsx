@@ -43,9 +43,6 @@ const Root = styled('div')<{ $gap: string }>`
   width      : 100%;
   box-sizing : border-box;
   margin     : ${({ $gap }) => $gap};
-  & > * {
-    padding: ${({ $gap }) => $gap};
-  }
 `;
 
 const ItemWrapper = styled('div')`
@@ -61,7 +58,6 @@ const HeaderBtn = styled('button')<{
   display         : flex;
   justify-content : space-between;
   align-items     : center;
-  gap             : 1rem;
   padding         : 1rem 0;
   background      : transparent;
   border          : none;
