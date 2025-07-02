@@ -122,6 +122,7 @@ export const Surface: React.FC<SurfaceProps> = ({
         overflow: 'auto',
       }
     : { width: '100%', height: 'auto', position: 'relative' };
+  const gap = theme.spacing(1);
 
   return (
     <SurfaceCtx.Provider value={useStore}>
@@ -134,6 +135,7 @@ export const Surface: React.FC<SurfaceProps> = ({
           ...cssVars,      // then fonts and other variables
           '--valet-screen-width': `${width}px`,
           '--valet-screen-height': `${Math.round(height)}px`,
+          margin: gap,
           ...style,        // finally allow external overrides
         } as any}
         {...props}
@@ -141,7 +143,7 @@ export const Surface: React.FC<SurfaceProps> = ({
         {showBackdrop && (
           <LoadingBackdrop fading={fade} showSpinner={showSpinner} />
         )}
-        <div style={{ visibility: fontsReady ? 'visible' : 'hidden' }}>{children}</div>
+        <div style={{ visibility: fontsReady ? 'visible' : 'hidden', padding: gap }}>{children}</div>
       </div>
     </SurfaceCtx.Provider>
   );

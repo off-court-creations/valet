@@ -27,11 +27,16 @@ const StackContainer = styled('div')<{
   $dir: 'row' | 'column';
   $gap: string;
   $wrap: boolean;
+  $pad: string;
 }>`
   display: flex;
   flex-direction: ${({ $dir }) => $dir};
   gap: ${({ $gap }) => $gap};
   ${({ $wrap }) => ($wrap ? 'flex-wrap: wrap;' : '')}
+  margin: ${({ $pad }) => $pad};
+  & > * {
+    padding: ${({ $pad }) => $pad};
+  }
 `;
 
 /*───────────────────────────────────────────────────────────*/
@@ -62,6 +67,7 @@ export const Stack: React.FC<StackProps> = ({
   const shouldWrap = typeof wrap === 'boolean' ? wrap : direction === 'row';
 
   const presetClasses = p ? preset(p) : '';
+  const pad = theme.spacing(1);
 
   return (
     <StackContainer
@@ -69,6 +75,7 @@ export const Stack: React.FC<StackProps> = ({
       $dir={direction}
       $gap={gap}
       $wrap={shouldWrap}
+      $pad={pad}
       className={[presetClasses, className].filter(Boolean).join(' ')}
       style={style}
     >

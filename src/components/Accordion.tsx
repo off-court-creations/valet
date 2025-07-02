@@ -39,9 +39,13 @@ const useAccordion = () => {
 
 /*───────────────────────────────────────────────────────────*/
 /* Styled primitives                                         */
-const Root = styled('div')`
+const Root = styled('div')<{ $gap: string }>`
   width      : 100%;
   box-sizing : border-box;
+  margin     : ${({ $gap }) => $gap};
+  & > * {
+    padding: ${({ $gap }) => $gap};
+  }
 `;
 
 const ItemWrapper = styled('div')`
@@ -141,6 +145,7 @@ export const Accordion: React.FC<AccordionProps> & {
   children,
   ...divProps
 }) => {
+  const { theme } = useTheme();
   const controlled = openProp !== undefined;
   const toArray = (v?: number | number[]) =>
     v === undefined ? [] : Array.isArray(v) ? v : [v];
@@ -179,6 +184,7 @@ export const Accordion: React.FC<AccordionProps> & {
     <AccordionCtx.Provider value={ctx}>
       <Root
         {...divProps}
+        $gap={theme.spacing(1)}
         className={[presetClasses, className].filter(Boolean).join(' ')}
       >
         {React.Children.map(children, (child, idx) =>
