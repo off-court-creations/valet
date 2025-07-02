@@ -10,8 +10,8 @@ export default function MainPage() {
     <Surface>
       <Typography variant="h1" centered><b>zeroui</b> Demo</Typography>
 
-      <Box centered style={{ margin: 0, padding: 0 }}>
-        <Stack style={{ margin: 0, padding: 0 }}>
+      <Box centered compact>
+        <Stack compact>
           <Panel variant="alt">
             <Typography variant="h2" centered>Components</Typography>
 
@@ -210,7 +210,7 @@ export default function MainPage() {
           <Panel>
             <Typography centered variant="h2">Demos</Typography>
 
-            <Stack direction="row" spacing={1} style={{ margin: 0, padding: 0 }}>
+            <Stack direction="row" spacing={1} compact>
               <Button
                 size="md"
                 onClick={() => navigate('/presets')}
@@ -241,7 +241,7 @@ export default function MainPage() {
             </Stack>
           </Panel>
 
-          <Box style={{margin: 0}}>
+          <Box compact>
             <Button
               size="lg"
               variant='outlined'

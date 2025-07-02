@@ -19,6 +19,8 @@ export interface PanelProps
   fullWidth?: boolean;
   /** Explicit background override */
   background?: string | undefined;
+  /** Remove built-in margin and padding */
+  compact?: boolean;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -71,6 +73,7 @@ export const Panel: React.FC<PanelProps> = ({
   className,
   style,
   background,
+  compact,
   children,
   ...rest
 }) => {
@@ -103,7 +106,7 @@ export const Panel: React.FC<PanelProps> = ({
   }
 
   const presetClasses = p ? preset(p) : '';
-  const gap = theme.spacing(1);
+  const gap = compact ? '0' : theme.spacing(1);
 
   return (
     <Base

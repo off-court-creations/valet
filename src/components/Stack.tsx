@@ -19,6 +19,8 @@ export interface StackProps
   /** If `true`, children wrap when they run out of space. Defaults to
    *  `true` for `row`, `false` for `column`. */
   wrap?: boolean;
+  /** Remove built-in margin and padding */
+  compact?: boolean;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -45,6 +47,7 @@ export const Stack: React.FC<StackProps> = ({
   direction = 'column',
   spacing,
   wrap,
+  compact,
   preset: p,
   className,
   children,
@@ -67,7 +70,7 @@ export const Stack: React.FC<StackProps> = ({
   const shouldWrap = typeof wrap === 'boolean' ? wrap : direction === 'row';
 
   const presetClasses = p ? preset(p) : '';
-  const pad = theme.spacing(1);
+  const pad = compact ? '0' : theme.spacing(1);
 
   return (
     <StackContainer

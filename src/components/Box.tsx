@@ -19,6 +19,8 @@ export interface BoxProps
   textColor?: string | undefined;
   /** Centre contents & propagate intent via CSS var */
   centered?: boolean;
+  /** Remove built-in margin and padding */
+  compact?: boolean;
 }
 
 /*───────────────────────────────────────────────────────────────*/
@@ -60,6 +62,7 @@ export const Box: React.FC<BoxProps> = ({
   background,
   textColor,
   centered,
+  compact,
   style,
   ...rest
 }) => {
@@ -79,7 +82,7 @@ export const Box: React.FC<BoxProps> = ({
         : undefined; // defer to cascade / presets
   }
 
-  const gap = theme.spacing(1);
+  const gap = compact ? '0' : theme.spacing(1);
 
   return (
     <Base
