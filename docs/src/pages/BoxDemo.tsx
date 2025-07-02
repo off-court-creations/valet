@@ -52,15 +52,11 @@ export default function BoxDemoPage() {
   return (
     <Surface /* Surface already defaults to theme background */>
       <Stack
-        spacing={1}
         preset="showcaseStack"
       >
         {/* Page header ----------------------------------------------------- */}
         <Typography variant="h2" bold>
           Box Showcase
-        </Typography>
-        <Typography variant="subtitle">
-          Every prop, every trick, all in one place
         </Typography>
 
         {/* 1. Vanilla Box -------------------------------------------------- */}

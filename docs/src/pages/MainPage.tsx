@@ -4,14 +4,14 @@ import { Surface, Button, Typography, Stack, useTheme, Box, Panel } from '@archw
 
 export default function MainPage() {
   const navigate = useNavigate();
-  const { theme, mode, toggleMode } = useTheme();
+  const { mode, toggleMode } = useTheme();
 
   return (
     <Surface>
       <Typography variant="h1" centered><b>zeroui</b> Demo</Typography>
 
-      <Box centered style={{ margin: 0, padding: 0 }}>
-        <Stack style={{ margin: 0, padding: 0 }}>
+      <Box centered compact>
+        <Stack compact>
           <Panel variant="alt">
             <Typography variant="h2" centered>Components</Typography>
 
@@ -210,30 +210,26 @@ export default function MainPage() {
           <Panel>
             <Typography centered variant="h2">Demos</Typography>
 
-            <Stack direction="row" spacing={1} style={{ margin: 0, padding: 0 }}>
+            <Stack direction="row" compact>
               <Button
-                size="md"
                 onClick={() => navigate('/presets')}
               >
                 Presets
               </Button>
 
               <Button
-                size="md"
                 onClick={() => navigate('/form')}
               >
                 Form
               </Button>
 
               <Button
-                size="md"
                 onClick={() => navigate('/parallax')}
               >
                 Parallax
               </Button>
 
               <Button
-                size="md"
                 onClick={() => navigate('/test')}
               >
                 Radio Button
@@ -241,7 +237,7 @@ export default function MainPage() {
             </Stack>
           </Panel>
 
-          <Box style={{margin: 0}}>
+          <Box>
             <Button
               size="lg"
               variant='outlined'
