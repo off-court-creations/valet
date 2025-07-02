@@ -27,9 +27,15 @@ const Base = styled('div')<{
   $bg?: string;
   $text?: string;
   $center?: boolean;
+  $margin: string;
+  $pad: string;
 }>`
   box-sizing: border-box;
   display: ${({ $center }) => ($center ? 'flex' : 'block')};
+  margin: ${({ $margin }) => $margin};
+  & > * {
+    padding: ${({ $pad }) => $pad};
+  }
   ${({ $center }) =>
     $center &&
     `
@@ -73,12 +79,16 @@ export const Box: React.FC<BoxProps> = ({
         : undefined; // defer to cascade / presets
   }
 
+  const gap = theme.spacing(1);
+
   return (
     <Base
       {...rest}
       $bg={background}
       $text={resolvedText}
       $center={centered}
+      $margin={gap}
+      $pad={gap}
       style={style}
       className={[presetClass, className].filter(Boolean).join(' ')}
     />

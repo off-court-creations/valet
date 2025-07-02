@@ -20,6 +20,8 @@ export interface TypographyProps
   variant?: Variant;
   bold?: boolean;
   italic?: boolean;
+  /** Centre the element within flex/grid parents */
+  centered?: boolean;
   fontSize?: string;
   scale?: number;
   autoSize?: boolean;
@@ -43,6 +45,7 @@ export const Typography: React.FC<TypographyProps> = ({
   autoSize = false,
   color,
   fontFamily,
+  centered,
   preset: p,
   className,
   children,
@@ -66,6 +69,7 @@ export const Typography: React.FC<TypographyProps> = ({
     $size: string;
     $bold: boolean;
     $italic: boolean;
+    $center?: boolean;
   }>`
     margin: 0;
     color: ${({ $color }) => $color || 'var(--valet-text-color, inherit)'};
@@ -82,6 +86,13 @@ export const Typography: React.FC<TypographyProps> = ({
           ? 'heading'
           : 'body'
       })`};
+    ${({ $center }) =>
+      $center &&
+      `
+        text-align: center;
+        align-self: center;
+        margin-inline: auto;
+      `};
     ${({ $variant }) =>
       $variant === 'button'
         ? `
@@ -102,6 +113,7 @@ export const Typography: React.FC<TypographyProps> = ({
       $size={size}
       $bold={bold}
       $italic={italic}
+      $center={centered}
       className={[presetClasses, className].filter(Boolean).join(' ')}
     >
       {children}

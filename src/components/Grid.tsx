@@ -17,10 +17,14 @@ export interface GridProps
 }
 
 /*───────────────────────────────────────────────────────────*/
-const Root = styled('div')<{ $cols: number; $gap: string }>`
+const Root = styled('div')<{ $cols: number; $gap: string; $pad: string }>`
   display: grid;
   grid-template-columns: repeat(${({ $cols }) => $cols}, 1fr);
   gap: ${({ $gap }) => $gap};
+  margin: ${({ $pad }) => $pad};
+  & > * {
+    padding: ${({ $pad }) => $pad};
+  }
 `;
 
 /*───────────────────────────────────────────────────────────*/
@@ -42,6 +46,8 @@ export const Grid: React.FC<GridProps> = ({
     g = String(gap);
   }
 
+  const pad = theme.spacing(1);
+
   const presetClass = p ? preset(p) : '';
 
   return (
@@ -49,6 +55,7 @@ export const Grid: React.FC<GridProps> = ({
       {...rest}
       $cols={columns}
       $gap={g}
+      $pad={pad}
       style={style}
       className={[presetClass, className].filter(Boolean).join(' ')}
     >

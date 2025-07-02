@@ -22,12 +22,17 @@ export interface AppBarProps
 const Bar = styled('header')<{
   $bg: string;
   $text: string;
+  $gap: string;
 }>`
   box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin: ${({ $gap }) => $gap};
   padding: 0.5rem 1rem;
+  & > * {
+    padding: ${({ $gap }) => $gap};
+  }
   position: fixed;
   top: 0;
   left: 0;
@@ -66,12 +71,14 @@ export const AppBar: React.FC<AppBarProps> = ({
       ? theme.colors[`${textColor}Text`]
       : textColor;
   const presetClass = p ? preset(p) : '';
+  const gap = theme.spacing(1);
 
   return (
     <Bar
       {...rest}
       $bg={bg}
       $text={text}
+      $gap={gap}
       className={[presetClass, className].filter(Boolean).join(' ')}
       style={style}
     >
