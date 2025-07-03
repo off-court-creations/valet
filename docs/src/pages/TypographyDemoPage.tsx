@@ -61,8 +61,11 @@ export default function TypographyDemoPage() {
           <Typography fontFamily="Poppins">fontFamily="Poppins"</Typography>
           <Typography fontSize="1.5rem">fontSize="1.5rem"</Typography>
           <Typography scale={1.25}>scale=1.25</Typography>
+          <Typography autoSize scale={1.25}>
+            autoSize + scale (resize viewport)
+          </Typography>
           <Typography variant="body" autoSize>
-            autoSize (resize viewport)
+            autoSize
           </Typography>
         </Panel>
 
@@ -139,7 +142,7 @@ export default function TypographyDemoPage() {
                 <td><code>scale</code></td>
                 <td><code>number</code></td>
                 <td>-</td>
-                <td>Multiply the base size (autoSize aware)</td>
+                <td>Multiply the final size (autoSize aware)</td>
               </tr>
               <tr>
                 <td><code>autoSize</code></td>
