@@ -135,8 +135,8 @@ export function Table<T extends object>({
   const wrapRef = useRef<HTMLDivElement>(null);
   const uniqueId = useId();
   const [maxHeight, setMaxHeight] = useState<number>();
-  const [shouldConstrain, setShouldConstrain] = useState(constrainHeight);
-  const constraintRef = useRef(constrainHeight);
+  const [shouldConstrain, setShouldConstrain] = useState(false);
+  const constraintRef = useRef(false);
 
   const calcCutoff = () => {
     if (typeof document === 'undefined') return 32;
@@ -176,12 +176,13 @@ export function Table<T extends object>({
       setShouldConstrain(false);
       setMaxHeight(undefined);
     } else {
-      constraintRef.current = true;
+      // fresh measurement will determine constraint state
+      constraintRef.current = false;
     }
   }, [constrainHeight]);
 
   useLayoutEffect(() => {
-    if (!constrainHeight || !wrapRef.current) return;
+    if (!constrainHeight || !wrapRef.current || !surface.element) return;
     const node = wrapRef.current;
     surface.registerChild(uniqueId, node, update);
     const ro = new ResizeObserver(update);
@@ -191,12 +192,12 @@ export function Table<T extends object>({
       surface.unregisterChild(uniqueId);
       ro.disconnect();
     };
-  }, [constrainHeight]);
+  }, [constrainHeight, surface.element]);
 
   useLayoutEffect(() => {
-    if (!constrainHeight || !wrapRef.current) return;
+    if (!constrainHeight || !wrapRef.current || !surface.element) return;
     update();
-  }, [constrainHeight, surface.height]);
+  }, [constrainHeight, surface.height, surface.element]);
 
   /* sort state */
   const [sort,setSort] =
