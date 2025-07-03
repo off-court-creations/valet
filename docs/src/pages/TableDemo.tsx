@@ -118,7 +118,6 @@ export default function TableDemoPage() {
         <Panel variant="alt" fullWidth>
           <Stack
             direction="row"
-            spacing={1}
             style={{ alignItems: 'center', flexWrap: 'wrap' }}
           >
             <Typography variant="h2" bold>
@@ -137,7 +136,6 @@ export default function TableDemoPage() {
         <Panel variant="alt" fullWidth>
           <Stack
             direction="row"
-            spacing={4}
             style={{ flexWrap: 'wrap', alignItems: 'flex-end' }}
           >
             <TextField
