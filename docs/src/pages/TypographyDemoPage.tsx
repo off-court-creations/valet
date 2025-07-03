@@ -2,133 +2,97 @@
 import { useNavigate } from 'react-router-dom';
 import {
   Surface,
-  Button,
   Stack,
   Typography,
+  Panel,
+  Button,
   useTheme,
-  Panel
 } from '@archway/valet';
 
 export default function TypographyDemoPage() {
-  const { theme } = useTheme();
+  const { theme, toggleMode } = useTheme();
   const navigate = useNavigate();
 
   return (
     <Surface>
-      <Stack
-        spacing={1}
-        preset="showcaseStack"
-      >
+      <Stack spacing={1} preset="showcaseStack">
+        {/* Page header ----------------------------------------------------- */}
+        <Typography variant="h2" bold>
+          Typography Showcase
+        </Typography>
+        <Typography variant="subtitle">
+          Variants, font tweaks and theme coupling
+        </Typography>
+
+        {/* 1. Variants ------------------------------------------------------ */}
+        <Typography variant="h3">1. Variants</Typography>
         <Panel style={{ padding: theme.spacing(1) }}>
-          <Typography variant="h1">
-            zeroui h1
-          </Typography>
+          <Typography variant="h1">variant="h1"</Typography>
+          <Typography variant="h2">variant="h2"</Typography>
+          <Typography variant="h3">variant="h3"</Typography>
+          <Typography variant="h4">variant="h4"</Typography>
+          <Typography variant="h5">variant="h5"</Typography>
+          <Typography variant="h6">variant="h6"</Typography>
+          <Typography variant="subtitle">variant="subtitle"</Typography>
+          <Typography variant="body">variant="body"</Typography>
+          <Typography variant="button">variant="button"</Typography>
+        </Panel>
 
-          <Typography variant="h2">
-            zeroui h2
+        {/* 2. Styling props ------------------------------------------------- */}
+        <Typography variant="h3">2. Styling props</Typography>
+        <Panel style={{ padding: theme.spacing(1) }}>
+          <Typography variant="body" bold>
+            bold
           </Typography>
-
-          <Typography variant="h3">
-            zeroui h3
+          <Typography variant="body" italic>
+            italic
           </Typography>
-
-          <Typography variant="h4">
-            zeroui h4
+          <Typography variant="body" bold italic>
+            bold italic
           </Typography>
-
-          <Typography variant="h5">
-            zeroui h5
-          </Typography>
-
-          <Typography variant="h6">
-            zeroui h6
+          <Typography variant="body" centered>
+            centered text
           </Typography>
         </Panel>
 
+        {/* 3. Font & size overrides ---------------------------------------- */}
+        <Typography variant="h3">3. Font &amp; size overrides</Typography>
         <Panel style={{ padding: theme.spacing(1) }}>
-          <Typography
-            variant="body"
-            style={{ margin: `${theme.spacing(1)} 0` }
-            }>
-            This is a body copy example.
-          </Typography>
-
-          <Typography
-            variant="subtitle"
-          >
-            This is a subtitle copy example.
-          </Typography>
-
-          <Typography
-            variant="body"
-            bold
-            style={{ margin: `${theme.spacing(1)} 0` }
-            }>
-            This is a bold body copy example.
-          </Typography>
-
-          <Typography
-            variant="subtitle"
-            bold
-          >
-            This is a bold subtitle copy example.
-          </Typography>
-
-          <Typography
-            variant="body"
-            italic
-            style={{ margin: `${theme.spacing(1)} 0` }
-            }>
-            This is an italic body copy example.
-          </Typography>
-
-          <Typography
-            variant="subtitle"
-            italic
-          >
-            This is an italic subtitle copy example.
-          </Typography>
-
-          <Typography
-            variant="body"
-            italic
-            bold
-            style={{ margin: `${theme.spacing(1)} 0` }
-            }>
-            This is a bold italic body copy example.
-          </Typography>
-
-          <Typography
-            variant="subtitle"
-            italic
-            bold
-          >
-            This is a bold italic subtitle copy example.
+          <Typography fontFamily="Poppins">fontFamily="Poppins"</Typography>
+          <Typography fontSize="1.5rem">fontSize="1.5rem"</Typography>
+          <Typography scale={1.25}>scale=1.25</Typography>
+          <Typography variant="body" autoSize>
+            autoSize (resize viewport)
           </Typography>
         </Panel>
 
+        {/* 4. Colour override & adaptation --------------------------------- */}
+        <Typography variant="h3">4. Colour override &amp; adaptation</Typography>
         <Panel style={{ padding: theme.spacing(1) }}>
-          <Typography>
-            Default Typography
-          </Typography>
-
-          <Typography>
-            Default Typography with <b>inline bold</b>
-          </Typography>
-
-          <Typography>
-            Default Typography with <i>inline italics</i>
-          </Typography>
-
-          <Typography>
-            Default Typography with <i><b>inline bold italics</b></i>
-          </Typography>
+          <Typography color="#e91e63">color="#e91e63"</Typography>
+          <Panel background={theme.colors['primary']} style={{ padding: theme.spacing(1) }}>
+            <Typography variant="h6">Inside Panel inherits text colour</Typography>
+          </Panel>
+          <Button style={{ marginTop: theme.spacing(1) }}>
+            <Typography variant="button" bold>
+              Typography inside Button
+            </Typography>
+          </Button>
         </Panel>
-      </Stack>
 
-      <Stack direction='row' spacing={1} style={{ padding: theme.spacing(1) }}>
-        <Button size="lg" variant="outlined" onClick={() => navigate(-1)}>
-          Go Back
+        {/* 5. Theme coupling ----------------------------------------------- */}
+        <Typography variant="h3">5. Theme coupling</Typography>
+        <Button variant="outlined" onClick={toggleMode}>
+          Toggle light / dark mode
+        </Button>
+
+        {/* Back nav --------------------------------------------------------- */}
+        <Button
+          size="lg"
+          onClick={() => navigate(-1)}
+          style={{ marginTop: theme.spacing(1) }}
+        >
+          ← Back
         </Button>
       </Stack>
     </Surface>
