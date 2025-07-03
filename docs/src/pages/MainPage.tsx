@@ -8,7 +8,7 @@ export default function MainPage() {
 
   return (
     <Surface>
-      <Typography variant="h1" centered><b>zeroui</b> Demo</Typography>
+      <Typography variant="h1" centered><b>zeroui</b> Docs</Typography>
 
       <Box centered compact>
         <Stack compact>
@@ -210,7 +210,7 @@ export default function MainPage() {
           <Panel>
             <Typography centered variant="h2">Demos</Typography>
 
-            <Stack direction="row" compact>
+            <Stack direction="row" compact spacing={1}>
               <Button
                 onClick={() => navigate('/presets')}
               >
