@@ -11,7 +11,7 @@ export default function MainPage() {
       <Typography variant="h1" centered><b>zeroui</b> Docs</Typography>
 
       <Box centered compact>
-        <Stack compact>
+        <Stack compact spacing={2}>
           <Panel variant="alt">
             <Typography variant="h2" centered>Components</Typography>
 

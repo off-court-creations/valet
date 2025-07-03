@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [v0.7.2]
+### Changed
+- Main page of docs - Main page spacing styling
+
+
 ## [v0.7.1]
 ### Fixed
 - Spacing units calculations internally. Mobile layouts improved.
