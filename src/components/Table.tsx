@@ -2,10 +2,18 @@
 // src/components/Table.tsx  | valet
 // Row-hover highlight fixed and now more saturated hover colour.
 // ─────────────────────────────────────────────────────────────
-import React, { useMemo, useState, useEffect, useLayoutEffect, useRef, useId } from 'react';
+import React, {
+  useMemo,
+  useState,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useId,
+} from 'react';
 import { styled }                 from '../css/createStyled';
 import { useTheme }               from '../system/themeStore';
 import { useSurface }             from '../system/surfaceStore';
+import { useFonts }               from '../system/fontStore';
 import { preset }                 from '../css/stylePresets';
 import { Checkbox }               from './Checkbox';
 import { stripe, toRgb, mix, toHex } from '../helpers/color';
@@ -125,36 +133,72 @@ export function Table<T extends object>({
 }:TableProps<T>) {
   const { theme } = useTheme();
   const surface = useSurface();
+  const fontsReady = useFonts((s) => s.ready);
   const wrapRef = useRef<HTMLDivElement>(null);
   const uniqueId = useId();
-  const [maxHeight,setMaxHeight] = useState<number>();
+  const [maxHeight, setMaxHeight] = useState<number>();
+  const [shouldConstrain, setShouldConstrain] = useState(false);
+  const constraintRef = useRef(false);
+
+  const calcCutoff = () => {
+    if (typeof document === 'undefined') return 32;
+    const fs = parseFloat(
+      getComputedStyle(document.documentElement).fontSize,
+    );
+    return (isNaN(fs) ? 16 : fs) * 2;
+  };
+
+  const update = () => {
+    const node = wrapRef.current;
+    const surfEl = surface.element;
+    if (!node || !surfEl) return;
+    const other = surfEl.scrollHeight - node.offsetHeight;
+    const available = surface.height - other;
+    const cutoff = calcCutoff();
+
+    const next = available >= cutoff;
+    if (next) {
+      if (!constraintRef.current) {
+        surfEl.scrollTop = 0;
+        surfEl.scrollLeft = 0;
+      }
+      constraintRef.current = true;
+      setShouldConstrain(true);
+      setMaxHeight(Math.max(0, available));
+    } else {
+      constraintRef.current = false;
+      setShouldConstrain(false);
+      setMaxHeight(undefined);
+    }
+  };
+
+  useEffect(() => {
+    if (!constrainHeight) {
+      constraintRef.current = false;
+      setShouldConstrain(false);
+      setMaxHeight(undefined);
+    } else {
+      update();
+    }
+  }, [constrainHeight, fontsReady]);
 
   useLayoutEffect(() => {
     if (!constrainHeight || !wrapRef.current) return;
     const node = wrapRef.current;
-    const update = () => {
-      const surfEl = surface.element;
-      if (!surfEl) return;
-      const other = surfEl.scrollHeight - node.offsetHeight;
-      const available = surface.height - other;
-      setMaxHeight(Math.max(0, available));
-    };
     surface.registerChild(uniqueId, node, update);
+    const ro = new ResizeObserver(update);
+    ro.observe(node);
     update();
     return () => {
       surface.unregisterChild(uniqueId);
+      ro.disconnect();
     };
   }, [constrainHeight]);
 
   useLayoutEffect(() => {
     if (!constrainHeight || !wrapRef.current) return;
-    const node = wrapRef.current;
-    const surfEl = surface.element;
-    if (!surfEl) return;
-    const other = surfEl.scrollHeight - node.offsetHeight;
-    const available = surface.height - other;
-    setMaxHeight(Math.max(0, available));
-  }, [constrainHeight, surface.height]);
+    update();
+  }, [constrainHeight, surface.height, fontsReady]);
 
   /* sort state */
   const [sort,setSort] =
@@ -230,7 +274,7 @@ export function Table<T extends object>({
     <Wrapper
       ref={wrapRef}
       style={
-        constrainHeight
+        shouldConstrain
           ? { overflow: 'auto', maxHeight }
           : undefined
       }

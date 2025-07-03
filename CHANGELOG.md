@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file. The format 
 ### Improved
 - Typography `autoSize` functionality
 - Stack default padding / margins
+- Table height updates on load when fonts settle
 
 ## [v0.7.2]
 ### Changed
