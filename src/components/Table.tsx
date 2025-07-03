@@ -2,7 +2,14 @@
 // src/components/Table.tsx  | valet
 // Row-hover highlight fixed and now more saturated hover colour.
 // ─────────────────────────────────────────────────────────────
-import React, { useMemo, useState, useEffect, useLayoutEffect, useRef, useId } from 'react';
+import React, {
+  useMemo,
+  useState,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useId,
+} from 'react';
 import { styled }                 from '../css/createStyled';
 import { useTheme }               from '../system/themeStore';
 import { useSurface }             from '../system/surfaceStore';
@@ -127,34 +134,80 @@ export function Table<T extends object>({
   const surface = useSurface();
   const wrapRef = useRef<HTMLDivElement>(null);
   const uniqueId = useId();
-  const [maxHeight,setMaxHeight] = useState<number>();
+  const [maxHeight, setMaxHeight] = useState<number>();
+  const [shouldConstrain, setShouldConstrain] = useState(false);
+  const constraintRef = useRef(false);
 
-  useLayoutEffect(() => {
-    if (!constrainHeight || !wrapRef.current) return;
+  const calcCutoff = () => {
+    if (typeof document === 'undefined') return 32;
+    const fs = parseFloat(
+      getComputedStyle(document.documentElement).fontSize,
+    );
+    return (isNaN(fs) ? 16 : fs) * 2;
+  };
+
+  const update = () => {
     const node = wrapRef.current;
-    const update = () => {
-      const surfEl = surface.element;
-      if (!surfEl) return;
-      const other = surfEl.scrollHeight - node.offsetHeight;
-      const available = surface.height - other;
+    const surfEl = surface.element;
+    if (!node || !surfEl) return;
+
+    const nodeRect = node.getBoundingClientRect();
+    const surfRect = surfEl.getBoundingClientRect();
+
+    const parent = node.parentElement;
+    const style = parent ? getComputedStyle(parent) : null;
+    const padBottom = style ? parseFloat(style.paddingBottom) || 0 : 0;
+    const marginBottom = style ? parseFloat(style.marginBottom) || 0 : 0;
+
+    const topOffset = nodeRect.top - surfRect.top;
+    const available =
+      surface.height - topOffset - padBottom - marginBottom - 1; // fudge factor
+    const cutoff = calcCutoff();
+
+    const next = available >= cutoff;
+    if (next) {
+      if (!constraintRef.current) {
+        surfEl.scrollTop = 0;
+        surfEl.scrollLeft = 0;
+      }
+      constraintRef.current = true;
+      setShouldConstrain(true);
       setMaxHeight(Math.max(0, available));
-    };
-    surface.registerChild(uniqueId, node, update);
-    update();
-    return () => {
-      surface.unregisterChild(uniqueId);
-    };
+    } else {
+      constraintRef.current = false;
+      setShouldConstrain(false);
+      setMaxHeight(undefined);
+    }
+  };
+
+  useEffect(() => {
+    if (!constrainHeight) {
+      constraintRef.current = false;
+      setShouldConstrain(false);
+      setMaxHeight(undefined);
+    } else {
+      // fresh measurement will determine constraint state
+      constraintRef.current = false;
+    }
   }, [constrainHeight]);
 
   useLayoutEffect(() => {
-    if (!constrainHeight || !wrapRef.current) return;
+    if (!constrainHeight || !wrapRef.current || !surface.element) return;
     const node = wrapRef.current;
-    const surfEl = surface.element;
-    if (!surfEl) return;
-    const other = surfEl.scrollHeight - node.offsetHeight;
-    const available = surface.height - other;
-    setMaxHeight(Math.max(0, available));
-  }, [constrainHeight, surface.height]);
+    surface.registerChild(uniqueId, node, update);
+    const ro = new ResizeObserver(update);
+    ro.observe(node);
+    update();
+    return () => {
+      surface.unregisterChild(uniqueId);
+      ro.disconnect();
+    };
+  }, [constrainHeight, surface.element]);
+
+  useLayoutEffect(() => {
+    if (!constrainHeight || !wrapRef.current || !surface.element) return;
+    update();
+  }, [constrainHeight, surface.height, surface.element]);
 
   /* sort state */
   const [sort,setSort] =
@@ -230,7 +283,7 @@ export function Table<T extends object>({
     <Wrapper
       ref={wrapRef}
       style={
-        constrainHeight
+        shouldConstrain
           ? { overflow: 'auto', maxHeight }
           : undefined
       }
