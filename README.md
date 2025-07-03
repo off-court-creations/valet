@@ -1,6 +1,6 @@
 # valet
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![GitHub](https://img.shields.io/badge/GitHub-valet-181717?logo=github&logoColor=white)](https://github.com/off-court-creations/valet) [![GitHub](https://img.shields.io/badge/GitHub-valet--playground-181717?logo=github&logoColor=white)](https://github.com/off-court-creations/valet-playground) [![npm](https://img.shields.io/badge/npm-%40archway%2Fvalet-CB3837?logo=npm&logoColor=white)](https://www.npmjs.com/package/@archway/valet) [![🚀](https://img.shields.io/badge/🚀-Live%20Demo!-111)](https://main.db2j7e5kim3gg.amplifyapp.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![GitHub](https://img.shields.io/badge/GitHub-valet-181717?logo=github&logoColor=white)](https://github.com/off-court-creations/valet) [![npm](https://img.shields.io/badge/npm-%40archway%2Fvalet-CB3837?logo=npm&logoColor=white)](https://www.npmjs.com/package/@archway/valet) [![🚀](https://img.shields.io/badge/🚀-Live%20Demo!-111)](https://main.db2j7e5kim3gg.amplifyapp.com/)
 
 `valet` is a CSS-in-JS engine, a UI component kit, and an accessibility layer that treats all humans and their AI proxies as first class users. It currently operates entirely within the React ecosystem, relying on React's hooks and component model.
 
@@ -74,7 +74,7 @@ Because valet is React-based, ensure your build process already handles
 
 ## Playground
 
-You can try every component in the [Valet Docs](https://github.com/off-court-creations/valet-playground). ([Live Demo!](https://main.db2j7e5kim3gg.amplifyapp.com/)) Clone that repository and run:
+You can try every component in the [Valet Docs](https://github.com/off-court-creations/valet/tree/main/docs). ([Live Demo!](https://main.db2j7e5kim3gg.amplifyapp.com/)) Clone that repository and run:
 
 ```shell
 npm install
@@ -83,7 +83,7 @@ npm run dev
 
 ## Components
 
-These have been mostly tested in the [Valet Docs](https://github.com/off-court-creations/valet-playground). ([Live Demo!](https://main.db2j7e5kim3gg.amplifyapp.com/))
+These have been mostly tested in the [Valet Docs](https://github.com/off-court-creations/valet/tree/main/docs). ([Live Demo!](https://main.db2j7e5kim3gg.amplifyapp.com/))
 
 | Component     | QC0 💻 | QC0 📱 | 1.0.0? 💻📱 | Style QC0 💻 | Style QC0 📱 | Comments                   |
 |---------------|:------:|:-------:|:------------:|:-------------|:-------------:|----------------------------|
