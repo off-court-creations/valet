@@ -37,7 +37,7 @@ const StackContainer = styled('div')<{
   ${({ $wrap }) => ($wrap ? 'flex-wrap: wrap;' : '')}
   margin: ${({ $pad }) => $pad};
   & > * {
-    padding: ${({ $pad }) => $pad};
+    margin: ${({ $pad }) => $pad};
   }
 `;
 
