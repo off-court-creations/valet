@@ -149,7 +149,7 @@ export function Table<T extends object>({
     const node = wrapRef.current;
     const surfEl = surface.element;
     if (!node || !surfEl) return;
-    const other = surfEl.scrollHeight - node.offsetHeight;
+    const other = surfEl.scrollHeight - node.scrollHeight;
     const available = surface.height - other;
     const cutoff = calcCutoff();
     if (available < cutoff) {
