@@ -43,7 +43,11 @@ export const Surface: React.FC<SurfaceProps> = ({
   const [showSpinner, setShowSpinner] = useState(false);
   const presetClasses = p ? preset(p) : '';
 
-  const { width, height } = useStore((s) => ({ width: s.width, height: s.height }));
+  const { width, height, hasScrollbar } = useStore((s) => ({
+    width: s.width,
+    height: s.height,
+    hasScrollbar: s.hasScrollbar,
+  }));
 
   const bpFor = (w: number): Breakpoint =>
     (Object.entries(theme.breakpoints) as [Breakpoint, number][]).reduce<Breakpoint>(
@@ -56,20 +60,25 @@ export const Surface: React.FC<SurfaceProps> = ({
     useStore.setState((s) => ({ ...s, element: node }));
     const measure = () => {
       const rect = node.getBoundingClientRect();
+      const vOverflow = node.scrollHeight - node.clientHeight;
+      const hOverflow = node.scrollWidth - node.clientWidth;
       useStore.setState((s) => ({
         ...s,
         width: rect.width,
         height: Math.round(rect.height),
-        hasScrollbar:
-          node.scrollHeight > node.clientHeight ||
-          node.scrollWidth > node.clientWidth,
+        hasScrollbar: vOverflow > 3 || hOverflow > 3,
         breakpoint: bpFor(rect.width),
       }));
     };
     const ro = new ResizeObserver(measure);
+    const mo = new MutationObserver(measure);
     ro.observe(node);
+    mo.observe(node, { childList: true, subtree: true });
     measure();
-    return () => ro.disconnect();
+    return () => {
+      ro.disconnect();
+      mo.disconnect();
+    };
   }, [theme.breakpoints, useStore]);
 
   useEffect(() => {
@@ -119,7 +128,7 @@ export const Surface: React.FC<SurfaceProps> = ({
         paddingRight: 'env(safe-area-inset-right)',
         paddingBottom: 'env(safe-area-inset-bottom)',
         paddingLeft: 'env(safe-area-inset-left)',
-        overflow: 'auto',
+        overflow: hasScrollbar ? 'auto' : 'hidden',
       }
     : { width: '100%', height: 'auto', position: 'relative' };
   const gap = theme.spacing(1);
