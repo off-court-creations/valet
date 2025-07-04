@@ -66,7 +66,7 @@ export const Surface: React.FC<SurfaceProps> = ({
         ...s,
         width: rect.width,
         height: Math.round(rect.height),
-        hasScrollbar: vOverflow > 1 || hOverflow > 1,
+        hasScrollbar: vOverflow > 3 || hOverflow > 3,
         breakpoint: bpFor(rect.width),
       }));
     };
