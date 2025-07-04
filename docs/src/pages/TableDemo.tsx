@@ -211,7 +211,7 @@ export default function TableDemoPage() {
             dividers={dividers}
             selectable={selectable}
             initialSort={{ index: 0 }}
-            style={{ minWidth: 640 }}
+            constrainHeight
           />
         </Panel>
 
