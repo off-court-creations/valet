@@ -74,7 +74,7 @@ Because valet is React-based, ensure your build process already handles
 
 ## Playground
 
-You can try every component in the [Valet Docs](https://github.com/off-court-creations/valet/tree/main/docs). ([Live Demo!](https://main.db2j7e5kim3gg.amplifyapp.com/)) Clone that repository and run:
+You can try every component in the [valet Docs](https://github.com/off-court-creations/valet/tree/main/docs). ([Live Demo!](https://main.db2j7e5kim3gg.amplifyapp.com/)) Clone that repository and run:
 
 ```shell
 npm install
@@ -83,7 +83,7 @@ npm run dev
 
 ## Components
 
-These have been mostly tested in the [Valet Docs](https://github.com/off-court-creations/valet/tree/main/docs). ([Live Demo!](https://main.db2j7e5kim3gg.amplifyapp.com/))
+These have been mostly tested in the [valet Docs](https://github.com/off-court-creations/valet/tree/main/docs). ([Live Demo!](https://main.db2j7e5kim3gg.amplifyapp.com/))
 
 | Component     | QC0 💻 | QC0 📱 | 1.0.0? 💻📱 | Style QC0 💻 | Style QC0 📱 | Comments                   |
 |---------------|:------:|:-------:|:------------:|:-------------|:-------------:|----------------------------|

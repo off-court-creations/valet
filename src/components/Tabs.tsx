@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/Tabs.tsx | valet
-// Grid-based Valet <Tabs> — bullet-proof placement: top / bottom / left / right
+// Grid-based valet <Tabs> — bullet-proof placement: top / bottom / left / right
 // ─────────────────────────────────────────────────────────────
 import React, {
   createContext,
