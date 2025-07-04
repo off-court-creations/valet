@@ -39,7 +39,7 @@ const Base = styled('div')<{
   display      : ${({ $full }) => ($full ? 'block' : 'inline-block')};
   width        : ${({ $full }) => ($full ? '100%'  : 'auto')};
   align-self   : ${({ $full }) => ($full ? 'stretch' : 'flex-start')};
-  margin       : ${({ $gap }) => $gap};
+  margin       : ${({ $gap, $full }) => ($full ? `${$gap} 0` : $gap)};
   & > * {
     padding: ${({ $gap }) => $gap};
   }

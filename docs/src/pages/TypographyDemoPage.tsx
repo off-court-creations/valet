@@ -173,7 +173,7 @@ export default function TypographyDemoPage() {
           <Tabs.Tab label="Reference" />
           <Tabs.Panel>
             <Typography variant="h3">Prop reference</Typography>
-            <Table data={data} columns={columns} constrainHeight={false}/>
+            <Table data={data} columns={columns} />
           </Tabs.Panel>
         </Tabs>
 

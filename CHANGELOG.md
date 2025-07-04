@@ -8,6 +8,11 @@ All notable changes to this project will be documented in this file. The format 
 - Stack default padding / margins
 ### Changed
 - `Table` now defaults to striped rows and column dividers
+### Fixed
+- Tab panels no longer create stray scrollbars when tables are constrained
+- Table inside tab panels no longer oscillates in height
+- Full width panels inside tabs no longer overflow horizontally
+- Switching tabs with short content no longer leaves 1px scroll gaps
 
 ## [v0.7.2]
 ### Changed

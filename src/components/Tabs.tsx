@@ -42,6 +42,7 @@ const Root = styled('div')<{
   $placement : 'top' | 'bottom' | 'left' | 'right';
   $gap: string;
 }>`
+  box-sizing: border-box;
   width: 100%;
   display: grid;
   margin: ${({ $gap }) => $gap};
@@ -125,8 +126,9 @@ const TabBtn = styled('button')<{
 `;
 
 const Panel = styled('div')`
+  box-sizing: border-box;
+  overflow-x: hidden;
   padding: 1rem 0;
-  overflow: hidden;
 `;
 
 /*───────────────────────────────────────────────────────────*/
