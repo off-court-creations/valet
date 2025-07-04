@@ -3,10 +3,13 @@
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [v0.8.0]
 ### Improved
 - Typography `autoSize` functionality
 - Stack default padding / margins
 - compact prop for Stack, Box, Panel
+- spacing behavior
 
 ### Changed
 - `Table` now defaults to striped rows and column dividers
@@ -112,6 +115,7 @@ All notable changes to this project will be documented in this file. The format 
 ### Other
 - vibe coded
 
+[v0.8.0]: https://github.com/off-court-creations/valet/releases/tag/v0.8.0
 [v0.7.1]: https://github.com/off-court-creations/valet/releases/tag/v0.7.1
 [v0.7.0]: https://github.com/off-court-creations/valet/releases/tag/v0.7.0
 [v0.6.1]: https://github.com/off-court-creations/valet/releases/tag/v0.6.1
