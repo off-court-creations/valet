@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file. The format 
 - Tabs alignment and docs typography page now uses tabs for intro and reference
 ### Fixed
 - Reference tab on Typography demo no longer shows a tiny scrollbar
+- Tab panels scale to content height so switching tabs doesn't scroll
 ### Changed
 - `Table` now defaults to striped rows and column dividers
 

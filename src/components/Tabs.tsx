@@ -52,12 +52,12 @@ const Root = styled('div')<{
     $orientation === 'horizontal'
       ? `
     /* rows: tab-strip + panel */
-    grid-template-rows: ${$placement === 'top' ? 'auto 1fr' : '1fr auto'};
+    grid-template-rows: ${$placement === 'top' ? 'auto auto' : 'auto auto'};
   `
       : `
     /* cols: tab-strip + panel */
     grid-template-columns: ${
-      $placement === 'left' ? 'max-content 1fr' : '1fr max-content'
+      $placement === 'left' ? 'max-content auto' : 'auto max-content'
     };
     align-items: start; /* keep panel aligned to top of tabs */
   `}
