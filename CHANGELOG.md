@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file. The format 
 - `Table` now defaults to striped rows and column dividers
 ### Fixed
 - Tab panels no longer create stray scrollbars when tables are constrained
+- Table inside tab panels no longer oscillates in height
 
 ## [v0.7.2]
 ### Changed
