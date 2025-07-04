@@ -2,133 +2,188 @@
 import { useNavigate } from 'react-router-dom';
 import {
   Surface,
-  Button,
   Stack,
   Typography,
+  Panel,
+  Button,
+  Table,
   useTheme,
-  Panel
+  Tabs
 } from '@archway/valet';
+import type { TableColumn } from '@archway/valet';
+import type { ReactNode } from 'react';
 
 export default function TypographyDemoPage() {
-  const { theme } = useTheme();
+  const { theme, toggleMode } = useTheme();
   const navigate = useNavigate();
+
+  interface Row {
+    prop: ReactNode;
+    type: ReactNode;
+    default: ReactNode;
+    description: ReactNode;
+  }
+
+  const columns: TableColumn<Row>[] = [
+    { header: 'Prop', accessor: 'prop' },
+    { header: 'Type', accessor: 'type' },
+    { header: 'Default', accessor: 'default' },
+    { header: 'Description', accessor: 'description' },
+  ];
+
+  const data: Row[] = [
+    {
+      prop: <code>variant</code>,
+      type: <code>'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'body' | 'subtitle' | 'button'</code>,
+      default: <code>'body'</code>,
+      description: 'Typography style preset',
+    },
+    {
+      prop: <code>bold</code>,
+      type: <code>boolean</code>,
+      default: <code>false</code>,
+      description: 'Use font-weight\u00A0700',
+    },
+    {
+      prop: <code>italic</code>,
+      type: <code>boolean</code>,
+      default: <code>false</code>,
+      description: 'Use italic font style',
+    },
+    {
+      prop: <code>centered</code>,
+      type: <code>boolean</code>,
+      default: <code>false</code>,
+      description:
+        'Center-align text and element within flex/grid parents',
+    },
+    {
+      prop: <code>fontFamily</code>,
+      type: <code>string</code>,
+      default: '-',
+      description: 'Override theme font family',
+    },
+    {
+      prop: <code>fontSize</code>,
+      type: <code>string</code>,
+      default: '-',
+      description: 'Explicit CSS font-size',
+    },
+    {
+      prop: <code>scale</code>,
+      type: <code>number</code>,
+      default: '-',
+      description: 'Multiply the final size (autoSize aware)',
+    },
+    {
+      prop: <code>autoSize</code>,
+      type: <code>boolean</code>,
+      default: <code>false</code>,
+      description: 'Resize to the current breakpoint',
+    },
+    {
+      prop: <code>color</code>,
+      type: <code>string</code>,
+      default: '-',
+      description: 'Override text colour',
+    },
+    {
+      prop: <code>preset</code>,
+      type: <code>string | string[]</code>,
+      default: '-',
+      description: 'Apply style presets',
+    },
+  ];
 
   return (
     <Surface>
-      <Stack
-        spacing={1}
-        preset="showcaseStack"
-      >
-        <Panel style={{ padding: theme.spacing(1) }}>
-          <Typography variant="h1">
-            zeroui h1
-          </Typography>
+      <Stack>
+        <Typography variant="h2">
+          Typography
+        </Typography>
 
-          <Typography variant="h2">
-            zeroui h2
-          </Typography>
+        <Tabs>
+          <Tabs.Tab label="Usage" />
+          <Tabs.Panel>
+            <Typography variant="h3">Variants</Typography>
+            <Panel compact>
+              <Typography variant="h1">variant="h1"</Typography>
+              <Typography variant="h2">variant="h2"</Typography>
+              <Typography variant="h3">variant="h3"</Typography>
+              <Typography variant="h4">variant="h4"</Typography>
+              <Typography variant="h5">variant="h5"</Typography>
+              <Typography variant="h6">variant="h6"</Typography>
+              <Typography variant="subtitle">variant="subtitle"</Typography>
+              <Typography variant="body">variant="body"</Typography>
+              <Typography variant="button">variant="button"</Typography>
+            </Panel>
 
-          <Typography variant="h3">
-            zeroui h3
-          </Typography>
+            <Typography variant="h3">Styling props</Typography>
+            <Panel fullWidth compact>
+              <Typography variant="body">
+                (regular body text)
+              </Typography>
+              <Typography variant="body" bold>
+                bold
+              </Typography>
+              <Typography variant="body" italic>
+                italic
+              </Typography>
+              <Typography variant="body" bold italic>
+                bold italic
+              </Typography>
+              <Typography variant="body" centered>
+                centered text
+              </Typography>
+            </Panel>
 
-          <Typography variant="h4">
-            zeroui h4
-          </Typography>
+            {/* 3. Font & size overrides ---------------------------------------- */}
+            <Typography variant="h3">Font &amp; size overrides</Typography>
+            <Panel compact>
+              <Typography fontFamily="Poppins">fontFamily="Poppins"</Typography>
+              <Typography fontSize="1.5rem">fontSize="1.5rem"</Typography>
+              <Typography scale={1.25}>scale=1.25</Typography>
+              <Typography autoSize scale={1.25}>
+                autoSize + scale (resize viewport)
+              </Typography>
+              <Typography variant="body" autoSize>
+                autoSize
+              </Typography>
+            </Panel>
 
-          <Typography variant="h5">
-            zeroui h5
-          </Typography>
+            <Typography variant="h3">Colour override &amp; adaptation</Typography>
+            <Panel compact>
+              <Typography color="#e91e63">color="#e91e63"</Typography>
+              <Panel background={theme.colors['primary']}>
+                <Typography variant="h6">Inside Panel inherits text colour</Typography>
+              </Panel>
+              <Button>
+                <Typography variant="button" bold>
+                  Typography inside Button
+                </Typography>
+              </Button>
+            </Panel>
 
-          <Typography variant="h6">
-            zeroui h6
-          </Typography>
-        </Panel>
+            <Typography variant="h3">Theme coupling</Typography>
+            <Button variant="outlined" onClick={toggleMode}>
+              Toggle light / dark mode
+            </Button>
+          </Tabs.Panel>
 
-        <Panel style={{ padding: theme.spacing(1) }}>
-          <Typography
-            variant="body"
-            style={{ margin: `${theme.spacing(1)} 0` }
-            }>
-            This is a body copy example.
-          </Typography>
+          <Tabs.Tab label="Reference" />
+          <Tabs.Panel>
+            <Typography variant="h3">Prop reference</Typography>
+            <Table data={data} columns={columns} constrainHeight={false}/>
+          </Tabs.Panel>
+        </Tabs>
 
-          <Typography
-            variant="subtitle"
-          >
-            This is a subtitle copy example.
-          </Typography>
-
-          <Typography
-            variant="body"
-            bold
-            style={{ margin: `${theme.spacing(1)} 0` }
-            }>
-            This is a bold body copy example.
-          </Typography>
-
-          <Typography
-            variant="subtitle"
-            bold
-          >
-            This is a bold subtitle copy example.
-          </Typography>
-
-          <Typography
-            variant="body"
-            italic
-            style={{ margin: `${theme.spacing(1)} 0` }
-            }>
-            This is an italic body copy example.
-          </Typography>
-
-          <Typography
-            variant="subtitle"
-            italic
-          >
-            This is an italic subtitle copy example.
-          </Typography>
-
-          <Typography
-            variant="body"
-            italic
-            bold
-            style={{ margin: `${theme.spacing(1)} 0` }
-            }>
-            This is a bold italic body copy example.
-          </Typography>
-
-          <Typography
-            variant="subtitle"
-            italic
-            bold
-          >
-            This is a bold italic subtitle copy example.
-          </Typography>
-        </Panel>
-
-        <Panel style={{ padding: theme.spacing(1) }}>
-          <Typography>
-            Default Typography
-          </Typography>
-
-          <Typography>
-            Default Typography with <b>inline bold</b>
-          </Typography>
-
-          <Typography>
-            Default Typography with <i>inline italics</i>
-          </Typography>
-
-          <Typography>
-            Default Typography with <i><b>inline bold italics</b></i>
-          </Typography>
-        </Panel>
-      </Stack>
-
-      <Stack direction='row' spacing={1} style={{ padding: theme.spacing(1) }}>
-        <Button size="lg" variant="outlined" onClick={() => navigate(-1)}>
-          Go Back
+        {/* Back nav --------------------------------------------------------- */}
+        <Button
+          size="lg"
+          onClick={() => navigate(-1)}
+          style={{ marginTop: theme.spacing(1) }}
+        >
+          ← Back
         </Button>
       </Stack>
     </Surface>

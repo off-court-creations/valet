@@ -71,7 +71,7 @@ export default function TableDemoPage() {
   const [rows,        setRows]        = useState(30);
   const [striped,     setStriped]     = useState(true);
   const [hoverable,   setHoverable]   = useState(true);
-  const [dividers,    setDividers]    = useState(false);
+  const [dividers,    setDividers]    = useState(true);
   const [selEnabled,  setSelEnabled]  = useState(false);
   const [multiSelect, setMultiSelect] = useState(false);
 
@@ -118,7 +118,6 @@ export default function TableDemoPage() {
         <Panel variant="alt" fullWidth>
           <Stack
             direction="row"
-            spacing={1}
             style={{ alignItems: 'center', flexWrap: 'wrap' }}
           >
             <Typography variant="h2" bold>
@@ -137,7 +136,6 @@ export default function TableDemoPage() {
         <Panel variant="alt" fullWidth>
           <Stack
             direction="row"
-            spacing={4}
             style={{ flexWrap: 'wrap', alignItems: 'flex-end' }}
           >
             <TextField
@@ -213,7 +211,7 @@ export default function TableDemoPage() {
             dividers={dividers}
             selectable={selectable}
             initialSort={{ index: 0 }}
-            style={{ minWidth: 640 }}
+            constrainHeight
           />
         </Panel>
 

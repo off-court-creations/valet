@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 // src/main.tsx
-// Bootstraps React + Valet, *plus* eagerly registers presets.
+// Bootstraps React + valet, *plus* eagerly registers presets.
 // ─────────────────────────────────────────────────────────────
 import React            from 'react';
 import ReactDOM         from 'react-dom/client';

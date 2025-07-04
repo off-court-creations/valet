@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 // src/css/createStyled.ts | valet
-// Tiny CSS-in-JS helper powering Valet primitives. Now exports `styled` +
+// Tiny CSS-in-JS helper powering valet primitives. Now exports `styled` +
 // `keyframes`, giving our components Emotion-style animation ergonomics.
 //
 // • Atomic – each unique rule hashed → single class / keyframes injection

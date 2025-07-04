@@ -57,7 +57,7 @@ export const Typography: React.FC<TypographyProps> = ({
 
   const defaultSize = theme.typography[variant].md;
   let size = autoSize ? theme.typography[variant][breakpoint] : defaultSize;
-  if (scale != null) size = `calc(${defaultSize} * ${scale})`;
+  if (scale != null) size = `calc(${size} * ${scale})`;
   if (fontSize) size = fontSize;
 
   const presetClasses = p ? preset(p) : '';
