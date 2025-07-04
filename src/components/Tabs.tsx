@@ -128,6 +128,7 @@ const Panel = styled('div')`
   padding: 1rem 0;
   overflow: visible;
   box-sizing: border-box;
+  min-height: 0;
 `;
 
 /*───────────────────────────────────────────────────────────*/
