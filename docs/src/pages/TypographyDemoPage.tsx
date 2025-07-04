@@ -107,7 +107,7 @@ export default function TypographyDemoPage() {
 
         {/* 1. Variants ------------------------------------------------------ */}
         <Typography variant="h3">1. Variants</Typography>
-        <Panel style={{ padding: theme.spacing(1) }}>
+        <Panel>
           <Typography variant="h1">variant="h1"</Typography>
           <Typography variant="h2">variant="h2"</Typography>
           <Typography variant="h3">variant="h3"</Typography>
@@ -121,7 +121,10 @@ export default function TypographyDemoPage() {
 
         {/* 2. Styling props ------------------------------------------------- */}
         <Typography variant="h3">2. Styling props</Typography>
-        <Panel style={{ padding: theme.spacing(1) }}>
+        <Panel fullWidth>
+          <Typography variant="body">
+            (regular body text)
+          </Typography>
           <Typography variant="body" bold>
             bold
           </Typography>
@@ -138,7 +141,7 @@ export default function TypographyDemoPage() {
 
         {/* 3. Font & size overrides ---------------------------------------- */}
         <Typography variant="h3">3. Font &amp; size overrides</Typography>
-        <Panel style={{ padding: theme.spacing(1) }}>
+        <Panel>
           <Typography fontFamily="Poppins">fontFamily="Poppins"</Typography>
           <Typography fontSize="1.5rem">fontSize="1.5rem"</Typography>
           <Typography scale={1.25}>scale=1.25</Typography>
@@ -152,12 +155,12 @@ export default function TypographyDemoPage() {
 
         {/* 4. Colour override & adaptation --------------------------------- */}
         <Typography variant="h3">4. Colour override &amp; adaptation</Typography>
-        <Panel style={{ padding: theme.spacing(1) }}>
+        <Panel>
           <Typography color="#e91e63">color="#e91e63"</Typography>
-          <Panel background={theme.colors['primary']} style={{ padding: theme.spacing(1) }}>
+          <Panel background={theme.colors['primary']}>
             <Typography variant="h6">Inside Panel inherits text colour</Typography>
           </Panel>
-          <Button style={{ marginTop: theme.spacing(1) }}>
+          <Button>
             <Typography variant="button" bold>
               Typography inside Button
             </Typography>
@@ -172,9 +175,7 @@ export default function TypographyDemoPage() {
 
         {/* 6. Prop reference ---------------------------------------------- */}
         <Typography variant="h3">6. Prop reference</Typography>
-        <Panel style={{ padding: theme.spacing(1), overflowX: 'auto' }}>
-          <Table data={data} columns={columns} style={{ minWidth: 640 }} />
-        </Panel>
+        <Table data={data} columns={columns} dividers striped />
 
         {/* Back nav --------------------------------------------------------- */}
         <Button
