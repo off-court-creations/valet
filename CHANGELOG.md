@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file. The format 
 - Reference tab on Typography demo no longer shows a tiny scrollbar
 - Tab panels scale to content height so switching tabs doesn't scroll
 - Switching tabs no longer leaves a tiny page scroll
+- Removed extra padding on Typography page stack so Reference tab fits without scrolling
 ### Changed
 - `Table` now defaults to striped rows and column dividers
 

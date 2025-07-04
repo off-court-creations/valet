@@ -97,7 +97,11 @@ export default function TypographyDemoPage() {
 
   return (
     <Surface>
-      <Stack spacing={1} preset="showcaseStack" style={{ marginBottom: 0 }}>
+      <Stack
+        spacing={1}
+        preset="showcaseStack"
+        style={{ marginBottom: 0, paddingBottom: 0 }}
+      >
         {/* Page header ----------------------------------------------------- */}
         <Typography variant="h2" bold>
           Typography Showcase
