@@ -50,6 +50,7 @@ export interface TableProps<T>
 const Wrapper = styled('div')`
   width:100%;
   display:block;
+  box-sizing:border-box;
 `;
 const Root = styled('table')<{
   $striped:boolean; $hover:boolean; $lines:boolean;
@@ -57,6 +58,7 @@ const Root = styled('table')<{
 }>`
   width:100%;
   border-collapse:collapse;
+  box-sizing:border-box;
   border:1px solid ${({$border})=>$border};
 
   th,td{
@@ -150,14 +152,13 @@ export function Table<T extends object>({
     const node = wrapRef.current;
     const surfEl = surface.element;
     if (!node || !surfEl) return;
-    let other = surfEl.scrollHeight - node.offsetHeight;
-    const parent = node.parentElement;
-    if (parent && typeof window !== 'undefined') {
-      const cs = getComputedStyle(parent);
-      other +=
-        (parseFloat(cs.marginTop) || 0) + (parseFloat(cs.marginBottom) || 0);
-    }
-    const available = surface.height - other;
+    const sRect = surfEl.getBoundingClientRect();
+    const nRect = node.getBoundingClientRect();
+    const top = Math.round(nRect.top - sRect.top + surfEl.scrollTop);
+    const bottomSpace = Math.round(
+      surfEl.scrollHeight - (nRect.bottom - sRect.top + surfEl.scrollTop),
+    );
+    const available = Math.round(surface.height - top - bottomSpace);
     const cutoff = calcCutoff();
 
     const next = available >= cutoff;

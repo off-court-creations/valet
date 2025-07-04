@@ -126,7 +126,9 @@ const TabBtn = styled('button')<{
 
 const Panel = styled('div')`
   padding: 1rem 0;
-  overflow: hidden;
+  overflow: visible;
+  box-sizing: border-box;
+  min-height: 0;
 `;
 
 /*───────────────────────────────────────────────────────────*/
@@ -195,9 +197,13 @@ export const Tabs: React.FC<TabsProps> & {
     if (!React.isValidElement(child)) return;
     const name = (child.type as any).displayName;
     if (name === 'Tabs.Tab')
-      tabs.push(React.cloneElement(child, { index: tabs.length } as any));
+      tabs.push(
+        React.cloneElement(child, { index: tabs.length, key: tabs.length } as any),
+      );
     if (name === 'Tabs.Panel')
-      panels.push(React.cloneElement(child, { index: panels.length } as any));
+      panels.push(
+        React.cloneElement(child, { index: panels.length, key: panels.length } as any),
+      );
   });
 
   const ctx = useMemo<Ctx>(

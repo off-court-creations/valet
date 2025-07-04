@@ -11,6 +11,11 @@ All notable changes to this project will be documented in this file. The format 
 ### Changed
 - `Table` now defaults to striped rows and column dividers
 
+### Fixed
+- `Surface` updates overflow state when DOM changes
+- `Table` constrainHeight measures offset from the surface top to avoid shrinking loops
+- `Table` accounts for content below it so controls remain visible
+
 ## [v0.7.2]
 ### Changed
 - Main page of docs - Main page spacing styling
