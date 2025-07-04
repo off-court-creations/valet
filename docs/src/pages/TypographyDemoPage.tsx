@@ -97,7 +97,7 @@ export default function TypographyDemoPage() {
 
   return (
     <Surface>
-      <Stack spacing={1} preset="showcaseStack">
+      <Stack compact>
         {/* Page header ----------------------------------------------------- */}
         <Typography variant="h2" bold>
           Typography Showcase
@@ -110,7 +110,7 @@ export default function TypographyDemoPage() {
           <Tabs.Tab label="Introduction" />
           <Tabs.Panel>
             {/* 1. Variants -------------------------------------------------- */}
-            <Typography variant="h3">1. Variants</Typography>
+            <Typography variant="h3">Variants</Typography>
             <Panel>
               <Typography variant="h1">variant="h1"</Typography>
               <Typography variant="h2">variant="h2"</Typography>
@@ -124,7 +124,7 @@ export default function TypographyDemoPage() {
             </Panel>
 
             {/* 2. Styling props ------------------------------------------- */}
-            <Typography variant="h3">2. Styling props</Typography>
+            <Typography variant="h3">Styling props</Typography>
             <Panel fullWidth>
               <Typography variant="body">
                 (regular body text)
@@ -144,7 +144,7 @@ export default function TypographyDemoPage() {
             </Panel>
 
             {/* 3. Font & size overrides ---------------------------------- */}
-            <Typography variant="h3">3. Font &amp; size overrides</Typography>
+            <Typography variant="h3">Font &amp; size overrides</Typography>
             <Panel>
               <Typography fontFamily="Poppins">fontFamily="Poppins"</Typography>
               <Typography fontSize="1.5rem">fontSize="1.5rem"</Typography>
@@ -158,7 +158,7 @@ export default function TypographyDemoPage() {
             </Panel>
 
             {/* 4. Colour override & adaptation --------------------------- */}
-            <Typography variant="h3">4. Colour override &amp; adaptation</Typography>
+            <Typography variant="h3">Color override &amp; adaptation</Typography>
             <Panel>
               <Typography color="#e91e63">color="#e91e63"</Typography>
               <Panel background={theme.colors['primary']}>
@@ -172,7 +172,7 @@ export default function TypographyDemoPage() {
             </Panel>
 
             {/* 5. Theme coupling ----------------------------------------- */}
-            <Typography variant="h3">5. Theme coupling</Typography>
+            <Typography variant="h3">Theme coupling</Typography>
             <Button variant="outlined" onClick={toggleMode}>
               Toggle light / dark mode
             </Button>
@@ -181,8 +181,8 @@ export default function TypographyDemoPage() {
           <Tabs.Tab label="Reference" />
           <Tabs.Panel>
             {/* 6. Prop reference ------------------------------------------ */}
-            <Typography variant="h3">6. Prop reference</Typography>
-            <Table data={data} columns={columns} />
+            <Typography variant="h3">Prop reference</Typography>
+            <Table data={data} columns={columns} constrainHeight={false}/>
           </Tabs.Panel>
         </Tabs>
 
