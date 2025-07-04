@@ -152,14 +152,14 @@ export function Table<T extends object>({
     const node = wrapRef.current;
     const surfEl = surface.element;
     if (!node || !surfEl) return;
-    let other = surfEl.scrollHeight - node.offsetHeight;
+    const sRect = surfEl.getBoundingClientRect();
+    const nRect = node.getBoundingClientRect();
+    const top = Math.round(nRect.top - sRect.top + surfEl.scrollTop);
     const parent = node.parentElement;
-    if (parent && typeof window !== 'undefined') {
-      const cs = getComputedStyle(parent);
-      other +=
-        (parseFloat(cs.marginTop) || 0) + (parseFloat(cs.marginBottom) || 0);
-    }
-    const available = Math.round(surface.height - other);
+    const margin = parent && typeof window !== 'undefined'
+      ? parseFloat(getComputedStyle(parent).marginTop) || 0
+      : 0;
+    const available = Math.round(surface.height - top - margin);
     const cutoff = calcCutoff();
 
     const next = available >= cutoff;
