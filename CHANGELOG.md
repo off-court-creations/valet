@@ -13,7 +13,7 @@ All notable changes to this project will be documented in this file. The format 
 
 ### Fixed
 - `Surface` updates overflow state when DOM changes
-- `Table` constrainHeight no longer shrinks or flashes
+- `Table` constrainHeight stays stable without flashing or shrinking loops
 
 ## [v0.7.2]
 ### Changed

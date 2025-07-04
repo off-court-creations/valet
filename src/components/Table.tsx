@@ -159,7 +159,7 @@ export function Table<T extends object>({
       other +=
         (parseFloat(cs.marginTop) || 0) + (parseFloat(cs.marginBottom) || 0);
     }
-    const available = Math.floor(surface.height - other);
+    const available = Math.round(surface.height - other);
     const cutoff = calcCutoff();
 
     const next = available >= cutoff;
