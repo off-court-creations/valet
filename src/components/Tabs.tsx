@@ -45,9 +45,8 @@ const Root = styled('div')<{
   width: 100%;
   display: grid;
   margin: ${({ $gap }) => $gap};
-  & > * {
-    padding: ${({ $gap }) => $gap};
-  }
+  gap: ${({ $gap }) => $gap};
+  & > * { padding: 0; }
 
   ${({ $orientation, $placement }) =>
     $orientation === 'horizontal'
@@ -77,7 +76,9 @@ const TabList = styled('div')<{
   display: flex;
   flex-direction: ${({ $orientation }) =>
     $orientation === 'vertical' ? 'column' : 'row'};
-  gap: 0;
+  gap: ${({ $orientation }) =>
+    $orientation === 'vertical' ? '0.25rem' : '0'};
+  align-items: stretch;
 
   ${({ $orientation }) =>
     $orientation === 'vertical' && 'width: max-content;'}
@@ -90,11 +91,12 @@ const TabBtn = styled('button')<{
   $primary : string;
   $orient  : 'horizontal' | 'vertical';
 }>`
+  box-sizing: border-box;
   background: transparent;
   border: none;
   color: inherit;
   font: inherit;
-  padding: 0.75rem 1.25rem;
+  padding: 0.5rem 0.75rem;
   cursor: pointer;
   appearance: none;
 
@@ -102,9 +104,12 @@ const TabBtn = styled('button')<{
   touch-action: manipulation;
 
   ${({ $orient }) =>
-    $orient === 'vertical' ? 'width: 100%;' : 'min-width: 4rem;'}
+    $orient === 'vertical' ? 'width: 100%;' : 'min-width: 3rem;'}
 
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
 
   &:focus-visible {
@@ -117,15 +122,15 @@ const TabBtn = styled('button')<{
     position: absolute;
     ${({ $orient }) =>
       $orient === 'horizontal'
-        ? `left: 0; right: 0; bottom: -1px; height: 2px;`
-        : `top: 0; bottom: 0; right: -1px; width: 2px;`}
+        ? `left: 0; right: 0; bottom: 0; height: 2px;`
+        : `top: 0; bottom: 0; right: 0; width: 2px;`}
     background: ${({ $primary, $active }) => ($active ? $primary : 'transparent')};
     transition: background 150ms ease;
   }
 `;
 
 const Panel = styled('div')`
-  padding: 1rem 0;
+  padding: 0.75rem 0;
   overflow: hidden;
 `;
 
