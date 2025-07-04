@@ -6,6 +6,8 @@ All notable changes to this project will be documented in this file. The format 
 ### Improved
 - Typography `autoSize` functionality
 - Stack default padding / margins
+- compact prop for Stack, Box, Panel
+
 ### Changed
 - `Table` now defaults to striped rows and column dividers
 

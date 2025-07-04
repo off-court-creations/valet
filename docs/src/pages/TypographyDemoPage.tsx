@@ -106,7 +106,7 @@ export default function TypographyDemoPage() {
           <Tabs.Tab label="Usage" />
           <Tabs.Panel>
             <Typography variant="h3">Variants</Typography>
-            <Panel>
+            <Panel compact>
               <Typography variant="h1">variant="h1"</Typography>
               <Typography variant="h2">variant="h2"</Typography>
               <Typography variant="h3">variant="h3"</Typography>
@@ -119,7 +119,7 @@ export default function TypographyDemoPage() {
             </Panel>
 
             <Typography variant="h3">Styling props</Typography>
-            <Panel fullWidth>
+            <Panel fullWidth compact>
               <Typography variant="body">
                 (regular body text)
               </Typography>
@@ -139,7 +139,7 @@ export default function TypographyDemoPage() {
 
             {/* 3. Font & size overrides ---------------------------------------- */}
             <Typography variant="h3">Font &amp; size overrides</Typography>
-            <Panel>
+            <Panel compact>
               <Typography fontFamily="Poppins">fontFamily="Poppins"</Typography>
               <Typography fontSize="1.5rem">fontSize="1.5rem"</Typography>
               <Typography scale={1.25}>scale=1.25</Typography>
@@ -152,7 +152,7 @@ export default function TypographyDemoPage() {
             </Panel>
 
             <Typography variant="h3">Colour override &amp; adaptation</Typography>
-            <Panel>
+            <Panel compact>
               <Typography color="#e91e63">color="#e91e63"</Typography>
               <Panel background={theme.colors['primary']}>
                 <Typography variant="h6">Inside Panel inherits text colour</Typography>

@@ -82,7 +82,8 @@ export const Box: React.FC<BoxProps> = ({
         : undefined; // defer to cascade / presets
   }
 
-  const gap = compact ? '0' : theme.spacing(1);
+  const pad = theme.spacing(1);
+  const margin = compact ? '0' : pad;
 
   return (
     <Base
@@ -90,8 +91,8 @@ export const Box: React.FC<BoxProps> = ({
       $bg={background}
       $text={resolvedText}
       $center={centered}
-      $margin={gap}
-      $pad={gap}
+      $margin={margin}
+      $pad={pad}
       style={style}
       className={[presetClass, className].filter(Boolean).join(' ')}
     />
