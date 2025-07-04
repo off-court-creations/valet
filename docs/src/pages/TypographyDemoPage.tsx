@@ -175,7 +175,7 @@ export default function TypographyDemoPage() {
 
         {/* 6. Prop reference ---------------------------------------------- */}
         <Typography variant="h3">6. Prop reference</Typography>
-        <Table data={data} columns={columns} dividers striped />
+        <Table data={data} columns={columns} />
 
         {/* Back nav --------------------------------------------------------- */}
         <Button

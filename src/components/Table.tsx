@@ -117,9 +117,9 @@ const Td = styled('td')<{ $align:'left'|'center'|'right' }>`
 export function Table<T extends object>({
   data,
   columns,
-  striped=false,
+  striped=true,
   hoverable=false,
-  dividers=false,
+  dividers=true,
   selectable,
   initialSort,
   onSortChange,

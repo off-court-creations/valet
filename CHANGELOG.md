@@ -6,6 +6,8 @@ All notable changes to this project will be documented in this file. The format 
 ### Improved
 - Typography `autoSize` functionality
 - Stack default padding / margins
+### Changed
+- `Table` now defaults to striped rows and column dividers
 
 ## [v0.7.2]
 ### Changed
