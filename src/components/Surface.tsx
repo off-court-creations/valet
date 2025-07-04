@@ -71,9 +71,14 @@ export const Surface: React.FC<SurfaceProps> = ({
       }));
     };
     const ro = new ResizeObserver(measure);
+    const mo = new MutationObserver(measure);
     ro.observe(node);
+    mo.observe(node, { childList: true, subtree: true });
     measure();
-    return () => ro.disconnect();
+    return () => {
+      ro.disconnect();
+      mo.disconnect();
+    };
   }, [theme.breakpoints, useStore]);
 
   useEffect(() => {
