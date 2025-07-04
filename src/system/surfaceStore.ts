@@ -44,7 +44,7 @@ export const createSurfaceStore = () =>
             const rect = entry.target.getBoundingClientRect()
             const metrics = {
               width: rect.width,
-              height: Math.round(rect.height),
+              height: rect.height,
               top: rect.top - sRect.top + scrollTop,
               left: rect.left - sRect.left + scrollLeft,
             }
@@ -77,7 +77,7 @@ export const createSurfaceStore = () =>
         const rect = node.getBoundingClientRect()
         const metrics = {
           width: rect.width,
-          height: Math.round(rect.height),
+          height: rect.height,
           top: rect.top - sRect.top + scrollTop,
           left: rect.left - sRect.left + scrollLeft,
         }

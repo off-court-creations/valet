@@ -59,7 +59,7 @@ export const Surface: React.FC<SurfaceProps> = ({
       useStore.setState((s) => ({
         ...s,
         width: rect.width,
-        height: Math.round(rect.height),
+        height: rect.height,
         hasScrollbar:
           node.scrollHeight > node.clientHeight ||
           node.scrollWidth > node.clientWidth,
