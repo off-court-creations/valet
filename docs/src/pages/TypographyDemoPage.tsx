@@ -97,7 +97,7 @@ export default function TypographyDemoPage() {
 
   return (
     <Surface>
-      <Stack compact>
+      <Stack>
         <Typography variant="h2">
           Typography
         </Typography>

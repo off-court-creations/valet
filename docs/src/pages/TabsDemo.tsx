@@ -32,10 +32,7 @@ export default function TabsDemoPage() {
 
   return (
     <Surface>
-      <Stack
-        spacing={1}
-        preset="showcaseStack"
-      >
+      <Stack>
         <Typography variant="h2" bold>
           Tabs Layout Showcase
         </Typography>
