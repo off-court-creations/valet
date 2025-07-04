@@ -8,6 +8,7 @@ import {
   Button,
   Table,
   useTheme,
+  Tabs
 } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
@@ -96,86 +97,85 @@ export default function TypographyDemoPage() {
 
   return (
     <Surface>
-      <Stack spacing={1} preset="showcaseStack">
-        {/* Page header ----------------------------------------------------- */}
-        <Typography variant="h2" bold>
-          Typography Showcase
-        </Typography>
-        <Typography variant="subtitle">
-          Variants, font tweaks and theme coupling
+      <Stack compact>
+        <Typography variant="h2">
+          Typography
         </Typography>
 
-        {/* 1. Variants ------------------------------------------------------ */}
-        <Typography variant="h3">1. Variants</Typography>
-        <Panel>
-          <Typography variant="h1">variant="h1"</Typography>
-          <Typography variant="h2">variant="h2"</Typography>
-          <Typography variant="h3">variant="h3"</Typography>
-          <Typography variant="h4">variant="h4"</Typography>
-          <Typography variant="h5">variant="h5"</Typography>
-          <Typography variant="h6">variant="h6"</Typography>
-          <Typography variant="subtitle">variant="subtitle"</Typography>
-          <Typography variant="body">variant="body"</Typography>
-          <Typography variant="button">variant="button"</Typography>
-        </Panel>
+        <Tabs>
+          <Tabs.Tab label="Usage" />
+          <Tabs.Panel>
+            <Typography variant="h3">Variants</Typography>
+            <Panel>
+              <Typography variant="h1">variant="h1"</Typography>
+              <Typography variant="h2">variant="h2"</Typography>
+              <Typography variant="h3">variant="h3"</Typography>
+              <Typography variant="h4">variant="h4"</Typography>
+              <Typography variant="h5">variant="h5"</Typography>
+              <Typography variant="h6">variant="h6"</Typography>
+              <Typography variant="subtitle">variant="subtitle"</Typography>
+              <Typography variant="body">variant="body"</Typography>
+              <Typography variant="button">variant="button"</Typography>
+            </Panel>
 
-        {/* 2. Styling props ------------------------------------------------- */}
-        <Typography variant="h3">2. Styling props</Typography>
-        <Panel fullWidth>
-          <Typography variant="body">
-            (regular body text)
-          </Typography>
-          <Typography variant="body" bold>
-            bold
-          </Typography>
-          <Typography variant="body" italic>
-            italic
-          </Typography>
-          <Typography variant="body" bold italic>
-            bold italic
-          </Typography>
-          <Typography variant="body" centered>
-            centered text
-          </Typography>
-        </Panel>
+            <Typography variant="h3">Styling props</Typography>
+            <Panel fullWidth>
+              <Typography variant="body">
+                (regular body text)
+              </Typography>
+              <Typography variant="body" bold>
+                bold
+              </Typography>
+              <Typography variant="body" italic>
+                italic
+              </Typography>
+              <Typography variant="body" bold italic>
+                bold italic
+              </Typography>
+              <Typography variant="body" centered>
+                centered text
+              </Typography>
+            </Panel>
 
-        {/* 3. Font & size overrides ---------------------------------------- */}
-        <Typography variant="h3">3. Font &amp; size overrides</Typography>
-        <Panel>
-          <Typography fontFamily="Poppins">fontFamily="Poppins"</Typography>
-          <Typography fontSize="1.5rem">fontSize="1.5rem"</Typography>
-          <Typography scale={1.25}>scale=1.25</Typography>
-          <Typography autoSize scale={1.25}>
-            autoSize + scale (resize viewport)
-          </Typography>
-          <Typography variant="body" autoSize>
-            autoSize
-          </Typography>
-        </Panel>
+            {/* 3. Font & size overrides ---------------------------------------- */}
+            <Typography variant="h3">Font &amp; size overrides</Typography>
+            <Panel>
+              <Typography fontFamily="Poppins">fontFamily="Poppins"</Typography>
+              <Typography fontSize="1.5rem">fontSize="1.5rem"</Typography>
+              <Typography scale={1.25}>scale=1.25</Typography>
+              <Typography autoSize scale={1.25}>
+                autoSize + scale (resize viewport)
+              </Typography>
+              <Typography variant="body" autoSize>
+                autoSize
+              </Typography>
+            </Panel>
 
-        {/* 4. Colour override & adaptation --------------------------------- */}
-        <Typography variant="h3">4. Colour override &amp; adaptation</Typography>
-        <Panel>
-          <Typography color="#e91e63">color="#e91e63"</Typography>
-          <Panel background={theme.colors['primary']}>
-            <Typography variant="h6">Inside Panel inherits text colour</Typography>
-          </Panel>
-          <Button>
-            <Typography variant="button" bold>
-              Typography inside Button
-            </Typography>
-          </Button>
-        </Panel>
+            <Typography variant="h3">Colour override &amp; adaptation</Typography>
+            <Panel>
+              <Typography color="#e91e63">color="#e91e63"</Typography>
+              <Panel background={theme.colors['primary']}>
+                <Typography variant="h6">Inside Panel inherits text colour</Typography>
+              </Panel>
+              <Button>
+                <Typography variant="button" bold>
+                  Typography inside Button
+                </Typography>
+              </Button>
+            </Panel>
 
-        {/* 5. Theme coupling ----------------------------------------------- */}
-        <Typography variant="h3">5. Theme coupling</Typography>
-        <Button variant="outlined" onClick={toggleMode}>
-          Toggle light / dark mode
-        </Button>
+            <Typography variant="h3">Theme coupling</Typography>
+            <Button variant="outlined" onClick={toggleMode}>
+              Toggle light / dark mode
+            </Button>
+          </Tabs.Panel>
 
-        {/* 6. Prop reference ---------------------------------------------- */}
-        <Typography variant="h3">6. Prop reference</Typography>
-        <Table data={data} columns={columns} />
+          <Tabs.Tab label="Reference" />
+          <Tabs.Panel>
+            <Typography variant="h3">Prop reference</Typography>
+            <Table data={data} columns={columns} constrainHeight={false}/>
+          </Tabs.Panel>
+        </Tabs>
 
         {/* Back nav --------------------------------------------------------- */}
         <Button
