@@ -6,6 +6,11 @@ All notable changes to this project will be documented in this file. The format 
 ### Improved
 - Typography `autoSize` functionality
 - Stack default padding / margins
+- Tabs alignment and docs typography page now uses tabs for intro and reference
+### Fixed
+- Reference tab on Typography demo no longer shows a tiny scrollbar
+- Tab panels scale to content height so switching tabs doesn't scroll
+- Switching tabs no longer leaves a tiny page scroll
 ### Changed
 - `Table` now defaults to striped rows and column dividers
 
