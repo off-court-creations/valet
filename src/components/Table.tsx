@@ -155,11 +155,10 @@ export function Table<T extends object>({
     const sRect = surfEl.getBoundingClientRect();
     const nRect = node.getBoundingClientRect();
     const top = Math.round(nRect.top - sRect.top + surfEl.scrollTop);
-    const parent = node.parentElement;
-    const margin = parent && typeof window !== 'undefined'
-      ? parseFloat(getComputedStyle(parent).marginTop) || 0
-      : 0;
-    const available = Math.round(surface.height - top - margin);
+    const bottomSpace = Math.round(
+      surfEl.scrollHeight - (nRect.bottom - sRect.top + surfEl.scrollTop),
+    );
+    const available = Math.round(surface.height - top - bottomSpace);
     const cutoff = calcCutoff();
 
     const next = available >= cutoff;
