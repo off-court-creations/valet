@@ -50,6 +50,7 @@ export interface TableProps<T>
 const Wrapper = styled('div')`
   width:100%;
   display:block;
+  box-sizing:border-box;
 `;
 const Root = styled('table')<{
   $striped:boolean; $hover:boolean; $lines:boolean;
@@ -57,6 +58,7 @@ const Root = styled('table')<{
 }>`
   width:100%;
   border-collapse:collapse;
+  box-sizing:border-box;
   border:1px solid ${({$border})=>$border};
 
   th,td{
