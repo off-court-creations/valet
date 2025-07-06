@@ -158,7 +158,10 @@ export function Table<T extends object>({
     const bottomSpace = Math.round(
       surfEl.scrollHeight - (nRect.bottom - sRect.top + surfEl.scrollTop),
     );
-    const available = Math.round(surface.height - top - bottomSpace);
+    const extraSpace = Math.max(0, surface.height - surfEl.scrollHeight);
+    const available = Math.round(
+      surface.height - top - Math.max(0, bottomSpace - extraSpace),
+    );
     const cutoff = calcCutoff();
 
     const next = available >= cutoff;
