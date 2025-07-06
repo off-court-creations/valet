@@ -15,11 +15,14 @@ import React, {
   useMemo,
   useLayoutEffect,
   useState,
+  useId,
+  useEffect,
 } from 'react';
 import { styled }               from '../css/createStyled';
 import { useTheme }             from '../system/themeStore';
 import { preset }               from '../css/stylePresets';
 import { toRgb, mix, toHex }    from '../helpers/color';
+import { useSurface }           from '../system/surfaceStore';
 import type { Presettable }     from '../types';
 
 /*───────────────────────────────────────────────────────────*/
@@ -47,6 +50,12 @@ const Root = styled('div')<{ $gap: string }>`
   & > * {
     padding: ${({ $gap }) => $gap};
   }
+`;
+
+const Wrapper = styled('div')`
+  width:100%;
+  display:block;
+  box-sizing:border-box;
 `;
 
 const ItemWrapper = styled('div')`
@@ -122,6 +131,7 @@ export interface AccordionProps
   multiple?: boolean;
   onOpenChange?: (open: number[]) => void;
   headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
+  constrainHeight?: boolean;
 }
 
 export interface AccordionItemProps
@@ -143,12 +153,19 @@ export const Accordion: React.FC<AccordionProps> & {
   multiple = false,
   onOpenChange,
   headingLevel = 3,
+  constrainHeight = true,
   preset: p,
   className,
   children,
   ...divProps
 }) => {
   const { theme } = useTheme();
+  const surface = useSurface();
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const uniqueId = useId();
+  const [maxHeight, setMaxHeight] = useState<number>();
+  const [shouldConstrain, setShouldConstrain] = useState(false);
+  const constraintRef = useRef(false);
   const controlled = openProp !== undefined;
   const toArray = (v?: number | number[]) =>
     v === undefined ? [] : Array.isArray(v) ? v : [v];
@@ -183,19 +200,91 @@ export const Accordion: React.FC<AccordionProps> & {
 
   const presetClasses = p ? preset(p) : '';
 
+  const calcCutoff = () => {
+    if (typeof document === 'undefined') return 32;
+    const fs = parseFloat(
+      getComputedStyle(document.documentElement).fontSize,
+    );
+    return (isNaN(fs) ? 16 : fs) * 2;
+  };
+
+  const update = () => {
+    const node = wrapRef.current;
+    const surfEl = surface.element;
+    if (!node || !surfEl) return;
+    const sRect = surfEl.getBoundingClientRect();
+    const nRect = node.getBoundingClientRect();
+    const top = Math.round(nRect.top - sRect.top + surfEl.scrollTop);
+    const bottomSpace = Math.round(
+      surfEl.scrollHeight - (nRect.bottom - sRect.top + surfEl.scrollTop),
+    );
+    const available = Math.round(surface.height - top - bottomSpace);
+    const cutoff = calcCutoff();
+
+    const next = available >= cutoff;
+    if (next) {
+      if (!constraintRef.current) {
+        surfEl.scrollTop = 0;
+        surfEl.scrollLeft = 0;
+      }
+      constraintRef.current = true;
+      setShouldConstrain(true);
+      setMaxHeight(Math.max(0, available));
+    } else {
+      constraintRef.current = false;
+      setShouldConstrain(false);
+      setMaxHeight(undefined);
+    }
+  };
+
+  useEffect(() => {
+    if (!constrainHeight) {
+      constraintRef.current = false;
+      setShouldConstrain(false);
+      setMaxHeight(undefined);
+    } else {
+      constraintRef.current = false;
+    }
+  }, [constrainHeight]);
+
+  useLayoutEffect(() => {
+    if (!constrainHeight || !wrapRef.current || !surface.element) return;
+    const node = wrapRef.current;
+    surface.registerChild(uniqueId, node, update);
+    const ro = new ResizeObserver(update);
+    ro.observe(node);
+    update();
+    return () => {
+      surface.unregisterChild(uniqueId);
+      ro.disconnect();
+    };
+  }, [constrainHeight, surface.element]);
+
+  useLayoutEffect(() => {
+    if (!constrainHeight || !wrapRef.current || !surface.element) return;
+    update();
+  }, [constrainHeight, surface.height, surface.element]);
+
   return (
     <AccordionCtx.Provider value={ctx}>
-      <Root
-        {...divProps}
-        $gap={theme.spacing(1)}
-        className={[presetClasses, className].filter(Boolean).join(' ')}
+      <Wrapper
+        ref={wrapRef}
+        style={
+          shouldConstrain ? { overflow: 'auto', maxHeight } : undefined
+        }
       >
-        {React.Children.map(children, (child, idx) =>
-          React.isValidElement(child)
-            ? React.cloneElement(child as React.ReactElement<any>, { index: idx })
-            : child,
-        )}
-      </Root>
+        <Root
+          {...divProps}
+          $gap={theme.spacing(1)}
+          className={[presetClasses, className].filter(Boolean).join(' ')}
+        >
+          {React.Children.map(children, (child, idx) =>
+            React.isValidElement(child)
+              ? React.cloneElement(child as React.ReactElement<any>, { index: idx })
+              : child,
+          )}
+        </Root>
+      </Wrapper>
     </AccordionCtx.Provider>
   );
 };

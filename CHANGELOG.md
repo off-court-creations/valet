@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file. The format 
 
 ### Improved
 - Accordion chevron orientation and animation performance
+- Accordion can now constrain height with Surface
 
 ## [v0.8.0]
 ### Improved
