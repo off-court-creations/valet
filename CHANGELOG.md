@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Improved
+- Accordion chevron orientation and animation performance
+
 ## [v0.8.0]
 ### Improved
 - Typography `autoSize` functionality

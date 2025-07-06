@@ -42,6 +42,9 @@ export default function AccordionDemoPage() {
         <Typography variant="h2" bold>
           Accordion Showcase
         </Typography>
+        <Typography>
+          Smooth animations and unified chevron icons
+        </Typography>
 
         {/* 1. Uncontrolled disclosure list (single item) ------------------ */}
         <Typography variant="h3">1. Uncontrolled (single-expand)</Typography>
