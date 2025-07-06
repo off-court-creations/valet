@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file. The format 
 
 ### Fixed
 - Accordion constrained height now fills the available space within a Surface
+- Accordion no longer clamps to its initial height before expansion
 
 ## [v0.8.0]
 ### Improved

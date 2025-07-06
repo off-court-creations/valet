@@ -216,14 +216,18 @@ export const Accordion: React.FC<AccordionProps> & {
     const sRect = surfEl.getBoundingClientRect();
     const nRect = node.getBoundingClientRect();
     const top = Math.round(nRect.top - sRect.top + surfEl.scrollTop);
-    const bottomSpace = Math.round(
-      surfEl.scrollHeight - (nRect.bottom - sRect.top + surfEl.scrollTop),
-    );
+    const hasAfterContent = surfEl.scrollHeight > surfEl.clientHeight;
+    const bottomSpace = hasAfterContent
+      ? Math.max(
+          0,
+          surfEl.scrollHeight - (nRect.bottom - sRect.top + surfEl.scrollTop),
+        )
+      : 0;
     const available = Math.round(surface.height - top - bottomSpace);
     const cutoff = calcCutoff();
 
-    const next = available >= cutoff;
-    if (next) {
+    const shouldClamp = node.scrollHeight > available && available >= cutoff;
+    if (shouldClamp) {
       if (!constraintRef.current) {
         surfEl.scrollTop = 0;
         surfEl.scrollLeft = 0;
