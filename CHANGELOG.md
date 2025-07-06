@@ -8,6 +8,9 @@ All notable changes to this project will be documented in this file. The format 
 - Accordion chevron orientation and animation performance
 - Accordion can now constrain height with Surface
 
+### Fixed
+- Accordion constrained height now fills the available space within a Surface
+
 ## [v0.8.0]
 ### Improved
 - Typography `autoSize` functionality

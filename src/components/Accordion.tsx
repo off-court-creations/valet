@@ -56,6 +56,7 @@ const Wrapper = styled('div')`
   width:100%;
   display:block;
   box-sizing:border-box;
+  min-height:0;
 `;
 
 const ItemWrapper = styled('div')`
