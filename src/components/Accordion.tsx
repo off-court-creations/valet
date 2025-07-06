@@ -13,6 +13,7 @@ import React, {
   useContext,
   useRef,
   useMemo,
+  useLayoutEffect,
   useState,
 } from 'react';
 import { styled }               from '../css/createStyled';
@@ -96,17 +97,19 @@ const HeaderBtn = styled('button')<{
   }
 `;
 
-const Chevron = styled('span')<{ $open: boolean }>`
-  display    : inline-block;
-  transition : transform 150ms ease;
-  transform  : rotate(${({ $open }) => ($open ? 90 : 0)}deg);
+const Chevron = styled('svg')<{ $open: boolean }>`
+  width      : 1em;
+  height     : 1em;
+  flex-shrink: 0;
+  transition : transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  transform  : rotate(${({ $open }) => ($open ? 0 : 180)}deg);
 `;
 
-const Content = styled('div')<{ $open: boolean }>`
-  overflow   : hidden;
-  max-height : ${({ $open }) => ($open ? '9999px' : '0')};
-  transition : max-height 300ms ease;
-  will-change: max-height;
+const Content = styled('div')<{ $open: boolean; $height: number }>`
+  overflow : hidden;
+  height   : ${({ $open, $height }) => ($open ? `${$height}px` : '0')};
+  transition: height 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: height;
 `;
 
 /*───────────────────────────────────────────────────────────*/
@@ -213,8 +216,16 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
 
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const wasLongPress = useRef(false);
+  const contentRef   = useRef<HTMLDivElement>(null);
+  const [height, setHeight] = useState(0);
 
   const isOpen   = open.includes(index);
+
+  useLayoutEffect(() => {
+    if (contentRef.current) {
+      setHeight(contentRef.current.scrollHeight);
+    }
+  }, [children, isOpen]);
   const headerId = `acc-btn-${index}`;
   const panelId  = `acc-panel-${index}`;
 
@@ -282,7 +293,16 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
           $disabledColor={disabledColor}
         >
           {header}
-          <Chevron aria-hidden $open={isOpen}>▶</Chevron>
+          <Chevron aria-hidden $open={isOpen} viewBox="0 0 24 24">
+            <path
+              d="M6 9l6 6 6-6"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </Chevron>
         </HeaderBtn>
       </HeaderTag>
 
@@ -291,8 +311,9 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
         id={panelId}
         aria-labelledby={headerId}
         $open={isOpen}
+        $height={height}
       >
-        <div style={{ padding: '0.75rem 0' }}>{children}</div>
+        <div ref={contentRef} style={{ padding: '0.75rem 0' }}>{children}</div>
       </Content>
     </ItemWrapper>
   );
