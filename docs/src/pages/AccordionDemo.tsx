@@ -45,6 +45,13 @@ export default function AccordionDemoPage() {
         <Typography>
           Smooth animations and unified chevron icons
         </Typography>
+        <Button
+          variant="outlined"
+          size="sm"
+          onClick={() => navigate('/accordion-constrained')}
+        >
+          Constrained height demo
+        </Button>
 
         {/* 1. Uncontrolled disclosure list (single item) ------------------ */}
         <Typography variant="h3">1. Uncontrolled (single-expand)</Typography>

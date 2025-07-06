@@ -6,6 +6,11 @@ All notable changes to this project will be documented in this file. The format 
 
 ### Improved
 - Accordion chevron orientation and animation performance
+- Accordion can now constrain height with Surface
+
+### Fixed
+- Accordion constrained height now fills the available space within a Surface
+- Accordion recalculates available height when items expand
 
 ## [v0.8.0]
 ### Improved
