@@ -30,6 +30,7 @@ const TooltipDemoPage       = page(() => import('./pages/TooltipDemo'));
 const ModalDemoPage         = page(() => import('./pages/ModalDemo'));
 const SwitchDemoPage        = page(() => import('./pages/SwitchDemo'));
 const AccordionDemoPage     = page(() => import('./pages/AccordionDemo'));
+const AccordionConstrainedDemoPage = page(() => import('./pages/AccordionConstrainedDemo'));
 const TabsDemoPage          = page(() => import('./pages/TabsDemo'));
 const SliderDemoPage        = page(() => import('./pages/SliderDemo'));
 const ProgressDemoPage      = page(() => import('./pages/ProgressDemo'));
@@ -83,6 +84,10 @@ export function App() {
         <Route path="/modal-demo"      element={<ModalDemoPage />} />
         <Route path="/switch-demo"     element={<SwitchDemoPage />} />
         <Route path="/accordion-demo"  element={<AccordionDemoPage />} />
+        <Route
+          path="/accordion-constrained"
+          element={<AccordionConstrainedDemoPage />}
+        />
         <Route path="/tabs-demo"       element={<TabsDemoPage />} />
         <Route path="/slider-demo"     element={<SliderDemoPage />} />
         <Route path="/progress-demo"   element={<ProgressDemoPage />} />
