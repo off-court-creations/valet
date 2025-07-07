@@ -69,6 +69,7 @@ const HeaderBtn = styled('button')<{
   $disabledColor: string;
   $highlight: string;
   $shift: string;
+  $skipHover: boolean;
 }>`
   width           : 100%;
   display         : flex;
@@ -98,7 +99,8 @@ const HeaderBtn = styled('button')<{
   /* Hover tint – only on devices that actually support hover */
   @media (hover: hover) {
     &:hover:not(:disabled) {
-      background: ${({ $primary }) => `${$primary}11`};
+      ${({ $skipHover, $primary }) =>
+        $skipHover ? '' : `background:${$primary}11;`}
     }
   }
 
@@ -320,6 +322,28 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   const wasLongPress = useRef(false);
   const contentRef   = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState(0);
+  const [skipHover, setSkipHover] = useState(false);
+  const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const moveHandler = useRef<((e: PointerEvent) => void) | null>(null);
+
+  const disableHoverUntilMove = () => {
+    if (hoverTimer.current) clearTimeout(hoverTimer.current);
+    setSkipHover(true);
+    const remove = () => {
+      if (moveHandler.current) {
+        window.removeEventListener('pointermove', moveHandler.current);
+        moveHandler.current = null;
+      }
+      if (hoverTimer.current) {
+        clearTimeout(hoverTimer.current);
+        hoverTimer.current = null;
+      }
+      setSkipHover(false);
+    };
+    moveHandler.current = () => remove();
+    window.addEventListener('pointermove', moveHandler.current, { once: true });
+    hoverTimer.current = setTimeout(remove, 1000);
+  };
 
   const isOpen   = open.includes(index);
 
@@ -364,6 +388,15 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
             wasLongPress.current = false;
           }}
           onPointerDown={(e) => {
+            if (hoverTimer.current) {
+              clearTimeout(hoverTimer.current);
+              hoverTimer.current = null;
+            }
+            if (moveHandler.current) {
+              window.removeEventListener('pointermove', moveHandler.current);
+              moveHandler.current = null;
+            }
+            setSkipHover(true);
             if (e.pointerType === 'touch') {
               longPressTimer.current = setTimeout(() => {
                 wasLongPress.current = true;
@@ -377,8 +410,18 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
               longPressTimer.current = null;
             }
             wasLongPress.current = false;
+            disableHoverUntilMove();
           }}
           onPointerLeave={() => {
+            if (hoverTimer.current) {
+              clearTimeout(hoverTimer.current);
+              hoverTimer.current = null;
+            }
+            if (moveHandler.current) {
+              window.removeEventListener('pointermove', moveHandler.current);
+              moveHandler.current = null;
+            }
+            setSkipHover(false);
             if (longPressTimer.current) {
               clearTimeout(longPressTimer.current);
               longPressTimer.current = null;
@@ -386,6 +429,15 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
             wasLongPress.current = false;
           }}
           onPointerCancel={() => {
+            if (hoverTimer.current) {
+              clearTimeout(hoverTimer.current);
+              hoverTimer.current = null;
+            }
+            if (moveHandler.current) {
+              window.removeEventListener('pointermove', moveHandler.current);
+              moveHandler.current = null;
+            }
+            setSkipHover(false);
             if (longPressTimer.current) {
               clearTimeout(longPressTimer.current);
               longPressTimer.current = null;
@@ -397,6 +449,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
           $disabledColor={disabledColor}
           $highlight={highlight}
           $shift={shift}
+          $skipHover={skipHover}
         >
           {header}
           <Chevron aria-hidden $open={isOpen} viewBox="0 0 24 24">
