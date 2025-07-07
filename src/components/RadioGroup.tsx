@@ -44,8 +44,8 @@ const useRadioGroup = () => {
 /*───────────────────────────────────────────────────────────*/
 /* Size map helper                                           */
 const createSizeMap = (t: Theme) => ({
-  sm: { indicator: '16px', dot: '8px',  gapInner: t.spacing(0.5) },
-  md: { indicator: '20px', dot: '10px', gapInner: t.spacing(0.5) },
+  sm: { indicator: '16px', dot: '8px',  gapInner: t.spacing(0.75) },
+  md: { indicator: '20px', dot: '10px', gapInner: t.spacing(0.75) },
   lg: { indicator: '24px', dot: '12px', gapInner: t.spacing(1) },
 });
 
