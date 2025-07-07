@@ -68,6 +68,7 @@ const HeaderBtn = styled('button')<{
   $primary: string;
   $disabledColor: string;
   $highlight: string;
+  $shift: string;
 }>`
   width           : 100%;
   display         : flex;
@@ -83,6 +84,8 @@ const HeaderBtn = styled('button')<{
   text-align      : left;
   appearance      : none;
   box-sizing      : border-box;
+  margin-inline-start : -${({ $shift }) => $shift};
+  padding-inline-start: ${({ $shift }) => $shift};
 
   /* Disable blue tap-highlight & text selection on mobile */
   -webkit-tap-highlight-color: transparent;
@@ -343,6 +346,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   const highlight = toHex(
     mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.15),
   );
+  const shift = theme.spacing(1);
 
   return (
     <ItemWrapper {...divProps} className={[presetClasses, className].filter(Boolean).join(' ')}>
@@ -392,6 +396,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
           $primary={theme.colors.primary}
           $disabledColor={disabledColor}
           $highlight={highlight}
+          $shift={shift}
         >
           {header}
           <Chevron aria-hidden $open={isOpen} viewBox="0 0 24 24">
