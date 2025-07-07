@@ -69,6 +69,7 @@ const HeaderBtn = styled('button')<{
   $disabledColor: string;
   $highlight: string;
   $shift: string;
+  $noHover: boolean;
 }>`
   width           : 100%;
   display         : flex;
@@ -97,9 +98,9 @@ const HeaderBtn = styled('button')<{
 
   /* Hover tint – only on devices that actually support hover */
   @media (hover: hover) {
-    &:hover:not(:disabled) {
-      background: ${({ $primary }) => `${$primary}11`};
-    }
+    ${({ $noHover, $primary }) =>
+      !$noHover &&
+      `&:hover:not(:disabled){background:${$primary}11;}`}
   }
 
   ${({ $open, $highlight }) => $open && `background:${$highlight};`}
@@ -318,8 +319,10 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
 
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const wasLongPress = useRef(false);
+  const ignoreHoverT  = useRef<ReturnType<typeof setTimeout> | null>(null);
   const contentRef   = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState(0);
+  const [noHover, setNoHover] = useState(false);
 
   const isOpen   = open.includes(index);
 
@@ -348,6 +351,12 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   );
   const shift = theme.spacing(1);
 
+  const disableHoverTemporarily = () => {
+    setNoHover(true);
+    clearTimeout(ignoreHoverT.current!);
+    ignoreHoverT.current = setTimeout(() => setNoHover(false), 800);
+  };
+
   return (
     <ItemWrapper {...divProps} className={[presetClasses, className].filter(Boolean).join(' ')}>
       <HeaderTag style={{ margin: 0 }}>
@@ -365,31 +374,35 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
           }}
           onPointerDown={(e) => {
             if (e.pointerType === 'touch') {
+              disableHoverTemporarily();
               longPressTimer.current = setTimeout(() => {
                 wasLongPress.current = true;
                 if (!disabled) toggle(index);
               }, 500);
             }
           }}
-          onPointerUp={() => {
+          onPointerUp={(e) => {
             if (longPressTimer.current) {
               clearTimeout(longPressTimer.current);
               longPressTimer.current = null;
             }
+            if (e.pointerType === 'touch') disableHoverTemporarily();
             wasLongPress.current = false;
           }}
-          onPointerLeave={() => {
+          onPointerLeave={(e) => {
             if (longPressTimer.current) {
               clearTimeout(longPressTimer.current);
               longPressTimer.current = null;
             }
+            if (e.pointerType === 'touch') disableHoverTemporarily();
             wasLongPress.current = false;
           }}
-          onPointerCancel={() => {
+          onPointerCancel={(e) => {
             if (longPressTimer.current) {
               clearTimeout(longPressTimer.current);
               longPressTimer.current = null;
             }
+            if (e.pointerType === 'touch') disableHoverTemporarily();
             wasLongPress.current = false;
           }}
           $open={isOpen}
@@ -397,6 +410,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
           $disabledColor={disabledColor}
           $highlight={highlight}
           $shift={shift}
+          $noHover={noHover}
         >
           {header}
           <Chevron aria-hidden $open={isOpen} viewBox="0 0 24 24">
