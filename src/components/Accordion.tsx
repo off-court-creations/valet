@@ -69,6 +69,7 @@ const HeaderBtn = styled('button')<{
   $disabledColor: string;
   $highlight: string;
   $shift: string;
+  $skipHover: boolean;
 }>`
   width           : 100%;
   display         : flex;
@@ -98,7 +99,8 @@ const HeaderBtn = styled('button')<{
   /* Hover tint – only on devices that actually support hover */
   @media (hover: hover) {
     &:hover:not(:disabled) {
-      background: ${({ $primary }) => `${$primary}11`};
+      ${({ $skipHover, $primary }) =>
+        $skipHover ? '' : `background:${$primary}11;`}
     }
   }
 
@@ -320,6 +322,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   const wasLongPress = useRef(false);
   const contentRef   = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState(0);
+  const [skipHover, setSkipHover] = useState(false);
 
   const isOpen   = open.includes(index);
 
@@ -364,6 +367,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
             wasLongPress.current = false;
           }}
           onPointerDown={(e) => {
+            setSkipHover(true);
             if (e.pointerType === 'touch') {
               longPressTimer.current = setTimeout(() => {
                 wasLongPress.current = true;
@@ -379,6 +383,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
             wasLongPress.current = false;
           }}
           onPointerLeave={() => {
+            setSkipHover(false);
             if (longPressTimer.current) {
               clearTimeout(longPressTimer.current);
               longPressTimer.current = null;
@@ -386,6 +391,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
             wasLongPress.current = false;
           }}
           onPointerCancel={() => {
+            setSkipHover(false);
             if (longPressTimer.current) {
               clearTimeout(longPressTimer.current);
               longPressTimer.current = null;
@@ -397,6 +403,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
           $disabledColor={disabledColor}
           $highlight={highlight}
           $shift={shift}
+          $skipHover={skipHover}
         >
           {header}
           <Chevron aria-hidden $open={isOpen} viewBox="0 0 24 24">
