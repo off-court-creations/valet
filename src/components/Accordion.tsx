@@ -97,7 +97,7 @@ const HeaderBtn = styled('button')<{
 
   /* Hover tint – only on devices that actually support hover */
   @media (hover: hover) {
-    &:hover:not(:disabled) {
+    &:hover:not(:disabled,[data-touch='true']) {
       background: ${({ $primary }) => `${$primary}11`};
     }
   }
@@ -365,27 +365,31 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
           }}
           onPointerDown={(e) => {
             if (e.pointerType === 'touch') {
+              e.currentTarget.dataset.touch = 'true';
               longPressTimer.current = setTimeout(() => {
                 wasLongPress.current = true;
                 if (!disabled) toggle(index);
               }, 500);
             }
           }}
-          onPointerUp={() => {
+          onPointerUp={(e) => {
+            delete e.currentTarget.dataset.touch;
             if (longPressTimer.current) {
               clearTimeout(longPressTimer.current);
               longPressTimer.current = null;
             }
             wasLongPress.current = false;
           }}
-          onPointerLeave={() => {
+          onPointerLeave={(e) => {
+            delete e.currentTarget.dataset.touch;
             if (longPressTimer.current) {
               clearTimeout(longPressTimer.current);
               longPressTimer.current = null;
             }
             wasLongPress.current = false;
           }}
-          onPointerCancel={() => {
+          onPointerCancel={(e) => {
+            delete e.currentTarget.dataset.touch;
             if (longPressTimer.current) {
               clearTimeout(longPressTimer.current);
               longPressTimer.current = null;
