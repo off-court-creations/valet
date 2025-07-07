@@ -67,6 +67,8 @@ const HeaderBtn = styled('button')<{
   $open: boolean;
   $primary: string;
   $disabledColor: string;
+  $highlight: string;
+  $shift: string;
 }>`
   width           : 100%;
   display         : flex;
@@ -82,6 +84,8 @@ const HeaderBtn = styled('button')<{
   text-align      : left;
   appearance      : none;
   box-sizing      : border-box;
+  margin-inline-start : -${({ $shift }) => $shift};
+  padding-inline-start: ${({ $shift }) => $shift};
 
   /* Disable blue tap-highlight & text selection on mobile */
   -webkit-tap-highlight-color: transparent;
@@ -89,12 +93,16 @@ const HeaderBtn = styled('button')<{
   -webkit-user-select       : none;
   -ms-user-select           : none;
 
+  transition: background 200ms ease;
+
   /* Hover tint – only on devices that actually support hover */
   @media (hover: hover) {
     &:hover:not(:disabled) {
       background: ${({ $primary }) => `${$primary}11`};
     }
   }
+
+  ${({ $open, $highlight }) => $open && `background:${$highlight};`}
 
   &:focus-visible {
     outline       : 2px solid ${({ $primary }) => $primary};
@@ -335,11 +343,13 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   const presetClasses = p ? preset(p) : '';
   const HeaderTag = headerTag as keyof JSX.IntrinsicElements;
 
+  const highlight = toHex(
+    mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.15),
+  );
+  const shift = theme.spacing(1);
+
   return (
-    <ItemWrapper
-      {...divProps}
-      className={[presetClasses, className].filter(Boolean).join(' ')}
-    >
+    <ItemWrapper {...divProps} className={[presetClasses, className].filter(Boolean).join(' ')}>
       <HeaderTag style={{ margin: 0 }}>
         <HeaderBtn
           id={headerId}
@@ -385,6 +395,8 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
           $open={isOpen}
           $primary={theme.colors.primary}
           $disabledColor={disabledColor}
+          $highlight={highlight}
+          $shift={shift}
         >
           {header}
           <Chevron aria-hidden $open={isOpen} viewBox="0 0 24 24">
