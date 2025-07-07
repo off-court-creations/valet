@@ -323,15 +323,26 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   const contentRef   = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState(0);
   const [skipHover, setSkipHover] = useState(false);
-  const hoverTimer   = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const moveHandler = useRef<((e: PointerEvent) => void) | null>(null);
 
-  const disableHoverTemporarily = () => {
+  const disableHoverUntilMove = () => {
     if (hoverTimer.current) clearTimeout(hoverTimer.current);
     setSkipHover(true);
-    hoverTimer.current = setTimeout(() => {
-      hoverTimer.current = null;
+    const remove = () => {
+      if (moveHandler.current) {
+        window.removeEventListener('pointermove', moveHandler.current);
+        moveHandler.current = null;
+      }
+      if (hoverTimer.current) {
+        clearTimeout(hoverTimer.current);
+        hoverTimer.current = null;
+      }
       setSkipHover(false);
-    }, 300);
+    };
+    moveHandler.current = () => remove();
+    window.addEventListener('pointermove', moveHandler.current, { once: true });
+    hoverTimer.current = setTimeout(remove, 1000);
   };
 
   const isOpen   = open.includes(index);
@@ -381,6 +392,10 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
               clearTimeout(hoverTimer.current);
               hoverTimer.current = null;
             }
+            if (moveHandler.current) {
+              window.removeEventListener('pointermove', moveHandler.current);
+              moveHandler.current = null;
+            }
             setSkipHover(true);
             if (e.pointerType === 'touch') {
               longPressTimer.current = setTimeout(() => {
@@ -395,12 +410,16 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
               longPressTimer.current = null;
             }
             wasLongPress.current = false;
-            disableHoverTemporarily();
+            disableHoverUntilMove();
           }}
           onPointerLeave={() => {
             if (hoverTimer.current) {
               clearTimeout(hoverTimer.current);
               hoverTimer.current = null;
+            }
+            if (moveHandler.current) {
+              window.removeEventListener('pointermove', moveHandler.current);
+              moveHandler.current = null;
             }
             setSkipHover(false);
             if (longPressTimer.current) {
@@ -413,6 +432,10 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
             if (hoverTimer.current) {
               clearTimeout(hoverTimer.current);
               hoverTimer.current = null;
+            }
+            if (moveHandler.current) {
+              window.removeEventListener('pointermove', moveHandler.current);
+              moveHandler.current = null;
             }
             setSkipHover(false);
             if (longPressTimer.current) {

@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 ### Fixed
-- Accordion hover suppression works on Windows touchscreens
+- Accordion hover state now waits for pointer movement on Windows touchscreens
 
 ## [v0.8.1]
 ### Improved
