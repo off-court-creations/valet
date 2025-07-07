@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file. The format 
 ### Fixed
 - Accordion hover state now waits for pointer movement on Windows touchscreens
 - Accordion constrainHeight no longer flickers near the Surface's limits
+- Accordion now updates its available space when items open or close
 
 ## [v0.8.1]
 ### Improved

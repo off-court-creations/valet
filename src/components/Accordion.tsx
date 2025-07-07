@@ -274,7 +274,7 @@ export const Accordion: React.FC<AccordionProps> & {
   useLayoutEffect(() => {
     if (!constrainHeight || !wrapRef.current || !surface.element) return;
     update();
-  }, [constrainHeight, surface.height, surface.element]);
+  }, [constrainHeight, open, surface.height, surface.element]);
 
   return (
     <AccordionCtx.Provider value={ctx}>
