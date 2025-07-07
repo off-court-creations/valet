@@ -59,19 +59,15 @@ const Wrapper = styled('div')`
   min-height:0;
 `;
 
-const ItemWrapper = styled('div')<{
-  $open: boolean;
-  $highlight: string;
-}>`
+const ItemWrapper = styled('div')`
   border-bottom: 1px solid currentColor;
-  transition: background 200ms ease;
-  ${({ $open, $highlight }) => $open && `background:${$highlight};`}
 `;
 
 const HeaderBtn = styled('button')<{
   $open: boolean;
   $primary: string;
   $disabledColor: string;
+  $highlight: string;
 }>`
   width           : 100%;
   display         : flex;
@@ -94,12 +90,16 @@ const HeaderBtn = styled('button')<{
   -webkit-user-select       : none;
   -ms-user-select           : none;
 
+  transition: background 200ms ease;
+
   /* Hover tint – only on devices that actually support hover */
   @media (hover: hover) {
     &:hover:not(:disabled) {
       background: ${({ $primary }) => `${$primary}11`};
     }
   }
+
+  ${({ $open, $highlight }) => $open && `background:${$highlight};`}
 
   &:focus-visible {
     outline       : 2px solid ${({ $primary }) => $primary};
@@ -345,12 +345,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   );
 
   return (
-    <ItemWrapper
-      {...divProps}
-      className={[presetClasses, className].filter(Boolean).join(' ')}
-      $open={isOpen}
-      $highlight={highlight}
-    >
+    <ItemWrapper {...divProps} className={[presetClasses, className].filter(Boolean).join(' ')}>
       <HeaderTag style={{ margin: 0 }}>
         <HeaderBtn
           id={headerId}
@@ -396,6 +391,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
           $open={isOpen}
           $primary={theme.colors.primary}
           $disabledColor={disabledColor}
+          $highlight={highlight}
         >
           {header}
           <Chevron aria-hidden $open={isOpen} viewBox="0 0 24 24">
