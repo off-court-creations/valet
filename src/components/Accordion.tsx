@@ -323,6 +323,16 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   const contentRef   = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState(0);
   const [skipHover, setSkipHover] = useState(false);
+  const hoverTimer   = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const disableHoverTemporarily = () => {
+    if (hoverTimer.current) clearTimeout(hoverTimer.current);
+    setSkipHover(true);
+    hoverTimer.current = setTimeout(() => {
+      hoverTimer.current = null;
+      setSkipHover(false);
+    }, 300);
+  };
 
   const isOpen   = open.includes(index);
 
@@ -367,6 +377,10 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
             wasLongPress.current = false;
           }}
           onPointerDown={(e) => {
+            if (hoverTimer.current) {
+              clearTimeout(hoverTimer.current);
+              hoverTimer.current = null;
+            }
             setSkipHover(true);
             if (e.pointerType === 'touch') {
               longPressTimer.current = setTimeout(() => {
@@ -381,8 +395,13 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
               longPressTimer.current = null;
             }
             wasLongPress.current = false;
+            disableHoverTemporarily();
           }}
           onPointerLeave={() => {
+            if (hoverTimer.current) {
+              clearTimeout(hoverTimer.current);
+              hoverTimer.current = null;
+            }
             setSkipHover(false);
             if (longPressTimer.current) {
               clearTimeout(longPressTimer.current);
@@ -391,6 +410,10 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
             wasLongPress.current = false;
           }}
           onPointerCancel={() => {
+            if (hoverTimer.current) {
+              clearTimeout(hoverTimer.current);
+              hoverTimer.current = null;
+            }
             setSkipHover(false);
             if (longPressTimer.current) {
               clearTimeout(longPressTimer.current);
