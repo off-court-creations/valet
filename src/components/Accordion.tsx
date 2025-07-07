@@ -59,8 +59,13 @@ const Wrapper = styled('div')`
   min-height:0;
 `;
 
-const ItemWrapper = styled('div')`
+const ItemWrapper = styled('div')<{
+  $open: boolean;
+  $highlight: string;
+}>`
   border-bottom: 1px solid currentColor;
+  transition: background 200ms ease;
+  ${({ $open, $highlight }) => $open && `background:${$highlight};`}
 `;
 
 const HeaderBtn = styled('button')<{
@@ -335,10 +340,16 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   const presetClasses = p ? preset(p) : '';
   const HeaderTag = headerTag as keyof JSX.IntrinsicElements;
 
+  const highlight = toHex(
+    mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.15),
+  );
+
   return (
     <ItemWrapper
       {...divProps}
       className={[presetClasses, className].filter(Boolean).join(' ')}
+      $open={isOpen}
+      $highlight={highlight}
     >
       <HeaderTag style={{ margin: 0 }}>
         <HeaderBtn
