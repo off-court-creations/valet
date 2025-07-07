@@ -69,6 +69,7 @@ const HeaderBtn = styled('button')<{
   $disabledColor: string;
   $highlight: string;
   $shift: string;
+  $skipHover: boolean;
 }>`
   width           : 100%;
   display         : flex;
@@ -98,7 +99,8 @@ const HeaderBtn = styled('button')<{
   /* Hover tint – only on devices that actually support hover */
   @media (hover: hover) {
     &:hover:not(:disabled) {
-      background: ${({ $primary }) => `${$primary}11`};
+      ${({ $skipHover, $primary }) =>
+        $skipHover ? '' : `background:${$primary}11;`}
     }
   }
 
@@ -320,6 +322,8 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   const wasLongPress = useRef(false);
   const contentRef   = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState(0);
+  const [skipHover, setSkipHover] = useState(false);
+  const touchActive = useRef(false);
 
   const isOpen   = open.includes(index);
 
@@ -364,7 +368,9 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
             wasLongPress.current = false;
           }}
           onPointerDown={(e) => {
-            if (e.pointerType === 'touch') {
+            touchActive.current = e.pointerType === 'touch';
+            if (touchActive.current) {
+              setSkipHover(true);
               longPressTimer.current = setTimeout(() => {
                 wasLongPress.current = true;
                 if (!disabled) toggle(index);
@@ -377,8 +383,11 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
               longPressTimer.current = null;
             }
             wasLongPress.current = false;
+            if (touchActive.current) setSkipHover(true);
           }}
           onPointerLeave={() => {
+            setSkipHover(false);
+            touchActive.current = false;
             if (longPressTimer.current) {
               clearTimeout(longPressTimer.current);
               longPressTimer.current = null;
@@ -386,6 +395,8 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
             wasLongPress.current = false;
           }}
           onPointerCancel={() => {
+            setSkipHover(false);
+            touchActive.current = false;
             if (longPressTimer.current) {
               clearTimeout(longPressTimer.current);
               longPressTimer.current = null;
@@ -397,6 +408,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
           $disabledColor={disabledColor}
           $highlight={highlight}
           $shift={shift}
+          $skipHover={skipHover}
         >
           {header}
           <Chevron aria-hidden $open={isOpen} viewBox="0 0 24 24">
