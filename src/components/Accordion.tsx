@@ -369,7 +369,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
     mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.15),
   );
   const hoverBg = toHex(
-    mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.25),
+    mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.6),
   );
   const shift = theme.spacing(1);
 
