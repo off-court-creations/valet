@@ -71,6 +71,12 @@ export default function MainPage() {
               </Button>
 
               <Button
+                onClick={() => navigate('/avatar-demo')}
+              >
+                Avatar
+              </Button>
+
+              <Button
                 onClick={() => navigate('/list-demo')}
               >
                 List

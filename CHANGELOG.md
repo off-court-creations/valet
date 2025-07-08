@@ -8,6 +8,8 @@ All notable changes to this project will be documented in this file. The format 
 - Uniform highlight width on Accordion items
 ### Improved
 - Clearer hover contrast on Accordion headers
+### Added
+- Avatar component with Gravatar fallback
 
 ## [v0.8.2]
 ### Improved
