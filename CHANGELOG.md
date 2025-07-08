@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. The format 
 
 
 ## Unreleased
+### Fixed
+- Uniform highlight width on Accordion items
 
 ## [v0.8.2]
 ### Improved

@@ -76,7 +76,7 @@ const HeaderBtn = styled('button')<{
   justify-content : space-between;
   align-items     : center;
   gap             : 1rem;
-  padding         : 1rem 0;
+  padding         : 1rem ${({ $shift }) => $shift};
   background      : transparent;
   border          : none;
   color           : inherit;
@@ -85,8 +85,8 @@ const HeaderBtn = styled('button')<{
   text-align      : left;
   appearance      : none;
   box-sizing      : border-box;
-  margin-inline-start : -${({ $shift }) => $shift};
-  padding-inline-start: ${({ $shift }) => $shift};
+  margin-inline-start: -${({ $shift }) => $shift};
+  margin-inline-end  : -${({ $shift }) => $shift};
 
   /* Disable blue tap-highlight & text selection on mobile */
   -webkit-tap-highlight-color: transparent;
