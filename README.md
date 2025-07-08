@@ -104,7 +104,7 @@ These have been mostly tested in the [valet Docs](https://github.com/off-court-c
 | Panel         |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | Parallax      |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | Progress      |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | styling                    |
-| Radio Group   |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
+| Radio Group   |  ✅    |  ✅    |     🟡      |      🟡      |      🟡      | ----------                 |
 | Select        |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | styling                    |
 | Slider        |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | Speed Dial    |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |

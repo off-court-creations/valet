@@ -4,8 +4,11 @@ All notable changes to this project will be documented in this file. The format 
 
 
 ## Unreleased
+
+## [v0.8.2]
 ### Improved
 - Radio button spacing and indicator alignment
+
 ## [v0.8.1]
 ### Improved
 - Accordion chevron orientation and animation performance
@@ -126,6 +129,7 @@ All notable changes to this project will be documented in this file. The format 
 ### Other
 - vibe coded
 
+[v0.8.2]: https://github.com/off-court-creations/valet/releases/tag/v0.8.2
 [v0.8.1]: https://github.com/off-court-creations/valet/releases/tag/v0.8.1
 [v0.8.0]: https://github.com/off-court-creations/valet/releases/tag/v0.8.0
 [v0.7.1]: https://github.com/off-court-creations/valet/releases/tag/v0.7.1
