@@ -177,6 +177,11 @@ export default function MainPage() {
               >
                 Stepper
               </Button>
+              <Button
+                onClick={() => navigate('/avatar-demo')}
+              >
+                Avatar
+              </Button>
             </Stack>
           </Panel>
 

@@ -46,6 +46,7 @@ const StepperDemoPage       = page(() => import('./pages/StepperDemo'));
 const RadioGroupDemoPage    = page(() => import('./pages/RadioGroupDemo'));
 const VideoDemoPage         = page(() => import('./pages/VideoDemo'));
 const SnackbarDemoPage      = page(() => import('./pages/SnackbarDemo'));
+const AvatarDemoPage        = page(() => import('./pages/AvatarDemoPage'));
 
 /*───────────────────────────────────────────────────────────*/
 export function App() {
@@ -103,6 +104,7 @@ export function App() {
         <Route path="/radio-demo"      element={<RadioGroupDemoPage />} />
         <Route path="/video-demo"      element={<VideoDemoPage />} />
         <Route path="/snackbar-demo"   element={<SnackbarDemoPage />} />
+        <Route path="/avatar-demo"     element={<AvatarDemoPage />} />
       </Routes>
     </Suspense>
   );

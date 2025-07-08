@@ -22,6 +22,7 @@ export * from './components/RadioGroup';
 export * from './components/Slider';
 export * from './components/Snackbar';
 export * from './components/Stack';
+export * from './components/Avatar';
 export { default as Select } from './components/Select';  // ← gives you `Select`
 export type {
   SelectProps,
