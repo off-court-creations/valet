@@ -28,7 +28,7 @@ export default function AvatarDemoPage() {
 
   return (
     <Surface>
-      <Stack spacing={1} preset="showcaseStack">
+      <Stack preset="showcaseStack">
         <Typography variant="h2" bold>
           Avatar Showcase
         </Typography>
@@ -40,12 +40,13 @@ export default function AvatarDemoPage() {
         <FormControl
           useStore={useEmailForm}
           onSubmitValues={(vals) => setEmail(vals.email)}
-          style={{ display: 'flex', flexDirection: 'row', gap: theme.spacing(1) }}
         >
-          <TextField name="email" type="email" placeholder="you@example.com" />
-          <Button type="submit">Show</Button>
+          <Stack direction="row" spacing={1}>
+            <Avatar email={email} size={64} />
+            <TextField name="email" type="email" placeholder="you@example.com" />
+            <Button type="submit">Show</Button>
+          </Stack>
         </FormControl>
-        <Avatar email={email} size={64} />
         <Typography variant="h3">2. Default example</Typography>
         <Avatar email="support@gravatar.com" size={64} />
         <Typography variant="h3">3. Custom src</Typography>
