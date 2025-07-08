@@ -1,10 +1,30 @@
 // src/pages/AvatarDemo.tsx
-import { Surface, Stack, Typography, Avatar, Button, useTheme } from '@archway/valet';
+import {
+  Surface,
+  Stack,
+  Typography,
+  Avatar,
+  Button,
+  TextField,
+  FormControl,
+  createFormStore,
+  useTheme,
+} from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+
+interface EmailForm {
+  email: string;
+}
+
+const useEmailForm = createFormStore<EmailForm>({
+  email: '',
+});
 
 export default function AvatarDemoPage() {
   const { theme } = useTheme();
   const navigate = useNavigate();
+  const [email, setEmail] = useState('support@gravatar.com');
 
   return (
     <Surface>
@@ -16,10 +36,19 @@ export default function AvatarDemoPage() {
           Gravatar wrapper with custom photo support
         </Typography>
 
-        <Typography variant="h3">1. Gravatar</Typography>
+        <Typography variant="h3">1. Try your Gravatar</Typography>
+        <FormControl
+          useStore={useEmailForm}
+          onSubmitValues={(vals) => setEmail(vals.email)}
+          style={{ display: 'flex', flexDirection: 'row', gap: theme.spacing(1) }}
+        >
+          <TextField name="email" type="email" placeholder="you@example.com" />
+          <Button type="submit">Show</Button>
+        </FormControl>
+        <Avatar email={email} size={64} />
+        <Typography variant="h3">2. Default example</Typography>
         <Avatar email="support@gravatar.com" size={64} />
-
-        <Typography variant="h3">2. Custom src</Typography>
+        <Typography variant="h3">3. Custom src</Typography>
         <Avatar
           src="https://avatars.githubusercontent.com/u/9919?s=200&v=4"
           size={64}
