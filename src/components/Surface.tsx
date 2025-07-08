@@ -30,6 +30,8 @@ export const Surface: React.FC<SurfaceProps> = ({
   ...props
 }) => {
   const ref = useRef<HTMLDivElement>(null);
+  const innerRef = useRef<HTMLDivElement>(null);
+  const frame = useRef<number>();
   const parent = useContext(SurfaceCtx);
   if (parent) throw new Error('Nested <Surface> components are not allowed');
 
@@ -56,9 +58,11 @@ export const Surface: React.FC<SurfaceProps> = ({
 
   useEffect(() => {
     const node = ref.current;
-    if (!node) return;
+    const content = innerRef.current;
+    if (!node || !content) return;
     useStore.setState((s) => ({ ...s, element: node }));
-    const measure = () => {
+
+    const measureNow = () => {
       const rect = node.getBoundingClientRect();
       const vOverflow = node.scrollHeight - node.clientHeight;
       const hOverflow = node.scrollWidth - node.clientWidth;
@@ -70,14 +74,25 @@ export const Surface: React.FC<SurfaceProps> = ({
         breakpoint: bpFor(rect.width),
       }));
     };
-    const ro = new ResizeObserver(measure);
-    const mo = new MutationObserver(measure);
+
+    const scheduleMeasure = () => {
+      if (frame.current !== undefined) return;
+      frame.current = requestAnimationFrame(() => {
+        frame.current = undefined;
+        measureNow();
+      });
+    };
+
+    const ro = new ResizeObserver(scheduleMeasure);
+    const contentRo = new ResizeObserver(scheduleMeasure);
     ro.observe(node);
-    mo.observe(node, { childList: true, subtree: true });
-    measure();
+    contentRo.observe(content);
+    scheduleMeasure();
+
     return () => {
       ro.disconnect();
-      mo.disconnect();
+      contentRo.disconnect();
+      if (frame.current !== undefined) cancelAnimationFrame(frame.current);
     };
   }, [theme.breakpoints, useStore]);
 
@@ -151,7 +166,12 @@ export const Surface: React.FC<SurfaceProps> = ({
         {showBackdrop && (
           <LoadingBackdrop fading={fade} showSpinner={showSpinner} />
         )}
-        <div style={{ visibility: fontsReady ? 'visible' : 'hidden', padding: gap }}>{children}</div>
+        <div
+          ref={innerRef}
+          style={{ visibility: fontsReady ? 'visible' : 'hidden', padding: gap }}
+        >
+          {children}
+        </div>
       </div>
     </SurfaceCtx.Provider>
   );

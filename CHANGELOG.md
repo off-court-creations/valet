@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file. The format 
 ## Unreleased
 ### Improved
 - Radio button spacing and indicator alignment
+- Surface resize logic now throttles and avoids MutationObserver
 ## [v0.8.1]
 ### Improved
 - Accordion chevron orientation and animation performance
