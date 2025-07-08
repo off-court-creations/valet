@@ -2,7 +2,7 @@
 // src/components/RadioGroup.tsx | valet
 // Theme-aware radio groups with keyboard nav & refined spacing
 // • Disabled state now mirrors Accordion / Checkbox colour recipe
-// • Inner (radio–label) gap tight; option gap = theme.spacing(1)
+// • Inner (radio–label) gap tight; vertical option gap = theme.spacing(1.5)
 // ─────────────────────────────────────────────────────────────
 import React, {
   ReactNode,
@@ -44,9 +44,9 @@ const useRadioGroup = () => {
 /*───────────────────────────────────────────────────────────*/
 /* Size map helper                                           */
 const createSizeMap = (t: Theme) => ({
-  sm: { indicator: '16px', dot: '8px',  gapInner: t.spacing(0.5) },
-  md: { indicator: '20px', dot: '10px', gapInner: t.spacing(0.5) },
-  lg: { indicator: '24px', dot: '12px', gapInner: t.spacing(1) },
+  sm: { indicator: '16px', dot: '10px', gapInner: t.spacing(0.75) },
+  md: { indicator: '20px', dot: '12px', gapInner: t.spacing(0.75) },
+  lg: { indicator: '24px', dot: '14px', gapInner: t.spacing(1) },
 });
 
 /*───────────────────────────────────────────────────────────*/
@@ -150,9 +150,13 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
 
   /* Gap between radio items ------------------------------------------- */
   let gapCss: string;
-  if (spacing === undefined) gapCss = theme.spacing(1);
-  else if (typeof spacing === 'number') gapCss = theme.spacing(spacing);
-  else gapCss = String(spacing);
+  if (spacing === undefined) {
+    gapCss = row ? theme.spacing(1) : theme.spacing(1.5);
+  } else if (typeof spacing === 'number') {
+    gapCss = theme.spacing(spacing);
+  } else {
+    gapCss = String(spacing);
+  }
 
   /* Keyboard navigation (roving radio) -------------------------------- */
   const ref = useRef<HTMLDivElement>(null);
@@ -234,6 +238,7 @@ const Indicator: React.FC<IndicatorProps> = ({
         alignItems   : 'center',
         justifyContent: 'center',
         transition   : 'box-shadow 120ms',
+        backgroundColor: checked ? ring : undefined,
         boxShadow    : checked
           ? `inset 0 0 0 ${parseInt(outerSize, 10) / 2}px ${ring}`
           : undefined,
