@@ -2,7 +2,7 @@
 // src/components/RadioGroup.tsx | valet
 // Theme-aware radio groups with keyboard nav & refined spacing
 // • Disabled state now mirrors Accordion / Checkbox colour recipe
-// • Inner (radio–label) gap tight; option gap = theme.spacing(1)
+// • Inner (radio–label) gap tight; vertical option gap = theme.spacing(1.5)
 // ─────────────────────────────────────────────────────────────
 import React, {
   ReactNode,
@@ -150,9 +150,13 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
 
   /* Gap between radio items ------------------------------------------- */
   let gapCss: string;
-  if (spacing === undefined) gapCss = theme.spacing(1);
-  else if (typeof spacing === 'number') gapCss = theme.spacing(spacing);
-  else gapCss = String(spacing);
+  if (spacing === undefined) {
+    gapCss = row ? theme.spacing(1) : theme.spacing(1.5);
+  } else if (typeof spacing === 'number') {
+    gapCss = theme.spacing(spacing);
+  } else {
+    gapCss = String(spacing);
+  }
 
   /* Keyboard navigation (roving radio) -------------------------------- */
   const ref = useRef<HTMLDivElement>(null);
