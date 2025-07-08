@@ -235,7 +235,7 @@ const Indicator: React.FC<IndicatorProps> = ({
         justifyContent: 'center',
         transition   : 'box-shadow 120ms',
         boxShadow    : checked
-          ? `inset 0 0 0 ${parseInt(outerSize, 10) / 2}px ${ring}`
+          ? `inset 0 0 0 ${parseInt(outerSize, 10) / 2 + 1}px ${ring}`
           : undefined,
       }}
     >
