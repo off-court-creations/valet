@@ -56,6 +56,14 @@ export default function AvatarDemoPage() {
           alt="GitHub"
         />
 
+        {/* 4. Sizes --------------------------------------------------------- */}
+        <Typography variant="h3">4. Sizes</Typography>
+        <Stack direction="row" spacing={1}>
+          {(['xs', 's', 'm', 'l', 'xl'] as const).map((s) => (
+            <Avatar key={s} email="support@gravatar.com" size={s} />
+          ))}
+        </Stack>
+
         <Button
           size="lg"
           onClick={() => navigate(-1)}
