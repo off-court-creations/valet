@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file. The format 
 - Uniform highlight width on Accordion items
 ### Improved
 - Clearer hover contrast on Accordion headers
+- Stack rows now vertically center their children
 ### Added
 - Avatar component with Gravatar fallback
 - Avatar demo page now includes an interactive email form
