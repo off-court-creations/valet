@@ -42,7 +42,7 @@ export default function AvatarDemoPage() {
           onSubmitValues={(vals) => setEmail(vals.email)}
         >
           <Stack direction="row" spacing={1}>
-            <Avatar email={email} size="l" />
+            <Avatar email={email}/>
             <TextField name="email" type="email" placeholder="you@example.com" />
             <Button type="submit">Show</Button>
           </Stack>
@@ -59,7 +59,7 @@ export default function AvatarDemoPage() {
         {/* 4. Sizes --------------------------------------------------------- */}
         <Typography variant="h3">4. Sizes</Typography>
         <Stack direction="row" spacing={1}>
-          {(['xs', 's', 'm', 'l', 'xl'] as const).map((s) => (
+          {(['xl', 'l', 'm', 's', 'xs'] as const).map((s) => (
             <Avatar key={s} email="support@gravatar.com" size={s} />
           ))}
         </Stack>
