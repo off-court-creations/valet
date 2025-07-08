@@ -11,6 +11,8 @@ All notable changes to this project will be documented in this file. The format 
 ### Added
 - Avatar component with Gravatar fallback
 - Avatar demo page now includes an interactive email form
+### Changed
+- Avatar size tokens now map to rem units
 
 ## [v0.8.2]
 ### Improved
