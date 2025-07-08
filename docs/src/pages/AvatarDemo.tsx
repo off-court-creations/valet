@@ -42,17 +42,17 @@ export default function AvatarDemoPage() {
           onSubmitValues={(vals) => setEmail(vals.email)}
         >
           <Stack direction="row" spacing={1}>
-            <Avatar email={email} size={64} />
+            <Avatar email={email} size="l" />
             <TextField name="email" type="email" placeholder="you@example.com" />
             <Button type="submit">Show</Button>
           </Stack>
         </FormControl>
         <Typography variant="h3">2. Default example</Typography>
-        <Avatar email="support@gravatar.com" size={64} />
+        <Avatar email="support@gravatar.com" size="l" />
         <Typography variant="h3">3. Custom src</Typography>
         <Avatar
           src="https://avatars.githubusercontent.com/u/9919?s=200&v=4"
-          size={64}
+          size="l"
           alt="GitHub"
         />
 
