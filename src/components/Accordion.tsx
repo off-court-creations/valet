@@ -70,13 +70,14 @@ const HeaderBtn = styled('button')<{
   $highlight: string;
   $shift: string;
   $skipHover: boolean;
+  $hoverBg: string;
 }>`
   width           : 100%;
   display         : flex;
   justify-content : space-between;
   align-items     : center;
   gap             : 1rem;
-  padding         : 1rem 0;
+  padding         : 1rem ${({ $shift }) => $shift};
   background      : transparent;
   border          : none;
   color           : inherit;
@@ -85,8 +86,8 @@ const HeaderBtn = styled('button')<{
   text-align      : left;
   appearance      : none;
   box-sizing      : border-box;
-  margin-inline-start : -${({ $shift }) => $shift};
-  padding-inline-start: ${({ $shift }) => $shift};
+  margin-inline-start: -${({ $shift }) => $shift};
+  margin-inline-end  : -${({ $shift }) => $shift};
 
   /* Disable blue tap-highlight & text selection on mobile */
   -webkit-tap-highlight-color: transparent;
@@ -99,8 +100,8 @@ const HeaderBtn = styled('button')<{
   /* Hover tint – only on devices that actually support hover */
   @media (hover: hover) {
     &:hover:not(:disabled) {
-      ${({ $skipHover, $primary }) =>
-        $skipHover ? '' : `background:${$primary}11;`}
+      ${({ $skipHover, $hoverBg }) =>
+        $skipHover ? '' : `background:${$hoverBg};`}
     }
   }
 
@@ -367,6 +368,9 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   const highlight = toHex(
     mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.15),
   );
+  const hoverBg = toHex(
+    mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.25),
+  );
   const shift = theme.spacing(1);
 
   return (
@@ -445,6 +449,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
           $primary={theme.colors.primary}
           $disabledColor={disabledColor}
           $highlight={highlight}
+          $hoverBg={hoverBg}
           $shift={shift}
           $skipHover={skipHover}
         >
