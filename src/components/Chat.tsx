@@ -17,6 +17,7 @@ import IconButton          from './IconButton';
 import TextField           from './TextField';
 import Panel               from './Panel';
 import Typography          from './Typography';
+import Avatar              from './Avatar';
 import type { Presettable } from '../types';
 
 /*───────────────────────────────────────────────────────────*/
@@ -32,6 +33,10 @@ export interface ChatProps
     Presettable {
   messages: ChatMessage[];
   onSend?: (message: ChatMessage) => void;
+  /** Avatar image for user messages */
+  userAvatar?: string;
+  /** Avatar image for system / assistant messages */
+  systemAvatar?: string;
   placeholder?: string;
   disableInput?: boolean;
   constrainHeight?: boolean;
@@ -73,6 +78,8 @@ const InputRow = styled('form')<{ $gap: string }>`
 export const Chat: React.FC<ChatProps> = ({
   messages,
   onSend,
+  userAvatar,
+  systemAvatar,
   placeholder = 'Message…',
   disableInput = false,
   constrainHeight = true,
@@ -189,6 +196,9 @@ export const Chat: React.FC<ChatProps> = ({
             $left={m.role === 'user' ? theme.spacing(24) : theme.spacing(3)}
             $right={m.role === 'user' ? theme.spacing(3) : theme.spacing(24)}
           >
+            {m.role !== 'user' && systemAvatar && (
+              <Avatar src={systemAvatar} size="s" style={{ marginRight: theme.spacing(1) }} />
+            )}
             <Panel
               fullWidth
               compact
@@ -202,6 +212,9 @@ export const Chat: React.FC<ChatProps> = ({
               )}
               <Typography>{m.content}</Typography>
             </Panel>
+            {m.role === 'user' && userAvatar && (
+              <Avatar src={userAvatar} size="s" style={{ marginLeft: theme.spacing(1) }} />
+            )}
           </Row>
         ))}
       </Messages>
