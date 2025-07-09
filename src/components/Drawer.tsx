@@ -29,6 +29,8 @@ export interface DrawerProps extends Presettable {
   disableBackdropClick?: boolean;
   /** Disable closing via ESC key */
   disableEscapeKeyDown?: boolean;
+  /** Drawer remains visible without backdrop */
+  persistent?: boolean;
   /** Drawer contents */
   children?: React.ReactNode;
 }
@@ -52,14 +54,24 @@ const Panel = styled('div')<{
   $size: string;
   $bg: string;
   $text: string;
+  $primary: string;
+  $persistent: boolean;
 }>`
   position: fixed;
-  z-index: 9999;
+  z-index: ${({ $persistent }) => ($persistent ? 9998 : 9999)};
   display: flex;
   flex-direction: column;
   background: ${({ $bg }) => $bg};
   color: ${({ $text }) => $text};
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  ${({ $anchor, $primary }) =>
+    $anchor === 'left'
+      ? `border-right:0.25rem solid ${$primary};`
+      : $anchor === 'right'
+      ? `border-left:0.25rem solid ${$primary};`
+      : $anchor === 'top'
+      ? `border-bottom:0.25rem solid ${$primary};`
+      : `border-top:0.25rem solid ${$primary};`}
   ${({ $anchor, $size }) =>
     $anchor === 'left' || $anchor === 'right'
       ? `width:${$size}; height:100%;`
@@ -72,15 +84,17 @@ const Panel = styled('div')<{
       : $anchor === 'top'
       ? 'top:0; left:0;'
       : 'bottom:0; left:0;'}
-  transform: ${({ $anchor, $fade }) =>
-    $anchor === 'left'
+  transform: ${({ $anchor, $fade, $persistent }) =>
+    $persistent
+      ? 'none'
+      : $anchor === 'left'
       ? `translateX(${$fade ? '-100%' : '0'})`
       : $anchor === 'right'
       ? `translateX(${$fade ? '100%' : '0'})`
       : $anchor === 'top'
       ? `translateY(${$fade ? '-100%' : '0'})`
       : `translateY(${$fade ? '100%' : '0'})`};
-  transition: transform 200ms ease;
+  transition: ${({ $persistent }) => ($persistent ? 'none' : 'transform 200ms ease')};
 `;
 
 /*───────────────────────────────────────────────────────────*/
@@ -94,6 +108,7 @@ export const Drawer: React.FC<DrawerProps> = ({
   size = '16rem',
   disableBackdropClick = false,
   disableEscapeKeyDown = false,
+  persistent = false,
   children,
   preset: presetKey,
 }) => {
@@ -102,7 +117,7 @@ export const Drawer: React.FC<DrawerProps> = ({
 
   const uncontrolled = controlledOpen === undefined;
   const [openState, setOpenState] = useState(defaultOpen);
-  const open = uncontrolled ? openState : controlledOpen!;
+  const open = persistent ? true : uncontrolled ? openState : controlledOpen!;
   const [fade, setFade] = useState(true);
 
   const requestClose = useCallback(() => {
@@ -112,7 +127,7 @@ export const Drawer: React.FC<DrawerProps> = ({
 
   /* Mount / unmount side-effects */
   useLayoutEffect(() => {
-    if (!open) return;
+    if (persistent || !open) return;
     setFade(false);
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && !disableEscapeKeyDown) {
@@ -125,24 +140,26 @@ export const Drawer: React.FC<DrawerProps> = ({
       document.removeEventListener('keydown', handleKeyDown, true);
       setFade(true);
     };
-  }, [open, disableEscapeKeyDown, requestClose]);
+  }, [open, persistent, disableEscapeKeyDown, requestClose]);
 
   const handleBackdropClick = (e: React.MouseEvent) => {
-    if (disableBackdropClick) return;
+    if (persistent || disableBackdropClick) return;
     if (e.target === e.currentTarget) requestClose();
   };
 
-  if (!open) return null;
+  if (!open && !persistent) return null;
 
   const drawerElement = (
     <>
-      <Backdrop $fade={fade} onClick={handleBackdropClick} />
+      {!persistent && <Backdrop $fade={fade} onClick={handleBackdropClick} />}
       <Panel
         $anchor={anchor}
         $fade={fade}
         $size={typeof size === 'number' ? `${size}px` : size}
-        $bg={theme.colors.surface}
+        $bg={theme.colors.background}
         $text={theme.colors.text}
+        $primary={theme.colors.primary}
+        $persistent={persistent}
         className={presetClasses}
       >
         {children}
