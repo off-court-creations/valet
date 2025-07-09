@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. The format 
 
 
 ## Unreleased
+### Added
+- Chat component with OpenAI-style messages and height constraint option
 
 ## [v0.8.3]
 ### Fixed

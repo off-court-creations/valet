@@ -47,6 +47,12 @@ export default function MainPage() {
               </Button>
 
               <Button
+                onClick={() => navigate('/chat-demo')}
+              >
+                Chat
+              </Button>
+
+              <Button
                 onClick={() => navigate('/drawer-demo')}
               >
                 Drawer

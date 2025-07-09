@@ -25,6 +25,7 @@ const TextFieldDemoPage     = page(() => import('./pages/TextFormDemo'));
 const IconDemoPage          = page(() => import('./pages/IconDemoPage'));
 const IconButtonDemoPage    = page(() => import('./pages/IconButtonDemoPage'));
 const AvatarDemoPage        = page(() => import('./pages/AvatarDemo'));
+const ChatDemoPage          = page(() => import('./pages/ChatDemo'));
 const PanelDemoPage         = page(() => import('./pages/PanelDemo'));
 const CheckboxDemoPage      = page(() => import('./pages/CheckBoxDemo'));
 const TooltipDemoPage       = page(() => import('./pages/TooltipDemo'));
@@ -104,6 +105,7 @@ export function App() {
         <Route path="/stepper-demo"    element={<StepperDemoPage />} />
         <Route path="/radio-demo"      element={<RadioGroupDemoPage />} />
         <Route path="/video-demo"      element={<VideoDemoPage />} />
+        <Route path="/chat-demo"       element={<ChatDemoPage />} />
         <Route path="/snackbar-demo"   element={<SnackbarDemoPage />} />
       </Routes>
     </Suspense>
