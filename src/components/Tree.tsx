@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/TreeView.tsx | valet
+// src/components/Tree.tsx | valet
 // Basic accessible tree view component
 // ─────────────────────────────────────────────────────────────
 import React, { useMemo, useState, useRef, KeyboardEvent } from 'react';
@@ -16,7 +16,7 @@ export interface TreeNode<T> {
   children?: TreeNode<T>[];
 }
 
-export interface TreeViewProps<T>
+export interface TreeProps<T>
   extends Omit<React.HTMLAttributes<HTMLUListElement>, 'children'>,
     Presettable {
   nodes: TreeNode<T>[];
@@ -126,7 +126,7 @@ const BoxIcon = styled('span')<{ $open: boolean; $line: string }>`
 `;
 
 /*───────────────────────────────────────────────────────────*/
-export function TreeView<T>({
+export function Tree<T>({
   nodes,
   getLabel,
   defaultExpanded = [],
@@ -135,7 +135,7 @@ export function TreeView<T>({
   preset: p,
   className,
   ...rest
-}: TreeViewProps<T>) {
+}: TreeProps<T>) {
   const { theme } = useTheme();
   const [expanded, setExpanded] = useState(() => new Set(defaultExpanded));
   const [focused, setFocused] = useState<string | null>(null);
@@ -316,4 +316,4 @@ export function TreeView<T>({
   );
 }
 
-export default TreeView;
+export default Tree;
