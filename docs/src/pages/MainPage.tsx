@@ -189,6 +189,11 @@ export default function MainPage() {
               >
                 Stepper
               </Button>
+              <Button
+                onClick={() => navigate('/treeview-demo')}
+              >
+                TreeView
+              </Button>
             </Stack>
           </Panel>
 
