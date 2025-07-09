@@ -9,16 +9,17 @@ import React, {
   useEffect,
   useLayoutEffect,
 } from 'react';
-import { styled }          from '../css/createStyled';
-import { useTheme }        from '../system/themeStore';
-import { useSurface }      from '../system/surfaceStore';
-import { preset }          from '../css/stylePresets';
-import IconButton          from './IconButton';
-import TextField           from './TextField';
-import Panel               from './Panel';
-import Typography          from './Typography';
-import Avatar              from './Avatar';
+import { styled } from '../css/createStyled';
+import { useTheme } from '../system/themeStore';
+import { useSurface } from '../system/surfaceStore';
+import { preset } from '../css/stylePresets';
+import IconButton from './IconButton';
+import TextField from './TextField';
+import Panel from './Panel';
+import Typography from './Typography';
+import Avatar from './Avatar';
 import type { Presettable } from '../types';
+import Stack from './Stack';
 
 /*───────────────────────────────────────────────────────────*/
 /* Types                                                      */
@@ -30,7 +31,7 @@ export interface ChatMessage {
 
 export interface ChatProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onSubmit'>,
-    Presettable {
+  Presettable {
   messages: ChatMessage[];
   onSend?: (message: ChatMessage) => void;
   /** Avatar image for user messages */
@@ -44,19 +45,19 @@ export interface ChatProps
 
 /*───────────────────────────────────────────────────────────*/
 /* Styled primitives                                         */
-const Wrapper = styled('div')<{ $gap: string }>`
+const Wrapper = styled('div') <{ $gap: string }>`
   display: flex;
   flex-direction: column;
   gap: ${({ $gap }) => $gap};
 `;
 
-const Messages = styled('div')<{ $gap: string }>`
+const Messages = styled('div') <{ $gap: string }>`
   display: flex;
   flex-direction: column;
   gap: ${({ $gap }) => $gap};
 `;
 
-const Row = styled('div')<{
+const Row = styled('div') <{
   $from: 'user' | 'assistant' | 'system' | 'function' | 'tool';
   $left: string;
   $right: string;
@@ -67,7 +68,7 @@ const Row = styled('div')<{
   padding-right: ${({ $right }) => $right};
 `;
 
-const InputRow = styled('form')<{ $gap: string }>`
+const InputRow = styled('form') <{ $gap: string }>`
   display: flex;
   align-items: flex-end;
   gap: ${({ $gap }) => $gap};
@@ -189,49 +190,49 @@ export const Chat: React.FC<ChatProps> = ({
           $gap={theme.spacing(1.5)}
           style={shouldConstrain ? { overflowY: 'auto', maxHeight } : undefined}
         >
-        {messages.map((m, i) => (
-          <Row
-            key={i}
-            $from={m.role}
-            $left={m.role === 'user' ? theme.spacing(24) : theme.spacing(3)}
-            $right={m.role === 'user' ? theme.spacing(3) : theme.spacing(24)}
-          >
-            {m.role !== 'user' && systemAvatar && (
-              <Avatar src={systemAvatar} size="s" style={{ marginRight: theme.spacing(1) }} />
-            )}
-            <Panel
-              fullWidth
-              compact
-              variant="main"
-              background={m.role === 'user' ? theme.colors.primary : undefined}
+          {messages.map((m, i) => (
+            <Row
+              key={i}
+              $from={m.role}
+              $left={m.role === 'user' ? theme.spacing(24) : theme.spacing(3)}
+              $right={m.role === 'user' ? theme.spacing(3) : theme.spacing(24)}
             >
-              {m.name && (
-                <Typography variant="subtitle" bold>
-                  {m.name}
-                </Typography>
+              {m.role !== 'user' && systemAvatar && (
+                <Avatar src={systemAvatar} size="s" style={{ marginRight: theme.spacing(1) }} />
               )}
-              <Typography>{m.content}</Typography>
-            </Panel>
-            {m.role === 'user' && userAvatar && (
-              <Avatar src={userAvatar} size="s" style={{ marginLeft: theme.spacing(1) }} />
-            )}
-          </Row>
-        ))}
-      </Messages>
-      {!disableInput && (
-        <InputRow onSubmit={handleSubmit} $gap={theme.spacing(1.5)}>
-          <TextField
-            as="textarea"
-            name="chat-message"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            rows={1}
-            placeholder={placeholder}
-            style={{ flex: 1 }}
-          />
-          <IconButton icon="mdi:send" type="submit" aria-label="Send" />
-        </InputRow>
-      )}
+              <Panel
+                fullWidth
+                compact
+                variant="main"
+                background={m.role === 'user' ? theme.colors.primary : undefined}
+              >
+                {m.name && (
+                  <Typography variant="subtitle" bold>
+                    {m.name}
+                  </Typography>
+                )}
+                <Typography>{m.content}</Typography>
+              </Panel>
+              {m.role === 'user' && userAvatar && (
+                <Avatar src={userAvatar} size="s" style={{ marginLeft: theme.spacing(1) }} />
+              )}
+            </Row>
+          ))}
+        </Messages>
+
+        {!disableInput && (
+          <Stack direction="row" spacing={2}>
+            <TextField
+              as="textarea"
+              name="chat-message"
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              rows={1}
+              placeholder={placeholder}
+            />
+            <IconButton icon="carbon:send" type="submit" aria-label="Send" />
+          </Stack>
+        )}
       </Wrapper>
     </Panel>
   );
