@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. The format 
 
 
 ## Unreleased
+### Added
+- TreeView component demonstrating nested navigation
 
 ## [v0.8.4]
 ### Added

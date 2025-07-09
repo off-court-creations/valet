@@ -78,8 +78,13 @@ export function TreeView<T>({
   const [focused, setFocused] = useState<string | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
 
-  const hoverBg = toHex(mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.2));
-  const selectedBg = toHex(mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.4));
+  // Swap hover and active intensity per design feedback
+  const hoverBg = toHex(
+    mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.4)
+  );
+  const selectedBg = toHex(
+    mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.2)
+  );
 
   const flat = useMemo(() => {
     const res: { node: TreeNode<T>; level: number }[] = [];
