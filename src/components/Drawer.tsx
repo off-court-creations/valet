@@ -29,6 +29,10 @@ export interface DrawerProps extends Presettable {
   disableBackdropClick?: boolean;
   /** Disable closing via ESC key */
   disableEscapeKeyDown?: boolean;
+  /** Show translucent backdrop */
+  backdrop?: boolean;
+  /** Render in place instead of portaling */
+  persistent?: boolean;
   /** Drawer contents */
   children?: React.ReactNode;
 }
@@ -94,6 +98,8 @@ export const Drawer: React.FC<DrawerProps> = ({
   size = '16rem',
   disableBackdropClick = false,
   disableEscapeKeyDown = false,
+  backdrop = true,
+  persistent = false,
   children,
   preset: presetKey,
 }) => {
@@ -132,25 +138,34 @@ export const Drawer: React.FC<DrawerProps> = ({
     if (e.target === e.currentTarget) requestClose();
   };
 
-  if (!open) return null;
+  if (!open && !persistent) return null;
 
-  const drawerElement = (
-    <>
+  const backdropNode =
+    backdrop && open && !persistent ? (
       <Backdrop $fade={fade} onClick={handleBackdropClick} />
-      <Panel
-        $anchor={anchor}
-        $fade={fade}
-        $size={typeof size === 'number' ? `${size}px` : size}
-        $bg={theme.colors.surface}
-        $text={theme.colors.text}
-        className={presetClasses}
-      >
-        {children}
-      </Panel>
+    ) : null;
+
+  const panel = (
+    <Panel
+      $anchor={anchor}
+      $fade={fade}
+      $size={typeof size === 'number' ? `${size}px` : size}
+      $bg={theme.colors.surface}
+      $text={theme.colors.text}
+      className={presetClasses}
+    >
+      {children}
+    </Panel>
+  );
+
+  const content = (
+    <>
+      {backdropNode}
+      {panel}
     </>
   );
 
-  return createPortal(drawerElement, document.body);
+  return persistent ? content : createPortal(content, document.body);
 };
 
 export default Drawer;

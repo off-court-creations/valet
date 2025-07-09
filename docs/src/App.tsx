@@ -40,6 +40,7 @@ const SelectDemoPage        = page(() => import('./pages/SelectDemo'));
 const TablePlaygroundPage   = page(() => import('./pages/TableDemo'));
 const ListDemoPage          = page(() => import('./pages/ListDemoPage'));
 const DrawerDemoPage        = page(() => import('./pages/DrawerDemo'));
+const DrawerPersistentDemoPage = page(() => import('./pages/DrawerPersistentDemo'));
 const AppBarDemoPage        = page(() => import('./pages/AppBarDemo'));
 const GridDemoPage          = page(() => import('./pages/GridDemo'));
 const PaginationDemoPage    = page(() => import('./pages/PaginationDemo'));
@@ -98,6 +99,7 @@ export function App() {
         <Route path="/table-demo"      element={<TablePlaygroundPage />} />
         <Route path="/list-demo"       element={<ListDemoPage />} />
         <Route path="/drawer-demo"     element={<DrawerDemoPage />} />
+        <Route path="/drawer-persistent" element={<DrawerPersistentDemoPage />} />
         <Route path="/appbar-demo"     element={<AppBarDemoPage />} />
         <Route path="/grid-demo"       element={<GridDemoPage />} />
         <Route path="/pagination-demo" element={<PaginationDemoPage />} />

@@ -59,6 +59,12 @@ export default function MainPage() {
               </Button>
 
               <Button
+                onClick={() => navigate('/drawer-persistent')}
+              >
+                Persistent Drawer
+              </Button>
+
+              <Button
                 onClick={() => navigate('/text-form-demo')}
               >
                 FormControl + Textfield
