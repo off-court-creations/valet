@@ -1,4 +1,7 @@
-// src/pages/AvatarDemo.tsx
+// ─────────────────────────────────────────────────────────────
+// src/pages/AvatarDemo.tsx | valet
+// Showcase of Avatar component
+// ─────────────────────────────────────────────────────────────
 import {
   Surface,
   Stack,
@@ -119,7 +122,10 @@ export default function AvatarDemoPage() {
             <Typography variant="h3">4. Sizes</Typography>
             <Stack direction="row" spacing={1}>
               {(['xl', 'l', 'm', 's', 'xs'] as const).map((s) => (
-                <Avatar key={s} email="support@gravatar.com" size={s} />
+                <Stack key={s} spacing={0.5} style={{ alignItems: 'center' }}>
+                  <Avatar email="support@gravatar.com" size={s} />
+                  <Typography variant="body">{s}</Typography>
+                </Stack>
               ))}
             </Stack>
           </Tabs.Panel>
