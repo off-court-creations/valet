@@ -72,25 +72,27 @@ const Branch = styled('ul')<{ $line: string; $root?: boolean }>`
   ${({ $root, $line }) => !$root && `border-left: 1px solid ${$line};`}
 `;
 
-const BranchItem = styled('li')<{ $line: string }>`
+const BranchItem = styled('li')<{ $line: string; $root?: boolean }>`
   position: relative;
   margin: 0;
   padding: 0;
   &::before {
-    content: '';
+    content: ${({ $root }) => ($root ? 'none' : "''")};
     position: absolute;
     top: 0.875rem;
     left: -1rem;
-    width: 1rem;
-    border-top: 1px solid ${({ $line }) => $line};
+    width: ${({ $root }) => ($root ? 0 : '1rem')};
+    border-top: ${({ $root, $line }) =>
+      $root ? 'none' : `1px solid ${$line}`};
   }
   &::after {
-    content: '';
+    content: ${({ $root }) => ($root ? 'none' : "''")};
     position: absolute;
     top: 0;
     bottom: 0;
     left: -1rem;
-    border-left: 1px solid ${({ $line }) => $line};
+    border-left: ${({ $root, $line }) =>
+      $root ? 'none' : `1px solid ${$line}`};
   }
 `;
 
@@ -227,7 +229,7 @@ export function TreeView<T>({
   const renderBranch = (items: TreeNode<T>[], level: number): React.ReactNode => (
     <Branch role={level ? 'group' : undefined} $line={line} $root={level === 0}>
       {items.map((node) => (
-        <BranchItem key={node.id} $line={line} role="none">
+        <BranchItem key={node.id} $line={line} $root={level === 0} role="none">
           <ListRow
             ref={(el) => (refs.current[node.id] = el)}
             role="treeitem"
