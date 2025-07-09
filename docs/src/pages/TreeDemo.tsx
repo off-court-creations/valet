@@ -1,6 +1,6 @@
-// src/pages/TreeViewDemo.tsx
+// src/pages/TreeDemo.tsx
 import { useState } from 'react';
-import { Surface, Stack, Typography, Button, TreeView, type TreeNode, useTheme } from '@archway/valet';
+import { Surface, Stack, Typography, Button, Tree, type TreeNode, useTheme } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
 
 interface Item {
@@ -12,7 +12,14 @@ const DATA: TreeNode<Item>[] = [
     id: 'fruit',
     data: { label: '🍎 Fruit' },
     children: [
-      { id: 'apple', data: { label: 'Green Apple 🍏' } },
+      {
+        id: 'apple',
+        data: { label: 'Green Apple 🍏' },
+        children: [
+          { id: 'granny', data: { label: 'Granny Smith' } },
+          { id: 'fuji', data: { label: 'Fuji' } },
+        ],
+      },
       { id: 'banana', data: { label: 'Banana 🍌' } },
     ],
   },
@@ -20,13 +27,20 @@ const DATA: TreeNode<Item>[] = [
     id: 'dairy',
     data: { label: '🧀 Dairy' },
     children: [
-      { id: 'milk', data: { label: 'Milk 🥛' } },
+      {
+        id: 'milk',
+        data: { label: 'Milk 🥛' },
+        children: [
+          { id: 'whole', data: { label: 'Whole Milk' } },
+          { id: 'skim', data: { label: 'Skim Milk' } },
+        ],
+      },
       { id: 'cheese', data: { label: 'Cheese 🧀' } },
     ],
   },
 ];
 
-export default function TreeViewDemoPage() {
+export default function TreeDemoPage() {
   const { theme, toggleMode } = useTheme();
   const navigate = useNavigate();
   const [selected, setSelected] = useState('');
@@ -34,14 +48,14 @@ export default function TreeViewDemoPage() {
   return (
     <Surface>
       <Stack spacing={1} preset="showcaseStack">
-        <Typography variant="h2" bold>TreeView Showcase</Typography>
+        <Typography variant="h2" bold>Tree Showcase</Typography>
         <Typography variant="subtitle">Nested list with keyboard navigation</Typography>
 
         <Typography variant="h3">1. Chevron variant</Typography>
-        <TreeView<Item>
+        <Tree<Item>
           nodes={DATA}
           getLabel={(n) => n.label}
-          defaultExpanded={['fruit']}
+          defaultExpanded={['fruit', 'dairy']}
           onNodeSelect={(n) => setSelected(String(n.label))}
           variant="chevron"
         />
@@ -50,10 +64,10 @@ export default function TreeViewDemoPage() {
         </Typography>
 
         <Typography variant="h3">2. List variant</Typography>
-        <TreeView<Item>
+        <Tree<Item>
           nodes={DATA}
           getLabel={(n) => n.label}
-          defaultExpanded={['fruit']}
+          defaultExpanded={['fruit', 'dairy']}
           variant="list"
         />
 
