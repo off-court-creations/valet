@@ -191,9 +191,9 @@ export default function MainPage() {
               </Button>
 
               <Button
-                onClick={() => navigate('/treeview-demo')}
+                onClick={() => navigate('/tree-demo')}
               >
-                TreeView
+                Tree
               </Button>
             </Stack>
           </Panel>
