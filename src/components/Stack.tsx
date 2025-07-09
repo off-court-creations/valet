@@ -34,6 +34,7 @@ const StackContainer = styled('div')<{
 }>`
   display: flex;
   flex-direction: ${({ $dir }) => $dir};
+  align-items: ${({ $dir }) => ($dir === 'row' ? 'center' : 'stretch')};
   gap: ${({ $gap }) => $gap};
   ${({ $wrap }) => ($wrap ? 'flex-wrap: wrap;' : '')}
   margin: ${({ $margin }) => $margin};

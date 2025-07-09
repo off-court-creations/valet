@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [v0.8.3]
+### Fixed
+- Uniform highlight width on Accordion items
+### Improved
+- Clearer hover contrast on Accordion headers
+- Stack rows now vertically center their children
+### Added
+- Avatar component with Gravatar fallback
+- Avatar demo page includes an interactive email form
+
 ## [v0.8.2]
 ### Improved
 - Radio button spacing and indicator alignment
@@ -129,6 +139,7 @@ All notable changes to this project will be documented in this file. The format 
 ### Other
 - vibe coded
 
+[v0.8.3]: https://github.com/off-court-creations/valet/releases/tag/v0.8.3
 [v0.8.2]: https://github.com/off-court-creations/valet/releases/tag/v0.8.2
 [v0.8.1]: https://github.com/off-court-creations/valet/releases/tag/v0.8.1
 [v0.8.0]: https://github.com/off-court-creations/valet/releases/tag/v0.8.0
