@@ -31,7 +31,6 @@ const Root = styled('ul')<{ $border: string }>`
   list-style: none;
   margin: 0;
   padding: 0;
-  border: 1px solid ${({ $border }) => $border};
 `;
 
 const ItemRow = styled('div')<{
