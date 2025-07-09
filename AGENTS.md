@@ -153,6 +153,7 @@ component rather than the page. Pass `constrainHeight={false}` to opt out.
 - **Box** – baseline container that handles background, text colour and centring.
 - **Button** – theme-aware button with variants and sizes.
 - **Checkbox** – controlled/uncontrolled checkbox adhering to accessibility.
+- **Chat** – conversation UI with OpenAI message format and optional height constraint.
 - **Drawer** – sliding overlay panel with escape handling and backdrop.
 - **FormControl** – context provider wiring labels, errors and disabled state.
 - **Grid** – CSS grid layout helper with gaps and spans.
