@@ -206,6 +206,7 @@ export const Chat: React.FC<ChatProps> = ({
                 compact
                 variant="main"
                 background={m.role === 'user' ? theme.colors.primary : undefined}
+                style={{ borderRadius: theme.spacing(0.5) }}
               >
                 {m.name && (
                   <Typography variant="subtitle" bold>
