@@ -90,6 +90,7 @@ These have been mostly tested in the [valet Docs](https://github.com/off-court-c
 |---------------|:------:|:-------:|:------------:|:-------------|:-------------:|----------------------------|
 | Accordion     |  ✅    |  ✅    |     🟡      |      ✅      |      ✅      | ----------                 |
 | App Bar       |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
+| Avatar        |  ✅    |  ✅    |     ✅      |      ✅      |      ✅      | ----------                 |
 | Box           |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | Button        |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | Checkbox      |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
@@ -142,7 +143,7 @@ These have been mostly tested in the [valet Docs](https://github.com/off-court-c
 
 ## Intended Components
 
-- TBD
+- Chat
 
 ## Contributing
 
