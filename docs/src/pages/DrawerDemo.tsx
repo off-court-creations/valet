@@ -14,15 +14,23 @@ export default function DrawerDemoPage() {
   const { theme, toggleMode } = useTheme();
   const navigate = useNavigate();
 
-  const [leftOpen, setLeftOpen] = useState(false);
+  const [overlayOpen, setOverlayOpen] = useState(false);
   const [rightOpen, setRightOpen] = useState(false);
   const [stubbornOpen, setStubbornOpen] = useState(false);
 
   return (
     <Surface>
+      <Drawer persistent anchor="left" size="16rem">
+        <Stack spacing={1} style={{ padding: theme.spacing(1) }}>
+          <Typography variant="h4" bold>
+            Persistent Drawer
+          </Typography>
+          <Typography>Always visible on the left.</Typography>
+        </Stack>
+      </Drawer>
       <Stack
         spacing={1}
-        style={{ padding: theme.spacing(1), maxWidth: 980, margin: '0 auto' }}
+        style={{ padding: theme.spacing(1), maxWidth: 980, margin: '0 auto', marginLeft: '16rem' }}
       >
         <Typography variant="h2" bold>
           Drawer Showcase
@@ -32,9 +40,9 @@ export default function DrawerDemoPage() {
         </Typography>
 
         {/* 1. Basic uncontrolled drawer */}
-        <Typography variant="h3">1. Left drawer</Typography>
-        <Button onClick={() => setLeftOpen(true)}>Open left drawer</Button>
-        <Drawer open={leftOpen} onClose={() => setLeftOpen(false)}>
+        <Typography variant="h3">1. Overlay left drawer</Typography>
+        <Button onClick={() => setOverlayOpen(true)}>Open left drawer</Button>
+        <Drawer open={overlayOpen} onClose={() => setOverlayOpen(false)}>
           <Stack spacing={1} style={{ padding: theme.spacing(1) }}>
             <Typography variant="h4" bold>
               Left Drawer
