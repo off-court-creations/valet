@@ -33,6 +33,7 @@ export * from './components/Surface';
 export * from './components/LoadingBackdrop';
 export * from './components/Switch';
 export * from './components/Tabs';
+export * from './components/TreeView';
 export * from './components/TextField';
 export * from './components/Tooltip';
 export * from './components/Typography';
