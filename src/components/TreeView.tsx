@@ -16,6 +16,8 @@ export interface TreeNode<T> {
   children?: TreeNode<T>[];
 }
 
+export type TreeViewVariant = 'chevron' | 'list';
+
 export interface TreeViewProps<T>
   extends Omit<React.HTMLAttributes<HTMLUListElement>, 'children'>,
     Presettable {
@@ -23,6 +25,7 @@ export interface TreeViewProps<T>
   getLabel: (node: T) => React.ReactNode;
   defaultExpanded?: string[];
   onNodeSelect?: (node: T) => void;
+  variant?: TreeViewVariant;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -33,16 +36,25 @@ const Root = styled('ul')<{ $border: string }>`
   border: 1px solid ${({ $border }) => $border};
 `;
 
+const INDENT = 1.25;
+
 const ItemRow = styled('div')<{
   $level: number;
   $hoverBg: string;
   $selectedBg: string;
   $selected: boolean;
+  $variant: TreeViewVariant;
+  $line: string;
+  $shadow: string;
 }>`
   display: flex;
   align-items: center;
   gap: 0.25rem;
-  padding: 0.25rem 0.5rem 0.25rem ${({ $level }) => $level * 1.25}rem;
+  padding: 0.25rem 0.5rem 0.25rem
+    ${({ $level, $variant }) =>
+      $variant === 'list'
+        ? ($level + 1) * INDENT + 'rem'
+        : $level * INDENT + 'rem'};
   cursor: pointer;
   user-select: none;
   ${({ $hoverBg }) =>
@@ -53,6 +65,30 @@ const ItemRow = styled('div')<{
     outline: 2px solid currentColor;
     outline-offset: 2px;
   }
+  ${({ $variant, $level, $line, $shadow }) =>
+    $variant === 'list' && $level > 0
+      ? `
+    position: relative;
+    &::before{
+      content:'';
+      position:absolute;
+      top:0;
+      bottom:0;
+      left:${($level - 1) * INDENT}rem;
+      border-left:1px solid ${$line};
+      ${$shadow ? `box-shadow:${$shadow};` : ''}
+    }
+    &::after{
+      content:'';
+      position:absolute;
+      top:50%;
+      left:${($level - 1) * INDENT}rem;
+      width:${INDENT}rem;
+      border-top:1px solid ${$line};
+      transform:translateY(-50%);
+    }
+  `
+      : ''}
 `;
 
 const ExpandIcon = styled('span')<{ $open: boolean }>`
@@ -63,12 +99,22 @@ const ExpandIcon = styled('span')<{ $open: boolean }>`
   transition: transform 150ms ease;
 `;
 
+const ExpandBox = styled('span')<{ $open: boolean; $line: string }>`
+  display: inline-block;
+  width: 0.75rem;
+  height: 0.75rem;
+  box-sizing: border-box;
+  border: 1px solid ${({ $line }) => $line};
+  background: ${({ $open, $line }) => ($open ? $line : 'transparent')};
+`;
+
 /*───────────────────────────────────────────────────────────*/
 export function TreeView<T>({
   nodes,
   getLabel,
   defaultExpanded = [],
   onNodeSelect,
+  variant = 'chevron',
   preset: p,
   className,
   ...rest
@@ -86,6 +132,8 @@ export function TreeView<T>({
     mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.2)
   );
 
+  const lineColor = theme.colors.backgroundAlt;
+
   const flat = useMemo(() => {
     const res: { node: TreeNode<T>; level: number }[] = [];
     const walk = (items: TreeNode<T>[], level: number) => {
@@ -97,6 +145,11 @@ export function TreeView<T>({
     walk(nodes, 0);
     return res;
   }, [nodes, expanded]);
+
+  const makeShadow = (lvl: number) =>
+    Array.from({ length: Math.max(0, lvl - 1) })
+      .map((_, i) => `${i * INDENT}rem 0 0 0 ${lineColor}`)
+      .join(', ');
 
   const refs = useRef<Record<string, HTMLDivElement | null>>({});
 
@@ -182,6 +235,9 @@ export function TreeView<T>({
             $hoverBg={hoverBg}
             $selectedBg={selectedBg}
             $selected={selected === node.id}
+            $variant={variant}
+            $line={lineColor}
+            $shadow={makeShadow(level)}
             onClick={() => {
               focusItem(node.id);
               setSelected(node.id);
@@ -190,16 +246,28 @@ export function TreeView<T>({
             onDoubleClick={() => node.children && toggle(node.id)}
           >
             {node.children && (
-              <ExpandIcon
-                aria-hidden
-                $open={expanded.has(node.id)}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggle(node.id);
-                }}
-              >
-                ▶
-              </ExpandIcon>
+              variant === 'chevron' ? (
+                <ExpandIcon
+                  aria-hidden
+                  $open={expanded.has(node.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggle(node.id);
+                  }}
+                >
+                  ▶
+                </ExpandIcon>
+              ) : (
+                <ExpandBox
+                  aria-hidden
+                  $open={expanded.has(node.id)}
+                  $line={lineColor}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggle(node.id);
+                  }}
+                />
+              )
             )}
             {getLabel(node.data)}
           </ItemRow>
