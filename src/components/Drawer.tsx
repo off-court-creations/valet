@@ -21,6 +21,8 @@ export interface DrawerProps extends Presettable {
   defaultOpen?: boolean;
   /** Drawer side */
   anchor?: DrawerAnchor;
+  /** Drawer always open without backdrop */
+  persistent?: boolean;
   /** Callback fired when user requests close */
   onClose?: () => void;
   /** Size (width or height depending on anchor) */
@@ -52,14 +54,24 @@ const Panel = styled('div')<{
   $size: string;
   $bg: string;
   $text: string;
+  $primary: string;
+  $persistent: boolean;
 }>`
   position: fixed;
-  z-index: 9999;
+  z-index: ${({ $persistent }) => ($persistent ? 9998 : 9999)};
   display: flex;
   flex-direction: column;
   background: ${({ $bg }) => $bg};
   color: ${({ $text }) => $text};
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  ${({ $anchor, $primary }) =>
+    $anchor === 'left'
+      ? `border-right:0.25rem solid ${$primary};`
+      : $anchor === 'right'
+      ? `border-left:0.25rem solid ${$primary};`
+      : $anchor === 'top'
+      ? `border-bottom:0.25rem solid ${$primary};`
+      : `border-top:0.25rem solid ${$primary};`}
   ${({ $anchor, $size }) =>
     $anchor === 'left' || $anchor === 'right'
       ? `width:${$size}; height:100%;`
@@ -90,6 +102,7 @@ export const Drawer: React.FC<DrawerProps> = ({
   open: controlledOpen,
   defaultOpen = false,
   anchor = 'left',
+  persistent = false,
   onClose,
   size = '16rem',
   disableBackdropClick = false,
@@ -102,17 +115,18 @@ export const Drawer: React.FC<DrawerProps> = ({
 
   const uncontrolled = controlledOpen === undefined;
   const [openState, setOpenState] = useState(defaultOpen);
-  const open = uncontrolled ? openState : controlledOpen!;
-  const [fade, setFade] = useState(true);
+  const open = persistent ? true : uncontrolled ? openState : controlledOpen!;
+  const [fade, setFade] = useState(persistent ? false : true);
 
   const requestClose = useCallback(() => {
+    if (persistent) return;
     if (uncontrolled) setOpenState(false);
     onClose?.();
-  }, [uncontrolled, onClose]);
+  }, [persistent, uncontrolled, onClose]);
 
   /* Mount / unmount side-effects */
   useLayoutEffect(() => {
-    if (!open) return;
+    if (persistent || !open) return;
     setFade(false);
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && !disableEscapeKeyDown) {
@@ -125,10 +139,10 @@ export const Drawer: React.FC<DrawerProps> = ({
       document.removeEventListener('keydown', handleKeyDown, true);
       setFade(true);
     };
-  }, [open, disableEscapeKeyDown, requestClose]);
+  }, [persistent, open, disableEscapeKeyDown, requestClose]);
 
   const handleBackdropClick = (e: React.MouseEvent) => {
-    if (disableBackdropClick) return;
+    if (persistent || disableBackdropClick) return;
     if (e.target === e.currentTarget) requestClose();
   };
 
@@ -136,13 +150,17 @@ export const Drawer: React.FC<DrawerProps> = ({
 
   const drawerElement = (
     <>
-      <Backdrop $fade={fade} onClick={handleBackdropClick} />
+      {persistent ? null : (
+        <Backdrop $fade={fade} onClick={handleBackdropClick} />
+      )}
       <Panel
         $anchor={anchor}
         $fade={fade}
         $size={typeof size === 'number' ? `${size}px` : size}
-        $bg={theme.colors.surface}
+        $bg={theme.colors.background}
         $text={theme.colors.text}
+        $primary={theme.colors.primary}
+        $persistent={persistent}
         className={presetClasses}
       >
         {children}

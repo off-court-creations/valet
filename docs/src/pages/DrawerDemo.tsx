@@ -14,7 +14,7 @@ export default function DrawerDemoPage() {
   const { theme, toggleMode } = useTheme();
   const navigate = useNavigate();
 
-  const [leftOpen, setLeftOpen] = useState(false);
+  const [overlayOpen, setOverlayOpen] = useState(false);
   const [rightOpen, setRightOpen] = useState(false);
   const [stubbornOpen, setStubbornOpen] = useState(false);
 
@@ -31,20 +31,31 @@ export default function DrawerDemoPage() {
           Minimal slide-in navigation panel
         </Typography>
 
-        {/* 1. Basic uncontrolled drawer */}
-        <Typography variant="h3">1. Left drawer</Typography>
-        <Button onClick={() => setLeftOpen(true)}>Open left drawer</Button>
-        <Drawer open={leftOpen} onClose={() => setLeftOpen(false)}>
+        {/* 1. Persistent left drawer */}
+        <Typography variant="h3">1. Persistent left drawer</Typography>
+        <Drawer persistent>
           <Stack spacing={1} style={{ padding: theme.spacing(1) }}>
             <Typography variant="h4" bold>
-              Left Drawer
+              Persistent
+            </Typography>
+            <Typography>Always visible without backdrop.</Typography>
+          </Stack>
+        </Drawer>
+
+        {/* 2. Overlay left drawer */}
+        <Typography variant="h3">2. Overlay left drawer</Typography>
+        <Button onClick={() => setOverlayOpen(true)}>Open left drawer</Button>
+        <Drawer open={overlayOpen} onClose={() => setOverlayOpen(false)}>
+          <Stack spacing={1} style={{ padding: theme.spacing(1) }}>
+            <Typography variant="h4" bold>
+              Overlay Drawer
             </Typography>
             <Typography>Click outside or press ESC to close.</Typography>
           </Stack>
         </Drawer>
 
-        {/* 2. Controlled right drawer */}
-        <Typography variant="h3">2. Controlled right drawer</Typography>
+        {/* 3. Controlled right drawer */}
+        <Typography variant="h3">3. Controlled right drawer</Typography>
         <Stack direction="row" spacing={1}>
           <Button onClick={() => setRightOpen(true)}>Open</Button>
           <Button onClick={() => setRightOpen(false)}>Close</Button>
@@ -58,8 +69,8 @@ export default function DrawerDemoPage() {
           </Stack>
         </Drawer>
 
-        {/* 3. Non-dismissable bottom drawer */}
-        <Typography variant="h3">3. Disable backdrop & ESC</Typography>
+        {/* 4. Non-dismissable bottom drawer */}
+        <Typography variant="h3">4. Disable backdrop & ESC</Typography>
         <Button onClick={() => setStubbornOpen(true)}>Open stubborn drawer</Button>
         <Drawer
           anchor="bottom"
