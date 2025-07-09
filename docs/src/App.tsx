@@ -48,6 +48,7 @@ const StepperDemoPage       = page(() => import('./pages/StepperDemo'));
 const RadioGroupDemoPage    = page(() => import('./pages/RadioGroupDemo'));
 const VideoDemoPage         = page(() => import('./pages/VideoDemo'));
 const SnackbarDemoPage      = page(() => import('./pages/SnackbarDemo'));
+const TreeViewDemoPage      = page(() => import('./pages/TreeViewDemo'));
 
 /*───────────────────────────────────────────────────────────*/
 export function App() {
@@ -107,6 +108,7 @@ export function App() {
         <Route path="/video-demo"      element={<VideoDemoPage />} />
         <Route path="/chat-demo"       element={<ChatDemoPage />} />
         <Route path="/snackbar-demo"   element={<SnackbarDemoPage />} />
+        <Route path="/treeview-demo"   element={<TreeViewDemoPage />} />
       </Routes>
     </Suspense>
   );
