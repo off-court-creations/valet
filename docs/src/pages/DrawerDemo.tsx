@@ -19,11 +19,20 @@ export default function DrawerDemoPage() {
   const [stubbornOpen, setStubbornOpen] = useState(false);
 
   return (
-    <Surface>
-      <Stack
-        spacing={1}
-        style={{ padding: theme.spacing(1), maxWidth: 980, margin: '0 auto' }}
-      >
+    <>
+      <Drawer persistent size="12rem">
+        <Stack spacing={1} style={{ padding: theme.spacing(1) }}>
+          <Typography variant="h4" bold>
+            Persistent Drawer
+          </Typography>
+          <Typography>Always visible on the left.</Typography>
+        </Stack>
+      </Drawer>
+      <Surface>
+        <Stack
+          spacing={1}
+          style={{ padding: theme.spacing(1), maxWidth: 980, margin: '0 auto' }}
+        >
         <Typography variant="h2" bold>
           Drawer Showcase
         </Typography>
@@ -85,5 +94,6 @@ export default function DrawerDemoPage() {
         </Stack>
       </Stack>
     </Surface>
+    </>
   );
 }
