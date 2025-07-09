@@ -23,6 +23,7 @@ export interface TreeViewProps<T>
   getLabel: (node: T) => React.ReactNode;
   defaultExpanded?: string[];
   onNodeSelect?: (node: T) => void;
+  variant?: 'chevron' | 'list';
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -63,12 +64,76 @@ const ExpandIcon = styled('span')<{ $open: boolean }>`
   transition: transform 150ms ease;
 `;
 
+const LINE_OFFSET = '0.875rem';
+
+const Branch = styled('ul')<{ $line: string; $root?: boolean }>`
+  list-style: none;
+  margin: 0;
+  padding-left: ${({ $root }) => ($root ? LINE_OFFSET : `calc(${LINE_OFFSET} + 1rem)`) };
+  position: relative;
+  ${({ $root, $line }) =>
+    !$root &&
+    `&::before{content:'';position:absolute;top:0;bottom:0;left:${LINE_OFFSET};border-left:1px solid ${$line};}`}
+`;
+
+const BranchItem = styled('li')<{ $line: string; $root?: boolean }>`
+  position: relative;
+  margin: 0;
+  padding: 0;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0.875rem;
+    left: ${({ $root }) => ($root ? LINE_OFFSET : `calc(${LINE_OFFSET} - 1rem)`) };
+    width: 1rem;
+    border-top: 1px solid ${({ $line }) => $line};
+  }
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: ${({ $root }) => ($root ? LINE_OFFSET : `calc(${LINE_OFFSET} - 1rem)`) };
+    border-left: 1px solid ${({ $line }) => $line};
+  }
+`;
+
+const ListRow = styled('div')<{
+  $hoverBg: string;
+  $selectedBg: string;
+  $selected: boolean;
+}>`
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  user-select: none;
+  ${({ $hoverBg }) =>`@media(hover:hover){&:hover{background:${$hoverBg};}}`}
+  ${({ $selected, $selectedBg }) => $selected ? `background:${$selectedBg};` : ''}
+  &:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+`;
+
+const BoxIcon = styled('span')<{ $open: boolean; $line: string }>`
+  display: inline-block;
+  width: 0.75em;
+  height: 0.75em;
+  border: 1px solid ${({ $line }) => $line};
+  background: ${({ $open, $line }) => ($open ? $line : 'transparent')};
+  margin-right: 0.25rem;
+  box-sizing: border-box;
+`;
+
 /*───────────────────────────────────────────────────────────*/
 export function TreeView<T>({
   nodes,
   getLabel,
   defaultExpanded = [],
   onNodeSelect,
+  variant = 'chevron',
   preset: p,
   className,
   ...rest
@@ -113,6 +178,8 @@ export function TreeView<T>({
       return next;
     });
   };
+
+  const line = theme.colors.backgroundAlt;
 
   const visibleIds = flat.map((f) => f.node.id);
 
@@ -161,24 +228,16 @@ export function TreeView<T>({
     }
   };
 
-  return (
-    <Root
-      {...rest}
-      role="tree"
-      tabIndex={0}
-      onKeyDown={keyNav}
-      $border={theme.colors.backgroundAlt}
-      className={[p ? preset(p) : '', className].filter(Boolean).join(' ')}
-    >
-      {flat.map(({ node, level }) => (
-        <li key={node.id} role="none">
-          <ItemRow
+  const renderBranch = (items: TreeNode<T>[], level: number): React.ReactNode => (
+    <Branch role={level ? 'group' : undefined} $line={line} $root={level === 0}>
+      {items.map((node) => (
+        <BranchItem key={node.id} $line={line} $root={level === 0} role="none">
+          <ListRow
             ref={(el) => (refs.current[node.id] = el)}
             role="treeitem"
             aria-expanded={node.children ? expanded.has(node.id) : undefined}
             aria-selected={selected === node.id}
             tabIndex={focused === node.id ? 0 : -1}
-            $level={level}
             $hoverBg={hoverBg}
             $selectedBg={selectedBg}
             $selected={selected === node.id}
@@ -190,21 +249,71 @@ export function TreeView<T>({
             onDoubleClick={() => node.children && toggle(node.id)}
           >
             {node.children && (
-              <ExpandIcon
+              <BoxIcon
                 aria-hidden
                 $open={expanded.has(node.id)}
+                $line={line}
                 onClick={(e) => {
                   e.stopPropagation();
                   toggle(node.id);
                 }}
-              >
-                ▶
-              </ExpandIcon>
+              />
             )}
             {getLabel(node.data)}
-          </ItemRow>
-        </li>
+          </ListRow>
+          {node.children && expanded.has(node.id) &&
+            renderBranch(node.children, level + 1)}
+        </BranchItem>
       ))}
+    </Branch>
+  );
+
+  return (
+    <Root
+      {...rest}
+      role="tree"
+      tabIndex={0}
+      onKeyDown={keyNav}
+      $border={theme.colors.backgroundAlt}
+      className={[p ? preset(p) : '', className].filter(Boolean).join(' ')}
+    >
+      {variant === 'chevron'
+        ? flat.map(({ node, level }) => (
+            <li key={node.id} role="none">
+              <ItemRow
+                ref={(el) => (refs.current[node.id] = el)}
+                role="treeitem"
+                aria-expanded={node.children ? expanded.has(node.id) : undefined}
+                aria-selected={selected === node.id}
+                tabIndex={focused === node.id ? 0 : -1}
+                $level={level}
+                $hoverBg={hoverBg}
+                $selectedBg={selectedBg}
+                $selected={selected === node.id}
+                onClick={() => {
+                  focusItem(node.id);
+                  setSelected(node.id);
+                  onNodeSelect?.(node.data);
+                }}
+                onDoubleClick={() => node.children && toggle(node.id)}
+              >
+                {node.children && (
+                  <ExpandIcon
+                    aria-hidden
+                    $open={expanded.has(node.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggle(node.id);
+                    }}
+                  >
+                    ▶
+                  </ExpandIcon>
+                )}
+                {getLabel(node.data)}
+              </ItemRow>
+            </li>
+          ))
+        : renderBranch(nodes, 0)}
     </Root>
   );
 }
