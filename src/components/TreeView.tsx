@@ -9,12 +9,16 @@ import { preset } from '../css/stylePresets';
 import { toRgb, mix, toHex } from '../helpers/color';
 import type { Presettable } from '../types';
 
+const INDENT = 1.25;
+
 /*───────────────────────────────────────────────────────────*/
 export interface TreeNode<T> {
   id: string;
   data: T;
   children?: TreeNode<T>[];
 }
+
+export type TreeViewVariant = 'chevron' | 'list';
 
 export interface TreeViewProps<T>
   extends Omit<React.HTMLAttributes<HTMLUListElement>, 'children'>,
@@ -23,6 +27,7 @@ export interface TreeViewProps<T>
   getLabel: (node: T) => React.ReactNode;
   defaultExpanded?: string[];
   onNodeSelect?: (node: T) => void;
+  variant?: TreeViewVariant;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -42,7 +47,7 @@ const ItemRow = styled('div')<{
   display: flex;
   align-items: center;
   gap: 0.25rem;
-  padding: 0.25rem 0.5rem 0.25rem ${({ $level }) => $level * 1.25}rem;
+  padding: 0.25rem 0.5rem 0.25rem ${({ $level }) => $level * INDENT}rem;
   cursor: pointer;
   user-select: none;
   ${({ $hoverBg }) =>
@@ -63,12 +68,47 @@ const ExpandIcon = styled('span')<{ $open: boolean }>`
   transition: transform 150ms ease;
 `;
 
+const ExpandBox = styled('span')<{ $open: boolean }>`
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  box-sizing: border-box;
+  border: 1px solid currentColor;
+  background: ${({ $open }) => ($open ? 'currentColor' : 'transparent')};
+`;
+
+const Lines = styled('span')<{
+  $left: number;
+  $color: string;
+  $shadows: string;
+  $hasSibling: boolean;
+}>`
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  bottom: ${({ $hasSibling }) => ($hasSibling ? 0 : '50%')};
+  left: ${({ $left }) => `${$left}rem`};
+  width: 0;
+  border-left: 1px solid ${({ $color }) => $color};
+  box-shadow: ${({ $shadows }) => $shadows};
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 0.75rem;
+    border-top: 1px solid ${({ $color }) => $color};
+  }
+`;
+
 /*───────────────────────────────────────────────────────────*/
 export function TreeView<T>({
   nodes,
   getLabel,
   defaultExpanded = [],
   onNodeSelect,
+  variant = 'chevron',
   preset: p,
   className,
   ...rest
@@ -77,6 +117,8 @@ export function TreeView<T>({
   const [expanded, setExpanded] = useState(() => new Set(defaultExpanded));
   const [focused, setFocused] = useState<string | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
+
+  const lineColor = theme.colors.backgroundAlt;
 
   // Swap hover and active intensity per design feedback
   const hoverBg = toHex(
@@ -87,14 +129,17 @@ export function TreeView<T>({
   );
 
   const flat = useMemo(() => {
-    const res: { node: TreeNode<T>; level: number }[] = [];
-    const walk = (items: TreeNode<T>[], level: number) => {
-      for (const it of items) {
-        res.push({ node: it, level });
-        if (it.children && expanded.has(it.id)) walk(it.children, level + 1);
-      }
+    const res: { node: TreeNode<T>; level: number; trail: boolean[]; hasSibling: boolean }[] = [];
+    const walk = (items: TreeNode<T>[], level: number, trail: boolean[]) => {
+      items.forEach((it, idx) => {
+        const hasSibling = idx < items.length - 1;
+        res.push({ node: it, level, trail, hasSibling });
+        if (it.children && expanded.has(it.id)) {
+          walk(it.children, level + 1, [...trail, hasSibling]);
+        }
+      });
     };
-    walk(nodes, 0);
+    walk(nodes, 0, []);
     return res;
   }, [nodes, expanded]);
 
@@ -170,7 +215,7 @@ export function TreeView<T>({
       $border={theme.colors.backgroundAlt}
       className={[p ? preset(p) : '', className].filter(Boolean).join(' ')}
     >
-      {flat.map(({ node, level }) => (
+      {flat.map(({ node, level, trail, hasSibling }) => (
         <li key={node.id} role="none">
           <ItemRow
             ref={(el) => (refs.current[node.id] = el)}
@@ -189,17 +234,42 @@ export function TreeView<T>({
             }}
             onDoubleClick={() => node.children && toggle(node.id)}
           >
-            {node.children && (
-              <ExpandIcon
+            {variant === 'list' && (
+              <Lines
                 aria-hidden
-                $open={expanded.has(node.id)}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggle(node.id);
-                }}
-              >
-                ▶
-              </ExpandIcon>
+                $left={level * INDENT}
+                $color={lineColor}
+                $shadows={trail
+                  .map((h, i) =>
+                    h ? `${(i + 1) * INDENT}rem 0 0 0 ${lineColor}` : null
+                  )
+                  .filter(Boolean)
+                  .join(', ')}
+                $hasSibling={hasSibling}
+              />
+            )}
+            {node.children && (
+              variant === 'list' ? (
+                <ExpandBox
+                  aria-hidden
+                  $open={expanded.has(node.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggle(node.id);
+                  }}
+                />
+              ) : (
+                <ExpandIcon
+                  aria-hidden
+                  $open={expanded.has(node.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggle(node.id);
+                  }}
+                >
+                  ▶
+                </ExpandIcon>
+              )
             )}
             {getLabel(node.data)}
           </ItemRow>
