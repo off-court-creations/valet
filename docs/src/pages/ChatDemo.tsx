@@ -19,6 +19,10 @@ export default function ChatDemoPage() {
   const { theme, toggleMode } = useTheme();
   const [messages, setMessages] = useState<ChatMessage[]>([
     { role: 'assistant', content: 'Hello! How can I help you?' },
+    { role: 'user', content: 'Tell me about valet.' },
+    { role: 'assistant', content: 'It\'s a tiny React UI kit focused on AI driven interfaces.' },
+    { role: 'user', content: 'Nice, how can I contribute?' },
+    { role: 'assistant', content: 'Check the repository README for guidelines.' },
   ]);
 
   const handleSend = (m: ChatMessage) => {

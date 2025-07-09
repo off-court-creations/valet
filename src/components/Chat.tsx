@@ -53,11 +53,13 @@ const Messages = styled('div')<{ $gap: string }>`
 
 const Row = styled('div')<{
   $from: 'user' | 'assistant' | 'system' | 'function' | 'tool';
-  $pad: string;
+  $left: string;
+  $right: string;
 }>`
   display: flex;
   justify-content: ${({ $from }) => ($from === 'user' ? 'flex-end' : 'flex-start')};
-  padding-inline: ${({ $pad }) => $pad};
+  padding-left: ${({ $left }) => $left};
+  padding-right: ${({ $right }) => $right};
 `;
 
 const InputRow = styled('form')<{ $gap: string }>`
@@ -177,8 +179,18 @@ export const Chat: React.FC<ChatProps> = ({
         style={shouldConstrain ? { overflowY: 'auto', maxHeight } : undefined}
       >
         {messages.map((m, i) => (
-          <Row key={i} $from={m.role} $pad={theme.spacing(1)}>
-            <Panel fullWidth compact variant={m.role === 'user' ? 'alt' : 'main'}>
+          <Row
+            key={i}
+            $from={m.role}
+            $left={m.role === 'user' ? theme.spacing(8) : theme.spacing(1)}
+            $right={m.role === 'user' ? theme.spacing(1) : theme.spacing(8)}
+          >
+            <Panel
+              fullWidth
+              compact
+              variant={m.role === 'user' ? 'alt' : 'main'}
+              background={m.role === 'user' ? theme.colors.primary : undefined}
+            >
               {m.name && (
                 <Typography variant="subtitle" bold>
                   {m.name}
