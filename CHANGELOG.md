@@ -6,6 +6,8 @@ All notable changes to this project will be documented in this file. The format 
 ## Unreleased
 ### Added
 - TreeView component demonstrating nested navigation
+### Improved
+- List variant lines centered on expand boxes and omit root connector
 
 ## [v0.8.4]
 ### Added
