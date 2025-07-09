@@ -63,7 +63,6 @@ const Row = styled('div') <{
   $right: string;
 }>`
   display: flex;
-  align-items: center;
   justify-content: ${({ $from }) => ($from === 'user' ? 'flex-end' : 'flex-start')};
   padding-left: ${({ $left }) => $left};
   padding-right: ${({ $right }) => $right};
@@ -99,6 +98,17 @@ export const Chat: React.FC<ChatProps> = ({
   const constraintRef = useRef(false);
 
   const [text, setText] = useState('');
+
+  /* Width for message bubbles --------------------------------------------*/
+  const bubbleWidth = React.useMemo(() => {
+    const base = typeof document === 'undefined'
+      ? 16
+      : parseFloat(getComputedStyle(document.documentElement).fontSize);
+    const rem = parseFloat(theme.spacing(80));
+    const pxLimit = rem * base;
+    const sixty = surface.width * 0.6;
+    return Math.max(sixty, Math.min(pxLimit, surface.width));
+  }, [surface.width, theme]);
 
   const calcCutoff = () => {
     if (typeof document === 'undefined') return 32;
@@ -198,25 +208,27 @@ export const Chat: React.FC<ChatProps> = ({
               $left={m.role === 'user' ? theme.spacing(24) : theme.spacing(3)}
               $right={m.role === 'user' ? theme.spacing(3) : theme.spacing(24)}
             >
-              {m.role !== 'user' && systemAvatar && (
-                <Avatar src={systemAvatar} size="s" style={{ marginRight: theme.spacing(1) }} />
-              )}
-              <Panel
-                fullWidth
-                compact
-                variant="main"
-                background={m.role === 'user' ? theme.colors.primary : undefined}
-              >
-                {m.name && (
-                  <Typography variant="subtitle" bold>
-                    {m.name}
-                  </Typography>
+              <Stack direction="row" spacing={1}>
+                {m.role !== 'user' && systemAvatar && (
+                  <Avatar src={systemAvatar} size="s" />
                 )}
-                <Typography>{m.content}</Typography>
-              </Panel>
-              {m.role === 'user' && userAvatar && (
-                <Avatar src={userAvatar} size="s" style={{ marginLeft: theme.spacing(1) }} />
-              )}
+                <Panel
+                  compact
+                  variant="main"
+                  background={m.role === 'user' ? theme.colors.primary : undefined}
+                  style={{ minWidth: `${bubbleWidth}px` }}
+                >
+                  {m.name && (
+                    <Typography variant="subtitle" bold>
+                      {m.name}
+                    </Typography>
+                  )}
+                  <Typography>{m.content}</Typography>
+                </Panel>
+                {m.role === 'user' && userAvatar && (
+                  <Avatar src={userAvatar} size="s" />
+                )}
+              </Stack>
             </Row>
           ))}
         </Messages>
