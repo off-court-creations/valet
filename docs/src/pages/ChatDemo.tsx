@@ -14,6 +14,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import type { ChatMessage } from '@archway/valet';
 import monkey from '../assets/monkey.jpg';
+import present from '../assets/present.jpg';
 
 export default function ChatDemoPage() {
   const navigate = useNavigate();
@@ -44,7 +45,7 @@ export default function ChatDemoPage() {
           messages={messages}
           onSend={handleSend}
           constrainHeight
-          userAvatar="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+          userAvatar={present}
           systemAvatar={monkey}
         />
 
