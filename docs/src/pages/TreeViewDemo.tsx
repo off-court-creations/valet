@@ -37,15 +37,25 @@ export default function TreeViewDemoPage() {
         <Typography variant="h2" bold>TreeView Showcase</Typography>
         <Typography variant="subtitle">Nested list with keyboard navigation</Typography>
 
+        <Typography variant="h3">1. Chevron variant</Typography>
         <TreeView<Item>
           nodes={DATA}
           getLabel={(n) => n.label}
           defaultExpanded={['fruit']}
           onNodeSelect={(n) => setSelected(String(n.label))}
+          variant="chevron"
         />
         <Typography variant="body">
           Selected: <code>{selected}</code>
         </Typography>
+
+        <Typography variant="h3">2. List variant</Typography>
+        <TreeView<Item>
+          nodes={DATA}
+          getLabel={(n) => n.label}
+          defaultExpanded={['fruit']}
+          variant="list"
+        />
 
         <Stack direction="row" spacing={1}>
           <Button variant="outlined" onClick={toggleMode}>Toggle light / dark</Button>
