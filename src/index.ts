@@ -3,6 +3,7 @@ export * from './components/Accordion';
 export * from './components/Box';
 export * from './components/Button';
 export * from './components/Checkbox';
+export * from './components/Chat';
 export * from './components/FormControl';
 export * from './components/Icon';
 export * from './components/IconButton';
