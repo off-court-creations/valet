@@ -64,34 +64,39 @@ const ExpandIcon = styled('span')<{ $open: boolean }>`
   transition: transform 150ms ease;
 `;
 
+const indent = '0.75rem';
+
 const Branch = styled('ul')<{ $line: string; $root?: boolean }>`
   list-style: none;
   margin: 0;
-  padding-left: ${({ $root }) => ($root ? 0 : '1rem')};
+  padding-left: ${({ $root }) => ($root ? 0 : indent)};
   position: relative;
   ${({ $root, $line }) => !$root && `border-left: 1px solid ${$line};`}
 `;
 
-const BranchItem = styled('li')<{ $line: string }>`
+const BranchItem = styled('li')<{ $line: string; $root?: boolean }>`
   position: relative;
   margin: 0;
   padding: 0;
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0.875rem;
-    left: -1rem;
-    width: 1rem;
-    border-top: 1px solid ${({ $line }) => $line};
-  }
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: -1rem;
-    border-left: 1px solid ${({ $line }) => $line};
-  }
+  ${({ $root, $line }) =>
+    !$root && `
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0.875rem;
+        left: calc(${indent} / -2);
+        width: calc(${indent} / 2);
+        border-top: 1px solid ${$line};
+      }
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: calc(${indent} / -2);
+        border-left: 1px solid ${$line};
+      }
+    `}
 `;
 
 const ListRow = styled('div')<{
@@ -227,7 +232,7 @@ export function TreeView<T>({
   const renderBranch = (items: TreeNode<T>[], level: number): React.ReactNode => (
     <Branch role={level ? 'group' : undefined} $line={line} $root={level === 0}>
       {items.map((node) => (
-        <BranchItem key={node.id} $line={line} role="none">
+        <BranchItem key={node.id} $line={line} $root={level === 0} role="none">
           <ListRow
             ref={(el) => (refs.current[node.id] = el)}
             role="treeitem"
