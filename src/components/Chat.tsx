@@ -17,6 +17,7 @@ import IconButton          from './IconButton';
 import TextField           from './TextField';
 import Panel               from './Panel';
 import Typography          from './Typography';
+import Avatar              from './Avatar';
 import type { Presettable } from '../types';
 
 /*───────────────────────────────────────────────────────────*/
@@ -35,6 +36,8 @@ export interface ChatProps
   placeholder?: string;
   disableInput?: boolean;
   constrainHeight?: boolean;
+  userAvatar?: string;
+  systemAvatar?: string;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -60,6 +63,13 @@ const Row = styled('div')<{
   justify-content: ${({ $from }) => ($from === 'user' ? 'flex-end' : 'flex-start')};
   padding-left: ${({ $left }) => $left};
   padding-right: ${({ $right }) => $right};
+  position: relative;
+`;
+
+const AvatarSlot = styled('div')<{ $from: 'user' | 'assistant' | 'system' | 'function' | 'tool' }>`
+  position: absolute;
+  bottom: 0;
+  ${({ $from }) => ($from === 'user' ? 'right: 0;' : 'left: 0;')}
 `;
 
 const InputRow = styled('form')<{ $gap: string }>`
@@ -76,6 +86,8 @@ export const Chat: React.FC<ChatProps> = ({
   placeholder = 'Message…',
   disableInput = false,
   constrainHeight = true,
+  userAvatar,
+  systemAvatar,
   preset: p,
   className,
   style,
@@ -189,6 +201,11 @@ export const Chat: React.FC<ChatProps> = ({
             $left={m.role === 'user' ? theme.spacing(24) : theme.spacing(3)}
             $right={m.role === 'user' ? theme.spacing(3) : theme.spacing(24)}
           >
+            {((m.role === 'user' ? userAvatar : systemAvatar)) && (
+              <AvatarSlot $from={m.role}>
+                <Avatar src={m.role === 'user' ? userAvatar : systemAvatar} size="m" />
+              </AvatarSlot>
+            )}
             <Panel
               fullWidth
               compact
