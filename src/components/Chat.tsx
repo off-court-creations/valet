@@ -63,6 +63,7 @@ const Row = styled('div') <{
   $right: string;
 }>`
   display: flex;
+  align-items: center;
   justify-content: ${({ $from }) => ($from === 'user' ? 'flex-end' : 'flex-start')};
   padding-left: ${({ $left }) => $left};
   padding-right: ${({ $right }) => $right};
