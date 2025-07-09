@@ -166,18 +166,22 @@ export const Chat: React.FC<ChatProps> = ({
 
   const presetClasses = p ? preset(p) : '';
 
+  const cls = [presetClasses, className].filter(Boolean).join(' ') || undefined;
+
   return (
-    <Wrapper
+    <Panel
       {...rest}
-      ref={wrapRef}
-      $gap={theme.spacing(3)}
-      style={{ ...style, overflow: 'hidden' }}
-      className={[presetClasses, className].filter(Boolean).join(' ')}
+      compact
+      fullWidth
+      variant="alt"
+      style={style}
+      className={cls}
     >
-      <Messages
-        $gap={theme.spacing(1.5)}
-        style={shouldConstrain ? { overflowY: 'auto', maxHeight } : undefined}
-      >
+      <Wrapper ref={wrapRef} $gap={theme.spacing(3)} style={{ overflow: 'hidden' }}>
+        <Messages
+          $gap={theme.spacing(1.5)}
+          style={shouldConstrain ? { overflowY: 'auto', maxHeight } : undefined}
+        >
         {messages.map((m, i) => (
           <Row
             key={i}
@@ -215,7 +219,8 @@ export const Chat: React.FC<ChatProps> = ({
           <IconButton icon="mdi:send" type="submit" aria-label="Send" />
         </InputRow>
       )}
-    </Wrapper>
+      </Wrapper>
+    </Panel>
   );
 };
 
