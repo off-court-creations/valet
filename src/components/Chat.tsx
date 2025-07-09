@@ -17,7 +17,9 @@ import IconButton          from './IconButton';
 import TextField           from './TextField';
 import Panel               from './Panel';
 import Typography          from './Typography';
+import Avatar              from './Avatar';
 import type { Presettable } from '../types';
+import monkey             from '../../docs/src/assets/monkey.jpg';
 
 /*───────────────────────────────────────────────────────────*/
 /* Types                                                      */
@@ -56,10 +58,17 @@ const Row = styled('div')<{
   $left: string;
   $right: string;
 }>`
+  position: relative;
   display: flex;
   justify-content: ${({ $from }) => ($from === 'user' ? 'flex-end' : 'flex-start')};
   padding-left: ${({ $left }) => $left};
   padding-right: ${({ $right }) => $right};
+`;
+
+const AvatarSlot = styled('div')<{ $side: 'left' | 'right'; $offset: string }>`
+  position: absolute;
+  top: 0;
+  ${({ $side, $offset }) => ($side === 'left' ? `left: ${$offset};` : `right: ${$offset};`)}
 `;
 
 const InputRow = styled('form')<{ $gap: string }>`
@@ -189,6 +198,16 @@ export const Chat: React.FC<ChatProps> = ({
             $left={m.role === 'user' ? theme.spacing(24) : theme.spacing(3)}
             $right={m.role === 'user' ? theme.spacing(3) : theme.spacing(24)}
           >
+            {m.role === 'system' && (
+              <AvatarSlot $side="left" $offset={theme.spacing(3)}>
+                <Avatar src={monkey} size="l" />
+              </AvatarSlot>
+            )}
+            {m.role === 'user' && (
+              <AvatarSlot $side="right" $offset={theme.spacing(3)}>
+                <Avatar size="l" />
+              </AvatarSlot>
+            )}
             <Panel
               fullWidth
               compact
