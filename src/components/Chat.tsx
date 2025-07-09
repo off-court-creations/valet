@@ -170,25 +170,25 @@ export const Chat: React.FC<ChatProps> = ({
     <Wrapper
       {...rest}
       ref={wrapRef}
-      $gap={theme.spacing(1)}
+      $gap={theme.spacing(3)}
       style={{ ...style, overflow: 'hidden' }}
       className={[presetClasses, className].filter(Boolean).join(' ')}
     >
       <Messages
-        $gap={theme.spacing(0.5)}
+        $gap={theme.spacing(1.5)}
         style={shouldConstrain ? { overflowY: 'auto', maxHeight } : undefined}
       >
         {messages.map((m, i) => (
           <Row
             key={i}
             $from={m.role}
-            $left={m.role === 'user' ? theme.spacing(8) : theme.spacing(1)}
-            $right={m.role === 'user' ? theme.spacing(1) : theme.spacing(8)}
+            $left={m.role === 'user' ? theme.spacing(24) : theme.spacing(3)}
+            $right={m.role === 'user' ? theme.spacing(3) : theme.spacing(24)}
           >
             <Panel
               fullWidth
               compact
-              variant={m.role === 'user' ? 'alt' : 'main'}
+              variant="main"
               background={m.role === 'user' ? theme.colors.primary : undefined}
             >
               {m.name && (
@@ -202,7 +202,7 @@ export const Chat: React.FC<ChatProps> = ({
         ))}
       </Messages>
       {!disableInput && (
-        <InputRow onSubmit={handleSubmit} $gap={theme.spacing(0.5)}>
+        <InputRow onSubmit={handleSubmit} $gap={theme.spacing(1.5)}>
           <TextField
             as="textarea"
             name="chat-message"
