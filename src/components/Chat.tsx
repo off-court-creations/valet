@@ -17,6 +17,7 @@ import IconButton          from './IconButton';
 import TextField           from './TextField';
 import Panel               from './Panel';
 import Typography          from './Typography';
+import Avatar              from './Avatar';
 import type { Presettable } from '../types';
 
 /*───────────────────────────────────────────────────────────*/
@@ -35,6 +36,8 @@ export interface ChatProps
   placeholder?: string;
   disableInput?: boolean;
   constrainHeight?: boolean;
+  userAvatar?: React.ReactNode;
+  systemAvatar?: React.ReactNode;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -60,6 +63,18 @@ const Row = styled('div')<{
   justify-content: ${({ $from }) => ($from === 'user' ? 'flex-end' : 'flex-start')};
   padding-left: ${({ $left }) => $left};
   padding-right: ${({ $right }) => $right};
+  position: relative;
+  `;
+
+const AvatarSlot = styled('div')<{ $side: 'left' | 'right'; $padTop: string; $width: string }>`
+  position: absolute;
+  top: 0;
+  ${({ $side }) => ($side === 'left' ? 'left:0;' : 'right:0;')}
+  display: flex;
+  align-items: flex-start;
+  padding-top: ${({ $padTop }) => $padTop};
+  width: ${({ $width }) => $width};
+  justify-content: center;
 `;
 
 const InputRow = styled('form')<{ $gap: string }>`
@@ -76,6 +91,8 @@ export const Chat: React.FC<ChatProps> = ({
   placeholder = 'Message…',
   disableInput = false,
   constrainHeight = true,
+  userAvatar,
+  systemAvatar,
   preset: p,
   className,
   style,
@@ -189,6 +206,25 @@ export const Chat: React.FC<ChatProps> = ({
             $left={m.role === 'user' ? theme.spacing(24) : theme.spacing(3)}
             $right={m.role === 'user' ? theme.spacing(3) : theme.spacing(24)}
           >
+            {m.role === 'user'
+              ? userAvatar && (
+                  <AvatarSlot
+                    $side="right"
+                    $padTop={theme.spacing(0.5)}
+                    $width={theme.spacing(24)}
+                  >
+                    {userAvatar}
+                  </AvatarSlot>
+                )
+              : systemAvatar && (
+                  <AvatarSlot
+                    $side="left"
+                    $padTop={theme.spacing(0.5)}
+                    $width={theme.spacing(24)}
+                  >
+                    {systemAvatar}
+                  </AvatarSlot>
+                )}
             <Panel
               fullWidth
               compact

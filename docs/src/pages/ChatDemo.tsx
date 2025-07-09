@@ -9,10 +9,13 @@ import {
   Typography,
   Button,
   Chat,
+  Avatar,
+  Icon,
   useTheme,
 } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
 import type { ChatMessage } from '@archway/valet';
+import monkey from '../assets/monkey.jpg';
 
 export default function ChatDemoPage() {
   const navigate = useNavigate();
@@ -29,6 +32,9 @@ export default function ChatDemoPage() {
     setMessages(prev => [...prev, m, { role: 'assistant', content: `Echo: ${m.content}` }]);
   };
 
+  const systemAvatarEl = <Avatar src={monkey} size="m" alt="System" />;
+  const userAvatarEl = <Icon icon="mdi:github" size="2rem" aria-label="GitHub" />;
+
   return (
     <Surface>
       <Stack spacing={1} preset="showcaseStack">
@@ -39,7 +45,13 @@ export default function ChatDemoPage() {
           Chat component with OpenAI style messages
         </Typography>
 
-        <Chat messages={messages} onSend={handleSend} constrainHeight />
+        <Chat
+          messages={messages}
+          onSend={handleSend}
+          constrainHeight
+          systemAvatar={systemAvatarEl}
+          userAvatar={userAvatarEl}
+        />
 
         <Button variant="outlined" onClick={toggleMode}>
           Toggle light / dark mode
