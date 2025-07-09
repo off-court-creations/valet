@@ -12,7 +12,11 @@ import {
   Icon,
   useTheme,
   definePreset,
+  Tabs,
+  Table,
 } from '@archway/valet';
+import type { TableColumn } from '@archway/valet';
+import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
@@ -43,6 +47,59 @@ export default function IconButtonDemoPage() {
   const { theme, toggleMode } = useTheme();
   const navigate = useNavigate();
 
+  interface Row {
+    prop: ReactNode;
+    type: ReactNode;
+    default: ReactNode;
+    description: ReactNode;
+  }
+
+  const columns: TableColumn<Row>[] = [
+    { header: 'Prop', accessor: 'prop' },
+    { header: 'Type', accessor: 'type' },
+    { header: 'Default', accessor: 'default' },
+    { header: 'Description', accessor: 'description' },
+  ];
+
+  const data: Row[] = [
+    {
+      prop: <code>variant</code>,
+      type: <code>'contained' | 'outlined'</code>,
+      default: <code>'contained'</code>,
+      description: 'Button style',
+    },
+    {
+      prop: <code>size</code>,
+      type: <code>'sm' | 'md' | 'lg'</code>,
+      default: <code>'md'</code>,
+      description: 'Overall button dimensions',
+    },
+    {
+      prop: <code>icon</code>,
+      type: <code>string</code>,
+      default: <code>-</code>,
+      description: 'Iconify name',
+    },
+    {
+      prop: <code>svg</code>,
+      type: <code>string | ReactElement</code>,
+      default: <code>-</code>,
+      description: 'Custom SVG content',
+    },
+    {
+      prop: <code>iconColor</code>,
+      type: <code>string</code>,
+      default: <code>-</code>,
+      description: 'Glyph colour override',
+    },
+    {
+      prop: <code>preset</code>,
+      type: <code>string | string[]</code>,
+      default: <code>-</code>,
+      description: 'Apply style presets',
+    },
+  ];
+
   return (
     <Surface>
       <Stack
@@ -53,9 +110,13 @@ export default function IconButtonDemoPage() {
         <Typography variant="h2" bold>
           IconButton Showcase
         </Typography>
-        <Typography variant="subtitle">
-          Circular icon-only buttons with contained &amp; outlined styles
-        </Typography>
+
+        <Tabs>
+          <Tabs.Tab label="Usage" />
+          <Tabs.Panel>
+            <Typography variant="subtitle">
+              Circular icon-only buttons with contained &amp; outlined styles
+            </Typography>
 
         {/* 1. Contained sizes --------------------------------------------- */}
         <Typography variant="h3">1. Contained sizes</Typography>
@@ -131,11 +192,19 @@ export default function IconButtonDemoPage() {
         </Box>
 
         {/* 7. Theme coupling ---------------------------------------------- */}
-        <Typography variant="h3">7. Theme demonstration</Typography>
-        <Button variant="outlined" onClick={toggleMode}>
-          Toggle light / dark mode&nbsp;
-          <Icon icon="mdi:theme-light-dark" size="1.2rem" />
-        </Button>
+            <Typography variant="h3">7. Theme demonstration</Typography>
+            <Button variant="outlined" onClick={toggleMode}>
+              Toggle light / dark mode&nbsp;
+              <Icon icon="mdi:theme-light-dark" size="1.2rem" />
+            </Button>
+          </Tabs.Panel>
+
+          <Tabs.Tab label="Reference" />
+          <Tabs.Panel>
+            <Typography variant="h3">Prop reference</Typography>
+            <Table data={data} columns={columns} constrainHeight={false} />
+          </Tabs.Panel>
+        </Tabs>
 
         {/* Back nav -------------------------------------------------------- */}
         <Button

@@ -9,13 +9,70 @@ import {
   Typography,
   Button,
   useTheme,
+  Tabs,
+  Table,
 } from '@archway/valet';
+import type { TableColumn } from '@archway/valet';
+import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 /*─────────────────────────────────────────────────────────────*/
 export default function ButtonDemoPage() {
   const { theme, toggleMode } = useTheme();
   const navigate = useNavigate();
+
+  interface Row {
+    prop: ReactNode;
+    type: ReactNode;
+    default: ReactNode;
+    description: ReactNode;
+  }
+
+  const columns: TableColumn<Row>[] = [
+    { header: 'Prop', accessor: 'prop' },
+    { header: 'Type', accessor: 'type' },
+    { header: 'Default', accessor: 'default' },
+    { header: 'Description', accessor: 'description' },
+  ];
+
+  const data: Row[] = [
+    {
+      prop: <code>color</code>,
+      type: <code>'primary' | 'secondary' | 'tertiary' | string</code>,
+      default: <code>'primary'</code>,
+      description: 'Background palette or custom colour',
+    },
+    {
+      prop: <code>textColor</code>,
+      type: <code>'primary' | 'secondary' | 'tertiary' | string</code>,
+      default: <code>-</code>,
+      description: 'Label colour override',
+    },
+    {
+      prop: <code>variant</code>,
+      type: <code>'contained' | 'outlined'</code>,
+      default: <code>'contained'</code>,
+      description: 'Visual style',
+    },
+    {
+      prop: <code>size</code>,
+      type: <code>'sm' | 'md' | 'lg'</code>,
+      default: <code>'md'</code>,
+      description: 'Overall button scale',
+    },
+    {
+      prop: <code>fullWidth</code>,
+      type: <code>boolean</code>,
+      default: <code>false</code>,
+      description: 'Stretch to fill parent width',
+    },
+    {
+      prop: <code>preset</code>,
+      type: <code>string | string[]</code>,
+      default: <code>-</code>,
+      description: 'Apply style presets',
+    },
+  ];
 
   return (
     <Surface>
@@ -24,16 +81,20 @@ export default function ButtonDemoPage() {
         <Typography variant="h2" bold>
           Button Showcase
         </Typography>
-        <Typography variant="subtitle">
-          Variants, sizes, palettes &amp; more
-        </Typography>
 
-        {/* 1 ▸ Variants -------------------------------------------------- */}
-        <Typography variant="h3">1. Variants</Typography>
-        <Stack direction="row" spacing={1}>
-          <Button>contained (default)</Button>
-          <Button variant="outlined">outlined</Button>
-        </Stack>
+        <Tabs>
+          <Tabs.Tab label="Usage" />
+          <Tabs.Panel>
+            <Typography variant="subtitle">
+              Variants, sizes, palettes &amp; more
+            </Typography>
+
+            {/* 1 ▸ Variants -------------------------------------------------- */}
+            <Typography variant="h3">1. Variants</Typography>
+            <Stack direction="row" spacing={1}>
+              <Button>contained (default)</Button>
+              <Button variant="outlined">outlined</Button>
+            </Stack>
 
         {/* 2 ▸ Sizes ----------------------------------------------------- */}
         <Typography variant="h3">2. Sizes</Typography>
@@ -93,13 +154,25 @@ export default function ButtonDemoPage() {
           </Button>
         </Stack>
 
-        {/* 9 ▸ Theme toggle (LAST) ------------------------------------- */}
-        <Typography variant="h3">9. Theme toggle</Typography>
-        <Button variant="outlined" onClick={toggleMode}>
-          Toggle light / dark mode
-        </Button>
+            {/* 9 ▸ Theme toggle (LAST) ------------------------------------- */}
+            <Typography variant="h3">9. Theme toggle</Typography>
+            <Button variant="outlined" onClick={toggleMode}>
+              Toggle light / dark mode
+            </Button>
+          </Tabs.Panel>
 
-        <Button size="lg" onClick={() => navigate(-1)} style={{ marginTop: theme.spacing(1) }}>
+          <Tabs.Tab label="Reference" />
+          <Tabs.Panel>
+            <Typography variant="h3">Prop reference</Typography>
+            <Table data={data} columns={columns} constrainHeight={false} />
+          </Tabs.Panel>
+        </Tabs>
+
+        <Button
+          size="lg"
+          onClick={() => navigate(-1)}
+          style={{ marginTop: theme.spacing(1) }}
+        >
           ← Back
         </Button>
       </Stack>
