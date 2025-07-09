@@ -52,6 +52,7 @@ const Panel = styled('div')<{
   $size: string;
   $bg: string;
   $text: string;
+  $primary: string;
 }>`
   position: fixed;
   z-index: 9999;
@@ -60,6 +61,14 @@ const Panel = styled('div')<{
   background: ${({ $bg }) => $bg};
   color: ${({ $text }) => $text};
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  ${({ $anchor, $primary }) =>
+    $anchor === 'left'
+      ? `border-right: 1px solid ${$primary};`
+      : $anchor === 'right'
+      ? `border-left: 1px solid ${$primary};`
+      : $anchor === 'top'
+      ? `border-bottom: 1px solid ${$primary};`
+      : `border-top: 1px solid ${$primary};`}
   ${({ $anchor, $size }) =>
     $anchor === 'left' || $anchor === 'right'
       ? `width:${$size}; height:100%;`
@@ -141,8 +150,9 @@ export const Drawer: React.FC<DrawerProps> = ({
         $anchor={anchor}
         $fade={fade}
         $size={typeof size === 'number' ? `${size}px` : size}
-        $bg={theme.colors.surface}
+        $bg={theme.colors.background}
         $text={theme.colors.text}
+        $primary={theme.colors.primary}
         className={presetClasses}
       >
         {children}
