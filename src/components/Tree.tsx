@@ -23,6 +23,10 @@ export interface TreeProps<T>
   nodes: TreeNode<T>[];
   getLabel: (node: T) => React.ReactNode;
   defaultExpanded?: string[];
+  /** Active selection (controlled). */
+  selected?: string;
+  /** Default selection for uncontrolled usage. */
+  defaultSelected?: string;
   onNodeSelect?: (node: T) => void;
   variant?: 'chevron' | 'list' | 'files';
 }
@@ -135,6 +139,8 @@ export function Tree<T>({
   nodes,
   getLabel,
   defaultExpanded = [],
+  selected: selectedProp,
+  defaultSelected,
   onNodeSelect,
   variant = 'chevron',
   preset: p,
@@ -144,7 +150,11 @@ export function Tree<T>({
   const { theme } = useTheme();
   const [expanded, setExpanded] = useState(() => new Set(defaultExpanded));
   const [focused, setFocused] = useState<string | null>(null);
-  const [selected, setSelected] = useState<string | null>(null);
+  const controlled = selectedProp !== undefined;
+  const [selfSelected, setSelfSelected] = useState<string | null>(
+    defaultSelected ?? null,
+  );
+  const selected = controlled ? selectedProp! : selfSelected;
 
   // Swap hover and active intensity per design feedback
   const hoverBg = toHex(
@@ -225,7 +235,7 @@ export function Tree<T>({
       case 'Enter':
       case ' ': // Space
         e.preventDefault();
-        setSelected(current.node.id);
+        if (!controlled) setSelfSelected(current.node.id);
         onNodeSelect?.(current.node.data);
         break;
     }
@@ -246,7 +256,7 @@ export function Tree<T>({
             $selected={selected === node.id}
             onClick={() => {
               focusItem(node.id);
-              setSelected(node.id);
+              if (!controlled) setSelfSelected(node.id);
               onNodeSelect?.(node.data);
             }}
             onDoubleClick={() => node.children && toggle(node.id)}
@@ -305,7 +315,7 @@ export function Tree<T>({
                 $selected={selected === node.id}
                 onClick={() => {
                   focusItem(node.id);
-                  setSelected(node.id);
+                  if (!controlled) setSelfSelected(node.id);
                   onNodeSelect?.(node.data);
                 }}
                 onDoubleClick={() => node.children && toggle(node.id)}

@@ -7,6 +7,8 @@ All notable changes to this project will be documented in this file. The format 
 ### Added
 - Tree component demonstrating nested navigation (renamed from TreeView)
 - Responsive drawer navigation with Getting Started pages
+### Changed
+- Tree now accepts a `selected` prop for controlled selection
 ### Improved
 - List variant lines centered on expand boxes and omit root connector
 - Tree demo shows a third level with mixed collapsible nodes

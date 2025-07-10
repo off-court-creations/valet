@@ -2,18 +2,21 @@
 // src/pages/MainPage.tsx  | valet
 // Doc home with responsive drawer navigation
 // ─────────────────────────────────────────────────────────────
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Surface,
   Drawer,
   Stack,
   Button,
   Typography,
+  Tree,
+  type TreeNode,
   useTheme,
 } from '@archway/valet';
 
 export default function MainPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { theme, mode, toggleMode } = useTheme();
 
   const components: [string, string][] = [
@@ -56,33 +59,48 @@ export default function MainPage() {
     ['Radio Button', '/test'],
   ];
 
+  interface Item { label: string; path?: string }
+
+  const treeData: TreeNode<Item>[] = [
+    {
+      id: 'getting-started',
+      data: { label: 'Getting Started' },
+      children: [
+        { id: '/overview', data: { label: 'Overview', path: '/overview' } },
+        { id: '/installation', data: { label: 'Installation', path: '/installation' } },
+        { id: '/usage', data: { label: 'Usage', path: '/usage' } },
+      ],
+    },
+    {
+      id: 'components',
+      data: { label: 'Components' },
+      children: components.map(([label, path]) => ({
+        id: path,
+        data: { label, path },
+      })),
+    },
+    {
+      id: 'demos',
+      data: { label: 'Demos' },
+      children: demos.map(([label, path]) => ({
+        id: path,
+        data: { label, path },
+      })),
+    },
+  ];
+
   return (
     <Surface>
       <Drawer responsive anchor="left" size="16rem" persistent>
-        <Stack spacing={1} style={{ padding: theme.spacing(1) }}>
-          <Typography variant="h3" bold>Getting Started</Typography>
-          <Button onClick={() => navigate('/overview')}>Overview</Button>
-          <Button onClick={() => navigate('/installation')}>Installation</Button>
-          <Button onClick={() => navigate('/usage')}>Usage</Button>
-
-          <Typography variant="h3" bold style={{ marginTop: theme.spacing(1) }}>
-            Components
-          </Typography>
-          {components.map(([label, path]) => (
-            <Button key={path} onClick={() => navigate(path)}>
-              {label}
-            </Button>
-          ))}
-
-          <Typography variant="h3" bold style={{ marginTop: theme.spacing(1) }}>
-            Demos
-          </Typography>
-          {demos.map(([label, path]) => (
-            <Button key={path} onClick={() => navigate(path)}>
-              {label}
-            </Button>
-          ))}
-        </Stack>
+        <Tree<Item>
+          nodes={treeData}
+          getLabel={(n) => n.label}
+          variant="list"
+          selected={location.pathname}
+          defaultExpanded={['getting-started', 'components', 'demos']}
+          onNodeSelect={(n) => n.path && navigate(n.path)}
+          style={{ padding: theme.spacing(1) }}
+        />
       </Drawer>
 
       <Stack
