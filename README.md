@@ -101,6 +101,7 @@ These have been mostly tested in the [valet Docs](https://github.com/off-court-c
 | Icon          |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | IconButton    |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | List          |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | Needs mobile support!      |
+| Loading Backdrop |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | Modal         |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | styling                    |
 | Pagination    |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | Panel         |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
@@ -109,6 +110,7 @@ These have been mostly tested in the [valet Docs](https://github.com/off-court-c
 | Radio Group   |  ✅    |  ✅    |     🟡      |      🟡      |      🟡      | ----------                 |
 | Select        |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | styling                    |
 | Slider        |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
+| Snackbar      |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | Speed Dial    |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | Stack         |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | Stepper       |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
@@ -120,6 +122,7 @@ These have been mostly tested in the [valet Docs](https://github.com/off-court-c
 | Tooltip       |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | Tree          |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | Typography    |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
+| Video         |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 
 ## Hooks
 
