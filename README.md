@@ -118,6 +118,7 @@ These have been mostly tested in the [valet Docs](https://github.com/off-court-c
 | Tabs          |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | Textfield     |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | Tooltip       |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
+| Tree          |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | Typography    |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 
 ## Hooks
