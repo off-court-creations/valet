@@ -35,6 +35,8 @@ export interface DrawerProps extends Presettable {
   persistent?: boolean;
   /** Responsive behaviour (persistent in landscape, overlay in portrait) */
   responsive?: boolean;
+  /** Push document body when persistent */
+  pushContent?: boolean;
   /** Icon for the portrait toggle button */
   toggleIcon?: string;
   /** Close button icon when portrait */
@@ -124,6 +126,7 @@ export const Drawer: React.FC<DrawerProps> = ({
   disableEscapeKeyDown = false,
   persistent = false,
   responsive = false,
+  pushContent = false,
   toggleIcon = 'mdi:menu',
   closeIcon = 'mdi:close',
   children,
@@ -147,6 +150,24 @@ export const Drawer: React.FC<DrawerProps> = ({
     ? openState
     : controlledOpen!;
   const [fade, setFade] = useState(true);
+
+  useLayoutEffect(() => {
+    if (!pushContent || !persistentEffective) return;
+    const side =
+      anchor === 'left'
+        ? 'marginLeft'
+        : anchor === 'right'
+        ? 'marginRight'
+        : anchor === 'top'
+        ? 'marginTop'
+        : 'marginBottom';
+    const resolved = typeof size === 'number' ? `${size}px` : size;
+    const prev = (document.body.style as any)[side] as string;
+    (document.body.style as any)[side] = resolved;
+    return () => {
+      (document.body.style as any)[side] = prev;
+    };
+  }, [pushContent, persistentEffective, anchor, size]);
 
   useEffect(() => {
     if (orientationPersistent) setOpenState(true);
