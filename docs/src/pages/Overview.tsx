@@ -3,6 +3,7 @@
 // Getting started overview page
 // ─────────────────────────────────────────────────────────────
 import { Surface, Stack, Typography, Button } from '@archway/valet';
+import NavDrawer from '../components/NavDrawer';
 import { useNavigate } from 'react-router-dom';
 
 export default function OverviewPage() {
@@ -10,6 +11,7 @@ export default function OverviewPage() {
 
   return (
     <Surface>
+      <NavDrawer />
       <Stack preset="showcaseStack">
         <Typography variant="h2">Overview</Typography>
         <Typography>
