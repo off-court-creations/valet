@@ -6,42 +6,11 @@ import {
   Surface,
   Stack,          // tidy vertical layout
   Panel,
-  Box,
   Typography,
   Button,
   useTheme,
-  definePreset,
 } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
-
-/*─────────────────────────────────────────────────────────────────────────────*/
-/* Style presets                                                              */
-
-// Elevated “card” look
-definePreset('fancyPanel', (t) => `
-  background   : ${t.colors['backgroundAlt']};
-  border-radius: 16px;
-  box-shadow   : 0 4px 14px ${t.colors['text']}22;
-  padding      : ${t.spacing(1)};
-`);
-
-// Frosted glass (requires backdrop-filter support)
-definePreset('glassPanel', (t) => `
-  background      : ${t.colors['background']}BB;
-  backdrop-filter : blur(8px) saturate(160%);
-  border          : 1px solid ${t.colors['text']}33;
-  border-radius   : 12px;
-  padding         : ${t.spacing(1)};
-`);
-
-// Loud gradient banner
-definePreset('gradientPanel', () => `
-  background : linear-gradient(135deg,#ff6b6b 0%,#f7b267 50%,#4bd0d2 100%);
-  color      : #ffffff;
-  padding    : 32px;
-  border-radius: 8px;
-  text-align : center;
-`);
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Demo page                                                                  */
@@ -126,22 +95,22 @@ export default function PanelDemoPage() {
         {/* 7. Preset demos -------------------------------------------------- */}
         <Typography variant="h3">7. Presets</Typography>
         <Stack spacing={1}>
-          <Panel preset="fancyPanel">
-            <Typography>preset=&quot;fancyPanel&quot;</Typography>
+          <Panel preset="fancyHolder">
+            <Typography>preset=&quot;fancyHolder&quot;</Typography>
           </Panel>
 
-          <Panel preset="glassPanel">
-            <Typography>preset=&quot;glassPanel&quot;</Typography>
+          <Panel preset="glassHolder">
+            <Typography>preset=&quot;glassHolder&quot;</Typography>
           </Panel>
 
           <Panel preset="gradientHolder">
-            <Typography>preset=&quot;gradientPanel&quot;</Typography>
+            <Typography>preset=&quot;gradientHolder&quot;</Typography>
           </Panel>
 
-          <Panel preset={['glassPanel', 'fancyPanel']}>
+          <Panel preset={['glassHolder', 'fancyHolder']}>
             <Typography>
               Combination&nbsp;
-              <code>preset={['glassPanel','fancyPanel']}</code>
+              <code>preset={['glassHolder','fancyHolder']}</code>
             </Typography>
           </Panel>
         </Stack>
