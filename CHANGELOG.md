@@ -4,12 +4,9 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [v0.8.6]
 ### Added
 - Shared navigation drawer component for docs
-- Avatar, Box, Button, and Checkbox pages now use the drawer
-- Modal, Pagination, Panel, Progress, TextForm, Radio Group, Slider,
-  Select, Snackbar, Switch, Tooltip, and Typography pages now use the drawer
-- AppBar, SpeedDial, Stepper, Tree, and Video pages now use the drawer
 
 ## [v0.8.5]
 ### Added
@@ -161,6 +158,7 @@ All notable changes to this project will be documented in this file. The format 
 ### Other
 - vibe coded
 
+[v0.8.6]: https://github.com/off-court-creations/valet/releases/tag/v0.8.6
 [v0.8.5]: https://github.com/off-court-creations/valet/releases/tag/v0.8.5
 [v0.8.4]: https://github.com/off-court-creations/valet/releases/tag/v0.8.4
 [v0.8.3]: https://github.com/off-court-creations/valet/releases/tag/v0.8.3
