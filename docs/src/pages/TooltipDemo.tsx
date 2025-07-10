@@ -15,6 +15,7 @@ import {
   definePreset,
 } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
+import NavDrawer from '../components/NavDrawer';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Style presets                                                              */
@@ -44,6 +45,7 @@ export default function TooltipDemoPage() {
 
   return (
     <Surface>
+      <NavDrawer />
       <Stack
         spacing={1}
         preset="showcaseStack"

@@ -14,6 +14,7 @@ import {
   useTheme,
 } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
+import NavDrawer from '../components/NavDrawer';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Example-wide constants                                                     */
@@ -31,6 +32,7 @@ export default function SliderDemoPage() {
 
   return (
     <Surface>
+      <NavDrawer />
       <Stack
         spacing={1}
         preset="showcaseStack"

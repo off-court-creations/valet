@@ -16,6 +16,7 @@ import {
   Modal,
 } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
+import NavDrawer from '../components/NavDrawer';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Presets                                                                    */
@@ -39,6 +40,7 @@ export default function ModalDemoPage() {
 
   return (
     <Surface>
+      <NavDrawer />
       <Stack
         spacing={1}
         preset="showcaseStack"

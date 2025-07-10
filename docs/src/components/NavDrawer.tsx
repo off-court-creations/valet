@@ -40,12 +40,12 @@ const components: [string, string][] = [
   ['Table', '/table-demo'],
   ['Tabs', '/tabs-demo'],
   ['Tooltip', '/tooltip-demo'],
+  ['Tree', '/tree-demo'],
   ['Typography', '/typography'],
   ['Video', '/video-demo'],
   ['AppBar', '/appbar-demo'],
   ['Speed Dial', '/speeddial-demo'],
   ['Stepper', '/stepper-demo'],
-  ['Tree', '/tree-demo'],
 ];
 
 const demos: [string, string][] = [

@@ -16,6 +16,7 @@ import {
   useTheme,
 } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
+import NavDrawer from '../components/NavDrawer';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Local form store for demo                                                  */
@@ -58,6 +59,7 @@ export default function SwitchDemoPage() {
 
   return (
     <Surface>
+      <NavDrawer />
       <Stack
         spacing={1}
         preset="showcaseStack"
