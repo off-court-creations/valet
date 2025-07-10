@@ -45,6 +45,7 @@ const GridDemoPage          = page(() => import('./pages/GridDemo'));
 const PaginationDemoPage    = page(() => import('./pages/PaginationDemo'));
 const SpeedDialDemoPage     = page(() => import('./pages/SpeedDialDemo'));
 const StepperDemoPage       = page(() => import('./pages/StepperDemo'));
+const DateTimePickerDemoPage= page(() => import('./pages/DateTimePickerDemo'));
 const RadioGroupDemoPage    = page(() => import('./pages/RadioGroupDemo'));
 const VideoDemoPage         = page(() => import('./pages/VideoDemo'));
 const SnackbarDemoPage      = page(() => import('./pages/SnackbarDemo'));
@@ -110,6 +111,7 @@ export function App() {
         <Route path="/pagination-demo" element={<PaginationDemoPage />} />
         <Route path="/speeddial-demo"  element={<SpeedDialDemoPage />} />
         <Route path="/stepper-demo"    element={<StepperDemoPage />} />
+        <Route path="/datetime-demo"   element={<DateTimePickerDemoPage />} />
         <Route path="/radio-demo"      element={<RadioGroupDemoPage />} />
         <Route path="/video-demo"      element={<VideoDemoPage />} />
         <Route path="/chat-demo"       element={<ChatDemoPage />} />

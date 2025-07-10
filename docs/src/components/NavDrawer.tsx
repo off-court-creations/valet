@@ -46,6 +46,7 @@ const components: [string, string][] = [
   ['AppBar', '/appbar-demo'],
   ['Speed Dial', '/speeddial-demo'],
   ['Stepper', '/stepper-demo'],
+  ['Date Time Picker', '/datetime-demo'],
 ];
 
 const demos: [string, string][] = [
