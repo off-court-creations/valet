@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Added
+- Shared navigation drawer component for docs
+- Avatar, Box, Button, and Checkbox pages now use the drawer
+
 ## [v0.8.5]
 ### Added
 - Tree component demonstrating nested navigation (renamed from TreeView)

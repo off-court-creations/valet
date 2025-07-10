@@ -181,6 +181,23 @@ export const Drawer: React.FC<DrawerProps> = ({
     if (e.target === e.currentTarget) requestClose();
   };
 
+  // When persistent, offset the current surface so content isn't hidden
+  useLayoutEffect(() => {
+    const node = surface.element;
+    if (!node) return;
+    const horizontal = anchor === 'left' || anchor === 'right';
+    if (persistentEffective && horizontal) {
+      const px = typeof size === 'number' ? `${size}px` : size;
+      const prop = anchor === 'left' ? 'marginLeft' : 'marginRight';
+      const prev = (node.style as any)[prop];
+      (node.style as any)[prop] = px;
+      return () => {
+        (node.style as any)[prop] = prev;
+      };
+    }
+    return;
+  }, [surface.element, persistentEffective, anchor, size]);
+
   if (!open && !persistentEffective) {
     if (responsiveMode && portrait) {
       return (

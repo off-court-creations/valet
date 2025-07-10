@@ -18,6 +18,7 @@ import {
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
+import NavDrawer from '../components/NavDrawer';
 import { useState } from 'react';
 
 interface EmailForm {
@@ -88,6 +89,7 @@ export default function AvatarDemoPage() {
 
   return (
     <Surface>
+      <NavDrawer />
       <Stack preset="showcaseStack">
         <Typography variant="h2">Avatar</Typography>
 

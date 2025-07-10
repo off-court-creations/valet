@@ -15,6 +15,7 @@ import {
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
+import NavDrawer from '../components/NavDrawer';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Demo page                                                                  */
@@ -71,6 +72,7 @@ export default function BoxDemoPage() {
 
   return (
     <Surface>
+      <NavDrawer />
       <Stack preset="showcaseStack">
         <Typography variant="h2" bold>
           Box Showcase
