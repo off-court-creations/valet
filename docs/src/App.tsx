@@ -48,6 +48,10 @@ const StepperDemoPage       = page(() => import('./pages/StepperDemo'));
 const RadioGroupDemoPage    = page(() => import('./pages/RadioGroupDemo'));
 const VideoDemoPage         = page(() => import('./pages/VideoDemo'));
 const SnackbarDemoPage      = page(() => import('./pages/SnackbarDemo'));
+const TreeDemoPage          = page(() => import('./pages/TreeDemo'));
+const OverviewPage          = page(() => import('./pages/Overview'));
+const InstallationPage      = page(() => import('./pages/Installation'));
+const UsagePage             = page(() => import('./pages/Usage'));
 
 /*───────────────────────────────────────────────────────────*/
 export function App() {
@@ -70,6 +74,9 @@ export function App() {
     <Suspense fallback={Fallback}>
       <Routes>
         <Route path="/"                element={<MainPage />} />
+        <Route path="/overview"        element={<OverviewPage />} />
+        <Route path="/installation"    element={<InstallationPage />} />
+        <Route path="/usage"           element={<UsagePage />} />
         <Route path="/typography"      element={<TypographyDemoPage />} />
         <Route path="/presets"         element={<PresetDemoPage />} />
         <Route path="/form"            element={<FormDemoPage />} />
@@ -107,6 +114,7 @@ export function App() {
         <Route path="/video-demo"      element={<VideoDemoPage />} />
         <Route path="/chat-demo"       element={<ChatDemoPage />} />
         <Route path="/snackbar-demo"   element={<SnackbarDemoPage />} />
+        <Route path="/tree-demo"      element={<TreeDemoPage />} />
       </Routes>
     </Suspense>
   );

@@ -18,6 +18,7 @@ export * from './components/Stepper';
 export * from './components/SpeedDial';
 export * from './components/Grid';
 export * from './components/List';
+export * from './components/Tree';
 export * from './components/Parallax';
 export * from './components/Progress';
 export * from './components/RadioGroup';

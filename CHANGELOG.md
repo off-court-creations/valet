@@ -2,8 +2,19 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-
 ## Unreleased
+
+## [v0.8.5]
+### Added
+- Tree component demonstrating nested navigation (renamed from TreeView)
+- Responsive drawer
+### Changed
+- Tree now accepts a `selected` prop for controlled selection
+### Improved
+- List variant lines centered on expand boxes and omit root connector
+- Tree demo shows a third level with mixed collapsible nodes
+- List variant boxes now use the secondary theme color when expanded
+- Persistent and responsive drawers now scroll if their content exceeds the viewport
 
 ## [v0.8.4]
 ### Added
@@ -143,6 +154,7 @@ All notable changes to this project will be documented in this file. The format 
 ### Other
 - vibe coded
 
+[v0.8.5]: https://github.com/off-court-creations/valet/releases/tag/v0.8.5
 [v0.8.4]: https://github.com/off-court-creations/valet/releases/tag/v0.8.4
 [v0.8.3]: https://github.com/off-court-creations/valet/releases/tag/v0.8.3
 [v0.8.2]: https://github.com/off-court-creations/valet/releases/tag/v0.8.2

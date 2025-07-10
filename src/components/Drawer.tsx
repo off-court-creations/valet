@@ -4,12 +4,14 @@
 // Controlled/uncontrolled, with backdrop and escape handling.
 // ─────────────────────────────────────────────────────────────
 
-import React, { useCallback, useLayoutEffect, useState } from 'react';
+import React, { useCallback, useLayoutEffect, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { styled } from '../css/createStyled';
 import { useTheme } from '../system/themeStore';
+import { useSurface } from '../system/surfaceStore';
 import { preset } from '../css/stylePresets';
 import type { Presettable } from '../types';
+import { IconButton } from './IconButton';
 
 /*───────────────────────────────────────────────────────────*/
 export type DrawerAnchor = 'left' | 'right' | 'top' | 'bottom';
@@ -29,6 +31,14 @@ export interface DrawerProps extends Presettable {
   disableBackdropClick?: boolean;
   /** Disable closing via ESC key */
   disableEscapeKeyDown?: boolean;
+  /** Drawer remains visible without backdrop */
+  persistent?: boolean;
+  /** Responsive behaviour (persistent in landscape, overlay in portrait) */
+  responsive?: boolean;
+  /** Icon for the portrait toggle button */
+  toggleIcon?: string;
+  /** Close button icon when portrait */
+  closeIcon?: string;
   /** Drawer contents */
   children?: React.ReactNode;
 }
@@ -52,14 +62,28 @@ const Panel = styled('div')<{
   $size: string;
   $bg: string;
   $text: string;
+  $primary: string;
+  $persistent: boolean;
 }>`
   position: fixed;
-  z-index: 9999;
+  z-index: ${({ $persistent }) => ($persistent ? 9998 : 9999)};
   display: flex;
   flex-direction: column;
+  overflow-y: ${({ $anchor }) =>
+    $anchor === 'left' || $anchor === 'right' ? 'auto' : 'visible'};
+  overflow-x: ${({ $anchor }) =>
+    $anchor === 'top' || $anchor === 'bottom' ? 'auto' : 'visible'};
   background: ${({ $bg }) => $bg};
   color: ${({ $text }) => $text};
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  ${({ $anchor, $primary }) =>
+    $anchor === 'left'
+      ? `border-right:0.25rem solid ${$primary};`
+      : $anchor === 'right'
+      ? `border-left:0.25rem solid ${$primary};`
+      : $anchor === 'top'
+      ? `border-bottom:0.25rem solid ${$primary};`
+      : `border-top:0.25rem solid ${$primary};`}
   ${({ $anchor, $size }) =>
     $anchor === 'left' || $anchor === 'right'
       ? `width:${$size}; height:100%;`
@@ -72,15 +96,17 @@ const Panel = styled('div')<{
       : $anchor === 'top'
       ? 'top:0; left:0;'
       : 'bottom:0; left:0;'}
-  transform: ${({ $anchor, $fade }) =>
-    $anchor === 'left'
+  transform: ${({ $anchor, $fade, $persistent }) =>
+    $persistent
+      ? 'none'
+      : $anchor === 'left'
       ? `translateX(${$fade ? '-100%' : '0'})`
       : $anchor === 'right'
       ? `translateX(${$fade ? '100%' : '0'})`
       : $anchor === 'top'
       ? `translateY(${$fade ? '-100%' : '0'})`
       : `translateY(${$fade ? '100%' : '0'})`};
-  transition: transform 200ms ease;
+  transition: ${({ $persistent }) => ($persistent ? 'none' : 'transform 200ms ease')};
 `;
 
 /*───────────────────────────────────────────────────────────*/
@@ -94,25 +120,46 @@ export const Drawer: React.FC<DrawerProps> = ({
   size = '16rem',
   disableBackdropClick = false,
   disableEscapeKeyDown = false,
+  persistent = false,
+  responsive = false,
+  toggleIcon = 'mdi:menu',
+  closeIcon = 'mdi:close',
   children,
   preset: presetKey,
 }) => {
   const { theme } = useTheme();
+  const surface = useSurface();
   const presetClasses = presetKey ? preset(presetKey) : '';
+
+  const { width, height } = surface;
+  const portrait = height > width;
+  const responsiveMode = responsive && (anchor === 'left' || anchor === 'right');
+  const orientationPersistent = responsiveMode && !portrait;
+  const persistentEffective = persistent || orientationPersistent;
 
   const uncontrolled = controlledOpen === undefined;
   const [openState, setOpenState] = useState(defaultOpen);
-  const open = uncontrolled ? openState : controlledOpen!;
+  const open = persistentEffective
+    ? true
+    : uncontrolled
+    ? openState
+    : controlledOpen!;
   const [fade, setFade] = useState(true);
 
+  useEffect(() => {
+    if (orientationPersistent) setOpenState(true);
+    else if (responsiveMode && portrait) setOpenState(false);
+  }, [orientationPersistent, responsiveMode, portrait]);
+
   const requestClose = useCallback(() => {
+    if (orientationPersistent) return;
     if (uncontrolled) setOpenState(false);
     onClose?.();
-  }, [uncontrolled, onClose]);
+  }, [orientationPersistent, uncontrolled, onClose]);
 
   /* Mount / unmount side-effects */
   useLayoutEffect(() => {
-    if (!open) return;
+    if (persistentEffective || !open) return;
     setFade(false);
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && !disableEscapeKeyDown) {
@@ -125,26 +172,63 @@ export const Drawer: React.FC<DrawerProps> = ({
       document.removeEventListener('keydown', handleKeyDown, true);
       setFade(true);
     };
-  }, [open, disableEscapeKeyDown, requestClose]);
+  }, [open, persistentEffective, disableEscapeKeyDown, requestClose]);
 
   const handleBackdropClick = (e: React.MouseEvent) => {
-    if (disableBackdropClick) return;
+    if (persistentEffective || disableBackdropClick) return;
     if (e.target === e.currentTarget) requestClose();
   };
 
-  if (!open) return null;
+  if (!open && !persistentEffective) {
+    if (responsiveMode && portrait) {
+      return (
+        <IconButton
+          icon={toggleIcon}
+          onClick={() => setOpenState(true)}
+          style={{
+            position: 'fixed',
+            top: theme.spacing(1),
+            [anchor]: theme.spacing(1),
+            zIndex: 9999,
+          }}
+          aria-label="Open drawer"
+        />
+      );
+    }
+    return null;
+  }
 
   const drawerElement = (
     <>
-      <Backdrop $fade={fade} onClick={handleBackdropClick} />
+      {!persistentEffective && (
+        <Backdrop $fade={fade} onClick={handleBackdropClick} />
+      )}
       <Panel
         $anchor={anchor}
         $fade={fade}
         $size={typeof size === 'number' ? `${size}px` : size}
-        $bg={theme.colors.surface}
+        $bg={theme.colors.background}
         $text={theme.colors.text}
+        $primary={theme.colors.primary}
+        $persistent={persistentEffective}
         className={presetClasses}
       >
+        {responsiveMode && portrait && (
+          <div
+            style={{
+              alignSelf: anchor === 'left' ? 'flex-end' : 'flex-start',
+              padding: theme.spacing(0.5),
+            }}
+          >
+            <IconButton
+              icon={closeIcon}
+              size="sm"
+              variant="outlined"
+              onClick={requestClose}
+              aria-label="Close drawer"
+            />
+          </div>
+        )}
         {children}
       </Panel>
     </>
