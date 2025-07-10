@@ -6,10 +6,16 @@ All notable changes to this project will be documented in this file. The format 
 ## Unreleased
 ### Added
 - Tree component demonstrating nested navigation (renamed from TreeView)
+- Responsive drawer navigation with Getting Started pages
+### Changed
+- Tree now accepts a `selected` prop for controlled selection
 ### Improved
 - List variant lines centered on expand boxes and omit root connector
 - Tree demo shows a third level with mixed collapsible nodes
 - List variant boxes now use the secondary theme color when expanded
+- Persistent and responsive drawers now scroll if their content exceeds the viewport
+### Fixed
+- Responsive drawer on the main docs page now closes correctly
 
 ## [v0.8.4]
 ### Added

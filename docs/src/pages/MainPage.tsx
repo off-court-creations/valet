@@ -1,244 +1,130 @@
-// src/pages/MainPage.tsx
-import { useNavigate } from 'react-router-dom';
-import { Surface, Button, Typography, Stack, useTheme, Box, Panel } from '@archway/valet';
+// ─────────────────────────────────────────────────────────────
+// src/pages/MainPage.tsx  | valet
+// Doc home with responsive drawer navigation
+// ─────────────────────────────────────────────────────────────
+import { useNavigate, useLocation } from 'react-router-dom';
+import {
+  Surface,
+  Drawer,
+  Stack,
+  Button,
+  Typography,
+  Tree,
+  type TreeNode,
+  useTheme,
+  useSurface,
+} from '@archway/valet';
 
 export default function MainPage() {
   const navigate = useNavigate();
-  const { mode, toggleMode } = useTheme();
+  const location = useLocation();
+  const { theme, mode, toggleMode } = useTheme();
+
+  const components: [string, string][] = [
+    ['Accordion', '/accordion-demo'],
+    ['Avatar', '/avatar-demo'],
+    ['Box', '/box-demo'],
+    ['Button', '/button-demo'],
+    ['Checkbox', '/checkbox-demo'],
+    ['Chat', '/chat-demo'],
+    ['Drawer', '/drawer-demo'],
+    ['FormControl + Textfield', '/text-form-demo'],
+    ['Grid', '/grid-demo'],
+    ['Icon', '/icon-demo'],
+    ['Icon Button', '/icon-button-demo'],
+    ['List', '/list-demo'],
+    ['Modal', '/modal-demo'],
+    ['Pagination', '/pagination-demo'],
+    ['Panel', '/panel-demo'],
+    ['Progress', '/progress-demo'],
+    ['Radio Group', '/radio-demo'],
+    ['Slider', '/slider-demo'],
+    ['Select', '/select-demo'],
+    ['Snackbar', '/snackbar-demo'],
+    ['Switch', '/switch-demo'],
+    ['Table', '/table-demo'],
+    ['Tabs', '/tabs-demo'],
+    ['Tooltip', '/tooltip-demo'],
+    ['Typography', '/typography'],
+    ['Video', '/video-demo'],
+    ['AppBar', '/appbar-demo'],
+    ['Speed Dial', '/speeddial-demo'],
+    ['Stepper', '/stepper-demo'],
+    ['Tree', '/tree-demo'],
+  ];
+
+  const demos: [string, string][] = [
+    ['Presets', '/presets'],
+    ['Form', '/form'],
+    ['Parallax', '/parallax'],
+    ['Radio Button', '/test'],
+  ];
+
+  interface Item { label: string; path?: string }
+
+  const treeData: TreeNode<Item>[] = [
+    {
+      id: 'getting-started',
+      data: { label: 'Getting Started' },
+      children: [
+        { id: '/overview', data: { label: 'Overview', path: '/overview' } },
+        { id: '/installation', data: { label: 'Installation', path: '/installation' } },
+        { id: '/usage', data: { label: 'Usage', path: '/usage' } },
+      ],
+    },
+    {
+      id: 'components',
+      data: { label: 'Components' },
+      children: components.map(([label, path]) => ({
+        id: path,
+        data: { label, path },
+      })),
+    },
+    {
+      id: 'demos',
+      data: { label: 'Demos' },
+      children: demos.map(([label, path]) => ({
+        id: path,
+        data: { label, path },
+      })),
+    },
+  ];
+
+  const { width, height } = useSurface();
+  const landscape = width >= height;
 
   return (
     <Surface>
-      <Typography variant="h1" centered><b>zeroui</b> Docs</Typography>
+      <Drawer responsive anchor="left" size="16rem">
+        <Tree<Item>
+          nodes={treeData}
+          getLabel={(n) => n.label}
+          variant="list"
+          selected={location.pathname}
+          defaultExpanded={['getting-started', 'components', 'demos']}
+          onNodeSelect={(n) => n.path && navigate(n.path)}
+          style={{ padding: theme.spacing(1) }}
+        />
+      </Drawer>
 
-      <Box centered compact>
-        <Stack compact spacing={2}>
-          <Panel variant="alt">
-            <Typography variant="h2" centered>Components</Typography>
-
-            <Stack direction="row">
-              <Button
-                onClick={() => navigate('/accordion-demo')}
-              >
-                Accordion
-              </Button>
-
-              <Button
-                onClick={() => navigate('/avatar-demo')}
-              >
-                Avatar
-              </Button>
-
-              <Button
-                onClick={() => navigate('/box-demo')}
-              >
-                Box
-              </Button>
-
-              <Button
-                onClick={() => navigate('/button-demo')}
-              >
-                Button
-              </Button>
-
-              <Button
-                onClick={() => navigate('/checkbox-demo')}
-              >
-                Checkbox
-              </Button>
-
-              <Button
-                onClick={() => navigate('/chat-demo')}
-              >
-                Chat
-              </Button>
-
-              <Button
-                onClick={() => navigate('/drawer-demo')}
-              >
-                Drawer
-              </Button>
-
-              <Button
-                onClick={() => navigate('/text-form-demo')}
-              >
-                FormControl + Textfield
-              </Button>
-
-              <Button
-                onClick={() => navigate('/grid-demo')}
-              >
-                Grid
-              </Button>
-
-              <Button
-                onClick={() => navigate('/icon-demo')}
-              >
-                Icon
-              </Button>
-
-              <Button
-                onClick={() => navigate('/icon-button-demo')}
-              >
-                Icon Button
-              </Button>
-
-              <Button
-                onClick={() => navigate('/list-demo')}
-              >
-                List
-              </Button>
-
-              <Button
-                onClick={() => navigate('/modal-demo')}
-              >
-                Modal
-              </Button>
-
-              <Button
-                onClick={() => navigate('/pagination-demo')}
-              >
-                Pagination
-              </Button>
-
-              <Button
-                onClick={() => navigate('/panel-demo')}
-              >
-                Panel
-              </Button>
-
-              <Button
-                onClick={() => navigate('/progress-demo')}
-              >
-                Progress
-              </Button>
-
-              <Button
-                onClick={() => navigate('/radio-demo')}
-              >
-                Radio Group
-              </Button>
-
-              <Button
-                onClick={() => navigate('/slider-demo')}
-              >
-                Slider
-              </Button>
-
-              <Button
-                onClick={() => navigate('/select-demo')}
-              >
-                Select
-              </Button>
-
-              <Button
-                onClick={() => navigate('/snackbar-demo')}
-              >
-                Snackbar
-              </Button>
-
-              <Button
-                onClick={() => navigate('/switch-demo')}
-              >
-                Switch
-              </Button>
-
-              <Button
-                onClick={() => navigate('/table-demo')}
-              >
-                Table
-              </Button>
-
-              <Button
-                onClick={() => navigate('/tabs-demo')}
-              >
-                Tabs
-              </Button>
-
-              <Button
-                onClick={() => navigate('/tooltip-demo')}
-              >
-                Tooltip
-              </Button>
-
-              <Button
-                onClick={() => navigate('/typography')}
-              >
-                Typography
-              </Button>
-
-              <Button
-                onClick={() => navigate('/video-demo')}
-              >
-                Video
-              </Button>
-
-              <Button
-                onClick={() => navigate('/appbar-demo')}
-              >
-                AppBar
-              </Button>
-
-              <Button
-                onClick={() => navigate('/speeddial-demo')}
-              >
-                Speed Dial
-              </Button>
-
-              <Button
-                onClick={() => navigate('/stepper-demo')}
-              >
-                Stepper
-              </Button>
-
-              <Button
-                onClick={() => navigate('/tree-demo')}
-              >
-                Tree
-              </Button>
-            </Stack>
-          </Panel>
-
-          <Panel>
-            <Typography centered variant="h2">Demos</Typography>
-
-            <Stack direction="row">
-              <Button
-                onClick={() => navigate('/presets')}
-              >
-                Presets
-              </Button>
-
-              <Button
-                onClick={() => navigate('/form')}
-              >
-                Form
-              </Button>
-
-              <Button
-                onClick={() => navigate('/parallax')}
-              >
-                Parallax
-              </Button>
-
-              <Button
-                onClick={() => navigate('/test')}
-              >
-                Radio Button
-              </Button>
-            </Stack>
-          </Panel>
-
-          <Box>
-            <Button
-              size="lg"
-              variant='outlined'
-              onClick={toggleMode}
-            >
-              Switch to {mode === 'light' ? 'dark' : 'light'} mode
-            </Button>
-          </Box>
-        </Stack>
-      </Box>
+      <Stack
+        spacing={1}
+        style={{
+          padding: theme.spacing(1),
+          marginLeft: landscape ? '16rem' : 0,
+          maxWidth: 980,
+        }}
+      >
+        <Typography variant="h1" bold>
+          valet
+        </Typography>
+        <Typography variant="subtitle">
+          A lightweight React component kit bridging AI and the web.
+        </Typography>
+        <Button variant="outlined" onClick={toggleMode}>
+          Switch to {mode === 'light' ? 'dark' : 'light'} mode
+        </Button>
+      </Stack>
     </Surface>
   );
 }
