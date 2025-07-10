@@ -36,6 +36,7 @@ const components: [string, string][] = [
   ['Slider', '/slider-demo'],
   ['Select', '/select-demo'],
   ['Snackbar', '/snackbar-demo'],
+  ['DateTime Picker', '/datetime-demo'],
   ['Switch', '/switch-demo'],
   ['Table', '/table-demo'],
   ['Tabs', '/tabs-demo'],

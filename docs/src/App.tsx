@@ -49,6 +49,7 @@ const RadioGroupDemoPage    = page(() => import('./pages/RadioGroupDemo'));
 const VideoDemoPage         = page(() => import('./pages/VideoDemo'));
 const SnackbarDemoPage      = page(() => import('./pages/SnackbarDemo'));
 const TreeDemoPage          = page(() => import('./pages/TreeDemo'));
+const DateTimePickerDemoPage = page(() => import('./pages/DateTimePickerDemo'));
 const OverviewPage          = page(() => import('./pages/Overview'));
 const InstallationPage      = page(() => import('./pages/Installation'));
 const UsagePage             = page(() => import('./pages/Usage'));
@@ -115,6 +116,7 @@ export function App() {
         <Route path="/chat-demo"       element={<ChatDemoPage />} />
         <Route path="/snackbar-demo"   element={<SnackbarDemoPage />} />
         <Route path="/tree-demo"      element={<TreeDemoPage />} />
+        <Route path="/datetime-demo"  element={<DateTimePickerDemoPage />} />
       </Routes>
     </Suspense>
   );
