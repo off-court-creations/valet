@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { Surface, Stack, Typography, Button, Stepper, useTheme } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
+import NavDrawer from '../components/NavDrawer';
 
 export default function StepperDemoPage() {
   const { theme, toggleMode } = useTheme();
@@ -12,6 +13,7 @@ export default function StepperDemoPage() {
 
   return (
     <Surface>
+      <NavDrawer />
       <Stack
         spacing={1}
         preset="showcaseStack"

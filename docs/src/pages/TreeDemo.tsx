@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { Surface, Stack, Typography, Button, Tree, type TreeNode, useTheme } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
+import NavDrawer from '../components/NavDrawer';
 
 interface Item {
   label: React.ReactNode;
@@ -66,6 +67,7 @@ export default function TreeDemoPage() {
 
   return (
     <Surface>
+      <NavDrawer />
       <Stack spacing={1} preset="showcaseStack">
         <Typography variant="h2" bold>Tree Showcase</Typography>
         <Typography variant="subtitle">Nested list with keyboard navigation</Typography>

@@ -1,6 +1,7 @@
 // src/pages/AppBarDemo.tsx
 import { Surface, Stack, Typography, Button, AppBar, Box, useTheme } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
+import NavDrawer from '../components/NavDrawer';
 
 export default function AppBarDemoPage() {
   const { toggleMode } = useTheme();
@@ -8,6 +9,7 @@ export default function AppBarDemoPage() {
 
   return (
     <Surface>
+      <NavDrawer />
       <Stack
         spacing={1}
         preset="showcaseStack"
