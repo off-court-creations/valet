@@ -2,15 +2,19 @@
 // src/pages/Installation.tsx  | valet
 // Getting started installation page
 // ─────────────────────────────────────────────────────────────
-import { Surface, Stack, Typography, Button, Panel } from '@archway/valet';
+import { Surface, Stack, Typography, Button, Panel, useSurface } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
+import DocsDrawer from '../components/DocsDrawer';
 
 export default function InstallationPage() {
   const navigate = useNavigate();
+  const { width, height } = useSurface();
+  const landscape = width >= height;
 
   return (
     <Surface>
-      <Stack spacing={1} preset="showcaseStack">
+      <DocsDrawer />
+      <Stack spacing={1} preset="showcaseStack" style={{ marginLeft: landscape ? '16rem' : undefined }}>
         <Typography variant="h2" bold>Installation</Typography>
         <Typography>Install via npm:</Typography>
         <Panel>
