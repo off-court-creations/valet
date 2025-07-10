@@ -115,12 +115,16 @@ const ListRow = styled('div')<{
   }
 `;
 
-const BoxIcon = styled('span')<{ $open: boolean; $line: string }>`
+const BoxIcon = styled('span')<{
+  $open: boolean;
+  $line: string;
+  $fill: string;
+}>`
   display: inline-block;
   width: 0.75em;
   height: 0.75em;
   border: 1px solid ${({ $line }) => $line};
-  background: ${({ $open, $line }) => ($open ? $line : 'transparent')};
+  background: ${({ $open, $fill }) => ($open ? $fill : 'transparent')};
   margin-right: 0.25rem;
   box-sizing: border-box;
 `;
@@ -251,6 +255,7 @@ export function Tree<T>({
                 aria-hidden
                 $open={expanded.has(node.id)}
                 $line={line}
+                $fill={theme.colors.secondary}
                 onClick={(e) => {
                   e.stopPropagation();
                   toggle(node.id);
