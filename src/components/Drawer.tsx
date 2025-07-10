@@ -139,6 +139,28 @@ export const Drawer: React.FC<DrawerProps> = ({
   const orientationPersistent = responsiveMode && !portrait;
   const persistentEffective = persistent || orientationPersistent;
 
+  /* Apply layout offset when persistent --------------------*/
+  useLayoutEffect(() => {
+    const root = surface.getState().element;
+    if (!root) return;
+    const val = typeof size === 'number' ? `${size}px` : size;
+    const clear = () => {
+      root.style.removeProperty('--valet-offset-left');
+      root.style.removeProperty('--valet-offset-right');
+      root.style.removeProperty('--valet-offset-top');
+      root.style.removeProperty('--valet-offset-bottom');
+    };
+    clear();
+    if (persistentEffective) {
+      if (anchor === 'left') root.style.setProperty('--valet-offset-left', val);
+      else if (anchor === 'right')
+        root.style.setProperty('--valet-offset-right', val);
+      else if (anchor === 'top') root.style.setProperty('--valet-offset-top', val);
+      else root.style.setProperty('--valet-offset-bottom', val);
+    }
+    return clear;
+  }, [surface, anchor, size, persistentEffective]);
+
   const uncontrolled = controlledOpen === undefined;
   const [openState, setOpenState] = useState(defaultOpen);
   const open = persistentEffective

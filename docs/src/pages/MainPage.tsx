@@ -12,7 +12,6 @@ import {
   Tree,
   type TreeNode,
   useTheme,
-  useSurface,
 } from '@archway/valet';
 
 export default function MainPage() {
@@ -91,15 +90,12 @@ export default function MainPage() {
   ];
 
   function Content() {
-    const { width, height } = useSurface();
-    const landscape = width >= height;
-
     return (
       <Stack
         spacing={1}
         style={{
           padding: theme.spacing(1),
-          marginLeft: landscape ? '16rem' : 0,
+          marginLeft: 'var(--valet-offset-left, 0)',
           maxWidth: 980,
         }}
       >
