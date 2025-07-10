@@ -14,6 +14,7 @@ import {
   useTheme,
 } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
+import NavDrawer from '../components/NavDrawer';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Helpers                                                                    */
@@ -34,6 +35,7 @@ export default function AccordionDemoPage() {
 
   return (
     <Surface>
+      <NavDrawer />
       <Stack
         spacing={1}
         preset="showcaseStack"
@@ -147,7 +149,7 @@ export default function AccordionDemoPage() {
         {/* Back nav -------------------------------------------------------- */}
         <Button
           size="lg"
-          onClick={() => navigate(-1)}
+          onClick={() => navigate('/')}
           style={{ marginTop: theme.spacing(1) }}
         >
           ← Back
