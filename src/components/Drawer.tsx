@@ -69,6 +69,10 @@ const Panel = styled('div')<{
   z-index: ${({ $persistent }) => ($persistent ? 9998 : 9999)};
   display: flex;
   flex-direction: column;
+  overflow-y: ${({ $anchor }) =>
+    $anchor === 'left' || $anchor === 'right' ? 'auto' : 'visible'};
+  overflow-x: ${({ $anchor }) =>
+    $anchor === 'top' || $anchor === 'bottom' ? 'auto' : 'visible'};
   background: ${({ $bg }) => $bg};
   color: ${({ $text }) => $text};
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
