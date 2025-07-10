@@ -1,5 +1,6 @@
 // src/pages/TypographyDemoPage.tsx
 import { useNavigate } from 'react-router-dom';
+import NavDrawer from '../components/NavDrawer';
 import {
   Surface,
   Stack,
@@ -97,6 +98,7 @@ export default function TypographyDemoPage() {
 
   return (
     <Surface>
+      <NavDrawer />
       <Stack>
         <Typography variant="h2">
           Typography

@@ -7,6 +7,8 @@ All notable changes to this project will be documented in this file. The format 
 ### Added
 - Shared navigation drawer component for docs
 - Avatar, Box, Button, and Checkbox pages now use the drawer
+- Modal, Pagination, Panel, Progress, TextForm, Radio Group, Slider,
+  Select, Snackbar, Switch, Tooltip, and Typography pages now use the drawer
 
 ## [v0.8.5]
 ### Added
