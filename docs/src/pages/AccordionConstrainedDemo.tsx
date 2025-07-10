@@ -36,7 +36,7 @@ export default function AccordionConstrainedDemo() {
             ))}
           </Accordion>
         </Panel>
-        <Button size="lg" onClick={() => navigate('/accordion-demo')}>
+        <Button size="lg" onClick={() => navigate('/')}>
           ← Back
         </Button>
       </Stack>
