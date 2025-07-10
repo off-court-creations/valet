@@ -8,11 +8,15 @@ import {
   Button,
   Drawer,
   useTheme,
+  useResponsiveDrawer,
 } from '@archway/valet';
 
 export default function DrawerDemoPage() {
   const { theme, toggleMode } = useTheme();
   const navigate = useNavigate();
+
+  const drawerSize = '16rem';
+  const persistent = useResponsiveDrawer(drawerSize);
 
   const [overlayOpen, setOverlayOpen] = useState(false);
   const [rightOpen, setRightOpen] = useState(false);
@@ -20,7 +24,7 @@ export default function DrawerDemoPage() {
 
   return (
     <Surface>
-      <Drawer persistent anchor="left" size="16rem">
+      <Drawer persistent={persistent} anchor="left" size={drawerSize}>
         <Stack spacing={1} style={{ padding: theme.spacing(1) }}>
           <Typography variant="h4" bold>
             Persistent Drawer
@@ -30,7 +34,12 @@ export default function DrawerDemoPage() {
       </Drawer>
       <Stack
         spacing={1}
-        style={{ padding: theme.spacing(1), maxWidth: 980, margin: '0 auto', marginLeft: '16rem' }}
+        style={{
+          padding: theme.spacing(1),
+          maxWidth: 980,
+          margin: '0 auto',
+          marginLeft: persistent ? drawerSize : undefined,
+        }}
       >
         <Typography variant="h2" bold>
           Drawer Showcase

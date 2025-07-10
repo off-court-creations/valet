@@ -127,6 +127,14 @@ These have been mostly tested in the [valet Docs](https://github.com/off-court-c
 | useGoogleFonts     | ✅        | ✅             |----------|
 | useTheme           | ✅        | ✅             |----------|
 | useInitialTheme    | ✅        | ✅             | applies theme and waits for fonts |
+| useResponsiveDrawer | ✅        | ✅             | toggles Drawer persistence |
+
+### Responsive drawers
+
+`useResponsiveDrawer(size, ratio)` returns `true` when a drawer of the
+given size should remain visible without a backdrop. Pass the returned
+boolean to the `<Drawer>` `persistent` prop. The optional `ratio`
+defaults to `0.4`.
 
 ## Utilities
 
