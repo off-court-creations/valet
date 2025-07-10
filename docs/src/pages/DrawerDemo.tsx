@@ -30,7 +30,7 @@ export default function DrawerDemoPage() {
       </Drawer>
       <Stack
         spacing={1}
-        style={{ padding: theme.spacing(1), maxWidth: 980, margin: '0 auto', marginLeft: '16rem' }}
+        style={{ padding: theme.spacing(1), maxWidth: 980, margin: '0 auto' }}
       >
         <Typography variant="h2" bold>
           Drawer Showcase

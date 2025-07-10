@@ -19,6 +19,7 @@ import {
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
+import NavDrawer from '../components/NavDrawer';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Local form store for demo                                                  */
@@ -113,6 +114,7 @@ export default function CheckboxDemoPage() {
 
   return (
     <Surface /* Surface already defaults to theme background */>
+      <NavDrawer />
       <Stack
         spacing={1}
         preset="showcaseStack"
