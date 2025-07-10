@@ -108,6 +108,12 @@ const Box = styled('span')<BoxProps>`
   /* Remove tap highlight */
   -webkit-tap-highlight-color: transparent;
 
+  @media (hover: hover) {
+    &:hover {
+      ${({ $disabled }) => ($disabled ? '' : 'filter: brightness(1.25);')}
+    }
+  }
+
   &::after {
     content: '';
     position: absolute;
@@ -222,7 +228,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
         <Box
           $size={SZ.box}
           $checked={currentChecked}
-          $primary={theme.colors.primary}
+          $primary={theme.colors.secondary}
           $text={theme.colors.text}
           $disabled={disabled}
           $disabledColor={disabledColor}
