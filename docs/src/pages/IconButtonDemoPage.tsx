@@ -18,6 +18,7 @@ import {
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
+import NavDrawer from '../components/NavDrawer';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Style preset showcasing IconButton inside a card                            */
@@ -102,6 +103,7 @@ export default function IconButtonDemoPage() {
 
   return (
     <Surface>
+      <NavDrawer />
       <Stack
         spacing={1}
         preset="showcaseStack"

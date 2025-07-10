@@ -1,6 +1,7 @@
 // src/pages/GridDemo.tsx
 import { Surface, Stack, Typography, Button, Grid, Box, useTheme } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
+import NavDrawer from '../components/NavDrawer';
 
 export default function GridDemoPage() {
   const { theme, toggleMode } = useTheme();
@@ -8,6 +9,7 @@ export default function GridDemoPage() {
 
   return (
     <Surface>
+      <NavDrawer />
       <Stack
         spacing={1}
         preset="showcaseStack"

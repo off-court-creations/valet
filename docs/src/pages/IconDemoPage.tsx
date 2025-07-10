@@ -17,6 +17,7 @@ import {
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
+import NavDrawer from '../components/NavDrawer';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Style presets – demonstrate Icon inside themed containers                   */
@@ -97,6 +98,7 @@ export default function IconDemoPage() {
 
   return (
     <Surface>
+      <NavDrawer />
       <Stack
         spacing={1}
         preset="showcaseStack"
