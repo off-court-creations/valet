@@ -64,6 +64,7 @@ const Panel = styled('div')<{
   $text: string;
   $primary: string;
   $persistent: boolean;
+  $responsive: boolean;
 }>`
   position: fixed;
   z-index: ${({ $persistent }) => ($persistent ? 9998 : 9999)};
@@ -75,7 +76,8 @@ const Panel = styled('div')<{
     $anchor === 'top' || $anchor === 'bottom' ? 'auto' : 'visible'};
   background: ${({ $bg }) => $bg};
   color: ${({ $text }) => $text};
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  box-shadow: ${({ $responsive }) =>
+    $responsive ? 'none' : '0 4px 16px rgba(0, 0, 0, 0.3)'};
   ${({ $anchor, $primary }) =>
     $anchor === 'left'
       ? `border-right:0.25rem solid ${$primary};`
@@ -211,6 +213,7 @@ export const Drawer: React.FC<DrawerProps> = ({
         $text={theme.colors.text}
         $primary={theme.colors.primary}
         $persistent={persistentEffective}
+        $responsive={responsiveMode}
         className={presetClasses}
       >
         {responsiveMode && portrait && (
