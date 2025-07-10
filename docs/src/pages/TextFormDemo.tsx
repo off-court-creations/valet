@@ -14,6 +14,7 @@ import {
   createFormStore
 } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
+import NavDrawer from '../components/NavDrawer';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Local form store for the demo                                              */
@@ -40,6 +41,7 @@ export default function TextFieldDemoPage() {
 
   return (
     <Surface>
+      <NavDrawer />
       <Stack
         spacing={1}
         preset="showcaseStack"
