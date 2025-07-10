@@ -91,7 +91,7 @@ export default function MainPage() {
 
   return (
     <Surface>
-      <Drawer responsive anchor="left" size="16rem" persistent>
+      <Drawer responsive anchor="left" size="16rem">
         <Tree<Item>
           nodes={treeData}
           getLabel={(n) => n.label}
