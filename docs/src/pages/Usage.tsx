@@ -2,15 +2,19 @@
 // src/pages/Usage.tsx  | valet
 // Getting started usage page
 // ─────────────────────────────────────────────────────────────
-import { Surface, Stack, Typography, Button } from '@archway/valet';
+import { Surface, Stack, Typography, Button, useSurface } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
+import NavDrawer from '../layout/NavDrawer';
 
 export default function UsagePage() {
   const navigate = useNavigate();
+  const { width, height } = useSurface();
+  const landscape = width >= height;
 
   return (
     <Surface>
-      <Stack spacing={1} preset="showcaseStack">
+      <NavDrawer />
+      <Stack spacing={1} preset="showcaseStack" style={{ marginLeft: landscape ? '16rem' : 0 }}>
         <Typography variant="h2" bold>Usage</Typography>
         <Typography>
           Import components as needed and wrap each route in a <code>{'<Surface>'}</code>.

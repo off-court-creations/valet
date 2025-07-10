@@ -2,15 +2,19 @@
 // src/pages/Overview.tsx  | valet
 // Getting started overview page
 // ─────────────────────────────────────────────────────────────
-import { Surface, Stack, Typography, Button } from '@archway/valet';
+import { Surface, Stack, Typography, Button, useSurface } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
+import NavDrawer from '../layout/NavDrawer';
 
 export default function OverviewPage() {
   const navigate = useNavigate();
+  const { width, height } = useSurface();
+  const landscape = width >= height;
 
   return (
     <Surface>
-      <Stack preset="showcaseStack">
+      <NavDrawer />
+      <Stack preset="showcaseStack" style={{ marginLeft: landscape ? '16rem' : 0 }}>
         <Typography variant="h2">Overview</Typography>
         <Typography>
           valet offers an opinionated collection of accessible UI components with
