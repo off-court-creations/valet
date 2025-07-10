@@ -2,14 +2,15 @@
 // src/pages/Overview.tsx  | valet
 // Getting started overview page
 // ─────────────────────────────────────────────────────────────
-import { Surface, Stack, Typography, Button } from '@archway/valet';
+import { Stack, Typography, Button } from '@archway/valet';
+import DocsLayout from './DocsLayout';
 import { useNavigate } from 'react-router-dom';
 
 export default function OverviewPage() {
   const navigate = useNavigate();
 
   return (
-    <Surface>
+    <DocsLayout>
       <Stack preset="showcaseStack">
         <Typography variant="h2">Overview</Typography>
         <Typography>
@@ -19,6 +20,6 @@ export default function OverviewPage() {
         </Typography>
         <Button onClick={() => navigate(-1)}>← Back</Button>
       </Stack>
-    </Surface>
+    </DocsLayout>
   );
 }

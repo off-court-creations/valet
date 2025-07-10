@@ -2,14 +2,15 @@
 // src/pages/Usage.tsx  | valet
 // Getting started usage page
 // ─────────────────────────────────────────────────────────────
-import { Surface, Stack, Typography, Button } from '@archway/valet';
+import { Stack, Typography, Button } from '@archway/valet';
+import DocsLayout from './DocsLayout';
 import { useNavigate } from 'react-router-dom';
 
 export default function UsagePage() {
   const navigate = useNavigate();
 
   return (
-    <Surface>
+    <DocsLayout>
       <Stack spacing={1} preset="showcaseStack">
         <Typography variant="h2" bold>Usage</Typography>
         <Typography>
@@ -20,6 +21,6 @@ export default function UsagePage() {
         </Typography>
         <Button onClick={() => navigate(-1)}>← Back</Button>
       </Stack>
-    </Surface>
+    </DocsLayout>
   );
 }
