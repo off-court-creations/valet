@@ -57,6 +57,10 @@ const demos: [string, string][] = [
 
 const treeData: TreeNode<Item>[] = [
   {
+    id: 'welcome',
+    data: { label: 'Welcome', path: '/' },
+  },
+  {
     id: 'getting-started',
     data: { label: 'Getting Started' },
     children: [
