@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file. The format 
 - List variant lines centered on expand boxes and omit root connector
 - Tree demo shows a third level with mixed collapsible nodes
 - List variant boxes now use the secondary theme color when expanded
+- Persistent and responsive drawers now scroll if their content exceeds the viewport
 
 ## [v0.8.4]
 ### Added
