@@ -91,6 +91,7 @@ These have been mostly tested in the [valet Docs](https://github.com/off-court-c
 | Accordion     |  ✅    |  ✅    |     🟡      |      ✅      |      ✅      | ----------                 |
 | App Bar       |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | Avatar        |  ✅    |  ✅    |     ✅      |      ✅      |      ✅      | ----------                 |
+| Backdrop      |  ✅    |  ✅    |     ✅      |      ✅      |      ✅      | ----------                 |
 | Box           |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | Button        |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | Checkbox      |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
@@ -101,7 +102,6 @@ These have been mostly tested in the [valet Docs](https://github.com/off-court-c
 | Icon          |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | IconButton    |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | List          |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | Needs mobile support!      |
-| Loading Backdrop |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | Modal         |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | styling                    |
 | Pagination    |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | Panel         |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
