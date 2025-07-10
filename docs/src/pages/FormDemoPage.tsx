@@ -13,6 +13,7 @@ import {
   definePreset,
   useTheme,
 } from '@archway/valet';
+import NavDrawer from '../components/NavDrawer';
 
 /*───────────────────────────────────────────────────────────────*/
 /* 1.  Create a typed store for this form                        */
@@ -52,6 +53,7 @@ export default function FormDemoPage() {
 
   return (
     <Surface style={{ backgroundColor: theme.colors['background'] }}>
+      <NavDrawer />
       <Box preset="cardForm">
         <Typography variant="h3" style={{ marginBottom: theme.spacing(1) }}>
           Contact Form Demo

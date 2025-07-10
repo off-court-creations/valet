@@ -6,9 +6,10 @@ import {
     Surface,
     Stack,
     Typography,
-    Video,
-    useTheme,
-  } from '@archway/valet';
+  Video,
+  useTheme,
+} from '@archway/valet';
+import NavDrawer from '../components/NavDrawer';
   
   /*─────────────────────────────────────────────────────────────*/
   /* Demo page                                                   */
@@ -17,6 +18,7 @@ import {
   
     return (
       <Surface>
+        <NavDrawer />
         <Stack
           spacing={1}
           style={{

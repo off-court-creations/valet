@@ -3,6 +3,7 @@
 // Getting started usage page
 // ─────────────────────────────────────────────────────────────
 import { Surface, Stack, Typography, Button } from '@archway/valet';
+import NavDrawer from '../components/NavDrawer';
 import { useNavigate } from 'react-router-dom';
 
 export default function UsagePage() {
@@ -10,6 +11,7 @@ export default function UsagePage() {
 
   return (
     <Surface>
+      <NavDrawer />
       <Stack spacing={1} preset="showcaseStack">
         <Typography variant="h2" bold>Usage</Typography>
         <Typography>

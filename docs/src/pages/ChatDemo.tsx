@@ -12,6 +12,7 @@ import {
   useTheme,
 } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
+import NavDrawer from '../components/NavDrawer';
 import type { ChatMessage } from '@archway/valet';
 import monkey from '../assets/monkey.jpg';
 import present from '../assets/present.jpg';
@@ -33,6 +34,7 @@ export default function ChatDemoPage() {
 
   return (
     <Surface>
+      <NavDrawer />
       <Stack spacing={1} preset="showcaseStack">
         <Typography variant="h2" bold>
           Chat Showcase
