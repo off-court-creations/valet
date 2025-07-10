@@ -9,43 +9,12 @@ import {
   Typography,
   Button,
   useTheme,
-  definePreset,
   Tabs,
   Table,
 } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-/*─────────────────────────────────────────────────────────────────────────────*/
-/* Style presets                                                              */
-// Fancy card-like container
-definePreset('fancyBox', (t) => `
-    background   : ${t.colors['primary']};
-    color        : ${t.colors['primaryText']};
-    border-radius: 20px;
-    box-shadow   : 0 6px 16px ${t.colors['text']}22;
-    padding      : ${t.spacing(1)};
-    margin       : ${t.spacing(1)};
-  `);
-
-// Frosted-glass effect (needs backdrop-filter support)
-definePreset('glassBox', (t) => `
-    background      : ${t.colors['background']}CC;
-    backdrop-filter : blur(6px) saturate(180%);
-    border          : 1px solid ${t.colors['text']}22;
-    padding         : ${t.spacing(1)};
-    border-radius   : 12px;
-  `);
-
-// Loud gradient banner
-definePreset('gradientBox', () => `
-    background: linear-gradient(135deg,#ff6b6b 0%,#f7b267 50%,#4bd0d2 100%);
-    color     : #ffffff;
-    padding   : 32px;
-    border-radius: 8px;
-    text-align: center;
-  `);
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Demo page                                                                  */
@@ -165,22 +134,22 @@ export default function BoxDemoPage() {
 
             <Typography variant="h3">6. Presets</Typography>
             <Stack spacing={1}>
-              <Box preset="fancyBox">
-                <Typography>preset="fancyBox"</Typography>
+              <Box preset="fancyHolder">
+                <Typography>preset="fancyHolder"</Typography>
               </Box>
 
-              <Box preset="glassBox">
-                <Typography>preset="glassBox"</Typography>
+              <Box preset="glassHolder">
+                <Typography>preset="glassHolder"</Typography>
               </Box>
 
-              <Box preset="gradientBox">
-                <Typography>preset="gradientBox"</Typography>
+              <Box preset="gradientHolder">
+                <Typography>preset="gradientHolder"</Typography>
               </Box>
 
-              <Box preset={['glassBox', 'fancyBox']}>
+              <Box preset={['glassHolder', 'fancyHolder']}>
                 <Typography>
                   Combination&nbsp;
-                  <code>preset=['glassBox','fancyBox']</code>
+                  <code>preset=['glassHolder','fancyHolder']</code>
                 </Typography>
               </Box>
             </Stack>

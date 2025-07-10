@@ -134,7 +134,7 @@ export default function PanelDemoPage() {
             <Typography>preset=&quot;glassPanel&quot;</Typography>
           </Panel>
 
-          <Panel preset="gradientBox">
+          <Panel preset="gradientHolder">
             <Typography>preset=&quot;gradientPanel&quot;</Typography>
           </Panel>
 
