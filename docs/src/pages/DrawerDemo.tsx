@@ -84,6 +84,19 @@ export default function DrawerDemoPage() {
           </Stack>
         </Drawer>
 
+        {/* 4. Responsive drawer */}
+        <Typography variant="h3">4. Responsive drawer</Typography>
+        <Drawer responsive anchor="right" size="16rem">
+          <Stack spacing={1} style={{ padding: theme.spacing(1) }}>
+            <Typography variant="h4" bold>
+              Responsive Drawer
+            </Typography>
+            <Typography>
+              Persistent in landscape, icon in portrait.
+            </Typography>
+          </Stack>
+        </Drawer>
+
         {/* Theme toggle + back nav */}
         <Stack direction="row" spacing={1}>
           <Button variant="outlined" onClick={toggleMode}>
