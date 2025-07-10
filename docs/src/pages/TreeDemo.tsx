@@ -40,6 +40,25 @@ const DATA: TreeNode<Item>[] = [
   },
 ];
 
+const FILES: TreeNode<Item>[] = [
+  {
+    id: 'src',
+    data: { label: 'src' },
+    children: [
+      {
+        id: 'components',
+        data: { label: 'components' },
+        children: [
+          { id: 'Button.tsx', data: { label: 'Button.tsx' } },
+          { id: 'Tree.tsx', data: { label: 'Tree.tsx' } },
+        ],
+      },
+      { id: 'index.ts', data: { label: 'index.ts' } },
+    ],
+  },
+  { id: 'package.json', data: { label: 'package.json' } },
+];
+
 export default function TreeDemoPage() {
   const { theme, toggleMode } = useTheme();
   const navigate = useNavigate();
@@ -69,6 +88,14 @@ export default function TreeDemoPage() {
           getLabel={(n) => n.label}
           defaultExpanded={['fruit', 'dairy']}
           variant="list"
+        />
+
+        <Typography variant="h3">3. Files variant</Typography>
+        <Tree<Item>
+          nodes={FILES}
+          getLabel={(n) => n.label}
+          defaultExpanded={['src', 'components']}
+          variant="files"
         />
 
         <Stack direction="row" spacing={1}>

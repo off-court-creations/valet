@@ -3,6 +3,7 @@
 // Basic accessible tree view component
 // ─────────────────────────────────────────────────────────────
 import React, { useMemo, useState, useRef, KeyboardEvent } from 'react';
+import Icon from './Icon';
 import { styled } from '../css/createStyled';
 import { useTheme } from '../system/themeStore';
 import { preset } from '../css/stylePresets';
@@ -23,7 +24,7 @@ export interface TreeProps<T>
   getLabel: (node: T) => React.ReactNode;
   defaultExpanded?: string[];
   onNodeSelect?: (node: T) => void;
-  variant?: 'chevron' | 'list';
+  variant?: 'chevron' | 'list' | 'files';
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -250,7 +251,7 @@ export function Tree<T>({
             }}
             onDoubleClick={() => node.children && toggle(node.id)}
           >
-            {node.children && (
+            {variant === 'list' && node.children && (
               <BoxIcon
                 aria-hidden
                 $open={expanded.has(node.id)}
@@ -260,6 +261,15 @@ export function Tree<T>({
                   e.stopPropagation();
                   toggle(node.id);
                 }}
+              />
+            )}
+            {variant === 'files' && (
+              <Icon
+                icon={node.children ? (expanded.has(node.id) ? 'carbon:folder-open' : 'carbon:folder') : 'carbon:document'}
+                size={16}
+                style={{ marginRight: '0.25rem' }}
+                aria-hidden
+                onClick={node.children ? (e => { e.stopPropagation(); toggle(node.id); }) : undefined}
               />
             )}
             {getLabel(node.data)}
