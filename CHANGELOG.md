@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [v0.8.7]
+### Added
+- DateTimePicker component
+
 ## [v0.8.6]
 ### Added
 - Shared navigation drawer component for docs
@@ -158,6 +162,7 @@ All notable changes to this project will be documented in this file. The format 
 ### Other
 - vibe coded
 
+[v0.8.7]: https://github.com/off-court-creations/valet/releases/tag/v0.8.7
 [v0.8.6]: https://github.com/off-court-creations/valet/releases/tag/v0.8.6
 [v0.8.5]: https://github.com/off-court-creations/valet/releases/tag/v0.8.5
 [v0.8.4]: https://github.com/off-court-creations/valet/releases/tag/v0.8.4
