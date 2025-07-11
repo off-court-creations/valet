@@ -23,6 +23,7 @@ const components: [string, string][] = [
   ['Checkbox', '/checkbox-demo'],
   ['Chat', '/chat-demo'],
   ['Drawer', '/drawer-demo'],
+  ['DateTime Picker', '/datetime-demo'],
   ['FormControl + Textfield', '/text-form-demo'],
   ['Grid', '/grid-demo'],
   ['Icon', '/icon-demo'],
