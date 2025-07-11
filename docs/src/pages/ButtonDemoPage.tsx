@@ -8,10 +8,12 @@ import {
   Box,
   Typography,
   Button,
+  ProgressButton,
   useTheme,
   Tabs,
   Table,
 } from '@archway/valet';
+import { useState } from 'react';
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -21,6 +23,7 @@ import NavDrawer from '../components/NavDrawer';
 export default function ButtonDemoPage() {
   const { theme, toggleMode } = useTheme();
   const navigate = useNavigate();
+  const [progress, setProgress] = useState<number | undefined>();
 
   interface Row {
     prop: ReactNode;
@@ -74,6 +77,22 @@ export default function ButtonDemoPage() {
       description: 'Apply style presets',
     },
   ];
+
+  const trigger = () => {
+    setProgress(undefined);
+    return new Promise<void>((resolve) => {
+      let pct = 0;
+      const id = setInterval(() => {
+        pct += 20;
+        setProgress(pct);
+        if (pct >= 100) {
+          clearInterval(id);
+          setTimeout(() => setProgress(undefined), 200);
+          resolve();
+        }
+      }, 200);
+    });
+  };
 
   return (
     <Surface>
@@ -156,8 +175,22 @@ export default function ButtonDemoPage() {
           </Button>
         </Stack>
 
-            {/* 9 ▸ Theme toggle (LAST) ------------------------------------- */}
-            <Typography variant="h3">9. Theme toggle</Typography>
+        {/* 9 ▸ ProgressButton ----------------------------------------- */}
+        <Typography variant="h3">9. ProgressButton</Typography>
+        <Stack direction="row" spacing={1}>
+          <ProgressButton action={() => new Promise((r) => setTimeout(r, 1200))}>
+            Indeterminate
+          </ProgressButton>
+          <ProgressButton
+            {...(progress !== undefined ? { progress } : {})}
+            action={trigger}
+          >
+            Determinate
+          </ProgressButton>
+        </Stack>
+
+            {/* 10 ▸ Theme toggle (LAST) ------------------------------------ */}
+            <Typography variant="h3">10. Theme toggle</Typography>
             <Button variant="outlined" onClick={toggleMode}>
               Toggle light / dark mode
             </Button>

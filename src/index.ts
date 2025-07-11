@@ -22,6 +22,7 @@ export * from './components/List';
 export * from './components/Tree';
 export * from './components/Parallax';
 export * from './components/Progress';
+export * from './components/ProgressButton';
 export * from './components/RadioGroup';
 export * from './components/Slider';
 export * from './components/Snackbar';
