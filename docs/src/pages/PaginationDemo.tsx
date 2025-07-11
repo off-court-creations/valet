@@ -13,7 +13,6 @@ export default function PaginationDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack
-        spacing={1}
         preset="showcaseStack"
       >
         <Typography variant="h2" bold>Pagination Showcase</Typography>
@@ -22,7 +21,7 @@ export default function PaginationDemoPage() {
         <Pagination count={5} page={page} onChange={setPage} />
         <Typography variant="body">Current page: {page}</Typography>
 
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row">
           <Button variant="outlined" onClick={toggleMode}>Toggle light / dark</Button>
           <Button onClick={() => navigate(-1)}>← Back</Button>
         </Stack>

@@ -111,7 +111,6 @@ export default function TableDemoPage() {
   return (
     <Surface>
       <Stack
-        spacing={1}
         preset="showcaseStack"
       >
         {/* Header bar ------------------------------------------------------- */}

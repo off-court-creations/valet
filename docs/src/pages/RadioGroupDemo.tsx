@@ -65,7 +65,6 @@ export default function RadioGroupDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack
-        spacing={1}
         preset="showcaseStack"
       >
         {/* Page header ----------------------------------------------------- */}
@@ -101,7 +100,7 @@ export default function RadioGroupDemoPage() {
 
         {/* 3. Sizes --------------------------------------------------------- */}
         <Typography variant="h3">3. Sizes</Typography>
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row">
           <RadioGroup defaultValue="sm" size="sm">
             <Radio value="sm" label="size='sm'" />
             <Radio value="sm2" label="size='sm'" />

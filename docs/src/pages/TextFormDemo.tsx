@@ -43,7 +43,6 @@ export default function TextFieldDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack
-        spacing={1}
         preset="showcaseStack"
       >
         {/* Page header --------------------------------------------------- */}
@@ -56,7 +55,7 @@ export default function TextFieldDemoPage() {
 
         {/* 1. Basic stand-alone fields ---------------------------------- */}
         <Typography variant="h3">1. Stand-alone TextField</Typography>
-        <Stack spacing={1}>
+        <Stack>
           {/* uncontrolled */}
           <TextField name="basic" placeholder="Uncontrolled" />
 

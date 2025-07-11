@@ -34,7 +34,6 @@ export default function SliderDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack
-        spacing={1}
         preset="showcaseStack"
       >
         {/* Header */}
@@ -51,7 +50,7 @@ export default function SliderDemoPage() {
 
         {/* 2. Controlled ---------------------------------------------------- */}
         <Typography variant="h3">2. Controlled</Typography>
-        <Stack spacing={1}>
+        <Stack>
           <Slider
             value={ctlValue}
             onChange={setCtlValue}
@@ -120,7 +119,7 @@ export default function SliderDemoPage() {
         />
 
         {/* Theme toggle + back nav ----------------------------------------- */}
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row">
           <Button variant="outlined" onClick={toggleMode}>
             Toggle light / dark
           </Button>

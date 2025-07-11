@@ -17,13 +17,7 @@ export default function MainPage() {
 
   function Content() {
     return (
-      <Stack
-        spacing={1}
-        style={{
-          padding: theme.spacing(1),
-          maxWidth: 980,
-        }}
-      >
+      <Stack>
         <Typography variant="h1" bold>
           valet
         </Typography>

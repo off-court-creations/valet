@@ -100,7 +100,6 @@ export default function IconDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack
-        spacing={1}
         preset="showcaseStack"
       >
         {/* Page header ----------------------------------------------------- */}
@@ -125,7 +124,7 @@ export default function IconDemoPage() {
 
         {/* 2. Sizing -------------------------------------------------------- */}
         <Typography variant="h3">2. Size prop</Typography>
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row">
           <Icon icon="mdi:home" size={16} aria-label="home-sm" />
           <Icon icon="mdi:home" size="24px" aria-label="home-md" />
           <Icon icon="mdi:home" size="2.5rem" aria-label="home-lg" />
@@ -134,7 +133,7 @@ export default function IconDemoPage() {
 
         {/* 3. Color override ---------------------------------------------- */}
         <Typography variant="h3">3. Colour override</Typography>
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row">
           <Icon icon="carbon:warning-filled" color={theme.colors['primary']} size={32} />
           <Icon icon="carbon:warning-filled" color="#ff6b6b" size={32} />
           <Icon icon="carbon:warning-filled" color="gold" size={32} />
@@ -155,7 +154,7 @@ export default function IconDemoPage() {
 
         {/* 7. Icon inside Button ------------------------------------------- */}
         <Typography variant="h3">6. Icon in other components</Typography>
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row">
           <Button>
             <Icon icon="mdi:thumb-up" size={18} style={{ marginRight: 8 }} />
             Like

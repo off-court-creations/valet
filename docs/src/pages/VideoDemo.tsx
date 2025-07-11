@@ -20,7 +20,6 @@ import NavDrawer from '../components/NavDrawer';
       <Surface>
         <NavDrawer />
         <Stack
-          spacing={1}
           style={{
             padding : theme.spacing(1),
             maxWidth: 1024,

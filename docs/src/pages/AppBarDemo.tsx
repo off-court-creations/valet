@@ -11,7 +11,6 @@ export default function AppBarDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack
-        spacing={1}
         preset="showcaseStack"
       >
         <Typography variant="h2" bold>
@@ -25,7 +24,7 @@ export default function AppBarDemoPage() {
           <Typography variant="h6">Fixed</Typography>
         </AppBar>
 
-        <Stack spacing={1}>
+        <Stack>
           <Typography variant="h1">
             placeholder
           </Typography>

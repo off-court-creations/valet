@@ -35,7 +35,6 @@ interface RowProps {
 const Row = ({ label, control }: RowProps) => (
   <Stack
     direction="row"
-    spacing={1}
     style={{ maxWidth: 360 }}
   >
     {control}
@@ -61,7 +60,7 @@ export default function SwitchDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack
-        spacing={1}
+       
         preset="showcaseStack"
       >
         {/* Page header ----------------------------------------------------- */}
@@ -74,7 +73,7 @@ export default function SwitchDemoPage() {
 
         {/* 1. Uncontrolled -------------------------------------------------- */}
         <Typography variant="h3">1. Uncontrolled</Typography>
-        <Stack spacing={1}>
+        <Stack>
           <Row
             label="Default unchecked"
             control={<Switch name="uc1" />}
@@ -100,7 +99,7 @@ export default function SwitchDemoPage() {
 
         {/* 3. Sizes --------------------------------------------------------- */}
         <Typography variant="h3">3. Sizes</Typography>
-        <Stack spacing={1}>
+        <Stack>
           <Row
             label="size='sm'"
             control={<Switch name="sm" size="sm" defaultChecked />}
@@ -117,7 +116,7 @@ export default function SwitchDemoPage() {
 
         {/* 4. Disabled ------------------------------------------------------ */}
         <Typography variant="h3">4. Disabled</Typography>
-        <Stack spacing={1}>
+        <Stack>
           <Row
             label="disabled & checked"
             control={<Switch name="d1" defaultChecked disabled />}

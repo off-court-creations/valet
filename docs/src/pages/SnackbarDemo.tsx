@@ -42,7 +42,7 @@ export default function SnackbarDemoPage() {
   return (
     <Surface>
       <NavDrawer />
-      <Stack spacing={1} preset="showcaseStack">
+      <Stack preset="showcaseStack">
         {/* Header --------------------------------------------------------- */}
         <Typography variant="h2" bold>
           Snackbar Showcase
@@ -78,7 +78,7 @@ export default function SnackbarDemoPage() {
           open={ctrlOpen}
           onClose={() => setCtrlOpen(false)}
         >
-          <Stack direction="row" spacing={1} wrap={false}>
+          <Stack direction="row" wrap={false}>
             <Typography variant="body" autoSize>
               Draft saved – click to dismiss
             </Typography>

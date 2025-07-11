@@ -35,7 +35,7 @@ export default function ChatDemoPage() {
   return (
     <Surface>
       <NavDrawer />
-      <Stack spacing={1} preset="showcaseStack">
+      <Stack preset="showcaseStack">
         <Typography variant="h2" bold>
           Chat Showcase
         </Typography>

@@ -24,7 +24,6 @@ export default function PanelDemoPage() {
     <Surface /* Surface already defaults to theme background */>
       <NavDrawer />
       <Stack
-        spacing={1}
         preset="showcaseStack"
       >
         {/* Page header ----------------------------------------------------- */}
@@ -49,7 +48,7 @@ export default function PanelDemoPage() {
 
         {/* 3. background override ------------------------------------------ */}
         <Typography variant="h3">3. background&nbsp;prop</Typography>
-        <Stack spacing={1}>
+        <Stack>
           <Panel
             background={theme.colors['primary']}
             style={{ padding: theme.spacing(1) }}
@@ -96,7 +95,7 @@ export default function PanelDemoPage() {
 
         {/* 7. Preset demos -------------------------------------------------- */}
         <Typography variant="h3">7. Presets</Typography>
-        <Stack spacing={1}>
+        <Stack>
           <Panel preset="fancyHolder">
             <Typography>preset=&quot;fancyHolder&quot;</Typography>
           </Panel>

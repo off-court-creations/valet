@@ -87,7 +87,7 @@ export default function BoxDemoPage() {
             </Box>
 
             <Typography variant="h3">2. background&nbsp;prop</Typography>
-            <Stack spacing={1}>
+            <Stack>
               <Box background={theme.colors['primary']}>
                 <Typography variant="h4">{`background=${theme.colors['primary']}`}</Typography>
               </Box>
@@ -135,7 +135,7 @@ export default function BoxDemoPage() {
             </Box>
 
             <Typography variant="h3">6. Presets</Typography>
-            <Stack spacing={1}>
+            <Stack>
               <Box preset="fancyHolder">
                 <Typography>preset="fancyHolder"</Typography>
               </Box>

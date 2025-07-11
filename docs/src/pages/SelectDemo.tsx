@@ -45,7 +45,6 @@ export default function SelectDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack
-        spacing={1}
         preset="showcaseStack"
       >
         <Typography variant="h2" bold>Select Playground</Typography>
@@ -63,7 +62,7 @@ export default function SelectDemoPage() {
 
         {/* ————————————————— Controlled single */}
         <Typography variant="h3">2. Controlled – single</Typography>
-        <Stack direction="row" spacing={1} style={{ alignItems: 'center' }}>
+        <Stack direction="row" style={{ alignItems: 'center' }}>
           <Select value={pet} onChange={(v) => setPet(v as string)}>
             <Select.Option value="cat">Cat</Select.Option>
             <Select.Option value="dog">Dog</Select.Option>
@@ -74,7 +73,7 @@ export default function SelectDemoPage() {
 
         {/* ————————————————— Controlled multiple */}
         <Typography variant="h3">3. Controlled – multiple</Typography>
-        <Stack direction="row" spacing={1} style={{ alignItems: 'center' }}>
+        <Stack direction="row" style={{ alignItems: 'center' }}>
           <Select
             multiple
             value={langs}
@@ -94,7 +93,7 @@ export default function SelectDemoPage() {
 
         {/* ————————————————— Sizes */}
         <Typography variant="h3">4. Size variants</Typography>
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row">
           {(['sm', 'md', 'lg'] as const).map((s) => (
             <Select key={s} size={s} placeholder={s.toUpperCase()}>
               <Select.Option value="a">A</Select.Option>
@@ -105,7 +104,7 @@ export default function SelectDemoPage() {
 
         {/* ————————————————— Disabled / preset */}
         <Typography variant="h3">5. Disabled & preset</Typography>
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row">
           <Select disabled placeholder="Disabled">
             <Select.Option value="x">X</Select.Option>
           </Select>
@@ -122,7 +121,7 @@ export default function SelectDemoPage() {
           useStore={useDemoForm}
           onSubmitValues={(vals) => setSubmitted(vals)}
         >
-          <Stack spacing={1}>
+          <Stack>
             <Select
               name="country"
               placeholder="Country"
