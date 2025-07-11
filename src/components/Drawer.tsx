@@ -4,14 +4,21 @@
 // Controlled/uncontrolled, with backdrop and escape handling.
 // ─────────────────────────────────────────────────────────────
 
-import React, { useCallback, useLayoutEffect, useState, useEffect } from 'react';
+import React, {
+  useCallback,
+  useLayoutEffect,
+  useState,
+  useEffect,
+  useContext,
+} from 'react';
 import { createPortal } from 'react-dom';
 import { styled } from '../css/createStyled';
 import { useTheme } from '../system/themeStore';
-import { useSurface } from '../system/surfaceStore';
+import { SurfaceCtx } from '../system/surfaceStore';
 import { preset } from '../css/stylePresets';
 import type { Presettable } from '../types';
 import { IconButton } from './IconButton';
+import { useOrientation } from '../hooks/useOrientation';
 
 /*───────────────────────────────────────────────────────────*/
 export type DrawerAnchor = 'left' | 'right' | 'top' | 'bottom';
@@ -130,11 +137,11 @@ export const Drawer: React.FC<DrawerProps> = ({
   preset: presetKey,
 }) => {
   const { theme } = useTheme();
-  const surface = useSurface();
+  const ctx = useContext(SurfaceCtx);
+  if (!ctx) throw new Error('Drawer must be used within a <Surface> component');
+  const surfaceElement = ctx((s) => s.element);
+  const { portrait } = useOrientation();
   const presetClasses = presetKey ? preset(presetKey) : '';
-
-  const { width, height } = surface;
-  const portrait = height > width;
   const responsiveMode = responsive && (anchor === 'left' || anchor === 'right');
   const orientationPersistent = responsiveMode && !portrait;
   const persistentEffective = persistent || orientationPersistent;
@@ -183,7 +190,7 @@ export const Drawer: React.FC<DrawerProps> = ({
 
   // When persistent, offset the current surface so content isn't hidden
   useLayoutEffect(() => {
-    const node = surface.element;
+    const node = surfaceElement;
     if (!node) return;
     const horizontal = anchor === 'left' || anchor === 'right';
     if (persistentEffective && horizontal) {
@@ -196,7 +203,7 @@ export const Drawer: React.FC<DrawerProps> = ({
       };
     }
     return;
-  }, [surface.element, persistentEffective, anchor, size]);
+  }, [surfaceElement, persistentEffective, anchor, size]);
 
   if (!open && !persistentEffective) {
     if (responsiveMode && portrait) {
