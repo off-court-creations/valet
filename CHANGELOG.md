@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.9.0]
+### Added
+- `useSurface` hook now accepts an optional state selector and equality function,
+mirroring Zustand’s API for partial subscriptions
+
+### Changed
+- `Accordion`, `Chat`, `Drawer`, `Snackbar`, `Table`, and `Typography` components call `useSurface` 
+with selectors and shallow equality to avoid unnecessary re-renders `Drawer`’s 
+responsive logic uses the selected `Surface` element to handle persistent margins correctly
+
+
 ## [v0.8.7]
 ### Added
 - DateTimePicker component
@@ -162,6 +173,7 @@ All notable changes to this project will be documented in this file. The format 
 ### Other
 - vibe coded
 
+[v0.9.0]: https://github.com/off-court-creations/valet/releases/tag/v0.9.0
 [v0.8.7]: https://github.com/off-court-creations/valet/releases/tag/v0.8.7
 [v0.8.6]: https://github.com/off-court-creations/valet/releases/tag/v0.8.6
 [v0.8.5]: https://github.com/off-court-creations/valet/releases/tag/v0.8.5
