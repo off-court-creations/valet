@@ -18,7 +18,7 @@ export default function TestPage() {
 
     return (
         <Surface style={{ backgroundColor: theme.colors['background'] }}>
-            <Stack direction="row" spacing={1}>
+            <Stack direction="row">
                 <Button>
                     <Typography>
                         Really Long Button
@@ -51,7 +51,7 @@ export default function TestPage() {
                     row
                     size="lg"
                 >
-                    <Stack direction="column" spacing={1}>
+                    <Stack direction="column">
                         <Radio value="standard" label="Standard (3–5 days)" />
                         <Radio value="express" label="Express (1–2 days)" />
                         <Radio value="overnight" label="Overnight" disabled />

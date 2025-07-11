@@ -116,7 +116,6 @@ export default function CheckboxDemoPage() {
     <Surface /* Surface already defaults to theme background */>
       <NavDrawer />
       <Stack
-        spacing={1}
         preset="showcaseStack"
       >
         {/* Page header ----------------------------------------------------- */}
@@ -133,7 +132,7 @@ export default function CheckboxDemoPage() {
 
         {/* 1. Uncontrolled -------------------------------------------------- */}
         <Typography variant="h3">1. Uncontrolled</Typography>
-        <Stack spacing={1}>
+        <Stack>
           <Checkbox name="uc1" label="Default unchecked" />
           <Checkbox
             name="uc2"
@@ -153,7 +152,7 @@ export default function CheckboxDemoPage() {
 
         {/* 3. Sizes --------------------------------------------------------- */}
         <Typography variant="h3">3. Sizes</Typography>
-        <Stack spacing={1}>
+        <Stack>
           <Checkbox name="sm" size="sm" defaultChecked label="size='sm'" />
           <Checkbox name="md" size="md" defaultChecked label="size='md'" />
           <Checkbox name="lg" size="lg" defaultChecked label="size='lg'" />
@@ -161,7 +160,7 @@ export default function CheckboxDemoPage() {
 
         {/* 4. Disabled ------------------------------------------------------ */}
         <Typography variant="h3">4. Disabled</Typography>
-        <Stack spacing={1}>
+        <Stack>
           <Checkbox
             name="d1"
             defaultChecked

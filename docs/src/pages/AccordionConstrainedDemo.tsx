@@ -20,7 +20,7 @@ export default function AccordionConstrainedDemo() {
 
   return (
     <Surface>
-      <Stack spacing={1} preset="showcaseStack">
+      <Stack preset="showcaseStack">
         <Typography variant="h2" bold>
           Constrained Accordion
         </Typography>

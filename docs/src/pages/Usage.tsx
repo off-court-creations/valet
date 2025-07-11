@@ -12,7 +12,7 @@ export default function UsagePage() {
   return (
     <Surface>
       <NavDrawer />
-      <Stack spacing={1} preset="showcaseStack">
+      <Stack preset="showcaseStack">
         <Typography variant="h2" bold>Usage</Typography>
         <Typography>
           Import components as needed and wrap each route in a <code>{'<Surface>'}</code>.

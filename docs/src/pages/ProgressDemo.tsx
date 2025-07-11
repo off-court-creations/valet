@@ -49,7 +49,6 @@ export default function ProgressDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack
-        spacing={1}
         preset="showcaseStack"
       >
         {/* Page header ----------------------------------------------------- */}
@@ -62,7 +61,7 @@ export default function ProgressDemoPage() {
 
         {/* 1. Circular indeterminate -------------------------------------- */}
         <Typography variant="h3">1. Circular – indeterminate</Typography>
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row">
           <Progress variant="circular" mode="indeterminate" />
           <Progress variant="circular" mode="indeterminate" size="lg" />
           <Progress
@@ -75,7 +74,7 @@ export default function ProgressDemoPage() {
 
         {/* 2. Circular determinate (controlled) --------------------------- */}
         <Typography variant="h3">2. Circular – determinate (controlled)</Typography>
-        <Stack direction="row" spacing={1} style={{ alignItems: 'center' }}>
+        <Stack direction="row" style={{ alignItems: 'center' }}>
           <Progress
             variant="circular"
             mode="determinate"
@@ -106,11 +105,11 @@ export default function ProgressDemoPage() {
 
         {/* 6. Interactive controls ---------------------------------------- */}
         <Typography variant="h3">6. Play with value</Typography>
-        <Stack spacing={1}>
+        <Stack>
           <Box style={{ maxWidth: 480 }}>
             <Slider value={value} onChange={setValue} />
           </Box>
-          <Stack direction="row" spacing={1}>
+          <Stack direction="row">
             <Button onClick={() => setValue((v) => Math.max(0, v - 10))}>
               –10
             </Button>

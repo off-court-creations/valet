@@ -105,7 +105,6 @@ export default function IconButtonDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack
-        spacing={1}
         preset="showcaseStack"
       >
         {/* Page header ----------------------------------------------------- */}
@@ -122,7 +121,7 @@ export default function IconButtonDemoPage() {
 
         {/* 1. Contained sizes --------------------------------------------- */}
         <Typography variant="h3">1. Contained sizes</Typography>
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row">
           <IconButton icon="mdi:play" size="sm" aria-label="Play small" />
           <IconButton icon="mdi:play" size="md" aria-label="Play medium" />
           <IconButton icon="mdi:play" size="lg" aria-label="Play large" />
@@ -130,7 +129,7 @@ export default function IconButtonDemoPage() {
 
         {/* 2. Outlined sizes ---------------------------------------------- */}
         <Typography variant="h3">2. Outlined sizes</Typography>
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row">
           <IconButton
             variant="outlined"
             icon="mdi:pause"
@@ -153,7 +152,7 @@ export default function IconButtonDemoPage() {
 
         {/* 3. Colour override --------------------------------------------- */}
         <Typography variant="h3">3. Icon colour override</Typography>
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row">
           <IconButton
             icon="mdi:heart"
             iconColor="#ff5e5e"
@@ -169,7 +168,7 @@ export default function IconButtonDemoPage() {
 
         {/* 4. Custom SVG --------------------------------------------------- */}
         <Typography variant="h3">4. Custom SVG graphics</Typography>
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row">
           <IconButton svg={HeartSvg} aria-label="Heart" />
         </Stack>
 

@@ -61,7 +61,7 @@ export default function PresetDemoPage() {
         </Typography>
 
         {/* “Pill” Stack containing ghost buttons */}
-        <Stack direction="row" spacing={1} preset="pillStack">
+        <Stack direction="row" preset="pillStack">
           <Button preset="ghostButton" size="md" style={{ marginLeft: theme.spacing(1) }}>
             Ghost 1
           </Button>
@@ -77,7 +77,7 @@ export default function PresetDemoPage() {
       </Box>
 
       {/* Navigation */}
-      <Stack direction="row" spacing={1} style={{ padding: theme.spacing(1) }}>
+      <Stack direction="row" style={{ padding: theme.spacing(1) }}>
         <Button variant="contained" size="lg" preset="ghostButton" onClick={() => navigate(-1)}>
           Go Back
         </Button>

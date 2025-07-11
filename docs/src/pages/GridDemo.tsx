@@ -11,7 +11,6 @@ export default function GridDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack
-        spacing={1}
         preset="showcaseStack"
       >
         <Typography variant="h2" bold>Grid Showcase</Typography>
@@ -37,7 +36,7 @@ export default function GridDemoPage() {
           ))}
         </Grid>
 
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row">
           <Button variant="outlined" onClick={toggleMode}>Toggle light / dark</Button>
           <Button onClick={() => navigate(-1)}>← Back</Button>
         </Stack>

@@ -21,7 +21,7 @@ export default function DrawerDemoPage() {
   return (
     <Surface>
       <Drawer persistent anchor="left" size="16rem">
-        <Stack spacing={1} style={{ padding: theme.spacing(1) }}>
+        <Stack style={{ padding: theme.spacing(1) }}>
           <Typography variant="h4" bold>
             Persistent Drawer
           </Typography>
@@ -29,7 +29,7 @@ export default function DrawerDemoPage() {
         </Stack>
       </Drawer>
       <Stack
-        spacing={1}
+       
         style={{ padding: theme.spacing(1), maxWidth: 980, margin: '0 auto' }}
       >
         <Typography variant="h2" bold>
@@ -43,7 +43,7 @@ export default function DrawerDemoPage() {
         <Typography variant="h3">1. Overlay left drawer</Typography>
         <Button onClick={() => setOverlayOpen(true)}>Open left drawer</Button>
         <Drawer open={overlayOpen} onClose={() => setOverlayOpen(false)}>
-          <Stack spacing={1} style={{ padding: theme.spacing(1) }}>
+          <Stack style={{ padding: theme.spacing(1) }}>
             <Typography variant="h4" bold>
               Left Drawer
             </Typography>
@@ -53,12 +53,12 @@ export default function DrawerDemoPage() {
 
         {/* 2. Controlled right drawer */}
         <Typography variant="h3">2. Controlled right drawer</Typography>
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row">
           <Button onClick={() => setRightOpen(true)}>Open</Button>
           <Button onClick={() => setRightOpen(false)}>Close</Button>
         </Stack>
         <Drawer anchor="right" open={rightOpen} onClose={() => setRightOpen(false)}>
-          <Stack spacing={1} style={{ padding: theme.spacing(1) }}>
+          <Stack style={{ padding: theme.spacing(1) }}>
             <Typography variant="h4" bold>
               Controlled Drawer
             </Typography>
@@ -76,7 +76,7 @@ export default function DrawerDemoPage() {
           disableBackdropClick
           disableEscapeKeyDown
         >
-          <Stack spacing={1} style={{ padding: theme.spacing(1) }}>
+          <Stack style={{ padding: theme.spacing(1) }}>
             <Typography variant="h4" bold>
               Can't close via backdrop or ESC
             </Typography>
@@ -87,7 +87,7 @@ export default function DrawerDemoPage() {
         {/* 4. Responsive drawer */}
         <Typography variant="h3">4. Responsive drawer</Typography>
         <Drawer responsive anchor="right" size="16rem">
-          <Stack spacing={1} style={{ padding: theme.spacing(1) }}>
+          <Stack style={{ padding: theme.spacing(1) }}>
             <Typography variant="h4" bold>
               Responsive Drawer
             </Typography>
@@ -98,7 +98,7 @@ export default function DrawerDemoPage() {
         </Drawer>
 
         {/* Theme toggle + back nav */}
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row">
           <Button variant="outlined" onClick={toggleMode}>
             Toggle light / dark
           </Button>

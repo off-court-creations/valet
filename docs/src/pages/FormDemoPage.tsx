@@ -67,7 +67,7 @@ export default function FormDemoPage() {
             setSubmitted(values);
           }}
         >
-          <Stack spacing={1}>
+          <Stack>
             <TextField
               name="name"
               label="Name"
@@ -110,7 +110,7 @@ export default function FormDemoPage() {
       )}
 
       {/* Nav back */}
-      <Stack direction="row" spacing={1} style={{ padding: theme.spacing(1) }}>
+      <Stack direction="row" style={{ padding: theme.spacing(1) }}>
         <Button variant="contained" size="lg" onClick={() => navigate(-1)}>
           Go Back
         </Button>

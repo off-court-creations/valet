@@ -12,7 +12,7 @@ export default function OverviewPage() {
   return (
     <Surface>
       <NavDrawer />
-      <Stack spacing={1}>
+      <Stack>
         <Typography variant="h2">Overview</Typography>
         <Typography>
           valet fuses an AI‑centric architecture with a lightweight React design system.
