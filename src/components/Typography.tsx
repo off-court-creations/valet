@@ -6,6 +6,7 @@ import React from 'react';
 import { styled } from '../css/createStyled';
 import { useTheme } from '../system/themeStore';
 import { useSurface } from '../system/surfaceStore';
+import { shallow } from 'zustand/shallow';
 import { preset } from '../css/stylePresets';
 import type { Presettable } from '../types';
 
@@ -53,7 +54,7 @@ export const Typography: React.FC<TypographyProps> = ({
 }) => {
   const Tag = mapping[variant];
   const { theme } = useTheme();
-  const { breakpoint } = useSurface();
+  const breakpoint = useSurface(s => s.breakpoint, shallow);
 
   const defaultSize = theme.typography[variant].md;
   let size = autoSize ? theme.typography[variant][breakpoint] : defaultSize;

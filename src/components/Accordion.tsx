@@ -23,6 +23,7 @@ import { useTheme }             from '../system/themeStore';
 import { preset }               from '../css/stylePresets';
 import { toRgb, mix, toHex }    from '../helpers/color';
 import { useSurface }           from '../system/surfaceStore';
+import { shallow }              from 'zustand/shallow';
 import type { Presettable }     from '../types';
 
 /*───────────────────────────────────────────────────────────*/
@@ -172,7 +173,15 @@ export const Accordion: React.FC<AccordionProps> & {
   ...divProps
 }) => {
   const { theme } = useTheme();
-  const surface = useSurface();
+  const surface = useSurface(
+    s => ({
+      element: s.element,
+      height: s.height,
+      registerChild: s.registerChild,
+      unregisterChild: s.unregisterChild,
+    }),
+    shallow,
+  );
   const wrapRef = useRef<HTMLDivElement>(null);
   const uniqueId = useId();
   const [maxHeight, setMaxHeight] = useState<number>();

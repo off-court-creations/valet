@@ -21,6 +21,7 @@ import React, {
 import { styled }               from '../css/createStyled';
 import { useTheme }             from '../system/themeStore';
 import { useSurface }           from '../system/surfaceStore';
+import { shallow }              from 'zustand/shallow';
 import { preset }               from '../css/stylePresets';
 import { Typography }           from './Typography';
 import type { Presettable }     from '../types';
@@ -101,7 +102,13 @@ export const Snackbar: React.FC<SnackbarProps> = ({
   ...rest
 }) => {
   const { theme } = useTheme();
-  const surface   = useSurface();
+  const surface   = useSurface(
+    s => ({
+      registerChild: s.registerChild,
+      unregisterChild: s.unregisterChild,
+    }),
+    shallow,
+  );
   const ref       = useRef<HTMLDivElement>(null);
   const id        = useId();
 
