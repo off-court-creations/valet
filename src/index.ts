@@ -8,6 +8,7 @@ export * from './components/FormControl';
 export * from './components/Icon';
 export * from './components/IconButton';
 export * from './components/Avatar';
+export * from './components/DateTimePicker';
 export * from './components/Modal';
 export * from './components/Drawer';
 export * from './components/AppBar';
