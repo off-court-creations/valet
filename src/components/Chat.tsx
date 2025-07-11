@@ -12,6 +12,7 @@ import React, {
 import { styled } from '../css/createStyled';
 import { useTheme } from '../system/themeStore';
 import { useSurface } from '../system/surfaceStore';
+import { shallow } from 'zustand/shallow';
 import { preset } from '../css/stylePresets';
 import IconButton from './IconButton';
 import TextField from './TextField';
@@ -91,7 +92,15 @@ export const Chat: React.FC<ChatProps> = ({
   ...rest
 }) => {
   const { theme } = useTheme();
-  const surface = useSurface();
+  const surface = useSurface(
+    s => ({
+      element: s.element,
+      height: s.height,
+      registerChild: s.registerChild,
+      unregisterChild: s.unregisterChild,
+    }),
+    shallow,
+  );
   const wrapRef = useRef<HTMLDivElement>(null);
   const uniqueId = useId();
   const [maxHeight, setMaxHeight] = useState<number>();

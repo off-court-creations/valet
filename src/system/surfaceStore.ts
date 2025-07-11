@@ -107,9 +107,18 @@ export type SurfaceStore = ReturnType<typeof createSurfaceStore>
 
 export const SurfaceCtx = React.createContext<SurfaceStore | null>(null)
 
-export const useSurface = () => {
+export function useSurface(): SurfaceState
+export function useSurface<U>(
+  selector: (state: SurfaceState) => U,
+  equality?: (a: U, b: U) => boolean,
+): U
+export function useSurface<U>(
+  selector?: (state: SurfaceState) => U,
+  equality?: (a: U, b: U) => boolean,
+): U | SurfaceState {
   const store = React.useContext(SurfaceCtx)
   if (!store)
     throw new Error('useSurface must be used within a <Surface> component')
-  return store()
+  const sel = selector ?? ((s) => s as unknown as U)
+  return store(sel as any, equality as any)
 }
