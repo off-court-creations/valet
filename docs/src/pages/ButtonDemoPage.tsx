@@ -8,12 +8,13 @@ import {
   Box,
   Typography,
   Button,
+  ProgressButton,
   useTheme,
   Tabs,
   Table,
 } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../components/NavDrawer';
 
@@ -74,6 +75,34 @@ export default function ButtonDemoPage() {
       description: 'Apply style presets',
     },
   ];
+
+  const wait = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms));
+
+  function ProgressDemo() {
+    const [val, setVal] = useState<number | undefined>();
+
+    const runIndet = () => wait(1000);
+
+    const runDet = async () => {
+      for (let v = 0; v <= 100; v += 20) {
+        setVal(v);
+        await wait(180);
+      }
+      setVal(undefined);
+    };
+
+    return (
+      <Stack direction="row" spacing={1}>
+        <ProgressButton onClick={runIndet}>Async</ProgressButton>
+        <ProgressButton
+          onClick={runDet}
+          {...(val !== undefined ? { progress: val } : {})}
+        >
+          Upload
+        </ProgressButton>
+      </Stack>
+    );
+  }
 
   return (
     <Surface>
@@ -156,8 +185,12 @@ export default function ButtonDemoPage() {
           </Button>
         </Stack>
 
-            {/* 9 ▸ Theme toggle (LAST) ------------------------------------- */}
-            <Typography variant="h3">9. Theme toggle</Typography>
+        {/* 9 ▸ ProgressButton ----------------------------------------- */}
+        <Typography variant="h3">9. ProgressButton</Typography>
+        <ProgressDemo />
+
+            {/* 10 ▸ Theme toggle (LAST) ----------------------------------- */}
+            <Typography variant="h3">10. Theme toggle</Typography>
             <Button variant="outlined" onClick={toggleMode}>
               Toggle light / dark mode
             </Button>
