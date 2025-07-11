@@ -9,6 +9,7 @@ import { createPortal } from 'react-dom';
 import { styled } from '../css/createStyled';
 import { useTheme } from '../system/themeStore';
 import { useSurface } from '../system/surfaceStore';
+import { shallow } from 'zustand/shallow';
 import { preset } from '../css/stylePresets';
 import type { Presettable } from '../types';
 import { IconButton } from './IconButton';
@@ -130,10 +131,11 @@ export const Drawer: React.FC<DrawerProps> = ({
   preset: presetKey,
 }) => {
   const { theme } = useTheme();
-  const surface = useSurface();
+  const { width, height, element } = useSurface(
+    s => ({ width: s.width, height: s.height, element: s.element }),
+    shallow,
+  );
   const presetClasses = presetKey ? preset(presetKey) : '';
-
-  const { width, height } = surface;
   const portrait = height > width;
   const responsiveMode = responsive && (anchor === 'left' || anchor === 'right');
   const orientationPersistent = responsiveMode && !portrait;
@@ -183,7 +185,7 @@ export const Drawer: React.FC<DrawerProps> = ({
 
   // When persistent, offset the current surface so content isn't hidden
   useLayoutEffect(() => {
-    const node = surface.element;
+    const node = element;
     if (!node) return;
     const horizontal = anchor === 'left' || anchor === 'right';
     if (persistentEffective && horizontal) {
@@ -196,7 +198,7 @@ export const Drawer: React.FC<DrawerProps> = ({
       };
     }
     return;
-  }, [surface.element, persistentEffective, anchor, size]);
+  }, [element, persistentEffective, anchor, size]);
 
   if (!open && !persistentEffective) {
     if (responsiveMode && portrait) {
