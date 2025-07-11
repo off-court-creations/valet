@@ -8,6 +8,7 @@ import {
   Box,
   Typography,
   Button,
+  ProgressButton,
   useTheme,
   Tabs,
   Table,
@@ -156,8 +157,29 @@ export default function ButtonDemoPage() {
           </Button>
         </Stack>
 
-            {/* 9 ▸ Theme toggle (LAST) ------------------------------------- */}
-            <Typography variant="h3">9. Theme toggle</Typography>
+        {/* 9 ▸ Progress button ----------------------------------------- */}
+        <Typography variant="h3">9. Progress button</Typography>
+        <Stack direction="row" spacing={1}>
+          <ProgressButton onClick={() => new Promise((r) => setTimeout(r, 1500))}>
+            Async
+          </ProgressButton>
+          <ProgressButton
+            variant="outlined"
+            size="sm"
+            onClick={() => new Promise((r) => setTimeout(r, 1500))}
+          >
+            Outlined
+          </ProgressButton>
+          <ProgressButton
+            color="secondary"
+            size="lg"
+            onClick={() => new Promise((r) => setTimeout(r, 1500))}
+          >
+            Large
+          </ProgressButton>
+        </Stack>
+            {/* 10 ▸ Theme toggle (LAST) ------------------------------------ */}
+            <Typography variant="h3">10. Theme toggle</Typography>
             <Button variant="outlined" onClick={toggleMode}>
               Toggle light / dark mode
             </Button>
