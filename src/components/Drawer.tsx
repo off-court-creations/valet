@@ -9,6 +9,7 @@ import { createPortal } from 'react-dom';
 import { styled } from '../css/createStyled';
 import { useTheme } from '../system/themeStore';
 import { useSurface } from '../system/surfaceStore';
+import { useOrientation } from '../hooks/useOrientation';
 import { preset } from '../css/stylePresets';
 import type { Presettable } from '../types';
 import { IconButton } from './IconButton';
@@ -131,10 +132,10 @@ export const Drawer: React.FC<DrawerProps> = ({
 }) => {
   const { theme } = useTheme();
   const surface = useSurface();
+  const orientation = useOrientation();
   const presetClasses = presetKey ? preset(presetKey) : '';
 
-  const { width, height } = surface;
-  const portrait = height > width;
+  const portrait = orientation === 'portrait';
   const responsiveMode = responsive && (anchor === 'left' || anchor === 'right');
   const orientationPersistent = responsiveMode && !portrait;
   const persistentEffective = persistent || orientationPersistent;
