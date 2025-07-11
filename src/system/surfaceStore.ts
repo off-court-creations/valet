@@ -31,6 +31,7 @@ export interface SurfaceState {
 export const createSurfaceStore = () =>
   create<SurfaceState>((set, get) => {
     const nodes = new Map<string, { node: HTMLElement; cb?: (m: ChildMetrics) => void }>()
+    const targets = new WeakMap<HTMLElement, { id: string; cb?: (m: ChildMetrics) => void }>()
 
     const ro = new ResizeObserver((entries) => {
       const surfEl = get().element
@@ -39,24 +40,22 @@ export const createSurfaceStore = () =>
       const scrollLeft = surfEl ? surfEl.scrollLeft : 0
 
       for (const entry of entries) {
-        for (const [id, meta] of nodes) {
-          if (meta.node === entry.target) {
-            const rect = entry.target.getBoundingClientRect()
-            const metrics = {
-              width: rect.width,
-              height: Math.round(rect.height),
-              top: rect.top - sRect.top + scrollTop,
-              left: rect.left - sRect.left + scrollLeft,
-            }
-            set((s) => {
-              const next = new Map(s.children)
-              next.set(id, metrics)
-              return { children: next }
-            })
-            meta.cb?.(metrics)
-            break
-          }
+        const meta = targets.get(entry.target as HTMLElement)
+        if (!meta) continue
+        const { id, cb } = meta
+        const rect = entry.target.getBoundingClientRect()
+        const metrics = {
+          width: rect.width,
+          height: Math.round(rect.height),
+          top: rect.top - sRect.top + scrollTop,
+          left: rect.left - sRect.left + scrollLeft,
         }
+        set((s) => {
+          const next = new Map(s.children)
+          next.set(id, metrics)
+          return { children: next }
+        })
+        cb?.(metrics)
       }
     })
 
@@ -69,6 +68,7 @@ export const createSurfaceStore = () =>
       children: new Map(),
       registerChild: (id, node, cb) => {
         nodes.set(id, { node, cb })
+        targets.set(node, { id, cb })
         ro.observe(node)
         const surfEl = get().element
         const sRect = surfEl ? surfEl.getBoundingClientRect() : { top: 0, left: 0 }
@@ -92,6 +92,7 @@ export const createSurfaceStore = () =>
         const entry = nodes.get(id)
         if (entry) {
           ro.unobserve(entry.node)
+          targets.delete(entry.node)
           nodes.delete(id)
         }
         set((s) => {
