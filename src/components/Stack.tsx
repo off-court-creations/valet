@@ -60,12 +60,14 @@ export const Stack: React.FC<StackProps> = ({
 
   /* Resolve number → theme spacing */
   let gap: string;
-  if (spacing === undefined) {
-    gap = '0';
-  } else if (typeof spacing === 'number') {
-    gap = theme.spacing(spacing);
+  let gapInput: number | string | undefined = spacing;
+  if (gapInput === undefined) {
+    gapInput = compact ? 0 : 1;
+  }
+  if (typeof gapInput === 'number') {
+    gap = theme.spacing(gapInput);
   } else {
-    gap = String(spacing);
+    gap = String(gapInput);
   }
 
   /* Enable wrapping by default when laying out in a row */
