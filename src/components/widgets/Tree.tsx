@@ -23,6 +23,8 @@ export interface TreeProps<T>
   nodes: TreeNode<T>[];
   getLabel: (node: T) => React.ReactNode;
   defaultExpanded?: string[];
+  expanded?: string[];
+  onExpandedChange?: (expanded: string[]) => void;
   /** Active selection (controlled). */
   selected?: string;
   /** Default selection for uncontrolled usage. */
@@ -139,6 +141,8 @@ export function Tree<T>({
   nodes,
   getLabel,
   defaultExpanded = [],
+  expanded: expandedProp,
+  onExpandedChange,
   selected: selectedProp,
   defaultSelected,
   onNodeSelect,
@@ -148,7 +152,9 @@ export function Tree<T>({
   ...rest
 }: TreeProps<T>) {
   const { theme } = useTheme();
-  const [expanded, setExpanded] = useState(() => new Set(defaultExpanded));
+  const controlledExpand = expandedProp !== undefined;
+  const [selfExpanded, setSelfExpanded] = useState(() => new Set(defaultExpanded));
+  const expanded = controlledExpand ? new Set(expandedProp) : selfExpanded;
   const [focused, setFocused] = useState<string | null>(null);
   const controlled = selectedProp !== undefined;
   const [selfSelected, setSelfSelected] = useState<string | null>(
@@ -174,7 +180,7 @@ export function Tree<T>({
     };
     walk(nodes, 0);
     return res;
-  }, [nodes, expanded]);
+  }, [nodes, expandedProp, selfExpanded]);
 
   const refs = useRef<Record<string, HTMLDivElement | null>>({});
 
@@ -184,12 +190,22 @@ export function Tree<T>({
   };
 
   const toggle = (id: string) => {
-    setExpanded((prev) => {
+    const apply = (prev: Set<string>) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
       else next.add(id);
       return next;
-    });
+    };
+    if (controlledExpand) {
+      const next = apply(expanded);
+      onExpandedChange?.([...next]);
+    } else {
+      setSelfExpanded((prev) => {
+        const next = apply(prev);
+        onExpandedChange?.([...next]);
+        return next;
+      });
+    }
   };
 
   const line = theme.colors.backgroundAlt;
