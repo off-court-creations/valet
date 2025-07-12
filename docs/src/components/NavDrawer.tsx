@@ -2,6 +2,7 @@
 // src/components/NavDrawer.tsx  | valet docs
 // Reusable navigation drawer for docs
 // ─────────────────────────────────────────────────────────────
+import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Drawer,
@@ -65,6 +66,15 @@ const demos: [string, string][] = [
   ['Parallax', '/parallax'],
   ['Presets', '/presets'],
   ['Radio Button', '/test'],
+];
+
+const DEFAULT_EXPANDED = [
+  'getting-started',
+  'primitives',
+  'layout',
+  'fields',
+  'widgets',
+  'demos',
 ];
 
 const treeData: TreeNode<Item>[] = [
@@ -133,6 +143,23 @@ export default function NavDrawer() {
   const navigate = useNavigate();
   const location = useLocation();
   const { theme } = useTheme();
+  const [expanded, setExpanded] = useState<string[]>(() => {
+    try {
+      const raw = localStorage.getItem('navExpanded');
+      return raw ? JSON.parse(raw) : DEFAULT_EXPANDED;
+    } catch {
+      return DEFAULT_EXPANDED;
+    }
+  });
+
+  const handleExpandedChange = (ids: string[]) => {
+    setExpanded(ids);
+    try {
+      localStorage.setItem('navExpanded', JSON.stringify(ids));
+    } catch {
+      /* ignore */
+    }
+  };
   return (
     <Drawer responsive anchor="left" size="16rem">
       <Tree<Item>
@@ -140,14 +167,8 @@ export default function NavDrawer() {
         getLabel={(n) => n.label}
         variant="list"
         selected={location.pathname}
-        defaultExpanded={[
-          'getting-started',
-          'primitives',
-          'layout',
-          'fields',
-          'widgets',
-          'demos',
-        ]}
+        expanded={expanded}
+        onExpandedChange={handleExpandedChange}
         onNodeSelect={(n) => n.path && navigate(n.path)}
         style={{ padding: theme.spacing(1) }}
       />
