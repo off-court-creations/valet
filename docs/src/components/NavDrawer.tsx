@@ -18,29 +18,29 @@ interface Item {
 const primitives: [string, string][] = [
   ['Avatar', '/avatar-demo'],
   ['Icon', '/icon-demo'],
-  ['Typography', '/typography'],
   ['Modal', '/modal-demo'],
   ['Progress', '/progress-demo'],
+  ['Typography', '/typography'],
   ['Video', '/video-demo'],
 ];
 
 const layoutPrimitives: [string, string][] = [
   ['Box', '/box-demo'],
-  ['Panel', '/panel-demo'],
   ['Grid', '/grid-demo'],
+  ['Panel', '/panel-demo'],
   ['Stack', '/stack-demo'],
 ];
 
 const fields: [string, string][] = [
   ['Button', '/button-demo'],
   ['Checkbox', '/checkbox-demo'],
+  ['DateTime Picker', '/datetime-demo'],
   ['Icon Button', '/icon-button-demo'],
   ['Radio Group', '/radio-demo'],
   ['Select', '/select-demo'],
   ['Slider', '/slider-demo'],
   ['Switch', '/switch-demo'],
   ['TextField', '/text-form-demo'],
-  ['DateTime Picker', '/datetime-demo'],
 ];
 
 const widgets: [string, string][] = [
@@ -50,6 +50,7 @@ const widgets: [string, string][] = [
   ['Drawer', '/drawer-demo'],
   ['List', '/list-demo'],
   ['Pagination', '/pagination-demo'],
+  ['Parallax', '/parallax'],
   ['Snackbar', '/snackbar-demo'],
   ['Speed Dial', '/speeddial-demo'],
   ['Stepper', '/stepper-demo'],
@@ -57,13 +58,12 @@ const widgets: [string, string][] = [
   ['Tabs', '/tabs-demo'],
   ['Tooltip', '/tooltip-demo'],
   ['Tree', '/tree-demo'],
-  ['Parallax', '/parallax'],
 ];
 
 const demos: [string, string][] = [
-  ['Presets', '/presets'],
   ['Form', '/form'],
   ['Parallax', '/parallax'],
+  ['Presets', '/presets'],
   ['Radio Button', '/test'],
 ];
 
@@ -86,17 +86,17 @@ const treeData: TreeNode<Item>[] = [
     data: { label: 'Components' },
     children: [
       {
-        id: 'primitives',
-        data: { label: 'Primitives' },
-        children: primitives.map(([label, path]) => ({
+        id: 'layout',
+        data: { label: 'Layout Primitives' },
+        children: layoutPrimitives.map(([label, path]) => ({
           id: path,
           data: { label, path },
         })),
       },
       {
-        id: 'layout',
-        data: { label: 'Layout Primitives' },
-        children: layoutPrimitives.map(([label, path]) => ({
+        id: 'primitives',
+        data: { label: 'Primitives' },
+        children: primitives.map(([label, path]) => ({
           id: path,
           data: { label, path },
         })),
@@ -142,7 +142,6 @@ export default function NavDrawer() {
         selected={location.pathname}
         defaultExpanded={[
           'getting-started',
-          'components',
           'primitives',
           'layout',
           'fields',
