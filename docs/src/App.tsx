@@ -42,6 +42,7 @@ const ListDemoPage          = page(() => import('./pages/ListDemoPage'));
 const DrawerDemoPage        = page(() => import('./pages/DrawerDemo'));
 const AppBarDemoPage        = page(() => import('./pages/AppBarDemo'));
 const GridDemoPage          = page(() => import('./pages/GridDemo'));
+const StackDemoPage         = page(() => import('./pages/StackDemo'));
 const PaginationDemoPage    = page(() => import('./pages/PaginationDemo'));
 const SpeedDialDemoPage     = page(() => import('./pages/SpeedDialDemo'));
 const StepperDemoPage       = page(() => import('./pages/StepperDemo'));
@@ -108,6 +109,7 @@ export function App() {
         <Route path="/drawer-demo"     element={<DrawerDemoPage />} />
         <Route path="/appbar-demo"     element={<AppBarDemoPage />} />
         <Route path="/grid-demo"       element={<GridDemoPage />} />
+        <Route path="/stack-demo"      element={<StackDemoPage />} />
         <Route path="/pagination-demo" element={<PaginationDemoPage />} />
         <Route path="/speeddial-demo"  element={<SpeedDialDemoPage />} />
         <Route path="/stepper-demo"    element={<StepperDemoPage />} />
