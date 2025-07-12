@@ -88,8 +88,8 @@ const BranchItem = styled('li')<{ $line: string; $root?: boolean }>`
         content: '';
         position: absolute;
         top: 0.875rem;
-        left: calc(-1rem + 0.375em);
-        width: calc(1rem - 0.375em);
+        left: calc(-1rem + 0.75em);
+        width: calc(1.25rem - 0.75em);
         border-top: 1px solid ${$line};
       }
     `}
@@ -98,7 +98,7 @@ const BranchItem = styled('li')<{ $line: string; $root?: boolean }>`
     position: absolute;
     top: 0;
     bottom: 0;
-    left: calc(-1rem + 0.375em);
+    left: calc(-1rem + 0.75em);
     border-left: 1px solid ${({ $line }) => $line};
   }
 `;
