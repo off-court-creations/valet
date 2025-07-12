@@ -15,38 +15,48 @@ interface Item {
   path?: string;
 }
 
-const components: [string, string][] = [
-  ['Accordion', '/accordion-demo'],
+const primitives: [string, string][] = [
   ['Avatar', '/avatar-demo'],
   ['Box', '/box-demo'],
+  ['Icon', '/icon-demo'],
+  ['Panel', '/panel-demo'],
+  ['Typography', '/typography'],
+];
+
+const layoutPrimitives: [string, string][] = [
+  ['Grid', '/grid-demo'],
+];
+
+const fields: [string, string][] = [
   ['Button', '/button-demo'],
   ['Checkbox', '/checkbox-demo'],
+  ['Icon Button', '/icon-button-demo'],
+  ['Radio Group', '/radio-demo'],
+  ['Select', '/select-demo'],
+  ['Slider', '/slider-demo'],
+  ['Switch', '/switch-demo'],
+  ['TextField', '/text-form-demo'],
+  ['DateTime Picker', '/datetime-demo'],
+];
+
+const widgets: [string, string][] = [
+  ['Accordion', '/accordion-demo'],
+  ['AppBar', '/appbar-demo'],
   ['Chat', '/chat-demo'],
   ['Drawer', '/drawer-demo'],
-  ['DateTime Picker', '/datetime-demo'],
-  ['FormControl + Textfield', '/text-form-demo'],
-  ['Grid', '/grid-demo'],
-  ['Icon', '/icon-demo'],
-  ['Icon Button', '/icon-button-demo'],
   ['List', '/list-demo'],
   ['Modal', '/modal-demo'],
   ['Pagination', '/pagination-demo'],
-  ['Panel', '/panel-demo'],
-  ['Progress', '/progress-demo'],
-  ['Radio Group', '/radio-demo'],
-  ['Slider', '/slider-demo'],
-  ['Select', '/select-demo'],
   ['Snackbar', '/snackbar-demo'],
-  ['Switch', '/switch-demo'],
+  ['Speed Dial', '/speeddial-demo'],
+  ['Stepper', '/stepper-demo'],
   ['Table', '/table-demo'],
   ['Tabs', '/tabs-demo'],
   ['Tooltip', '/tooltip-demo'],
   ['Tree', '/tree-demo'],
-  ['Typography', '/typography'],
   ['Video', '/video-demo'],
-  ['AppBar', '/appbar-demo'],
-  ['Speed Dial', '/speeddial-demo'],
-  ['Stepper', '/stepper-demo'],
+  ['Progress', '/progress-demo'],
+  ['Parallax', '/parallax'],
 ];
 
 const demos: [string, string][] = [
@@ -73,10 +83,40 @@ const treeData: TreeNode<Item>[] = [
   {
     id: 'components',
     data: { label: 'Components' },
-    children: components.map(([label, path]) => ({
-      id: path,
-      data: { label, path },
-    })),
+    children: [
+      {
+        id: 'primitives',
+        data: { label: 'Primitives' },
+        children: primitives.map(([label, path]) => ({
+          id: path,
+          data: { label, path },
+        })),
+      },
+      {
+        id: 'layout',
+        data: { label: 'Layout Primitives' },
+        children: layoutPrimitives.map(([label, path]) => ({
+          id: path,
+          data: { label, path },
+        })),
+      },
+      {
+        id: 'fields',
+        data: { label: 'Fields' },
+        children: fields.map(([label, path]) => ({
+          id: path,
+          data: { label, path },
+        })),
+      },
+      {
+        id: 'widgets',
+        data: { label: 'Widgets' },
+        children: widgets.map(([label, path]) => ({
+          id: path,
+          data: { label, path },
+        })),
+      },
+    ],
   },
   {
     id: 'demos',
@@ -99,7 +139,15 @@ export default function NavDrawer() {
         getLabel={(n) => n.label}
         variant="list"
         selected={location.pathname}
-        defaultExpanded={['getting-started', 'components', 'demos']}
+        defaultExpanded={[
+          'getting-started',
+          'components',
+          'primitives',
+          'layout',
+          'fields',
+          'widgets',
+          'demos',
+        ]}
         onNodeSelect={(n) => n.path && navigate(n.path)}
         style={{ padding: theme.spacing(1) }}
       />
