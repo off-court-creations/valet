@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 - `Stack` spacing defaults to 1 and respects `compact` unless explicitly set
+- Docs now include a Surface usage explainer
 
 ## [0.9.0]
 ### Added

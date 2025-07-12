@@ -54,6 +54,7 @@ const DateTimeDemoPage      = page(() => import('./pages/DateTimeDemo'));
 const OverviewPage          = page(() => import('./pages/Overview'));
 const InstallationPage      = page(() => import('./pages/Installation'));
 const UsagePage             = page(() => import('./pages/Usage'));
+const SurfaceExplainerPage  = page(() => import('./pages/SurfaceExplainer'));
 
 /*───────────────────────────────────────────────────────────*/
 export function App() {
@@ -79,6 +80,7 @@ export function App() {
         <Route path="/overview"        element={<OverviewPage />} />
         <Route path="/installation"    element={<InstallationPage />} />
         <Route path="/usage"           element={<UsagePage />} />
+        <Route path="/surface"         element={<SurfaceExplainerPage />} />
         <Route path="/typography"      element={<TypographyDemoPage />} />
         <Route path="/presets"         element={<PresetDemoPage />} />
         <Route path="/form"            element={<FormDemoPage />} />
