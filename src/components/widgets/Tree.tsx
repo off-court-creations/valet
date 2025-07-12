@@ -89,7 +89,7 @@ const BranchItem = styled('li')<{ $line: string; $root?: boolean }>`
         position: absolute;
         top: 0.875rem;
         left: calc(-1rem + 0.75em);
-        width: calc(1rem - 0.75em);
+        width: 1.25rem;
         border-top: 1px solid ${$line};
       }
     `}
