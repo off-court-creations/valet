@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/Modal.tsx | valet
+// src/components/widgets/Modal.tsx | valet
 // Accessible, theme‑aware Modal component that supports both “dialog” and
 // “alert” semantics. Fully controlled/uncontrolled, focus‑trapping, backdrop &
 // ESC/Click dismissal, no external deps.
@@ -14,10 +14,10 @@ import React, {
     useState,
   } from 'react';
   import { createPortal } from 'react-dom';
-  import { styled } from '../css/createStyled';
-  import { useTheme } from '../system/themeStore';
-  import { preset } from '../css/stylePresets';
-  import type { Presettable } from '../types';
+  import { styled } from '../../css/createStyled';
+  import { useTheme } from '../../system/themeStore';
+  import { preset } from '../../css/stylePresets';
+  import type { Presettable } from '../../types';
   
   /*───────────────────────────────────────────────────────────*/
   /* Styled primitives                                         */

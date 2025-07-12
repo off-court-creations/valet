@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/Tabs.tsx | valet
+// src/components/widgets/Tabs.tsx | valet
 // Grid-based valet <Tabs> — bullet-proof placement: top / bottom / left / right
 // ─────────────────────────────────────────────────────────────
 import React, {
@@ -14,10 +14,10 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { styled }           from '../css/createStyled';
-import { useTheme }         from '../system/themeStore';
-import { preset }           from '../css/stylePresets';
-import type { Presettable } from '../types';
+import { styled }           from '../../css/createStyled';
+import { useTheme }         from '../../system/themeStore';
+import { preset }           from '../../css/stylePresets';
+import type { Presettable } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 /* Context                                                   */

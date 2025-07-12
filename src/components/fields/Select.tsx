@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/Select.tsx | valet
+// src/components/fields/Select.tsx | valet
 // Fully-typed, FormControl-aware <Select/> (single + multiple).
 // © 2025 Off-Court Creations – MIT licence
 // ─────────────────────────────────────────────────────────────
@@ -12,12 +12,12 @@ import React, {
     useRef,
     useState,
   }                               from 'react';
-  import { styled }               from '../css/createStyled';
-  import { useTheme }             from '../system/themeStore';
-  import { preset }               from '../css/stylePresets';
-  import { useForm }              from './FormControl';
-  import type { Presettable }     from '../types';
-  import type { Theme }           from '../system/themeStore';
+  import { styled }               from '../../css/createStyled';
+  import { useTheme }             from '../../system/themeStore';
+  import { preset }               from '../../css/stylePresets';
+  import { useForm }              from '../FormControl';
+  import type { Presettable }     from '../../types';
+  import type { Theme }           from '../../system/themeStore';
   
   type Primitive = string | number;
   

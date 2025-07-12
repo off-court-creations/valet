@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/Accordion.tsx | valet
+// src/components/widgets/Accordion.tsx | valet
 // Fully-typed, theme-aware <Accordion /> component
 // – Composition API (Accordion.Item / .Header / .Content)
 // – Controlled & uncontrolled modes, single- or multi-expand
@@ -18,13 +18,13 @@ import React, {
   useId,
   useEffect,
 } from 'react';
-import { styled }               from '../css/createStyled';
-import { useTheme }             from '../system/themeStore';
-import { preset }               from '../css/stylePresets';
-import { toRgb, mix, toHex }    from '../helpers/color';
-import { useSurface }           from '../system/surfaceStore';
+import { styled }               from '../../css/createStyled';
+import { useTheme }             from '../../system/themeStore';
+import { preset }               from '../../css/stylePresets';
+import { toRgb, mix, toHex }    from '../../helpers/color';
+import { useSurface }           from '../../system/surfaceStore';
 import { shallow }              from 'zustand/shallow';
-import type { Presettable }     from '../types';
+import type { Presettable }     from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 /* Context                                                   */

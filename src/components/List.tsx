@@ -7,7 +7,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { styled }                 from '../css/createStyled';
 import { useTheme }               from '../system/themeStore';
 import { preset }                 from '../css/stylePresets';
-import { Typography }             from './Typography';
+import { Typography }             from './primitives/Typography';
 import { stripe, toRgb, mix, toHex } from '../helpers/color';
 import type { Presettable }       from '../types';
 

@@ -8,7 +8,7 @@ import { useTheme }            from '../system/themeStore';
 import type { Theme }          from '../system/themeStore';
 import { preset }              from '../css/stylePresets';
 import type { Presettable }    from '../types';
-import { Icon }                from './Icon';
+import { Icon }                from './primitives/Icon';
 
 /*───────────────────────────────────────────────────────────*/
 /* Public API                                                */

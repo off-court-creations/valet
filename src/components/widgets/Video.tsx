@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/Video.tsx  | valet
+// src/components/widgets/Video.tsx  | valet
 // flexible <Video /> component with lazy loading & fullscreen
 // ─────────────────────────────────────────────────────────────
 import React, {
@@ -8,9 +8,9 @@ import React, {
   useEffect,
   KeyboardEvent,
 } from 'react';
-import { styled } from '../css/createStyled';
-import { preset } from '../css/stylePresets';
-import type { Presettable } from '../types';
+import { styled } from '../../css/createStyled';
+import { preset } from '../../css/stylePresets';
+import type { Presettable } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 /* Public types                                               */

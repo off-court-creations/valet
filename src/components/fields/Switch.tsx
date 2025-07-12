@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/Switch.tsx | valet
+// src/components/fields/Switch.tsx | valet
 // Theme-aware, accessible boolean <Switch /> component
 // – Un / controlled, FormControl-aware, preset-friendly
 // ─────────────────────────────────────────────────────────────
@@ -10,12 +10,12 @@ import React, {
     useState,
     MouseEventHandler,
   } from 'react';
-  import { styled }             from '../css/createStyled';
-  import { useTheme }           from '../system/themeStore';
-  import { preset }             from '../css/stylePresets';
-  import { useForm }            from './FormControl';
-  import type { Theme }         from '../system/themeStore';
-  import type { Presettable }   from '../types';
+  import { styled }             from '../../css/createStyled';
+  import { useTheme }           from '../../system/themeStore';
+  import { preset }             from '../../css/stylePresets';
+  import { useForm }            from '../FormControl';
+  import type { Theme }         from '../../system/themeStore';
+  import type { Presettable }   from '../../types';
   
   /*───────────────────────────────────────────────────────────*/
   /* Size map helper                                           */

@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/Icon.tsx  | valet
+// src/components/primitives/Icon.tsx  | valet
 // strict‑optional safe typings
 // ─────────────────────────────────────────────────────────────
 import React, {
@@ -8,9 +8,9 @@ import React, {
   PropsWithChildren,
 } from 'react';
 import { Icon as Iconify }     from '@iconify/react';
-import { styled }              from '../css/createStyled';
-import { preset }              from '../css/stylePresets';
-import type { Presettable }    from '../types';
+import { styled }              from '../../css/createStyled';
+import { preset }              from '../../css/stylePresets';
+import type { Presettable }    from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 /* Public props                                              */

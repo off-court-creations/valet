@@ -1,12 +1,12 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/Stack.tsx  | valet
+// src/components/layout/Stack.tsx  | valet
 // strict‑optional safe typings
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
-import { styled }            from '../css/createStyled';
-import { useTheme }   from '../system/themeStore';
-import { preset }            from '../css/stylePresets';
-import type { Presettable }  from '../types';
+import { styled }            from '../../css/createStyled';
+import { useTheme }   from '../../system/themeStore';
+import { preset }            from '../../css/stylePresets';
+import type { Presettable }  from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 /* Public props                                              */

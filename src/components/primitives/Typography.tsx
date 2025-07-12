@@ -1,14 +1,14 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/Typography.tsx | valet
+// src/components/primitives/Typography.tsx | valet
 // Semantic text variants with responsive sizes, colour vars
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
-import { styled } from '../css/createStyled';
-import { useTheme } from '../system/themeStore';
-import { useSurface } from '../system/surfaceStore';
+import { styled } from '../../css/createStyled';
+import { useTheme } from '../../system/themeStore';
+import { useSurface } from '../../system/surfaceStore';
 import { shallow } from 'zustand/shallow';
-import { preset } from '../css/stylePresets';
-import type { Presettable } from '../types';
+import { preset } from '../../css/stylePresets';
+import type { Presettable } from '../../types';
 
 export type Variant =
   | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'

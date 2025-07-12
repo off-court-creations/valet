@@ -3,7 +3,7 @@
 // Basic accessible tree view component
 // ─────────────────────────────────────────────────────────────
 import React, { useMemo, useState, useRef, KeyboardEvent } from 'react';
-import Icon from './Icon';
+import Icon from './primitives/Icon';
 import { styled } from '../css/createStyled';
 import { useTheme } from '../system/themeStore';
 import { preset } from '../css/stylePresets';

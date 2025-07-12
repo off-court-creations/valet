@@ -1,14 +1,14 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/Button.tsx | valet
+// src/components/fields/Button.tsx | valet
 // Theme-aware <Button /> – automatic Typography wrapping
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
-import { styled }           from '../css/createStyled';
-import { useTheme }         from '../system/themeStore';
-import type { Theme }       from '../system/themeStore';
-import { preset }           from '../css/stylePresets';
-import { Typography }       from './Typography';
-import type { Presettable } from '../types';
+import { styled }           from '../../css/createStyled';
+import { useTheme }         from '../../system/themeStore';
+import type { Theme }       from '../../system/themeStore';
+import { preset }           from '../../css/stylePresets';
+import { Typography }       from '../primitives/Typography';
+import type { Presettable } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 export type ButtonVariant = 'contained' | 'outlined';

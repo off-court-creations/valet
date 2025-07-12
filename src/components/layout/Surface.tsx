@@ -1,18 +1,18 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/Surface.tsx  | valet
+// src/components/layout/Surface.tsx  | valet
 // top-level wrapper that applies theme backgrounds and breakpoints
 // ─────────────────────────────────────────────────────────────
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Breakpoint, useTheme } from '../system/themeStore';
-import { useFonts } from '../system/fontStore';
-import LoadingBackdrop from './LoadingBackdrop';
+import { Breakpoint, useTheme } from '../../system/themeStore';
+import { useFonts } from '../../system/fontStore';
+import LoadingBackdrop from '../LoadingBackdrop';
 import {
   createSurfaceStore,
   SurfaceCtx,
   useSurface as useSurfaceState,
-} from '../system/surfaceStore';
-import { preset } from '../css/stylePresets';
-import type { Presettable } from '../types';
+} from '../../system/surfaceStore';
+import { preset } from '../../css/stylePresets';
+import type { Presettable } from '../../types';
 
 /** Surface Props definition */
 export interface SurfaceProps

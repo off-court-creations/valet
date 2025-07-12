@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/Slider.tsx | valet
+// src/components/fields/Slider.tsx | valet
 // Theme-aware, ultra-fast <Slider/> for @archway/valet
 // – Un/controlled, FormControl-aware, preset-friendly
 // – Optional min/max & live value labels, ticks, three snap modes
@@ -17,12 +17,12 @@ import React, {
     KeyboardEvent,
     MutableRefObject,
   } from 'react';
-  import { styled }            from '../css/createStyled';
-  import { useTheme }          from '../system/themeStore';
-  import { preset }            from '../css/stylePresets';
-  import { useForm }           from './FormControl';
-  import type { Theme }        from '../system/themeStore';
-  import type { Presettable }  from '../types';
+  import { styled }            from '../../css/createStyled';
+  import { useTheme }          from '../../system/themeStore';
+  import { preset }            from '../../css/stylePresets';
+  import { useForm }           from '../FormControl';
+  import type { Theme }        from '../../system/themeStore';
+  import type { Presettable }  from '../../types';
   
   /*───────────────────────────────────────────────────────────*/
   /* Size map                                                  */

@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/Table.tsx  | valet
+// src/components/widgets/Table.tsx  | valet
 // Row-hover highlight fixed and now more saturated hover colour.
 // ─────────────────────────────────────────────────────────────
 import React, {
@@ -10,14 +10,14 @@ import React, {
   useRef,
   useId,
 } from 'react';
-import { styled }                 from '../css/createStyled';
-import { useTheme }               from '../system/themeStore';
-import { useSurface }             from '../system/surfaceStore';
+import { styled }                 from '../../css/createStyled';
+import { useTheme }               from '../../system/themeStore';
+import { useSurface }             from '../../system/surfaceStore';
 import { shallow }                from 'zustand/shallow';
-import { preset }                 from '../css/stylePresets';
-import { Checkbox }               from './Checkbox';
-import { stripe, toRgb, mix, toHex } from '../helpers/color';
-import type { Presettable }       from '../types';
+import { preset }                 from '../../css/stylePresets';
+import { Checkbox }               from '../fields/Checkbox';
+import { stripe, toRgb, mix, toHex } from '../../helpers/color';
+import type { Presettable }       from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 /* Column definition                                          */

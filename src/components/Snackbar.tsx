@@ -23,7 +23,7 @@ import { useTheme }             from '../system/themeStore';
 import { useSurface }           from '../system/surfaceStore';
 import { shallow }              from 'zustand/shallow';
 import { preset }               from '../css/stylePresets';
-import { Typography }           from './Typography';
+import { Typography }           from './primitives/Typography';
 import type { Presettable }     from '../types';
 
 /*───────────────────────────────────────────────────────────*/

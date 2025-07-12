@@ -1,12 +1,12 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/Pagination.tsx  | valet
+// src/components/widgets/Pagination.tsx  | valet
 // Tab-style pagination with thick underline for active page
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
-import { styled } from '../css/createStyled';
-import { preset } from '../css/stylePresets';
-import { useTheme } from '../system/themeStore';
-import type { Presettable } from '../types';
+import { styled } from '../../css/createStyled';
+import { preset } from '../../css/stylePresets';
+import { useTheme } from '../../system/themeStore';
+import type { Presettable } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 /* Public props                                              */

@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/TextField.tsx  | valet
+// src/components/fields/TextField.tsx  | valet
 // controlled text input integrating with FormControl
 // ─────────────────────────────────────────────────────────────
 import React, {
@@ -9,12 +9,12 @@ import React, {
   InputHTMLAttributes,
   TextareaHTMLAttributes,
 } from 'react';
-import { styled } from '../css/createStyled';
-import { useTheme } from '../system/themeStore';
-import { preset } from '../css/stylePresets';
-import { useForm } from './FormControl';
-import type { Theme } from '../system/themeStore';
-import type { Presettable } from '../types';
+import { styled } from '../../css/createStyled';
+import { useTheme } from '../../system/themeStore';
+import { preset } from '../../css/stylePresets';
+import { useForm } from '../FormControl';
+import type { Theme } from '../../system/themeStore';
+import type { Presettable } from '../../types';
 
 /*───────────────────────────────────────────────────────────────────────────*/
 /* Prop contracts                                                            */

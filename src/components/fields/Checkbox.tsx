@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// src/components/Checkbox.tsx | valet
+// src/components/fields/Checkbox.tsx | valet
 // Theme-aware, accessible Checkbox – consistent outline, no blue flash,
 // greyed-out disabled styling (Accordion-style).
 // ─────────────────────────────────────────────────────────────────────────────
@@ -11,13 +11,13 @@ import React, {
   ChangeEvent,
   ReactNode,
 } from 'react';
-import { styled }         from '../css/createStyled';
-import { useTheme }       from '../system/themeStore';
-import { preset }         from '../css/stylePresets';
-import { useForm }        from './FormControl';
-import { toRgb, mix, toHex } from '../helpers/color';
-import type { Theme }     from '../system/themeStore';
-import type { Presettable } from '../types';
+import { styled }         from '../../css/createStyled';
+import { useTheme }       from '../../system/themeStore';
+import { preset }         from '../../css/stylePresets';
+import { useForm }        from '../FormControl';
+import { toRgb, mix, toHex } from '../../helpers/color';
+import type { Theme }     from '../../system/themeStore';
+import type { Presettable } from '../../types';
 
 /*───────────────────────────────────────────────────────────────────────────*/
 /* Public prop contracts                                                    */

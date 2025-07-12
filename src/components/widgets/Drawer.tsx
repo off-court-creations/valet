@@ -1,18 +1,18 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/Drawer.tsx  | valet
+// src/components/widgets/Drawer.tsx  | valet
 // Minimal sliding drawer component akin to MUI's Drawer.
 // Controlled/uncontrolled, with backdrop and escape handling.
 // ─────────────────────────────────────────────────────────────
 
 import React, { useCallback, useLayoutEffect, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { styled } from '../css/createStyled';
-import { useTheme } from '../system/themeStore';
-import { useSurface } from '../system/surfaceStore';
+import { styled } from '../../css/createStyled';
+import { useTheme } from '../../system/themeStore';
+import { useSurface } from '../../system/surfaceStore';
 import { shallow } from 'zustand/shallow';
-import { preset } from '../css/stylePresets';
-import type { Presettable } from '../types';
-import { IconButton } from './IconButton';
+import { preset } from '../../css/stylePresets';
+import type { Presettable } from '../../types';
+import { IconButton } from '../IconButton';
 
 /*───────────────────────────────────────────────────────────*/
 export type DrawerAnchor = 'left' | 'right' | 'top' | 'bottom';

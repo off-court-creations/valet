@@ -1,12 +1,12 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/SpeedDial.tsx | valet
+// src/components/widgets/SpeedDial.tsx | valet
 // Floating action button with expandable actions
 // ─────────────────────────────────────────────────────────────
 import React, { useState } from 'react';
-import { styled }          from '../css/createStyled';
-import { preset }          from '../css/stylePresets';
-import { useTheme }        from '../system/themeStore';
-import type { Presettable } from '../types';
+import { styled }          from '../../css/createStyled';
+import { preset }          from '../../css/stylePresets';
+import { useTheme }        from '../../system/themeStore';
+import type { Presettable } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 export interface SpeedDialAction {

@@ -15,38 +15,47 @@ interface Item {
   path?: string;
 }
 
-const components: [string, string][] = [
-  ['Accordion', '/accordion-demo'],
-  ['Avatar', '/avatar-demo'],
+const primitives: [string, string][] = [
   ['Box', '/box-demo'],
+  ['Typography', '/typography'],
+  ['Icon', '/icon-demo'],
+  ['Panel', '/panel-demo'],
+];
+
+const layoutPrimitives: [string, string][] = [
+  ['Grid', '/grid-demo'],
+];
+
+const fields: [string, string][] = [
   ['Button', '/button-demo'],
   ['Checkbox', '/checkbox-demo'],
-  ['Chat', '/chat-demo'],
-  ['Drawer', '/drawer-demo'],
-  ['DateTime Picker', '/datetime-demo'],
-  ['FormControl + Textfield', '/text-form-demo'],
-  ['Grid', '/grid-demo'],
-  ['Icon', '/icon-demo'],
-  ['Icon Button', '/icon-button-demo'],
-  ['List', '/list-demo'],
-  ['Modal', '/modal-demo'],
-  ['Pagination', '/pagination-demo'],
-  ['Panel', '/panel-demo'],
-  ['Progress', '/progress-demo'],
+  ['Switch', '/switch-demo'],
   ['Radio Group', '/radio-demo'],
   ['Slider', '/slider-demo'],
+  ['FormControl + Textfield', '/text-form-demo'],
   ['Select', '/select-demo'],
-  ['Snackbar', '/snackbar-demo'],
-  ['Switch', '/switch-demo'],
-  ['Table', '/table-demo'],
+];
+
+const widgets: [string, string][] = [
+  ['Accordion', '/accordion-demo'],
   ['Tabs', '/tabs-demo'],
+  ['Drawer', '/drawer-demo'],
+  ['Modal', '/modal-demo'],
+  ['Stepper', '/stepper-demo'],
+  ['Speed Dial', '/speeddial-demo'],
+  ['Pagination', '/pagination-demo'],
+  ['Table', '/table-demo'],
+  ['Video', '/video-demo'],
+  ['Avatar', '/avatar-demo'],
+  ['Chat', '/chat-demo'],
+  ['DateTime Picker', '/datetime-demo'],
+  ['Icon Button', '/icon-button-demo'],
+  ['List', '/list-demo'],
+  ['Progress', '/progress-demo'],
+  ['Snackbar', '/snackbar-demo'],
   ['Tooltip', '/tooltip-demo'],
   ['Tree', '/tree-demo'],
-  ['Typography', '/typography'],
-  ['Video', '/video-demo'],
   ['AppBar', '/appbar-demo'],
-  ['Speed Dial', '/speeddial-demo'],
-  ['Stepper', '/stepper-demo'],
 ];
 
 const demos: [string, string][] = [
@@ -73,10 +82,28 @@ const treeData: TreeNode<Item>[] = [
   {
     id: 'components',
     data: { label: 'Components' },
-    children: components.map(([label, path]) => ({
-      id: path,
-      data: { label, path },
-    })),
+    children: [
+      {
+        id: 'primitives',
+        data: { label: 'Primitives' },
+        children: primitives.map(([label, path]) => ({ id: path, data: { label, path } })),
+      },
+      {
+        id: 'layout-primitives',
+        data: { label: 'Layout Primitives' },
+        children: layoutPrimitives.map(([label, path]) => ({ id: path, data: { label, path } })),
+      },
+      {
+        id: 'fields',
+        data: { label: 'Fields' },
+        children: fields.map(([label, path]) => ({ id: path, data: { label, path } })),
+      },
+      {
+        id: 'widgets',
+        data: { label: 'Widgets' },
+        children: widgets.map(([label, path]) => ({ id: path, data: { label, path } })),
+      },
+    ],
   },
   {
     id: 'demos',
@@ -99,7 +126,7 @@ export default function NavDrawer() {
         getLabel={(n) => n.label}
         variant="list"
         selected={location.pathname}
-        defaultExpanded={['getting-started', 'components', 'demos']}
+        defaultExpanded={['getting-started', 'components', 'primitives', 'layout-primitives', 'fields', 'widgets', 'demos']}
         onNodeSelect={(n) => n.path && navigate(n.path)}
         style={{ padding: theme.spacing(1) }}
       />

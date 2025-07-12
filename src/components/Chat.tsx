@@ -15,12 +15,12 @@ import { useSurface } from '../system/surfaceStore';
 import { shallow } from 'zustand/shallow';
 import { preset } from '../css/stylePresets';
 import IconButton from './IconButton';
-import TextField from './TextField';
-import Panel from './Panel';
-import Typography from './Typography';
+import TextField from './fields/TextField';
+import Panel from './primitives/Panel';
+import Typography from './primitives/Typography';
 import Avatar from './Avatar';
 import type { Presettable } from '../types';
-import Stack from './Stack';
+import Stack from './layout/Stack';
 
 /*───────────────────────────────────────────────────────────*/
 /* Types                                                      */
