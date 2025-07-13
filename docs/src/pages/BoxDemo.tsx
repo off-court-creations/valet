@@ -14,14 +14,12 @@ import {
 } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../components/NavDrawer';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Demo page                                                                  */
 export default function BoxDemoPage() {
   const { theme, toggleMode } = useTheme();   // live theme switch
-  const navigate = useNavigate();
 
   interface Row {
     prop: ReactNode;
@@ -166,14 +164,6 @@ export default function BoxDemoPage() {
             <Table data={data} columns={columns} constrainHeight={false} />
           </Tabs.Panel>
         </Tabs>
-
-        <Button
-          size="lg"
-          onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing(1) }}
-        >
-          ← Back
-        </Button>
       </Stack>
     </Surface>
   );

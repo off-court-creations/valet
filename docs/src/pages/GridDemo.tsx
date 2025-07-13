@@ -6,7 +6,6 @@ import {
   Surface,
   Stack,
   Typography,
-  Button,
   Grid,
   Box,
   Tabs,
@@ -14,13 +13,11 @@ import {
   useTheme,
 } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
-import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../components/NavDrawer';
 import type { ReactNode } from 'react';
 
 export default function GridDemoPage() {
-  const { theme, toggleMode } = useTheme();
-  const navigate = useNavigate();
+  const { theme } = useTheme();
 
   interface Row {
     prop: ReactNode;
@@ -133,17 +130,6 @@ export default function GridDemoPage() {
             <Table data={data} columns={columns} constrainHeight={false} />
           </Tabs.Panel>
         </Tabs>
-
-        <Button variant="outlined" onClick={toggleMode} style={{ marginTop: theme.spacing(1) }}>
-          Toggle light / dark
-        </Button>
-        <Button
-          size="lg"
-          onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing(1) }}
-        >
-          ← Back
-        </Button>
       </Stack>
     </Surface>
   );
