@@ -1,7 +1,7 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// src/pages/PanelDemoPage.tsx
-// A comprehensive live demo of every Panel capability in ZeroUI
-// ─────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// src/pages/PanelDemo.tsx | valet
+// Showcase of Panel component
+// ─────────────────────────────────────────────────────────────
 import {
   Surface,
   Stack,          // tidy vertical layout
@@ -9,8 +9,11 @@ import {
   Typography,
   Button,
   useTheme,
+  Tabs,
+  Table,
 } from '@archway/valet';
-import { useNavigate } from 'react-router-dom';
+import type { TableColumn } from '@archway/valet';
+import type { ReactNode } from 'react';
 import NavDrawer from '../components/NavDrawer';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
@@ -18,7 +21,53 @@ import NavDrawer from '../components/NavDrawer';
 
 export default function PanelDemoPage() {
   const { theme, toggleMode } = useTheme();      // live theme switch
-  const navigate = useNavigate();
+
+  interface Row {
+    prop: ReactNode;
+    type: ReactNode;
+    default: ReactNode;
+    description: ReactNode;
+  }
+
+  const columns: TableColumn<Row>[] = [
+    { header: 'Prop', accessor: 'prop' },
+    { header: 'Type', accessor: 'type' },
+    { header: 'Default', accessor: 'default' },
+    { header: 'Description', accessor: 'description' },
+  ];
+
+  const data: Row[] = [
+    {
+      prop: <code>variant</code>,
+      type: <code>'main' | 'alt'</code>,
+      default: <code>'main'</code>,
+      description: 'Visual style',
+    },
+    {
+      prop: <code>fullWidth</code>,
+      type: <code>boolean</code>,
+      default: <code>false</code>,
+      description: 'Stretch to fill parent width',
+    },
+    {
+      prop: <code>background</code>,
+      type: <code>string</code>,
+      default: <code>-</code>,
+      description: 'Background colour override',
+    },
+    {
+      prop: <code>compact</code>,
+      type: <code>boolean</code>,
+      default: <code>false</code>,
+      description: 'Remove default margin and padding',
+    },
+    {
+      prop: <code>preset</code>,
+      type: <code>string | string[]</code>,
+      default: <code>-</code>,
+      description: 'Apply style presets',
+    },
+  ];
 
   return (
     <Surface /* Surface already defaults to theme background */>
@@ -30,15 +79,18 @@ export default function PanelDemoPage() {
         <Typography variant="h2" bold>
           Panel Showcase
         </Typography>
-        <Typography variant="subtitle">
-          All props & tricks, neatly demonstrated
-        </Typography>
+        <Typography variant="subtitle">All props &amp; tricks, neatly demonstrated</Typography>
 
-        {/* 1. Default Panel ------------------------------------------------- */}
-        <Typography variant="h3">1. Default Panel (variant=&quot;main&quot;)</Typography>
-        <Panel style={{ padding: theme.spacing(1) }}>
-          <Typography>(no props) — inherits theme backgroundAlt &amp; text</Typography>
-        </Panel>
+        <Tabs>
+          <Tabs.Tab label="Usage" />
+          <Tabs.Panel>
+            {/* 1. Default Panel ------------------------------------------------- */}
+            <Typography variant="h3">1. Default Panel (variant=&quot;main&quot;)</Typography>
+            <Panel style={{ padding: theme.spacing(1) }}>
+              <Typography>
+                (no props) — inherits theme backgroundAlt &amp; text
+              </Typography>
+            </Panel>
 
         {/* 2. alt variant --------------------------------------------------- */}
         <Typography variant="h3">2. variant=&quot;alt&quot;</Typography>
@@ -93,43 +145,42 @@ export default function PanelDemoPage() {
           </Panel>
         </Panel>
 
-        {/* 7. Preset demos -------------------------------------------------- */}
-        <Typography variant="h3">7. Presets</Typography>
-        <Stack>
-          <Panel preset="fancyHolder">
-            <Typography>preset=&quot;fancyHolder&quot;</Typography>
-          </Panel>
+            {/* 7. Preset demos -------------------------------------------------- */}
+            <Typography variant="h3">7. Presets</Typography>
+            <Stack>
+              <Panel preset="fancyHolder">
+                <Typography>preset=&quot;fancyHolder&quot;</Typography>
+              </Panel>
 
-          <Panel preset="glassHolder">
-            <Typography>preset=&quot;glassHolder&quot;</Typography>
-          </Panel>
+              <Panel preset="glassHolder">
+                <Typography>preset=&quot;glassHolder&quot;</Typography>
+              </Panel>
 
-          <Panel preset="gradientHolder">
-            <Typography>preset=&quot;gradientHolder&quot;</Typography>
-          </Panel>
+              <Panel preset="gradientHolder">
+                <Typography>preset=&quot;gradientHolder&quot;</Typography>
+              </Panel>
 
-          <Panel preset={['glassHolder', 'fancyHolder']}>
-            <Typography>
-              Combination&nbsp;
-              <code>preset={['glassHolder','fancyHolder']}</code>
-            </Typography>
-          </Panel>
-        </Stack>
+              <Panel preset={['glassHolder', 'fancyHolder']}>
+                <Typography>
+                  Combination&nbsp;
+                  <code>preset={['glassHolder','fancyHolder']}</code>
+                </Typography>
+              </Panel>
+            </Stack>
 
-        {/* 9. Live theme validation ---------------------------------------- */}
-        <Typography variant="h3">9. Theme coupling</Typography>
-        <Button variant="outlined" onClick={toggleMode}>
-          Toggle light / dark mode
-        </Button>
+            {/* 9. Live theme validation ---------------------------------------- */}
+            <Typography variant="h3">9. Theme coupling</Typography>
+            <Button variant="outlined" onClick={toggleMode}>
+              Toggle light / dark mode
+            </Button>
+          </Tabs.Panel>
 
-        {/* Back nav --------------------------------------------------------- */}
-        <Button
-          size="lg"
-          onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing(1) }}
-        >
-          ← Back
-        </Button>
+          <Tabs.Tab label="Reference" />
+          <Tabs.Panel>
+            <Typography variant="h3">Prop reference</Typography>
+            <Table data={data} columns={columns} constrainHeight={false} />
+          </Tabs.Panel>
+        </Tabs>
       </Stack>
     </Surface>
   );

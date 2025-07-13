@@ -1,9 +1,7 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// src/pages/ProgressDemoPage.tsx | valet
-// Interactive playground showcasing every <Progress/> capability – circular &
-// linear, determinate / indeterminate / buffer modes, all sizes, colour /
-// theme coupling, and live control via Slider, Button, & IconButton.
-// ─────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// src/pages/ProgressDemo.tsx | valet
+// Showcase of Progress component
+// ─────────────────────────────────────────────────────────────
 import { useEffect, useState } from 'react';
 import {
   Surface,
@@ -15,15 +13,82 @@ import {
   Slider,
   Progress,
   useTheme,
+  Tabs,
+  Table,
 } from '@archway/valet';
-import { useNavigate } from 'react-router-dom';
+import type { TableColumn } from '@archway/valet';
+import type { ReactNode } from 'react';
 import NavDrawer from '../components/NavDrawer';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Demo page                                                                  */
 export default function ProgressDemoPage() {
   const { theme, toggleMode } = useTheme();
-  const navigate               = useNavigate();
+
+  interface Row {
+    prop: ReactNode;
+    type: ReactNode;
+    default: ReactNode;
+    description: ReactNode;
+  }
+
+  const columns: TableColumn<Row>[] = [
+    { header: 'Prop', accessor: 'prop' },
+    { header: 'Type', accessor: 'type' },
+    { header: 'Default', accessor: 'default' },
+    { header: 'Description', accessor: 'description' },
+  ];
+
+  const data: Row[] = [
+    {
+      prop: <code>variant</code>,
+      type: <code>'linear' | 'circular'</code>,
+      default: <code>'linear'</code>,
+      description: 'Visual style',
+    },
+    {
+      prop: <code>mode</code>,
+      type: <code>'determinate' | 'indeterminate' | 'buffer'</code>,
+      default: <code>'determinate'</code>,
+      description: 'Progress behaviour',
+    },
+    {
+      prop: <code>value</code>,
+      type: <code>number</code>,
+      default: <code>0</code>,
+      description: '0–100 foreground value',
+    },
+    {
+      prop: <code>buffer</code>,
+      type: <code>number</code>,
+      default: <code>0</code>,
+      description: 'Secondary/buffer value',
+    },
+    {
+      prop: <code>size</code>,
+      type: <code>'sm' | 'md' | 'lg'</code>,
+      default: <code>'md'</code>,
+      description: 'Component scale',
+    },
+    {
+      prop: <code>showLabel</code>,
+      type: <code>boolean</code>,
+      default: <code>false</code>,
+      description: 'Show numeric percent',
+    },
+    {
+      prop: <code>color</code>,
+      type: <code>string</code>,
+      default: <code>-</code>,
+      description: 'Colour override',
+    },
+    {
+      prop: <code>preset</code>,
+      type: <code>string | string[]</code>,
+      default: <code>-</code>,
+      description: 'Apply style presets',
+    },
+  ];
 
   /* Controlled value / buffer ------------------------------------------- */
   const [value,  setValue]  = useState(40);
@@ -59,18 +124,21 @@ export default function ProgressDemoPage() {
           Every variant, mode, and size – plus interactive controls
         </Typography>
 
-        {/* 1. Circular indeterminate -------------------------------------- */}
-        <Typography variant="h3">1. Circular – indeterminate</Typography>
-        <Stack direction="row">
-          <Progress variant="circular" mode="indeterminate" />
-          <Progress variant="circular" mode="indeterminate" size="lg" />
-          <Progress
-            variant="circular"
-            mode="indeterminate"
-            size="sm"
-            color={theme.colors['success']}
-          />
-        </Stack>
+        <Tabs>
+          <Tabs.Tab label="Usage" />
+          <Tabs.Panel>
+            {/* 1. Circular indeterminate -------------------------------------- */}
+            <Typography variant="h3">1. Circular – indeterminate</Typography>
+            <Stack direction="row">
+              <Progress variant="circular" mode="indeterminate" />
+              <Progress variant="circular" mode="indeterminate" size="lg" />
+              <Progress
+                variant="circular"
+                mode="indeterminate"
+                size="sm"
+                color={theme.colors['success']}
+              />
+            </Stack>
 
         {/* 2. Circular determinate (controlled) --------------------------- */}
         <Typography variant="h3">2. Circular – determinate (controlled)</Typography>
@@ -124,15 +192,14 @@ export default function ProgressDemoPage() {
             </Button>
           </Stack>
         </Stack>
+          </Tabs.Panel>
 
-        {/* Back nav -------------------------------------------------------- */}
-        <Button
-          size="lg"
-          onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing(1) }}
-        >
-          ← Back
-        </Button>
+          <Tabs.Tab label="Reference" />
+          <Tabs.Panel>
+            <Typography variant="h3">Prop reference</Typography>
+            <Table data={data} columns={columns} constrainHeight={false} />
+          </Tabs.Panel>
+        </Tabs>
       </Stack>
     </Surface>
   );
