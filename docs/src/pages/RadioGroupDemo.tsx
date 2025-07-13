@@ -16,8 +16,11 @@ import {
   createFormStore,
   definePreset,
   useTheme,
+  Tabs,
+  Table,
 } from '@archway/valet';
-import { useNavigate } from 'react-router-dom';
+import type { TableColumn } from '@archway/valet';
+import type { ReactNode } from 'react';
 import NavDrawer from '../components/NavDrawer';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
@@ -50,7 +53,6 @@ const useSurveyForm = createFormStore({
 /* Demo page                                                                  */
 export default function RadioGroupDemoPage() {
   const { theme, toggleMode } = useTheme();       // live theme switch
-  const navigate              = useNavigate();
 
   /* Controlled example state --------------------------------------------- */
   const [shipping, setShipping] = useState<'standard' | 'express'>('standard');
@@ -60,6 +62,71 @@ export default function RadioGroupDemoPage() {
     // eslint-disable-next-line no-alert – demo purposes only
     alert(JSON.stringify(values, null, 2));
   };
+
+  interface Row {
+    prop: ReactNode;
+    type: ReactNode;
+    default: ReactNode;
+    description: ReactNode;
+  }
+
+  const columns: TableColumn<Row>[] = [
+    { header: 'Prop', accessor: 'prop' },
+    { header: 'Type', accessor: 'type' },
+    { header: 'Default', accessor: 'default' },
+    { header: 'Description', accessor: 'description' },
+  ];
+
+  const data: Row[] = [
+    {
+      prop: <code>value</code>,
+      type: <code>string</code>,
+      default: <code>-</code>,
+      description: 'Controlled value',
+    },
+    {
+      prop: <code>defaultValue</code>,
+      type: <code>string</code>,
+      default: <code>-</code>,
+      description: 'Uncontrolled initial value',
+    },
+    {
+      prop: <code>name</code>,
+      type: <code>string</code>,
+      default: <code>-</code>,
+      description: 'Field name for forms',
+    },
+    {
+      prop: <code>row</code>,
+      type: <code>boolean</code>,
+      default: <code>false</code>,
+      description: 'Horizontal layout',
+    },
+    {
+      prop: <code>size</code>,
+      type: <code>'sm' | 'md' | 'lg'</code>,
+      default: <code>'md'</code>,
+      description: 'Radio size token',
+    },
+    {
+      prop: <code>spacing</code>,
+      type: <code>number | string</code>,
+      default: <code>-</code>,
+      description: 'Gap between options',
+    },
+    {
+      prop: <code>onChange</code>,
+      type: <code>(val: string) =&gt; void</code>,
+      default: <code>-</code>,
+      description: 'Change handler',
+    },
+    {
+      prop: <code>preset</code>,
+      type: <code>string | string[]</code>,
+      default: <code>-</code>,
+      description: 'Apply style presets',
+    },
+  ];
 
   return (
     <Surface>
@@ -74,6 +141,10 @@ export default function RadioGroupDemoPage() {
         <Typography variant="subtitle">
           Every prop, every trick, all in one place
         </Typography>
+
+        <Tabs>
+          <Tabs.Tab label="Usage" />
+          <Tabs.Panel>
 
         {/* 1. Uncontrolled -------------------------------------------------- */}
         <Typography variant="h3">1. Uncontrolled</Typography>
@@ -168,20 +239,19 @@ export default function RadioGroupDemoPage() {
           </Button>
         </FormControl>
 
-        {/* 8. Live theme validation ---------------------------------------- */}
+        {/* 8. Theme coupling */}
         <Typography variant="h3">8. Theme coupling</Typography>
         <Button variant="outlined" onClick={toggleMode}>
           Toggle light / dark mode
         </Button>
+          </Tabs.Panel>
 
-        {/* Back nav -------------------------------------------------------- */}
-        <Button
-          size="lg"
-          onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing(1) }}
-        >
-          ← Back
-        </Button>
+          <Tabs.Tab label="Reference" />
+          <Tabs.Panel>
+            <Typography variant="h3">Prop reference</Typography>
+            <Table data={data} columns={columns} constrainHeight={false} />
+          </Tabs.Panel>
+        </Tabs>
       </Stack>
     </Surface>
   );

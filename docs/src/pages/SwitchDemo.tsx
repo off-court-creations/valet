@@ -14,8 +14,11 @@ import {
   FormControl,
   createFormStore,
   useTheme,
+  Tabs,
+  Table,
 } from '@archway/valet';
-import { useNavigate } from 'react-router-dom';
+import type { TableColumn } from '@archway/valet';
+import type { ReactNode } from 'react';
 import NavDrawer from '../components/NavDrawer';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
@@ -46,7 +49,6 @@ const Row = ({ label, control }: RowProps) => (
 /* Demo page                                                                  */
 export default function SwitchDemoPage() {
   const { theme, toggleMode } = useTheme();           // live theme switch
-  const navigate              = useNavigate();
 
   /* Controlled example state --------------------------------------------- */
   const [wifi, setWifi] = useState(false);
@@ -55,6 +57,65 @@ export default function SwitchDemoPage() {
   const handleSubmit = (values: { darkMode: boolean; newsletter: boolean }) =>
     // eslint-disable-next-line no-alert – demo only
     alert(JSON.stringify(values, null, 2));
+
+  interface Row {
+    prop: ReactNode;
+    type: ReactNode;
+    default: ReactNode;
+    description: ReactNode;
+  }
+
+  const columns: TableColumn<Row>[] = [
+    { header: 'Prop', accessor: 'prop' },
+    { header: 'Type', accessor: 'type' },
+    { header: 'Default', accessor: 'default' },
+    { header: 'Description', accessor: 'description' },
+  ];
+
+  const data: Row[] = [
+    {
+      prop: <code>checked</code>,
+      type: <code>boolean</code>,
+      default: <code>-</code>,
+      description: 'Controlled state',
+    },
+    {
+      prop: <code>defaultChecked</code>,
+      type: <code>boolean</code>,
+      default: <code>false</code>,
+      description: 'Uncontrolled initial state',
+    },
+    {
+      prop: <code>onChange</code>,
+      type: <code>(checked: boolean) =&gt; void</code>,
+      default: <code>-</code>,
+      description: 'State change handler',
+    },
+    {
+      prop: <code>name</code>,
+      type: <code>string</code>,
+      default: <code>-</code>,
+      description: 'Form field name',
+    },
+    {
+      prop: <code>size</code>,
+      type: <code>'sm' | 'md' | 'lg'</code>,
+      default: <code>'md'</code>,
+      description: 'Switch size',
+    },
+    {
+      prop: <code>disabled</code>,
+      type: <code>boolean</code>,
+      default: <code>false</code>,
+      description: 'Disable interaction',
+    },
+    {
+      prop: <code>preset</code>,
+      type: <code>string | string[]</code>,
+      default: <code>-</code>,
+      description: 'Apply style presets',
+    },
+  ];
 
   return (
     <Surface>
@@ -70,6 +131,10 @@ export default function SwitchDemoPage() {
         <Typography variant="subtitle">
           Every prop, every trick, all in one place
         </Typography>
+
+        <Tabs>
+          <Tabs.Tab label="Usage" />
+          <Tabs.Panel>
 
         {/* 1. Uncontrolled -------------------------------------------------- */}
         <Typography variant="h3">1. Uncontrolled</Typography>
@@ -156,15 +221,15 @@ export default function SwitchDemoPage() {
         <Button variant="outlined" onClick={toggleMode}>
           Toggle light / dark mode
         </Button>
+          </Tabs.Panel>
 
-        {/* Back nav -------------------------------------------------------- */}
-        <Button
-          size="lg"
-          onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing(1) }}
-        >
-          ← Back
-        </Button>
+          <Tabs.Tab label="Reference" />
+          <Tabs.Panel>
+            <Typography variant="h3">Prop reference</Typography>
+            <Table data={data} columns={columns} constrainHeight={false} />
+          </Tabs.Panel>
+        </Tabs>
+
       </Stack>
     </Surface>
   );
