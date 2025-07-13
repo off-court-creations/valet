@@ -12,8 +12,11 @@ import {
   Button,
   Slider,
   useTheme,
+  Tabs,
+  Table,
 } from '@archway/valet';
-import { useNavigate } from 'react-router-dom';
+import type { TableColumn } from '@archway/valet';
+import type { ReactNode } from 'react';
 import NavDrawer from '../components/NavDrawer';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
@@ -25,10 +28,116 @@ const CUSTOM_TICKS = [0, 15, 30, 45, 60];            // example #5 ticks
 /* Demo page                                                                   */
 export default function SliderDemoPage() {
   const { theme, toggleMode } = useTheme();
-  const navigate               = useNavigate();
 
   /* Controlled slider state ------------------------------------------------ */
   const [ctlValue, setCtlValue] = useState(30);
+
+  interface Row {
+    prop: ReactNode;
+    type: ReactNode;
+    default: ReactNode;
+    description: ReactNode;
+  }
+
+  const columns: TableColumn<Row>[] = [
+    { header: 'Prop', accessor: 'prop' },
+    { header: 'Type', accessor: 'type' },
+    { header: 'Default', accessor: 'default' },
+    { header: 'Description', accessor: 'description' },
+  ];
+
+  const data: Row[] = [
+    {
+      prop: <code>value</code>,
+      type: <code>number</code>,
+      default: <code>-</code>,
+      description: 'Controlled value',
+    },
+    {
+      prop: <code>defaultValue</code>,
+      type: <code>number</code>,
+      default: <code>0</code>,
+      description: 'Uncontrolled start value',
+    },
+    {
+      prop: <code>min</code>,
+      type: <code>number</code>,
+      default: <code>0</code>,
+      description: 'Minimum value',
+    },
+    {
+      prop: <code>max</code>,
+      type: <code>number</code>,
+      default: <code>100</code>,
+      description: 'Maximum value',
+    },
+    {
+      prop: <code>step</code>,
+      type: <code>number</code>,
+      default: <code>1</code>,
+      description: 'Step increment',
+    },
+    {
+      prop: <code>presets</code>,
+      type: <code>number[]</code>,
+      default: <code>[]</code>,
+      description: 'Preset snap points',
+    },
+    {
+      prop: <code>snap</code>,
+      type: <code>'none' | 'step' | 'presets'</code>,
+      default: <code>'none'</code>,
+      description: 'Snap behaviour',
+    },
+    {
+      prop: <code>precision</code>,
+      type: <code>number</code>,
+      default: <code>0</code>,
+      description: 'Decimal places',
+    },
+    {
+      prop: <code>showValue</code>,
+      type: <code>boolean</code>,
+      default: <code>false</code>,
+      description: 'Display current value',
+    },
+    {
+      prop: <code>showMinMax</code>,
+      type: <code>boolean</code>,
+      default: <code>false</code>,
+      description: 'Display min and max labels',
+    },
+    {
+      prop: <code>showTicks</code>,
+      type: <code>boolean</code>,
+      default: <code>false</code>,
+      description: 'Show tick marks',
+    },
+    {
+      prop: <code>ticks</code>,
+      type: <code>number[]</code>,
+      default: <code>-</code>,
+      description: 'Custom tick positions',
+    },
+    {
+      prop: <code>size</code>,
+      type: <code>'sm' | 'md' | 'lg'</code>,
+      default: <code>'md'</code>,
+      description: 'Slider size',
+    },
+    {
+      prop: <code>disabled</code>,
+      type: <code>boolean</code>,
+      default: <code>false</code>,
+      description: 'Disable interaction',
+    },
+    {
+      prop: <code>preset</code>,
+      type: <code>string | string[]</code>,
+      default: <code>-</code>,
+      description: 'Apply style presets',
+    },
+  ];
 
   return (
     <Surface>
@@ -43,6 +152,10 @@ export default function SliderDemoPage() {
         <Typography variant="subtitle">
           A smörgåsbord of every prop, pattern, and trick
         </Typography>
+
+        <Tabs>
+          <Tabs.Tab label="Usage" />
+          <Tabs.Panel>
 
         {/* 1. Default uncontrolled ----------------------------------------- */}
         <Typography variant="h3">1. Uncontrolled (defaults)</Typography>
@@ -118,13 +231,18 @@ export default function SliderDemoPage() {
           showMinMax
         />
 
-        {/* Theme toggle + back nav ----------------------------------------- */}
-        <Stack direction="row">
-          <Button variant="outlined" onClick={toggleMode}>
-            Toggle light / dark
-          </Button>
-          <Button onClick={() => navigate(-1)}>← Back</Button>
-        </Stack>
+        {/* Theme coupling */}
+        <Button variant="outlined" onClick={toggleMode}>
+          Toggle light / dark
+        </Button>
+          </Tabs.Panel>
+
+          <Tabs.Tab label="Reference" />
+          <Tabs.Panel>
+            <Typography variant="h3">Prop reference</Typography>
+            <Table data={data} columns={columns} constrainHeight={false} />
+          </Tabs.Panel>
+        </Tabs>
       </Stack>
     </Surface>
   );
