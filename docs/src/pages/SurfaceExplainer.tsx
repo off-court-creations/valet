@@ -13,7 +13,7 @@ export default function SurfaceExplainerPage() {
     <Surface>
       <NavDrawer />
       <Stack preset="showcaseStack">
-        <Typography variant="h2" bold>
+        <Typography variant="h2">
           Surface
         </Typography>
         <Typography>
@@ -21,7 +21,7 @@ export default function SurfaceExplainerPage() {
           breakpoints and sizing variables for everything inside.
         </Typography>
         <Typography>
-          Never nest surfaces. Each route should render exactly one at the highest level
+          <b>Never nest surfaces!</b> Each route should render exactly one at the highest level
           so components can subscribe to its store with <code>useSurface</code>.
         </Typography>
         <Panel compact fullWidth>
@@ -34,10 +34,10 @@ export default function SurfaceExplainerPage() {
           </Typography>
         </Panel>
         <Typography>
-          Other components such as Drawer, Accordion and Table read this store to align
-          themselves with the available space.
+          Other components such as <code>{'<Drawer>'}</code>, <code>{'<Accordion>'}</code> and <code>{'<Table>'}</code> read
+          this store to align themselves with the available space.
         </Typography>
-        <Panel>
+        <Panel compact>
           <Typography>
             {`<Surface>`}
             <br /> &nbsp;{`<MyRoute />`}

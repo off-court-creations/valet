@@ -26,11 +26,11 @@ const primitives: [string, string][] = [
 ];
 
 const layoutPrimitives: [string, string][] = [
-  ['Surface', '/surface'],
   ['Box', '/box-demo'],
   ['Grid', '/grid-demo'],
   ['Panel', '/panel-demo'],
   ['Stack', '/stack-demo'],
+  ['Surface', '/surface'],
 ];
 
 const fields: [string, string][] = [
