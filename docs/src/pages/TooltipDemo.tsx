@@ -47,7 +47,6 @@ export default function TooltipDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack
-        spacing={1}
         preset="showcaseStack"
       >
         {/* Page header ----------------------------------------------------- */}
@@ -66,7 +65,7 @@ export default function TooltipDemoPage() {
 
         {/* 2. Placements ---------------------------------------------------- */}
         <Typography variant="h3">2. Placements</Typography>
-        <Stack direction="row" wrap spacing={1}>
+        <Stack direction="row" wrap>
           {placements.map(({ key, label }) => (
             <Tooltip key={key} placement={key as any} title={`placement="${key}"`}>
               <Button>{label}</Button>
@@ -76,7 +75,7 @@ export default function TooltipDemoPage() {
 
         {/* 3. Arrow toggle -------------------------------------------------- */}
         <Typography variant="h3">3. Arrow toggle</Typography>
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row">
           <Tooltip title="Default arrow (true)">
             <IconButton icon="mdi:home" />
           </Tooltip>
@@ -87,7 +86,7 @@ export default function TooltipDemoPage() {
 
         {/* 4. Controlled visibility ---------------------------------------- */}
         <Typography variant="h3">4. Controlled visibility</Typography>
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row">
           <Tooltip
             open={controlledOpen}
             onClose={() => setControlledOpen(false)}

@@ -42,7 +42,6 @@ export default function ModalDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack
-        spacing={1}
         preset="showcaseStack"
       >
         <Typography variant="h2" bold>
@@ -104,7 +103,7 @@ export default function ModalDemoPage() {
 
         {/* 3. Controlled modal -------------------------------------------- */}
         <Typography variant="h3">3. Controlled modal</Typography>
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row">
           <Button onClick={() => setControlledOpen(true)}>Open</Button>
           <Button onClick={() => setControlledOpen(false)}>Close</Button>
         </Stack>
@@ -137,7 +136,7 @@ export default function ModalDemoPage() {
 
         {/* 5. Size props --------------------------------------------------- */}
         <Typography variant="h3">5. maxWidth & fullWidth</Typography>
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row">
           <Button onClick={() => setDialogOpen(true)}>maxWidth (default)</Button>
           <Button onClick={() => setControlledOpen(true)}>fullWidth</Button>
         </Stack>

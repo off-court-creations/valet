@@ -105,7 +105,7 @@ export default function AvatarDemoPage() {
               useStore={useEmailForm}
               onSubmitValues={(vals) => setEmail(vals.email)}
             >
-              <Stack direction="row" spacing={1}>
+              <Stack direction="row">
                 <Avatar email={email} />
                 <TextField name="email" type="email" placeholder="you@example.com" />
                 <Button type="submit">Show</Button>
@@ -122,7 +122,7 @@ export default function AvatarDemoPage() {
 
             {/* 4. Sizes --------------------------------------------------------- */}
             <Typography variant="h3">4. Sizes</Typography>
-            <Stack direction="row" spacing={1}>
+            <Stack direction="row">
               {(['xl', 'l', 'm', 's', 'xs'] as const).map((s) => (
                 <Stack key={s} spacing={0.5} style={{ alignItems: 'center' }}>
                   <Avatar email="support@gravatar.com" size={s} />

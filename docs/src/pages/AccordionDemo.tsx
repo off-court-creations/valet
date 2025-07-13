@@ -37,7 +37,6 @@ export default function AccordionDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack
-        spacing={1}
         preset="showcaseStack"
       >
         {/* Header --------------------------------------------------------- */}

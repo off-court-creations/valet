@@ -15,8 +15,11 @@ import {
   FormControl,
   createFormStore,
   useTheme,
+  Tabs,
+  Table,
 } from '@archway/valet';
-import { useNavigate } from 'react-router-dom';
+import type { TableColumn } from '@archway/valet';
+import type { ReactNode } from 'react';
 import NavDrawer from '../components/NavDrawer';
 
 /*───────────────────────────────────────────────────────────*/
@@ -32,7 +35,6 @@ const useDemoForm = createFormStore<DemoForm>({
 
 export default function SelectDemoPage() {
   const { theme, toggleMode } = useTheme();
-  const navigate               = useNavigate();
 
   /* other controlled examples ----------------------------------------- */
   const [pet, setPet]     = useState('cat');
@@ -41,17 +43,91 @@ export default function SelectDemoPage() {
   /* show submitted values --------------------------------------------- */
   const [submitted, setSubmitted] = useState<DemoForm | null>(null);
 
+  interface Row {
+    prop: ReactNode;
+    type: ReactNode;
+    default: ReactNode;
+    description: ReactNode;
+  }
+
+  const columns: TableColumn<Row>[] = [
+    { header: 'Prop', accessor: 'prop' },
+    { header: 'Type', accessor: 'type' },
+    { header: 'Default', accessor: 'default' },
+    { header: 'Description', accessor: 'description' },
+  ];
+
+  const data: Row[] = [
+    {
+      prop: <code>value</code>,
+      type: <code>string | number | (string | number)[]</code>,
+      default: <code>-</code>,
+      description: 'Controlled value',
+    },
+    {
+      prop: <code>initialValue</code>,
+      type: <code>string | number | (string | number)[]</code>,
+      default: <code>-</code>,
+      description: 'Uncontrolled initial value',
+    },
+    {
+      prop: <code>onChange</code>,
+      type: <code>(v: Primitive | Primitive[]) =&gt; void</code>,
+      default: <code>-</code>,
+      description: 'Change handler',
+    },
+    {
+      prop: <code>multiple</code>,
+      type: <code>boolean</code>,
+      default: <code>false</code>,
+      description: 'Allow multiple values',
+    },
+    {
+      prop: <code>placeholder</code>,
+      type: <code>string</code>,
+      default: <code>'Select…'</code>,
+      description: 'Label when empty',
+    },
+    {
+      prop: <code>size</code>,
+      type: <code>'sm' | 'md' | 'lg'</code>,
+      default: <code>'md'</code>,
+      description: 'Control height',
+    },
+    {
+      prop: <code>disabled</code>,
+      type: <code>boolean</code>,
+      default: <code>false</code>,
+      description: 'Disable interaction',
+    },
+    {
+      prop: <code>name</code>,
+      type: <code>string</code>,
+      default: <code>-</code>,
+      description: 'Form field name',
+    },
+    {
+      prop: <code>preset</code>,
+      type: <code>string | string[]</code>,
+      default: <code>-</code>,
+      description: 'Apply style presets',
+    },
+  ];
+
   return (
     <Surface>
       <NavDrawer />
       <Stack
-        spacing={1}
         preset="showcaseStack"
       >
         <Typography variant="h2" bold>Select Playground</Typography>
         <Typography variant="subtitle">
           Uncontrolled • controlled • multiple • sizes • presets • FormControl
         </Typography>
+
+        <Tabs>
+          <Tabs.Tab label="Usage" />
+          <Tabs.Panel>
 
         {/* ————————————————— Uncontrolled */}
         <Typography variant="h3">1. Uncontrolled (initialValue)</Typography>
@@ -63,7 +139,7 @@ export default function SelectDemoPage() {
 
         {/* ————————————————— Controlled single */}
         <Typography variant="h3">2. Controlled – single</Typography>
-        <Stack direction="row" spacing={1} style={{ alignItems: 'center' }}>
+        <Stack direction="row" style={{ alignItems: 'center' }}>
           <Select value={pet} onChange={(v) => setPet(v as string)}>
             <Select.Option value="cat">Cat</Select.Option>
             <Select.Option value="dog">Dog</Select.Option>
@@ -74,7 +150,7 @@ export default function SelectDemoPage() {
 
         {/* ————————————————— Controlled multiple */}
         <Typography variant="h3">3. Controlled – multiple</Typography>
-        <Stack direction="row" spacing={1} style={{ alignItems: 'center' }}>
+        <Stack direction="row" style={{ alignItems: 'center' }}>
           <Select
             multiple
             value={langs}
@@ -94,7 +170,7 @@ export default function SelectDemoPage() {
 
         {/* ————————————————— Sizes */}
         <Typography variant="h3">4. Size variants</Typography>
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row">
           {(['sm', 'md', 'lg'] as const).map((s) => (
             <Select key={s} size={s} placeholder={s.toUpperCase()}>
               <Select.Option value="a">A</Select.Option>
@@ -105,7 +181,7 @@ export default function SelectDemoPage() {
 
         {/* ————————————————— Disabled / preset */}
         <Typography variant="h3">5. Disabled & preset</Typography>
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row">
           <Select disabled placeholder="Disabled">
             <Select.Option value="x">X</Select.Option>
           </Select>
@@ -122,7 +198,7 @@ export default function SelectDemoPage() {
           useStore={useDemoForm}
           onSubmitValues={(vals) => setSubmitted(vals)}
         >
-          <Stack spacing={1}>
+          <Stack>
             <Select
               name="country"
               placeholder="Country"
@@ -167,14 +243,14 @@ export default function SelectDemoPage() {
         {/* ————————————————— Theme toggle */}
         <Typography variant="h3">7. Theme toggle</Typography>
         <IconButton icon="mdi:weather-night" onClick={toggleMode} aria-label="toggle theme" />
-        {/* nav back */}
-        <Button
-          size="lg"
-          onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing(1) }}
-        >
-          ← Back
-        </Button>
+          </Tabs.Panel>
+
+          <Tabs.Tab label="Reference" />
+          <Tabs.Panel>
+            <Typography variant="h3">Prop reference</Typography>
+            <Table data={data} columns={columns} constrainHeight={false} />
+          </Tabs.Panel>
+        </Tabs>
       </Stack>
     </Surface>
   );

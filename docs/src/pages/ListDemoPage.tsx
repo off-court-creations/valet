@@ -51,7 +51,6 @@ export default function ListDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack
-        spacing={1}
         preset="showcaseStack"
       >
         {/* Header --------------------------------------------------------- */}
@@ -71,7 +70,7 @@ export default function ListDemoPage() {
         {/* 2. striped & hoverable props ---------------------------------- */}
         <Typography variant="h3">2. <code>striped</code> & <code>hoverable</code></Typography>
         <Panel variant="alt" style={{ padding: theme.spacing(1) }}>
-          <Stack direction="row" spacing={1} wrap={false}>
+          <Stack direction="row" wrap={false}>
             <Checkbox
               label="striped"
               checked={striped}

@@ -38,7 +38,7 @@ export default function DateTimeDemoPage() {
   return (
     <Surface>
       <NavDrawer />
-      <Stack spacing={1} preset="showcaseStack">
+      <Stack preset="showcaseStack">
         <Typography variant="h2" bold>
           DateTimePicker Showcase
         </Typography>
@@ -50,7 +50,7 @@ export default function DateTimeDemoPage() {
         <DateTimePicker />
 
         <Typography variant="h3">2. Controlled</Typography>
-        <Stack spacing={1}>
+        <Stack>
           <DateTimePicker value={ctl} onChange={setCtl} />
           <Typography>
             Current value: <code>{ctl}</code>
