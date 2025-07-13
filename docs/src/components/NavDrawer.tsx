@@ -30,6 +30,7 @@ const layoutPrimitives: [string, string][] = [
   ['Grid', '/grid-demo'],
   ['Panel', '/panel-demo'],
   ['Stack', '/stack-demo'],
+  ['Surface', '/surface'],
 ];
 
 const fields: [string, string][] = [
