@@ -3,6 +3,8 @@
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [0.10.1]
 - `AppBar` uses the surface store to offset content and now renders via portal
   above responsive drawers
 - Docs demo updated to show scroll behind the AppBar
@@ -181,6 +183,8 @@ responsive logic uses the selected `Surface` element to handle persistent margin
 ### Other
 - vibe coded
 
+[v0.10.1]: https://github.com/off-court-creations/valet/releases/tag/v0.10.1
+[v0.10.0]: https://github.com/off-court-creations/valet/releases/tag/v0.10.0
 [v0.9.0]: https://github.com/off-court-creations/valet/releases/tag/v0.9.0
 [v0.8.7]: https://github.com/off-court-creations/valet/releases/tag/v0.8.7
 [v0.8.6]: https://github.com/off-court-creations/valet/releases/tag/v0.8.6
