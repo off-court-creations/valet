@@ -156,85 +156,88 @@ export default function SliderDemoPage() {
         <Tabs>
           <Tabs.Tab label="Usage" />
           <Tabs.Panel>
+            <Stack>
 
-        {/* 1. Default uncontrolled ----------------------------------------- */}
-        <Typography variant="h3">1. Uncontrolled (defaults)</Typography>
-        <Slider defaultValue={50} />
 
-        {/* 2. Controlled ---------------------------------------------------- */}
-        <Typography variant="h3">2. Controlled</Typography>
-        <Stack>
-          <Slider
-            value={ctlValue}
-            onChange={setCtlValue}
-            showValue
-            showMinMax
-          />
-          <Typography>
-            Current value:&nbsp;
-            <code>{ctlValue}</code>
-          </Typography>
-        </Stack>
+              {/* 1. Default uncontrolled ----------------------------------------- */}
+              <Typography variant="h3">1. Uncontrolled (defaults)</Typography>
+              <Slider defaultValue={50} />
 
-        {/* 3. Step snapping w/ ticks --------------------------------------- */}
-        <Typography variant="h3">3. Snap = "step" + ticks</Typography>
-        <Slider
-          defaultValue={40}
-          min={0}
-          max={100}
-          step={10}
-          snap="step"
-          showValue
-          showMinMax
-          showTicks
-        />
+              {/* 2. Controlled ---------------------------------------------------- */}
+              <Typography variant="h3">2. Controlled</Typography>
+              <Stack>
+                <Slider
+                  value={ctlValue}
+                  onChange={setCtlValue}
+                  showValue
+                  showMinMax
+                />
+                <Typography>
+                  Current value:&nbsp;
+                  <code>{ctlValue}</code>
+                </Typography>
+              </Stack>
 
-        {/* 4. Preset snapping ---------------------------------------------- */}
-        <Typography variant="h3">4. Snap = "presets"</Typography>
-        <Slider
-          defaultValue={75}
-          min={0}
-          max={100}
-          presets={PRESET_MARKS}
-          snap="presets"
-          showValue
-          showMinMax
-          showTicks
-        />
+              {/* 3. Step snapping w/ ticks --------------------------------------- */}
+              <Typography variant="h3">3. Snap = "step" + ticks</Typography>
+              <Slider
+                defaultValue={40}
+                min={0}
+                max={100}
+                step={10}
+                snap="step"
+                showValue
+                showMinMax
+                showTicks
+              />
 
-        {/* 5. Custom ticks *with* snapping ---------------------------------- */}
-        <Typography variant="h3">5. Custom ticks (snap = "presets")</Typography>
-        <Slider
-          defaultValue={15}
-          min={0}
-          max={60}
-          ticks={CUSTOM_TICKS}
-          presets={CUSTOM_TICKS}
-          snap="presets"          // ← ensures handle snaps to tick marks
-          showTicks
-        />
+              {/* 4. Preset snapping ---------------------------------------------- */}
+              <Typography variant="h3">4. Snap = "presets"</Typography>
+              <Slider
+                defaultValue={75}
+                min={0}
+                max={100}
+                presets={PRESET_MARKS}
+                snap="presets"
+                showValue
+                showMinMax
+                showTicks
+              />
 
-        {/* 6. Small size variant ------------------------------------------- */}
-        <Typography variant="h3">6. sm size variant</Typography>
-        <Slider
-          defaultValue={25}
-          size="sm"
-          showValue
-          showMinMax
-        />
+              {/* 5. Custom ticks *with* snapping ---------------------------------- */}
+              <Typography variant="h3">5. Custom ticks (snap = "presets")</Typography>
+              <Slider
+                defaultValue={15}
+                min={0}
+                max={60}
+                ticks={CUSTOM_TICKS}
+                presets={CUSTOM_TICKS}
+                snap="presets"          // ← ensures handle snaps to tick marks
+                showTicks
+              />
 
-        {/* 7. Disabled state ----------------------------------------------- */}
-        <Typography variant="h3">7. Disabled</Typography>
-        <Slider
-          value={50}
-          disabled
-          showMinMax
-        />
+              {/* 6. Small size variant ------------------------------------------- */}
+              <Typography variant="h3">6. sm size variant</Typography>
+              <Slider
+                defaultValue={25}
+                size="sm"
+                showValue
+                showMinMax
+              />
 
-        {/* Theme coupling */}
-        <Button variant="outlined" onClick={toggleMode}>
-          Toggle light / dark
-        </Button>
+              {/* 7. Disabled state ----------------------------------------------- */}
+              <Typography variant="h3">7. Disabled</Typography>
+              <Slider
+                value={50}
+                disabled
+                showMinMax
+              />
+
+              {/* Theme coupling */}
+              <Button variant="outlined" onClick={toggleMode}>
+                Toggle light / dark
+              </Button>
+            </Stack>
           </Tabs.Panel>
 
           <Tabs.Tab label="Reference" />
