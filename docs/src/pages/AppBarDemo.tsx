@@ -10,19 +10,19 @@ export default function AppBarDemoPage() {
   return (
     <Surface>
       <NavDrawer />
-      <Stack
-        preset="showcaseStack"
-      >
+      <AppBar>
+        <Typography variant="h6">Fixed</Typography>
+      </AppBar>
+      <Stack preset="showcaseStack">
         <Typography variant="h2" bold>
           AppBar Showcase
         </Typography>
         <Typography variant="subtitle">
           Basic usage and positioning
         </Typography>
-
-        <AppBar>
-          <Typography variant="h6">Fixed</Typography>
-        </AppBar>
+        <Typography variant="body">
+          Scroll to see content move under the AppBar.
+        </Typography>
 
         <Stack>
           <Typography variant="h1">
