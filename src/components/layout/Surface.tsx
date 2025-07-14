@@ -124,7 +124,7 @@ export const Surface: React.FC<SurfaceProps> = ({
     ? {
         position: 'fixed',
         inset: 0,
-        paddingTop: 'env(safe-area-inset-top)',
+        paddingTop: 'calc(var(--valet-top-offset, 0px) + env(safe-area-inset-top))',
         paddingRight: 'env(safe-area-inset-right)',
         paddingBottom: 'env(safe-area-inset-bottom)',
         paddingLeft: 'env(safe-area-inset-left)',

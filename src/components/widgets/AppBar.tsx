@@ -2,9 +2,11 @@
 // src/components/widgets/AppBar.tsx  | valet
 // minimal top navigation bar
 // ─────────────────────────────────────────────────────────────
-import React from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
+import { useSurface } from '../../system/surfaceStore';
+import { shallow } from 'zustand/shallow';
 import { preset } from '../../css/stylePresets';
 import type { Presettable } from '../../types';
 
@@ -37,7 +39,7 @@ const Bar = styled('header')<{
   top: 0;
   left: 0;
   right: 0;
-  z-index: 1000;
+  z-index: 10000;
   background: ${({ $bg }) => $bg};
   color: ${({ $text }) => $text};
 `;
@@ -72,6 +74,28 @@ export const AppBar: React.FC<AppBarProps> = ({
       : textColor;
   const presetClass = p ? preset(p) : '';
   const gap = theme.spacing(1);
+  const { element } = useSurface(
+    s => ({ element: s.element }),
+    shallow,
+  );
+  const ref = useRef<HTMLElement>(null);
+
+  useLayoutEffect(() => {
+    const node = ref.current;
+    const surfaceEl = element;
+    if (!node || !surfaceEl) return;
+    const update = () => {
+      const rect = node.getBoundingClientRect();
+      surfaceEl.style.setProperty('--valet-top-offset', `${Math.round(rect.bottom)}px`);
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(node);
+    return () => {
+      ro.disconnect();
+      surfaceEl.style.removeProperty('--valet-top-offset');
+    };
+  }, [element]);
 
   return (
     <Bar
@@ -81,6 +105,7 @@ export const AppBar: React.FC<AppBarProps> = ({
       $gap={gap}
       className={[presetClass, className].filter(Boolean).join(' ')}
       style={style}
+      ref={ref}
     >
       {children}
     </Bar>
