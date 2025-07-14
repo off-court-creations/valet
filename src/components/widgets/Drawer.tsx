@@ -4,7 +4,12 @@
 // Controlled/uncontrolled, with backdrop and escape handling.
 // ─────────────────────────────────────────────────────────────
 
-import React, { useCallback, useLayoutEffect, useState, useEffect } from 'react';
+import React, {
+  useCallback,
+  useLayoutEffect,
+  useState,
+  useEffect,
+} from 'react';
 import { createPortal } from 'react-dom';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
@@ -66,6 +71,7 @@ const Panel = styled('div')<{
   $primary: string;
   $persistent: boolean;
   $responsive: boolean;
+  $offset: number;
 }>`
   position: fixed;
   z-index: ${({ $persistent }) => ($persistent ? 9998 : 9999)};
@@ -87,17 +93,17 @@ const Panel = styled('div')<{
       : $anchor === 'top'
       ? `border-bottom:0.25rem solid ${$primary};`
       : `border-top:0.25rem solid ${$primary};`}
-  ${({ $anchor, $size }) =>
+  ${({ $anchor, $size, $offset }) =>
     $anchor === 'left' || $anchor === 'right'
-      ? `width:${$size}; height:100%;`
+      ? `width:${$size}; height:calc(100% - ${$offset}px);`
       : `height:${$size}; width:100%;`}
-  ${({ $anchor }) =>
+  ${({ $anchor, $offset }) =>
     $anchor === 'left'
-      ? 'top:0; left:0;'
+      ? `top:${$offset}px; left:0;`
       : $anchor === 'right'
-      ? 'top:0; right:0;'
+      ? `top:${$offset}px; right:0;`
       : $anchor === 'top'
-      ? 'top:0; left:0;'
+      ? `top:${$offset}px; left:0;`
       : 'bottom:0; left:0;'}
   transform: ${({ $anchor, $fade, $persistent }) =>
     $persistent
@@ -133,6 +139,16 @@ export const Drawer: React.FC<DrawerProps> = ({
   const { theme } = useTheme();
   const { width, height, element } = useSurface(
     s => ({ width: s.width, height: s.height, element: s.element }),
+    shallow,
+  );
+  const topOffset = useSurface(
+    s => {
+      let off = 0;
+      s.children.forEach(m => {
+        if (m.top < 4) off = Math.max(off, m.height);
+      });
+      return off;
+    },
     shallow,
   );
   const presetClasses = presetKey ? preset(presetKey) : '';
@@ -208,7 +224,7 @@ export const Drawer: React.FC<DrawerProps> = ({
           onClick={() => setOpenState(true)}
           style={{
             position: 'fixed',
-            top: theme.spacing(1),
+            top: `calc(${topOffset}px + ${theme.spacing(1)})`,
             [anchor]: theme.spacing(1),
             zIndex: 9999,
           }}
@@ -233,6 +249,7 @@ export const Drawer: React.FC<DrawerProps> = ({
         $primary={theme.colors.primary}
         $persistent={persistentEffective}
         $responsive={responsiveMode}
+        $offset={topOffset}
         className={presetClasses}
       >
         {responsiveMode && portrait && (

@@ -3,7 +3,11 @@
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-
+- `AppBar` uses the surface store to offset content and now renders via portal
+  above responsive drawers
+- Docs demo updated to show scroll behind the AppBar
+- `AppBar` no longer applies outer margins
+- `Drawer` accounts for the AppBar offset when responsive
 ## [0.10.0]
 - `Stack` spacing defaults to 1 and respects `compact` unless explicitly set
 - Docs now include a Surface usage explainer
