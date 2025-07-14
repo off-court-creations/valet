@@ -3,6 +3,8 @@
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [0.10.0]
 - `Stack` spacing defaults to 1 and respects `compact` unless explicitly set
 - Docs now include a Surface usage explainer
 
