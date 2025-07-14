@@ -135,6 +135,9 @@ export const Drawer: React.FC<DrawerProps> = ({
     s => ({ width: s.width, height: s.height, element: s.element }),
     shallow,
   );
+  const surfOffset = element
+    ? parseFloat(window.getComputedStyle(element).marginTop || '0')
+    : 0;
   const presetClasses = presetKey ? preset(presetKey) : '';
   const portrait = height > width;
   const responsiveMode = responsive && (anchor === 'left' || anchor === 'right');
@@ -208,7 +211,7 @@ export const Drawer: React.FC<DrawerProps> = ({
           onClick={() => setOpenState(true)}
           style={{
             position: 'fixed',
-            top: theme.spacing(1),
+            top: `calc(${theme.spacing(1)} + ${surfOffset}px)`,
             [anchor]: theme.spacing(1),
             zIndex: 9999,
           }}
@@ -234,6 +237,11 @@ export const Drawer: React.FC<DrawerProps> = ({
         $persistent={persistentEffective}
         $responsive={responsiveMode}
         className={presetClasses}
+        style={
+          anchor === 'left' || anchor === 'right' || anchor === 'top'
+            ? { top: `${surfOffset}px` }
+            : undefined
+        }
       >
         {responsiveMode && portrait && (
           <div
