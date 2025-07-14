@@ -162,7 +162,7 @@ export default function NavDrawer() {
     }
   };
   return (
-    <Drawer responsive anchor="left" size="16rem">
+    <Drawer adaptive anchor="left" size="16rem">
       <Tree<Item>
         nodes={treeData}
         getLabel={(n) => n.label}
