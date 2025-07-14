@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 // src/pages/MainPage.tsx  | valet
-// Doc home with responsive drawer navigation
+// Doc home with adaptive drawer navigation
 // ─────────────────────────────────────────────────────────────
 
 import {

@@ -84,12 +84,12 @@ export default function DrawerDemoPage() {
           </Stack>
         </Drawer>
 
-        {/* 4. Responsive drawer */}
-        <Typography variant="h3">4. Responsive drawer</Typography>
-        <Drawer responsive anchor="right" size="16rem">
+        {/* 4. Adaptive drawer */}
+        <Typography variant="h3">4. Adaptive drawer</Typography>
+        <Drawer adaptive anchor="right" size="16rem">
           <Stack style={{ padding: theme.spacing(1) }}>
             <Typography variant="h4" bold>
-              Responsive Drawer
+              Adaptive Drawer
             </Typography>
             <Typography>
               Persistent in landscape, icon in portrait.

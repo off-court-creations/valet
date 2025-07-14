@@ -34,8 +34,8 @@ export interface DrawerProps extends Presettable {
   disableEscapeKeyDown?: boolean;
   /** Drawer remains visible without backdrop */
   persistent?: boolean;
-  /** Responsive behaviour (persistent in landscape, overlay in portrait) */
-  responsive?: boolean;
+  /** Adaptive behaviour (persistent in landscape, overlay in portrait) */
+  adaptive?: boolean;
   /** Icon for the portrait toggle button */
   toggleIcon?: string;
   /** Close button icon when portrait */
@@ -65,7 +65,7 @@ const Panel = styled('div')<{
   $text: string;
   $primary: string;
   $persistent: boolean;
-  $responsive: boolean;
+  $adaptive: boolean;
 }>`
   position: fixed;
   z-index: ${({ $persistent }) => ($persistent ? 9998 : 9999)};
@@ -77,8 +77,8 @@ const Panel = styled('div')<{
     $anchor === 'top' || $anchor === 'bottom' ? 'auto' : 'visible'};
   background: ${({ $bg }) => $bg};
   color: ${({ $text }) => $text};
-  box-shadow: ${({ $responsive }) =>
-    $responsive ? 'none' : '0 4px 16px rgba(0, 0, 0, 0.3)'};
+  box-shadow: ${({ $adaptive }) =>
+    $adaptive ? 'none' : '0 4px 16px rgba(0, 0, 0, 0.3)'};
   ${({ $anchor, $primary }) =>
     $anchor === 'left'
       ? `border-right:0.25rem solid ${$primary};`
@@ -124,7 +124,7 @@ export const Drawer: React.FC<DrawerProps> = ({
   disableBackdropClick = false,
   disableEscapeKeyDown = false,
   persistent = false,
-  responsive = false,
+  adaptive = false,
   toggleIcon = 'mdi:menu',
   closeIcon = 'mdi:close',
   children,
@@ -140,8 +140,8 @@ export const Drawer: React.FC<DrawerProps> = ({
     : 0;
   const presetClasses = presetKey ? preset(presetKey) : '';
   const portrait = height > width;
-  const responsiveMode = responsive && (anchor === 'left' || anchor === 'right');
-  const orientationPersistent = responsiveMode && !portrait;
+  const adaptiveMode = adaptive && (anchor === 'left' || anchor === 'right');
+  const orientationPersistent = adaptiveMode && !portrait;
   const persistentEffective = persistent || orientationPersistent;
 
   const uncontrolled = controlledOpen === undefined;
@@ -155,8 +155,8 @@ export const Drawer: React.FC<DrawerProps> = ({
 
   useEffect(() => {
     if (orientationPersistent) setOpenState(true);
-    else if (responsiveMode && portrait) setOpenState(false);
-  }, [orientationPersistent, responsiveMode, portrait]);
+    else if (adaptiveMode && portrait) setOpenState(false);
+  }, [orientationPersistent, adaptiveMode, portrait]);
 
   const requestClose = useCallback(() => {
     if (orientationPersistent) return;
@@ -204,7 +204,7 @@ export const Drawer: React.FC<DrawerProps> = ({
   }, [element, persistentEffective, anchor, size]);
 
   if (!open && !persistentEffective) {
-    if (responsiveMode && portrait) {
+    if (adaptiveMode && portrait) {
       return (
         <IconButton
           icon={toggleIcon}
@@ -235,7 +235,7 @@ export const Drawer: React.FC<DrawerProps> = ({
         $text={theme.colors.text}
         $primary={theme.colors.primary}
         $persistent={persistentEffective}
-        $responsive={responsiveMode}
+        $adaptive={adaptiveMode}
         className={presetClasses}
         style={
           anchor === 'left' || anchor === 'right' || anchor === 'top'
@@ -243,7 +243,7 @@ export const Drawer: React.FC<DrawerProps> = ({
             : undefined
         }
       >
-        {responsiveMode && portrait && (
+        {adaptiveMode && portrait && (
           <div
             style={{
               alignSelf: anchor === 'left' ? 'flex-end' : 'flex-start',
