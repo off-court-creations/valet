@@ -6,6 +6,8 @@ import React from 'react';
 import { styled } from '../../css/createStyled';
 import { preset } from '../../css/stylePresets';
 import { useTheme } from '../../system/themeStore';
+import { useSurface } from '../../system/surfaceStore';
+import { shallow } from 'zustand/shallow';
 import type { Presettable } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
@@ -14,6 +16,7 @@ export interface GridProps
     Presettable {
   columns?: number;
   gap?: number | string;
+  adaptive?: boolean;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -31,6 +34,7 @@ const Root = styled('div')<{ $cols: number; $gap: string; $pad: string }>`
 export const Grid: React.FC<GridProps> = ({
   columns = 2,
   gap = 2,
+  adaptive = false,
   preset: p,
   style,
   className,
@@ -38,6 +42,13 @@ export const Grid: React.FC<GridProps> = ({
   ...rest
 }) => {
   const { theme } = useTheme();
+  const { width, height } = useSurface(
+    s => ({ width: s.width, height: s.height }),
+    shallow,
+  );
+
+  const portrait = height > width;
+  const effectiveCols = adaptive && portrait ? 1 : columns;
 
   let g: string;
   if (typeof gap === 'number') {
@@ -53,7 +64,7 @@ export const Grid: React.FC<GridProps> = ({
   return (
     <Root
       {...rest}
-      $cols={columns}
+      $cols={effectiveCols}
       $gap={g}
       $pad={pad}
       style={style}

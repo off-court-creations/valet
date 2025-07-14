@@ -47,6 +47,12 @@ export default function GridDemoPage() {
       description: 'Spacing between cells (numbers use theme.spacing)',
     },
     {
+      prop: <code>adaptive</code>,
+      type: <code>boolean</code>,
+      default: <code>false</code>,
+      description: 'Portrait orientation uses a single column',
+    },
+    {
       prop: <code>preset</code>,
       type: <code>string | string[]</code>,
       default: <code>-</code>,
@@ -114,6 +120,23 @@ export default function GridDemoPage() {
                   style={{
                     background: theme.colors['primary'] as string,
                     color: theme.colors['primaryText'] as string,
+                    padding: theme.spacing(1),
+                    textAlign: 'center',
+                  }}
+                >
+                  {n}
+                </Box>
+              ))}
+            </Grid>
+
+            <Typography variant="h3">4. Adaptive grid</Typography>
+            <Grid columns={4} gap={1} adaptive>
+              {['1', '2', '3', '4', '5', '6', '7', '8'].map((n) => (
+                <Box
+                  key={n}
+                  style={{
+                    background: theme.colors['secondary'] as string,
+                    color: theme.colors['secondaryText'] as string,
                     padding: theme.spacing(1),
                     textAlign: 'center',
                   }}
