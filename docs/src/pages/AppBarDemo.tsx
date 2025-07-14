@@ -52,6 +52,12 @@ export default function AppBarDemoPage() {
           <Typography variant="h1">
             placeholder
           </Typography>
+          <Typography variant="h1">
+            placeholder
+          </Typography>
+          <Typography variant="h1">
+            placeholder
+          </Typography>
 
           <Button variant="outlined" onClick={toggleMode}>
             Toggle light / dark

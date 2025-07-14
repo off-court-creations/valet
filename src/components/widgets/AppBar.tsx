@@ -2,9 +2,10 @@
 // src/components/widgets/AppBar.tsx  | valet
 // minimal top navigation bar
 // ─────────────────────────────────────────────────────────────
-import React from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
+import { useSurface } from '../../system/surfaceStore';
 import { preset } from '../../css/stylePresets';
 import type { Presettable } from '../../types';
 
@@ -37,7 +38,7 @@ const Bar = styled('header')<{
   top: 0;
   left: 0;
   right: 0;
-  z-index: 1000;
+  z-index: 10000;
   background: ${({ $bg }) => $bg};
   color: ${({ $text }) => $text};
 `;
@@ -53,6 +54,25 @@ export const AppBar: React.FC<AppBarProps> = ({
   ...rest
 }) => {
   const { theme } = useTheme();
+  const element = useSurface(s => s.element);
+  const ref = useRef<HTMLElement>(null);
+
+  useLayoutEffect(() => {
+    const surf = element;
+    const bar = ref.current;
+    if (!surf || !bar) return;
+    const prev = surf.style.marginTop;
+    const apply = () => {
+      surf.style.marginTop = `${bar.getBoundingClientRect().height}px`;
+    };
+    const ro = new ResizeObserver(apply);
+    ro.observe(bar);
+    apply();
+    return () => {
+      ro.disconnect();
+      surf.style.marginTop = prev;
+    };
+  }, [element]);
 
   const isToken = (v: any): v is AppBarToken =>
     v === 'primary' || v === 'secondary' || v === 'tertiary';
@@ -76,6 +96,7 @@ export const AppBar: React.FC<AppBarProps> = ({
   return (
     <Bar
       {...rest}
+      ref={ref}
       $bg={bg}
       $text={text}
       $gap={gap}
