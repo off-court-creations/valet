@@ -32,7 +32,7 @@ export default function UsagePage() {
     {
       prop: <code>preset</code>,
       purpose: 'Apply named style presets',
-      components: 'All components',
+      components: "All components (Besides Surface's internal LoadingBackdrop)",
     },
     {
       prop: <code>size</code>,
