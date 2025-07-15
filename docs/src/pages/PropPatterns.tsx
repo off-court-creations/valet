@@ -32,13 +32,13 @@ export default function UsagePage() {
     {
       prop: <code>preset</code>,
       purpose: 'Apply named style presets',
-      components: "All components (Besides Surface's internal LoadingBackdrop)",
+      components: "All components (besides Surface's internal LoadingBackdrop)",
     },
     {
       prop: <code>size</code>,
-      purpose: 'Control geometry (sm / md / lg …)',
+      purpose: <p><b>"xs", "sm", "md", "lg", "xl"</b> rem-based tokens. Other <code>STRING</code> values are treated as CSS like <b>"24px"</b> or <b>"3rem"</b></p>,
       components:
-        'Avatar, Button, Icon, IconButton, Checkbox, RadioGroup, Select, Slider, Progress, SpeedDial',
+        'Avatar, Button, Icon, IconButton, Checkbox, RadioGroup, Select, Slider, Progress',
     },
     {
       prop: <code>variant</code>,
