@@ -13,13 +13,13 @@ import { Icon }                from '../primitives/Icon';
 /*───────────────────────────────────────────────────────────*/
 /* Public API                                                */
 export type IconButtonVariant = 'contained' | 'outlined';
-export type IconButtonSize    = 'sm' | 'md' | 'lg' | 'xl';
+export type IconButtonSize    = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 export interface IconButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     Presettable {
   variant?: IconButtonVariant;
-  size?: IconButtonSize;
+  size?: IconButtonSize | number | string;
   icon?: string;
   svg?: string | ReactElement<SVGSVGElement>;
   /** Colour override for the glyph */
@@ -30,6 +30,7 @@ export interface IconButtonProps
 /* Geometry map                                              */
 type Geometry = { d: string; icon: string };
 const geom: (t: Theme) => Record<IconButtonSize, Geometry> = () => ({
+  xs: { d: '1.75rem', icon: '0.75rem' },
   sm: { d: '2.25rem', icon: '1rem'   },
   md: { d: '2.75rem', icon: '1.25rem'},
   lg: { d: '3.25rem', icon: '1.5rem' },
@@ -112,7 +113,20 @@ export const IconButton: React.FC<IconButtonProps> = ({
   ...rest
 }) => {
   const { theme } = useTheme();
-  const { d: diam, icon: iconSz } = geom(theme)[size];
+  const sizes = geom(theme);
+
+  let diam: string;
+  let iconSz: string;
+
+  if (typeof size === 'number') {
+    diam = `${size}px`;
+    iconSz = `calc(${diam} * 0.45)`;
+  } else if (sizes[size as IconButtonSize]) {
+    ({ d: diam, icon: iconSz } = sizes[size as IconButtonSize]);
+  } else {
+    diam = size;
+    iconSz = `calc(${diam} * 0.45)`;
+  }
 
   const ripple =
     variant === 'contained'

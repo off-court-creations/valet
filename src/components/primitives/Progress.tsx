@@ -13,7 +13,7 @@ import type { Theme }                  from '../../system/themeStore';
 /* Public API                                                */
 export type ProgressVariant = 'linear' | 'circular';
 export type ProgressMode    = 'determinate' | 'indeterminate' | 'buffer';
-export type ProgressSize    = 'sm' | 'md' | 'lg';
+export type ProgressSize    = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 export interface ProgressProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'>,
@@ -26,8 +26,8 @@ export interface ProgressProps
   value?: number;
   /** 0 – 100 secondary/buffer value (linear‑buffer only). */
   buffer?: number;
-  /** sm (IconButton sm), md (default), or lg. */
-  size?: ProgressSize;
+  /** xs – xl token or custom CSS size */
+  size?: ProgressSize | number | string;
   /** Show numeric % inside Circular centre. */
   showLabel?: boolean;
   /** Colour override (defaults to theme.primary). */
@@ -36,8 +36,8 @@ export interface ProgressProps
 
 /*───────────────────────────────────────────────────────────*/
 /* Size tokens, strongly typed                               */
-interface CircularToken { box: number; stroke: number }
-interface LinearToken   { h: number }
+interface CircularToken { box: string; stroke: string }
+interface LinearToken   { h: string }
 
 type Tokens = {
   circular: Record<ProgressSize, CircularToken>;
@@ -46,16 +46,27 @@ type Tokens = {
 
 const geom = (_t: Theme): Tokens => ({
   circular: {
-    sm: { box: 24, stroke: 3 },
-    md: { box: 36, stroke: 4 },
-    lg: { box: 48, stroke: 6 },
+    xs: { box: '0.75rem', stroke: '0.09375rem' },
+    sm: { box: '1.5rem',  stroke: '0.1875rem'  },
+    md: { box: '2.25rem', stroke: '0.25rem'    },
+    lg: { box: '3rem',    stroke: '0.375rem'   },
+    xl: { box: '3.75rem', stroke: '0.46875rem' },
   },
   linear: {
-    sm: { h: 4 },
-    md: { h: 6 },
-    lg: { h: 8 },
+    xs: { h: '0.125rem'  },
+    sm: { h: '0.25rem'   },
+    md: { h: '0.375rem'  },
+    lg: { h: '0.5rem'    },
+    xl: { h: '0.625rem'  },
   },
 });
+
+const toPx = (val: string): number =>
+  val.endsWith('rem')
+    ? parseFloat(val) * 16
+    : val.endsWith('px')
+      ? parseFloat(val)
+      : parseFloat(val);
 
 /*───────────────────────────────────────────────────────────*/
 /* Indeterminate keyframes                                   */
@@ -87,9 +98,9 @@ const Root = styled('div')`
 `;
 
 // ─── Circular ─────────────────────────────────────────────
-const CircleWrap = styled('div')<{ $d: number }>`
-  width: ${({ $d }) => $d}px;
-  height:${({ $d }) => $d}px;
+const CircleWrap = styled('div')<{ $d: string }>`
+  width: ${({ $d }) => $d};
+  height: ${({ $d }) => $d};
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -109,9 +120,9 @@ const CenterLabel = styled('span')<{ $font: string }>`
 `;
 
 // ─── Linear ───────────────────────────────────────────────
-const Track = styled('div')<{ $h: number }>`
+const Track = styled('div')<{ $h: string }>`
   width: 100%;
-  height: ${({ $h }) => $h}px;
+  height: ${({ $h }) => $h};
   background: #0003;
   border-radius: 9999px;
   overflow: hidden;
@@ -177,10 +188,35 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
     /* CIRCULAR                                                */
     /*─────────────────────────────────────────────────────────*/
     if (variant === 'circular') {
-      const { box, stroke } = tokens.circular[size];
-      const radius          = (box - stroke) / 2;
-      const circ            = 2 * Math.PI * radius;
-      const offset          = ((100 - value) / 100) * circ;
+      let box: string;
+      let stroke: string;
+
+      if (typeof size === 'number') {
+        box = `${size}px`;
+        stroke = `calc(${box} / 8)`;
+      } else if (tokens.circular[size as ProgressSize]) {
+        ({ box, stroke } = tokens.circular[size as ProgressSize]);
+      } else {
+        box = size as string;
+        stroke = `calc(${box} / 8)`;
+      }
+
+      const boxPx =
+        typeof size === 'number'
+          ? size
+          : tokens.circular[size as ProgressSize]
+            ? toPx(tokens.circular[size as ProgressSize].box)
+            : toPx(size as string);
+      const strokePx =
+        typeof size === 'number'
+          ? boxPx / 8
+          : tokens.circular[size as ProgressSize]
+            ? toPx(tokens.circular[size as ProgressSize].stroke)
+            : boxPx / 8;
+
+      const radius = (boxPx - strokePx) / 2;
+      const circ   = 2 * Math.PI * radius;
+      const offset = ((100 - value) / 100) * circ;
 
       const svgProps =
         mode === 'indeterminate'
@@ -214,16 +250,16 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
             <svg
               width={box}
               height={box}
-              viewBox={`0 0 ${box} ${box}`}
+              viewBox={`0 0 ${boxPx} ${boxPx}`}
               {...svgProps}
             >
               <circle
-                cx={box / 2}
-                cy={box / 2}
+                cx={boxPx / 2}
+                cy={boxPx / 2}
                 r={radius}
                 fill="none"
                 stroke={primary}
-                strokeWidth={stroke}
+                strokeWidth={strokePx}
                 strokeLinecap="round"
                 {...circleProps}
               />
@@ -241,7 +277,15 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
     /*─────────────────────────────────────────────────────────*/
     /* LINEAR                                                  */
     /*─────────────────────────────────────────────────────────*/
-    const { h } = tokens.linear[size];
+    let h: string;
+
+    if (typeof size === 'number') {
+      h = `${size / 6}px`;
+    } else if (tokens.linear[size as ProgressSize]) {
+      h = tokens.linear[size as ProgressSize].h;
+    } else {
+      h = `calc(${size} / 6)`;
+    }
     const barStyle: React.CSSProperties = {
       width : `${value}%`,
       right : 'auto',
