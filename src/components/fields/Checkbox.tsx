@@ -21,7 +21,7 @@ import type { Presettable } from '../../types';
 
 /*───────────────────────────────────────────────────────────────────────────*/
 /* Public prop contracts                                                    */
-export type CheckboxSize = 'sm' | 'md' | 'lg';
+export type CheckboxSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 export interface CheckboxProps
   extends Omit<
@@ -33,16 +33,18 @@ export interface CheckboxProps
   defaultChecked?: boolean;
   name: string;
   label?: ReactNode;
-  size?: CheckboxSize;
+  size?: CheckboxSize | number | string;
   onChange?: (checked: boolean, event: ChangeEvent<HTMLInputElement>) => void;
 }
 
 /*───────────────────────────────────────────────────────────────────────────*/
 /* Size map helper                                                          */
 const createSizeMap = (t: Theme) => ({
-  sm : { box: '16px', tick: '10px', gap: t.spacing(1) },
-  md : { box: '20px', tick: '12px', gap: t.spacing(1) },
-  lg : { box: '24px', tick: '14px', gap: t.spacing(1) },
+  xs: { box: '0.75rem', tick: 'calc(0.75rem * 0.6)', gap: t.spacing(1) },
+  sm: { box: '1rem',   tick: 'calc(1rem * 0.6)',   gap: t.spacing(1) },
+  md: { box: '1.25rem',tick: 'calc(1.25rem * 0.6)',gap: t.spacing(1) },
+  lg: { box: '1.5rem', tick: 'calc(1.5rem * 0.6)', gap: t.spacing(1) },
+  xl: { box: '1.75rem',tick: 'calc(1.75rem * 0.6)',gap: t.spacing(1) },
 } as const);
 
 /*───────────────────────────────────────────────────────────────────────────*/
@@ -158,7 +160,18 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
   ) => {
     /* Theme & sizing ---------------------------------------------------- */
     const { theme, mode } = useTheme();
-    const SZ              = createSizeMap(theme)[size];
+    const map = createSizeMap(theme);
+
+    let SZ: { box: string; tick: string; gap: string };
+
+    if (typeof size === 'number') {
+      const box = `${size}px`;
+      SZ = { box, tick: `calc(${box} * 0.6)`, gap: theme.spacing(1) };
+    } else if (map[size as CheckboxSize]) {
+      SZ = map[size as CheckboxSize];
+    } else {
+      SZ = { box: size, tick: `calc(${size} * 0.6)`, gap: theme.spacing(1) };
+    }
 
     /* Disabled colour (same recipe as Accordion) ------------------------ */
     const disabledColor = toHex(

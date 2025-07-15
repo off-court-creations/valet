@@ -64,12 +64,14 @@ export default function ProgressDemoPage() {
         <Stack direction="row">
           <Progress variant="circular" mode="indeterminate" />
           <Progress variant="circular" mode="indeterminate" size="lg" />
+          <Progress variant="circular" mode="indeterminate" size="xl" />
           <Progress
             variant="circular"
             mode="indeterminate"
             size="sm"
             color={theme.colors['success']}
           />
+          <Progress variant="circular" mode="indeterminate" size="xs" />
         </Stack>
 
         {/* 2. Circular determinate (controlled) --------------------------- */}
@@ -98,6 +100,7 @@ export default function ProgressDemoPage() {
         {/* 4. Linear determinate (controlled) ----------------------------- */}
         <Typography variant="h3">4. Linear – determinate (controlled)</Typography>
         <Progress value={value} />
+        <Progress value={value} size={50} />
 
         {/* 5. Linear buffer ----------------------------------------------- */}
         <Typography variant="h3">5. Linear – buffer</Typography>

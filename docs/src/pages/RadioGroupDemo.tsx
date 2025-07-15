@@ -104,9 +104,9 @@ export default function RadioGroupDemoPage() {
     },
     {
       prop: <code>size</code>,
-      type: <code>'sm' | 'md' | 'lg'</code>,
+      type: <code>'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string</code>,
       default: <code>'md'</code>,
-      description: 'Radio size token',
+      description: 'Radio size token or custom CSS measurement',
     },
     {
       prop: <code>spacing</code>,
@@ -172,6 +172,11 @@ export default function RadioGroupDemoPage() {
         {/* 3. Sizes --------------------------------------------------------- */}
         <Typography variant="h3">3. Sizes</Typography>
         <Stack direction="row">
+          <RadioGroup defaultValue="xs" size="xs">
+            <Radio value="xs" label="size='xs'" />
+            <Radio value="xs2" label="size='xs'" />
+            <Radio value="xs3" label="size='xs'" />
+          </RadioGroup>
           <RadioGroup defaultValue="sm" size="sm">
             <Radio value="sm" label="size='sm'" />
             <Radio value="sm2" label="size='sm'" />
@@ -186,6 +191,23 @@ export default function RadioGroupDemoPage() {
             <Radio value="lg" label="size='lg'" />
             <Radio value="lg2" label="size='lg'" />
             <Radio value="lg3" label="size='lg'" />
+          </RadioGroup>
+          <RadioGroup defaultValue="xl" size="xl">
+            <Radio value="xl" label="size='xl'" />
+            <Radio value="xl2" label="size='xl'" />
+            <Radio value="xl3" label="size='xl'" />
+          </RadioGroup>
+        </Stack>
+
+        <Typography variant="h4">Custom sizes</Typography>
+        <Stack direction="row">
+          <RadioGroup defaultValue="c1" size="3rem">
+            <Radio value="c1" label="size='3rem'" />
+            <Radio value="c2" label="size='3rem'" />
+          </RadioGroup>
+          <RadioGroup defaultValue="c3" size={28}>
+            <Radio value="c3" label="size={28}" />
+            <Radio value="c4" label="size={28}" />
           </RadioGroup>
         </Stack>
 
