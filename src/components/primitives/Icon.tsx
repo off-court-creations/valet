@@ -12,6 +12,8 @@ import { styled }              from '../../css/createStyled';
 import { preset }              from '../../css/stylePresets';
 import type { Presettable }    from '../../types';
 
+export type IconSize = 'sm' | 'md' | 'lg' | 'xl';
+
 /*───────────────────────────────────────────────────────────*/
 /* Public props                                              */
 /*  – We extend span-level attributes so they match <Wrapper> */
@@ -26,8 +28,8 @@ export interface IconProps
    * • **ReactElement** – a full `<svg>` element
    */
   svg?: string | ReactElement<SVGSVGElement>;
-  /** Icon size. `number` ⇒ "Npx", `string` ⇒ any CSS length. Default "1em". */
-  size?: number | string;
+  /** Icon size token or explicit CSS size. */
+  size?: IconSize | number | string;
   /** Explicit colour override; otherwise inherits `currentColor`. */
   color?: string | undefined;
 }
@@ -46,11 +48,18 @@ const Wrapper = styled('span')<{ $size: string }>`
   }
 `;
 
+const sizeMap: Record<IconSize, string> = {
+  sm: '1rem',
+  md: '1.25rem',
+  lg: '1.5rem',
+  xl: '1.75rem',
+};
+
 /*───────────────────────────────────────────────────────────*/
 export const Icon: React.FC<PropsWithChildren<IconProps>> = ({
   icon,
   svg,
-  size = '1em',
+  size = 'md',
   color,
   preset: p,
   className,
@@ -62,7 +71,10 @@ export const Icon: React.FC<PropsWithChildren<IconProps>> = ({
   const presetClasses = p ? preset(p) : '';
 
   /* ----- normalise size & colour ------------------------- */
-  const finalSize   = typeof size === 'number' ? `${size}px` : size;
+  const finalSize =
+    typeof size === 'number'
+      ? `${size}px`
+      : sizeMap[size as IconSize] ?? size;
   const colourStyle = color ? { color } : undefined;
 
   /*─────────────────────────────────────────────────────────*/

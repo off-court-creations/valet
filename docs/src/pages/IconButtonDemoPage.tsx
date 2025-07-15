@@ -71,7 +71,7 @@ export default function IconButtonDemoPage() {
     },
     {
       prop: <code>size</code>,
-      type: <code>'sm' | 'md' | 'lg'</code>,
+      type: <code>'sm' | 'md' | 'lg' | 'xl'</code>,
       default: <code>'md'</code>,
       description: 'Overall button dimensions',
     },
@@ -125,6 +125,7 @@ export default function IconButtonDemoPage() {
           <IconButton icon="mdi:play" size="sm" aria-label="Play small" />
           <IconButton icon="mdi:play" size="md" aria-label="Play medium" />
           <IconButton icon="mdi:play" size="lg" aria-label="Play large" />
+          <IconButton icon="mdi:play" size="xl" aria-label="Play extra" />
         </Stack>
 
         {/* 2. Outlined sizes ---------------------------------------------- */}
@@ -147,6 +148,12 @@ export default function IconButtonDemoPage() {
             icon="mdi:pause"
             size="lg"
             aria-label="Pause large"
+          />
+          <IconButton
+            variant="outlined"
+            icon="mdi:pause"
+            size="xl"
+            aria-label="Pause extra"
           />
         </Stack>
 

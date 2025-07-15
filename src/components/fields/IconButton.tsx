@@ -13,7 +13,7 @@ import { Icon }                from '../primitives/Icon';
 /*───────────────────────────────────────────────────────────*/
 /* Public API                                                */
 export type IconButtonVariant = 'contained' | 'outlined';
-export type IconButtonSize    = 'sm' | 'md' | 'lg';
+export type IconButtonSize    = 'sm' | 'md' | 'lg' | 'xl';
 
 export interface IconButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -33,6 +33,7 @@ const geom: (t: Theme) => Record<IconButtonSize, Geometry> = () => ({
   sm: { d: '2.25rem', icon: '1rem'   },
   md: { d: '2.75rem', icon: '1.25rem'},
   lg: { d: '3.25rem', icon: '1.5rem' },
+  xl: { d: '3.75rem', icon: '1.75rem' },
 });
 
 /*───────────────────────────────────────────────────────────*/

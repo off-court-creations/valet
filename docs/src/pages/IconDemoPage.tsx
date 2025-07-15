@@ -78,9 +78,9 @@ export default function IconDemoPage() {
     },
     {
       prop: <code>size</code>,
-      type: <code>number | string</code>,
-      default: <code>'1em'</code>,
-      description: 'CSS size of the icon',
+      type: <code>'sm' | 'md' | 'lg' | 'xl' | number | string</code>,
+      default: <code>'md'</code>,
+      description: 'Icon dimensions',
     },
     {
       prop: <code>color</code>,
@@ -125,10 +125,10 @@ export default function IconDemoPage() {
         {/* 2. Sizing -------------------------------------------------------- */}
         <Typography variant="h3">2. Size prop</Typography>
         <Stack direction="row">
-          <Icon icon="mdi:home" size={16} aria-label="home-sm" />
-          <Icon icon="mdi:home" size="24px" aria-label="home-md" />
-          <Icon icon="mdi:home" size="2.5rem" aria-label="home-lg" />
-          <Icon icon="mdi:home" size={64} aria-label="home-xl" />
+          <Icon icon="mdi:home" size="sm" aria-label="home-sm" />
+          <Icon icon="mdi:home" size="md" aria-label="home-md" />
+          <Icon icon="mdi:home" size="lg" aria-label="home-lg" />
+          <Icon icon="mdi:home" size="xl" aria-label="home-xl" />
         </Stack>
 
         {/* 3. Color override ---------------------------------------------- */}
