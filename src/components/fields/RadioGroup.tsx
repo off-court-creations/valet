@@ -25,13 +25,13 @@ import type { Presettable } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 /* Context                                                   */
-type RadioSize = 'sm' | 'md' | 'lg';
+export type RadioSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 interface RadioCtx {
   value   : string | null;
   setValue: (v: string) => void;
   name    : string;
-  size    : RadioSize;
+  size    : RadioSize | number | string;
 }
 
 const RadioGroupCtx = createContext<RadioCtx | null>(null);
@@ -44,9 +44,11 @@ const useRadioGroup = () => {
 /*───────────────────────────────────────────────────────────*/
 /* Size map helper                                           */
 const createSizeMap = (t: Theme) => ({
-  sm: { indicator: '16px', dot: '10px', gapInner: t.spacing(0.75) },
-  md: { indicator: '20px', dot: '12px', gapInner: t.spacing(0.75) },
-  lg: { indicator: '24px', dot: '14px', gapInner: t.spacing(1) },
+  xs: { indicator: '0.75rem', dot: 'calc(0.75rem * 0.6)', gapInner: t.spacing(0.75) },
+  sm: { indicator: '1rem',    dot: 'calc(1rem * 0.6)',    gapInner: t.spacing(0.75) },
+  md: { indicator: '1.25rem', dot: 'calc(1.25rem * 0.6)', gapInner: t.spacing(0.75) },
+  lg: { indicator: '1.5rem',  dot: 'calc(1.5rem * 0.6)',  gapInner: t.spacing(1)    },
+  xl: { indicator: '1.75rem', dot: 'calc(1.75rem * 0.6)', gapInner: t.spacing(1)    },
 });
 
 /*───────────────────────────────────────────────────────────*/
@@ -88,7 +90,7 @@ export interface RadioGroupProps
   defaultValue? : string;
   name?         : string;
   row?          : boolean;
-  size?         : RadioSize;
+  size?         : RadioSize | number | string;
   /** Gap between options */
   spacing?      : number | string;
   onChange?     : (val: string) => void;
@@ -103,7 +105,7 @@ export interface RadioProps
     Presettable {
   value   : string;
   label?  : string;
-  size?   : RadioSize;
+  size?   : RadioSize | number | string;
   children?: ReactNode;
 }
 
@@ -281,7 +283,27 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
     const { value: sel, setValue, name, size: groupSize } = useRadioGroup();
 
     const token   = sizeProp ?? groupSize;
-    const SZ      = createSizeMap(theme)[token];
+    const map     = createSizeMap(theme);
+
+    let SZ: { indicator: string; dot: string; gapInner: string };
+
+    if (typeof token === 'number') {
+      const ind = `${token}px`;
+      SZ = {
+        indicator: ind,
+        dot      : `calc(${ind} * 0.6)`,
+        gapInner : theme.spacing(0.75),
+      };
+    } else if (map[token as RadioSize]) {
+      SZ = map[token as RadioSize];
+    } else {
+      const ind = token as string;
+      SZ = {
+        indicator: ind,
+        dot      : `calc(${ind} * 0.6)`,
+        gapInner : theme.spacing(0.75),
+      };
+    }
     const checked = sel === value;
 
     /* Disabled colour (Accordion recipe) ------------------------------- */

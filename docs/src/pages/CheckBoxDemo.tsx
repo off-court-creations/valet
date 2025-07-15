@@ -78,7 +78,7 @@ export default function CheckboxDemoPage() {
     },
     {
       prop: <code>size</code>,
-      type: <code>'sm' | 'md' | 'lg'</code>,
+      type: <code>'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string</code>,
       default: <code>'md'</code>,
       description: 'Checkbox dimensions',
     },
@@ -153,13 +153,22 @@ export default function CheckboxDemoPage() {
         {/* 3. Sizes --------------------------------------------------------- */}
         <Typography variant="h3">3. Sizes</Typography>
         <Stack>
+          <Checkbox name="xs" size="xs" defaultChecked label="size='xs'" />
           <Checkbox name="sm" size="sm" defaultChecked label="size='sm'" />
           <Checkbox name="md" size="md" defaultChecked label="size='md'" />
           <Checkbox name="lg" size="lg" defaultChecked label="size='lg'" />
+          <Checkbox name="xl" size="xl" defaultChecked label="size='xl'" />
         </Stack>
 
-        {/* 4. Disabled ------------------------------------------------------ */}
-        <Typography variant="h3">4. Disabled</Typography>
+        {/* 4. Custom sizes ------------------------------------------------- */}
+        <Typography variant="h3">4. Custom sizes</Typography>
+        <Stack>
+          <Checkbox name="c1" size="3rem" defaultChecked label="size='3rem'" />
+          <Checkbox name="c2" size={28} defaultChecked label="size={28}" />
+        </Stack>
+
+        {/* 5. Disabled ------------------------------------------------------ */}
+        <Typography variant="h3">5. Disabled</Typography>
         <Stack>
           <Checkbox
             name="d1"
@@ -170,8 +179,8 @@ export default function CheckboxDemoPage() {
           <Checkbox name="d2" disabled label="disabled & unchecked" />
         </Stack>
 
-        {/* 5. FormControl integration -------------------------------------- */}
-        <Typography variant="h3">5. FormControl Binding</Typography>
+        {/* 6. FormControl integration -------------------------------------- */}
+        <Typography variant="h3">6. FormControl Binding</Typography>
         <FormControl
           useStore={useSignupForm}
           onSubmitValues={handleSubmit}
@@ -191,8 +200,8 @@ export default function CheckboxDemoPage() {
           </Button>
         </FormControl>
 
-          {/* 6. Live theme validation ---------------------------------------- */}
-          <Typography variant="h3">6. Theme coupling</Typography>
+          {/* 7. Live theme validation ---------------------------------------- */}
+          <Typography variant="h3">7. Theme coupling</Typography>
           <Button variant="outlined" onClick={toggleMode}>
             Toggle light / dark mode
           </Button>
