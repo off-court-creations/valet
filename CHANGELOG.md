@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.11.3]
+- Adjusted IconButton and Button to have consistent sizing under the hood
+
 ## [0.11.2]
 - Added `Image` primitive component and docs demo
 
@@ -192,8 +195,9 @@ responsive logic uses the selected `Surface` element to handle persistent margin
 ### Other
 - vibe coded
 
-[v0.11.2]: https://github.com/off-court-creations/valet/releases/tag/v0.11.0
-[v0.11.1]: https://github.com/off-court-creations/valet/releases/tag/v0.11.0
+[v0.11.3]: https://github.com/off-court-creations/valet/releases/tag/v0.11.3
+[v0.11.2]: https://github.com/off-court-creations/valet/releases/tag/v0.11.2
+[v0.11.1]: https://github.com/off-court-creations/valet/releases/tag/v0.11.1
 [v0.11.0]: https://github.com/off-court-creations/valet/releases/tag/v0.11.0
 [v0.10.1]: https://github.com/off-court-creations/valet/releases/tag/v0.10.1
 [v0.10.0]: https://github.com/off-court-creations/valet/releases/tag/v0.10.0
