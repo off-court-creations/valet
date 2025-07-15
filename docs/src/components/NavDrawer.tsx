@@ -19,6 +19,7 @@ interface Item {
 const primitives: [string, string][] = [
   ['Avatar', '/avatar-demo'],
   ['Icon', '/icon-demo'],
+  ['Image', '/image-demo'],
   ['Modal', '/modal-demo'],
   ['Progress', '/progress-demo'],
   ['Typography', '/typography'],

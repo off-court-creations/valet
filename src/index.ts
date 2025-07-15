@@ -7,6 +7,7 @@ export * from './components/primitives/Typography';
 export * from './components/primitives/Modal';
 export * from './components/primitives/Progress';
 export * from './components/primitives/Video';
+export * from './components/primitives/Image';
 
 // ─── Layout Primitives ──────────────────────────────────────
 export * from './components/layout/Grid';
