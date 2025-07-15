@@ -62,16 +62,11 @@ export default function ProgressDemoPage() {
         {/* 1. Circular indeterminate -------------------------------------- */}
         <Typography variant="h3">1. Circular – indeterminate</Typography>
         <Stack direction="row">
+          <Progress variant="circular" mode="indeterminate" size="xs" />
+          <Progress variant="circular" mode="indeterminate" size="sm" />
           <Progress variant="circular" mode="indeterminate" />
           <Progress variant="circular" mode="indeterminate" size="lg" />
           <Progress variant="circular" mode="indeterminate" size="xl" />
-          <Progress
-            variant="circular"
-            mode="indeterminate"
-            size="sm"
-            color={theme.colors['success']}
-          />
-          <Progress variant="circular" mode="indeterminate" size="xs" />
         </Stack>
 
         {/* 2. Circular determinate (controlled) --------------------------- */}
