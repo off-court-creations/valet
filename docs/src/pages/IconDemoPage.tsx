@@ -78,7 +78,7 @@ export default function IconDemoPage() {
     },
     {
       prop: <code>size</code>,
-      type: <code>'sm' | 'md' | 'lg' | 'xl' | number | string</code>,
+      type: <code>'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string</code>,
       default: <code>'md'</code>,
       description: 'Icon dimensions',
     },
@@ -125,6 +125,7 @@ export default function IconDemoPage() {
         {/* 2. Sizing -------------------------------------------------------- */}
         <Typography variant="h3">2. Size prop</Typography>
         <Stack direction="row">
+          <Icon icon="mdi:home" size="xs" aria-label="home-xs" />
           <Icon icon="mdi:home" size="sm" aria-label="home-sm" />
           <Icon icon="mdi:home" size="md" aria-label="home-md" />
           <Icon icon="mdi:home" size="lg" aria-label="home-lg" />

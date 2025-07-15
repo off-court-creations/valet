@@ -71,7 +71,7 @@ export default function IconButtonDemoPage() {
     },
     {
       prop: <code>size</code>,
-      type: <code>'sm' | 'md' | 'lg' | 'xl'</code>,
+      type: <code>'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string</code>,
       default: <code>'md'</code>,
       description: 'Overall button dimensions',
     },
@@ -122,6 +122,7 @@ export default function IconButtonDemoPage() {
         {/* 1. Contained sizes --------------------------------------------- */}
         <Typography variant="h3">1. Contained sizes</Typography>
         <Stack direction="row">
+          <IconButton icon="mdi:play" size="xs" aria-label="Play xs" />
           <IconButton icon="mdi:play" size="sm" aria-label="Play small" />
           <IconButton icon="mdi:play" size="md" aria-label="Play medium" />
           <IconButton icon="mdi:play" size="lg" aria-label="Play large" />
@@ -131,6 +132,12 @@ export default function IconButtonDemoPage() {
         {/* 2. Outlined sizes ---------------------------------------------- */}
         <Typography variant="h3">2. Outlined sizes</Typography>
         <Stack direction="row">
+          <IconButton
+            variant="outlined"
+            icon="mdi:pause"
+            size="xs"
+            aria-label="Pause xs"
+          />
           <IconButton
             variant="outlined"
             icon="mdi:pause"
@@ -179,8 +186,15 @@ export default function IconButtonDemoPage() {
           <IconButton svg={HeartSvg} aria-label="Heart" />
         </Stack>
 
-        {/* 5. Disabled & active states ------------------------------------ */}
-        <Typography variant="h3">5. Disabled state</Typography>
+        {/* 5. Custom sizes ------------------------------------------------- */}
+        <Typography variant="h3">5. Custom sizes</Typography>
+        <Stack direction="row">
+          <IconButton icon="mdi:play" size="3rem" aria-label="Play 3rem" />
+          <IconButton icon="mdi:star" size={56} aria-label="Star 56px" />
+        </Stack>
+
+        {/* 6. Disabled & active states ------------------------------------ */}
+        <Typography variant="h3">6. Disabled state</Typography>
         <IconButton
           icon="mdi:delete"
           size="md"
@@ -188,8 +202,8 @@ export default function IconButtonDemoPage() {
           aria-label="Delete disabled"
         />
 
-        {/* 6. Preset usage ------------------------------------------------- */}
-        <Typography variant="h3">6. Preset integration</Typography>
+        {/* 7. Preset usage ------------------------------------------------- */}
+        <Typography variant="h3">7. Preset integration</Typography>
         <Box preset="actionCard">
           <IconButton
             icon="mdi:credit-card"
@@ -199,8 +213,8 @@ export default function IconButtonDemoPage() {
           <Typography>Pay now</Typography>
         </Box>
 
-        {/* 7. Theme coupling ---------------------------------------------- */}
-            <Typography variant="h3">7. Theme demonstration</Typography>
+        {/* 8. Theme coupling ---------------------------------------------- */}
+            <Typography variant="h3">8. Theme demonstration</Typography>
             <Button variant="outlined" onClick={toggleMode}>
               Toggle light / dark mode&nbsp;
               <Icon icon="mdi:theme-light-dark" size="1.2rem" />
