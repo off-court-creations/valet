@@ -23,6 +23,8 @@ import React, {
   
   /*───────────────────────────────────────────────────────────*/
   /* Public props                                              */
+  export type SelectSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+
   export interface SelectProps
     extends Omit<
         React.HTMLAttributes<HTMLDivElement>,
@@ -39,8 +41,8 @@ import React, {
     multiple?: boolean;
     /** Placeholder when nothing selected. */
     placeholder?: string;
-    /** Size token */
-    size?: 'sm' | 'md' | 'lg';
+    /** Size token or custom measurement */
+    size?: SelectSize | number | string;
     disabled?: boolean;
     /** Field name for FormControl binding. */
     name?: string;
@@ -57,16 +59,18 @@ import React, {
   /*───────────────────────────────────────────────────────────*/
   /* Size tokens                                               */
   const geom = (t: Theme) => ({
-    sm: { h: 30, pad: 8,  font: '0.75rem'  },
-    md: { h: 38, pad: 10, font: '0.875rem' },
-    lg: { h: 46, pad: 12, font: '1rem'     },
+    xs: { h: '1.5rem',  pad: t.spacing(0.75), font: '0.625rem'  },
+    sm: { h: '1.875rem', pad: t.spacing(1),    font: '0.75rem'   },
+    md: { h: '2.375rem', pad: t.spacing(1.25), font: '0.875rem'  },
+    lg: { h: '2.875rem', pad: t.spacing(1.5),  font: '1rem'      },
+    xl: { h: '3.375rem', pad: t.spacing(1.75), font: '1.125rem'  },
   }) as const;
   
   /*───────────────────────────────────────────────────────────*/
   /* Styled primitives                                         */
   const Trigger = styled('button')<{
-    $h: number;
-    $pad: number;
+    $h: string;
+    $pad: string;
     $bg: string;
     $text: string;
     $primary: string;
@@ -74,8 +78,8 @@ import React, {
     all: unset;
     box-sizing: border-box;
     width: 100%;
-    height: ${({ $h }) => $h}px;
-    padding: 0 ${({ $pad }) => $pad}px;
+    height: ${({ $h }) => $h};
+    padding: 0 ${({ $pad }) => $pad};
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -125,9 +129,9 @@ import React, {
   `;
   
   const Item = styled('li')<{
-    $pad: number; $active?: boolean; $disabled?: boolean; $primary: string;
+    $pad: string; $active?: boolean; $disabled?: boolean; $primary: string;
   }>`
-    padding: 6px ${({ $pad }) => $pad}px;
+    padding: 6px ${({ $pad }) => $pad};
     cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
     opacity:${({ $disabled }) => ($disabled ? .45 : 1)};
     background:${({ $active,$primary }) => $active ? $primary+'22' : 'transparent'};
@@ -167,8 +171,21 @@ import React, {
     } = props;
   
     /* theme + geometry --------------------------------------- */
-    const { theme }       = useTheme();
-    const g               = geom(theme)[size];
+    const { theme } = useTheme();
+    const map = geom(theme);
+
+    let g: { h: string; pad: string; font: string };
+
+    if (typeof size === 'number') {
+      const h = `${size}px`;
+      g = { h, pad: `${size * 0.26}px`, font: `calc(${h} * 0.35)` };
+    } else if (map[size as SelectSize]) {
+      g = map[size as SelectSize];
+    } else {
+      const h = size;
+      g = { h, pad: `calc(${size} * 0.26)`, font: `calc(${size} * 0.35)` };
+    }
+
     const textCol         = theme.colors.text;
     const bg              = theme.colors.surface;
     const bgElev          = theme.colors.surfaceElevated ?? theme.colors.backgroundAlt ?? bg;
