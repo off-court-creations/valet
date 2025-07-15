@@ -56,6 +56,7 @@ const OverviewPage          = page(() => import('./pages/Overview'));
 const InstallationPage      = page(() => import('./pages/Installation'));
 const UsagePage             = page(() => import('./pages/Usage'));
 const SurfaceExplainerPage  = page(() => import('./pages/SurfaceExplainer'));
+const PropPatternsPage      = page(() => import('./pages/PropPatterns'));
 
 /*───────────────────────────────────────────────────────────*/
 export function App() {
@@ -123,6 +124,7 @@ export function App() {
         <Route path="/snackbar-demo"   element={<SnackbarDemoPage />} />
         <Route path="/tree-demo"      element={<TreeDemoPage />} />
         <Route path="/datetime-demo"  element={<DateTimeDemoPage />} />
+        <Route path="/prop-patterns"  element={<PropPatternsPage />} />
       </Routes>
     </Suspense>
   );
