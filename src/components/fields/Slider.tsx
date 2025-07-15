@@ -36,11 +36,11 @@ import React, {
   }
 
   const createSizeMap = (_: Theme): Record<SliderSize, SizeTokens> => ({
-    xs: { trackH: '2px',  thumb: '10px', tickH: '4px',  font: '0.5rem'   },
-    sm: { trackH: '4px',  thumb: '14px', tickH: '6px',  font: '0.625rem' },
-    md: { trackH: '6px',  thumb: '18px', tickH: '8px',  font: '0.75rem'  },
-    lg: { trackH: '8px',  thumb: '22px', tickH: '10px', font: '0.875rem' },
-    xl: { trackH: '10px', thumb: '26px', tickH: '12px', font: '1rem'    },
+    xs: { trackH: '4px',  thumb: '14px', tickH: '6px',  font: '0.625rem' },
+    sm: { trackH: '6px',  thumb: '18px', tickH: '8px',  font: '0.75rem'  },
+    md: { trackH: '8px',  thumb: '22px', tickH: '10px', font: '0.875rem' },
+    lg: { trackH: '10px', thumb: '26px', tickH: '12px', font: '1rem'    },
+    xl: { trackH: '14px', thumb: '34px', tickH: '16px', font: '1.125rem'},
   });
   
   /*───────────────────────────────────────────────────────────*/
