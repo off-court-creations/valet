@@ -123,6 +123,7 @@ These have been mostly tested in the [valet Docs](https://github.com/off-court-c
 | Tooltip       |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | Tree          |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | Typography    |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
+| Image         |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | Video         |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 
 ## Hooks

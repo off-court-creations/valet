@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 - Grid now supports an `adaptive` prop for portrait layouts
+- Added `Image` primitive component and docs demo
 
 ## [0.11.0]
 - Renamed `Drawer` prop `responsive` to `adaptive`

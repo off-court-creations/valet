@@ -24,6 +24,7 @@ const ButtonDemoPage        = page(() => import('./pages/ButtonDemoPage'));
 const TextFieldDemoPage     = page(() => import('./pages/TextFormDemo'));
 const IconDemoPage          = page(() => import('./pages/IconDemoPage'));
 const IconButtonDemoPage    = page(() => import('./pages/IconButtonDemoPage'));
+const ImageDemoPage         = page(() => import('./pages/ImageDemo'));
 const AvatarDemoPage        = page(() => import('./pages/AvatarDemo'));
 const ChatDemoPage          = page(() => import('./pages/ChatDemo'));
 const PanelDemoPage         = page(() => import('./pages/PanelDemo'));
@@ -90,6 +91,7 @@ export function App() {
         <Route path="/button-demo"     element={<ButtonDemoPage />} />
         <Route path="/text-form-demo"  element={<TextFieldDemoPage />} />
         <Route path="/icon-demo"       element={<IconDemoPage />} />
+        <Route path="/image-demo"      element={<ImageDemoPage />} />
         <Route path="/icon-button-demo"element={<IconButtonDemoPage />} />
         <Route path="/avatar-demo"    element={<AvatarDemoPage />} />
         <Route path="/panel-demo"      element={<PanelDemoPage />} />
