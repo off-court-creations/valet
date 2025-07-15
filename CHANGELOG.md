@@ -3,8 +3,12 @@
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-- Grid now supports an `adaptive` prop for portrait layouts
+
+## [0.11.2]
 - Added `Image` primitive component and docs demo
+
+## [0.11.1]
+- Grid now supports an `adaptive` prop for portrait layouts
 
 ## [0.11.0]
 - Renamed `Drawer` prop `responsive` to `adaptive`
@@ -188,6 +192,8 @@ responsive logic uses the selected `Surface` element to handle persistent margin
 ### Other
 - vibe coded
 
+[v0.11.2]: https://github.com/off-court-creations/valet/releases/tag/v0.11.0
+[v0.11.1]: https://github.com/off-court-creations/valet/releases/tag/v0.11.0
 [v0.11.0]: https://github.com/off-court-creations/valet/releases/tag/v0.11.0
 [v0.10.1]: https://github.com/off-court-creations/valet/releases/tag/v0.10.1
 [v0.10.0]: https://github.com/off-court-creations/valet/releases/tag/v0.10.0
