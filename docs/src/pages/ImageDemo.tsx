@@ -23,7 +23,7 @@ export default function ImageDemoPage() {
 
         <Typography variant="h3">1. Basic usage</Typography>
         <Image
-          src="https://placekitten.com/800/400"
+          src="https://placecats.com/800/400"
           alt="Kitten"
           width="100%"
           height="auto"
@@ -32,7 +32,7 @@ export default function ImageDemoPage() {
 
         <Typography variant="h3">2. Lazy loaded</Typography>
         <Image
-          src="https://placekitten.com/600/400"
+          src="https://placecats.com/600/400"
           alt="Lazy kitten"
           width="100%"
           height="300px"
@@ -42,7 +42,7 @@ export default function ImageDemoPage() {
 
         <Typography variant="h3">3. Contain fit</Typography>
         <Image
-          src="https://placekitten.com/400/500"
+          src="https://placecats.com/400/500"
           alt="Contained kitten"
           width="100%"
           height="300px"
