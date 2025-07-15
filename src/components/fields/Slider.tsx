@@ -26,19 +26,21 @@ import React, {
   
   /*───────────────────────────────────────────────────────────*/
   /* Size map                                                  */
-  type SliderSize = 'sm' | 'md' | 'lg';
-  
+  type SliderSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+
   interface SizeTokens {
-    trackH : number;
-    thumb  : number;
-    tickH  : number;
+    trackH : string;
+    thumb  : string;
+    tickH  : string;
     font   : string;
   }
-  
-  const createSizeMap = (t: Theme): Record<SliderSize, SizeTokens> => ({
-    sm: { trackH: 4, thumb: 14, tickH: 6,  font: '0.625rem'  },
-    md: { trackH: 6, thumb: 18, tickH: 8,  font: '0.75rem'   },
-    lg: { trackH: 8, thumb: 22, tickH: 10, font: '0.875rem'  },
+
+  const createSizeMap = (_: Theme): Record<SliderSize, SizeTokens> => ({
+    xs: { trackH: '4px',  thumb: '14px', tickH: '6px',  font: '0.625rem' },
+    sm: { trackH: '6px',  thumb: '18px', tickH: '8px',  font: '0.75rem'  },
+    md: { trackH: '8px',  thumb: '22px', tickH: '10px', font: '0.875rem' },
+    lg: { trackH: '10px', thumb: '26px', tickH: '12px', font: '1rem'    },
+    xl: { trackH: '14px', thumb: '34px', tickH: '16px', font: '1.125rem'},
   });
   
   /*───────────────────────────────────────────────────────────*/
@@ -50,9 +52,9 @@ import React, {
     user-select: none;
   `;
   
-  const Track = styled('div')<{ $h: number }>`
+  const Track = styled('div')<{ $h: string }>`
     position: relative;
-    height: ${({ $h }) => $h}px;
+    height: ${({ $h }) => $h};
     background: #0003;
     border-radius: 9999px;
     overflow: hidden;
@@ -67,14 +69,14 @@ import React, {
   `;
   
   const Thumb = styled('button')<{
-    $d: number;
+    $d: string;
     $primary: string;
   }>`
     position: absolute;
     top: 50%;
     transform: translate(-50%, -50%);
-    width: ${({ $d }) => $d}px;
-    height: ${({ $d }) => $d}px;
+    width: ${({ $d }) => $d};
+    height: ${({ $d }) => $d};
     border-radius: 50%;
     border: 2px solid #fff;
     background: ${({ $primary }) => $primary};
@@ -111,12 +113,12 @@ import React, {
     user-select: none;
   `;
   
-  const Tick = styled('span')<{ $h: number }>`
+  const Tick = styled('span')<{ $h: string }>`
     position: absolute;
     top: 50%;
     transform: translate(-50%, -50%);
     width: 1px;
-    height: ${({ $h }) => $h}px;
+    height: ${({ $h }) => $h};
     background: currentColor;
     pointer-events: none;
   `;
@@ -179,7 +181,7 @@ import React, {
     /** Optional FormControl binding. */
     name?: string;
   
-    size?: SliderSize;
+    size?: SliderSize | number | string;
     disabled?: boolean;
   }
   
@@ -213,7 +215,29 @@ import React, {
     ) => {
       /* theme + geom tokens ----------------------------------- */
       const { theme } = useTheme();
-      const geom      = createSizeMap(theme)[size];
+      const map  = createSizeMap(theme);
+
+      let geom: SizeTokens;
+
+      if (typeof size === 'number') {
+        const h = `${size}px`;
+        geom = {
+          trackH: h,
+          thumb : `calc(${h} * 2 + 6px)`,
+          tickH : `calc(${h} + 2px)`,
+          font  : `calc(${h} + 6px)`,
+        };
+      } else if (map[size as SliderSize]) {
+        geom = map[size as SliderSize];
+      } else {
+        const h = size as string;
+        geom = {
+          trackH: h,
+          thumb : `calc(${h} * 2 + 6px)`,
+          tickH : `calc(${h} + 2px)`,
+          font  : `calc(${h} + 6px)`,
+        };
+      }
   
       /* optional FormControl binding -------------------------- */
       let form: ReturnType<typeof useForm<any>> | null = null;
@@ -373,7 +397,7 @@ import React, {
             $primary={theme.colors.primary}
             onKeyDown={onKeyDown}
             onPointerDown={onPointerDown}
-            style={{ top: geom.trackH / 2 }}
+            style={{ top: `calc(${geom.trackH} / 2)` }}
           >
             {showValue && (
               <ValueBubble $font={geom.font}>

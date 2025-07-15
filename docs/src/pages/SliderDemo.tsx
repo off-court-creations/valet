@@ -121,7 +121,7 @@ export default function SliderDemoPage() {
     },
     {
       prop: <code>size</code>,
-      type: <code>'sm' | 'md' | 'lg'</code>,
+      type: <code>'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string</code>,
       default: <code>'md'</code>,
       description: 'Slider size',
     },
@@ -216,22 +216,25 @@ export default function SliderDemoPage() {
                 showTicks
               />
 
-              {/* 6. Small size variant ------------------------------------------- */}
-              <Typography variant="h3">6. sm size variant</Typography>
-              <Slider
-                defaultValue={25}
-                size="sm"
-                showValue
-                showMinMax
-              />
+                {/* 6. Sizes ------------------------------------------------------- */}
+                <Typography variant="h3">6. Sizes</Typography>
+                <Stack>
+                  <Slider defaultValue={20} size="xs" showMinMax />
+                  <Slider defaultValue={20} size="sm" showMinMax />
+                  <Slider defaultValue={20} size="md" showMinMax />
+                  <Slider defaultValue={20} size="lg" showMinMax />
+                  <Slider defaultValue={20} size="xl" showMinMax />
+                </Stack>
 
-              {/* 7. Disabled state ----------------------------------------------- */}
-              <Typography variant="h3">7. Disabled</Typography>
-              <Slider
-                value={50}
-                disabled
-                showMinMax
-              />
+                {/* 7. Custom sizes --------------------------------------------- */}
+                <Typography variant="h3">7. Custom sizes</Typography>
+                <Stack>
+                  <Slider defaultValue={40} size="2rem" showMinMax />
+                  <Slider defaultValue={40} size="24px" showMinMax />
+                </Stack>
+
+                {/* 8. Disabled state -------------------------------------------- */}
+                <Typography variant="h3">8. Disabled</Typography>
 
               {/* Theme coupling */}
               <Button variant="outlined" onClick={toggleMode}>
