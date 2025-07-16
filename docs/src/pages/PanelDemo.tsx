@@ -116,6 +116,14 @@ export default function PanelDemoPage() {
           </Panel>
         </Stack>
 
+        {/* 8. centered prop ----------------------------------------------- */}
+        <Typography variant="h3">8. centered&nbsp;prop</Typography>
+        <Panel centered style={{ padding: theme.spacing(1), minHeight: 80 }}>
+          <Typography>
+            Contents centered with <code>centered</code>
+          </Typography>
+        </Panel>
+
         {/* 9. Live theme validation ---------------------------------------- */}
         <Typography variant="h3">9. Theme coupling</Typography>
         <Button variant="outlined" onClick={toggleMode}>
