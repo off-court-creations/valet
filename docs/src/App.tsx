@@ -53,6 +53,7 @@ const SnackbarDemoPage      = page(() => import('./pages/SnackbarDemo'));
 const TreeDemoPage          = page(() => import('./pages/TreeDemo'));
 const DateTimeDemoPage      = page(() => import('./pages/DateTimeDemo'));
 const DateSelectorDemoPage  = page(() => import('./pages/DateSelectorDemo'));
+const IteratorDemoPage      = page(() => import('./pages/IteratorDemo'));
 const OverviewPage          = page(() => import('./pages/Overview'));
 const InstallationPage      = page(() => import('./pages/Installation'));
 const UsagePage             = page(() => import('./pages/Usage'));
@@ -126,6 +127,7 @@ export function App() {
         <Route path="/tree-demo"      element={<TreeDemoPage />} />
         <Route path="/datetime-demo"  element={<DateTimeDemoPage />} />
         <Route path="/dateselector-demo" element={<DateSelectorDemoPage />} />
+        <Route path="/iterator-demo"  element={<IteratorDemoPage />} />
         <Route path="/prop-patterns"  element={<PropPatternsPage />} />
       </Routes>
     </Suspense>

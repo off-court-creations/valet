@@ -45,6 +45,7 @@ const fields: [string, string][] = [
   ['Slider', '/slider-demo'],
   ['Switch', '/switch-demo'],
   ['TextField', '/text-form-demo'],
+  ['Iterator', '/iterator-demo'],
 ];
 
 const widgets: [string, string][] = [
