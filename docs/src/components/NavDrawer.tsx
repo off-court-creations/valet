@@ -51,6 +51,7 @@ const widgets: [string, string][] = [
   ['AppBar', '/appbar-demo'],
   ['OAIChat', '/chat-demo'],
   ['Drawer', '/drawer-demo'],
+  ['Date Selector', '/date-selector-demo'],
   ['List', '/list-demo'],
   ['Pagination', '/pagination-demo'],
   ['Parallax', '/parallax'],

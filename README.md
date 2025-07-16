@@ -97,6 +97,7 @@ These have been mostly tested in the [valet Docs](https://github.com/off-court-c
 | Checkbox      |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | OAIChat          |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | DateTimePicker|  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
+| DateSelector |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | Drawer        |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | FormControl   |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | Grid          |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
