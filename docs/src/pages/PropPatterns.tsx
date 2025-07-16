@@ -43,22 +43,22 @@ export default function UsagePage() {
     {
       prop: <code>variant</code>,
       purpose: 'Switch visual style',
-      components: 'Panel, Button, Progress, Modal, Typography, Tabs',
+      components: 'Button, IconButton, Panel, Modal, Progress, Typography, Tree',
     },
     {
       prop: <code>color</code>,
       purpose: 'Override theme colours',
-      components: 'Box, Panel, Button, AppBar, Icon, Progress, Video',
+      components: 'Progress, Icon, AppBar, Button',
     },
     {
       prop: <code>fullWidth</code>,
       purpose: 'Stretch to fill parent width',
-      components: 'Panel, Button, Modal, Chat',
+      components: 'Panel, Button, Modal',
     },
     {
       prop: <code>compact</code>,
       purpose: 'Remove default spacing',
-      components: 'Box, Panel, Stack, Chat',
+      components: 'Box, Panel, Stack',
     },
     {
       prop: <code>centered</code>,
