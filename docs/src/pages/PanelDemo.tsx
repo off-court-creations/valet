@@ -61,10 +61,6 @@ export default function PanelDemoPage() {
         <Typography variant="h3">4. fullWidth&nbsp;prop</Typography>
         <Panel
           fullWidth
-          style={{
-            padding: theme.spacing(1),
-            textAlign: 'center',
-          }}
         >
           <Typography>Stretch me edge-to-edge with <code>fullWidth</code></Typography>
         </Panel>
@@ -115,6 +111,14 @@ export default function PanelDemoPage() {
             </Typography>
           </Panel>
         </Stack>
+
+        {/* 8. centered prop ----------------------------------------------- */}
+        <Typography variant="h3">8. centered&nbsp;prop</Typography>
+        <Panel centered fullWidth>
+          <Typography>
+            Contents centered with <code>centered</code>
+          </Typography>
+        </Panel>
 
         {/* 9. Live theme validation ---------------------------------------- */}
         <Typography variant="h3">9. Theme coupling</Typography>

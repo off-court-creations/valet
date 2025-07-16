@@ -90,7 +90,7 @@ export default function SelectDemoPage() {
     },
     {
       prop: <code>size</code>,
-      type: <code>'sm' | 'md' | 'lg'</code>,
+      type: <code>'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string</code>,
       default: <code>'md'</code>,
       description: 'Control height',
     },
@@ -171,7 +171,7 @@ export default function SelectDemoPage() {
         {/* ————————————————— Sizes */}
         <Typography variant="h3">4. Size variants</Typography>
         <Stack direction="row">
-          {(['sm', 'md', 'lg'] as const).map((s) => (
+          {(['xs', 'sm', 'md', 'lg', 'xl'] as const).map((s) => (
             <Select key={s} size={s} placeholder={s.toUpperCase()}>
               <Select.Option value="a">A</Select.Option>
               <Select.Option value="b">B</Select.Option>
@@ -179,8 +179,19 @@ export default function SelectDemoPage() {
           ))}
         </Stack>
 
-        {/* ————————————————— Disabled / preset */}
-        <Typography variant="h3">5. Disabled & preset</Typography>
+        {/* ————————————————— Custom sizes */}
+        <Typography variant="h3">5. Custom sizes</Typography>
+        <Stack direction="row">
+          <Select size="3rem" placeholder="3rem">
+            <Select.Option value="x">X</Select.Option>
+          </Select>
+          <Select size={56} placeholder="56px">
+            <Select.Option value="y">Y</Select.Option>
+          </Select>
+        </Stack>
+
+        {/* ————————————————— Disabled & preset */}
+        <Typography variant="h3">6. Disabled & preset</Typography>
         <Stack direction="row">
           <Select disabled placeholder="Disabled">
             <Select.Option value="x">X</Select.Option>
@@ -193,7 +204,7 @@ export default function SelectDemoPage() {
         </Stack>
 
         {/* ————————————————— FormControl demo */}
-        <Typography variant="h3">6. FormControl integration</Typography>
+        <Typography variant="h3">7. FormControl integration</Typography>
         <FormControl
           useStore={useDemoForm}
           onSubmitValues={(vals) => setSubmitted(vals)}
@@ -241,7 +252,7 @@ export default function SelectDemoPage() {
         )}
 
         {/* ————————————————— Theme toggle */}
-        <Typography variant="h3">7. Theme toggle</Typography>
+        <Typography variant="h3">8. Theme toggle</Typography>
         <IconButton icon="mdi:weather-night" onClick={toggleMode} aria-label="toggle theme" />
           </Tabs.Panel>
 

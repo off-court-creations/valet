@@ -13,7 +13,7 @@ import {
 import NavDrawer from '../components/NavDrawer';
 
 export default function MainPage() {
-  const { theme, mode, toggleMode } = useTheme();
+  const { mode, toggleMode } = useTheme();
 
   function Content() {
     return (

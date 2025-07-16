@@ -57,9 +57,9 @@ export default function ButtonDemoPage() {
     },
     {
       prop: <code>size</code>,
-      type: <code>'sm' | 'md' | 'lg'</code>,
+      type: <code>'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string</code>,
       default: <code>'md'</code>,
-      description: 'Overall button scale',
+      description: 'Overall button size or custom CSS length',
     },
     {
       prop: <code>fullWidth</code>,
@@ -101,9 +101,15 @@ export default function ButtonDemoPage() {
         {/* 2 ▸ Sizes ----------------------------------------------------- */}
         <Typography variant="h3">2. Sizes</Typography>
         <Stack direction="row">
+          <Button size="xs">xs</Button>
           <Button size="sm">sm</Button>
           <Button>md (default)</Button>
           <Button size="lg">lg</Button>
+          <Button size="xl">xl</Button>
+        </Stack>
+        <Stack direction="row">
+          <Button size="2rem">2rem</Button>
+          <Button size="32px">32px</Button>
         </Stack>
 
         {/* 3 ▸ Full-width ---------------------------------------------- */}

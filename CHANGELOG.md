@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.12.0]
+- Adjusted Avatar, Button, Icon, IconButton, Checkbox, RadioGroup,
+Select, Slider, and Progress to have more consistent sizing
+and `size` prop usage.
+- Added Prop Patterns docs page to Getting Started
+
 ## [0.11.3]
 - Adjusted IconButton and Button to have consistent sizing under the hood
 

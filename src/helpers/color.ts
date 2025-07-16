@@ -44,6 +44,13 @@ export function toHex({ r, g, b }: RGB): string {
   return '#' + (((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1));
 }
 
+/*──────────── Hex → RGBA string ────────────*/
+export function withAlpha(hex: string, alpha: number): string {
+  const { r, g, b } = toRgb(hex);
+  const a = alpha <= 0 ? 0 : alpha >= 1 ? 1 : alpha;
+  return `rgba(${r}, ${g}, ${b}, ${a})`;
+}
+
 /*──────────── Cached zebra-stripe colour ────────────*/
 const stripeCache = new Map<string, string>();
 

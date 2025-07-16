@@ -91,6 +91,7 @@ const treeData: TreeNode<Item>[] = [
       { id: '/overview', data: { label: 'Overview', path: '/overview' } },
       { id: '/installation', data: { label: 'Installation', path: '/installation' } },
       { id: '/usage', data: { label: 'Usage', path: '/usage' } },
+      { id: '/prop-patterns', data: { label: 'Prop Patterns', path: '/prop-patterns' } },
     ],
   },
   {

@@ -12,7 +12,7 @@ import { styled }              from '../../css/createStyled';
 import { preset }              from '../../css/stylePresets';
 import type { Presettable }    from '../../types';
 
-export type IconSize = 'sm' | 'md' | 'lg' | 'xl';
+export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 /*───────────────────────────────────────────────────────────*/
 /* Public props                                              */
@@ -49,6 +49,7 @@ const Wrapper = styled('span')<{ $size: string }>`
 `;
 
 const sizeMap: Record<IconSize, string> = {
+  xs: '0.75rem',
   sm: '1rem',
   md: '1.25rem',
   lg: '1.5rem',
