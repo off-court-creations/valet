@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.13.0]
+- Renamed `Chat` to `OAIChat`
+
 ## [0.12.1]
 - Fixed `AppBar` portal to inherit font variables from the current `Surface`
 
@@ -204,6 +207,7 @@ responsive logic uses the selected `Surface` element to handle persistent margin
 ### Other
 - vibe coded
 
+[v0.13.0]: https://github.com/off-court-creations/valet/releases/tag/v0.13.0
 [v0.12.1]: https://github.com/off-court-creations/valet/releases/tag/v0.12.1
 [v0.12.0]: https://github.com/off-court-creations/valet/releases/tag/v0.12.0
 [v0.11.3]: https://github.com/off-court-creations/valet/releases/tag/v0.11.3
