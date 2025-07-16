@@ -61,6 +61,7 @@ const widgets: [string, string][] = [
   ['Tabs', '/tabs-demo'],
   ['Tooltip', '/tooltip-demo'],
   ['Tree', '/tree-demo'],
+  ['Date Selector', '/date-selector-demo'],
 ];
 
 const demos: [string, string][] = [

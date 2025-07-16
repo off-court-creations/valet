@@ -48,6 +48,7 @@ export * from './components/widgets/Table';
 export * from './components/widgets/Tabs';
 export * from './components/widgets/Tooltip';
 export * from './components/widgets/Tree';
+export * from './components/widgets/DateSelector';
 
 // ─── Core ────────────────────────────────────────────────────
 export * from './css/createStyled';
