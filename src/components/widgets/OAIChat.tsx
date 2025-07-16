@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/widgets/Chat.tsx  | valet
+// src/components/widgets/OAIChat.tsx  | valet
 // OpenAI style chat component with height constraint
 // ─────────────────────────────────────────────────────────────
 import React, {
@@ -78,7 +78,7 @@ const InputRow = styled('form') <{ $gap: string }>`
 
 /*───────────────────────────────────────────────────────────*/
 /* Component                                                  */
-export const Chat: React.FC<ChatProps> = ({
+export const OAIChat: React.FC<ChatProps> = ({
   messages,
   onSend,
   userAvatar,
@@ -249,4 +249,4 @@ export const Chat: React.FC<ChatProps> = ({
   );
 };
 
-export default Chat;
+export default OAIChat;

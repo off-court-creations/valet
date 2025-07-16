@@ -49,7 +49,7 @@ const fields: [string, string][] = [
 const widgets: [string, string][] = [
   ['Accordion', '/accordion-demo'],
   ['AppBar', '/appbar-demo'],
-  ['Chat', '/chat-demo'],
+  ['OAIChat', '/chat-demo'],
   ['Drawer', '/drawer-demo'],
   ['List', '/list-demo'],
   ['Pagination', '/pagination-demo'],

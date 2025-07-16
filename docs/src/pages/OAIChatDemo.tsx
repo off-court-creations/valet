@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// src/pages/ChatDemo.tsx
-// Simple showcase for <Chat /> component
+// src/pages/OAIChatDemo.tsx | valet
+// Simple showcase for <OAIChat /> component
 // ─────────────────────────────────────────────────────────────────────────────
 import { useState } from 'react';
 import {
@@ -8,7 +8,7 @@ import {
   Stack,
   Typography,
   Button,
-  Chat,
+  OAIChat,
   useTheme,
 } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
@@ -17,7 +17,7 @@ import type { ChatMessage } from '@archway/valet';
 import monkey from '../assets/monkey.jpg';
 import present from '../assets/present.jpg';
 
-export default function ChatDemoPage() {
+export default function OAIChatDemoPage() {
   const navigate = useNavigate();
   const { theme, toggleMode } = useTheme();
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -40,10 +40,10 @@ export default function ChatDemoPage() {
           Chat Showcase
         </Typography>
         <Typography variant="subtitle">
-          Chat component with OpenAI style messages
+          OAIChat component with OpenAI style messages
         </Typography>
 
-        <Chat
+        <OAIChat
           messages={messages}
           onSend={handleSend}
           constrainHeight

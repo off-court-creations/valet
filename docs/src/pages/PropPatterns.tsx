@@ -73,7 +73,7 @@ export default function UsagePage() {
     {
       prop: <code>constrainHeight</code>,
       purpose: 'Clamp height using Surface metrics',
-      components: 'Accordion, Chat, Table',
+      components: 'Accordion, OAIChat, Table',
     },
     {
       prop: <code>value</code>,

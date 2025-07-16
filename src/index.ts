@@ -35,7 +35,7 @@ export * from './components/fields/TextField';
 // ─── Widgets ─────────────────────────────────────────────────
 export * from './components/widgets/Accordion';
 export * from './components/widgets/AppBar';
-export * from './components/widgets/Chat';
+export * from './components/widgets/OAIChat';
 export * from './components/widgets/Drawer';
 export * from './components/widgets/List';
 export * from './components/widgets/LoadingBackdrop';
