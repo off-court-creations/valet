@@ -3,11 +3,12 @@
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-### Added
-- `RadioGroup` now supports `xs` through `xl` size tokens and accepts numeric or
-  string values for custom radio dimensions
-- `Progress` size prop now accepts `xs` through `xl` tokens and custom numeric or
-  string dimensions
+
+## [0.12.0]
+- Adjusted Avatar, Button, Icon, IconButton, Checkbox, RadioGroup,
+Select, Slider, and Progress to have more consistent sizing
+and `size` prop usage.
+- Added Prop Patterns docs page to Getting Started
 
 ## [0.11.3]
 - Adjusted IconButton and Button to have consistent sizing under the hood
