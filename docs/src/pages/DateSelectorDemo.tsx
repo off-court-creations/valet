@@ -7,6 +7,7 @@ import {
   Button,
   DateSelector,
   useTheme,
+  Grid,
 } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../components/NavDrawer';
@@ -29,6 +30,14 @@ export default function DateSelectorDemoPage() {
 
         <DateSelector value={selected} onChange={setSelected} />
         <Typography variant="body">Current: {selected}</Typography>
+
+        <Grid columns={3} adaptive>
+          <DateSelector value={selected} onChange={setSelected} />
+        </Grid>
+
+        <Grid columns={5} adaptive>
+          <DateSelector value={selected} onChange={setSelected} />
+        </Grid>
 
         <Stack direction="row">
           <Button variant="outlined" onClick={toggleMode}>
