@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 - Added `DateSelector` widget – compact calendar component
+- Added `Iterator` widget – numeric stepper input
+- Fixed `Iterator` to hide native number spinners in Firefox
+- Iterator responds to mouse wheel scrolling when hovered
+- Iterator prevents page scroll while hovered
+- Improved Iterator's wheel handler to stop scrolling the page on Firefox
+- Shrunk Iterator buttons and width; increased spacing for a lighter layout
 
 ## [0.13.0]
 - Renamed `Chat` to `OAIChat`

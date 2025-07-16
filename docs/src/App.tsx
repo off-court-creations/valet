@@ -30,6 +30,7 @@ const OAIChatDemoPage          = page(() => import('./pages/OAIChatDemo'));
 const PanelDemoPage         = page(() => import('./pages/PanelDemo'));
 const CheckboxDemoPage      = page(() => import('./pages/CheckBoxDemo'));
 const TooltipDemoPage       = page(() => import('./pages/TooltipDemo'));
+const IteratorDemoPage      = page(() => import('./pages/IteratorDemo'));
 const ModalDemoPage         = page(() => import('./pages/ModalDemo'));
 const SwitchDemoPage        = page(() => import('./pages/SwitchDemo'));
 const AccordionDemoPage     = page(() => import('./pages/AccordionDemo'));
@@ -124,6 +125,7 @@ export function App() {
         <Route path="/chat-demo"       element={<OAIChatDemoPage />} />
         <Route path="/snackbar-demo"   element={<SnackbarDemoPage />} />
         <Route path="/tree-demo"      element={<TreeDemoPage />} />
+        <Route path="/iterator-demo"  element={<IteratorDemoPage />} />
         <Route path="/datetime-demo"  element={<DateTimeDemoPage />} />
         <Route path="/dateselector-demo" element={<DateSelectorDemoPage />} />
         <Route path="/prop-patterns"  element={<PropPatternsPage />} />

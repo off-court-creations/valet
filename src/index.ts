@@ -31,6 +31,7 @@ export type {
 export * from './components/fields/Slider';
 export * from './components/fields/Switch';
 export * from './components/fields/TextField';
+export * from './components/fields/Iterator';
 
 // ─── Widgets ─────────────────────────────────────────────────
 export * from './components/widgets/Accordion';
