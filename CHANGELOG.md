@@ -3,7 +3,9 @@
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-- Fixed AppBar portal to inherit font variables from the current Surface
+
+## [0.12.1]
+- Fixed `AppBar` portal to inherit font variables from the current `Surface`
 
 ## [0.12.0]
 - Adjusted Avatar, Button, Icon, IconButton, Checkbox, RadioGroup,
@@ -202,6 +204,8 @@ responsive logic uses the selected `Surface` element to handle persistent margin
 ### Other
 - vibe coded
 
+[v0.12.1]: https://github.com/off-court-creations/valet/releases/tag/v0.12.1
+[v0.12.0]: https://github.com/off-court-creations/valet/releases/tag/v0.12.0
 [v0.11.3]: https://github.com/off-court-creations/valet/releases/tag/v0.11.3
 [v0.11.2]: https://github.com/off-court-creations/valet/releases/tag/v0.11.2
 [v0.11.1]: https://github.com/off-court-creations/valet/releases/tag/v0.11.1
