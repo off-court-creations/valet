@@ -160,12 +160,19 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
             onClick={() => changeMonth(-1)}
           />
         </div>
-        <div style={{ display: 'flex', gap: '0.25rem', alignItems: 'center' }}>
+        <div
+          style={{
+            display: 'flex',
+            gap: theme.spacing(0.5),
+            flex: 1,
+            alignItems: 'center',
+          }}
+        >
           <Select
-            size="sm"
+            size="xs"
             value={viewMonth}
             onChange={(v) => setViewMonth(Number(v))}
-            style={{ minWidth: 90 }}
+            style={{ flex: 1 }}
           >
             {monthNames.map((m, i) => (
               <Select.Option key={m} value={i}>
@@ -174,10 +181,10 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
             ))}
           </Select>
           <Select
-            size="sm"
+            size="xs"
             value={viewYear}
             onChange={(v) => setViewYear(Number(v))}
-            style={{ minWidth: 80 }}
+            style={{ flex: 1 }}
           >
             {years.map((y) => (
               <Select.Option key={y} value={y}>
