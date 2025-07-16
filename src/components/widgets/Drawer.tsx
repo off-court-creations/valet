@@ -13,6 +13,7 @@ import { shallow } from 'zustand/shallow';
 import { preset } from '../../css/stylePresets';
 import type { Presettable } from '../../types';
 import { IconButton } from '../fields/IconButton';
+import { withAlpha } from '../../helpers/color';
 
 /*───────────────────────────────────────────────────────────*/
 export type DrawerAnchor = 'left' | 'right' | 'top' | 'bottom';
@@ -139,6 +140,7 @@ export const Drawer: React.FC<DrawerProps> = ({
     ? parseFloat(window.getComputedStyle(element).marginTop || '0')
     : 0;
   const presetClasses = presetKey ? preset(presetKey) : '';
+  const toggleBg = withAlpha(theme.colors.primary, 0.7);
   const portrait = height > width;
   const adaptiveMode = adaptive && (anchor === 'left' || anchor === 'right');
   const orientationPersistent = adaptiveMode && !portrait;
@@ -214,6 +216,7 @@ export const Drawer: React.FC<DrawerProps> = ({
             top: `calc(${theme.spacing(1)} + ${surfOffset}px)`,
             [anchor]: theme.spacing(1),
             zIndex: 9999,
+            background: toggleBg,
           }}
           aria-label="Open drawer"
         />
