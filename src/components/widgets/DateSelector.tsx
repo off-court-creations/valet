@@ -7,7 +7,7 @@ import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { IconButton } from '../fields/IconButton';
-import { Typography } from '../primitives/Typography';
+import { Select } from '../fields/Select';
 import { useForm } from '../fields/FormControl';
 import type { Presettable } from '../../types';
 
@@ -109,6 +109,8 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   const [viewYear, setViewYear] = useState(selected.getFullYear());
   const [viewMonth, setViewMonth] = useState(selected.getMonth());
 
+  const years = Array.from({ length: 101 }, (_, i) => viewYear - 50 + i);
+
   const startDay = new Date(viewYear, viewMonth, 1).getDay();
   const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
 
@@ -158,9 +160,32 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
             onClick={() => changeMonth(-1)}
           />
         </div>
-        <Typography variant="body" bold>
-          {monthNames[viewMonth]} {viewYear}
-        </Typography>
+        <div style={{ display: 'flex', gap: '0.25rem', alignItems: 'center' }}>
+          <Select
+            size="sm"
+            value={viewMonth}
+            onChange={(v) => setViewMonth(Number(v))}
+            style={{ minWidth: 90 }}
+          >
+            {monthNames.map((m, i) => (
+              <Select.Option key={m} value={i}>
+                {m}
+              </Select.Option>
+            ))}
+          </Select>
+          <Select
+            size="sm"
+            value={viewYear}
+            onChange={(v) => setViewYear(Number(v))}
+            style={{ minWidth: 80 }}
+          >
+            {years.map((y) => (
+              <Select.Option key={y} value={y}>
+                {y}
+              </Select.Option>
+            ))}
+          </Select>
+        </div>
         <div style={{ display: 'flex', gap: '0.25rem' }}>
           <IconButton
             size="sm"
