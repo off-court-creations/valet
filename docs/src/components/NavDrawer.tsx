@@ -43,6 +43,7 @@ const fields: [string, string][] = [
   ['Radio Group', '/radio-demo'],
   ['Select', '/select-demo'],
   ['Slider', '/slider-demo'],
+  ['Iterator', '/iterator-demo'],
   ['Switch', '/switch-demo'],
   ['TextField', '/text-form-demo'],
 ];

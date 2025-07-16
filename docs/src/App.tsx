@@ -38,6 +38,7 @@ const TabsDemoPage          = page(() => import('./pages/TabsDemo'));
 const SliderDemoPage        = page(() => import('./pages/SliderDemo'));
 const ProgressDemoPage      = page(() => import('./pages/ProgressDemo'));
 const SelectDemoPage        = page(() => import('./pages/SelectDemo'));
+const IteratorDemoPage      = page(() => import('./pages/IteratorDemo'));
 const TablePlaygroundPage   = page(() => import('./pages/TableDemo'));
 const ListDemoPage          = page(() => import('./pages/ListDemoPage'));
 const DrawerDemoPage        = page(() => import('./pages/DrawerDemo'));
@@ -108,6 +109,7 @@ export function App() {
         />
         <Route path="/tabs-demo"       element={<TabsDemoPage />} />
         <Route path="/slider-demo"     element={<SliderDemoPage />} />
+        <Route path="/iterator-demo"  element={<IteratorDemoPage />} />
         <Route path="/progress-demo"   element={<ProgressDemoPage />} />
         <Route path="/select-demo"     element={<SelectDemoPage />} />
         <Route path="/table-demo"      element={<TablePlaygroundPage />} />
