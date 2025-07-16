@@ -19,6 +19,8 @@ export interface PanelProps
   fullWidth?: boolean;
   /** Explicit background override */
   background?: string | undefined;
+  /** Centre contents & propagate intent via CSS var */
+  centered?: boolean;
   /** Remove built-in margin and padding */
   compact?: boolean;
 }
@@ -28,6 +30,7 @@ export interface PanelProps
 const Base = styled('div')<{
   $variant: PanelVariant;
   $full?: boolean;
+  $center?: boolean;
   $outline?: string;
   $bg?: string;
   $text?: string;
@@ -37,13 +40,21 @@ const Base = styled('div')<{
   box-sizing: border-box;
   vertical-align: top;
 
-  display      : ${({ $full }) => ($full ? 'block' : 'inline-block')};
+  display      : ${({ $center, $full }) =>
+    $center ? 'flex' : $full ? 'block' : 'inline-block'};
   width        : ${({ $full }) => ($full ? '100%'  : 'auto')};
   align-self   : ${({ $full }) => ($full ? 'stretch' : 'flex-start')};
   margin       : ${({ $margin }) => $margin};
   & > * {
     padding: ${({ $pad }) => $pad};
   }
+
+  ${({ $center }) =>
+    $center &&
+    `
+      justify-content: center;
+      align-items: center;
+    `}
 
   /* Only emit a background when we’ve actually been given one */
   ${({ $variant, $bg }) =>
@@ -63,6 +74,9 @@ const Base = styled('div')<{
       color: ${$text};
       --valet-text-color: ${$text};
     `}
+
+  ${({ $center }) =>
+    $center !== undefined && `--valet-centered: ${$center ? '1' : '0'};`}
 `;
 
 /*───────────────────────────────────────────────────────────*/
@@ -70,6 +84,7 @@ const Base = styled('div')<{
 export const Panel: React.FC<PanelProps> = ({
   variant   = 'main',
   fullWidth = false,
+  centered,
   preset: p,
   className,
   style,
@@ -115,6 +130,7 @@ export const Panel: React.FC<PanelProps> = ({
       {...rest}
       $variant={variant}
       $full={fullWidth}
+      $center={centered}
       $outline={theme.colors.backgroundAlt}
       $bg={bg}
       $text={textColour}

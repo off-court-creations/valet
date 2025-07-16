@@ -63,7 +63,7 @@ export default function UsagePage() {
     {
       prop: <code>centered</code>,
       purpose: 'Center content or text',
-      components: 'Box, Typography',
+      components: 'Box, Typography, Panel',
     },
     {
       prop: <code>open</code>,
