@@ -12,7 +12,7 @@ import type { Presettable } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 export type ButtonVariant = 'contained' | 'outlined';
-export type ButtonSize    = 'sm' | 'md' | 'lg';
+export type ButtonSize    = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type ButtonToken   = 'primary' | 'secondary' | 'tertiary';
 
 export interface ButtonProps
@@ -21,15 +21,17 @@ export interface ButtonProps
   color?     : ButtonToken | string;
   textColor? : ButtonToken | string;
   variant?   : ButtonVariant;
-  size?      : ButtonSize;
+  size?      : ButtonSize | number | string;
   fullWidth? : boolean;
 }
 
 /*───────────────────────────────────────────────────────────*/
 const createSizeMap = (t: Theme) => ({
-  sm: { padV: t.spacing(1), padH: t.spacing(1), font: '1rem',  height: '2rem'  },
-  md: { padV: t.spacing(1), padH: t.spacing(1), font: '1rem', height: '2.5rem'},
-  lg: { padV: t.spacing(1), padH: t.spacing(1), font: '1rem',     height: '3rem'  },
+  xs: { padV: t.spacing(1), padH: t.spacing(1), font: '1rem', height: '1.5rem' },
+  sm: { padV: t.spacing(1), padH: t.spacing(1), font: '1rem', height: '2rem'   },
+  md: { padV: t.spacing(1), padH: t.spacing(1), font: '1rem', height: '2.5rem' },
+  lg: { padV: t.spacing(1), padH: t.spacing(1), font: '1rem', height: '3rem'   },
+  xl: { padV: t.spacing(1), padH: t.spacing(1), font: '1rem', height: '3.5rem' },
 } as const);
 
 /*───────────────────────────────────────────────────────────*/
@@ -129,7 +131,19 @@ export const Button: React.FC<ButtonProps> = ({
   ...rest
 }) => {
   const { theme, mode } = useTheme();
-  const { padV, padH, font, height } = createSizeMap(theme)[size];
+  const map = createSizeMap(theme);
+  let geom: { padV: string; padH: string; font: string; height: string };
+
+  if (typeof size === 'number') {
+    const h = `${size}px`;
+    geom = { padV: theme.spacing(1), padH: theme.spacing(1), font: '1rem', height: h };
+  } else if (map[size as ButtonSize]) {
+    geom = map[size as ButtonSize];
+  } else {
+    geom = { padV: theme.spacing(1), padH: theme.spacing(1), font: '1rem', height: size as string };
+  }
+
+  const { padV, padH, font, height } = geom;
 
   const padRule =
     variant === 'outlined'
