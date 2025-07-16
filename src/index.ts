@@ -37,6 +37,7 @@ export * from './components/widgets/Accordion';
 export * from './components/widgets/AppBar';
 export * from './components/widgets/OAIChat';
 export * from './components/widgets/Drawer';
+export * from './components/widgets/DateSelector';
 export * from './components/widgets/List';
 export * from './components/widgets/LoadingBackdrop';
 export * from './components/widgets/Pagination';
