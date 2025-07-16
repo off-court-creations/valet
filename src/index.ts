@@ -44,6 +44,7 @@ export * from './components/widgets/Parallax';
 export * from './components/widgets/Snackbar';
 export * from './components/widgets/SpeedDial';
 export * from './components/widgets/Stepper';
+export * from './components/widgets/DateSelector';
 export * from './components/widgets/Table';
 export * from './components/widgets/Tabs';
 export * from './components/widgets/Tooltip';
