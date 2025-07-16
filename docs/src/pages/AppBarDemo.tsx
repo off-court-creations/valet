@@ -11,7 +11,7 @@ export default function AppBarDemoPage() {
     <Surface>
       <NavDrawer />
       <AppBar>
-        <Typography variant="h6">Fixed</Typography>
+        <Typography fontFamily="Poppins">AppBar with Typography</Typography>
       </AppBar>
       <Stack preset="showcaseStack">
         <Typography variant="h2" bold>
