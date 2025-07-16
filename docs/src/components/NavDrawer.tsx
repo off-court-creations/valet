@@ -56,6 +56,7 @@ const widgets: [string, string][] = [
   ['Parallax', '/parallax'],
   ['Snackbar', '/snackbar-demo'],
   ['Speed Dial', '/speeddial-demo'],
+  ['Date Selector', '/dateselector-demo'],
   ['Stepper', '/stepper-demo'],
   ['Table', '/table-demo'],
   ['Tabs', '/tabs-demo'],
