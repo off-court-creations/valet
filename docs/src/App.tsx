@@ -26,6 +26,7 @@ const IconDemoPage          = page(() => import('./pages/IconDemoPage'));
 const IconButtonDemoPage    = page(() => import('./pages/IconButtonDemoPage'));
 const ImageDemoPage         = page(() => import('./pages/ImageDemo'));
 const AvatarDemoPage        = page(() => import('./pages/AvatarDemo'));
+const IteratorDemoPage      = page(() => import('./pages/IteratorDemo'));
 const OAIChatDemoPage          = page(() => import('./pages/OAIChatDemo'));
 const PanelDemoPage         = page(() => import('./pages/PanelDemo'));
 const CheckboxDemoPage      = page(() => import('./pages/CheckBoxDemo'));
@@ -95,6 +96,7 @@ export function App() {
         <Route path="/icon-demo"       element={<IconDemoPage />} />
         <Route path="/image-demo"      element={<ImageDemoPage />} />
         <Route path="/icon-button-demo"element={<IconButtonDemoPage />} />
+        <Route path="/iterator-demo"  element={<IteratorDemoPage />} />
         <Route path="/avatar-demo"    element={<AvatarDemoPage />} />
         <Route path="/panel-demo"      element={<PanelDemoPage />} />
         <Route path="/checkbox-demo"   element={<CheckboxDemoPage />} />

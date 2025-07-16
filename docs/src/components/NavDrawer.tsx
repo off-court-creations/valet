@@ -40,6 +40,7 @@ const fields: [string, string][] = [
   ['Date Selector', '/dateselector-demo'],
   ['DateTime Picker', '/datetime-demo'],
   ['Icon Button', '/icon-button-demo'],
+  ['Iterator', '/iterator-demo'],
   ['Radio Group', '/radio-demo'],
   ['Select', '/select-demo'],
   ['Slider', '/slider-demo'],
