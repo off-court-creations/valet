@@ -81,13 +81,6 @@ export default function DateSelectorDemoPage() {
         <Tabs>
           <Tabs.Tab label="Usage" />
           <Tabs.Panel>
-            <Typography variant="subtitle">
-              Compact calendar with month and year navigation
-            </Typography>
-
-            <DateSelector value={selected} onChange={setSelected} />
-            <Typography variant="body">Current: {selected}</Typography>
-
             <Grid columns={3} adaptive>
               <DateSelector value={selected} onChange={setSelected} />
             </Grid>
