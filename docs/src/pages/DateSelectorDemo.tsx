@@ -1,4 +1,7 @@
-// src/pages/DateSelectorDemo.tsx
+// ─────────────────────────────────────────────────────────────
+// src/pages/DateSelectorDemo.tsx | valet
+// Showcase of DateSelector component
+// ─────────────────────────────────────────────────────────────
 import { useState } from 'react';
 import {
   Surface,
@@ -8,7 +11,11 @@ import {
   DateSelector,
   useTheme,
   Grid,
+  Tabs,
+  Table,
 } from '@archway/valet';
+import type { TableColumn } from '@archway/valet';
+import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../components/NavDrawer';
 
@@ -17,6 +24,53 @@ export default function DateSelectorDemoPage() {
   const navigate = useNavigate();
   const [selected, setSelected] = useState('2025-01-01');
 
+  interface Row {
+    prop: ReactNode;
+    type: ReactNode;
+    default: ReactNode;
+    description: ReactNode;
+  }
+
+  const columns: TableColumn<Row>[] = [
+    { header: 'Prop', accessor: 'prop' },
+    { header: 'Type', accessor: 'type' },
+    { header: 'Default', accessor: 'default' },
+    { header: 'Description', accessor: 'description' },
+  ];
+
+  const data: Row[] = [
+    {
+      prop: <code>value</code>,
+      type: <code>string</code>,
+      default: <code>-</code>,
+      description: 'Controlled ISO date value (YYYY-MM-DD)',
+    },
+    {
+      prop: <code>defaultValue</code>,
+      type: <code>string</code>,
+      default: <code>-</code>,
+      description: 'Initial uncontrolled value',
+    },
+    {
+      prop: <code>onChange</code>,
+      type: <code>(value: string) =&gt; void</code>,
+      default: <code>-</code>,
+      description: 'Fires when selection changes',
+    },
+    {
+      prop: <code>name</code>,
+      type: <code>string</code>,
+      default: <code>-</code>,
+      description: 'FormControl field name',
+    },
+    {
+      prop: <code>preset</code>,
+      type: <code>string | string[]</code>,
+      default: <code>-</code>,
+      description: 'Apply style presets',
+    },
+  ];
+
   return (
     <Surface>
       <NavDrawer />
@@ -24,27 +78,38 @@ export default function DateSelectorDemoPage() {
         <Typography variant="h2" bold>
           DateSelector Showcase
         </Typography>
-        <Typography variant="subtitle">
-          Compact calendar with month and year navigation
-        </Typography>
+        <Tabs>
+          <Tabs.Tab label="Usage" />
+          <Tabs.Panel>
+            <Grid columns={3} adaptive>
+              <DateSelector value={selected} onChange={setSelected} />
+            </Grid>
 
-        <DateSelector value={selected} onChange={setSelected} />
-        <Typography variant="body">Current: {selected}</Typography>
+            <Grid columns={5} adaptive>
+              <DateSelector value={selected} onChange={setSelected} />
+            </Grid>
 
-        <Grid columns={3} adaptive>
-          <DateSelector value={selected} onChange={setSelected} />
-        </Grid>
+            <Stack direction="row">
+              <Button variant="outlined" onClick={toggleMode}>
+                Toggle light / dark
+              </Button>
+            </Stack>
+          </Tabs.Panel>
 
-        <Grid columns={5} adaptive>
-          <DateSelector value={selected} onChange={setSelected} />
-        </Grid>
+          <Tabs.Tab label="Reference" />
+          <Tabs.Panel>
+            <Typography variant="h3">Prop reference</Typography>
+            <Table data={data} columns={columns} constrainHeight={false} />
+          </Tabs.Panel>
+        </Tabs>
 
-        <Stack direction="row">
-          <Button variant="outlined" onClick={toggleMode}>
-            Toggle light / dark
-          </Button>
-          <Button onClick={() => navigate(-1)}>← Back</Button>
-        </Stack>
+        <Button
+          size="lg"
+          onClick={() => navigate(-1)}
+          style={{ marginTop: theme.spacing(1) }}
+        >
+          ← Back
+        </Button>
       </Stack>
     </Surface>
   );
