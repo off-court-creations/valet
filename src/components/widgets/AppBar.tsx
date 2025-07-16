@@ -114,7 +114,7 @@ export const AppBar: React.FC<AppBarProps> = ({
     </Bar>
   );
 
-  return createPortal(bar, document.body);
+  return createPortal(bar, element || document.body);
 };
 
 export default AppBar;
