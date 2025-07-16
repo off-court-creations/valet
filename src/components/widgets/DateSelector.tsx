@@ -35,10 +35,10 @@ const Wrapper = styled('div')<{ $bg: string; $text: string }>`
   user-select: none;
 `;
 
-const Header = styled('div')`
+const Header = styled('div')<{ $gap: string }>`
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: ${({ $gap }) => $gap};
   margin-bottom: 0.5rem;
 `;
 
@@ -143,8 +143,8 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
       className={cls}
       style={style}
     >
-      <Header>
-        <div style={{ display: 'flex', gap: '0.25rem' }}>
+      <Header $gap={theme.spacing(1)}>
+        <div style={{ display: 'flex', gap: theme.spacing(0.5) }}>
           <IconButton
             size="sm"
             variant="outlined"
@@ -193,7 +193,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
             ))}
           </Select>
         </div>
-        <div style={{ display: 'flex', gap: '0.25rem' }}>
+        <div style={{ display: 'flex', gap: theme.spacing(0.5) }}>
           <IconButton
             size="sm"
             variant="outlined"
