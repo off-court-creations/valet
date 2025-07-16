@@ -117,16 +117,16 @@ export default function IteratorDemoPage() {
           Compact numeric stepper with plus/minus controls. Scroll while
           hovering to change the value without moving the page.
         </Typography>
-        <Typography>
-          The field will increment when scrolling up and decrement when
-          scrolling down. Page scrolling is suppressed while hovering,
-          including on Firefox.
-        </Typography>
 
         <Tabs>
           <Tabs.Tab label="Usage" />
           <Tabs.Panel>
             <Stack>
+              <Typography>
+                The field will increment when scrolling up and decrement when
+                scrolling down. Page scrolling is suppressed while hovering,
+                including on Firefox.
+              </Typography>
               <Typography variant="h3">1. Uncontrolled</Typography>
               <Iterator defaultValue={3} />
 
@@ -147,8 +147,10 @@ export default function IteratorDemoPage() {
                 useStore={useFormStore}
                 onSubmitValues={(vals) => alert(JSON.stringify(vals))}
               >
-                <Iterator name="amount" />
-                <Button type="submit">Submit</Button>
+                <Stack direction="row" compact>
+                  <Iterator name="amount" />
+                  <Button type="submit">Submit</Button>
+                </Stack>
               </FormControl>
 
               <Typography variant="h3">6. Theme toggle</Typography>
