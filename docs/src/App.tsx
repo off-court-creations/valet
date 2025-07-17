@@ -52,7 +52,6 @@ const RadioGroupDemoPage    = page(() => import('./pages/RadioGroupDemo'));
 const VideoDemoPage         = page(() => import('./pages/VideoDemo'));
 const SnackbarDemoPage      = page(() => import('./pages/SnackbarDemo'));
 const TreeDemoPage          = page(() => import('./pages/TreeDemo'));
-const DateTimeDemoPage      = page(() => import('./pages/DateTimeDemo'));
 const DateSelectorDemoPage  = page(() => import('./pages/DateSelectorDemo'));
 const OverviewPage          = page(() => import('./pages/Overview'));
 const InstallationPage      = page(() => import('./pages/Installation'));
@@ -126,7 +125,6 @@ export function App() {
         <Route path="/snackbar-demo"   element={<SnackbarDemoPage />} />
         <Route path="/tree-demo"      element={<TreeDemoPage />} />
         <Route path="/iterator-demo"  element={<IteratorDemoPage />} />
-        <Route path="/datetime-demo"  element={<DateTimeDemoPage />} />
         <Route path="/dateselector-demo" element={<DateSelectorDemoPage />} />
         <Route path="/prop-patterns"  element={<PropPatternsPage />} />
       </Routes>
