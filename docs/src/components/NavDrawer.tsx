@@ -37,10 +37,12 @@ const layoutPrimitives: [string, string][] = [
 const fields: [string, string][] = [
   ['Button', '/button-demo'],
   ['Checkbox', '/checkbox-demo'],
+  ['Date Selector', '/dateselector-demo'],
   ['DateTime Picker', '/datetime-demo'],
   ['Icon Button', '/icon-button-demo'],
   ['Radio Group', '/radio-demo'],
   ['Select', '/select-demo'],
+  ['Iterator', '/iterator-demo'],
   ['Slider', '/slider-demo'],
   ['Switch', '/switch-demo'],
   ['TextField', '/text-form-demo'],

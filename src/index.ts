@@ -31,12 +31,14 @@ export type {
 export * from './components/fields/Slider';
 export * from './components/fields/Switch';
 export * from './components/fields/TextField';
+export * from './components/fields/Iterator';
 
 // ─── Widgets ─────────────────────────────────────────────────
 export * from './components/widgets/Accordion';
 export * from './components/widgets/AppBar';
 export * from './components/widgets/OAIChat';
 export * from './components/widgets/Drawer';
+export * from './components/widgets/DateSelector';
 export * from './components/widgets/List';
 export * from './components/widgets/LoadingBackdrop';
 export * from './components/widgets/Pagination';
