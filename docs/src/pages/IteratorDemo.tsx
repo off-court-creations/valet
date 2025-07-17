@@ -109,7 +109,7 @@ export default function IteratorDemoPage() {
   return (
     <Surface>
       <NavDrawer />
-      <Stack preset="showcaseStack">
+      <Stack>
         <Typography variant="h2" bold>
           Iterator Playground
         </Typography>

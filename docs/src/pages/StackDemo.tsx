@@ -71,7 +71,7 @@ export default function StackDemoPage() {
   return (
     <Surface>
       <NavDrawer />
-      <Stack preset="showcaseStack">
+      <Stack>
         <Typography variant="h2">Stack</Typography>
 
         <Tabs>

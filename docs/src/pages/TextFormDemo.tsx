@@ -42,9 +42,7 @@ export default function TextFieldDemoPage() {
   return (
     <Surface>
       <NavDrawer />
-      <Stack
-        preset="showcaseStack"
-      >
+      <Stack>
         {/* Page header --------------------------------------------------- */}
         <Typography variant="h2" bold>
           TextField &amp; FormControl Showcase

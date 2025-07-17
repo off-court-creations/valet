@@ -12,7 +12,7 @@ export default function InstallationPage() {
   return (
     <Surface>
       <NavDrawer />
-      <Stack preset="showcaseStack">
+      <Stack>
         <Typography variant="h2" bold>Installation</Typography>
         <Typography>Install via npm:</Typography>
         <Panel>

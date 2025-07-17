@@ -115,9 +115,7 @@ export default function CheckboxDemoPage() {
   return (
     <Surface /* Surface already defaults to theme background */>
       <NavDrawer />
-      <Stack
-        preset="showcaseStack"
-      >
+      <Stack>
         {/* Page header ----------------------------------------------------- */}
         <Typography variant="h2" bold>
           Checkbox Showcase

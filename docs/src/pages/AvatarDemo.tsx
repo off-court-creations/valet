@@ -90,7 +90,7 @@ export default function AvatarDemoPage() {
   return (
     <Surface>
       <NavDrawer />
-      <Stack preset="showcaseStack">
+      <Stack>
         <Typography variant="h2">Avatar</Typography>
 
         <Tabs>

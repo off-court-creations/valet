@@ -12,7 +12,7 @@ export default function SurfaceExplainerPage() {
   return (
     <Surface>
       <NavDrawer />
-      <Stack preset="showcaseStack">
+      <Stack>
         <Typography variant="h2">
           Surface
         </Typography>

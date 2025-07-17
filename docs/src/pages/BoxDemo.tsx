@@ -71,9 +71,13 @@ export default function BoxDemoPage() {
   return (
     <Surface>
       <NavDrawer />
-      <Stack preset="showcaseStack">
+      <Stack>
         <Typography variant="h2" bold>
           Box Showcase
+        </Typography>
+
+        <Typography variant="subtitle">
+          Baseline container for backgrounds and centring
         </Typography>
 
         <Tabs>

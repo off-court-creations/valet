@@ -13,7 +13,7 @@ export default function AppBarDemoPage() {
       <AppBar>
         <Typography fontFamily="Poppins">AppBar with Typography</Typography>
       </AppBar>
-      <Stack preset="showcaseStack">
+      <Stack>
         <Typography variant="h2" bold>
           AppBar Showcase
         </Typography>
