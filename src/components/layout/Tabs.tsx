@@ -42,9 +42,10 @@ const Root = styled('div')<{
   $placement : 'top' | 'bottom' | 'left' | 'right';
   $gap: string;
 }>`
+  box-sizing: border-box;
   width: 100%;
   display: grid;
-  margin: ${({ $gap }) => $gap};
+  margin: ${({ $gap }) => `${$gap} 0`};
   & > * {
     padding: ${({ $gap }) => $gap};
   }
