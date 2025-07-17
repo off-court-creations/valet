@@ -151,7 +151,16 @@ export const Surface: React.FC<SurfaceProps> = ({
         {showBackdrop && (
           <LoadingBackdrop fading={fade} showSpinner={showSpinner} />
         )}
-        <div style={{ visibility: fontsReady ? 'visible' : 'hidden', padding: gap }}>{children}</div>
+        <div
+          style={{
+            visibility: fontsReady ? 'visible' : 'hidden',
+            padding: gap,
+            boxSizing: 'border-box',
+            width: '100%',
+          }}
+        >
+          {children}
+        </div>
       </div>
     </SurfaceCtx.Provider>
   );
