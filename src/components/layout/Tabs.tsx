@@ -43,8 +43,9 @@ const Root = styled('div')<{
   $gap: string;
 }>`
   width: 100%;
+  box-sizing: border-box;
   display: grid;
-  margin: ${({ $gap }) => $gap};
+  margin: ${({ $gap }) => `${$gap} 0`};
   & > * {
     padding: ${({ $gap }) => $gap};
   }
@@ -79,8 +80,9 @@ const TabList = styled('div')<{
     $orientation === 'vertical' ? 'column' : 'row'};
   gap: 0;
 
-  ${({ $orientation }) =>
-    $orientation === 'vertical' && 'width: max-content;'}
+  box-sizing: border-box;
+  width: ${({ $orientation }) =>
+    $orientation === 'vertical' ? 'max-content' : '100%'};
 `;
 
 /*───────────────────────────────────────────────────────────*/
@@ -128,6 +130,7 @@ const Panel = styled('div')`
   padding: 1rem 0;
   overflow: visible;
   box-sizing: border-box;
+  width: 100%;
   min-height: 0;
 `;
 

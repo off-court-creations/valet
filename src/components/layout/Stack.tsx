@@ -32,15 +32,15 @@ const StackContainer = styled('div')<{
   $margin: string;
   $pad: string;
 }>`
+  box-sizing: border-box;
+  width: 100%;
   display: flex;
   flex-direction: ${({ $dir }) => $dir};
   align-items: ${({ $dir }) => ($dir === 'row' ? 'center' : 'stretch')};
   gap: ${({ $gap }) => $gap};
   ${({ $wrap }) => ($wrap ? 'flex-wrap: wrap;' : '')}
-  margin: ${({ $margin }) => $margin};
-  & > * {
-    margin: ${({ $pad }) => $pad};
-  }
+  margin : ${({ $margin }) => $margin};
+  padding: ${({ $pad }) => $pad};
 `;
 
 /*───────────────────────────────────────────────────────────*/
