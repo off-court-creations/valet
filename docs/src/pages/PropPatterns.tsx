@@ -79,7 +79,7 @@ export default function UsagePage() {
       prop: <code>value</code>,
       purpose: 'Controlled value (with defaultValue)',
       components:
-        'Slider, Select, Checkbox, Switch, RadioGroup, DateTimePicker, TextField',
+        'Slider, Select, Checkbox, Switch, RadioGroup, TextField',
     },
     {
       prop: <code>orientation</code>,

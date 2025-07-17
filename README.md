@@ -96,13 +96,18 @@ These have been mostly tested in the [valet Docs](https://github.com/off-court-c
 | Button        |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | Checkbox      |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | OAIChat          |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
-| DateTimePicker|  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | Drawer        |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
+| Date Selector |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      |
+----------                 |
 | FormControl   |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | Grid          |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | Icon          |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | IconButton    |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
+| Iterator      |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      |
+----------                 |
 | List          |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | Needs mobile support!      |
+| LoadingBackdrop |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      |
+----------                 |
 | Modal         |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | styling                    |
 | Pagination    |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | Panel         |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
