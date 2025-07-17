@@ -196,10 +196,13 @@ export const Drawer: React.FC<DrawerProps> = ({
     if (persistentEffective && horizontal) {
       const px = typeof size === 'number' ? `${size}px` : size;
       const prop = anchor === 'left' ? 'marginLeft' : 'marginRight';
-      const prev = (node.style as any)[prop];
+      const widthPrev = node.style.width;
+      const marginPrev = (node.style as any)[prop];
+      node.style.width = `calc(100% - ${px})`;
       (node.style as any)[prop] = px;
       return () => {
-        (node.style as any)[prop] = prev;
+        node.style.width = widthPrev;
+        (node.style as any)[prop] = marginPrev;
       };
     }
     return;
