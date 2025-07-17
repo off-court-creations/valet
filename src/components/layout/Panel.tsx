@@ -123,7 +123,7 @@ export const Panel: React.FC<PanelProps> = ({
 
   const presetClasses = p ? preset(p) : '';
   const pad = theme.spacing(1);
-  const margin = compact ? '0' : pad;
+  const margin = compact ? '0' : fullWidth ? `${pad} 0` : pad;
 
   return (
     <Base
