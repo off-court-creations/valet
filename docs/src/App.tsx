@@ -27,7 +27,7 @@ const IconButtonDemoPage    = page(() => import('./pages/IconButtonDemoPage'));
 const ImageDemoPage         = page(() => import('./pages/ImageDemo'));
 const AvatarDemoPage        = page(() => import('./pages/AvatarDemo'));
 const OAIChatDemoPage          = page(() => import('./pages/OAIChatDemo'));
-const PanelDemoPage         = page(() => import('./pages/PanelDemo'));
+const PanelDemoPage         = page(() => import('./pages/components/Panel'));
 const CheckboxDemoPage      = page(() => import('./pages/CheckBoxDemo'));
 const TooltipDemoPage       = page(() => import('./pages/TooltipDemo'));
 const IteratorDemoPage      = page(() => import('./pages/IteratorDemo'));

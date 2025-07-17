@@ -46,9 +46,7 @@ export default function TooltipDemoPage() {
   return (
     <Surface>
       <NavDrawer />
-      <Stack
-        preset="showcaseStack"
-      >
+      <Stack>
         {/* Page header ----------------------------------------------------- */}
         <Typography variant="h2" bold>
           Tooltip Showcase

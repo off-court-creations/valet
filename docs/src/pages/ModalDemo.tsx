@@ -41,9 +41,7 @@ export default function ModalDemoPage() {
   return (
     <Surface>
       <NavDrawer />
-      <Stack
-        preset="showcaseStack"
-      >
+      <Stack>
         <Typography variant="h2" bold>
           Modal Showcase
         </Typography>

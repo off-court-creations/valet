@@ -13,7 +13,7 @@ export default function ImageDemoPage() {
   return (
     <Surface>
       <NavDrawer />
-      <Stack preset="showcaseStack">
+      <Stack>
         <Typography variant="h2" bold>
           Image Showcase
         </Typography>

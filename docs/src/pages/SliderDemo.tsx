@@ -142,9 +142,7 @@ export default function SliderDemoPage() {
   return (
     <Surface>
       <NavDrawer />
-      <Stack
-        preset="showcaseStack"
-      >
+      <Stack>
         {/* Header */}
         <Typography variant="h2" bold>
           Slider Showcase

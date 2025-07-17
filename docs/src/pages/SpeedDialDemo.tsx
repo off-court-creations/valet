@@ -16,9 +16,7 @@ export default function SpeedDialDemoPage() {
   return (
     <Surface>
       <NavDrawer />
-      <Stack
-        preset="showcaseStack"
-      >
+      <Stack>
         <Typography variant="h2" bold>SpeedDial Showcase</Typography>
         <Typography variant="subtitle">Floating action button</Typography>
 

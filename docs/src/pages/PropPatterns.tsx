@@ -91,7 +91,7 @@ export default function UsagePage() {
   return (
     <Surface>
       <NavDrawer />
-      <Stack preset="showcaseStack">
+      <Stack>
         <Typography variant="h2" bold>Property Patterns</Typography>
         <Typography>
           Many props repeat across components. Use this table as a quick

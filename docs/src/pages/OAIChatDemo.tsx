@@ -35,7 +35,7 @@ export default function OAIChatDemoPage() {
   return (
     <Surface>
       <NavDrawer />
-      <Stack preset="showcaseStack">
+      <Stack>
         <Typography variant="h2" bold>
           Chat Showcase
         </Typography>

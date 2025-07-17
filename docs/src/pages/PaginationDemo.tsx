@@ -12,9 +12,7 @@ export default function PaginationDemoPage() {
   return (
     <Surface>
       <NavDrawer />
-      <Stack
-        preset="showcaseStack"
-      >
+      <Stack>
         <Typography variant="h2" bold>Pagination Showcase</Typography>
         <Typography variant="subtitle">Controlled page selection</Typography>
 

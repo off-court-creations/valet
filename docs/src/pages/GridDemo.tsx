@@ -63,7 +63,7 @@ export default function GridDemoPage() {
   return (
     <Surface>
       <NavDrawer />
-      <Stack preset="showcaseStack">
+      <Stack>
         <Typography variant="h2" bold>
           Grid Showcase
         </Typography>
