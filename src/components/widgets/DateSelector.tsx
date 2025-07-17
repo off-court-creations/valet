@@ -109,7 +109,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   const [viewYear, setViewYear] = useState(selected.getFullYear());
   const [viewMonth, setViewMonth] = useState(selected.getMonth());
 
-  const years = Array.from({ length: 101 }, (_, i) => viewYear - 50 + i);
+  const years = Array.from({ length: 241 }, (_, i) => viewYear - 120 + i);
 
   const startDay = new Date(viewYear, viewMonth, 1).getDay();
   const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
