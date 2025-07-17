@@ -23,6 +23,7 @@ export default function DateSelectorDemoPage() {
   const { theme, toggleMode } = useTheme();
   const navigate = useNavigate();
   const [selected, setSelected] = useState('2025-01-01');
+  const [limited, setLimited] = useState('2025-07-15');
 
   interface Row {
     prop: ReactNode;
@@ -69,6 +70,18 @@ export default function DateSelectorDemoPage() {
       default: <code>-</code>,
       description: 'Apply style presets',
     },
+    {
+      prop: <code>minDate</code>,
+      type: <code>string</code>,
+      default: <code>'120y ago'</code>,
+      description: 'Earliest selectable date',
+    },
+    {
+      prop: <code>maxDate</code>,
+      type: <code>string</code>,
+      default: <code>'120y ahead'</code>,
+      description: 'Latest selectable date',
+    },
   ];
 
   return (
@@ -87,6 +100,15 @@ export default function DateSelectorDemoPage() {
 
             <Grid columns={5} adaptive>
               <DateSelector value={selected} onChange={setSelected} />
+            </Grid>
+
+            <Grid columns={4} adaptive>
+              <DateSelector
+                value={limited}
+                onChange={setLimited}
+                minDate="2025-06-01"
+                maxDate="2025-09-30"
+              />
             </Grid>
 
             <Stack direction="row">
