@@ -115,7 +115,9 @@ import React, {
     $w: number; $top: number; $left: number; $bg: string;
   }>`
     position: absolute;
-    width: ${({ $w }) => $w}px;
+    min-width: ${({ $w }) => $w}px;
+    width: max-content;
+    max-width: min(100vw - 2rem, 360px);
     max-height: 260px;
     top: ${({ $top }) => $top}px;
     left: ${({ $left }) => $left}px;
@@ -126,6 +128,7 @@ import React, {
     background: ${({ $bg }) => $bg};
     box-shadow: 0 8px 24px #00000040;
     overflow-y: auto;
+    overflow-x: hidden;
   `;
   
   const Item = styled('li')<{
