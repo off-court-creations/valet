@@ -44,7 +44,8 @@ const Root = styled('div')<{
 }>`
   width: 100%;
   display: grid;
-  margin: ${({ $gap }) => $gap};
+  margin: ${({ $gap }) => `${$gap} 0`};
+  overflow-x: hidden;
   & > * {
     padding: ${({ $gap }) => $gap};
   }

@@ -41,6 +41,10 @@ const StackContainer = styled('div')<{
   & > * {
     margin: ${({ $pad }) => $pad};
   }
+  & > [data-valet-fullwidth] {
+    margin-left: 0;
+    margin-right: 0;
+  }
 `;
 
 /*───────────────────────────────────────────────────────────*/

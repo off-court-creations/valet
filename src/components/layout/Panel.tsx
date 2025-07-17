@@ -44,7 +44,8 @@ const Base = styled('div')<{
     $center ? 'flex' : $full ? 'block' : 'inline-block'};
   width        : ${({ $full }) => ($full ? '100%'  : 'auto')};
   align-self   : ${({ $full }) => ($full ? 'stretch' : 'flex-start')};
-  margin       : ${({ $margin }) => $margin};
+  margin       :
+    ${({ $margin, $full }) => ($full ? `${$margin} 0` : $margin)};
   & > * {
     padding: ${({ $pad }) => $pad};
   }
@@ -128,6 +129,7 @@ export const Panel: React.FC<PanelProps> = ({
   return (
     <Base
       {...rest}
+      data-valet-fullwidth={fullWidth || undefined}
       $variant={variant}
       $full={fullWidth}
       $center={centered}
