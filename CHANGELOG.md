@@ -3,13 +3,12 @@
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [0.14.0]
 - Added `DateSelector` widget – compact calendar component
 - Added `Iterator` widget – numeric stepper input
-- Fixed `Iterator` to hide native number spinners in Firefox
-- Iterator responds to mouse wheel scrolling when hovered
-- Iterator prevents page scroll while hovered
-- Improved Iterator's wheel handler to stop scrolling the page on Firefox
-- Shrunk Iterator buttons and width; increased spacing for a lighter layout
+- `Iterator` responds to mouse wheel scrolling when hovered
+- `Iterator` prevents page scroll while hovered
 
 ## [0.13.0]
 - Renamed `Chat` to `OAIChat`
@@ -213,7 +212,7 @@ responsive logic uses the selected `Surface` element to handle persistent margin
 ## [v0.2.1]
 ### Other
 - vibe coded
-
+[v0.14.0]: https://github.com/off-court-creations/valet/releases/tag/v0.14.0
 [v0.13.0]: https://github.com/off-court-creations/valet/releases/tag/v0.13.0
 [v0.12.1]: https://github.com/off-court-creations/valet/releases/tag/v0.12.1
 [v0.12.0]: https://github.com/off-court-creations/valet/releases/tag/v0.12.0
