@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.15.1]
+- Adjusted size mappings for `IconButonn` and `Icon` 
+
 ## [0.15.0]
 ### Removed
 - `DateTimePicker` component
