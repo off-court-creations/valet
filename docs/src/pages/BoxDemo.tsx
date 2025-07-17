@@ -76,6 +76,10 @@ export default function BoxDemoPage() {
           Box Showcase
         </Typography>
 
+        <Typography variant="subtitle">
+          Baseline container for backgrounds and centring
+        </Typography>
+
         <Tabs>
           <Tabs.Tab label="Usage" />
           <Tabs.Panel>
