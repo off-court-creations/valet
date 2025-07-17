@@ -102,19 +102,17 @@ export default function DateSelectorDemoPage() {
             <DateSelector value={selected} onChange={setSelected} />
 
             <Typography variant="h3">2. Custom width</Typography>
-            <Grid columns={5} adaptive>
+            <Grid columns={3} adaptive>
               <DateSelector value={selected} onChange={setSelected} />
             </Grid>
 
             <Typography variant="h3">3. Limited range</Typography>
-            <Grid columns={4} adaptive>
-              <DateSelector
-                value={limited}
-                onChange={setLimited}
-                minDate="2025-06-01"
-                maxDate="2025-09-30"
-              />
-            </Grid>
+            <DateSelector
+              value={limited}
+              onChange={setLimited}
+              minDate="2025-06-01"
+              maxDate="2025-09-30"
+            />
 
             <Stack direction="row">
               <Button variant="outlined" onClick={toggleMode}>
