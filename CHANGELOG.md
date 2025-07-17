@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.15.0]
+### Removed
+- `DateTimePicker` component
+
 ## [0.14.0]
 - Added `DateSelector` widget – compact calendar component
 - Added `Iterator` widget – numeric stepper input
