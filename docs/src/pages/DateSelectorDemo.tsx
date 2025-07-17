@@ -111,7 +111,7 @@ export default function DateSelectorDemoPage() {
               value={limited}
               onChange={setLimited}
               minDate="2025-06-01"
-              maxDate="2025-09-30"
+              maxDate="2025-09-15"
             />
 
             <Stack direction="row">
