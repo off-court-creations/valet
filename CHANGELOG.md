@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file. The format 
 
 ## [0.15.1]
 - Adjusted size mappings for `IconButonn` and `Icon` 
+- Adjusted classification of some components
 
 ## [0.15.0]
 ### Removed

@@ -6,9 +6,9 @@ import React, { useState } from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
-import { IconButton } from '../fields/IconButton';
-import { Select } from '../fields/Select';
-import { useForm } from '../fields/FormControl';
+import { IconButton } from './IconButton';
+import { Select } from './Select';
+import { useForm } from './FormControl';
 import type { Presettable } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/

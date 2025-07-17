@@ -20,18 +20,23 @@ const primitives: [string, string][] = [
   ['Avatar', '/avatar-demo'],
   ['Icon', '/icon-demo'],
   ['Image', '/image-demo'],
-  ['Modal', '/modal-demo'],
   ['Progress', '/progress-demo'],
   ['Typography', '/typography'],
   ['Video', '/video-demo'],
 ];
 
-const layoutPrimitives: [string, string][] = [
+const layoutComponents: [string, string][] = [
+  ['Accordion', '/accordion-demo'],
+  ['AppBar', '/appbar-demo'],
   ['Box', '/box-demo'],
+  ['Drawer', '/drawer-demo'],
   ['Grid', '/grid-demo'],
+  ['List', '/list-demo'],
+  ['Modal', '/modal-demo'],
   ['Panel', '/panel-demo'],
   ['Stack', '/stack-demo'],
   ['Surface', '/surface'],
+  ['Tabs', '/tabs-demo'],
 ];
 
 const fields: [string, string][] = [
@@ -48,18 +53,13 @@ const fields: [string, string][] = [
 ];
 
 const widgets: [string, string][] = [
-  ['Accordion', '/accordion-demo'],
-  ['AppBar', '/appbar-demo'],
   ['OAIChat', '/chat-demo'],
-  ['Drawer', '/drawer-demo'],
-  ['List', '/list-demo'],
   ['Pagination', '/pagination-demo'],
   ['Parallax', '/parallax'],
   ['Snackbar', '/snackbar-demo'],
   ['Speed Dial', '/speeddial-demo'],
   ['Stepper', '/stepper-demo'],
   ['Table', '/table-demo'],
-  ['Tabs', '/tabs-demo'],
   ['Tooltip', '/tooltip-demo'],
   ['Tree', '/tree-demo'],
 ];
@@ -101,15 +101,15 @@ const treeData: TreeNode<Item>[] = [
     children: [
       {
         id: 'layout',
-        data: { label: 'Layout Primitives' },
-        children: layoutPrimitives.map(([label, path]) => ({
+        data: { label: 'Layout' },
+        children: layoutComponents.map(([label, path]) => ({
           id: path,
           data: { label, path },
         })),
       },
       {
         id: 'primitives',
-        data: { label: 'Primitives' },
+        data: { label: 'Primitive' },
         children: primitives.map(([label, path]) => ({
           id: path,
           data: { label, path },

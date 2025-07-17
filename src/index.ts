@@ -4,7 +4,7 @@
 export * from './components/primitives/Avatar';
 export * from './components/primitives/Icon';
 export * from './components/primitives/Typography';
-export * from './components/primitives/Modal';
+export * from './components/layout/Modal';
 export * from './components/primitives/Progress';
 export * from './components/primitives/Video';
 export * from './components/primitives/Image';
@@ -33,12 +33,12 @@ export * from './components/fields/TextField';
 export * from './components/fields/Iterator';
 
 // ─── Widgets ─────────────────────────────────────────────────
-export * from './components/widgets/Accordion';
-export * from './components/widgets/AppBar';
+export * from './components/layout/Accordion';
+export * from './components/layout/AppBar';
 export * from './components/widgets/OAIChat';
-export * from './components/widgets/Drawer';
-export * from './components/widgets/DateSelector';
-export * from './components/widgets/List';
+export * from './components/layout/Drawer';
+export * from './components/fields/DateSelector';
+export * from './components/layout/List';
 export * from './components/widgets/LoadingBackdrop';
 export * from './components/widgets/Pagination';
 export * from './components/widgets/Parallax';
@@ -46,7 +46,7 @@ export * from './components/widgets/Snackbar';
 export * from './components/widgets/SpeedDial';
 export * from './components/widgets/Stepper';
 export * from './components/widgets/Table';
-export * from './components/widgets/Tabs';
+export * from './components/layout/Tabs';
 export * from './components/widgets/Tooltip';
 export * from './components/widgets/Tree';
 
