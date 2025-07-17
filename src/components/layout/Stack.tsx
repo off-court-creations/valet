@@ -37,10 +37,8 @@ const StackContainer = styled('div')<{
   align-items: ${({ $dir }) => ($dir === 'row' ? 'center' : 'stretch')};
   gap: ${({ $gap }) => $gap};
   ${({ $wrap }) => ($wrap ? 'flex-wrap: wrap;' : '')}
-  margin: ${({ $margin }) => $margin};
-  & > * {
-    margin: ${({ $pad }) => $pad};
-  }
+  margin : ${({ $margin }) => `${$margin} 0`};
+  padding: ${({ $pad }) => $pad};
 `;
 
 /*───────────────────────────────────────────────────────────*/
