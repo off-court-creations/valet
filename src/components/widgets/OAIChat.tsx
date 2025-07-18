@@ -73,7 +73,8 @@ const Row = styled('div') <{
 `;
 
 const InputRow = styled('form')`
-  align-self: center;
+  align-self: stretch;
+  width: 100%;
 `;
 
 const Bar = styled('div')<{ $bg: string; $text: string; $gap: string }>`
@@ -279,7 +280,7 @@ export const OAIChat: React.FC<ChatProps> = ({
 
         {!disableInput && (
           <InputRow onSubmit={handleSubmit}>
-            <Stack direction="row" spacing={1} compact>
+            <Stack direction="row" spacing={1} compact style={{ width: '100%' }}>
               <TextField
                 as="textarea"
                 name="chat-message"
@@ -287,6 +288,7 @@ export const OAIChat: React.FC<ChatProps> = ({
                 onChange={(e) => setText(e.target.value)}
                 rows={1}
                 placeholder={placeholder}
+                style={{ flex: 1 }}
               />
               <IconButton icon="carbon:send" type="submit" aria-label="Send" />
             </Stack>
