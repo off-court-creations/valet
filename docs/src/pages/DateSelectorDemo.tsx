@@ -24,6 +24,10 @@ export default function DateSelectorDemoPage() {
   const navigate = useNavigate();
   const [selected, setSelected] = useState('2025-01-01');
   const [limited, setLimited] = useState('2025-07-15');
+  const [rangeSel, setRangeSel] = useState<[string, string]>([
+    '2025-02-01',
+    '2025-02-05',
+  ]);
 
   interface Row {
     prop: ReactNode;
@@ -42,19 +46,19 @@ export default function DateSelectorDemoPage() {
   const data: Row[] = [
     {
       prop: <code>value</code>,
-      type: <code>string</code>,
+      type: <code>string | [string, string]</code>,
       default: <code>-</code>,
       description: 'Controlled ISO date value (YYYY-MM-DD)',
     },
     {
       prop: <code>defaultValue</code>,
-      type: <code>string</code>,
+      type: <code>string | [string, string]</code>,
       default: <code>-</code>,
       description: 'Initial uncontrolled value',
     },
     {
       prop: <code>onChange</code>,
-      type: <code>(value: string) =&gt; void</code>,
+      type: <code>(value: string | [string, string]) =&gt; void</code>,
       default: <code>-</code>,
       description: 'Fires when selection changes',
     },
@@ -82,6 +86,12 @@ export default function DateSelectorDemoPage() {
       default: <code>'120y ahead'</code>,
       description: 'Latest selectable date',
     },
+    {
+      prop: <code>range</code>,
+      type: <code>boolean</code>,
+      default: <code>false</code>,
+      description: 'Enable dual start/end selection',
+    },
   ];
 
   return (
@@ -99,19 +109,34 @@ export default function DateSelectorDemoPage() {
             </Typography>
 
             <Typography variant="h3">1. Basic</Typography>
-            <DateSelector value={selected} onChange={setSelected} />
+            <DateSelector
+              value={selected}
+              onChange={(v) => setSelected(Array.isArray(v) ? v[0] : v)}
+            />
 
             <Typography variant="h3">2. Custom width</Typography>
             <Grid columns={3} adaptive>
-              <DateSelector value={selected} onChange={setSelected} />
+              <DateSelector
+                value={selected}
+                onChange={(v) => setSelected(Array.isArray(v) ? v[0] : v)}
+              />
             </Grid>
 
             <Typography variant="h3">3. Limited range</Typography>
             <DateSelector
               value={limited}
-              onChange={setLimited}
+              onChange={(v) => setLimited(Array.isArray(v) ? v[0] : v)}
               minDate="2025-06-01"
               maxDate="2025-09-15"
+            />
+
+            <Typography variant="h3">4. Range mode</Typography>
+            <DateSelector
+              value={rangeSel}
+              onChange={(v) =>
+                Array.isArray(v) ? setRangeSel(v as [string, string]) : setRangeSel([v, v])
+              }
+              range
             />
 
             <Stack direction="row">

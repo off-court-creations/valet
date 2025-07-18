@@ -15,18 +15,20 @@ import type { Presettable } from '../../types';
 export interface DateSelectorProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'>,
     Presettable {
-  /** Controlled ISO date value (YYYY-MM-DD). */
-  value?: string;
+  /** Controlled ISO date value or `[start, end]` pair. */
+  value?: string | [string, string];
   /** Default value for uncontrolled usage. */
-  defaultValue?: string;
-  /** Fires with ISO value when selection changes. */
-  onChange?: (value: string) => void;
+  defaultValue?: string | [string, string];
+  /** Fires with ISO value or pair when selection changes. */
+  onChange?: (value: string | [string, string]) => void;
   /** FormControl field name. */
   name?: string;
   /** Earliest selectable ISO date (YYYY-MM-DD). */
   minDate?: string;
   /** Latest selectable ISO date (YYYY-MM-DD). */
   maxDate?: string;
+  /** Enable dual start/end date selection. */
+  range?: boolean;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -58,11 +60,18 @@ const DayLabel = styled('div')`
   opacity: 0.8;
 `;
 
-const Cell = styled('button')<{ $selected: boolean; $primary: string }>`
+const Cell = styled('button')<{
+  $start: boolean;
+  $end: boolean;
+  $between: boolean;
+  $primary: string;
+  $secondary: string;
+}>`
   padding: 0.25rem 0;
-  border: none;
-  background: ${({ $selected, $primary }) =>
-    $selected ? $primary : 'transparent'};
+  border: ${({ $end, $primary }) =>
+    $end ? `1px solid ${$primary}` : 'none'};
+  background: ${({ $start, $between, $primary, $secondary }) =>
+    $start ? $primary : $between ? $secondary + '55' : 'transparent'};
   color: inherit;
   border-radius: 4px;
   cursor: pointer;
@@ -98,6 +107,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   minDate: minDateProp,
   maxDate: maxDateProp,
   preset: p,
+  range = false,
   className,
   style,
   ...rest
@@ -106,23 +116,48 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   let form: ReturnType<typeof useForm<any>> | null = null;
   try { form = useForm<any>(); } catch {}
 
-  const formVal = form && name ? (form.values[name] as string | undefined) : undefined;
+  const formVal = form && name ? (form.values[name] as any) : undefined;
   const controlled = value !== undefined || formVal !== undefined;
+  const rangeMode = range;
   const initial = value ?? formVal ?? defaultValue;
-  const parseDate = (v?: string) => v ? new Date(v + 'T00:00') : new Date();
-  const [internal, setInternal] = useState(parseDate(initial));
+
+  const parseDate = (v?: string) => (v ? new Date(v + 'T00:00') : undefined);
+
+  const [startInt, setStartInt] = useState<Date | undefined>(() => {
+    if (Array.isArray(initial)) return parseDate(initial[0]);
+    return parseDate(initial as string);
+  });
+  const [endInt, setEndInt] = useState<Date | undefined>(() => {
+    if (Array.isArray(initial)) return parseDate(initial[1]);
+    return undefined;
+  });
 
   const today = new Date();
-  const min = minDateProp ? parseDate(minDateProp) : new Date(today.getFullYear() - 120, 0, 1);
-  const max = maxDateProp ? parseDate(maxDateProp) : new Date(today.getFullYear() + 120, 11, 31);
+  const min = minDateProp ? parseDate(minDateProp)! : new Date(today.getFullYear() - 120, 0, 1);
+  const max = maxDateProp ? parseDate(maxDateProp)! : new Date(today.getFullYear() + 120, 11, 31);
 
   const minYear = min.getFullYear();
   const maxYear = max.getFullYear();
 
 
-  const selected = controlled ? parseDate(value ?? formVal) : internal;
-  const [viewYear, setViewYear] = useState(selected.getFullYear());
-  const [viewMonth, setViewMonth] = useState(selected.getMonth());
+  const val = controlled ? (value ?? formVal) : undefined;
+  const selectedStart = controlled
+    ? Array.isArray(val)
+      ? parseDate(val[0])
+      : parseDate(val as string)
+    : startInt;
+  const selectedEnd = controlled
+    ? Array.isArray(val)
+      ? parseDate(val[1])
+      : undefined
+    : endInt;
+
+  const [viewYear, setViewYear] = useState(
+    (selectedStart ?? new Date()).getFullYear()
+  );
+  const [viewMonth, setViewMonth] = useState(
+    (selectedStart ?? new Date()).getMonth()
+  );
 
   const years = Array.from({ length: maxYear - minYear + 1 }, (_, i) => minYear + i);
 
@@ -135,11 +170,39 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   const startDay = new Date(viewYear, viewMonth, 1).getDay();
   const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
 
+  const isoDate = (d: Date) => d.toISOString().slice(0, 10);
+
   const commit = (d: number) => {
-    const iso = new Date(viewYear, viewMonth, d).toISOString().slice(0, 10);
-    if (!controlled) setInternal(new Date(viewYear, viewMonth, d));
-    if (form && name) form.setField(name as any, iso);
-    onChange?.(iso);
+    const selDate = new Date(viewYear, viewMonth, d);
+    const iso = isoDate(selDate);
+    if (!rangeMode) {
+      if (!controlled) setStartInt(parseDate(iso)!);
+      if (form && name) form.setField(name as any, iso);
+      onChange?.(iso);
+      return;
+    }
+
+    let start = selectedStart;
+    let end = selectedEnd;
+    const sel = parseDate(iso)!;
+
+    if (!start || (start && end)) {
+      start = sel;
+      end = undefined;
+    } else if (sel < start) {
+      end = start;
+      start = sel;
+    } else {
+      end = sel;
+    }
+
+    if (!controlled) {
+      setStartInt(start);
+      setEndInt(end);
+    }
+    const out = end ? [isoDate(start), isoDate(end)] : [isoDate(start)];
+    if (form && name) form.setField(name as any, out);
+    onChange?.(out as any);
   };
 
   const changeMonth = (delta: number) => {
@@ -268,15 +331,34 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
           const day = i + 1;
           const date = new Date(viewYear, viewMonth, day);
           const disabled = date < min || date > max;
-          const selectedDay =
-            selected.getFullYear() === viewYear &&
-            selected.getMonth() === viewMonth &&
-            selected.getDate() === day;
+
+          const isStart =
+            selectedStart &&
+            selectedStart.getFullYear() === viewYear &&
+            selectedStart.getMonth() === viewMonth &&
+            selectedStart.getDate() === day;
+          const isEnd =
+            selectedEnd &&
+            selectedEnd.getFullYear() === viewYear &&
+            selectedEnd.getMonth() === viewMonth &&
+            selectedEnd.getDate() === day;
+
+          let between = false;
+          if (rangeMode && selectedStart && selectedEnd) {
+            const time = date.getTime();
+            between =
+              time > selectedStart.getTime() &&
+              time < selectedEnd.getTime();
+          }
+
           return (
             <Cell
               key={day}
-              $selected={selectedDay}
+              $start={!!isStart}
+              $end={!!isEnd}
+              $between={between}
               $primary={theme.colors.primary}
+              $secondary={theme.colors.secondary}
               onClick={() => !disabled && commit(day)}
               disabled={disabled}
             >
