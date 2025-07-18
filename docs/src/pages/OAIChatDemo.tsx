@@ -26,6 +26,11 @@ export default function OAIChatDemoPage() {
     { role: 'assistant', content: 'It\'s a tiny React UI kit focused on AI driven interfaces.' },
     { role: 'user', content: 'Nice, how can I contribute?' },
     { role: 'assistant', content: 'Check the repository README for guidelines.' },
+    {
+      role: 'assistant',
+      content:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus luctus, metus ut fermentum aliquet, turpis ligula tristique turpis, at viverra orci elit in lorem. Donec eget massa vitae lorem suscipit porttitor. Sed venenatis elit vel odio tempor, eget facilisis lorem suscipit. Mauris at dui non orci pulvinar euismod. Donec ultricies, nisl a varius sagittis, velit nunc gravida risus, quis facilisis massa nunc ut sapien.',
+    },
   ]);
 
   const handleSend = (m: ChatMessage) => {
