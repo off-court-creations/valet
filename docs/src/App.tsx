@@ -4,7 +4,7 @@
 // ─────────────────────────────────────────────────────────────
 import React, { Suspense, lazy }   from 'react';
 import { Routes, Route }           from 'react-router-dom';
-import { useInitialTheme, Surface, Stack, Typography } from '@archway/valet';
+import { useInitialTheme, Surface, Stack, Typography, KeyModal } from '@archway/valet';
 
 /*───────────────────────────────────────────────────────────*/
 /* Helper – terse lazy() wrapper                            */
@@ -78,6 +78,7 @@ export function App() {
 
   return (
     <Suspense fallback={Fallback}>
+      <KeyModal />
       <Routes>
         <Route path="/"                element={<MainPage />} />
         <Route path="/overview"        element={<OverviewPage />} />

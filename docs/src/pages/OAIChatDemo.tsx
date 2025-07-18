@@ -10,6 +10,7 @@ import {
   Button,
   OAIChat,
   useTheme,
+  sendChat,
 } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../components/NavDrawer';
@@ -21,25 +22,21 @@ export default function OAIChatDemoPage() {
   const navigate = useNavigate();
   const { theme, toggleMode } = useTheme();
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: 'assistant', content: 'Hello! How can I help you?' },
-    { role: 'user', content: 'Tell me about valet.' },
-    { role: 'assistant', content: "It's a tiny React UI kit focused on AI driven interfaces." },
-    { role: 'user', content: 'Nice, how can I contribute?' },
-    { role: 'assistant', content: 'Check the repository README for guidelines.' },
-    {
-      role: 'user',
-      content:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
-    },
-    {
-      role: 'assistant',
-      content:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
-    },
+    { role: 'system', content: 'You are a concise assistant for the valet docs.' },
   ]);
 
-  const handleSend = (m: ChatMessage) => {
-    setMessages(prev => [...prev, m, { role: 'assistant', content: `Echo: ${m.content}` }]);
+  const handleSend = async (m: ChatMessage) => {
+    const next = [...messages, m];
+    setMessages(next);
+    try {
+      const res = await sendChat(next);
+      const reply = res.choices?.[0]?.message;
+      if (reply) {
+        setMessages(prev => [...prev, { role: reply.role as any, content: reply.content }]);
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (

@@ -49,6 +49,7 @@ export * from './components/widgets/Table';
 export * from './components/layout/Tabs';
 export * from './components/widgets/Tooltip';
 export * from './components/widgets/Tree';
+export { default as KeyModal } from './components/KeyModal';
 
 // ─── Core ────────────────────────────────────────────────────
 export * from './css/createStyled';
@@ -58,3 +59,5 @@ export * from './system/themeStore';
 export * from './system/fontStore';
 export * from './system/createInitialTheme';
 export * from './hooks/useGoogleFonts';
+export * from './system/openaiKeyStore';
+export * from './system/openai';

@@ -131,6 +131,8 @@ These have been mostly tested in the [valet Docs](https://github.com/off-court-c
 | Image         |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 | Video         |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
 
+`KeyModal` works with `useOpenAIKey` so users can keep their API key entirely in the browser.
+
 ## Hooks
 
 | Hook               | Functional | Playground QC   | Comments |
