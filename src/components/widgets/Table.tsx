@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/widgets/Table.tsx  | valet
-// Row-hover highlight fixed and now more saturated hover colour.
+// patch: self‑narrowing and table‑layout fixed to avoid right‑edge clipping – 2025‑07‑18
 // ─────────────────────────────────────────────────────────────
 import React, {
   useMemo,
@@ -48,115 +48,116 @@ export interface TableProps<T>
 
 /*───────────────────────────────────────────────────────────*/
 /* Styled primitives                                          */
-const Wrapper = styled('div')`
-  width:100%;
-  display:block;
-  box-sizing:border-box;
+const Wrapper = styled('div')<{ $pad:string }>`
+  width: 100%;
+  display: block;
+  box-sizing: border-box;
+  overflow-x: hidden;       /* never allow horizontal scroll */
+  padding-inline: ${({ $pad }) => $pad};
 `;
+
 const Root = styled('table')<{
   $striped:boolean; $hover:boolean; $lines:boolean;
-  $border:string; $stripe:string; $hoverBg:string;
+  $border:string; $stripe:string; $hoverBg:string; $gutter:string;
 }>`
-  width:100%;
-  border-collapse:collapse;
-  box-sizing:border-box;
-  border:1px solid ${({$border})=>$border};
+  /* leave a subtle gutter so right border never clips */
+  width: calc(100% - ${({ $gutter }) => $gutter} * 2);
+  max-width: 100%;
+  margin-inline: auto;
 
-  th,td{
-    padding:0.5rem 0.75rem;
-    text-align:left;
-    border-bottom:1px solid ${({$border})=>$border};
+  border-collapse: collapse;
+  box-sizing: border-box;
+  border: 1px solid ${({ $border }) => $border};
+  table-layout: fixed; /* prevents cells pushing past width */
+
+  th, td {
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid ${({ $border }) => $border};
     transition: background 120ms ease;
+    word-break: break-word;
+    overflow-wrap: anywhere;
   }
+  th code, td code { word-break: break-word; overflow-wrap: anywhere; }
 
   /* Zebra stripes */
-  ${({$striped,$stripe})=>$striped&&`
-    tbody tr:nth-of-type(odd) td{background:${$stripe};}
+  ${({ $striped, $stripe }) => $striped && `
+    tbody tr:nth-of-type(odd) td { background: ${$stripe}; }
   `}
 
-  /* Row hover (functional even without stripes) */
-  ${({$hover,$hoverBg})=>$hover&&`
+  /* Row hover */
+  ${({ $hover, $hoverBg }) => $hover && `
     tbody tr:hover,
-    tbody tr:hover > td{
-      background:${$hoverBg};
-    }
+    tbody tr:hover > td { background: ${$hoverBg}; }
   `}
 
   /* Column dividers */
-  ${({$lines,$border})=>$lines&&`
-    th:not(:last-child),
-    td:not(:last-child){
-      border-right:1px solid ${$border};
-    }
+  ${({ $lines, $border }) => $lines && `
+    th:not(:last-child), td:not(:last-child) { border-right: 1px solid ${$border}; }
   `}
 `;
 
 const Th = styled('th')<{
-  $align:'left'|'center'|'right'; $sortable:boolean;
-  $active:boolean; $primary:string;
+  $align:'left'|'center'|'right'; $sortable:boolean; $active:boolean; $primary:string;
 }>`
-  text-align:${({$align})=>$align};
-  ${({$sortable})=>$sortable&&'cursor:pointer; user-select:none;'}
-  position:relative;
-
-  &:hover { ${({$sortable})=>$sortable&&'filter:brightness(0.9);'} }
-
-  &::after{
-    content:'';
-    position:absolute;
-    left:0; right:0; bottom:-1px;
-    height:4px;
-    background:${({$primary,$active})=>$active?$primary:'transparent'};
-    transition:background 150ms ease;
+  text-align: ${({ $align }) => $align};
+  ${({ $sortable }) => $sortable && 'cursor: pointer; user-select: none;'}
+  position: relative;
+  &:hover { ${({ $sortable }) => $sortable && 'filter: brightness(0.9);'} }
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: -1px;
+    height: 4px;
+    background: ${({ $primary, $active }) => ($active ? $primary : 'transparent')};
+    transition: background 150ms ease;
   }
 `;
 
 const Td = styled('td')<{ $align:'left'|'center'|'right' }>`
-  text-align:${({$align})=>$align};
+  text-align: ${({ $align }) => $align};
 `;
 
 /*───────────────────────────────────────────────────────────*/
-/* Component                                                  */
 export function Table<T extends object>({
   data,
   columns,
-  striped=true,
-  hoverable=false,
-  dividers=true,
+  striped = true,
+  hoverable = false,
+  dividers = true,
   selectable,
   initialSort,
   onSortChange,
   onSelectionChange,
   constrainHeight = true,
-  preset:p,
+  preset: p,
   className,
   style,
   ...rest
-}:TableProps<T>) {
+}: TableProps<T>) {
   const { theme } = useTheme();
   const surface = useSurface(
-    s => ({
-      element: s.element,
-      height: s.height,
-      registerChild: s.registerChild,
-      unregisterChild: s.unregisterChild,
-    }),
+    s => ({ element: s.element, height: s.height, registerChild: s.registerChild, unregisterChild: s.unregisterChild }),
     shallow,
   );
   const wrapRef = useRef<HTMLDivElement>(null);
   const uniqueId = useId();
+
+  const pad = theme.spacing(1);
+
+  /* height‑constraint internal state */
   const [maxHeight, setMaxHeight] = useState<number>();
   const [shouldConstrain, setShouldConstrain] = useState(false);
   const constraintRef = useRef(false);
 
+  /* size helpers */
   const calcCutoff = () => {
     if (typeof document === 'undefined') return 32;
-    const fs = parseFloat(
-      getComputedStyle(document.documentElement).fontSize,
-    );
+    const fs = parseFloat(getComputedStyle(document.documentElement).fontSize);
     return (isNaN(fs) ? 16 : fs) * 2;
   };
 
+  /* measurement update */
   const update = () => {
     const node = wrapRef.current;
     const surfEl = surface.element;
@@ -164,18 +165,13 @@ export function Table<T extends object>({
     const sRect = surfEl.getBoundingClientRect();
     const nRect = node.getBoundingClientRect();
     const top = Math.round(nRect.top - sRect.top + surfEl.scrollTop);
-    const bottomSpace = Math.round(
-      surfEl.scrollHeight - (nRect.bottom - sRect.top + surfEl.scrollTop),
-    );
+    const bottomSpace = Math.round(surfEl.scrollHeight - (nRect.bottom - sRect.top + surfEl.scrollTop));
     const available = Math.round(surface.height - top - bottomSpace);
     const cutoff = calcCutoff();
 
     const next = available >= cutoff;
     if (next) {
-      if (!constraintRef.current) {
-        surfEl.scrollTop = 0;
-        surfEl.scrollLeft = 0;
-      }
+      if (!constraintRef.current) { surfEl.scrollTop = 0; surfEl.scrollLeft = 0; }
       constraintRef.current = true;
       setShouldConstrain(true);
       setMaxHeight(Math.max(0, available));
@@ -186,14 +182,14 @@ export function Table<T extends object>({
     }
   };
 
+  /* constrain toggles */
   useEffect(() => {
     if (!constrainHeight) {
       constraintRef.current = false;
       setShouldConstrain(false);
       setMaxHeight(undefined);
     } else {
-      // fresh measurement will determine constraint state
-      constraintRef.current = false;
+      constraintRef.current = false; // next update decides
     }
   }, [constrainHeight]);
 
@@ -204,10 +200,7 @@ export function Table<T extends object>({
     const ro = new ResizeObserver(update);
     ro.observe(node);
     update();
-    return () => {
-      surface.unregisterChild(uniqueId);
-      ro.disconnect();
-    };
+    return () => { surface.unregisterChild(uniqueId); ro.disconnect(); };
   }, [constrainHeight, surface.element]);
 
   useLayoutEffect(() => {
@@ -215,44 +208,35 @@ export function Table<T extends object>({
     update();
   }, [constrainHeight, surface.height, surface.element]);
 
-  /* sort state */
-  const [sort,setSort] =
-    useState<{index:number;desc:boolean}|null>(
-      initialSort ? {index:initialSort.index,desc:!!initialSort.desc} : null);
+  /* sort + selection state */
+  const [sort, setSort] = useState<{ index: number; desc: boolean } | null>(initialSort ? { index: initialSort.index, desc: !!initialSort.desc } : null);
+  const [selected, setSelected] = useState<Set<T>>(new Set());
 
-  /* row selection (reference-safe) */
-  const [selected,setSelected] = useState<Set<T>>(new Set());
-
-  /* keep selection in sync with external data replacement */
-  useEffect(()=>{
-    setSelected(prev=>{
-      const next = new Set(Array.from(prev).filter(r=>data.includes(r)));
+  useEffect(() => {
+    setSelected(prev => {
+      const next = new Set(Array.from(prev).filter(r => data.includes(r)));
       onSelectionChange?.(Array.from(next));
       return next;
     });
-  },[data]);
+  }, [data]);
 
   /* colours */
   const stripeColor = stripe(theme.colors.background, theme.colors.text);
-  // Hover colour mixed at 25 % primary → background for extra saturation
-  const hoverBg     = toHex(mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.25));
+  const hoverBg = toHex(mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.25));
 
-  /* sort toggle */
-  const toggleSort = (idx:number)=>{
-    setSort(prev=>{
-      const next = !prev||prev.index!==idx
-        ? {index:idx,desc:false}
-        : {index:idx,desc:!prev.desc};
-      onSortChange?.(next.index,next.desc);
+  /* callbacks */
+  const toggleSort = (idx: number) => {
+    setSort(prev => {
+      const next = !prev || prev.index !== idx ? { index: idx, desc: false } : { index: idx, desc: !prev.desc };
+      onSortChange?.(next.index, next.desc);
       return next;
     });
   };
 
-  /* selection toggle */
-  const toggleSelect = (row:T, checked:boolean)=>{
-    setSelected(prev=>{
+  const toggleSelect = (row: T, checked: boolean) => {
+    setSelected(prev => {
       const next = new Set(prev);
-      if(selectable==='single') next.clear();
+      if (selectable === 'single') next.clear();
       checked ? next.add(row) : next.delete(row);
       onSelectionChange?.(Array.from(next));
       return next;
@@ -260,115 +244,94 @@ export function Table<T extends object>({
   };
 
   /* sorted data */
-  const sorted = useMemo(()=>{
-    if(!sort) return data;
+  const sorted = useMemo(() => {
+    if (!sort) return data;
     const col = columns[sort.index];
-    if(!col||!col.sortable) return data;
+    if (!col || !col.sortable) return data;
 
-    const cmp: (a:T,b:T)=>number =
-      typeof col.sortable==='function'
-        ? col.sortable
-        : (a:T,b:T)=>{
-            const getter =
-              typeof col.accessor==='function'
-                ? col.accessor
-                : (row:T)=>row[col.accessor as keyof T];
-            const va = getter(a) as any;
-            const vb = getter(b) as any;
-            return va>vb?1:va<vb?-1:0;
-          };
+    const cmp: (a: T, b: T) => number = typeof col.sortable === 'function' ? col.sortable : (a: T, b: T) => {
+      const getter = typeof col.accessor === 'function' ? col.accessor : (row: T) => row[col.accessor as keyof T];
+      const va = getter(a) as any;
+      const vb = getter(b) as any;
+      return va > vb ? 1 : va < vb ? -1 : 0;
+    };
 
     const arr = [...data].sort(cmp);
     return sort.desc ? arr.reverse() : arr;
-  },[data,columns,sort]);
+  }, [data, columns, sort]);
 
-  const cls = [p?preset(p):'',className].filter(Boolean).join(' ')||undefined;
+  /* class merge */
+  const cls = [p ? preset(p) : '', className].filter(Boolean).join(' ') || undefined;
 
   /*─────────────────────────────────────────────────────────*/
   return (
     <Wrapper
       ref={wrapRef}
-      style={
-        shouldConstrain
-          ? { overflow: 'auto', maxHeight }
-          : undefined
-      }
+      $pad={pad}
+      style={shouldConstrain ? { overflow: 'auto', maxHeight } : undefined}
     >
-    <Root
-      {...rest}
-      $striped={striped}
-      $hover={hoverable}
-      $lines={dividers}
-      $border={theme.colors.backgroundAlt}
-      $stripe={stripeColor}
-      $hoverBg={hoverBg}
-      className={cls}
-      style={style}
-    >
-      <thead>
-        <tr>
-          {selectable && (
-            <Th
-              $align="center"
-              $sortable={false}
-              $active={false}
-              $primary={theme.colors.primary}
-              style={{width:48}}
-            />
-          )}
-          {columns.map((c,i)=>(
-            <Th
-              key={i}
-              $align={c.align??'left'}
-              $sortable={!!c.sortable}
-              $active={sort?.index===i}
-              $primary={theme.colors.primary}
-              onClick={c.sortable ? ()=>toggleSort(i) : undefined}
-            >
-              {c.header}
-              {sort?.index===i && (sort.desc ? ' ▼' : ' ▲')}
-            </Th>
-          ))}
-        </tr>
-      </thead>
-
-      <tbody>
-        {sorted.map((row,rIdx)=>(
-          <tr key={rIdx}>
+      <Root
+        {...rest}
+        $striped={striped}
+        $hover={hoverable}
+        $lines={dividers}
+        $border={theme.colors.backgroundAlt}
+        $stripe={stripeColor}
+        $hoverBg={hoverBg}
+        $gutter={pad}
+        className={cls}
+        style={style}
+      >
+        <thead>
+          <tr>
             {selectable && (
-              <Td $align="center">
-                <Checkbox
-                  name={`sel-${rIdx}`}
-                  size="sm"
-                  checked={selected.has(row)}
-                  onChange={(chk)=>toggleSelect(row,chk)}
-                  aria-label={`Select row ${rIdx+1}`}
-                />
-              </Td>
+              <Th $align="center" $sortable={false} $active={false} $primary={theme.colors.primary} style={{ width: 48 }} />
             )}
-
-            {columns.map((c,cIdx)=>{
-              const getter =
-                typeof c.accessor==='function'
-                  ? c.accessor
-                  : (item:T)=>item[c.accessor as keyof T];
-
-              const content = c.render
-                ? c.render(row,rIdx)
-                : c.accessor!==undefined
-                  ? (getter(row) as React.ReactNode)
-                  : null;
-
-              return (
-                <Td key={cIdx} $align={c.align??'left'}>
-                  {content}
-                </Td>
-              );
-            })}
+            {columns.map((c, i) => (
+              <Th
+                key={i}
+                $align={c.align ?? 'left'}
+                $sortable={!!c.sortable}
+                $active={sort?.index === i}
+                $primary={theme.colors.primary}
+                onClick={c.sortable ? () => toggleSort(i) : undefined}
+              >
+                {c.header}
+                {sort?.index === i && (sort.desc ? ' ▼' : ' ▲')}
+              </Th>
+            ))}
           </tr>
-        ))}
-      </tbody>
-    </Root>
+        </thead>
+
+        <tbody>
+          {sorted.map((row, rIdx) => (
+            <tr key={rIdx}>
+              {selectable && (
+                <Td $align="center">
+                  <Checkbox
+                    name={`sel-${rIdx}`}
+                    size="sm"
+                    checked={selected.has(row)}
+                    onChange={chk => toggleSelect(row, chk)}
+                    aria-label={`Select row ${rIdx + 1}`}
+                  />
+                </Td>
+              )}
+
+              {columns.map((c, cIdx) => {
+                const getter = typeof c.accessor === 'function' ? c.accessor : (item: T) => item[c.accessor as keyof T];
+                const content = c.render ? c.render(row, rIdx) : c.accessor !== undefined ? (getter(row) as React.ReactNode) : null;
+
+                return (
+                  <Td key={cIdx} $align={c.align ?? 'left'}>
+                    {content}
+                  </Td>
+                );
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </Root>
     </Wrapper>
   );
 }

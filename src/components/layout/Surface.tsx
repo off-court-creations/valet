@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/layout/Surface.tsx  | valet
-// top-level wrapper that applies theme backgrounds and breakpoints
+// overhaul: surfaces never show scrollbars – 2025‑07‑17
 // ─────────────────────────────────────────────────────────────
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Breakpoint, useTheme } from '../../system/themeStore';
@@ -14,13 +14,15 @@ import {
 import { preset } from '../../css/stylePresets';
 import type { Presettable } from '../../types';
 
-/** Surface Props definition */
+/*───────────────────────────────────────────────────────────*/
 export interface SurfaceProps
   extends React.HTMLAttributes<HTMLDivElement>,
     Presettable {
+  /** Fixed‑position full‑screen surface when true (default). */
   fullscreen?: boolean;
 }
 
+/*───────────────────────────────────────────────────────────*/
 export const Surface: React.FC<SurfaceProps> = ({
   children,
   style,
@@ -29,44 +31,47 @@ export const Surface: React.FC<SurfaceProps> = ({
   fullscreen = true,
   ...props
 }) => {
-  const ref = useRef<HTMLDivElement>(null);
+  /* Prevent nested surfaces ------------------------------------------- */
   const parent = useContext(SurfaceCtx);
   if (parent) throw new Error('Nested <Surface> components are not allowed');
 
+  /* Local reactive store (width / height / breakpoint) ----------------- */
   const storeRef = useRef<ReturnType<typeof createSurfaceStore>>();
   if (!storeRef.current) storeRef.current = createSurfaceStore();
   const useStore = storeRef.current;
+
+  const ref = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
   const fontsReady = useFonts((s) => s.ready);
   const [showBackdrop, setShowBackdrop] = useState(!fontsReady);
   const [fade, setFade] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
+
   const presetClasses = p ? preset(p) : '';
 
-  const { width, height, hasScrollbar } = useStore((s) => ({
+  const { width, height } = useStore((s) => ({
     width: s.width,
     height: s.height,
-    hasScrollbar: s.hasScrollbar,
   }));
 
+  /* Helper: resolve breakpoint for given width ------------------------- */
   const bpFor = (w: number): Breakpoint =>
     (Object.entries(theme.breakpoints) as [Breakpoint, number][]).reduce<Breakpoint>(
-      (acc, [key, min]) => (w >= min ? key : acc), 'xs'
+      (acc, [key, min]) => (w >= min ? key : acc),
+      'xs',
     );
 
+  /* Measure size whenever the element or its children change ----------- */
   useEffect(() => {
     const node = ref.current;
     if (!node) return;
     useStore.setState((s) => ({ ...s, element: node }));
     const measure = () => {
       const rect = node.getBoundingClientRect();
-      const vOverflow = node.scrollHeight - node.clientHeight;
-      const hOverflow = node.scrollWidth - node.clientWidth;
       useStore.setState((s) => ({
         ...s,
         width: rect.width,
         height: Math.round(rect.height),
-        hasScrollbar: vOverflow > 3 || hOverflow > 3,
         breakpoint: bpFor(rect.width),
       }));
     };
@@ -81,6 +86,7 @@ export const Surface: React.FC<SurfaceProps> = ({
     };
   }, [theme.breakpoints, useStore]);
 
+  /* Font‑loading backdrop handling ------------------------------------- */
   useEffect(() => {
     if (!fontsReady) {
       setShowBackdrop(true);
@@ -105,13 +111,11 @@ export const Surface: React.FC<SurfaceProps> = ({
     return () => clearTimeout(t);
   }, [fontsReady]);
 
-  /* Restore defaults explicitly (critical fix) */
+  /* Defaults + CSS custom properties ----------------------------------- */
   const defaults: React.CSSProperties = {
-    background: theme.colors.background, // ← FIXED explicitly
-    color: theme.colors.text,            // ← FIXED explicitly
+    background: theme.colors.background,
+    color: theme.colors.text,
   };
-
-  /* Fonts and other CSS Variables (fully preserved) */
   const cssVars: React.CSSProperties = {
     '--valet-bg': theme.colors.background,
     '--valet-text-color': theme.colors.text,
@@ -120,6 +124,7 @@ export const Surface: React.FC<SurfaceProps> = ({
     '--valet-font-mono': theme.fonts.mono,
   } as any;
 
+  /* Layout: fixed full‑screen or flow‑based ---------------------------- */
   const layoutStyles: React.CSSProperties = fullscreen
     ? {
         position: 'fixed',
@@ -128,35 +133,51 @@ export const Surface: React.FC<SurfaceProps> = ({
         paddingRight: 'env(safe-area-inset-right)',
         paddingBottom: 'env(safe-area-inset-bottom)',
         paddingLeft: 'env(safe-area-inset-left)',
-        overflow: hasScrollbar ? 'auto' : 'hidden',
+        overflow: 'auto', // ← never show scrollbars on a surface
       }
-    : { width: '100%', height: 'auto', position: 'relative' };
+    : {
+        position: 'relative',
+        width: '100%',
+        height: 'auto',
+        overflow: 'auto',
+      };
+
   const gap = theme.spacing(1);
 
   return (
     <SurfaceCtx.Provider value={useStore}>
       <div
         ref={ref}
+        {...props}
         className={[presetClasses, className].filter(Boolean).join(' ')}
         style={{
-          ...layoutStyles, // first apply layout rules
-          ...defaults,     // then explicitly apply default colors (critical fix)
-          ...cssVars,      // then fonts and other variables
+          ...layoutStyles,
+          ...defaults,
+          ...cssVars,
           '--valet-screen-width': `${width}px`,
           '--valet-screen-height': `${Math.round(height)}px`,
-          ...style,        // finally allow external overrides
+          ...style,
         } as any}
-        {...props}
       >
         {showBackdrop && (
           <LoadingBackdrop fading={fade} showSpinner={showSpinner} />
         )}
-        <div style={{ visibility: fontsReady ? 'visible' : 'hidden', padding: gap }}>{children}</div>
+        {/* Inner wrapper gains padding but NO scrollbars */}
+        <div
+          style={{
+            visibility: fontsReady ? 'visible' : 'hidden',
+            padding: gap,
+            maxWidth: '100%',
+            maxHeight: '100%',
+            boxSizing: 'border-box',
+          }}
+        >
+          {children}
+        </div>
       </div>
     </SurfaceCtx.Provider>
   );
 };
 
 export default Surface;
-
 export { useSurfaceState as useSurface };

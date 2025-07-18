@@ -1,15 +1,13 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/layout/Panel.tsx  | valet
-// strict‑optional safe typings
+// overhaul: internal scrollbars & boundary guards – 2025‑07‑17
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
-import { styled }            from '../../css/createStyled';
-import { useTheme }          from '../../system/themeStore';
-import { preset }            from '../../css/stylePresets';
-import type { Presettable }  from '../../types';
+import { styled } from '../../css/createStyled';
+import { useTheme } from '../../system/themeStore';
+import { preset } from '../../css/stylePresets';
+import type { Presettable } from '../../types';
 
-/*───────────────────────────────────────────────────────────*/
-/* Public types                                              */
 export type PanelVariant = 'main' | 'alt';
 
 export interface PanelProps
@@ -21,12 +19,10 @@ export interface PanelProps
   background?: string | undefined;
   /** Centre contents & propagate intent via CSS var */
   centered?: boolean;
-  /** Remove built-in margin and padding */
+  /** Remove built‑in margin and padding */
   compact?: boolean;
 }
 
-/*───────────────────────────────────────────────────────────*/
-/* Styled primitive                                          */
 const Base = styled('div')<{
   $variant: PanelVariant;
   $full?: boolean;
@@ -42,8 +38,22 @@ const Base = styled('div')<{
 
   display      : ${({ $center, $full }) =>
     $center ? 'flex' : $full ? 'block' : 'inline-block'};
-  width        : ${({ $full }) => ($full ? '100%'  : 'auto')};
+  width        : ${({ $full }) => ($full ? '100%' : 'auto')};
   align-self   : ${({ $full }) => ($full ? 'stretch' : 'flex-start')};
+
+  /* Boundary guards */
+  max-width  : 100%;
+  max-height : 100%;
+  min-width  : 0;
+  min-height : 0;
+
+  /* Prevent horizontal scrolling */
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE & Edge */
+  &::-webkit-scrollbar { display: none; }
+
   margin       : ${({ $margin }) => $margin};
   & > * {
     padding: ${({ $pad }) => $pad};
@@ -56,7 +66,7 @@ const Base = styled('div')<{
       align-items: center;
     `}
 
-  /* Only emit a background when we’ve actually been given one */
+  /* Background handling ------------------------------------- */
   ${({ $variant, $bg }) =>
     $bg &&
     `
@@ -64,7 +74,7 @@ const Base = styled('div')<{
       --valet-bg: ${$bg};
     `}
 
-  /* Variant “alt” gets a 1‑px outline */
+  /* Variant “alt” gets outline ------------------------------ */
   ${({ $variant, $outline }) =>
     $variant === 'alt' && $outline ? `border: 1px solid ${$outline};` : ''}
 
@@ -79,10 +89,8 @@ const Base = styled('div')<{
     $center !== undefined && `--valet-centered: ${$center ? '1' : '0'};`}
 `;
 
-/*───────────────────────────────────────────────────────────*/
-/* Component                                                 */
 export const Panel: React.FC<PanelProps> = ({
-  variant   = 'main',
+  variant = 'main',
   fullWidth = false,
   centered,
   preset: p,
@@ -94,36 +102,32 @@ export const Panel: React.FC<PanelProps> = ({
   ...rest
 }) => {
   const { theme } = useTheme();
-  const hasPreset  = Boolean(p);
-  const hasBgProp  = typeof background === 'string';
+  const hasPreset = Boolean(p);
+  const hasBgProp = typeof background === 'string';
 
-  /**
-   * Decide what (if anything) to pass down as `$bg`.
-   * – If caller passed `background`, honour it.
-   * – Else, if *no* preset is applied and variant === 'main',
-   *   fall back to theme.colors.backgroundAlt.
-   * – Otherwise leave undefined so presets can paint freely.
-   */
-  const bg: string | undefined =
-    hasBgProp
-      ? background!
-      : !hasPreset && variant === 'main'
-        ? theme.colors.backgroundAlt
-        : undefined;
+  /* Resolve background */
+  const bg: string | undefined = hasBgProp
+    ? background!
+    : !hasPreset && variant === 'main'
+    ? theme.colors.backgroundAlt
+    : undefined;
 
-  /* Only choose an explicit text colour when we also chose a bg */
+  /* Derive legible text colour */
   let textColour: string | undefined;
   if (bg) {
     textColour =
-      bg === theme.colors.primary   ? theme.colors.primaryText   :
-      bg === theme.colors.secondary ? theme.colors.secondaryText :
-      bg === theme.colors.tertiary  ? theme.colors.tertiaryText  :
-      theme.colors.text;
+      bg === theme.colors.primary
+        ? theme.colors.primaryText
+        : bg === theme.colors.secondary
+        ? theme.colors.secondaryText
+        : bg === theme.colors.tertiary
+        ? theme.colors.tertiaryText
+        : theme.colors.text;
   }
 
-  const presetClasses = p ? preset(p) : '';
   const pad = theme.spacing(1);
   const margin = compact ? '0' : pad;
+  const presetClasses = p ? preset(p) : '';
 
   return (
     <Base

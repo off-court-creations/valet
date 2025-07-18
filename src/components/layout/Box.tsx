@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/layout/Box.tsx  | valet
-// patched for strict optional props
+// overhaul: internal scrollbars & boundary guards – 2025‑07‑17
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
 import { styled } from '../../css/createStyled';
@@ -8,23 +8,15 @@ import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import type { Presettable } from '../../types';
 
-/*───────────────────────────────────────────────────────────────*/
-/* Public props                                                  */
 export interface BoxProps
   extends React.ComponentProps<'div'>,
     Presettable {
-  /** Explicit background override */
   background?: string | undefined;
-  /** Explicit text-colour override */
   textColor?: string | undefined;
-  /** Centre contents & propagate intent via CSS var */
   centered?: boolean;
-  /** Remove built-in margin and padding */
   compact?: boolean;
 }
 
-/*───────────────────────────────────────────────────────────────*/
-/* Styled primitive                                              */
 const Base = styled('div')<{
   $bg?: string;
   $text?: string;
@@ -33,11 +25,20 @@ const Base = styled('div')<{
   $pad: string;
 }>`
   box-sizing: border-box;
+
+  /* Boundary & overflow guards */
+  max-width  : 100%;
+  max-height : 100%;
+  min-width  : 0;
+  min-height : 0;
+  overflow   : hidden;
+
   display: ${({ $center }) => ($center ? 'flex' : 'block')};
-  margin: ${({ $margin }) => $margin};
+  margin : ${({ $margin }) => $margin};
   & > * {
     padding: ${({ $pad }) => $pad};
   }
+
   ${({ $center }) =>
     $center &&
     `
@@ -45,17 +46,12 @@ const Base = styled('div')<{
       align-items: center;
     `}
 
-  /* Only set when an override is supplied -------------------- */
-  ${({ $bg })   => $bg   && `background: ${$bg}; --valet-bg: ${$bg};`}
+  ${({ $bg })   => $bg && `background: ${$bg}; --valet-bg: ${$bg};`}  
   ${({ $text }) => $text && `color: ${$text}; --valet-text-color: ${$text};`}
-
-  /* Propagate centred intent ---------------------------------- */
   ${({ $center }) =>
     $center !== undefined && `--valet-centered: ${$center ? '1' : '0'};`}
 `;
 
-/*───────────────────────────────────────────────────────────────*/
-/* Component                                                     */
 export const Box: React.FC<BoxProps> = ({
   preset: p,
   className,
@@ -69,7 +65,6 @@ export const Box: React.FC<BoxProps> = ({
   const { theme } = useTheme();
   const presetClass = p ? preset(p) : '';
 
-  /* Derive an accessible text colour when only bg is supplied */
   let resolvedText = textColor;
   if (!resolvedText && background) {
     resolvedText =
@@ -79,7 +74,7 @@ export const Box: React.FC<BoxProps> = ({
         ? theme.colors.secondaryText
         : background === theme.colors.tertiary
         ? theme.colors.tertiaryText
-        : undefined; // defer to cascade / presets
+        : undefined;
   }
 
   const pad = theme.spacing(1);
