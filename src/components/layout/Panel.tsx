@@ -5,7 +5,7 @@
 import React from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
-import { preset } from '../../css/stylePresets';
+import { preset, presetHas } from '../../css/stylePresets';
 import type { Presettable } from '../../types';
 
 export type PanelVariant = 'main' | 'alt';
@@ -103,11 +103,12 @@ export const Panel: React.FC<PanelProps> = ({
 }) => {
   const { theme } = useTheme();
   const hasBgProp = typeof background === 'string';
+  const hasPresetBg = p ? presetHas(p, 'background') : false;
 
   /* Resolve background */
   const bg: string | undefined = hasBgProp
     ? background!
-    : variant === 'main'
+    : !hasPresetBg && variant === 'main'
     ? theme.colors.backgroundAlt
     : undefined;
 
