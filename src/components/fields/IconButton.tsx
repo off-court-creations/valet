@@ -30,11 +30,11 @@ export interface IconButtonProps
 /* Geometry map                                              */
 type Geometry = { d: string; icon: string };
 const geom: (t: Theme) => Record<IconButtonSize, Geometry> = () => ({
-  xs: { d: '1.75rem', icon: '0.75rem' },
-  sm: { d: '2.25rem', icon: '1rem'   },
-  md: { d: '2.75rem', icon: '1.25rem'},
-  lg: { d: '3.25rem', icon: '1.5rem' },
-  xl: { d: '3.75rem', icon: '1.75rem' },
+  xs: { d: '1.5rem', icon: '0.75rem' },
+  sm: { d: '2rem', icon: '1rem'   },
+  md: { d: '3rem', icon: '1.5rem'},
+  lg: { d: '4rem', icon: '2rem' },
+  xl: { d: '5rem', icon: '2.5rem' },
 });
 
 /*───────────────────────────────────────────────────────────*/

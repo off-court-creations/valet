@@ -78,7 +78,7 @@ export default function ButtonDemoPage() {
   return (
     <Surface>
       <NavDrawer />
-      <Stack preset="showcaseStack">
+      <Stack>
         {/* Header ------------------------------------------------------- */}
         <Typography variant="h2" bold>
           Button Showcase

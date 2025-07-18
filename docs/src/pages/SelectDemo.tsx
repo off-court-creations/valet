@@ -117,9 +117,7 @@ export default function SelectDemoPage() {
   return (
     <Surface>
       <NavDrawer />
-      <Stack
-        preset="showcaseStack"
-      >
+      <Stack>
         <Typography variant="h2" bold>Select Playground</Typography>
         <Typography variant="subtitle">
           Uncontrolled • controlled • multiple • sizes • presets • FormControl

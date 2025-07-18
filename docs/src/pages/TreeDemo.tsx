@@ -68,7 +68,7 @@ export default function TreeDemoPage() {
   return (
     <Surface>
       <NavDrawer />
-      <Stack preset="showcaseStack">
+      <Stack>
         <Typography variant="h2" bold>Tree Showcase</Typography>
         <Typography variant="subtitle">Nested list with keyboard navigation</Typography>
 

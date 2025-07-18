@@ -126,10 +126,20 @@ const TabBtn = styled('button')<{
 
 const Panel = styled('div')`
   padding: 1rem 0;
-  overflow: visible;
+
+  /* Strictly vertical scrolling */
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE & Edge */
+  &::-webkit-scrollbar { display: none; }
+
   box-sizing: border-box;
   min-height: 0;
+  max-height: 100%;
+  max-width: 100%;
 `;
+
 
 /*───────────────────────────────────────────────────────────*/
 export interface TabsProps

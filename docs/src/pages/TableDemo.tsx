@@ -110,9 +110,7 @@ export default function TableDemoPage() {
   /* Render ---------------------------------------------------------------- */
   return (
     <Surface>
-      <Stack
-        preset="showcaseStack"
-      >
+      <Stack>
         {/* Header bar ------------------------------------------------------- */}
         <Panel variant="alt" fullWidth>
           <Stack

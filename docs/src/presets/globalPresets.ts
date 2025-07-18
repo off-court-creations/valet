@@ -9,10 +9,6 @@ import { definePreset } from '@archway/valet';
 
 /*───────────────────────────────────────────────────────────*/
 /* Shared layout preset – used by *many* demo pages          */
-definePreset('showcaseStack', (t) => `
-  margin    : ${t.spacing(1)};
-  padding   : ${t.spacing(1)};
-`);
 // Fancy card-like container
 definePreset('fancyHolder', (t) => `
     background   : ${t.colors['primary']};

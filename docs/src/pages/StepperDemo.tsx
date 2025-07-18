@@ -14,9 +14,7 @@ export default function StepperDemoPage() {
   return (
     <Surface>
       <NavDrawer />
-      <Stack
-        preset="showcaseStack"
-      >
+      <Stack>
         <Typography variant="h2" bold>Stepper Showcase</Typography>
         <Typography variant="subtitle">Simple progress indicator</Typography>
 

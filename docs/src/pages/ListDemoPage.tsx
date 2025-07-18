@@ -50,9 +50,7 @@ export default function ListDemoPage() {
   return (
     <Surface>
       <NavDrawer />
-      <Stack
-        preset="showcaseStack"
-      >
+      <Stack>
         {/* Header --------------------------------------------------------- */}
         <Typography variant="h2" bold>List Showcase</Typography>
         <Typography variant="subtitle">

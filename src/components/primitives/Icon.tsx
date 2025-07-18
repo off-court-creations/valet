@@ -51,9 +51,9 @@ const Wrapper = styled('span')<{ $size: string }>`
 const sizeMap: Record<IconSize, string> = {
   xs: '0.75rem',
   sm: '1rem',
-  md: '1.25rem',
-  lg: '1.5rem',
-  xl: '1.75rem',
+  md: '1.5rem',
+  lg: '2.5rem',
+  xl: '4rem',
 };
 
 /*───────────────────────────────────────────────────────────*/

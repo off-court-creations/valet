@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.16.0]
+- Adjust sizing and spacing for:
+  - Box
+	- Panel
+	- Stack
+	- Surface
+	- Tabs
+	- Typography
+	- Table
+
+## [0.15.1]
+- Adjusted size mappings for `IconButonn` and `Icon` 
+- Adjusted classification of some components
+
 ## [0.15.0]
 ### Removed
 - `DateTimePicker` component

@@ -99,9 +99,7 @@ export default function IconDemoPage() {
   return (
     <Surface>
       <NavDrawer />
-      <Stack
-        preset="showcaseStack"
-      >
+      <Stack>
         {/* Page header ----------------------------------------------------- */}
         <Typography variant="h2" bold>
           Icon Showcase

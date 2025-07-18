@@ -48,9 +48,7 @@ export default function ProgressDemoPage() {
   return (
     <Surface>
       <NavDrawer />
-      <Stack
-        preset="showcaseStack"
-      >
+      <Stack>
         {/* Page header ----------------------------------------------------- */}
         <Typography variant="h2" bold>
           Progress Playground
