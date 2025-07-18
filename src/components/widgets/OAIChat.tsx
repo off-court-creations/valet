@@ -244,7 +244,7 @@ export const OAIChat: React.FC<ChatProps> = ({
 
         {!disableInput && (
           <InputRow onSubmit={handleSubmit}>
-            <Stack direction="row" spacing={2}>
+            <Stack direction="row" spacing={1} compact>
               <TextField
                 as="textarea"
                 name="chat-message"
