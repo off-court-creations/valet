@@ -22,7 +22,6 @@ import Avatar from '../primitives/Avatar';
 import KeyModal from '../KeyModal';
 import { useOpenAIKey } from '../../system/openaiKeyStore';
 import type { Presettable } from '../../types';
-import Stack from '../layout/Stack';
 
 /*───────────────────────────────────────────────────────────*/
 /* Types                                                      */
@@ -72,9 +71,11 @@ const Row = styled('div') <{
   padding-right: ${({ $right }) => $right};
 `;
 
-const InputRow = styled('form')`
+const InputRow = styled('form')<{ $gap: string }>`
   align-self: stretch;
   width: 100%;
+  display: flex;
+  gap: ${({ $gap }) => $gap};
 `;
 
 const Bar = styled('div')<{ $bg: string; $text: string; $gap: string }>`
@@ -279,19 +280,17 @@ export const OAIChat: React.FC<ChatProps> = ({
         </Messages>
 
         {!disableInput && (
-          <InputRow onSubmit={handleSubmit}>
-            <Stack direction="row" spacing={1} compact style={{ width: '100%' }}>
-              <TextField
-                as="textarea"
-                name="chat-message"
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                rows={1}
-                placeholder={placeholder}
-                style={{ flex: 1 }}
-              />
-              <IconButton icon="carbon:send" type="submit" aria-label="Send" />
-            </Stack>
+          <InputRow onSubmit={handleSubmit} $gap={theme.spacing(1)}>
+            <TextField
+              as="textarea"
+              name="chat-message"
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              rows={1}
+              placeholder={placeholder}
+              style={{ flex: 1 }}
+            />
+            <IconButton icon="carbon:send" type="submit" aria-label="Send" />
           </InputRow>
         )}
       </Wrapper>
