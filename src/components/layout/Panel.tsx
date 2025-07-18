@@ -102,13 +102,12 @@ export const Panel: React.FC<PanelProps> = ({
   ...rest
 }) => {
   const { theme } = useTheme();
-  const hasPreset = Boolean(p);
   const hasBgProp = typeof background === 'string';
 
   /* Resolve background */
   const bg: string | undefined = hasBgProp
     ? background!
-    : !hasPreset && variant === 'main'
+    : variant === 'main'
     ? theme.colors.backgroundAlt
     : undefined;
 
