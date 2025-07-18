@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file. The format 
 - Panel now checks presets for a custom background before falling back
 ### Changed
 - Range mode on `DateSelector` uses primary tones and a filled secondary end day
+- Selected dates in `DateSelector` now have bold text
 
 ## [0.16.1]
 - Bugfix on `Panel` default background

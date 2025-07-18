@@ -89,6 +89,7 @@ const Cell = styled('button')<{
   border-radius: 4px;
   cursor: pointer;
   font: inherit;
+  font-weight: ${({ $start, $end }) => ($start || $end ? 'bold' : 'inherit')};
   height: 2rem;
   &:hover:not(:disabled) { filter: brightness(1.2); }
   &:disabled { opacity: 0.4; cursor: default; }
