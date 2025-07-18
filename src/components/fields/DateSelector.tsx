@@ -9,6 +9,7 @@ import { preset } from '../../css/stylePresets';
 import { IconButton } from './IconButton';
 import { Select } from './Select';
 import { useForm } from './FormControl';
+import { toRgb, mix, toHex } from '../../helpers/color';
 import type { Presettable } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
@@ -27,6 +28,14 @@ export interface DateSelectorProps
   minDate?: string;
   /** Latest selectable ISO date (YYYY-MM-DD). */
   maxDate?: string;
+  /** Enable dual start/end selection mode. */
+  range?: boolean;
+  /** Controlled end date when `range` is true. */
+  endValue?: string;
+  /** Default end date for uncontrolled range mode. */
+  defaultEndValue?: string;
+  /** Fires with start and end ISO values when range changes. */
+  onRangeChange?: (start: string, end: string) => void;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -58,15 +67,29 @@ const DayLabel = styled('div')`
   opacity: 0.8;
 `;
 
-const Cell = styled('button')<{ $selected: boolean; $primary: string }>`
+const Cell = styled('button')<{
+  $start: boolean;
+  $end: boolean;
+  $inRange: boolean;
+  $primary: string;
+  $secondary: string;
+  $rangeBg: string;
+}>`
   padding: 0.25rem 0;
   border: none;
-  background: ${({ $selected, $primary }) =>
-    $selected ? $primary : 'transparent'};
+  background: ${({ $start, $end, $inRange, $primary, $secondary, $rangeBg }) =>
+    $start
+      ? $primary
+      : $end
+      ? $secondary
+      : $inRange
+      ? $rangeBg
+      : 'transparent'};
   color: inherit;
   border-radius: 4px;
   cursor: pointer;
   font: inherit;
+  font-weight: ${({ $start, $end }) => ($start || $end ? 'bold' : 'inherit')};
   height: 2rem;
   &:hover:not(:disabled) { filter: brightness(1.2); }
   &:disabled { opacity: 0.4; cursor: default; }
@@ -94,6 +117,10 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   value,
   defaultValue,
   onChange,
+  range = false,
+  endValue,
+  defaultEndValue,
+  onRangeChange,
   name,
   minDate: minDateProp,
   maxDate: maxDateProp,
@@ -108,9 +135,13 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
 
   const formVal = form && name ? (form.values[name] as string | undefined) : undefined;
   const controlled = value !== undefined || formVal !== undefined;
-  const initial = value ?? formVal ?? defaultValue;
-  const parseDate = (v?: string) => v ? new Date(v + 'T00:00') : new Date();
-  const [internal, setInternal] = useState(parseDate(initial));
+  const parseDate = (v?: string) => (v ? new Date(v + 'T00:00') : new Date());
+
+  const initialStart = value ?? formVal ?? defaultValue;
+  const initialEnd = endValue ?? defaultEndValue ?? initialStart;
+
+  const [startInt, setStartInt] = useState(parseDate(initialStart));
+  const [endInt, setEndInt] = useState(parseDate(initialEnd));
 
   const today = new Date();
   const min = minDateProp ? parseDate(minDateProp) : new Date(today.getFullYear() - 120, 0, 1);
@@ -119,10 +150,13 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   const minYear = min.getFullYear();
   const maxYear = max.getFullYear();
 
+  const startDate = controlled ? parseDate(value ?? formVal) : startInt;
+  const endDate = range
+    ? (endValue !== undefined ? parseDate(endValue) : endInt)
+    : startDate;
 
-  const selected = controlled ? parseDate(value ?? formVal) : internal;
-  const [viewYear, setViewYear] = useState(selected.getFullYear());
-  const [viewMonth, setViewMonth] = useState(selected.getMonth());
+  const [viewYear, setViewYear] = useState(startDate.getFullYear());
+  const [viewMonth, setViewMonth] = useState(startDate.getMonth());
 
   const years = Array.from({ length: maxYear - minYear + 1 }, (_, i) => minYear + i);
 
@@ -137,9 +171,35 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
 
   const commit = (d: number) => {
     const iso = new Date(viewYear, viewMonth, d).toISOString().slice(0, 10);
-    if (!controlled) setInternal(new Date(viewYear, viewMonth, d));
+    if (!controlled) setStartInt(new Date(viewYear, viewMonth, d));
     if (form && name) form.setField(name as any, iso);
     onChange?.(iso);
+  };
+
+  const commitRange = (d: number) => {
+    const clicked = new Date(viewYear, viewMonth, d);
+    let start = startDate;
+    let end = endDate;
+
+    if (start.getTime() !== end.getTime()) {
+      start = clicked;
+      end = clicked;
+    } else {
+      if (clicked < start) {
+        start = clicked;
+      } else {
+        end = clicked;
+      }
+      if (start > end) {
+        const tmp = start;
+        start = end;
+        end = tmp;
+      }
+    }
+
+    if (!controlled) setStartInt(start);
+    if (endValue === undefined) setEndInt(end);
+    onRangeChange?.(start.toISOString().slice(0, 10), end.toISOString().slice(0, 10));
   };
 
   const changeMonth = (delta: number) => {
@@ -158,6 +218,10 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
 
   const presetCls = p ? preset(p) : '';
   const cls = [presetCls, className].filter(Boolean).join(' ') || undefined;
+
+  const rangeBg = toHex(
+    mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.25),
+  );
 
   return (
     <Wrapper
@@ -268,16 +332,31 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
           const day = i + 1;
           const date = new Date(viewYear, viewMonth, day);
           const disabled = date < min || date > max;
-          const selectedDay =
-            selected.getFullYear() === viewYear &&
-            selected.getMonth() === viewMonth &&
-            selected.getDate() === day;
+          const startSel =
+            startDate.getFullYear() === viewYear &&
+            startDate.getMonth() === viewMonth &&
+            startDate.getDate() === day;
+          const endSel =
+            range &&
+            endDate.getFullYear() === viewYear &&
+            endDate.getMonth() === viewMonth &&
+            endDate.getDate() === day;
+          const inRange =
+            range &&
+            date > startDate &&
+            date < endDate;
           return (
             <Cell
               key={day}
-              $selected={selectedDay}
+              $start={startSel}
+              $end={!!endSel && !startSel}
+              $inRange={!!inRange}
               $primary={theme.colors.primary}
-              onClick={() => !disabled && commit(day)}
+              $secondary={theme.colors.secondary}
+              $rangeBg={rangeBg}
+              onClick={() =>
+                !disabled && (range ? commitRange(day) : commit(day))
+              }
               disabled={disabled}
             >
               {day}

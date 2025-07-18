@@ -24,6 +24,10 @@ export default function DateSelectorDemoPage() {
   const navigate = useNavigate();
   const [selected, setSelected] = useState('2025-01-01');
   const [limited, setLimited] = useState('2025-07-15');
+  const [rangeDates, setRangeDates] = useState<[string, string]>([
+    '2025-07-01',
+    '2025-07-10',
+  ]);
 
   interface Row {
     prop: ReactNode;
@@ -82,6 +86,30 @@ export default function DateSelectorDemoPage() {
       default: <code>'120y ahead'</code>,
       description: 'Latest selectable date',
     },
+    {
+      prop: <code>range</code>,
+      type: <code>boolean</code>,
+      default: <code>false</code>,
+      description: 'Enable dual start/end selection',
+    },
+    {
+      prop: <code>endValue</code>,
+      type: <code>string</code>,
+      default: <code>-</code>,
+      description: 'Controlled end date when range is true',
+    },
+    {
+      prop: <code>defaultEndValue</code>,
+      type: <code>string</code>,
+      default: <code>-</code>,
+      description: 'Uncontrolled end date default',
+    },
+    {
+      prop: <code>onRangeChange</code>,
+      type: <code>(start: string, end: string) =&gt; void</code>,
+      default: <code>-</code>,
+      description: 'Fires when range selection changes',
+    },
   ];
 
   return (
@@ -112,6 +140,14 @@ export default function DateSelectorDemoPage() {
               onChange={setLimited}
               minDate="2025-06-01"
               maxDate="2025-09-15"
+            />
+
+            <Typography variant="h3">4. Range mode</Typography>
+            <DateSelector
+              range
+              value={rangeDates[0]}
+              endValue={rangeDates[1]}
+              onRangeChange={(s, e) => setRangeDates([s, e])}
             />
 
             <Stack direction="row">
