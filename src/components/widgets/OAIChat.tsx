@@ -70,10 +70,7 @@ const Row = styled('div') <{
   padding-right: ${({ $right }) => $right};
 `;
 
-const InputRow = styled('form') <{ $gap: string }>`
-  display: flex;
-  align-items: flex-end;
-  gap: ${({ $gap }) => $gap};
+const InputRow = styled('form')`
   align-self: center;
 `;
 
@@ -246,19 +243,18 @@ export const OAIChat: React.FC<ChatProps> = ({
         </Messages>
 
         {!disableInput && (
-          <InputRow
-            $gap={theme.spacing(2)}
-            onSubmit={handleSubmit}
-          >
-            <TextField
-              as="textarea"
-              name="chat-message"
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              rows={1}
-              placeholder={placeholder}
-            />
-            <IconButton icon="carbon:send" type="submit" aria-label="Send" />
+          <InputRow onSubmit={handleSubmit}>
+            <Stack direction="row" spacing={2}>
+              <TextField
+                as="textarea"
+                name="chat-message"
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                rows={1}
+                placeholder={placeholder}
+              />
+              <IconButton icon="carbon:send" type="submit" aria-label="Send" />
+            </Stack>
           </InputRow>
         )}
       </Wrapper>
