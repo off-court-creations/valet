@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Default Panel background ignored when a preset was present
+- Panel now checks presets for a custom background before falling back
+
+## [0.16.1]
+- Bugfix on `Panel` default background
 
 ## [0.16.0]
 - Adjust sizing and spacing for:

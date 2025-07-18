@@ -68,3 +68,17 @@ export function preset(names: string | string[]) {
     })
     .join(' ');
 }
+
+export function presetHas(
+  names: string | string[],
+  property: string,
+): boolean {
+  const list = Array.isArray(names) ? names : [names];
+  for (const name of list) {
+    const entry = registry.get(name);
+    if (entry && entry.rule.style.getPropertyValue(property)) {
+      return true;
+    }
+  }
+  return false;
+}
