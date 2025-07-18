@@ -10,6 +10,7 @@ import {
   Button,
   OAIChat,
   sendChat,
+  Snackbar,
   useTheme,
 } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
@@ -24,6 +25,7 @@ export default function OAIChatDemoPage() {
   const [messages, setMessages] = useState<ChatMessage[]>([
     { role: 'system', content: 'You are a helpful assistant.' },
   ]);
+  const [noKey, setNoKey] = useState(false);
 
   const handleSend = async (m: ChatMessage) => {
     const history = [...messages, m];
@@ -33,10 +35,15 @@ export default function OAIChatDemoPage() {
       const reply = res.choices[0]?.message as ChatMessage | undefined;
       if (reply) setMessages(prev => [...prev, reply]);
     } catch (err: any) {
-      setMessages(prev => [
-        ...prev,
-        { role: 'assistant', content: String(err.message || err) },
-      ]);
+      const msg = String(err.message || err);
+      if (msg.includes('No OpenAI key set')) {
+        setNoKey(true);
+      } else {
+        setMessages(prev => [
+          ...prev,
+          { role: 'assistant', content: msg },
+        ]);
+      }
     }
   };
 
@@ -58,6 +65,12 @@ export default function OAIChatDemoPage() {
           userAvatar={present}
           systemAvatar={monkey}
         />
+        {noKey && (
+          <Snackbar
+            message="No OpenAI key set"
+            onClose={() => setNoKey(false)}
+          />
+        )}
 
         <Button variant="outlined" onClick={toggleMode}>
           Toggle light / dark mode
