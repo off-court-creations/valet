@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file. The format 
 
 ### Improved
 - `KeyModal` now shows an error when an incorrect passphrase is entered
+- Chat demo no longer records attempts when the API key is missing
 
 ## [0.16.3]
 - Improved `OAIChat` styling, especially on mobile / portrait. 
