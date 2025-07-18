@@ -6,6 +6,8 @@ All notable changes to this project will be documented in this file. The format 
 ### Fixed
 - Default Panel background ignored when a preset was present
 - Panel now checks presets for a custom background before falling back
+### Changed
+- Range mode on `DateSelector` uses primary tones and a filled secondary end day
 
 ## [0.16.1]
 - Bugfix on `Panel` default background

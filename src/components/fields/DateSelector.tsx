@@ -68,19 +68,24 @@ const DayLabel = styled('div')`
 `;
 
 const Cell = styled('button')<{
-  $selected: boolean;
-  $outline: boolean;
+  $start: boolean;
+  $end: boolean;
   $inRange: boolean;
   $primary: string;
+  $secondary: string;
   $rangeBg: string;
 }>`
   padding: 0.25rem 0;
-  border: ${({ $outline, $primary }) =>
-    $outline ? `1px solid ${$primary}` : 'none'};
-  background: ${({ $selected, $inRange, $primary, $rangeBg }) =>
-    $selected ? $primary : $inRange ? $rangeBg : 'transparent'};
-  color: ${({ $outline, $primary }) =>
-    $outline ? $primary : 'inherit'};
+  border: none;
+  background: ${({ $start, $end, $inRange, $primary, $secondary, $rangeBg }) =>
+    $start
+      ? $primary
+      : $end
+      ? $secondary
+      : $inRange
+      ? $rangeBg
+      : 'transparent'};
+  color: inherit;
   border-radius: 4px;
   cursor: pointer;
   font: inherit;
@@ -214,7 +219,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   const cls = [presetCls, className].filter(Boolean).join(' ') || undefined;
 
   const rangeBg = toHex(
-    mix(toRgb(theme.colors.secondary), toRgb(theme.colors.background), 0.25),
+    mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.25),
   );
 
   return (
@@ -342,10 +347,11 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
           return (
             <Cell
               key={day}
-              $selected={startSel}
-              $outline={!!endSel && !startSel}
+              $start={startSel}
+              $end={!!endSel && !startSel}
               $inRange={!!inRange}
               $primary={theme.colors.primary}
+              $secondary={theme.colors.secondary}
               $rangeBg={rangeBg}
               onClick={() =>
                 !disabled && (range ? commitRange(day) : commit(day))
