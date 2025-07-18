@@ -95,12 +95,14 @@ export const OAIChat: React.FC<ChatProps> = ({
   const surface = useSurface(
     s => ({
       element: s.element,
+      width: s.width,
       height: s.height,
       registerChild: s.registerChild,
       unregisterChild: s.unregisterChild,
     }),
     shallow,
   );
+  const portrait = surface.height > surface.width;
   const wrapRef = useRef<HTMLDivElement>(null);
   const uniqueId = useId();
   const [maxHeight, setMaxHeight] = useState<number>();
@@ -200,22 +202,23 @@ export const OAIChat: React.FC<ChatProps> = ({
           $gap={theme.spacing(1.5)}
           style={shouldConstrain ? { overflowY: 'auto', maxHeight } : undefined}
         >
-          {messages.map((m, i) => (
-            <Row
-              key={i}
-              $from={m.role}
-              $left={m.role === 'user' ? theme.spacing(24) : theme.spacing(3)}
-              $right={m.role === 'user' ? theme.spacing(3) : theme.spacing(24)}
-            >
+          {messages.map((m, i) => {
+            const sidePad = portrait ? theme.spacing(8) : theme.spacing(24);
+            return (
+              <Row
+                key={i}
+                $from={m.role}
+                $left={m.role === 'user' ? sidePad : theme.spacing(3)}
+                $right={m.role === 'user' ? theme.spacing(3) : sidePad}
+              >
               {m.role !== 'user' && systemAvatar && (
                 <Avatar src={systemAvatar} size="s" style={{ marginRight: theme.spacing(1) }} />
               )}
               <Panel
-                fullWidth
                 compact
                 variant="main"
                 background={m.role === 'user' ? theme.colors.primary : undefined}
-                style={{ borderRadius: theme.spacing(0.5) }}
+                style={{ maxWidth: '100%', width: 'fit-content', borderRadius: theme.spacing(0.5) }}
               >
                 {m.name && (
                   <Typography variant="subtitle" bold>
@@ -227,8 +230,9 @@ export const OAIChat: React.FC<ChatProps> = ({
               {m.role === 'user' && userAvatar && (
                 <Avatar src={userAvatar} size="s" style={{ marginLeft: theme.spacing(1) }} />
               )}
-            </Row>
-          ))}
+              </Row>
+            );
+          })}
         </Messages>
 
         {!disableInput && (
