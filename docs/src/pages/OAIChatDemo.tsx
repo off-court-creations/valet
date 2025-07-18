@@ -10,12 +10,29 @@ import {
   Button,
   OAIChat,
   useTheme,
+  KeyModal,
+  useOpenAIKey,
 } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../components/NavDrawer';
 import type { ChatMessage } from '@archway/valet';
 import monkey from '../assets/monkey.jpg';
 import present from '../assets/present.jpg';
+
+async function sendChat(messages: ChatMessage[]) {
+  const apiKey = useOpenAIKey.getState().apiKey;
+  if (!apiKey) throw new Error('No OpenAI key set');
+  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({ model: 'gpt-4o', messages }),
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
 
 export default function OAIChatDemoPage() {
   const navigate = useNavigate();
@@ -38,12 +55,21 @@ export default function OAIChatDemoPage() {
     },
   ]);
 
-  const handleSend = (m: ChatMessage) => {
-    setMessages(prev => [...prev, m, { role: 'assistant', content: `Echo: ${m.content}` }]);
+  const handleSend = async (m: ChatMessage) => {
+    const userMessages = [...messages, m];
+    setMessages(userMessages);
+    try {
+      const res = await sendChat(userMessages);
+      const reply = res.choices?.[0]?.message?.content ?? '...';
+      setMessages([...userMessages, { role: 'assistant', content: reply }]);
+    } catch (err: any) {
+      setMessages([...userMessages, { role: 'assistant', content: String(err) }]);
+    }
   };
 
   return (
     <Surface>
+      <KeyModal />
       <NavDrawer />
       <Stack>
         <Typography variant="h2" bold>
