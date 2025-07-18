@@ -24,6 +24,11 @@ export default function OAIChatDemoPage() {
     { role: 'assistant', content: 'Hello! How can I help you?' },
     { role: 'user', content: 'Tell me about valet.' },
     { role: 'assistant', content: 'It\'s a tiny React UI kit focused on AI driven interfaces.' },
+    {
+      role: 'assistant',
+      content:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum vitae risus eu massa viverra ultrices. Donec nec justo a lorem aliquet varius. Cras tincidunt aliquam orci, sed finibus nulla efficitur at. Nunc pellentesque interdum velit, in facilisis lorem elementum ut. Sed hendrerit, purus at suscipit posuere, nulla est maximus metus, eget feugiat nunc nulla sit amet metus. Integer vitae tellus ac elit efficitur sodales vitae in nibh. Praesent tempor nisi neque, et ultricies ipsum varius sit amet.',
+    },
     { role: 'user', content: 'Nice, how can I contribute?' },
     { role: 'assistant', content: 'Check the repository README for guidelines.' },
   ]);

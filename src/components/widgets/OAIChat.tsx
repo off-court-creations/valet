@@ -211,11 +211,14 @@ export const OAIChat: React.FC<ChatProps> = ({
                 <Avatar src={systemAvatar} size="s" style={{ marginRight: theme.spacing(1) }} />
               )}
               <Panel
-                fullWidth
                 compact
                 variant="main"
                 background={m.role === 'user' ? theme.colors.primary : undefined}
-                style={{ borderRadius: theme.spacing(0.5) }}
+                style={{
+                  borderRadius: theme.spacing(0.5),
+                  maxWidth: '100%',
+                  width: 'fit-content',
+                }}
               >
                 {m.name && (
                   <Typography variant="subtitle" bold>
