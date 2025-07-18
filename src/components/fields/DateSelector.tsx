@@ -10,23 +10,26 @@ import { IconButton } from './IconButton';
 import { Select } from './Select';
 import { useForm } from './FormControl';
 import type { Presettable } from '../../types';
+import { toRgb, mix, toHex } from '../../helpers/color';
 
 /*───────────────────────────────────────────────────────────*/
 export interface DateSelectorProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'>,
     Presettable {
-  /** Controlled ISO date value (YYYY-MM-DD). */
-  value?: string;
-  /** Default value for uncontrolled usage. */
-  defaultValue?: string;
-  /** Fires with ISO value when selection changes. */
-  onChange?: (value: string) => void;
+  /** Controlled ISO date value */
+  value?: string | [string, string];
+  /** Default value for uncontrolled usage */
+  defaultValue?: string | [string, string];
+  /** Fires when selection changes */
+  onChange?: (value: string | [string, string]) => void;
   /** FormControl field name. */
   name?: string;
   /** Earliest selectable ISO date (YYYY-MM-DD). */
   minDate?: string;
   /** Latest selectable ISO date (YYYY-MM-DD). */
   maxDate?: string;
+  /** Enable start/end range selection */
+  range?: boolean;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -58,11 +61,20 @@ const DayLabel = styled('div')`
   opacity: 0.8;
 `;
 
-const Cell = styled('button')<{ $selected: boolean; $primary: string }>`
+const Cell = styled('button')<{
+  $selected: boolean;
+  $outlined: boolean;
+  $rangeBg: string | null;
+  $primary: string;
+}>`
   padding: 0.25rem 0;
-  border: none;
-  background: ${({ $selected, $primary }) =>
-    $selected ? $primary : 'transparent'};
+  box-sizing: border-box;
+  border: ${({ $outlined, $primary }) =>
+    $outlined ? `1px solid ${$primary}` : 'none'};
+  background: ${({ $selected, $outlined, $primary, $rangeBg }) =>
+    $selected && !$outlined
+      ? $primary
+      : $rangeBg ?? 'transparent'};
   color: inherit;
   border-radius: 4px;
   cursor: pointer;
@@ -97,32 +109,64 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   name,
   minDate: minDateProp,
   maxDate: maxDateProp,
+  range = false,
   preset: p,
   className,
   style,
   ...rest
 }) => {
   const { theme } = useTheme();
+  const rangeColor = toHex(
+    mix(toRgb(theme.colors.secondary), toRgb(theme.colors.background), 0.25),
+  );
   let form: ReturnType<typeof useForm<any>> | null = null;
   try { form = useForm<any>(); } catch {}
 
-  const formVal = form && name ? (form.values[name] as string | undefined) : undefined;
+  const formVal = form && name ? (form.values[name] as any) : undefined;
   const controlled = value !== undefined || formVal !== undefined;
   const initial = value ?? formVal ?? defaultValue;
-  const parseDate = (v?: string) => v ? new Date(v + 'T00:00') : new Date();
-  const [internal, setInternal] = useState(parseDate(initial));
+
+  const parseDate = (v?: string | null) =>
+    v ? new Date(v + 'T00:00') : null;
+
+  const [internalStart, setInternalStart] = useState<Date | null>(() => {
+    if (range) {
+      if (Array.isArray(initial)) return parseDate(initial[0]);
+      if (typeof initial === 'string') return parseDate(initial);
+      return null;
+    }
+    return parseDate(initial as string | undefined);
+  });
+
+  const [internalEnd, setInternalEnd] = useState<Date | null>(() => {
+    if (range && Array.isArray(initial)) return parseDate(initial[1]);
+    return null;
+  });
 
   const today = new Date();
-  const min = minDateProp ? parseDate(minDateProp) : new Date(today.getFullYear() - 120, 0, 1);
-  const max = maxDateProp ? parseDate(maxDateProp) : new Date(today.getFullYear() + 120, 11, 31);
+  const min = minDateProp ? parseDate(minDateProp)! : new Date(today.getFullYear() - 120, 0, 1);
+  const max = maxDateProp ? parseDate(maxDateProp)! : new Date(today.getFullYear() + 120, 11, 31);
 
   const minYear = min.getFullYear();
   const maxYear = max.getFullYear();
 
 
-  const selected = controlled ? parseDate(value ?? formVal) : internal;
-  const [viewYear, setViewYear] = useState(selected.getFullYear());
-  const [viewMonth, setViewMonth] = useState(selected.getMonth());
+  const controlledStart = controlled
+    ? Array.isArray(value ?? formVal)
+      ? (value ?? formVal)[0]
+      : (value ?? formVal)
+    : undefined;
+  const controlledEnd =
+    controlled && Array.isArray(value ?? formVal)
+      ? (value ?? formVal)[1]
+      : undefined;
+
+  const start = controlled ? parseDate(controlledStart) : internalStart;
+  const end   = controlled ? parseDate(controlledEnd)   : internalEnd;
+
+  const refDate = start ?? end ?? new Date();
+  const [viewYear, setViewYear] = useState(refDate.getFullYear());
+  const [viewMonth, setViewMonth] = useState(refDate.getMonth());
 
   const years = Array.from({ length: maxYear - minYear + 1 }, (_, i) => minYear + i);
 
@@ -136,10 +180,50 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
 
   const commit = (d: number) => {
-    const iso = new Date(viewYear, viewMonth, d).toISOString().slice(0, 10);
-    if (!controlled) setInternal(new Date(viewYear, viewMonth, d));
-    if (form && name) form.setField(name as any, iso);
-    onChange?.(iso);
+    const date = new Date(viewYear, viewMonth, d);
+    const iso = date.toISOString().slice(0, 10);
+
+    if (!range) {
+      if (!controlled) setInternalStart(date);
+      if (form && name) form.setField(name as any, iso);
+      onChange?.(iso);
+      return;
+    }
+
+    if (!controlled) {
+      if (!internalStart || internalEnd) {
+        setInternalStart(date);
+        setInternalEnd(null);
+        if (form && name) form.setField(name as any, [iso, null]);
+      } else {
+        let s = internalStart;
+        let e = date;
+        if (e < s) [s, e] = [e, s];
+        setInternalStart(s);
+        setInternalEnd(e);
+        const startIso = s.toISOString().slice(0, 10);
+        const endIso = e.toISOString().slice(0, 10);
+        if (form && name) form.setField(name as any, [startIso, endIso]);
+        onChange?.([startIso, endIso]);
+      }
+    } else {
+      let startVal = controlledStart ? new Date(controlledStart + 'T00:00') : null;
+      let endVal = controlledEnd ? new Date(controlledEnd + 'T00:00') : null;
+
+      if (!startVal || endVal) {
+        startVal = date;
+        endVal = null;
+        if (form && name) form.setField(name as any, [iso, null]);
+      } else {
+        let s = startVal;
+        let e = date;
+        if (e < s) [s, e] = [e, s];
+        const startIso = s.toISOString().slice(0, 10);
+        const endIso = e.toISOString().slice(0, 10);
+        if (form && name) form.setField(name as any, [startIso, endIso]);
+        onChange?.([startIso, endIso]);
+      }
+    }
   };
 
   const changeMonth = (delta: number) => {
@@ -268,14 +352,29 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
           const day = i + 1;
           const date = new Date(viewYear, viewMonth, day);
           const disabled = date < min || date > max;
-          const selectedDay =
-            selected.getFullYear() === viewYear &&
-            selected.getMonth() === viewMonth &&
-            selected.getDate() === day;
+          const isStart =
+            !!start &&
+            start.getFullYear() === viewYear &&
+            start.getMonth() === viewMonth &&
+            start.getDate() === day;
+          const isEnd =
+            !!end &&
+            end.getFullYear() === viewYear &&
+            end.getMonth() === viewMonth &&
+            end.getDate() === day;
+
+          const inRange =
+            !!start &&
+            !!end &&
+            date > start &&
+            date < end;
+
           return (
             <Cell
               key={day}
-              $selected={selectedDay}
+              $selected={isStart}
+              $outlined={range && isEnd}
+              $rangeBg={range && inRange ? rangeColor : null}
               $primary={theme.colors.primary}
               onClick={() => !disabled && commit(day)}
               disabled={disabled}
