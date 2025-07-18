@@ -70,10 +70,8 @@ const Row = styled('div') <{
   padding-right: ${({ $right }) => $right};
 `;
 
-const InputRow = styled('form') <{ $gap: string }>`
-  display: flex;
-  align-items: flex-end;
-  gap: ${({ $gap }) => $gap};
+const InputRow = styled('form')`
+  align-self: center;
 `;
 
 /*───────────────────────────────────────────────────────────*/
@@ -95,12 +93,14 @@ export const OAIChat: React.FC<ChatProps> = ({
   const surface = useSurface(
     s => ({
       element: s.element,
+      width: s.width,
       height: s.height,
       registerChild: s.registerChild,
       unregisterChild: s.unregisterChild,
     }),
     shallow,
   );
+  const portrait = surface.height > surface.width;
   const wrapRef = useRef<HTMLDivElement>(null);
   const uniqueId = useId();
   const [maxHeight, setMaxHeight] = useState<number>();
@@ -200,22 +200,28 @@ export const OAIChat: React.FC<ChatProps> = ({
           $gap={theme.spacing(1.5)}
           style={shouldConstrain ? { overflowY: 'auto', maxHeight } : undefined}
         >
-          {messages.map((m, i) => (
-            <Row
-              key={i}
-              $from={m.role}
-              $left={m.role === 'user' ? theme.spacing(24) : theme.spacing(3)}
-              $right={m.role === 'user' ? theme.spacing(3) : theme.spacing(24)}
-            >
+          {messages.map((m, i) => {
+            const sidePad = portrait ? theme.spacing(8) : theme.spacing(24);
+            const avatarPad = theme.spacing(1);
+            return (
+              <Row
+                key={i}
+                $from={m.role}
+                $left={m.role === 'user' ? sidePad : avatarPad}
+                $right={m.role === 'user' ? avatarPad : sidePad}
+              >
               {m.role !== 'user' && systemAvatar && (
-                <Avatar src={systemAvatar} size="s" style={{ marginRight: theme.spacing(1) }} />
+                <Avatar
+                  src={systemAvatar}
+                  size="s"
+                  style={{ marginRight: theme.spacing(1) }}
+                />
               )}
               <Panel
-                fullWidth
                 compact
                 variant="main"
                 background={m.role === 'user' ? theme.colors.primary : undefined}
-                style={{ borderRadius: theme.spacing(0.5) }}
+                style={{ maxWidth: '100%', width: 'fit-content', borderRadius: theme.spacing(0.5) }}
               >
                 {m.name && (
                   <Typography variant="subtitle" bold>
@@ -225,24 +231,31 @@ export const OAIChat: React.FC<ChatProps> = ({
                 <Typography>{m.content}</Typography>
               </Panel>
               {m.role === 'user' && userAvatar && (
-                <Avatar src={userAvatar} size="s" style={{ marginLeft: theme.spacing(1) }} />
+                <Avatar
+                  src={userAvatar}
+                  size="s"
+                  style={{ marginLeft: theme.spacing(1) }}
+                />
               )}
-            </Row>
-          ))}
+              </Row>
+            );
+          })}
         </Messages>
 
         {!disableInput && (
-          <Stack direction="row" spacing={2}>
-            <TextField
-              as="textarea"
-              name="chat-message"
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              rows={1}
-              placeholder={placeholder}
-            />
-            <IconButton icon="carbon:send" type="submit" aria-label="Send" />
-          </Stack>
+          <InputRow onSubmit={handleSubmit}>
+            <Stack direction="row" spacing={1} compact>
+              <TextField
+                as="textarea"
+                name="chat-message"
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                rows={1}
+                placeholder={placeholder}
+              />
+              <IconButton icon="carbon:send" type="submit" aria-label="Send" />
+            </Stack>
+          </InputRow>
         )}
       </Wrapper>
     </Panel>
