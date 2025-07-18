@@ -19,6 +19,8 @@ import TextField from '../fields/TextField';
 import Panel from '../layout/Panel';
 import Typography from '../primitives/Typography';
 import Avatar from '../primitives/Avatar';
+import KeyModal from '../KeyModal';
+import { useOpenAIKey } from '../../system/openaiKeyStore';
 import type { Presettable } from '../../types';
 import Stack from '../layout/Stack';
 
@@ -74,6 +76,18 @@ const InputRow = styled('form')`
   align-self: center;
 `;
 
+const Bar = styled('div')<{ $bg: string; $text: string; $gap: string }>`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+  background: ${({ $bg }) => $bg};
+  color: ${({ $text }) => $text};
+  & > * {
+    padding: ${({ $gap }) => $gap};
+  }
+`;
+
 /*───────────────────────────────────────────────────────────*/
 /* Component                                                  */
 export const OAIChat: React.FC<ChatProps> = ({
@@ -108,6 +122,8 @@ export const OAIChat: React.FC<ChatProps> = ({
   const constraintRef = useRef(false);
 
   const [text, setText] = useState('');
+  const { apiKey } = useOpenAIKey();
+  const [showKeyModal, setShowKeyModal] = useState(false);
 
   const calcCutoff = () => {
     if (typeof document === 'undefined') return 32;
@@ -187,15 +203,32 @@ export const OAIChat: React.FC<ChatProps> = ({
   const cls = [presetClasses, className].filter(Boolean).join(' ') || undefined;
 
   return (
-    <Panel
-      {...rest}
-      compact
-      fullWidth
-      variant="alt"
-      style={style}
-      className={cls}
-    >
-      <Wrapper ref={wrapRef} $gap={theme.spacing(3)} style={{ overflow: 'hidden' }}>
+    <>
+      <KeyModal open={showKeyModal} onClose={() => setShowKeyModal(false)} />
+      <Panel
+        {...rest}
+        compact
+        fullWidth
+        variant="alt"
+        style={style}
+        className={cls}
+      >
+        <Bar $bg={theme.colors.primary} $text={theme.colors.primaryText} $gap={theme.spacing(0.5)}>
+          <span />
+          <span
+            style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: theme.spacing(0.5) }}
+            onClick={() => setShowKeyModal(true)}
+          >
+            <Typography variant="subtitle">
+              {apiKey ? 'Connected' : 'Disconnected'}
+            </Typography>
+            <IconButton
+              icon={apiKey ? 'carbon:checkmark' : 'carbon:circle-dash'}
+              aria-label="Set OpenAI key"
+            />
+          </span>
+        </Bar>
+        <Wrapper ref={wrapRef} $gap={theme.spacing(3)} style={{ overflow: 'hidden' }}>
         <Messages
           $gap={theme.spacing(1.5)}
           style={shouldConstrain ? { overflowY: 'auto', maxHeight } : undefined}
@@ -259,6 +292,7 @@ export const OAIChat: React.FC<ChatProps> = ({
         )}
       </Wrapper>
     </Panel>
+    </>
   );
 };
 
