@@ -27,6 +27,8 @@ interface FieldCommon extends Presettable {
   label?: string;
   helperText?: string;
   error?: boolean;
+  /** Stretch the wrapper to fill available width */
+  fullWidth?: boolean;
 }
 
 export type TextFieldProps =
@@ -94,9 +96,11 @@ export const TextField = forwardRef<
     label,
     helperText,
     error = false,
+    fullWidth = false,
     preset: presetName,
     className,
     rows,
+    style: styleProp,
     ...rawRest
   } = props;
 
@@ -142,6 +146,7 @@ export const TextField = forwardRef<
     <Wrapper
       theme={theme}
       className={[presetClasses, className].filter(Boolean).join(' ')}
+      style={fullWidth ? { flex: 1, width: '100%', ...styleProp } : styleProp}
     >
       {label && (
         <Label theme={theme} htmlFor={id}>
