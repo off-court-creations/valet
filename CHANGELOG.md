@@ -3,10 +3,8 @@
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-### Fixed
-- Default Panel background ignored when a preset was present
-- Panel now checks presets for a custom background before falling back
-### Changed
+
+## [0.16.2]
 - Range mode on `DateSelector` uses primary tones and a filled secondary end day
 - Selected dates in `DateSelector` now have bold text
 
@@ -239,6 +237,12 @@ responsive logic uses the selected `Surface` element to handle persistent margin
 ## [v0.2.1]
 ### Other
 - vibe coded
+
+[v0.16.2]: https://github.com/off-court-creations/valet/releases/tag/v0.16.2
+[v0.16.1]: https://github.com/off-court-creations/valet/releases/tag/v0.16.1
+[v0.16.0]: https://github.com/off-court-creations/valet/releases/tag/v0.14.0
+[v0.15.1]: https://github.com/off-court-creations/valet/releases/tag/v0.15.1
+[v0.15.0]: https://github.com/off-court-creations/valet/releases/tag/v0.15.0
 [v0.14.0]: https://github.com/off-court-creations/valet/releases/tag/v0.14.0
 [v0.13.0]: https://github.com/off-court-creations/valet/releases/tag/v0.13.0
 [v0.12.1]: https://github.com/off-court-creations/valet/releases/tag/v0.12.1
