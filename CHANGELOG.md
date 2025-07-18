@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file. The format 
 
 ### Changed
 - `OAIChat` starts disconnected with a built-in AppBar to manage the OpenAI key
+- Chat AppBar uses the secondary color scheme
 
 ### Improved
 - `KeyModal` now shows an error when an incorrect passphrase is entered

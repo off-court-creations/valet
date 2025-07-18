@@ -213,7 +213,7 @@ export const OAIChat: React.FC<ChatProps> = ({
         style={style}
         className={cls}
       >
-        <Bar $bg={theme.colors.primary} $text={theme.colors.primaryText} $gap={theme.spacing(0.5)}>
+        <Bar $bg={theme.colors.secondary} $text={theme.colors.secondaryText} $gap={theme.spacing(0.5)}>
           <span />
           <span
             style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: theme.spacing(0.5) }}
