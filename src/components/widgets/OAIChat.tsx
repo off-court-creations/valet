@@ -233,7 +233,9 @@ export const OAIChat: React.FC<ChatProps> = ({
           $gap={theme.spacing(1.5)}
           style={shouldConstrain ? { overflowY: 'auto', maxHeight } : undefined}
         >
-          {messages.map((m, i) => {
+          {messages
+            .filter(m => m.role !== 'system')
+            .map((m, i) => {
             const sidePad = portrait ? theme.spacing(8) : theme.spacing(24);
             const avatarPad = theme.spacing(1);
             return (

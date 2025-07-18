@@ -12,6 +12,9 @@ All notable changes to this project will be documented in this file. The format 
 - `OAIChat` starts disconnected with a built-in AppBar to manage the OpenAI key
 - Chat AppBar uses the secondary color scheme
 
+### Fixed
+- `OAIChat` no longer displays system prompt messages
+
 ### Improved
 - `KeyModal` now shows an error when an incorrect passphrase is entered
 - Chat demo no longer records attempts when the API key is missing
