@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.16.3]
+- Improved `OAIChat` styling, especially on mobile / portrait. 
+
 ## [0.16.2]
 - Range mode on `DateSelector` uses primary tones and a filled secondary end day
 - Selected dates in `DateSelector` now have bold text
@@ -238,6 +241,7 @@ responsive logic uses the selected `Surface` element to handle persistent margin
 ### Other
 - vibe coded
 
+[v0.16.3]: https://github.com/off-court-creations/valet/releases/tag/v0.16.3
 [v0.16.2]: https://github.com/off-court-creations/valet/releases/tag/v0.16.2
 [v0.16.1]: https://github.com/off-court-creations/valet/releases/tag/v0.16.1
 [v0.16.0]: https://github.com/off-court-creations/valet/releases/tag/v0.14.0
