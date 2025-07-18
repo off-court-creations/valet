@@ -1,28 +1,24 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// src/pages/PanelDemoPage.tsx
-// A comprehensive live demo of every Panel capability in ZeroUI
+// src/pages/components/Panel.tsx
 // ─────────────────────────────────────────────────────────────────────────────
 import {
   Surface,
   Stack,          // tidy vertical layout
   Panel,
   Typography,
-  Button,
   useTheme,
   Tabs,
   Table,
 } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../components/NavDrawer';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Demo page                                                                  */
 
 export default function PanelDemoPage() {
-  const { theme, toggleMode } = useTheme();      // live theme switch
-  const navigate = useNavigate();
+  const { theme } = useTheme();      // live theme switch
 
   interface Row {
     prop: ReactNode;
@@ -39,18 +35,6 @@ export default function PanelDemoPage() {
   ];
 
   const data: Row[] = [
-    {
-      prop: <code>variant</code>,
-      type: <code>'main' | 'alt'</code>,
-      default: <code>'main'</code>,
-      description: 'Visual style: filled or outlined',
-    },
-    {
-      prop: <code>fullWidth</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Stretch to 100% width',
-    },
     {
       prop: <code>background</code>,
       type: <code>string</code>,
@@ -70,10 +54,22 @@ export default function PanelDemoPage() {
       description: 'Remove default margin and padding',
     },
     {
+      prop: <code>fullWidth</code>,
+      type: <code>boolean</code>,
+      default: <code>false</code>,
+      description: 'Stretch to 100% width',
+    },
+    {
       prop: <code>preset</code>,
       type: <code>string | string[]</code>,
       default: <code>-</code>,
       description: 'Apply style presets',
+    },
+    {
+      prop: <code>variant</code>,
+      type: <code>'main' | 'alt'</code>,
+      default: <code>'main'</code>,
+      description: 'Visual style: filled or outlined',
     },
   ];
 
@@ -96,13 +92,13 @@ export default function PanelDemoPage() {
               {/* 1. 
               Default Panel ------------------------------------------- */}
               <Typography variant="h3">Default Panel</Typography>
-              <Panel style={{ padding: theme.spacing(1), marginBottom: theme.spacing(4) }}>
+              <Panel preset="codePanel">
                 <Typography>(no props) — inherits theme backgroundAlt &amp; text</Typography>
               </Panel>
 
               {/* 2. alt variant --------------------------------------------------- */}
               <Typography variant="h3"><code>variant</code>=&quot;alt&quot;</Typography>
-              <Panel variant="alt" style={{ padding: theme.spacing(1), marginBottom: theme.spacing(4) }}>
+              <Panel variant="alt" preset="codePanel">
                 <Typography>Transparent with outline by default</Typography>
               </Panel>
 
@@ -111,7 +107,7 @@ export default function PanelDemoPage() {
               <Stack>
                 <Panel
                   background={theme.colors['primary']}
-                  style={{ padding: theme.spacing(1), marginBottom: theme.spacing(4) }}
+                  preset="codePanel"
                 >
                   <Typography>{`background=${theme.colors['primary']}`}</Typography>
                 </Panel>
@@ -121,7 +117,7 @@ export default function PanelDemoPage() {
               <Typography variant="h3"><code>fullWidth</code> prop</Typography>
               <Panel
                 fullWidth
-                style={{ padding: theme.spacing(1), marginBottom: theme.spacing(4) }}
+                style={{ marginBottom: theme.spacing(4) }}
               >
                 <Typography>Stretch me edge-to-edge with <code>fullWidth</code></Typography>
               </Panel>
@@ -130,11 +126,10 @@ export default function PanelDemoPage() {
               <Typography variant="h3">Inline style</Typography>
               <Panel
                 style={{
-                  padding: theme.spacing(1),
                   borderRadius: 12,
                   border: `2px dashed ${theme.colors['text']}`,
-                  marginBottom: theme.spacing(4)
                 }}
+                preset="codePanel"
               >
                 <Typography>Custom dashed border &amp; radius via <code>style</code></Typography>
               </Panel>

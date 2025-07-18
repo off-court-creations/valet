@@ -36,3 +36,8 @@ definePreset('gradientHolder', () => `
     border-radius: 8px;
     text-align: center;
   `);
+
+definePreset('codePanel', (t) => `
+    padding         : ${t.spacing(1)};
+    margin-bottom : ${t.spacing(4)} !important;
+  `);
