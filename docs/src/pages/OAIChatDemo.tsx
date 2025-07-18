@@ -23,9 +23,19 @@ export default function OAIChatDemoPage() {
   const [messages, setMessages] = useState<ChatMessage[]>([
     { role: 'assistant', content: 'Hello! How can I help you?' },
     { role: 'user', content: 'Tell me about valet.' },
-    { role: 'assistant', content: 'It\'s a tiny React UI kit focused on AI driven interfaces.' },
+    { role: 'assistant', content: "It's a tiny React UI kit focused on AI driven interfaces." },
     { role: 'user', content: 'Nice, how can I contribute?' },
     { role: 'assistant', content: 'Check the repository README for guidelines.' },
+    {
+      role: 'user',
+      content:
+        "Could you also give me a lengthy explanation of the core principles behind this project? I'm curious about every detail.",
+    },
+    {
+      role: 'assistant',
+      content:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue. Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue. Praesent egestas leo in pede. Praesent blandit odio eu enim. Pellentesque sed dui ut augue blandit sodales. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aliquam nibh. Mauris ac mauris sed pede pellentesque fermentum. Maecenas adipiscing ante non diam sodales hendrerit.' ,
+    },
   ]);
 
   const handleSend = (m: ChatMessage) => {

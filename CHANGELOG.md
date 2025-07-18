@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+- Chat bubbles in `OAIChat` shrink to fit short messages.
+
 ## [0.16.2]
 - Range mode on `DateSelector` uses primary tones and a filled secondary end day
 - Selected dates in `DateSelector` now have bold text
