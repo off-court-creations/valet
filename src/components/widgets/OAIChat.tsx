@@ -16,11 +16,13 @@ import { shallow } from 'zustand/shallow';
 import { preset } from '../../css/stylePresets';
 import IconButton from '../fields/IconButton';
 import TextField from '../fields/TextField';
+import Stack from '../layout/Stack';
 import Panel from '../layout/Panel';
 import Typography from '../primitives/Typography';
 import Avatar from '../primitives/Avatar';
+import KeyModal from '../KeyModal';
+import { useOpenAIKey } from '../../system/openaiKeyStore';
 import type { Presettable } from '../../types';
-import Stack from '../layout/Stack';
 
 /*───────────────────────────────────────────────────────────*/
 /* Types                                                      */
@@ -70,8 +72,17 @@ const Row = styled('div') <{
   padding-right: ${({ $right }) => $right};
 `;
 
-const InputRow = styled('form')`
-  align-self: center;
+
+const Bar = styled('div')<{ $bg: string; $text: string; $gap: string }>`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+  background: ${({ $bg }) => $bg};
+  color: ${({ $text }) => $text};
+  & > * {
+    padding: ${({ $gap }) => $gap};
+  }
 `;
 
 /*───────────────────────────────────────────────────────────*/
@@ -108,6 +119,8 @@ export const OAIChat: React.FC<ChatProps> = ({
   const constraintRef = useRef(false);
 
   const [text, setText] = useState('');
+  const { apiKey } = useOpenAIKey();
+  const [showKeyModal, setShowKeyModal] = useState(false);
 
   const calcCutoff = () => {
     if (typeof document === 'undefined') return 32;
@@ -187,20 +200,39 @@ export const OAIChat: React.FC<ChatProps> = ({
   const cls = [presetClasses, className].filter(Boolean).join(' ') || undefined;
 
   return (
-    <Panel
-      {...rest}
-      compact
-      fullWidth
-      variant="alt"
-      style={style}
-      className={cls}
-    >
-      <Wrapper ref={wrapRef} $gap={theme.spacing(3)} style={{ overflow: 'hidden' }}>
+    <>
+      <KeyModal open={showKeyModal} onClose={() => setShowKeyModal(false)} />
+      <Panel
+        {...rest}
+        compact
+        fullWidth
+        variant="alt"
+        style={style}
+        className={cls}
+      >
+        <Bar $bg={theme.colors.secondary} $text={theme.colors.secondaryText} $gap={theme.spacing(0.5)}>
+          <span />
+          <span
+            style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: theme.spacing(0.5) }}
+            onClick={() => setShowKeyModal(true)}
+          >
+            <Typography variant="subtitle">
+              {apiKey ? 'Connected' : 'Disconnected'}
+            </Typography>
+            <IconButton
+              icon={apiKey ? 'carbon:checkmark' : 'carbon:circle-dash'}
+              aria-label="Set OpenAI key"
+            />
+          </span>
+        </Bar>
+        <Wrapper ref={wrapRef} $gap={theme.spacing(3)} style={{ overflow: 'hidden' }}>
         <Messages
           $gap={theme.spacing(1.5)}
           style={shouldConstrain ? { overflowY: 'auto', maxHeight } : undefined}
         >
-          {messages.map((m, i) => {
+          {messages
+            .filter(m => m.role !== 'system')
+            .map((m, i) => {
             const sidePad = portrait ? theme.spacing(8) : theme.spacing(24);
             const avatarPad = theme.spacing(1);
             return (
@@ -243,22 +275,30 @@ export const OAIChat: React.FC<ChatProps> = ({
         </Messages>
 
         {!disableInput && (
-          <InputRow onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} style={{ width: '100%' }}>
             <Stack direction="row" spacing={1} compact>
               <TextField
                 as="textarea"
                 name="chat-message"
                 value={text}
                 onChange={(e) => setText(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSubmit(e as any);
+                  }
+                }}
                 rows={1}
                 placeholder={placeholder}
+                fullWidth
               />
               <IconButton icon="carbon:send" type="submit" aria-label="Send" />
             </Stack>
-          </InputRow>
+          </form>
         )}
       </Wrapper>
     </Panel>
+    </>
   );
 };
 

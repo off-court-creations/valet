@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- `KeyModal` component and secure `openaiKeyStore` for browser-stored keys
+- `sendChat` helper for direct OpenAI conversations
+- `KeyModal` now allows deleting the stored key
+
+### Changed
+- `OAIChat` starts disconnected with a built-in AppBar to manage the OpenAI key
+- Chat AppBar uses the secondary color scheme
+- Chat text field now fills available width
+- Chat input uses `Stack`; Enter sends the message while Shift+Enter newlines
+- `TextField` accepts `fullWidth` to stretch inside flex rows
+
+### Fixed
+- `OAIChat` no longer displays system prompt messages
+
+### Improved
+- `KeyModal` now shows an error when an incorrect passphrase is entered
+- Chat demo no longer records attempts when the API key is missing
 
 ## [0.16.3]
 - Improved `OAIChat` styling, especially on mobile / portrait. 
