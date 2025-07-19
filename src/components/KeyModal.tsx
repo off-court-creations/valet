@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/KeyModal.tsx | valet
-// modal to capture an OpenAI API key
+// modal to capture an AI provider API key
 // ─────────────────────────────────────────────────────────────
 import { useState } from 'react';
 import Modal from './layout/Modal';
@@ -8,7 +8,7 @@ import Panel from './layout/Panel';
 import Stack from './layout/Stack';
 import Typography from './primitives/Typography';
 import Button from './fields/Button';
-import { useOpenAIKey } from '../system/openaiKeyStore';
+import { useAIKey, AIProvider } from '../system/aiKeyStore';
 import { useTheme } from '../system/themeStore';
 
 export interface KeyModalProps {
@@ -17,10 +17,11 @@ export interface KeyModalProps {
 }
 
 export default function KeyModal({ open, onClose }: KeyModalProps) {
-  const { apiKey, cipher, setKey, applyPassphrase, clearKey } = useOpenAIKey();
+  const { apiKey, provider, cipher, setKey, applyPassphrase, clearKey } = useAIKey();
   const [value, setValue] = useState('');
   const [remember, setRemember] = useState(false);
   const [passphrase, setPassphrase] = useState('');
+  const [prov, setProv] = useState<AIProvider>(provider ?? 'openai');
   const [error, setError] = useState('');
   const { theme } = useTheme();
 
@@ -31,7 +32,7 @@ export default function KeyModal({ open, onClose }: KeyModalProps) {
       <Panel centered compact style={{ maxWidth: 480 }}>
         <Stack spacing={1}>
           <Typography variant="h3" bold>
-            {cipher ? 'Unlock OpenAI key' : 'Paste your OpenAI key'}
+            {cipher ? `Unlock ${prov === 'anthropic' ? 'Anthropic' : 'OpenAI'} key` : 'Paste your API key'}
           </Typography>
 
           {!cipher && (
@@ -58,6 +59,17 @@ export default function KeyModal({ open, onClose }: KeyModalProps) {
               }}
               style={{ width: '100%', padding: '0.5rem' }}
             />
+          )}
+
+          {!cipher && (
+            <select
+              value={prov}
+              onChange={(e) => setProv(e.target.value as AIProvider)}
+              style={{ width: '100%', padding: '0.5rem' }}
+            >
+              <option value="openai">OpenAI</option>
+              <option value="anthropic">Anthropic</option>
+            </select>
           )}
 
           {error && (
@@ -87,7 +99,11 @@ export default function KeyModal({ open, onClose }: KeyModalProps) {
                   return;
                 }
               } else {
-                await setKey(value.trim(), remember ? passphrase : undefined);
+                await setKey(
+                  value.trim(),
+                  prov,
+                  remember ? passphrase : undefined,
+                );
               }
               onClose?.();
             }}
