@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// src/pages/OAIChatDemo.tsx | valet
-// Simple showcase for <OAIChat /> component
+// src/pages/LLMChatDemo.tsx | valet
+// Simple showcase for <LLMChat /> component
 // ─────────────────────────────────────────────────────────────────────────────
 import { useState } from 'react';
 import {
@@ -8,7 +8,7 @@ import {
   Stack,
   Typography,
   Button,
-  OAIChat,
+  LLMChat,
   sendChat,
   Snackbar,
   useAIKey,
@@ -20,7 +20,7 @@ import type { ChatMessage } from '@archway/valet';
 import monkey from '../assets/monkey.jpg';
 import present from '../assets/present.jpg';
 
-export default function OAIChatDemoPage() {
+export default function LLMChatDemoPage() {
   const navigate = useNavigate();
   const { theme, toggleMode } = useTheme();
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -71,9 +71,9 @@ export default function OAIChatDemoPage() {
         <Typography variant="h2" bold>
           Chat Showcase
         </Typography>
-        <Typography variant="subtitle">OAIChat component demo</Typography>
+        <Typography variant="subtitle">LLMChat component demo</Typography>
 
-        <OAIChat
+        <LLMChat
           messages={messages}
           onSend={handleSend}
           constrainHeight

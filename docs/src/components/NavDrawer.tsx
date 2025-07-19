@@ -53,7 +53,7 @@ const fields: [string, string][] = [
 ];
 
 const widgets: [string, string][] = [
-  ['OAIChat', '/chat-demo'],
+  ['LLMChat', '/chat-demo'],
   ['Pagination', '/pagination-demo'],
   ['Parallax', '/parallax'],
   ['Snackbar', '/snackbar-demo'],
