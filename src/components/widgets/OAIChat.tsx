@@ -21,8 +21,18 @@ import Panel from '../layout/Panel';
 import Typography from '../primitives/Typography';
 import Avatar from '../primitives/Avatar';
 import KeyModal from '../KeyModal';
-import { useOpenAIKey } from '../../system/openaiKeyStore';
+import Select from '../fields/Select';
+import { useAIKey, AIProvider } from '../../system/aiKeyStore';
 import type { Presettable } from '../../types';
+
+const models: Record<AIProvider, string[]> = {
+  openai: ['gpt-4o', 'gpt-4-turbo', 'gpt-3.5-turbo'],
+  anthropic: [
+    'claude-3-opus-20240229',
+    'claude-3-sonnet-20240229',
+    'claude-3-haiku-20240307',
+  ],
+};
 
 /*───────────────────────────────────────────────────────────*/
 /* Types                                                      */
@@ -48,6 +58,10 @@ export interface ChatProps
   placeholder?: string;
   disableInput?: boolean;
   constrainHeight?: boolean;
+  apiKey?: string;
+  provider?: AIProvider;
+  model?: string;
+  onModelChange?: (m: string) => void;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -124,6 +138,10 @@ export const OAIChat: React.FC<ChatProps> = ({
   placeholder = 'Message…',
   disableInput = false,
   constrainHeight = true,
+  apiKey: propKey,
+  provider: propProvider,
+  model: propModel,
+  onModelChange,
   preset: p,
   className,
   style,
@@ -148,8 +166,37 @@ export const OAIChat: React.FC<ChatProps> = ({
   const constraintRef = useRef(false);
 
   const [text, setText] = useState('');
-  const { apiKey } = useOpenAIKey();
+  const {
+    apiKey: storeKey,
+    provider: storeProv,
+    model: storeModel,
+    setModel,
+  } = useAIKey();
   const [showKeyModal, setShowKeyModal] = useState(false);
+  const key = propKey ?? storeKey;
+  const provider = (propProvider ?? storeProv) as AIProvider | null;
+  const [model, setModelLocal] = useState(
+    propModel ?? storeModel ?? (provider ? models[provider][0] : ''),
+  );
+
+  useEffect(() => {
+    if (propModel) setModelLocal(propModel);
+  }, [propModel]);
+
+  useEffect(() => {
+    if (!propModel && provider) {
+      const m = storeModel ?? models[provider][0];
+      setModelLocal(m);
+    }
+  }, [provider, storeModel, propModel]);
+
+  const handleModelChange = (m: string) => {
+    if (!propModel) {
+      setModelLocal(m);
+      setModel(m);
+    }
+    onModelChange?.(m);
+  };
 
   const calcCutoff = () => {
     if (typeof document === 'undefined') return 32;
@@ -230,7 +277,9 @@ export const OAIChat: React.FC<ChatProps> = ({
 
   return (
     <>
-      <KeyModal open={showKeyModal} onClose={() => setShowKeyModal(false)} />
+      {!propKey && (
+        <KeyModal open={showKeyModal} onClose={() => setShowKeyModal(false)} />
+      )}
       <Panel
         {...rest}
         compact
@@ -240,17 +289,29 @@ export const OAIChat: React.FC<ChatProps> = ({
         className={cls}
       >
         <Bar $bg={theme.colors.secondary} $text={theme.colors.secondaryText} $gap={theme.spacing(0.5)}>
-          <span />
+          {provider && key ? (
+            <Select
+              size="sm"
+              value={model}
+              onChange={(v) => handleModelChange(v as string)}
+            >
+              {models[provider].map(m => (
+                <Select.Option key={m} value={m}>{m}</Select.Option>
+              ))}
+            </Select>
+          ) : (
+            <span />
+          )}
           <span
             style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: theme.spacing(0.5) }}
-            onClick={() => setShowKeyModal(true)}
+            onClick={() => !propKey && setShowKeyModal(true)}
           >
             <Typography variant="subtitle">
-              {apiKey ? 'Connected' : 'Disconnected'}
+              {key ? 'Connected' : 'Disconnected'}
             </Typography>
             <IconButton
-              icon={apiKey ? 'carbon:checkmark' : 'carbon:circle-dash'}
-              aria-label="Set OpenAI key"
+              icon={key ? 'carbon:checkmark' : 'carbon:circle-dash'}
+              aria-label="Set API key"
             />
           </span>
         </Bar>
