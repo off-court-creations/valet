@@ -41,7 +41,8 @@
   "dependencies": {
     "@iconify/react": "^6.0.0",
     "siphash": "^1.2.0",
-    "zustand": "^4.5.7"
+    "zustand": "^4.5.7",
+    "marked": "^16.1.1"
   },
   "peerDependencies": {
     "react": ">=18.0.0 || ^19.0.0",
