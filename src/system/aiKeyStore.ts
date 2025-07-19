@@ -104,7 +104,10 @@ export const useAIKey = create<KeyState>()(
           return false;
         }
       },
-      clearKey: () => set({ apiKey: null, provider: null, model: null, cipher: null, passphrase: null }),
+      clearKey: () => {
+        dynamicStorage.removeItem('valet-ai-key');
+        set({ apiKey: null, provider: null, model: null, cipher: null, passphrase: null });
+      },
     }),
     {
       name: 'valet-ai-key',
