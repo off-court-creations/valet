@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/KeyModal.tsx | valet
-// modal to capture an OpenAI API key
+// modal to capture an AI provider key
 // ─────────────────────────────────────────────────────────────
 import { useState } from 'react';
 import Modal from './layout/Modal';
@@ -8,7 +8,8 @@ import Panel from './layout/Panel';
 import Stack from './layout/Stack';
 import Typography from './primitives/Typography';
 import Button from './fields/Button';
-import { useOpenAIKey } from '../system/openaiKeyStore';
+import { useAIKey, Provider } from '../system/openaiKeyStore';
+import Select from './fields/Select';
 import { useTheme } from '../system/themeStore';
 
 export interface KeyModalProps {
@@ -17,7 +18,8 @@ export interface KeyModalProps {
 }
 
 export default function KeyModal({ open, onClose }: KeyModalProps) {
-  const { apiKey, cipher, setKey, applyPassphrase, clearKey } = useOpenAIKey();
+  const { apiKey, cipher, provider, setKey, applyPassphrase, clearKey } = useAIKey();
+  const [prov, setProv] = useState<Provider>(provider ?? 'openai');
   const [value, setValue] = useState('');
   const [remember, setRemember] = useState(false);
   const [passphrase, setPassphrase] = useState('');
@@ -31,14 +33,21 @@ export default function KeyModal({ open, onClose }: KeyModalProps) {
       <Panel centered compact style={{ maxWidth: 480 }}>
         <Stack spacing={1}>
           <Typography variant="h3" bold>
-            {cipher ? 'Unlock OpenAI key' : 'Paste your OpenAI key'}
+            {cipher ? `Unlock ${provider ?? prov} key` : 'Paste your API key'}
           </Typography>
+
+          {!cipher && (
+            <Select value={prov} onChange={v => setProv(v as Provider)}>
+              <Select.Option value="openai">OpenAI</Select.Option>
+              <Select.Option value="anthropic">Anthropic</Select.Option>
+            </Select>
+          )}
 
           {!cipher && (
             <input
               style={{ fontFamily: 'monospace', width: '100%', padding: '0.5rem' }}
               type="password"
-              placeholder="sk-..."
+              placeholder="api-key"
               value={value}
               onChange={(e) => {
                 setValue(e.target.value);
@@ -87,7 +96,7 @@ export default function KeyModal({ open, onClose }: KeyModalProps) {
                   return;
                 }
               } else {
-                await setKey(value.trim(), remember ? passphrase : undefined);
+                await setKey(value.trim(), prov, remember ? passphrase : undefined);
               }
               onClose?.();
             }}

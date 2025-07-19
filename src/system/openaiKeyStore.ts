@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 // src/system/openaiKeyStore.ts | valet
-// secure in-browser store for OpenAI keys
+// secure in-browser store for AI keys (OpenAI & Anthropic)
 // ─────────────────────────────────────────────────────────────
 import { create } from 'zustand';
 import { persist, StateStorage, createJSONStorage } from 'zustand/middleware';
@@ -62,28 +62,32 @@ const dynamicStorage: StateStorage = {
 };
 
 /* ---- 3. Zustand secure store ------------------------------------ */
+export type Provider = 'openai' | 'anthropic';
+
 type KeyState = {
   apiKey: string | null;     // decrypted key in memory
+  provider: Provider | null; // which service the key is for
   cipher: string | null;     // encrypted key persisted
   passphrase: string | null; // transient
-  setKey: (k: string, pass?: string) => Promise<void>;
+  setKey: (k: string, p: Provider, pass?: string) => Promise<void>;
   applyPassphrase: (pass: string) => Promise<boolean>;
   clearKey: () => void;
 };
 
-export const useOpenAIKey = create<KeyState>()(
+export const useAIKey = create<KeyState>()(
   persist(
     (set, get) => {
       return {
         apiKey: null,
+        provider: null,
         cipher: null,
         passphrase: null,
-        setKey: async (k, pass) => {
+        setKey: async (k, p, pass) => {
           if (pass) {
             const cipher = await encrypt(k, pass);
-            set({ apiKey: k, cipher, passphrase: pass });
+            set({ apiKey: k, provider: p, cipher, passphrase: pass });
           } else {
-            set({ apiKey: k, cipher: null, passphrase: null });
+            set({ apiKey: k, provider: p, cipher: null, passphrase: null });
           }
         },
         applyPassphrase: async (pass) => {
@@ -97,29 +101,50 @@ export const useOpenAIKey = create<KeyState>()(
             return false;
           }
         },
-        clearKey: () => set({ apiKey: null, cipher: null, passphrase: null }),
+        clearKey: () => set({ apiKey: null, provider: null, cipher: null, passphrase: null }),
       };
     },
     {
-      name: 'valet-openai-key',
+      name: 'valet-ai-key',
       storage: createJSONStorage(() => dynamicStorage),
-      partialize: (state) => ({ cipher: state.cipher }),
+      partialize: (state) => ({ cipher: state.cipher, provider: state.provider }),
     },
   ),
 );
 
 /* ---- 4. helper for OpenAI chat ---------------------------------- */
-export async function sendChat(messages: any[], model = 'gpt-4o') {
-  const apiKey = useOpenAIKey.getState().apiKey;
-  if (!apiKey) throw new Error('No OpenAI key set');
+export async function sendChat(
+  messages: any[],
+  model?: string,
+  providerOverride?: Provider,
+  apiKeyOverride?: string,
+) {
+  const state = useAIKey.getState();
+  const apiKey = apiKeyOverride ?? state.apiKey;
+  const provider = providerOverride ?? state.provider;
+  if (!apiKey || !provider) throw new Error('No AI provider configured');
 
-  const res = await fetch('https://api.openai.com/v1/chat/completions', {
-    method : 'POST',
+  if (provider === 'openai') {
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({ model: model ?? 'gpt-4o', messages }),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+  }
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
     headers: {
-      'Content-Type' : 'application/json',
-      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
     },
-    body: JSON.stringify({ model, messages }),
+    body: JSON.stringify({ model: model ?? 'claude-3-haiku-20240307', messages, max_tokens: 1024 }),
   });
   if (!res.ok) throw new Error(await res.text());
   return res.json();

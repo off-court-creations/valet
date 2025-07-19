@@ -21,7 +21,8 @@ import Panel from '../layout/Panel';
 import Typography from '../primitives/Typography';
 import Avatar from '../primitives/Avatar';
 import KeyModal from '../KeyModal';
-import { useOpenAIKey } from '../../system/openaiKeyStore';
+import { useAIKey } from '../../system/openaiKeyStore';
+import Select from '../fields/Select';
 import type { Presettable } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
@@ -48,6 +49,14 @@ export interface ChatProps
   placeholder?: string;
   disableInput?: boolean;
   constrainHeight?: boolean;
+  /** API key to use instead of stored value */
+  apiKey?: string;
+  /** Service provider */
+  provider?: 'openai' | 'anthropic';
+  /** Chat model */
+  model?: string;
+  /** Hide the model select UI */
+  hideModelSelect?: boolean;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -114,6 +123,15 @@ const Typing = styled('div')<{ $color: string }>`
   & span:nth-child(3) { animation-delay: 0.4s; }
 `;
 
+const providerModels = {
+  openai: ['gpt-4o', 'gpt-4-turbo', 'gpt-3.5-turbo'],
+  anthropic: [
+    'claude-3-opus-20240229',
+    'claude-3-sonnet-20240229',
+    'claude-3-haiku-20240307',
+  ],
+} as const;
+
 /*───────────────────────────────────────────────────────────*/
 /* Component                                                  */
 export const OAIChat: React.FC<ChatProps> = ({
@@ -124,6 +142,10 @@ export const OAIChat: React.FC<ChatProps> = ({
   placeholder = 'Message…',
   disableInput = false,
   constrainHeight = true,
+  apiKey: propKey,
+  provider: propProvider,
+  model: propModel,
+  hideModelSelect = false,
   preset: p,
   className,
   style,
@@ -148,8 +170,21 @@ export const OAIChat: React.FC<ChatProps> = ({
   const constraintRef = useRef(false);
 
   const [text, setText] = useState('');
-  const { apiKey } = useOpenAIKey();
+  const { apiKey: storeKey, provider: storeProvider } = useAIKey();
   const [showKeyModal, setShowKeyModal] = useState(false);
+  const apiKey = propKey ?? storeKey;
+  const provider = propProvider ?? storeProvider;
+  const [model, setModel] = useState(
+    propModel ?? (provider ? providerModels[provider][0] : 'gpt-4o'),
+  );
+
+  useEffect(() => {
+    if (propModel) setModel(propModel);
+  }, [propModel]);
+
+  useEffect(() => {
+    if (provider) setModel(propModel ?? providerModels[provider][0]);
+  }, [provider]);
 
   const calcCutoff = () => {
     if (typeof document === 'undefined') return 32;
@@ -240,17 +275,29 @@ export const OAIChat: React.FC<ChatProps> = ({
         className={cls}
       >
         <Bar $bg={theme.colors.secondary} $text={theme.colors.secondaryText} $gap={theme.spacing(0.5)}>
-          <span />
+          {!hideModelSelect && provider && (
+            <Select
+              value={model}
+              onChange={v => setModel(String(v))}
+              style={{ minWidth: '8rem' }}
+            >
+              {providerModels[provider].map(m => (
+                <Select.Option key={m} value={m}>
+                  {m}
+                </Select.Option>
+              ))}
+            </Select>
+          )}
           <span
             style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: theme.spacing(0.5) }}
-            onClick={() => setShowKeyModal(true)}
+            onClick={() => !propKey && setShowKeyModal(true)}
           >
             <Typography variant="subtitle">
-              {apiKey ? 'Connected' : 'Disconnected'}
+              {provider ? provider : 'Disconnected'}
             </Typography>
             <IconButton
               icon={apiKey ? 'carbon:checkmark' : 'carbon:circle-dash'}
-              aria-label="Set OpenAI key"
+              aria-label="Set API key"
             />
           </span>
         </Bar>
