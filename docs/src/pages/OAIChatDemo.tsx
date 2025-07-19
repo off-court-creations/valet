@@ -9,6 +9,9 @@ import {
   Typography,
   Button,
   OAIChat,
+  sendChat,
+  Snackbar,
+  useAIKey,
   useTheme,
 } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
@@ -21,25 +24,44 @@ export default function OAIChatDemoPage() {
   const navigate = useNavigate();
   const { theme, toggleMode } = useTheme();
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: 'assistant', content: 'Hello! How can I help you?' },
-    { role: 'user', content: 'Tell me about valet.' },
-    { role: 'assistant', content: "It's a tiny React UI kit focused on AI driven interfaces." },
-    { role: 'user', content: 'Nice, how can I contribute?' },
-    { role: 'assistant', content: 'Check the repository README for guidelines.' },
-    {
-      role: 'user',
-      content:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
-    },
-    {
-      role: 'assistant',
-      content:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
-    },
+    { role: 'system', content: 'You are a helpful assistant.' },
   ]);
+  const [noKey, setNoKey] = useState(false);
 
-  const handleSend = (m: ChatMessage) => {
-    setMessages(prev => [...prev, m, { role: 'assistant', content: `Echo: ${m.content}` }]);
+  const handleSend = async (m: ChatMessage) => {
+    if (!useAIKey.getState().apiKey) {
+      setNoKey(true);
+      return;
+    }
+    const history = [...messages, m];
+    setMessages([...history, { role: 'assistant', content: '', typing: true }]);
+    try {
+      const res = await sendChat(history);
+      const reply = res.choices[0]?.message as ChatMessage | undefined;
+      if (reply)
+        setMessages(prev => {
+          const next = [...prev];
+          const idx = next.findIndex(x => x.typing);
+          if (idx >= 0) next[idx] = { ...reply, animate: true } as ChatMessage;
+          else next.push({ ...reply, animate: true } as ChatMessage);
+          return next;
+        });
+    } catch (err: any) {
+      const msg = String(err.message || err);
+      if (msg.includes('No API key set yet')) {
+        setNoKey(true);
+      } else {
+        setMessages(prev => {
+          const next = [...prev];
+          const idx = next.findIndex(x => x.typing);
+          if (idx >= 0)
+            next[idx] = { role: 'assistant', content: msg, animate: true };
+          else
+            next.push({ role: 'assistant', content: msg, animate: true });
+          return next;
+        });
+      }
+    }
   };
 
   return (
@@ -49,9 +71,7 @@ export default function OAIChatDemoPage() {
         <Typography variant="h2" bold>
           Chat Showcase
         </Typography>
-        <Typography variant="subtitle">
-          OAIChat component with OpenAI style messages
-        </Typography>
+        <Typography variant="subtitle">OAIChat component demo</Typography>
 
         <OAIChat
           messages={messages}
@@ -60,6 +80,12 @@ export default function OAIChatDemoPage() {
           userAvatar={present}
           systemAvatar={monkey}
         />
+        {noKey && (
+          <Snackbar
+            message="No API key set yet"
+            onClose={() => setNoKey(false)}
+          />
+        )}
 
         <Button variant="outlined" onClick={toggleMode}>
           Toggle light / dark mode

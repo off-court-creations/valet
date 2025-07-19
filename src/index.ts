@@ -49,6 +49,10 @@ export * from './components/widgets/Table';
 export * from './components/layout/Tabs';
 export * from './components/widgets/Tooltip';
 export * from './components/widgets/Tree';
+export { default as KeyModal } from './components/KeyModal';
+
+// ─── AI Helpers ─────────────────────────────────────────────
+export * from './system/aiKeyStore';
 
 // ─── Core ────────────────────────────────────────────────────
 export * from './css/createStyled';
