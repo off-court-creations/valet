@@ -49,6 +49,7 @@ export * from './components/widgets/Table';
 export * from './components/layout/Tabs';
 export * from './components/widgets/Tooltip';
 export * from './components/widgets/Tree';
+export * from './components/widgets/Markdown';
 export { default as KeyModal } from './components/KeyModal';
 
 // ─── AI Helpers ─────────────────────────────────────────────

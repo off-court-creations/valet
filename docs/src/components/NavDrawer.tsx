@@ -62,8 +62,9 @@ const widgets: [string, string][] = [
   ['Table', '/table-demo'],
   ['Tooltip', '/tooltip-demo'],
   ['Tree', '/tree-demo'],
+  ['Markdown', '/markdown-demo'],
+  
 ];
-
 const demos: [string, string][] = [
   ['Form', '/form'],
   ['Parallax', '/parallax'],

@@ -57,6 +57,7 @@ const OverviewPage          = page(() => import('./pages/Overview'));
 const InstallationPage      = page(() => import('./pages/Installation'));
 const UsagePage             = page(() => import('./pages/Usage'));
 const SurfaceExplainerPage  = page(() => import('./pages/SurfaceExplainer'));
+const MarkdownDemoPage = page(() => import('./pages/MarkdownDemo'));
 const PropPatternsPage      = page(() => import('./pages/PropPatterns'));
 
 /*───────────────────────────────────────────────────────────*/
@@ -126,6 +127,7 @@ export function App() {
         <Route path="/tree-demo"      element={<TreeDemoPage />} />
         <Route path="/iterator-demo"  element={<IteratorDemoPage />} />
         <Route path="/dateselector-demo" element={<DateSelectorDemoPage />} />
+        <Route path="/markdown-demo" element={<MarkdownDemoPage />} />
         <Route path="/prop-patterns"  element={<PropPatternsPage />} />
       </Routes>
     </Suspense>
