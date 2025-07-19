@@ -19,6 +19,7 @@ import TextField from '../fields/TextField';
 import Stack from '../layout/Stack';
 import Panel from '../layout/Panel';
 import Typography from '../primitives/Typography';
+import Markdown from './Markdown';
 import Avatar from '../primitives/Avatar';
 import KeyModal from '../KeyModal';
 import Select from '../fields/Select';
@@ -359,6 +360,8 @@ export const LLMChat: React.FC<ChatProps> = ({
                     <span />
                     <span />
                   </Typing>
+                ) : m.role === 'assistant' ? (
+                  <Markdown data={m.content} codeBackground={theme.colors.background} />
                 ) : (
                   <Typography>{m.content}</Typography>
                 )}
