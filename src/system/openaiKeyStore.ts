@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 // src/system/openaiKeyStore.ts | valet
-// secure in-browser store for OpenAI keys
+// secure in-browser store for OpenAI & Anthropic keys
 // ─────────────────────────────────────────────────────────────
 import { create } from 'zustand';
 import { persist, StateStorage, createJSONStorage } from 'zustand/middleware';
@@ -62,12 +62,17 @@ const dynamicStorage: StateStorage = {
 };
 
 /* ---- 3. Zustand secure store ------------------------------------ */
+export type LLMProvider = 'openai' | 'anthropic';
+
 type KeyState = {
   apiKey: string | null;     // decrypted key in memory
+  provider: LLMProvider | null;
+  model: string | null;
   cipher: string | null;     // encrypted key persisted
   passphrase: string | null; // transient
-  setKey: (k: string, pass?: string) => Promise<void>;
+  setKey: (k: string, p: LLMProvider, pass?: string) => Promise<void>;
   applyPassphrase: (pass: string) => Promise<boolean>;
+  setModel: (m: string) => void;
   clearKey: () => void;
 };
 
@@ -76,14 +81,16 @@ export const useOpenAIKey = create<KeyState>()(
     (set, get) => {
       return {
         apiKey: null,
+        provider: null,
+        model: null,
         cipher: null,
         passphrase: null,
-        setKey: async (k, pass) => {
+        setKey: async (k, p, pass) => {
           if (pass) {
             const cipher = await encrypt(k, pass);
-            set({ apiKey: k, cipher, passphrase: pass });
+            set({ apiKey: k, provider: p, cipher, passphrase: pass });
           } else {
-            set({ apiKey: k, cipher: null, passphrase: null });
+            set({ apiKey: k, provider: p, cipher: null, passphrase: null });
           }
         },
         applyPassphrase: async (pass) => {
@@ -97,27 +104,58 @@ export const useOpenAIKey = create<KeyState>()(
             return false;
           }
         },
-        clearKey: () => set({ apiKey: null, cipher: null, passphrase: null }),
+        setModel: (m) => set({ model: m }),
+        clearKey: () => set({ apiKey: null, provider: null, model: null, cipher: null, passphrase: null }),
       };
     },
     {
-      name: 'valet-openai-key',
+      name: 'valet-llm-key',
       storage: createJSONStorage(() => dynamicStorage),
-      partialize: (state) => ({ cipher: state.cipher }),
+      partialize: (state) => ({ cipher: state.cipher, provider: state.provider, model: state.model }),
     },
   ),
 );
 
 /* ---- 4. helper for OpenAI chat ---------------------------------- */
-export async function sendChat(messages: any[], model = 'gpt-4o') {
-  const apiKey = useOpenAIKey.getState().apiKey;
-  if (!apiKey) throw new Error('No OpenAI key set');
+export interface SendChatOptions {
+  model?: string;
+  provider?: LLMProvider;
+  apiKey?: string;
+}
 
-  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+export async function sendChat(
+  messages: any[],
+  opts: SendChatOptions = {},
+) {
+  const state = useOpenAIKey.getState();
+  const provider = opts.provider ?? state.provider;
+  const apiKey   = opts.apiKey ?? state.apiKey;
+  const model    = opts.model ?? state.model ?? (provider === 'anthropic'
+    ? 'claude-3-haiku-20240307'
+    : 'gpt-4o');
+
+  if (!apiKey) throw new Error('No API key set');
+  if (!provider) throw new Error('No provider set');
+
+  if (provider === 'openai') {
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method : 'POST',
+      headers: {
+        'Content-Type' : 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({ model, messages }),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+  }
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
     method : 'POST',
     headers: {
-      'Content-Type' : 'application/json',
-      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type'       : 'application/json',
+      'x-api-key'          : apiKey,
+      'anthropic-version'  : '2023-06-01',
     },
     body: JSON.stringify({ model, messages }),
   });

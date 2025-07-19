@@ -48,7 +48,7 @@ export default function OAIChatDemoPage() {
         });
     } catch (err: any) {
       const msg = String(err.message || err);
-      if (msg.includes('No OpenAI key set yet')) {
+      if (msg.includes('No API key set')) {
         setNoKey(true);
       } else {
         setMessages(prev => {
@@ -72,7 +72,7 @@ export default function OAIChatDemoPage() {
           Chat Showcase
         </Typography>
         <Typography variant="subtitle">
-          OAIChat component with OpenAI style messages
+          OAIChat component with API-driven messages
         </Typography>
 
         <OAIChat
@@ -84,7 +84,7 @@ export default function OAIChatDemoPage() {
         />
         {noKey && (
           <Snackbar
-            message="No OpenAI key set yet"
+            message="No API key set yet"
             onClose={() => setNoKey(false)}
           />
         )}

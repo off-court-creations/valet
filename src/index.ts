@@ -51,7 +51,7 @@ export * from './components/widgets/Tooltip';
 export * from './components/widgets/Tree';
 export { default as KeyModal } from './components/KeyModal';
 
-// ─── OpenAI Helpers ──────────────────────────────────────────
+// ─── LLM Helpers ─────────────────────────────────────────────
 export * from './system/openaiKeyStore';
 
 // ─── Core ────────────────────────────────────────────────────

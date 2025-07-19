@@ -8,9 +8,11 @@ All notable changes to this project will be documented in this file. The format 
 - `sendChat` helper for direct OpenAI conversations
 - `KeyModal` now allows deleting the stored key
 - `OAIChat` shows a typing indicator and fades in replies
+- Anthropic provider option with model selection
 
 ### Changed
 - `OAIChat` starts disconnected with a built-in AppBar to manage the OpenAI key
+- `sendChat` now supports OpenAI and Anthropic APIs
 - Chat AppBar uses the secondary color scheme
 - Chat text field now fills available width
 - Chat input uses `Stack`; Enter sends the message while Shift+Enter newlines
