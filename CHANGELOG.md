@@ -4,7 +4,11 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
-## [0.17.0]
+## [0.18.1]
+- Added `Markdown` component
+- Used `Markdown` component in `LLMChat` to improve response styling
+
+## [0.18.0]
 - Renamed `OAIChat` component to `LLMChat`
 
 ## [0.17.0]
@@ -252,6 +256,7 @@ responsive logic uses the selected `Surface` element to handle persistent margin
 ### Other
 - vibe coded
 
+[v0.18.1]: https://github.com/off-court-creations/valet/releases/tag/v0.18.1
 [v0.18.0]: https://github.com/off-court-creations/valet/releases/tag/v0.18.0
 [v0.17.0]: https://github.com/off-court-creations/valet/releases/tag/v0.17.0
 [v0.16.3]: https://github.com/off-court-creations/valet/releases/tag/v0.16.3
