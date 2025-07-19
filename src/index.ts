@@ -35,7 +35,7 @@ export * from './components/fields/Iterator';
 // ─── Widgets ─────────────────────────────────────────────────
 export * from './components/layout/Accordion';
 export * from './components/layout/AppBar';
-export * from './components/widgets/OAIChat';
+export * from './components/widgets/LLMChat';
 export * from './components/layout/Drawer';
 export * from './components/fields/DateSelector';
 export * from './components/layout/List';
