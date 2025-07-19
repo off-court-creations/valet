@@ -25,6 +25,11 @@ export default function LLMChatDemoPage() {
   const { theme, toggleMode } = useTheme();
   const [messages, setMessages] = useState<ChatMessage[]>([
     { role: 'system', content: 'You are a helpful assistant.' },
+    {
+      role: 'assistant',
+      content: '**Markdown** _works_!\n\n```ts\nconsole.log("hi");\n```',
+      animate: true,
+    },
   ]);
   const [noKey, setNoKey] = useState(false);
 
