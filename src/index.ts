@@ -52,7 +52,7 @@ export * from './components/widgets/Tree';
 export { default as KeyModal } from './components/KeyModal';
 
 // ─── OpenAI Helpers ──────────────────────────────────────────
-export * from './system/openaiKeyStore';
+export * from './system/aiStore';
 
 // ─── Core ────────────────────────────────────────────────────
 export * from './css/createStyled';

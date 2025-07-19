@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/KeyModal.tsx | valet
-// modal to capture an OpenAI API key
+// modal to capture an AI API key and provider
 // ─────────────────────────────────────────────────────────────
 import { useState } from 'react';
 import Modal from './layout/Modal';
@@ -8,7 +8,8 @@ import Panel from './layout/Panel';
 import Stack from './layout/Stack';
 import Typography from './primitives/Typography';
 import Button from './fields/Button';
-import { useOpenAIKey } from '../system/openaiKeyStore';
+import { useAI } from '../system/aiStore';
+import Select from './fields/Select';
 import { useTheme } from '../system/themeStore';
 
 export interface KeyModalProps {
@@ -17,7 +18,15 @@ export interface KeyModalProps {
 }
 
 export default function KeyModal({ open, onClose }: KeyModalProps) {
-  const { apiKey, cipher, setKey, applyPassphrase, clearKey } = useOpenAIKey();
+  const {
+    apiKey,
+    cipher,
+    provider,
+    setProvider,
+    setKey,
+    applyPassphrase,
+    clearKey,
+  } = useAI();
   const [value, setValue] = useState('');
   const [remember, setRemember] = useState(false);
   const [passphrase, setPassphrase] = useState('');
@@ -31,8 +40,15 @@ export default function KeyModal({ open, onClose }: KeyModalProps) {
       <Panel centered compact style={{ maxWidth: 480 }}>
         <Stack spacing={1}>
           <Typography variant="h3" bold>
-            {cipher ? 'Unlock OpenAI key' : 'Paste your OpenAI key'}
+            {cipher ? 'Unlock API key' : 'Paste your API key'}
           </Typography>
+
+          {!cipher && (
+            <Select value={provider} onChange={(v) => setProvider(v as any)}>
+              <Select.Option value="openai">OpenAI</Select.Option>
+              <Select.Option value="anthropic">Anthropic</Select.Option>
+            </Select>
+          )}
 
           {!cipher && (
             <input

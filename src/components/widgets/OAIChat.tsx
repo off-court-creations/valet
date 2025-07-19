@@ -21,7 +21,8 @@ import Panel from '../layout/Panel';
 import Typography from '../primitives/Typography';
 import Avatar from '../primitives/Avatar';
 import KeyModal from '../KeyModal';
-import { useOpenAIKey } from '../../system/openaiKeyStore';
+import { useAI } from '../../system/aiStore';
+import Select from '../fields/Select';
 import type { Presettable } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
@@ -45,6 +46,12 @@ export interface ChatProps
   userAvatar?: string;
   /** Avatar image for system / assistant messages */
   systemAvatar?: string;
+  /** API key to use instead of modal/store */
+  apiKey?: string;
+  /** Provider for the API key */
+  provider?: 'openai' | 'anthropic';
+  /** Chat model to use */
+  model?: string;
   placeholder?: string;
   disableInput?: boolean;
   constrainHeight?: boolean;
@@ -121,6 +128,9 @@ export const OAIChat: React.FC<ChatProps> = ({
   onSend,
   userAvatar,
   systemAvatar,
+  apiKey,
+  provider: propsProvider,
+  model: propModel,
   placeholder = 'Message…',
   disableInput = false,
   constrainHeight = true,
@@ -148,8 +158,25 @@ export const OAIChat: React.FC<ChatProps> = ({
   const constraintRef = useRef(false);
 
   const [text, setText] = useState('');
-  const { apiKey } = useOpenAIKey();
+  const {
+    apiKey: storeKey,
+    provider: storeProvider,
+    model: storeModel,
+    setModel,
+  } = useAI();
   const [showKeyModal, setShowKeyModal] = useState(false);
+
+  const openaiModels = ['gpt-4o', 'gpt-4-turbo', 'gpt-3.5-turbo'];
+  const anthropicModels = [
+    'claude-3-opus-20240229',
+    'claude-3-sonnet-20240229',
+    'claude-3-haiku-20240307',
+  ];
+
+  const key = apiKey ?? storeKey;
+  const provider = propsProvider ?? storeProvider;
+  const model = propModel ?? storeModel;
+  const modelOptions = provider === 'openai' ? openaiModels : anthropicModels;
 
   const calcCutoff = () => {
     if (typeof document === 'undefined') return 32;
@@ -240,17 +267,25 @@ export const OAIChat: React.FC<ChatProps> = ({
         className={cls}
       >
         <Bar $bg={theme.colors.secondary} $text={theme.colors.secondaryText} $gap={theme.spacing(0.5)}>
-          <span />
+          <Select
+            value={model}
+            onChange={(v) => !propModel && setModel(v as string)}
+            style={{ minWidth: 160 }}
+          >
+            {modelOptions.map(m => (
+              <Select.Option key={m} value={m}>{m}</Select.Option>
+            ))}
+          </Select>
           <span
             style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: theme.spacing(0.5) }}
             onClick={() => setShowKeyModal(true)}
           >
             <Typography variant="subtitle">
-              {apiKey ? 'Connected' : 'Disconnected'}
+              {key ? 'Connected' : 'Disconnected'}
             </Typography>
             <IconButton
-              icon={apiKey ? 'carbon:checkmark' : 'carbon:circle-dash'}
-              aria-label="Set OpenAI key"
+              icon={key ? 'carbon:checkmark' : 'carbon:circle-dash'}
+              aria-label="Set API key"
             />
           </span>
         </Bar>
