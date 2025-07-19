@@ -8,6 +8,9 @@ All notable changes to this project will be documented in this file. The format 
 - `sendChat` helper for direct OpenAI conversations
 - `KeyModal` now allows deleting the stored key
 - `OAIChat` shows a typing indicator and fades in replies
+- Provider-aware `aiKeyStore` with optional model selection
+- `sendChat` accepts a custom endpoint for CORS proxies
+- `sendChat` adapts system messages for Anthropic
 
 ### Changed
 - `OAIChat` starts disconnected with a built-in AppBar to manage the OpenAI key
