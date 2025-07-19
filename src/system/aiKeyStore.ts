@@ -161,5 +161,17 @@ export async function sendChat(
     body: JSON.stringify({ model: mdl, system, messages: msgs, max_tokens: 1024 }),
   });
   if (!res.ok) throw new Error(await res.text());
-  return res.json();
+  const json = await res.json();
+  return {
+    choices: [
+      {
+        message: {
+          role: json.role,
+          content: Array.isArray(json.content)
+            ? json.content.map((p: any) => p.text ?? '').join('')
+            : '',
+        },
+      },
+    ],
+  };
 }

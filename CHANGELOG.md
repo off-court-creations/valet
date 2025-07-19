@@ -21,6 +21,7 @@ All notable changes to this project will be documented in this file. The format 
 ### Fixed
 - `OAIChat` no longer displays system prompt messages
 - Anthropic messages use top-level `system` parameter
+- `sendChat` normalizes Anthropic responses to OpenAI format
 
 ### Improved
 - `KeyModal` now shows an error when an incorrect passphrase is entered
