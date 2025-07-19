@@ -2,7 +2,7 @@
 // src/components/KeyModal.tsx | valet
 // modal to capture an AI provider API key
 // ─────────────────────────────────────────────────────────────
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Modal from './layout/Modal';
 import Panel from './layout/Panel';
 import Stack from './layout/Stack';
@@ -25,10 +25,27 @@ export default function KeyModal({ open, onClose }: KeyModalProps) {
   const [error, setError] = useState('');
   const { theme } = useTheme();
 
+  const resetFields = () => {
+    setValue('');
+    setRemember(false);
+    setPassphrase('');
+    setError('');
+    setProv(provider ?? 'openai');
+  };
+
+  const handleClose = () => {
+    resetFields();
+    onClose?.();
+  };
+
+  useEffect(() => {
+    if (!open) resetFields();
+  }, [open]);
+
   if (!open) return null;
 
   return (
-    <Modal open={open} onClose={onClose}>
+    <Modal open={open} onClose={handleClose}>
       <Panel centered compact style={{ maxWidth: 480 }}>
         <Stack spacing={1}>
           <Typography variant="h3" bold>
@@ -105,14 +122,14 @@ export default function KeyModal({ open, onClose }: KeyModalProps) {
                   remember ? passphrase : undefined,
                 );
               }
-              onClose?.();
+              handleClose();
             }}
           >
             Save &amp; Continue
           </Button>
 
           {(cipher || apiKey) && (
-            <Button variant="outlined" fullWidth onClick={() => { clearKey(); onClose?.(); }}>
+            <Button variant="outlined" fullWidth onClick={() => { clearKey(); handleClose(); }}>
               Delete stored key
             </Button>
           )}
