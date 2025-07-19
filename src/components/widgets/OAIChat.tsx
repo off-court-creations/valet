@@ -9,7 +9,7 @@ import React, {
   useEffect,
   useLayoutEffect,
 } from 'react';
-import { styled } from '../../css/createStyled';
+import { styled, keyframes } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { useSurface } from '../../system/surfaceStore';
 import { shallow } from 'zustand/shallow';
@@ -30,6 +30,10 @@ export interface ChatMessage {
   role: 'system' | 'user' | 'assistant' | 'function' | 'tool';
   content: string;
   name?: string;
+  /** Show animated typing indicator */
+  typing?: boolean;
+  /** Apply fade animation when first rendered */
+  animate?: boolean;
 }
 
 export interface ChatProps
@@ -83,6 +87,31 @@ const Bar = styled('div')<{ $bg: string; $text: string; $gap: string }>`
   & > * {
     padding: ${({ $gap }) => $gap};
   }
+`;
+
+const typingDot = keyframes`
+  0%, 80%, 100% { opacity: 0.3; transform: translateY(0); }
+  40% { opacity: 1; transform: translateY(-0.1rem); }
+`;
+
+const fadeIn = keyframes`
+  from { opacity: 0; transform: translateY(0.25rem); }
+  to   { opacity: 1; transform: translateY(0); }
+`;
+
+const Typing = styled('div')<{ $color: string }>`
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  & span {
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 50%;
+    background: ${({ $color }) => $color};
+    animation: ${typingDot} 1s infinite;
+  }
+  & span:nth-child(2) { animation-delay: 0.2s; }
+  & span:nth-child(3) { animation-delay: 0.4s; }
 `;
 
 /*───────────────────────────────────────────────────────────*/
@@ -253,14 +282,27 @@ export const OAIChat: React.FC<ChatProps> = ({
                 compact
                 variant="main"
                 background={m.role === 'user' ? theme.colors.primary : undefined}
-                style={{ maxWidth: '100%', width: 'fit-content', borderRadius: theme.spacing(0.5) }}
+                style={{
+                  maxWidth: '100%',
+                  width: 'fit-content',
+                  borderRadius: theme.spacing(0.5),
+                  animation: m.animate ? `${fadeIn} 0.2s ease-out` : undefined,
+                }}
               >
                 {m.name && (
                   <Typography variant="subtitle" bold>
                     {m.name}
                   </Typography>
                 )}
-                <Typography>{m.content}</Typography>
+                {m.typing ? (
+                  <Typing $color={m.role === 'user' ? theme.colors.primaryText : theme.colors.text}>
+                    <span />
+                    <span />
+                    <span />
+                  </Typing>
+                ) : (
+                  <Typography>{m.content}</Typography>
+                )}
               </Panel>
               {m.role === 'user' && userAvatar && (
                 <Avatar

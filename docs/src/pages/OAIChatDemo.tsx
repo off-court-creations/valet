@@ -34,20 +34,32 @@ export default function OAIChatDemoPage() {
       return;
     }
     const history = [...messages, m];
-    setMessages(history);
+    setMessages([...history, { role: 'assistant', content: '', typing: true }]);
     try {
       const res = await sendChat(history);
       const reply = res.choices[0]?.message as ChatMessage | undefined;
-      if (reply) setMessages(prev => [...prev, reply]);
+      if (reply)
+        setMessages(prev => {
+          const next = [...prev];
+          const idx = next.findIndex(x => x.typing);
+          if (idx >= 0) next[idx] = { ...reply, animate: true } as ChatMessage;
+          else next.push({ ...reply, animate: true } as ChatMessage);
+          return next;
+        });
     } catch (err: any) {
       const msg = String(err.message || err);
       if (msg.includes('No OpenAI key set yet')) {
         setNoKey(true);
       } else {
-        setMessages(prev => [
-          ...prev,
-          { role: 'assistant', content: msg },
-        ]);
+        setMessages(prev => {
+          const next = [...prev];
+          const idx = next.findIndex(x => x.typing);
+          if (idx >= 0)
+            next[idx] = { role: 'assistant', content: msg, animate: true };
+          else
+            next.push({ role: 'assistant', content: msg, animate: true });
+          return next;
+        });
       }
     }
   };

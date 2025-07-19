@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file. The format 
 - `KeyModal` component and secure `openaiKeyStore` for browser-stored keys
 - `sendChat` helper for direct OpenAI conversations
 - `KeyModal` now allows deleting the stored key
+- `OAIChat` shows a typing indicator and fades in replies
 
 ### Changed
 - `OAIChat` starts disconnected with a built-in AppBar to manage the OpenAI key
