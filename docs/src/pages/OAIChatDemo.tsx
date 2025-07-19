@@ -11,7 +11,7 @@ import {
   OAIChat,
   sendChat,
   Snackbar,
-  useOpenAIKey,
+  useAIKey,
   useTheme,
 } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
@@ -29,7 +29,7 @@ export default function OAIChatDemoPage() {
   const [noKey, setNoKey] = useState(false);
 
   const handleSend = async (m: ChatMessage) => {
-    if (!useOpenAIKey.getState().apiKey) {
+    if (!useAIKey.getState().apiKey) {
       setNoKey(true);
       return;
     }
@@ -48,7 +48,7 @@ export default function OAIChatDemoPage() {
         });
     } catch (err: any) {
       const msg = String(err.message || err);
-      if (msg.includes('No OpenAI key set yet')) {
+      if (msg.includes('No API key set yet')) {
         setNoKey(true);
       } else {
         setMessages(prev => {
@@ -71,9 +71,7 @@ export default function OAIChatDemoPage() {
         <Typography variant="h2" bold>
           Chat Showcase
         </Typography>
-        <Typography variant="subtitle">
-          OAIChat component with OpenAI style messages
-        </Typography>
+        <Typography variant="subtitle">OAIChat component demo</Typography>
 
         <OAIChat
           messages={messages}
@@ -84,7 +82,7 @@ export default function OAIChatDemoPage() {
         />
         {noKey && (
           <Snackbar
-            message="No OpenAI key set yet"
+            message="No API key set yet"
             onClose={() => setNoKey(false)}
           />
         )}
