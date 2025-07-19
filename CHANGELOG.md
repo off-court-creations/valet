@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file. The format 
 ## Unreleased
 
 ## [0.17.0]
+- Renamed `OAIChat` component to `LLMChat`
+
+## [0.17.0]
 ### Added
 - `KeyModal` component and secure `openaiKeyStore` for browser-stored keys
 
@@ -248,6 +251,8 @@ responsive logic uses the selected `Surface` element to handle persistent margin
 ## [v0.2.1]
 ### Other
 - vibe coded
+
+[v0.18.0]: https://github.com/off-court-creations/valet/releases/tag/v0.18.0
 [v0.17.0]: https://github.com/off-court-creations/valet/releases/tag/v0.17.0
 [v0.16.3]: https://github.com/off-court-creations/valet/releases/tag/v0.16.3
 [v0.16.2]: https://github.com/off-court-creations/valet/releases/tag/v0.16.2

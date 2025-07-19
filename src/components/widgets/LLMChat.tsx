@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/widgets/OAIChat.tsx  | valet
-// OpenAI style chat component with height constraint
+// src/components/widgets/LLMChat.tsx  | valet
+// LLM style chat component with height constraint
 // ─────────────────────────────────────────────────────────────
 import React, {
   useState,
@@ -128,7 +128,7 @@ const Typing = styled('div')<{ $color: string }>`
 
 /*───────────────────────────────────────────────────────────*/
 /* Component                                                  */
-export const OAIChat: React.FC<ChatProps> = ({
+export const LLMChat: React.FC<ChatProps> = ({
   messages,
   onSend,
   userAvatar,
@@ -403,4 +403,4 @@ export const OAIChat: React.FC<ChatProps> = ({
   );
 };
 
-export default OAIChat;
+export default LLMChat;
