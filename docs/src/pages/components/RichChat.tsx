@@ -8,13 +8,16 @@ import {
   Typography,
   Tabs,
   Table,
+  Button,
   useTheme,
 } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../components/NavDrawer';
 
 export default function RichChatPage() {
+  const navigate = useNavigate();
   const { theme } = useTheme();
 
   interface Row {
@@ -106,11 +109,19 @@ export default function RichChatPage() {
                 RichChat allows JSX content in messages for custom layouts.
               </Typography>
               <Typography>
+                It builds on <code>LLMChat</code> but lets you embed forms and
+                interactive widgets directly within the conversation.
+              </Typography>
+              <Typography>
                 Each message may define a <code>form</code> component to collect a response.
                 When submitted, <code>onFormSubmit</code> receives the value and index.
               </Typography>
               <Typography>
                 The compose area is disabled while a form is active.
+              </Typography>
+              <Typography>
+                RichChat excels at onboarding flows or demos where you need the
+                user to fill in a few structured fields along the way.
               </Typography>
             </Stack>
           </Tabs.Panel>
@@ -119,6 +130,13 @@ export default function RichChatPage() {
             <Table data={data} columns={columns} constrainHeight={false} />
           </Tabs.Panel>
         </Tabs>
+        <Button
+          size="lg"
+          onClick={() => navigate('/rich-chat-demo')}
+          style={{ marginTop: theme.spacing(1) }}
+        >
+          View Example →
+        </Button>
       </Stack>
     </Surface>
   );
