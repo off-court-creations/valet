@@ -272,39 +272,51 @@ export const RichChat: React.FC<RichChatProps> = ({
                       width: 'fit-content',
                       borderRadius: theme.spacing(0.5),
                       animation: m.animate ? `${fadeIn} 0.2s ease-out` : undefined,
+                      position: 'relative',
                     }}
                   >
-                    {m.name && (
-                      <Typography variant="subtitle" bold>
-                        {m.name}
-                      </Typography>
+                    <div
+                      style={{
+                        paddingRight: m.role === 'user' && m.onEdit ? theme.spacing(3) : undefined,
+                      }}
+                    >
+                      {m.name && (
+                        <Typography variant="subtitle" bold>
+                          {m.name}
+                        </Typography>
+                      )}
+                      {m.typing ? (
+                        <Typing $color={m.role === 'user' ? theme.colors.primaryText : theme.colors.text}>
+                          <span />
+                          <span />
+                          <span />
+                        </Typing>
+                      ) : (
+                        content
+                      )}
+                      {Form && <Form onSubmit={(v: string) => onFormSubmit?.(v, i)} />}
+                    </div>
+                    {m.role === 'user' && m.onEdit && (
+                      <IconButton
+                        icon="mdi:pencil"
+                        size="sm"
+                        variant="outlined"
+                        onClick={m.onEdit}
+                        aria-label="Edit"
+                        style={{
+                          position: 'absolute',
+                          top: theme.spacing(0.5),
+                          right: theme.spacing(0.5),
+                          padding: 0,
+                        }}
+                      />
                     )}
-                    {m.typing ? (
-                      <Typing $color={m.role === 'user' ? theme.colors.primaryText : theme.colors.text}>
-                        <span />
-                        <span />
-                        <span />
-                      </Typing>
-                    ) : (
-                      content
-                    )}
-                    {Form && <Form onSubmit={(v: string) => onFormSubmit?.(v, i)} />}
                   </Panel>
                   {m.role === 'user' && userAvatar && (
                     <Avatar
                       src={userAvatar}
                       size="s"
                       style={{ marginLeft: theme.spacing(1) }}
-                    />
-                  )}
-                  {m.role === 'user' && m.onEdit && (
-                    <IconButton
-                      icon="mdi:pencil"
-                      size="sm"
-                      variant="outlined"
-                      onClick={m.onEdit}
-                      aria-label="Edit"
-                      style={{ marginLeft: theme.spacing(0.5) }}
                     />
                   )}
                 </Row>
