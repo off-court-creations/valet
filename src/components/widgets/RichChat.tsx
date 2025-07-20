@@ -28,6 +28,10 @@ import type { Presettable } from '../../types';
 export interface RichMessage {
   role: 'system' | 'user' | 'assistant' | 'function' | 'tool';
   content: React.ReactNode;
+  /** Optional interactive form to collect a canned response */
+  form?: React.ComponentType<{ onSubmit: (value: string) => void }>;
+  /** Optional edit handler shown on user messages */
+  onEdit?: () => void;
   name?: string;
   typing?: boolean;
   animate?: boolean;
@@ -37,6 +41,8 @@ export interface RichChatProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onSubmit'>,
     Presettable {
   messages: RichMessage[];
+  /** Called when a form message collects a response */
+  onFormSubmit?: (value: string, index: number) => void;
   onSend?: (message: RichMessage) => void;
   userAvatar?: string;
   systemAvatar?: string;
@@ -101,6 +107,7 @@ const Typing = styled('div')<{ $color: string }>`
 export const RichChat: React.FC<RichChatProps> = ({
   messages,
   onSend,
+  onFormSubmit,
   userAvatar,
   systemAvatar,
   placeholder = 'Message…',
@@ -130,6 +137,8 @@ export const RichChat: React.FC<RichChatProps> = ({
   const constraintRef = useRef(false);
 
   const [text, setText] = useState('');
+
+  const inputDisabled = disableInput || messages.some(m => m.form);
 
   const calcCutoff = () => {
     if (typeof document === 'undefined') return 32;
@@ -239,6 +248,7 @@ export const RichChat: React.FC<RichChatProps> = ({
                 ) : (
                   m.content
                 );
+              const Form = m.form;
               return (
                 <Row
                   key={i}
@@ -278,6 +288,7 @@ export const RichChat: React.FC<RichChatProps> = ({
                     ) : (
                       content
                     )}
+                    {Form && <Form onSubmit={(v: string) => onFormSubmit?.(v, i)} />}
                   </Panel>
                   {m.role === 'user' && userAvatar && (
                     <Avatar
@@ -286,12 +297,22 @@ export const RichChat: React.FC<RichChatProps> = ({
                       style={{ marginLeft: theme.spacing(1) }}
                     />
                   )}
+                  {m.role === 'user' && m.onEdit && (
+                    <IconButton
+                      icon="mdi:pencil"
+                      size="sm"
+                      variant="outlined"
+                      onClick={m.onEdit}
+                      aria-label="Edit"
+                      style={{ marginLeft: theme.spacing(0.5) }}
+                    />
+                  )}
                 </Row>
               );
             })}
         </Messages>
 
-        {!disableInput && (
+        {!inputDisabled && (
           <form onSubmit={handleSubmit} style={{ width: '100%' }}>
             <Stack direction="row" spacing={1} compact>
               <TextField

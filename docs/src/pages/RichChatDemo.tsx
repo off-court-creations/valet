@@ -2,7 +2,7 @@
 // src/pages/RichChatDemo.tsx | valet
 // Showcase for <RichChat /> component with local logic
 // ─────────────────────────────────────────────────────────────────────────────
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   Surface,
   Stack,
@@ -20,16 +20,15 @@ import present from '../assets/present.jpg';
 export default function RichChatDemoPage() {
   const navigate = useNavigate();
   const { theme, toggleMode } = useTheme();
+  const backup = useRef<RichMessage[] | null>(null);
   const [messages, setMessages] = useState<RichMessage[]>([
     {
       role: 'assistant',
-      content: (
-        <Stack>
-          <Typography>Do you like valet?</Typography>
-          <Stack direction="row" spacing={1}>
-            <Button onClick={() => handleAnswer('Yes')}>Yes</Button>
-            <Button onClick={() => handleAnswer('No')}>No</Button>
-          </Stack>
+      content: <Typography>Do you like valet?</Typography>,
+      form: ({ onSubmit }) => (
+        <Stack direction="row" spacing={1}>
+          <Button onClick={() => onSubmit('Yes')}>Yes</Button>
+          <Button onClick={() => onSubmit('No')}>No</Button>
         </Stack>
       ),
       animate: true,
@@ -37,18 +36,33 @@ export default function RichChatDemoPage() {
   ]);
 
   const handleAnswer = (reply: string) => {
-    setMessages(prev => [
-      ...prev,
-      { role: 'user', content: reply, animate: true },
-      {
+    setMessages(prev => {
+      backup.current = [...prev];
+      const base = prev.map((m, idx) => {
+        if (idx === prev.length - 1) {
+          const { form, ...rest } = m as any;
+          return rest as RichMessage;
+        }
+        return m;
+      });
+      const userMsg: RichMessage = {
+        role: 'user',
+        content: reply,
+        animate: true,
+        onEdit: () => {
+          if (backup.current) setMessages(backup.current);
+        },
+      };
+      const followUp: RichMessage = {
         role: 'assistant',
         content:
           reply === 'Yes'
             ? 'Great! Thanks for checking out valet.'
             : "That's okay, maybe next time!",
         animate: true,
-      },
-    ]);
+      };
+      return [...base, userMsg, followUp];
+    });
   };
 
   const handleSend = (m: RichMessage) => {
@@ -67,6 +81,7 @@ export default function RichChatDemoPage() {
         <RichChat
           messages={messages}
           onSend={handleSend}
+          onFormSubmit={reply => handleAnswer(reply)}
           constrainHeight
           userAvatar={present}
           systemAvatar={monkey}
