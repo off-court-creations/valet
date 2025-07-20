@@ -277,7 +277,7 @@ export const RichChat: React.FC<RichChatProps> = ({
                   >
                     <div
                       style={{
-                        paddingRight: m.role === 'user' && m.onEdit ? theme.spacing(9) : undefined,
+                        paddingRight: m.role === 'user' && m.onEdit ? theme.spacing(7) : undefined,
                       }}
                     >
                       {m.name && (
