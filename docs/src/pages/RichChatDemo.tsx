@@ -203,14 +203,6 @@ export default function RichChatDemoPage() {
         >
           Docs →
         </Button>
-
-        <Button
-          size="lg"
-          onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing(1) }}
-        >
-          ← Back
-        </Button>
       </Stack>
     </Surface>
   );
