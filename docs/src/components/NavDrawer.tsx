@@ -44,7 +44,6 @@ const fields: [string, string][] = [
   ['Checkbox', '/checkbox-demo'],
   ['Date Selector', '/dateselector-demo'],
   ['Icon Button', '/icon-button-demo'],
-  ['Radio Group', '/radio-demo'],
   ['Select', '/select-demo'],
   ['Iterator', '/iterator-demo'],
   ['Slider', '/slider-demo'],
@@ -53,9 +52,9 @@ const fields: [string, string][] = [
 ];
 
 const widgets: [string, string][] = [
-  ['LLMChat', '/chat-demo'],
+  ['LLMChat', '/llmchat'],
+  ['RichChat', '/richchat'],
   ['Pagination', '/pagination-demo'],
-  ['Parallax', '/parallax'],
   ['Snackbar', '/snackbar-demo'],
   ['Speed Dial', '/speeddial-demo'],
   ['Stepper', '/stepper-demo'],
@@ -65,11 +64,11 @@ const widgets: [string, string][] = [
   ['Markdown', '/markdown-demo'],
 ];
 
-const demos: [string, string][] = [
+const examples: [string, string][] = [
   ['Form', '/form'],
-  ['Parallax', '/parallax'],
   ['Presets', '/presets'],
-  ['Radio Button', '/test'],
+  ['LLMChat', '/chat-demo'],
+  ['RichChat', '/rich-chat-demo'],
 ];
 
 const DEFAULT_EXPANDED = [
@@ -78,7 +77,7 @@ const DEFAULT_EXPANDED = [
   'layout',
   'fields',
   'widgets',
-  'demos',
+  'examples',
 ];
 
 const treeData: TreeNode<Item>[] = [
@@ -135,9 +134,9 @@ const treeData: TreeNode<Item>[] = [
     ],
   },
   {
-    id: 'demos',
-    data: { label: 'Demos' },
-    children: demos.map(([label, path]) => ({
+    id: 'examples',
+    data: { label: 'Examples' },
+    children: examples.map(([label, path]) => ({
       id: path,
       data: { label, path },
     })),

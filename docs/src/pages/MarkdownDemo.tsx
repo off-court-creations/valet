@@ -30,9 +30,7 @@ export default function MarkdownDemoPage() {
 
         <Typography variant="h3">Raw Text</Typography>
         <Panel preset="codePanel">
-          <Typography as="pre" style={{ whiteSpace: 'pre-wrap' }}>
-            {sample}
-          </Typography>
+          <pre style={{ whiteSpace: 'pre-wrap', margin: 0 }}>{sample}</pre>
         </Panel>
 
         <Typography variant="h3">Markdown Component</Typography>
