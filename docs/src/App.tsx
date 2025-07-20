@@ -28,6 +28,8 @@ const ImageDemoPage         = page(() => import('./pages/ImageDemo'));
 const AvatarDemoPage        = page(() => import('./pages/AvatarDemo'));
 const LLMChatDemoPage          = page(() => import('./pages/LLMChatDemo'));
 const RichChatDemoPage         = page(() => import('./pages/RichChatDemo'));
+const LLMChatPage              = page(() => import('./pages/components/LLMChat'));
+const RichChatPage             = page(() => import('./pages/components/RichChat'));
 const PanelDemoPage         = page(() => import('./pages/components/Panel'));
 const CheckboxDemoPage      = page(() => import('./pages/CheckBoxDemo'));
 const TooltipDemoPage       = page(() => import('./pages/TooltipDemo'));
@@ -125,6 +127,8 @@ export function App() {
         <Route path="/video-demo"      element={<VideoDemoPage />} />
         <Route path="/chat-demo"       element={<LLMChatDemoPage />} />
         <Route path="/rich-chat-demo" element={<RichChatDemoPage />} />
+        <Route path="/llmchat"         element={<LLMChatPage />} />
+        <Route path="/richchat"        element={<RichChatPage />} />
         <Route path="/snackbar-demo"   element={<SnackbarDemoPage />} />
         <Route path="/tree-demo"      element={<TreeDemoPage />} />
         <Route path="/iterator-demo"  element={<IteratorDemoPage />} />
