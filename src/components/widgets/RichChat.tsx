@@ -277,7 +277,7 @@ export const RichChat: React.FC<RichChatProps> = ({
                   >
                     <div
                       style={{
-                        paddingRight: m.role === 'user' && m.onEdit ? theme.spacing(3) : undefined,
+                        paddingRight: m.role === 'user' && m.onEdit ? theme.spacing(9) : undefined,
                       }}
                     >
                       {m.name && (
@@ -306,7 +306,7 @@ export const RichChat: React.FC<RichChatProps> = ({
                         style={{
                           position: 'absolute',
                           top: theme.spacing(0.5),
-                          right: theme.spacing(0.5),
+                          right: theme.spacing(1),
                           padding: 0,
                         }}
                       />
