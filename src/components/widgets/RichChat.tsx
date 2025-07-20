@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/widgets/LLMChat.tsx  | valet
-// LLM style chat component with height constraint
+// src/components/widgets/RichChat.tsx  | valet
+// Local chat component with embeddable content
 // ─────────────────────────────────────────────────────────────
 import React, {
   useState,
@@ -21,57 +21,39 @@ import Panel from '../layout/Panel';
 import Typography from '../primitives/Typography';
 import Markdown from './Markdown';
 import Avatar from '../primitives/Avatar';
-import KeyModal from '../KeyModal';
-import Select from '../fields/Select';
-import { useAIKey, AIProvider } from '../../system/aiKeyStore';
 import type { Presettable } from '../../types';
-
-const models: Record<AIProvider, string[]> = {
-  openai: ['gpt-4o', 'gpt-4-turbo', 'gpt-3.5-turbo'],
-  anthropic: [
-    'claude-sonnet-4-20250514'
-  ],
-};
 
 /*───────────────────────────────────────────────────────────*/
 /* Types                                                      */
-export interface ChatMessage {
+export interface RichMessage {
   role: 'system' | 'user' | 'assistant' | 'function' | 'tool';
-  content: string;
+  content: React.ReactNode;
   name?: string;
-  /** Show animated typing indicator */
   typing?: boolean;
-  /** Apply fade animation when first rendered */
   animate?: boolean;
 }
 
-export interface ChatProps
+export interface RichChatProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onSubmit'>,
-  Presettable {
-  messages: ChatMessage[];
-  onSend?: (message: ChatMessage) => void;
-  /** Avatar image for user messages */
+    Presettable {
+  messages: RichMessage[];
+  onSend?: (message: RichMessage) => void;
   userAvatar?: string;
-  /** Avatar image for system / assistant messages */
   systemAvatar?: string;
   placeholder?: string;
   disableInput?: boolean;
   constrainHeight?: boolean;
-  apiKey?: string;
-  provider?: AIProvider;
-  model?: string;
-  onModelChange?: (m: string) => void;
 }
 
 /*───────────────────────────────────────────────────────────*/
 /* Styled primitives                                         */
-const Wrapper = styled('div') <{ $gap: string }>`
+const Wrapper = styled('div')<{ $gap: string }>`
   display: flex;
   flex-direction: column;
   gap: ${({ $gap }) => $gap};
 `;
 
-const Messages = styled('div') <{ $gap: string }>`
+const Messages = styled('div')<{ $gap: string }>`
   display: flex;
   flex-direction: column;
   gap: ${({ $gap }) => $gap};
@@ -88,19 +70,6 @@ const Row = styled('div')<{
   justify-content: ${({ $from }) => ($from === 'user' ? 'flex-end' : 'flex-start')};
   padding-left: ${({ $left }) => $left};
   padding-right: ${({ $right }) => $right};
-`;
-
-
-const Bar = styled('div')<{ $bg: string; $text: string; $gap: string }>`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.5rem 1rem;
-  background: ${({ $bg }) => $bg};
-  color: ${({ $text }) => $text};
-  & > * {
-    padding: ${({ $gap }) => $gap};
-  }
 `;
 
 const typingDot = keyframes`
@@ -129,7 +98,7 @@ const Typing = styled('div')<{ $color: string }>`
 `;
 
 const MessageRow: React.FC<{
-  message: ChatMessage;
+  message: RichMessage;
   portrait: boolean;
   userAvatar?: string;
   systemAvatar?: string;
@@ -147,6 +116,17 @@ const MessageRow: React.FC<{
 
   const sidePad = portrait ? theme.spacing(8) : theme.spacing(24);
   const avatarPad = theme.spacing(1);
+
+  const content =
+    typeof m.content === 'string'
+      ? m.role === 'assistant'
+        ? (
+            <Markdown data={m.content} codeBackground={theme.colors.background} />
+          )
+        : (
+            <Typography>{m.content}</Typography>
+          )
+      : m.content;
 
   return (
     <Row
@@ -185,10 +165,8 @@ const MessageRow: React.FC<{
             <span />
             <span />
           </Typing>
-        ) : m.role === 'assistant' ? (
-          <Markdown data={m.content} codeBackground={theme.colors.background} />
         ) : (
-          <Typography>{m.content}</Typography>
+          content
         )}
       </Panel>
       {m.role === 'user' && userAvatar && (
@@ -204,7 +182,7 @@ const MessageRow: React.FC<{
 
 /*───────────────────────────────────────────────────────────*/
 /* Component                                                  */
-export const LLMChat: React.FC<ChatProps> = ({
+export const RichChat: React.FC<RichChatProps> = ({
   messages,
   onSend,
   userAvatar,
@@ -212,10 +190,6 @@ export const LLMChat: React.FC<ChatProps> = ({
   placeholder = 'Message…',
   disableInput = false,
   constrainHeight = true,
-  apiKey: propKey,
-  provider: propProvider,
-  model: propModel,
-  onModelChange,
   preset: p,
   className,
   style,
@@ -240,37 +214,6 @@ export const LLMChat: React.FC<ChatProps> = ({
   const constraintRef = useRef(false);
 
   const [text, setText] = useState('');
-  const {
-    apiKey: storeKey,
-    provider: storeProv,
-    model: storeModel,
-    setModel,
-  } = useAIKey();
-  const [showKeyModal, setShowKeyModal] = useState(false);
-  const key = propKey ?? storeKey;
-  const provider = (propProvider ?? storeProv) as AIProvider | null;
-  const [model, setModelLocal] = useState(
-    propModel ?? storeModel ?? (provider ? models[provider][0] : ''),
-  );
-
-  useEffect(() => {
-    if (propModel) setModelLocal(propModel);
-  }, [propModel]);
-
-  useEffect(() => {
-    if (!propModel && provider) {
-      const m = storeModel ?? models[provider][0];
-      setModelLocal(m);
-    }
-  }, [provider, storeModel, propModel]);
-
-  const handleModelChange = (m: string) => {
-    if (!propModel) {
-      setModelLocal(m);
-      setModel(m);
-    }
-    onModelChange?.(m);
-  };
 
   const calcCutoff = () => {
     if (typeof document === 'undefined') return 32;
@@ -340,56 +283,24 @@ export const LLMChat: React.FC<ChatProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!text.trim()) return;
-    const msg: ChatMessage = { role: 'user', content: text.trim() };
+    const msg: RichMessage = { role: 'user', content: text.trim() };
     onSend?.(msg);
     setText('');
   };
 
   const presetClasses = p ? preset(p) : '';
-
   const cls = [presetClasses, className].filter(Boolean).join(' ') || undefined;
 
   return (
-    <>
-      {!propKey && (
-        <KeyModal open={showKeyModal} onClose={() => setShowKeyModal(false)} />
-      )}
-      <Panel
-        {...rest}
-        compact
-        fullWidth
-        variant="alt"
-        style={style}
-        className={cls}
-      >
-        <Bar $bg={theme.colors.secondary} $text={theme.colors.secondaryText} $gap={theme.spacing(0.5)}>
-          {provider && key ? (
-            <Select
-              size="sm"
-              value={model}
-              onChange={(v) => handleModelChange(v as string)}
-            >
-              {models[provider].map(m => (
-                <Select.Option key={m} value={m}>{m}</Select.Option>
-              ))}
-            </Select>
-          ) : (
-            <span />
-          )}
-          <span
-            style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: theme.spacing(0.5) }}
-            onClick={() => !propKey && setShowKeyModal(true)}
-          >
-            <Typography variant="subtitle">
-              {key ? 'Connected' : 'Disconnected'}
-            </Typography>
-            <IconButton
-              icon={key ? 'carbon:checkmark' : 'carbon:circle-dash'}
-              aria-label="Set API key"
-            />
-          </span>
-        </Bar>
-        <Wrapper ref={wrapRef} $gap={theme.spacing(3)} style={{ overflow: 'hidden' }}>
+    <Panel
+      {...rest}
+      compact
+      fullWidth
+      variant="alt"
+      style={style}
+      className={cls}
+    >
+      <Wrapper ref={wrapRef} $gap={theme.spacing(3)} style={{ overflow: 'hidden' }}>
         <Messages
           $gap={theme.spacing(1.5)}
           style={shouldConstrain ? { overflowY: 'auto', maxHeight } : undefined}
@@ -431,8 +342,7 @@ export const LLMChat: React.FC<ChatProps> = ({
         )}
       </Wrapper>
     </Panel>
-    </>
   );
 };
 
-export default LLMChat;
+export default RichChat;

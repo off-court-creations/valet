@@ -54,6 +54,7 @@ const fields: [string, string][] = [
 
 const widgets: [string, string][] = [
   ['LLMChat', '/chat-demo'],
+  ['RichChat', '/rich-chat-demo'],
   ['Pagination', '/pagination-demo'],
   ['Parallax', '/parallax'],
   ['Snackbar', '/snackbar-demo'],
