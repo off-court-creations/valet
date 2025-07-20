@@ -27,6 +27,7 @@ const IconButtonDemoPage    = page(() => import('./pages/IconButtonDemoPage'));
 const ImageDemoPage         = page(() => import('./pages/ImageDemo'));
 const AvatarDemoPage        = page(() => import('./pages/AvatarDemo'));
 const LLMChatDemoPage          = page(() => import('./pages/LLMChatDemo'));
+const RichChatDemoPage         = page(() => import('./pages/RichChatDemo'));
 const PanelDemoPage         = page(() => import('./pages/components/Panel'));
 const CheckboxDemoPage      = page(() => import('./pages/CheckBoxDemo'));
 const TooltipDemoPage       = page(() => import('./pages/TooltipDemo'));
@@ -123,6 +124,7 @@ export function App() {
         <Route path="/radio-demo"      element={<RadioGroupDemoPage />} />
         <Route path="/video-demo"      element={<VideoDemoPage />} />
         <Route path="/chat-demo"       element={<LLMChatDemoPage />} />
+        <Route path="/rich-chat"       element={<RichChatDemoPage />} />
         <Route path="/snackbar-demo"   element={<SnackbarDemoPage />} />
         <Route path="/tree-demo"      element={<TreeDemoPage />} />
         <Route path="/iterator-demo"  element={<IteratorDemoPage />} />
