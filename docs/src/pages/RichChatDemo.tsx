@@ -198,10 +198,10 @@ export default function RichChatDemoPage() {
 
         <Button
           size="lg"
-          onClick={() => navigate(-1)}
+          onClick={() => navigate('/richchat')}
           style={{ marginTop: theme.spacing(1) }}
         >
-          ← Back
+          Docs →
         </Button>
       </Stack>
     </Surface>
