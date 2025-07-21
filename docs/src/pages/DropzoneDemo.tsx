@@ -49,6 +49,12 @@ export default function DropzoneDemoPage() {
       description: 'Show preview thumbnails',
     },
     {
+      prop: <code>showFileList</code>,
+      type: <code>boolean</code>,
+      default: <code>false</code>,
+      description: 'Show icons and names',
+    },
+    {
       prop: <code>onFilesChange</code>,
       type: <code>(files: File[]) =&gt; void</code>,
       default: <code>-</code>,
@@ -110,13 +116,16 @@ export default function DropzoneDemoPage() {
               <Typography variant="h3">3. Limit to two files</Typography>
               <Dropzone maxFiles={2} />
 
-              <Typography variant="h3">4. No previews</Typography>
+              <Typography variant="h3">4. File list</Typography>
+              <Dropzone showPreviews={false} showFileList />
+
+              <Typography variant="h3">5. No previews</Typography>
               <Dropzone showPreviews={false} />
 
-              <Typography variant="h3">5. Full width</Typography>
+              <Typography variant="h3">6. Full width</Typography>
               <Dropzone fullWidth />
 
-              <Typography variant="h3">6. Theme toggle</Typography>
+              <Typography variant="h3">7. Theme toggle</Typography>
               <Button variant="outlined" onClick={toggleMode}>
                 Toggle light / dark
               </Button>
