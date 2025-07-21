@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file. The format 
 ## Unreleased
 ### Added
 - `RichChat` component for local chats with embeddable content
+- `Dropzone` component for simple drag-and-drop uploads
 
 ## [0.18.1]
 - Added `Markdown` component

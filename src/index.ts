@@ -47,6 +47,7 @@ export * from './components/widgets/Snackbar';
 export * from './components/widgets/SpeedDial';
 export * from './components/widgets/Stepper';
 export * from './components/widgets/Table';
+export * from './components/widgets/Dropzone';
 export * from './components/layout/Tabs';
 export * from './components/widgets/Tooltip';
 export * from './components/widgets/Tree';
