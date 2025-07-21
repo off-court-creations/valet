@@ -60,6 +60,7 @@ const widgets: [string, string][] = [
   ['Stepper', '/stepper-demo'],
   ['Table', '/table-demo'],
   ['Tooltip', '/tooltip-demo'],
+  ['Dropzone', '/dropzone-demo'],
   ['Tree', '/tree-demo'],
   ['Markdown', '/markdown-demo'],
 ];
