@@ -67,6 +67,12 @@ export default function DropzoneDemoPage() {
       description: 'Allow multiple file selection',
     },
     {
+      prop: <code>fullWidth</code>,
+      type: <code>boolean</code>,
+      default: <code>false</code>,
+      description: 'Stretch to fill parent width',
+    },
+    {
       prop: <code>onDrop</code>,
       type: <code>DropzoneOptions['onDrop']</code>,
       default: <code>-</code>,
@@ -107,7 +113,10 @@ export default function DropzoneDemoPage() {
               <Typography variant="h3">4. No previews</Typography>
               <Dropzone showPreviews={false} />
 
-              <Typography variant="h3">5. Theme toggle</Typography>
+              <Typography variant="h3">5. Full width</Typography>
+              <Dropzone fullWidth />
+
+              <Typography variant="h3">6. Theme toggle</Typography>
               <Button variant="outlined" onClick={toggleMode}>
                 Toggle light / dark
               </Button>

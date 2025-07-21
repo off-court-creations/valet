@@ -31,6 +31,8 @@ export interface DropzoneProps
   multiple?: boolean;
   /** Callback for when files are dropped */
   onDrop?: DropzoneOptions['onDrop'];
+  /** Stretch to fill parent width */
+  fullWidth?: boolean;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -42,6 +44,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
   onDrop: onDropCb,
   onFilesChange,
   preset: p,
+  fullWidth = false,
   className,
   style,
   ...rest
@@ -87,7 +90,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
       {...rootProps}
       ref={rootProps.ref as any}
       variant="alt"
-      fullWidth
+      fullWidth={fullWidth}
       style={{
         textAlign: 'center',
         cursor: 'pointer',
