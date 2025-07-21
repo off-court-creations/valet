@@ -12,6 +12,7 @@ import {
 import Panel from '../layout/Panel';
 import Grid from '../layout/Grid';
 import Icon from '../primitives/Icon';
+import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import type { Presettable } from '../../types';
 
@@ -50,6 +51,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
   ...rest
 }) => {
   const [files, setFiles] = useState<File[]>([]);
+  const { theme } = useTheme();
 
   const handleDrop = useCallback(
     (accepted: File[], _rej: FileRejection[], _evt: DropEvent) => {
@@ -92,6 +94,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
       variant="alt"
       fullWidth={fullWidth}
       style={{
+        width: fullWidth ? `calc(100% - ${theme.spacing(1)} * 2)` : undefined,
         textAlign: 'center',
         cursor: 'pointer',
         ...style,
