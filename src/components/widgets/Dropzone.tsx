@@ -138,7 +138,6 @@ export const Dropzone: React.FC<DropzoneProps> = ({
     <Panel
       {...rest}
       {...rootProps}
-      ref={rootProps.ref as any}
       variant="alt"
       fullWidth={fullWidth}
       style={{

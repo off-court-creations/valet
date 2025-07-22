@@ -63,6 +63,7 @@ const InstallationPage      = page(() => import('./pages/Installation'));
 const UsagePage             = page(() => import('./pages/Usage'));
 const SurfaceExplainerPage  = page(() => import('./pages/SurfaceExplainer'));
 const PropPatternsPage      = page(() => import('./pages/PropPatterns'));
+const FabricatorDemoPage    = page(() => import('./pages/FabricatorDemo'));
 
 /*───────────────────────────────────────────────────────────*/
 export function App() {
@@ -127,6 +128,7 @@ export function App() {
         <Route path="/radio-demo"      element={<RadioGroupDemoPage />} />
         <Route path="/video-demo"      element={<VideoDemoPage />} />
         <Route path="/dropzone-demo"   element={<DropzoneDemoPage />} />
+        <Route path="/fabricator-demo" element={<FabricatorDemoPage />} />
         <Route path="/chat-demo"       element={<LLMChatDemoPage />} />
         <Route path="/rich-chat-demo" element={<RichChatDemoPage />} />
         <Route path="/llmchat"         element={<LLMChatPage />} />

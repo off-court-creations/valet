@@ -68,6 +68,7 @@ const widgets: [string, string][] = [
 const examples: [string, string][] = [
   ['Form', '/form'],
   ['Presets', '/presets'],
+  ['Fabricator', '/fabricator-demo'],
   ['LLMChat', '/chat-demo'],
   ['RichChat', '/rich-chat-demo'],
 ];
