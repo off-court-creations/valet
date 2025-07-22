@@ -1,4 +1,7 @@
-// src/pages/FormDemoPage.tsx
+// ─────────────────────────────────────────────────────────────
+// src/pages/FormDemoPage.tsx  | valet
+// Party planner form replicating RichChat questions
+// ─────────────────────────────────────────────────────────────
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -8,6 +11,9 @@ import {
   Typography,
   Button,
   TextField,
+  Checkbox,
+  DateSelector,
+  Iterator,
   FormControl,
   createFormStore,
   definePreset,
@@ -17,15 +23,19 @@ import NavDrawer from '../components/NavDrawer';
 
 /*───────────────────────────────────────────────────────────────*/
 /* 1.  Create a typed store for this form                        */
-interface ContactValues {
-  name: string;
-  email: string;
-  message: string;
+interface PartyValues {
+  scheduled: boolean;
+  date: string;
+  age: number;
+  childName: string;
+  kids: number;
 }
-const useContactForm = createFormStore<ContactValues>({
-  name: '',
-  email: '',
-  message: '',
+const usePartyForm = createFormStore<PartyValues>({
+  scheduled: false,
+  date: '',
+  age: 7,
+  childName: '',
+  kids: 15,
 });
 
 /*───────────────────────────────────────────────────────────────*/
@@ -49,18 +59,18 @@ definePreset('underlineField', (t) => `
 export default function FormDemoPage() {
   const { theme } = useTheme();
   const navigate  = useNavigate();
-  const [submitted, setSubmitted] = useState<ContactValues | null>(null);
+  const [submitted, setSubmitted] = useState<PartyValues | null>(null);
 
   return (
     <Surface style={{ backgroundColor: theme.colors['background'] }}>
       <NavDrawer />
       <Box preset="cardForm">
         <Typography variant="h3" style={{ marginBottom: theme.spacing(1) }}>
-          Contact Form Demo
+          Party Planner Form
         </Typography>
 
         <FormControl
-          useStore={useContactForm}
+          useStore={usePartyForm}
           // <- custom callback passes (values, event)
           onSubmitValues={(values) => {
             console.log('FORM SUBMIT', values);
@@ -68,29 +78,31 @@ export default function FormDemoPage() {
           }}
         >
           <Stack>
+            <Checkbox
+              name="scheduled"
+              label="Do you have a party scheduled?"
+            />
+
+            <Stack>
+              <Typography bold>When is the party?</Typography>
+              <DateSelector name="date" />
+            </Stack>
+
+            <Stack direction="row" style={{ alignItems: 'center' }}>
+              <Typography bold>How old is your child turning?</Typography>
+              <Iterator name="age" min={1} max={12} />
+            </Stack>
+
             <TextField
-              name="name"
-              label="Name"
-              autoFocus
+              name="childName"
+              label="What is your child's name?"
               preset="underlineField"
             />
 
-            <TextField
-              name="email"
-              label="Email"
-              type="email"
-              helperText="We'll never share your email."
-              preset="underlineField"
-            />
-
-            <TextField
-              name="message"
-              label="Message"
-              as="textarea"
-              rows={4}
-              helperText="Max 500 chars"
-              preset="underlineField"
-            />
+            <Stack direction="row" style={{ alignItems: 'center' }}>
+              <Typography bold>How many kids are coming?</Typography>
+              <Iterator name="kids" min={5} max={45} step={5} />
+            </Stack>
 
             <Button type="submit" variant='contained' size="lg">
               Send
