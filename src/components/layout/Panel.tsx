@@ -2,7 +2,7 @@
 // src/components/layout/Panel.tsx  | valet
 // overhaul: internal scrollbars & boundary guards – 2025‑07‑17
 // ─────────────────────────────────────────────────────────────
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset, presetHas } from '../../css/stylePresets';
@@ -89,7 +89,7 @@ const Base = styled('div')<{
     $center !== undefined && `--valet-centered: ${$center ? '1' : '0'};`}
 `;
 
-export const Panel: React.FC<PanelProps> = ({
+export const Panel = forwardRef<HTMLDivElement, PanelProps>(({ 
   variant = 'main',
   fullWidth = false,
   centered,
@@ -100,7 +100,7 @@ export const Panel: React.FC<PanelProps> = ({
   compact,
   children,
   ...rest
-}) => {
+}, ref) => {
   const { theme } = useTheme();
   const hasBgProp = typeof background === 'string';
   const hasPresetBg = p ? presetHas(p, 'background') : false;
@@ -132,6 +132,7 @@ export const Panel: React.FC<PanelProps> = ({
   return (
     <Base
       {...rest}
+      ref={ref}
       $variant={variant}
       $full={fullWidth}
       $center={centered}
@@ -146,6 +147,8 @@ export const Panel: React.FC<PanelProps> = ({
       {children}
     </Base>
   );
-};
+});
+
+Panel.displayName = 'Panel';
 
 export default Panel;
