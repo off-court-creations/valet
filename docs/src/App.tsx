@@ -56,6 +56,7 @@ const VideoDemoPage         = page(() => import('./pages/VideoDemo'));
 const SnackbarDemoPage      = page(() => import('./pages/SnackbarDemo'));
 const TreeDemoPage          = page(() => import('./pages/TreeDemo'));
 const DropzoneDemoPage      = page(() => import('./pages/DropzoneDemo'));
+const FabricatorDemoPage    = page(() => import('./pages/FabricatorDemo'));
 const DateSelectorDemoPage  = page(() => import('./pages/DateSelectorDemo'));
 const MarkdownDemoPage      = page(() => import('./pages/MarkdownDemo'));
 const OverviewPage          = page(() => import('./pages/Overview'));
@@ -127,6 +128,7 @@ export function App() {
         <Route path="/radio-demo"      element={<RadioGroupDemoPage />} />
         <Route path="/video-demo"      element={<VideoDemoPage />} />
         <Route path="/dropzone-demo"   element={<DropzoneDemoPage />} />
+        <Route path="/fabricator-demo" element={<FabricatorDemoPage />} />
         <Route path="/chat-demo"       element={<LLMChatDemoPage />} />
         <Route path="/rich-chat-demo" element={<RichChatDemoPage />} />
         <Route path="/llmchat"         element={<LLMChatPage />} />

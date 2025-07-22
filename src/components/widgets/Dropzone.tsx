@@ -2,7 +2,7 @@
 // src/components/widgets/Dropzone.tsx | valet
 // react-dropzone wrapper with theming and previews
 // ─────────────────────────────────────────────────────────────
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, forwardRef } from 'react';
 import {
   useDropzone,
   type DropzoneOptions,
@@ -40,20 +40,24 @@ export interface DropzoneProps
 }
 
 /*───────────────────────────────────────────────────────────*/
-export const Dropzone: React.FC<DropzoneProps> = ({
-  accept,
-  maxFiles,
-  multiple = true,
-  showPreviews = true,
-  showFileList = false,
-  onDrop: onDropCb,
-  onFilesChange,
-  preset: p,
-  fullWidth = false,
-  className,
-  style,
-  ...rest
-}) => {
+export const Dropzone = forwardRef<HTMLDivElement, DropzoneProps>(
+  (
+    {
+      accept,
+      maxFiles,
+      multiple = true,
+      showPreviews = true,
+      showFileList = false,
+      onDrop: onDropCb,
+      onFilesChange,
+      preset: p,
+      fullWidth = false,
+      className,
+      style,
+      ...rest
+    },
+    ref,
+  ) => {
   const [files, setFiles] = useState<File[]>([]);
   const { theme } = useTheme();
 
@@ -138,7 +142,11 @@ export const Dropzone: React.FC<DropzoneProps> = ({
     <Panel
       {...rest}
       {...rootProps}
-      ref={rootProps.ref as any}
+      ref={(el) => {
+        (rootProps.ref as (node: HTMLDivElement | null) => void)(el);
+        if (typeof ref === 'function') ref(el);
+        else if (ref) (ref as React.MutableRefObject<HTMLDivElement | null>).current = el;
+      }}
       variant="alt"
       fullWidth={fullWidth}
       style={{
@@ -157,6 +165,6 @@ export const Dropzone: React.FC<DropzoneProps> = ({
       {previews || fileList}
     </Panel>
   );
-};
+});
 
 export default Dropzone;
