@@ -222,7 +222,7 @@ export const Button: React.FC<ButtonProps> = ({
   return (
     <Root
       {...rest}
-      onContextMenu={(e) => e.preventDefault()}
+      onContextMenu={(e: React.MouseEvent) => e.preventDefault()}
       style={{ '--valet-text-color': labelColor } as React.CSSProperties}
       className={[presetClasses, className].filter(Boolean).join(' ')}
       $variant={variant}

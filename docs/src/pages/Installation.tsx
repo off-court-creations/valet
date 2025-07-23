@@ -18,7 +18,7 @@ export default function InstallationPage() {
         <Panel>
           <Typography><code>npm install @archway/valet</code></Typography>
         </Panel>
-        <Typography>For now, valet works best with React 18</Typography>
+        <Typography>valet works best with React 19.x</Typography>
         <Button onClick={() => navigate(-1)}>← Back</Button>
       </Stack>
     </Surface>

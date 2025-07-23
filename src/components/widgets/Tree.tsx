@@ -261,8 +261,8 @@ export function Tree<T>({
     <Branch role={level ? 'group' : undefined} $line={line} $root={level === 0}>
       {items.map((node) => (
         <BranchItem key={node.id} $line={line} $root={level === 0} role="none">
-          <ListRow
-            ref={(el) => (refs.current[node.id] = el)}
+              <ListRow
+                ref={(el: HTMLDivElement | null) => { refs.current[node.id] = el; }}
             role="treeitem"
             aria-expanded={node.children ? expanded.has(node.id) : undefined}
             aria-selected={selected === node.id}
@@ -283,7 +283,7 @@ export function Tree<T>({
                 $open={expanded.has(node.id)}
                 $line={line}
                 $fill={theme.colors.secondary}
-                onClick={(e) => {
+                  onClick={(e: React.MouseEvent) => {
                   e.stopPropagation();
                   toggle(node.id);
                 }}
@@ -295,7 +295,7 @@ export function Tree<T>({
                 size={16}
                 style={{ marginRight: '0.25rem' }}
                 aria-hidden
-                onClick={node.children ? (e => { e.stopPropagation(); toggle(node.id); }) : undefined}
+                onClick={node.children ? ((e: React.MouseEvent) => { e.stopPropagation(); toggle(node.id); }) : undefined}
               />
             )}
             {getLabel(node.data)}
@@ -320,7 +320,7 @@ export function Tree<T>({
         ? flat.map(({ node, level }) => (
             <li key={node.id} role="none">
               <ItemRow
-                ref={(el) => (refs.current[node.id] = el)}
+                ref={(el: HTMLDivElement | null) => { refs.current[node.id] = el; }}
                 role="treeitem"
                 aria-expanded={node.children ? expanded.has(node.id) : undefined}
                 aria-selected={selected === node.id}
@@ -338,13 +338,13 @@ export function Tree<T>({
               >
                 {node.children && (
                   <ExpandIcon
-                    aria-hidden
-                    $open={expanded.has(node.id)}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggle(node.id);
-                    }}
-                  >
+                      aria-hidden
+                      $open={expanded.has(node.id)}
+                    onClick={(e: React.MouseEvent) => {
+                        e.stopPropagation();
+                        toggle(node.id);
+                      }}
+                    >
                     ▶
                   </ExpandIcon>
                 )}

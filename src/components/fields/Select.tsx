@@ -327,7 +327,7 @@ import React, {
           disabled={disabled}
           onClick={() => { if (disabled) return;
                            setOpen((o) => !o); calcPos(); }}
-          onKeyDown={(e) => {
+          onKeyDown={(e: React.KeyboardEvent<HTMLButtonElement>) => {
             if (disabled) return;
             if (e.key === 'ArrowDown') { e.preventDefault(); setOpen(true); calcPos(); move( 1); }
             if (e.key === 'ArrowUp')   { e.preventDefault(); setOpen(true); calcPos(); move(-1); }

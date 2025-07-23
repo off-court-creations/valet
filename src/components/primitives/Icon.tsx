@@ -4,6 +4,7 @@
 // ─────────────────────────────────────────────────────────────
 import React, {
   ReactElement,
+  SVGProps,
   isValidElement,
   PropsWithChildren,
 } from 'react';
@@ -27,7 +28,7 @@ export interface IconProps
    * • **string** – raw `<path …>` data (wrapped in 24×24 viewBox)
    * • **ReactElement** – a full `<svg>` element
    */
-  svg?: string | ReactElement<SVGSVGElement>;
+  svg?: string | ReactElement<React.SVGProps<SVGSVGElement>>;
   /** Icon size token or explicit CSS size. */
   size?: IconSize | number | string;
   /** Explicit colour override; otherwise inherits `currentColor`. */
@@ -95,7 +96,7 @@ export const Icon: React.FC<PropsWithChildren<IconProps>> = ({
       />
     );
   } else if (isValidElement(svg)) {
-    const svgEl = svg as ReactElement;
+    const svgEl = svg as ReactElement<React.SVGProps<SVGSVGElement>>;
     content = React.cloneElement(svgEl, {
       width : svgEl.props.width  ?? finalSize,
       height: svgEl.props.height ?? finalSize,
@@ -112,7 +113,7 @@ export const Icon: React.FC<PropsWithChildren<IconProps>> = ({
       />
     );
   } else if (isValidElement(children)) {
-    const child = children as ReactElement;
+    const child = children as ReactElement<React.SVGProps<SVGSVGElement>>;
     content = React.cloneElement(child, {
       width : child.props.width  ?? finalSize,
       height: child.props.height ?? finalSize,

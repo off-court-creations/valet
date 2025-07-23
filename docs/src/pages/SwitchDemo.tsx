@@ -5,6 +5,7 @@
 // Now zero reference to ReactNode → no duplicate-type clash.
 // ─────────────────────────────────────────────────────────────────────────────
 import { useState } from 'react';
+import type { JSX } from 'react';
 import {
   Surface,
   Stack,

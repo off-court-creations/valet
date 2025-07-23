@@ -2,7 +2,7 @@
 // src/components/fields/IconButton.tsx  | valet
 // strict‑optional clean build
 // ─────────────────────────────────────────────────────────────
-import React, { ReactElement } from 'react';
+import React, { ReactElement, SVGProps } from 'react';
 import { styled }              from '../../css/createStyled';
 import { useTheme }            from '../../system/themeStore';
 import type { Theme }          from '../../system/themeStore';
@@ -21,7 +21,7 @@ export interface IconButtonProps
   variant?: IconButtonVariant;
   size?: IconButtonSize | number | string;
   icon?: string;
-  svg?: string | ReactElement<SVGSVGElement>;
+  svg?: string | ReactElement<SVGProps<SVGSVGElement>>;
   /** Colour override for the glyph */
   iconColor?: string | undefined;
 }
@@ -147,7 +147,7 @@ export const IconButton: React.FC<IconButtonProps> = ({
     <Skin
       type="button"
       {...rest}
-      onContextMenu={(e) => e.preventDefault()}
+      onContextMenu={(e: React.MouseEvent) => e.preventDefault()}
       $variant={variant}
       $primary={theme.colors.primary}
       $text={theme.colors.text}
