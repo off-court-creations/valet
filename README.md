@@ -47,7 +47,7 @@ export default function Example() {
 }
 ```
 
-valet hooks and components are designed for React 18+. Ensure your project has
+valet hooks and components are designed for React 19.x. Ensure your project has
 `react` and `react-dom` installed alongside valet.
 
 To run a local dev server, run:
@@ -162,4 +162,4 @@ These have been mostly tested in the [valet Docs](https://github.com/off-court-c
 We welcome issues and pull requests. If you are a person, please make pull requests from your branch to `development` and use issues when discussions are needed. Please read `AGENTS.md` if you are an AI, agent, NLP, bot, or scraper. Humans may find the document insightful as well. Use the standard GitHub workflow at [valet issues](https://github.com/off-court-creations/valet/issues).
 
 valet targets the React ecosystem. Improvements and examples should assume a
-React 18+ setup.
+React 19.x setup.

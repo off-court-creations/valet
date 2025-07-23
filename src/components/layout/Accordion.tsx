@@ -18,6 +18,7 @@ import React, {
   useId,
   useEffect,
 } from 'react';
+import type { JSX } from 'react';
 import { styled }               from '../../css/createStyled';
 import { useTheme }             from '../../system/themeStore';
 import { preset }               from '../../css/stylePresets';
@@ -392,12 +393,12 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
           aria-controls={panelId}
           disabled={disabled}
           onClick={() => toggle(index)}
-          onContextMenu={(e) => {
+          onContextMenu={(e: React.MouseEvent) => {
             e.preventDefault();
             if (!disabled && !wasLongPress.current) toggle(index);
             wasLongPress.current = false;
           }}
-          onPointerDown={(e) => {
+          onPointerDown={(e: React.PointerEvent) => {
             if (hoverTimer.current) {
               clearTimeout(hoverTimer.current);
               hoverTimer.current = null;

@@ -36,7 +36,7 @@ export const Surface: React.FC<SurfaceProps> = ({
   if (parent) throw new Error('Nested <Surface> components are not allowed');
 
   /* Local reactive store (width / height / breakpoint) ----------------- */
-  const storeRef = useRef<ReturnType<typeof createSurfaceStore>>();
+  const storeRef = useRef<ReturnType<typeof createSurfaceStore> | null>(null);
   if (!storeRef.current) storeRef.current = createSurfaceStore();
   const useStore = storeRef.current;
 

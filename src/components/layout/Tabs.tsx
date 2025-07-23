@@ -273,7 +273,7 @@ const Tab: React.FC<TabProps> = forwardRef<HTMLButtonElement, TabProps>(
     return (
       <TabBtn
         {...rest}
-        ref={(el) => {
+          ref={(el: HTMLButtonElement | null) => {
           registerTab(index, el);
           if (typeof ref === 'function') ref(el);
           else if (ref) (ref as any).current = el;
@@ -283,7 +283,7 @@ const Tab: React.FC<TabProps> = forwardRef<HTMLButtonElement, TabProps>(
         aria-selected={selected}
         aria-controls={`panel-${index}`}
         tabIndex={selected ? 0 : -1}
-        onClick={(e) => {
+          onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
           setActive(index);
           onClick?.(e);
         }}

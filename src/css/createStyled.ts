@@ -10,6 +10,7 @@
 // © 2025 Off-Court Creations – MIT licence
 // ─────────────────────────────────────────────────────────────
 import React, { useContext, useLayoutEffect, useRef } from 'react';
+import type { JSX } from 'react';
 import { hashStr } from './hash';
 
 function labelize(raw: string) {

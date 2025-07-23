@@ -10,17 +10,19 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@archway/valet": "0.18.2",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "@archway/valet": "0.18.3",
+    "@pixi/react": "^8.0.2",
+    "pixi.js": "^8.11.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
     "react-dropzone": "^14.2.3",
     "react-router-dom": "^7.6.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
     "@types/node": "^24.0.3",
-    "@types/react": "^18.3.1",
-    "@types/react-dom": "^18.3.7",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^4.4.1",
     "eslint": "^9.25.0",
     "eslint-plugin-react-hooks": "^5.2.0",
