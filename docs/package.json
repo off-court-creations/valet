@@ -14,7 +14,9 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-dropzone": "^14.2.3",
-    "react-router-dom": "^7.6.0"
+    "react-router-dom": "^7.6.0",
+    "pixi.js": "^8.2.6",
+    "@pixi/react": "^8.0.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",

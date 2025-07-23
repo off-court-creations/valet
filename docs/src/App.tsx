@@ -58,6 +58,7 @@ const TreeDemoPage          = page(() => import('./pages/TreeDemo'));
 const DropzoneDemoPage      = page(() => import('./pages/DropzoneDemo'));
 const DateSelectorDemoPage  = page(() => import('./pages/DateSelectorDemo'));
 const MarkdownDemoPage      = page(() => import('./pages/MarkdownDemo'));
+const PixiDropzoneDemoPage = page(() => import('./pages/PixiDropzoneDemo'));
 const OverviewPage          = page(() => import('./pages/Overview'));
 const InstallationPage      = page(() => import('./pages/Installation'));
 const UsagePage             = page(() => import('./pages/Usage'));
@@ -127,6 +128,7 @@ export function App() {
         <Route path="/radio-demo"      element={<RadioGroupDemoPage />} />
         <Route path="/video-demo"      element={<VideoDemoPage />} />
         <Route path="/dropzone-demo"   element={<DropzoneDemoPage />} />
+        <Route path="/pixi-dropzone"   element={<PixiDropzoneDemoPage />} />
         <Route path="/chat-demo"       element={<LLMChatDemoPage />} />
         <Route path="/rich-chat-demo" element={<RichChatDemoPage />} />
         <Route path="/llmchat"         element={<LLMChatPage />} />

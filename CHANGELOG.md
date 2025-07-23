@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 - Added React 19 compatibility
+- Added Pixi dropzone example to docs
 
 ## [0.18.3]
 - `Dropzone` component for simple drag-and-drop uploads
