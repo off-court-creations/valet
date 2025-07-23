@@ -92,7 +92,7 @@ const Bubble = styled('div')<{
         transform-origin: center left;
         transform: translate(${ $show ? '0' : '-4px'}, -50%);
       `,
-    } as Record<Placement, string>)[$placement]}
+    } as Record<Placement, string>)[$placement as Placement]}
 `;
 
 const Arrow = styled('span')<{
@@ -111,7 +111,7 @@ const Arrow = styled('span')<{
       bottom: `top:    calc(-0.5 * var(--s)); left: 50%; transform: translateX(-50%) rotate(45deg);`,
       left  : `right:  calc(-0.5 * var(--s)); top: 50%; transform: translateY(-50%) rotate(45deg);`,
       right : `left:   calc(-0.5 * var(--s)); top: 50%; transform: translateY(-50%) rotate(45deg);`,
-    } as Record<Placement, string>)[$placement]}
+    } as Record<Placement, string>)[$placement as Placement]}
 `;
 
 /*───────────────────────────────────────────────────────────*/
@@ -162,9 +162,12 @@ export const Tooltip: React.FC<TooltipProps> = ({
   const show = controlled ?? internalShow;
 
   /* timers */
-  const inT   = useRef<ReturnType<typeof setTimeout>>();
-  const outT  = useRef<ReturnType<typeof setTimeout>>();
-  const clear = () => { clearTimeout(inT.current); clearTimeout(outT.current); };
+  const inT   = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const outT  = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const clear = () => {
+    if (inT.current) clearTimeout(inT.current);
+    if (outT.current) clearTimeout(outT.current);
+  };
 
   const close = useCallback(() => {
     if (controlled === undefined) setInternalShow(false);
@@ -196,13 +199,13 @@ export const Tooltip: React.FC<TooltipProps> = ({
   };
 
   /* long press touch support */
-  const touchTimer = useRef<ReturnType<typeof setTimeout>>();
+  const touchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const wasOpen = useRef(false);
 
   const handlePointerDown = (e: React.PointerEvent) => {
     if (e.pointerType !== 'touch' || disableTouchListener) return;
     wasOpen.current = show;
-    clearTimeout(touchTimer.current);
+    if (touchTimer.current) clearTimeout(touchTimer.current);
     touchTimer.current = setTimeout(() => {
       if (!show) open();
     }, LONG_PRESS_MS);
@@ -210,7 +213,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
 
   const handlePointerUp = (e: React.PointerEvent) => {
     if (e.pointerType !== 'touch' || disableTouchListener) return;
-    clearTimeout(touchTimer.current);
+    if (touchTimer.current) clearTimeout(touchTimer.current);
     if (wasOpen.current) {
       close();
     }
@@ -218,13 +221,13 @@ export const Tooltip: React.FC<TooltipProps> = ({
 
   const handlePointerCancel = (e: React.PointerEvent) => {
     if (e.pointerType !== 'touch' || disableTouchListener) return;
-    clearTimeout(touchTimer.current);
+    if (touchTimer.current) clearTimeout(touchTimer.current);
   };
 
   useEffect(() => {
     return () => {
       clear();
-      clearTimeout(touchTimer.current);
+      if (touchTimer.current) clearTimeout(touchTimer.current);
       unregisterTooltip(close);
     };
   }, [close]);

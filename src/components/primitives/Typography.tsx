@@ -3,6 +3,7 @@
 // patch: force text wrapping – 2025‑07‑17
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
+import type { JSX } from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { useSurface } from '../../system/surfaceStore';
