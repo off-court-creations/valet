@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+- Removed Pixi.js integration demo
+
 ## [0.19.0]
 - Added React 19 compatibility
 - Added Pixi.js integration demo
