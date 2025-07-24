@@ -53,6 +53,7 @@ const SpeedDialDemoPage     = page(() => import('./pages/SpeedDialDemo'));
 const StepperDemoPage       = page(() => import('./pages/StepperDemo'));
 const RadioGroupDemoPage    = page(() => import('./pages/RadioGroupDemo'));
 const VideoDemoPage         = page(() => import('./pages/VideoDemo'));
+const ShaderDemoPage        = page(() => import('./pages/ShaderDemo'));
 const SnackbarDemoPage      = page(() => import('./pages/SnackbarDemo'));
 const TreeDemoPage          = page(() => import('./pages/TreeDemo'));
 const DropzoneDemoPage      = page(() => import('./pages/DropzoneDemo'));
@@ -126,6 +127,7 @@ export function App() {
         <Route path="/stepper-demo"    element={<StepperDemoPage />} />
         <Route path="/radio-demo"      element={<RadioGroupDemoPage />} />
         <Route path="/video-demo"      element={<VideoDemoPage />} />
+        <Route path="/shader-demo"     element={<ShaderDemoPage />} />
         <Route path="/dropzone-demo"   element={<DropzoneDemoPage />} />
         <Route path="/chat-demo"       element={<LLMChatDemoPage />} />
         <Route path="/rich-chat-demo" element={<RichChatDemoPage />} />

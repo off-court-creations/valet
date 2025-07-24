@@ -23,6 +23,7 @@ const primitives: [string, string][] = [
   ['Progress', '/progress-demo'],
   ['Typography', '/typography'],
   ['Video', '/video-demo'],
+  ['Shader', '/shader-demo'],
 ];
 
 const layoutComponents: [string, string][] = [
