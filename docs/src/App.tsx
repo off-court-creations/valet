@@ -63,6 +63,7 @@ const InstallationPage      = page(() => import('./pages/Installation'));
 const UsagePage             = page(() => import('./pages/Usage'));
 const SurfaceExplainerPage  = page(() => import('./pages/SurfaceExplainer'));
 const PropPatternsPage      = page(() => import('./pages/PropPatterns'));
+const ShaderDemoPage        = page(() => import('./pages/ShaderDemo'));
 
 /*───────────────────────────────────────────────────────────*/
 export function App() {
@@ -136,6 +137,7 @@ export function App() {
         <Route path="/iterator-demo"  element={<IteratorDemoPage />} />
         <Route path="/dateselector-demo" element={<DateSelectorDemoPage />} />
         <Route path="/markdown-demo"  element={<MarkdownDemoPage />} />
+        <Route path="/shader-demo"    element={<ShaderDemoPage />} />
         <Route path="/prop-patterns"  element={<PropPatternsPage />} />
       </Routes>
     </Suspense>
