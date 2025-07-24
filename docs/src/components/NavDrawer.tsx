@@ -70,7 +70,6 @@ const examples: [string, string][] = [
   ['Presets', '/presets'],
   ['LLMChat', '/chat-demo'],
   ['RichChat', '/rich-chat-demo'],
-  ['Pixi Dropzone', '/pixi-dropzone'],
 ];
 
 const DEFAULT_EXPANDED = [
