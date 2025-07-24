@@ -14,7 +14,9 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-dropzone": "^14.2.3",
-    "react-router-dom": "^7.6.0"
+    "react-router-dom": "^7.6.0",
+    "gl-react": "^5.0.0",
+    "gl-react-dom": "^5.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",

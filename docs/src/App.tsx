@@ -58,6 +58,7 @@ const TreeDemoPage          = page(() => import('./pages/TreeDemo'));
 const DropzoneDemoPage      = page(() => import('./pages/DropzoneDemo'));
 const DateSelectorDemoPage  = page(() => import('./pages/DateSelectorDemo'));
 const MarkdownDemoPage      = page(() => import('./pages/MarkdownDemo'));
+const ShaderDemoPage        = page(() => import('./pages/ShaderDemo'));
 const OverviewPage          = page(() => import('./pages/Overview'));
 const InstallationPage      = page(() => import('./pages/Installation'));
 const UsagePage             = page(() => import('./pages/Usage'));
@@ -136,6 +137,7 @@ export function App() {
         <Route path="/iterator-demo"  element={<IteratorDemoPage />} />
         <Route path="/dateselector-demo" element={<DateSelectorDemoPage />} />
         <Route path="/markdown-demo"  element={<MarkdownDemoPage />} />
+        <Route path="/shader-demo"    element={<ShaderDemoPage />} />
         <Route path="/prop-patterns"  element={<PropPatternsPage />} />
       </Routes>
     </Suspense>
