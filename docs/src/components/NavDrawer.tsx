@@ -22,7 +22,8 @@ const primitives: [string, string][] = [
   ['Image', '/image-demo'],
   ['Progress', '/progress-demo'],
   ['Typography', '/typography'],
-  ['Video', '/video-demo'],
+  ["Video", "/video-demo"],
+  ['Shader', '/shader-demo'],
 ];
 
 const layoutComponents: [string, string][] = [
