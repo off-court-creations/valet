@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+- Added `outline` variant to `Avatar`. Existing style renamed to `plain`.
+
 ## [0.19.1]
 - Removed Pixi.js integration demo
 

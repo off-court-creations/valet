@@ -74,6 +74,12 @@ export default function AvatarDemoPage() {
       description: 'Fallback style when no avatar exists',
     },
     {
+      prop: <code>variant</code>,
+      type: <code>'plain' | 'outline'</code>,
+      default: <code>'plain'</code>,
+      description: 'Visual style of the avatar',
+    },
+    {
       prop: <code>alt</code>,
       type: <code>string</code>,
       default: <code>-</code>,
