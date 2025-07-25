@@ -9,6 +9,7 @@ import {
   Typography,
   Button,
   Tabs,
+  Icon,
   useTheme,
 } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
@@ -116,8 +117,21 @@ export default function TabsDemoPage() {
           <Tabs.Panel>{'Third → ' + SIX}</Tabs.Panel>
         </Tabs>
 
+        {/* 6. Icon headings ----------------------------------------------- */}
+        <Typography variant="h3">6. Icon headings</Typography>
+        <Tabs>
+          <Tabs.Tab label={<Icon icon="mdi:home" />} aria-label="Home" />
+          <Tabs.Panel>{'Home → ' + ONE}</Tabs.Panel>
+
+          <Tabs.Tab label={<Icon icon="mdi:account" />} aria-label="Profile" />
+          <Tabs.Panel>{'Profile → ' + TWO}</Tabs.Panel>
+
+          <Tabs.Tab label={<Icon icon="mdi:cog" />} aria-label="Settings" />
+          <Tabs.Panel>{'Settings → ' + THREE}</Tabs.Panel>
+        </Tabs>
+
         {/* Theme switcher -------------------------------------------------- */}
-        <Typography variant="h3">6. Theme coupling</Typography>
+        <Typography variant="h3">7. Theme coupling</Typography>
         <Button variant="outlined" onClick={toggleMode}>
           Toggle light / dark
         </Button>
