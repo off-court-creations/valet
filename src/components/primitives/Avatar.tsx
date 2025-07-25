@@ -5,10 +5,12 @@
 import React from 'react';
 import { styled } from '../../css/createStyled';
 import { preset } from '../../css/stylePresets';
+import { useTheme } from '../../system/themeStore';
 import type { Presettable } from '../../types';
 import { md5 } from '../../helpers/md5';
 
 export type AvatarSize = 'xs' | 's' | 'm' | 'l' | 'xl';
+export type AvatarVariant = 'plain' | 'outline';
 
 export interface AvatarProps
   extends React.ImgHTMLAttributes<HTMLImageElement>,
@@ -19,6 +21,8 @@ export interface AvatarProps
   email?: string;
   /** Size token controlling relative dimensions. */
   size?: AvatarSize;
+  /** Visual style variant. */
+  variant?: AvatarVariant;
   /** Fallback style when no avatar exists. */
   gravatarDefault?: string;
 }
@@ -31,18 +35,25 @@ const sizeMap: Record<AvatarSize, string> = {
   xl: '6rem',
 };
 
-const Img = styled('img')<{ $size: string }>`
+const Img = styled('img')<{
+  $size: string;
+  $variant: AvatarVariant;
+  $stroke: string;
+}>`
   display: inline-block;
   width: ${({ $size }) => $size};
   height: ${({ $size }) => $size};
   border-radius: 50%;
   object-fit: cover;
+  ${({ $variant, $stroke }) =>
+    $variant === 'outline' ? `box-shadow: 0 0 0 0.25rem ${$stroke};` : ''}
 `;
 
 export const Avatar: React.FC<AvatarProps> = ({
   src,
   email,
   size = 'm',
+  variant = 'plain',
   gravatarDefault = 'identicon',
   preset: p,
   className,
@@ -57,12 +68,17 @@ export const Avatar: React.FC<AvatarProps> = ({
     finalSrc = `https://www.gravatar.com/avatar/${hash}?s=${px}&d=${encodeURIComponent(gravatarDefault)}`;
   }
 
+  const { theme } = useTheme();
+  const stroke = theme.colors.backgroundAlt;
+
   const presetCls = p ? preset(p) : '';
   return (
     <Img
       {...rest}
       src={finalSrc}
       $size={rem}
+      $variant={variant}
+      $stroke={stroke}
       className={[presetCls, className].filter(Boolean).join(' ')}
     />
   );
