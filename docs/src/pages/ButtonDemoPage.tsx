@@ -8,6 +8,7 @@ import {
   Box,
   Typography,
   Button,
+  Icon,
   useTheme,
   Tabs,
   Table,
@@ -162,8 +163,21 @@ export default function ButtonDemoPage() {
           </Button>
         </Stack>
 
-            {/* 9 ▸ Theme toggle (LAST) ------------------------------------- */}
-            <Typography variant="h3">9. Theme toggle</Typography>
+        {/* 9 ▸ Icons with text ---------------------------------------- */}
+        <Typography variant="h3">9. Icons with text</Typography>
+        <Stack direction="row">
+          <Button>
+            <Icon icon="mdi:star" size={18} style={{ marginRight: 8 }} />
+            Favourite
+          </Button>
+          <Button variant="outlined">
+            <Icon icon="mdi:delete-outline" size={18} style={{ marginRight: 8 }} />
+            Delete
+          </Button>
+        </Stack>
+
+            {/* 10 ▸ Theme toggle (LAST) ------------------------------------ */}
+            <Typography variant="h3">10. Theme toggle</Typography>
             <Button variant="outlined" onClick={toggleMode}>
               Toggle light / dark mode
             </Button>
