@@ -68,8 +68,8 @@ export const Avatar: React.FC<AvatarProps> = ({
     finalSrc = `https://www.gravatar.com/avatar/${hash}?s=${px}&d=${encodeURIComponent(gravatarDefault)}`;
   }
 
-  const { mode } = useTheme();
-  const stroke = mode === 'dark' ? '#fff' : '#000';
+  const { theme } = useTheme();
+  const stroke = theme.colors.backgroundAlt;
 
   const presetCls = p ? preset(p) : '';
   return (
