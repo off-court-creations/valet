@@ -335,6 +335,7 @@ export const LLMChat: React.FC<ChatProps> = ({
                 <Avatar
                   src={systemAvatar}
                   size="s"
+                  variant="outline"
                   style={{ marginRight: theme.spacing(1) }}
                 />
               )}
@@ -370,6 +371,7 @@ export const LLMChat: React.FC<ChatProps> = ({
                 <Avatar
                   src={userAvatar}
                   size="s"
+                  variant="outline"
                   style={{ marginLeft: theme.spacing(1) }}
                 />
               )}

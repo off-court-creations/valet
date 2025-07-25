@@ -68,6 +68,12 @@ export default function AvatarDemoPage() {
       description: 'Relative size token',
     },
     {
+      prop: <code>variant</code>,
+      type: <code>'plain' | 'outline'</code>,
+      default: <code>'plain'</code>,
+      description: 'Visual style variant',
+    },
+    {
       prop: <code>gravatarDefault</code>,
       type: <code>string</code>,
       default: <code>'identicon'</code>,
@@ -130,6 +136,9 @@ export default function AvatarDemoPage() {
                 </Stack>
               ))}
             </Stack>
+
+            <Typography variant="h3">5. Outline</Typography>
+            <Avatar email="support@gravatar.com" size="l" variant="outline" />
           </Tabs.Panel>
 
           <Tabs.Tab label="Reference" />
