@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.19.3]
+- Updated `Accordion` demo
+
 ## [0.19.2]
 - Adjusted `Accordion`
 - Adjust `RichChat` and `LLMChat` to use "outlined" `Accordion`
