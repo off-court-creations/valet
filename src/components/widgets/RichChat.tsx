@@ -260,6 +260,7 @@ export const RichChat: React.FC<RichChatProps> = ({
                     <Avatar
                       src={systemAvatar}
                       size="s"
+                      variant="outline"
                       style={{ marginRight: theme.spacing(1) }}
                     />
                   )}
@@ -316,6 +317,7 @@ export const RichChat: React.FC<RichChatProps> = ({
                     <Avatar
                       src={userAvatar}
                       size="s"
+                      variant="outline"
                       style={{ marginLeft: theme.spacing(1) }}
                     />
                   )}
