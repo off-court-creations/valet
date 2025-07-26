@@ -17,9 +17,10 @@ export async function createInitialTheme(
   extras: string[] = [],
   options?: GoogleFontOptions
 ): Promise<void> {
-  const { setTheme, theme } = useTheme.getState();
+  const { setTheme } = useTheme.getState();
   const { start, finish } = useFonts.getState();
   setTheme(patch);
+  const { theme } = useTheme.getState();
   const fonts = Array.from(
     new Set([
       theme.fonts.heading,

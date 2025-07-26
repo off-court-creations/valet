@@ -93,15 +93,13 @@ export const Typography: React.FC<TypographyProps> = ({
         line-height: ${({ $variant }) => ($variant === 'button' ? 1 : 1.4)};
         font-family: ${({ $fontFamily, $variant }) =>
           $fontFamily ||
-          `var(--valet-font-$
-            {
-              $variant === 'button'
-                ? 'mono'
-                : $variant.startsWith('h')
-                ? 'heading'
-                : 'body'
-            }
-          )`};
+          `var(--valet-font-${
+            $variant === 'button'
+              ? 'mono'
+              : $variant.startsWith('h')
+              ? 'heading'
+              : 'body'
+          })`};
         ${({ $center }) =>
           $center &&
           `
