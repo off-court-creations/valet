@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 - Added optional `icon` prop to `AppBar` with left/right placement and improved spacing
+- Fixed theme fonts not loading unless `fontFamily` prop set on `Typography`
+- Added `family` prop to `Typography` for choosing theme fonts
+- Tree text now uses the body font
 
 ## [0.19.3]
 - Updated `Accordion` demo

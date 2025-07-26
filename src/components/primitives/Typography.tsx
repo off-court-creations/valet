@@ -33,6 +33,8 @@ export interface TypographyProps
   scale?: number;
   autoSize?: boolean;
   color?: string;
+  /** Choose a theme font family */
+  family?: 'heading' | 'body' | 'mono';
   fontFamily?: string;
 }
 
@@ -56,6 +58,7 @@ export const Typography: React.FC<TypographyProps> = ({
   scale,
   autoSize = false,
   color,
+  family,
   fontFamily,
   centered,
   preset: p,
@@ -80,6 +83,7 @@ export const Typography: React.FC<TypographyProps> = ({
         $variant: Variant;
         $color?: string;
         $fontFamily?: string;
+        $family?: 'heading' | 'body' | 'mono';
         $size: string;
         $bold: boolean;
         $italic: boolean;
@@ -91,17 +95,17 @@ export const Typography: React.FC<TypographyProps> = ({
         font-weight: ${({ $bold }) => ($bold ? 700 : 400)};
         font-style: ${({ $italic }) => ($italic ? 'italic' : 'normal')};
         line-height: ${({ $variant }) => ($variant === 'button' ? 1 : 1.4)};
-        font-family: ${({ $fontFamily, $variant }) =>
+        font-family: ${({ $fontFamily, $family, $variant }) =>
           $fontFamily ||
-          `var(--valet-font-$
-            {
-              $variant === 'button'
-                ? 'mono'
-                : $variant.startsWith('h')
-                ? 'heading'
-                : 'body'
-            }
-          )`};
+          ($family
+            ? `var(--valet-font-${$family})`
+            : `var(--valet-font-${
+                $variant === 'button'
+                  ? 'mono'
+                  : $variant.startsWith('h')
+                  ? 'heading'
+                  : 'body'
+              })`)};
         ${({ $center }) =>
           $center &&
           `
@@ -133,6 +137,7 @@ export const Typography: React.FC<TypographyProps> = ({
       {...props}
       $color={color}
       $fontFamily={fontFamily}
+      $family={family}
       $variant={variant}
       $size={size}
       $bold={bold}
