@@ -30,8 +30,6 @@ export interface RichMessage {
   content: React.ReactNode;
   /** Optional interactive form to collect a canned response */
   form?: React.ComponentType<{ onSubmit: (value: string) => void }>;
-  /** Optional edit handler shown on user messages */
-  onEdit?: () => void;
   name?: string;
   typing?: boolean;
   animate?: boolean;
@@ -276,11 +274,7 @@ export const RichChat: React.FC<RichChatProps> = ({
                       position: 'relative',
                     }}
                   >
-                    <div
-                      style={{
-                        paddingRight: m.role === 'user' && m.onEdit ? theme.spacing(7) : undefined,
-                      }}
-                    >
+                    <div>
                       {m.name && (
                         <Typography variant="subtitle" bold>
                           {m.name}
@@ -297,21 +291,6 @@ export const RichChat: React.FC<RichChatProps> = ({
                       )}
                       {Form && <Form onSubmit={(v: string) => onFormSubmit?.(v, i)} />}
                     </div>
-                    {m.role === 'user' && m.onEdit && (
-                      <IconButton
-                        icon="mdi:pencil"
-                        size="sm"
-                        variant="outlined"
-                        onClick={m.onEdit}
-                        aria-label="Edit"
-                        style={{
-                          position: 'absolute',
-                          top: theme.spacing(0.5),
-                          right: theme.spacing(1),
-                          padding: 0,
-                        }}
-                      />
-                    )}
                   </Panel>
                   {m.role === 'user' && userAvatar && (
                     <Avatar

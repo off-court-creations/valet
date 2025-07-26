@@ -2,7 +2,7 @@
 // src/pages/RichChatDemo.tsx | valet
 // Showcase for <RichChat /> component with local logic
 // ─────────────────────────────────────────────────────────────────────────────
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import {
   Surface,
   Stack,
@@ -23,7 +23,6 @@ import present from '../assets/present.jpg';
 export default function RichChatDemoPage() {
   const navigate = useNavigate();
   const { theme, toggleMode } = useTheme();
-  const backup = useRef<RichMessage[] | null>(null);
   const [step, setStep] = useState(0);
   const [scheduled, setScheduled] = useState<boolean | null>(null);
   const [messages, setMessages] = useState<RichMessage[]>([
@@ -90,7 +89,6 @@ export default function RichChatDemoPage() {
 
   const handleAnswer = (reply: string) => {
     setMessages(prev => {
-      backup.current = [...prev];
       const base = prev.map((m, idx) => {
         if (idx === prev.length - 1) {
           const { form, ...rest } = m as any;
@@ -103,9 +101,6 @@ export default function RichChatDemoPage() {
         role: 'user',
         content: reply,
         animate: true,
-        onEdit: () => {
-          if (backup.current) setMessages(backup.current);
-        },
       };
 
       let next: RichMessage | null = null;
