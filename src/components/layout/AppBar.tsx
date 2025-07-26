@@ -28,16 +28,12 @@ export interface AppBarProps
 const Bar = styled('header')<{
   $bg: string;
   $text: string;
-  $gap: string;
+  $pad: string;
 }>`
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   padding: 0.5rem 1rem;
-  & > * {
-    padding: ${({ $gap }) => $gap};
-  }
   position: fixed;
   top: 0;
   left: 0;
@@ -45,6 +41,21 @@ const Bar = styled('header')<{
   z-index: 10000;
   background: ${({ $bg }) => $bg};
   color: ${({ $text }) => $text};
+  & > * {
+    padding: ${({ $pad }) => $pad};
+  }
+`;
+
+const LeftWrap = styled('div')<{ $gap: string }>`
+  display: flex;
+  align-items: center;
+  gap: ${({ $gap }) => $gap};
+`;
+
+const RightWrap = styled('div')`
+  margin-left: auto;
+  display: flex;
+  align-items: center;
 `;
 
 /*───────────────────────────────────────────────────────────*/
@@ -88,7 +99,8 @@ export const AppBar: React.FC<AppBarProps> = ({
       ? theme.colors[`${textColor}Text`]
       : textColor;
   const presetClass = p ? preset(p) : '';
-  const gap = theme.spacing(1);
+  const pad = theme.spacing(1);
+  const gap = theme.spacing(2);
 
   useLayoutEffect(() => {
     const node = ref.current;
@@ -111,13 +123,15 @@ export const AppBar: React.FC<AppBarProps> = ({
       {...rest}
       $bg={bg}
       $text={text}
-      $gap={gap}
+      $pad={pad}
       className={[presetClass, className].filter(Boolean).join(' ')}
       style={style}
     >
-      {iconPlacement === 'left' && icon}
-      {children}
-      {iconPlacement === 'right' && icon}
+      <LeftWrap $gap={gap}>
+        {iconPlacement === 'left' && icon}
+        {children}
+      </LeftWrap>
+      {iconPlacement === 'right' && icon && <RightWrap>{icon}</RightWrap>}
     </Bar>
   );
 

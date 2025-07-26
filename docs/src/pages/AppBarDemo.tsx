@@ -10,7 +10,7 @@ export default function AppBarDemoPage() {
   return (
     <Surface>
       <NavDrawer />
-      <AppBar icon={<Icon icon="mdi:car" />} iconPlacement="right">
+      <AppBar icon={<Icon icon="mdi:car" />}>
         <Typography fontFamily="Poppins">AppBar with Icon</Typography>
       </AppBar>
       <Stack>
