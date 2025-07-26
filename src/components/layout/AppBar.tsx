@@ -40,6 +40,12 @@ const Bar = styled('header')<{
   right: 0;
   z-index: 10000;
   background: ${({ $bg }) => $bg};
+  background-color: ${({ $bg }) => $bg};
+  --valet-bg: ${({ $bg }) => $bg};
+  --valet-text-color: ${({ $text }) => $text};
+  will-change: transform;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
   color: ${({ $text }) => $text};
   & > * {
     padding: ${({ $pad }) => $pad};
