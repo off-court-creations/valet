@@ -34,6 +34,7 @@ interface Ctx {
   toggle     : (idx: number) => void;
   multiple   : boolean;
   headerTag  : keyof JSX.IntrinsicElements;
+  updateHeight: () => void;
 }
 
 const AccordionCtx = createContext<Ctx | null>(null);
@@ -210,16 +211,6 @@ export const Accordion: React.FC<AccordionProps> & {
     [controlled, multiple, onOpenChange, open],
   );
 
-  const ctx = useMemo<Ctx>(
-    () => ({
-      open,
-      toggle,
-      multiple,
-      headerTag: `h${headingLevel}` as keyof JSX.IntrinsicElements,
-    }),
-    [open, toggle, multiple, headingLevel],
-  );
-
   const presetClasses = p ? preset(p) : '';
 
   const calcCutoff = () => {
@@ -259,6 +250,17 @@ export const Accordion: React.FC<AccordionProps> & {
       setMaxHeight(undefined);
     }
   };
+
+  const ctx = useMemo<Ctx>(
+    () => ({
+      open,
+      toggle,
+      multiple,
+      headerTag: `h${headingLevel}` as keyof JSX.IntrinsicElements,
+      updateHeight: update,
+    }),
+    [open, toggle, multiple, headingLevel],
+  );
 
   useEffect(() => {
     if (!constrainHeight) {
@@ -324,7 +326,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   ...divProps
 }) => {
   const { theme, mode }          = useTheme();
-  const { open, toggle, headerTag } = useAccordion();
+  const { open, toggle, headerTag, updateHeight } = useAccordion();
 
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const wasLongPress = useRef(false);
@@ -357,7 +359,9 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
 
   useLayoutEffect(() => {
     if (contentRef.current) {
-      setHeight(contentRef.current.scrollHeight);
+      const h = contentRef.current.scrollHeight;
+      setHeight(h);
+      requestAnimationFrame(() => updateHeight());
     }
   }, [children, isOpen]);
   const headerId = `acc-btn-${index}`;
