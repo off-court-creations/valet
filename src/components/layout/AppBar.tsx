@@ -2,12 +2,9 @@
 // src/components/layout/AppBar.tsx  | valet
 // minimal top navigation bar
 // ─────────────────────────────────────────────────────────────
-import React, { ReactElement, useLayoutEffect, useRef, useId } from 'react';
-import { createPortal } from 'react-dom';
+import React, { ReactElement } from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
-import { useSurface } from '../../system/surfaceStore';
-import { shallow } from 'zustand/shallow';
 import { preset } from '../../css/stylePresets';
 import type { Presettable } from '../../types';
 import type { IconProps } from '../primitives/Icon';
@@ -34,12 +31,18 @@ const Bar = styled('header')<{
   display: flex;
   align-items: center;
   padding: 0.5rem 1rem;
-  position: fixed;
+  position: sticky;
   top: 0;
   left: 0;
   right: 0;
   z-index: 10000;
   background: ${({ $bg }) => $bg};
+  background-color: ${({ $bg }) => $bg};
+  --valet-bg: ${({ $bg }) => $bg};
+  --valet-text-color: ${({ $text }) => $text};
+  will-change: transform;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
   color: ${({ $text }) => $text};
   & > * {
     padding: ${({ $pad }) => $pad};
@@ -71,16 +74,6 @@ export const AppBar: React.FC<AppBarProps> = ({
   ...rest
 }) => {
   const { theme } = useTheme();
-  const { element, registerChild, unregisterChild } = useSurface(
-    s => ({
-      element: s.element,
-      registerChild: s.registerChild,
-      unregisterChild: s.unregisterChild,
-    }),
-    shallow,
-  );
-  const ref = useRef<HTMLElement>(null);
-  const id = useId();
 
   const isToken = (v: any): v is AppBarToken =>
     v === 'primary' || v === 'secondary' || v === 'tertiary';
@@ -102,24 +95,8 @@ export const AppBar: React.FC<AppBarProps> = ({
   const pad = theme.spacing(1);
   const gap = theme.spacing(2);
 
-  useLayoutEffect(() => {
-    const node = ref.current;
-    const surfEl = element;
-    if (!node || !surfEl) return;
-    const prev = (surfEl.style as any).marginTop;
-    const update = (m: { height: number }) => {
-      (surfEl.style as any).marginTop = `${m.height}px`;
-    };
-    registerChild(id, node, update);
-    return () => {
-      unregisterChild(id);
-      (surfEl.style as any).marginTop = prev;
-    };
-  }, [element]);
-
   const bar = (
     <Bar
-      ref={ref}
       {...rest}
       $bg={bg}
       $text={text}
@@ -135,7 +112,7 @@ export const AppBar: React.FC<AppBarProps> = ({
     </Bar>
   );
 
-  return createPortal(bar, element || document.body);
+  return bar;
 };
 
 export default AppBar;
