@@ -42,9 +42,11 @@ const Wrapper = styled('span')<{ $size: string }>`
   align-items: center;
   justify-content: center;
   line-height: 0;
+  width : ${({ $size }) => $size};
+  height: ${({ $size }) => $size};
   svg {
-    width : ${({ $size }) => $size};
-    height: ${({ $size }) => $size};
+    width : 100%;
+    height: 100%;
     flex-shrink: 0;
   }
 `;
@@ -98,15 +100,15 @@ export const Icon: React.FC<PropsWithChildren<IconProps>> = ({
   } else if (isValidElement(svg)) {
     const svgEl = svg as ReactElement<React.SVGProps<SVGSVGElement>>;
     content = React.cloneElement(svgEl, {
-      width : svgEl.props.width  ?? finalSize,
-      height: svgEl.props.height ?? finalSize,
+      width : svgEl.props.width  ?? '100%',
+      height: svgEl.props.height ?? '100%',
       fill  : svgEl.props.fill   ?? 'currentColor',
     });
   } else if (typeof svg === 'string') {
     content = (
       <svg
-        width={finalSize}
-        height={finalSize}
+        width="100%"
+        height="100%"
         viewBox="0 0 24 24"
         fill="currentColor"
         dangerouslySetInnerHTML={{ __html: svg.trim() }}
@@ -115,8 +117,8 @@ export const Icon: React.FC<PropsWithChildren<IconProps>> = ({
   } else if (isValidElement(children)) {
     const child = children as ReactElement<React.SVGProps<SVGSVGElement>>;
     content = React.cloneElement(child, {
-      width : child.props.width  ?? finalSize,
-      height: child.props.height ?? finalSize,
+      width : child.props.width  ?? '100%',
+      height: child.props.height ?? '100%',
       fill  : child.props.fill   ?? 'currentColor',
     });
   } else {
