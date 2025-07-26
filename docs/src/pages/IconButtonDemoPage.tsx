@@ -187,7 +187,7 @@ export default function IconButtonDemoPage() {
         {/* 5. Custom sizes ------------------------------------------------- */}
         <Typography variant="h3">5. Custom sizes</Typography>
         <Stack direction="row">
-          <IconButton icon="mdi:play" size="3rem" aria-label="Play 3rem" />
+          <IconButton icon="mdi:play" size="3em" aria-label="Play 3em" />
           <IconButton icon="mdi:star" size={56} aria-label="Star 56px" />
         </Stack>
 
@@ -215,7 +215,7 @@ export default function IconButtonDemoPage() {
             <Typography variant="h3">8. Theme demonstration</Typography>
             <Button variant="outlined" onClick={toggleMode}>
               Toggle light / dark mode&nbsp;
-              <Icon icon="mdi:theme-light-dark" size="1.2rem" />
+              <Icon icon="mdi:theme-light-dark" size="1.2em" />
             </Button>
           </Tabs.Panel>
 

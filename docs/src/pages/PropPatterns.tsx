@@ -36,7 +36,7 @@ export default function UsagePage() {
     },
     {
       prop: <code>size</code>,
-      purpose: <p><b>"xs", "sm", "md", "lg", "xl"</b> rem-based tokens. Other <code>STRING</code> values are treated as CSS like <b>"24px"</b> or <b>"3rem"</b></p>,
+      purpose: <p><b>"xs", "sm", "md", "lg", "xl"</b> em-based tokens. Other <code>STRING</code> values are treated as CSS like <b>"24px"</b> or <b>"3em"</b></p>,
       components:
         'Avatar, Button, Icon, IconButton, Checkbox, RadioGroup, Select, Slider, Progress',
     },
