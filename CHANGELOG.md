@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.21.1]
+- Adjusted `Icon` sizing for better iOS / Safari support
+
 ## [0.21.0]
 - Removed edit pencil functionality from `Rich Chat`
 
