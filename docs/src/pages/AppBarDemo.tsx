@@ -1,5 +1,5 @@
 // src/pages/AppBarDemo.tsx
-import { Surface, Stack, Typography, Button, AppBar, Box, useTheme } from '@archway/valet';
+import { Surface, Stack, Typography, Button, AppBar, Box, Icon, useTheme } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../components/NavDrawer';
 
@@ -10,8 +10,8 @@ export default function AppBarDemoPage() {
   return (
     <Surface>
       <NavDrawer />
-      <AppBar>
-        <Typography fontFamily="Poppins">AppBar with Typography</Typography>
+      <AppBar icon={<Icon icon="mdi:car" />} iconPlacement="right">
+        <Typography fontFamily="Poppins">AppBar with Icon</Typography>
       </AppBar>
       <Stack>
         <Typography variant="h2" bold>

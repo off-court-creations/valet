@@ -1,8 +1,8 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/widgets/AppBar.tsx  | valet
+// src/components/layout/AppBar.tsx  | valet
 // minimal top navigation bar
 // ─────────────────────────────────────────────────────────────
-import React, { useLayoutEffect, useRef, useId } from 'react';
+import React, { ReactElement, useLayoutEffect, useRef, useId } from 'react';
 import { createPortal } from 'react-dom';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
@@ -10,6 +10,7 @@ import { useSurface } from '../../system/surfaceStore';
 import { shallow } from 'zustand/shallow';
 import { preset } from '../../css/stylePresets';
 import type { Presettable } from '../../types';
+import type { IconProps } from '../primitives/Icon';
 
 /*───────────────────────────────────────────────────────────*/
 export type AppBarToken = 'primary' | 'secondary' | 'tertiary';
@@ -19,6 +20,8 @@ export interface AppBarProps
     Presettable {
   color?: AppBarToken | string;
   textColor?: AppBarToken | string;
+  icon?: ReactElement<IconProps>;
+  iconPlacement?: 'left' | 'right';
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -48,6 +51,8 @@ const Bar = styled('header')<{
 export const AppBar: React.FC<AppBarProps> = ({
   color,
   textColor,
+  icon,
+  iconPlacement = 'left',
   preset: p,
   className,
   style,
@@ -110,7 +115,9 @@ export const AppBar: React.FC<AppBarProps> = ({
       className={[presetClass, className].filter(Boolean).join(' ')}
       style={style}
     >
+      {iconPlacement === 'left' && icon}
       {children}
+      {iconPlacement === 'right' && icon}
     </Bar>
   );
 
