@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.21.0]
+- Removed edit pencil functionality from `Rich Chat`
+
 ## [0.20.1]
 - Fix Button text spacing when wrapping primitives
 
@@ -285,6 +288,7 @@ responsive logic uses the selected `Surface` element to handle persistent margin
 ### Other
 - vibe coded
 
+[v0.21.0]: https://github.com/off-court-creations/valet/releases/tag/v0.21.0
 [v0.20.1]: https://github.com/off-court-creations/valet/releases/tag/v0.20.1
 [v0.20.0]: https://github.com/off-court-creations/valet/releases/tag/v0.20.0
 [v0.19.3]: https://github.com/off-court-creations/valet/releases/tag/v0.19.3

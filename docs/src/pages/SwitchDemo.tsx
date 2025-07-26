@@ -121,10 +121,7 @@ export default function SwitchDemoPage() {
   return (
     <Surface>
       <NavDrawer />
-      <Stack
-       
-        preset="showcaseStack"
-      >
+      <Stack>
         {/* Page header ----------------------------------------------------- */}
         <Typography variant="h2" bold>
           Switch Showcase
