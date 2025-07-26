@@ -60,7 +60,7 @@ export default function TypographyDemoPage() {
     },
     {
       prop: <code>family</code>,
-      type: <code>'heading' | 'body' | 'mono'</code>,
+      type: <code>'heading' | 'body' | 'mono' | 'button'</code>,
       default: <code>'-'</code>,
       description: 'Select a theme font family',
     },
@@ -151,6 +151,7 @@ export default function TypographyDemoPage() {
               <Typography fontFamily="Poppins">fontFamily="Poppins"</Typography>
               <Typography family="mono">family="mono"</Typography>
               <Typography family="heading">family="heading"</Typography>
+              <Typography family="button">family="button"</Typography>
               <Typography fontSize="1.5rem">fontSize="1.5rem"</Typography>
               <Typography scale={1.25}>scale=1.25</Typography>
               <Typography autoSize scale={1.25}>
