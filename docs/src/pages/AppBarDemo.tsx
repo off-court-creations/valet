@@ -11,7 +11,7 @@ export default function AppBarDemoPage() {
     <Surface>
       <NavDrawer />
       <AppBar icon={<Icon icon="mdi:car" />}>
-        <Typography fontFamily="Poppins">AppBar with Icon</Typography>
+        <Typography fontFamily="Cabin">AppBar with Icon</Typography>
       </AppBar>
       <Stack>
         <Typography variant="h2" bold>
