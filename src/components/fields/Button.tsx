@@ -203,21 +203,47 @@ export const Button: React.FC<ButtonProps> = ({
 
   const presetClasses = p ? preset(p) : '';
 
-  const isPrimitive =
-    typeof children === 'string' || typeof children === 'number';
+  const childArray = React.Children.toArray(children);
+  const grouped: React.ReactNode[] = [];
+  let buffer = '';
 
-  const content = isPrimitive ? (
-    <Typography
-      variant="button"
-      bold
-      fontSize={font}
-      style={{ pointerEvents: 'none' }}
-    >
-      {children}
-    </Typography>
-  ) : (
-    children
-  );
+  childArray.forEach((node, i) => {
+    if (typeof node === 'string' || typeof node === 'number') {
+      buffer += node;
+    } else {
+      if (buffer) {
+        grouped.push(
+          <Typography
+            key={`text-${i}`}
+            variant="button"
+            bold
+            fontSize={font}
+            style={{ pointerEvents: 'none' }}
+          >
+            {buffer}
+          </Typography>
+        );
+        buffer = '';
+      }
+      grouped.push(node);
+    }
+  });
+
+  if (buffer) {
+    grouped.push(
+      <Typography
+        key="text-final"
+        variant="button"
+        bold
+        fontSize={font}
+        style={{ pointerEvents: 'none' }}
+      >
+        {buffer}
+      </Typography>
+    );
+  }
+
+  const content = grouped;
 
   return (
     <Root

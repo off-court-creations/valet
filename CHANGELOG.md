@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.20.1]
+- Fix Button text spacing when wrapping primitives
+
 ## [0.20.0]
 - Added optional `icon` prop to `AppBar` with left/right placement and improved spacing
 - Fixed theme fonts not loading unless `fontFamily` prop set on `Typography`
@@ -282,6 +285,7 @@ responsive logic uses the selected `Surface` element to handle persistent margin
 ### Other
 - vibe coded
 
+[v0.20.1]: https://github.com/off-court-creations/valet/releases/tag/v0.20.1
 [v0.20.0]: https://github.com/off-court-creations/valet/releases/tag/v0.20.0
 [v0.19.3]: https://github.com/off-court-creations/valet/releases/tag/v0.19.3
 [v0.19.2]: https://github.com/off-court-creations/valet/releases/tag/v0.19.2
