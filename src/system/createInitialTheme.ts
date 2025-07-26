@@ -15,18 +15,19 @@ import {
 export async function createInitialTheme(
   patch: Partial<Theme>,
   extras: string[] = [],
-  options?: GoogleFontOptions
+  options?: GoogleFontOptions,
 ): Promise<void> {
-  const { setTheme, theme } = useTheme.getState();
+  const { setTheme } = useTheme.getState();
   const { start, finish } = useFonts.getState();
   setTheme(patch);
+  const { theme } = useTheme.getState();
   const fonts = Array.from(
     new Set([
       theme.fonts.heading,
       theme.fonts.body,
       theme.fonts.mono,
       ...extras,
-    ])
+    ]),
   );
   injectGoogleFontLinks(fonts, options);
   start();

@@ -116,12 +116,13 @@ export const Surface: React.FC<SurfaceProps> = ({
     background: theme.colors.background,
     color: theme.colors.text,
   };
+  const quote = (f: string) => (f.includes(' ') ? `'${f}'` : f);
   const cssVars: React.CSSProperties = {
     '--valet-bg': theme.colors.background,
     '--valet-text-color': theme.colors.text,
-    '--valet-font-heading': theme.fonts.heading,
-    '--valet-font-body': theme.fonts.body,
-    '--valet-font-mono': theme.fonts.mono,
+    '--valet-font-heading': quote(theme.fonts.heading),
+    '--valet-font-body': quote(theme.fonts.body),
+    '--valet-font-mono': quote(theme.fonts.mono),
   } as any;
 
   /* Layout: fixed full‑screen or flow‑based ---------------------------- */
