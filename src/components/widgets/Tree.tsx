@@ -4,6 +4,7 @@
 // ─────────────────────────────────────────────────────────────
 import React, { useMemo, useState, useRef, KeyboardEvent } from 'react';
 import Icon from '../primitives/Icon';
+import Typography from '../primitives/Typography';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
@@ -298,7 +299,9 @@ export function Tree<T>({
                 onClick={node.children ? ((e: React.MouseEvent) => { e.stopPropagation(); toggle(node.id); }) : undefined}
               />
             )}
-            {getLabel(node.data)}
+            <Typography variant="body" family="body" style={{ display: 'inline' }}>
+              {getLabel(node.data)}
+            </Typography>
           </ListRow>
           {node.children && expanded.has(node.id) &&
             renderBranch(node.children, level + 1)}
@@ -348,7 +351,9 @@ export function Tree<T>({
                     ▶
                   </ExpandIcon>
                 )}
-                {getLabel(node.data)}
+                <Typography variant="body" family="body" style={{ display: 'inline' }}>
+                  {getLabel(node.data)}
+                </Typography>
               </ItemRow>
             </li>
           ))

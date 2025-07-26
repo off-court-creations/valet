@@ -59,6 +59,12 @@ export default function TypographyDemoPage() {
         'Center-align text and element within flex/grid parents',
     },
     {
+      prop: <code>family</code>,
+      type: <code>'heading' | 'body' | 'mono'</code>,
+      default: <code>'-'</code>,
+      description: 'Select a theme font family',
+    },
+    {
       prop: <code>fontFamily</code>,
       type: <code>string</code>,
       default: '-',
@@ -143,6 +149,8 @@ export default function TypographyDemoPage() {
             <Typography variant="h3">Font &amp; size overrides</Typography>
             <Panel compact>
               <Typography fontFamily="Poppins">fontFamily="Poppins"</Typography>
+              <Typography family="mono">family="mono"</Typography>
+              <Typography family="heading">family="heading"</Typography>
               <Typography fontSize="1.5rem">fontSize="1.5rem"</Typography>
               <Typography scale={1.25}>scale=1.25</Typography>
               <Typography autoSize scale={1.25}>
