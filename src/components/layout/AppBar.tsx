@@ -25,11 +25,7 @@ export interface AppBarProps
 }
 
 /*───────────────────────────────────────────────────────────*/
-const Bar = styled('header')<{
-  $bg: string;
-  $text: string;
-  $pad: string;
-}>`
+const Bar = styled('header')<{ $text: string; $pad: string }>`
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -39,11 +35,18 @@ const Bar = styled('header')<{
   left: 0;
   right: 0;
   z-index: 10000;
-  background: ${({ $bg }) => $bg};
   color: ${({ $text }) => $text};
   & > * {
     padding: ${({ $pad }) => $pad};
   }
+`;
+
+const BarBg = styled('div')<{ $bg: string }>`
+  position: absolute;
+  inset: 0;
+  background: ${({ $bg }) => $bg};
+  pointer-events: none;
+  z-index: -1;
 `;
 
 const LeftWrap = styled('div')<{ $gap: string }>`
@@ -121,12 +124,18 @@ export const AppBar: React.FC<AppBarProps> = ({
     <Bar
       ref={ref}
       {...rest}
-      $bg={bg}
       $text={text}
       $pad={pad}
       className={[presetClass, className].filter(Boolean).join(' ')}
-      style={style}
+      style={{
+        '--valet-bg': bg,
+        '--valet-text-color': text,
+        background: bg,
+        color: text,
+        ...style,
+      } as React.CSSProperties}
     >
+      <BarBg $bg={bg} />
       <LeftWrap $gap={gap}>
         {iconPlacement === 'left' && icon}
         {children}
