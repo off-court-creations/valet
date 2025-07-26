@@ -203,21 +203,21 @@ export const Button: React.FC<ButtonProps> = ({
 
   const presetClasses = p ? preset(p) : '';
 
-  const isPrimitive =
-    typeof children === 'string' || typeof children === 'number';
+  const wrapText = (node: React.ReactNode) =>
+    typeof node === 'string' || typeof node === 'number'
+      ? (
+          <Typography
+            variant="button"
+            bold
+            fontSize={font}
+            style={{ pointerEvents: 'none' }}
+          >
+            {node}
+          </Typography>
+        )
+      : node;
 
-  const content = isPrimitive ? (
-    <Typography
-      variant="button"
-      bold
-      fontSize={font}
-      style={{ pointerEvents: 'none' }}
-    >
-      {children}
-    </Typography>
-  ) : (
-    children
-  );
+  const content = React.Children.map(children, wrapText);
 
   return (
     <Root

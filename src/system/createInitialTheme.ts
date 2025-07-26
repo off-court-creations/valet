@@ -26,6 +26,7 @@ export async function createInitialTheme(
       theme.fonts.heading,
       theme.fonts.body,
       theme.fonts.mono,
+      theme.fonts.button,
       ...extras,
     ])
   );

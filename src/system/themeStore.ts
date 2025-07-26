@@ -18,6 +18,7 @@ export interface Theme {
     heading: string;
     body: string;
     mono: string;
+    button: string;
   };
 }
 
@@ -58,6 +59,7 @@ const common: Omit<Theme, 'colors'> = {
     heading: 'Roboto',
     body   : 'Roboto Serif',
     mono   : 'Roboto Mono',
+    button : 'Roboto Mono',
   },
 };
 
