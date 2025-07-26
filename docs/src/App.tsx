@@ -68,8 +68,8 @@ const PropPatternsPage      = page(() => import('./pages/PropPatterns'));
 export function App() {
   /* One-time initial theme + Google-font preload */
   useInitialTheme(
-    { fonts: { heading: 'Cabin', body: 'Cabin', mono: 'Cabin Mono' } },
-    ['Fira Sans', 'Ubuntu', 'Ubuntu Mono', 'Poppins', "Cabin"]
+    { fonts: { heading: 'Cabin', body: 'Cabin', mono: 'Cabin Mono', button: 'Cabin' } },
+    ['Fira Sans', 'Ubuntu', 'Ubuntu Mono', 'Poppins', 'Cabin']
   );
 
   /* Simple fallback – swap for a branded spinner when ready */

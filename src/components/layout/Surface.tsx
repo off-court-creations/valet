@@ -122,6 +122,7 @@ export const Surface: React.FC<SurfaceProps> = ({
     '--valet-font-heading': theme.fonts.heading,
     '--valet-font-body': theme.fonts.body,
     '--valet-font-mono': theme.fonts.mono,
+    '--valet-font-button': theme.fonts.button,
   } as any;
 
   /* Layout: fixed full‑screen or flow‑based ---------------------------- */

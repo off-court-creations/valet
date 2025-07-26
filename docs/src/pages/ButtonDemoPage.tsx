@@ -8,6 +8,7 @@ import {
   Box,
   Typography,
   Button,
+  Icon,
   useTheme,
   Tabs,
   Table,
@@ -133,8 +134,15 @@ export default function ButtonDemoPage() {
           <Button color="#00BFA5">#00BFA5</Button>
         </Stack>
 
-        {/* 6 ▸ Outlined overrides -------------------------------------- */}
-        <Typography variant="h3">6. Outlined colour override</Typography>
+        {/* 6 ▸ Icons & text ------------------------------------------- */}
+        <Typography variant="h3">6. Icons &amp; text</Typography>
+        <Button>
+          <Icon icon="carbon:chat" style={{ marginRight: theme.spacing(1) }} />
+          With icon
+        </Button>
+
+        {/* 7 ▸ Outlined overrides -------------------------------------- */}
+        <Typography variant="h3">7. Outlined colour override</Typography>
         <Stack direction="row">
           <Button variant="outlined">default outline</Button>
           <Button variant="outlined" color="secondary">secondary outline</Button>
@@ -144,16 +152,16 @@ export default function ButtonDemoPage() {
           </Button>
         </Stack>
 
-        {/* 7 ▸ Disabled ------------------------------------------------- */}
-        <Typography variant="h3">7. Disabled</Typography>
+        {/* 8 ▸ Disabled ------------------------------------------------- */}
+        <Typography variant="h3">8. Disabled</Typography>
         <Stack direction="row">
           <Button disabled>contained</Button>
           <Button variant="outlined" disabled>outlined</Button>
           <Button color="secondary" disabled>palette</Button>
         </Stack>
 
-        {/* 8 ▸ Custom label variants ----------------------------------- */}
-        <Typography variant="h3">8. Custom label variants</Typography>
+        {/* 9 ▸ Custom label variants ----------------------------------- */}
+        <Typography variant="h3">9. Custom label variants</Typography>
         <Stack direction="row">
           <Button><Typography variant="h4">h4 in button</Typography></Button>
           <Button><Typography variant="subtitle">subtitle text</Typography></Button>
@@ -162,8 +170,8 @@ export default function ButtonDemoPage() {
           </Button>
         </Stack>
 
-            {/* 9 ▸ Theme toggle (LAST) ------------------------------------- */}
-            <Typography variant="h3">9. Theme toggle</Typography>
+            {/* 10 ▸ Theme toggle (LAST) ------------------------------------ */}
+            <Typography variant="h3">10. Theme toggle</Typography>
             <Button variant="outlined" onClick={toggleMode}>
               Toggle light / dark mode
             </Button>

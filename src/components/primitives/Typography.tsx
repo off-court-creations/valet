@@ -34,7 +34,7 @@ export interface TypographyProps
   autoSize?: boolean;
   color?: string;
   /** Choose a theme font family */
-  family?: 'heading' | 'body' | 'mono';
+  family?: 'heading' | 'body' | 'mono' | 'button';
   fontFamily?: string;
 }
 
@@ -83,7 +83,7 @@ export const Typography: React.FC<TypographyProps> = ({
         $variant: Variant;
         $color?: string;
         $fontFamily?: string;
-        $family?: 'heading' | 'body' | 'mono';
+        $family?: 'heading' | 'body' | 'mono' | 'button';
         $size: string;
         $bold: boolean;
         $italic: boolean;
@@ -101,7 +101,7 @@ export const Typography: React.FC<TypographyProps> = ({
             ? `var(--valet-font-${$family})`
             : `var(--valet-font-${
                 $variant === 'button'
-                  ? 'mono'
+                  ? 'button'
                   : $variant.startsWith('h')
                   ? 'heading'
                   : 'body'
