@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.20.0]
+- Added optional `icon` prop to `AppBar` with left/right placement and improved spacing
+- Fixed theme fonts not loading unless `fontFamily` prop set on `Typography`
+- Added `family` prop to `Typography` for choosing theme fonts
+- `Tree` text now uses the body font
+
 ## [0.19.3]
 - Updated `Accordion` demo
 
@@ -275,6 +281,9 @@ responsive logic uses the selected `Surface` element to handle persistent margin
 ## [v0.2.1]
 ### Other
 - vibe coded
+
+[v0.20.0]: https://github.com/off-court-creations/valet/releases/tag/v0.20.0
+[v0.19.3]: https://github.com/off-court-creations/valet/releases/tag/v0.19.3
 [v0.19.2]: https://github.com/off-court-creations/valet/releases/tag/v0.19.2
 [v0.19.1]: https://github.com/off-court-creations/valet/releases/tag/v0.19.1
 [v0.19.0]: https://github.com/off-court-creations/valet/releases/tag/v0.19.0
