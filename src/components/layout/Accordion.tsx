@@ -356,9 +356,13 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   const isOpen   = open.includes(index);
 
   useLayoutEffect(() => {
-    if (contentRef.current) {
-      setHeight(contentRef.current.scrollHeight);
-    }
+    const node = contentRef.current;
+    if (!node) return;
+    const measure = () => setHeight(node.scrollHeight);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(node);
+    return () => ro.disconnect();
   }, [children, isOpen]);
   const headerId = `acc-btn-${index}`;
   const panelId  = `acc-panel-${index}`;
