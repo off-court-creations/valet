@@ -88,8 +88,8 @@ export const Icon: React.FC<PropsWithChildren<IconProps>> = ({
     content = (
       <Iconify
         icon={icon}
-        width="100%"          /* Wrapper controls final px/rem size */
-        height="100%"
+        width={finalSize}
+        height={finalSize}
         color="currentColor"  /* inherits Wrapper.text-color */
         aria-hidden={spanRest['aria-label'] ? undefined : true}
         focusable="false"
