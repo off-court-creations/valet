@@ -50,11 +50,11 @@ const Wrapper = styled('span')<{ $size: string }>`
 `;
 
 const sizeMap: Record<IconSize, string> = {
-  xs: '0.75rem',
-  sm: '1rem',
-  md: '1.5rem',
-  lg: '2.5rem',
-  xl: '4rem',
+  xs: '0.75em',
+  sm: '1em',
+  md: '1.5em',
+  lg: '2.5em',
+  xl: '4em',
 };
 
 /*───────────────────────────────────────────────────────────*/
@@ -88,7 +88,7 @@ export const Icon: React.FC<PropsWithChildren<IconProps>> = ({
     content = (
       <Iconify
         icon={icon}
-        width="100%"          /* Wrapper controls final px/rem size */
+        width="100%"          /* Wrapper controls final px/em size */
         height="100%"
         color="currentColor"  /* inherits Wrapper.text-color */
         aria-hidden={spanRest['aria-label'] ? undefined : true}
