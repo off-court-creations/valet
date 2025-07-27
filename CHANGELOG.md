@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file. The format 
 ## Unreleased
 - Reworked `AppBar` to ensure background color renders on older Safari
 - Portaled `AppBar` to `document.body` to fix background color bug on old Safari
+- Added `MetroSelect` component
+- Tweaked `MetroSelect` layout and spacing
 
 ## [0.21.1]
 - Adjusted `Icon` sizing for better iOS / Safari support

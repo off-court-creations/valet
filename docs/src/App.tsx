@@ -52,6 +52,7 @@ const PaginationDemoPage    = page(() => import('./pages/PaginationDemo'));
 const SpeedDialDemoPage     = page(() => import('./pages/SpeedDialDemo'));
 const StepperDemoPage       = page(() => import('./pages/StepperDemo'));
 const RadioGroupDemoPage    = page(() => import('./pages/RadioGroupDemo'));
+const MetroSelectDemoPage   = page(() => import('./pages/MetroSelectDemo'));
 const VideoDemoPage         = page(() => import('./pages/VideoDemo'));
 const SnackbarDemoPage      = page(() => import('./pages/SnackbarDemo'));
 const TreeDemoPage          = page(() => import('./pages/TreeDemo'));
@@ -124,6 +125,7 @@ export function App() {
         <Route path="/pagination-demo" element={<PaginationDemoPage />} />
         <Route path="/speeddial-demo"  element={<SpeedDialDemoPage />} />
         <Route path="/stepper-demo"    element={<StepperDemoPage />} />
+        <Route path="/metroselect-demo" element={<MetroSelectDemoPage />} />
         <Route path="/radio-demo"      element={<RadioGroupDemoPage />} />
         <Route path="/video-demo"      element={<VideoDemoPage />} />
         <Route path="/dropzone-demo"   element={<DropzoneDemoPage />} />
