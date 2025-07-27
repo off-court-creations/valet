@@ -76,7 +76,7 @@ export const Option: React.FC<MetroOptionProps> = ({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: theme.spacing(0.25),
+    gap: theme.spacing(1),
     height: '100%',
     width: '100%',
   };
@@ -88,8 +88,8 @@ export const Option: React.FC<MetroOptionProps> = ({
       compact
       onClick={() => !disabled && setValue(value)}
       style={{
-        width: '4rem',
-        height: '4rem',
+        width: '6rem',
+        height: '6rem',
         cursor: disabled ? 'not-allowed' : 'pointer',
         display: 'flex',
         alignItems: 'center',
@@ -103,11 +103,11 @@ export const Option: React.FC<MetroOptionProps> = ({
     >
       <div style={innerStyle}>
           {typeof icon === 'string' ? (
-          <Icon icon={icon} size="md" />
+          <Icon icon={icon} size="lg" />
         ) : (
-          <Icon size="md">{icon}</Icon>
+          <Icon size="lg">{icon}</Icon>
         )}
-        <Typography variant="h5" centered>
+        <Typography variant="h6" centered>
           {label}
         </Typography>
       </div>
@@ -124,7 +124,7 @@ export interface MetroSelectComponent
 export const MetroSelect: MetroSelectComponent = ({
   value: valueProp,
   defaultValue,
-  gap = 4,
+  gap = 0,
   onChange,
   preset: p,
   className,
@@ -157,7 +157,7 @@ export const MetroSelect: MetroSelectComponent = ({
         <Stack
           direction="row"
           wrap
-          spacing={gap}
+          spacing={0.5 * Number(gap)}
           compact
           {...rest}
           style={style}
