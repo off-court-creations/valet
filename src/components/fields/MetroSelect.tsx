@@ -71,20 +71,33 @@ export const Option: React.FC<MetroOptionProps> = ({
   const dim = typeof size === 'number' ? `${size}px` : String(size);
   const presetCls = p ? preset(p) : '';
 
+  const innerStyle: React.CSSProperties = {
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1),
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: theme.spacing(0.5),
+    height: '100%',
+    width: '100%',
+  };
+
   return (
     <Panel
       {...rest}
       variant="alt"
+      compact
       onClick={() => !disabled && setValue(value)}
       style={{
         width: dim,
         height: dim,
         cursor: disabled ? 'not-allowed' : 'pointer',
         display: 'flex',
-        flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: theme.spacing(0.5),
         borderColor: selected ? theme.colors.primary : undefined,
         background: selected ? theme.colors.primary : undefined,
         color: selected ? theme.colors.primaryText : undefined,
@@ -92,14 +105,16 @@ export const Option: React.FC<MetroOptionProps> = ({
       }}
       className={[presetCls, className].filter(Boolean).join(' ')}
     >
-      {typeof icon === 'string' ? (
-        <Icon icon={icon} size="xl" />
-      ) : (
-        <Icon size="xl">{icon}</Icon>
-      )}
-      <Typography variant="h5" centered>
-        {label}
-      </Typography>
+      <div style={innerStyle}>
+        {typeof icon === 'string' ? (
+          <Icon icon={icon} size="xl" />
+        ) : (
+          <Icon size="xl">{icon}</Icon>
+        )}
+        <Typography variant="h5" centered>
+          {label}
+        </Typography>
+      </div>
     </Panel>
   );
 };
@@ -109,7 +124,7 @@ export const MetroSelect: React.FC<MetroSelectProps> = ({
   value: valueProp,
   defaultValue,
   columns = 3,
-  gap = 2,
+  gap = 4,
   onChange,
   preset: p,
   className,

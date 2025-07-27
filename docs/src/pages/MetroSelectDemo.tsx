@@ -20,7 +20,7 @@ export default function MetroSelectDemoPage() {
         <Typography variant="h2" bold>MetroSelect Showcase</Typography>
         <Typography variant="subtitle">Grid style single choice</Typography>
 
-        <MetroSelect columns={3} gap={2}>
+        <MetroSelect columns={3} gap={4}>
           {options.map((o) => (
             <MetroSelect.Option key={o.value} icon={o.icon} value={o.value} label={o.label} />
           ))}
