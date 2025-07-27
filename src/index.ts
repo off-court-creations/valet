@@ -27,6 +27,11 @@ export type {
   SelectProps,
   OptionProps as SelectOptionProps,
 } from './components/fields/Select';
+export { default as MetroSelect } from './components/fields/MetroSelect';
+export type {
+  MetroSelectProps,
+  MetroOptionProps,
+} from './components/fields/MetroSelect';
 export * from './components/fields/Slider';
 export * from './components/fields/Switch';
 export * from './components/fields/TextField';
