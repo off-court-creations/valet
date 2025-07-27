@@ -87,9 +87,9 @@ export const Option: React.FC<MetroOptionProps> = ({
       variant="alt"
       compact
       onClick={() => !disabled && setValue(value)}
-    style={{
-        width: '6rem',
-        height: '6rem',
+      style={{
+        width: '4rem',
+        height: '4rem',
         cursor: disabled ? 'not-allowed' : 'pointer',
         display: 'flex',
         alignItems: 'center',
@@ -102,10 +102,10 @@ export const Option: React.FC<MetroOptionProps> = ({
       className={[presetCls, className].filter(Boolean).join(' ')}
     >
       <div style={innerStyle}>
-        {typeof icon === 'string' ? (
-          <Icon icon={icon} size="xl" />
+          {typeof icon === 'string' ? (
+          <Icon icon={icon} size="md" />
         ) : (
-          <Icon size="xl">{icon}</Icon>
+          <Icon size="md">{icon}</Icon>
         )}
         <Typography variant="h5" centered>
           {label}
