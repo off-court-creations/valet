@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file. The format 
 - Added `MetroSelect` component
 - Tweaked `MetroSelect` layout and spacing
 - Documented `MetroSelect` with usage and reference demos
+- Removed `size` prop from `MetroSelect.Option`; tiles use fixed 6rem size
 
 ## [0.21.1]
 - Adjusted `Icon` sizing for better iOS / Safari support

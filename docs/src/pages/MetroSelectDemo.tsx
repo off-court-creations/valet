@@ -102,12 +102,6 @@ export default function MetroSelectDemoPage() {
       description: 'Text displayed below the icon',
     },
     {
-      prop: <code>size</code>,
-      type: <code>number | string</code>,
-      default: <code>'6rem'</code>,
-      description: 'Tile width and height',
-    },
-    {
       prop: <code>disabled</code>,
       type: <code>boolean</code>,
       default: <code>false</code>,
@@ -193,13 +187,6 @@ export default function MetroSelectDemoPage() {
                 <MetroSelect.Option key={o.value} {...o} />
               ))}
             </MetroSelect>
-
-            <Typography variant="h3">4. Custom size</Typography>
-            <MetroSelect gap={4}>
-              <MetroSelect.Option value="big" icon="mdi:star" label="Big" size="7rem" />
-              <MetroSelect.Option value="sm" icon="mdi:star-outline" label="Small" size="4rem" />
-            </MetroSelect>
-
             <Stack direction="row">
               <Button variant="outlined" onClick={toggleMode}>
                 Toggle light / dark

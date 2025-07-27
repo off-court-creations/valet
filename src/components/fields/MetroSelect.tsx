@@ -48,7 +48,6 @@ export interface MetroOptionProps
   icon: string | React.ReactElement;
   label: React.ReactNode;
   disabled?: boolean;
-  size?: number | string;
 }
 
 export const Option: React.FC<MetroOptionProps> = ({
@@ -56,7 +55,6 @@ export const Option: React.FC<MetroOptionProps> = ({
   icon,
   label,
   disabled = false,
-  size = '6rem',
   preset: p,
   style,
   className,
@@ -67,7 +65,6 @@ export const Option: React.FC<MetroOptionProps> = ({
 
   const selected = sel !== null && String(sel) === String(value);
 
-  const dim = typeof size === 'number' ? `${size}px` : String(size);
   const presetCls = p ? preset(p) : '';
 
   const innerStyle: React.CSSProperties = {
@@ -90,9 +87,9 @@ export const Option: React.FC<MetroOptionProps> = ({
       variant="alt"
       compact
       onClick={() => !disabled && setValue(value)}
-      style={{
-        width: dim,
-        height: dim,
+    style={{
+        width: '6rem',
+        height: '6rem',
         cursor: disabled ? 'not-allowed' : 'pointer',
         display: 'flex',
         alignItems: 'center',
