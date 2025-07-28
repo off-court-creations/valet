@@ -90,6 +90,7 @@ export const Option: React.FC<MetroOptionProps> = ({
       style={{
         width: '6rem',
         height: '6rem',
+        overflow: 'hidden',
         cursor: disabled ? 'not-allowed' : 'pointer',
         display: 'flex',
         alignItems: 'center',
