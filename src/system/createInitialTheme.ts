@@ -9,6 +9,8 @@ import { useEffect } from 'react';
 import {
   injectGoogleFontLinks,
   waitForGoogleFonts,
+  injectLocalFontFaces,
+  waitForLocalFonts,
   GoogleFontOptions,
 } from '../helpers/fontLoader';
 
@@ -31,8 +33,12 @@ export async function createInitialTheme(
     ])
   );
   injectGoogleFontLinks(fonts, options);
+  injectLocalFontFaces(options?.local || []);
   start();
-  await waitForGoogleFonts(fonts);
+  await Promise.all([
+    waitForGoogleFonts(fonts),
+    waitForLocalFonts(options?.local || []),
+  ]);
   finish();
 }
 

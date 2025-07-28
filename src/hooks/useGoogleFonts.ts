@@ -8,6 +8,8 @@ import { useTheme } from '../system/themeStore';
 import {
   injectGoogleFontLinks,
   waitForGoogleFonts,
+  injectLocalFontFaces,
+  waitForLocalFonts,
   GoogleFontOptions,
 } from '../helpers/fontLoader';
 
@@ -16,24 +18,35 @@ export function useGoogleFonts(extras: string[] = [], options?: GoogleFontOption
   const finish = useFonts((s) => s.finish);
   const themeFonts = useTheme((s) => s.theme.fonts);
   const fonts = useMemo(
-    () => Array.from(new Set([
-      themeFonts.heading,
-      themeFonts.body,
-      themeFonts.mono,
-      ...extras,
-    ])),
+    () =>
+      Array.from(
+        new Set([
+          themeFonts.heading,
+          themeFonts.body,
+          themeFonts.mono,
+          ...extras,
+        ])
+      ),
     [themeFonts.heading, themeFonts.body, themeFonts.mono, extras.join(',')]
   );
   useInsertionEffect(() => {
     start();
-    return injectGoogleFontLinks(fonts, options);
-  }, [fonts.join(','), options?.preload, start]);
+    const removeGoogle = injectGoogleFontLinks(fonts, options);
+    const removeLocal = injectLocalFontFaces(options?.local || []);
+    return () => {
+      removeGoogle();
+      removeLocal();
+    };
+  }, [fonts.join(','), options?.preload, JSON.stringify(options?.local), start]);
 
   useEffect(() => {
     let active = true;
     (async () => {
       try {
-        await waitForGoogleFonts(fonts);
+        await Promise.all([
+          waitForGoogleFonts(fonts),
+          waitForLocalFonts(options?.local || []),
+        ]);
       } finally {
         if (active) finish();
       }
@@ -41,5 +54,5 @@ export function useGoogleFonts(extras: string[] = [], options?: GoogleFontOption
     return () => {
       active = false;
     };
-  }, [fonts.join(','), finish]);
+  }, [fonts.join(','), JSON.stringify(options?.local), finish]);
 }

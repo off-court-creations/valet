@@ -5,6 +5,7 @@
 import React, { Suspense, lazy }   from 'react';
 import { Routes, Route }           from 'react-router-dom';
 import { useInitialTheme, Surface, Stack, Typography } from '@archway/valet';
+import brandon from './assets/fonts/BrandonGrotesque.otf';
 
 /*───────────────────────────────────────────────────────────*/
 /* Helper – terse lazy() wrapper                            */
@@ -69,8 +70,9 @@ const PropPatternsPage      = page(() => import('./pages/PropPatterns'));
 export function App() {
   /* One-time initial theme + Google-font preload */
   useInitialTheme(
-    { fonts: { heading: 'Cabin', body: 'Cabin', mono: 'Ubuntu Mono', button: 'Ubuntu' } },
-    ['Ubuntu', 'Ubuntu Mono', 'Cabin']
+    { fonts: { heading: 'Cabin', body: 'Brandon', mono: 'Ubuntu Mono', button: 'Ubuntu' } },
+    ['Ubuntu', 'Ubuntu Mono', 'Cabin'],
+    { local: [{ name: 'Brandon', src: brandon }] }
   );
 
   /* Simple fallback – swap for a branded spinner when ready */

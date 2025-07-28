@@ -2,8 +2,21 @@
 // src/helpers/fontLoader.ts | valet
 // shared utilities for injecting and loading Google Fonts
 // ─────────────────────────────────────────────────────────────
+export interface LocalFont {
+  /** Font-family name exposed to CSS */
+  name: string;
+  /** URL to the font file */
+  src: string;
+  /** Font format hint – defaults based on extension */
+  format?: string;
+  /** Preload link tag */
+  preload?: boolean;
+}
+
 export interface GoogleFontOptions {
   preload?: boolean;
+  /** Local fonts to register alongside Google fonts */
+  local?: LocalFont[];
 }
 
 const loadedFonts = new Set<string>();
@@ -63,4 +76,40 @@ export async function waitForGoogleFonts(fonts: string[]): Promise<void> {
   }
   await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
   await new Promise((r) => setTimeout(r, 200));
+}
+
+export function injectLocalFontFaces(fonts: LocalFont[]): () => void {
+  if (!fonts.length) return () => {};
+  const style = document.createElement('style');
+  style.dataset['valetLocalFonts'] = 'true';
+  const addedLinks: HTMLLinkElement[] = [];
+  style.textContent = fonts
+    .map((f) => {
+      const fmt = f.format || f.src.split('.').pop() || 'woff2';
+      if (f.preload) {
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'font';
+        link.href = f.src;
+        link.crossOrigin = 'anonymous';
+        document.head.appendChild(link);
+        addedLinks.push(link);
+      }
+      return `@font-face{font-family:'${f.name}';src:url('${f.src}') format('${fmt}');font-display:swap;}`;
+    })
+    .join('');
+  document.head.appendChild(style);
+  return () => {
+    document.head.removeChild(style);
+    addedLinks.forEach((l) => document.head.removeChild(l));
+  };
+}
+
+export async function waitForLocalFonts(fonts: LocalFont[]): Promise<void> {
+  await Promise.all(fonts.map((f) => document.fonts.load(`400 1em ${f.name}`)));
+  if ((document as any).fonts?.ready) {
+    await (document as any).fonts.ready;
+  }
+  await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+  await new Promise((r) => setTimeout(r, 50));
 }
