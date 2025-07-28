@@ -73,90 +73,25 @@ Run `npm run build` to generate the `dist` folder for publishing. Use `npm run d
 Because valet is React-based, ensure your build process already handles
 `react` and `react-dom` before publishing your package.
 
-## Playground
+## Docs
 
-You can try every component in the [valet Docs](https://github.com/off-court-creations/valet/tree/main/docs). ([Live Demo!](https://main.db2j7e5kim3gg.amplifyapp.com/)) Clone that repository and run:
+You can try every component in the [valet Docs](https://github.com/off-court-creations/valet/tree/main/docs). ([Live Demo!](https://main.db2j7e5kim3gg.amplifyapp.com/)) Try with:
 
 ```shell
+cd docs
 npm install
 npm run dev
 ```
 
-## Components
+or for a live local DX:
 
-These have been mostly tested in the [valet Docs](https://github.com/off-court-creations/valet/tree/main/docs). ([Live Demo!](https://main.db2j7e5kim3gg.amplifyapp.com/))
-
-| Component     | QC0 💻 | QC0 📱 | 1.0.0? 💻📱 | Style QC0 💻 | Style QC0 📱 | Comments                   |
-|---------------|:------:|:-------:|:------------:|:-------------|:-------------:|----------------------------|
-| Accordion     |  ✅    |  ✅    |     🟡      |      ✅      |      ✅      | ----------                 |
-| App Bar       |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
-| Avatar        |  ✅    |  ✅    |     ✅      |      ✅      |      ✅      | ----------                 |
-| Backdrop      |  ✅    |  ✅    |     ✅      |      ✅      |      ✅      | ----------                 |
-| Box           |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
-| Button        |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
-| Checkbox      |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
-| LLMChat          |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
-| RichChat          |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
-| Drawer        |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
-| Date Selector |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      |
-----------                 |
-| FormControl   |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
-| Grid          |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
-| Icon          |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
-| IconButton    |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
-| Iterator      |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      |
-----------                 |
-| List          |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | Needs mobile support!      |
-| LoadingBackdrop |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      |
-----------                 |
-| Modal         |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | styling                    |
-| Pagination    |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
-| Panel         |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
-| Parallax      |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
-| Progress      |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | styling                    |
-| Radio Group   |  ✅    |  ✅    |     🟡      |      🟡      |      🟡      | ----------                 |
-| Select        |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | styling                    |
-| Slider        |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
-| Snackbar      |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
-| Speed Dial    |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
-| Stack         |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
-| Stepper       |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
-| Surface       |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
-| Switch        |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
-| Table         |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | Needs mobile support!      |
-| Tabs          |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
-| Textfield     |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
-| Tooltip       |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
-| Tree          |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
-| Typography    |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
-| Image         |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
-| Video         |  🟡    |  🟡    |     🟡      |      🟡      |      🟡      | ----------                 |
-
-## Hooks
-
-| Hook               | Functional | Playground QC   | Comments |
-|--------------------|:---------:|:---------------:|----------|
-| useGoogleFonts     | ✅        | ✅             |----------|
-| useTheme           | ✅        | ✅             |----------|
-| useInitialTheme    | ✅        | ✅             | applies theme and waits for fonts |
-
-## Utilities
-
-| Utility            | Functional | Playground QC   | Comments |
-|--------------------|:---------:|:---------------:|----------|
-| createFormStore    | ✅        | ✅             |----------|
-| definePreset       | ✅        | ✅             |----------|
-| createInitialTheme | ✅        | ✅             | async preloader for theme & fonts |
-
-## Roadmap
-
-- Develop the AI "bridge" that lets proxies introspect component semantics and drive user interactions
-- As close to AAA accessibility support as possible
-  - No compromises on getting to AA
-
-## Intended Components
-
-<!-- None -->
+```shell
+npm link
+cd docs
+npm install
+npm link @archway/valet
+npm run dev
+```
 
 ## Contributing
 

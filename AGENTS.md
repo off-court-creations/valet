@@ -45,33 +45,6 @@ Welcome to **@archway/valet**, a performant, AI-forward UI library designed as a
     abandoning the core ethos or goals of valet. This directive allows some
     room for "code style" to evolve as valet becomes more excellent. 
 
-    - In this regard, agents should be like **Don McCurdy**:
-      - Distill complex technical ideas into clear, reusable patterns that
-        empower both newcomers and seasoned developers.
-      - Design APIs that are minimal yet expressive—small composable
-        primitives instead of bulky, one-off helpers.
-      - Defend performance budgets: lazy-load modules as needed, defer
-        non-critical work, and optimize for both high-performance servers
-        and legacy machines so everything stays responsive.
-      - Champion open standards and cross-platform parity.
-      - Model open-source citizenship: clear issues, mentor contributors and
-        those you proxy for without being preachy. Leave every repo better 
-        than you found it.
-
-    - Agents should also be like **Bob Gurr**:
-      - Lead with pragmatic curiosity: begin by admitting what you don’t yet
-        know, then learn fast and build with quiet confidence.
-      - Favor the simplest dependable mechanism; unnecessary complexity is a
-        liability.
-      - Design with tomorrow in mind: plan for performance, edge cases, every
-        human input method, and future integrations to sidestep tech debt—
-        like legacy rides' reliability despite their innovation.
-      - Document decisions and trade-offs in plain language so the next
-        engineer (or agent) can service and extend the work without
-        archaeology.
-      - Measure success by long-term reliability and user delight: elegant
-        solutions that keep running with minimal fuss are the real showpieces.
-
 ### Commit Messages
 
 - Use short, imperative sentences ("Add feature" not "Added feature").
@@ -150,24 +123,35 @@ component rather than the page. Pass `constrainHeight={false}` to opt out.
 
 - **Accordion** – accessible expand/collapse container with composition API.
 - **AppBar** – responsive top navigation bar.
+- **Avatar** – Gravatar wrapper with custom image support.
 - **Box** – baseline container that handles background, text colour and centring.
 - **Button** – theme-aware button with variants and sizes.
 - **Checkbox** – controlled/uncontrolled checkbox adhering to accessibility.
-- **LLMChat** – conversation UI with OpenAI message format and optional height constraint.
+- **DateSelector** – date picker with optional range mode.
 - **Drawer** – sliding overlay panel with escape handling and backdrop.
+- **Dropzone** – file drag-and-drop area with previews.
 - **FormControl** – context provider wiring labels, errors and disabled state.
 - **Grid** – CSS grid layout helper with gaps and spans.
 - **Icon** – wrapper around `@iconify/react` icons with size theming.
 - **IconButton** – icon-only button sharing Button’s theming.
+- **Image** – responsive image component with lazy loading.
+- **Iterator** – numeric stepper input.
+- **KeyModal** – overlay for capturing API keys.
+- **LLMChat** – conversation UI with OpenAI message format and optional height constraint.
 - **List** – simple list with optional drag and keyboard reordering.
+- **LoadingBackdrop** – fullscreen loading overlay for async operations.
+- **Markdown** – render Markdown text with valet primitives.
+- **MetroSelect** – segmented switch for discrete choices.
 - **Modal** – accessible dialog component with optional backdrop.
 - **Pagination** – page selector with first/last controls.
 - **Panel** – lightweight container with `main` and `alt` variants.
 - **Parallax** – scroll-aware container for simple parallax effects.
 - **Progress** – linear or circular indicator supporting determinate/indeterminate.
 - **RadioGroup** – grouped radio inputs managed via FormControl.
+- **RichChat** – embeddable chat that supports custom JSX messages.
 - **Select** – typed single or multi-select input.
 - **Slider** – pointer and keyboard friendly value slider.
+- **Snackbar** – transient message bar with stacking.
 - **SpeedDial** – radial quick action menu.
 - **Stack** – flexbox-based layout helper for consistent spacing.
 - **Stepper** – horizontal or vertical step progress indicator.
@@ -177,6 +161,7 @@ component rather than the page. Pass `constrainHeight={false}` to opt out.
 - **Tabs** – grid-based tab list with placement options.
 - **TextField** – controlled text input integrating with FormControl.
 - **Tooltip** – hover/focus tooltip with theme-aware styling.
+- **Tree** – nested list with collapsible branches.
 - **Typography** – semantic text variants with responsive sizes.
 - **Video** – multi-source video wrapper with lazy loading, fullscreen, and caption tracks.
 
