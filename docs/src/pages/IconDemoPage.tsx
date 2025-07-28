@@ -18,6 +18,7 @@ import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../components/NavDrawer';
+import mymoSVG from "../assets/mygymlogo.svg"
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Style presets – demonstrate Icon inside themed containers                   */
@@ -140,7 +141,7 @@ export default function IconDemoPage() {
 
         {/* 4. Custom SVG (React element) ----------------------------------- */}
         <Typography variant="h3">4. Custom SVG element</Typography>
-        <Icon svg={HeartSvg} size={40} color={theme.colors['tertiary']} aria-label="heart" />
+        <Icon svg={mymoSVG} size={40} aria-label="heart" />
 
         {/* 6. Icon presets -------------------------------------------------- */}
         <Typography variant="h3">5. Presets</Typography>
