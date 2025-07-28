@@ -18,7 +18,7 @@ import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../components/NavDrawer';
-import mymoSVG from "../assets/mygymlogo.svg"
+import mymoSVG from "../assets/mygymlogo.svg?raw"
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Style presets – demonstrate Icon inside themed containers                   */

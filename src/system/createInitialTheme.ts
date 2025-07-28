@@ -7,38 +7,51 @@ import { useTheme } from './themeStore';
 import { useFonts } from './fontStore';
 import { useEffect } from 'react';
 import {
-  injectGoogleFontLinks,
-  waitForGoogleFonts,
+  injectFontLinks,
+  waitForFonts,
   GoogleFontOptions,
+  Font,
 } from '../helpers/fontLoader';
 
 export async function createInitialTheme(
-  patch: Partial<Theme>,
-  extras: string[] = [],
+  patch: Partial<Omit<Theme, 'fonts'> & { fonts?: Partial<Record<'heading' | 'body' | 'mono' | 'button', Font>> }>,
+  extras: Font[] = [],
   options?: GoogleFontOptions
 ): Promise<void> {
   const { setTheme } = useTheme.getState();
   const { start, finish } = useFonts.getState();
-  setTheme(patch);
+  const themePatch: Partial<Theme> = { ...patch } as any;
+  if (patch.fonts) {
+    themePatch.fonts = Object.fromEntries(
+      Object.entries(patch.fonts).map(([k, v]) => [k, typeof v === 'string' ? v : v.name])
+    ) as any;
+  }
+  setTheme(themePatch);
   const { theme } = useTheme.getState();
-  const fonts = Array.from(
-    new Set([
-      theme.fonts.heading,
-      theme.fonts.body,
-      theme.fonts.mono,
-      theme.fonts.button,
+  const fonts = (() => {
+    const all: Font[] = [
+      patch.fonts?.heading || theme.fonts.heading,
+      patch.fonts?.body || theme.fonts.body,
+      patch.fonts?.mono || theme.fonts.mono,
+      patch.fonts?.button || theme.fonts.button,
       ...extras,
-    ])
-  );
-  injectGoogleFontLinks(fonts, options);
+    ];
+    const map = new Map<string, Font>();
+    all.forEach((f) => {
+      const key = typeof f === 'string' ? f : f.name;
+      if (key) map.set(key, f);
+    });
+    return Array.from(map.values());
+  })();
+  injectFontLinks(fonts, options);
   start();
-  await waitForGoogleFonts(fonts);
+  await waitForFonts(fonts);
   finish();
 }
 
 export function useInitialTheme(
-  patch: Partial<Theme>,
-  extras: string[] = [],
+  patch: Partial<Omit<Theme, 'fonts'> & { fonts?: Partial<Record<'heading' | 'body' | 'mono' | 'button', Font>> }>,
+  extras: Font[] = [],
   options?: GoogleFontOptions
 ) {
   useEffect(() => {
