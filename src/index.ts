@@ -70,3 +70,4 @@ export * from './system/themeStore';
 export * from './system/fontStore';
 export * from './system/createInitialTheme';
 export * from './hooks/useGoogleFonts';
+export type { Font, CustomFont } from './helpers/fontLoader';
