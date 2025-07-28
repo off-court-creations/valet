@@ -2,7 +2,7 @@
 // src/system/createFormStore.ts  | valet
 // factory creating typed Zustand stores for form state
 // ─────────────────────────────────────────────────────────────
-import { create } from 'zustand';
+import { createWithEqualityFn as create } from 'zustand/traditional';
 
 /**
  * Runtime state slice for any form.

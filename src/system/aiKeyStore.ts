@@ -2,7 +2,7 @@
 // src/system/aiKeyStore.ts | valet
 // secure in-browser store for AI provider keys
 // ─────────────────────────────────────────────────────────────
-import { create } from 'zustand';
+import { createWithEqualityFn as create } from 'zustand/traditional';
 import { persist, StateStorage, createJSONStorage } from 'zustand/middleware';
 
 export type AIProvider = 'openai' | 'anthropic';

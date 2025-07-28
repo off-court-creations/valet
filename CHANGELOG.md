@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.21.3]
+- Adjusted internal Zustand store setup
+
 ## [0.21.2]
 - Adjusted `Icon` sizing for better iOS / Safari support
 - Reworked `AppBar` to ensure background color renders on older Safari
@@ -297,6 +300,7 @@ responsive logic uses the selected `Surface` element to handle persistent margin
 ### Other
 - vibe coded
 
+[v0.21.3]: https://github.com/off-court-creations/valet/releases/tag/v0.21.3
 [v0.21.2]: https://github.com/off-court-creations/valet/releases/tag/v0.21.2
 [v0.21.1]: https://github.com/off-court-creations/valet/releases/tag/v0.21.1
 [v0.21.0]: https://github.com/off-court-creations/valet/releases/tag/v0.21.0

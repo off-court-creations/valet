@@ -2,7 +2,7 @@
 // src/system/fontStore.ts | valet
 // tracks Google font loading state
 // ─────────────────────────────────────────────────────────────
-import { create } from 'zustand';
+import { createWithEqualityFn as create } from 'zustand/traditional';
 
 interface FontState {
   loading: number;

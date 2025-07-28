@@ -3,7 +3,7 @@
 // per-surface Zustand store tracking size & children
 // ─────────────────────────────────────────────────────────────
 import React from 'react'
-import { create } from 'zustand'
+import { createWithEqualityFn as create } from 'zustand/traditional'
 import type { Breakpoint } from './themeStore'
 
 export interface ChildMetrics {
