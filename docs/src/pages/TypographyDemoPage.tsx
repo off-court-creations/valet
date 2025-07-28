@@ -149,6 +149,7 @@ export default function TypographyDemoPage() {
             <Typography variant="h3">Font &amp; size overrides</Typography>
             <Panel compact>
               <Typography fontFamily="Poppins">fontFamily="Poppins"</Typography>
+              <Typography fontFamily="Brandon">fontFamily="Brandon"</Typography>
               <Typography family="mono">family="mono"</Typography>
               <Typography family="heading">family="heading"</Typography>
               <Typography family="button">family="button"</Typography>
