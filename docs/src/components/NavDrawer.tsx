@@ -59,7 +59,7 @@ const widgets: [string, string][] = [
   ['Snackbar', '/snackbar-demo'],
   ['Speed Dial', '/speeddial-demo'],
   ['Stepper', '/stepper-demo'],
-  ['Table', '/table-demo'],
+  ['Table', '/table'],
   ['Tooltip', '/tooltip-demo'],
   ['Dropzone', '/dropzone-demo'],
   ['Tree', '/tree-demo'],
@@ -71,6 +71,7 @@ const examples: [string, string][] = [
   ['Presets', '/presets'],
   ['LLMChat', '/chat-demo'],
   ['RichChat', '/rich-chat-demo'],
+  ['Table', '/table-demo'],
 ];
 
 const DEFAULT_EXPANDED = [
