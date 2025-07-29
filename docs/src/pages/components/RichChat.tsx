@@ -1,10 +1,9 @@
 // ─────────────────────────────────────────────────────────────
-// src/pages/components/RichChat.tsx
+// src/pages/components/RichChat.tsx | valet
 // ─────────────────────────────────────────────────────────────
 import {
   Surface,
   Stack,
-  Panel,
   Typography,
   Tabs,
   Table,
