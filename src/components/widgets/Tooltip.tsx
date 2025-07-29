@@ -7,10 +7,12 @@ import React, {
   ReactNode,
   useCallback,
   useEffect,
+  useLayoutEffect,
   useId,
   useRef,
   useState,
 } from 'react';
+import { createPortal } from 'react-dom';
 import { styled }    from '../../css/createStyled';
 import { useTheme }  from '../../system/themeStore';
 import { preset }    from '../../css/stylePresets';
@@ -51,7 +53,7 @@ const Bubble = styled('div')<{
   $placement: Placement;
 }>`
   --gap: ${GAP}px;
-  position: absolute;
+  position: fixed;
   z-index: 9999;
   max-width: 22rem;
   padding: 0.4rem 0.7rem;
@@ -65,34 +67,24 @@ const Bubble = styled('div')<{
   opacity: ${({ $show }) => ($show ? 1 : 0)};
   transition: opacity 140ms ease, transform 140ms ease;
 
-  /* placement geometry + enter/leave slide */
-  ${({ $show, $placement }) =>
+  transform-origin: ${({ $placement }) =>
     ({
-      top: `
-        bottom: calc(100% + var(--gap));
-        left: 50%;
-        transform-origin: bottom center;
-        transform: translate(-50%, ${$show ? '0' : '4px'});
-      `,
-      bottom: `
-        top: calc(100% + var(--gap));
-        left: 50%;
-        transform-origin: top center;
-        transform: translate(-50%, ${$show ? '0' : '-4px'});
-      `,
-      left: `
-        right: calc(100% + var(--gap));
-        top: 50%;
-        transform-origin: center right;
-        transform: translate(${ $show ? '0' : '4px'}, -50%);
-      `,
-      right: `
-        left: calc(100% + var(--gap));
-        top: 50%;
-        transform-origin: center left;
-        transform: translate(${ $show ? '0' : '-4px'}, -50%);
-      `,
-    } as Record<Placement, string>)[$placement as Placement]}
+      top: 'bottom center',
+      bottom: 'top center',
+      left: 'center right',
+      right: 'center left',
+    } as Record<Placement, string>)[$placement]};
+  transform: ${({ $show, $placement }) => {
+    const dist = $show ? 0 : ({
+      top: 4,
+      bottom: -4,
+      left: 4,
+      right: -4,
+    } as Record<Placement, number>)[$placement];
+    return $placement === 'top' || $placement === 'bottom'
+      ? `translate(-50%, ${dist}px)`
+      : `translate(${dist}px, -50%)`;
+  }};
 `;
 
 const Arrow = styled('span')<{
@@ -156,6 +148,8 @@ export const Tooltip: React.FC<TooltipProps> = ({
   const id        = useId();
   const hasPreset = Boolean(presetKey);
   const wrapperRef = useRef<HTMLSpanElement>(null);
+  const bubbleRef = useRef<HTMLDivElement>(null);
+  const [pos, setPos] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
 
   /* uncontrolled ↔ controlled gate */
   const [internalShow, setInternalShow] = useState(defaultOpen);
@@ -247,6 +241,45 @@ export const Tooltip: React.FC<TooltipProps> = ({
     };
   }, [show, handleOutside]);
 
+  useLayoutEffect(() => {
+    if (!show) return;
+    const calc = () => {
+      const wrapper = wrapperRef.current;
+      const bubble = bubbleRef.current;
+      if (!wrapper || !bubble) return;
+      const rect = wrapper.getBoundingClientRect();
+      const b = bubble.getBoundingClientRect();
+      let top = 0;
+      let left = 0;
+      switch (placement) {
+        case 'top':
+          top = rect.top - b.height - GAP;
+          left = rect.left + rect.width / 2;
+          break;
+        case 'bottom':
+          top = rect.bottom + GAP;
+          left = rect.left + rect.width / 2;
+          break;
+        case 'left':
+          top = rect.top + rect.height / 2;
+          left = rect.left - b.width - GAP;
+          break;
+        case 'right':
+          top = rect.top + rect.height / 2;
+          left = rect.right + GAP;
+          break;
+      }
+      setPos({ top, left });
+    };
+    calc();
+    window.addEventListener('scroll', calc, true);
+    window.addEventListener('resize', calc);
+    return () => {
+      window.removeEventListener('scroll', calc, true);
+      window.removeEventListener('resize', calc);
+    };
+  }, [show, placement]);
+
   /* preset classes */
   const presetClasses = presetKey ? preset(presetKey) : '';
 
@@ -264,25 +297,30 @@ export const Tooltip: React.FC<TooltipProps> = ({
       aria-describedby={show ? `tooltip-${id}` : undefined}
     >
       {children}
-
-      <Bubble
-        $show={show}
-        $placement={placement}
-        role="tooltip"
-        id={`tooltip-${id}`}
-        className={presetClasses}
-        style={
-          hasPreset
-            ? undefined
-            : ({
-                '--tt-bg': theme.colors.text,
-                '--tt-fg': theme.colors.background,
-              } as React.CSSProperties)
-        }
-      >
-        {title}
-        {arrow && <Arrow $placement={placement} />}
-      </Bubble>
+      {createPortal(
+        <Bubble
+          ref={bubbleRef}
+          $show={show}
+          $placement={placement}
+          role="tooltip"
+          id={`tooltip-${id}`}
+          className={presetClasses}
+          style={{
+            top: pos.top,
+            left: pos.left,
+            ...(hasPreset
+              ? undefined
+              : ({
+                  '--tt-bg': theme.colors.text,
+                  '--tt-fg': theme.colors.background,
+                } as React.CSSProperties)),
+          }}
+        >
+          {title}
+          {arrow && <Arrow $placement={placement} />}
+        </Bubble>,
+        document.body
+      )}
     </Wrapper>
   );
 };
