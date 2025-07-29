@@ -1,10 +1,9 @@
 // ─────────────────────────────────────────────────────────────
-// src/pages/components/LLMChat.tsx
+// src/pages/components/LLMChat.tsx | valet
 // ─────────────────────────────────────────────────────────────
 import {
   Surface,
   Stack,
-  Panel,
   Typography,
   Tabs,
   Table,

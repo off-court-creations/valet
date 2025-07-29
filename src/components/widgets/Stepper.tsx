@@ -29,7 +29,8 @@ const StepItem = styled('div')<{ $active: boolean; $primary: string }>`
   align-items: center;
   gap: 0.25rem;
   font-size: 0.875rem;
-  color: ${({ $active, $primary }) => ($active ? $primary : 'inherit')};
+  font-weight: ${({ $active }) => ($active ? 'bold' : 'normal')};
+  color: inherit;
 
   &::before {
     counter-increment: step;
