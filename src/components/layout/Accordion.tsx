@@ -230,34 +230,60 @@ export const Accordion: React.FC<AccordionProps> & {
     return (isNaN(fs) ? 16 : fs) * 2;
   };
 
-  const update = () => {
+  const bottomRef = useRef(0);
+  const rafRef = useRef<number>(0);
+  const prevHeightRef = useRef<number | undefined>(undefined);
+  const prevConstrainedRef = useRef(false);
+
+  const runUpdate = () => {
     const node = wrapRef.current;
     const surfEl = surface.element;
     if (!node || !surfEl) return;
     const sRect = surfEl.getBoundingClientRect();
     const nRect = node.getBoundingClientRect();
     const top = Math.round(nRect.top - sRect.top + surfEl.scrollTop);
-    const bottomSpace = Math.round(
+    const dynBottom = Math.round(
       surfEl.scrollHeight - (nRect.bottom - sRect.top + surfEl.scrollTop),
     );
-    const available = Math.round(surface.height - top - bottomSpace);
+    if (!constraintRef.current) bottomRef.current = dynBottom;
+    const available = Math.round(surface.height - top - bottomRef.current);
     const cutoff = calcCutoff();
 
     const shouldClamp =
       node.scrollHeight - available > 1 && available >= cutoff;
+
     if (shouldClamp) {
       if (!constraintRef.current) {
         surfEl.scrollTop = 0;
         surfEl.scrollLeft = 0;
       }
       constraintRef.current = true;
-      setShouldConstrain(true);
-      setMaxHeight(Math.max(0, available));
+      if (!prevConstrainedRef.current) {
+        prevConstrainedRef.current = true;
+        setShouldConstrain(true);
+      }
+      const newHeight = Math.max(0, available);
+      if (prevHeightRef.current !== newHeight) {
+        prevHeightRef.current = newHeight;
+        setMaxHeight(newHeight);
+      }
     } else {
       constraintRef.current = false;
-      setShouldConstrain(false);
-      setMaxHeight(undefined);
+      bottomRef.current = dynBottom;
+      if (prevConstrainedRef.current) {
+        prevConstrainedRef.current = false;
+        setShouldConstrain(false);
+      }
+      if (prevHeightRef.current !== undefined) {
+        prevHeightRef.current = undefined;
+        setMaxHeight(undefined);
+      }
     }
+  };
+
+  const update = () => {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(runUpdate);
   };
 
   useEffect(() => {
@@ -280,6 +306,7 @@ export const Accordion: React.FC<AccordionProps> & {
     return () => {
       surface.unregisterChild(uniqueId);
       ro.disconnect();
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
   }, [constrainHeight, surface.element]);
 
