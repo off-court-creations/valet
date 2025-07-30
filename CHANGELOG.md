@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.22.2]
+- Improved visual bug involving skrinking / resizing for `Table` and `Accordion`
+
 ## [0.22.1]
 - Fixed a visibility bug with `Tooltip`
 - Adjusted `Stepper` styling
@@ -307,6 +310,7 @@ responsive logic uses the selected `Surface` element to handle persistent margin
 ### Other
 - vibe coded
 
+[v0.22.2]: https://github.com/off-court-creations/valet/releases/tag/v0.22.2
 [v0.22.1]: https://github.com/off-court-creations/valet/releases/tag/v0.22.1
 [v0.22.0]: https://github.com/off-court-creations/valet/releases/tag/v0.22.0
 [v0.21.3]: https://github.com/off-court-creations/valet/releases/tag/v0.21.3
