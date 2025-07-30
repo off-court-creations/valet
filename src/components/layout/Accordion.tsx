@@ -243,8 +243,7 @@ export const Accordion: React.FC<AccordionProps> & {
     const available = Math.round(surface.height - top - bottomSpace);
     const cutoff = calcCutoff();
 
-    const shouldClamp =
-      node.scrollHeight - available > 1 && available >= cutoff;
+    const shouldClamp = available >= cutoff;
     if (shouldClamp) {
       if (!constraintRef.current) {
         surfEl.scrollTop = 0;
