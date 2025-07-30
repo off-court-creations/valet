@@ -230,6 +230,8 @@ export const Accordion: React.FC<AccordionProps> & {
     return (isNaN(fs) ? 16 : fs) * 2;
   };
 
+  const bottomRef = useRef(0);
+
   const update = () => {
     const node = wrapRef.current;
     const surfEl = surface.element;
@@ -237,10 +239,11 @@ export const Accordion: React.FC<AccordionProps> & {
     const sRect = surfEl.getBoundingClientRect();
     const nRect = node.getBoundingClientRect();
     const top = Math.round(nRect.top - sRect.top + surfEl.scrollTop);
-    const bottomSpace = Math.round(
+    const dynBottom = Math.round(
       surfEl.scrollHeight - (nRect.bottom - sRect.top + surfEl.scrollTop),
     );
-    const available = Math.round(surface.height - top - bottomSpace);
+    if (!constraintRef.current) bottomRef.current = dynBottom;
+    const available = Math.round(surface.height - top - bottomRef.current);
     const cutoff = calcCutoff();
 
     const shouldClamp =
@@ -255,6 +258,7 @@ export const Accordion: React.FC<AccordionProps> & {
       setMaxHeight(Math.max(0, available));
     } else {
       constraintRef.current = false;
+      bottomRef.current = dynBottom;
       setShouldConstrain(false);
       setMaxHeight(undefined);
     }
