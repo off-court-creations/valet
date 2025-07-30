@@ -128,9 +128,10 @@ const Chevron = styled('svg')<{ $open: boolean }>`
   transform  : rotate(${({ $open }) => ($open ? 0 : 180)}deg);
 `;
 
-const Content = styled('div')<{ $open: boolean; $height: number }>`
+const Content = styled('div')<{ $open: boolean; $height: number | 'auto' }>`
   overflow : hidden;
-  height   : ${({ $open, $height }) => ($open ? `${$height}px` : '0')};
+  height   : ${({ $open, $height }) =>
+    $open ? (typeof $height === 'number' ? `${$height}px` : $height) : '0'};
   transition: height 300ms cubic-bezier(0.4, 0, 0.2, 1);
   will-change: height;
 `;
@@ -329,7 +330,8 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const wasLongPress = useRef(false);
   const contentRef   = useRef<HTMLDivElement>(null);
-  const [height, setHeight] = useState(0);
+  const [height, setHeight] = useState<number | 'auto'>(0);
+  const animFrameRef = useRef<number | null>(null);
   const [skipHover, setSkipHover] = useState(false);
   const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const moveHandler = useRef<((e: PointerEvent) => void) | null>(null);
@@ -356,9 +358,24 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   const isOpen   = open.includes(index);
 
   useLayoutEffect(() => {
-    if (contentRef.current) {
-      setHeight(contentRef.current.scrollHeight);
+    const node = contentRef.current;
+    if (!node) return;
+    if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+    if (isOpen) {
+      setHeight(node.scrollHeight);
+      const end = () => setHeight('auto');
+      node.addEventListener('transitionend', end, { once: true });
+      return () => {
+        node.removeEventListener('transitionend', end);
+      };
     }
+    // closing
+    const start = node.scrollHeight;
+    setHeight(start);
+    animFrameRef.current = requestAnimationFrame(() => setHeight(0));
+    return () => {
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+    };
   }, [children, isOpen]);
   const headerId = `acc-btn-${index}`;
   const panelId  = `acc-panel-${index}`;
