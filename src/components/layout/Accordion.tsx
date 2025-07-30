@@ -185,7 +185,8 @@ export const Accordion: React.FC<AccordionProps> & {
   );
   const wrapRef = useRef<HTMLDivElement>(null);
   const uniqueId = useId();
-  const [maxHeight, setMaxHeight] = useState<number>();
+  const [maxHeight, setMaxHeight] = useState<number | undefined>(undefined);
+  const prevMaxHeight = useRef<number | undefined>(undefined);
   const [shouldConstrain, setShouldConstrain] = useState(false);
   const constraintRef = useRef(false);
   const controlled = openProp !== undefined;
@@ -236,15 +237,14 @@ export const Accordion: React.FC<AccordionProps> & {
     if (!node || !surfEl) return;
     const sRect = surfEl.getBoundingClientRect();
     const nRect = node.getBoundingClientRect();
-    const top = Math.round(nRect.top - sRect.top + surfEl.scrollTop);
-    const bottomSpace = Math.round(
-      surfEl.scrollHeight - (nRect.bottom - sRect.top + surfEl.scrollTop),
-    );
-    const available = Math.round(surface.height - top - bottomSpace);
+    const top = nRect.top - sRect.top + surfEl.scrollTop;
+    const bottomSpace =
+      surfEl.scrollHeight - (nRect.bottom - sRect.top + surfEl.scrollTop);
+    const available = surface.height - top - bottomSpace;
+    const next = Math.floor(available);
     const cutoff = calcCutoff();
 
-    const shouldClamp =
-      node.scrollHeight - available > 1 && available >= cutoff;
+    const shouldClamp = node.scrollHeight - next > 1 && next >= cutoff;
     if (shouldClamp) {
       if (!constraintRef.current) {
         surfEl.scrollTop = 0;
@@ -252,11 +252,17 @@ export const Accordion: React.FC<AccordionProps> & {
       }
       constraintRef.current = true;
       setShouldConstrain(true);
-      setMaxHeight(Math.max(0, available));
+      if (prevMaxHeight.current !== next) {
+        prevMaxHeight.current = next;
+        setMaxHeight(Math.max(0, next));
+      }
     } else {
       constraintRef.current = false;
       setShouldConstrain(false);
-      setMaxHeight(undefined);
+      if (prevMaxHeight.current !== undefined) {
+        prevMaxHeight.current = undefined;
+        setMaxHeight(undefined);
+      }
     }
   };
 
