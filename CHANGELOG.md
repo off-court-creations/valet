@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.22.5]
 - Add `noSelect` prop to `Typography` to disable text selection
 - Use `Typography` `noSelect` for `Accordion` headers, `Tabs` labels, and `MetroSelect` options
 
@@ -319,6 +320,7 @@ responsive logic uses the selected `Surface` element to handle persistent margin
 ### Other
 - vibe coded
 
+[v0.22.5]: https://github.com/off-court-creations/valet/releases/tag/v0.22.5
 [v0.22.4]: https://github.com/off-court-creations/valet/releases/tag/v0.22.4
 [v0.22.3]: https://github.com/off-court-creations/valet/releases/tag/v0.22.3
 [v0.22.2]: https://github.com/off-court-creations/valet/releases/tag/v0.22.2
