@@ -26,6 +26,7 @@ import { toRgb, mix, toHex }    from '../../helpers/color';
 import { useSurface }           from '../../system/surfaceStore';
 import { shallow }              from 'zustand/shallow';
 import type { Presettable }     from '../../types';
+import { Typography }          from '../primitives/Typography';
 
 /*───────────────────────────────────────────────────────────*/
 /* Context                                                   */
@@ -91,11 +92,8 @@ const HeaderBtn = styled('button')<{
   margin-inline-start: -${({ $shift }) => $shift};
   margin-inline-end  : -${({ $shift }) => $shift};
 
-  /* Disable blue tap-highlight & text selection on mobile */
+  /* Disable blue tap-highlight on mobile */
   -webkit-tap-highlight-color: transparent;
-  user-select               : none;
-  -webkit-user-select       : none;
-  -ms-user-select           : none;
 
   transition: background 200ms ease;
 
@@ -490,7 +488,13 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
           $shift={shift}
           $skipHover={skipHover}
         >
-          {header}
+          {typeof header === 'string' || typeof header === 'number' ? (
+            <Typography variant="subtitle" noSelect style={{ font: 'inherit' }}>
+              {header}
+            </Typography>
+          ) : (
+            header
+          )}
           <Chevron aria-hidden $open={isOpen} viewBox="0 0 24 24">
             <path
               d="M6 9l6 6 6-6"
