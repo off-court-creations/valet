@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// src/pages/TabsDemoPage.tsx | valet
+// docs/src/pages/TabsDemo.tsx | valet
 // Demonstrates placement-aware <Tabs/> with varied panel content.
 // ─────────────────────────────────────────────────────────────────────────────
 import { useState } from 'react';
@@ -117,9 +117,9 @@ export default function TabsDemoPage() {
           <Tabs.Panel>{'Third → ' + SIX}</Tabs.Panel>
         </Tabs>
 
-        {/* 6. Icon headings ----------------------------------------------- */}
+        {/* 6. Icon headings (centered) ----------------------------------- */}
         <Typography variant="h3">6. Icon headings</Typography>
-        <Tabs>
+        <Tabs centered>
           <Tabs.Tab label={<Icon icon="mdi:home" />} aria-label="Home" />
           <Tabs.Panel>{'Home → ' + ONE}</Tabs.Panel>
 
