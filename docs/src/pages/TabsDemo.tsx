@@ -130,8 +130,55 @@ export default function TabsDemoPage() {
           <Tabs.Panel>{'Settings → ' + THREE}</Tabs.Panel>
         </Tabs>
 
+        {/* 7. Centered headings ------------------------------------------- */}
+        <Typography variant="h3">7. Centered headings</Typography>
+        <Tabs centered>
+          <Tabs.Tab
+            label={
+              <Stack direction="row" style={{ alignItems: 'center', gap: theme.spacing(0.5) }}>
+                <Icon icon="mdi:home" />
+                <Typography>Home</Typography>
+              </Stack>
+            }
+          />
+          <Tabs.Panel>{'Home → ' + ONE}</Tabs.Panel>
+
+          <Tabs.Tab
+            label={
+              <Stack direction="row" style={{ alignItems: 'center', gap: theme.spacing(0.5) }}>
+                <Icon icon="mdi:account" />
+                <Typography>Profile</Typography>
+              </Stack>
+            }
+          />
+          <Tabs.Panel>{'Profile → ' + TWO}</Tabs.Panel>
+
+          <Tabs.Tab
+            label={
+              <Stack direction="row" style={{ alignItems: 'center', gap: theme.spacing(0.5) }}>
+                <Icon icon="mdi:cog" />
+                <Typography>Settings</Typography>
+              </Stack>
+            }
+          />
+          <Tabs.Panel>{'Settings → ' + THREE}</Tabs.Panel>
+        </Tabs>
+
+        {/* 8. Vertical - left centered ---------------------------------- */}
+        <Typography variant="h3">8. Vertical – left centered</Typography>
+        <Tabs orientation="vertical" centered style={{ height: 200 }}>
+          <Tabs.Tab label={<Icon icon="mdi:home" />} aria-label="Home" />
+          <Tabs.Panel>{'Home → ' + ONE}</Tabs.Panel>
+
+          <Tabs.Tab label={<Icon icon="mdi:account" />} aria-label="Profile" />
+          <Tabs.Panel>{'Profile → ' + TWO}</Tabs.Panel>
+
+          <Tabs.Tab label={<Icon icon="mdi:cog" />} aria-label="Settings" />
+          <Tabs.Panel>{'Settings → ' + THREE}</Tabs.Panel>
+        </Tabs>
+
         {/* Theme switcher -------------------------------------------------- */}
-        <Typography variant="h3">7. Theme coupling</Typography>
+        <Typography variant="h3">9. Theme coupling</Typography>
         <Button variant="outlined" onClick={toggleMode}>
           Toggle light / dark
         </Button>
