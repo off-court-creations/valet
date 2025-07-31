@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.22.3]
 - Add `centered` prop to `Tabs` to center tab headings
 
 ## [0.22.2]
@@ -312,6 +313,7 @@ responsive logic uses the selected `Surface` element to handle persistent margin
 ### Other
 - vibe coded
 
+[v0.22.3]: https://github.com/off-court-creations/valet/releases/tag/v0.22.3
 [v0.22.2]: https://github.com/off-court-creations/valet/releases/tag/v0.22.2
 [v0.22.1]: https://github.com/off-court-creations/valet/releases/tag/v0.22.1
 [v0.22.0]: https://github.com/off-court-creations/valet/releases/tag/v0.22.0
