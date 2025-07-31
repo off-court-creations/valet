@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+- Tabs: add `centerIcons` prop to optionally center tab icons
+
 ## [0.22.2]
 - Improved visual bug involving skrinking / resizing for `Table` and `Accordion`
 

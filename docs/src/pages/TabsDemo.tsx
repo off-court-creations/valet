@@ -43,7 +43,7 @@ export default function TabsDemoPage() {
 
         {/* 1. Horizontal - top (default) ---------------------------------- */}
         <Typography variant="h3">1. Horizontal – top (default)</Typography>
-        <Tabs>
+          <Tabs>
           <Tabs.Tab label="One"   />
           <Tabs.Panel>{ONE}</Tabs.Panel>
 
@@ -119,7 +119,7 @@ export default function TabsDemoPage() {
 
         {/* 6. Icon headings ----------------------------------------------- */}
         <Typography variant="h3">6. Icon headings</Typography>
-        <Tabs>
+        <Tabs centerIcons>
           <Tabs.Tab label={<Icon icon="mdi:home" />} aria-label="Home" />
           <Tabs.Panel>{'Home → ' + ONE}</Tabs.Panel>
 
