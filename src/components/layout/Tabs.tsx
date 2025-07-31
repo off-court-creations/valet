@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/layout/Tabs.tsx | valet
-// Grid-based <Tabs>; optional heading centering
+// Grid-based <Tabs>; optional heading centering + tab tooltips
 // ─────────────────────────────────────────────────────────────
 import React, {
   createContext,
@@ -17,6 +17,7 @@ import React, {
 import { styled }           from '../../css/createStyled';
 import { useTheme }         from '../../system/themeStore';
 import { preset }           from '../../css/stylePresets';
+import { Tooltip }          from '../widgets/Tooltip';
 import type { Presettable } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
@@ -163,6 +164,7 @@ export interface TabProps
     Presettable {
   index?: number;
   label?: ReactNode;
+  tooltip?: ReactNode;
 }
 export interface TabPanelProps
   extends React.HTMLAttributes<HTMLDivElement>,
@@ -270,7 +272,7 @@ export const Tabs: React.FC<TabsProps> & {
 
 /*───────────────────────────────────────────────────────────*/
 const Tab: React.FC<TabProps> = forwardRef<HTMLButtonElement, TabProps>(
-  ({ index = 0, label, preset: p, className, onKeyDown, onClick, ...rest }, ref) => {
+  ({ index = 0, label, tooltip, preset: p, className, onKeyDown, onClick, ...rest }, ref) => {
     const { theme } = useTheme();
     const { active, setActive, orientation, registerTab, totalTabs } = useTabs();
     const selected = active === index;
@@ -286,10 +288,10 @@ const Tab: React.FC<TabProps> = forwardRef<HTMLButtonElement, TabProps>(
       onKeyDown?.(e);
     };
 
-    return (
+    const btn = (
       <TabBtn
         {...rest}
-          ref={(el: HTMLButtonElement | null) => {
+        ref={(el: HTMLButtonElement | null) => {
           registerTab(index, el);
           if (typeof ref === 'function') ref(el);
           else if (ref) (ref as any).current = el;
@@ -299,7 +301,7 @@ const Tab: React.FC<TabProps> = forwardRef<HTMLButtonElement, TabProps>(
         aria-selected={selected}
         aria-controls={`panel-${index}`}
         tabIndex={selected ? 0 : -1}
-          onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+        onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
           setActive(index);
           onClick?.(e);
         }}
@@ -312,6 +314,8 @@ const Tab: React.FC<TabProps> = forwardRef<HTMLButtonElement, TabProps>(
         {label ?? rest.children}
       </TabBtn>
     );
+
+    return tooltip ? <Tooltip title={tooltip}>{btn}</Tooltip> : btn;
   },
 );
 Tab.displayName = 'Tabs.Tab';
