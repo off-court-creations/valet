@@ -120,13 +120,13 @@ export default function TabsDemoPage() {
         {/* 6. Icon headings ----------------------------------------------- */}
         <Typography variant="h3">6. Icon headings</Typography>
         <Tabs>
-          <Tabs.Tab label={<Icon icon="mdi:home" />} aria-label="Home" />
+          <Tabs.Tab label={<Icon icon="mdi:home" />} aria-label="Home" tooltip="Home" />
           <Tabs.Panel>{'Home → ' + ONE}</Tabs.Panel>
 
-          <Tabs.Tab label={<Icon icon="mdi:account" />} aria-label="Profile" />
+          <Tabs.Tab label={<Icon icon="mdi:account" />} aria-label="Profile" tooltip="Profile" />
           <Tabs.Panel>{'Profile → ' + TWO}</Tabs.Panel>
 
-          <Tabs.Tab label={<Icon icon="mdi:cog" />} aria-label="Settings" />
+          <Tabs.Tab label={<Icon icon="mdi:cog" />} aria-label="Settings" tooltip="Settings" />
           <Tabs.Panel>{'Settings → ' + THREE}</Tabs.Panel>
         </Tabs>
 
@@ -167,13 +167,13 @@ export default function TabsDemoPage() {
         {/* 8. Vertical - left centered ---------------------------------- */}
         <Typography variant="h3">8. Vertical – left centered</Typography>
         <Tabs orientation="vertical" centered style={{ height: 200 }}>
-          <Tabs.Tab label={<Icon icon="mdi:home" />} aria-label="Home" />
+          <Tabs.Tab label={<Icon icon="mdi:home" />} aria-label="Home" tooltip="Home" />
           <Tabs.Panel>{'Home → ' + ONE}</Tabs.Panel>
 
-          <Tabs.Tab label={<Icon icon="mdi:account" />} aria-label="Profile" />
+          <Tabs.Tab label={<Icon icon="mdi:account" />} aria-label="Profile" tooltip="Profile" />
           <Tabs.Panel>{'Profile → ' + TWO}</Tabs.Panel>
 
-          <Tabs.Tab label={<Icon icon="mdi:cog" />} aria-label="Settings" />
+          <Tabs.Tab label={<Icon icon="mdi:cog" />} aria-label="Settings" tooltip="Settings" />
           <Tabs.Panel>{'Settings → ' + THREE}</Tabs.Panel>
         </Tabs>
 

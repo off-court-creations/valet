@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+- Add optional `tooltip` prop to `Tabs.Tab` for hover hints
+
 ## [0.22.3]
 - Add `centered` prop to `Tabs` to center tab headings
 
