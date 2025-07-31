@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/primitives/Typography.tsx | valet
-// patch: force text wrapping – 2025‑07‑17
+// patch: force text wrapping; add noSelect prop – 2025‑07‑17
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
 import type { JSX } from 'react';
@@ -29,6 +29,7 @@ export interface TypographyProps
   bold?: boolean;
   italic?: boolean;
   centered?: boolean;
+  noSelect?: boolean;
   fontSize?: string;
   scale?: number;
   autoSize?: boolean;
@@ -61,6 +62,7 @@ export const Typography: React.FC<TypographyProps> = ({
   family,
   fontFamily,
   centered,
+  noSelect = false,
   preset: p,
   className,
   children,
@@ -88,6 +90,7 @@ export const Typography: React.FC<TypographyProps> = ({
         $bold: boolean;
         $italic: boolean;
         $center?: boolean;
+        $noSelect: boolean;
       }>`
         margin: 0;
         color: ${({ $color }) => $color || 'var(--valet-text-color, inherit)'};
@@ -113,15 +116,14 @@ export const Typography: React.FC<TypographyProps> = ({
             align-self: center;
             margin-inline: auto;
           `};
-        ${({ $variant }) =>
-          $variant === 'button'
-            ? `
-          user-select: none;
-          -webkit-user-select: none;
-          -ms-user-select: none;
-          -webkit-touch-callout: none;
-        `
-            : ''};
+        ${({ $noSelect }) =>
+          $noSelect &&
+          `
+            user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            -webkit-touch-callout: none;
+          `};
 
         /* Newline & wrapping guards */
         white-space: normal;
@@ -143,6 +145,7 @@ export const Typography: React.FC<TypographyProps> = ({
       $bold={bold}
       $italic={italic}
       $center={centered}
+      $noSelect={noSelect}
       className={[presetClasses, className].filter(Boolean).join(' ')}
     >
       {children}

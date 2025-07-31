@@ -81,10 +81,6 @@ const Root = styled('button')<{
     filter     0.2s ease;
 
   -webkit-tap-highlight-color: transparent;
-  user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  -webkit-touch-callout: none;
 
   @media (hover: hover) {
     &:hover:not(:disabled) {
@@ -218,7 +214,7 @@ export const Button: React.FC<ButtonProps> = ({
             variant="button"
             bold
             fontSize={font}
-            style={{ pointerEvents: 'none' }}
+            noSelect
           >
             {buffer}
           </Typography>
@@ -236,7 +232,7 @@ export const Button: React.FC<ButtonProps> = ({
         variant="button"
         bold
         fontSize={font}
-        style={{ pointerEvents: 'none' }}
+        noSelect
       >
         {buffer}
       </Typography>
@@ -248,7 +244,6 @@ export const Button: React.FC<ButtonProps> = ({
   return (
     <Root
       {...rest}
-      onContextMenu={(e: React.MouseEvent) => e.preventDefault()}
       style={{ '--valet-text-color': labelColor } as React.CSSProperties}
       className={[presetClasses, className].filter(Boolean).join(' ')}
       $variant={variant}
