@@ -108,7 +108,7 @@ export const Option: React.FC<MetroOptionProps> = ({
         ) : (
           <Icon size="lg">{icon}</Icon>
         )}
-        <Typography variant="h6" centered>
+        <Typography variant="h6" centered noSelect>
           {label}
         </Typography>
       </div>

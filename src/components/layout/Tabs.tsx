@@ -19,6 +19,7 @@ import { useTheme }         from '../../system/themeStore';
 import { preset }           from '../../css/stylePresets';
 import { Tooltip }          from '../widgets/Tooltip';
 import type { Presettable } from '../../types';
+import { Typography }       from '../primitives/Typography';
 
 /*───────────────────────────────────────────────────────────*/
 /* Context                                                   */
@@ -288,6 +289,8 @@ const Tab: React.FC<TabProps> = forwardRef<HTMLButtonElement, TabProps>(
       onKeyDown?.(e);
     };
 
+    const content = label ?? rest.children;
+
     const btn = (
       <TabBtn
         {...rest}
@@ -311,7 +314,13 @@ const Tab: React.FC<TabProps> = forwardRef<HTMLButtonElement, TabProps>(
         $orient={orientation}
         className={[p ? preset(p) : '', className].filter(Boolean).join(' ')}
       >
-        {label ?? rest.children}
+        {typeof content === 'string' || typeof content === 'number' ? (
+          <Typography variant="button" noSelect>
+            {content}
+          </Typography>
+        ) : (
+          content
+        )}
       </TabBtn>
     );
 

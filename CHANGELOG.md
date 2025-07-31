@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+- Add `noSelect` prop to `Typography` to disable text selection
+- Use `Typography` `noSelect` for `Accordion` headers, `Tabs` labels, and `MetroSelect` options
+- Use `Typography` `noSelect` in `Button` and drop redundant selection overrides
+
 ## [0.22.4]
 - Add optional `tooltip` prop to `Tabs.Tab` for hover hints
 
