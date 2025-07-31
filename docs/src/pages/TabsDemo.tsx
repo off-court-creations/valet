@@ -133,13 +133,34 @@ export default function TabsDemoPage() {
         {/* 7. Centered headings ------------------------------------------- */}
         <Typography variant="h3">7. Centered headings</Typography>
         <Tabs centered>
-          <Tabs.Tab label={<Icon icon="mdi:home" />} aria-label="Home" />
+          <Tabs.Tab
+            label={
+              <Stack direction="row" style={{ alignItems: 'center', gap: theme.spacing(0.5) }}>
+                <Icon icon="mdi:home" />
+                <Typography>Home</Typography>
+              </Stack>
+            }
+          />
           <Tabs.Panel>{'Home → ' + ONE}</Tabs.Panel>
 
-          <Tabs.Tab label={<Icon icon="mdi:account" />} aria-label="Profile" />
+          <Tabs.Tab
+            label={
+              <Stack direction="row" style={{ alignItems: 'center', gap: theme.spacing(0.5) }}>
+                <Icon icon="mdi:account" />
+                <Typography>Profile</Typography>
+              </Stack>
+            }
+          />
           <Tabs.Panel>{'Profile → ' + TWO}</Tabs.Panel>
 
-          <Tabs.Tab label={<Icon icon="mdi:cog" />} aria-label="Settings" />
+          <Tabs.Tab
+            label={
+              <Stack direction="row" style={{ alignItems: 'center', gap: theme.spacing(0.5) }}>
+                <Icon icon="mdi:cog" />
+                <Typography>Settings</Typography>
+              </Stack>
+            }
+          />
           <Tabs.Panel>{'Settings → ' + THREE}</Tabs.Panel>
         </Tabs>
 
