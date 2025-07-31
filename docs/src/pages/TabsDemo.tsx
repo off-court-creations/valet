@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// src/pages/TabsDemoPage.tsx | valet
-// Demonstrates placement-aware <Tabs/> with varied panel content.
+// src/pages/TabsDemo.tsx | valet
+// Demonstrates placement-aware <Tabs/> with varied panel content + icon centring.
 // ─────────────────────────────────────────────────────────────────────────────
 import { useState } from 'react';
 import {
@@ -130,8 +130,21 @@ export default function TabsDemoPage() {
           <Tabs.Panel>{'Settings → ' + THREE}</Tabs.Panel>
         </Tabs>
 
-        {/* Theme switcher -------------------------------------------------- */}
-        <Typography variant="h3">7. Theme coupling</Typography>
+        {/* 7. Centred icons ----------------------------------------------- */}
+        <Typography variant="h3">7. Centred icons</Typography>
+        <Tabs centered>
+          <Tabs.Tab label={<Icon icon="mdi:home" />} aria-label="Home" />
+          <Tabs.Panel>{'Home → ' + ONE}</Tabs.Panel>
+
+          <Tabs.Tab label={<Icon icon="mdi:account" />} aria-label="Profile" />
+          <Tabs.Panel>{'Profile → ' + TWO}</Tabs.Panel>
+
+          <Tabs.Tab label={<Icon icon="mdi:cog" />} aria-label="Settings" />
+          <Tabs.Panel>{'Settings → ' + THREE}</Tabs.Panel>
+        </Tabs>
+
+        {/* 8. Theme switcher -------------------------------------------------- */}
+        <Typography variant="h3">8. Theme coupling</Typography>
         <Button variant="outlined" onClick={toggleMode}>
           Toggle light / dark
         </Button>

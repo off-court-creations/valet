@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/widgets/Tabs.tsx | valet
-// Grid-based valet <Tabs> — bullet-proof placement: top / bottom / left / right
+// Grid-based valet <Tabs> — bullet-proof placement + optional icon centring
 // ─────────────────────────────────────────────────────────────
 import React, {
   createContext,
@@ -27,6 +27,7 @@ interface Ctx {
   orientation : 'horizontal' | 'vertical';
   registerTab : (i: number, el: HTMLButtonElement | null) => void;
   totalTabs   : number;
+  centered    : boolean;
 }
 const TabsCtx = createContext<Ctx | null>(null);
 const useTabs = () => {
@@ -89,6 +90,7 @@ const TabBtn = styled('button')<{
   $active  : boolean;
   $primary : string;
   $orient  : 'horizontal' | 'vertical';
+  $center  : boolean;
 }>`
   background: transparent;
   border: none;
@@ -105,7 +107,14 @@ const TabBtn = styled('button')<{
     $orient === 'vertical' ? 'width: 100%;' : 'min-width: 4rem;'}
 
   position: relative;
-  text-align: center;
+  display: flex;
+  flex-direction: ${({ $orient }) =>
+    $orient === 'vertical' ? 'column' : 'row'};
+  align-items: center;
+  justify-content: ${({ $center }) =>
+    $center ? 'center' : 'flex-start'};
+  text-align: ${({ $orient, $center }) =>
+    $orient === 'vertical' || $center ? 'center' : 'left'};
 
   &:focus-visible {
     outline: 2px solid ${({ $primary }) => $primary};
@@ -150,6 +159,7 @@ export interface TabsProps
   onTabChange?: (i: number) => void;
   orientation?: 'horizontal' | 'vertical';
   placement?: 'top' | 'bottom' | 'left' | 'right';
+  centered?: boolean;
 }
 export interface TabProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -173,6 +183,7 @@ export const Tabs: React.FC<TabsProps> & {
   defaultActive = 0,
   orientation = 'horizontal',
   placement: placementProp,
+  centered = false,
   onTabChange,
   preset: p,
   className,
@@ -223,8 +234,9 @@ export const Tabs: React.FC<TabsProps> & {
       orientation,
       registerTab,
       totalTabs: tabs.length,
+      centered,
     }),
-    [active, orientation, setActive, tabs.length],
+    [active, orientation, setActive, tabs.length, centered],
   );
 
   const cls = [p ? preset(p) : '', className].filter(Boolean).join(' ');
@@ -256,7 +268,8 @@ export const Tabs: React.FC<TabsProps> & {
 const Tab: React.FC<TabProps> = forwardRef<HTMLButtonElement, TabProps>(
   ({ index = 0, label, preset: p, className, onKeyDown, onClick, ...rest }, ref) => {
     const { theme } = useTheme();
-    const { active, setActive, orientation, registerTab, totalTabs } = useTabs();
+    const { active, setActive, orientation, registerTab, totalTabs, centered } =
+      useTabs();
     const selected = active === index;
 
     const nav = (e: KeyboardEvent<HTMLButtonElement>) => {
@@ -291,6 +304,7 @@ const Tab: React.FC<TabProps> = forwardRef<HTMLButtonElement, TabProps>(
         $active={selected}
         $primary={theme.colors.primary}
         $orient={orientation}
+        $center={centered}
         className={[p ? preset(p) : '', className].filter(Boolean).join(' ')}
       >
         {label ?? rest.children}
