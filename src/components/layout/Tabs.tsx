@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/widgets/Tabs.tsx | valet
+// src/components/layout/Tabs.tsx  | valet
 // Grid-based valet <Tabs> — bullet-proof placement: top / bottom / left / right
 // ─────────────────────────────────────────────────────────────
 import React, {
@@ -73,6 +73,7 @@ const Root = styled('div')<{
 /*───────────────────────────────────────────────────────────*/
 const TabList = styled('div')<{
   $orientation: 'horizontal' | 'vertical';
+  $center     : boolean;
 }>`
   display: flex;
   flex-direction: ${({ $orientation }) =>
@@ -81,6 +82,13 @@ const TabList = styled('div')<{
 
   ${({ $orientation }) =>
     $orientation === 'vertical' && 'width: max-content;'}
+
+  ${({ $center, $orientation }) =>
+    $center
+      ? $orientation === 'horizontal'
+        ? 'justify-content: center;'
+        : 'justify-content: center; align-self: stretch;'
+      : ''}
 `;
 
 /*───────────────────────────────────────────────────────────*/
@@ -150,6 +158,7 @@ export interface TabsProps
   onTabChange?: (i: number) => void;
   orientation?: 'horizontal' | 'vertical';
   placement?: 'top' | 'bottom' | 'left' | 'right';
+  centered?: boolean;
 }
 export interface TabProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -174,6 +183,7 @@ export const Tabs: React.FC<TabsProps> & {
   orientation = 'horizontal',
   placement: placementProp,
   onTabChange,
+  centered = false,
   preset: p,
   className,
   children,
@@ -242,11 +252,19 @@ export const Tabs: React.FC<TabsProps> & {
         $gap={gap}
         className={cls}
       >
-        {stripFirst && <TabList $orientation={orientation}>{tabs}</TabList>}
+        {stripFirst && (
+          <TabList $orientation={orientation} $center={centered}>
+            {tabs}
+          </TabList>
+        )}
 
         <Panel>{panels}</Panel>
 
-        {!stripFirst && <TabList $orientation={orientation}>{tabs}</TabList>}
+        {!stripFirst && (
+          <TabList $orientation={orientation} $center={centered}>
+            {tabs}
+          </TabList>
+        )}
       </Root>
     </TabsCtx.Provider>
   );

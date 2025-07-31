@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+- Added optional `centered` prop to `Tabs` for full-area heading centering
+
 ## [0.22.2]
 - Improved visual bug involving skrinking / resizing for `Table` and `Accordion`
 
