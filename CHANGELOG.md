@@ -4,10 +4,11 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.23.0]
 - Add `left` and `right` slots to `AppBar` for flexible placement
-- **Migration**: replace `icon`/`iconAlign` with `left`/`right`
-  - before: `<AppBar icon={<Icon />} iconAlign="left" />`
-  - after: `<AppBar left={<Icon />} right={<Button />} />`
+  - **Migration**: replace `icon`/`iconAlign` with `left`/`right`
+    - before: `<AppBar icon={<Icon />} iconAlign="left" />`
+    - after: `<AppBar left={<Icon />} right={<Button />} />`
 
 ## [0.22.5]
 - Add `noSelect` prop to `Typography` to disable text selection
@@ -325,7 +326,7 @@ responsive logic uses the selected `Surface` element to handle persistent margin
 ## [v0.2.1]
 ### Other
 - vibe coded
-
+[v0.23.0]: https://github.com/off-court-creations/valet/releases/tag/v0.23.0
 [v0.22.5]: https://github.com/off-court-creations/valet/releases/tag/v0.22.5
 [v0.22.4]: https://github.com/off-court-creations/valet/releases/tag/v0.22.4
 [v0.22.3]: https://github.com/off-court-creations/valet/releases/tag/v0.22.3
