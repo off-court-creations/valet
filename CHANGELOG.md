@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file. The format 
 ## Unreleased
 
 - Add `left` and `right` slots to `AppBar` for flexible placement
+- **Migration**: replace `icon`/`iconAlign` with `left`/`right`
+  - before: `<AppBar icon={<Icon />} iconAlign="left" />`
+  - after: `<AppBar left={<Icon />} right={<Button />} />`
 
 ## [0.22.5]
 - Add `noSelect` prop to `Typography` to disable text selection
