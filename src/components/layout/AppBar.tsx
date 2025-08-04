@@ -1,8 +1,8 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/layout/AppBar.tsx  | valet
-// minimal top navigation bar
+// left/right parking slots
 // ─────────────────────────────────────────────────────────────
-import React, { ReactElement, useLayoutEffect, useRef, useId } from 'react';
+import React, { useLayoutEffect, useRef, useId } from 'react';
 import { createPortal } from 'react-dom';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
@@ -10,7 +10,6 @@ import { useSurface } from '../../system/surfaceStore';
 import { shallow } from 'zustand/shallow';
 import { preset } from '../../css/stylePresets';
 import type { Presettable } from '../../types';
-import type { IconProps } from '../primitives/Icon';
 
 /*───────────────────────────────────────────────────────────*/
 export type AppBarToken = 'primary' | 'secondary' | 'tertiary';
@@ -20,8 +19,8 @@ export interface AppBarProps
     Presettable {
   color?: AppBarToken | string;
   textColor?: AppBarToken | string;
-  icon?: ReactElement<IconProps>;
-  iconPlacement?: 'left' | 'right';
+  left?: React.ReactNode;
+  right?: React.ReactNode;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -65,8 +64,8 @@ const RightWrap = styled('div')`
 export const AppBar: React.FC<AppBarProps> = ({
   color,
   textColor,
-  icon,
-  iconPlacement = 'left',
+  left,
+  right,
   preset: p,
   className,
   style,
@@ -137,10 +136,9 @@ export const AppBar: React.FC<AppBarProps> = ({
     >
       <BarBg $bg={bg} />
       <LeftWrap $gap={gap}>
-        {iconPlacement === 'left' && icon}
-        {children}
+        {left ?? children}
       </LeftWrap>
-      {iconPlacement === 'right' && icon && <RightWrap>{icon}</RightWrap>}
+      {right && <RightWrap>{right}</RightWrap>}
     </Bar>
   );
 
