@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+- Add disabled style for MetroSelect options
+
 ## [0.23.0]
 - Add `left` and `right` slots to `AppBar` for flexible placement
   - **Migration**: replace `icon`/`iconAlign` with `left`/`right`
