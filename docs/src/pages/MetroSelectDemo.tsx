@@ -118,7 +118,7 @@ export default function MetroSelectDemoPage() {
   // Sample option lists -------------------------------------------------
   const basic = [
     { icon: 'mdi:home', label: 'Home', value: 'home' },
-    { icon: 'mdi:briefcase', label: 'Work', value: 'work' },
+    { icon: 'mdi:briefcase', label: 'Work', value: 'work', disabled: true },
     { icon: 'mdi:airplane', label: 'Travel', value: 'travel' },
   ];
 

@@ -15,6 +15,7 @@ import { Icon } from '../primitives/Icon';
 import { Typography } from '../primitives/Typography';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
+import { toHex, toRgb, mix } from '../../helpers/color';
 import type { Presettable } from '../../types';
 
 export type Primitive = string | number;
@@ -60,12 +61,24 @@ export const Option: React.FC<MetroOptionProps> = ({
   className,
   ...rest
 }) => {
-  const { theme } = useTheme();
+  const { theme, mode } = useTheme();
   const { value: sel, setValue } = useMetro();
 
   const selected = sel !== null && String(sel) === String(value);
 
   const presetCls = p ? preset(p) : '';
+
+  const disabledColor = useMemo(
+    () =>
+      toHex(
+        mix(
+          toRgb(theme.colors.text),
+          toRgb(mode === 'dark' ? '#000' : '#fff'),
+          0.4,
+        ),
+      ),
+    [theme, mode],
+  );
 
   const innerStyle: React.CSSProperties = {
     paddingTop: theme.spacing(3),
@@ -95,9 +108,15 @@ export const Option: React.FC<MetroOptionProps> = ({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        borderColor: selected ? theme.colors.primary : undefined,
-        background: selected ? theme.colors.primary : undefined,
-        color: selected ? theme.colors.primaryText : undefined,
+        borderColor:
+          selected && !disabled
+            ? theme.colors.primary
+            : disabled
+            ? disabledColor
+            : undefined,
+        background: selected && !disabled ? theme.colors.primary : undefined,
+        color: disabled ? disabledColor : selected ? theme.colors.primaryText : undefined,
+        opacity: disabled ? 0.45 : 1,
         ...style,
       }}
       className={[presetCls, className].filter(Boolean).join(' ')}

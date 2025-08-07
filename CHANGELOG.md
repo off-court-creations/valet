@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.23.1]
+- Add disabled style for MetroSelect options
+
 ## [0.23.0]
 - Add `left` and `right` slots to `AppBar` for flexible placement
   - **Migration**: replace `icon`/`iconAlign` with `left`/`right`
@@ -326,6 +329,8 @@ responsive logic uses the selected `Surface` element to handle persistent margin
 ## [v0.2.1]
 ### Other
 - vibe coded
+
+[v0.23.1]: https://github.com/off-court-creations/valet/releases/tag/v0.23.1
 [v0.23.0]: https://github.com/off-court-creations/valet/releases/tag/v0.23.0
 [v0.22.5]: https://github.com/off-court-creations/valet/releases/tag/v0.22.5
 [v0.22.4]: https://github.com/off-court-creations/valet/releases/tag/v0.22.4
