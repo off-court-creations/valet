@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+- Add `fontFamily` prop to `TextField` and `RichChat` for custom input fonts
+
 ## [0.23.1]
 - Add disabled style for MetroSelect options
 
