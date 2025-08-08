@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.23.3]
+- Added `Skeleton` component
+- Prevent `Image` dragging to avoid ghost cursor
+
 ## [0.23.2]
 - Add `fontFamily` prop to `TextField` and `RichChat` for custom input fonts
 
@@ -333,6 +337,7 @@ responsive logic uses the selected `Surface` element to handle persistent margin
 ### Other
 - vibe coded
 
+[v0.23.3]: https://github.com/off-court-creations/valet/releases/tag/v0.23.3
 [v0.23.2]: https://github.com/off-court-creations/valet/releases/tag/v0.23.2
 [v0.23.1]: https://github.com/off-court-creations/valet/releases/tag/v0.23.1
 [v0.23.0]: https://github.com/off-court-creations/valet/releases/tag/v0.23.0
