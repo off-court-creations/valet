@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/fields/TextField.tsx  | valet
-// controlled text input integrating with FormControl
+// controlled text input integrating with FormControl; add fontFamily prop
 // ─────────────────────────────────────────────────────────────
 import React, {
   forwardRef,
@@ -29,6 +29,8 @@ interface FieldCommon extends Presettable {
   error?: boolean;
   /** Stretch the wrapper to fill available width */
   fullWidth?: boolean;
+  /** Override input font */
+  fontFamily?: string;
 }
 
 export type TextFieldProps =
@@ -97,6 +99,7 @@ export const TextField = forwardRef<
     helperText,
     error = false,
     fullWidth = false,
+    fontFamily,
     preset: presetName,
     className,
     rows,
@@ -167,6 +170,7 @@ export const TextField = forwardRef<
         value={controlledValue}
         defaultValue={defaultValue}
         onChange={handleChange}
+        style={fontFamily ? { fontFamily } : undefined}
       />
 
       {helperText && (
