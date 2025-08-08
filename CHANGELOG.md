@@ -4,11 +4,8 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
-- Add versatile `Skeleton` component with pulsing placeholder
-- Improve `Skeleton` fade transition and content-wrapping width
-- Fix `Skeleton` placeholder stretching to full container width
-- Smooth `Skeleton` fade by dropping scale transform and waiting for transition end
-- Stop `Skeleton` pulse once content appears and overlay placeholder above content
+## [0.23.3]
+- Added `Skeleton` component
 - Prevent `Image` dragging to avoid ghost cursor
 
 ## [0.23.2]
@@ -340,6 +337,7 @@ responsive logic uses the selected `Surface` element to handle persistent margin
 ### Other
 - vibe coded
 
+[v0.23.3]: https://github.com/off-court-creations/valet/releases/tag/v0.23.3
 [v0.23.2]: https://github.com/off-court-creations/valet/releases/tag/v0.23.2
 [v0.23.1]: https://github.com/off-court-creations/valet/releases/tag/v0.23.1
 [v0.23.0]: https://github.com/off-court-creations/valet/releases/tag/v0.23.0
