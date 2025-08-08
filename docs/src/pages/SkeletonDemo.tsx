@@ -24,6 +24,7 @@ export default function SkeletonDemoPage() {
   const { theme } = useTheme();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [imgLoading, setImgLoading] = useState(true);
 
   interface Row {
     prop: ReactNode;
@@ -117,6 +118,20 @@ export default function SkeletonDemoPage() {
                       height: 80,
                       background: theme.colors['backgroundAlt'],
                     }}
+                  />
+                </Skeleton>
+              </Stack>
+
+              <Stack compact>
+                <Typography variant="subtitle">Auto Image</Typography>
+                <Skeleton loading={imgLoading}>
+                  <Image
+                    src="https://picsum.photos/400/301"
+                    alt="Random scenic"
+                    width={160}
+                    height={80}
+                    rounded={4}
+                    onLoad={() => setImgLoading(false)}
                   />
                 </Skeleton>
               </Stack>

@@ -39,6 +39,7 @@ const Wrapper = styled('span')`
 const Placeholder = styled('span')<{
   $bg: string;
   $radius: string;
+  $loading: boolean;
 }>`
   position: absolute;
   top: 0;
@@ -47,7 +48,9 @@ const Placeholder = styled('span')<{
   height: 100%;
   border-radius: ${({ $radius }) => $radius};
   background: ${({ $bg }) => $bg};
-  animation: ${pulse} 1.5s ease-in-out infinite;
+  z-index: 1;
+  animation: ${({ $loading }) =>
+    $loading ? `${pulse} 1.5s ease-in-out infinite` : 'none'};
   pointer-events: none;
 `;
 
@@ -134,6 +137,7 @@ export const Skeleton = forwardRef<HTMLSpanElement, SkeletonProps>(
             aria-hidden="true"
             $bg={bg}
             $radius={radius}
+            $loading={loading}
             style={{
               opacity: loading ? 1 : 0,
               transition: `opacity ${fadeMs}ms ease`,
