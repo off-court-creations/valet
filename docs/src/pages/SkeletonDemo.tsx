@@ -110,7 +110,7 @@ export default function SkeletonDemoPage() {
 
               <Stack compact>
                 <Typography variant="subtitle">Rect</Typography>
-                <Skeleton loading={loading} variant="rect">
+                <Skeleton variant="rect">
                   <div
                     style={{
                       width: 160,
