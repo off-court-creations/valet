@@ -81,27 +81,45 @@ export default function SkeletonDemoPage() {
             </Button>
 
             <Stack spacing={1} style={{ marginTop: theme.spacing(1) }}>
-              <Skeleton loading={loading}>
-                <Typography variant="body">Text loads in…</Typography>
-              </Skeleton>
+              <Stack spacing={0.25}>
+                <Typography variant="subtitle">Text</Typography>
+                <Skeleton loading={loading}>
+                  <Typography variant="body">Text loads in…</Typography>
+                </Skeleton>
+              </Stack>
 
-              <Skeleton loading={loading}>
-                <Avatar email="support@gravatar.com" size="l" />
-              </Skeleton>
+              <Stack spacing={0.25}>
+                <Typography variant="subtitle">Avatar</Typography>
+                <Skeleton loading={loading}>
+                  <Avatar email="support@gravatar.com" size="l" />
+                </Skeleton>
+              </Stack>
 
-              <Skeleton loading={loading}>
-                <Image
-                  src="https://picsum.photos/400/300"
-                  alt="Loading kitten"
-                  width={160}
-                  height={80}
-                  rounded={4}
-                />
-              </Skeleton>
+              <Stack spacing={0.25}>
+                <Typography variant="subtitle">Image</Typography>
+                <Skeleton loading={loading}>
+                  <Image
+                    src="https://picsum.photos/400/300"
+                    alt="Loading kitten"
+                    width={160}
+                    height={80}
+                    rounded={4}
+                  />
+                </Skeleton>
+              </Stack>
 
-              <Skeleton loading={loading} variant="rect">
-                <div style={{ width: 160, height: 80, background: theme.colors['backgroundAlt'] }} />
-              </Skeleton>
+              <Stack spacing={0.25}>
+                <Typography variant="subtitle">Rect</Typography>
+                <Skeleton loading={loading} variant="rect">
+                  <div
+                    style={{
+                      width: 160,
+                      height: 80,
+                      background: theme.colors['backgroundAlt'],
+                    }}
+                  />
+                </Skeleton>
+              </Stack>
             </Stack>
           </Tabs.Panel>
 
