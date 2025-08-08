@@ -37,6 +37,8 @@ const Img = styled('img')<{
   height: ${({ $h }) => $h || 'auto'};
   object-fit: ${({ $fit }) => $fit};
   border-radius: ${({ $radius }) => $radius || 0};
+  user-select: none;
+  -webkit-user-drag: none;
 `;
 
 export const Image: React.FC<ImageProps> = ({
@@ -50,6 +52,9 @@ export const Image: React.FC<ImageProps> = ({
   preset: p,
   className,
   style,
+  draggable,
+  onDragStart,
+  loading: loadingAttr,
   ...rest
 }) => {
   const [ready, setReady] = useState(!lazy);
@@ -80,9 +85,14 @@ export const Image: React.FC<ImageProps> = ({
       $h={h}
       $fit={objectFit}
       $radius={r}
-      loading={lazy ? 'lazy' : rest.loading}
+      loading={lazy ? 'lazy' : loadingAttr}
       className={[presetCls, className].filter(Boolean).join(' ')}
       style={style}
+      draggable={draggable ?? false}
+      onDragStart={(e) => {
+        e.preventDefault();
+        onDragStart?.(e);
+      }}
     />
   );
 };
