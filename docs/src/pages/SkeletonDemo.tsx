@@ -8,6 +8,7 @@ import {
   Typography,
   Skeleton,
   Avatar,
+  Image,
   Button,
   Tabs,
   Table,
@@ -86,6 +87,16 @@ export default function SkeletonDemoPage() {
 
               <Skeleton loading={loading}>
                 <Avatar email="support@gravatar.com" size="l" />
+              </Skeleton>
+
+              <Skeleton loading={loading}>
+                <Image
+                  src="https://placecats.com/160/80"
+                  alt="Loading kitten"
+                  width={160}
+                  height={80}
+                  rounded={4}
+                />
               </Skeleton>
 
               <Skeleton loading={loading} variant="rect">
