@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.23.5]
 - Auto-hide `Skeleton` when wrapped image finishes loading
 
 ## [0.23.4]
@@ -342,6 +343,7 @@ responsive logic uses the selected `Surface` element to handle persistent margin
 ### Other
 - vibe coded
 
+[v0.23.5]: https://github.com/off-court-creations/valet/releases/tag/v0.23.5
 [v0.23.4]: https://github.com/off-court-creations/valet/releases/tag/v0.23.4
 [v0.23.3]: https://github.com/off-court-creations/valet/releases/tag/v0.23.3
 [v0.23.2]: https://github.com/off-court-creations/valet/releases/tag/v0.23.2
