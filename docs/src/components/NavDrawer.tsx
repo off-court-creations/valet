@@ -21,6 +21,7 @@ const primitives: [string, string][] = [
   ['Icon', '/icon-demo'],
   ['Image', '/image-demo'],
   ['Progress', '/progress-demo'],
+  ['Skeleton', '/skeleton-demo'],
   ['Typography', '/typography'],
   ['Video', '/video-demo'],
 ];
