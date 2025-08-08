@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file. The format 
 ## Unreleased
 
 - Add versatile `Skeleton` component with pulsing placeholder
+- Improve `Skeleton` fade transition and content-wrapping width
 
 ## [0.23.2]
 - Add `fontFamily` prop to `TextField` and `RichChat` for custom input fonts

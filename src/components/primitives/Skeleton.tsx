@@ -99,10 +99,11 @@ export const Skeleton = forwardRef<HTMLSpanElement, SkeletonProps>(
     const { theme } = useTheme();
     const bg = theme.colors.backgroundAlt;
 
+    const fadeMs = 400;
     const [show, setShow] = useState(loading);
     useEffect(() => {
       if (!loading) {
-        const t = setTimeout(() => setShow(false), 250);
+        const t = setTimeout(() => setShow(false), fadeMs);
         return () => clearTimeout(t);
       }
       setShow(true);
@@ -125,7 +126,11 @@ export const Skeleton = forwardRef<HTMLSpanElement, SkeletonProps>(
             aria-hidden="true"
             $bg={bg}
             $radius={radius}
-            style={{ opacity: loading ? 1 : 0, transition: 'opacity 0.25s ease' }}
+            style={{
+              opacity: loading ? 1 : 0,
+              transform: loading ? 'none' : 'scale(0.98)',
+              transition: `opacity ${fadeMs}ms ease, transform ${fadeMs}ms ease`,
+            }}
           />
         )}
         {el &&
@@ -133,9 +138,12 @@ export const Skeleton = forwardRef<HTMLSpanElement, SkeletonProps>(
             'aria-hidden': loading,
             style: {
               ...el.props.style,
+              ...(loading && resolved === 'text'
+                ? { display: 'inline-block', width: 'fit-content' }
+                : null),
               visibility: loading ? 'hidden' : undefined,
               opacity: loading ? 0 : 1,
-              transition: 'opacity 0.25s ease',
+              transition: `opacity ${fadeMs}ms ease`,
             },
           } as any)}
       </Wrapper>
