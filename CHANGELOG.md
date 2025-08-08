@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+- Allow `Skeleton` to display optional icon while loading
+
 ## [0.23.3]
 - Added `Skeleton` component
 - Prevent `Image` dragging to avoid ghost cursor

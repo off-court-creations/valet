@@ -17,6 +17,8 @@ export interface SkeletonProps
   loading?: boolean;
   /** Override detected placeholder shape */
   variant?: SkeletonVariant;
+  /** Optional icon rendered while loading */
+  icon?: React.ReactNode;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -41,6 +43,9 @@ const Placeholder = styled('span')<{
   $radius: string;
   $loading: boolean;
 }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: absolute;
   top: 0;
   left: 0;
@@ -89,6 +94,7 @@ export const Skeleton = forwardRef<HTMLSpanElement, SkeletonProps>(
     {
       loading = true,
       variant,
+      icon,
       preset: p,
       className,
       children,
@@ -143,7 +149,9 @@ export const Skeleton = forwardRef<HTMLSpanElement, SkeletonProps>(
               transition: `opacity ${fadeMs}ms ease`,
               willChange: 'opacity',
             }}
-          />
+          >
+            {loading && icon}
+          </Placeholder>
         )}
         {el &&
           React.cloneElement(el, {
