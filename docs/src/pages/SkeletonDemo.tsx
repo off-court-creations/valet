@@ -12,6 +12,7 @@ import {
   Button,
   Tabs,
   Table,
+  Icon,
   useTheme,
 } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
@@ -52,6 +53,12 @@ export default function SkeletonDemoPage() {
       type: <code>'text' | 'rect' | 'circle'</code>,
       default: <code>-</code>,
       description: 'Override inferred placeholder shape',
+    },
+    {
+      prop: <code>icon</code>,
+      type: <code>ReactNode</code>,
+      default: <code>-</code>,
+      description: 'Optional icon shown while loading',
     },
     {
       prop: <code>preset</code>,
@@ -119,6 +126,16 @@ export default function SkeletonDemoPage() {
                       background: theme.colors['backgroundAlt'],
                     }}
                   />
+                </Skeleton>
+              </Stack>
+
+              <Stack compact>
+                <Typography variant="subtitle">With icon</Typography>
+                <Skeleton
+                  loading={loading}
+                  icon={<Icon icon="mdi:clock-outline" />}
+                >
+                  <Typography variant="body">Loading with icon…</Typography>
                 </Skeleton>
               </Stack>
 
