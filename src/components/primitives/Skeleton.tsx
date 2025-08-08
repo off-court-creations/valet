@@ -92,7 +92,7 @@ function radiusFor(v: SkeletonVariant): string {
 export const Skeleton = forwardRef<HTMLSpanElement, SkeletonProps>(
   (
     {
-      loading = true,
+      loading,
       variant,
       icon,
       preset: p,
@@ -110,11 +110,16 @@ export const Skeleton = forwardRef<HTMLSpanElement, SkeletonProps>(
     const { theme } = useTheme();
     const bg = theme.colors.backgroundAlt;
 
+    const isControlled = loading !== undefined;
+    const [internalLoading, setInternalLoading] = useState(loading ?? true);
+    const activeLoading = isControlled ? loading! : internalLoading;
+
     const fadeMs = 400;
-    const [show, setShow] = useState(loading);
+    const [show, setShow] = useState(activeLoading);
     const phRef = useRef<HTMLSpanElement>(null);
+
     useEffect(() => {
-      if (!loading) {
+      if (!activeLoading) {
         const node = phRef.current;
         if (node) {
           const handler = () => setShow(false);
@@ -123,7 +128,11 @@ export const Skeleton = forwardRef<HTMLSpanElement, SkeletonProps>(
       } else {
         setShow(true);
       }
-    }, [loading]);
+    }, [activeLoading]);
+
+    useEffect(() => {
+      if (isControlled) setInternalLoading(loading!);
+    }, [isControlled, loading]);
 
     const presetCls = p ? preset(p) : '';
 
@@ -135,7 +144,7 @@ export const Skeleton = forwardRef<HTMLSpanElement, SkeletonProps>(
         ref={ref}
         style={style}
         className={[presetCls, className].filter(Boolean).join(' ')}
-        aria-busy={loading}
+        aria-busy={activeLoading}
       >
         {show && (
           <Placeholder
@@ -143,29 +152,41 @@ export const Skeleton = forwardRef<HTMLSpanElement, SkeletonProps>(
             aria-hidden="true"
             $bg={bg}
             $radius={radius}
-            $loading={loading}
+            $loading={activeLoading}
             style={{
-              opacity: loading ? 1 : 0,
+              opacity: activeLoading ? 1 : 0,
               transition: `opacity ${fadeMs}ms ease`,
               willChange: 'opacity',
             }}
           >
-            {loading && icon}
+            {activeLoading && icon}
           </Placeholder>
         )}
         {el &&
           React.cloneElement(el, {
-            'aria-hidden': loading,
+            'aria-hidden': activeLoading,
             style: {
               ...el.props.style,
-              ...(loading && resolved === 'text'
+              ...(activeLoading && resolved === 'text'
                 ? { display: 'inline-block', width: 'fit-content' }
                 : null),
-              visibility: loading ? 'hidden' : undefined,
-              opacity: loading ? 0 : 1,
+              visibility: activeLoading ? 'hidden' : undefined,
+              opacity: activeLoading ? 0 : 1,
               transition: `opacity ${fadeMs}ms ease`,
               willChange: 'opacity',
             },
+            ...(isControlled
+              ? null
+              : {
+                  onLoad: (e: any) => {
+                    el.props.onLoad?.(e);
+                    setInternalLoading(false);
+                  },
+                  onError: (e: any) => {
+                    el.props.onError?.(e);
+                    setInternalLoading(false);
+                  },
+                }),
           } as any)}
       </Wrapper>
     );
