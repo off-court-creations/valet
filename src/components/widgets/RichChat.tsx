@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/widgets/RichChat.tsx  | valet
-// Local chat component with embeddable content
+// Local chat component with embeddable content; add fontFamily prop
 // ─────────────────────────────────────────────────────────────
 import React, {
   useState,
@@ -47,6 +47,8 @@ export interface RichChatProps
   placeholder?: string;
   disableInput?: boolean;
   constrainHeight?: boolean;
+  /** Override input font */
+  fontFamily?: string;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -111,6 +113,7 @@ export const RichChat: React.FC<RichChatProps> = ({
   placeholder = 'Message…',
   disableInput = false,
   constrainHeight = true,
+  fontFamily,
   preset: p,
   className,
   style,
@@ -322,6 +325,7 @@ export const RichChat: React.FC<RichChatProps> = ({
                 rows={1}
                 placeholder={placeholder}
                 fullWidth
+                fontFamily={fontFamily}
               />
               <IconButton icon="carbon:send" type="submit" aria-label="Send" />
             </Stack>
