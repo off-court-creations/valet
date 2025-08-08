@@ -32,6 +32,8 @@ const pulse = keyframes`
 const Wrapper = styled('span')`
   display: inline-block;
   position: relative;
+  align-self: flex-start;
+  width: fit-content;
 `;
 
 const Placeholder = styled('span')<{
