@@ -80,22 +80,22 @@ export default function SkeletonDemoPage() {
               {loading ? 'Show content' : 'Show skeleton'}
             </Button>
 
-            <Stack spacing={1} style={{ marginTop: theme.spacing(1) }}>
-              <Stack spacing={0.25}>
+            <Stack compact>
+              <Stack compact>
                 <Typography variant="subtitle">Text</Typography>
                 <Skeleton loading={loading}>
                   <Typography variant="body">Text loads in…</Typography>
                 </Skeleton>
               </Stack>
 
-              <Stack spacing={0.25}>
+              <Stack compact>
                 <Typography variant="subtitle">Avatar</Typography>
                 <Skeleton loading={loading}>
                   <Avatar email="support@gravatar.com" size="l" />
                 </Skeleton>
               </Stack>
 
-              <Stack spacing={0.25}>
+              <Stack compact>
                 <Typography variant="subtitle">Image</Typography>
                 <Skeleton loading={loading}>
                   <Image
@@ -108,7 +108,7 @@ export default function SkeletonDemoPage() {
                 </Skeleton>
               </Stack>
 
-              <Stack spacing={0.25}>
+              <Stack compact>
                 <Typography variant="subtitle">Rect</Typography>
                 <Skeleton loading={loading} variant="rect">
                   <div
