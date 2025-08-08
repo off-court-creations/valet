@@ -91,7 +91,7 @@ export default function SkeletonDemoPage() {
 
               <Skeleton loading={loading}>
                 <Image
-                  src="https://placecats.com/160/80"
+                  src="https://picsum.photos/400/300"
                   alt="Loading kitten"
                   width={160}
                   height={80}
