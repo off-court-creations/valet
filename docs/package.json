@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@archway/valet": "0.23.2",
+    "@archway/valet": "0.23.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-dropzone": "^14.2.3",
