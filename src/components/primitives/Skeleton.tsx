@@ -2,7 +2,7 @@
 // src/components/primitives/Skeleton.tsx  | valet
 // Adaptive skeleton placeholder with content-aware sizing
 // ─────────────────────────────────────────────────────────────
-import React, { useEffect, useState, forwardRef } from 'react';
+import React, { useEffect, useState, forwardRef, useRef } from 'react';
 import { styled, keyframes } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
@@ -103,12 +103,17 @@ export const Skeleton = forwardRef<HTMLSpanElement, SkeletonProps>(
 
     const fadeMs = 400;
     const [show, setShow] = useState(loading);
+    const phRef = useRef<HTMLSpanElement>(null);
     useEffect(() => {
       if (!loading) {
-        const t = setTimeout(() => setShow(false), fadeMs);
-        return () => clearTimeout(t);
+        const node = phRef.current;
+        if (node) {
+          const handler = () => setShow(false);
+          node.addEventListener('transitionend', handler, { once: true });
+        }
+      } else {
+        setShow(true);
       }
-      setShow(true);
     }, [loading]);
 
     const presetCls = p ? preset(p) : '';
@@ -125,13 +130,14 @@ export const Skeleton = forwardRef<HTMLSpanElement, SkeletonProps>(
       >
         {show && (
           <Placeholder
+            ref={phRef}
             aria-hidden="true"
             $bg={bg}
             $radius={radius}
             style={{
               opacity: loading ? 1 : 0,
-              transform: loading ? 'none' : 'scale(0.98)',
-              transition: `opacity ${fadeMs}ms ease, transform ${fadeMs}ms ease`,
+              transition: `opacity ${fadeMs}ms ease`,
+              willChange: 'opacity',
             }}
           />
         )}
@@ -146,6 +152,7 @@ export const Skeleton = forwardRef<HTMLSpanElement, SkeletonProps>(
               visibility: loading ? 'hidden' : undefined,
               opacity: loading ? 0 : 1,
               transition: `opacity ${fadeMs}ms ease`,
+              willChange: 'opacity',
             },
           } as any)}
       </Wrapper>
