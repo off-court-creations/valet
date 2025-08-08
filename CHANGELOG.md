@@ -7,6 +7,8 @@ All notable changes to this project will be documented in this file. The format 
 - Add versatile `Skeleton` component with pulsing placeholder
 - Improve `Skeleton` fade transition and content-wrapping width
 - Fix `Skeleton` placeholder stretching to full container width
+- Smooth `Skeleton` fade by dropping scale transform and waiting for transition end
+- Stop `Skeleton` pulse once content appears and overlay placeholder above content
 - Prevent `Image` dragging to avoid ghost cursor
 
 ## [0.23.2]
