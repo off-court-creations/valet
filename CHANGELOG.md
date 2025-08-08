@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+- Auto-hide `Skeleton` when wrapped image finishes loading
+
 ## [0.23.4]
 - Allow `Skeleton` to display optional icon while loading
 
