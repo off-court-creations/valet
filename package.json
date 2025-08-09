@@ -39,7 +39,8 @@
     "prepublishOnly": "npm run build",
     "lint": "eslint --ignore-path .gitignore \"{src,docs}/**/*.{ts,tsx}\"",
     "lint:fix": "eslint --ignore-path .gitignore \"{src,docs}/**/*.{ts,tsx}\" --fix",
-    "format": "prettier --ignore-path .gitignore \"{src,docs}/**/*.{ts,tsx,js,jsx,json,md,css}\" --check"
+    "format": "prettier --ignore-path .gitignore \"{src,docs}/**/*.{ts,tsx,js,jsx,json,md,css}\" --check",
+    "format:fix": "prettier --ignore-path .gitignore \"{src,docs}/**/*.{ts,tsx,js,jsx,json,md,css}\" --write"
   },
   "dependencies": {
     "@iconify/react": "^6.0.0",
