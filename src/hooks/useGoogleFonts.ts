@@ -12,6 +12,8 @@ import {
   Font,
 } from '../helpers/fontLoader';
 
+const fontToName = (f: Font) => (typeof f === 'string' ? f : f.name);
+
 export function useGoogleFonts(
   extras: Font[] = [],
   options?: GoogleFontOptions,
@@ -19,6 +21,8 @@ export function useGoogleFonts(
   const start = useFonts((s) => s.start);
   const finish = useFonts((s) => s.finish);
   const themeFonts = useTheme((s) => s.theme.fonts);
+
+  // Build a de-duplicated, stable array of fonts to load
   const fonts = useMemo(() => {
     const all: Font[] = [
       themeFonts.heading,
@@ -26,23 +30,24 @@ export function useGoogleFonts(
       themeFonts.mono,
       ...extras,
     ];
-    const map = new Map<string, Font>();
-    all.forEach((f) => {
-      const key = typeof f === 'string' ? f : f.name;
-      if (!map.has(key)) map.set(key, f);
-    });
-    return Array.from(map.values());
-  }, [
-    themeFonts.heading,
-    themeFonts.body,
-    themeFonts.mono,
-    JSON.stringify(extras),
-  ]);
+    const seen = new Set<string>();
+    const out: Font[] = [];
+    for (const f of all) {
+      const name = fontToName(f);
+      if (!name || seen.has(name)) continue;
+      seen.add(name);
+      out.push(f);
+    }
+    return out;
+  }, [themeFonts.heading, themeFonts.body, themeFonts.mono, extras]);
+
+  // Inject <link>s as soon as possible; clean them up on change/unmount
   useInsertionEffect(() => {
     start();
     return injectFontLinks(fonts, options);
-  }, [fonts.join(','), options?.preload, start]);
+  }, [fonts, options, start]);
 
+  // Wait for fonts to load, then mark finished
   useEffect(() => {
     let active = true;
     (async () => {
@@ -55,5 +60,5 @@ export function useGoogleFonts(
     return () => {
       active = false;
     };
-  }, [fonts.join(','), finish]);
+  }, [fonts, finish]);
 }
