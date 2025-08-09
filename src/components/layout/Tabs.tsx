@@ -14,21 +14,21 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { styled }           from '../../css/createStyled';
-import { useTheme }         from '../../system/themeStore';
-import { preset }           from '../../css/stylePresets';
-import { Tooltip }          from '../widgets/Tooltip';
+import { styled } from '../../css/createStyled';
+import { useTheme } from '../../system/themeStore';
+import { preset } from '../../css/stylePresets';
+import { Tooltip } from '../widgets/Tooltip';
 import type { Presettable } from '../../types';
-import { Typography }       from '../primitives/Typography';
+import { Typography } from '../primitives/Typography';
 
 /*───────────────────────────────────────────────────────────*/
 /* Context                                                   */
 interface Ctx {
-  active      : number;
-  setActive   : (i: number) => void;
-  orientation : 'horizontal' | 'vertical';
-  registerTab : (i: number, el: HTMLButtonElement | null) => void;
-  totalTabs   : number;
+  active: number;
+  setActive: (i: number) => void;
+  orientation: 'horizontal' | 'vertical';
+  registerTab: (i: number, el: HTMLButtonElement | null) => void;
+  totalTabs: number;
 }
 const TabsCtx = createContext<Ctx | null>(null);
 const useTabs = () => {
@@ -41,7 +41,7 @@ const useTabs = () => {
 /* Grid container                                            */
 const Root = styled('div')<{
   $orientation: 'horizontal' | 'vertical';
-  $placement : 'top' | 'bottom' | 'left' | 'right';
+  $placement: 'top' | 'bottom' | 'left' | 'right';
   $gap: string;
 }>`
   width: 100%;
@@ -94,9 +94,9 @@ const TabList = styled('div')<{
 /*───────────────────────────────────────────────────────────*/
 /* Added -webkit-tap-highlight-color + touch-action to kill blue flash */
 const TabBtn = styled('button')<{
-  $active  : boolean;
-  $primary : string;
-  $orient  : 'horizontal' | 'vertical';
+  $active: boolean;
+  $primary: string;
+  $orient: 'horizontal' | 'vertical';
 }>`
   background: transparent;
   border: none;
@@ -127,7 +127,8 @@ const TabBtn = styled('button')<{
       $orient === 'horizontal'
         ? `left: 0; right: 0; bottom: -1px; height: 2px;`
         : `top: 0; bottom: 0; right: -1px; width: 2px;`}
-    background: ${({ $primary, $active }) => ($active ? $primary : 'transparent')};
+    background: ${({ $primary, $active }) =>
+      $active ? $primary : 'transparent'};
     transition: background 150ms ease;
   }
 `;
@@ -140,14 +141,15 @@ const Panel = styled('div')`
   overflow-y: auto;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE & Edge */
-  &::-webkit-scrollbar { display: none; }
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
   box-sizing: border-box;
   min-height: 0;
   max-height: 100%;
   max-width: 100%;
 `;
-
 
 /*───────────────────────────────────────────────────────────*/
 export interface TabsProps
@@ -194,9 +196,9 @@ export const Tabs: React.FC<TabsProps> & {
   const placement =
     placementProp ?? (orientation === 'horizontal' ? 'top' : 'left');
 
-  const controlled      = controlledActive !== undefined;
+  const controlled = controlledActive !== undefined;
   const [self, setSelf] = useState(defaultActive);
-  const active          = controlled ? controlledActive! : self;
+  const active = controlled ? controlledActive! : self;
 
   const refs = useRef<Record<number, HTMLButtonElement | null>>({});
   const registerTab = useCallback(
@@ -212,18 +214,24 @@ export const Tabs: React.FC<TabsProps> & {
     [controlled, onTabChange],
   );
 
-  const tabs: ReactElement[]   = [];
+  const tabs: ReactElement[] = [];
   const panels: ReactElement[] = [];
   React.Children.forEach(children, (child) => {
     if (!React.isValidElement(child)) return;
     const name = (child.type as any).displayName;
     if (name === 'Tabs.Tab')
       tabs.push(
-        React.cloneElement(child, { index: tabs.length, key: tabs.length } as any),
+        React.cloneElement(child, {
+          index: tabs.length,
+          key: tabs.length,
+        } as any),
       );
     if (name === 'Tabs.Panel')
       panels.push(
-        React.cloneElement(child, { index: panels.length, key: panels.length } as any),
+        React.cloneElement(child, {
+          index: panels.length,
+          key: panels.length,
+        } as any),
       );
   });
 
@@ -242,7 +250,7 @@ export const Tabs: React.FC<TabsProps> & {
   const gap = theme.spacing(1);
   const stripFirst =
     (orientation === 'horizontal' && placement === 'top') ||
-    (orientation === 'vertical'   && placement === 'left');
+    (orientation === 'vertical' && placement === 'left');
 
   return (
     <TabsCtx.Provider value={ctx}>
@@ -273,15 +281,28 @@ export const Tabs: React.FC<TabsProps> & {
 
 /*───────────────────────────────────────────────────────────*/
 const Tab: React.FC<TabProps> = forwardRef<HTMLButtonElement, TabProps>(
-  ({ index = 0, label, tooltip, preset: p, className, onKeyDown, onClick, ...rest }, ref) => {
+  (
+    {
+      index = 0,
+      label,
+      tooltip,
+      preset: p,
+      className,
+      onKeyDown,
+      onClick,
+      ...rest
+    },
+    ref,
+  ) => {
     const { theme } = useTheme();
-    const { active, setActive, orientation, registerTab, totalTabs } = useTabs();
+    const { active, setActive, orientation, registerTab, totalTabs } =
+      useTabs();
     const selected = active === index;
 
     const nav = (e: KeyboardEvent<HTMLButtonElement>) => {
       const horiz = orientation === 'horizontal';
-      const prev  = horiz ? 'ArrowLeft'  : 'ArrowUp';
-      const next  = horiz ? 'ArrowRight' : 'ArrowDown';
+      const prev = horiz ? 'ArrowLeft' : 'ArrowUp';
+      const next = horiz ? 'ArrowRight' : 'ArrowDown';
       if (e.key === prev || e.key === next) {
         e.preventDefault();
         setActive((active + (e.key === next ? 1 : -1) + totalTabs) % totalTabs);
@@ -356,7 +377,7 @@ const TabPanel: React.FC<TabPanelProps> = ({
 TabPanel.displayName = 'Tabs.Panel';
 
 /*───────────────────────────────────────────────────────────*/
-Tabs.Tab   = Tab;
+Tabs.Tab = Tab;
 Tabs.Panel = TabPanel;
 
 export default Tabs;

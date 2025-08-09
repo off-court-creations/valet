@@ -2,7 +2,7 @@
 // src/pages/SkeletonDemo.tsx | valet
 // Showcase of Skeleton component
 // ─────────────────────────────────────────────────────────────
-import { 
+import {
   Surface,
   Stack,
   Typography,

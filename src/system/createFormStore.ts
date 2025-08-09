@@ -7,7 +7,7 @@ import { createWithEqualityFn as create } from 'zustand/traditional';
 /**
  * Runtime state slice for any form.
  */
-export interface FormStore<T extends Record<string, any>> {
+export interface FormStore<T extends Record<string, unknown>> {
   /** Current values keyed by field name. */
   values: T;
   /** Imperative setter for a single field. */
@@ -24,7 +24,7 @@ export interface FormStore<T extends Record<string, any>> {
  * const useLoginForm = createFormStore({ email:'', password:'' });
  * ```
  */
-export function createFormStore<T extends Record<string, any>>(initial: T) {
+export function createFormStore<T extends Record<string, unknown>>(initial: T) {
   return create<FormStore<T>>((set) => ({
     values: initial,
     setField: (key, value) =>

@@ -1,5 +1,13 @@
 // src/pages/AppBarDemo.tsx
-import { Surface, Stack, Typography, Button, AppBar, Icon, useTheme } from '@archway/valet';
+import {
+  Surface,
+  Stack,
+  Typography,
+  Button,
+  AppBar,
+  Icon,
+  useTheme,
+} from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../components/NavDrawer';
 
@@ -17,47 +25,31 @@ export default function AppBarDemoPage() {
             <Typography fontFamily="Cabin">AppBar Slots</Typography>
           </>
         }
-        right={<Button variant="outlined" onClick={toggleMode}>Toggle</Button>}
+        right={
+          <Button variant="outlined" onClick={toggleMode}>
+            Toggle
+          </Button>
+        }
       />
       <Stack>
         <Typography variant="h2" bold>
           AppBar Showcase
         </Typography>
-        <Typography variant="subtitle">
-          Basic usage and positioning
-        </Typography>
+        <Typography variant="subtitle">Basic usage and positioning</Typography>
         <Typography variant="body">
           Scroll to see content move under the AppBar.
         </Typography>
 
         <Stack>
-          <Typography variant="h1">
-            placeholder
-          </Typography>
-          <Typography variant="h1">
-            placeholder
-          </Typography>
-          <Typography variant="h1">
-            placeholder
-          </Typography>
-          <Typography variant="h1">
-            placeholder
-          </Typography>
-          <Typography variant="h1">
-            placeholder
-          </Typography>
-          <Typography variant="h1">
-            placeholder
-          </Typography>
-          <Typography variant="h1">
-            placeholder
-          </Typography>
-          <Typography variant="h1">
-            placeholder
-          </Typography>
-          <Typography variant="h1">
-            placeholder
-          </Typography>
+          <Typography variant="h1">placeholder</Typography>
+          <Typography variant="h1">placeholder</Typography>
+          <Typography variant="h1">placeholder</Typography>
+          <Typography variant="h1">placeholder</Typography>
+          <Typography variant="h1">placeholder</Typography>
+          <Typography variant="h1">placeholder</Typography>
+          <Typography variant="h1">placeholder</Typography>
+          <Typography variant="h1">placeholder</Typography>
+          <Typography variant="h1">placeholder</Typography>
 
           <Button variant="outlined" onClick={toggleMode}>
             Toggle light / dark

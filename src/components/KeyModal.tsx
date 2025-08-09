@@ -17,7 +17,8 @@ export interface KeyModalProps {
 }
 
 export default function KeyModal({ open, onClose }: KeyModalProps) {
-  const { apiKey, provider, cipher, setKey, applyPassphrase, clearKey } = useAIKey();
+  const { apiKey, provider, cipher, setKey, applyPassphrase, clearKey } =
+    useAIKey();
   const [value, setValue] = useState('');
   const [remember, setRemember] = useState(false);
   const [passphrase, setPassphrase] = useState('');
@@ -32,12 +33,18 @@ export default function KeyModal({ open, onClose }: KeyModalProps) {
       <Panel centered compact style={{ maxWidth: 480 }}>
         <Stack spacing={1}>
           <Typography variant="h3" bold>
-            {cipher ? `Unlock ${prov === 'anthropic' ? 'Anthropic' : 'OpenAI'} key` : 'Paste your API key'}
+            {cipher
+              ? `Unlock ${prov === 'anthropic' ? 'Anthropic' : 'OpenAI'} key`
+              : 'Paste your API key'}
           </Typography>
 
           {!cipher && (
             <input
-              style={{ fontFamily: 'monospace', width: '100%', padding: '0.5rem' }}
+              style={{
+                fontFamily: 'monospace',
+                width: '100%',
+                padding: '0.5rem',
+              }}
               type="password"
               placeholder="sk-..."
               value={value}
@@ -77,7 +84,9 @@ export default function KeyModal({ open, onClose }: KeyModalProps) {
           )}
 
           {!cipher && (
-            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <label
+              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+            >
               <input
                 type="checkbox"
                 checked={remember}
@@ -89,7 +98,9 @@ export default function KeyModal({ open, onClose }: KeyModalProps) {
 
           <Button
             fullWidth
-            disabled={cipher ? !passphrase : (!value.trim() || (remember && !passphrase))}
+            disabled={
+              cipher ? !passphrase : !value.trim() || (remember && !passphrase)
+            }
             onClick={async () => {
               setError('');
               if (cipher) {
@@ -112,7 +123,14 @@ export default function KeyModal({ open, onClose }: KeyModalProps) {
           </Button>
 
           {(cipher || apiKey) && (
-            <Button variant="outlined" fullWidth onClick={() => { clearKey(); onClose?.(); }}>
+            <Button
+              variant="outlined"
+              fullWidth
+              onClick={() => {
+                clearKey();
+                onClose?.();
+              }}
+            >
               Delete stored key
             </Button>
           )}
@@ -121,4 +139,3 @@ export default function KeyModal({ open, onClose }: KeyModalProps) {
     </Modal>
   );
 }
-

@@ -2,6 +2,7 @@
 // src/helpers/fontLoader.ts | valet
 // shared utilities for injecting Google and custom fonts
 // ─────────────────────────────────────────────────────────────
+
 export interface GoogleFontOptions {
   preload?: boolean;
 }
@@ -16,12 +17,21 @@ export type Font = string | CustomFont;
 const loadedFonts = new Set<string>();
 const customFaces = new Map<string, FontFace>();
 
-export function injectFontLinks(fonts: Font[], options: GoogleFontOptions = {}): () => void {
+// If your lib.dom typings don't include FontFaceSet.add/delete, add a global
+// augmentation in src/types/fontface.d.ts as suggested earlier.
+
+export function injectFontLinks(
+  fonts: Font[],
+  options: GoogleFontOptions = {},
+): () => void {
   const { preload = true } = options;
   const added: HTMLLinkElement[] = [];
 
   const googleFonts = fonts.filter((f): f is string => typeof f === 'string');
-  if (googleFonts.length && !document.getElementById('valet-fonts-preconnect')) {
+  if (
+    googleFonts.length &&
+    !document.getElementById('valet-fonts-preconnect')
+  ) {
     const preconnect1 = document.createElement('link');
     preconnect1.id = 'valet-fonts-preconnect';
     preconnect1.rel = 'preconnect';
@@ -39,6 +49,7 @@ export function injectFontLinks(fonts: Font[], options: GoogleFontOptions = {}):
   fonts.forEach((font) => {
     if (typeof font === 'string') {
       if (!font || loadedFonts.has(font)) return;
+
       const formatted = font.replace(/ /g, '+');
       const href = `https://fonts.googleapis.com/css2?family=${formatted}:wght@400;700&display=swap`;
 
@@ -58,9 +69,11 @@ export function injectFontLinks(fonts: Font[], options: GoogleFontOptions = {}):
       link.crossOrigin = 'anonymous';
       document.head.appendChild(link);
       added.push(link);
+
       loadedFonts.add(font);
     } else {
       if (!font.name || loadedFonts.has(font.name)) return;
+
       if (preload) {
         const preloadLink = document.createElement('link');
         preloadLink.rel = 'preload';
@@ -72,17 +85,31 @@ export function injectFontLinks(fonts: Font[], options: GoogleFontOptions = {}):
       }
 
       const face = new FontFace(font.name, `url(${font.src})`);
-      (document as any).fonts.add(face);
-      face.load().catch(() => {});
+      document.fonts.add(face);
+      // Ignore failures (network/unsupported) without empty-catch
+      void face.load().catch(() => void 0);
+
       customFaces.set(font.name, face);
       loadedFonts.add(font.name);
     }
   });
 
   return () => {
-    added.forEach((el) => document.head.removeChild(el));
-    fonts.forEach((f) => loadedFonts.delete(typeof f === 'string' ? f : f.name));
+    added.forEach((el) => {
+      if (el.parentNode) el.parentNode.removeChild(el);
+    });
+    fonts.forEach((f) => {
+      const key = typeof f === 'string' ? f : f.name;
+      loadedFonts.delete(key);
+      if (typeof f !== 'string') customFaces.delete(f.name);
+    });
   };
+}
+
+function nextFrame(): Promise<void> {
+  return new Promise<void>((resolve) => {
+    requestAnimationFrame(() => resolve());
+  });
 }
 
 export async function waitForFonts(fonts: Font[]): Promise<void> {
@@ -91,21 +118,24 @@ export async function waitForFonts(fonts: Font[]): Promise<void> {
       if (typeof font === 'string') {
         return document.fonts.load(`400 1em ${font}`);
       }
-      const face =
-        customFaces.get(font.name) ||
-        new FontFace(font.name, `url(${font.src})`);
-      if (!customFaces.has(font.name)) {
+      const existing = customFaces.get(font.name);
+      const face = existing ?? new FontFace(font.name, `url(${font.src})`);
+      if (!existing) {
         customFaces.set(font.name, face);
-        (document as any).fonts.add(face);
+        document.fonts.add(face);
       }
       return face.load();
-    })
+    }),
   );
-  if ((document as any).fonts?.ready) {
-    await (document as any).fonts.ready;
-  }
-  await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
-  await new Promise((r) => setTimeout(r, 200));
+
+  await document.fonts.ready;
+
+  // Let layout/paint settle before returning (two frames)
+  await nextFrame();
+  await nextFrame();
+
+  // Small safety delay for late layout
+  await new Promise<void>((r) => setTimeout(r, 200));
 }
 
 export {

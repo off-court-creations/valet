@@ -22,7 +22,7 @@ export const useForm = <T extends Record<string, any>>() => {
 /*───────────────────────────────────────────────────────────────*/
 /* Props & component                                             */
 export interface FormControlProps<T extends Record<string, any>>
-  /*  Exclude the native onSubmit so we can supply our typed version  */
+/*  Exclude the native onSubmit so we can supply our typed version  */
   extends Omit<React.FormHTMLAttributes<HTMLFormElement>, 'onSubmit'>,
     Presettable {
   /**
@@ -33,10 +33,7 @@ export interface FormControlProps<T extends Record<string, any>>
   /**
    * Fires after native submit is intercepted – gives you typed values.
    */
-  onSubmitValues?: (
-    values: T,
-    event: React.FormEvent<HTMLFormElement>
-  ) => void;
+  onSubmitValues?: (values: T, event: React.FormEvent<HTMLFormElement>) => void;
 }
 
 export function FormControl<T extends Record<string, any>>({
@@ -47,12 +44,12 @@ export function FormControl<T extends Record<string, any>>({
   children,
   ...rest
 }: FormControlProps<T>) {
-  const store = useStore();                 // ← typed FormStore<T>
+  const store = useStore(); // ← typed FormStore<T>
   const presetClasses = p ? preset(p) : '';
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    onSubmitValues?.(store.values, e);      // values is <T>
+    onSubmitValues?.(store.values, e); // values is <T>
   };
 
   return (

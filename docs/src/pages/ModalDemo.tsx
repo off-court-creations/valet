@@ -21,10 +21,13 @@ import NavDrawer from '../components/NavDrawer';
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Presets                                                                    */
 // A bold red alert preset
-definePreset('alertDanger', (t) => `
+definePreset(
+  'alertDanger',
+  (t) => `
   background : ${t.colors['error']};
   color      : #fff;
-`);
+`,
+);
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Demo page                                                                  */
@@ -46,7 +49,8 @@ export default function ModalDemoPage() {
           Modal Showcase
         </Typography>
         <Typography variant="subtitle">
-          Explore dialog vs alert semantics, controlled state, size props, and more.
+          Explore dialog vs alert semantics, controlled state, size props, and
+          more.
         </Typography>
 
         {/* 1. Simple dialog ------------------------------------------------ */}
@@ -74,28 +78,41 @@ export default function ModalDemoPage() {
 
         {/* 2. Alert modal -------------------------------------------------- */}
         <Typography variant="h3">2. Alert modal</Typography>
-        <Button color="error" variant="contained" onClick={() => setAlertOpen(true)}>
+        <Button
+          color="error"
+          variant="contained"
+          onClick={() => setAlertOpen(true)}
+        >
           Delete item…
         </Button>
         <Modal
           variant="alert"
           open={alertOpen}
           onClose={() => setAlertOpen(false)}
-          title={<><Icon style={{ marginRight: 8 }} /> Confirm delete</>}
+          title={
+            <>
+              <Icon style={{ marginRight: 8 }} /> Confirm delete
+            </>
+          }
           preset="alertDanger"
           actions={
             <>
               <Button variant="outlined" onClick={() => setAlertOpen(false)}>
                 Cancel
               </Button>
-              <Button variant="contained" color="error" onClick={() => setAlertOpen(false)}>
+              <Button
+                variant="contained"
+                color="error"
+                onClick={() => setAlertOpen(false)}
+              >
                 Delete
               </Button>
             </>
           }
         >
           <Typography>
-            This action is <strong>permanent</strong>. Are you sure you want to continue?
+            This action is <strong>permanent</strong>. Are you sure you want to
+            continue?
           </Typography>
         </Modal>
 
@@ -109,7 +126,9 @@ export default function ModalDemoPage() {
           open={controlledOpen}
           onClose={() => setControlledOpen(false)}
           title="Externally controlled"
-          actions={<Button onClick={() => setControlledOpen(false)}>Okay</Button>}
+          actions={
+            <Button onClick={() => setControlledOpen(false)}>Okay</Button>
+          }
         >
           <Typography>Visibility is managed by external buttons.</Typography>
         </Modal>
@@ -125,7 +144,9 @@ export default function ModalDemoPage() {
           disableBackdropClick
           disableEscapeKeyDown
           title="Try clicking backdrop or pressing ESC"
-          actions={<Button onClick={() => setNoBackdropCloseOpen(false)}>Close</Button>}
+          actions={
+            <Button onClick={() => setNoBackdropCloseOpen(false)}>Close</Button>
+          }
         >
           <Typography>
             Both backdrop click and ESC key are disabled for this modal.
@@ -135,7 +156,9 @@ export default function ModalDemoPage() {
         {/* 5. Size props --------------------------------------------------- */}
         <Typography variant="h3">5. maxWidth & fullWidth</Typography>
         <Stack direction="row">
-          <Button onClick={() => setDialogOpen(true)}>maxWidth (default)</Button>
+          <Button onClick={() => setDialogOpen(true)}>
+            maxWidth (default)
+          </Button>
           <Button onClick={() => setControlledOpen(true)}>fullWidth</Button>
         </Stack>
         {/* reuse existing modals for brevity */}
@@ -147,7 +170,11 @@ export default function ModalDemoPage() {
         </Button>
 
         {/* Back nav -------------------------------------------------------- */}
-        <Button size="lg" onClick={() => navigate(-1)} style={{ marginTop: theme.spacing(1) }}>
+        <Button
+          size="lg"
+          onClick={() => navigate(-1)}
+          style={{ marginTop: theme.spacing(1) }}
+        >
           ← Back
         </Button>
       </Stack>

@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "skipLibCheck": false,
+    "moduleResolution": "Bundler",
+    "lib": ["DOM", "ES2020"]
+  },
+  "include": ["src"]
+}

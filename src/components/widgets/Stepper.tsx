@@ -36,7 +36,8 @@ const StepItem = styled('div')<{ $active: boolean; $primary: string }>`
     counter-increment: step;
     content: counter(step);
     border: 1px solid ${({ $primary }) => $primary};
-    background: ${({ $active, $primary }) => ($active ? $primary : 'transparent')};
+    background: ${({ $active, $primary }) =>
+      $active ? $primary : 'transparent'};
     color: ${({ $active }) => ($active ? '#fff' : 'inherit')};
     border-radius: 999px;
     width: 1.5rem;

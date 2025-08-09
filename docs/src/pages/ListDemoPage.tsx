@@ -52,7 +52,9 @@ export default function ListDemoPage() {
       <NavDrawer />
       <Stack>
         {/* Header --------------------------------------------------------- */}
-        <Typography variant="h2" bold>List Showcase</Typography>
+        <Typography variant="h2" bold>
+          List Showcase
+        </Typography>
         <Typography variant="subtitle">
           Drag‑and‑drop reordering, striped rows, hover states & more
         </Typography>
@@ -66,7 +68,9 @@ export default function ListDemoPage() {
         />
 
         {/* 2. striped & hoverable props ---------------------------------- */}
-        <Typography variant="h3">2. <code>striped</code> & <code>hoverable</code></Typography>
+        <Typography variant="h3">
+          2. <code>striped</code> & <code>hoverable</code>
+        </Typography>
         <Panel variant="alt" style={{ padding: theme.spacing(1) }}>
           <Stack direction="row" wrap={false}>
             <Checkbox

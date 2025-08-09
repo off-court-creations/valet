@@ -16,11 +16,11 @@ import React, {
   KeyboardEvent,
   createContext,
 } from 'react';
-import { styled }           from '../../css/createStyled';
-import { preset }           from '../../css/stylePresets';
-import { useTheme }         from '../../system/themeStore';
+import { styled } from '../../css/createStyled';
+import { preset } from '../../css/stylePresets';
+import { useTheme } from '../../system/themeStore';
 import { toRgb, mix, toHex } from '../../helpers/color';
-import type { Theme }       from '../../system/themeStore';
+import type { Theme } from '../../system/themeStore';
 import type { Presettable } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
@@ -28,10 +28,10 @@ import type { Presettable } from '../../types';
 export type RadioSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 interface RadioCtx {
-  value   : string | null;
+  value: string | null;
   setValue: (v: string) => void;
-  name    : string;
-  size    : RadioSize | number | string;
+  name: string;
+  size: RadioSize | number | string;
 }
 
 const RadioGroupCtx = createContext<RadioCtx | null>(null);
@@ -44,11 +44,27 @@ const useRadioGroup = () => {
 /*───────────────────────────────────────────────────────────*/
 /* Size map helper                                           */
 const createSizeMap = (t: Theme) => ({
-  xs: { indicator: '0.75rem', dot: 'calc(0.75rem * 0.6)', gapInner: t.spacing(0.75) },
-  sm: { indicator: '1rem',    dot: 'calc(1rem * 0.6)',    gapInner: t.spacing(0.75) },
-  md: { indicator: '1.25rem', dot: 'calc(1.25rem * 0.6)', gapInner: t.spacing(0.75) },
-  lg: { indicator: '1.5rem',  dot: 'calc(1.5rem * 0.6)',  gapInner: t.spacing(1)    },
-  xl: { indicator: '1.75rem', dot: 'calc(1.75rem * 0.6)', gapInner: t.spacing(1)    },
+  xs: {
+    indicator: '0.75rem',
+    dot: 'calc(0.75rem * 0.6)',
+    gapInner: t.spacing(0.75),
+  },
+  sm: { indicator: '1rem', dot: 'calc(1rem * 0.6)', gapInner: t.spacing(0.75) },
+  md: {
+    indicator: '1.25rem',
+    dot: 'calc(1.25rem * 0.6)',
+    gapInner: t.spacing(0.75),
+  },
+  lg: {
+    indicator: '1.5rem',
+    dot: 'calc(1.5rem * 0.6)',
+    gapInner: t.spacing(1),
+  },
+  xl: {
+    indicator: '1.75rem',
+    dot: 'calc(1.75rem * 0.6)',
+    gapInner: t.spacing(1),
+  },
 });
 
 /*───────────────────────────────────────────────────────────*/
@@ -75,9 +91,9 @@ const OptionLabel = styled('label')<{
 
 const HiddenInput = styled('input')`
   position: absolute;
-  opacity : 0;
-  width   : 0;
-  height  : 0;
+  opacity: 0;
+  width: 0;
+  height: 0;
   pointer-events: none;
 `;
 
@@ -86,15 +102,15 @@ const HiddenInput = styled('input')`
 export interface RadioGroupProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'>,
     Presettable {
-  value?        : string;
-  defaultValue? : string;
-  name?         : string;
-  row?          : boolean;
-  size?         : RadioSize | number | string;
+  value?: string;
+  defaultValue?: string;
+  name?: string;
+  row?: boolean;
+  size?: RadioSize | number | string;
   /** Gap between options */
-  spacing?      : number | string;
-  onChange?     : (val: string) => void;
-  children      : ReactNode;
+  spacing?: number | string;
+  onChange?: (val: string) => void;
+  children: ReactNode;
 }
 
 export interface RadioProps
@@ -103,9 +119,9 @@ export interface RadioProps
       'type' | 'size' | 'onChange'
     >,
     Presettable {
-  value   : string;
-  label?  : string;
-  size?   : RadioSize | number | string;
+  value: string;
+  label?: string;
+  size?: RadioSize | number | string;
   children?: ReactNode;
 }
 
@@ -125,9 +141,9 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
   children,
   ...rest
 }) => {
-  const { theme }  = useTheme();
-  const id         = useId();
-  const name       = nameProp ?? `radio-group-${id}`;
+  const { theme } = useTheme();
+  const id = useId();
+  const name = nameProp ?? `radio-group-${id}`;
   const controlled = valueProp !== undefined;
 
   /* Controlled/uncontrolled wiring ------------------------------------- */
@@ -172,7 +188,9 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
     );
     if (!radios?.length) return;
 
-    const idx  = Array.from(radios).findIndex((r) => r === document.activeElement);
+    const idx = Array.from(radios).findIndex(
+      (r) => r === document.activeElement,
+    );
     const step = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : -1;
     const next = (idx + step + radios.length) % radios.length;
     radios[next]?.focus();
@@ -181,7 +199,8 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
 
   /* preset → className ------------------------------------------------- */
   const presetCls = p ? preset(p) : '';
-  const mergedCls = [presetCls, className].filter(Boolean).join(' ') || undefined;
+  const mergedCls =
+    [presetCls, className].filter(Boolean).join(' ') || undefined;
 
   return (
     <RadioGroupCtx.Provider value={ctxVal}>
@@ -193,8 +212,8 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
         className={mergedCls}
         style={{
           flexDirection: row ? 'row' : 'column',
-          alignItems   : row ? 'center' : 'flex-start',
-          gap          : gapCss,
+          alignItems: row ? 'center' : 'flex-start',
+          gap: gapCss,
           ...style,
         }}
       >
@@ -207,11 +226,11 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
 /*───────────────────────────────────────────────────────────*/
 /* Indicator helper                                          */
 interface IndicatorProps extends React.HTMLAttributes<HTMLSpanElement> {
-  checked      : boolean;
-  outerSize    : string;
-  dotSize      : string;
-  primary      : string;
-  disabled     : boolean;
+  checked: boolean;
+  outerSize: string;
+  dotSize: string;
+  primary: string;
+  disabled: boolean;
   disabledColor: string;
 }
 
@@ -231,17 +250,17 @@ const Indicator: React.FC<IndicatorProps> = ({
       {...rest}
       aria-hidden
       style={{
-        width        : outerSize,
-        height       : outerSize,
-        minWidth     : outerSize,
-        borderRadius : '50%',
-        border       : `2px solid ${ring}`,
-        display      : 'inline-flex',
-        alignItems   : 'center',
+        width: outerSize,
+        height: outerSize,
+        minWidth: outerSize,
+        borderRadius: '50%',
+        border: `2px solid ${ring}`,
+        display: 'inline-flex',
+        alignItems: 'center',
         justifyContent: 'center',
-        transition   : 'box-shadow 120ms',
+        transition: 'box-shadow 120ms',
         backgroundColor: checked ? ring : undefined,
-        boxShadow    : checked
+        boxShadow: checked
           ? `inset 0 0 0 ${parseInt(outerSize, 10) / 2}px ${ring}`
           : undefined,
       }}
@@ -249,11 +268,11 @@ const Indicator: React.FC<IndicatorProps> = ({
       {checked && (
         <span
           style={{
-            width           : dotSize,
-            height          : dotSize,
-            borderRadius    : '50%',
-            backgroundColor : '#fff',
-            filter          : disabled ? 'grayscale(1)' : 'none',
+            width: dotSize,
+            height: dotSize,
+            borderRadius: '50%',
+            backgroundColor: '#fff',
+            filter: disabled ? 'grayscale(1)' : 'none',
           }}
         />
       )}
@@ -282,8 +301,8 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
     const { theme, mode } = useTheme();
     const { value: sel, setValue, name, size: groupSize } = useRadioGroup();
 
-    const token   = sizeProp ?? groupSize;
-    const map     = createSizeMap(theme);
+    const token = sizeProp ?? groupSize;
+    const map = createSizeMap(theme);
 
     let SZ: { indicator: string; dot: string; gapInner: string };
 
@@ -291,8 +310,8 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
       const ind = `${token}px`;
       SZ = {
         indicator: ind,
-        dot      : `calc(${ind} * 0.6)`,
-        gapInner : theme.spacing(0.75),
+        dot: `calc(${ind} * 0.6)`,
+        gapInner: theme.spacing(0.75),
       };
     } else if (map[token as RadioSize]) {
       SZ = map[token as RadioSize];
@@ -300,8 +319,8 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
       const ind = token as string;
       SZ = {
         indicator: ind,
-        dot      : `calc(${ind} * 0.6)`,
-        gapInner : theme.spacing(0.75),
+        dot: `calc(${ind} * 0.6)`,
+        gapInner: theme.spacing(0.75),
       };
     }
     const checked = sel === value;
@@ -319,7 +338,8 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
 
     /* preset → className ---------------------------------------------- */
     const presetCls = p ? preset(p) : '';
-    const mergedCls = [presetCls, className].filter(Boolean).join(' ') || undefined;
+    const mergedCls =
+      [presetCls, className].filter(Boolean).join(' ') || undefined;
 
     /*───────────────────────────────────────────────────────────────────*/
     return (
@@ -340,12 +360,12 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
           onChange={onChange}
         />
         <Indicator
-          checked       ={checked}
-          outerSize     ={SZ.indicator}
-          dotSize       ={SZ.dot}
-          primary       ={theme.colors.primary}
-          disabled      ={disabled}
-          disabledColor ={disabledColor}
+          checked={checked}
+          outerSize={SZ.indicator}
+          dotSize={SZ.dot}
+          primary={theme.colors.primary}
+          disabled={disabled}
+          disabledColor={disabledColor}
         />
         {label ?? children}
       </OptionLabel>

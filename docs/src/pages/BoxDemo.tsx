@@ -19,7 +19,7 @@ import NavDrawer from '../components/NavDrawer';
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Demo page                                                                  */
 export default function BoxDemoPage() {
-  const { theme, toggleMode } = useTheme();   // live theme switch
+  const { theme, toggleMode } = useTheme(); // live theme switch
 
   interface Row {
     prop: ReactNode;
@@ -85,7 +85,9 @@ export default function BoxDemoPage() {
           <Tabs.Panel>
             <Typography variant="h3">1. Default Box</Typography>
             <Box>
-              <Typography>(no props) — inherits parent background, uses theme text colour</Typography>
+              <Typography>
+                (no props) — inherits parent background, uses theme text colour
+              </Typography>
             </Box>
 
             <Typography variant="h3">2. background&nbsp;prop</Typography>
@@ -123,15 +125,25 @@ export default function BoxDemoPage() {
                 borderRadius: 12,
               }}
             >
-              <Typography>Dashed border, custom radius, padding via <code>style</code></Typography>
+              <Typography>
+                Dashed border, custom radius, padding via <code>style</code>
+              </Typography>
             </Box>
 
             <Typography variant="h3">5. Nested Boxes</Typography>
-            <Box background={theme.colors['primary']} style={{ padding: theme.spacing(1) }}>
-              <Box background={theme.colors['secondary']} style={{ padding: theme.spacing(1) }}>
+            <Box
+              background={theme.colors['primary']}
+              style={{ padding: theme.spacing(1) }}
+            >
+              <Box
+                background={theme.colors['secondary']}
+                style={{ padding: theme.spacing(1) }}
+              >
                 <Typography>
                   Child automatically receives&nbsp;
-                  <code style={{ color: 'var(--zero-text-color)' }}>--zero-text-color</code>
+                  <code style={{ color: 'var(--zero-text-color)' }}>
+                    --zero-text-color
+                  </code>
                 </Typography>
               </Box>
             </Box>
@@ -159,7 +171,9 @@ export default function BoxDemoPage() {
             </Stack>
 
             <Typography variant="h3">7. Theme coupling</Typography>
-            <Button variant="outlined" onClick={toggleMode}>Toggle light / dark mode</Button>
+            <Button variant="outlined" onClick={toggleMode}>
+              Toggle light / dark mode
+            </Button>
           </Tabs.Panel>
 
           <Tabs.Tab label="Reference" />

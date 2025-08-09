@@ -68,11 +68,12 @@ export const Dropzone: React.FC<DropzoneProps> = ({
     [files, multiple, maxFiles, onFilesChange, onDropCb],
   );
 
-  const {
-    getRootProps,
-    getInputProps,
-    isDragActive,
-  } = useDropzone({ accept, maxFiles, multiple, onDrop: handleDrop });
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    accept,
+    maxFiles,
+    multiple,
+    onDrop: handleDrop,
+  });
   const presetCls = p ? preset(p) : '';
 
   const previews = showPreviews && files.length > 0 && (
@@ -124,9 +125,22 @@ export const Dropzone: React.FC<DropzoneProps> = ({
   const fileList = showFileList && !showPreviews && files.length > 0 && (
     <Stack spacing={0.5} style={{ width: '100%' }}>
       {files.map((f, i) => (
-        <Stack key={i} direction="row" spacing={0.5} style={{ alignItems: 'center' }}>
+        <Stack
+          key={i}
+          direction="row"
+          spacing={0.5}
+          style={{ alignItems: 'center' }}
+        >
           <Icon icon={fileIcon(f.name)} />
-          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{f.name}</span>
+          <span
+            style={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {f.name}
+          </span>
         </Stack>
       ))}
     </Stack>
@@ -153,7 +167,9 @@ export const Dropzone: React.FC<DropzoneProps> = ({
     >
       <input {...getInputProps()} />
       <Icon icon="mdi:cloud-upload" size="lg" />
-      <div>{isDragActive ? 'Drop files here…' : 'Drag files or click to browse'}</div>
+      <div>
+        {isDragActive ? 'Drop files here…' : 'Drag files or click to browse'}
+      </div>
       {previews || fileList}
     </Panel>
   );

@@ -4,12 +4,12 @@
 // and persistent drag highlight.
 // ─────────────────────────────────────────────────────────────
 import React, { useEffect, useRef, useState } from 'react';
-import { styled }                 from '../../css/createStyled';
-import { useTheme }               from '../../system/themeStore';
-import { preset }                 from '../../css/stylePresets';
-import { Typography }             from '../primitives/Typography';
+import { styled } from '../../css/createStyled';
+import { useTheme } from '../../system/themeStore';
+import { preset } from '../../css/stylePresets';
+import { Typography } from '../primitives/Typography';
 import { stripe, toRgb, mix, toHex } from '../../helpers/color';
-import type { Presettable }       from '../../types';
+import type { Presettable } from '../../types';
 
 /* 1 × 1 transparent GIF to suppress the default drag preview */
 const EMPTY_IMG = (() => {
@@ -35,11 +35,11 @@ export interface ListProps<T>
 /*───────────────────────────────────────────────────────────*/
 /* Styled primitive                                          */
 const Root = styled('ul')<{
-  $striped : boolean;
-  $hover   : boolean;
-  $border  : string;
-  $stripe  : string;
-  $hoverBg : string;
+  $striped: boolean;
+  $hover: boolean;
+  $border: string;
+  $stripe: string;
+  $hoverBg: string;
 }>`
   list-style: none;
   margin: 0;
@@ -56,7 +56,9 @@ const Root = styled('ul')<{
     user-select: none;
     transition: background 120ms ease;
   }
-  li:last-child { border-bottom: none; }
+  li:last-child {
+    border-bottom: none;
+  }
 
   /* Zebra stripes */
   ${({ $striped, $stripe }) =>
@@ -64,7 +66,8 @@ const Root = styled('ul')<{
 
   /* Hover + drag highlight (row AND its cells) */
   ${({ $hover, $hoverBg }) =>
-    $hover && `
+    $hover &&
+    `
       li:hover,
       li:hover > *,
       li[data-dragging="true"],
@@ -80,7 +83,7 @@ export function List<T>({
   data,
   getTitle,
   getSubtitle,
-  striped   = false,
+  striped = false,
   hoverable,
   onReorder,
   preset: p,
@@ -92,13 +95,12 @@ export function List<T>({
 
   /* Colours */
   const stripeColor = stripe(theme.colors.background, theme.colors.text);
-  const hoverBg     = toHex(
+  const hoverBg = toHex(
     mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.25),
   );
 
   /* Determine whether hover is enabled */
-  const enableHover =
-    hoverable !== undefined ? hoverable : !striped;
+  const enableHover = hoverable !== undefined ? hoverable : !striped;
 
   /* State */
   const [items, setItems] = useState<T[]>(data);
@@ -108,21 +110,21 @@ export function List<T>({
   useEffect(() => setItems(data), [data]);
 
   /* Handlers -------------------------------------------------------------- */
-  const handleDragStart = (idx: number) =>
-    (e: React.DragEvent<HTMLLIElement>) => {
+  const handleDragStart =
+    (idx: number) => (e: React.DragEvent<HTMLLIElement>) => {
       dragFrom.current = idx;
       setDragIdx(idx);
       e.dataTransfer.setDragImage(EMPTY_IMG, 0, 0); // hide ghost
       e.dataTransfer.effectAllowed = 'move';
     };
 
-  const handleDragOver = (idx: number) =>
-    (e: React.DragEvent<HTMLLIElement>) => {
+  const handleDragOver =
+    (idx: number) => (e: React.DragEvent<HTMLLIElement>) => {
       e.preventDefault();
       const from = dragFrom.current;
       if (from === null || from === idx) return;
 
-      setItems(prev => {
+      setItems((prev) => {
         const arr = [...prev];
         const [moved] = arr.splice(from, 1);
         arr.splice(idx, 0, moved);
@@ -167,9 +169,7 @@ export function List<T>({
             {getTitle(item)}
           </Typography>
           {getSubtitle && (
-            <Typography variant="subtitle">
-              {getSubtitle(item)}
-            </Typography>
+            <Typography variant="subtitle">{getSubtitle(item)}</Typography>
           )}
         </li>
       ))}

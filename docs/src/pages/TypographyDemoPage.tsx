@@ -9,7 +9,7 @@ import {
   Button,
   Table,
   useTheme,
-  Tabs
+  Tabs,
 } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
@@ -35,7 +35,12 @@ export default function TypographyDemoPage() {
   const data: Row[] = [
     {
       prop: <code>variant</code>,
-      type: <code>'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'body' | 'subtitle' | 'button'</code>,
+      type: (
+        <code>
+          'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'body' | 'subtitle' |
+          'button'
+        </code>
+      ),
       default: <code>'body'</code>,
       description: 'Typography style preset',
     },
@@ -55,8 +60,7 @@ export default function TypographyDemoPage() {
       prop: <code>centered</code>,
       type: <code>boolean</code>,
       default: <code>false</code>,
-      description:
-        'Center-align text and element within flex/grid parents',
+      description: 'Center-align text and element within flex/grid parents',
     },
     {
       prop: <code>family</code>,
@@ -106,9 +110,7 @@ export default function TypographyDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography variant="h2">
-          Typography
-        </Typography>
+        <Typography variant="h2">Typography</Typography>
 
         <Tabs>
           <Tabs.Tab label="Usage" />
@@ -128,9 +130,7 @@ export default function TypographyDemoPage() {
 
             <Typography variant="h3">Styling props</Typography>
             <Panel fullWidth compact>
-              <Typography variant="body">
-                (regular body text)
-              </Typography>
+              <Typography variant="body">(regular body text)</Typography>
               <Typography variant="body" bold>
                 bold
               </Typography>
@@ -163,11 +163,15 @@ export default function TypographyDemoPage() {
               </Typography>
             </Panel>
 
-            <Typography variant="h3">Colour override &amp; adaptation</Typography>
+            <Typography variant="h3">
+              Colour override &amp; adaptation
+            </Typography>
             <Panel compact>
               <Typography color="#e91e63">color="#e91e63"</Typography>
               <Panel background={theme.colors['primary']}>
-                <Typography variant="h6">Inside Panel inherits text colour</Typography>
+                <Typography variant="h6">
+                  Inside Panel inherits text colour
+                </Typography>
               </Panel>
               <Button>
                 <Typography variant="button" bold>
@@ -185,7 +189,7 @@ export default function TypographyDemoPage() {
           <Tabs.Tab label="Reference" />
           <Tabs.Panel>
             <Typography variant="h3">Prop reference</Typography>
-            <Table data={data} columns={columns} constrainHeight={false}/>
+            <Table data={data} columns={columns} constrainHeight={false} />
           </Tabs.Panel>
         </Tabs>
 

@@ -72,7 +72,8 @@ const Row = styled('div')<{
 }>`
   display: flex;
   align-items: center;
-  justify-content: ${({ $from }) => ($from === 'user' ? 'flex-end' : 'flex-start')};
+  justify-content: ${({ $from }) =>
+    $from === 'user' ? 'flex-end' : 'flex-start'};
   padding-left: ${({ $left }) => $left};
   padding-right: ${({ $right }) => $right};
 `;
@@ -98,8 +99,12 @@ const Typing = styled('div')<{ $color: string }>`
     background: ${({ $color }) => $color};
     animation: ${typingDot} 1s infinite;
   }
-  & span:nth-child(2) { animation-delay: 0.2s; }
-  & span:nth-child(3) { animation-delay: 0.4s; }
+  & span:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  & span:nth-child(3) {
+    animation-delay: 0.4s;
+  }
 `;
 
 /*───────────────────────────────────────────────────────────*/
@@ -121,7 +126,7 @@ export const RichChat: React.FC<RichChatProps> = ({
 }) => {
   const { theme } = useTheme();
   const surface = useSurface(
-    s => ({
+    (s) => ({
       element: s.element,
       width: s.width,
       height: s.height,
@@ -139,13 +144,11 @@ export const RichChat: React.FC<RichChatProps> = ({
 
   const [text, setText] = useState('');
 
-  const inputDisabled = disableInput || messages.some(m => m.form);
+  const inputDisabled = disableInput || messages.some((m) => m.form);
 
   const calcCutoff = () => {
     if (typeof document === 'undefined') return 32;
-    const fs = parseFloat(
-      getComputedStyle(document.documentElement).fontSize,
-    );
+    const fs = parseFloat(getComputedStyle(document.documentElement).fontSize);
     return (isNaN(fs) ? 16 : fs) * 2;
   };
 
@@ -226,13 +229,17 @@ export const RichChat: React.FC<RichChatProps> = ({
       style={style}
       className={cls}
     >
-      <Wrapper ref={wrapRef} $gap={theme.spacing(3)} style={{ overflow: 'hidden' }}>
+      <Wrapper
+        ref={wrapRef}
+        $gap={theme.spacing(3)}
+        style={{ overflow: 'hidden' }}
+      >
         <Messages
           $gap={theme.spacing(1.5)}
           style={shouldConstrain ? { overflowY: 'auto', maxHeight } : undefined}
         >
           {messages
-            .filter(m => m.role !== 'system')
+            .filter((m) => m.role !== 'system')
             .map((m, i) => {
               const sidePad = portrait ? theme.spacing(8) : theme.spacing(24);
               const avatarPad = theme.spacing(1);
@@ -268,12 +275,16 @@ export const RichChat: React.FC<RichChatProps> = ({
                   <Panel
                     compact
                     variant="main"
-                    background={m.role === 'user' ? theme.colors.primary : undefined}
+                    background={
+                      m.role === 'user' ? theme.colors.primary : undefined
+                    }
                     style={{
                       maxWidth: '100%',
                       width: 'fit-content',
                       borderRadius: theme.spacing(0.5),
-                      animation: m.animate ? `${fadeIn} 0.2s ease-out` : undefined,
+                      animation: m.animate
+                        ? `${fadeIn} 0.2s ease-out`
+                        : undefined,
                       position: 'relative',
                     }}
                   >
@@ -284,7 +295,13 @@ export const RichChat: React.FC<RichChatProps> = ({
                         </Typography>
                       )}
                       {m.typing ? (
-                        <Typing $color={m.role === 'user' ? theme.colors.primaryText : theme.colors.text}>
+                        <Typing
+                          $color={
+                            m.role === 'user'
+                              ? theme.colors.primaryText
+                              : theme.colors.text
+                          }
+                        >
                           <span />
                           <span />
                           <span />
@@ -292,7 +309,9 @@ export const RichChat: React.FC<RichChatProps> = ({
                       ) : (
                         content
                       )}
-                      {Form && <Form onSubmit={(v: string) => onFormSubmit?.(v, i)} />}
+                      {Form && (
+                        <Form onSubmit={(v: string) => onFormSubmit?.(v, i)} />
+                      )}
                     </div>
                   </Panel>
                   {m.role === 'user' && userAvatar && (

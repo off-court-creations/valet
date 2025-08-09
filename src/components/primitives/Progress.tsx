@@ -3,17 +3,17 @@
 // strict‑optional clean build
 // ─────────────────────────────────────────────────────────────
 import React, { forwardRef } from 'react';
-import { styled, keyframes }           from '../../css/createStyled';
-import { useTheme }                    from '../../system/themeStore';
-import { preset }                      from '../../css/stylePresets';
-import type { Presettable }            from '../../types';
-import type { Theme }                  from '../../system/themeStore';
+import { styled, keyframes } from '../../css/createStyled';
+import { useTheme } from '../../system/themeStore';
+import { preset } from '../../css/stylePresets';
+import type { Presettable } from '../../types';
+import type { Theme } from '../../system/themeStore';
 
 /*───────────────────────────────────────────────────────────*/
 /* Public API                                                */
 export type ProgressVariant = 'linear' | 'circular';
-export type ProgressMode    = 'determinate' | 'indeterminate' | 'buffer';
-export type ProgressSize    = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+export type ProgressMode = 'determinate' | 'indeterminate' | 'buffer';
+export type ProgressSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 export interface ProgressProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'>,
@@ -36,28 +36,33 @@ export interface ProgressProps
 
 /*───────────────────────────────────────────────────────────*/
 /* Size tokens, strongly typed                               */
-interface CircularToken { box: string; stroke: string }
-interface LinearToken   { h: string }
+interface CircularToken {
+  box: string;
+  stroke: string;
+}
+interface LinearToken {
+  h: string;
+}
 
 type Tokens = {
   circular: Record<ProgressSize, CircularToken>;
-  linear  : Record<ProgressSize, LinearToken>;
+  linear: Record<ProgressSize, LinearToken>;
 };
 
 const geom = (_t: Theme): Tokens => ({
   circular: {
     xs: { box: '0.75rem', stroke: '0.09375rem' },
-    sm: { box: '1.5rem',  stroke: '0.1875rem'  },
-    md: { box: '2.25rem', stroke: '0.25rem'    },
-    lg: { box: '3rem',    stroke: '0.375rem'   },
+    sm: { box: '1.5rem', stroke: '0.1875rem' },
+    md: { box: '2.25rem', stroke: '0.25rem' },
+    lg: { box: '3rem', stroke: '0.375rem' },
     xl: { box: '3.75rem', stroke: '0.46875rem' },
   },
   linear: {
-    xs: { h: '0.125rem'  },
-    sm: { h: '0.25rem'   },
-    md: { h: '0.375rem'  },
-    lg: { h: '0.5rem'    },
-    xl: { h: '0.625rem'  },
+    xs: { h: '0.125rem' },
+    sm: { h: '0.25rem' },
+    md: { h: '0.375rem' },
+    lg: { h: '0.5rem' },
+    xl: { h: '0.625rem' },
   },
 });
 
@@ -151,12 +156,12 @@ const Bar = styled('div')<{
 export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
   (
     {
-      variant    = 'linear',
-      mode       = 'determinate',
-      value      = 0,
-      buffer     = 0,
-      size       = 'md',
-      showLabel  = false,
+      variant = 'linear',
+      mode = 'determinate',
+      value = 0,
+      buffer = 0,
+      size = 'md',
+      showLabel = false,
       color,
       preset: p,
       className,
@@ -166,12 +171,13 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
     ref,
   ) => {
     const { theme } = useTheme();
-    const tokens    = geom(theme);
-    const primary   = (color ?? theme.colors.primary) as string;
+    const tokens = geom(theme);
+    const primary = (color ?? theme.colors.primary) as string;
 
     /* preset → classes merge */
     const presetCls = p ? preset(p) : '';
-    const mergedCls = [presetCls, className].filter(Boolean).join(' ') || undefined;
+    const mergedCls =
+      [presetCls, className].filter(Boolean).join(' ') || undefined;
 
     /* accessibility roles / ARIA values */
     const ariaProps =
@@ -215,7 +221,7 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
             : boxPx / 8;
 
       const radius = (boxPx - strokePx) / 2;
-      const circ   = 2 * Math.PI * radius;
+      const circ = 2 * Math.PI * radius;
       const offset = ((100 - value) / 100) * circ;
 
       const svgProps =
@@ -233,9 +239,9 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
               },
             }
           : {
-              strokeDasharray : circ,
+              strokeDasharray: circ,
               strokeDashoffset: offset,
-              transition      : 'stroke-dashoffset 0.2s linear',
+              transition: 'stroke-dashoffset 0.2s linear',
             };
 
       return (
@@ -287,14 +293,14 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
       h = `calc(${size} / 6)`;
     }
     const barStyle: React.CSSProperties = {
-      width : `${value}%`,
-      right : 'auto',
-      left  : 0,
+      width: `${value}%`,
+      right: 'auto',
+      left: 0,
     };
     const bufferStyle: React.CSSProperties = {
-      width : `${buffer}%`,
-      right : 'auto',
-      left  : 0,
+      width: `${buffer}%`,
+      right: 'auto',
+      left: 0,
       background: primary + '55',
     };
 

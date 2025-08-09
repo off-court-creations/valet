@@ -10,9 +10,7 @@ import type { Presettable } from '../../types';
 
 export type PanelVariant = 'main' | 'alt';
 
-export interface PanelProps
-  extends React.ComponentProps<'div'>,
-    Presettable {
+export interface PanelProps extends React.ComponentProps<'div'>, Presettable {
   variant?: PanelVariant;
   fullWidth?: boolean;
   /** Explicit background override */
@@ -36,25 +34,27 @@ const Base = styled('div')<{
   box-sizing: border-box;
   vertical-align: top;
 
-  display      : ${({ $center, $full }) =>
+  display: ${({ $center, $full }) =>
     $center ? 'flex' : $full ? 'block' : 'inline-block'};
-  width        : ${({ $full }) => ($full ? '100%' : 'auto')};
-  align-self   : ${({ $full }) => ($full ? 'stretch' : 'flex-start')};
+  width: ${({ $full }) => ($full ? '100%' : 'auto')};
+  align-self: ${({ $full }) => ($full ? 'stretch' : 'flex-start')};
 
   /* Boundary guards */
-  max-width  : 100%;
-  max-height : 100%;
-  min-width  : 0;
-  min-height : 0;
+  max-width: 100%;
+  max-height: 100%;
+  min-width: 0;
+  min-height: 0;
 
   /* Prevent horizontal scrolling */
   overflow-x: hidden;
   overflow-y: auto;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE & Edge */
-  &::-webkit-scrollbar { display: none; }
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
-  margin       : ${({ $margin }) => $margin};
+  margin: ${({ $margin }) => $margin};
   & > * {
     padding: ${({ $pad }) => $pad};
   }
@@ -109,8 +109,8 @@ export const Panel: React.FC<PanelProps> = ({
   const bg: string | undefined = hasBgProp
     ? background!
     : !hasPresetBg && variant === 'main'
-    ? theme.colors.backgroundAlt
-    : undefined;
+      ? theme.colors.backgroundAlt
+      : undefined;
 
   /* Derive legible text colour */
   let textColour: string | undefined;
@@ -119,10 +119,10 @@ export const Panel: React.FC<PanelProps> = ({
       bg === theme.colors.primary
         ? theme.colors.primaryText
         : bg === theme.colors.secondary
-        ? theme.colors.secondaryText
-        : bg === theme.colors.tertiary
-        ? theme.colors.tertiaryText
-        : theme.colors.text;
+          ? theme.colors.secondaryText
+          : bg === theme.colors.tertiary
+            ? theme.colors.tertiaryText
+            : theme.colors.text;
   }
 
   const pad = theme.spacing(1);

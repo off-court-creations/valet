@@ -179,7 +179,9 @@ export default function MetroSelectDemoPage() {
                 <MetroSelect.Option key={o.value} {...o} />
               ))}
             </MetroSelect>
-            <Typography>Current: <b>{transport}</b></Typography>
+            <Typography>
+              Current: <b>{transport}</b>
+            </Typography>
 
             <Typography variant="h3">3. Many options</Typography>
             <MetroSelect gap={4}>
@@ -202,7 +204,11 @@ export default function MetroSelectDemoPage() {
             <Typography variant="h3" style={{ marginTop: theme.spacing(3) }}>
               Option props
             </Typography>
-            <Table data={optionData} columns={optionColumns} constrainHeight={false} />
+            <Table
+              data={optionData}
+              columns={optionColumns}
+              constrainHeight={false}
+            />
           </Tabs.Panel>
         </Tabs>
       </Stack>

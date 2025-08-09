@@ -113,7 +113,11 @@ export default function AvatarDemoPage() {
             >
               <Stack direction="row">
                 <Avatar email={email} />
-                <TextField name="email" type="email" placeholder="you@example.com" />
+                <TextField
+                  name="email"
+                  type="email"
+                  placeholder="you@example.com"
+                />
                 <Button type="submit">Show</Button>
               </Stack>
             </FormControl>

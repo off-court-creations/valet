@@ -7,8 +7,8 @@ export function md5(str: string): string {
   const x = str2binl(str);
   const len = str.length * 8;
 
-  x[len >> 5] |= 0x80 << (len % 32);
-  x[((len + 64 >>> 9) << 4) + 14] = len;
+  x[len >> 5] |= 0x80 << len % 32;
+  x[(((len + 64) >>> 9) << 4) + 14] = len;
 
   let a = 1732584193;
   let b = -271733879;
@@ -101,16 +101,48 @@ export function md5(str: string): string {
 function cmn(q: number, a: number, b: number, x: number, s: number, t: number) {
   return safe_add(rotl(safe_add(safe_add(a, q), safe_add(x, t)), s), b);
 }
-function ff(a: number, b: number, c: number, d: number, x: number, s: number, t: number) {
+function ff(
+  a: number,
+  b: number,
+  c: number,
+  d: number,
+  x: number,
+  s: number,
+  t: number,
+) {
   return cmn((b & c) | (~b & d), a, b, x, s, t);
 }
-function gg(a: number, b: number, c: number, d: number, x: number, s: number, t: number) {
+function gg(
+  a: number,
+  b: number,
+  c: number,
+  d: number,
+  x: number,
+  s: number,
+  t: number,
+) {
   return cmn((b & d) | (c & ~d), a, b, x, s, t);
 }
-function hh(a: number, b: number, c: number, d: number, x: number, s: number, t: number) {
+function hh(
+  a: number,
+  b: number,
+  c: number,
+  d: number,
+  x: number,
+  s: number,
+  t: number,
+) {
   return cmn(b ^ c ^ d, a, b, x, s, t);
 }
-function ii(a: number, b: number, c: number, d: number, x: number, s: number, t: number) {
+function ii(
+  a: number,
+  b: number,
+  c: number,
+  d: number,
+  x: number,
+  s: number,
+  t: number,
+) {
   return cmn(c ^ (b | ~d), a, b, x, s, t);
 }
 function safe_add(x: number, y: number) {
@@ -125,7 +157,7 @@ function str2binl(str: string) {
   const bin: number[] = [];
   const mask = 0xff;
   for (let i = 0; i < str.length * 8; i += 8) {
-    bin[i >> 5] |= (str.charCodeAt(i / 8) & mask) << (i % 32);
+    bin[i >> 5] |= (str.charCodeAt(i / 8) & mask) << i % 32;
   }
   return bin;
 }

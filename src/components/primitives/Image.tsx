@@ -64,9 +64,12 @@ export const Image: React.FC<ImageProps> = ({
     if (!lazy || ready || !('IntersectionObserver' in window)) return;
     const img = ref.current;
     if (!img) return;
-    const io = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) setReady(true);
-    }, { threshold: 0.1 });
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) setReady(true);
+      },
+      { threshold: 0.1 },
+    );
     io.observe(img);
     return () => io.disconnect();
   }, [lazy, ready]);

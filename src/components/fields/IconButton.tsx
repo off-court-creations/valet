@@ -3,17 +3,17 @@
 // strict‑optional clean build
 // ─────────────────────────────────────────────────────────────
 import React, { ReactElement, SVGProps } from 'react';
-import { styled }              from '../../css/createStyled';
-import { useTheme }            from '../../system/themeStore';
-import type { Theme }          from '../../system/themeStore';
-import { preset }              from '../../css/stylePresets';
-import type { Presettable }    from '../../types';
-import { Icon }                from '../primitives/Icon';
+import { styled } from '../../css/createStyled';
+import { useTheme } from '../../system/themeStore';
+import type { Theme } from '../../system/themeStore';
+import { preset } from '../../css/stylePresets';
+import type { Presettable } from '../../types';
+import { Icon } from '../primitives/Icon';
 
 /*───────────────────────────────────────────────────────────*/
 /* Public API                                                */
 export type IconButtonVariant = 'contained' | 'outlined';
-export type IconButtonSize    = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+export type IconButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 export interface IconButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -31,8 +31,8 @@ export interface IconButtonProps
 type Geometry = { d: string; icon: string };
 const geom: (t: Theme) => Record<IconButtonSize, Geometry> = () => ({
   xs: { d: '1.5rem', icon: '0.75rem' },
-  sm: { d: '2rem', icon: '1rem'   },
-  md: { d: '3rem', icon: '1.5rem'},
+  sm: { d: '2rem', icon: '1rem' },
+  md: { d: '3rem', icon: '1.5rem' },
   lg: { d: '4rem', icon: '2rem' },
   xl: { d: '5rem', icon: '2.5rem' },
 });
@@ -65,9 +65,9 @@ const Skin = styled('button')<{
   cursor: pointer;
   transition:
     background 0.2s ease,
-    color      0.2s ease,
-    filter     0.2s ease,
-    transform  0.1s ease;
+    color 0.2s ease,
+    filter 0.2s ease,
+    transform 0.1s ease;
 
   user-select: none;
 
@@ -81,8 +81,13 @@ const Skin = styled('button')<{
         `}
   }
 
-  &:active:not(:disabled)   { transform: scale(0.94); }
-  &:disabled                { opacity: 0.5; cursor: default; }
+  &:active:not(:disabled) {
+    transform: scale(0.94);
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
 
   /* ripple -------------------------------------------------------------- */
   &::after {
@@ -94,16 +99,21 @@ const Skin = styled('button')<{
     opacity: 0;
     transform: scale(0.8);
     pointer-events: none;
-    transition: transform 0.3s ease, opacity 0.3s ease;
+    transition:
+      transform 0.3s ease,
+      opacity 0.3s ease;
   }
-  &:active:not(:disabled)::after { opacity: 1; transform: scale(1); }
+  &:active:not(:disabled)::after {
+    opacity: 1;
+    transform: scale(1);
+  }
 `;
 
 /*───────────────────────────────────────────────────────────*/
 /* Component                                                 */
 export const IconButton: React.FC<IconButtonProps> = ({
   variant = 'contained',
-  size    = 'md',
+  size = 'md',
   icon,
   svg,
   iconColor,
@@ -129,17 +139,15 @@ export const IconButton: React.FC<IconButtonProps> = ({
   }
 
   const ripple =
-    variant === 'contained'
-      ? 'rgba(255,255,255,0.25)'
-      : 'rgba(0,0,0,0.1)';
+    variant === 'contained' ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.1)';
 
   const presetClasses = p ? preset(p) : '';
 
   const geomStyle: React.CSSProperties = {
-    width       : diam,
-    height      : diam,
-    minWidth    : diam,
-    minHeight   : diam,
+    width: diam,
+    height: diam,
+    minWidth: diam,
+    minHeight: diam,
     borderRadius: '50%',
   };
 

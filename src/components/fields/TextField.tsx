@@ -124,8 +124,7 @@ export const TextField = forwardRef<
     form = useForm<any>();
   } catch {}
 
-  const controlledValue =
-    form ? form.values[name] ?? '' : externalValue;
+  const controlledValue = form ? (form.values[name] ?? '') : externalValue;
 
   const setField = form ? form.setField : undefined;
 
@@ -140,9 +139,7 @@ export const TextField = forwardRef<
 
   const Element =
     as === 'textarea'
-      ? (FieldTextarea as React.ComponentType<
-          StyledFieldProps & TextareaProps
-        >)
+      ? (FieldTextarea as React.ComponentType<StyledFieldProps & TextareaProps>)
       : (FieldInput as React.ComponentType<StyledFieldProps & InputProps>);
 
   return (

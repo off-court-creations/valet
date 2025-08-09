@@ -11,7 +11,7 @@ import {
   TextField,
   FormControl,
   useTheme,
-  createFormStore
+  createFormStore,
 } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../components/NavDrawer';
@@ -19,14 +19,14 @@ import NavDrawer from '../components/NavDrawer';
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Local form store for the demo                                              */
 interface ContactValues {
-  name   : string;
-  email  : string;
+  name: string;
+  email: string;
   message: string;
 }
 
 const useContactForm = createFormStore<ContactValues>({
-  name   : '',
-  email  : '',
+  name: '',
+  email: '',
   message: '',
 });
 
@@ -34,7 +34,7 @@ const useContactForm = createFormStore<ContactValues>({
 /* Demo page                                                                  */
 export default function TextFieldDemoPage() {
   const { theme, toggleMode } = useTheme();
-  const navigate              = useNavigate();
+  const navigate = useNavigate();
 
   /* Stand-alone controlled example -------------------------------------- */
   const [username, setUsername] = useState('');
@@ -82,7 +82,11 @@ export default function TextFieldDemoPage() {
           <FormControl
             useStore={useContactForm}
             onSubmitValues={(vals) => alert(JSON.stringify(vals, null, 2))}
-            style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing(1) }}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: theme.spacing(1),
+            }}
           >
             <TextField name="name" label="Name" placeholder="Jane Doe" />
             <TextField

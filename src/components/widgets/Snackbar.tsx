@@ -18,13 +18,13 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { styled }               from '../../css/createStyled';
-import { useTheme }             from '../../system/themeStore';
-import { useSurface }           from '../../system/surfaceStore';
-import { shallow }              from 'zustand/shallow';
-import { preset }               from '../../css/stylePresets';
-import { Typography }           from '../primitives/Typography';
-import type { Presettable }     from '../../types';
+import { styled } from '../../css/createStyled';
+import { useTheme } from '../../system/themeStore';
+import { useSurface } from '../../system/surfaceStore';
+import { shallow } from 'zustand/shallow';
+import { preset } from '../../css/stylePresets';
+import { Typography } from '../primitives/Typography';
+import type { Presettable } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 /* Dismiss-context so nested children (e.g. IconButton) can
@@ -53,11 +53,11 @@ export interface SnackbarProps
 /*───────────────────────────────────────────────────────────*/
 /* Styled primitive                                          */
 const Root = styled('div')<{
-  $visible : boolean;
-  $spacing : string;
-  $outline : string;
-  $bg      : string;
-  $flex    : boolean;
+  $visible: boolean;
+  $spacing: string;
+  $outline: string;
+  $bg: string;
+  $flex: boolean;
 }>`
   position: fixed;
   left: 50%;
@@ -66,7 +66,9 @@ const Root = styled('div')<{
     translateY(${({ $visible }) => ($visible ? '0' : '0.75rem')});
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};
   pointer-events: ${({ $visible }) => ($visible ? 'auto' : 'none')};
-  transition: opacity 200ms ease, transform 200ms ease;
+  transition:
+    opacity 200ms ease,
+    transform 200ms ease;
 
   background: ${({ $bg }) => $bg};
   outline: 0.25rem solid ${({ $outline }) => $outline};
@@ -86,8 +88,8 @@ const Root = styled('div')<{
 /* Component                                                 */
 export const Snackbar: React.FC<SnackbarProps> = ({
   /* Behaviour ---------------------------------------------*/
-  open,               // controlled flag
-  onClose,            // callback when fully hidden
+  open, // controlled flag
+  onClose, // callback when fully hidden
   autoHideDuration = 4000,
   noStack = false,
 
@@ -102,21 +104,21 @@ export const Snackbar: React.FC<SnackbarProps> = ({
   ...rest
 }) => {
   const { theme } = useTheme();
-  const surface   = useSurface(
-    s => ({
+  const surface = useSurface(
+    (s) => ({
       registerChild: s.registerChild,
       unregisterChild: s.unregisterChild,
     }),
     shallow,
   );
-  const ref       = useRef<HTMLDivElement>(null);
-  const id        = useId();
+  const ref = useRef<HTMLDivElement>(null);
+  const id = useId();
 
   /* Controlled vs uncontrolled lifecycle ------------------*/
   const [internalOpen, setInternalOpen] = useState(
-    open !== undefined ? open : true
+    open !== undefined ? open : true,
   );
-  const visible      = open !== undefined ? open : internalOpen;
+  const visible = open !== undefined ? open : internalOpen;
   const [exiting, setExiting] = useState(false);
 
   /* Register with surfaceStore so pop-stack order remains
@@ -165,9 +167,8 @@ export const Snackbar: React.FC<SnackbarProps> = ({
     ) : null);
 
   /* Final className (preset + custom) ---------------------*/
-  const classes = [p ? preset(p) : '', className]
-    .filter(Boolean)
-    .join(' ') || undefined;
+  const classes =
+    [p ? preset(p) : '', className].filter(Boolean).join(' ') || undefined;
 
   /*────────────────────────────────────────────────────────*/
   return (

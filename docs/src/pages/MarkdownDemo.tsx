@@ -71,11 +71,14 @@ export default function MarkdownDemoPage() {
                 The <code>Markdown</code> component parses a Markdown string and
                 renders each element with equivalent valet components. Provide
                 your Markdown source via the <code>data</code> prop. Set
-                <code>codeBackground</code> to control fenced code block styling.
+                <code>codeBackground</code> to control fenced code block
+                styling.
               </Typography>
               <Typography variant="h3">Source text</Typography>
               <Panel preset="codePanel">
-                <pre style={{ whiteSpace: 'pre-wrap', margin: 0 }}>{sample}</pre>
+                <pre style={{ whiteSpace: 'pre-wrap', margin: 0 }}>
+                  {sample}
+                </pre>
               </Panel>
               <Typography variant="h3">Rendered output</Typography>
               <MarkdownRenderer data={sample} />

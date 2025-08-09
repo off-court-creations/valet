@@ -2,7 +2,14 @@
 // src/pages/ImageDemo.tsx | valet
 // Showcase of Image component
 // ─────────────────────────────────────────────────────────────
-import { Surface, Stack, Typography, Image, Button, useTheme } from '@archway/valet';
+import {
+  Surface,
+  Stack,
+  Typography,
+  Image,
+  Button,
+  useTheme,
+} from '@archway/valet';
 import NavDrawer from '../components/NavDrawer';
 import { useNavigate } from 'react-router-dom';
 

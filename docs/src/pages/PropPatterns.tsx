@@ -2,13 +2,7 @@
 // src/pages/PropPatterns.tsx  | valet
 // Getting started usage page
 // ─────────────────────────────────────────────────────────────
-import {
-  Surface,
-  Stack,
-  Typography,
-  Button,
-  Table,
-} from '@archway/valet';
+import { Surface, Stack, Typography, Button, Table } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import NavDrawer from '../components/NavDrawer';
 import { useNavigate } from 'react-router-dom';
@@ -36,14 +30,21 @@ export default function UsagePage() {
     },
     {
       prop: <code>size</code>,
-      purpose: <p><b>"xs", "sm", "md", "lg", "xl"</b> em-based tokens. Other <code>STRING</code> values are treated as CSS like <b>"24px"</b> or <b>"3em"</b></p>,
+      purpose: (
+        <p>
+          <b>"xs", "sm", "md", "lg", "xl"</b> em-based tokens. Other{' '}
+          <code>STRING</code> values are treated as CSS like <b>"24px"</b> or{' '}
+          <b>"3em"</b>
+        </p>
+      ),
       components:
         'Avatar, Button, Icon, IconButton, Checkbox, RadioGroup, Select, Slider, Progress',
     },
     {
       prop: <code>variant</code>,
       purpose: 'Switch visual style',
-      components: 'Button, IconButton, Panel, Modal, Progress, Typography, Tree',
+      components:
+        'Button, IconButton, Panel, Modal, Progress, Typography, Tree',
     },
     {
       prop: <code>color</code>,
@@ -78,8 +79,7 @@ export default function UsagePage() {
     {
       prop: <code>value</code>,
       purpose: 'Controlled value (with defaultValue)',
-      components:
-        'Slider, Select, Checkbox, Switch, RadioGroup, TextField',
+      components: 'Slider, Select, Checkbox, Switch, RadioGroup, TextField',
     },
     {
       prop: <code>orientation</code>,
@@ -92,7 +92,9 @@ export default function UsagePage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography variant="h2" bold>Property Patterns</Typography>
+        <Typography variant="h2" bold>
+          Property Patterns
+        </Typography>
         <Typography>
           Many props repeat across components. Use this table as a quick
           reference for the most common patterns.

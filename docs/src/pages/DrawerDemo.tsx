@@ -29,7 +29,6 @@ export default function DrawerDemoPage() {
         </Stack>
       </Drawer>
       <Stack
-       
         style={{ padding: theme.spacing(1), maxWidth: 980, margin: '0 auto' }}
       >
         <Typography variant="h2" bold>
@@ -57,7 +56,11 @@ export default function DrawerDemoPage() {
           <Button onClick={() => setRightOpen(true)}>Open</Button>
           <Button onClick={() => setRightOpen(false)}>Close</Button>
         </Stack>
-        <Drawer anchor="right" open={rightOpen} onClose={() => setRightOpen(false)}>
+        <Drawer
+          anchor="right"
+          open={rightOpen}
+          onClose={() => setRightOpen(false)}
+        >
           <Stack style={{ padding: theme.spacing(1) }}>
             <Typography variant="h4" bold>
               Controlled Drawer
@@ -68,7 +71,9 @@ export default function DrawerDemoPage() {
 
         {/* 3. Non-dismissable bottom drawer */}
         <Typography variant="h3">3. Disable backdrop & ESC</Typography>
-        <Button onClick={() => setStubbornOpen(true)}>Open stubborn drawer</Button>
+        <Button onClick={() => setStubbornOpen(true)}>
+          Open stubborn drawer
+        </Button>
         <Drawer
           anchor="bottom"
           open={stubbornOpen}
@@ -91,9 +96,7 @@ export default function DrawerDemoPage() {
             <Typography variant="h4" bold>
               Adaptive Drawer
             </Typography>
-            <Typography>
-              Persistent in landscape, icon in portrait.
-            </Typography>
+            <Typography>Persistent in landscape, icon in portrait.</Typography>
           </Stack>
         </Drawer>
 

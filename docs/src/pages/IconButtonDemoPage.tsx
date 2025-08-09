@@ -22,7 +22,9 @@ import NavDrawer from '../components/NavDrawer';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Style preset showcasing IconButton inside a card                            */
-definePreset('actionCard', t => `
+definePreset(
+  'actionCard',
+  (t) => `
     background   : ${t.colors['backgroundAlt']};
     padding      : ${t.spacing(1)};
     border-radius: 16px;
@@ -30,7 +32,8 @@ definePreset('actionCard', t => `
     display      : flex;
     align-items  : center;
     gap          : ${t.spacing(1)};
-  `);
+  `,
+);
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Example custom SVGs                                                         */
@@ -117,101 +120,101 @@ export default function IconButtonDemoPage() {
               Circular icon-only buttons with contained &amp; outlined styles
             </Typography>
 
-        {/* 1. Contained sizes --------------------------------------------- */}
-        <Typography variant="h3">1. Contained sizes</Typography>
-        <Stack direction="row">
-          <IconButton icon="mdi:play" size="xs" aria-label="Play xs" />
-          <IconButton icon="mdi:play" size="sm" aria-label="Play small" />
-          <IconButton icon="mdi:play" size="md" aria-label="Play medium" />
-          <IconButton icon="mdi:play" size="lg" aria-label="Play large" />
-          <IconButton icon="mdi:play" size="xl" aria-label="Play extra" />
-        </Stack>
+            {/* 1. Contained sizes --------------------------------------------- */}
+            <Typography variant="h3">1. Contained sizes</Typography>
+            <Stack direction="row">
+              <IconButton icon="mdi:play" size="xs" aria-label="Play xs" />
+              <IconButton icon="mdi:play" size="sm" aria-label="Play small" />
+              <IconButton icon="mdi:play" size="md" aria-label="Play medium" />
+              <IconButton icon="mdi:play" size="lg" aria-label="Play large" />
+              <IconButton icon="mdi:play" size="xl" aria-label="Play extra" />
+            </Stack>
 
-        {/* 2. Outlined sizes ---------------------------------------------- */}
-        <Typography variant="h3">2. Outlined sizes</Typography>
-        <Stack direction="row">
-          <IconButton
-            variant="outlined"
-            icon="mdi:pause"
-            size="xs"
-            aria-label="Pause xs"
-          />
-          <IconButton
-            variant="outlined"
-            icon="mdi:pause"
-            size="sm"
-            aria-label="Pause small"
-          />
-          <IconButton
-            variant="outlined"
-            icon="mdi:pause"
-            size="md"
-            aria-label="Pause medium"
-          />
-          <IconButton
-            variant="outlined"
-            icon="mdi:pause"
-            size="lg"
-            aria-label="Pause large"
-          />
-          <IconButton
-            variant="outlined"
-            icon="mdi:pause"
-            size="xl"
-            aria-label="Pause extra"
-          />
-        </Stack>
+            {/* 2. Outlined sizes ---------------------------------------------- */}
+            <Typography variant="h3">2. Outlined sizes</Typography>
+            <Stack direction="row">
+              <IconButton
+                variant="outlined"
+                icon="mdi:pause"
+                size="xs"
+                aria-label="Pause xs"
+              />
+              <IconButton
+                variant="outlined"
+                icon="mdi:pause"
+                size="sm"
+                aria-label="Pause small"
+              />
+              <IconButton
+                variant="outlined"
+                icon="mdi:pause"
+                size="md"
+                aria-label="Pause medium"
+              />
+              <IconButton
+                variant="outlined"
+                icon="mdi:pause"
+                size="lg"
+                aria-label="Pause large"
+              />
+              <IconButton
+                variant="outlined"
+                icon="mdi:pause"
+                size="xl"
+                aria-label="Pause extra"
+              />
+            </Stack>
 
-        {/* 3. Colour override --------------------------------------------- */}
-        <Typography variant="h3">3. Icon colour override</Typography>
-        <Stack direction="row">
-          <IconButton
-            icon="mdi:heart"
-            iconColor="#ff5e5e"
-            aria-label="Favorite"
-          />
-          <IconButton
-            variant="outlined"
-            icon="mdi:pencil"
-            iconColor={theme.colors['secondary']}
-            aria-label="Edit"
-          />
-        </Stack>
+            {/* 3. Colour override --------------------------------------------- */}
+            <Typography variant="h3">3. Icon colour override</Typography>
+            <Stack direction="row">
+              <IconButton
+                icon="mdi:heart"
+                iconColor="#ff5e5e"
+                aria-label="Favorite"
+              />
+              <IconButton
+                variant="outlined"
+                icon="mdi:pencil"
+                iconColor={theme.colors['secondary']}
+                aria-label="Edit"
+              />
+            </Stack>
 
-        {/* 4. Custom SVG --------------------------------------------------- */}
-        <Typography variant="h3">4. Custom SVG graphics</Typography>
-        <Stack direction="row">
-          <IconButton svg={HeartSvg} aria-label="Heart" />
-        </Stack>
+            {/* 4. Custom SVG --------------------------------------------------- */}
+            <Typography variant="h3">4. Custom SVG graphics</Typography>
+            <Stack direction="row">
+              <IconButton svg={HeartSvg} aria-label="Heart" />
+            </Stack>
 
-        {/* 5. Custom sizes ------------------------------------------------- */}
-        <Typography variant="h3">5. Custom sizes</Typography>
-        <Stack direction="row">
-          <IconButton icon="mdi:play" size="3em" aria-label="Play 3em" />
-          <IconButton icon="mdi:star" size={56} aria-label="Star 56px" />
-        </Stack>
+            {/* 5. Custom sizes ------------------------------------------------- */}
+            <Typography variant="h3">5. Custom sizes</Typography>
+            <Stack direction="row">
+              <IconButton icon="mdi:play" size="3em" aria-label="Play 3em" />
+              <IconButton icon="mdi:star" size={56} aria-label="Star 56px" />
+            </Stack>
 
-        {/* 6. Disabled & active states ------------------------------------ */}
-        <Typography variant="h3">6. Disabled state</Typography>
-        <IconButton
-          icon="mdi:delete"
-          size="md"
-          disabled
-          aria-label="Delete disabled"
-        />
+            {/* 6. Disabled & active states ------------------------------------ */}
+            <Typography variant="h3">6. Disabled state</Typography>
+            <IconButton
+              icon="mdi:delete"
+              size="md"
+              disabled
+              aria-label="Delete disabled"
+            />
 
-        {/* 7. Preset usage ------------------------------------------------- */}
-        <Typography variant="h3">7. Preset integration</Typography>
-        <Box preset="actionCard">
-          <IconButton
-            icon="mdi:credit-card"
-            size="md"
-            aria-label="Pay now"
-          />
-          <Typography>Pay now</Typography>
-        </Box>
+            {/* 7. Preset usage ------------------------------------------------- */}
+            <Typography variant="h3">7. Preset integration</Typography>
+            <Box preset="actionCard">
+              <IconButton
+                icon="mdi:credit-card"
+                size="md"
+                aria-label="Pay now"
+              />
+              <Typography>Pay now</Typography>
+            </Box>
 
-        {/* 8. Theme coupling ---------------------------------------------- */}
+            {/* 8. Theme coupling ---------------------------------------------- */}
             <Typography variant="h3">8. Theme demonstration</Typography>
             <Button variant="outlined" onClick={toggleMode}>
               Toggle light / dark mode&nbsp;

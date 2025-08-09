@@ -23,17 +23,17 @@ import NavDrawer from '../components/NavDrawer';
 /* Demo page                                                                  */
 export default function ProgressDemoPage() {
   const { theme, toggleMode } = useTheme();
-  const navigate               = useNavigate();
+  const navigate = useNavigate();
 
   /* Controlled value / buffer ------------------------------------------- */
-  const [value,  setValue]  = useState(40);
+  const [value, setValue] = useState(40);
   const [buffer, setBuffer] = useState(60);
 
   /* Auto-increment animation just for show ------------------------------ */
   useEffect(() => {
     const id = window.setTimeout(() => {
       if (value < 100) {
-        setValue((v)  => Math.min(100, v + 1));
+        setValue((v) => Math.min(100, v + 1));
         setBuffer((b) => Math.min(100, b + 1.5));
       }
     }, 90);
@@ -68,7 +68,9 @@ export default function ProgressDemoPage() {
         </Stack>
 
         {/* 2. Circular determinate (controlled) --------------------------- */}
-        <Typography variant="h3">2. Circular – determinate (controlled)</Typography>
+        <Typography variant="h3">
+          2. Circular – determinate (controlled)
+        </Typography>
         <Stack direction="row" style={{ alignItems: 'center' }}>
           <Progress
             variant="circular"
@@ -91,7 +93,9 @@ export default function ProgressDemoPage() {
         <Progress mode="indeterminate" />
 
         {/* 4. Linear determinate (controlled) ----------------------------- */}
-        <Typography variant="h3">4. Linear – determinate (controlled)</Typography>
+        <Typography variant="h3">
+          4. Linear – determinate (controlled)
+        </Typography>
         <Progress value={value} />
         <Progress value={value} size={50} />
 

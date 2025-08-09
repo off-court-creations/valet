@@ -74,7 +74,7 @@ export const AppBar: React.FC<AppBarProps> = ({
 }) => {
   const { theme } = useTheme();
   const { element, registerChild, unregisterChild } = useSurface(
-    s => ({
+    (s) => ({
       element: s.element,
       registerChild: s.registerChild,
       unregisterChild: s.unregisterChild,
@@ -87,19 +87,21 @@ export const AppBar: React.FC<AppBarProps> = ({
   const isToken = (v: any): v is AppBarToken =>
     v === 'primary' || v === 'secondary' || v === 'tertiary';
 
-  const bg = color === undefined
-    ? theme.colors.primary
-    : isToken(color)
-      ? theme.colors[color]
-      : color;
+  const bg =
+    color === undefined
+      ? theme.colors.primary
+      : isToken(color)
+        ? theme.colors[color]
+        : color;
 
-  const text = textColor === undefined
-    ? isToken(color)
-      ? theme.colors[`${color}Text`]
-      : theme.colors.text
-    : isToken(textColor)
-      ? theme.colors[`${textColor}Text`]
-      : textColor;
+  const text =
+    textColor === undefined
+      ? isToken(color)
+        ? theme.colors[`${color}Text`]
+        : theme.colors.text
+      : isToken(textColor)
+        ? theme.colors[`${textColor}Text`]
+        : textColor;
   const presetClass = p ? preset(p) : '';
   const pad = theme.spacing(1);
   const gap = theme.spacing(2);
@@ -126,18 +128,18 @@ export const AppBar: React.FC<AppBarProps> = ({
       $text={text}
       $pad={pad}
       className={[presetClass, className].filter(Boolean).join(' ')}
-      style={{
-        '--valet-bg': bg,
-        '--valet-text-color': text,
-        background: bg,
-        color: text,
-        ...style,
-      } as React.CSSProperties}
+      style={
+        {
+          '--valet-bg': bg,
+          '--valet-text-color': text,
+          background: bg,
+          color: text,
+          ...style,
+        } as React.CSSProperties
+      }
     >
       <BarBg $bg={bg} />
-      <LeftWrap $gap={gap}>
-        {left ?? children}
-      </LeftWrap>
+      <LeftWrap $gap={gap}>{left ?? children}</LeftWrap>
       {right && <RightWrap>{right}</RightWrap>}
     </Bar>
   );

@@ -66,10 +66,7 @@ function inferVariant(child: React.ReactNode): SkeletonVariant {
   if (typeof child === 'string') return 'text';
   if (React.isValidElement(child)) {
     const t: any = child.type;
-    const name =
-      typeof t === 'string'
-        ? t
-        : t.displayName || t.name || '';
+    const name = typeof t === 'string' ? t : t.displayName || t.name || '';
     if (/avatar|icon|img/i.test(name)) return 'circle';
     if (/typography|span|p|h[1-6]|text/i.test(name)) return 'text';
   }
@@ -91,16 +88,7 @@ function radiusFor(v: SkeletonVariant): string {
 /* Component                                                 */
 export const Skeleton = forwardRef<HTMLSpanElement, SkeletonProps>(
   (
-    {
-      loading,
-      variant,
-      icon,
-      preset: p,
-      className,
-      children,
-      style,
-      ...rest
-    },
+    { loading, variant, icon, preset: p, className, children, style, ...rest },
     ref,
   ) => {
     const child = React.Children.count(children) === 1 ? children : null;

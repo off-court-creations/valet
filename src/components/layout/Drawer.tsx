@@ -4,7 +4,12 @@
 // Controlled/uncontrolled, with backdrop and escape handling.
 // ─────────────────────────────────────────────────────────────
 
-import React, { useCallback, useLayoutEffect, useState, useEffect } from 'react';
+import React, {
+  useCallback,
+  useLayoutEffect,
+  useState,
+  useEffect,
+} from 'react';
 import { createPortal } from 'react-dom';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
@@ -48,7 +53,7 @@ export interface DrawerProps extends Presettable {
 /*───────────────────────────────────────────────────────────*/
 /* Styled primitives                                         */
 
-const Backdrop = styled('div')<{$fade: boolean}>`
+const Backdrop = styled('div')<{ $fade: boolean }>`
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.55);
@@ -84,10 +89,10 @@ const Panel = styled('div')<{
     $anchor === 'left'
       ? `border-right:0.25rem solid ${$primary};`
       : $anchor === 'right'
-      ? `border-left:0.25rem solid ${$primary};`
-      : $anchor === 'top'
-      ? `border-bottom:0.25rem solid ${$primary};`
-      : `border-top:0.25rem solid ${$primary};`}
+        ? `border-left:0.25rem solid ${$primary};`
+        : $anchor === 'top'
+          ? `border-bottom:0.25rem solid ${$primary};`
+          : `border-top:0.25rem solid ${$primary};`}
   ${({ $anchor, $size }) =>
     $anchor === 'left' || $anchor === 'right'
       ? `width:${$size}; height:100%;`
@@ -96,21 +101,22 @@ const Panel = styled('div')<{
     $anchor === 'left'
       ? 'top:0; left:0;'
       : $anchor === 'right'
-      ? 'top:0; right:0;'
-      : $anchor === 'top'
-      ? 'top:0; left:0;'
-      : 'bottom:0; left:0;'}
+        ? 'top:0; right:0;'
+        : $anchor === 'top'
+          ? 'top:0; left:0;'
+          : 'bottom:0; left:0;'}
   transform: ${({ $anchor, $fade, $persistent }) =>
     $persistent
       ? 'none'
       : $anchor === 'left'
-      ? `translateX(${$fade ? '-100%' : '0'})`
-      : $anchor === 'right'
-      ? `translateX(${$fade ? '100%' : '0'})`
-      : $anchor === 'top'
-      ? `translateY(${$fade ? '-100%' : '0'})`
-      : `translateY(${$fade ? '100%' : '0'})`};
-  transition: ${({ $persistent }) => ($persistent ? 'none' : 'transform 200ms ease')};
+        ? `translateX(${$fade ? '-100%' : '0'})`
+        : $anchor === 'right'
+          ? `translateX(${$fade ? '100%' : '0'})`
+          : $anchor === 'top'
+            ? `translateY(${$fade ? '-100%' : '0'})`
+            : `translateY(${$fade ? '100%' : '0'})`};
+  transition: ${({ $persistent }) =>
+    $persistent ? 'none' : 'transform 200ms ease'};
 `;
 
 /*───────────────────────────────────────────────────────────*/
@@ -133,7 +139,7 @@ export const Drawer: React.FC<DrawerProps> = ({
 }) => {
   const { theme } = useTheme();
   const { width, height, element } = useSurface(
-    s => ({ width: s.width, height: s.height, element: s.element }),
+    (s) => ({ width: s.width, height: s.height, element: s.element }),
     shallow,
   );
   const surfOffset = element
@@ -151,8 +157,8 @@ export const Drawer: React.FC<DrawerProps> = ({
   const open = persistentEffective
     ? true
     : uncontrolled
-    ? openState
-    : controlledOpen!;
+      ? openState
+      : controlledOpen!;
   const [fade, setFade] = useState(true);
 
   useEffect(() => {

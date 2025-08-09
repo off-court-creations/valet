@@ -4,12 +4,7 @@
 // ─────────────────────────────────────────────────────────────
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import {
-  Drawer,
-  Tree,
-  type TreeNode,
-  useTheme,
-} from '@archway/valet';
+import { Drawer, Tree, type TreeNode, useTheme } from '@archway/valet';
 
 interface Item {
   label: string;
@@ -93,9 +88,15 @@ const treeData: TreeNode<Item>[] = [
     data: { label: 'Getting Started' },
     children: [
       { id: '/overview', data: { label: 'Overview', path: '/overview' } },
-      { id: '/installation', data: { label: 'Installation', path: '/installation' } },
+      {
+        id: '/installation',
+        data: { label: 'Installation', path: '/installation' },
+      },
       { id: '/usage', data: { label: 'Usage', path: '/usage' } },
-      { id: '/prop-patterns', data: { label: 'Prop Patterns', path: '/prop-patterns' } },
+      {
+        id: '/prop-patterns',
+        data: { label: 'Prop Patterns', path: '/prop-patterns' },
+      },
     ],
   },
   {

@@ -56,10 +56,9 @@ export const Surface: React.FC<SurfaceProps> = ({
 
   /* Helper: resolve breakpoint for given width ------------------------- */
   const bpFor = (w: number): Breakpoint =>
-    (Object.entries(theme.breakpoints) as [Breakpoint, number][]).reduce<Breakpoint>(
-      (acc, [key, min]) => (w >= min ? key : acc),
-      'xs',
-    );
+    (
+      Object.entries(theme.breakpoints) as [Breakpoint, number][]
+    ).reduce<Breakpoint>((acc, [key, min]) => (w >= min ? key : acc), 'xs');
 
   /* Measure size whenever the element or its children change ----------- */
   useEffect(() => {
@@ -151,14 +150,16 @@ export const Surface: React.FC<SurfaceProps> = ({
         ref={ref}
         {...props}
         className={[presetClasses, className].filter(Boolean).join(' ')}
-        style={{
-          ...layoutStyles,
-          ...defaults,
-          ...cssVars,
-          '--valet-screen-width': `${width}px`,
-          '--valet-screen-height': `${Math.round(height)}px`,
-          ...style,
-        } as any}
+        style={
+          {
+            ...layoutStyles,
+            ...defaults,
+            ...cssVars,
+            '--valet-screen-width': `${width}px`,
+            '--valet-screen-height': `${Math.round(height)}px`,
+            ...style,
+          } as any
+        }
       >
         {showBackdrop && (
           <LoadingBackdrop fading={fade} showSpinner={showSpinner} />
