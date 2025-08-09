@@ -41,8 +41,17 @@ export * from './components/fields/Iterator';
 // ─── Widgets ─────────────────────────────────────────────────
 export * from './components/layout/Accordion';
 export * from './components/layout/AppBar';
-export * from './components/widgets/LLMChat';
-export * from './components/widgets/RichChat';
+
+// Avoid DTS name collisions by using explicit, aliased re-exports for chat widgets
+export { default as LLMChat } from './components/widgets/LLMChat';
+export type {
+  ChatProps as LLMChatProps,
+  ChatMessage as LLMChatMessage,
+} from './components/widgets/LLMChat';
+
+export { default as RichChat } from './components/widgets/RichChat';
+export type { RichChatProps, RichMessage } from './components/widgets/RichChat';
+
 export * from './components/layout/Drawer';
 export * from './components/fields/DateSelector';
 export * from './components/layout/List';
