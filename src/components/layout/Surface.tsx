@@ -1,8 +1,8 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/layout/Surface.tsx  | valet
-// overhaul: surfaces never show scrollbars – 2025‑07‑17
+// overhaul: surfaces never show scrollbars – 2025-07-17
 // ─────────────────────────────────────────────────────────────
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState, useCallback } from 'react';
 import { Breakpoint, useTheme } from '../../system/themeStore';
 import { useFonts } from '../../system/fontStore';
 import LoadingBackdrop from '../widgets/LoadingBackdrop';
@@ -14,9 +14,13 @@ import {
 import { preset } from '../../css/stylePresets';
 import type { Presettable } from '../../types';
 
+/* Allow strongly-typed CSS custom properties (e.g. --valet-*) */
+type CSSVarName = `--${string}`;
+type CSSVarStyles = React.CSSProperties & Record<CSSVarName, string | number>;
+
 /*───────────────────────────────────────────────────────────*/
 export interface SurfaceProps extends React.HTMLAttributes<HTMLDivElement>, Presettable {
-  /** Fixed‑position full‑screen surface when true (default). */
+  /** Fixed-position full-screen surface when true (default). */
   fullscreen?: boolean;
 }
 
@@ -53,11 +57,14 @@ export const Surface: React.FC<SurfaceProps> = ({
   }));
 
   /* Helper: resolve breakpoint for given width ------------------------- */
-  const bpFor = (w: number): Breakpoint =>
-    (Object.entries(theme.breakpoints) as [Breakpoint, number][]).reduce<Breakpoint>(
-      (acc, [key, min]) => (w >= min ? key : acc),
-      'xs',
-    );
+  const bpFor = useCallback(
+    (w: number): Breakpoint =>
+      (Object.entries(theme.breakpoints) as [Breakpoint, number][]).reduce<Breakpoint>(
+        (acc, [key, min]) => (w >= min ? key : acc),
+        'xs',
+      ),
+    [theme.breakpoints],
+  );
 
   /* Measure size whenever the element or its children change ----------- */
   useEffect(() => {
@@ -82,9 +89,9 @@ export const Surface: React.FC<SurfaceProps> = ({
       ro.disconnect();
       mo.disconnect();
     };
-  }, [theme.breakpoints, useStore]);
+  }, [bpFor, useStore]);
 
-  /* Font‑loading backdrop handling ------------------------------------- */
+  /* Font-loading backdrop handling ------------------------------------- */
   useEffect(() => {
     if (!fontsReady) {
       setShowBackdrop(true);
@@ -114,16 +121,17 @@ export const Surface: React.FC<SurfaceProps> = ({
     background: theme.colors.background,
     color: theme.colors.text,
   };
-  const cssVars: React.CSSProperties = {
+
+  const cssVars: CSSVarStyles = {
     '--valet-bg': theme.colors.background,
     '--valet-text-color': theme.colors.text,
     '--valet-font-heading': theme.fonts.heading,
     '--valet-font-body': theme.fonts.body,
     '--valet-font-mono': theme.fonts.mono,
     '--valet-font-button': theme.fonts.button,
-  } as any;
+  };
 
-  /* Layout: fixed full‑screen or flow‑based ---------------------------- */
+  /* Layout: fixed full-screen or flow-based ---------------------------- */
   const layoutStyles: React.CSSProperties = fullscreen
     ? {
         position: 'fixed',
@@ -143,22 +151,22 @@ export const Surface: React.FC<SurfaceProps> = ({
 
   const gap = theme.spacing(1);
 
+  const containerStyle: CSSVarStyles = {
+    ...layoutStyles,
+    ...defaults,
+    ...cssVars,
+    '--valet-screen-width': `${width}px`,
+    '--valet-screen-height': `${Math.round(height)}px`,
+    ...(style ?? {}),
+  };
+
   return (
     <SurfaceCtx.Provider value={useStore}>
       <div
         ref={ref}
         {...props}
         className={[presetClasses, className].filter(Boolean).join(' ')}
-        style={
-          {
-            ...layoutStyles,
-            ...defaults,
-            ...cssVars,
-            '--valet-screen-width': `${width}px`,
-            '--valet-screen-height': `${Math.round(height)}px`,
-            ...style,
-          } as any
-        }
+        style={containerStyle}
       >
         {showBackdrop && (
           <LoadingBackdrop

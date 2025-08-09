@@ -2,7 +2,7 @@
 // src/components/widgets/LLMChat.tsx  | valet
 // LLM style chat component with height constraint
 // ─────────────────────────────────────────────────────────────
-import React, { useState, useRef, useId, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useRef, useId, useEffect, useLayoutEffect, useCallback } from 'react';
 import { styled, keyframes } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { useSurface } from '../../system/surfaceStore';
@@ -193,7 +193,7 @@ export const LLMChat: React.FC<ChatProps> = ({
     return (isNaN(fs) ? 16 : fs) * 2;
   };
 
-  const update = () => {
+  const update = useCallback(() => {
     const node = wrapRef.current;
     const surfEl = surface.element;
     if (!node || !surfEl) return;
@@ -220,7 +220,7 @@ export const LLMChat: React.FC<ChatProps> = ({
       setShouldConstrain(false);
       setMaxHeight(undefined);
     }
-  };
+  }, [surface.element, surface.height]);
 
   useEffect(() => {
     if (!constrainHeight) {
@@ -243,12 +243,12 @@ export const LLMChat: React.FC<ChatProps> = ({
       surface.unregisterChild(uniqueId);
       ro.disconnect();
     };
-  }, [constrainHeight, surface.element]);
+  }, [constrainHeight, surface, uniqueId, update]);
 
   useLayoutEffect(() => {
     if (!constrainHeight || !wrapRef.current || !surface.element) return;
     update();
-  }, [constrainHeight, surface.height, surface.element]);
+  }, [constrainHeight, surface.height, surface.element, update]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -410,10 +410,11 @@ export const LLMChat: React.FC<ChatProps> = ({
                   name='chat-message'
                   value={text}
                   onChange={(e) => setText(e.target.value)}
-                  onKeyDown={(e) => {
+                  onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
                     if (e.key === 'Enter' && !e.shiftKey) {
                       e.preventDefault();
-                      handleSubmit(e as any);
+                      const form = e.currentTarget.form;
+                      form?.requestSubmit();
                     }
                   }}
                   rows={1}

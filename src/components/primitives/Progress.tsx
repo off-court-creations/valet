@@ -1,13 +1,12 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/primitives/Progress.tsx  | valet
-// strict‑optional clean build
+// strict-optional clean build
 // ─────────────────────────────────────────────────────────────
 import React, { forwardRef } from 'react';
 import { styled, keyframes } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import type { Presettable } from '../../types';
-import type { Theme } from '../../system/themeStore';
 
 /*───────────────────────────────────────────────────────────*/
 /* Public API                                                */
@@ -22,15 +21,15 @@ export interface ProgressProps
   variant?: ProgressVariant;
   /** determinate (default), indeterminate, or (linear-only) buffer. */
   mode?: ProgressMode;
-  /** 0 – 100 value for determinate / buffer foreground. */
+  /** 0 - 100 value for determinate / buffer foreground. */
   value?: number;
-  /** 0 – 100 secondary/buffer value (linear‑buffer only). */
+  /** 0 - 100 secondary/buffer value (linear-buffer only). */
   buffer?: number;
   /** xs – xl token or custom CSS size */
   size?: ProgressSize | number | string;
-  /** Show numeric % inside Circular centre. */
+  /** Show numeric % inside Circular center. */
   showLabel?: boolean;
-  /** Colour override (defaults to theme.primary). */
+  /** Color override (defaults to theme.primary). */
   color?: string | undefined;
 }
 
@@ -49,7 +48,7 @@ type Tokens = {
   linear: Record<ProgressSize, LinearToken>;
 };
 
-const geom = (_t: Theme): Tokens => ({
+const geom = (): Tokens => ({
   circular: {
     xs: { box: '0.75rem', stroke: '0.09375rem' },
     sm: { box: '1.5rem', stroke: '0.1875rem' },
@@ -171,7 +170,7 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
     ref,
   ) => {
     const { theme } = useTheme();
-    const tokens = geom(theme);
+    const tokens = geom();
     const primary = (color ?? theme.colors.primary) as string;
 
     /* preset → classes merge */
@@ -194,30 +193,23 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
     /*─────────────────────────────────────────────────────────*/
     if (variant === 'circular') {
       let box: string;
-      let stroke: string;
+      let boxPx: number;
+      let strokePx: number;
 
       if (typeof size === 'number') {
-        box = `${size}px`;
-        stroke = `calc(${box} / 8)`;
+        boxPx = size;
+        box = `${boxPx}px`;
+        strokePx = boxPx / 8;
       } else if (tokens.circular[size as ProgressSize]) {
-        ({ box, stroke } = tokens.circular[size as ProgressSize]);
+        const tok = tokens.circular[size as ProgressSize];
+        box = tok.box;
+        boxPx = toPx(tok.box);
+        strokePx = toPx(tok.stroke);
       } else {
         box = size as string;
-        stroke = `calc(${box} / 8)`;
+        boxPx = toPx(box);
+        strokePx = boxPx / 8;
       }
-
-      const boxPx =
-        typeof size === 'number'
-          ? size
-          : tokens.circular[size as ProgressSize]
-            ? toPx(tokens.circular[size as ProgressSize].box)
-            : toPx(size as string);
-      const strokePx =
-        typeof size === 'number'
-          ? boxPx / 8
-          : tokens.circular[size as ProgressSize]
-            ? toPx(tokens.circular[size as ProgressSize].stroke)
-            : boxPx / 8;
 
       const radius = (boxPx - strokePx) / 2;
       const circ = 2 * Math.PI * radius;

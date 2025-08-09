@@ -1,18 +1,10 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/primitives/Modal.tsx | valet
-// Accessible, theme‑aware Modal component that supports both “dialog” and
-// “alert” semantics. Fully controlled/uncontrolled, focus‑trapping, backdrop &
+// Accessible, theme-aware Modal component that supports both “dialog” and
+// “alert” semantics. Fully controlled/uncontrolled, focus-trapping, backdrop &
 // ESC/Click dismissal, no external deps.
 // ─────────────────────────────────────────────────────────────
-import React, {
-  ReactNode,
-  useCallback,
-  useEffect,
-  useId,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { ReactNode, useCallback, useId, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
@@ -109,7 +101,7 @@ export interface ModalProps extends Presettable {
   onClose?: () => void;
   /** Dialog semantics (default) or alertdialog semantics */
   variant?: 'dialog' | 'alert';
-  /** Dialog title – used for aria‑labelledby when provided */
+  /** Dialog title – used for aria-labelledby when provided */
   title?: ReactNode;
   /** Main body content */
   children?: ReactNode;
@@ -162,11 +154,11 @@ export const Modal: React.FC<ModalProps> = ({
     onClose?.();
   }, [uncontrolled, onClose]);
 
-  /* ----- mount / unmount side‑effects ----------------------------------- */
+  /* ----- mount / unmount side-effects ----------------------------------- */
   useLayoutEffect(() => {
     if (!open) return;
 
-    // start fade‑in on mount
+    // start fade-in on mount
     setFade(false);
     previouslyFocused.current = document.activeElement;
 
@@ -232,7 +224,7 @@ export const Modal: React.FC<ModalProps> = ({
         $bg={theme.colors.surface}
         $text={theme.colors.text}
         $fade={fade}
-        $maxW={maxWidth as any}
+        $maxW={maxWidth}
         $full={fullWidth}
         $gap={theme.spacing(1)}
         className={presetClasses}

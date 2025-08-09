@@ -62,8 +62,12 @@ function inferVariant(child: React.ReactNode): SkeletonVariant {
   if (!child) return 'rect';
   if (typeof child === 'string') return 'text';
   if (React.isValidElement(child)) {
-    const t: any = child.type;
-    const name = typeof t === 'string' ? t : t.displayName || t.name || '';
+    const t = (child as React.ReactElement).type;
+    type Named = { displayName?: string; name?: string };
+    const name =
+      typeof t === 'string'
+        ? t
+        : ((t as unknown as Named).displayName ?? (t as unknown as Named).name ?? '');
     if (/avatar|icon|img/i.test(name)) return 'circle';
     if (/typography|span|p|h[1-6]|text/i.test(name)) return 'text';
   }
@@ -94,7 +98,7 @@ export const Skeleton = forwardRef<HTMLSpanElement, SkeletonProps>(
 
     const isControlled = loading !== undefined;
     const [internalLoading, setInternalLoading] = useState(loading ?? true);
-    const activeLoading = isControlled ? loading! : internalLoading;
+    const activeLoading = isControlled ? (loading as boolean) : internalLoading;
 
     const fadeMs = 400;
     const [show, setShow] = useState(activeLoading);
@@ -113,12 +117,13 @@ export const Skeleton = forwardRef<HTMLSpanElement, SkeletonProps>(
     }, [activeLoading]);
 
     useEffect(() => {
-      if (isControlled) setInternalLoading(loading!);
+      if (isControlled) setInternalLoading(loading as boolean);
     }, [isControlled, loading]);
 
     const presetCls = p ? preset(p) : '';
 
-    const el = child as React.ReactElement<any> | null;
+    type AnyProps = Record<string, unknown>;
+    const el = child as React.ReactElement<AnyProps> | null;
 
     return (
       <Wrapper
@@ -148,7 +153,7 @@ export const Skeleton = forwardRef<HTMLSpanElement, SkeletonProps>(
           React.cloneElement(el, {
             'aria-hidden': activeLoading,
             style: {
-              ...el.props.style,
+              ...(el.props.style as Record<string, unknown> | undefined),
               ...(activeLoading && resolved === 'text'
                 ? { display: 'inline-block', width: 'fit-content' }
                 : null),
@@ -160,16 +165,22 @@ export const Skeleton = forwardRef<HTMLSpanElement, SkeletonProps>(
             ...(isControlled
               ? null
               : {
-                  onLoad: (e: any) => {
-                    el.props.onLoad?.(e);
+                  onLoad: (e: unknown) => {
+                    const orig = (el.props as AnyProps)['onLoad'];
+                    if (typeof orig === 'function') {
+                      (orig as (arg: unknown) => void)(e);
+                    }
                     setInternalLoading(false);
                   },
-                  onError: (e: any) => {
-                    el.props.onError?.(e);
+                  onError: (e: unknown) => {
+                    const orig = (el.props as AnyProps)['onError'];
+                    if (typeof orig === 'function') {
+                      (orig as (arg: unknown) => void)(e);
+                    }
                     setInternalLoading(false);
                   },
                 }),
-          } as any)}
+          } as AnyProps)}
       </Wrapper>
     );
   },

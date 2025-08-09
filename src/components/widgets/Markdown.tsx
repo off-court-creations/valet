@@ -23,34 +23,39 @@ const renderInline = (tokens?: Token[]): React.ReactNode => {
   return tokens.map((t: Token, i: number) => {
     switch (t.type) {
       case 'strong':
-        return <strong key={i}>{renderInline(t.tokens)}</strong>;
+        return <strong key={i}>{renderInline((t as Tokens.Strong).tokens)}</strong>;
       case 'em':
-        return <em key={i}>{renderInline(t.tokens)}</em>;
+        return <em key={i}>{renderInline((t as Tokens.Em).tokens)}</em>;
       case 'codespan':
         return <code key={i}>{(t as Tokens.Codespan).text}</code>;
-      case 'link':
+      case 'link': {
+        const link = t as Tokens.Link;
         return (
           <a
             key={i}
-            href={t.href}
-            title={t.title}
+            href={link.href}
+            title={link.title ?? undefined}
           >
-            {renderInline(t.tokens)}
+            {renderInline(link.tokens)}
           </a>
         );
-      case 'image':
+      }
+      case 'image': {
+        const img = t as Tokens.Image;
         return (
           <Image
             key={i}
-            src={(t as Tokens.Image).href}
-            alt={(t as Tokens.Image).text}
+            src={img.href}
+            alt={img.text}
             style={{ maxWidth: '100%' }}
           />
         );
+      }
       case 'text':
         return (t as Tokens.Text).text;
       default:
-        return (t as any).raw || '';
+        // Fallback to raw token text when no specific renderer exists
+        return (t as Token).raw ?? '';
     }
   });
 };
@@ -58,38 +63,45 @@ const renderInline = (tokens?: Token[]): React.ReactNode => {
 const renderTokens = (tokens: TokensList, codeBg?: string): React.ReactNode =>
   tokens.map((t: Token, i: number) => {
     switch (t.type) {
-      case 'heading':
-        const variant = `h${t.depth}` as Variant;
+      case 'heading': {
+        const heading = t as Tokens.Heading;
+        const variant = `h${heading.depth}` as Variant;
         return (
           <Typography
             key={i}
             variant={variant}
             bold
           >
-            {renderInline(t.tokens)}
+            {renderInline(heading.tokens)}
           </Typography>
         );
-      case 'paragraph':
+      }
+      case 'paragraph': {
+        const p = t as Tokens.Paragraph;
         return (
           <Typography
             key={i}
             style={{ margin: '0.5rem 0' }}
           >
-            {renderInline(t.tokens)}
+            {renderInline(p.tokens)}
           </Typography>
         );
-      case 'list':
+      }
+      case 'list': {
+        const list = t as Tokens.List;
         return (
           <ul
             key={i}
             style={{ paddingLeft: '1.25rem' }}
           >
-            {t.items.map((item: Tokens.ListItem, j: number) => (
+            {list.items.map((item: Tokens.ListItem, j: number) => (
               <li key={j}>{renderInline(item.tokens)}</li>
             ))}
           </ul>
         );
-      case 'code':
+      }
+      case 'code': {
+        const code = t as Tokens.Code;
         return (
           <Panel
             key={i}
@@ -97,17 +109,19 @@ const renderTokens = (tokens: TokensList, codeBg?: string): React.ReactNode =>
             background={codeBg}
             style={{ margin: '0.5rem 0' }}
           >
-            <code>{t.text}</code>
+            <code>{code.text}</code>
           </Panel>
         );
-      case 'table':
-        const columns: TableColumn<Record<string, string>>[] = t.header.map(
+      }
+      case 'table': {
+        const table = t as Tokens.Table;
+        const columns: TableColumn<Record<string, string>>[] = table.header.map(
           (h: Tokens.TableCell, idx: number) => ({
             header: renderInline(h.tokens),
-            accessor: idx.toString() as any,
+            accessor: idx.toString() as keyof Record<string, string>,
           }),
         );
-        const data = t.rows.map((row: Tokens.TableCell[]) => {
+        const data = table.rows.map((row: Tokens.TableCell[]) => {
           const obj: Record<string, string> = {};
           row.forEach((cell: Tokens.TableCell, idx: number) => {
             obj[idx] = cell.text;
@@ -122,10 +136,11 @@ const renderTokens = (tokens: TokensList, codeBg?: string): React.ReactNode =>
             constrainHeight={false}
           />
         );
+      }
       case 'space':
         return null;
       default:
-        return <Typography key={i}>{('raw' in t && (t as any).raw) || ''}</Typography>;
+        return <Typography key={i}>{(t as Token).raw ?? ''}</Typography>;
     }
   });
 

@@ -83,6 +83,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
       style={{ width: '100%' }}
     >
       {files.map((f, i) => (
+        // Note: object URLs are not revoked here; callers can re-mount to clear
         <img
           key={i}
           src={URL.createObjectURL(f)}
@@ -153,13 +154,24 @@ export const Dropzone: React.FC<DropzoneProps> = ({
     </Stack>
   );
 
-  const rootProps = getRootProps();
+  // Pull out dropzone's ref so we can forward a typed ref without `any`
+  const { ref: dropzoneRef, ...rootProps } = getRootProps();
+
+  const setPanelRef: React.RefCallback<HTMLDivElement> = (node) => {
+    if (!dropzoneRef) return;
+    if (typeof dropzoneRef === 'function') {
+      // react-dropzone expects to receive the root element
+      (dropzoneRef as (instance: HTMLDivElement | null) => void)(node);
+    } else {
+      (dropzoneRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+    }
+  };
 
   return (
     <Panel
       {...rest}
       {...rootProps}
-      ref={rootProps.ref as any}
+      ref={setPanelRef}
       variant='alt'
       fullWidth={fullWidth}
       style={{

@@ -2,6 +2,7 @@
 // src/components/layout/Tabs.tsx | valet
 // Grid-based <Tabs>; optional heading centering + tab tooltips
 // ─────────────────────────────────────────────────────────────
+/* eslint-disable react/prop-types */
 import React, {
   createContext,
   forwardRef,
@@ -189,10 +190,9 @@ export const Tabs: React.FC<TabsProps> & {
   const active = controlled ? controlledActive! : self;
 
   const refs = useRef<Record<number, HTMLButtonElement | null>>({});
-  const registerTab = useCallback(
-    (i: number, el: HTMLButtonElement | null) => (refs.current[i] = el),
-    [],
-  );
+  const registerTab = useCallback((i: number, el: HTMLButtonElement | null) => {
+    refs.current[i] = el;
+  }, []);
   const setActive = useCallback(
     (i: number) => {
       if (!controlled) setSelf(i);
@@ -206,21 +206,29 @@ export const Tabs: React.FC<TabsProps> & {
   const panels: ReactElement[] = [];
   React.Children.forEach(children, (child) => {
     if (!React.isValidElement(child)) return;
-    const name = (child.type as any).displayName;
-    if (name === 'Tabs.Tab')
+    const name =
+      typeof child.type === 'string'
+        ? child.type
+        : (child.type as { displayName?: string }).displayName;
+
+    if (name === 'Tabs.Tab') {
+      const el = child as React.ReactElement<TabProps>;
       tabs.push(
-        React.cloneElement(child, {
+        React.cloneElement(el, {
           index: tabs.length,
           key: tabs.length,
-        } as any),
+        }),
       );
-    if (name === 'Tabs.Panel')
+    }
+    if (name === 'Tabs.Panel') {
+      const el = child as React.ReactElement<TabPanelProps>;
       panels.push(
-        React.cloneElement(child, {
+        React.cloneElement(el, {
           index: panels.length,
           key: panels.length,
-        } as any),
+        }),
       );
+    }
   });
 
   const ctx = useMemo<Ctx>(
@@ -231,7 +239,7 @@ export const Tabs: React.FC<TabsProps> & {
       registerTab,
       totalTabs: tabs.length,
     }),
-    [active, orientation, setActive, tabs.length],
+    [active, orientation, setActive, registerTab, tabs.length],
   );
 
   const cls = [p ? preset(p) : '', className].filter(Boolean).join(' ');
@@ -299,7 +307,9 @@ const Tab: React.FC<TabProps> = forwardRef<HTMLButtonElement, TabProps>(
         ref={(el: HTMLButtonElement | null) => {
           registerTab(index, el);
           if (typeof ref === 'function') ref(el);
-          else if (ref) (ref as any).current = el;
+          else if (ref) {
+            (ref as React.MutableRefObject<HTMLButtonElement | null>).current = el;
+          }
         }}
         role='tab'
         id={`tab-${index}`}

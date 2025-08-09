@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/layout/Stack.tsx  | valet
-// overhaul: internal scrollbars & boundary guards – 2025‑07‑17
+// overhaul: internal scrollbars & boundary guards – 2025-07-17
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
 import { styled } from '../../css/createStyled';
@@ -16,7 +16,7 @@ export interface StackProps extends React.HTMLAttributes<HTMLDivElement>, Preset
   /** If `true`, children wrap when they run out of space. Defaults to
    *  `true` for `row`, `false` for `column`. */
   wrap?: boolean;
-  /** Remove built‑in margin and padding */
+  /** Remove built-in margin and padding */
   compact?: boolean;
 }
 
@@ -74,12 +74,8 @@ export const Stack: React.FC<StackProps> = ({
   const { theme } = useTheme();
 
   /* Resolve number → theme spacing */
-  let gap: string;
-  let gapInput: number | string | undefined = spacing;
-  if (gapInput === undefined) {
-    gapInput = compact ? 0 : 1;
-  }
-  gap = typeof gapInput === 'number' ? theme.spacing(gapInput) : String(gapInput);
+  const gapInput: number | string = spacing === undefined ? (compact ? 0 : 1) : spacing;
+  const gap = typeof gapInput === 'number' ? theme.spacing(gapInput) : String(gapInput);
 
   /* Enable wrapping by default for rows */
   const shouldWrap = typeof wrap === 'boolean' ? wrap : direction === 'row';

@@ -2,7 +2,7 @@
 // src/components/widgets/RichChat.tsx  | valet
 // Local chat component with embeddable content; add fontFamily prop
 // ─────────────────────────────────────────────────────────────
-import React, { useState, useRef, useId, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useRef, useId, useEffect, useLayoutEffect, useCallback } from 'react';
 import { styled, keyframes } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { useSurface } from '../../system/surfaceStore';
@@ -128,7 +128,10 @@ export const RichChat: React.FC<RichChatProps> = ({
     }),
     shallow,
   );
-  const portrait = surface.height > surface.width;
+
+  const { element, width, height, registerChild, unregisterChild } = surface;
+
+  const portrait = height > width;
   const wrapRef = useRef<HTMLDivElement>(null);
   const uniqueId = useId();
   const [maxHeight, setMaxHeight] = useState<number>();
@@ -145,9 +148,9 @@ export const RichChat: React.FC<RichChatProps> = ({
     return (isNaN(fs) ? 16 : fs) * 2;
   };
 
-  const update = () => {
+  const update = useCallback(() => {
     const node = wrapRef.current;
-    const surfEl = surface.element;
+    const surfEl = element;
     if (!node || !surfEl) return;
     const sRect = surfEl.getBoundingClientRect();
     const nRect = node.getBoundingClientRect();
@@ -155,7 +158,7 @@ export const RichChat: React.FC<RichChatProps> = ({
     const bottomSpace = Math.round(
       surfEl.scrollHeight - (nRect.bottom - sRect.top + surfEl.scrollTop),
     );
-    const available = Math.round(surface.height - top - bottomSpace);
+    const available = Math.round(height - top - bottomSpace);
     const cutoff = calcCutoff();
 
     const next = available >= cutoff;
@@ -172,7 +175,7 @@ export const RichChat: React.FC<RichChatProps> = ({
       setShouldConstrain(false);
       setMaxHeight(undefined);
     }
-  };
+  }, [element, height]);
 
   useEffect(() => {
     if (!constrainHeight) {
@@ -185,29 +188,33 @@ export const RichChat: React.FC<RichChatProps> = ({
   }, [constrainHeight]);
 
   useLayoutEffect(() => {
-    if (!constrainHeight || !wrapRef.current || !surface.element) return;
+    if (!constrainHeight || !wrapRef.current || !element) return;
     const node = wrapRef.current;
-    surface.registerChild(uniqueId, node, update);
+    registerChild(uniqueId, node, update);
     const ro = new ResizeObserver(update);
     ro.observe(node);
     update();
     return () => {
-      surface.unregisterChild(uniqueId);
+      unregisterChild(uniqueId);
       ro.disconnect();
     };
-  }, [constrainHeight, surface.element]);
+  }, [constrainHeight, element, uniqueId, registerChild, unregisterChild, update]);
 
   useLayoutEffect(() => {
-    if (!constrainHeight || !wrapRef.current || !surface.element) return;
+    if (!constrainHeight || !wrapRef.current || !element) return;
     update();
-  }, [constrainHeight, surface.height, surface.element]);
+  }, [constrainHeight, element, update]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const doSubmit = () => {
     if (!text.trim()) return;
     const msg: RichMessage = { role: 'user', content: text.trim() };
     onSend?.(msg);
     setText('');
+  };
+
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault();
+    doSubmit();
   };
 
   const presetClasses = p ? preset(p) : '';
@@ -331,7 +338,7 @@ export const RichChat: React.FC<RichChatProps> = ({
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
-                    handleSubmit(e as any);
+                    doSubmit();
                   }
                 }}
                 rows={1}
