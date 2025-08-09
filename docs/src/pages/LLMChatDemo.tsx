@@ -39,9 +39,9 @@ export default function LLMChatDemoPage() {
       const res = await sendChat(history);
       const reply = res.choices[0]?.message as ChatMessage | undefined;
       if (reply)
-        setMessages(prev => {
+        setMessages((prev) => {
           const next = [...prev];
-          const idx = next.findIndex(x => x.typing);
+          const idx = next.findIndex((x) => x.typing);
           if (idx >= 0) next[idx] = { ...reply, animate: true } as ChatMessage;
           else next.push({ ...reply, animate: true } as ChatMessage);
           return next;
@@ -51,13 +51,12 @@ export default function LLMChatDemoPage() {
       if (msg.includes('No API key set yet')) {
         setNoKey(true);
       } else {
-        setMessages(prev => {
+        setMessages((prev) => {
           const next = [...prev];
-          const idx = next.findIndex(x => x.typing);
+          const idx = next.findIndex((x) => x.typing);
           if (idx >= 0)
             next[idx] = { role: 'assistant', content: msg, animate: true };
-          else
-            next.push({ role: 'assistant', content: msg, animate: true });
+          else next.push({ role: 'assistant', content: msg, animate: true });
           return next;
         });
       }

@@ -55,7 +55,7 @@ const renderTokens = (tokens: TokensList, codeBg?: string): React.ReactNode =>
   tokens.map((t: Token, i: number) => {
     switch (t.type) {
       case 'heading':
-        const variant = (`h${t.depth}`) as Variant;
+        const variant = `h${t.depth}` as Variant;
         return (
           <Typography key={i} variant={variant} bold>
             {renderInline(t.tokens)}
@@ -87,10 +87,12 @@ const renderTokens = (tokens: TokensList, codeBg?: string): React.ReactNode =>
           </Panel>
         );
       case 'table':
-        const columns: TableColumn<Record<string, string>>[] = t.header.map((h: Tokens.TableCell, idx: number) => ({
-          header: renderInline(h.tokens),
-          accessor: idx.toString() as any,
-        }));
+        const columns: TableColumn<Record<string, string>>[] = t.header.map(
+          (h: Tokens.TableCell, idx: number) => ({
+            header: renderInline(h.tokens),
+            accessor: idx.toString() as any,
+          }),
+        );
         const data = t.rows.map((row: Tokens.TableCell[]) => {
           const obj: Record<string, string> = {};
           row.forEach((cell: Tokens.TableCell, idx: number) => {

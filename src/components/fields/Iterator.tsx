@@ -2,7 +2,13 @@
 // src/components/fields/Iterator.tsx | valet
 // numeric stepper with plus/minus buttons and scroll wheel support
 // ─────────────────────────────────────────────────────────────
-import React, { forwardRef, useState, useEffect, useRef, useCallback } from 'react';
+import React, {
+  forwardRef,
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+} from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
@@ -12,7 +18,9 @@ import type { Presettable } from '../../types';
 import type { Theme } from '../../system/themeStore';
 
 /*───────────────────────────────────────────────────────────*/
-export interface IteratorProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'>, Presettable {
+export interface IteratorProps
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'>,
+    Presettable {
   value?: number;
   defaultValue?: number;
   onChange?: (value: number) => void;
@@ -85,9 +93,12 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
     );
 
     let form: ReturnType<typeof useForm<any>> | null = null;
-    try { form = useForm<any>(); } catch {}
+    try {
+      form = useForm<any>();
+    } catch {}
 
-    const formVal = form && name ? (form.values[name] as number | undefined) : undefined;
+    const formVal =
+      form && name ? (form.values[name] as number | undefined) : undefined;
     const controlled = valueProp !== undefined || formVal !== undefined;
     const [internal, setInternal] = useState(defaultValue ?? 0);
     const current = controlled ? (formVal ?? valueProp!) : internal;
@@ -119,16 +130,22 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
       else commit(num);
     };
 
-    const stepBy = useCallback((dir: number) => {
-      commit(current + dir * step);
-    }, [current, step]);
+    const stepBy = useCallback(
+      (dir: number) => {
+        commit(current + dir * step);
+      },
+      [current, step],
+    );
 
-    const handleWheel = useCallback((e: WheelEvent) => {
-      if (disabled) return;
-      e.preventDefault();
-      e.stopPropagation();
-      stepBy(e.deltaY < 0 ? 1 : -1);
-    }, [disabled, stepBy]);
+    const handleWheel = useCallback(
+      (e: WheelEvent) => {
+        if (disabled) return;
+        e.preventDefault();
+        e.stopPropagation();
+        stepBy(e.deltaY < 0 ? 1 : -1);
+      },
+      [disabled, stepBy],
+    );
 
     useEffect(() => {
       const node = localRef.current;
@@ -137,7 +154,8 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
       return () => node.removeEventListener('wheel', handleWheel);
     }, [handleWheel]);
 
-    const cls = [p ? preset(p) : '', className].filter(Boolean).join(' ') || undefined;
+    const cls =
+      [p ? preset(p) : '', className].filter(Boolean).join(' ') || undefined;
 
     const w = typeof width === 'number' ? `${width}px` : width;
 

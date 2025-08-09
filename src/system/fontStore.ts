@@ -14,12 +14,10 @@ interface FontState {
 export const useFonts = create<FontState>((set) => ({
   loading: 0,
   ready: false,
-  start: () =>
-    set((s) => ({ loading: s.loading + 1, ready: false })),
+  start: () => set((s) => ({ loading: s.loading + 1, ready: false })),
   finish: () =>
     set((s) => {
       const loading = Math.max(0, s.loading - 1);
       return { loading, ready: loading === 0 };
     }),
 }));
-

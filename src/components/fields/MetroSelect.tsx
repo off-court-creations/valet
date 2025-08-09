@@ -112,17 +112,21 @@ export const Option: React.FC<MetroOptionProps> = ({
           selected && !disabled
             ? theme.colors.primary
             : disabled
-            ? disabledColor
-            : undefined,
+              ? disabledColor
+              : undefined,
         background: selected && !disabled ? theme.colors.primary : undefined,
-        color: disabled ? disabledColor : selected ? theme.colors.primaryText : undefined,
+        color: disabled
+          ? disabledColor
+          : selected
+            ? theme.colors.primaryText
+            : undefined,
         opacity: disabled ? 0.45 : 1,
         ...style,
       }}
       className={[presetCls, className].filter(Boolean).join(' ')}
     >
       <div style={innerStyle}>
-          {typeof icon === 'string' ? (
+        {typeof icon === 'string' ? (
           <Icon icon={icon} size="lg" />
         ) : (
           <Icon size="lg">{icon}</Icon>
@@ -136,8 +140,7 @@ export const Option: React.FC<MetroOptionProps> = ({
 };
 Option.displayName = 'MetroSelect.Option';
 
-export interface MetroSelectComponent
-  extends React.FC<MetroSelectProps> {
+export interface MetroSelectComponent extends React.FC<MetroSelectProps> {
   Option: React.FC<MetroOptionProps>;
 }
 
@@ -152,42 +155,42 @@ export const MetroSelect: MetroSelectComponent = ({
   children,
   ...rest
 }) => {
-    const controlled = valueProp !== undefined;
-    const [self, setSelf] = useState<Primitive | null>(defaultValue ?? null);
+  const controlled = valueProp !== undefined;
+  const [self, setSelf] = useState<Primitive | null>(defaultValue ?? null);
 
-    const val = controlled ? valueProp! : self;
+  const val = controlled ? valueProp! : self;
 
-    const setValue = useCallback(
-      (v: Primitive) => {
-        if (!controlled) setSelf(v);
-        onChange?.(v);
-      },
-      [controlled, onChange],
-    );
+  const setValue = useCallback(
+    (v: Primitive) => {
+      if (!controlled) setSelf(v);
+      onChange?.(v);
+    },
+    [controlled, onChange],
+  );
 
-    const presetCls = p ? preset(p) : '';
+  const presetCls = p ? preset(p) : '';
 
-    const ctx = useMemo<MetroCtx>(
-      () => ({ value: val ?? null, setValue }),
-      [val, setValue],
-    );
+  const ctx = useMemo<MetroCtx>(
+    () => ({ value: val ?? null, setValue }),
+    [val, setValue],
+  );
 
-    return (
-      <MetroCtx.Provider value={ctx}>
-        <Stack
-          direction="row"
-          wrap
-          spacing={0.5 * Number(gap)}
-          compact
-          {...rest}
-          style={style}
-          className={[presetCls, className].filter(Boolean).join(' ')}
-        >
-          {children}
-        </Stack>
-      </MetroCtx.Provider>
-    );
-  };
+  return (
+    <MetroCtx.Provider value={ctx}>
+      <Stack
+        direction="row"
+        wrap
+        spacing={0.5 * Number(gap)}
+        compact
+        {...rest}
+        style={style}
+        className={[presetCls, className].filter(Boolean).join(' ')}
+      >
+        {children}
+      </Stack>
+    </MetroCtx.Provider>
+  );
+};
 
 MetroSelect.displayName = 'MetroSelect';
 MetroSelect.Option = Option;

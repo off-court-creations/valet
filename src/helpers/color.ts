@@ -15,7 +15,7 @@ export function toRgb(hex: string): RGB {
   if (rgbCache.has(hex)) return rgbCache.get(hex)!;
 
   let s = hex.startsWith('#') ? hex.slice(1) : hex;
-  if (s.length === 3) s = s.replace(/./g, ch => ch + ch); // #abc → aabbcc
+  if (s.length === 3) s = s.replace(/./g, (ch) => ch + ch); // #abc → aabbcc
 
   let rgb: RGB;
   if (s.length === 6 && !/[^a-f\d]/i.test(s)) {
@@ -33,15 +33,15 @@ export function toRgb(hex: string): RGB {
 export function mix(a: RGB, b: RGB, weight: number): RGB {
   const t = weight <= 0 ? 0 : weight >= 1 ? 1 : weight;
   return {
-    r: ((a.r * (1 - t) + b.r * t) + 0.5) | 0,
-    g: ((a.g * (1 - t) + b.g * t) + 0.5) | 0,
-    b: ((a.b * (1 - t) + b.b * t) + 0.5) | 0,
+    r: (a.r * (1 - t) + b.r * t + 0.5) | 0,
+    g: (a.g * (1 - t) + b.g * t + 0.5) | 0,
+    b: (a.b * (1 - t) + b.b * t + 0.5) | 0,
   };
 }
 
 /*──────────── RGB → Hex ────────────*/
 export function toHex({ r, g, b }: RGB): string {
-  return '#' + (((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1));
+  return '#' + ((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1);
 }
 
 /*──────────── Hex → RGBA string ────────────*/

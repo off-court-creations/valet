@@ -21,7 +21,7 @@ import { SurfaceCtx } from '../system/surfaceStore';
 /*───────────────────────────────────────────────────────────*/
 /* Internal caches                                           */
 const styleCache = new Map<string, string>(); // normal rules
-const injected   = new Set<string>();         // injected IDs
+const injected = new Set<string>(); // injected IDs
 
 /* Single global stylesheet for all rules ------------------------------ */
 const styleEl = document.createElement('style');
@@ -55,8 +55,9 @@ export function styled<Tag extends keyof JSX.IntrinsicElements>(tag: Tag) {
       | false
       | null
       | undefined
-      | ((props: ExtraProps & JSX.IntrinsicElements[Tag]) =>
-          string | number | false | null | undefined)
+      | ((
+          props: ExtraProps & JSX.IntrinsicElements[Tag],
+        ) => string | number | false | null | undefined)
     >
   ) {
     type DomRef = Tag extends keyof HTMLElementTagNameMap
@@ -70,9 +71,9 @@ export function styled<Tag extends keyof JSX.IntrinsicElements>(tag: Tag) {
 
     const StyledComponent = React.forwardRef<DomRef, StyledProps>(
       (props, ref) => {
-        const localRef = useRef<DomRef | null>(null)
-        const surface = useContext(SurfaceCtx)
-        const idRef = useRef(`el-${Math.random().toString(36).slice(2)}`)
+        const localRef = useRef<DomRef | null>(null);
+        const surface = useContext(SurfaceCtx);
+        const idRef = useRef(`el-${Math.random().toString(36).slice(2)}`);
 
         /* Build raw CSS string (inc. interpolations) ------------------- */
         let rawCSS = '';
@@ -100,31 +101,34 @@ export function styled<Tag extends keyof JSX.IntrinsicElements>(tag: Tag) {
           styleCache.set(normalized, className);
         }
 
-        const merged = [className, props.className].filter(Boolean).join(' ')
-        const domProps = filterStyledProps(props)
+        const merged = [className, props.className].filter(Boolean).join(' ');
+        const domProps = filterStyledProps(props);
 
         useLayoutEffect(() => {
-          const el = localRef.current
-          if (!surface || !el) return
-          const id = idRef.current
+          const el = localRef.current;
+          if (!surface || !el) return;
+          const id = idRef.current;
           surface.getState().registerChild(id, el, (m) => {
-            el.style.setProperty('--valet-el-width', `${m.width}px`)
-            el.style.setProperty('--valet-el-height', `${Math.round(m.height)}px`)
-          })
+            el.style.setProperty('--valet-el-width', `${m.width}px`);
+            el.style.setProperty(
+              '--valet-el-height',
+              `${Math.round(m.height)}px`,
+            );
+          });
           return () => {
-            surface.getState().unregisterChild(id)
-          }
-        }, [surface])
+            surface.getState().unregisterChild(id);
+          };
+        }, [surface]);
 
         return React.createElement(tag, {
           ...domProps,
           className: merged,
           ref: (node: DomRef | null) => {
-            localRef.current = node
-            if (typeof ref === 'function') ref(node)
-            else if (ref) (ref as any).current = node
+            localRef.current = node;
+            if (typeof ref === 'function') ref(node);
+            else if (ref) (ref as any).current = node;
           },
-        })
+        });
       },
     );
 
@@ -147,14 +151,11 @@ export function keyframes(
   }
 
   const normalized = normalizeCSS(rawCSS);
-  const animName   = `z-kf-${hashStr(normalized)}`;
+  const animName = `z-kf-${hashStr(normalized)}`;
 
   /* Only inject once --------------------------------------------------- */
   if (!injected.has(animName)) {
-    inject(
-      animName,
-      `@keyframes ${animName}{${normalized}}`,
-    );
+    inject(animName, `@keyframes ${animName}{${normalized}}`);
   }
 
   return animName; // used as animation-name

@@ -139,11 +139,13 @@ export default function DropzoneDemoPage() {
           </Tabs.Panel>
         </Tabs>
 
-        <Button onClick={() => navigate(-1)} style={{ marginTop: theme.spacing(2) }}>
+        <Button
+          onClick={() => navigate(-1)}
+          style={{ marginTop: theme.spacing(2) }}
+        >
           ← Back
         </Button>
       </Stack>
     </Surface>
   );
 }
-

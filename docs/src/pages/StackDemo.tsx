@@ -86,8 +86,14 @@ export default function StackDemoPage() {
 
             <Typography variant="h3">2. Wrapping</Typography>
             <Stack direction="row" spacing={1} wrap style={{ maxWidth: 200 }}>
-              {['1','2','3','4','5','6'].map((n) => (
-                <Box key={n} background={theme.colors['primary']} style={{ padding: theme.spacing(0.5) }}>{n}</Box>
+              {['1', '2', '3', '4', '5', '6'].map((n) => (
+                <Box
+                  key={n}
+                  background={theme.colors['primary']}
+                  style={{ padding: theme.spacing(0.5) }}
+                >
+                  {n}
+                </Box>
               ))}
             </Stack>
           </Tabs.Panel>
@@ -99,10 +105,18 @@ export default function StackDemoPage() {
           </Tabs.Panel>
         </Tabs>
 
-        <Button variant="outlined" onClick={toggleMode} style={{ marginTop: theme.spacing(1) }}>
+        <Button
+          variant="outlined"
+          onClick={toggleMode}
+          style={{ marginTop: theme.spacing(1) }}
+        >
           Toggle light / dark
         </Button>
-        <Button size="lg" onClick={() => navigate(-1)} style={{ marginTop: theme.spacing(1) }}>
+        <Button
+          size="lg"
+          onClick={() => navigate(-1)}
+          style={{ marginTop: theme.spacing(1) }}
+        >
           ← Back
         </Button>
       </Stack>

@@ -20,9 +20,21 @@ export default function SpeedDialDemoPage() {
   const navigate = useNavigate();
 
   const actions = [
-    { icon: <Icon icon="mdi:content-copy" />, label: 'Copy', onClick: () => alert('Copy') },
-    { icon: <Icon icon="mdi:share-variant" />, label: 'Share', onClick: () => alert('Share') },
-    { icon: <Icon icon="mdi:delete" />, label: 'Delete', onClick: () => alert('Delete') },
+    {
+      icon: <Icon icon="mdi:content-copy" />,
+      label: 'Copy',
+      onClick: () => alert('Copy'),
+    },
+    {
+      icon: <Icon icon="mdi:share-variant" />,
+      label: 'Share',
+      onClick: () => alert('Share'),
+    },
+    {
+      icon: <Icon icon="mdi:delete" />,
+      label: 'Delete',
+      onClick: () => alert('Delete'),
+    },
   ];
 
   interface Row {
@@ -70,7 +82,9 @@ export default function SpeedDialDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography variant="h2" bold>SpeedDial Showcase</Typography>
+        <Typography variant="h2" bold>
+          SpeedDial Showcase
+        </Typography>
         <Typography variant="subtitle">Floating action button</Typography>
 
         <Tabs>
@@ -78,9 +92,13 @@ export default function SpeedDialDemoPage() {
           <Tabs.Panel>
             <Stack>
               <Typography variant="h3">Example</Typography>
-              <Typography variant="body">Click the fab to reveal actions.</Typography>
+              <Typography variant="body">
+                Click the fab to reveal actions.
+              </Typography>
               <SpeedDial icon={<Icon icon="mdi:plus" />} actions={actions} />
-              <Button variant="outlined" onClick={toggleMode}>Toggle light / dark</Button>
+              <Button variant="outlined" onClick={toggleMode}>
+                Toggle light / dark
+              </Button>
             </Stack>
           </Tabs.Panel>
 

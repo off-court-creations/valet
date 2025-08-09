@@ -11,12 +11,12 @@ import React, {
   ChangeEvent,
   ReactNode,
 } from 'react';
-import { styled }         from '../../css/createStyled';
-import { useTheme }       from '../../system/themeStore';
-import { preset }         from '../../css/stylePresets';
-import { useForm }        from './FormControl';
+import { styled } from '../../css/createStyled';
+import { useTheme } from '../../system/themeStore';
+import { preset } from '../../css/stylePresets';
+import { useForm } from './FormControl';
 import { toRgb, mix, toHex } from '../../helpers/color';
-import type { Theme }     from '../../system/themeStore';
+import type { Theme } from '../../system/themeStore';
 import type { Presettable } from '../../types';
 
 /*───────────────────────────────────────────────────────────────────────────*/
@@ -39,13 +39,14 @@ export interface CheckboxProps
 
 /*───────────────────────────────────────────────────────────────────────────*/
 /* Size map helper                                                          */
-const createSizeMap = (t: Theme) => ({
-  xs: { box: '0.75rem', tick: 'calc(0.75rem * 0.6)', gap: t.spacing(1) },
-  sm: { box: '1rem',   tick: 'calc(1rem * 0.6)',   gap: t.spacing(1) },
-  md: { box: '1.25rem',tick: 'calc(1.25rem * 0.6)',gap: t.spacing(1) },
-  lg: { box: '1.5rem', tick: 'calc(1.5rem * 0.6)', gap: t.spacing(1) },
-  xl: { box: '1.75rem',tick: 'calc(1.75rem * 0.6)',gap: t.spacing(1) },
-} as const);
+const createSizeMap = (t: Theme) =>
+  ({
+    xs: { box: '0.75rem', tick: 'calc(0.75rem * 0.6)', gap: t.spacing(1) },
+    sm: { box: '1rem', tick: 'calc(1rem * 0.6)', gap: t.spacing(1) },
+    md: { box: '1.25rem', tick: 'calc(1.25rem * 0.6)', gap: t.spacing(1) },
+    lg: { box: '1.5rem', tick: 'calc(1.5rem * 0.6)', gap: t.spacing(1) },
+    xl: { box: '1.75rem', tick: 'calc(1.75rem * 0.6)', gap: t.spacing(1) },
+  }) as const;
 
 /*───────────────────────────────────────────────────────────────────────────*/
 /* Styled primitives                                                        */
@@ -86,7 +87,7 @@ interface BoxProps {
 const Box = styled('span')<BoxProps>`
   position: relative;
   display: inline-block;
-  width:  ${({ $size }) => $size};
+  width: ${({ $size }) => $size};
   height: ${({ $size }) => $size};
   min-width: ${({ $size }) => $size};
   border-radius: 4px;
@@ -99,13 +100,11 @@ const Box = styled('span')<BoxProps>`
 
   /* Fill when checked, swap to disabled colour if disabled */
   background: ${({ $checked, $disabled, $primary, $disabledColor }) =>
-    $checked
-      ? $disabled
-        ? $disabledColor
-        : $primary
-      : 'transparent'};
+    $checked ? ($disabled ? $disabledColor : $primary) : 'transparent'};
 
-  transition: background 120ms ease, border-color 120ms ease;
+  transition:
+    background 120ms ease,
+    border-color 120ms ease;
 
   /* Remove tap highlight */
   -webkit-tap-highlight-color: transparent;
@@ -126,13 +125,11 @@ const Box = styled('span')<BoxProps>`
     margin: auto;
     opacity: ${({ $checked }) => ($checked ? 1 : 0)};
     transform: ${({ $checked }) => ($checked ? 'scale(1)' : 'scale(0.85)')};
-    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' " +
-                    "xmlns='http://www.w3.org/2000/svg' "          +
-                    "fill='none' stroke='%23fff' stroke-width='3' " +
-                    "stroke-linecap='round' stroke-linejoin='round'%3E" +
-                    "%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E")
-               center/contain no-repeat;
-    transition: opacity 120ms ease, transform 120ms ease;
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' " + "xmlns='http://www.w3.org/2000/svg' " + "fill='none' stroke='%23fff' stroke-width='3' " + "stroke-linecap='round' stroke-linejoin='round'%3E" + "%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E")
+      center/contain no-repeat;
+    transition:
+      opacity 120ms ease,
+      transform 120ms ease;
     /* Fade tick when disabled */
     filter: ${({ $disabled }) => ($disabled ? 'grayscale(1)' : 'none')};
   }
@@ -184,22 +181,26 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
 
     /* Optional FormControl binding -------------------------------------- */
     let form: ReturnType<typeof useForm<any>> | null = null;
-    try { form = useForm<any>(); } catch {}
+    try {
+      form = useForm<any>();
+    } catch {}
 
     /* Controlled vs uncontrolled logic ---------------------------------- */
-    const controlled   = checkedProp !== undefined;
-    const formBound    = Boolean(form);
-    const initialState =
-      controlled         ? checkedProp! :
-      formBound          ? Boolean(form!.values[name]) :
-      Boolean(defaultChecked);
+    const controlled = checkedProp !== undefined;
+    const formBound = Boolean(form);
+    const initialState = controlled
+      ? checkedProp!
+      : formBound
+        ? Boolean(form!.values[name])
+        : Boolean(defaultChecked);
 
     const [internal, setInternal] = useState(initialState);
 
-    const currentChecked =
-      controlled ? checkedProp! :
-      formBound  ? Boolean(form!.values[name]) :
-      internal;
+    const currentChecked = controlled
+      ? checkedProp!
+      : formBound
+        ? Boolean(form!.values[name])
+        : internal;
 
     /* Event handler – updates state, FormStore, and user callback -------- */
     const handleChange = useCallback(
@@ -217,7 +218,8 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
 
     /* preset → className merge ------------------------------------------ */
     const presetCls = presetKey ? preset(presetKey) : '';
-    const mergedCls = [presetCls, className].filter(Boolean).join(' ') || undefined;
+    const mergedCls =
+      [presetCls, className].filter(Boolean).join(' ') || undefined;
 
     /*─────────────────────────────────────────────────────────────────────*/
     return (

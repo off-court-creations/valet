@@ -61,7 +61,9 @@ export default function StepperDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography variant="h2" bold>Stepper Showcase</Typography>
+        <Typography variant="h2" bold>
+          Stepper Showcase
+        </Typography>
         <Typography variant="subtitle">Simple progress indicator</Typography>
 
         <Tabs>
@@ -70,8 +72,16 @@ export default function StepperDemoPage() {
             <Stack>
               <Stepper steps={steps} active={active} />
               <Stack direction="row">
-                <Button onClick={() => setActive((a) => Math.max(0, a - 1))}>Back</Button>
-                <Button onClick={() => setActive((a) => Math.min(steps.length - 1, a + 1))}>Next</Button>
+                <Button onClick={() => setActive((a) => Math.max(0, a - 1))}>
+                  Back
+                </Button>
+                <Button
+                  onClick={() =>
+                    setActive((a) => Math.min(steps.length - 1, a + 1))
+                  }
+                >
+                  Next
+                </Button>
               </Stack>
               <Button variant="outlined" onClick={toggleMode}>
                 Toggle light / dark

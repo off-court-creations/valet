@@ -25,13 +25,13 @@ const LOREM =
 /* Demo page                                                                  */
 export default function AccordionDemoPage() {
   const { theme, toggleMode } = useTheme();
-  const navigate              = useNavigate();
+  const navigate = useNavigate();
 
   /* Controlled single-expand state -------------------------------------- */
   const [openSingle, setOpenSingle] = useState<number[]>([0]);
 
   /* Controlled multi-expand state --------------------------------------- */
-  const [openMulti, setOpenMulti]   = useState<number[]>([0, 2]);
+  const [openMulti, setOpenMulti] = useState<number[]>([0, 2]);
 
   return (
     <Surface>
@@ -41,9 +41,7 @@ export default function AccordionDemoPage() {
         <Typography variant="h2" bold>
           Accordion Showcase
         </Typography>
-        <Typography>
-          Smooth animations and unified chevron icons
-        </Typography>
+        <Typography>Smooth animations and unified chevron icons</Typography>
         <Button
           variant="outlined"
           size="sm"
@@ -71,17 +69,12 @@ export default function AccordionDemoPage() {
         <Button
           size="sm"
           variant="outlined"
-          onClick={() =>
-            setOpenSingle((prev) => (prev[0] === 1 ? [] : [1]))
-          }
+          onClick={() => setOpenSingle((prev) => (prev[0] === 1 ? [] : [1]))}
           style={{ alignSelf: 'flex-start' }}
         >
           Toggle second item programmatically
         </Button>
-        <Accordion
-          open={openSingle}
-          onOpenChange={setOpenSingle}
-        >
+        <Accordion open={openSingle} onOpenChange={setOpenSingle}>
           <Accordion.Item header="First">
             <Typography>{LOREM}</Typography>
           </Accordion.Item>
@@ -95,11 +88,7 @@ export default function AccordionDemoPage() {
 
         {/* 3. Controlled multi-expand ------------------------------------- */}
         <Typography variant="h3">3. Controlled (multi-expand)</Typography>
-        <Accordion
-          multiple
-          open={openMulti}
-          onOpenChange={setOpenMulti}
-        >
+        <Accordion multiple open={openMulti} onOpenChange={setOpenMulti}>
           <Accordion.Item header="Alpha">
             <Typography>{LOREM}</Typography>
           </Accordion.Item>
@@ -117,10 +106,7 @@ export default function AccordionDemoPage() {
           <Accordion.Item header="Enabled">
             <Typography>{LOREM}</Typography>
           </Accordion.Item>
-          <Accordion.Item
-            header="Disabled"
-            disabled
-          >
+          <Accordion.Item header="Disabled" disabled>
             {/* Will never open */}
             <Typography>{LOREM}</Typography>
           </Accordion.Item>

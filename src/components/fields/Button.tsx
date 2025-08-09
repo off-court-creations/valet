@@ -3,50 +3,76 @@
 // Theme-aware <Button /> – automatic Typography wrapping
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
-import { styled }           from '../../css/createStyled';
-import { useTheme }         from '../../system/themeStore';
-import type { Theme }       from '../../system/themeStore';
-import { preset }           from '../../css/stylePresets';
-import { Typography }       from '../primitives/Typography';
+import { styled } from '../../css/createStyled';
+import { useTheme } from '../../system/themeStore';
+import type { Theme } from '../../system/themeStore';
+import { preset } from '../../css/stylePresets';
+import { Typography } from '../primitives/Typography';
 import type { Presettable } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 export type ButtonVariant = 'contained' | 'outlined';
-export type ButtonSize    = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-export type ButtonToken   = 'primary' | 'secondary' | 'tertiary';
+export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+export type ButtonToken = 'primary' | 'secondary' | 'tertiary';
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     Presettable {
-  color?     : ButtonToken | string;
-  textColor? : ButtonToken | string;
-  variant?   : ButtonVariant;
-  size?      : ButtonSize | number | string;
-  fullWidth? : boolean;
+  color?: ButtonToken | string;
+  textColor?: ButtonToken | string;
+  variant?: ButtonVariant;
+  size?: ButtonSize | number | string;
+  fullWidth?: boolean;
 }
 
 /*───────────────────────────────────────────────────────────*/
-const createSizeMap = (t: Theme) => ({
-  xs: { padV: t.spacing(1), padH: t.spacing(1), font: '1rem', height: '1.5rem' },
-  sm: { padV: t.spacing(1), padH: t.spacing(1), font: '1rem', height: '2rem'   },
-  md: { padV: t.spacing(1), padH: t.spacing(1), font: '1rem', height: '2.5rem' },
-  lg: { padV: t.spacing(1), padH: t.spacing(1), font: '1rem', height: '3rem'   },
-  xl: { padV: t.spacing(1), padH: t.spacing(1), font: '1rem', height: '3.5rem' },
-} as const);
+const createSizeMap = (t: Theme) =>
+  ({
+    xs: {
+      padV: t.spacing(1),
+      padH: t.spacing(1),
+      font: '1rem',
+      height: '1.5rem',
+    },
+    sm: {
+      padV: t.spacing(1),
+      padH: t.spacing(1),
+      font: '1rem',
+      height: '2rem',
+    },
+    md: {
+      padV: t.spacing(1),
+      padH: t.spacing(1),
+      font: '1rem',
+      height: '2.5rem',
+    },
+    lg: {
+      padV: t.spacing(1),
+      padH: t.spacing(1),
+      font: '1rem',
+      height: '3rem',
+    },
+    xl: {
+      padV: t.spacing(1),
+      padH: t.spacing(1),
+      font: '1rem',
+      height: '3.5rem',
+    },
+  }) as const;
 
 /*───────────────────────────────────────────────────────────*/
 const Root = styled('button')<{
-  $variant    : ButtonVariant;
-  $height     : string;
-  $padRule    : string;
-  $font       : string;
-  $minW       : string;
-  $bg         : string;
-  $label      : string;
-  $hoverLabel : string;
-  $outline    : string;
-  $ripple     : string;
-  $full       : boolean;
+  $variant: ButtonVariant;
+  $height: string;
+  $padRule: string;
+  $font: string;
+  $minW: string;
+  $bg: string;
+  $label: string;
+  $hoverLabel: string;
+  $outline: string;
+  $ripple: string;
+  $full: boolean;
 }>`
   display: inline-flex;
   align-items: center;
@@ -54,13 +80,13 @@ const Root = styled('button')<{
   position: relative;
   overflow: hidden;
 
-  height   : ${({ $height })  => $height};
-  min-width: ${({ $minW })    => $minW};
-  padding  : ${({ $padRule }) => $padRule};
+  height: ${({ $height }) => $height};
+  min-width: ${({ $minW }) => $minW};
+  padding: ${({ $padRule }) => $padRule};
   box-sizing: border-box;
 
   align-self: ${({ $full }) => ($full ? 'stretch' : 'flex-start')};
-  width     : ${({ $full }) => ($full ? '100%'   : 'auto')};
+  width: ${({ $full }) => ($full ? '100%' : 'auto')};
 
   border-radius: 4px;
   border: ${({ $variant, $outline }) =>
@@ -69,16 +95,16 @@ const Root = styled('button')<{
   background: ${({ $variant, $bg }) =>
     $variant === 'contained' ? $bg : 'transparent'};
 
-  color      : ${({ $label }) => $label};
-  font-size  : ${({ $font }) => $font};
+  color: ${({ $label }) => $label};
+  font-size: ${({ $font }) => $font};
   font-weight: 600;
   line-height: 1;
-  cursor     : pointer;
-  transition :
+  cursor: pointer;
+  transition:
     background 0.2s ease,
-    color      0.2s ease,
-    transform  0.1s ease,
-    filter     0.2s ease;
+    color 0.2s ease,
+    transform 0.1s ease,
+    filter 0.2s ease;
 
   -webkit-tap-highlight-color: transparent;
 
@@ -94,19 +120,26 @@ const Root = styled('button')<{
     }
   }
 
-  &:active:not(:disabled) { transform: scale(0.96); }
-  &:disabled              { opacity: 0.5; cursor: default; }
+  &:active:not(:disabled) {
+    transform: scale(0.96);
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
 
   &::after {
-    content : '';
+    content: '';
     position: absolute;
-    inset   : 0;
-    background    : ${({ $ripple }) => $ripple};
-    border-radius : inherit;
-    transform     : scale(0.95);
-    opacity       : 0;
+    inset: 0;
+    background: ${({ $ripple }) => $ripple};
+    border-radius: inherit;
+    transform: scale(0.95);
+    opacity: 0;
     pointer-events: none;
-    transition    : transform 0.3s ease, opacity 0.3s ease;
+    transition:
+      transform 0.3s ease,
+      opacity 0.3s ease;
   }
   &:active:not(:disabled)::after {
     opacity: 1;
@@ -116,8 +149,8 @@ const Root = styled('button')<{
 
 /*───────────────────────────────────────────────────────────*/
 export const Button: React.FC<ButtonProps> = ({
-  variant   = 'contained',
-  size      = 'md',
+  variant = 'contained',
+  size = 'md',
   color,
   textColor,
   fullWidth = false,
@@ -132,11 +165,21 @@ export const Button: React.FC<ButtonProps> = ({
 
   if (typeof size === 'number') {
     const h = `${size}px`;
-    geom = { padV: theme.spacing(1), padH: theme.spacing(1), font: '1rem', height: h };
+    geom = {
+      padV: theme.spacing(1),
+      padH: theme.spacing(1),
+      font: '1rem',
+      height: h,
+    };
   } else if (map[size as ButtonSize]) {
     geom = map[size as ButtonSize];
   } else {
-    geom = { padV: theme.spacing(1), padH: theme.spacing(1), font: '1rem', height: size as string };
+    geom = {
+      padV: theme.spacing(1),
+      padH: theme.spacing(1),
+      font: '1rem',
+      height: size as string,
+    };
   }
 
   const { padV, padH, font, height } = geom;
@@ -152,14 +195,14 @@ export const Button: React.FC<ButtonProps> = ({
     v === 'primary' || v === 'secondary' || v === 'tertiary';
 
   const paletteToken: ButtonToken | null =
-    color === undefined ? 'primary'
-    : isToken(color)     ? color
-    : null;
+    color === undefined ? 'primary' : isToken(color) ? color : null;
 
   const bg = paletteToken
     ? theme.colors[paletteToken]
     : color
-      ? (isToken(color) ? theme.colors[color] : color)
+      ? isToken(color)
+        ? theme.colors[color]
+        : color
       : theme.colors.primary;
 
   const outlineNeutral = mode === 'dark' ? '#eee' : '#111';
@@ -170,9 +213,7 @@ export const Button: React.FC<ButtonProps> = ({
   let labelColor: string;
 
   if (variant === 'outlined') {
-    labelColor = textColor
-      ? resolveText(textColor)
-      : outlineNeutral;
+    labelColor = textColor ? resolveText(textColor) : outlineNeutral;
   } else {
     labelColor = textColor
       ? resolveText(textColor)
@@ -183,11 +224,11 @@ export const Button: React.FC<ButtonProps> = ({
 
   const hoverLabel =
     variant === 'outlined'
-      ? (textColor
-          ? resolveText(textColor)
-          : paletteToken
-            ? theme.colors[`${paletteToken}ButtonText`]
-            : '#fff')
+      ? textColor
+        ? resolveText(textColor)
+        : paletteToken
+          ? theme.colors[`${paletteToken}ButtonText`]
+          : '#fff'
       : labelColor;
 
   const ripple =
@@ -217,7 +258,7 @@ export const Button: React.FC<ButtonProps> = ({
             noSelect
           >
             {buffer}
-          </Typography>
+          </Typography>,
         );
         buffer = '';
       }
@@ -235,7 +276,7 @@ export const Button: React.FC<ButtonProps> = ({
         noSelect
       >
         {buffer}
-      </Typography>
+      </Typography>,
     );
   }
 

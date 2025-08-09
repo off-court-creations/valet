@@ -3,13 +3,7 @@
 // Doc home with adaptive drawer navigation
 // ─────────────────────────────────────────────────────────────
 
-import {
-  Surface,
-  Stack,
-  Button,
-  Typography,
-  useTheme,
-} from '@archway/valet';
+import { Surface, Stack, Button, Typography, useTheme } from '@archway/valet';
 import NavDrawer from '../components/NavDrawer';
 
 export default function MainPage() {

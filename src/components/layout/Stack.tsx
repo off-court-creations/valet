@@ -49,7 +49,9 @@ const StackContainer = styled('div')<{
   /* Hide native scrollbars where supported */
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE & Edge */
-  &::-webkit-scrollbar { display: none; }
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
   box-sizing: border-box;
 
@@ -79,7 +81,8 @@ export const Stack: React.FC<StackProps> = ({
   if (gapInput === undefined) {
     gapInput = compact ? 0 : 1;
   }
-  gap = typeof gapInput === 'number' ? theme.spacing(gapInput) : String(gapInput);
+  gap =
+    typeof gapInput === 'number' ? theme.spacing(gapInput) : String(gapInput);
 
   /* Enable wrapping by default for rows */
   const shouldWrap = typeof wrap === 'boolean' ? wrap : direction === 'row';

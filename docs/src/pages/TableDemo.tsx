@@ -54,9 +54,9 @@ const rand = <T,>(arr: readonly T[]): T =>
 
 const makePeople = (n: number): Person[] =>
   Array.from({ length: n }, (_, i) => ({
-    id  : i + 1,
+    id: i + 1,
     name: rand(NAMES),
-    age : 18 + Math.floor(Math.random() * 50),
+    age: 18 + Math.floor(Math.random() * 50),
     city: rand(CITIES),
     join: new Date(Date.now() - Math.random() * 2.5e11),
   }));
@@ -68,11 +68,11 @@ export default function TableDemoPage() {
   const navigate = useNavigate();
 
   /* UI controls ----------------------------------------------------------- */
-  const [rows,        setRows]        = useState(30);
-  const [striped,     setStriped]     = useState(true);
-  const [hoverable,   setHoverable]   = useState(true);
-  const [dividers,    setDividers]    = useState(true);
-  const [selEnabled,  setSelEnabled]  = useState(false);
+  const [rows, setRows] = useState(30);
+  const [striped, setStriped] = useState(true);
+  const [hoverable, setHoverable] = useState(true);
+  const [dividers, setDividers] = useState(true);
+  const [selEnabled, setSelEnabled] = useState(false);
   const [multiSelect, setMultiSelect] = useState(false);
 
   const [seed, setSeed] = useState(0); // triggers fresh random data
@@ -83,20 +83,20 @@ export default function TableDemoPage() {
 
   const columns: TableColumn<Person>[] = useMemo(
     () => [
-      { header: 'ID',   accessor: 'id',   align: 'right', sortable: true },
-      { header: 'Name', accessor: 'name',                 sortable: true },
-      { header: 'Age',  accessor: 'age',  align: 'right', sortable: true },
-      { header: 'City', accessor: 'city',                 sortable: true },
+      { header: 'ID', accessor: 'id', align: 'right', sortable: true },
+      { header: 'Name', accessor: 'name', sortable: true },
+      { header: 'Age', accessor: 'age', align: 'right', sortable: true },
+      { header: 'City', accessor: 'city', sortable: true },
       {
-        header  : 'Joined',
+        header: 'Joined',
         accessor: 'join',
-        align   : 'right',
+        align: 'right',
         sortable: true,
-        render  : (p) =>
+        render: (p) =>
           p.join.toLocaleDateString(undefined, {
-            year : 'numeric',
+            year: 'numeric',
             month: 'short',
-            day  : 'numeric',
+            day: 'numeric',
           }),
       },
     ],
@@ -104,8 +104,11 @@ export default function TableDemoPage() {
   );
 
   /* Derive table-selection mode ------------------------------------------ */
-  const selectable =
-    selEnabled ? (multiSelect ? 'multi' : 'single') : undefined;
+  const selectable = selEnabled
+    ? multiSelect
+      ? 'multi'
+      : 'single'
+    : undefined;
 
   /* Render ---------------------------------------------------------------- */
   return (

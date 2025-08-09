@@ -21,7 +21,9 @@ import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../components/NavDrawer';
 
 /*───────────────────────────────────────────────────────────*/
-interface FormVals { amount: number; }
+interface FormVals {
+  amount: number;
+}
 const useFormStore = createFormStore<FormVals>({ amount: 1 });
 
 export default function IteratorDemoPage() {

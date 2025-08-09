@@ -43,7 +43,7 @@ export const Grid: React.FC<GridProps> = ({
 }) => {
   const { theme } = useTheme();
   const { width, height } = useSurface(
-    s => ({ width: s.width, height: s.height }),
+    (s) => ({ width: s.width, height: s.height }),
     shallow,
   );
 

@@ -16,12 +16,18 @@ export type Font = string | CustomFont;
 const loadedFonts = new Set<string>();
 const customFaces = new Map<string, FontFace>();
 
-export function injectFontLinks(fonts: Font[], options: GoogleFontOptions = {}): () => void {
+export function injectFontLinks(
+  fonts: Font[],
+  options: GoogleFontOptions = {},
+): () => void {
   const { preload = true } = options;
   const added: HTMLLinkElement[] = [];
 
   const googleFonts = fonts.filter((f): f is string => typeof f === 'string');
-  if (googleFonts.length && !document.getElementById('valet-fonts-preconnect')) {
+  if (
+    googleFonts.length &&
+    !document.getElementById('valet-fonts-preconnect')
+  ) {
     const preconnect1 = document.createElement('link');
     preconnect1.id = 'valet-fonts-preconnect';
     preconnect1.rel = 'preconnect';
@@ -81,7 +87,9 @@ export function injectFontLinks(fonts: Font[], options: GoogleFontOptions = {}):
 
   return () => {
     added.forEach((el) => document.head.removeChild(el));
-    fonts.forEach((f) => loadedFonts.delete(typeof f === 'string' ? f : f.name));
+    fonts.forEach((f) =>
+      loadedFonts.delete(typeof f === 'string' ? f : f.name),
+    );
   };
 }
 
@@ -99,12 +107,14 @@ export async function waitForFonts(fonts: Font[]): Promise<void> {
         (document as any).fonts.add(face);
       }
       return face.load();
-    })
+    }),
   );
   if ((document as any).fonts?.ready) {
     await (document as any).fonts.ready;
   }
-  await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+  await new Promise((r) =>
+    requestAnimationFrame(() => requestAnimationFrame(r)),
+  );
   await new Promise((r) => setTimeout(r, 200));
 }
 

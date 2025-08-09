@@ -12,7 +12,10 @@ import {
   Font,
 } from '../helpers/fontLoader';
 
-export function useGoogleFonts(extras: Font[] = [], options?: GoogleFontOptions) {
+export function useGoogleFonts(
+  extras: Font[] = [],
+  options?: GoogleFontOptions,
+) {
   const start = useFonts((s) => s.start);
   const finish = useFonts((s) => s.finish);
   const themeFonts = useTheme((s) => s.theme.fonts);
@@ -29,7 +32,12 @@ export function useGoogleFonts(extras: Font[] = [], options?: GoogleFontOptions)
       if (!map.has(key)) map.set(key, f);
     });
     return Array.from(map.values());
-  }, [themeFonts.heading, themeFonts.body, themeFonts.mono, JSON.stringify(extras)]);
+  }, [
+    themeFonts.heading,
+    themeFonts.body,
+    themeFonts.mono,
+    JSON.stringify(extras),
+  ]);
   useInsertionEffect(() => {
     start();
     return injectFontLinks(fonts, options);

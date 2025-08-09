@@ -53,8 +53,7 @@ const ItemRow = styled('div')<{
   padding: 0.25rem 0.5rem 0.25rem ${({ $level }) => $level * 1.25}rem;
   cursor: pointer;
   user-select: none;
-  ${({ $hoverBg }) =>
-    `@media(hover:hover){&:hover{background:${$hoverBg};}}`}
+  ${({ $hoverBg }) => `@media(hover:hover){&:hover{background:${$hoverBg};}}`}
   ${({ $selected, $selectedBg }) =>
     $selected ? `background:${$selectedBg};` : ''}
   &:focus-visible {
@@ -115,8 +114,9 @@ const ListRow = styled('div')<{
   padding: 0.25rem 0.5rem;
   cursor: pointer;
   user-select: none;
-  ${({ $hoverBg }) =>`@media(hover:hover){&:hover{background:${$hoverBg};}}`}
-  ${({ $selected, $selectedBg }) => $selected ? `background:${$selectedBg};` : ''}
+  ${({ $hoverBg }) => `@media(hover:hover){&:hover{background:${$hoverBg};}}`}
+  ${({ $selected, $selectedBg }) =>
+    $selected ? `background:${$selectedBg};` : ''}
   &:focus-visible {
     outline: 2px solid currentColor;
     outline-offset: 2px;
@@ -154,7 +154,9 @@ export function Tree<T>({
 }: TreeProps<T>) {
   const { theme } = useTheme();
   const controlledExpand = expandedProp !== undefined;
-  const [selfExpanded, setSelfExpanded] = useState(() => new Set(defaultExpanded));
+  const [selfExpanded, setSelfExpanded] = useState(
+    () => new Set(defaultExpanded),
+  );
   const expanded = controlledExpand ? new Set(expandedProp) : selfExpanded;
   const [focused, setFocused] = useState<string | null>(null);
   const controlled = selectedProp !== undefined;
@@ -165,10 +167,10 @@ export function Tree<T>({
 
   // Swap hover and active intensity per design feedback
   const hoverBg = toHex(
-    mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.4)
+    mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.4),
   );
   const selectedBg = toHex(
-    mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.2)
+    mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.2),
   );
 
   const flat = useMemo(() => {
@@ -258,12 +260,17 @@ export function Tree<T>({
     }
   };
 
-  const renderBranch = (items: TreeNode<T>[], level: number): React.ReactNode => (
+  const renderBranch = (
+    items: TreeNode<T>[],
+    level: number,
+  ): React.ReactNode => (
     <Branch role={level ? 'group' : undefined} $line={line} $root={level === 0}>
       {items.map((node) => (
         <BranchItem key={node.id} $line={line} $root={level === 0} role="none">
-              <ListRow
-                ref={(el: HTMLDivElement | null) => { refs.current[node.id] = el; }}
+          <ListRow
+            ref={(el: HTMLDivElement | null) => {
+              refs.current[node.id] = el;
+            }}
             role="treeitem"
             aria-expanded={node.children ? expanded.has(node.id) : undefined}
             aria-selected={selected === node.id}
@@ -284,7 +291,7 @@ export function Tree<T>({
                 $open={expanded.has(node.id)}
                 $line={line}
                 $fill={theme.colors.secondary}
-                  onClick={(e: React.MouseEvent) => {
+                onClick={(e: React.MouseEvent) => {
                   e.stopPropagation();
                   toggle(node.id);
                 }}
@@ -292,18 +299,36 @@ export function Tree<T>({
             )}
             {variant === 'files' && (
               <Icon
-                icon={node.children ? (expanded.has(node.id) ? 'carbon:folder-open' : 'carbon:folder') : 'carbon:document'}
+                icon={
+                  node.children
+                    ? expanded.has(node.id)
+                      ? 'carbon:folder-open'
+                      : 'carbon:folder'
+                    : 'carbon:document'
+                }
                 size={16}
                 style={{ marginRight: '0.25rem' }}
                 aria-hidden
-                onClick={node.children ? ((e: React.MouseEvent) => { e.stopPropagation(); toggle(node.id); }) : undefined}
+                onClick={
+                  node.children
+                    ? (e: React.MouseEvent) => {
+                        e.stopPropagation();
+                        toggle(node.id);
+                      }
+                    : undefined
+                }
               />
             )}
-            <Typography variant="body" family="body" style={{ display: 'inline' }}>
+            <Typography
+              variant="body"
+              family="body"
+              style={{ display: 'inline' }}
+            >
               {getLabel(node.data)}
             </Typography>
           </ListRow>
-          {node.children && expanded.has(node.id) &&
+          {node.children &&
+            expanded.has(node.id) &&
             renderBranch(node.children, level + 1)}
         </BranchItem>
       ))}
@@ -323,9 +348,13 @@ export function Tree<T>({
         ? flat.map(({ node, level }) => (
             <li key={node.id} role="none">
               <ItemRow
-                ref={(el: HTMLDivElement | null) => { refs.current[node.id] = el; }}
+                ref={(el: HTMLDivElement | null) => {
+                  refs.current[node.id] = el;
+                }}
                 role="treeitem"
-                aria-expanded={node.children ? expanded.has(node.id) : undefined}
+                aria-expanded={
+                  node.children ? expanded.has(node.id) : undefined
+                }
                 aria-selected={selected === node.id}
                 tabIndex={focused === node.id ? 0 : -1}
                 $level={level}
@@ -341,17 +370,21 @@ export function Tree<T>({
               >
                 {node.children && (
                   <ExpandIcon
-                      aria-hidden
-                      $open={expanded.has(node.id)}
+                    aria-hidden
+                    $open={expanded.has(node.id)}
                     onClick={(e: React.MouseEvent) => {
-                        e.stopPropagation();
-                        toggle(node.id);
-                      }}
-                    >
+                      e.stopPropagation();
+                      toggle(node.id);
+                    }}
+                  >
                     ▶
                   </ExpandIcon>
                 )}
-                <Typography variant="body" family="body" style={{ display: 'inline' }}>
+                <Typography
+                  variant="body"
+                  family="body"
+                  style={{ display: 'inline' }}
+                >
                   {getLabel(node.data)}
                 </Typography>
               </ItemRow>

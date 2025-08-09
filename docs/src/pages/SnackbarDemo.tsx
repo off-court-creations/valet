@@ -35,11 +35,11 @@ const DismissBtn: React.FC = () => {
 /* Demo page                                                                   */
 export default function SnackbarDemoPage() {
   const { theme, toggleMode } = useTheme();
-  const navigate              = useNavigate();
+  const navigate = useNavigate();
 
   /* Demo state ----------------------------------------------------------- */
-  const [autoOpen,    setAutoOpen]    = useState(false);
-  const [ctrlOpen,    setCtrlOpen]    = useState(false);
+  const [autoOpen, setAutoOpen] = useState(false);
+  const [ctrlOpen, setCtrlOpen] = useState(false);
   const [noStackOpen, setNoStackOpen] = useState(false);
 
   interface Row {

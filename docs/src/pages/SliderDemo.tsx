@@ -21,8 +21,8 @@ import NavDrawer from '../components/NavDrawer';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Example-wide constants                                                     */
-const PRESET_MARKS = [0, 25, 50, 75, 100];           // example #4 presets
-const CUSTOM_TICKS = [0, 15, 30, 45, 60];            // example #5 ticks
+const PRESET_MARKS = [0, 25, 50, 75, 100]; // example #4 presets
+const CUSTOM_TICKS = [0, 15, 30, 45, 60]; // example #5 ticks
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Demo page                                                                   */
@@ -155,8 +155,6 @@ export default function SliderDemoPage() {
           <Tabs.Tab label="Usage" />
           <Tabs.Panel>
             <Stack>
-
-
               {/* 1. Default uncontrolled ----------------------------------------- */}
               <Typography variant="h3">1. Uncontrolled (defaults)</Typography>
               <Slider defaultValue={50} />
@@ -203,36 +201,38 @@ export default function SliderDemoPage() {
               />
 
               {/* 5. Custom ticks *with* snapping ---------------------------------- */}
-              <Typography variant="h3">5. Custom ticks (snap = "presets")</Typography>
+              <Typography variant="h3">
+                5. Custom ticks (snap = "presets")
+              </Typography>
               <Slider
                 defaultValue={15}
                 min={0}
                 max={60}
                 ticks={CUSTOM_TICKS}
                 presets={CUSTOM_TICKS}
-                snap="presets"          // ← ensures handle snaps to tick marks
+                snap="presets" // ← ensures handle snaps to tick marks
                 showTicks
               />
 
-                {/* 6. Sizes ------------------------------------------------------- */}
-                <Typography variant="h3">6. Sizes</Typography>
-                <Stack>
-                  <Slider defaultValue={20} size="xs" showMinMax />
-                  <Slider defaultValue={20} size="sm" showMinMax />
-                  <Slider defaultValue={20} size="md" showMinMax />
-                  <Slider defaultValue={20} size="lg" showMinMax />
-                  <Slider defaultValue={20} size="xl" showMinMax />
-                </Stack>
+              {/* 6. Sizes ------------------------------------------------------- */}
+              <Typography variant="h3">6. Sizes</Typography>
+              <Stack>
+                <Slider defaultValue={20} size="xs" showMinMax />
+                <Slider defaultValue={20} size="sm" showMinMax />
+                <Slider defaultValue={20} size="md" showMinMax />
+                <Slider defaultValue={20} size="lg" showMinMax />
+                <Slider defaultValue={20} size="xl" showMinMax />
+              </Stack>
 
-                {/* 7. Custom sizes --------------------------------------------- */}
-                <Typography variant="h3">7. Custom sizes</Typography>
-                <Stack>
-                  <Slider defaultValue={40} size="2rem" showMinMax />
-                  <Slider defaultValue={40} size="24px" showMinMax />
-                </Stack>
+              {/* 7. Custom sizes --------------------------------------------- */}
+              <Typography variant="h3">7. Custom sizes</Typography>
+              <Stack>
+                <Slider defaultValue={40} size="2rem" showMinMax />
+                <Slider defaultValue={40} size="24px" showMinMax />
+              </Stack>
 
-                {/* 8. Disabled state -------------------------------------------- */}
-                <Typography variant="h3">8. Disabled</Typography>
+              {/* 8. Disabled state -------------------------------------------- */}
+              <Typography variant="h3">8. Disabled</Typography>
 
               {/* Theme coupling */}
               <Button variant="outlined" onClick={toggleMode}>

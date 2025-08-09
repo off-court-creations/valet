@@ -123,26 +123,33 @@ export default function LLMChatPage() {
           <Tabs.Panel>
             <Stack>
               <Typography>
-                LLMChat renders a scrollable chat history and an optional compose area.
-                Provide an array of <code>ChatMessage</code> objects via the
-                <code>messages</code> prop and update it when the user sends a message.
+                LLMChat renders a scrollable chat history and an optional
+                compose area. Provide an array of <code>ChatMessage</code>{' '}
+                objects via the
+                <code>messages</code> prop and update it when the user sends a
+                message.
               </Typography>
               <Typography>
-                The component focuses on minimal ceremony so your users can start
-                chatting with an AI quickly. Styling hooks are provided via the
-                <code>preset</code> prop so it fits naturally within your product.
+                The component focuses on minimal ceremony so your users can
+                start chatting with an AI quickly. Styling hooks are provided
+                via the
+                <code>preset</code> prop so it fits naturally within your
+                product.
               </Typography>
               <Typography>
-                Use <code>onSend</code> to forward user input to your API. The helper
+                Use <code>onSend</code> to forward user input to your API. The
+                helper
                 <code>sendChat</code> communicates with OpenAI or Anthropic.
               </Typography>
               <Typography>
-                When <code>constrainHeight</code> is true the chat fits inside the surrounding
-                <code>{'<Surface>'}</code>. Avatars and model selection are optional.
+                When <code>constrainHeight</code> is true the chat fits inside
+                the surrounding
+                <code>{'<Surface>'}</code>. Avatars and model selection are
+                optional.
               </Typography>
               <Typography>
-                LLMChat works well for prototypes or integrated workflows when you
-                need a straightforward conversational widget.
+                LLMChat works well for prototypes or integrated workflows when
+                you need a straightforward conversational widget.
               </Typography>
             </Stack>
           </Tabs.Panel>
@@ -162,4 +169,3 @@ export default function LLMChatPage() {
     </Surface>
   );
 }
-

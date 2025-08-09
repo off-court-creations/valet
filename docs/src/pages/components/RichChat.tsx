@@ -112,8 +112,9 @@ export default function RichChatPage() {
                 interactive widgets directly within the conversation.
               </Typography>
               <Typography>
-                Each message may define a <code>form</code> component to collect a response.
-                When submitted, <code>onFormSubmit</code> receives the value and index.
+                Each message may define a <code>form</code> component to collect
+                a response. When submitted, <code>onFormSubmit</code> receives
+                the value and index.
               </Typography>
               <Typography>
                 The compose area is disabled while a form is active.
@@ -140,4 +141,3 @@ export default function RichChatPage() {
     </Surface>
   );
 }
-

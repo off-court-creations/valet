@@ -3,7 +3,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 import {
   Surface,
-  Stack,          // tidy vertical layout
+  Stack, // tidy vertical layout
   Panel,
   Typography,
   useTheme,
@@ -18,7 +18,7 @@ import NavDrawer from '../../components/NavDrawer';
 /* Demo page                                                                  */
 
 export default function PanelDemoPage() {
-  const { theme } = useTheme();      // live theme switch
+  const { theme } = useTheme(); // live theme switch
 
   interface Row {
     prop: ReactNode;
@@ -93,33 +93,37 @@ export default function PanelDemoPage() {
               Default Panel ------------------------------------------- */}
               <Typography variant="h3">Default Panel</Typography>
               <Panel preset="codePanel">
-                <Typography>(no props) — inherits theme backgroundAlt &amp; text</Typography>
+                <Typography>
+                  (no props) — inherits theme backgroundAlt &amp; text
+                </Typography>
               </Panel>
 
               {/* 2. alt variant --------------------------------------------------- */}
-              <Typography variant="h3"><code>variant</code>=&quot;alt&quot;</Typography>
+              <Typography variant="h3">
+                <code>variant</code>=&quot;alt&quot;
+              </Typography>
               <Panel variant="alt" preset="codePanel">
                 <Typography>Transparent with outline by default</Typography>
               </Panel>
 
               {/* 3. background override ------------------------------------------ */}
-              <Typography variant="h3"><code>background</code> prop</Typography>
+              <Typography variant="h3">
+                <code>background</code> prop
+              </Typography>
               <Stack>
-                <Panel
-                  background={theme.colors['primary']}
-                  preset="codePanel"
-                >
+                <Panel background={theme.colors['primary']} preset="codePanel">
                   <Typography>{`background=${theme.colors['primary']}`}</Typography>
                 </Panel>
               </Stack>
 
               {/* 4. fullWidth prop ----------------------------------------------- */}
-              <Typography variant="h3"><code>fullWidth</code> prop</Typography>
-              <Panel
-                fullWidth
-                style={{ marginBottom: theme.spacing(4) }}
-              >
-                <Typography>Stretch me edge-to-edge with <code>fullWidth</code></Typography>
+              <Typography variant="h3">
+                <code>fullWidth</code> prop
+              </Typography>
+              <Panel fullWidth style={{ marginBottom: theme.spacing(4) }}>
+                <Typography>
+                  Stretch me edge-to-edge with <code>fullWidth</code>
+                </Typography>
               </Panel>
 
               {/* 5. Inline style overrides --------------------------------------- */}
@@ -131,16 +135,30 @@ export default function PanelDemoPage() {
                 }}
                 preset="codePanel"
               >
-                <Typography>Custom dashed border &amp; radius via <code>style</code></Typography>
+                <Typography>
+                  Custom dashed border &amp; radius via <code>style</code>
+                </Typography>
               </Panel>
 
               {/* 6. Nested Panels & colour inheritance --------------------------- */}
               <Typography variant="h3">Nested Panels</Typography>
-              <Panel background={theme.colors['primary']} style={{ padding: theme.spacing(1), marginBottom: theme.spacing(4) }}>
-                <Panel variant="alt" fullWidth style={{ padding: theme.spacing(1) }}>
+              <Panel
+                background={theme.colors['primary']}
+                style={{
+                  padding: theme.spacing(1),
+                  marginBottom: theme.spacing(4),
+                }}
+              >
+                <Panel
+                  variant="alt"
+                  fullWidth
+                  style={{ padding: theme.spacing(1) }}
+                >
                   <Typography>
                     Parent sets&nbsp;
-                    <code style={{ color: 'var(--zero-text-color)' }}>--zero-text-color</code>
+                    <code style={{ color: 'var(--zero-text-color)' }}>
+                      --zero-text-color
+                    </code>
                     &nbsp;for child
                   </Typography>
                 </Panel>
@@ -170,7 +188,9 @@ export default function PanelDemoPage() {
               </Stack>
 
               {/* 8. centered prop ----------------------------------------------- */}
-              <Typography variant="h3"><code>centered</code> prop</Typography>
+              <Typography variant="h3">
+                <code>centered</code> prop
+              </Typography>
               <Panel centered fullWidth>
                 <Typography>
                   Contents centered with <code>centered</code>

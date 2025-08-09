@@ -2,11 +2,7 @@
 // src/components/primitives/Icon.tsx  | valet
 // strict‑optional safe typings
 // ─────────────────────────────────────────────────────────────
-import React, {
-  ReactElement,
-  isValidElement,
-  PropsWithChildren,
-} from 'react';
+import React, { ReactElement, isValidElement, PropsWithChildren } from 'react';
 import { Icon as Iconify } from '@iconify/react';
 import { styled } from '../../css/createStyled';
 import { preset } from '../../css/stylePresets';
@@ -67,7 +63,9 @@ export const Icon: React.FC<PropsWithChildren<IconProps>> = ({
 }) => {
   const presetClasses = p ? preset(p) : '';
   const finalSize =
-    typeof size === 'number' ? `${size}px` : sizeMap[size as IconSize] ?? size;
+    typeof size === 'number'
+      ? `${size}px`
+      : (sizeMap[size as IconSize] ?? size);
   const colourStyle = color ? { color } : undefined;
 
   let content: ReactElement | null = null;
@@ -109,7 +107,9 @@ export const Icon: React.FC<PropsWithChildren<IconProps>> = ({
     });
   } else {
     if (process.env.NODE_ENV !== 'production') {
-      console.warn('<Icon /> requires `icon`, `svg`, or children containing an <svg>.');
+      console.warn(
+        '<Icon /> requires `icon`, `svg`, or children containing an <svg>.',
+      );
     }
     return null;
   }

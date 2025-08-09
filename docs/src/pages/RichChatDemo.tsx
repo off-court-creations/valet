@@ -71,13 +71,7 @@ export default function RichChatDemoPage() {
     const [kids, setKids] = useState(15);
     return (
       <Stack direction="row" spacing={1}>
-        <Iterator
-          value={kids}
-          onChange={setKids}
-          min={5}
-          max={45}
-          step={5}
-        />
+        <Iterator value={kids} onChange={setKids} min={5} max={45} step={5} />
         <IconButton
           icon="carbon:checkmark"
           aria-label="Confirm"
@@ -88,7 +82,7 @@ export default function RichChatDemoPage() {
   };
 
   const handleAnswer = (reply: string) => {
-    setMessages(prev => {
+    setMessages((prev) => {
       const base = prev.map((m, idx) => {
         if (idx === prev.length - 1) {
           const { form, ...rest } = m as any;
@@ -151,7 +145,7 @@ export default function RichChatDemoPage() {
   };
 
   const handleSend = (m: RichMessage) => {
-    setMessages(prev => {
+    setMessages((prev) => {
       let nextMsgs = [...prev, m];
       if (step === 3) {
         nextMsgs = [
@@ -176,12 +170,14 @@ export default function RichChatDemoPage() {
         <Typography variant="h2" bold>
           RichChat Demo
         </Typography>
-        <Typography variant="subtitle">Local chat with embeddable components</Typography>
+        <Typography variant="subtitle">
+          Local chat with embeddable components
+        </Typography>
 
         <RichChat
           messages={messages}
           onSend={handleSend}
-          onFormSubmit={reply => handleAnswer(reply)}
+          onFormSubmit={(reply) => handleAnswer(reply)}
           constrainHeight
           userAvatar={present}
           systemAvatar={monkey}

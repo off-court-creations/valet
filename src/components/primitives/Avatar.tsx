@@ -29,9 +29,9 @@ export interface AvatarProps
 
 const sizeMap: Record<AvatarSize, string> = {
   xs: '1.5rem',
-  s : '2rem',
-  m : '3rem',
-  l : '4rem',
+  s: '2rem',
+  m: '3rem',
+  l: '4rem',
   xl: '6rem',
 };
 

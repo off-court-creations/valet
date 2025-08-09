@@ -81,18 +81,23 @@ const Cell = styled('button')<{
     $start
       ? $primary
       : $end
-      ? $secondary
-      : $inRange
-      ? $rangeBg
-      : 'transparent'};
+        ? $secondary
+        : $inRange
+          ? $rangeBg
+          : 'transparent'};
   color: inherit;
   border-radius: 4px;
   cursor: pointer;
   font: inherit;
   font-weight: ${({ $start, $end }) => ($start || $end ? 'bold' : 'inherit')};
   height: 2rem;
-  &:hover:not(:disabled) { filter: brightness(1.2); }
-  &:disabled { opacity: 0.4; cursor: default; }
+  &:hover:not(:disabled) {
+    filter: brightness(1.2);
+  }
+  &:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
 `;
 
 /*───────────────────────────────────────────────────────────*/
@@ -131,9 +136,12 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
 }) => {
   const { theme } = useTheme();
   let form: ReturnType<typeof useForm<any>> | null = null;
-  try { form = useForm<any>(); } catch {}
+  try {
+    form = useForm<any>();
+  } catch {}
 
-  const formVal = form && name ? (form.values[name] as string | undefined) : undefined;
+  const formVal =
+    form && name ? (form.values[name] as string | undefined) : undefined;
   const controlled = value !== undefined || formVal !== undefined;
   const parseDate = (v?: string) => (v ? new Date(v + 'T00:00') : new Date());
 
@@ -144,27 +152,39 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   const [endInt, setEndInt] = useState(parseDate(initialEnd));
 
   const today = new Date();
-  const min = minDateProp ? parseDate(minDateProp) : new Date(today.getFullYear() - 120, 0, 1);
-  const max = maxDateProp ? parseDate(maxDateProp) : new Date(today.getFullYear() + 120, 11, 31);
+  const min = minDateProp
+    ? parseDate(minDateProp)
+    : new Date(today.getFullYear() - 120, 0, 1);
+  const max = maxDateProp
+    ? parseDate(maxDateProp)
+    : new Date(today.getFullYear() + 120, 11, 31);
 
   const minYear = min.getFullYear();
   const maxYear = max.getFullYear();
 
   const startDate = controlled ? parseDate(value ?? formVal) : startInt;
   const endDate = range
-    ? (endValue !== undefined ? parseDate(endValue) : endInt)
+    ? endValue !== undefined
+      ? parseDate(endValue)
+      : endInt
     : startDate;
 
   const [viewYear, setViewYear] = useState(startDate.getFullYear());
   const [viewMonth, setViewMonth] = useState(startDate.getMonth());
 
-  const years = Array.from({ length: maxYear - minYear + 1 }, (_, i) => minYear + i);
+  const years = Array.from(
+    { length: maxYear - minYear + 1 },
+    (_, i) => minYear + i,
+  );
 
   const minMonth = min.getMonth();
   const maxMonth = max.getMonth();
   const firstMonth = viewYear === minYear ? minMonth : 0;
   const lastMonth = viewYear === maxYear ? maxMonth : 11;
-  const months = Array.from({ length: lastMonth - firstMonth + 1 }, (_, i) => firstMonth + i);
+  const months = Array.from(
+    { length: lastMonth - firstMonth + 1 },
+    (_, i) => firstMonth + i,
+  );
 
   const startDay = new Date(viewYear, viewMonth, 1).getDay();
   const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
@@ -199,15 +219,24 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
 
     if (!controlled) setStartInt(start);
     if (endValue === undefined) setEndInt(end);
-    onRangeChange?.(start.toISOString().slice(0, 10), end.toISOString().slice(0, 10));
+    onRangeChange?.(
+      start.toISOString().slice(0, 10),
+      end.toISOString().slice(0, 10),
+    );
   };
 
   const changeMonth = (delta: number) => {
     setViewMonth((m) => {
       let next = m + delta;
       let yr = viewYear;
-      while (next < 0) { next += 12; yr--; }
-      while (next > 11) { next -= 12; yr++; }
+      while (next < 0) {
+        next += 12;
+        yr--;
+      }
+      while (next > 11) {
+        next -= 12;
+        yr++;
+      }
       const start = new Date(yr, next, 1);
       const end = new Date(yr, next + 1, 0);
       if (end < min || start > max) return m;
@@ -341,10 +370,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
             endDate.getFullYear() === viewYear &&
             endDate.getMonth() === viewMonth &&
             endDate.getDate() === day;
-          const inRange =
-            range &&
-            date > startDate &&
-            date < endDate;
+          const inRange = range && date > startDate && date < endDate;
           return (
             <Cell
               key={day}

@@ -30,25 +30,31 @@ const useContactForm = createFormStore<ContactValues>({
 
 /*───────────────────────────────────────────────────────────────*/
 /* 2.  Optional style presets for a quick themed look            */
-definePreset('cardForm', (t) => `
+definePreset(
+  'cardForm',
+  (t) => `
   background:${t.colors['primary']};
   border-radius:16px;
   padding:${t.spacing(1)};
-`);
+`,
+);
 
-definePreset('underlineField', (t) => `
+definePreset(
+  'underlineField',
+  (t) => `
   input {
     border:none !important;
     border-bottom:2px solid ${t.colors['primary']}55 !important;
     border-radius:0 !important;
   }
-`);
+`,
+);
 
 /*───────────────────────────────────────────────────────────────*/
 /* 3.  Demo page component                                       */
 export default function FormDemoPage() {
   const { theme } = useTheme();
-  const navigate  = useNavigate();
+  const navigate = useNavigate();
   const [submitted, setSubmitted] = useState<ContactValues | null>(null);
 
   return (
@@ -92,7 +98,7 @@ export default function FormDemoPage() {
               preset="underlineField"
             />
 
-            <Button type="submit" variant='contained' size="lg">
+            <Button type="submit" variant="contained" size="lg">
               Send
             </Button>
           </Stack>

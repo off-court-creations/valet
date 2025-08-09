@@ -10,55 +10,60 @@ import React, {
   useRef,
   useId,
 } from 'react';
-import { styled }                 from '../../css/createStyled';
-import { useTheme }               from '../../system/themeStore';
-import { useSurface }             from '../../system/surfaceStore';
-import { shallow }                from 'zustand/shallow';
-import { preset }                 from '../../css/stylePresets';
-import { Checkbox }               from '../fields/Checkbox';
+import { styled } from '../../css/createStyled';
+import { useTheme } from '../../system/themeStore';
+import { useSurface } from '../../system/surfaceStore';
+import { shallow } from 'zustand/shallow';
+import { preset } from '../../css/stylePresets';
+import { Checkbox } from '../fields/Checkbox';
 import { stripe, toRgb, mix, toHex } from '../../helpers/color';
-import type { Presettable }       from '../../types';
+import type { Presettable } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 /* Column definition                                          */
 export interface TableColumn<T> {
-  header   : React.ReactNode;
-  accessor?: keyof T | ((row:T)=>unknown);
-  render?  : (row:T,idx:number)=>React.ReactNode;
-  align?   : 'left'|'center'|'right';
-  sortable?: boolean | ((a:T,b:T)=>number);
+  header: React.ReactNode;
+  accessor?: keyof T | ((row: T) => unknown);
+  render?: (row: T, idx: number) => React.ReactNode;
+  align?: 'left' | 'center' | 'right';
+  sortable?: boolean | ((a: T, b: T) => number);
 }
 
 /*───────────────────────────────────────────────────────────*/
 /* Public props                                               */
 export interface TableProps<T>
   extends Omit<React.TableHTMLAttributes<HTMLTableElement>, 'children'>,
-          Presettable {
+    Presettable {
   data: T[];
   columns: TableColumn<T>[];
   striped?: boolean;
   hoverable?: boolean;
   dividers?: boolean;
   selectable?: 'single' | 'multi' | undefined;
-  initialSort?: { index:number; desc?:boolean };
-  onSortChange?: (index:number, desc:boolean)=>void;
-  onSelectionChange?: (selected:T[])=>void;
+  initialSort?: { index: number; desc?: boolean };
+  onSortChange?: (index: number, desc: boolean) => void;
+  onSelectionChange?: (selected: T[]) => void;
   constrainHeight?: boolean;
 }
 
 /*───────────────────────────────────────────────────────────*/
 /* Styled primitives                                          */
-const Wrapper = styled('div')<{ $pad:string }>`
+const Wrapper = styled('div')<{ $pad: string }>`
   width: 100%;
   display: block;
   box-sizing: border-box;
-  overflow-x: hidden;       /* never allow horizontal scroll */
+  overflow-x: hidden; /* never allow horizontal scroll */
   padding-inline: ${({ $pad }) => $pad};
 `;
 
 const Root = styled('table')<{
-  $striped:boolean; $hover:boolean; $lines:boolean;
-  $border:string; $stripe:string; $hoverBg:string; $gutter:string;
+  $striped: boolean;
+  $hover: boolean;
+  $lines: boolean;
+  $border: string;
+  $stripe: string;
+  $hoverBg: string;
+  $gutter: string;
 }>`
   /* leave a subtle gutter so right border never clips */
   width: calc(100% - ${({ $gutter }) => $gutter} * 2);
@@ -70,7 +75,8 @@ const Root = styled('table')<{
   border: 1px solid ${({ $border }) => $border};
   table-layout: fixed; /* prevents cells pushing past width */
 
-  th, td {
+  th,
+  td {
     padding: 0.5rem 0.75rem;
     text-align: left;
     border-bottom: 1px solid ${({ $border }) => $border};
@@ -78,43 +84,61 @@ const Root = styled('table')<{
     word-break: break-word;
     overflow-wrap: anywhere;
   }
-  th code, td code { word-break: break-word; overflow-wrap: anywhere; }
+  th code,
+  td code {
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
 
   /* Zebra stripes */
-  ${({ $striped, $stripe }) => $striped && `
+  ${({ $striped, $stripe }) =>
+    $striped &&
+    `
     tbody tr:nth-of-type(odd) td { background: ${$stripe}; }
   `}
 
   /* Row hover */
-  ${({ $hover, $hoverBg }) => $hover && `
+  ${({ $hover, $hoverBg }) =>
+    $hover &&
+    `
     tbody tr:hover,
     tbody tr:hover > td { background: ${$hoverBg}; }
   `}
 
   /* Column dividers */
-  ${({ $lines, $border }) => $lines && `
+  ${({ $lines, $border }) =>
+    $lines &&
+    `
     th:not(:last-child), td:not(:last-child) { border-right: 1px solid ${$border}; }
   `}
 `;
 
 const Th = styled('th')<{
-  $align:'left'|'center'|'right'; $sortable:boolean; $active:boolean; $primary:string;
+  $align: 'left' | 'center' | 'right';
+  $sortable: boolean;
+  $active: boolean;
+  $primary: string;
 }>`
   text-align: ${({ $align }) => $align};
   ${({ $sortable }) => $sortable && 'cursor: pointer; user-select: none;'}
   position: relative;
-  &:hover { ${({ $sortable }) => $sortable && 'filter: brightness(0.9);'} }
+  &:hover {
+    ${({ $sortable }) => $sortable && 'filter: brightness(0.9);'}
+  }
   &::after {
     content: '';
     position: absolute;
-    left: 0; right: 0; bottom: -1px;
+    left: 0;
+    right: 0;
+    bottom: -1px;
     height: 4px;
-    background: ${({ $primary, $active }) => ($active ? $primary : 'transparent')};
+    background: ${({ $primary, $active }) =>
+      $active ? $primary : 'transparent'};
     transition: background 150ms ease;
   }
 `;
 
-const Td = styled('td')<{ $align:'left'|'center'|'right' }>`
+const Td = styled('td')<{ $align: 'left' | 'center' | 'right' }>`
   text-align: ${({ $align }) => $align};
 `;
 
@@ -137,7 +161,12 @@ export function Table<T extends object>({
 }: TableProps<T>) {
   const { theme } = useTheme();
   const surface = useSurface(
-    s => ({ element: s.element, height: s.height, registerChild: s.registerChild, unregisterChild: s.unregisterChild }),
+    (s) => ({
+      element: s.element,
+      height: s.height,
+      registerChild: s.registerChild,
+      unregisterChild: s.unregisterChild,
+    }),
     shallow,
   );
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -176,7 +205,8 @@ export function Table<T extends object>({
     const available = Math.round(surface.height - top - bottomRef.current);
     const cutoff = calcCutoff();
 
-    const shouldClamp = node.scrollHeight - available > 1 && available >= cutoff;
+    const shouldClamp =
+      node.scrollHeight - available > 1 && available >= cutoff;
 
     if (shouldClamp) {
       if (!constraintRef.current) {
@@ -243,12 +273,14 @@ export function Table<T extends object>({
   }, [constrainHeight, surface.height, surface.element]);
 
   /* sort + selection state */
-  const [sort, setSort] = useState<{ index: number; desc: boolean } | null>(initialSort ? { index: initialSort.index, desc: !!initialSort.desc } : null);
+  const [sort, setSort] = useState<{ index: number; desc: boolean } | null>(
+    initialSort ? { index: initialSort.index, desc: !!initialSort.desc } : null,
+  );
   const [selected, setSelected] = useState<Set<T>>(new Set());
 
   useEffect(() => {
-    setSelected(prev => {
-      const next = new Set(Array.from(prev).filter(r => data.includes(r)));
+    setSelected((prev) => {
+      const next = new Set(Array.from(prev).filter((r) => data.includes(r)));
       onSelectionChange?.(Array.from(next));
       return next;
     });
@@ -256,19 +288,24 @@ export function Table<T extends object>({
 
   /* colours */
   const stripeColor = stripe(theme.colors.background, theme.colors.text);
-  const hoverBg = toHex(mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.25));
+  const hoverBg = toHex(
+    mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.25),
+  );
 
   /* callbacks */
   const toggleSort = (idx: number) => {
-    setSort(prev => {
-      const next = !prev || prev.index !== idx ? { index: idx, desc: false } : { index: idx, desc: !prev.desc };
+    setSort((prev) => {
+      const next =
+        !prev || prev.index !== idx
+          ? { index: idx, desc: false }
+          : { index: idx, desc: !prev.desc };
       onSortChange?.(next.index, next.desc);
       return next;
     });
   };
 
   const toggleSelect = (row: T, checked: boolean) => {
-    setSelected(prev => {
+    setSelected((prev) => {
       const next = new Set(prev);
       if (selectable === 'single') next.clear();
       checked ? next.add(row) : next.delete(row);
@@ -283,19 +320,26 @@ export function Table<T extends object>({
     const col = columns[sort.index];
     if (!col || !col.sortable) return data;
 
-    const cmp: (a: T, b: T) => number = typeof col.sortable === 'function' ? col.sortable : (a: T, b: T) => {
-      const getter = typeof col.accessor === 'function' ? col.accessor : (row: T) => row[col.accessor as keyof T];
-      const va = getter(a) as any;
-      const vb = getter(b) as any;
-      return va > vb ? 1 : va < vb ? -1 : 0;
-    };
+    const cmp: (a: T, b: T) => number =
+      typeof col.sortable === 'function'
+        ? col.sortable
+        : (a: T, b: T) => {
+            const getter =
+              typeof col.accessor === 'function'
+                ? col.accessor
+                : (row: T) => row[col.accessor as keyof T];
+            const va = getter(a) as any;
+            const vb = getter(b) as any;
+            return va > vb ? 1 : va < vb ? -1 : 0;
+          };
 
     const arr = [...data].sort(cmp);
     return sort.desc ? arr.reverse() : arr;
   }, [data, columns, sort]);
 
   /* class merge */
-  const cls = [p ? preset(p) : '', className].filter(Boolean).join(' ') || undefined;
+  const cls =
+    [p ? preset(p) : '', className].filter(Boolean).join(' ') || undefined;
 
   /*─────────────────────────────────────────────────────────*/
   return (
@@ -319,7 +363,13 @@ export function Table<T extends object>({
         <thead>
           <tr>
             {selectable && (
-              <Th $align="center" $sortable={false} $active={false} $primary={theme.colors.primary} style={{ width: 48 }} />
+              <Th
+                $align="center"
+                $sortable={false}
+                $active={false}
+                $primary={theme.colors.primary}
+                style={{ width: 48 }}
+              />
             )}
             {columns.map((c, i) => (
               <Th
@@ -346,15 +396,22 @@ export function Table<T extends object>({
                     name={`sel-${rIdx}`}
                     size="sm"
                     checked={selected.has(row)}
-                    onChange={chk => toggleSelect(row, chk)}
+                    onChange={(chk) => toggleSelect(row, chk)}
                     aria-label={`Select row ${rIdx + 1}`}
                   />
                 </Td>
               )}
 
               {columns.map((c, cIdx) => {
-                const getter = typeof c.accessor === 'function' ? c.accessor : (item: T) => item[c.accessor as keyof T];
-                const content = c.render ? c.render(row, rIdx) : c.accessor !== undefined ? (getter(row) as React.ReactNode) : null;
+                const getter =
+                  typeof c.accessor === 'function'
+                    ? c.accessor
+                    : (item: T) => item[c.accessor as keyof T];
+                const content = c.render
+                  ? c.render(row, rIdx)
+                  : c.accessor !== undefined
+                    ? (getter(row) as React.ReactNode)
+                    : null;
 
                 return (
                   <Td key={cIdx} $align={c.align ?? 'left'}>

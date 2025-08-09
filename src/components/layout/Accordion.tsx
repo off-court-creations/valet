@@ -19,22 +19,22 @@ import React, {
   useEffect,
 } from 'react';
 import type { JSX } from 'react';
-import { styled }               from '../../css/createStyled';
-import { useTheme }             from '../../system/themeStore';
-import { preset }               from '../../css/stylePresets';
-import { toRgb, mix, toHex }    from '../../helpers/color';
-import { useSurface }           from '../../system/surfaceStore';
-import { shallow }              from 'zustand/shallow';
-import type { Presettable }     from '../../types';
-import { Typography }          from '../primitives/Typography';
+import { styled } from '../../css/createStyled';
+import { useTheme } from '../../system/themeStore';
+import { preset } from '../../css/stylePresets';
+import { toRgb, mix, toHex } from '../../helpers/color';
+import { useSurface } from '../../system/surfaceStore';
+import { shallow } from 'zustand/shallow';
+import type { Presettable } from '../../types';
+import { Typography } from '../primitives/Typography';
 
 /*───────────────────────────────────────────────────────────*/
 /* Context                                                   */
 interface Ctx {
-  open       : number[];
-  toggle     : (idx: number) => void;
-  multiple   : boolean;
-  headerTag  : keyof JSX.IntrinsicElements;
+  open: number[];
+  toggle: (idx: number) => void;
+  multiple: boolean;
+  headerTag: keyof JSX.IntrinsicElements;
 }
 
 const AccordionCtx = createContext<Ctx | null>(null);
@@ -47,19 +47,19 @@ const useAccordion = () => {
 /*───────────────────────────────────────────────────────────*/
 /* Styled primitives                                         */
 const Root = styled('div')<{ $gap: string }>`
-  width      : 100%;
-  box-sizing : border-box;
-  margin     : ${({ $gap }) => $gap};
+  width: 100%;
+  box-sizing: border-box;
+  margin: ${({ $gap }) => $gap};
   & > * {
     padding: ${({ $gap }) => $gap};
   }
 `;
 
 const Wrapper = styled('div')`
-  width:100%;
-  display:block;
-  box-sizing:border-box;
-  min-height:0;
+  width: 100%;
+  display: block;
+  box-sizing: border-box;
+  min-height: 0;
 `;
 
 const ItemWrapper = styled('div')`
@@ -75,22 +75,22 @@ const HeaderBtn = styled('button')<{
   $skipHover: boolean;
   $hoverBg: string;
 }>`
-  width           : 100%;
-  display         : flex;
-  justify-content : space-between;
-  align-items     : center;
-  gap             : 1rem;
-  padding         : 1rem ${({ $shift }) => $shift};
-  background      : transparent;
-  border          : none;
-  color           : inherit;
-  font            : inherit;
-  cursor          : pointer;
-  text-align      : left;
-  appearance      : none;
-  box-sizing      : border-box;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem ${({ $shift }) => $shift};
+  background: transparent;
+  border: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+  appearance: none;
+  box-sizing: border-box;
   margin-inline-start: -${({ $shift }) => $shift};
-  margin-inline-end  : -${({ $shift }) => $shift};
+  margin-inline-end: -${({ $shift }) => $shift};
 
   /* Disable blue tap-highlight on mobile */
   -webkit-tap-highlight-color: transparent;
@@ -108,27 +108,27 @@ const HeaderBtn = styled('button')<{
   ${({ $open, $highlight }) => $open && `background:${$highlight};`}
 
   &:focus-visible {
-    outline       : 2px solid ${({ $primary }) => $primary};
+    outline: 2px solid ${({ $primary }) => $primary};
     outline-offset: 2px;
   }
 
   &:disabled {
-    color : ${({ $disabledColor }) => $disabledColor};
+    color: ${({ $disabledColor }) => $disabledColor};
     cursor: not-allowed;
   }
 `;
 
 const Chevron = styled('svg')<{ $open: boolean }>`
-  width      : 1em;
-  height     : 1em;
+  width: 1em;
+  height: 1em;
   flex-shrink: 0;
-  transition : transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
-  transform  : rotate(${({ $open }) => ($open ? 0 : 180)}deg);
+  transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  transform: rotate(${({ $open }) => ($open ? 0 : 180)}deg);
 `;
 
 const Content = styled('div')<{ $open: boolean; $height: number }>`
-  overflow : hidden;
-  height   : ${({ $open, $height }) => ($open ? `${$height}px` : '0')};
+  overflow: hidden;
+  height: ${({ $open, $height }) => ($open ? `${$height}px` : '0')};
   transition: height 300ms cubic-bezier(0.4, 0, 0.2, 1);
   will-change: height;
 `;
@@ -173,7 +173,7 @@ export const Accordion: React.FC<AccordionProps> & {
 }) => {
   const { theme } = useTheme();
   const surface = useSurface(
-    s => ({
+    (s) => ({
       element: s.element,
       height: s.height,
       registerChild: s.registerChild,
@@ -222,9 +222,7 @@ export const Accordion: React.FC<AccordionProps> & {
 
   const calcCutoff = () => {
     if (typeof document === 'undefined') return 32;
-    const fs = parseFloat(
-      getComputedStyle(document.documentElement).fontSize,
-    );
+    const fs = parseFloat(getComputedStyle(document.documentElement).fontSize);
     return (isNaN(fs) ? 16 : fs) * 2;
   };
 
@@ -317,9 +315,7 @@ export const Accordion: React.FC<AccordionProps> & {
     <AccordionCtx.Provider value={ctx}>
       <Wrapper
         ref={wrapRef}
-        style={
-          shouldConstrain ? { overflow: 'auto', maxHeight } : undefined
-        }
+        style={shouldConstrain ? { overflow: 'auto', maxHeight } : undefined}
       >
         <Root
           {...divProps}
@@ -328,7 +324,9 @@ export const Accordion: React.FC<AccordionProps> & {
         >
           {React.Children.map(children, (child, idx) =>
             React.isValidElement(child)
-              ? React.cloneElement(child as React.ReactElement<any>, { index: idx })
+              ? React.cloneElement(child as React.ReactElement<any>, {
+                  index: idx,
+                })
               : child,
           )}
         </Root>
@@ -348,12 +346,12 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   index = 0,
   ...divProps
 }) => {
-  const { theme, mode }          = useTheme();
+  const { theme, mode } = useTheme();
   const { open, toggle, headerTag } = useAccordion();
 
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const wasLongPress = useRef(false);
-  const contentRef   = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState(0);
   const [skipHover, setSkipHover] = useState(false);
   const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -378,7 +376,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
     hoverTimer.current = setTimeout(remove, 1000);
   };
 
-  const isOpen   = open.includes(index);
+  const isOpen = open.includes(index);
 
   useLayoutEffect(() => {
     if (contentRef.current) {
@@ -386,7 +384,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
     }
   }, [children, isOpen]);
   const headerId = `acc-btn-${index}`;
-  const panelId  = `acc-panel-${index}`;
+  const panelId = `acc-panel-${index}`;
 
   /* ----- compute disabled colour (greyed-out, mode-aware) -- */
   const disabledColor = toHex(
@@ -409,7 +407,10 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   const shift = theme.spacing(1);
 
   return (
-    <ItemWrapper {...divProps} className={[presetClasses, className].filter(Boolean).join(' ')}>
+    <ItemWrapper
+      {...divProps}
+      className={[presetClasses, className].filter(Boolean).join(' ')}
+    >
       <HeaderTag style={{ margin: 0 }}>
         <HeaderBtn
           id={headerId}
@@ -515,13 +516,15 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
         $open={isOpen}
         $height={height}
       >
-        <div ref={contentRef} style={{ padding: '0.75rem 0' }}>{children}</div>
+        <div ref={contentRef} style={{ padding: '0.75rem 0' }}>
+          {children}
+        </div>
       </Content>
     </ItemWrapper>
   );
 };
 AccordionItem.displayName = 'Accordion.Item';
-Accordion.Item           = AccordionItem;
+Accordion.Item = AccordionItem;
 
 /*───────────────────────────────────────────────────────────*/
 export default Accordion;

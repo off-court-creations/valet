@@ -52,16 +52,15 @@ const PageBtn = styled('button')<{
 }>`
   position: relative;
   font-weight: ${({ $active }) => ($active ? 700 : 400)};
-  color: ${({ $active, $primary, $text }) =>
-    $active ? $primary : $text};
+  color: ${({ $active, $primary, $text }) => ($active ? $primary : $text)};
 
   &::after {
     content: '';
     position: absolute;
     left: 0;
     right: 0;
-    bottom: -0.3rem;       /* hugs text baseline */
-    height: 0.25rem;       /* thicker than normal underline */
+    bottom: -0.3rem; /* hugs text baseline */
+    height: 0.25rem; /* thicker than normal underline */
     border-radius: 2px 2px 0 0;
     background: ${({ $active, $primary }) =>
       $active ? $primary : 'transparent'};
@@ -85,9 +84,8 @@ export const Pagination: React.FC<PaginationProps> = ({
 
   /* preset → utility class merge */
   const presetClass = p ? preset(p) : '';
-  const mergedClass = [presetClass, className]
-    .filter(Boolean)
-    .join(' ') || undefined;
+  const mergedClass =
+    [presetClass, className].filter(Boolean).join(' ') || undefined;
 
   const nav = (p: number) => () => onChange?.(p);
 
@@ -100,10 +98,7 @@ export const Pagination: React.FC<PaginationProps> = ({
       style={style}
     >
       {/* Prev/Next – simple text buttons (no underline) */}
-      <button
-        onClick={nav(Math.max(1, page - 1))}
-        disabled={page === 1}
-      >
+      <button onClick={nav(Math.max(1, page - 1))} disabled={page === 1}>
         Prev
       </button>
 

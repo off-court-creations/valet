@@ -20,26 +20,30 @@ import NavDrawer from '../components/NavDrawer';
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Style presets                                                              */
 // Bright red tooltip for destructive actions
-definePreset('dangerTooltip', () => `
+definePreset(
+  'dangerTooltip',
+  () => `
   background-color : #ff0000;
   color      : #ffffff;
-`);
+`,
+);
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Demo page                                                                  */
 export default function TooltipDemoPage() {
   const { theme, toggleMode } = useTheme();
-  const navigate              = useNavigate();
+  const navigate = useNavigate();
 
   const [controlledOpen, setControlledOpen] = useState(false);
 
   const placements = useMemo(
-    () => ([
-      { key: 'top',    label: 'Top'    },
-      { key: 'right',  label: 'Right'  },
-      { key: 'bottom', label: 'Bottom' },
-      { key: 'left',   label: 'Left'   },
-    ]) as const,
+    () =>
+      [
+        { key: 'top', label: 'Top' },
+        { key: 'right', label: 'Right' },
+        { key: 'bottom', label: 'Bottom' },
+        { key: 'left', label: 'Left' },
+      ] as const,
     [],
   );
 
@@ -65,7 +69,11 @@ export default function TooltipDemoPage() {
         <Typography variant="h3">2. Placements</Typography>
         <Stack direction="row" wrap>
           {placements.map(({ key, label }) => (
-            <Tooltip key={key} placement={key as any} title={`placement="${key}"`}>
+            <Tooltip
+              key={key}
+              placement={key as any}
+              title={`placement="${key}"`}
+            >
               <Button>{label}</Button>
             </Tooltip>
           ))}
@@ -100,7 +108,11 @@ export default function TooltipDemoPage() {
 
         {/* 5. Custom enter / leave delays ---------------------------------- */}
         <Typography variant="h3">5. Custom enter / leave delays</Typography>
-        <Tooltip title="500 ms open / 1 s close" enterDelay={500} leaveDelay={1000}>
+        <Tooltip
+          title="500 ms open / 1 s close"
+          enterDelay={500}
+          leaveDelay={1000}
+        >
           <Button>Slow tooltip</Button>
         </Tooltip>
 
@@ -117,7 +129,11 @@ export default function TooltipDemoPage() {
         </Button>
 
         {/* Back nav --------------------------------------------------------- */}
-        <Button size="lg" onClick={() => navigate(-1)} style={{ marginTop: theme.spacing(1) }}>
+        <Button
+          size="lg"
+          onClick={() => navigate(-1)}
+          style={{ marginTop: theme.spacing(1) }}
+        >
           ← Back
         </Button>
       </Stack>
