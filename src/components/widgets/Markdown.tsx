@@ -30,7 +30,11 @@ const renderInline = (tokens?: Token[]): React.ReactNode => {
         return <code key={i}>{(t as Tokens.Codespan).text}</code>;
       case 'link':
         return (
-          <a key={i} href={t.href} title={t.title}>
+          <a
+            key={i}
+            href={t.href}
+            title={t.title}
+          >
             {renderInline(t.tokens)}
           </a>
         );
@@ -57,19 +61,29 @@ const renderTokens = (tokens: TokensList, codeBg?: string): React.ReactNode =>
       case 'heading':
         const variant = `h${t.depth}` as Variant;
         return (
-          <Typography key={i} variant={variant} bold>
+          <Typography
+            key={i}
+            variant={variant}
+            bold
+          >
             {renderInline(t.tokens)}
           </Typography>
         );
       case 'paragraph':
         return (
-          <Typography key={i} style={{ margin: '0.5rem 0' }}>
+          <Typography
+            key={i}
+            style={{ margin: '0.5rem 0' }}
+          >
             {renderInline(t.tokens)}
           </Typography>
         );
       case 'list':
         return (
-          <ul key={i} style={{ paddingLeft: '1.25rem' }}>
+          <ul
+            key={i}
+            style={{ paddingLeft: '1.25rem' }}
+          >
             {t.items.map((item: Tokens.ListItem, j: number) => (
               <li key={j}>{renderInline(item.tokens)}</li>
             ))}
@@ -79,7 +93,7 @@ const renderTokens = (tokens: TokensList, codeBg?: string): React.ReactNode =>
         return (
           <Panel
             key={i}
-            preset="codePanel"
+            preset='codePanel'
             background={codeBg}
             style={{ margin: '0.5rem 0' }}
           >
@@ -111,11 +125,7 @@ const renderTokens = (tokens: TokensList, codeBg?: string): React.ReactNode =>
       case 'space':
         return null;
       default:
-        return (
-          <Typography key={i}>
-            {('raw' in t && (t as any).raw) || ''}
-          </Typography>
-        );
+        return <Typography key={i}>{('raw' in t && (t as any).raw) || ''}</Typography>;
     }
   });
 
@@ -128,7 +138,11 @@ export const Markdown: React.FC<MarkdownProps> = ({
 }) => {
   const tokens = React.useMemo(() => marked.lexer(data) as TokensList, [data]);
   return (
-    <Stack {...rest} className={className} style={style}>
+    <Stack
+      {...rest}
+      className={className}
+      style={style}
+    >
       {renderTokens(tokens, codeBackground)}
     </Stack>
   );

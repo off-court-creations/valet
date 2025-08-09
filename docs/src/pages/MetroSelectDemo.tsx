@@ -152,56 +152,79 @@ export default function MetroSelectDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography variant="h2" bold>
+        <Typography
+          variant='h2'
+          bold
+        >
           MetroSelect
         </Typography>
-        <Typography variant="subtitle">
-          Touch-friendly grid selection
-        </Typography>
+        <Typography variant='subtitle'>Touch-friendly grid selection</Typography>
 
         <Tabs>
-          <Tabs.Tab label="Usage" />
+          <Tabs.Tab label='Usage' />
           <Tabs.Panel>
-            <Typography variant="h3">1. Uncontrolled</Typography>
-            <MetroSelect defaultValue="home" gap={4}>
+            <Typography variant='h3'>1. Uncontrolled</Typography>
+            <MetroSelect
+              defaultValue='home'
+              gap={4}
+            >
               {basic.map((o) => (
-                <MetroSelect.Option key={o.value} {...o} />
+                <MetroSelect.Option
+                  key={o.value}
+                  {...o}
+                />
               ))}
             </MetroSelect>
 
-            <Typography variant="h3">2. Controlled value</Typography>
+            <Typography variant='h3'>2. Controlled value</Typography>
             <MetroSelect
               value={transport}
               onChange={(v) => setTransport(v as string)}
               gap={4}
             >
               {controlled.map((o) => (
-                <MetroSelect.Option key={o.value} {...o} />
+                <MetroSelect.Option
+                  key={o.value}
+                  {...o}
+                />
               ))}
             </MetroSelect>
             <Typography>
               Current: <b>{transport}</b>
             </Typography>
 
-            <Typography variant="h3">3. Many options</Typography>
+            <Typography variant='h3'>3. Many options</Typography>
             <MetroSelect gap={4}>
               {many.map((o) => (
-                <MetroSelect.Option key={o.value} {...o} />
+                <MetroSelect.Option
+                  key={o.value}
+                  {...o}
+                />
               ))}
             </MetroSelect>
-            <Stack direction="row">
-              <Button variant="outlined" onClick={toggleMode}>
+            <Stack direction='row'>
+              <Button
+                variant='outlined'
+                onClick={toggleMode}
+              >
                 Toggle light / dark
               </Button>
               <Button onClick={() => navigate(-1)}>← Back</Button>
             </Stack>
           </Tabs.Panel>
 
-          <Tabs.Tab label="Reference" />
+          <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant="h3">MetroSelect props</Typography>
-            <Table data={data} columns={columns} constrainHeight={false} />
-            <Typography variant="h3" style={{ marginTop: theme.spacing(3) }}>
+            <Typography variant='h3'>MetroSelect props</Typography>
+            <Table
+              data={data}
+              columns={columns}
+              constrainHeight={false}
+            />
+            <Typography
+              variant='h3'
+              style={{ marginTop: theme.spacing(3) }}
+            >
               Option props
             </Typography>
             <Table

@@ -78,13 +78,7 @@ const Cell = styled('button')<{
   padding: 0.25rem 0;
   border: none;
   background: ${({ $start, $end, $inRange, $primary, $secondary, $rangeBg }) =>
-    $start
-      ? $primary
-      : $end
-        ? $secondary
-        : $inRange
-          ? $rangeBg
-          : 'transparent'};
+    $start ? $primary : $end ? $secondary : $inRange ? $rangeBg : 'transparent'};
   color: inherit;
   border-radius: 4px;
   cursor: pointer;
@@ -140,8 +134,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
     form = useForm<any>();
   } catch {}
 
-  const formVal =
-    form && name ? (form.values[name] as string | undefined) : undefined;
+  const formVal = form && name ? (form.values[name] as string | undefined) : undefined;
   const controlled = value !== undefined || formVal !== undefined;
   const parseDate = (v?: string) => (v ? new Date(v + 'T00:00') : new Date());
 
@@ -152,39 +145,25 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   const [endInt, setEndInt] = useState(parseDate(initialEnd));
 
   const today = new Date();
-  const min = minDateProp
-    ? parseDate(minDateProp)
-    : new Date(today.getFullYear() - 120, 0, 1);
-  const max = maxDateProp
-    ? parseDate(maxDateProp)
-    : new Date(today.getFullYear() + 120, 11, 31);
+  const min = minDateProp ? parseDate(minDateProp) : new Date(today.getFullYear() - 120, 0, 1);
+  const max = maxDateProp ? parseDate(maxDateProp) : new Date(today.getFullYear() + 120, 11, 31);
 
   const minYear = min.getFullYear();
   const maxYear = max.getFullYear();
 
   const startDate = controlled ? parseDate(value ?? formVal) : startInt;
-  const endDate = range
-    ? endValue !== undefined
-      ? parseDate(endValue)
-      : endInt
-    : startDate;
+  const endDate = range ? (endValue !== undefined ? parseDate(endValue) : endInt) : startDate;
 
   const [viewYear, setViewYear] = useState(startDate.getFullYear());
   const [viewMonth, setViewMonth] = useState(startDate.getMonth());
 
-  const years = Array.from(
-    { length: maxYear - minYear + 1 },
-    (_, i) => minYear + i,
-  );
+  const years = Array.from({ length: maxYear - minYear + 1 }, (_, i) => minYear + i);
 
   const minMonth = min.getMonth();
   const maxMonth = max.getMonth();
   const firstMonth = viewYear === minYear ? minMonth : 0;
   const lastMonth = viewYear === maxYear ? maxMonth : 11;
-  const months = Array.from(
-    { length: lastMonth - firstMonth + 1 },
-    (_, i) => firstMonth + i,
-  );
+  const months = Array.from({ length: lastMonth - firstMonth + 1 }, (_, i) => firstMonth + i);
 
   const startDay = new Date(viewYear, viewMonth, 1).getDay();
   const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
@@ -219,10 +198,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
 
     if (!controlled) setStartInt(start);
     if (endValue === undefined) setEndInt(end);
-    onRangeChange?.(
-      start.toISOString().slice(0, 10),
-      end.toISOString().slice(0, 10),
-    );
+    onRangeChange?.(start.toISOString().slice(0, 10), end.toISOString().slice(0, 10));
   };
 
   const changeMonth = (delta: number) => {
@@ -248,9 +224,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   const presetCls = p ? preset(p) : '';
   const cls = [presetCls, className].filter(Boolean).join(' ') || undefined;
 
-  const rangeBg = toHex(
-    mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.25),
-  );
+  const rangeBg = toHex(mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.25));
 
   return (
     <Wrapper
@@ -263,10 +237,10 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
       <Header $gap={theme.spacing(1)}>
         <div style={{ display: 'flex', gap: theme.spacing(0.5) }}>
           <IconButton
-            size="sm"
-            variant="outlined"
-            icon="mdi:chevron-double-left"
-            aria-label="Previous year"
+            size='sm'
+            variant='outlined'
+            icon='mdi:chevron-double-left'
+            aria-label='Previous year'
             onClick={() => {
               const yr = viewYear - 1;
               let m = viewMonth;
@@ -277,10 +251,10 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
             disabled={new Date(viewYear - 1, 11, 31) < min}
           />
           <IconButton
-            size="sm"
-            variant="outlined"
-            icon="mdi:chevron-left"
-            aria-label="Previous month"
+            size='sm'
+            variant='outlined'
+            icon='mdi:chevron-left'
+            aria-label='Previous month'
             onClick={() => changeMonth(-1)}
             disabled={new Date(viewYear, viewMonth, 0) < min}
           />
@@ -294,19 +268,22 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
           }}
         >
           <Select
-            size="xs"
+            size='xs'
             value={viewMonth}
             onChange={(v) => setViewMonth(Number(v))}
             style={{ flex: 1 }}
           >
             {months.map((idx) => (
-              <Select.Option key={monthNames[idx]} value={idx}>
+              <Select.Option
+                key={monthNames[idx]}
+                value={idx}
+              >
                 {monthNames[idx]}
               </Select.Option>
             ))}
           </Select>
           <Select
-            size="xs"
+            size='xs'
             value={viewYear}
             onChange={(v) => {
               const yr = Number(v);
@@ -319,7 +296,10 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
             style={{ flex: 1 }}
           >
             {years.map((y) => (
-              <Select.Option key={y} value={y}>
+              <Select.Option
+                key={y}
+                value={y}
+              >
                 {y}
               </Select.Option>
             ))}
@@ -327,18 +307,18 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
         </div>
         <div style={{ display: 'flex', gap: theme.spacing(0.5) }}>
           <IconButton
-            size="sm"
-            variant="outlined"
-            icon="mdi:chevron-right"
-            aria-label="Next month"
+            size='sm'
+            variant='outlined'
+            icon='mdi:chevron-right'
+            aria-label='Next month'
             onClick={() => changeMonth(1)}
             disabled={new Date(viewYear, viewMonth + 1, 1) > max}
           />
           <IconButton
-            size="sm"
-            variant="outlined"
-            icon="mdi:chevron-double-right"
-            aria-label="Next year"
+            size='sm'
+            variant='outlined'
+            icon='mdi:chevron-double-right'
+            aria-label='Next year'
             onClick={() => {
               const yr = viewYear + 1;
               let m = viewMonth;
@@ -380,9 +360,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
               $primary={theme.colors.primary}
               $secondary={theme.colors.secondary}
               $rangeBg={rangeBg}
-              onClick={() =>
-                !disabled && (range ? commitRange(day) : commit(day))
-              }
+              onClick={() => !disabled && (range ? commitRange(day) : commit(day))}
               disabled={disabled}
             >
               {day}

@@ -81,8 +81,7 @@ const OptionLabel = styled('label')<{
   align-items: center;
   cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
   user-select: none;
-  color: ${({ $disabled, $disabledColor }) =>
-    $disabled ? $disabledColor : 'inherit'};
+  color: ${({ $disabled, $disabledColor }) => ($disabled ? $disabledColor : 'inherit')};
 
   /* Mobile tap highlight suppression */
   -webkit-tap-highlight-color: transparent;
@@ -114,10 +113,7 @@ export interface RadioGroupProps
 }
 
 export interface RadioProps
-  extends Omit<
-      React.InputHTMLAttributes<HTMLInputElement>,
-      'type' | 'size' | 'onChange'
-    >,
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type' | 'size' | 'onChange'>,
     Presettable {
   value: string;
   label?: string;
@@ -179,8 +175,7 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
   /* Keyboard navigation (roving radio) -------------------------------- */
   const ref = useRef<HTMLDivElement>(null);
   const onKey = (e: KeyboardEvent<HTMLDivElement>) => {
-    if (!['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'].includes(e.key))
-      return;
+    if (!['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'].includes(e.key)) return;
     e.preventDefault();
 
     const radios = ref.current?.querySelectorAll<HTMLInputElement>(
@@ -188,9 +183,7 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
     );
     if (!radios?.length) return;
 
-    const idx = Array.from(radios).findIndex(
-      (r) => r === document.activeElement,
-    );
+    const idx = Array.from(radios).findIndex((r) => r === document.activeElement);
     const step = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : -1;
     const next = (idx + step + radios.length) % radios.length;
     radios[next]?.focus();
@@ -199,15 +192,14 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
 
   /* preset → className ------------------------------------------------- */
   const presetCls = p ? preset(p) : '';
-  const mergedCls =
-    [presetCls, className].filter(Boolean).join(' ') || undefined;
+  const mergedCls = [presetCls, className].filter(Boolean).join(' ') || undefined;
 
   return (
     <RadioGroupCtx.Provider value={ctxVal}>
       <RootBase
         {...rest}
         ref={ref}
-        role="radiogroup"
+        role='radiogroup'
         onKeyDown={onKey}
         className={mergedCls}
         style={{
@@ -260,9 +252,7 @@ const Indicator: React.FC<IndicatorProps> = ({
         justifyContent: 'center',
         transition: 'box-shadow 120ms',
         backgroundColor: checked ? ring : undefined,
-        boxShadow: checked
-          ? `inset 0 0 0 ${parseInt(outerSize, 10) / 2}px ${ring}`
-          : undefined,
+        boxShadow: checked ? `inset 0 0 0 ${parseInt(outerSize, 10) / 2}px ${ring}` : undefined,
       }}
     >
       {checked && (
@@ -327,19 +317,14 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
 
     /* Disabled colour (Accordion recipe) ------------------------------- */
     const disabledColor = toHex(
-      mix(
-        toRgb(theme.colors.text),
-        toRgb(mode === 'dark' ? '#000' : '#fff'),
-        0.4,
-      ),
+      mix(toRgb(theme.colors.text), toRgb(mode === 'dark' ? '#000' : '#fff'), 0.4),
     );
 
     const onChange = () => !disabled && setValue(value);
 
     /* preset → className ---------------------------------------------- */
     const presetCls = p ? preset(p) : '';
-    const mergedCls =
-      [presetCls, className].filter(Boolean).join(' ') || undefined;
+    const mergedCls = [presetCls, className].filter(Boolean).join(' ') || undefined;
 
     /*───────────────────────────────────────────────────────────────────*/
     return (
@@ -352,7 +337,7 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
         <HiddenInput
           {...inputRest}
           ref={ref}
-          type="radio"
+          type='radio'
           name={name}
           value={value}
           checked={checked}

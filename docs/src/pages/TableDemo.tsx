@@ -29,14 +29,7 @@ interface Person {
   join: Date;
 }
 
-const CITIES = [
-  'Los Angeles',
-  'New York',
-  'Chicago',
-  'Austin',
-  'Seattle',
-  'Denver',
-] as const;
+const CITIES = ['Los Angeles', 'New York', 'Chicago', 'Austin', 'Seattle', 'Denver'] as const;
 
 const NAMES = [
   'Ada Lovelace',
@@ -49,8 +42,7 @@ const NAMES = [
 ] as const;
 
 /** Safe picker – always returns a concrete string */
-const rand = <T,>(arr: readonly T[]): T =>
-  arr[Math.floor(Math.random() * arr.length)] as T;
+const rand = <T,>(arr: readonly T[]): T => arr[Math.floor(Math.random() * arr.length)] as T;
 
 const makePeople = (n: number): Person[] =>
   Array.from({ length: n }, (_, i) => ({
@@ -104,98 +96,98 @@ export default function TableDemoPage() {
   );
 
   /* Derive table-selection mode ------------------------------------------ */
-  const selectable = selEnabled
-    ? multiSelect
-      ? 'multi'
-      : 'single'
-    : undefined;
+  const selectable = selEnabled ? (multiSelect ? 'multi' : 'single') : undefined;
 
   /* Render ---------------------------------------------------------------- */
   return (
     <Surface>
       <Stack>
         {/* Header bar ------------------------------------------------------- */}
-        <Panel variant="alt" fullWidth>
+        <Panel
+          variant='alt'
+          fullWidth
+        >
           <Stack
-            direction="row"
+            direction='row'
             style={{ alignItems: 'center', flexWrap: 'wrap' }}
           >
-            <Typography variant="h2" bold>
+            <Typography
+              variant='h2'
+              bold
+            >
               Table Demo
             </Typography>
             <div style={{ flex: 1 }} />
             <IconButton
-              aria-label="Toggle light/dark"
-              icon="mdi:weather-sunny"
+              aria-label='Toggle light/dark'
+              icon='mdi:weather-sunny'
               onClick={toggleMode}
             />
           </Stack>
         </Panel>
 
         {/* Controls --------------------------------------------------------- */}
-        <Panel variant="alt" fullWidth>
+        <Panel
+          variant='alt'
+          fullWidth
+        >
           <Stack
-            direction="row"
+            direction='row'
             style={{ flexWrap: 'wrap', alignItems: 'flex-end' }}
           >
             <TextField
-              as="input"
-              type="number"
-              name="rows"
-              label="Rows"
+              as='input'
+              type='number'
+              name='rows'
+              label='Rows'
               min={1}
               max={500}
               value={rows}
               onChange={(e) =>
-                setRows(
-                  Math.max(
-                    1,
-                    Math.min(500, Number((e.target as HTMLInputElement).value)),
-                  ),
-                )
+                setRows(Math.max(1, Math.min(500, Number((e.target as HTMLInputElement).value))))
               }
               style={{ width: 120 }}
             />
 
             <Checkbox
-              name="striped"
+              name='striped'
               checked={striped}
               onChange={setStriped}
-              label="Striped rows"
+              label='Striped rows'
             />
             <Checkbox
-              name="hover"
+              name='hover'
               checked={hoverable}
               onChange={setHoverable}
-              label="Row hover"
+              label='Row hover'
             />
             <Checkbox
-              name="lines"
+              name='lines'
               checked={dividers}
               onChange={setDividers}
-              label="Column dividers"
+              label='Column dividers'
             />
 
             <Checkbox
-              name="enableSel"
+              name='enableSel'
               checked={selEnabled}
               onChange={(c) => {
                 setSelEnabled(c);
                 if (!c) setMultiSelect(false); // reset multi when disabling
               }}
-              label="Enable selection"
+              label='Enable selection'
             />
             <Checkbox
-              name="multiSel"
+              name='multiSel'
               checked={multiSelect}
               disabled={!selEnabled}
               onChange={setMultiSelect}
-              label="Multi-select"
+              label='Multi-select'
             />
 
             <IconButton
-              aria-label="Refresh data"
-              icon="mdi:refresh"
+              aria-label='Refresh data'
+              icon='mdi:refresh'
               onClick={handleRefresh}
             />
           </Stack>
@@ -216,7 +208,7 @@ export default function TableDemoPage() {
         </Panel>
 
         <Button
-          size="lg"
+          size='lg'
           onClick={() => navigate(-1)}
           style={{ marginTop: theme.spacing(1) }}
         >

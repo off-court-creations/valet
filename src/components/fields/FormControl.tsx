@@ -14,8 +14,7 @@ const FormCtx = createContext<FormStore<any> | null>(null);
 
 export const useForm = <T extends Record<string, any>>() => {
   const ctx = useContext(FormCtx);
-  if (!ctx)
-    throw new Error('useForm must be used inside a <FormControl> component');
+  if (!ctx) throw new Error('useForm must be used inside a <FormControl> component');
   return ctx as FormStore<T>;
 };
 

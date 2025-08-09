@@ -3,14 +3,7 @@
 // Theme-aware, accessible Checkbox – consistent outline, no blue flash,
 // greyed-out disabled styling (Accordion-style).
 // ─────────────────────────────────────────────────────────────────────────────
-import React, {
-  forwardRef,
-  useCallback,
-  useId,
-  useState,
-  ChangeEvent,
-  ReactNode,
-} from 'react';
+import React, { forwardRef, useCallback, useId, useState, ChangeEvent, ReactNode } from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
@@ -59,8 +52,7 @@ const Wrapper = styled('label')<{
   gap: var(--checkbox-gap);
   cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
   user-select: none;
-  color: ${({ $disabled, $disabledColor }) =>
-    $disabled ? $disabledColor : 'inherit'};
+  color: ${({ $disabled, $disabledColor }) => ($disabled ? $disabledColor : 'inherit')};
 
   /* Prevent blue flash on mobile */
   -webkit-tap-highlight-color: transparent;
@@ -75,7 +67,12 @@ const HiddenInput = styled('input')`
   height: 0;
 `;
 
+/* Note: This local props type is used in styled<...>. To satisfy createStyled’s
+   generic constraint (P extends Record<string, unknown>), we add a string
+   index signature. This is type-safe because all specific properties are
+   subtypes of `unknown`. */
 interface BoxProps {
+  [key: string]: unknown;
   $size: string;
   $checked: boolean;
   $primary: string;
@@ -95,8 +92,7 @@ const Box = styled('span')<BoxProps>`
 
   /* Outline always visible, greyed when disabled */
   border: 2px solid
-    ${({ $disabled, $disabledColor, $text }) =>
-      $disabled ? $disabledColor : $text};
+    ${({ $disabled, $disabledColor, $text }) => ($disabled ? $disabledColor : $text)};
 
   /* Fill when checked, swap to disabled colour if disabled */
   background: ${({ $checked, $disabled, $primary, $disabledColor }) =>
@@ -172,11 +168,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
 
     /* Disabled colour (same recipe as Accordion) ------------------------ */
     const disabledColor = toHex(
-      mix(
-        toRgb(theme.colors.text),
-        toRgb(mode === 'dark' ? '#000' : '#fff'),
-        0.4,
-      ),
+      mix(toRgb(theme.colors.text), toRgb(mode === 'dark' ? '#000' : '#fff'), 0.4),
     );
 
     /* Optional FormControl binding -------------------------------------- */
@@ -218,8 +210,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
 
     /* preset → className merge ------------------------------------------ */
     const presetCls = presetKey ? preset(presetKey) : '';
-    const mergedCls =
-      [presetCls, className].filter(Boolean).join(' ') || undefined;
+    const mergedCls = [presetCls, className].filter(Boolean).join(' ') || undefined;
 
     /*─────────────────────────────────────────────────────────────────────*/
     return (
@@ -235,7 +226,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           id={id}
           ref={ref}
           name={name}
-          type="checkbox"
+          type='checkbox'
           disabled={disabled}
           checked={currentChecked}
           onChange={handleChange}

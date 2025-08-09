@@ -21,17 +21,17 @@ export default function SpeedDialDemoPage() {
 
   const actions = [
     {
-      icon: <Icon icon="mdi:content-copy" />,
+      icon: <Icon icon='mdi:content-copy' />,
       label: 'Copy',
       onClick: () => alert('Copy'),
     },
     {
-      icon: <Icon icon="mdi:share-variant" />,
+      icon: <Icon icon='mdi:share-variant' />,
       label: 'Share',
       onClick: () => alert('Share'),
     },
     {
-      icon: <Icon icon="mdi:delete" />,
+      icon: <Icon icon='mdi:delete' />,
       label: 'Delete',
       onClick: () => alert('Delete'),
     },
@@ -82,35 +82,46 @@ export default function SpeedDialDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography variant="h2" bold>
+        <Typography
+          variant='h2'
+          bold
+        >
           SpeedDial Showcase
         </Typography>
-        <Typography variant="subtitle">Floating action button</Typography>
+        <Typography variant='subtitle'>Floating action button</Typography>
 
         <Tabs>
-          <Tabs.Tab label="Usage" />
+          <Tabs.Tab label='Usage' />
           <Tabs.Panel>
             <Stack>
-              <Typography variant="h3">Example</Typography>
-              <Typography variant="body">
-                Click the fab to reveal actions.
-              </Typography>
-              <SpeedDial icon={<Icon icon="mdi:plus" />} actions={actions} />
-              <Button variant="outlined" onClick={toggleMode}>
+              <Typography variant='h3'>Example</Typography>
+              <Typography variant='body'>Click the fab to reveal actions.</Typography>
+              <SpeedDial
+                icon={<Icon icon='mdi:plus' />}
+                actions={actions}
+              />
+              <Button
+                variant='outlined'
+                onClick={toggleMode}
+              >
                 Toggle light / dark
               </Button>
             </Stack>
           </Tabs.Panel>
 
-          <Tabs.Tab label="Reference" />
+          <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant="h3">Prop reference</Typography>
-            <Table data={data} columns={columns} constrainHeight={false} />
+            <Typography variant='h3'>Prop reference</Typography>
+            <Table
+              data={data}
+              columns={columns}
+              constrainHeight={false}
+            />
           </Tabs.Panel>
         </Tabs>
 
         <Button
-          size="lg"
+          size='lg'
           onClick={() => navigate(-1)}
           style={{ marginTop: theme.spacing(1) }}
         >

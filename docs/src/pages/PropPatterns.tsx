@@ -32,9 +32,8 @@ export default function UsagePage() {
       prop: <code>size</code>,
       purpose: (
         <p>
-          <b>"xs", "sm", "md", "lg", "xl"</b> em-based tokens. Other{' '}
-          <code>STRING</code> values are treated as CSS like <b>"24px"</b> or{' '}
-          <b>"3em"</b>
+          <b>"xs", "sm", "md", "lg", "xl"</b> em-based tokens. Other <code>STRING</code> values are
+          treated as CSS like <b>"24px"</b> or <b>"3em"</b>
         </p>
       ),
       components:
@@ -43,8 +42,7 @@ export default function UsagePage() {
     {
       prop: <code>variant</code>,
       purpose: 'Switch visual style',
-      components:
-        'Button, IconButton, Panel, Modal, Progress, Typography, Tree',
+      components: 'Button, IconButton, Panel, Modal, Progress, Typography, Tree',
     },
     {
       prop: <code>color</code>,
@@ -92,14 +90,21 @@ export default function UsagePage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography variant="h2" bold>
+        <Typography
+          variant='h2'
+          bold
+        >
           Property Patterns
         </Typography>
         <Typography>
-          Many props repeat across components. Use this table as a quick
-          reference for the most common patterns.
+          Many props repeat across components. Use this table as a quick reference for the most
+          common patterns.
         </Typography>
-        <Table data={data} columns={columns} constrainHeight={false} />
+        <Table
+          data={data}
+          columns={columns}
+          constrainHeight={false}
+        />
         <Button onClick={() => navigate(-1)}>← Back</Button>
       </Stack>
     </Surface>

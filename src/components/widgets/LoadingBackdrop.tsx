@@ -11,10 +11,7 @@ export interface LoadingBackdropProps {
   showSpinner?: boolean;
 }
 
-export const LoadingBackdrop: React.FC<LoadingBackdropProps> = ({
-  fading,
-  showSpinner,
-}) => {
+export const LoadingBackdrop: React.FC<LoadingBackdropProps> = ({ fading, showSpinner }) => {
   const { theme } = useTheme();
   return (
     <div
@@ -37,7 +34,10 @@ export const LoadingBackdrop: React.FC<LoadingBackdropProps> = ({
           opacity: showSpinner ? 1 : 0,
         }}
       >
-        <Progress variant="circular" mode="indeterminate" />
+        <Progress
+          variant='circular'
+          mode='indeterminate'
+        />
       </div>
     </div>
   );

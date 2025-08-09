@@ -50,76 +50,113 @@ export default function ProgressDemoPage() {
       <NavDrawer />
       <Stack>
         {/* Page header ----------------------------------------------------- */}
-        <Typography variant="h2" bold>
+        <Typography
+          variant='h2'
+          bold
+        >
           Progress Playground
         </Typography>
-        <Typography variant="subtitle">
+        <Typography variant='subtitle'>
           Every variant, mode, and size – plus interactive controls
         </Typography>
 
         {/* 1. Circular indeterminate -------------------------------------- */}
-        <Typography variant="h3">1. Circular – indeterminate</Typography>
-        <Stack direction="row">
-          <Progress variant="circular" mode="indeterminate" size="xs" />
-          <Progress variant="circular" mode="indeterminate" size="sm" />
-          <Progress variant="circular" mode="indeterminate" />
-          <Progress variant="circular" mode="indeterminate" size="lg" />
-          <Progress variant="circular" mode="indeterminate" size="xl" />
+        <Typography variant='h3'>1. Circular – indeterminate</Typography>
+        <Stack direction='row'>
+          <Progress
+            variant='circular'
+            mode='indeterminate'
+            size='xs'
+          />
+          <Progress
+            variant='circular'
+            mode='indeterminate'
+            size='sm'
+          />
+          <Progress
+            variant='circular'
+            mode='indeterminate'
+          />
+          <Progress
+            variant='circular'
+            mode='indeterminate'
+            size='lg'
+          />
+          <Progress
+            variant='circular'
+            mode='indeterminate'
+            size='xl'
+          />
         </Stack>
 
         {/* 2. Circular determinate (controlled) --------------------------- */}
-        <Typography variant="h3">
-          2. Circular – determinate (controlled)
-        </Typography>
-        <Stack direction="row" style={{ alignItems: 'center' }}>
+        <Typography variant='h3'>2. Circular – determinate (controlled)</Typography>
+        <Stack
+          direction='row'
+          style={{ alignItems: 'center' }}
+        >
           <Progress
-            variant="circular"
-            mode="determinate"
+            variant='circular'
+            mode='determinate'
             value={value}
             showLabel
           />
           <Progress
-            variant="circular"
-            mode="determinate"
+            variant='circular'
+            mode='determinate'
             value={value}
-            size="lg"
+            size='lg'
             color={theme.colors['error']}
           />
-          <IconButton icon="mdi:home" onClick={reset} aria-label="reset" />
+          <IconButton
+            icon='mdi:home'
+            onClick={reset}
+            aria-label='reset'
+          />
         </Stack>
 
         {/* 3. Linear indeterminate ---------------------------------------- */}
-        <Typography variant="h3">3. Linear – indeterminate</Typography>
-        <Progress mode="indeterminate" />
+        <Typography variant='h3'>3. Linear – indeterminate</Typography>
+        <Progress mode='indeterminate' />
 
         {/* 4. Linear determinate (controlled) ----------------------------- */}
-        <Typography variant="h3">
-          4. Linear – determinate (controlled)
-        </Typography>
+        <Typography variant='h3'>4. Linear – determinate (controlled)</Typography>
         <Progress value={value} />
-        <Progress value={value} size={50} />
+        <Progress
+          value={value}
+          size={50}
+        />
 
         {/* 5. Linear buffer ----------------------------------------------- */}
-        <Typography variant="h3">5. Linear – buffer</Typography>
-        <Progress mode="buffer" value={value} buffer={buffer} />
+        <Typography variant='h3'>5. Linear – buffer</Typography>
+        <Progress
+          mode='buffer'
+          value={value}
+          buffer={buffer}
+        />
 
         {/* 6. Interactive controls ---------------------------------------- */}
-        <Typography variant="h3">6. Play with value</Typography>
+        <Typography variant='h3'>6. Play with value</Typography>
         <Stack>
           <Box style={{ maxWidth: 480 }}>
-            <Slider value={value} onChange={setValue} />
+            <Slider
+              value={value}
+              onChange={setValue}
+            />
           </Box>
-          <Stack direction="row">
-            <Button onClick={() => setValue((v) => Math.max(0, v - 10))}>
-              –10
-            </Button>
-            <Button onClick={() => setValue((v) => Math.min(100, v + 10))}>
-              +10
-            </Button>
-            <Button variant="outlined" onClick={reset}>
+          <Stack direction='row'>
+            <Button onClick={() => setValue((v) => Math.max(0, v - 10))}>–10</Button>
+            <Button onClick={() => setValue((v) => Math.min(100, v + 10))}>+10</Button>
+            <Button
+              variant='outlined'
+              onClick={reset}
+            >
               Reset
             </Button>
-            <Button variant="outlined" onClick={toggleMode}>
+            <Button
+              variant='outlined'
+              onClick={toggleMode}
+            >
               Toggle light / dark
             </Button>
           </Stack>
@@ -127,7 +164,7 @@ export default function ProgressDemoPage() {
 
         {/* Back nav -------------------------------------------------------- */}
         <Button
-          size="lg"
+          size='lg'
           onClick={() => navigate(-1)}
           style={{ marginTop: theme.spacing(1) }}
         >

@@ -1,14 +1,6 @@
 // src/pages/PresetDemoPage.tsx
 import { useNavigate } from 'react-router-dom';
-import {
-  definePreset,
-  Surface,
-  Box,
-  Stack,
-  Typography,
-  Button,
-  useTheme,
-} from '@archway/valet';
+import { definePreset, Surface, Box, Stack, Typography, Button, useTheme } from '@archway/valet';
 
 /*───────────────────────────────────────────────────────────────*/
 /* 1.  Register demo-only presets (once per page load)           */
@@ -63,28 +55,40 @@ export default function PresetDemoPage() {
   const navigate = useNavigate();
 
   return (
-    <Surface preset="frostedSurface">
+    <Surface preset='frostedSurface'>
       {/* Card-style Box */}
-      <Box preset="cardBox">
+      <Box preset='cardBox'>
         {/* Accent headline */}
-        <Typography variant="h2" preset="accentText">
+        <Typography
+          variant='h2'
+          preset='accentText'
+        >
           Preset Showcase
         </Typography>
 
-        <Typography variant="body" style={{ marginBottom: theme.spacing(1) }}>
+        <Typography
+          variant='body'
+          style={{ marginBottom: theme.spacing(1) }}
+        >
           Every component below uses a different <code>preset</code>.
         </Typography>
 
         {/* “Pill” Stack containing ghost buttons */}
-        <Stack direction="row" preset="pillStack">
+        <Stack
+          direction='row'
+          preset='pillStack'
+        >
           <Button
-            preset="ghostButton"
-            size="md"
+            preset='ghostButton'
+            size='md'
             style={{ marginLeft: theme.spacing(1) }}
           >
             Ghost 1
           </Button>
-          <Button preset="ghostButton" size="md">
+          <Button
+            preset='ghostButton'
+            size='md'
+          >
             Ghost 2
           </Button>
         </Stack>
@@ -96,11 +100,14 @@ export default function PresetDemoPage() {
       </Box>
 
       {/* Navigation */}
-      <Stack direction="row" style={{ padding: theme.spacing(1) }}>
+      <Stack
+        direction='row'
+        style={{ padding: theme.spacing(1) }}
+      >
         <Button
-          variant="contained"
-          size="lg"
-          preset="ghostButton"
+          variant='contained'
+          size='lg'
+          preset='ghostButton'
           onClick={() => navigate(-1)}
         >
           Go Back

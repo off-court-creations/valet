@@ -12,9 +12,7 @@ import { md5 } from '../../helpers/md5';
 export type AvatarSize = 'xs' | 's' | 'm' | 'l' | 'xl';
 export type AvatarVariant = 'plain' | 'outline';
 
-export interface AvatarProps
-  extends React.ImgHTMLAttributes<HTMLImageElement>,
-    Presettable {
+export interface AvatarProps extends React.ImgHTMLAttributes<HTMLImageElement>, Presettable {
   /** Image URL override. */
   src?: string;
   /** Email used for Gravatar lookup when src missing. */

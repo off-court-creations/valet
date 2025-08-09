@@ -2,13 +2,7 @@
 // src/components/fields/Iterator.tsx | valet
 // numeric stepper with plus/minus buttons and scroll wheel support
 // ─────────────────────────────────────────────────────────────
-import React, {
-  forwardRef,
-  useState,
-  useEffect,
-  useRef,
-  useCallback,
-} from 'react';
+import React, { forwardRef, useState, useEffect, useRef, useCallback } from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
@@ -97,8 +91,7 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
       form = useForm<any>();
     } catch {}
 
-    const formVal =
-      form && name ? (form.values[name] as number | undefined) : undefined;
+    const formVal = form && name ? (form.values[name] as number | undefined) : undefined;
     const controlled = valueProp !== undefined || formVal !== undefined;
     const [internal, setInternal] = useState(defaultValue ?? 0);
     const current = controlled ? (formVal ?? valueProp!) : internal;
@@ -154,26 +147,29 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
       return () => node.removeEventListener('wheel', handleWheel);
     }, [handleWheel]);
 
-    const cls =
-      [p ? preset(p) : '', className].filter(Boolean).join(' ') || undefined;
+    const cls = [p ? preset(p) : '', className].filter(Boolean).join(' ') || undefined;
 
     const w = typeof width === 'number' ? `${width}px` : width;
 
     return (
-      <Wrapper theme={theme} className={cls} style={style}>
+      <Wrapper
+        theme={theme}
+        className={cls}
+        style={style}
+      >
         <IconButton
-          size="xs"
-          variant="outlined"
-          icon="mdi:minus"
+          size='xs'
+          variant='outlined'
+          icon='mdi:minus'
           onClick={() => stepBy(-1)}
           disabled={disabled}
-          aria-label="decrement"
+          aria-label='decrement'
         />
         <Field
           {...rest}
           ref={setRef}
-          type="number"
-          inputMode="numeric"
+          type='number'
+          inputMode='numeric'
           theme={theme}
           $w={w}
           value={text}
@@ -182,12 +178,12 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
           disabled={disabled}
         />
         <IconButton
-          size="xs"
-          variant="outlined"
-          icon="mdi:plus"
+          size='xs'
+          variant='outlined'
+          icon='mdi:plus'
           onClick={() => stepBy(1)}
           disabled={disabled}
-          aria-label="increment"
+          aria-label='increment'
         />
       </Wrapper>
     );

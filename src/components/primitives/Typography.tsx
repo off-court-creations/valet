@@ -11,20 +11,9 @@ import { shallow } from 'zustand/shallow';
 import { preset } from '../../css/stylePresets';
 import type { Presettable } from '../../types';
 
-export type Variant =
-  | 'h1'
-  | 'h2'
-  | 'h3'
-  | 'h4'
-  | 'h5'
-  | 'h6'
-  | 'body'
-  | 'subtitle'
-  | 'button';
+export type Variant = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'body' | 'subtitle' | 'button';
 
-export interface TypographyProps
-  extends React.HTMLAttributes<HTMLElement>,
-    Presettable {
+export interface TypographyProps extends React.HTMLAttributes<HTMLElement>, Presettable {
   variant?: Variant;
   bold?: boolean;
   italic?: boolean;
@@ -102,11 +91,7 @@ export const Typography: React.FC<TypographyProps> = ({
         ($family
           ? `var(--valet-font-${$family})`
           : `var(--valet-font-${
-              $variant === 'button'
-                ? 'button'
-                : $variant.startsWith('h')
-                  ? 'heading'
-                  : 'body'
+              $variant === 'button' ? 'button' : $variant.startsWith('h') ? 'heading' : 'body'
             })`)};
       ${({ $center }) =>
         $center &&

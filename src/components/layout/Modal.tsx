@@ -219,11 +219,14 @@ export const Modal: React.FC<ModalProps> = ({
   /* ----- portal content ------------------------------------------------- */
   const modalElement = (
     <>
-      <Backdrop $fade={fade} onClick={handleBackdropClick} />
+      <Backdrop
+        $fade={fade}
+        onClick={handleBackdropClick}
+      />
       <Box
         ref={dialogRef}
         role={variant === 'alert' ? 'alertdialog' : 'dialog'}
-        aria-modal="true"
+        aria-modal='true'
         aria-labelledby={title ? idTitle : undefined}
         tabIndex={-1}
         $bg={theme.colors.surface}

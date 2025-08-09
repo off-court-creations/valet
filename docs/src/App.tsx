@@ -38,9 +38,7 @@ const IteratorDemoPage = page(() => import('./pages/IteratorDemo'));
 const ModalDemoPage = page(() => import('./pages/ModalDemo'));
 const SwitchDemoPage = page(() => import('./pages/SwitchDemo'));
 const AccordionDemoPage = page(() => import('./pages/AccordionDemo'));
-const AccordionConstrainedDemoPage = page(
-  () => import('./pages/AccordionConstrainedDemo'),
-);
+const AccordionConstrainedDemoPage = page(() => import('./pages/AccordionConstrainedDemo'));
 const TabsDemoPage = page(() => import('./pages/TabsDemo'));
 const SliderDemoPage = page(() => import('./pages/SliderDemo'));
 const ProgressDemoPage = page(() => import('./pages/ProgressDemo'));
@@ -88,7 +86,7 @@ export function App() {
   const Fallback = (
     <Surface>
       <Stack style={{ padding: '2rem', alignItems: 'center' }}>
-        <Typography variant="subtitle">Loading…</Typography>
+        <Typography variant='subtitle'>Loading…</Typography>
       </Stack>
     </Surface>
   );
@@ -96,61 +94,214 @@ export function App() {
   return (
     <Suspense fallback={Fallback}>
       <Routes>
-        <Route path="/" element={<MainPage />} />
-        <Route path="/overview" element={<OverviewPage />} />
-        <Route path="/installation" element={<InstallationPage />} />
-        <Route path="/usage" element={<UsagePage />} />
-        <Route path="/surface" element={<SurfaceExplainerPage />} />
-        <Route path="/typography" element={<TypographyDemoPage />} />
-        <Route path="/presets" element={<PresetDemoPage />} />
-        <Route path="/form" element={<FormDemoPage />} />
-        <Route path="/parallax" element={<ParallaxDemo />} />
-        <Route path="/test" element={<TestPage />} />
-        <Route path="/box-demo" element={<BoxDemo />} />
-        <Route path="/button-demo" element={<ButtonDemoPage />} />
-        <Route path="/text-form-demo" element={<TextFieldDemoPage />} />
-        <Route path="/icon-demo" element={<IconDemoPage />} />
-        <Route path="/image-demo" element={<ImageDemoPage />} />
-        <Route path="/icon-button-demo" element={<IconButtonDemoPage />} />
-        <Route path="/avatar-demo" element={<AvatarDemoPage />} />
-        <Route path="/panel-demo" element={<PanelDemoPage />} />
-        <Route path="/checkbox-demo" element={<CheckboxDemoPage />} />
-        <Route path="/tooltip-demo" element={<TooltipDemoPage />} />
-        <Route path="/modal-demo" element={<ModalDemoPage />} />
-        <Route path="/switch-demo" element={<SwitchDemoPage />} />
-        <Route path="/accordion-demo" element={<AccordionDemoPage />} />
         <Route
-          path="/accordion-constrained"
+          path='/'
+          element={<MainPage />}
+        />
+        <Route
+          path='/overview'
+          element={<OverviewPage />}
+        />
+        <Route
+          path='/installation'
+          element={<InstallationPage />}
+        />
+        <Route
+          path='/usage'
+          element={<UsagePage />}
+        />
+        <Route
+          path='/surface'
+          element={<SurfaceExplainerPage />}
+        />
+        <Route
+          path='/typography'
+          element={<TypographyDemoPage />}
+        />
+        <Route
+          path='/presets'
+          element={<PresetDemoPage />}
+        />
+        <Route
+          path='/form'
+          element={<FormDemoPage />}
+        />
+        <Route
+          path='/parallax'
+          element={<ParallaxDemo />}
+        />
+        <Route
+          path='/test'
+          element={<TestPage />}
+        />
+        <Route
+          path='/box-demo'
+          element={<BoxDemo />}
+        />
+        <Route
+          path='/button-demo'
+          element={<ButtonDemoPage />}
+        />
+        <Route
+          path='/text-form-demo'
+          element={<TextFieldDemoPage />}
+        />
+        <Route
+          path='/icon-demo'
+          element={<IconDemoPage />}
+        />
+        <Route
+          path='/image-demo'
+          element={<ImageDemoPage />}
+        />
+        <Route
+          path='/icon-button-demo'
+          element={<IconButtonDemoPage />}
+        />
+        <Route
+          path='/avatar-demo'
+          element={<AvatarDemoPage />}
+        />
+        <Route
+          path='/panel-demo'
+          element={<PanelDemoPage />}
+        />
+        <Route
+          path='/checkbox-demo'
+          element={<CheckboxDemoPage />}
+        />
+        <Route
+          path='/tooltip-demo'
+          element={<TooltipDemoPage />}
+        />
+        <Route
+          path='/modal-demo'
+          element={<ModalDemoPage />}
+        />
+        <Route
+          path='/switch-demo'
+          element={<SwitchDemoPage />}
+        />
+        <Route
+          path='/accordion-demo'
+          element={<AccordionDemoPage />}
+        />
+        <Route
+          path='/accordion-constrained'
           element={<AccordionConstrainedDemoPage />}
         />
-        <Route path="/tabs-demo" element={<TabsDemoPage />} />
-        <Route path="/slider-demo" element={<SliderDemoPage />} />
-        <Route path="/progress-demo" element={<ProgressDemoPage />} />
-        <Route path="/skeleton-demo" element={<SkeletonDemoPage />} />
-        <Route path="/select-demo" element={<SelectDemoPage />} />
-        <Route path="/table-demo" element={<TablePlaygroundPage />} />
-        <Route path="/list-demo" element={<ListDemoPage />} />
-        <Route path="/drawer-demo" element={<DrawerDemoPage />} />
-        <Route path="/appbar-demo" element={<AppBarDemoPage />} />
-        <Route path="/grid-demo" element={<GridDemoPage />} />
-        <Route path="/stack-demo" element={<StackDemoPage />} />
-        <Route path="/pagination-demo" element={<PaginationDemoPage />} />
-        <Route path="/speeddial-demo" element={<SpeedDialDemoPage />} />
-        <Route path="/stepper-demo" element={<StepperDemoPage />} />
-        <Route path="/metroselect-demo" element={<MetroSelectDemoPage />} />
-        <Route path="/radio-demo" element={<RadioGroupDemoPage />} />
-        <Route path="/video-demo" element={<VideoDemoPage />} />
-        <Route path="/dropzone-demo" element={<DropzoneDemoPage />} />
-        <Route path="/chat-demo" element={<LLMChatDemoPage />} />
-        <Route path="/rich-chat-demo" element={<RichChatDemoPage />} />
-        <Route path="/llmchat" element={<LLMChatPage />} />
-        <Route path="/richchat" element={<RichChatPage />} />
-        <Route path="/snackbar-demo" element={<SnackbarDemoPage />} />
-        <Route path="/tree-demo" element={<TreeDemoPage />} />
-        <Route path="/iterator-demo" element={<IteratorDemoPage />} />
-        <Route path="/dateselector-demo" element={<DateSelectorDemoPage />} />
-        <Route path="/markdown-demo" element={<MarkdownDemoPage />} />
-        <Route path="/prop-patterns" element={<PropPatternsPage />} />
+        <Route
+          path='/tabs-demo'
+          element={<TabsDemoPage />}
+        />
+        <Route
+          path='/slider-demo'
+          element={<SliderDemoPage />}
+        />
+        <Route
+          path='/progress-demo'
+          element={<ProgressDemoPage />}
+        />
+        <Route
+          path='/skeleton-demo'
+          element={<SkeletonDemoPage />}
+        />
+        <Route
+          path='/select-demo'
+          element={<SelectDemoPage />}
+        />
+        <Route
+          path='/table-demo'
+          element={<TablePlaygroundPage />}
+        />
+        <Route
+          path='/list-demo'
+          element={<ListDemoPage />}
+        />
+        <Route
+          path='/drawer-demo'
+          element={<DrawerDemoPage />}
+        />
+        <Route
+          path='/appbar-demo'
+          element={<AppBarDemoPage />}
+        />
+        <Route
+          path='/grid-demo'
+          element={<GridDemoPage />}
+        />
+        <Route
+          path='/stack-demo'
+          element={<StackDemoPage />}
+        />
+        <Route
+          path='/pagination-demo'
+          element={<PaginationDemoPage />}
+        />
+        <Route
+          path='/speeddial-demo'
+          element={<SpeedDialDemoPage />}
+        />
+        <Route
+          path='/stepper-demo'
+          element={<StepperDemoPage />}
+        />
+        <Route
+          path='/metroselect-demo'
+          element={<MetroSelectDemoPage />}
+        />
+        <Route
+          path='/radio-demo'
+          element={<RadioGroupDemoPage />}
+        />
+        <Route
+          path='/video-demo'
+          element={<VideoDemoPage />}
+        />
+        <Route
+          path='/dropzone-demo'
+          element={<DropzoneDemoPage />}
+        />
+        <Route
+          path='/chat-demo'
+          element={<LLMChatDemoPage />}
+        />
+        <Route
+          path='/rich-chat-demo'
+          element={<RichChatDemoPage />}
+        />
+        <Route
+          path='/llmchat'
+          element={<LLMChatPage />}
+        />
+        <Route
+          path='/richchat'
+          element={<RichChatPage />}
+        />
+        <Route
+          path='/snackbar-demo'
+          element={<SnackbarDemoPage />}
+        />
+        <Route
+          path='/tree-demo'
+          element={<TreeDemoPage />}
+        />
+        <Route
+          path='/iterator-demo'
+          element={<IteratorDemoPage />}
+        />
+        <Route
+          path='/dateselector-demo'
+          element={<DateSelectorDemoPage />}
+        />
+        <Route
+          path='/markdown-demo'
+          element={<MarkdownDemoPage />}
+        />
+        <Route
+          path='/prop-patterns'
+          element={<PropPatternsPage />}
+        />
       </Routes>
     </Suspense>
   );

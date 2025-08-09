@@ -13,12 +13,14 @@ export default function UsagePage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography variant="h2" bold>
+        <Typography
+          variant='h2'
+          bold
+        >
           Usage
         </Typography>
         <Typography>
-          Import components as needed and wrap each route in a{' '}
-          <code>{'<Surface>'}</code>.
+          Import components as needed and wrap each route in a <code>{'<Surface>'}</code>.
         </Typography>
         <Typography>
           Example: <code>{'<Button>Click me</Button>'}</code>

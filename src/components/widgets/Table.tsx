@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/widgets/Table.tsx  | valet
-// patch: self‑narrowing and table‑layout fixed to avoid right‑edge clipping – 2025‑07‑18
+// patch: self-narrowing and table-layout fixed to avoid right-edge clipping – 2025-07-18
 // ─────────────────────────────────────────────────────────────
 import React, {
   useMemo,
@@ -9,6 +9,7 @@ import React, {
   useLayoutEffect,
   useRef,
   useId,
+  useCallback,
 } from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
@@ -92,25 +93,28 @@ const Root = styled('table')<{
 
   /* Zebra stripes */
   ${({ $striped, $stripe }) =>
-    $striped &&
-    `
+    $striped
+      ? `
     tbody tr:nth-of-type(odd) td { background: ${$stripe}; }
-  `}
+  `
+      : ''}
 
   /* Row hover */
   ${({ $hover, $hoverBg }) =>
-    $hover &&
-    `
+    $hover
+      ? `
     tbody tr:hover,
     tbody tr:hover > td { background: ${$hoverBg}; }
-  `}
+  `
+      : ''}
 
   /* Column dividers */
   ${({ $lines, $border }) =>
-    $lines &&
-    `
+    $lines
+      ? `
     th:not(:last-child), td:not(:last-child) { border-right: 1px solid ${$border}; }
-  `}
+  `
+      : ''}
 `;
 
 const Th = styled('th')<{
@@ -120,10 +124,10 @@ const Th = styled('th')<{
   $primary: string;
 }>`
   text-align: ${({ $align }) => $align};
-  ${({ $sortable }) => $sortable && 'cursor: pointer; user-select: none;'}
+  ${({ $sortable }) => ($sortable ? 'cursor: pointer; user-select: none;' : '')}
   position: relative;
   &:hover {
-    ${({ $sortable }) => $sortable && 'filter: brightness(0.9);'}
+    ${({ $sortable }) => ($sortable ? 'filter: brightness(0.9);' : '')}
   }
   &::after {
     content: '';
@@ -132,8 +136,7 @@ const Th = styled('th')<{
     right: 0;
     bottom: -1px;
     height: 4px;
-    background: ${({ $primary, $active }) =>
-      $active ? $primary : 'transparent'};
+    background: ${({ $primary, $active }) => ($active ? $primary : 'transparent')};
     transition: background 150ms ease;
   }
 `;
@@ -174,7 +177,7 @@ export function Table<T extends object>({
 
   const pad = theme.spacing(1);
 
-  /* height‑constraint internal state */
+  /* height-constraint internal state */
   const [maxHeight, setMaxHeight] = useState<number>();
   const [shouldConstrain, setShouldConstrain] = useState(false);
   const constraintRef = useRef(false);
@@ -190,8 +193,8 @@ export function Table<T extends object>({
     return (isNaN(fs) ? 16 : fs) * 2;
   };
 
-  /* measurement update */
-  const runUpdate = () => {
+  /* measurement update (stable) */
+  const runUpdate = useCallback(() => {
     const node = wrapRef.current;
     const surfEl = surface.element;
     if (!node || !surfEl) return;
@@ -205,8 +208,7 @@ export function Table<T extends object>({
     const available = Math.round(surface.height - top - bottomRef.current);
     const cutoff = calcCutoff();
 
-    const shouldClamp =
-      node.scrollHeight - available > 1 && available >= cutoff;
+    const shouldClamp = node.scrollHeight - available > 1 && available >= cutoff;
 
     if (shouldClamp) {
       if (!constraintRef.current) {
@@ -235,12 +237,12 @@ export function Table<T extends object>({
         setMaxHeight(undefined);
       }
     }
-  };
+  }, [surface]); // depend on the selected store slice as a whole
 
-  const update = () => {
+  const update = useCallback(() => {
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     rafRef.current = requestAnimationFrame(runUpdate);
-  };
+  }, [runUpdate]);
 
   /* constrain toggles */
   useEffect(() => {
@@ -265,12 +267,12 @@ export function Table<T extends object>({
       ro.disconnect();
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [constrainHeight, surface.element]);
+  }, [constrainHeight, surface, uniqueId, update]);
 
   useLayoutEffect(() => {
     if (!constrainHeight || !wrapRef.current || !surface.element) return;
     update();
-  }, [constrainHeight, surface.height, surface.element]);
+  }, [constrainHeight, surface, update]);
 
   /* sort + selection state */
   const [sort, setSort] = useState<{ index: number; desc: boolean } | null>(
@@ -284,13 +286,11 @@ export function Table<T extends object>({
       onSelectionChange?.(Array.from(next));
       return next;
     });
-  }, [data]);
+  }, [data, onSelectionChange]);
 
   /* colours */
   const stripeColor = stripe(theme.colors.background, theme.colors.text);
-  const hoverBg = toHex(
-    mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.25),
-  );
+  const hoverBg = toHex(mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.25));
 
   /* callbacks */
   const toggleSort = (idx: number) => {
@@ -308,7 +308,13 @@ export function Table<T extends object>({
     setSelected((prev) => {
       const next = new Set(prev);
       if (selectable === 'single') next.clear();
-      checked ? next.add(row) : next.delete(row);
+
+      if (checked) {
+        next.add(row);
+      } else {
+        next.delete(row);
+      }
+
       onSelectionChange?.(Array.from(next));
       return next;
     });
@@ -328,9 +334,23 @@ export function Table<T extends object>({
               typeof col.accessor === 'function'
                 ? col.accessor
                 : (row: T) => row[col.accessor as keyof T];
-            const va = getter(a) as any;
-            const vb = getter(b) as any;
-            return va > vb ? 1 : va < vb ? -1 : 0;
+
+            const va = getter(a) as unknown;
+            const vb = getter(b) as unknown;
+
+            // Numeric / Date / boolean / string-safe comparator
+            const isNum = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
+            const isDate = (v: unknown): v is Date =>
+              v instanceof Date && !Number.isNaN(v.getTime());
+
+            if (isNum(va) && isNum(vb)) return va - vb;
+            if (isDate(va) && isDate(vb)) return va.getTime() - vb.getTime();
+            if (typeof va === 'boolean' && typeof vb === 'boolean')
+              return (va ? 1 : 0) - (vb ? 1 : 0);
+
+            const sa = String(va ?? '');
+            const sb = String(vb ?? '');
+            return sa.localeCompare(sb);
           };
 
     const arr = [...data].sort(cmp);
@@ -338,8 +358,7 @@ export function Table<T extends object>({
   }, [data, columns, sort]);
 
   /* class merge */
-  const cls =
-    [p ? preset(p) : '', className].filter(Boolean).join(' ') || undefined;
+  const cls = [p ? preset(p) : '', className].filter(Boolean).join(' ') || undefined;
 
   /*─────────────────────────────────────────────────────────*/
   return (
@@ -362,15 +381,15 @@ export function Table<T extends object>({
       >
         <thead>
           <tr>
-            {selectable && (
+            {selectable ? (
               <Th
-                $align="center"
+                $align='center'
                 $sortable={false}
                 $active={false}
                 $primary={theme.colors.primary}
                 style={{ width: 48 }}
               />
-            )}
+            ) : null}
             {columns.map((c, i) => (
               <Th
                 key={i}
@@ -381,7 +400,7 @@ export function Table<T extends object>({
                 onClick={c.sortable ? () => toggleSort(i) : undefined}
               >
                 {c.header}
-                {sort?.index === i && (sort.desc ? ' ▼' : ' ▲')}
+                {sort?.index === i ? (sort.desc ? ' ▼' : ' ▲') : null}
               </Th>
             ))}
           </tr>
@@ -390,17 +409,17 @@ export function Table<T extends object>({
         <tbody>
           {sorted.map((row, rIdx) => (
             <tr key={rIdx}>
-              {selectable && (
-                <Td $align="center">
+              {selectable ? (
+                <Td $align='center'>
                   <Checkbox
                     name={`sel-${rIdx}`}
-                    size="sm"
+                    size='sm'
                     checked={selected.has(row)}
                     onChange={(chk) => toggleSelect(row, chk)}
                     aria-label={`Select row ${rIdx + 1}`}
                   />
                 </Td>
-              )}
+              ) : null}
 
               {columns.map((c, cIdx) => {
                 const getter =
@@ -414,7 +433,10 @@ export function Table<T extends object>({
                     : null;
 
                 return (
-                  <Td key={cIdx} $align={c.align ?? 'left'}>
+                  <Td
+                    key={cIdx}
+                    $align={c.align ?? 'left'}
+                  >
                     {content}
                   </Td>
                 );

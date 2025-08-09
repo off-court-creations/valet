@@ -13,7 +13,10 @@ export default function InstallationPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography variant="h2" bold>
+        <Typography
+          variant='h2'
+          bold
+        >
           Installation
         </Typography>
         <Typography>Install via npm:</Typography>

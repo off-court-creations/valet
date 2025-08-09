@@ -15,9 +15,7 @@ export type ButtonVariant = 'contained' | 'outlined';
 export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type ButtonToken = 'primary' | 'secondary' | 'tertiary';
 
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    Presettable {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, Presettable {
   color?: ButtonToken | string;
   textColor?: ButtonToken | string;
   variant?: ButtonVariant;
@@ -92,8 +90,7 @@ const Root = styled('button')<{
   border: ${({ $variant, $outline }) =>
     $variant === 'outlined' ? `1px solid ${$outline}` : 'none'};
 
-  background: ${({ $variant, $bg }) =>
-    $variant === 'contained' ? $bg : 'transparent'};
+  background: ${({ $variant, $bg }) => ($variant === 'contained' ? $bg : 'transparent')};
 
   color: ${({ $label }) => $label};
   font-size: ${({ $font }) => $font};
@@ -185,9 +182,7 @@ export const Button: React.FC<ButtonProps> = ({
   const { padV, padH, font, height } = geom;
 
   const padRule =
-    variant === 'outlined'
-      ? `calc(${padV} - 1px) calc(${padH} - 1px)`
-      : `${padV} ${padH}`;
+    variant === 'outlined' ? `calc(${padV} - 1px) calc(${padH} - 1px)` : `${padV} ${padH}`;
 
   const minW = `calc(${height} * 2)`;
 
@@ -207,8 +202,7 @@ export const Button: React.FC<ButtonProps> = ({
 
   const outlineNeutral = mode === 'dark' ? '#eee' : '#111';
 
-  const resolveText = (v: ButtonToken | string) =>
-    isToken(v) ? theme.colors[`${v}Text`] : v;
+  const resolveText = (v: ButtonToken | string) => (isToken(v) ? theme.colors[`${v}Text`] : v);
 
   let labelColor: string;
 
@@ -252,7 +246,7 @@ export const Button: React.FC<ButtonProps> = ({
         grouped.push(
           <Typography
             key={`text-${i}`}
-            variant="button"
+            variant='button'
             bold
             fontSize={font}
             noSelect
@@ -269,8 +263,8 @@ export const Button: React.FC<ButtonProps> = ({
   if (buffer) {
     grouped.push(
       <Typography
-        key="text-final"
-        variant="button"
+        key='text-final'
+        variant='button'
         bold
         fontSize={font}
         noSelect

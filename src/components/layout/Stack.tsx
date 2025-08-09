@@ -9,9 +9,7 @@ import { preset } from '../../css/stylePresets';
 import type { Presettable } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
-export interface StackProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    Presettable {
+export interface StackProps extends React.HTMLAttributes<HTMLDivElement>, Presettable {
   direction?: 'row' | 'column';
   /** Number of spacing units or any CSS length. */
   spacing?: number | string | undefined;
@@ -81,8 +79,7 @@ export const Stack: React.FC<StackProps> = ({
   if (gapInput === undefined) {
     gapInput = compact ? 0 : 1;
   }
-  gap =
-    typeof gapInput === 'number' ? theme.spacing(gapInput) : String(gapInput);
+  gap = typeof gapInput === 'number' ? theme.spacing(gapInput) : String(gapInput);
 
   /* Enable wrapping by default for rows */
   const shouldWrap = typeof wrap === 'boolean' ? wrap : direction === 'row';

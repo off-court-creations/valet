@@ -24,10 +24,7 @@ export default function DateSelectorDemoPage() {
   const navigate = useNavigate();
   const [selected, setSelected] = useState('2025-01-01');
   const [limited, setLimited] = useState('2025-07-15');
-  const [rangeDates, setRangeDates] = useState<[string, string]>([
-    '2025-07-01',
-    '2025-07-10',
-  ]);
+  const [rangeDates, setRangeDates] = useState<[string, string]>(['2025-07-01', '2025-07-10']);
 
   interface Row {
     prop: ReactNode;
@@ -116,33 +113,45 @@ export default function DateSelectorDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography variant="h2" bold>
+        <Typography
+          variant='h2'
+          bold
+        >
           DateSelector Showcase
         </Typography>
         <Tabs>
-          <Tabs.Tab label="Usage" />
+          <Tabs.Tab label='Usage' />
           <Tabs.Panel>
-            <Typography variant="subtitle">
+            <Typography variant='subtitle'>
               Compact calendar with month and year navigation
             </Typography>
 
-            <Typography variant="h3">1. Basic</Typography>
-            <DateSelector value={selected} onChange={setSelected} />
+            <Typography variant='h3'>1. Basic</Typography>
+            <DateSelector
+              value={selected}
+              onChange={setSelected}
+            />
 
-            <Typography variant="h3">2. Custom width</Typography>
-            <Grid columns={3} adaptive>
-              <DateSelector value={selected} onChange={setSelected} />
+            <Typography variant='h3'>2. Custom width</Typography>
+            <Grid
+              columns={3}
+              adaptive
+            >
+              <DateSelector
+                value={selected}
+                onChange={setSelected}
+              />
             </Grid>
 
-            <Typography variant="h3">3. Limited range</Typography>
+            <Typography variant='h3'>3. Limited range</Typography>
             <DateSelector
               value={limited}
               onChange={setLimited}
-              minDate="2025-06-01"
-              maxDate="2025-09-15"
+              minDate='2025-06-01'
+              maxDate='2025-09-15'
             />
 
-            <Typography variant="h3">4. Range mode</Typography>
+            <Typography variant='h3'>4. Range mode</Typography>
             <DateSelector
               range
               value={rangeDates[0]}
@@ -150,22 +159,29 @@ export default function DateSelectorDemoPage() {
               onRangeChange={(s, e) => setRangeDates([s, e])}
             />
 
-            <Stack direction="row">
-              <Button variant="outlined" onClick={toggleMode}>
+            <Stack direction='row'>
+              <Button
+                variant='outlined'
+                onClick={toggleMode}
+              >
                 Toggle light / dark
               </Button>
             </Stack>
           </Tabs.Panel>
 
-          <Tabs.Tab label="Reference" />
+          <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant="h3">Prop reference</Typography>
-            <Table data={data} columns={columns} constrainHeight={false} />
+            <Typography variant='h3'>Prop reference</Typography>
+            <Table
+              data={data}
+              columns={columns}
+              constrainHeight={false}
+            />
           </Tabs.Panel>
         </Tabs>
 
         <Button
-          size="lg"
+          size='lg'
           onClick={() => navigate(-1)}
           style={{ marginTop: theme.spacing(1) }}
         >

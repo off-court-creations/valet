@@ -101,48 +101,16 @@ export function md5(str: string): string {
 function cmn(q: number, a: number, b: number, x: number, s: number, t: number) {
   return safe_add(rotl(safe_add(safe_add(a, q), safe_add(x, t)), s), b);
 }
-function ff(
-  a: number,
-  b: number,
-  c: number,
-  d: number,
-  x: number,
-  s: number,
-  t: number,
-) {
+function ff(a: number, b: number, c: number, d: number, x: number, s: number, t: number) {
   return cmn((b & c) | (~b & d), a, b, x, s, t);
 }
-function gg(
-  a: number,
-  b: number,
-  c: number,
-  d: number,
-  x: number,
-  s: number,
-  t: number,
-) {
+function gg(a: number, b: number, c: number, d: number, x: number, s: number, t: number) {
   return cmn((b & d) | (c & ~d), a, b, x, s, t);
 }
-function hh(
-  a: number,
-  b: number,
-  c: number,
-  d: number,
-  x: number,
-  s: number,
-  t: number,
-) {
+function hh(a: number, b: number, c: number, d: number, x: number, s: number, t: number) {
   return cmn(b ^ c ^ d, a, b, x, s, t);
 }
-function ii(
-  a: number,
-  b: number,
-  c: number,
-  d: number,
-  x: number,
-  s: number,
-  t: number,
-) {
+function ii(a: number, b: number, c: number, d: number, x: number, s: number, t: number) {
   return cmn(c ^ (b | ~d), a, b, x, s, t);
 }
 function safe_add(x: number, y: number) {

@@ -46,8 +46,7 @@ const Base = styled('div')<{
 
   ${({ $bg }) => $bg && `background: ${$bg}; --valet-bg: ${$bg};`}  
   ${({ $text }) => $text && `color: ${$text}; --valet-text-color: ${$text};`}
-  ${({ $center }) =>
-    $center !== undefined && `--valet-centered: ${$center ? '1' : '0'};`}
+  ${({ $center }) => $center !== undefined && `--valet-centered: ${$center ? '1' : '0'};`}
 `;
 
 export const Box: React.FC<BoxProps> = ({

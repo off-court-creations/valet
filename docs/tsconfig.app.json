@@ -36,7 +36,7 @@
     "incremental": false,
 
     /* Extra ambient types ---------------------------------------------------- */
-    "types": ["vite/client"]        // React types pulled in automatically
+    "types": ["vite/client"] // React types pulled in automatically
   },
 
   "include": ["src/**/*.ts", "src/**/*.tsx"],

@@ -52,22 +52,28 @@ export default function TooltipDemoPage() {
       <NavDrawer />
       <Stack>
         {/* Page header ----------------------------------------------------- */}
-        <Typography variant="h2" bold>
+        <Typography
+          variant='h2'
+          bold
+        >
           Tooltip Showcase
         </Typography>
-        <Typography variant="subtitle">
+        <Typography variant='subtitle'>
           Hover, focus, or tap the elements below to explore every capability
         </Typography>
 
         {/* 1. Basic usage -------------------------------------------------- */}
-        <Typography variant="h3">1. Default Tooltip</Typography>
-        <Tooltip title="Hello, ZeroUI!">
-          <Button variant="contained">Hover me</Button>
+        <Typography variant='h3'>1. Default Tooltip</Typography>
+        <Tooltip title='Hello, ZeroUI!'>
+          <Button variant='contained'>Hover me</Button>
         </Tooltip>
 
         {/* 2. Placements ---------------------------------------------------- */}
-        <Typography variant="h3">2. Placements</Typography>
-        <Stack direction="row" wrap>
+        <Typography variant='h3'>2. Placements</Typography>
+        <Stack
+          direction='row'
+          wrap
+        >
           {placements.map(({ key, label }) => (
             <Tooltip
               key={key}
@@ -80,26 +86,29 @@ export default function TooltipDemoPage() {
         </Stack>
 
         {/* 3. Arrow toggle -------------------------------------------------- */}
-        <Typography variant="h3">3. Arrow toggle</Typography>
-        <Stack direction="row">
-          <Tooltip title="Default arrow (true)">
-            <IconButton icon="mdi:home" />
+        <Typography variant='h3'>3. Arrow toggle</Typography>
+        <Stack direction='row'>
+          <Tooltip title='Default arrow (true)'>
+            <IconButton icon='mdi:home' />
           </Tooltip>
-          <Tooltip arrow={false} title="arrow={false}">
-            <IconButton icon="mdi:home" />
+          <Tooltip
+            arrow={false}
+            title='arrow={false}'
+          >
+            <IconButton icon='mdi:home' />
           </Tooltip>
         </Stack>
 
         {/* 4. Controlled visibility ---------------------------------------- */}
-        <Typography variant="h3">4. Controlled visibility</Typography>
-        <Stack direction="row">
+        <Typography variant='h3'>4. Controlled visibility</Typography>
+        <Stack direction='row'>
           <Tooltip
             open={controlledOpen}
             onClose={() => setControlledOpen(false)}
             onOpen={() => setControlledOpen(true)}
-            title="I am controlled!"
+            title='I am controlled!'
           >
-            <Button variant="outlined">Target</Button>
+            <Button variant='outlined'>Target</Button>
           </Tooltip>
           <Button onClick={() => setControlledOpen((v) => !v)}>
             {controlledOpen ? 'Hide' : 'Show'} tooltip
@@ -107,9 +116,9 @@ export default function TooltipDemoPage() {
         </Stack>
 
         {/* 5. Custom enter / leave delays ---------------------------------- */}
-        <Typography variant="h3">5. Custom enter / leave delays</Typography>
+        <Typography variant='h3'>5. Custom enter / leave delays</Typography>
         <Tooltip
-          title="500 ms open / 1 s close"
+          title='500 ms open / 1 s close'
           enterDelay={500}
           leaveDelay={1000}
         >
@@ -117,20 +126,26 @@ export default function TooltipDemoPage() {
         </Tooltip>
 
         {/* 6. Preset styling ----------------------------------------------- */}
-        <Typography variant="h3">6. Preset styling</Typography>
-        <Tooltip title="Looks dangerous" preset="dangerTooltip">
-          <Button variant="contained">Danger button</Button>
+        <Typography variant='h3'>6. Preset styling</Typography>
+        <Tooltip
+          title='Looks dangerous'
+          preset='dangerTooltip'
+        >
+          <Button variant='contained'>Danger button</Button>
         </Tooltip>
 
         {/* 7. Theme coupling ----------------------------------------------- */}
-        <Typography variant="h3">7. Theme coupling</Typography>
-        <Button variant="outlined" onClick={toggleMode}>
+        <Typography variant='h3'>7. Theme coupling</Typography>
+        <Button
+          variant='outlined'
+          onClick={toggleMode}
+        >
           Toggle light / dark mode
         </Button>
 
         {/* Back nav --------------------------------------------------------- */}
         <Button
-          size="lg"
+          size='lg'
           onClick={() => navigate(-1)}
           style={{ marginTop: theme.spacing(1) }}
         >

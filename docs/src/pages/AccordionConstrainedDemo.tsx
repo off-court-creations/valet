@@ -2,14 +2,7 @@
 // src/pages/AccordionConstrainedDemo.tsx | valet
 // Demo for <Accordion> with constrainHeight enabled
 // ─────────────────────────────────────────────────────────────────────────────
-import {
-  Surface,
-  Stack,
-  Typography,
-  Accordion,
-  Button,
-  Panel,
-} from '@archway/valet';
+import { Surface, Stack, Typography, Accordion, Button, Panel } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
 
 const LOREM =
@@ -21,22 +14,29 @@ export default function AccordionConstrainedDemo() {
   return (
     <Surface>
       <Stack>
-        <Typography variant="h2" bold>
+        <Typography
+          variant='h2'
+          bold
+        >
           Constrained Accordion
         </Typography>
-        <Typography>
-          Uses Surface child registration for automatic height
-        </Typography>
+        <Typography>Uses Surface child registration for automatic height</Typography>
         <Panel fullWidth>
           <Accordion constrainHeight>
             {Array.from({ length: 8 }, (_, i) => (
-              <Accordion.Item key={i} header={`Item ${i + 1}`}>
+              <Accordion.Item
+                key={i}
+                header={`Item ${i + 1}`}
+              >
                 <Typography>{LOREM}</Typography>
               </Accordion.Item>
             ))}
           </Accordion>
         </Panel>
-        <Button size="lg" onClick={() => navigate('/')}>
+        <Button
+          size='lg'
+          onClick={() => navigate('/')}
+        >
           ← Back
         </Button>
       </Stack>

@@ -42,25 +42,25 @@ export default function ListDemoPage() {
   const [striped, setStriped] = useState(true);
   const [hoverable, setHoverable] = useState(true);
 
-  const orderLabel = useMemo(
-    () => items.map((i) => i.name).join(' → '),
-    [items],
-  );
+  const orderLabel = useMemo(() => items.map((i) => i.name).join(' → '), [items]);
 
   return (
     <Surface>
       <NavDrawer />
       <Stack>
         {/* Header --------------------------------------------------------- */}
-        <Typography variant="h2" bold>
+        <Typography
+          variant='h2'
+          bold
+        >
           List Showcase
         </Typography>
-        <Typography variant="subtitle">
+        <Typography variant='subtitle'>
           Drag‑and‑drop reordering, striped rows, hover states & more
         </Typography>
 
         {/* 1. Default list ------------------------------------------------ */}
-        <Typography variant="h3">1. Default List</Typography>
+        <Typography variant='h3'>1. Default List</Typography>
         <List<Character>
           hoverable={true}
           data={INITIAL}
@@ -68,22 +68,28 @@ export default function ListDemoPage() {
         />
 
         {/* 2. striped & hoverable props ---------------------------------- */}
-        <Typography variant="h3">
+        <Typography variant='h3'>
           2. <code>striped</code> & <code>hoverable</code>
         </Typography>
-        <Panel variant="alt" style={{ padding: theme.spacing(1) }}>
-          <Stack direction="row" wrap={false}>
+        <Panel
+          variant='alt'
+          style={{ padding: theme.spacing(1) }}
+        >
+          <Stack
+            direction='row'
+            wrap={false}
+          >
             <Checkbox
-              label="striped"
+              label='striped'
               checked={striped}
               onChange={setStriped}
-              name="striped"
+              name='striped'
             />
             <Checkbox
-              label="hoverable"
+              label='hoverable'
               checked={hoverable}
               onChange={setHoverable}
-              name="hoverable"
+              name='hoverable'
             />
           </Stack>
 
@@ -96,7 +102,7 @@ export default function ListDemoPage() {
         </Panel>
 
         {/* 3. Title + subtitle ------------------------------------------- */}
-        <Typography variant="h3">3. Subtitle rendering</Typography>
+        <Typography variant='h3'>3. Subtitle rendering</Typography>
         <List<Character>
           data={INITIAL}
           striped
@@ -106,8 +112,8 @@ export default function ListDemoPage() {
         />
 
         {/* 4. Live drag‑and‑drop reorder --------------------------------- */}
-        <Typography variant="h3">4. onReorder callback</Typography>
-        <Typography variant="subtitle">
+        <Typography variant='h3'>4. onReorder callback</Typography>
+        <Typography variant='subtitle'>
           Drag rows to reorder – the label below updates instantly.
         </Typography>
         <List<Character>
@@ -117,19 +123,22 @@ export default function ListDemoPage() {
           getTitle={(c) => c.name}
           onReorder={setItems}
         />
-        <Typography variant="body">
+        <Typography variant='body'>
           Current order:&nbsp;<code>{orderLabel}</code>
         </Typography>
 
         {/* 5. Theme validation ------------------------------------------- */}
-        <Typography variant="h3">5. Theme coupling</Typography>
-        <Button variant="outlined" onClick={toggleMode}>
+        <Typography variant='h3'>5. Theme coupling</Typography>
+        <Button
+          variant='outlined'
+          onClick={toggleMode}
+        >
           Toggle light / dark mode
         </Button>
 
         {/* Back nav ------------------------------------------------------- */}
         <Button
-          size="lg"
+          size='lg'
           onClick={() => navigate(-1)}
           style={{ marginTop: theme.spacing(1) }}
         >

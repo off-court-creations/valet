@@ -2,16 +2,7 @@
 // src/pages/GridDemo.tsx | valet
 // Showcase of Grid layout primitive
 // ─────────────────────────────────────────────────────────────
-import {
-  Surface,
-  Stack,
-  Typography,
-  Grid,
-  Box,
-  Tabs,
-  Table,
-  useTheme,
-} from '@archway/valet';
+import { Surface, Stack, Typography, Grid, Box, Tabs, Table, useTheme } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import NavDrawer from '../components/NavDrawer';
 import type { ReactNode } from 'react';
@@ -64,17 +55,23 @@ export default function GridDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography variant="h2" bold>
+        <Typography
+          variant='h2'
+          bold
+        >
           Grid Showcase
         </Typography>
 
         <Tabs>
-          <Tabs.Tab label="Usage" />
+          <Tabs.Tab label='Usage' />
           <Tabs.Panel>
-            <Typography variant="subtitle">Responsive column layout</Typography>
+            <Typography variant='subtitle'>Responsive column layout</Typography>
 
-            <Typography variant="h3">1. Two columns</Typography>
-            <Grid columns={2} gap={2}>
+            <Typography variant='h3'>1. Two columns</Typography>
+            <Grid
+              columns={2}
+              gap={2}
+            >
               <Box
                 style={{
                   background: theme.colors['primary'] as string,
@@ -95,8 +92,11 @@ export default function GridDemoPage() {
               </Box>
             </Grid>
 
-            <Typography variant="h3">2. Four columns</Typography>
-            <Grid columns={4} gap={1}>
+            <Typography variant='h3'>2. Four columns</Typography>
+            <Grid
+              columns={4}
+              gap={1}
+            >
               {['1', '2', '3', '4', '5', '6', '7', '8'].map((n) => (
                 <Box
                   key={n}
@@ -112,8 +112,11 @@ export default function GridDemoPage() {
               ))}
             </Grid>
 
-            <Typography variant="h3">3. Eight columns</Typography>
-            <Grid columns={8} gap={1}>
+            <Typography variant='h3'>3. Eight columns</Typography>
+            <Grid
+              columns={8}
+              gap={1}
+            >
               {['1', '2', '3', '4', '5', '6', '7', '8'].map((n) => (
                 <Box
                   key={n}
@@ -129,8 +132,12 @@ export default function GridDemoPage() {
               ))}
             </Grid>
 
-            <Typography variant="h3">4. Adaptive grid</Typography>
-            <Grid columns={4} gap={1} adaptive>
+            <Typography variant='h3'>4. Adaptive grid</Typography>
+            <Grid
+              columns={4}
+              gap={1}
+              adaptive
+            >
               {['1', '2', '3', '4', '5', '6', '7', '8'].map((n) => (
                 <Box
                   key={n}
@@ -147,10 +154,14 @@ export default function GridDemoPage() {
             </Grid>
           </Tabs.Panel>
 
-          <Tabs.Tab label="Reference" />
+          <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant="h3">Prop reference</Typography>
-            <Table data={data} columns={columns} constrainHeight={false} />
+            <Typography variant='h3'>Prop reference</Typography>
+            <Table
+              data={data}
+              columns={columns}
+              constrainHeight={false}
+            />
           </Tabs.Panel>
         </Tabs>
       </Stack>

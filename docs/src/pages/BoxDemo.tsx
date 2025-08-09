@@ -72,40 +72,41 @@ export default function BoxDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography variant="h2" bold>
+        <Typography
+          variant='h2'
+          bold
+        >
           Box Showcase
         </Typography>
 
-        <Typography variant="subtitle">
-          Baseline container for backgrounds and centring
-        </Typography>
+        <Typography variant='subtitle'>Baseline container for backgrounds and centring</Typography>
 
         <Tabs>
-          <Tabs.Tab label="Usage" />
+          <Tabs.Tab label='Usage' />
           <Tabs.Panel>
-            <Typography variant="h3">1. Default Box</Typography>
+            <Typography variant='h3'>1. Default Box</Typography>
             <Box>
               <Typography>
                 (no props) — inherits parent background, uses theme text colour
               </Typography>
             </Box>
 
-            <Typography variant="h3">2. background&nbsp;prop</Typography>
+            <Typography variant='h3'>2. background&nbsp;prop</Typography>
             <Stack>
               <Box background={theme.colors['primary']}>
-                <Typography variant="h4">{`background=${theme.colors['primary']}`}</Typography>
+                <Typography variant='h4'>{`background=${theme.colors['primary']}`}</Typography>
               </Box>
               <Box background={theme.colors['secondary']}>
-                <Typography variant="h4">{`background=${theme.colors['secondary']}`}</Typography>
+                <Typography variant='h4'>{`background=${theme.colors['secondary']}`}</Typography>
               </Box>
               <Box background={theme.colors['tertiary']}>
-                <Typography variant="h4">{`background=${theme.colors['tertiary']}`}</Typography>
+                <Typography variant='h4'>{`background=${theme.colors['tertiary']}`}</Typography>
               </Box>
             </Stack>
 
-            <Typography variant="h3">3. textColor&nbsp;override</Typography>
+            <Typography variant='h3'>3. textColor&nbsp;override</Typography>
             <Box
-              background="#333333"
+              background='#333333'
               textColor={theme.colors['tertiary']}
               style={{ padding: theme.spacing(1) }}
             >
@@ -116,7 +117,7 @@ export default function BoxDemoPage() {
               </Typography>
             </Box>
 
-            <Typography variant="h3">4. Inline style</Typography>
+            <Typography variant='h3'>4. Inline style</Typography>
             <Box
               background={theme.colors['tertiary']}
               style={{
@@ -130,7 +131,7 @@ export default function BoxDemoPage() {
               </Typography>
             </Box>
 
-            <Typography variant="h3">5. Nested Boxes</Typography>
+            <Typography variant='h3'>5. Nested Boxes</Typography>
             <Box
               background={theme.colors['primary']}
               style={{ padding: theme.spacing(1) }}
@@ -141,24 +142,22 @@ export default function BoxDemoPage() {
               >
                 <Typography>
                   Child automatically receives&nbsp;
-                  <code style={{ color: 'var(--zero-text-color)' }}>
-                    --zero-text-color
-                  </code>
+                  <code style={{ color: 'var(--zero-text-color)' }}>--zero-text-color</code>
                 </Typography>
               </Box>
             </Box>
 
-            <Typography variant="h3">6. Presets</Typography>
+            <Typography variant='h3'>6. Presets</Typography>
             <Stack>
-              <Box preset="fancyHolder">
+              <Box preset='fancyHolder'>
                 <Typography>preset="fancyHolder"</Typography>
               </Box>
 
-              <Box preset="glassHolder">
+              <Box preset='glassHolder'>
                 <Typography>preset="glassHolder"</Typography>
               </Box>
 
-              <Box preset="gradientHolder">
+              <Box preset='gradientHolder'>
                 <Typography>preset="gradientHolder"</Typography>
               </Box>
 
@@ -170,16 +169,23 @@ export default function BoxDemoPage() {
               </Box>
             </Stack>
 
-            <Typography variant="h3">7. Theme coupling</Typography>
-            <Button variant="outlined" onClick={toggleMode}>
+            <Typography variant='h3'>7. Theme coupling</Typography>
+            <Button
+              variant='outlined'
+              onClick={toggleMode}
+            >
               Toggle light / dark mode
             </Button>
           </Tabs.Panel>
 
-          <Tabs.Tab label="Reference" />
+          <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant="h3">Prop reference</Typography>
-            <Table data={data} columns={columns} constrainHeight={false} />
+            <Typography variant='h3'>Prop reference</Typography>
+            <Table
+              data={data}
+              columns={columns}
+              constrainHeight={false}
+            />
           </Tabs.Panel>
         </Tabs>
       </Stack>

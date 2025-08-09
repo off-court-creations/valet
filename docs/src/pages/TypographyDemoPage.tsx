@@ -1,16 +1,7 @@
 // src/pages/TypographyDemoPage.tsx
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../components/NavDrawer';
-import {
-  Surface,
-  Stack,
-  Typography,
-  Panel,
-  Button,
-  Table,
-  useTheme,
-  Tabs,
-} from '@archway/valet';
+import { Surface, Stack, Typography, Panel, Button, Table, useTheme, Tabs } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 
@@ -35,12 +26,7 @@ export default function TypographyDemoPage() {
   const data: Row[] = [
     {
       prop: <code>variant</code>,
-      type: (
-        <code>
-          'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'body' | 'subtitle' |
-          'button'
-        </code>
-      ),
+      type: <code>'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'body' | 'subtitle' | 'button'</code>,
       default: <code>'body'</code>,
       description: 'Typography style preset',
     },
@@ -110,92 +96,120 @@ export default function TypographyDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography variant="h2">Typography</Typography>
+        <Typography variant='h2'>Typography</Typography>
 
         <Tabs>
-          <Tabs.Tab label="Usage" />
+          <Tabs.Tab label='Usage' />
           <Tabs.Panel>
-            <Typography variant="h3">Variants</Typography>
+            <Typography variant='h3'>Variants</Typography>
             <Panel compact>
-              <Typography variant="h1">variant="h1"</Typography>
-              <Typography variant="h2">variant="h2"</Typography>
-              <Typography variant="h3">variant="h3"</Typography>
-              <Typography variant="h4">variant="h4"</Typography>
-              <Typography variant="h5">variant="h5"</Typography>
-              <Typography variant="h6">variant="h6"</Typography>
-              <Typography variant="subtitle">variant="subtitle"</Typography>
-              <Typography variant="body">variant="body"</Typography>
-              <Typography variant="button">variant="button"</Typography>
+              <Typography variant='h1'>variant="h1"</Typography>
+              <Typography variant='h2'>variant="h2"</Typography>
+              <Typography variant='h3'>variant="h3"</Typography>
+              <Typography variant='h4'>variant="h4"</Typography>
+              <Typography variant='h5'>variant="h5"</Typography>
+              <Typography variant='h6'>variant="h6"</Typography>
+              <Typography variant='subtitle'>variant="subtitle"</Typography>
+              <Typography variant='body'>variant="body"</Typography>
+              <Typography variant='button'>variant="button"</Typography>
             </Panel>
 
-            <Typography variant="h3">Styling props</Typography>
-            <Panel fullWidth compact>
-              <Typography variant="body">(regular body text)</Typography>
-              <Typography variant="body" bold>
+            <Typography variant='h3'>Styling props</Typography>
+            <Panel
+              fullWidth
+              compact
+            >
+              <Typography variant='body'>(regular body text)</Typography>
+              <Typography
+                variant='body'
+                bold
+              >
                 bold
               </Typography>
-              <Typography variant="body" italic>
+              <Typography
+                variant='body'
+                italic
+              >
                 italic
               </Typography>
-              <Typography variant="body" bold italic>
+              <Typography
+                variant='body'
+                bold
+                italic
+              >
                 bold italic
               </Typography>
-              <Typography variant="body" centered>
+              <Typography
+                variant='body'
+                centered
+              >
                 centered text
               </Typography>
             </Panel>
 
             {/* 3. Font & size overrides ---------------------------------------- */}
-            <Typography variant="h3">Font &amp; size overrides</Typography>
+            <Typography variant='h3'>Font &amp; size overrides</Typography>
             <Panel compact>
-              <Typography fontFamily="Poppins">fontFamily="Poppins"</Typography>
-              <Typography fontFamily="Brandon">fontFamily="Brandon"</Typography>
-              <Typography family="mono">family="mono"</Typography>
-              <Typography family="heading">family="heading"</Typography>
-              <Typography family="button">family="button"</Typography>
-              <Typography fontSize="1.5rem">fontSize="1.5rem"</Typography>
+              <Typography fontFamily='Poppins'>fontFamily="Poppins"</Typography>
+              <Typography fontFamily='Brandon'>fontFamily="Brandon"</Typography>
+              <Typography family='mono'>family="mono"</Typography>
+              <Typography family='heading'>family="heading"</Typography>
+              <Typography family='button'>family="button"</Typography>
+              <Typography fontSize='1.5rem'>fontSize="1.5rem"</Typography>
               <Typography scale={1.25}>scale=1.25</Typography>
-              <Typography autoSize scale={1.25}>
+              <Typography
+                autoSize
+                scale={1.25}
+              >
                 autoSize + scale (resize viewport)
               </Typography>
-              <Typography variant="body" autoSize>
+              <Typography
+                variant='body'
+                autoSize
+              >
                 autoSize
               </Typography>
             </Panel>
 
-            <Typography variant="h3">
-              Colour override &amp; adaptation
-            </Typography>
+            <Typography variant='h3'>Colour override &amp; adaptation</Typography>
             <Panel compact>
-              <Typography color="#e91e63">color="#e91e63"</Typography>
+              <Typography color='#e91e63'>color="#e91e63"</Typography>
               <Panel background={theme.colors['primary']}>
-                <Typography variant="h6">
-                  Inside Panel inherits text colour
-                </Typography>
+                <Typography variant='h6'>Inside Panel inherits text colour</Typography>
               </Panel>
               <Button>
-                <Typography variant="button" bold>
+                <Typography
+                  variant='button'
+                  bold
+                >
                   Typography inside Button
                 </Typography>
               </Button>
             </Panel>
 
-            <Typography variant="h3">Theme coupling</Typography>
-            <Button variant="outlined" onClick={toggleMode}>
+            <Typography variant='h3'>Theme coupling</Typography>
+            <Button
+              variant='outlined'
+              onClick={toggleMode}
+            >
               Toggle light / dark mode
             </Button>
           </Tabs.Panel>
 
-          <Tabs.Tab label="Reference" />
+          <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant="h3">Prop reference</Typography>
-            <Table data={data} columns={columns} constrainHeight={false} />
+            <Typography variant='h3'>Prop reference</Typography>
+            <Table
+              data={data}
+              columns={columns}
+              constrainHeight={false}
+            />
           </Tabs.Panel>
         </Tabs>
 
         {/* Back nav --------------------------------------------------------- */}
         <Button
-          size="lg"
+          size='lg'
           onClick={() => navigate(-1)}
           style={{ marginTop: theme.spacing(1) }}
         >

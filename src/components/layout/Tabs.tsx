@@ -59,17 +59,13 @@ const Root = styled('div')<{
   `
       : `
     /* cols: tab-strip + panel */
-    grid-template-columns: ${
-      $placement === 'left' ? 'max-content 1fr' : '1fr max-content'
-    };
+    grid-template-columns: ${$placement === 'left' ? 'max-content 1fr' : '1fr max-content'};
     align-items: start; /* keep panel aligned to top of tabs */
   `}
 
   /* Gutter only for vertical-left layout */
   ${({ $orientation, $placement }) =>
-    $orientation === 'vertical' && $placement === 'left'
-      ? 'column-gap: 1rem;'
-      : ''}
+    $orientation === 'vertical' && $placement === 'left' ? 'column-gap: 1rem;' : ''}
 `;
 
 /*───────────────────────────────────────────────────────────*/
@@ -78,8 +74,7 @@ const TabList = styled('div')<{
   $center?: boolean;
 }>`
   display: flex;
-  flex-direction: ${({ $orientation }) =>
-    $orientation === 'vertical' ? 'column' : 'row'};
+  flex-direction: ${({ $orientation }) => ($orientation === 'vertical' ? 'column' : 'row')};
   gap: 0;
 
   ${({ $orientation, $center }) => {
@@ -109,8 +104,7 @@ const TabBtn = styled('button')<{
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
 
-  ${({ $orient }) =>
-    $orient === 'vertical' ? 'width: 100%;' : 'min-width: 4rem;'}
+  ${({ $orient }) => ($orient === 'vertical' ? 'width: 100%;' : 'min-width: 4rem;')}
 
   position: relative;
   text-align: center;
@@ -127,8 +121,7 @@ const TabBtn = styled('button')<{
       $orient === 'horizontal'
         ? `left: 0; right: 0; bottom: -1px; height: 2px;`
         : `top: 0; bottom: 0; right: -1px; width: 2px;`}
-    background: ${({ $primary, $active }) =>
-      $active ? $primary : 'transparent'};
+    background: ${({ $primary, $active }) => ($active ? $primary : 'transparent')};
     transition: background 150ms ease;
   }
 `;
@@ -162,16 +155,12 @@ export interface TabsProps
   placement?: 'top' | 'bottom' | 'left' | 'right';
   centered?: boolean;
 }
-export interface TabProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    Presettable {
+export interface TabProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, Presettable {
   index?: number;
   label?: ReactNode;
   tooltip?: ReactNode;
 }
-export interface TabPanelProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    Presettable {
+export interface TabPanelProps extends React.HTMLAttributes<HTMLDivElement>, Presettable {
   index?: number;
   keepMounted?: boolean;
 }
@@ -193,8 +182,7 @@ export const Tabs: React.FC<TabsProps> & {
   ...divProps
 }) => {
   const { theme } = useTheme();
-  const placement =
-    placementProp ?? (orientation === 'horizontal' ? 'top' : 'left');
+  const placement = placementProp ?? (orientation === 'horizontal' ? 'top' : 'left');
 
   const controlled = controlledActive !== undefined;
   const [self, setSelf] = useState(defaultActive);
@@ -262,7 +250,10 @@ export const Tabs: React.FC<TabsProps> & {
         className={cls}
       >
         {stripFirst && (
-          <TabList $orientation={orientation} $center={centered}>
+          <TabList
+            $orientation={orientation}
+            $center={centered}
+          >
             {tabs}
           </TabList>
         )}
@@ -270,7 +261,10 @@ export const Tabs: React.FC<TabsProps> & {
         <Panel>{panels}</Panel>
 
         {!stripFirst && (
-          <TabList $orientation={orientation} $center={centered}>
+          <TabList
+            $orientation={orientation}
+            $center={centered}
+          >
             {tabs}
           </TabList>
         )}
@@ -281,22 +275,9 @@ export const Tabs: React.FC<TabsProps> & {
 
 /*───────────────────────────────────────────────────────────*/
 const Tab: React.FC<TabProps> = forwardRef<HTMLButtonElement, TabProps>(
-  (
-    {
-      index = 0,
-      label,
-      tooltip,
-      preset: p,
-      className,
-      onKeyDown,
-      onClick,
-      ...rest
-    },
-    ref,
-  ) => {
+  ({ index = 0, label, tooltip, preset: p, className, onKeyDown, onClick, ...rest }, ref) => {
     const { theme } = useTheme();
-    const { active, setActive, orientation, registerTab, totalTabs } =
-      useTabs();
+    const { active, setActive, orientation, registerTab, totalTabs } = useTabs();
     const selected = active === index;
 
     const nav = (e: KeyboardEvent<HTMLButtonElement>) => {
@@ -320,7 +301,7 @@ const Tab: React.FC<TabProps> = forwardRef<HTMLButtonElement, TabProps>(
           if (typeof ref === 'function') ref(el);
           else if (ref) (ref as any).current = el;
         }}
-        role="tab"
+        role='tab'
         id={`tab-${index}`}
         aria-selected={selected}
         aria-controls={`panel-${index}`}
@@ -336,7 +317,10 @@ const Tab: React.FC<TabProps> = forwardRef<HTMLButtonElement, TabProps>(
         className={[p ? preset(p) : '', className].filter(Boolean).join(' ')}
       >
         {typeof content === 'string' || typeof content === 'number' ? (
-          <Typography variant="button" noSelect>
+          <Typography
+            variant='button'
+            noSelect
+          >
             {content}
           </Typography>
         ) : (
@@ -365,7 +349,7 @@ const TabPanel: React.FC<TabPanelProps> = ({
   return (
     <div
       {...rest}
-      role="tabpanel"
+      role='tabpanel'
       id={`panel-${index}`}
       aria-labelledby={`tab-${index}`}
       className={[p ? preset(p) : '', className].filter(Boolean).join(' ')}

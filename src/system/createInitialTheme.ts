@@ -6,12 +6,7 @@ import type { Theme } from './themeStore';
 import { useTheme } from './themeStore';
 import { useFonts } from './fontStore';
 import { useEffect } from 'react';
-import {
-  injectFontLinks,
-  waitForFonts,
-  GoogleFontOptions,
-  Font,
-} from '../helpers/fontLoader';
+import { injectFontLinks, waitForFonts, GoogleFontOptions, Font } from '../helpers/fontLoader';
 
 // Infer keys from Theme so this stays in sync if you add/remove slots later
 type FontKeys = keyof Theme['fonts'];

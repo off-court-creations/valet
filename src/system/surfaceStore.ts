@@ -19,26 +19,17 @@ export interface SurfaceState {
   hasScrollbar: boolean;
   element: HTMLDivElement | null;
   children: Map<string, ChildMetrics>;
-  registerChild: (
-    id: string,
-    node: HTMLElement,
-    cb?: (metrics: ChildMetrics) => void,
-  ) => void;
+  registerChild: (id: string, node: HTMLElement, cb?: (metrics: ChildMetrics) => void) => void;
   unregisterChild: (id: string) => void;
 }
 
 export const createSurfaceStore = () =>
   create<SurfaceState>((set, get) => {
-    const nodes = new Map<
-      string,
-      { node: HTMLElement; cb?: (m: ChildMetrics) => void }
-    >();
+    const nodes = new Map<string, { node: HTMLElement; cb?: (m: ChildMetrics) => void }>();
 
     const ro = new ResizeObserver((entries) => {
       const surfEl = get().element;
-      const sRect = surfEl
-        ? surfEl.getBoundingClientRect()
-        : { top: 0, left: 0 };
+      const sRect = surfEl ? surfEl.getBoundingClientRect() : { top: 0, left: 0 };
       const scrollTop = surfEl ? surfEl.scrollTop : 0;
       const scrollLeft = surfEl ? surfEl.scrollLeft : 0;
 
@@ -76,9 +67,7 @@ export const createSurfaceStore = () =>
         ro.observe(node);
 
         const surfEl = get().element;
-        const sRect = surfEl
-          ? surfEl.getBoundingClientRect()
-          : { top: 0, left: 0 };
+        const sRect = surfEl ? surfEl.getBoundingClientRect() : { top: 0, left: 0 };
         const scrollTop = surfEl ? surfEl.scrollTop : 0;
         const scrollLeft = surfEl ? surfEl.scrollLeft : 0;
 

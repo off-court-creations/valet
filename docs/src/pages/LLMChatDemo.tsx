@@ -54,8 +54,7 @@ export default function LLMChatDemoPage() {
         setMessages((prev) => {
           const next = [...prev];
           const idx = next.findIndex((x) => x.typing);
-          if (idx >= 0)
-            next[idx] = { role: 'assistant', content: msg, animate: true };
+          if (idx >= 0) next[idx] = { role: 'assistant', content: msg, animate: true };
           else next.push({ role: 'assistant', content: msg, animate: true });
           return next;
         });
@@ -67,10 +66,13 @@ export default function LLMChatDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography variant="h2" bold>
+        <Typography
+          variant='h2'
+          bold
+        >
           Chat Showcase
         </Typography>
-        <Typography variant="subtitle">LLMChat component demo</Typography>
+        <Typography variant='subtitle'>LLMChat component demo</Typography>
 
         <LLMChat
           messages={messages}
@@ -81,17 +83,20 @@ export default function LLMChatDemoPage() {
         />
         {noKey && (
           <Snackbar
-            message="No API key set yet"
+            message='No API key set yet'
             onClose={() => setNoKey(false)}
           />
         )}
 
-        <Button variant="outlined" onClick={toggleMode}>
+        <Button
+          variant='outlined'
+          onClick={toggleMode}
+        >
           Toggle light / dark mode
         </Button>
 
         <Button
-          size="lg"
+          size='lg'
           onClick={() => navigate('/llmchat')}
           style={{ marginTop: theme.spacing(1) }}
         >
@@ -99,7 +104,7 @@ export default function LLMChatDemoPage() {
         </Button>
 
         <Button
-          size="lg"
+          size='lg'
           onClick={() => navigate(-1)}
           style={{ marginTop: theme.spacing(1) }}
         >

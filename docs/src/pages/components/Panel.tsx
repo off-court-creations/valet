@@ -78,62 +78,70 @@ export default function PanelDemoPage() {
       <NavDrawer />
       <Stack>
         {/* Page header ----------------------------------------------------- */}
-        <Typography variant="h2" bold>
+        <Typography
+          variant='h2'
+          bold
+        >
           Panel
         </Typography>
-        <Typography variant="subtitle">
-          A basic, visible content container
-        </Typography>
+        <Typography variant='subtitle'>A basic, visible content container</Typography>
 
         <Tabs>
-          <Tabs.Tab label="Usage" />
+          <Tabs.Tab label='Usage' />
           <Tabs.Panel>
             <Stack>
               {/* 1. 
               Default Panel ------------------------------------------- */}
-              <Typography variant="h3">Default Panel</Typography>
-              <Panel preset="codePanel">
-                <Typography>
-                  (no props) — inherits theme backgroundAlt &amp; text
-                </Typography>
+              <Typography variant='h3'>Default Panel</Typography>
+              <Panel preset='codePanel'>
+                <Typography>(no props) — inherits theme backgroundAlt &amp; text</Typography>
               </Panel>
 
               {/* 2. alt variant --------------------------------------------------- */}
-              <Typography variant="h3">
+              <Typography variant='h3'>
                 <code>variant</code>=&quot;alt&quot;
               </Typography>
-              <Panel variant="alt" preset="codePanel">
+              <Panel
+                variant='alt'
+                preset='codePanel'
+              >
                 <Typography>Transparent with outline by default</Typography>
               </Panel>
 
               {/* 3. background override ------------------------------------------ */}
-              <Typography variant="h3">
+              <Typography variant='h3'>
                 <code>background</code> prop
               </Typography>
               <Stack>
-                <Panel background={theme.colors['primary']} preset="codePanel">
+                <Panel
+                  background={theme.colors['primary']}
+                  preset='codePanel'
+                >
                   <Typography>{`background=${theme.colors['primary']}`}</Typography>
                 </Panel>
               </Stack>
 
               {/* 4. fullWidth prop ----------------------------------------------- */}
-              <Typography variant="h3">
+              <Typography variant='h3'>
                 <code>fullWidth</code> prop
               </Typography>
-              <Panel fullWidth style={{ marginBottom: theme.spacing(4) }}>
+              <Panel
+                fullWidth
+                style={{ marginBottom: theme.spacing(4) }}
+              >
                 <Typography>
                   Stretch me edge-to-edge with <code>fullWidth</code>
                 </Typography>
               </Panel>
 
               {/* 5. Inline style overrides --------------------------------------- */}
-              <Typography variant="h3">Inline style</Typography>
+              <Typography variant='h3'>Inline style</Typography>
               <Panel
                 style={{
                   borderRadius: 12,
                   border: `2px dashed ${theme.colors['text']}`,
                 }}
-                preset="codePanel"
+                preset='codePanel'
               >
                 <Typography>
                   Custom dashed border &amp; radius via <code>style</code>
@@ -141,7 +149,7 @@ export default function PanelDemoPage() {
               </Panel>
 
               {/* 6. Nested Panels & colour inheritance --------------------------- */}
-              <Typography variant="h3">Nested Panels</Typography>
+              <Typography variant='h3'>Nested Panels</Typography>
               <Panel
                 background={theme.colors['primary']}
                 style={{
@@ -150,32 +158,30 @@ export default function PanelDemoPage() {
                 }}
               >
                 <Panel
-                  variant="alt"
+                  variant='alt'
                   fullWidth
                   style={{ padding: theme.spacing(1) }}
                 >
                   <Typography>
                     Parent sets&nbsp;
-                    <code style={{ color: 'var(--zero-text-color)' }}>
-                      --zero-text-color
-                    </code>
+                    <code style={{ color: 'var(--zero-text-color)' }}>--zero-text-color</code>
                     &nbsp;for child
                   </Typography>
                 </Panel>
               </Panel>
 
               {/* 7. Preset demos -------------------------------------------------- */}
-              <Typography variant="h3">Presets</Typography>
+              <Typography variant='h3'>Presets</Typography>
               <Stack style={{ marginBottom: theme.spacing(4) }}>
-                <Panel preset="fancyHolder">
+                <Panel preset='fancyHolder'>
                   <Typography>preset=&quot;fancyHolder&quot;</Typography>
                 </Panel>
 
-                <Panel preset="glassHolder">
+                <Panel preset='glassHolder'>
                   <Typography>preset=&quot;glassHolder&quot;</Typography>
                 </Panel>
 
-                <Panel preset="gradientHolder">
+                <Panel preset='gradientHolder'>
                   <Typography>preset=&quot;gradientHolder&quot;</Typography>
                 </Panel>
 
@@ -188,10 +194,13 @@ export default function PanelDemoPage() {
               </Stack>
 
               {/* 8. centered prop ----------------------------------------------- */}
-              <Typography variant="h3">
+              <Typography variant='h3'>
                 <code>centered</code> prop
               </Typography>
-              <Panel centered fullWidth>
+              <Panel
+                centered
+                fullWidth
+              >
                 <Typography>
                   Contents centered with <code>centered</code>
                 </Typography>
@@ -199,9 +208,13 @@ export default function PanelDemoPage() {
             </Stack>
           </Tabs.Panel>
 
-          <Tabs.Tab label="Reference" />
+          <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Table data={data} columns={columns} constrainHeight={false} />
+            <Table
+              data={data}
+              columns={columns}
+              constrainHeight={false}
+            />
           </Tabs.Panel>
         </Tabs>
       </Stack>

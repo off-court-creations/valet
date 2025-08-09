@@ -3,13 +3,7 @@
 // Theme-aware, accessible boolean <Switch /> component
 // – Un / controlled, FormControl-aware, preset-friendly
 // ─────────────────────────────────────────────────────────────
-import React, {
-  forwardRef,
-  useCallback,
-  useId,
-  useState,
-  MouseEventHandler,
-} from 'react';
+import React, { forwardRef, useCallback, useId, useState, MouseEventHandler } from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
@@ -77,10 +71,7 @@ const Thumb = styled('span')<{
   position: absolute;
   top: 50%;
   left: 2px; /* 2-px gutter */
-  transform: translate(
-    ${({ $checked, $offset }) => ($checked ? `${$offset}px` : '0')},
-    -50%
-  );
+  transform: translate(${({ $checked, $offset }) => ($checked ? `${$offset}px` : '0')}, -50%);
   width: ${({ $size }) => $size}px;
   height: ${({ $size }) => $size}px;
   border-radius: 50%;
@@ -140,11 +131,7 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
 
     const controlled = checkedProp !== undefined || formChecked !== undefined;
     const [self, setSelf] = useState(defaultChecked);
-    const checked = controlled
-      ? formChecked !== undefined
-        ? formChecked
-        : !!checkedProp
-      : self;
+    const checked = controlled ? (formChecked !== undefined ? formChecked : !!checkedProp) : self;
 
     /* ----- event handler ----------------------------------- */
     const handleToggle: MouseEventHandler<HTMLButtonElement> = useCallback(
@@ -174,7 +161,7 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
       <Track
         {...btnProps}
         ref={ref}
-        role="switch"
+        role='switch'
         id={switchId}
         aria-checked={checked}
         aria-disabled={disabled || undefined}
@@ -187,7 +174,11 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
         className={[presetClasses, className].filter(Boolean).join(' ')}
         style={style}
       >
-        <Thumb $checked={checked} $size={geom.thumb} $offset={geom.offset} />
+        <Thumb
+          $checked={checked}
+          $size={geom.thumb}
+          $offset={geom.offset}
+        />
       </Track>
     );
   },

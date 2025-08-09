@@ -176,8 +176,7 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
 
     /* preset → classes merge */
     const presetCls = p ? preset(p) : '';
-    const mergedCls =
-      [presetCls, className].filter(Boolean).join(' ') || undefined;
+    const mergedCls = [presetCls, className].filter(Boolean).join(' ') || undefined;
 
     /* accessibility roles / ARIA values */
     const ariaProps =
@@ -263,17 +262,15 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
                 cx={boxPx / 2}
                 cy={boxPx / 2}
                 r={radius}
-                fill="none"
+                fill='none'
                 stroke={primary}
                 strokeWidth={strokePx}
-                strokeLinecap="round"
+                strokeLinecap='round'
                 {...circleProps}
               />
             </svg>
             {showLabel && mode !== 'indeterminate' && (
-              <CenterLabel $font={theme.typography.body.md}>
-                {Math.round(value)}%
-              </CenterLabel>
+              <CenterLabel $font={theme.typography.body.md}>{Math.round(value)}%</CenterLabel>
             )}
           </CircleWrap>
         </Root>
@@ -315,16 +312,30 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
         <Track $h={h}>
           {/* BUFFER BAR */}
           {mode === 'buffer' && (
-            <Bar $color={primary + '55'} style={bufferStyle} />
+            <Bar
+              $color={primary + '55'}
+              style={bufferStyle}
+            />
           )}
           {/* MAIN BAR */}
           {mode === 'indeterminate' ? (
             <>
-              <Bar $color={primary} $indet $index={1} />
-              <Bar $color={primary} $indet $index={2} />
+              <Bar
+                $color={primary}
+                $indet
+                $index={1}
+              />
+              <Bar
+                $color={primary}
+                $indet
+                $index={2}
+              />
             </>
           ) : (
-            <Bar $color={primary} style={barStyle} />
+            <Bar
+              $color={primary}
+              style={barStyle}
+            />
           )}
         </Track>
       </Root>

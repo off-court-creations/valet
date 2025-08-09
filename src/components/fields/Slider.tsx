@@ -135,18 +135,10 @@ type SnapMode = 'none' | 'step' | 'presets';
 /** Round to `p` decimal places (default 0) */
 const roundTo = (val: number, p: number) => parseFloat(val.toFixed(p));
 
-const snapValue = (
-  val: number,
-  mode: SnapMode,
-  step: number,
-  presets: number[],
-) => {
+const snapValue = (val: number, mode: SnapMode, step: number, presets: number[]) => {
   if (mode === 'step') return Math.round(val / step) * step;
   if (mode === 'presets')
-    return presets.reduce(
-      (a, b) => (Math.abs(b - val) < Math.abs(a - val) ? b : a),
-      presets[0],
-    );
+    return presets.reduce((a, b) => (Math.abs(b - val) < Math.abs(a - val) ? b : a), presets[0]);
   return val;
 };
 
@@ -256,11 +248,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
     const formVal = form && name ? form.values[name] : undefined;
     const controlled = formVal !== undefined || valueProp !== undefined;
     const [self, setSelf] = useState(defaultValue);
-    const current = controlled
-      ? formVal !== undefined
-        ? formVal
-        : valueProp!
-      : self;
+    const current = controlled ? (formVal !== undefined ? formVal : valueProp!) : self;
 
     /* derived ticks ----------------------------------------- */
     const tickValues: number[] = useMemo(() => {
@@ -307,12 +295,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
     /* commit helper ----------------------------------------- */
     const commitValue = useCallback(
       (v: number) => {
-        const snapped = snapValue(
-          Math.min(Math.max(v, min), max),
-          snap,
-          step,
-          presets,
-        );
+        const snapped = snapValue(Math.min(Math.max(v, min), max), snap, step, presets);
 
         const rounded = roundTo(snapped, precision);
 
@@ -321,18 +304,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
         onChange?.(rounded);
         renderVisual(rounded);
       },
-      [
-        controlled,
-        form,
-        min,
-        max,
-        name,
-        onChange,
-        presets,
-        snap,
-        step,
-        precision,
-      ],
+      [controlled, form, min, max, name, onChange, presets, snap, step, precision],
     );
 
     /* pointer handling -------------------------------------- */
@@ -372,8 +344,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
 
     /* preset → class merge ---------------------------------- */
     const presetCls = p ? preset(p) : '';
-    const mergedCls =
-      [presetCls, className].filter(Boolean).join(' ') || undefined;
+    const mergedCls = [presetCls, className].filter(Boolean).join(' ') || undefined;
 
     /* ref merger (fixes TS2540) ------------------------------ */
     const setWrapperRef = useCallback(
@@ -383,8 +354,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
         if (typeof forwardedRef === 'function') {
           forwardedRef(node);
         } else if (forwardedRef && 'current' in forwardedRef) {
-          (forwardedRef as MutableRefObject<HTMLDivElement | null>).current =
-            node;
+          (forwardedRef as MutableRefObject<HTMLDivElement | null>).current = node;
         }
       },
       [forwardedRef],
@@ -404,15 +374,22 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
         style={style}
       >
         {/* track + fill */}
-        <Track $h={geom.trackH} onPointerDown={onPointerDown} aria-hidden>
-          <Fill ref={fillRef} $primary={theme.colors.primary} />
+        <Track
+          $h={geom.trackH}
+          onPointerDown={onPointerDown}
+          aria-hidden
+        >
+          <Fill
+            ref={fillRef}
+            $primary={theme.colors.primary}
+          />
         </Track>
 
         {/* thumb */}
         <Thumb
           ref={thumbRef}
           id={id}
-          role="slider"
+          role='slider'
           aria-valuemin={min}
           aria-valuemax={max}
           aria-valuenow={current}
@@ -425,18 +402,22 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
           onPointerDown={onPointerDown}
           style={{ top: `calc(${geom.trackH} / 2)` }}
         >
-          {showValue && (
-            <ValueBubble $font={geom.font}>{format(current)}</ValueBubble>
-          )}
+          {showValue && <ValueBubble $font={geom.font}>{format(current)}</ValueBubble>}
         </Thumb>
 
         {/* min / max labels */}
         {showMinMax && (
           <>
-            <EndLabel $font={geom.font} style={{ left: 0 }}>
+            <EndLabel
+              $font={geom.font}
+              style={{ left: 0 }}
+            >
               {format(min)}
             </EndLabel>
-            <EndLabel $font={geom.font} style={{ right: 0 }}>
+            <EndLabel
+              $font={geom.font}
+              style={{ right: 0 }}
+            >
               {format(max)}
             </EndLabel>
           </>
@@ -445,7 +426,11 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
         {/* ticks */}
         {showTicks &&
           tickValues.map((t) => (
-            <Tick key={t} $h={geom.tickH} style={{ left: `${pctFor(t)}%` }} />
+            <Tick
+              key={t}
+              $h={geom.tickH}
+              style={{ left: `${pctFor(t)}%` }}
+            />
           ))}
       </Wrapper>
     );

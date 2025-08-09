@@ -5,16 +5,7 @@
 // – Removed: preset-styling showcase (simplifies demo focus)
 // ─────────────────────────────────────────────────────────────────────────────
 import React, { useState, useMemo } from 'react';
-import {
-  Surface,
-  Stack,
-  Typography,
-  Button,
-  Slider,
-  useTheme,
-  Tabs,
-  Table,
-} from '@archway/valet';
+import { Surface, Stack, Typography, Button, Slider, useTheme, Tabs, Table } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import NavDrawer from '../components/NavDrawer';
@@ -144,23 +135,24 @@ export default function SliderDemoPage() {
       <NavDrawer />
       <Stack>
         {/* Header */}
-        <Typography variant="h2" bold>
+        <Typography
+          variant='h2'
+          bold
+        >
           Slider Showcase
         </Typography>
-        <Typography variant="subtitle">
-          A smörgåsbord of every prop, pattern, and trick
-        </Typography>
+        <Typography variant='subtitle'>A smörgåsbord of every prop, pattern, and trick</Typography>
 
         <Tabs>
-          <Tabs.Tab label="Usage" />
+          <Tabs.Tab label='Usage' />
           <Tabs.Panel>
             <Stack>
               {/* 1. Default uncontrolled ----------------------------------------- */}
-              <Typography variant="h3">1. Uncontrolled (defaults)</Typography>
+              <Typography variant='h3'>1. Uncontrolled (defaults)</Typography>
               <Slider defaultValue={50} />
 
               {/* 2. Controlled ---------------------------------------------------- */}
-              <Typography variant="h3">2. Controlled</Typography>
+              <Typography variant='h3'>2. Controlled</Typography>
               <Stack>
                 <Slider
                   value={ctlValue}
@@ -175,76 +167,109 @@ export default function SliderDemoPage() {
               </Stack>
 
               {/* 3. Step snapping w/ ticks --------------------------------------- */}
-              <Typography variant="h3">3. Snap = "step" + ticks</Typography>
+              <Typography variant='h3'>3. Snap = "step" + ticks</Typography>
               <Slider
                 defaultValue={40}
                 min={0}
                 max={100}
                 step={10}
-                snap="step"
+                snap='step'
                 showValue
                 showMinMax
                 showTicks
               />
 
               {/* 4. Preset snapping ---------------------------------------------- */}
-              <Typography variant="h3">4. Snap = "presets"</Typography>
+              <Typography variant='h3'>4. Snap = "presets"</Typography>
               <Slider
                 defaultValue={75}
                 min={0}
                 max={100}
                 presets={PRESET_MARKS}
-                snap="presets"
+                snap='presets'
                 showValue
                 showMinMax
                 showTicks
               />
 
               {/* 5. Custom ticks *with* snapping ---------------------------------- */}
-              <Typography variant="h3">
-                5. Custom ticks (snap = "presets")
-              </Typography>
+              <Typography variant='h3'>5. Custom ticks (snap = "presets")</Typography>
               <Slider
                 defaultValue={15}
                 min={0}
                 max={60}
                 ticks={CUSTOM_TICKS}
                 presets={CUSTOM_TICKS}
-                snap="presets" // ← ensures handle snaps to tick marks
+                snap='presets' // ← ensures handle snaps to tick marks
                 showTicks
               />
 
               {/* 6. Sizes ------------------------------------------------------- */}
-              <Typography variant="h3">6. Sizes</Typography>
+              <Typography variant='h3'>6. Sizes</Typography>
               <Stack>
-                <Slider defaultValue={20} size="xs" showMinMax />
-                <Slider defaultValue={20} size="sm" showMinMax />
-                <Slider defaultValue={20} size="md" showMinMax />
-                <Slider defaultValue={20} size="lg" showMinMax />
-                <Slider defaultValue={20} size="xl" showMinMax />
+                <Slider
+                  defaultValue={20}
+                  size='xs'
+                  showMinMax
+                />
+                <Slider
+                  defaultValue={20}
+                  size='sm'
+                  showMinMax
+                />
+                <Slider
+                  defaultValue={20}
+                  size='md'
+                  showMinMax
+                />
+                <Slider
+                  defaultValue={20}
+                  size='lg'
+                  showMinMax
+                />
+                <Slider
+                  defaultValue={20}
+                  size='xl'
+                  showMinMax
+                />
               </Stack>
 
               {/* 7. Custom sizes --------------------------------------------- */}
-              <Typography variant="h3">7. Custom sizes</Typography>
+              <Typography variant='h3'>7. Custom sizes</Typography>
               <Stack>
-                <Slider defaultValue={40} size="2rem" showMinMax />
-                <Slider defaultValue={40} size="24px" showMinMax />
+                <Slider
+                  defaultValue={40}
+                  size='2rem'
+                  showMinMax
+                />
+                <Slider
+                  defaultValue={40}
+                  size='24px'
+                  showMinMax
+                />
               </Stack>
 
               {/* 8. Disabled state -------------------------------------------- */}
-              <Typography variant="h3">8. Disabled</Typography>
+              <Typography variant='h3'>8. Disabled</Typography>
 
               {/* Theme coupling */}
-              <Button variant="outlined" onClick={toggleMode}>
+              <Button
+                variant='outlined'
+                onClick={toggleMode}
+              >
                 Toggle light / dark
               </Button>
             </Stack>
           </Tabs.Panel>
 
-          <Tabs.Tab label="Reference" />
+          <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant="h3">Prop reference</Typography>
-            <Table data={data} columns={columns} constrainHeight={false} />
+            <Typography variant='h3'>Prop reference</Typography>
+            <Table
+              data={data}
+              columns={columns}
+              constrainHeight={false}
+            />
           </Tabs.Panel>
         </Tabs>
       </Stack>

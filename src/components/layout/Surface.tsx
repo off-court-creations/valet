@@ -15,9 +15,7 @@ import { preset } from '../../css/stylePresets';
 import type { Presettable } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
-export interface SurfaceProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    Presettable {
+export interface SurfaceProps extends React.HTMLAttributes<HTMLDivElement>, Presettable {
   /** Fixed‑position full‑screen surface when true (default). */
   fullscreen?: boolean;
 }
@@ -56,9 +54,10 @@ export const Surface: React.FC<SurfaceProps> = ({
 
   /* Helper: resolve breakpoint for given width ------------------------- */
   const bpFor = (w: number): Breakpoint =>
-    (
-      Object.entries(theme.breakpoints) as [Breakpoint, number][]
-    ).reduce<Breakpoint>((acc, [key, min]) => (w >= min ? key : acc), 'xs');
+    (Object.entries(theme.breakpoints) as [Breakpoint, number][]).reduce<Breakpoint>(
+      (acc, [key, min]) => (w >= min ? key : acc),
+      'xs',
+    );
 
   /* Measure size whenever the element or its children change ----------- */
   useEffect(() => {
@@ -162,7 +161,10 @@ export const Surface: React.FC<SurfaceProps> = ({
         }
       >
         {showBackdrop && (
-          <LoadingBackdrop fading={fade} showSpinner={showSpinner} />
+          <LoadingBackdrop
+            fading={fade}
+            showSpinner={showSpinner}
+          />
         )}
         {/* Inner wrapper gains padding but NO scrollbars */}
         <div

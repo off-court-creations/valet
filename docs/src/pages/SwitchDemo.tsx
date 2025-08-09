@@ -37,7 +37,10 @@ interface RowProps {
 }
 
 const Row = ({ label, control }: RowProps) => (
-  <Stack direction="row" style={{ maxWidth: 360 }}>
+  <Stack
+    direction='row'
+    style={{ maxWidth: 360 }}
+  >
     {control}
     <Typography style={{ flex: 1 }}>{label}</Typography>
   </Stack>
@@ -120,65 +123,109 @@ export default function SwitchDemoPage() {
       <NavDrawer />
       <Stack>
         {/* Page header ----------------------------------------------------- */}
-        <Typography variant="h2" bold>
+        <Typography
+          variant='h2'
+          bold
+        >
           Switch Showcase
         </Typography>
-        <Typography variant="subtitle">
-          Every prop, every trick, all in one place
-        </Typography>
+        <Typography variant='subtitle'>Every prop, every trick, all in one place</Typography>
 
         <Tabs>
-          <Tabs.Tab label="Usage" />
+          <Tabs.Tab label='Usage' />
           <Tabs.Panel>
             {/* 1. Uncontrolled -------------------------------------------------- */}
-            <Typography variant="h3">1. Uncontrolled</Typography>
+            <Typography variant='h3'>1. Uncontrolled</Typography>
             <Stack>
-              <Row label="Default unchecked" control={<Switch name="uc1" />} />
               <Row
-                label="Default checked (defaultChecked)"
-                control={<Switch name="uc2" defaultChecked />}
+                label='Default unchecked'
+                control={<Switch name='uc1' />}
+              />
+              <Row
+                label='Default checked (defaultChecked)'
+                control={
+                  <Switch
+                    name='uc2'
+                    defaultChecked
+                  />
+                }
               />
             </Stack>
 
             {/* 2. Controlled ---------------------------------------------------- */}
-            <Typography variant="h3">2. Controlled</Typography>
+            <Typography variant='h3'>2. Controlled</Typography>
             <Row
               label={`Wi-Fi – ${wifi ? 'on' : 'off'}`}
-              control={<Switch name="wifi" checked={wifi} onChange={setWifi} />}
+              control={
+                <Switch
+                  name='wifi'
+                  checked={wifi}
+                  onChange={setWifi}
+                />
+              }
             />
 
             {/* 3. Sizes --------------------------------------------------------- */}
-            <Typography variant="h3">3. Sizes</Typography>
+            <Typography variant='h3'>3. Sizes</Typography>
             <Stack>
               <Row
                 label="size='sm'"
-                control={<Switch name="sm" size="sm" defaultChecked />}
+                control={
+                  <Switch
+                    name='sm'
+                    size='sm'
+                    defaultChecked
+                  />
+                }
               />
               <Row
                 label="size='md'"
-                control={<Switch name="md" size="md" defaultChecked />}
+                control={
+                  <Switch
+                    name='md'
+                    size='md'
+                    defaultChecked
+                  />
+                }
               />
               <Row
                 label="size='lg'"
-                control={<Switch name="lg" size="lg" defaultChecked />}
+                control={
+                  <Switch
+                    name='lg'
+                    size='lg'
+                    defaultChecked
+                  />
+                }
               />
             </Stack>
 
             {/* 4. Disabled ------------------------------------------------------ */}
-            <Typography variant="h3">4. Disabled</Typography>
+            <Typography variant='h3'>4. Disabled</Typography>
             <Stack>
               <Row
-                label="disabled & checked"
-                control={<Switch name="d1" defaultChecked disabled />}
+                label='disabled & checked'
+                control={
+                  <Switch
+                    name='d1'
+                    defaultChecked
+                    disabled
+                  />
+                }
               />
               <Row
-                label="disabled & unchecked"
-                control={<Switch name="d2" disabled />}
+                label='disabled & unchecked'
+                control={
+                  <Switch
+                    name='d2'
+                    disabled
+                  />
+                }
               />
             </Stack>
 
             {/* 5. FormControl integration -------------------------------------- */}
-            <Typography variant="h3">5. FormControl Binding</Typography>
+            <Typography variant='h3'>5. FormControl Binding</Typography>
             <FormControl
               useStore={usePrefsForm}
               onSubmitValues={handleSubmit}
@@ -188,27 +235,41 @@ export default function SwitchDemoPage() {
                 gap: theme.spacing(1),
               }}
             >
-              <Row label="Dark mode" control={<Switch name="darkMode" />} />
               <Row
-                label="Join newsletter"
-                control={<Switch name="newsletter" />}
+                label='Dark mode'
+                control={<Switch name='darkMode' />}
               />
-              <Button type="submit" variant="contained" size="lg">
+              <Row
+                label='Join newsletter'
+                control={<Switch name='newsletter' />}
+              />
+              <Button
+                type='submit'
+                variant='contained'
+                size='lg'
+              >
                 Save preferences
               </Button>
             </FormControl>
 
             {/* 6. Live theme validation ---------------------------------------- */}
-            <Typography variant="h3">6. Theme coupling</Typography>
-            <Button variant="outlined" onClick={toggleMode}>
+            <Typography variant='h3'>6. Theme coupling</Typography>
+            <Button
+              variant='outlined'
+              onClick={toggleMode}
+            >
               Toggle light / dark mode
             </Button>
           </Tabs.Panel>
 
-          <Tabs.Tab label="Reference" />
+          <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant="h3">Prop reference</Typography>
-            <Table data={data} columns={columns} constrainHeight={false} />
+            <Typography variant='h3'>Prop reference</Typography>
+            <Table
+              data={data}
+              columns={columns}
+              constrainHeight={false}
+            />
           </Tabs.Panel>
         </Tabs>
       </Stack>

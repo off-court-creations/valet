@@ -34,8 +34,7 @@ const Base = styled('div')<{
   box-sizing: border-box;
   vertical-align: top;
 
-  display: ${({ $center, $full }) =>
-    $center ? 'flex' : $full ? 'block' : 'inline-block'};
+  display: ${({ $center, $full }) => ($center ? 'flex' : $full ? 'block' : 'inline-block')};
   width: ${({ $full }) => ($full ? '100%' : 'auto')};
   align-self: ${({ $full }) => ($full ? 'stretch' : 'flex-start')};
 
@@ -85,8 +84,7 @@ const Base = styled('div')<{
       --valet-text-color: ${$text};
     `}
 
-  ${({ $center }) =>
-    $center !== undefined && `--valet-centered: ${$center ? '1' : '0'};`}
+  ${({ $center }) => $center !== undefined && `--valet-centered: ${$center ? '1' : '0'};`}
 `;
 
 export const Panel: React.FC<PanelProps> = ({

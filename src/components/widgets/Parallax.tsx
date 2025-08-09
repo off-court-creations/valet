@@ -2,14 +2,7 @@
 // src/components/widgets/Parallax.tsx  | valet
 // simple scroll-aware container for parallax effects
 // ─────────────────────────────────────────────────────────────
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { preset } from '../../css/stylePresets';
 import type { Presettable } from '../../types';
 
@@ -43,9 +36,7 @@ const findScrollParent = (node: HTMLElement | null): HTMLElement | Window => {
 /*───────────────────────────────────────────────────────────────*/
 /* 3 ▸ ParallaxScroll – root wrapper                             */
 
-export interface ParallaxScrollProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    Presettable {
+export interface ParallaxScrollProps extends React.HTMLAttributes<HTMLDivElement>, Presettable {
   /** Track horizontal scroll in addition to vertical. */
   trackX?: boolean;
 }
@@ -71,9 +62,7 @@ export const ParallaxScroll: React.FC<ParallaxScrollProps> = ({
       ticking = true;
       requestAnimationFrame(() => {
         const y =
-          scrollParent === window
-            ? window.scrollY
-            : (scrollParent as HTMLElement).scrollTop;
+          scrollParent === window ? window.scrollY : (scrollParent as HTMLElement).scrollTop;
         const x = trackX
           ? scrollParent === window
             ? window.scrollX
@@ -109,9 +98,7 @@ export const ParallaxScroll: React.FC<ParallaxScrollProps> = ({
 /*───────────────────────────────────────────────────────────────*/
 /* 4 ▸ Generic ParallaxLayer                                     */
 
-export interface ParallaxLayerProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    Presettable {
+export interface ParallaxLayerProps extends React.HTMLAttributes<HTMLDivElement>, Presettable {
   speed?: number; // 1 = native, 0.5 = slower, 2 = faster
   axis?: 'y' | 'x';
 }
@@ -132,9 +119,7 @@ export const ParallaxLayer: React.FC<ParallaxLayerProps> = ({
   }, [scrollY, scrollX, speed, axis]);
 
   const transform =
-    axis === 'y'
-      ? `translate3d(0, ${offset}px, 0)`
-      : `translate3d(${offset}px, 0, 0)`;
+    axis === 'y' ? `translate3d(0, ${offset}px, 0)` : `translate3d(${offset}px, 0, 0)`;
 
   const presetClasses = p ? preset(p) : '';
 
@@ -160,9 +145,7 @@ export const ParallaxLayer: React.FC<ParallaxLayerProps> = ({
 
 type MediaType = 'image' | 'video';
 
-export interface ParallaxBackgroundProps
-  extends Omit<ParallaxLayerProps, 'children'>,
-    Presettable {
+export interface ParallaxBackgroundProps extends Omit<ParallaxLayerProps, 'children'>, Presettable {
   /** Source for JPG / WEBP / WEBM (auto-detects type if omitted). */
   src: string;
   /** Force media type (otherwise guessed by file extension). */
@@ -239,8 +222,8 @@ export const ParallaxBackground: React.FC<ParallaxBackgroundProps> = ({
       <img
         ref={mediaRef as React.RefObject<HTMLImageElement>}
         src={src}
-        loading="lazy"
-        alt=""
+        loading='lazy'
+        alt=''
         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
       />
     );

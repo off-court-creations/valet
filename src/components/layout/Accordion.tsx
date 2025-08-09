@@ -100,8 +100,7 @@ const HeaderBtn = styled('button')<{
   /* Hover tint – only on devices that actually support hover */
   @media (hover: hover) {
     &:hover:not(:disabled) {
-      ${({ $skipHover, $hoverBg }) =>
-        $skipHover ? '' : `background:${$hoverBg};`}
+      ${({ $skipHover, $hoverBg }) => ($skipHover ? '' : `background:${$hoverBg};`)}
     }
   }
 
@@ -146,9 +145,7 @@ export interface AccordionProps
   constrainHeight?: boolean;
 }
 
-export interface AccordionItemProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    Presettable {
+export interface AccordionItemProps extends React.HTMLAttributes<HTMLDivElement>, Presettable {
   header: ReactNode;
   index?: number;
   disabled?: boolean;
@@ -187,8 +184,7 @@ export const Accordion: React.FC<AccordionProps> & {
   const [shouldConstrain, setShouldConstrain] = useState(false);
   const constraintRef = useRef(false);
   const controlled = openProp !== undefined;
-  const toArray = (v?: number | number[]) =>
-    v === undefined ? [] : Array.isArray(v) ? v : [v];
+  const toArray = (v?: number | number[]) => (v === undefined ? [] : Array.isArray(v) ? v : [v]);
 
   const [selfOpen, setSelfOpen] = useState(() => toArray(defaultOpen));
   const open = controlled ? toArray(openProp) : selfOpen;
@@ -245,8 +241,7 @@ export const Accordion: React.FC<AccordionProps> & {
     const available = Math.round(surface.height - top - bottomRef.current);
     const cutoff = calcCutoff();
 
-    const shouldClamp =
-      node.scrollHeight - available > 1 && available >= cutoff;
+    const shouldClamp = node.scrollHeight - available > 1 && available >= cutoff;
 
     if (shouldClamp) {
       if (!constraintRef.current) {
@@ -388,22 +383,14 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
 
   /* ----- compute disabled colour (greyed-out, mode-aware) -- */
   const disabledColor = toHex(
-    mix(
-      toRgb(theme.colors.text),
-      toRgb(mode === 'dark' ? '#000' : '#fff'),
-      0.4,
-    ),
+    mix(toRgb(theme.colors.text), toRgb(mode === 'dark' ? '#000' : '#fff'), 0.4),
   );
 
   const presetClasses = p ? preset(p) : '';
   const HeaderTag = headerTag as keyof JSX.IntrinsicElements;
 
-  const highlight = toHex(
-    mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.15),
-  );
-  const hoverBg = toHex(
-    mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.6),
-  );
+  const highlight = toHex(mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.15));
+  const hoverBg = toHex(mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.6));
   const shift = theme.spacing(1);
 
   return (
@@ -414,7 +401,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
       <HeaderTag style={{ margin: 0 }}>
         <HeaderBtn
           id={headerId}
-          type="button"
+          type='button'
           aria-expanded={isOpen}
           aria-controls={panelId}
           disabled={disabled}
@@ -490,33 +477,44 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
           $skipHover={skipHover}
         >
           {typeof header === 'string' || typeof header === 'number' ? (
-            <Typography variant="subtitle" noSelect style={{ font: 'inherit' }}>
+            <Typography
+              variant='subtitle'
+              noSelect
+              style={{ font: 'inherit' }}
+            >
               {header}
             </Typography>
           ) : (
             header
           )}
-          <Chevron aria-hidden $open={isOpen} viewBox="0 0 24 24">
+          <Chevron
+            aria-hidden
+            $open={isOpen}
+            viewBox='0 0 24 24'
+          >
             <path
-              d="M6 9l6 6 6-6"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+              d='M6 9l6 6 6-6'
+              fill='none'
+              stroke='currentColor'
+              strokeWidth='2'
+              strokeLinecap='round'
+              strokeLinejoin='round'
             />
           </Chevron>
         </HeaderBtn>
       </HeaderTag>
 
       <Content
-        role="region"
+        role='region'
         id={panelId}
         aria-labelledby={headerId}
         $open={isOpen}
         $height={height}
       >
-        <div ref={contentRef} style={{ padding: '0.75rem 0' }}>
+        <div
+          ref={contentRef}
+          style={{ padding: '0.75rem 0' }}
+        >
           {children}
         </div>
       </Content>

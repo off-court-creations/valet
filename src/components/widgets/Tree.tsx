@@ -54,8 +54,7 @@ const ItemRow = styled('div')<{
   cursor: pointer;
   user-select: none;
   ${({ $hoverBg }) => `@media(hover:hover){&:hover{background:${$hoverBg};}}`}
-  ${({ $selected, $selectedBg }) =>
-    $selected ? `background:${$selectedBg};` : ''}
+  ${({ $selected, $selectedBg }) => ($selected ? `background:${$selectedBg};` : '')}
   &:focus-visible {
     outline: 2px solid currentColor;
     outline-offset: 2px;
@@ -115,8 +114,7 @@ const ListRow = styled('div')<{
   cursor: pointer;
   user-select: none;
   ${({ $hoverBg }) => `@media(hover:hover){&:hover{background:${$hoverBg};}}`}
-  ${({ $selected, $selectedBg }) =>
-    $selected ? `background:${$selectedBg};` : ''}
+  ${({ $selected, $selectedBg }) => ($selected ? `background:${$selectedBg};` : '')}
   &:focus-visible {
     outline: 2px solid currentColor;
     outline-offset: 2px;
@@ -154,24 +152,22 @@ export function Tree<T>({
 }: TreeProps<T>) {
   const { theme } = useTheme();
   const controlledExpand = expandedProp !== undefined;
-  const [selfExpanded, setSelfExpanded] = useState(
-    () => new Set(defaultExpanded),
+  const [selfExpanded, setSelfExpanded] = useState(() => new Set(defaultExpanded));
+
+  // Ensure a stable Set for `expanded` so hooks depending on it can list it safely
+  const expanded = useMemo<Set<string>>(
+    () => (controlledExpand ? new Set(expandedProp ?? []) : selfExpanded),
+    [controlledExpand, expandedProp, selfExpanded],
   );
-  const expanded = controlledExpand ? new Set(expandedProp) : selfExpanded;
+
   const [focused, setFocused] = useState<string | null>(null);
   const controlled = selectedProp !== undefined;
-  const [selfSelected, setSelfSelected] = useState<string | null>(
-    defaultSelected ?? null,
-  );
+  const [selfSelected, setSelfSelected] = useState<string | null>(defaultSelected ?? null);
   const selected = controlled ? selectedProp! : selfSelected;
 
   // Swap hover and active intensity per design feedback
-  const hoverBg = toHex(
-    mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.4),
-  );
-  const selectedBg = toHex(
-    mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.2),
-  );
+  const hoverBg = toHex(mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.4));
+  const selectedBg = toHex(mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.2));
 
   const flat = useMemo(() => {
     const res: { node: TreeNode<T>; level: number }[] = [];
@@ -183,7 +179,7 @@ export function Tree<T>({
     };
     walk(nodes, 0);
     return res;
-  }, [nodes, expandedProp, selfExpanded]);
+  }, [nodes, expanded]);
 
   const refs = useRef<Record<string, HTMLDivElement | null>>({});
 
@@ -234,8 +230,7 @@ export function Tree<T>({
         e.preventDefault();
         if (current.node.children) {
           if (!expanded.has(current.node.id)) toggle(current.node.id);
-          else if (current.node.children.length)
-            focusItem(current.node.children[0].id);
+          else if (current.node.children.length) focusItem(current.node.children[0].id);
         }
         break;
       case 'ArrowLeft':
@@ -260,18 +255,24 @@ export function Tree<T>({
     }
   };
 
-  const renderBranch = (
-    items: TreeNode<T>[],
-    level: number,
-  ): React.ReactNode => (
-    <Branch role={level ? 'group' : undefined} $line={line} $root={level === 0}>
+  const renderBranch = (items: TreeNode<T>[], level: number): React.ReactNode => (
+    <Branch
+      role={level ? 'group' : undefined}
+      $line={line}
+      $root={level === 0}
+    >
       {items.map((node) => (
-        <BranchItem key={node.id} $line={line} $root={level === 0} role="none">
+        <BranchItem
+          key={node.id}
+          $line={line}
+          $root={level === 0}
+          role='none'
+        >
           <ListRow
             ref={(el: HTMLDivElement | null) => {
               refs.current[node.id] = el;
             }}
-            role="treeitem"
+            role='treeitem'
             aria-expanded={node.children ? expanded.has(node.id) : undefined}
             aria-selected={selected === node.id}
             tabIndex={focused === node.id ? 0 : -1}
@@ -320,16 +321,14 @@ export function Tree<T>({
               />
             )}
             <Typography
-              variant="body"
-              family="body"
+              variant='body'
+              family='body'
               style={{ display: 'inline' }}
             >
               {getLabel(node.data)}
             </Typography>
           </ListRow>
-          {node.children &&
-            expanded.has(node.id) &&
-            renderBranch(node.children, level + 1)}
+          {node.children && expanded.has(node.id) && renderBranch(node.children, level + 1)}
         </BranchItem>
       ))}
     </Branch>
@@ -338,7 +337,7 @@ export function Tree<T>({
   return (
     <Root
       {...rest}
-      role="tree"
+      role='tree'
       tabIndex={0}
       onKeyDown={keyNav}
       $border={theme.colors.backgroundAlt}
@@ -346,15 +345,16 @@ export function Tree<T>({
     >
       {variant === 'chevron'
         ? flat.map(({ node, level }) => (
-            <li key={node.id} role="none">
+            <li
+              key={node.id}
+              role='none'
+            >
               <ItemRow
                 ref={(el: HTMLDivElement | null) => {
                   refs.current[node.id] = el;
                 }}
-                role="treeitem"
-                aria-expanded={
-                  node.children ? expanded.has(node.id) : undefined
-                }
+                role='treeitem'
+                aria-expanded={node.children ? expanded.has(node.id) : undefined}
                 aria-selected={selected === node.id}
                 tabIndex={focused === node.id ? 0 : -1}
                 $level={level}
@@ -381,8 +381,8 @@ export function Tree<T>({
                   </ExpandIcon>
                 )}
                 <Typography
-                  variant="body"
-                  family="body"
+                  variant='body'
+                  family='body'
                   style={{ display: 'inline' }}
                 >
                   {getLabel(node.data)}

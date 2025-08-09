@@ -40,7 +40,9 @@ export type TextFieldProps =
 /*───────────────────────────────────────────────────────────────────────────*/
 /* Shared styled helpers                                                     */
 
+/* Add string index signature to satisfy styled<...> constraint */
 interface StyledFieldProps {
+  [key: string]: unknown;
   theme: Theme;
   $error?: boolean;
 }
@@ -81,103 +83,105 @@ const Label = styled('label')<{ theme: Theme }>`
 
 const Helper = styled('span')<{ theme: Theme; $error?: boolean }>`
   font-size: 0.75rem;
-  color: ${({ theme, $error }) =>
-    ($error ? theme.colors.secondary : theme.colors.text) + 'AA'};
+  color: ${({ theme, $error }) => ($error ? theme.colors.secondary : theme.colors.text) + 'AA'};
 `;
 
 /*───────────────────────────────────────────────────────────────────────────*/
 /* Component                                                                 */
 
-export const TextField = forwardRef<
-  HTMLInputElement | HTMLTextAreaElement,
-  TextFieldProps
->((props, ref) => {
-  const {
-    as = 'input',
-    name,
-    label,
-    helperText,
-    error = false,
-    fullWidth = false,
-    fontFamily,
-    preset: presetName,
-    className,
-    rows,
-    style: styleProp,
-    ...rawRest
-  } = props;
+export const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, TextFieldProps>(
+  (props, ref) => {
+    const {
+      as = 'input',
+      name,
+      label,
+      helperText,
+      error = false,
+      fullWidth = false,
+      fontFamily,
+      preset: presetName,
+      className,
+      rows,
+      style: styleProp,
+      ...rawRest
+    } = props;
 
-  /* Strip props we manage so they don’t duplicate ----------------------- */
-  const {
-    onChange: externalOnChange,
-    value: externalValue,
-    defaultValue,
-    ...rest
-  } = rawRest as any;
+    /* Strip props we manage so they don’t duplicate ----------------------- */
+    const {
+      onChange: externalOnChange,
+      value: externalValue,
+      defaultValue,
+      ...rest
+    } = rawRest as any;
 
-  const id = useId();
-  const { theme } = useTheme();
+    const id = useId();
+    const { theme } = useTheme();
 
-  /* Optional FormControl wiring ----------------------------------------- */
-  let form: ReturnType<typeof useForm<any>> | null = null;
-  try {
-    form = useForm<any>();
-  } catch {}
+    /* Optional FormControl wiring ----------------------------------------- */
+    let form: ReturnType<typeof useForm<any>> | null = null;
+    try {
+      form = useForm<any>();
+    } catch {}
 
-  const controlledValue = form ? (form.values[name] ?? '') : externalValue;
+    const controlledValue = form ? (form.values[name] ?? '') : externalValue;
 
-  const setField = form ? form.setField : undefined;
+    const setField = form ? form.setField : undefined;
 
-  const handleChange: ChangeEventHandler<
-    HTMLInputElement | HTMLTextAreaElement
-  > = (e) => {
-    setField?.(name as any, e.target.value);
-    externalOnChange?.(e); // call user’s handler if provided
-  };
+    const handleChange: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (e) => {
+      setField?.(name as any, e.target.value);
+      externalOnChange?.(e); // call user’s handler if provided
+    };
 
-  const presetClasses = presetName ? preset(presetName) : '';
+    const presetClasses = presetName ? preset(presetName) : '';
 
-  const Element =
-    as === 'textarea'
-      ? (FieldTextarea as React.ComponentType<StyledFieldProps & TextareaProps>)
-      : (FieldInput as React.ComponentType<StyledFieldProps & InputProps>);
+    const Element =
+      as === 'textarea'
+        ? (FieldTextarea as React.ComponentType<StyledFieldProps & TextareaProps>)
+        : (FieldInput as React.ComponentType<StyledFieldProps & InputProps>);
 
-  return (
-    <Wrapper
-      theme={theme}
-      className={[presetClasses, className].filter(Boolean).join(' ')}
-      style={fullWidth ? { flex: 1, width: '100%', ...styleProp } : styleProp}
-    >
-      {label && (
-        <Label theme={theme} htmlFor={id}>
-          {label}
-        </Label>
-      )}
-
-      <Element
-        id={id}
-        name={name}
-        ref={ref as any}
+    return (
+      <Wrapper
         theme={theme}
-        $error={error}
-        rows={as === 'textarea' ? rows : undefined}
-        /* Spread the remaining, de-duplicated props first */
-        {...rest}
-        /* Then our controlled bits so they win if overlaps exist */
-        value={controlledValue}
-        defaultValue={defaultValue}
-        onChange={handleChange}
-        style={fontFamily ? { fontFamily } : undefined}
-      />
+        className={[presetClasses, className].filter(Boolean).join(' ')}
+        style={fullWidth ? { flex: 1, width: '100%', ...styleProp } : styleProp}
+      >
+        {label && (
+          <Label
+            theme={theme}
+            htmlFor={id}
+          >
+            {label}
+          </Label>
+        )}
 
-      {helperText && (
-        <Helper theme={theme} $error={error}>
-          {helperText}
-        </Helper>
-      )}
-    </Wrapper>
-  );
-});
+        <Element
+          id={id}
+          name={name}
+          ref={ref as any}
+          theme={theme}
+          $error={error}
+          rows={as === 'textarea' ? rows : undefined}
+          /* Spread the remaining, de-duplicated props first */
+          {...rest}
+          /* Then our controlled bits so they win if overlaps exist */
+          value={controlledValue}
+          defaultValue={defaultValue}
+          onChange={handleChange}
+          style={fontFamily ? { fontFamily } : undefined}
+        />
+
+        {helperText && (
+          <Helper
+            theme={theme}
+            $error={error}
+          >
+            {helperText}
+          </Helper>
+        )}
+      </Wrapper>
+    );
+  },
+);
 
 TextField.displayName = 'TextField';
 

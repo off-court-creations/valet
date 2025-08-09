@@ -10,9 +10,7 @@ import type { Presettable } from '../../types';
 
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
-export interface IconProps
-  extends React.HTMLAttributes<HTMLSpanElement>,
-    Presettable {
+export interface IconProps extends React.HTMLAttributes<HTMLSpanElement>, Presettable {
   /** Iconify icon name, e.g. "mdi:home". */
   icon?: string;
   /**
@@ -62,10 +60,7 @@ export const Icon: React.FC<PropsWithChildren<IconProps>> = ({
   ...spanRest
 }) => {
   const presetClasses = p ? preset(p) : '';
-  const finalSize =
-    typeof size === 'number'
-      ? `${size}px`
-      : (sizeMap[size as IconSize] ?? size);
+  const finalSize = typeof size === 'number' ? `${size}px` : (sizeMap[size as IconSize] ?? size);
   const colourStyle = color ? { color } : undefined;
 
   let content: ReactElement | null = null;
@@ -74,11 +69,11 @@ export const Icon: React.FC<PropsWithChildren<IconProps>> = ({
     content = (
       <Iconify
         icon={icon}
-        width="100%"
-        height="100%"
-        color="currentColor"
+        width='100%'
+        height='100%'
+        color='currentColor'
         aria-hidden={spanRest['aria-label'] ? undefined : true}
-        focusable="false"
+        focusable='false'
       />
     );
   } else if (isValidElement(svg)) {
@@ -91,10 +86,10 @@ export const Icon: React.FC<PropsWithChildren<IconProps>> = ({
   } else if (typeof svg === 'string') {
     content = (
       <svg
-        width="100%"
-        height="100%"
-        viewBox="0 0 24 24"
-        fill="currentColor"
+        width='100%'
+        height='100%'
+        viewBox='0 0 24 24'
+        fill='currentColor'
         dangerouslySetInnerHTML={{ __html: svg.trim() }}
       />
     );
@@ -107,9 +102,7 @@ export const Icon: React.FC<PropsWithChildren<IconProps>> = ({
     });
   } else {
     if (process.env.NODE_ENV !== 'production') {
-      console.warn(
-        '<Icon /> requires `icon`, `svg`, or children containing an <svg>.',
-      );
+      console.warn('<Icon /> requires `icon`, `svg`, or children containing an <svg>.');
     }
     return null;
   }

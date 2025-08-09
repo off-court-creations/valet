@@ -2,13 +2,7 @@
 // src/components/fields/MetroSelect.tsx | valet
 // windows 8 start screen style grid select
 // ─────────────────────────────────────────────────────────────
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-} from 'react';
+import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import Stack from '../layout/Stack';
 import Panel from '../layout/Panel';
 import { Icon } from '../primitives/Icon';
@@ -42,9 +36,7 @@ export interface MetroSelectProps
   children: React.ReactNode;
 }
 
-export interface MetroOptionProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    Presettable {
+export interface MetroOptionProps extends React.HTMLAttributes<HTMLDivElement>, Presettable {
   value: Primitive;
   icon: string | React.ReactElement;
   label: React.ReactNode;
@@ -69,14 +61,7 @@ export const Option: React.FC<MetroOptionProps> = ({
   const presetCls = p ? preset(p) : '';
 
   const disabledColor = useMemo(
-    () =>
-      toHex(
-        mix(
-          toRgb(theme.colors.text),
-          toRgb(mode === 'dark' ? '#000' : '#fff'),
-          0.4,
-        ),
-      ),
+    () => toHex(mix(toRgb(theme.colors.text), toRgb(mode === 'dark' ? '#000' : '#fff'), 0.4)),
     [theme, mode],
   );
 
@@ -97,7 +82,7 @@ export const Option: React.FC<MetroOptionProps> = ({
   return (
     <Panel
       {...rest}
-      variant="alt"
+      variant='alt'
       compact
       onClick={() => !disabled && setValue(value)}
       style={{
@@ -109,17 +94,9 @@ export const Option: React.FC<MetroOptionProps> = ({
         alignItems: 'center',
         justifyContent: 'center',
         borderColor:
-          selected && !disabled
-            ? theme.colors.primary
-            : disabled
-              ? disabledColor
-              : undefined,
+          selected && !disabled ? theme.colors.primary : disabled ? disabledColor : undefined,
         background: selected && !disabled ? theme.colors.primary : undefined,
-        color: disabled
-          ? disabledColor
-          : selected
-            ? theme.colors.primaryText
-            : undefined,
+        color: disabled ? disabledColor : selected ? theme.colors.primaryText : undefined,
         opacity: disabled ? 0.45 : 1,
         ...style,
       }}
@@ -127,11 +104,18 @@ export const Option: React.FC<MetroOptionProps> = ({
     >
       <div style={innerStyle}>
         {typeof icon === 'string' ? (
-          <Icon icon={icon} size="lg" />
+          <Icon
+            icon={icon}
+            size='lg'
+          />
         ) : (
-          <Icon size="lg">{icon}</Icon>
+          <Icon size='lg'>{icon}</Icon>
         )}
-        <Typography variant="h6" centered noSelect>
+        <Typography
+          variant='h6'
+          centered
+          noSelect
+        >
           {label}
         </Typography>
       </div>
@@ -170,15 +154,12 @@ export const MetroSelect: MetroSelectComponent = ({
 
   const presetCls = p ? preset(p) : '';
 
-  const ctx = useMemo<MetroCtx>(
-    () => ({ value: val ?? null, setValue }),
-    [val, setValue],
-  );
+  const ctx = useMemo<MetroCtx>(() => ({ value: val ?? null, setValue }), [val, setValue]);
 
   return (
     <MetroCtx.Provider value={ctx}>
       <Stack
-        direction="row"
+        direction='row'
         wrap
         spacing={0.5 * Number(gap)}
         compact

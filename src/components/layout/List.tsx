@@ -61,8 +61,7 @@ const Root = styled('ul')<{
   }
 
   /* Zebra stripes */
-  ${({ $striped, $stripe }) =>
-    $striped && `li:nth-of-type(odd){background:${$stripe};}`}
+  ${({ $striped, $stripe }) => $striped && `li:nth-of-type(odd){background:${$stripe};}`}
 
   /* Hover + drag highlight (row AND its cells) */
   ${({ $hover, $hoverBg }) =>
@@ -95,9 +94,7 @@ export function List<T>({
 
   /* Colours */
   const stripeColor = stripe(theme.colors.background, theme.colors.text);
-  const hoverBg = toHex(
-    mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.25),
-  );
+  const hoverBg = toHex(mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.25));
 
   /* Determine whether hover is enabled */
   const enableHover = hoverable !== undefined ? hoverable : !striped;
@@ -110,29 +107,27 @@ export function List<T>({
   useEffect(() => setItems(data), [data]);
 
   /* Handlers -------------------------------------------------------------- */
-  const handleDragStart =
-    (idx: number) => (e: React.DragEvent<HTMLLIElement>) => {
+  const handleDragStart = (idx: number) => (e: React.DragEvent<HTMLLIElement>) => {
+    dragFrom.current = idx;
+    setDragIdx(idx);
+    e.dataTransfer.setDragImage(EMPTY_IMG, 0, 0); // hide ghost
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (idx: number) => (e: React.DragEvent<HTMLLIElement>) => {
+    e.preventDefault();
+    const from = dragFrom.current;
+    if (from === null || from === idx) return;
+
+    setItems((prev) => {
+      const arr = [...prev];
+      const [moved] = arr.splice(from, 1);
+      arr.splice(idx, 0, moved);
       dragFrom.current = idx;
-      setDragIdx(idx);
-      e.dataTransfer.setDragImage(EMPTY_IMG, 0, 0); // hide ghost
-      e.dataTransfer.effectAllowed = 'move';
-    };
-
-  const handleDragOver =
-    (idx: number) => (e: React.DragEvent<HTMLLIElement>) => {
-      e.preventDefault();
-      const from = dragFrom.current;
-      if (from === null || from === idx) return;
-
-      setItems((prev) => {
-        const arr = [...prev];
-        const [moved] = arr.splice(from, 1);
-        arr.splice(idx, 0, moved);
-        dragFrom.current = idx;
-        return arr;
-      });
-      setDragIdx(idx); // keep highlight on moved row
-    };
+      return arr;
+    });
+    setDragIdx(idx); // keep highlight on moved row
+  };
 
   const handleDragEnd = () => {
     if (dragFrom.current !== null) onReorder?.(items);
@@ -141,8 +136,7 @@ export function List<T>({
   };
 
   /* Class merge */
-  const cls =
-    [p ? preset(p) : '', className].filter(Boolean).join(' ') || undefined;
+  const cls = [p ? preset(p) : '', className].filter(Boolean).join(' ') || undefined;
 
   /*─────────────────────────────────────────────────────────*/
   return (
@@ -165,12 +159,13 @@ export function List<T>({
           onDragOver={handleDragOver(idx)}
           onDragEnd={handleDragEnd}
         >
-          <Typography variant="body" bold>
+          <Typography
+            variant='body'
+            bold
+          >
             {getTitle(item)}
           </Typography>
-          {getSubtitle && (
-            <Typography variant="subtitle">{getSubtitle(item)}</Typography>
-          )}
+          {getSubtitle && <Typography variant='subtitle'>{getSubtitle(item)}</Typography>}
         </li>
       ))}
     </Root>

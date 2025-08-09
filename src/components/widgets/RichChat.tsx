@@ -2,13 +2,7 @@
 // src/components/widgets/RichChat.tsx  | valet
 // Local chat component with embeddable content; add fontFamily prop
 // ─────────────────────────────────────────────────────────────
-import React, {
-  useState,
-  useRef,
-  useId,
-  useEffect,
-  useLayoutEffect,
-} from 'react';
+import React, { useState, useRef, useId, useEffect, useLayoutEffect } from 'react';
 import { styled, keyframes } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { useSurface } from '../../system/surfaceStore';
@@ -72,8 +66,7 @@ const Row = styled('div')<{
 }>`
   display: flex;
   align-items: center;
-  justify-content: ${({ $from }) =>
-    $from === 'user' ? 'flex-end' : 'flex-start'};
+  justify-content: ${({ $from }) => ($from === 'user' ? 'flex-end' : 'flex-start')};
   padding-left: ${({ $left }) => $left};
   padding-right: ${({ $right }) => $right};
 `;
@@ -225,7 +218,7 @@ export const RichChat: React.FC<RichChatProps> = ({
       {...rest}
       compact
       fullWidth
-      variant="alt"
+      variant='alt'
       style={style}
       className={cls}
     >
@@ -267,40 +260,35 @@ export const RichChat: React.FC<RichChatProps> = ({
                   {m.role !== 'user' && systemAvatar && (
                     <Avatar
                       src={systemAvatar}
-                      size="s"
-                      variant="outline"
+                      size='s'
+                      variant='outline'
                       style={{ marginRight: theme.spacing(1) }}
                     />
                   )}
                   <Panel
                     compact
-                    variant="main"
-                    background={
-                      m.role === 'user' ? theme.colors.primary : undefined
-                    }
+                    variant='main'
+                    background={m.role === 'user' ? theme.colors.primary : undefined}
                     style={{
                       maxWidth: '100%',
                       width: 'fit-content',
                       borderRadius: theme.spacing(0.5),
-                      animation: m.animate
-                        ? `${fadeIn} 0.2s ease-out`
-                        : undefined,
+                      animation: m.animate ? `${fadeIn} 0.2s ease-out` : undefined,
                       position: 'relative',
                     }}
                   >
                     <div>
                       {m.name && (
-                        <Typography variant="subtitle" bold>
+                        <Typography
+                          variant='subtitle'
+                          bold
+                        >
                           {m.name}
                         </Typography>
                       )}
                       {m.typing ? (
                         <Typing
-                          $color={
-                            m.role === 'user'
-                              ? theme.colors.primaryText
-                              : theme.colors.text
-                          }
+                          $color={m.role === 'user' ? theme.colors.primaryText : theme.colors.text}
                         >
                           <span />
                           <span />
@@ -309,16 +297,14 @@ export const RichChat: React.FC<RichChatProps> = ({
                       ) : (
                         content
                       )}
-                      {Form && (
-                        <Form onSubmit={(v: string) => onFormSubmit?.(v, i)} />
-                      )}
+                      {Form && <Form onSubmit={(v: string) => onFormSubmit?.(v, i)} />}
                     </div>
                   </Panel>
                   {m.role === 'user' && userAvatar && (
                     <Avatar
                       src={userAvatar}
-                      size="s"
-                      variant="outline"
+                      size='s'
+                      variant='outline'
                       style={{ marginLeft: theme.spacing(1) }}
                     />
                   )}
@@ -328,11 +314,18 @@ export const RichChat: React.FC<RichChatProps> = ({
         </Messages>
 
         {!inputDisabled && (
-          <form onSubmit={handleSubmit} style={{ width: '100%' }}>
-            <Stack direction="row" spacing={1} compact>
+          <form
+            onSubmit={handleSubmit}
+            style={{ width: '100%' }}
+          >
+            <Stack
+              direction='row'
+              spacing={1}
+              compact
+            >
               <TextField
-                as="textarea"
-                name="chat-message"
+                as='textarea'
+                name='chat-message'
                 value={text}
                 onChange={(e) => setText(e.target.value)}
                 onKeyDown={(e) => {
@@ -346,7 +339,11 @@ export const RichChat: React.FC<RichChatProps> = ({
                 fullWidth
                 fontFamily={fontFamily}
               />
-              <IconButton icon="carbon:send" type="submit" aria-label="Send" />
+              <IconButton
+                icon='carbon:send'
+                type='submit'
+                aria-label='Send'
+              />
             </Stack>
           </form>
         )}

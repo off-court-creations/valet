@@ -14,9 +14,7 @@ import type { Presettable } from '../../types';
 /*───────────────────────────────────────────────────────────*/
 export type AppBarToken = 'primary' | 'secondary' | 'tertiary';
 
-export interface AppBarProps
-  extends React.HTMLAttributes<HTMLElement>,
-    Presettable {
+export interface AppBarProps extends React.HTMLAttributes<HTMLElement>, Presettable {
   color?: AppBarToken | string;
   textColor?: AppBarToken | string;
   left?: React.ReactNode;
@@ -88,11 +86,7 @@ export const AppBar: React.FC<AppBarProps> = ({
     v === 'primary' || v === 'secondary' || v === 'tertiary';
 
   const bg =
-    color === undefined
-      ? theme.colors.primary
-      : isToken(color)
-        ? theme.colors[color]
-        : color;
+    color === undefined ? theme.colors.primary : isToken(color) ? theme.colors[color] : color;
 
   const text =
     textColor === undefined

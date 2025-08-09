@@ -62,8 +62,7 @@ const PageBtn = styled('button')<{
     bottom: -0.3rem; /* hugs text baseline */
     height: 0.25rem; /* thicker than normal underline */
     border-radius: 2px 2px 0 0;
-    background: ${({ $active, $primary }) =>
-      $active ? $primary : 'transparent'};
+    background: ${({ $active, $primary }) => ($active ? $primary : 'transparent')};
     transition: background 150ms ease;
   }
 `;
@@ -84,21 +83,23 @@ export const Pagination: React.FC<PaginationProps> = ({
 
   /* preset → utility class merge */
   const presetClass = p ? preset(p) : '';
-  const mergedClass =
-    [presetClass, className].filter(Boolean).join(' ') || undefined;
+  const mergedClass = [presetClass, className].filter(Boolean).join(' ') || undefined;
 
   const nav = (p: number) => () => onChange?.(p);
 
   return (
     <Root
       {...rest}
-      aria-label="pagination"
+      aria-label='pagination'
       $text={theme.colors.text}
       className={mergedClass}
       style={style}
     >
       {/* Prev/Next – simple text buttons (no underline) */}
-      <button onClick={nav(Math.max(1, page - 1))} disabled={page === 1}>
+      <button
+        onClick={nav(Math.max(1, page - 1))}
+        disabled={page === 1}
+      >
         Prev
       </button>
 

@@ -186,9 +186,7 @@ export async function sendChat(
   const key = apiKey ?? state.apiKey;
   const prov = provider ?? state.provider;
   const mdl =
-    model ??
-    state.model ??
-    (prov === 'anthropic' ? 'claude-sonnet-4-20250514' : 'gpt-4o');
+    model ?? state.model ?? (prov === 'anthropic' ? 'claude-sonnet-4-20250514' : 'gpt-4o');
 
   if (!key || !prov) throw new Error('No API key set yet');
 
@@ -236,9 +234,7 @@ export async function sendChat(
   const contentText =
     typeof json.content === 'string'
       ? json.content
-      : json.content
-          .map((block) => (typeof block.text === 'string' ? block.text : ''))
-          .join('');
+      : json.content.map((block) => (typeof block.text === 'string' ? block.text : '')).join('');
 
   return {
     choices: [

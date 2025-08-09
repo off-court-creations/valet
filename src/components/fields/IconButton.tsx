@@ -53,11 +53,9 @@ const Skin = styled('button')<{
   overflow: hidden;
   box-sizing: border-box;
 
-  border: ${({ $variant, $text }) =>
-    $variant === 'outlined' ? `1px solid ${$text}` : 'none'};
+  border: ${({ $variant, $text }) => ($variant === 'outlined' ? `1px solid ${$text}` : 'none')};
 
-  background: ${({ $variant, $primary }) =>
-    $variant === 'contained' ? $primary : 'transparent'};
+  background: ${({ $variant, $primary }) => ($variant === 'contained' ? $primary : 'transparent')};
 
   color: ${({ $variant, $text, $primaryText }) =>
     $variant === 'contained' ? $primaryText : $text};
@@ -138,8 +136,7 @@ export const IconButton: React.FC<IconButtonProps> = ({
     iconSz = `calc(${diam} * 0.45)`;
   }
 
-  const ripple =
-    variant === 'contained' ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.1)';
+  const ripple = variant === 'contained' ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.1)';
 
   const presetClasses = p ? preset(p) : '';
 
@@ -153,7 +150,7 @@ export const IconButton: React.FC<IconButtonProps> = ({
 
   return (
     <Skin
-      type="button"
+      type='button'
       {...rest}
       onContextMenu={(e: React.MouseEvent) => e.preventDefault()}
       $variant={variant}

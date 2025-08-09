@@ -1,15 +1,7 @@
 // ─────────────────────────────────────────────────────────────
 // src/pages/components/RichChat.tsx | valet
 // ─────────────────────────────────────────────────────────────
-import {
-  Surface,
-  Stack,
-  Typography,
-  Tabs,
-  Table,
-  Button,
-  useTheme,
-} from '@archway/valet';
+import { Surface, Stack, Typography, Tabs, Table, Button, useTheme } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -94,44 +86,44 @@ export default function RichChatPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography variant="h2" bold>
+        <Typography
+          variant='h2'
+          bold
+        >
           RichChat
         </Typography>
-        <Typography variant="subtitle">
-          Embeddable chat with local UI components
-        </Typography>
+        <Typography variant='subtitle'>Embeddable chat with local UI components</Typography>
         <Tabs>
-          <Tabs.Tab label="Usage" />
+          <Tabs.Tab label='Usage' />
           <Tabs.Panel>
             <Stack>
+              <Typography>RichChat allows JSX content in messages for custom layouts.</Typography>
               <Typography>
-                RichChat allows JSX content in messages for custom layouts.
+                It builds on <code>LLMChat</code> but lets you embed forms and interactive widgets
+                directly within the conversation.
               </Typography>
               <Typography>
-                It builds on <code>LLMChat</code> but lets you embed forms and
-                interactive widgets directly within the conversation.
+                Each message may define a <code>form</code> component to collect a response. When
+                submitted, <code>onFormSubmit</code> receives the value and index.
               </Typography>
+              <Typography>The compose area is disabled while a form is active.</Typography>
               <Typography>
-                Each message may define a <code>form</code> component to collect
-                a response. When submitted, <code>onFormSubmit</code> receives
-                the value and index.
-              </Typography>
-              <Typography>
-                The compose area is disabled while a form is active.
-              </Typography>
-              <Typography>
-                RichChat excels at onboarding flows or demos where you need the
-                user to fill in a few structured fields along the way.
+                RichChat excels at onboarding flows or demos where you need the user to fill in a
+                few structured fields along the way.
               </Typography>
             </Stack>
           </Tabs.Panel>
-          <Tabs.Tab label="Reference" />
+          <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Table data={data} columns={columns} constrainHeight={false} />
+            <Table
+              data={data}
+              columns={columns}
+              constrainHeight={false}
+            />
           </Tabs.Panel>
         </Tabs>
         <Button
-          size="lg"
+          size='lg'
           onClick={() => navigate('/rich-chat-demo')}
           style={{ marginTop: theme.spacing(1) }}
         >

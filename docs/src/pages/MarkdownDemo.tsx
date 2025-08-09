@@ -57,33 +57,31 @@ export default function MarkdownDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography variant="h2" bold>
+        <Typography
+          variant='h2'
+          bold
+        >
           Markdown
         </Typography>
-        <Typography variant="subtitle">
-          Render Markdown text with valet primitives
-        </Typography>
+        <Typography variant='subtitle'>Render Markdown text with valet primitives</Typography>
         <Tabs>
-          <Tabs.Tab label="Usage" />
+          <Tabs.Tab label='Usage' />
           <Tabs.Panel>
             <Stack>
               <Typography>
-                The <code>Markdown</code> component parses a Markdown string and
-                renders each element with equivalent valet components. Provide
-                your Markdown source via the <code>data</code> prop. Set
-                <code>codeBackground</code> to control fenced code block
-                styling.
+                The <code>Markdown</code> component parses a Markdown string and renders each
+                element with equivalent valet components. Provide your Markdown source via the{' '}
+                <code>data</code> prop. Set
+                <code>codeBackground</code> to control fenced code block styling.
               </Typography>
-              <Typography variant="h3">Source text</Typography>
-              <Panel preset="codePanel">
-                <pre style={{ whiteSpace: 'pre-wrap', margin: 0 }}>
-                  {sample}
-                </pre>
+              <Typography variant='h3'>Source text</Typography>
+              <Panel preset='codePanel'>
+                <pre style={{ whiteSpace: 'pre-wrap', margin: 0 }}>{sample}</pre>
               </Panel>
-              <Typography variant="h3">Rendered output</Typography>
+              <Typography variant='h3'>Rendered output</Typography>
               <MarkdownRenderer data={sample} />
               <Button
-                variant="outlined"
+                variant='outlined'
                 onClick={toggleMode}
                 style={{ marginTop: theme.spacing(1) }}
               >
@@ -91,13 +89,17 @@ export default function MarkdownDemoPage() {
               </Button>
             </Stack>
           </Tabs.Panel>
-          <Tabs.Tab label="Reference" />
+          <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Table data={data} columns={columns} constrainHeight={false} />
+            <Table
+              data={data}
+              columns={columns}
+              constrainHeight={false}
+            />
           </Tabs.Panel>
         </Tabs>
         <Button
-          size="lg"
+          size='lg'
           onClick={() => navigate(-1)}
           style={{ marginTop: theme.spacing(1) }}
         >

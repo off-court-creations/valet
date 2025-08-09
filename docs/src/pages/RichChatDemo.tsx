@@ -30,7 +30,10 @@ export default function RichChatDemoPage() {
       role: 'assistant',
       content: <Typography>Do you have a party scheduled?</Typography>,
       form: ({ onSubmit }) => (
-        <Stack direction="row" spacing={1}>
+        <Stack
+          direction='row'
+          spacing={1}
+        >
           <Button onClick={() => onSubmit('Yes')}>Yes</Button>
           <Button onClick={() => onSubmit('No')}>No</Button>
         </Stack>
@@ -42,11 +45,17 @@ export default function RichChatDemoPage() {
   const DateForm = ({ onSubmit }: { onSubmit: (val: string) => void }) => {
     const [date, setDate] = useState('');
     return (
-      <Stack direction="row" spacing={1}>
-        <DateSelector value={date} onChange={setDate} />
+      <Stack
+        direction='row'
+        spacing={1}
+      >
+        <DateSelector
+          value={date}
+          onChange={setDate}
+        />
         <IconButton
-          icon="carbon:checkmark"
-          aria-label="Confirm"
+          icon='carbon:checkmark'
+          aria-label='Confirm'
           onClick={() => onSubmit(date)}
         />
       </Stack>
@@ -56,11 +65,19 @@ export default function RichChatDemoPage() {
   const AgeForm = ({ onSubmit }: { onSubmit: (val: string) => void }) => {
     const [age, setAge] = useState(7);
     return (
-      <Stack direction="row" spacing={1}>
-        <Iterator value={age} onChange={setAge} min={1} max={12} />
+      <Stack
+        direction='row'
+        spacing={1}
+      >
+        <Iterator
+          value={age}
+          onChange={setAge}
+          min={1}
+          max={12}
+        />
         <IconButton
-          icon="carbon:checkmark"
-          aria-label="Confirm"
+          icon='carbon:checkmark'
+          aria-label='Confirm'
           onClick={() => onSubmit(String(age))}
         />
       </Stack>
@@ -70,11 +87,20 @@ export default function RichChatDemoPage() {
   const KidsForm = ({ onSubmit }: { onSubmit: (val: string) => void }) => {
     const [kids, setKids] = useState(15);
     return (
-      <Stack direction="row" spacing={1}>
-        <Iterator value={kids} onChange={setKids} min={5} max={45} step={5} />
+      <Stack
+        direction='row'
+        spacing={1}
+      >
+        <Iterator
+          value={kids}
+          onChange={setKids}
+          min={5}
+          max={45}
+          step={5}
+        />
         <IconButton
-          icon="carbon:checkmark"
-          aria-label="Confirm"
+          icon='carbon:checkmark'
+          aria-label='Confirm'
           onClick={() => onSubmit(String(kids))}
         />
       </Stack>
@@ -167,12 +193,13 @@ export default function RichChatDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography variant="h2" bold>
+        <Typography
+          variant='h2'
+          bold
+        >
           RichChat Demo
         </Typography>
-        <Typography variant="subtitle">
-          Local chat with embeddable components
-        </Typography>
+        <Typography variant='subtitle'>Local chat with embeddable components</Typography>
 
         <RichChat
           messages={messages}
@@ -183,12 +210,15 @@ export default function RichChatDemoPage() {
           systemAvatar={monkey}
         />
 
-        <Button variant="outlined" onClick={toggleMode}>
+        <Button
+          variant='outlined'
+          onClick={toggleMode}
+        >
           Toggle light / dark mode
         </Button>
 
         <Button
-          size="lg"
+          size='lg'
           onClick={() => navigate('/richchat')}
           style={{ marginTop: theme.spacing(1) }}
         >

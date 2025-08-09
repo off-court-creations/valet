@@ -160,7 +160,7 @@ export const Video: React.FC<VideoProps> = ({
         muted={muted}
         loop={loop}
         playsInline
-        preload="metadata"
+        preload='metadata'
         poster={poster}
         tabIndex={0}
         onPlay={onPlay}
@@ -169,8 +169,20 @@ export const Video: React.FC<VideoProps> = ({
         onKeyDown={handleKey}
       >
         {ready &&
-          sources.map((s, i) => <source key={i} src={s.src} type={s.type} />)}
-        {ready && tracks?.map((t, i) => <track key={i} {...t} />)}
+          sources.map((s, i) => (
+            <source
+              key={i}
+              src={s.src}
+              type={s.type}
+            />
+          ))}
+        {ready &&
+          tracks?.map((t, i) => (
+            <track
+              key={i}
+              {...t}
+            />
+          ))}
       </video>
     </VideoWrapper>
   );

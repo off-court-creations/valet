@@ -60,8 +60,11 @@ export default function FormDemoPage() {
   return (
     <Surface style={{ backgroundColor: theme.colors['background'] }}>
       <NavDrawer />
-      <Box preset="cardForm">
-        <Typography variant="h3" style={{ marginBottom: theme.spacing(1) }}>
+      <Box preset='cardForm'>
+        <Typography
+          variant='h3'
+          style={{ marginBottom: theme.spacing(1) }}
+        >
           Contact Form Demo
         </Typography>
 
@@ -75,30 +78,34 @@ export default function FormDemoPage() {
         >
           <Stack>
             <TextField
-              name="name"
-              label="Name"
+              name='name'
+              label='Name'
               autoFocus
-              preset="underlineField"
+              preset='underlineField'
             />
 
             <TextField
-              name="email"
-              label="Email"
-              type="email"
+              name='email'
+              label='Email'
+              type='email'
               helperText="We'll never share your email."
-              preset="underlineField"
+              preset='underlineField'
             />
 
             <TextField
-              name="message"
-              label="Message"
-              as="textarea"
+              name='message'
+              label='Message'
+              as='textarea'
               rows={4}
-              helperText="Max 500 chars"
-              preset="underlineField"
+              helperText='Max 500 chars'
+              preset='underlineField'
             />
 
-            <Button type="submit" variant="contained" size="lg">
+            <Button
+              type='submit'
+              variant='contained'
+              size='lg'
+            >
               Send
             </Button>
           </Stack>
@@ -108,16 +115,21 @@ export default function FormDemoPage() {
       {/* Echo submitted payload */}
       {submitted && (
         <Box style={{ padding: theme.spacing(1) }}>
-          <Typography variant="h4">Server Echo</Typography>
-          <pre style={{ color: theme.colors['text'] }}>
-            {JSON.stringify(submitted, null, 2)}
-          </pre>
+          <Typography variant='h4'>Server Echo</Typography>
+          <pre style={{ color: theme.colors['text'] }}>{JSON.stringify(submitted, null, 2)}</pre>
         </Box>
       )}
 
       {/* Nav back */}
-      <Stack direction="row" style={{ padding: theme.spacing(1) }}>
-        <Button variant="contained" size="lg" onClick={() => navigate(-1)}>
+      <Stack
+        direction='row'
+        style={{ padding: theme.spacing(1) }}
+      >
+        <Button
+          variant='contained'
+          size='lg'
+          onClick={() => navigate(-1)}
+        >
           Go Back
         </Button>
       </Stack>

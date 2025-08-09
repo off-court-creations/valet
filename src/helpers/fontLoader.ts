@@ -20,18 +20,12 @@ const customFaces = new Map<string, FontFace>();
 // If your lib.dom typings don't include FontFaceSet.add/delete, add a global
 // augmentation in src/types/fontface.d.ts as suggested earlier.
 
-export function injectFontLinks(
-  fonts: Font[],
-  options: GoogleFontOptions = {},
-): () => void {
+export function injectFontLinks(fonts: Font[], options: GoogleFontOptions = {}): () => void {
   const { preload = true } = options;
   const added: HTMLLinkElement[] = [];
 
   const googleFonts = fonts.filter((f): f is string => typeof f === 'string');
-  if (
-    googleFonts.length &&
-    !document.getElementById('valet-fonts-preconnect')
-  ) {
+  if (googleFonts.length && !document.getElementById('valet-fonts-preconnect')) {
     const preconnect1 = document.createElement('link');
     preconnect1.id = 'valet-fonts-preconnect';
     preconnect1.rel = 'preconnect';
@@ -138,7 +132,4 @@ export async function waitForFonts(fonts: Font[]): Promise<void> {
   await new Promise<void>((r) => setTimeout(r, 200));
 }
 
-export {
-  injectFontLinks as injectGoogleFontLinks,
-  waitForFonts as waitForGoogleFonts,
-};
+export { injectFontLinks as injectGoogleFontLinks, waitForFonts as waitForGoogleFonts };

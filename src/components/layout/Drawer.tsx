@@ -4,12 +4,7 @@
 // Controlled/uncontrolled, with backdrop and escape handling.
 // ─────────────────────────────────────────────────────────────
 
-import React, {
-  useCallback,
-  useLayoutEffect,
-  useState,
-  useEffect,
-} from 'react';
+import React, { useCallback, useLayoutEffect, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
@@ -77,14 +72,11 @@ const Panel = styled('div')<{
   z-index: ${({ $persistent }) => ($persistent ? 9998 : 9999)};
   display: flex;
   flex-direction: column;
-  overflow-y: ${({ $anchor }) =>
-    $anchor === 'left' || $anchor === 'right' ? 'auto' : 'visible'};
-  overflow-x: ${({ $anchor }) =>
-    $anchor === 'top' || $anchor === 'bottom' ? 'auto' : 'visible'};
+  overflow-y: ${({ $anchor }) => ($anchor === 'left' || $anchor === 'right' ? 'auto' : 'visible')};
+  overflow-x: ${({ $anchor }) => ($anchor === 'top' || $anchor === 'bottom' ? 'auto' : 'visible')};
   background: ${({ $bg }) => $bg};
   color: ${({ $text }) => $text};
-  box-shadow: ${({ $adaptive }) =>
-    $adaptive ? 'none' : '0 4px 16px rgba(0, 0, 0, 0.3)'};
+  box-shadow: ${({ $adaptive }) => ($adaptive ? 'none' : '0 4px 16px rgba(0, 0, 0, 0.3)')};
   ${({ $anchor, $primary }) =>
     $anchor === 'left'
       ? `border-right:0.25rem solid ${$primary};`
@@ -115,8 +107,7 @@ const Panel = styled('div')<{
           : $anchor === 'top'
             ? `translateY(${$fade ? '-100%' : '0'})`
             : `translateY(${$fade ? '100%' : '0'})`};
-  transition: ${({ $persistent }) =>
-    $persistent ? 'none' : 'transform 200ms ease'};
+  transition: ${({ $persistent }) => ($persistent ? 'none' : 'transform 200ms ease')};
 `;
 
 /*───────────────────────────────────────────────────────────*/
@@ -142,9 +133,7 @@ export const Drawer: React.FC<DrawerProps> = ({
     (s) => ({ width: s.width, height: s.height, element: s.element }),
     shallow,
   );
-  const surfOffset = element
-    ? parseFloat(window.getComputedStyle(element).marginTop || '0')
-    : 0;
+  const surfOffset = element ? parseFloat(window.getComputedStyle(element).marginTop || '0') : 0;
   const presetClasses = presetKey ? preset(presetKey) : '';
   const toggleBg = withAlpha(theme.colors.primary, 0.7);
   const portrait = height > width;
@@ -154,11 +143,7 @@ export const Drawer: React.FC<DrawerProps> = ({
 
   const uncontrolled = controlledOpen === undefined;
   const [openState, setOpenState] = useState(defaultOpen);
-  const open = persistentEffective
-    ? true
-    : uncontrolled
-      ? openState
-      : controlledOpen!;
+  const open = persistentEffective ? true : uncontrolled ? openState : controlledOpen!;
   const [fade, setFade] = useState(true);
 
   useEffect(() => {
@@ -224,7 +209,7 @@ export const Drawer: React.FC<DrawerProps> = ({
             zIndex: 9999,
             background: toggleBg,
           }}
-          aria-label="Open drawer"
+          aria-label='Open drawer'
         />
       );
     }
@@ -234,7 +219,10 @@ export const Drawer: React.FC<DrawerProps> = ({
   const drawerElement = (
     <>
       {!persistentEffective && (
-        <Backdrop $fade={fade} onClick={handleBackdropClick} />
+        <Backdrop
+          $fade={fade}
+          onClick={handleBackdropClick}
+        />
       )}
       <Panel
         $anchor={anchor}
@@ -261,10 +249,10 @@ export const Drawer: React.FC<DrawerProps> = ({
           >
             <IconButton
               icon={closeIcon}
-              size="sm"
-              variant="outlined"
+              size='sm'
+              variant='outlined'
               onClick={requestClose}
-              aria-label="Close drawer"
+              aria-label='Close drawer'
             />
           </div>
         )}

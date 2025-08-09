@@ -161,47 +161,48 @@ export default function TreeDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography variant="h2" bold>
+        <Typography
+          variant='h2'
+          bold
+        >
           Tree
         </Typography>
-        <Typography variant="subtitle">
-          Nested list with keyboard navigation
-        </Typography>
+        <Typography variant='subtitle'>Nested list with keyboard navigation</Typography>
 
         <Tabs>
-          <Tabs.Tab label="Usage" />
+          <Tabs.Tab label='Usage' />
           <Tabs.Panel>
             <Stack>
-              <Typography variant="h3">Variant "chevron"</Typography>
+              <Typography variant='h3'>Variant "chevron"</Typography>
               <Tree<Item>
                 nodes={DATA}
                 getLabel={(n) => n.label}
                 defaultExpanded={['fruit', 'dairy']}
                 onNodeSelect={(n) => setSelected(String(n.label))}
-                variant="chevron"
+                variant='chevron'
               />
-              <Typography variant="body">
+              <Typography variant='body'>
                 Selected: <code>{selected}</code>
               </Typography>
 
-              <Typography variant="h3">Variant "list"</Typography>
+              <Typography variant='h3'>Variant "list"</Typography>
               <Tree<Item>
                 nodes={DATA}
                 getLabel={(n) => n.label}
                 defaultExpanded={['fruit', 'dairy']}
-                variant="list"
+                variant='list'
               />
 
-              <Typography variant="h3">Variant "files"</Typography>
+              <Typography variant='h3'>Variant "files"</Typography>
               <Tree<Item>
                 nodes={FILES}
                 getLabel={(n) => n.label}
                 defaultExpanded={['src', 'components']}
-                variant="files"
+                variant='files'
               />
 
               <Button
-                variant="outlined"
+                variant='outlined'
                 onClick={toggleMode}
                 style={{ marginTop: theme.spacing(1) }}
               >
@@ -209,14 +210,18 @@ export default function TreeDemoPage() {
               </Button>
             </Stack>
           </Tabs.Panel>
-          <Tabs.Tab label="Reference" />
+          <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Table data={data} columns={columns} constrainHeight={false} />
+            <Table
+              data={data}
+              columns={columns}
+              constrainHeight={false}
+            />
           </Tabs.Panel>
         </Tabs>
 
         <Button
-          size="lg"
+          size='lg'
           onClick={() => navigate(-1)}
           style={{ marginTop: theme.spacing(1) }}
         >

@@ -17,8 +17,7 @@ export interface KeyModalProps {
 }
 
 export default function KeyModal({ open, onClose }: KeyModalProps) {
-  const { apiKey, provider, cipher, setKey, applyPassphrase, clearKey } =
-    useAIKey();
+  const { apiKey, provider, cipher, setKey, applyPassphrase, clearKey } = useAIKey();
   const [value, setValue] = useState('');
   const [remember, setRemember] = useState(false);
   const [passphrase, setPassphrase] = useState('');
@@ -29,10 +28,20 @@ export default function KeyModal({ open, onClose }: KeyModalProps) {
   if (!open) return null;
 
   return (
-    <Modal open={open} onClose={onClose}>
-      <Panel centered compact style={{ maxWidth: 480 }}>
+    <Modal
+      open={open}
+      onClose={onClose}
+    >
+      <Panel
+        centered
+        compact
+        style={{ maxWidth: 480 }}
+      >
         <Stack spacing={1}>
-          <Typography variant="h3" bold>
+          <Typography
+            variant='h3'
+            bold
+          >
             {cipher
               ? `Unlock ${prov === 'anthropic' ? 'Anthropic' : 'OpenAI'} key`
               : 'Paste your API key'}
@@ -45,8 +54,8 @@ export default function KeyModal({ open, onClose }: KeyModalProps) {
                 width: '100%',
                 padding: '0.5rem',
               }}
-              type="password"
-              placeholder="sk-..."
+              type='password'
+              placeholder='sk-...'
               value={value}
               onChange={(e) => {
                 setValue(e.target.value);
@@ -57,8 +66,8 @@ export default function KeyModal({ open, onClose }: KeyModalProps) {
 
           {(remember || cipher) && (
             <input
-              type="password"
-              placeholder="passphrase"
+              type='password'
+              placeholder='passphrase'
               value={passphrase}
               onChange={(e) => {
                 setPassphrase(e.target.value);
@@ -74,21 +83,17 @@ export default function KeyModal({ open, onClose }: KeyModalProps) {
               onChange={(e) => setProv(e.target.value as AIProvider)}
               style={{ width: '100%', padding: '0.5rem' }}
             >
-              <option value="openai">OpenAI</option>
-              <option value="anthropic">Anthropic</option>
+              <option value='openai'>OpenAI</option>
+              <option value='anthropic'>Anthropic</option>
             </select>
           )}
 
-          {error && (
-            <Typography color={theme.colors.secondary}>{error}</Typography>
-          )}
+          {error && <Typography color={theme.colors.secondary}>{error}</Typography>}
 
           {!cipher && (
-            <label
-              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-            >
+            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <input
-                type="checkbox"
+                type='checkbox'
                 checked={remember}
                 onChange={(e) => setRemember(e.target.checked)}
               />
@@ -98,9 +103,7 @@ export default function KeyModal({ open, onClose }: KeyModalProps) {
 
           <Button
             fullWidth
-            disabled={
-              cipher ? !passphrase : !value.trim() || (remember && !passphrase)
-            }
+            disabled={cipher ? !passphrase : !value.trim() || (remember && !passphrase)}
             onClick={async () => {
               setError('');
               if (cipher) {
@@ -110,11 +113,7 @@ export default function KeyModal({ open, onClose }: KeyModalProps) {
                   return;
                 }
               } else {
-                await setKey(
-                  value.trim(),
-                  prov,
-                  remember ? passphrase : undefined,
-                );
+                await setKey(value.trim(), prov, remember ? passphrase : undefined);
               }
               onClose?.();
             }}
@@ -124,7 +123,7 @@ export default function KeyModal({ open, onClose }: KeyModalProps) {
 
           {(cipher || apiKey) && (
             <Button
-              variant="outlined"
+              variant='outlined'
               fullWidth
               onClick={() => {
                 clearKey();

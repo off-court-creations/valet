@@ -15,9 +15,7 @@ export interface SpeedDialAction {
   onClick: () => void;
 }
 
-export interface SpeedDialProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    Presettable {
+export interface SpeedDialProps extends React.HTMLAttributes<HTMLDivElement>, Presettable {
   /** Icon for the main FAB (usually a ➕). */
   icon: React.ReactNode;
   /** Speed-dial actions revealed when the FAB is toggled. */
@@ -87,7 +85,7 @@ export const SpeedDial: React.FC<SpeedDialProps> = ({
   return (
     <Container
       {...rest}
-      $gap="0.5rem"
+      $gap='0.5rem'
       style={{ flexDirection: dirMap[direction] }}
       className={[presetCls, className].filter(Boolean).join(' ')}
     >
@@ -110,7 +108,7 @@ export const SpeedDial: React.FC<SpeedDialProps> = ({
         onClick={() => setOpen((o) => !o)}
         $bg={bg}
         $color={text}
-        aria-label="Speed dial"
+        aria-label='Speed dial'
       >
         {icon}
       </ActionButton>

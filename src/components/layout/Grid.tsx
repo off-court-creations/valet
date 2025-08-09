@@ -11,9 +11,7 @@ import { shallow } from 'zustand/shallow';
 import type { Presettable } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
-export interface GridProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    Presettable {
+export interface GridProps extends React.HTMLAttributes<HTMLDivElement>, Presettable {
   columns?: number;
   gap?: number | string;
   adaptive?: boolean;
@@ -42,10 +40,7 @@ export const Grid: React.FC<GridProps> = ({
   ...rest
 }) => {
   const { theme } = useTheme();
-  const { width, height } = useSurface(
-    (s) => ({ width: s.width, height: s.height }),
-    shallow,
-  );
+  const { width, height } = useSurface((s) => ({ width: s.width, height: s.height }), shallow);
 
   const portrait = height > width;
   const effectiveCols = adaptive && portrait ? 1 : columns;

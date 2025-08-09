@@ -9,9 +9,7 @@ import { preset } from '../../css/stylePresets';
 import type { Presettable } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
-export interface StepperProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    Presettable {
+export interface StepperProps extends React.HTMLAttributes<HTMLDivElement>, Presettable {
   steps: React.ReactNode[];
   active?: number;
 }
@@ -36,8 +34,7 @@ const StepItem = styled('div')<{ $active: boolean; $primary: string }>`
     counter-increment: step;
     content: counter(step);
     border: 1px solid ${({ $primary }) => $primary};
-    background: ${({ $active, $primary }) =>
-      $active ? $primary : 'transparent'};
+    background: ${({ $active, $primary }) => ($active ? $primary : 'transparent')};
     color: ${({ $active }) => ($active ? '#fff' : 'inherit')};
     border-radius: 999px;
     width: 1.5rem;
@@ -68,7 +65,11 @@ export const Stepper: React.FC<StepperProps> = ({
       style={style}
     >
       {steps.map((label, idx) => (
-        <StepItem key={idx} $active={idx === active} $primary={primary}>
+        <StepItem
+          key={idx}
+          $active={idx === active}
+          $primary={primary}
+        >
           {label}
         </StepItem>
       ))}

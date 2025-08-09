@@ -27,7 +27,7 @@ function ensureSubscription() {
   subscribed = true;
   /* Re-run every preset whenever the theme changes */
   useTheme.subscribe(({ theme }) => {
-    for (const { cssFn, class: cls, rule } of registry.values()) {
+    for (const { cssFn, rule } of registry.values()) {
       const nextCSS = normalise(cssFn(theme));
       rule.style.cssText = nextCSS;
     }

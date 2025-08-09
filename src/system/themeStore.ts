@@ -130,6 +130,5 @@ export const useTheme = create<ThemeStore>((set, get) => ({
 
   toggleMode: () => get().setMode(get().mode === 'dark' ? 'light' : 'dark'),
 
-  setTheme: (patch) =>
-    set((state) => ({ theme: { ...state.theme, ...patch } })),
+  setTheme: (patch) => set((state) => ({ theme: { ...state.theme, ...patch } })),
 }));

@@ -21,10 +21,13 @@ export default function VideoDemoPage() {
         }}
       >
         {/* Header --------------------------------------------------- */}
-        <Typography variant="h2" bold>
+        <Typography
+          variant='h2'
+          bold
+        >
           Video Demo
         </Typography>
-        <Typography variant="subtitle">
+        <Typography variant='subtitle'>
           Basic usage of the&nbsp;
           <code>&lt;Video /&gt;</code>&nbsp;component
         </Typography>
@@ -41,9 +44,9 @@ export default function VideoDemoPage() {
           autoPlay // starts muted (default) for autoplay compliance
           muted
           loop
-          width="100%"
-          height="auto"
-          objectFit="contain"
+          width='100%'
+          height='auto'
+          objectFit='contain'
         />
       </Stack>
     </Surface>

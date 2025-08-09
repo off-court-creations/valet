@@ -18,7 +18,7 @@ export default function TestPage() {
 
   return (
     <Surface style={{ backgroundColor: theme.colors['background'] }}>
-      <Stack direction="row">
+      <Stack direction='row'>
         <Button>
           <Typography>Really Long Button</Typography>
         </Button>
@@ -43,16 +43,26 @@ export default function TestPage() {
         }}
       >
         <RadioGroup
-          name="shipping"
+          name='shipping'
           value={method}
           onChange={setMethod}
           row
-          size="lg"
+          size='lg'
         >
-          <Stack direction="column">
-            <Radio value="standard" label="Standard (3–5 days)" />
-            <Radio value="express" label="Express (1–2 days)" />
-            <Radio value="overnight" label="Overnight" disabled />
+          <Stack direction='column'>
+            <Radio
+              value='standard'
+              label='Standard (3–5 days)'
+            />
+            <Radio
+              value='express'
+              label='Express (1–2 days)'
+            />
+            <Radio
+              value='overnight'
+              label='Overnight'
+              disabled
+            />
           </Stack>
         </RadioGroup>
       </Panel>

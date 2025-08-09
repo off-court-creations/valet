@@ -2,13 +2,7 @@
 // src/components/widgets/LLMChat.tsx  | valet
 // LLM style chat component with height constraint
 // ─────────────────────────────────────────────────────────────
-import React, {
-  useState,
-  useRef,
-  useId,
-  useEffect,
-  useLayoutEffect,
-} from 'react';
+import React, { useState, useRef, useId, useEffect, useLayoutEffect } from 'react';
 import { styled, keyframes } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { useSurface } from '../../system/surfaceStore';
@@ -82,8 +76,7 @@ const Row = styled('div')<{
 }>`
   display: flex;
   align-items: center;
-  justify-content: ${({ $from }) =>
-    $from === 'user' ? 'flex-end' : 'flex-start'};
+  justify-content: ${({ $from }) => ($from === 'user' ? 'flex-end' : 'flex-start')};
   padding-left: ${({ $left }) => $left};
   padding-right: ${({ $right }) => $right};
 `;
@@ -167,12 +160,7 @@ export const LLMChat: React.FC<ChatProps> = ({
   const constraintRef = useRef(false);
 
   const [text, setText] = useState('');
-  const {
-    apiKey: storeKey,
-    provider: storeProv,
-    model: storeModel,
-    setModel,
-  } = useAIKey();
+  const { apiKey: storeKey, provider: storeProv, model: storeModel, setModel } = useAIKey();
   const [showKeyModal, setShowKeyModal] = useState(false);
   const key = propKey ?? storeKey;
   const provider = (propProvider ?? storeProv) as AIProvider | null;
@@ -277,13 +265,16 @@ export const LLMChat: React.FC<ChatProps> = ({
   return (
     <>
       {!propKey && (
-        <KeyModal open={showKeyModal} onClose={() => setShowKeyModal(false)} />
+        <KeyModal
+          open={showKeyModal}
+          onClose={() => setShowKeyModal(false)}
+        />
       )}
       <Panel
         {...rest}
         compact
         fullWidth
-        variant="alt"
+        variant='alt'
         style={style}
         className={cls}
       >
@@ -294,12 +285,15 @@ export const LLMChat: React.FC<ChatProps> = ({
         >
           {provider && key ? (
             <Select
-              size="sm"
+              size='sm'
               value={model}
               onChange={(v) => handleModelChange(v as string)}
             >
               {models[provider].map((m) => (
-                <Select.Option key={m} value={m}>
+                <Select.Option
+                  key={m}
+                  value={m}
+                >
                   {m}
                 </Select.Option>
               ))}
@@ -316,12 +310,10 @@ export const LLMChat: React.FC<ChatProps> = ({
             }}
             onClick={() => !propKey && setShowKeyModal(true)}
           >
-            <Typography variant="subtitle">
-              {key ? 'Connected' : 'Disconnected'}
-            </Typography>
+            <Typography variant='subtitle'>{key ? 'Connected' : 'Disconnected'}</Typography>
             <IconButton
               icon={key ? 'carbon:checkmark' : 'carbon:circle-dash'}
-              aria-label="Set API key"
+              aria-label='Set API key'
             />
           </span>
         </Bar>
@@ -332,9 +324,7 @@ export const LLMChat: React.FC<ChatProps> = ({
         >
           <Messages
             $gap={theme.spacing(1.5)}
-            style={
-              shouldConstrain ? { overflowY: 'auto', maxHeight } : undefined
-            }
+            style={shouldConstrain ? { overflowY: 'auto', maxHeight } : undefined}
           >
             {messages
               .filter((m) => m.role !== 'system')
@@ -351,38 +341,33 @@ export const LLMChat: React.FC<ChatProps> = ({
                     {m.role !== 'user' && systemAvatar && (
                       <Avatar
                         src={systemAvatar}
-                        size="s"
-                        variant="outline"
+                        size='s'
+                        variant='outline'
                         style={{ marginRight: theme.spacing(1) }}
                       />
                     )}
                     <Panel
                       compact
-                      variant="main"
-                      background={
-                        m.role === 'user' ? theme.colors.primary : undefined
-                      }
+                      variant='main'
+                      background={m.role === 'user' ? theme.colors.primary : undefined}
                       style={{
                         maxWidth: '100%',
                         width: 'fit-content',
                         borderRadius: theme.spacing(0.5),
-                        animation: m.animate
-                          ? `${fadeIn} 0.2s ease-out`
-                          : undefined,
+                        animation: m.animate ? `${fadeIn} 0.2s ease-out` : undefined,
                       }}
                     >
                       {m.name && (
-                        <Typography variant="subtitle" bold>
+                        <Typography
+                          variant='subtitle'
+                          bold
+                        >
                           {m.name}
                         </Typography>
                       )}
                       {m.typing ? (
                         <Typing
-                          $color={
-                            m.role === 'user'
-                              ? theme.colors.primaryText
-                              : theme.colors.text
-                          }
+                          $color={m.role === 'user' ? theme.colors.primaryText : theme.colors.text}
                         >
                           <span />
                           <span />
@@ -400,8 +385,8 @@ export const LLMChat: React.FC<ChatProps> = ({
                     {m.role === 'user' && userAvatar && (
                       <Avatar
                         src={userAvatar}
-                        size="s"
-                        variant="outline"
+                        size='s'
+                        variant='outline'
                         style={{ marginLeft: theme.spacing(1) }}
                       />
                     )}
@@ -411,11 +396,18 @@ export const LLMChat: React.FC<ChatProps> = ({
           </Messages>
 
           {!disableInput && (
-            <form onSubmit={handleSubmit} style={{ width: '100%' }}>
-              <Stack direction="row" spacing={1} compact>
+            <form
+              onSubmit={handleSubmit}
+              style={{ width: '100%' }}
+            >
+              <Stack
+                direction='row'
+                spacing={1}
+                compact
+              >
                 <TextField
-                  as="textarea"
-                  name="chat-message"
+                  as='textarea'
+                  name='chat-message'
                   value={text}
                   onChange={(e) => setText(e.target.value)}
                   onKeyDown={(e) => {
@@ -429,9 +421,9 @@ export const LLMChat: React.FC<ChatProps> = ({
                   fullWidth
                 />
                 <IconButton
-                  icon="carbon:send"
-                  type="submit"
-                  aria-label="Send"
+                  icon='carbon:send'
+                  type='submit'
+                  aria-label='Send'
                 />
               </Stack>
             </form>

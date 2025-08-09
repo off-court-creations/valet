@@ -10,9 +10,7 @@ import type { Presettable } from '../../types';
 
 export type SkeletonVariant = 'text' | 'rect' | 'circle';
 
-export interface SkeletonProps
-  extends React.HTMLAttributes<HTMLSpanElement>,
-    Presettable {
+export interface SkeletonProps extends React.HTMLAttributes<HTMLSpanElement>, Presettable {
   /** Show placeholder while true */
   loading?: boolean;
   /** Override detected placeholder shape */
@@ -54,8 +52,7 @@ const Placeholder = styled('span')<{
   border-radius: ${({ $radius }) => $radius};
   background: ${({ $bg }) => $bg};
   z-index: 1;
-  animation: ${({ $loading }) =>
-    $loading ? `${pulse} 1.5s ease-in-out infinite` : 'none'};
+  animation: ${({ $loading }) => ($loading ? `${pulse} 1.5s ease-in-out infinite` : 'none')};
   pointer-events: none;
 `;
 
@@ -87,10 +84,7 @@ function radiusFor(v: SkeletonVariant): string {
 /*───────────────────────────────────────────────────────────*/
 /* Component                                                 */
 export const Skeleton = forwardRef<HTMLSpanElement, SkeletonProps>(
-  (
-    { loading, variant, icon, preset: p, className, children, style, ...rest },
-    ref,
-  ) => {
+  ({ loading, variant, icon, preset: p, className, children, style, ...rest }, ref) => {
     const child = React.Children.count(children) === 1 ? children : null;
     const resolved = variant || inferVariant(child);
     const radius = radiusFor(resolved);
@@ -137,7 +131,7 @@ export const Skeleton = forwardRef<HTMLSpanElement, SkeletonProps>(
         {show && (
           <Placeholder
             ref={phRef}
-            aria-hidden="true"
+            aria-hidden='true'
             $bg={bg}
             $radius={radius}
             $loading={activeLoading}

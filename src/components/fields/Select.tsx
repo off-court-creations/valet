@@ -26,10 +26,7 @@ type Primitive = string | number;
 export type SelectSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 export interface SelectProps
-  extends Omit<
-      React.HTMLAttributes<HTMLDivElement>,
-      'onChange' | 'defaultValue' | 'children'
-    >,
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'defaultValue' | 'children'>,
     Presettable {
   /** Controlled value (single) or array (multiple). */
   value?: Primitive | Primitive[];
@@ -150,8 +147,7 @@ const Item = styled('li')<{
   padding: 6px ${({ $pad }) => $pad};
   cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
   opacity: ${({ $disabled }) => ($disabled ? 0.45 : 1)};
-  background: ${({ $active, $primary }) =>
-    $active ? $primary + '22' : 'transparent'};
+  background: ${({ $active, $primary }) => ($active ? $primary + '22' : 'transparent')};
 
   &:hover:not([data-disabled='true']) {
     background: ${({ $primary }) => $primary + '33'};
@@ -205,8 +201,7 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLDivElement>) => {
 
   const textCol = theme.colors.text;
   const bg = theme.colors.surface;
-  const bgElev =
-    theme.colors.surfaceElevated ?? theme.colors.backgroundAlt ?? bg;
+  const bgElev = theme.colors.surfaceElevated ?? theme.colors.backgroundAlt ?? bg;
   const primary = theme.colors.primary;
 
   /* optional FormControl hook ------------------------------ */
@@ -220,11 +215,7 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLDivElement>) => {
   const controlled = formVal !== undefined || valueProp !== undefined;
 
   const [self, setSelf] = useState(initialValue);
-  const cur = controlled
-    ? formVal !== undefined
-      ? formVal
-      : valueProp!
-    : self;
+  const cur = controlled ? (formVal !== undefined ? formVal : valueProp!) : self;
 
   /* commit helper ------------------------------------------ */
   const commit = useCallback(
@@ -292,8 +283,7 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLDivElement>) => {
   };
 
   /* helpers ------------------------------------------------ */
-  const isSel = (v: Primitive) =>
-    multiple ? array(cur ?? []).some((x) => eq(x, v)) : eq(cur, v);
+  const isSel = (v: Primitive) => (multiple ? array(cur ?? []).some((x) => eq(x, v)) : eq(cur, v));
 
   const toggle = (v: Primitive) => {
     if (multiple) {
@@ -324,8 +314,7 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLDivElement>) => {
 
   /* preset classes merge ----------------------------------- */
   const presetCls = presetKey ? preset(presetKey) : '';
-  const mergedCls =
-    [presetCls, className].filter(Boolean).join(' ') || undefined;
+  const mergedCls = [presetCls, className].filter(Boolean).join(' ') || undefined;
 
   /*──────────────────────────────────────────────────────────*/
   return (
@@ -343,9 +332,9 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLDivElement>) => {
         $bg={bg}
         $text={textCol}
         $primary={primary}
-        type="button"
-        role="combobox"
-        aria-haspopup="listbox"
+        type='button'
+        role='combobox'
+        aria-haspopup='listbox'
         aria-controls={listId}
         aria-expanded={open}
         disabled={disabled}
@@ -388,7 +377,7 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLDivElement>) => {
             $top={pos.top}
             $left={pos.left}
             $bg={bgElev}
-            role="listbox"
+            role='listbox'
             id={listId}
           >
             {opts.map((o, i) => {
@@ -396,7 +385,7 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLDivElement>) => {
               return (
                 <Item
                   key={o.props.value}
-                  role="option"
+                  role='option'
                   aria-selected={sel}
                   data-disabled={o.props.disabled}
                   $pad={g.pad}
@@ -408,7 +397,7 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLDivElement>) => {
                 >
                   {multiple && (
                     <input
-                      type="checkbox"
+                      type='checkbox'
                       readOnly
                       checked={sel}
                       style={{ marginRight: 6 }}

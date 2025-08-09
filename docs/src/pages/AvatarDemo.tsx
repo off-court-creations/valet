@@ -97,63 +97,79 @@ export default function AvatarDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography variant="h2">Avatar</Typography>
+        <Typography variant='h2'>Avatar</Typography>
 
         <Tabs>
-          <Tabs.Tab label="Usage" />
+          <Tabs.Tab label='Usage' />
           <Tabs.Panel>
-            <Typography variant="subtitle">
-              Gravatar wrapper with custom photo support
-            </Typography>
+            <Typography variant='subtitle'>Gravatar wrapper with custom photo support</Typography>
 
-            <Typography variant="h3">1. Try your Gravatar</Typography>
+            <Typography variant='h3'>1. Try your Gravatar</Typography>
             <FormControl
               useStore={useEmailForm}
               onSubmitValues={(vals) => setEmail(vals.email)}
             >
-              <Stack direction="row">
+              <Stack direction='row'>
                 <Avatar email={email} />
                 <TextField
-                  name="email"
-                  type="email"
-                  placeholder="you@example.com"
+                  name='email'
+                  type='email'
+                  placeholder='you@example.com'
                 />
-                <Button type="submit">Show</Button>
+                <Button type='submit'>Show</Button>
               </Stack>
             </FormControl>
-            <Typography variant="h3">2. Default example</Typography>
-            <Avatar email="support@gravatar.com" size="l" />
-            <Typography variant="h3">3. Custom src</Typography>
+            <Typography variant='h3'>2. Default example</Typography>
             <Avatar
-              src="https://avatars.githubusercontent.com/u/9919?s=200&v=4"
-              size="l"
-              alt="GitHub"
+              email='support@gravatar.com'
+              size='l'
+            />
+            <Typography variant='h3'>3. Custom src</Typography>
+            <Avatar
+              src='https://avatars.githubusercontent.com/u/9919?s=200&v=4'
+              size='l'
+              alt='GitHub'
             />
 
             {/* 4. Sizes --------------------------------------------------------- */}
-            <Typography variant="h3">4. Sizes</Typography>
-            <Stack direction="row">
+            <Typography variant='h3'>4. Sizes</Typography>
+            <Stack direction='row'>
               {(['xl', 'l', 'm', 's', 'xs'] as const).map((s) => (
-                <Stack key={s} spacing={0.5} style={{ alignItems: 'center' }}>
-                  <Avatar email="support@gravatar.com" size={s} />
-                  <Typography variant="body">{s}</Typography>
+                <Stack
+                  key={s}
+                  spacing={0.5}
+                  style={{ alignItems: 'center' }}
+                >
+                  <Avatar
+                    email='support@gravatar.com'
+                    size={s}
+                  />
+                  <Typography variant='body'>{s}</Typography>
                 </Stack>
               ))}
             </Stack>
 
-            <Typography variant="h3">5. Outline</Typography>
-            <Avatar email="support@gravatar.com" size="l" variant="outline" />
+            <Typography variant='h3'>5. Outline</Typography>
+            <Avatar
+              email='support@gravatar.com'
+              size='l'
+              variant='outline'
+            />
           </Tabs.Panel>
 
-          <Tabs.Tab label="Reference" />
+          <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant="h3">Prop reference</Typography>
-            <Table data={data} columns={columns} constrainHeight={false} />
+            <Typography variant='h3'>Prop reference</Typography>
+            <Table
+              data={data}
+              columns={columns}
+              constrainHeight={false}
+            />
           </Tabs.Panel>
         </Tabs>
 
         <Button
-          size="lg"
+          size='lg'
           onClick={() => navigate(-1)}
           style={{ marginTop: theme.spacing(1) }}
         >

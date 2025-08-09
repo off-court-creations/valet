@@ -169,11 +169,15 @@ export default function NavDrawer() {
     }
   };
   return (
-    <Drawer adaptive anchor="left" size="16rem">
+    <Drawer
+      adaptive
+      anchor='left'
+      size='16rem'
+    >
       <Tree<Item>
         nodes={treeData}
         getLabel={(n) => n.label}
-        variant="list"
+        variant='list'
         selected={location.pathname}
         expanded={expanded}
         onExpandedChange={handleExpandedChange}

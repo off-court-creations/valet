@@ -5,31 +5,18 @@
 import { useInsertionEffect, useEffect, useMemo } from 'react';
 import { useFonts } from '../system/fontStore';
 import { useTheme } from '../system/themeStore';
-import {
-  injectFontLinks,
-  waitForFonts,
-  GoogleFontOptions,
-  Font,
-} from '../helpers/fontLoader';
+import { injectFontLinks, waitForFonts, GoogleFontOptions, Font } from '../helpers/fontLoader';
 
 const fontToName = (f: Font) => (typeof f === 'string' ? f : f.name);
 
-export function useGoogleFonts(
-  extras: Font[] = [],
-  options?: GoogleFontOptions,
-) {
+export function useGoogleFonts(extras: Font[] = [], options?: GoogleFontOptions) {
   const start = useFonts((s) => s.start);
   const finish = useFonts((s) => s.finish);
   const themeFonts = useTheme((s) => s.theme.fonts);
 
   // Build a de-duplicated, stable array of fonts to load
   const fonts = useMemo(() => {
-    const all: Font[] = [
-      themeFonts.heading,
-      themeFonts.body,
-      themeFonts.mono,
-      ...extras,
-    ];
+    const all: Font[] = [themeFonts.heading, themeFonts.body, themeFonts.mono, ...extras];
     const seen = new Set<string>();
     const out: Font[] = [];
     for (const f of all) {
