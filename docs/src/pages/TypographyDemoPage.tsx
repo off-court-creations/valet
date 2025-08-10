@@ -1,4 +1,4 @@
-// src/pages/TypographyDemoPage.tsx
+// docs/src/pages/TypographyDemoPage.tsx
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../components/NavDrawer';
 import { Surface, Stack, Typography, Panel, Button, Table, useTheme, Tabs } from '@archway/valet';
@@ -26,8 +26,13 @@ export default function TypographyDemoPage() {
   const data: Row[] = [
     {
       prop: <code>variant</code>,
-      type: <code>'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'body' | 'subtitle' | 'button'</code>,
-      default: <code>'body'</code>,
+      type: (
+        <code>
+          &#39;h1&#39; | &#39;h2&#39; | &#39;h3&#39; | &#39;h4&#39; | &#39;h5&#39; | &#39;h6&#39; |
+          &#39;body&#39; | &#39;subtitle&#39; | &#39;button&#39;
+        </code>
+      ),
+      default: <code>&#39;body&#39;</code>,
       description: 'Typography style preset',
     },
     {
@@ -50,26 +55,26 @@ export default function TypographyDemoPage() {
     },
     {
       prop: <code>family</code>,
-      type: <code>'heading' | 'body' | 'mono' | 'button'</code>,
-      default: <code>'-'</code>,
+      type: <code>&#39;heading&#39; | &#39;body&#39; | &#39;mono&#39; | &#39;button&#39;</code>,
+      default: <code>&#39;-&#39;</code>,
       description: 'Select a theme font family',
     },
     {
       prop: <code>fontFamily</code>,
       type: <code>string</code>,
-      default: '-',
+      default: <code>&#39;-&#39;</code>,
       description: 'Override theme font family',
     },
     {
       prop: <code>fontSize</code>,
       type: <code>string</code>,
-      default: '-',
+      default: <code>&#39;-&#39;</code>,
       description: 'Explicit CSS font-size',
     },
     {
       prop: <code>scale</code>,
       type: <code>number</code>,
-      default: '-',
+      default: <code>&#39;-&#39;</code>,
       description: 'Multiply the final size (autoSize aware)',
     },
     {
@@ -81,13 +86,13 @@ export default function TypographyDemoPage() {
     {
       prop: <code>color</code>,
       type: <code>string</code>,
-      default: '-',
+      default: <code>&#39;-&#39;</code>,
       description: 'Override text colour',
     },
     {
       prop: <code>preset</code>,
       type: <code>string | string[]</code>,
-      default: '-',
+      default: <code>&#39;-&#39;</code>,
       description: 'Apply style presets',
     },
   ];
@@ -103,15 +108,15 @@ export default function TypographyDemoPage() {
           <Tabs.Panel>
             <Typography variant='h3'>Variants</Typography>
             <Panel compact>
-              <Typography variant='h1'>variant="h1"</Typography>
-              <Typography variant='h2'>variant="h2"</Typography>
-              <Typography variant='h3'>variant="h3"</Typography>
-              <Typography variant='h4'>variant="h4"</Typography>
-              <Typography variant='h5'>variant="h5"</Typography>
-              <Typography variant='h6'>variant="h6"</Typography>
-              <Typography variant='subtitle'>variant="subtitle"</Typography>
-              <Typography variant='body'>variant="body"</Typography>
-              <Typography variant='button'>variant="button"</Typography>
+              <Typography variant='h1'>variant=&quot;h1&quot;</Typography>
+              <Typography variant='h2'>variant=&quot;h2&quot;</Typography>
+              <Typography variant='h3'>variant=&quot;h3&quot;</Typography>
+              <Typography variant='h4'>variant=&quot;h4&quot;</Typography>
+              <Typography variant='h5'>variant=&quot;h5&quot;</Typography>
+              <Typography variant='h6'>variant=&quot;h6&quot;</Typography>
+              <Typography variant='subtitle'>variant=&quot;subtitle&quot;</Typography>
+              <Typography variant='body'>variant=&quot;body&quot;</Typography>
+              <Typography variant='button'>variant=&quot;button&quot;</Typography>
             </Panel>
 
             <Typography variant='h3'>Styling props</Typography>
@@ -150,12 +155,12 @@ export default function TypographyDemoPage() {
             {/* 3. Font & size overrides ---------------------------------------- */}
             <Typography variant='h3'>Font &amp; size overrides</Typography>
             <Panel compact>
-              <Typography fontFamily='Poppins'>fontFamily="Poppins"</Typography>
-              <Typography fontFamily='Brandon'>fontFamily="Brandon"</Typography>
-              <Typography family='mono'>family="mono"</Typography>
-              <Typography family='heading'>family="heading"</Typography>
-              <Typography family='button'>family="button"</Typography>
-              <Typography fontSize='1.5rem'>fontSize="1.5rem"</Typography>
+              <Typography fontFamily='Poppins'>fontFamily=&quot;Poppins&quot;</Typography>
+              <Typography fontFamily='Brandon'>fontFamily=&quot;Brandon&quot;</Typography>
+              <Typography family='mono'>family=&quot;mono&quot;</Typography>
+              <Typography family='heading'>family=&quot;heading&quot;</Typography>
+              <Typography family='button'>family=&quot;button&quot;</Typography>
+              <Typography fontSize='1.5rem'>fontSize=&quot;1.5rem&quot;</Typography>
               <Typography scale={1.25}>scale=1.25</Typography>
               <Typography
                 autoSize
@@ -173,7 +178,7 @@ export default function TypographyDemoPage() {
 
             <Typography variant='h3'>Colour override &amp; adaptation</Typography>
             <Panel compact>
-              <Typography color='#e91e63'>color="#e91e63"</Typography>
+              <Typography color='#e91e63'>color=&quot;#e91e63&quot;</Typography>
               <Panel background={theme.colors['primary']}>
                 <Typography variant='h6'>Inside Panel inherits text colour</Typography>
               </Panel>

@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// src/pages/RichChatDemo.tsx | valet
+// docs/src/pages/components/RichChat.tsx | valet
 // Showcase for <RichChat /> component with local logic
 // ─────────────────────────────────────────────────────────────────────────────
 import { useState } from 'react';
@@ -153,7 +153,7 @@ export default function RichChatDemoPage() {
       } else if (step === 2) {
         next = {
           role: 'assistant',
-          content: <Typography>What is your child's name?</Typography>,
+          content: <Typography>What is your child&#39;s name?</Typography>,
           animate: true,
         };
         setStep(3);

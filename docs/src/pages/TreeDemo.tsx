@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/pages/TreeDemo.tsx | valet
+// docs/src/pages/TreeDemo.tsx | valet
 // Showcase of Tree component
 // ─────────────────────────────────────────────────────────────
 import {
@@ -20,7 +20,7 @@ import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../components/NavDrawer';
 
 interface Item {
-  label: React.ReactNode;
+  label: ReactNode;
 }
 
 const DATA: TreeNode<Item>[] = [
@@ -140,8 +140,8 @@ const data: Row[] = [
   },
   {
     prop: <code>variant</code>,
-    type: <code>'chevron' | 'list' | 'files'</code>,
-    default: <code>'chevron'</code>,
+    type: <code>&#39;chevron&#39; | &#39;list&#39; | &#39;files&#39;</code>,
+    default: <code>&#39;chevron&#39;</code>,
     description: 'Visual style of branches',
   },
   {
@@ -173,7 +173,7 @@ export default function TreeDemoPage() {
           <Tabs.Tab label='Usage' />
           <Tabs.Panel>
             <Stack>
-              <Typography variant='h3'>Variant "chevron"</Typography>
+              <Typography variant='h3'>Variant &quot;chevron&quot;</Typography>
               <Tree<Item>
                 nodes={DATA}
                 getLabel={(n) => n.label}
@@ -185,7 +185,7 @@ export default function TreeDemoPage() {
                 Selected: <code>{selected}</code>
               </Typography>
 
-              <Typography variant='h3'>Variant "list"</Typography>
+              <Typography variant='h3'>Variant &quot;list&quot;</Typography>
               <Tree<Item>
                 nodes={DATA}
                 getLabel={(n) => n.label}
@@ -193,7 +193,7 @@ export default function TreeDemoPage() {
                 variant='list'
               />
 
-              <Typography variant='h3'>Variant "files"</Typography>
+              <Typography variant='h3'>Variant &quot;files&quot;</Typography>
               <Tree<Item>
                 nodes={FILES}
                 getLabel={(n) => n.label}
