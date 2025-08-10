@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types -- Fully typed TSX: runtime PropTypes not used */
 // ─────────────────────────────────────────────────────────────
 // src/components/widgets/Accordion.tsx | valet
 // Fully-typed, theme-aware <Accordion /> component
@@ -227,7 +228,7 @@ export const Accordion: React.FC<AccordionProps> & {
   const prevHeightRef = useRef<number | undefined>(undefined);
   const prevConstrainedRef = useRef(false);
 
-  const runUpdate = () => {
+  const runUpdate = useCallback(() => {
     const node = wrapRef.current;
     const surfEl = surface.element;
     if (!node || !surfEl) return;
@@ -270,12 +271,12 @@ export const Accordion: React.FC<AccordionProps> & {
         setMaxHeight(undefined);
       }
     }
-  };
+  }, [surface]);
 
-  const update = () => {
+  const update = useCallback(() => {
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     rafRef.current = requestAnimationFrame(runUpdate);
-  };
+  }, [runUpdate]);
 
   useEffect(() => {
     if (!constrainHeight) {
@@ -299,12 +300,12 @@ export const Accordion: React.FC<AccordionProps> & {
       ro.disconnect();
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [constrainHeight, surface.element]);
+  }, [constrainHeight, surface, uniqueId, update]);
 
   useLayoutEffect(() => {
     if (!constrainHeight || !wrapRef.current || !surface.element) return;
     update();
-  }, [constrainHeight, surface.height, surface.element]);
+  }, [constrainHeight, surface.height, surface.element, update]);
 
   return (
     <AccordionCtx.Provider value={ctx}>
@@ -319,7 +320,7 @@ export const Accordion: React.FC<AccordionProps> & {
         >
           {React.Children.map(children, (child, idx) =>
             React.isValidElement(child)
-              ? React.cloneElement(child as React.ReactElement<any>, {
+              ? React.cloneElement(child as React.ReactElement<{ index?: number }>, {
                   index: idx,
                 })
               : child,

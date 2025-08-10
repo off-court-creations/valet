@@ -82,7 +82,7 @@ export const AppBar: React.FC<AppBarProps> = ({
   const ref = useRef<HTMLElement>(null);
   const id = useId();
 
-  const isToken = (v: any): v is AppBarToken =>
+  const isToken = (v: unknown): v is AppBarToken =>
     v === 'primary' || v === 'secondary' || v === 'tertiary';
 
   const bg =
@@ -104,16 +104,20 @@ export const AppBar: React.FC<AppBarProps> = ({
     const node = ref.current;
     const surfEl = element;
     if (!node || !surfEl) return;
-    const prev = (surfEl.style as any).marginTop;
+
+    const surfaceEl = surfEl as HTMLElement;
+    const prev = surfaceEl.style.marginTop;
+
     const update = (m: { height: number }) => {
-      (surfEl.style as any).marginTop = `${m.height}px`;
+      surfaceEl.style.marginTop = `${m.height}px`;
     };
+
     registerChild(id, node, update);
     return () => {
       unregisterChild(id);
-      (surfEl.style as any).marginTop = prev;
+      surfaceEl.style.marginTop = prev;
     };
-  }, [element]);
+  }, [element, id, registerChild, unregisterChild]);
 
   const bar = (
     <Bar

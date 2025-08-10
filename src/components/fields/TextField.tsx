@@ -106,44 +106,29 @@ export const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
       ...rawRest
     } = props;
 
-    /* Strip props we manage so they don’t duplicate ----------------------- */
-    const {
-      onChange: externalOnChange,
-      value: externalValue,
-      defaultValue,
-      ...rest
-    } = rawRest as any;
+    // Keys we manage/control
+    const { onChange: externalOnChange, value: externalValue, defaultValue, ...rest } = rawRest;
 
     const id = useId();
     const { theme } = useTheme();
 
-    /* Optional FormControl wiring ----------------------------------------- */
-    let form: ReturnType<typeof useForm<any>> | null = null;
-    try {
-      form = useForm<any>();
-    } catch {}
+    /** Optional FormControl wiring (safe-cast to a minimal interface) */
+    type FormApi = {
+      values: Record<string, unknown>;
+      setField: (field: string, value: unknown) => void;
+    } | null;
 
-    const controlledValue = form ? (form.values[name] ?? '') : externalValue;
-
-    const setField = form ? form.setField : undefined;
-
-    const handleChange: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (e) => {
-      setField?.(name as any, e.target.value);
-      externalOnChange?.(e); // call user’s handler if provided
-    };
+    // Call unconditionally to satisfy hooks rule; provider-less usage should be handled by the hook.
+    const form = useForm() as unknown as FormApi;
 
     const presetClasses = presetName ? preset(presetName) : '';
-
-    const Element =
-      as === 'textarea'
-        ? (FieldTextarea as React.ComponentType<StyledFieldProps & TextareaProps>)
-        : (FieldInput as React.ComponentType<StyledFieldProps & InputProps>);
+    const wrapperStyle = fullWidth ? { flex: 1, width: '100%', ...styleProp } : styleProp;
 
     return (
       <Wrapper
         theme={theme}
         className={[presetClasses, className].filter(Boolean).join(' ')}
-        style={fullWidth ? { flex: 1, width: '100%', ...styleProp } : styleProp}
+        style={wrapperStyle}
       >
         {label && (
           <Label
@@ -154,21 +139,66 @@ export const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
           </Label>
         )}
 
-        <Element
-          id={id}
-          name={name}
-          ref={ref as any}
-          theme={theme}
-          $error={error}
-          rows={as === 'textarea' ? rows : undefined}
-          /* Spread the remaining, de-duplicated props first */
-          {...rest}
-          /* Then our controlled bits so they win if overlaps exist */
-          value={controlledValue}
-          defaultValue={defaultValue}
-          onChange={handleChange}
-          style={fontFamily ? { fontFamily } : undefined}
-        />
+        {as === 'textarea'
+          ? (() => {
+              const onChangeTextarea = externalOnChange as
+                | ChangeEventHandler<HTMLTextAreaElement>
+                | undefined;
+
+              const handleChange: ChangeEventHandler<HTMLTextAreaElement> = (e) => {
+                if (form?.setField) form.setField(name, e.target.value);
+                onChangeTextarea?.(e);
+              };
+
+              const value = (
+                form ? (form.values[name] as TextareaProps['value'] | undefined) : externalValue
+              ) as TextareaProps['value'] | undefined;
+
+              return (
+                <FieldTextarea
+                  id={id}
+                  name={name}
+                  ref={ref as React.Ref<HTMLTextAreaElement>}
+                  theme={theme}
+                  $error={error}
+                  rows={rows}
+                  {...(rest as Omit<TextareaProps, 'onChange' | 'value' | 'defaultValue'>)}
+                  value={value}
+                  defaultValue={defaultValue as TextareaProps['defaultValue']}
+                  onChange={handleChange}
+                  style={fontFamily ? { fontFamily } : undefined}
+                />
+              );
+            })()
+          : (() => {
+              const onChangeInput = externalOnChange as
+                | ChangeEventHandler<HTMLInputElement>
+                | undefined;
+
+              const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+                if (form?.setField) form.setField(name, e.target.value);
+                onChangeInput?.(e);
+              };
+
+              const value = (
+                form ? (form.values[name] as InputProps['value'] | undefined) : externalValue
+              ) as InputProps['value'] | undefined;
+
+              return (
+                <FieldInput
+                  id={id}
+                  name={name}
+                  ref={ref as React.Ref<HTMLInputElement>}
+                  theme={theme}
+                  $error={error}
+                  {...(rest as Omit<InputProps, 'onChange' | 'value' | 'defaultValue'>)}
+                  value={value}
+                  defaultValue={defaultValue as InputProps['defaultValue']}
+                  onChange={handleChange}
+                  style={fontFamily ? { fontFamily } : undefined}
+                />
+              );
+            })()}
 
         {helperText && (
           <Helper

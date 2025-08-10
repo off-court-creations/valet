@@ -8,7 +8,6 @@ import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { useForm } from './FormControl';
-import type { Theme } from '../../system/themeStore';
 import type { Presettable } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
@@ -22,11 +21,32 @@ interface SizeTokens {
   offset: number;
 }
 
-const createSizeMap = (_: Theme): Record<SwitchSize, SizeTokens> => ({
+const createSizeMap = (): Record<SwitchSize, SizeTokens> => ({
   sm: { trackW: 32, trackH: 18, thumb: 14, offset: 14 }, // 32-18 = 14
   md: { trackW: 44, trackH: 24, thumb: 20, offset: 20 }, // 44-24 = 20
   lg: { trackW: 56, trackH: 30, thumb: 26, offset: 26 }, // 56-30 = 26
 });
+
+/*───────────────────────────────────────────────────────────*/
+/* Form helper (safe in/out of provider)                     */
+interface MinimalForm {
+  values: Record<string, unknown>;
+  setField?: (field: string, value: unknown) => void;
+}
+
+/** Custom hook that returns a form API if inside a provider, otherwise `null`. */
+function useOptionalForm(): MinimalForm | null {
+  try {
+    /* eslint-disable react-hooks/rules-of-hooks */
+    // Always call the hook; if not within a provider, the implementation may throw.
+    // We intentionally catch that to fall back to uncontrolled behavior.
+    const f = useForm<Record<string, unknown>>() as unknown as MinimalForm;
+    /* eslint-enable react-hooks/rules-of-hooks */
+    return f;
+  } catch {
+    return null;
+  }
+}
 
 /*───────────────────────────────────────────────────────────*/
 /* Styled primitives                                         */
@@ -118,13 +138,10 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
   ) => {
     /* ----- theme + geometry -------------------------------- */
     const { theme } = useTheme();
-    const geom = createSizeMap(theme)[size];
+    const geom = createSizeMap()[size];
 
     /* ----- optional FormControl binding -------------------- */
-    let form: ReturnType<typeof useForm<any>> | null = null;
-    try {
-      form = useForm<any>();
-    } catch {}
+    const form = useOptionalForm();
 
     /* If we’re in a form and given `name`, prefer that as source of truth */
     const formChecked = form && name ? Boolean(form.values[name]) : undefined;
@@ -142,7 +159,7 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
         /* update uncontrolled state */
         if (!controlled) setSelf(next);
         /* notify FormControl */
-        form?.setField?.(name as any, next);
+        if (name && form?.setField) form.setField(name, next);
         /* fire user callback */
         onChange?.(next);
         /* propagate native click */

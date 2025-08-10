@@ -3,15 +3,7 @@
 // Fully-typed, FormControl-aware <Select/> (single + multiple).
 // © 2025 Off-Court Creations – MIT licence
 // ─────────────────────────────────────────────────────────────
-import React, {
-  forwardRef,
-  useCallback,
-  useId,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { forwardRef, useCallback, useId, useMemo, useRef, useState } from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
@@ -156,8 +148,14 @@ const Item = styled('li')<{
 
 /*───────────────────────────────────────────────────────────*/
 /* Helpers                                                   */
-const eq = (a: any, b: any) => String(a) === String(b);
+const eq = (a: Primitive, b: Primitive) => String(a) === String(b);
 const array = <T,>(v: T | T[]) => (Array.isArray(v) ? v : [v]);
+
+/* Minimal FormControl subset for typing */
+interface MinimalForm {
+  values: Record<string, unknown>;
+  setField: (name: string, value: unknown) => void;
+}
 
 /*───────────────────────────────────────────────────────────*/
 /* JSX helper component                                      */
@@ -205,23 +203,21 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLDivElement>) => {
   const primary = theme.colors.primary;
 
   /* optional FormControl hook ------------------------------ */
-  let form: ReturnType<typeof useForm<any>> | null = null;
-  try {
-    form = useForm<any>();
-  } catch {}
+  const form = useForm<Record<string, unknown>>() as unknown as MinimalForm | null;
 
   /* value management --------------------------------------- */
-  const formVal = form && name ? form.values[name] : undefined;
+  const formVal =
+    form && name ? (form.values[name] as Primitive | Primitive[] | undefined) : undefined;
   const controlled = formVal !== undefined || valueProp !== undefined;
 
-  const [self, setSelf] = useState(initialValue);
+  const [self, setSelf] = useState<Primitive | Primitive[] | undefined>(initialValue);
   const cur = controlled ? (formVal !== undefined ? formVal : valueProp!) : self;
 
   /* commit helper ------------------------------------------ */
   const commit = useCallback(
     (next: Primitive | Primitive[]) => {
       if (!controlled) setSelf(next);
-      if (form && name) form.setField(name as any, next);
+      if (form && name) form.setField(name, next);
       onChange?.(next);
     },
     [controlled, form, name, onChange],
@@ -275,6 +271,7 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLDivElement>) => {
   const move = (dir: 1 | -1) => {
     setActive((i) => {
       let n = i;
+      if (opts.length === 0) return 0;
       do {
         n = (n + dir + opts.length) % opts.length;
       } while (opts[n].props.disabled);
@@ -283,11 +280,12 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLDivElement>) => {
   };
 
   /* helpers ------------------------------------------------ */
-  const isSel = (v: Primitive) => (multiple ? array(cur ?? []).some((x) => eq(x, v)) : eq(cur, v));
+  const isSel = (v: Primitive) =>
+    multiple ? (array(cur ?? []) as Primitive[]).some((x) => eq(x, v)) : eq(cur as Primitive, v);
 
   const toggle = (v: Primitive) => {
     if (multiple) {
-      const arr = array(cur ?? []);
+      const arr = array(cur ?? []) as Primitive[];
       const exists = arr.some((x) => eq(x, v));
       commit(exists ? arr.filter((x) => !eq(x, v)) : [...arr, v]);
     } else {
@@ -300,13 +298,14 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLDivElement>) => {
     if (cur == null || (Array.isArray(cur) && !cur.length)) return placeholder;
 
     if (multiple) {
-      return opts
-        .filter((o) => array(cur).some((v) => eq(v, o.props.value)))
-        .map((o) => o.props.children)
-        .join(', ');
+      return (
+        opts
+          .filter((o) => array(cur as Primitive[]).some((v) => eq(v, o.props.value)))
+          .map((o) => o.props.children) as unknown as string[]
+      ).join(', ');
     }
-    const found = opts.find((o) => eq(o.props.value, cur));
-    return found ? found.props.children : placeholder;
+    const found = opts.find((o) => eq(o.props.value, cur as Primitive));
+    return found ? (found.props.children as unknown as string) : placeholder;
   }, [cur, multiple, opts, placeholder]);
 
   /* aria linking ------------------------------------------ */
@@ -379,6 +378,7 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLDivElement>) => {
             $bg={bgElev}
             role='listbox'
             id={listId}
+            aria-multiselectable={multiple || undefined}
           >
             {opts.map((o, i) => {
               const sel = isSel(o.props.value);

@@ -15,13 +15,11 @@ import React, {
   useState,
   PointerEvent as PE,
   KeyboardEvent,
-  MutableRefObject,
 } from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { useForm } from './FormControl';
-import type { Theme } from '../../system/themeStore';
 import type { Presettable } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
@@ -35,7 +33,7 @@ interface SizeTokens {
   font: string;
 }
 
-const createSizeMap = (_: Theme): Record<SliderSize, SizeTokens> => ({
+const createSizeMap = (): Record<SliderSize, SizeTokens> => ({
   xs: { trackH: '4px', thumb: '14px', tickH: '6px', font: '0.625rem' },
   sm: { trackH: '6px', thumb: '18px', tickH: '8px', font: '0.75rem' },
   md: { trackH: '8px', thumb: '22px', tickH: '10px', font: '0.875rem' },
@@ -142,6 +140,17 @@ const snapValue = (val: number, mode: SnapMode, step: number, presets: number[])
   return val;
 };
 
+/* Assign to either function or object ref without deprecated types */
+function assignRef<T>(ref: React.Ref<T> | null | undefined, value: T | null) {
+  if (!ref) return;
+  if (typeof ref === 'function') {
+    ref(value);
+  } else {
+    // RefObject has a readonly `current` in the type definition; runtime allows setting.
+    (ref as unknown as { current: T | null }).current = value;
+  }
+}
+
 /*───────────────────────────────────────────────────────────*/
 /* Public props                                              */
 export interface SliderProps
@@ -184,6 +193,12 @@ export interface SliderProps
   disabled?: boolean;
 }
 
+/* Minimal form shape we rely on (values + optional setField) */
+type NumForm = {
+  values: Record<string, number | undefined>;
+  setField?: (name: string, value: number) => void;
+};
+
 /*───────────────────────────────────────────────────────────*/
 /* Component                                                 */
 export const Slider = forwardRef<HTMLDivElement, SliderProps>(
@@ -214,7 +229,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
   ) => {
     /* theme + geom tokens ----------------------------------- */
     const { theme } = useTheme();
-    const map = createSizeMap(theme);
+    const map = createSizeMap();
 
     let geom: SizeTokens;
 
@@ -238,17 +253,15 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
       };
     }
 
-    /* optional FormControl binding -------------------------- */
-    let form: ReturnType<typeof useForm<any>> | null = null;
-    try {
-      form = useForm<any>();
-    } catch {}
+    /* optional FormControl binding (always call hook) -------- */
+    // We only rely on `values` and an optional `setField`.
+    const form = useForm<Record<string, number | undefined>>() as unknown as NumForm;
 
     /* controlled hierarchy ---------------------------------- */
     const formVal = form && name ? form.values[name] : undefined;
     const controlled = formVal !== undefined || valueProp !== undefined;
     const [self, setSelf] = useState(defaultValue);
-    const current = controlled ? (formVal !== undefined ? formVal : valueProp!) : self;
+    const current = controlled ? (formVal !== undefined ? formVal : (valueProp as number)) : self;
 
     /* derived ticks ----------------------------------------- */
     const tickValues: number[] = useMemo(() => {
@@ -278,57 +291,65 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
     const thumbRef = useRef<HTMLButtonElement | null>(null);
 
     /* helper – % <-> value ---------------------------------- */
-    const pctFor = (val: number) => ((val - min) / (max - min)) * 100;
-    const valFor = (pct: number) => min + ((max - min) * pct) / 100;
+    const pctFor = useCallback((val: number) => ((val - min) / (max - min)) * 100, [min, max]);
+    const valFor = useCallback((pct: number) => min + ((max - min) * pct) / 100, [min, max]);
 
     /* visual paint ------------------------------------------ */
-    const renderVisual = (val: number) => {
-      const pct = pctFor(val);
-      if (fillRef.current) fillRef.current.style.width = `${pct}%`;
-      if (thumbRef.current) thumbRef.current.style.left = `${pct}%`;
-    };
+    const renderVisual = useCallback(
+      (val: number) => {
+        const pct = pctFor(val);
+        if (fillRef.current) fillRef.current.style.width = `${pct}%`;
+        if (thumbRef.current) thumbRef.current.style.left = `${pct}%`;
+      },
+      [pctFor],
+    );
 
     useEffect(() => {
       renderVisual(current);
-    }, [current]);
+    }, [current, renderVisual]);
 
     /* commit helper ----------------------------------------- */
     const commitValue = useCallback(
       (v: number) => {
         const snapped = snapValue(Math.min(Math.max(v, min), max), snap, step, presets);
-
         const rounded = roundTo(snapped, precision);
 
         if (!controlled) setSelf(rounded);
-        form?.setField?.(name as any, rounded);
+        if (name && form?.setField) form.setField(name, rounded);
         onChange?.(rounded);
         renderVisual(rounded);
       },
-      [controlled, form, min, max, name, onChange, presets, snap, step, precision],
+      [controlled, form, min, max, name, onChange, presets, snap, step, precision, renderVisual],
     );
 
     /* pointer handling -------------------------------------- */
-    const pointerHandler = useCallback(
-      (e: PE<HTMLElement>) => {
-        if (disabled) return;
-        const rect = wrapRef.current!.getBoundingClientRect();
-        const pct = ((e.clientX - rect.left) / rect.width) * 100;
+    const updateFromClientX = useCallback(
+      (clientX: number) => {
+        if (!wrapRef.current) return;
+        const rect = wrapRef.current.getBoundingClientRect();
+        const pct = ((clientX - rect.left) / rect.width) * 100;
         commitValue(valFor(pct));
       },
-      [commitValue, disabled],
+      [commitValue, valFor],
     );
 
-    const onPointerDown = (e: PE<HTMLElement>) => {
-      e.preventDefault();
-      pointerHandler(e);
-      const move = (ev: PE<HTMLElement>) => pointerHandler(ev);
-      const up = () => {
-        document.removeEventListener('pointermove', move as any);
-        document.removeEventListener('pointerup', up);
-      };
-      document.addEventListener('pointermove', move as any);
-      document.addEventListener('pointerup', up, { once: true });
-    };
+    const onPointerDown = useCallback(
+      (e: PE<HTMLElement>) => {
+        if (disabled) return;
+        e.preventDefault();
+        updateFromClientX(e.clientX);
+
+        const move = (ev: PointerEvent) => updateFromClientX(ev.clientX);
+        const up = () => {
+          document.removeEventListener('pointermove', move);
+          document.removeEventListener('pointerup', up as EventListener);
+        };
+
+        document.addEventListener('pointermove', move);
+        document.addEventListener('pointerup', up as EventListener, { once: true });
+      },
+      [disabled, updateFromClientX],
+    );
 
     /* keyboard handling ------------------------------------- */
     const keyStep = snap === 'step' ? step : (max - min) / 100;
@@ -346,16 +367,11 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
     const presetCls = p ? preset(p) : '';
     const mergedCls = [presetCls, className].filter(Boolean).join(' ') || undefined;
 
-    /* ref merger (fixes TS2540) ------------------------------ */
+    /* ref merger without deprecated MutableRefObject --------- */
     const setWrapperRef = useCallback(
       (node: HTMLDivElement | null) => {
-        (wrapRef as MutableRefObject<HTMLDivElement | null>).current = node;
-
-        if (typeof forwardedRef === 'function') {
-          forwardedRef(node);
-        } else if (forwardedRef && 'current' in forwardedRef) {
-          (forwardedRef as MutableRefObject<HTMLDivElement | null>).current = node;
-        }
+        wrapRef.current = node;
+        assignRef(forwardedRef, node);
       },
       [forwardedRef],
     );

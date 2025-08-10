@@ -2,6 +2,8 @@
 // src/components/fields/MetroSelect.tsx | valet
 // windows 8 start screen style grid select
 // ─────────────────────────────────────────────────────────────
+/* eslint-disable react/prop-types */
+
 import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import Stack from '../layout/Stack';
 import Panel from '../layout/Panel';
