@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/widgets/DateSelector.tsx | valet
+// src/components/fields/DateSelector.tsx | valet
 // interactive month calendar for picking dates
 // ─────────────────────────────────────────────────────────────
 import React, { useState } from 'react';
@@ -129,10 +129,15 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   ...rest
 }) => {
   const { theme } = useTheme();
-  let form: ReturnType<typeof useForm<any>> | null = null;
+
+  /* optional FormControl binding --------------------------- */
+  type StringForm = ReturnType<typeof useForm<Record<string, string | undefined>>>;
+  let form: StringForm | null = null;
   try {
-    form = useForm<any>();
-  } catch {}
+    form = useForm<Record<string, string | undefined>>();
+  } catch {
+    /* No FormControl context available */
+  }
 
   const formVal = form && name ? (form.values[name] as string | undefined) : undefined;
   const controlled = value !== undefined || formVal !== undefined;

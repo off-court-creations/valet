@@ -118,8 +118,12 @@ export const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
       setField: (field: string, value: unknown) => void;
     } | null;
 
-    // Call unconditionally to satisfy hooks rule; provider-less usage should be handled by the hook.
-    const form = useForm() as unknown as FormApi;
+    let form: FormApi = null;
+    try {
+      form = useForm() as unknown as FormApi;
+    } catch {
+      /* No FormControl context available */
+    }
 
     const presetClasses = presetName ? preset(presetName) : '';
     const wrapperStyle = fullWidth ? { flex: 1, width: '100%', ...styleProp } : styleProp;

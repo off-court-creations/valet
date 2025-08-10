@@ -253,12 +253,17 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
       };
     }
 
-    /* optional FormControl binding (always call hook) -------- */
+    /* optional FormControl binding --------------------------- */
     // We only rely on `values` and an optional `setField`.
-    const form = useForm<Record<string, number | undefined>>() as unknown as NumForm;
+    let form: NumForm | null = null;
+    try {
+      form = useForm<Record<string, number | undefined>>() as unknown as NumForm;
+    } catch {
+      /* No FormControl context available */
+    }
 
     /* controlled hierarchy ---------------------------------- */
-    const formVal = form && name ? form.values[name] : undefined;
+    const formVal = name ? form?.values[name] : undefined;
     const controlled = formVal !== undefined || valueProp !== undefined;
     const [self, setSelf] = useState(defaultValue);
     const current = controlled ? (formVal !== undefined ? formVal : (valueProp as number)) : self;
