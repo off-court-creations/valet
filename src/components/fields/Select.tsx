@@ -203,7 +203,10 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLDivElement>) => {
   const primary = theme.colors.primary;
 
   /* optional FormControl hook ------------------------------ */
-  const form = useForm<Record<string, unknown>>() as unknown as MinimalForm | null;
+  let form: MinimalForm | null = null;
+  try {
+    form = useForm<Record<string, unknown>>() as unknown as MinimalForm;
+  } catch {}
 
   /* value management --------------------------------------- */
   const formVal =
