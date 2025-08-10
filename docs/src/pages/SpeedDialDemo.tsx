@@ -66,8 +66,8 @@ export default function SpeedDialDemoPage() {
     },
     {
       prop: <code>direction</code>,
-      type: <code>'up' | 'down' | 'left' | 'right'</code>,
-      default: <code>'up'</code>,
+      type: <code>&#39;up&#39; | &#39;down&#39; | &#39;left&#39; | &#39;right&#39;</code>,
+      default: <code>&#39;up&#39;</code>,
       description: 'Expansion direction',
     },
     {

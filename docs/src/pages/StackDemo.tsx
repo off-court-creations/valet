@@ -29,8 +29,8 @@ export default function StackDemoPage() {
   const data: Row[] = [
     {
       prop: <code>direction</code>,
-      type: <code>'row' | 'column'</code>,
-      default: <code>'column'</code>,
+      type: <code>&#39;row&#39; | &#39;column&#39;</code>,
+      default: <code>&#39;column&#39;</code>,
       description: 'Layout direction',
     },
     {

@@ -1,8 +1,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// src/pages/SwitchDemoPage.tsx | valet
+// src/pages/SwitchDemo.tsx | valet docs
 // Comprehensive live demo for <Switch /> – showcases uncontrolled,
 // controlled, form-bound, sizes, disabled, and live theme coupling.
-// Now zero reference to ReactNode → no duplicate-type clash.
 // ─────────────────────────────────────────────────────────────────────────────
 import { useState } from 'react';
 import type { JSX } from 'react';
@@ -56,7 +55,7 @@ export default function SwitchDemoPage() {
 
   /* Form submit handler --------------------------------------------------- */
   const handleSubmit = (values: { darkMode: boolean; newsletter: boolean }) =>
-    // eslint-disable-next-line no-alert – demo only
+    // eslint-disable-next-line no-alert -- demo only
     alert(JSON.stringify(values, null, 2));
 
   interface Row {
@@ -100,8 +99,8 @@ export default function SwitchDemoPage() {
     },
     {
       prop: <code>size</code>,
-      type: <code>'sm' | 'md' | 'lg'</code>,
-      default: <code>'md'</code>,
+      type: <code>&apos;sm&apos; | &apos;md&apos; | &apos;lg&apos;</code>,
+      default: <code>&apos;md&apos;</code>,
       description: 'Switch size',
     },
     {

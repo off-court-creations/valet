@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// src/pages/RadioGroupDemoPage.tsx
+// docs/src/pages/RadioGroupDemo.tsx | valet
 // Full-feature playground showcase for <RadioGroup /> + <Radio />
 // – Uncontrolled, controlled, sizes, disabled, row vs column, presets,
 //   FormControl binding, keyboard navigation, and live theme validation.
@@ -62,7 +62,7 @@ export default function RadioGroupDemoPage() {
 
   /* Form submit handler --------------------------------------------------- */
   const handleSubmit = (values: { color: string; pet: string }) => {
-    // eslint-disable-next-line no-alert – demo purposes only
+    // eslint-disable-next-line no-alert // demo purposes only
     alert(JSON.stringify(values, null, 2));
   };
 
@@ -107,8 +107,13 @@ export default function RadioGroupDemoPage() {
     },
     {
       prop: <code>size</code>,
-      type: <code>'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string</code>,
-      default: <code>'md'</code>,
+      type: (
+        <code>
+          &apos;xs&apos; | &apos;sm&apos; | &apos;md&apos; | &apos;lg&apos; | &apos;xl&apos; |
+          number | string
+        </code>
+      ),
+      default: <code>&apos;md&apos;</code>,
       description: 'Radio size token or custom CSS measurement',
     },
     {

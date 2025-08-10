@@ -53,7 +53,7 @@ export default function LLMChatPage() {
     {
       prop: <code>placeholder</code>,
       type: <code>string</code>,
-      default: <code>'Message…'</code>,
+      default: <code>&#39;Message…&#39;</code>,
       description: 'Input placeholder',
     },
     {

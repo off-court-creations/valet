@@ -4,6 +4,7 @@
 // ─────────────────────────────────────────────────────────────
 import { Surface, Stack, Typography, Button, Table } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
+import type { ReactNode } from 'react';
 import NavDrawer from '../components/NavDrawer';
 import { useNavigate } from 'react-router-dom';
 
@@ -11,9 +12,9 @@ export default function UsagePage() {
   const navigate = useNavigate();
 
   interface Row {
-    prop: React.ReactNode;
-    purpose: React.ReactNode;
-    components: React.ReactNode;
+    prop: ReactNode;
+    purpose: ReactNode;
+    components: ReactNode;
   }
 
   const columns: TableColumn<Row>[] = [
@@ -26,14 +27,15 @@ export default function UsagePage() {
     {
       prop: <code>preset</code>,
       purpose: 'Apply named style presets',
-      components: "All components (besides Surface's internal LoadingBackdrop)",
+      components: 'All components (besides Surface&apos;s internal LoadingBackdrop)',
     },
     {
       prop: <code>size</code>,
       purpose: (
         <p>
-          <b>"xs", "sm", "md", "lg", "xl"</b> em-based tokens. Other <code>STRING</code> values are
-          treated as CSS like <b>"24px"</b> or <b>"3em"</b>
+          <b>&quot;xs&quot;, &quot;sm&quot;, &quot;md&quot;, &quot;lg&quot;, &quot;xl&quot;</b>{' '}
+          em-based tokens. Other <code>STRING</code> values are treated as CSS like{' '}
+          <b>&quot;24px&quot;</b> or <b>&quot;3em&quot;</b>
         </p>
       ),
       components:

@@ -1,10 +1,10 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// src/pages/SliderDemoPage.tsx | valet
+// src/pages/SliderDemo.tsx | valet
 // Comprehensive live demo showcasing every Slider feature & edge-case
 // – Updated: section #5 now snaps to its custom tick marks
 // – Removed: preset-styling showcase (simplifies demo focus)
 // ─────────────────────────────────────────────────────────────────────────────
-import React, { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { Surface, Stack, Typography, Button, Slider, useTheme, Tabs, Table } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
@@ -18,7 +18,7 @@ const CUSTOM_TICKS = [0, 15, 30, 45, 60]; // example #5 ticks
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Demo page                                                                   */
 export default function SliderDemoPage() {
-  const { theme, toggleMode } = useTheme();
+  const { toggleMode } = useTheme();
 
   /* Controlled slider state ------------------------------------------------ */
   const [ctlValue, setCtlValue] = useState(30);
@@ -76,8 +76,8 @@ export default function SliderDemoPage() {
     },
     {
       prop: <code>snap</code>,
-      type: <code>'none' | 'step' | 'presets'</code>,
-      default: <code>'none'</code>,
+      type: <code>&#39;none&#39; | &#39;step&#39; | &#39;presets&#39;</code>,
+      default: <code>&#39;none&#39;</code>,
       description: 'Snap behaviour',
     },
     {
@@ -112,8 +112,12 @@ export default function SliderDemoPage() {
     },
     {
       prop: <code>size</code>,
-      type: <code>'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string</code>,
-      default: <code>'md'</code>,
+      type: (
+        <code>
+          &#39;xs&#39; | &#39;sm&#39; | &#39;md&#39; | &#39;lg&#39; | &#39;xl&#39; | number | string
+        </code>
+      ),
+      default: <code>&#39;md&#39;</code>,
       description: 'Slider size',
     },
     {
@@ -167,7 +171,7 @@ export default function SliderDemoPage() {
               </Stack>
 
               {/* 3. Step snapping w/ ticks --------------------------------------- */}
-              <Typography variant='h3'>3. Snap = "step" + ticks</Typography>
+              <Typography variant='h3'>3. Snap = &quot;step&quot; + ticks</Typography>
               <Slider
                 defaultValue={40}
                 min={0}
@@ -180,7 +184,7 @@ export default function SliderDemoPage() {
               />
 
               {/* 4. Preset snapping ---------------------------------------------- */}
-              <Typography variant='h3'>4. Snap = "presets"</Typography>
+              <Typography variant='h3'>4. Snap = &quot;presets&quot;</Typography>
               <Slider
                 defaultValue={75}
                 min={0}
@@ -193,7 +197,7 @@ export default function SliderDemoPage() {
               />
 
               {/* 5. Custom ticks *with* snapping ---------------------------------- */}
-              <Typography variant='h3'>5. Custom ticks (snap = "presets")</Typography>
+              <Typography variant='h3'>5. Custom ticks (snap = &quot;presets&quot;)</Typography>
               <Slider
                 defaultValue={15}
                 min={0}

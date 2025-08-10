@@ -67,8 +67,8 @@ export default function PanelDemoPage() {
     },
     {
       prop: <code>variant</code>,
-      type: <code>'main' | 'alt'</code>,
-      default: <code>'main'</code>,
+      type: <code>{`'main' | 'alt'`}</code>,
+      default: <code>{`'main'`}</code>,
       description: 'Visual style: filled or outlined',
     },
   ];
@@ -188,7 +188,7 @@ export default function PanelDemoPage() {
                 <Panel preset={['glassHolder', 'fancyHolder']}>
                   <Typography>
                     Combination&nbsp;
-                    <code>preset={['glassHolder', 'fancyHolder']}</code>
+                    <code>{`preset={['glassHolder', 'fancyHolder']}`}</code>
                   </Typography>
                 </Panel>
               </Stack>

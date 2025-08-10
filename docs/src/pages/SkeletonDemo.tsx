@@ -49,7 +49,7 @@ export default function SkeletonDemoPage() {
     },
     {
       prop: <code>variant</code>,
-      type: <code>'text' | 'rect' | 'circle'</code>,
+      type: <code>&#39;text&#39; | &#39;rect&#39; | &#39;circle&#39;</code>,
       default: <code>-</code>,
       description: 'Override inferred placeholder shape',
     },

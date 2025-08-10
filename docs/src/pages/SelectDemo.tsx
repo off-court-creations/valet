@@ -2,7 +2,7 @@
 // src/pages/SelectDemoPage.tsx | valet
 // Exhaustive playground – now demonstrating FormControl integration.
 // ─────────────────────────────────────────────────────────────────────────────
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Surface,
   Stack,
@@ -10,7 +10,6 @@ import {
   Typography,
   Button,
   IconButton,
-  Icon,
   Select,
   FormControl,
   createFormStore,
@@ -85,13 +84,18 @@ export default function SelectDemoPage() {
     {
       prop: <code>placeholder</code>,
       type: <code>string</code>,
-      default: <code>'Select…'</code>,
+      default: <code>&apos;Select…&apos;</code>,
       description: 'Label when empty',
     },
     {
       prop: <code>size</code>,
-      type: <code>'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string</code>,
-      default: <code>'md'</code>,
+      type: (
+        <code>
+          &apos;xs&apos; | &apos;sm&apos; | &apos;md&apos; | &apos;lg&apos; | &apos;xl&apos; |
+          number | string
+        </code>
+      ),
+      default: <code>&apos;md&apos;</code>,
       description: 'Control height',
     },
     {
@@ -217,7 +221,7 @@ export default function SelectDemoPage() {
             </Stack>
 
             {/* ————————————————— Disabled & preset */}
-            <Typography variant='h3'>6. Disabled & preset</Typography>
+            <Typography variant='h3'>6. Disabled &amp; preset</Typography>
             <Stack direction='row'>
               <Select
                 disabled
