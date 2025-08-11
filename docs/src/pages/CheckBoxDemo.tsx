@@ -78,8 +78,13 @@ export default function CheckboxDemoPage() {
     },
     {
       prop: <code>size</code>,
-      type: <code>'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string</code>,
-      default: <code>'md'</code>,
+      type: (
+        <code>
+          &apos;xs&apos; | &apos;sm&apos; | &apos;md&apos; | &apos;lg&apos; | &apos;xl&apos; |
+          number | string
+        </code>
+      ),
+      default: <code>&apos;md&apos;</code>,
       description: 'Checkbox dimensions',
     },
     {
@@ -104,7 +109,8 @@ export default function CheckboxDemoPage() {
 
   /* Form submit handler --------------------------------------------------- */
   const handleSubmit = (values: { terms: boolean; marketing: boolean }) => {
-    // eslint-disable-next-line no-alert – demo purposes only
+    /* eslint-disable-next-line no-alert */
+    // demo purposes only
     alert(JSON.stringify(values, null, 2));
   };
 
@@ -245,7 +251,7 @@ export default function CheckboxDemoPage() {
               </Button>
             </FormControl>
 
-            {/* 7. Live theme validation ---------------------------------------- */}
+            {/* 7. Theme coupling ----------------------------------------------- */}
             <Typography variant='h3'>7. Theme coupling</Typography>
             <Button
               variant='outlined'

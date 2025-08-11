@@ -23,6 +23,7 @@ import { useState } from 'react';
 
 interface EmailForm {
   email: string;
+  [key: string]: unknown;
 }
 
 const useEmailForm = createFormStore<EmailForm>({
@@ -63,20 +64,22 @@ export default function AvatarDemoPage() {
     },
     {
       prop: <code>size</code>,
-      type: <code>'xs' | 's' | 'm' | 'l' | 'xl'</code>,
-      default: <code>'m'</code>,
+      type: (
+        <code>&apos;xs&apos; | &apos;s&apos; | &apos;m&apos; | &apos;l&apos; | &apos;xl&apos;</code>
+      ),
+      default: <code>&apos;m&apos;</code>,
       description: 'Relative size token',
     },
     {
       prop: <code>variant</code>,
-      type: <code>'plain' | 'outline'</code>,
-      default: <code>'plain'</code>,
+      type: <code>&apos;plain&apos; | &apos;outline&apos;</code>,
+      default: <code>&apos;plain&apos;</code>,
       description: 'Visual style variant',
     },
     {
       prop: <code>gravatarDefault</code>,
       type: <code>string</code>,
-      default: <code>'identicon'</code>,
+      default: <code>&apos;identicon&apos;</code>,
       description: 'Fallback style when no avatar exists',
     },
     {
@@ -107,7 +110,7 @@ export default function AvatarDemoPage() {
             <Typography variant='h3'>1. Try your Gravatar</Typography>
             <FormControl
               useStore={useEmailForm}
-              onSubmitValues={(vals) => setEmail(vals.email)}
+              onSubmitValues={(vals) => setEmail(vals.email as string)}
             >
               <Stack direction='row'>
                 <Avatar email={email} />
