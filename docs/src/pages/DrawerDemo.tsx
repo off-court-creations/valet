@@ -92,7 +92,7 @@ export default function DrawerDemoPage() {
               variant='h4'
               bold
             >
-              Can't close via backdrop or ESC
+              Can&apos;t close via backdrop or ESC
             </Typography>
             <Button onClick={() => setStubbornOpen(false)}>Close</Button>
           </Stack>

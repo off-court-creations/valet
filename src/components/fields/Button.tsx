@@ -186,8 +186,8 @@ export const Button: React.FC<ButtonProps> = ({
 
   const minW = `calc(${height} * 2)`;
 
-  const isToken = (v: any): v is ButtonToken =>
-    v === 'primary' || v === 'secondary' || v === 'tertiary';
+  const isToken = (v: unknown): v is ButtonToken =>
+    typeof v === 'string' && (v === 'primary' || v === 'secondary' || v === 'tertiary');
 
   const paletteToken: ButtonToken | null =
     color === undefined ? 'primary' : isToken(color) ? color : null;

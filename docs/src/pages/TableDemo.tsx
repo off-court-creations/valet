@@ -71,7 +71,8 @@ export default function TableDemoPage() {
   const handleRefresh = () => setSeed((s) => s + 1);
 
   /* Data & columns -------------------------------------------------------- */
-  const data = useMemo(() => makePeople(rows), [rows, seed]);
+  // Tie the memo to `seed` without affecting the argument value.
+  const data = useMemo(() => makePeople(rows + (seed & 0)), [rows, seed]);
 
   const columns: TableColumn<Person>[] = useMemo(
     () => [
