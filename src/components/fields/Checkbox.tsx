@@ -7,7 +7,7 @@ import React, { forwardRef, useCallback, useId, useState, ChangeEvent, ReactNode
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
-import { useForm } from './FormControl';
+import { useOptionalForm } from './FormControl';
 import { toRgb, mix, toHex } from '../../helpers/color';
 import type { Theme } from '../../system/themeStore';
 import type { Presettable } from '../../types';
@@ -172,10 +172,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
     );
 
     /* Optional FormControl binding -------------------------------------- */
-    let form: ReturnType<typeof useForm<any>> | null = null;
-    try {
-      form = useForm<any>();
-    } catch {}
+    const form = useOptionalForm<Record<string, unknown>>();
 
     /* Controlled vs uncontrolled logic ---------------------------------- */
     const controlled = checkedProp !== undefined;
@@ -199,7 +196,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
       (e: ChangeEvent<HTMLInputElement>) => {
         const next = e.target.checked;
         if (!controlled && !formBound) setInternal(next);
-        form?.setField(name as any, next);
+        if (form && name) form.setField(name as keyof Record<string, unknown>, next as unknown);
         onChange?.(next, e);
       },
       [controlled, formBound, form, name, onChange],

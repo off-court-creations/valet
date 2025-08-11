@@ -9,7 +9,7 @@ import type { FormStore } from '../../system/createFormStore';
 import type { StoreApi, UseBoundStore } from 'zustand';
 
 /*───────────────────────────────────────────────────────────────*/
-/* Context & public hook (store erased to avoid invariance issues) */
+/* Context & hooks (store erased to avoid invariance issues) */
 const FormCtx = createContext<unknown | null>(null);
 
 export const useForm = <
@@ -20,6 +20,13 @@ export const useForm = <
     throw new Error('useForm must be used inside a <FormControl> component');
   }
   return ctx as FormStore<T>;
+};
+
+export const useOptionalForm = <
+  T extends Record<string, unknown> = Record<string, unknown>,
+>(): FormStore<T> | null => {
+  const ctx = useContext(FormCtx);
+  return ctx as FormStore<T> | null;
 };
 
 /*───────────────────────────────────────────────────────────────*/

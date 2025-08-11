@@ -8,7 +8,7 @@ import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { IconButton } from './IconButton';
 import { Select } from './Select';
-import { useForm } from './FormControl';
+import { useOptionalForm } from './FormControl';
 import { toRgb, mix, toHex } from '../../helpers/color';
 import type { Presettable } from '../../types';
 
@@ -131,13 +131,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   const { theme } = useTheme();
 
   /* optional FormControl binding --------------------------- */
-  type StringForm = ReturnType<typeof useForm<Record<string, string | undefined>>>;
-  let form: StringForm | null = null;
-  try {
-    form = useForm<Record<string, string | undefined>>();
-  } catch {
-    /* No FormControl context available */
-  }
+  const form = useOptionalForm<Record<string, string | undefined>>();
 
   const formVal = form && name ? (form.values[name] as string | undefined) : undefined;
   const controlled = value !== undefined || formVal !== undefined;
@@ -176,7 +170,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   const commit = (d: number) => {
     const iso = new Date(viewYear, viewMonth, d).toISOString().slice(0, 10);
     if (!controlled) setStartInt(new Date(viewYear, viewMonth, d));
-    if (form && name) form.setField(name as any, iso);
+    if (form && name) form.setField(name as keyof Record<string, string | undefined>, iso);
     onChange?.(iso);
   };
 
