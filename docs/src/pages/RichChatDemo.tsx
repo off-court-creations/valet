@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// docs/src/pages/components/RichChat.tsx | valet
+// src/pages/RichChatDemo.tsx | valet
 // Showcase for <RichChat /> component with local logic
 // ─────────────────────────────────────────────────────────────────────────────
 import { useState } from 'react';
@@ -24,7 +24,7 @@ export default function RichChatDemoPage() {
   const navigate = useNavigate();
   const { theme, toggleMode } = useTheme();
   const [step, setStep] = useState(0);
-  const [scheduled, setScheduled] = useState<boolean | null>(null);
+  const [, setScheduled] = useState<boolean | null>(null);
   const [messages, setMessages] = useState<RichMessage[]>([
     {
       role: 'assistant',
@@ -111,8 +111,10 @@ export default function RichChatDemoPage() {
     setMessages((prev) => {
       const base = prev.map((m, idx) => {
         if (idx === prev.length - 1) {
-          const { form, ...rest } = m as any;
-          return rest as RichMessage;
+          // Create a shallow clone, remove the `form` key entirely to avoid type conflicts
+          const clone = { ...(m as unknown as object) } as Record<string, unknown>;
+          delete clone['form'];
+          return clone as unknown as RichMessage;
         }
         return m;
       });
@@ -204,7 +206,7 @@ export default function RichChatDemoPage() {
         <RichChat
           messages={messages}
           onSend={handleSend}
-          onFormSubmit={(reply) => handleAnswer(reply)}
+          onFormSubmit={handleAnswer}
           constrainHeight
           userAvatar={present}
           systemAvatar={monkey}
