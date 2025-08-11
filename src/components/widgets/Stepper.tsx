@@ -9,9 +9,7 @@ import { preset } from '../../css/stylePresets';
 import type { Presettable } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
-export interface StepperProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    Presettable {
+export interface StepperProps extends React.HTMLAttributes<HTMLDivElement>, Presettable {
   steps: React.ReactNode[];
   active?: number;
 }
@@ -67,7 +65,11 @@ export const Stepper: React.FC<StepperProps> = ({
       style={style}
     >
       {steps.map((label, idx) => (
-        <StepItem key={idx} $active={idx === active} $primary={primary}>
+        <StepItem
+          key={idx}
+          $active={idx === active}
+          $primary={primary}
+        >
           {label}
         </StepItem>
       ))}

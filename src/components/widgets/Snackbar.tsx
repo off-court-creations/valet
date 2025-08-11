@@ -11,6 +11,7 @@
 // ─────────────────────────────────────────────────────────────
 import React, {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useId,
@@ -18,13 +19,13 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { styled }               from '../../css/createStyled';
-import { useTheme }             from '../../system/themeStore';
-import { useSurface }           from '../../system/surfaceStore';
-import { shallow }              from 'zustand/shallow';
-import { preset }               from '../../css/stylePresets';
-import { Typography }           from '../primitives/Typography';
-import type { Presettable }     from '../../types';
+import { styled } from '../../css/createStyled';
+import { useTheme } from '../../system/themeStore';
+import { useSurface } from '../../system/surfaceStore';
+import { shallow } from 'zustand/shallow';
+import { preset } from '../../css/stylePresets';
+import { Typography } from '../primitives/Typography';
+import type { Presettable } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 /* Dismiss-context so nested children (e.g. IconButton) can
@@ -35,9 +36,7 @@ export const useSnackbar = () => useContext(SnackbarCtx);
 
 /*───────────────────────────────────────────────────────────*/
 /* Props                                                     */
-export interface SnackbarProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    Presettable {
+export interface SnackbarProps extends React.HTMLAttributes<HTMLDivElement>, Presettable {
   /** Controlled open state – omit for uncontrolled */
   open?: boolean;
   /** Called when the snackbar has fully hidden */
@@ -53,20 +52,21 @@ export interface SnackbarProps
 /*───────────────────────────────────────────────────────────*/
 /* Styled primitive                                          */
 const Root = styled('div')<{
-  $visible : boolean;
-  $spacing : string;
-  $outline : string;
-  $bg      : string;
-  $flex    : boolean;
+  $visible: boolean;
+  $spacing: string;
+  $outline: string;
+  $bg: string;
+  $flex: boolean;
 }>`
   position: fixed;
   left: 50%;
   bottom: ${({ $spacing }) => $spacing};
-  transform: translateX(-50%)
-    translateY(${({ $visible }) => ($visible ? '0' : '0.75rem')});
+  transform: translateX(-50%) translateY(${({ $visible }) => ($visible ? '0' : '0.75rem')});
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};
   pointer-events: ${({ $visible }) => ($visible ? 'auto' : 'none')};
-  transition: opacity 200ms ease, transform 200ms ease;
+  transition:
+    opacity 200ms ease,
+    transform 200ms ease;
 
   background: ${({ $bg }) => $bg};
   outline: 0.25rem solid ${({ $outline }) => $outline};
@@ -86,8 +86,8 @@ const Root = styled('div')<{
 /* Component                                                 */
 export const Snackbar: React.FC<SnackbarProps> = ({
   /* Behaviour ---------------------------------------------*/
-  open,               // controlled flag
-  onClose,            // callback when fully hidden
+  open, // controlled flag
+  onClose, // callback when fully hidden
   autoHideDuration = 4000,
   noStack = false,
 
@@ -102,42 +102,26 @@ export const Snackbar: React.FC<SnackbarProps> = ({
   ...rest
 }) => {
   const { theme } = useTheme();
-  const surface   = useSurface(
-    s => ({
+
+  // Select stable register/unregister fns from surface store
+  const { registerChild, unregisterChild } = useSurface(
+    (s) => ({
       registerChild: s.registerChild,
       unregisterChild: s.unregisterChild,
     }),
     shallow,
   );
-  const ref       = useRef<HTMLDivElement>(null);
-  const id        = useId();
+
+  const ref = useRef<HTMLDivElement>(null);
+  const id = useId();
 
   /* Controlled vs uncontrolled lifecycle ------------------*/
-  const [internalOpen, setInternalOpen] = useState(
-    open !== undefined ? open : true
-  );
-  const visible      = open !== undefined ? open : internalOpen;
+  const [internalOpen, setInternalOpen] = useState(open !== undefined ? open : true);
+  const visible = open !== undefined ? open : internalOpen;
   const [exiting, setExiting] = useState(false);
 
-  /* Register with surfaceStore so pop-stack order remains
-     intuitive alongside Dialogs, Popovers, Tooltips, etc.  */
-  useLayoutEffect(() => {
-    if (!ref.current) return;
-    const node = ref.current;
-    const noop = () => {};
-    surface.registerChild(id, node, noop);
-    return () => surface.unregisterChild(id);
-  }, []);
-
-  /* Auto-hide timer ---------------------------------------*/
-  useEffect(() => {
-    if (!visible || autoHideDuration == null) return;
-    const timer = setTimeout(() => handleClose(), autoHideDuration);
-    return () => clearTimeout(timer);
-  }, [visible, autoHideDuration]);
-
   /* Unified close handler (supports fade-out first) --------*/
-  const handleClose: DismissFn = () => {
+  const handleClose: DismissFn = useCallback(() => {
     if (open !== undefined) {
       /* Controlled mode – delegate responsibility upward    */
       onClose?.();
@@ -150,7 +134,26 @@ export const Snackbar: React.FC<SnackbarProps> = ({
       setExiting(false);
       onClose?.();
     }, 200); // match CSS transition
-  };
+  }, [open, onClose]);
+
+  /* Register with surfaceStore so pop-stack order remains
+     intuitive alongside Dialogs, Popovers, Tooltips, etc.  */
+  useLayoutEffect(() => {
+    if (!ref.current) return;
+    const node = ref.current;
+    const noop = () => {};
+    registerChild(id, node, noop);
+    return () => {
+      unregisterChild(id);
+    };
+  }, [id, registerChild, unregisterChild]);
+
+  /* Auto-hide timer ---------------------------------------*/
+  useEffect(() => {
+    if (!visible || autoHideDuration == null) return;
+    const timer = setTimeout(() => handleClose(), autoHideDuration);
+    return () => clearTimeout(timer);
+  }, [visible, autoHideDuration, handleClose]);
 
   /* Don’t render once fully hidden in uncontrolled mode ----*/
   if (!visible && !exiting) return null;
@@ -159,15 +162,16 @@ export const Snackbar: React.FC<SnackbarProps> = ({
   const body =
     children ??
     (message != null ? (
-      <Typography variant="body" autoSize>
+      <Typography
+        variant='body'
+        autoSize
+      >
         {message}
       </Typography>
     ) : null);
 
   /* Final className (preset + custom) ---------------------*/
-  const classes = [p ? preset(p) : '', className]
-    .filter(Boolean)
-    .join(' ') || undefined;
+  const classes = [p ? preset(p) : '', className].filter(Boolean).join(' ') || undefined;
 
   /*────────────────────────────────────────────────────────*/
   return (

@@ -11,20 +11,9 @@ import { shallow } from 'zustand/shallow';
 import { preset } from '../../css/stylePresets';
 import type { Presettable } from '../../types';
 
-export type Variant =
-  | 'h1'
-  | 'h2'
-  | 'h3'
-  | 'h4'
-  | 'h5'
-  | 'h6'
-  | 'body'
-  | 'subtitle'
-  | 'button';
+export type Variant = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'body' | 'subtitle' | 'button';
 
-export interface TypographyProps
-  extends React.HTMLAttributes<HTMLElement>,
-    Presettable {
+export interface TypographyProps extends React.HTMLAttributes<HTMLElement>, Presettable {
   variant?: Variant;
   bold?: boolean;
   italic?: boolean;
@@ -80,57 +69,52 @@ export const Typography: React.FC<TypographyProps> = ({
   const presetClasses = p ? preset(p) : '';
 
   const Component = React.useMemo(
-    () =>
-      styled(Tag)<{
-        $variant: Variant;
-        $color?: string;
-        $fontFamily?: string;
-        $family?: 'heading' | 'body' | 'mono' | 'button';
-        $size: string;
-        $bold: boolean;
-        $italic: boolean;
-        $center?: boolean;
-        $noSelect: boolean;
-      }>`
-        margin: 0;
-        color: ${({ $color }) => $color || 'var(--valet-text-color, inherit)'};
-        font-size: ${({ $size }) => $size};
-        font-weight: ${({ $bold }) => ($bold ? 700 : 400)};
-        font-style: ${({ $italic }) => ($italic ? 'italic' : 'normal')};
-        line-height: ${({ $variant }) => ($variant === 'button' ? 1 : 1.4)};
-        font-family: ${({ $fontFamily, $family, $variant }) =>
-          $fontFamily ||
-          ($family
-            ? `var(--valet-font-${$family})`
-            : `var(--valet-font-${
-                $variant === 'button'
-                  ? 'button'
-                  : $variant.startsWith('h')
-                  ? 'heading'
-                  : 'body'
-              })`)};
-        ${({ $center }) =>
-          $center &&
-          `
+    () => styled(Tag)<{
+      $variant: Variant;
+      $color?: string;
+      $fontFamily?: string;
+      $family?: 'heading' | 'body' | 'mono' | 'button';
+      $size: string;
+      $bold: boolean;
+      $italic: boolean;
+      $center?: boolean;
+      $noSelect: boolean;
+    }>`
+      margin: 0;
+      color: ${({ $color }) => $color || 'var(--valet-text-color, inherit)'};
+      font-size: ${({ $size }) => $size};
+      font-weight: ${({ $bold }) => ($bold ? 700 : 400)};
+      font-style: ${({ $italic }) => ($italic ? 'italic' : 'normal')};
+      line-height: ${({ $variant }) => ($variant === 'button' ? 1 : 1.4)};
+      font-family: ${({ $fontFamily, $family, $variant }) =>
+        $fontFamily ||
+        ($family
+          ? `var(--valet-font-${$family})`
+          : `var(--valet-font-${
+              $variant === 'button' ? 'button' : $variant.startsWith('h') ? 'heading' : 'body'
+            })`)};
+      ${({ $center }) =>
+        $center &&
+        `
             text-align: center;
             align-self: center;
             margin-inline: auto;
           `};
-        ${({ $noSelect }) =>
-          $noSelect &&
-          `
+      ${({ $noSelect }) =>
+        $noSelect &&
+        `
             user-select: none;
             -webkit-user-select: none;
             -ms-user-select: none;
             -webkit-touch-callout: none;
           `};
 
-        /* Newline & wrapping guards */
-        white-space: normal;
-        overflow-wrap: anywhere;
-        word-break: break-word;
-        max-width: 100%;
-      `,
+      /* Newline & wrapping guards */
+      white-space: normal;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      max-width: 100%;
+    `,
     [Tag],
   );
 

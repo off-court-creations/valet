@@ -1,15 +1,7 @@
 // ─────────────────────────────────────────────────────────────
 // src/pages/components/LLMChat.tsx | valet
 // ─────────────────────────────────────────────────────────────
-import {
-  Surface,
-  Stack,
-  Typography,
-  Tabs,
-  Table,
-  Button,
-  useTheme,
-} from '@archway/valet';
+import { Surface, Stack, Typography, Tabs, Table, Button, useTheme } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -61,7 +53,7 @@ export default function LLMChatPage() {
     {
       prop: <code>placeholder</code>,
       type: <code>string</code>,
-      default: <code>'Message…'</code>,
+      default: <code>&#39;Message…&#39;</code>,
       description: 'Input placeholder',
     },
     {
@@ -112,24 +104,25 @@ export default function LLMChatPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography variant="h2" bold>
+        <Typography
+          variant='h2'
+          bold
+        >
           LLMChat
         </Typography>
-        <Typography variant="subtitle">
-          Conversation UI for large language models
-        </Typography>
+        <Typography variant='subtitle'>Conversation UI for large language models</Typography>
         <Tabs>
-          <Tabs.Tab label="Usage" />
+          <Tabs.Tab label='Usage' />
           <Tabs.Panel>
             <Stack>
               <Typography>
-                LLMChat renders a scrollable chat history and an optional compose area.
-                Provide an array of <code>ChatMessage</code> objects via the
+                LLMChat renders a scrollable chat history and an optional compose area. Provide an
+                array of <code>ChatMessage</code> objects via the
                 <code>messages</code> prop and update it when the user sends a message.
               </Typography>
               <Typography>
-                The component focuses on minimal ceremony so your users can start
-                chatting with an AI quickly. Styling hooks are provided via the
+                The component focuses on minimal ceremony so your users can start chatting with an
+                AI quickly. Styling hooks are provided via the
                 <code>preset</code> prop so it fits naturally within your product.
               </Typography>
               <Typography>
@@ -141,18 +134,22 @@ export default function LLMChatPage() {
                 <code>{'<Surface>'}</code>. Avatars and model selection are optional.
               </Typography>
               <Typography>
-                LLMChat works well for prototypes or integrated workflows when you
-                need a straightforward conversational widget.
+                LLMChat works well for prototypes or integrated workflows when you need a
+                straightforward conversational widget.
               </Typography>
             </Stack>
           </Tabs.Panel>
-          <Tabs.Tab label="Reference" />
+          <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Table data={data} columns={columns} constrainHeight={false} />
+            <Table
+              data={data}
+              columns={columns}
+              constrainHeight={false}
+            />
           </Tabs.Panel>
         </Tabs>
         <Button
-          size="lg"
+          size='lg'
           onClick={() => navigate('/chat-demo')}
           style={{ marginTop: theme.spacing(1) }}
         >
@@ -162,4 +159,3 @@ export default function LLMChatPage() {
     </Surface>
   );
 }
-

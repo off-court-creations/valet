@@ -14,9 +14,7 @@ import type { Presettable } from '../../types';
 /*───────────────────────────────────────────────────────────*/
 export type AppBarToken = 'primary' | 'secondary' | 'tertiary';
 
-export interface AppBarProps
-  extends React.HTMLAttributes<HTMLElement>,
-    Presettable {
+export interface AppBarProps extends React.HTMLAttributes<HTMLElement>, Presettable {
   color?: AppBarToken | string;
   textColor?: AppBarToken | string;
   left?: React.ReactNode;
@@ -74,7 +72,7 @@ export const AppBar: React.FC<AppBarProps> = ({
 }) => {
   const { theme } = useTheme();
   const { element, registerChild, unregisterChild } = useSurface(
-    s => ({
+    (s) => ({
       element: s.element,
       registerChild: s.registerChild,
       unregisterChild: s.unregisterChild,
@@ -84,22 +82,20 @@ export const AppBar: React.FC<AppBarProps> = ({
   const ref = useRef<HTMLElement>(null);
   const id = useId();
 
-  const isToken = (v: any): v is AppBarToken =>
+  const isToken = (v: unknown): v is AppBarToken =>
     v === 'primary' || v === 'secondary' || v === 'tertiary';
 
-  const bg = color === undefined
-    ? theme.colors.primary
-    : isToken(color)
-      ? theme.colors[color]
-      : color;
+  const bg =
+    color === undefined ? theme.colors.primary : isToken(color) ? theme.colors[color] : color;
 
-  const text = textColor === undefined
-    ? isToken(color)
-      ? theme.colors[`${color}Text`]
-      : theme.colors.text
-    : isToken(textColor)
-      ? theme.colors[`${textColor}Text`]
-      : textColor;
+  const text =
+    textColor === undefined
+      ? isToken(color)
+        ? theme.colors[`${color}Text`]
+        : theme.colors.text
+      : isToken(textColor)
+        ? theme.colors[`${textColor}Text`]
+        : textColor;
   const presetClass = p ? preset(p) : '';
   const pad = theme.spacing(1);
   const gap = theme.spacing(2);
@@ -108,16 +104,20 @@ export const AppBar: React.FC<AppBarProps> = ({
     const node = ref.current;
     const surfEl = element;
     if (!node || !surfEl) return;
-    const prev = (surfEl.style as any).marginTop;
+
+    const surfaceEl = surfEl as HTMLElement;
+    const prev = surfaceEl.style.marginTop;
+
     const update = (m: { height: number }) => {
-      (surfEl.style as any).marginTop = `${m.height}px`;
+      surfaceEl.style.marginTop = `${m.height}px`;
     };
+
     registerChild(id, node, update);
     return () => {
       unregisterChild(id);
-      (surfEl.style as any).marginTop = prev;
+      surfaceEl.style.marginTop = prev;
     };
-  }, [element]);
+  }, [element, id, registerChild, unregisterChild]);
 
   const bar = (
     <Bar
@@ -126,18 +126,18 @@ export const AppBar: React.FC<AppBarProps> = ({
       $text={text}
       $pad={pad}
       className={[presetClass, className].filter(Boolean).join(' ')}
-      style={{
-        '--valet-bg': bg,
-        '--valet-text-color': text,
-        background: bg,
-        color: text,
-        ...style,
-      } as React.CSSProperties}
+      style={
+        {
+          '--valet-bg': bg,
+          '--valet-text-color': text,
+          background: bg,
+          color: text,
+          ...style,
+        } as React.CSSProperties
+      }
     >
       <BarBg $bg={bg} />
-      <LeftWrap $gap={gap}>
-        {left ?? children}
-      </LeftWrap>
+      <LeftWrap $gap={gap}>{left ?? children}</LeftWrap>
       {right && <RightWrap>{right}</RightWrap>}
     </Bar>
   );

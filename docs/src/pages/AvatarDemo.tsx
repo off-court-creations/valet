@@ -23,6 +23,7 @@ import { useState } from 'react';
 
 interface EmailForm {
   email: string;
+  [key: string]: unknown;
 }
 
 const useEmailForm = createFormStore<EmailForm>({
@@ -63,20 +64,22 @@ export default function AvatarDemoPage() {
     },
     {
       prop: <code>size</code>,
-      type: <code>'xs' | 's' | 'm' | 'l' | 'xl'</code>,
-      default: <code>'m'</code>,
+      type: (
+        <code>&apos;xs&apos; | &apos;s&apos; | &apos;m&apos; | &apos;l&apos; | &apos;xl&apos;</code>
+      ),
+      default: <code>&apos;m&apos;</code>,
       description: 'Relative size token',
     },
     {
       prop: <code>variant</code>,
-      type: <code>'plain' | 'outline'</code>,
-      default: <code>'plain'</code>,
+      type: <code>&apos;plain&apos; | &apos;outline&apos;</code>,
+      default: <code>&apos;plain&apos;</code>,
       description: 'Visual style variant',
     },
     {
       prop: <code>gravatarDefault</code>,
       type: <code>string</code>,
-      default: <code>'identicon'</code>,
+      default: <code>&apos;identicon&apos;</code>,
       description: 'Fallback style when no avatar exists',
     },
     {
@@ -97,59 +100,79 @@ export default function AvatarDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography variant="h2">Avatar</Typography>
+        <Typography variant='h2'>Avatar</Typography>
 
         <Tabs>
-          <Tabs.Tab label="Usage" />
+          <Tabs.Tab label='Usage' />
           <Tabs.Panel>
-            <Typography variant="subtitle">
-              Gravatar wrapper with custom photo support
-            </Typography>
+            <Typography variant='subtitle'>Gravatar wrapper with custom photo support</Typography>
 
-            <Typography variant="h3">1. Try your Gravatar</Typography>
+            <Typography variant='h3'>1. Try your Gravatar</Typography>
             <FormControl
               useStore={useEmailForm}
-              onSubmitValues={(vals) => setEmail(vals.email)}
+              onSubmitValues={(vals) => setEmail(vals.email as string)}
             >
-              <Stack direction="row">
+              <Stack direction='row'>
                 <Avatar email={email} />
-                <TextField name="email" type="email" placeholder="you@example.com" />
-                <Button type="submit">Show</Button>
+                <TextField
+                  name='email'
+                  type='email'
+                  placeholder='you@example.com'
+                />
+                <Button type='submit'>Show</Button>
               </Stack>
             </FormControl>
-            <Typography variant="h3">2. Default example</Typography>
-            <Avatar email="support@gravatar.com" size="l" />
-            <Typography variant="h3">3. Custom src</Typography>
+            <Typography variant='h3'>2. Default example</Typography>
             <Avatar
-              src="https://avatars.githubusercontent.com/u/9919?s=200&v=4"
-              size="l"
-              alt="GitHub"
+              email='support@gravatar.com'
+              size='l'
+            />
+            <Typography variant='h3'>3. Custom src</Typography>
+            <Avatar
+              src='https://avatars.githubusercontent.com/u/9919?s=200&v=4'
+              size='l'
+              alt='GitHub'
             />
 
             {/* 4. Sizes --------------------------------------------------------- */}
-            <Typography variant="h3">4. Sizes</Typography>
-            <Stack direction="row">
+            <Typography variant='h3'>4. Sizes</Typography>
+            <Stack direction='row'>
               {(['xl', 'l', 'm', 's', 'xs'] as const).map((s) => (
-                <Stack key={s} spacing={0.5} style={{ alignItems: 'center' }}>
-                  <Avatar email="support@gravatar.com" size={s} />
-                  <Typography variant="body">{s}</Typography>
+                <Stack
+                  key={s}
+                  spacing={0.5}
+                  style={{ alignItems: 'center' }}
+                >
+                  <Avatar
+                    email='support@gravatar.com'
+                    size={s}
+                  />
+                  <Typography variant='body'>{s}</Typography>
                 </Stack>
               ))}
             </Stack>
 
-            <Typography variant="h3">5. Outline</Typography>
-            <Avatar email="support@gravatar.com" size="l" variant="outline" />
+            <Typography variant='h3'>5. Outline</Typography>
+            <Avatar
+              email='support@gravatar.com'
+              size='l'
+              variant='outline'
+            />
           </Tabs.Panel>
 
-          <Tabs.Tab label="Reference" />
+          <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant="h3">Prop reference</Typography>
-            <Table data={data} columns={columns} constrainHeight={false} />
+            <Typography variant='h3'>Prop reference</Typography>
+            <Table
+              data={data}
+              columns={columns}
+              constrainHeight={false}
+            />
           </Tabs.Panel>
         </Tabs>
 
         <Button
-          size="lg"
+          size='lg'
           onClick={() => navigate(-1)}
           style={{ marginTop: theme.spacing(1) }}
         >

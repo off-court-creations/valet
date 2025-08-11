@@ -7,12 +7,14 @@ import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { IconButton } from './IconButton';
-import { useForm } from './FormControl';
+import { useOptionalForm } from './FormControl';
 import type { Presettable } from '../../types';
 import type { Theme } from '../../system/themeStore';
 
 /*───────────────────────────────────────────────────────────*/
-export interface IteratorProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'>, Presettable {
+export interface IteratorProps
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'>,
+    Presettable {
   value?: number;
   defaultValue?: number;
   onChange?: (value: number) => void;
@@ -79,13 +81,12 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
       (node: HTMLInputElement | null) => {
         localRef.current = node;
         if (typeof ref === 'function') ref(node);
-        else if (ref) (ref as any).current = node;
+        else if (ref) (ref as React.MutableRefObject<HTMLInputElement | null>).current = node;
       },
       [ref],
     );
 
-    let form: ReturnType<typeof useForm<any>> | null = null;
-    try { form = useForm<any>(); } catch {}
+    const form = useOptionalForm<Record<string, number | undefined>>();
 
     const formVal = form && name ? (form.values[name] as number | undefined) : undefined;
     const controlled = valueProp !== undefined || formVal !== undefined;
@@ -97,14 +98,17 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
       setText(String(current));
     }, [current]);
 
-    const commit = (next: number) => {
-      if (min !== undefined && next < min) next = min;
-      if (max !== undefined && next > max) next = max;
-      if (!controlled) setInternal(next);
-      form?.setField(name as any, next);
-      onChange?.(next);
-      setText(String(next));
-    };
+    const commit = useCallback(
+      (next: number) => {
+        if (min !== undefined && next < min) next = min;
+        if (max !== undefined && next > max) next = max;
+        if (!controlled) setInternal(next);
+        if (form && name) form.setField(name as keyof Record<string, number | undefined>, next);
+        onChange?.(next);
+        setText(String(next));
+      },
+      [controlled, form, max, min, name, onChange],
+    );
 
     const handleInput: React.ChangeEventHandler<HTMLInputElement> = (e) => {
       const val = e.target.value;
@@ -119,16 +123,22 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
       else commit(num);
     };
 
-    const stepBy = useCallback((dir: number) => {
-      commit(current + dir * step);
-    }, [current, step]);
+    const stepBy = useCallback(
+      (dir: number) => {
+        commit(current + dir * step);
+      },
+      [commit, current, step],
+    );
 
-    const handleWheel = useCallback((e: WheelEvent) => {
-      if (disabled) return;
-      e.preventDefault();
-      e.stopPropagation();
-      stepBy(e.deltaY < 0 ? 1 : -1);
-    }, [disabled, stepBy]);
+    const handleWheel = useCallback(
+      (e: WheelEvent) => {
+        if (disabled) return;
+        e.preventDefault();
+        e.stopPropagation();
+        stepBy(e.deltaY < 0 ? 1 : -1);
+      },
+      [disabled, stepBy],
+    );
 
     useEffect(() => {
       const node = localRef.current;
@@ -142,20 +152,24 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
     const w = typeof width === 'number' ? `${width}px` : width;
 
     return (
-      <Wrapper theme={theme} className={cls} style={style}>
+      <Wrapper
+        theme={theme}
+        className={cls}
+        style={style}
+      >
         <IconButton
-          size="xs"
-          variant="outlined"
-          icon="mdi:minus"
+          size='xs'
+          variant='outlined'
+          icon='mdi:minus'
           onClick={() => stepBy(-1)}
           disabled={disabled}
-          aria-label="decrement"
+          aria-label='decrement'
         />
         <Field
           {...rest}
           ref={setRef}
-          type="number"
-          inputMode="numeric"
+          type='number'
+          inputMode='numeric'
           theme={theme}
           $w={w}
           value={text}
@@ -164,12 +178,12 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
           disabled={disabled}
         />
         <IconButton
-          size="xs"
-          variant="outlined"
-          icon="mdi:plus"
+          size='xs'
+          variant='outlined'
+          icon='mdi:plus'
           onClick={() => stepBy(1)}
           disabled={disabled}
-          aria-label="increment"
+          aria-label='increment'
         />
       </Wrapper>
     );

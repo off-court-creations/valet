@@ -21,7 +21,9 @@ import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../components/NavDrawer';
 
 /*───────────────────────────────────────────────────────────*/
-interface FormVals { amount: number; }
+interface FormVals extends Record<string, unknown> {
+  amount: number;
+}
 const useFormStore = createFormStore<FormVals>({ amount: 1 });
 
 export default function IteratorDemoPage() {
@@ -89,7 +91,7 @@ export default function IteratorDemoPage() {
     {
       prop: <code>width</code>,
       type: <code>number | string</code>,
-      default: <code>'3.5rem'</code>,
+      default: <code>&#39;3.5rem&#39;</code>,
       description: 'Field width',
     },
     {
@@ -110,65 +112,91 @@ export default function IteratorDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography variant="h2" bold>
+        <Typography
+          variant='h2'
+          bold
+        >
           Iterator Playground
         </Typography>
-        <Typography variant="subtitle">
-          Compact numeric stepper with plus/minus controls. Scroll while
-          hovering to change the value without moving the page.
+        <Typography variant='subtitle'>
+          Compact numeric stepper with plus/minus controls. Scroll while hovering to change the
+          value without moving the page.
         </Typography>
 
         <Tabs>
-          <Tabs.Tab label="Usage" />
+          <Tabs.Tab label='Usage' />
           <Tabs.Panel>
             <Stack>
               <Typography>
-                The field will increment when scrolling up and decrement when
-                scrolling down. Page scrolling is suppressed while hovering,
-                including on Firefox.
+                The field will increment when scrolling up and decrement when scrolling down. Page
+                scrolling is suppressed while hovering, including on Firefox.
               </Typography>
-              <Typography variant="h3">1. Uncontrolled</Typography>
+              <Typography variant='h3'>1. Uncontrolled</Typography>
               <Iterator defaultValue={3} />
 
-              <Typography variant="h3">2. Controlled</Typography>
-              <Stack direction="row" style={{ alignItems: 'center' }}>
-                <Iterator value={count} onChange={setCount} />
+              <Typography variant='h3'>2. Controlled</Typography>
+              <Stack
+                direction='row'
+                style={{ alignItems: 'center' }}
+              >
+                <Iterator
+                  value={count}
+                  onChange={setCount}
+                />
                 <Typography>Value: {count}</Typography>
               </Stack>
 
-              <Typography variant="h3">3. Min, max &amp; step</Typography>
-              <Iterator min={0} max={10} step={2} defaultValue={4} />
+              <Typography variant='h3'>3. Min, max &amp; step</Typography>
+              <Iterator
+                min={0}
+                max={10}
+                step={2}
+                defaultValue={4}
+              />
 
-              <Typography variant="h3">4. Disabled</Typography>
-              <Iterator defaultValue={5} disabled />
+              <Typography variant='h3'>4. Disabled</Typography>
+              <Iterator
+                defaultValue={5}
+                disabled
+              />
 
-              <Typography variant="h3">5. FormControl</Typography>
+              <Typography variant='h3'>5. FormControl</Typography>
               <FormControl
                 useStore={useFormStore}
                 onSubmitValues={(vals) => alert(JSON.stringify(vals))}
               >
-                <Stack direction="row" compact>
-                  <Iterator name="amount" />
-                  <Button type="submit">Submit</Button>
+                <Stack
+                  direction='row'
+                  compact
+                >
+                  <Iterator name='amount' />
+                  <Button type='submit'>Submit</Button>
                 </Stack>
               </FormControl>
 
-              <Typography variant="h3">6. Theme toggle</Typography>
-              <Button variant="outlined" onClick={toggleMode}>
+              <Typography variant='h3'>6. Theme toggle</Typography>
+              <Button
+                variant='outlined'
+                onClick={toggleMode}
+              >
                 Toggle light / dark
               </Button>
             </Stack>
           </Tabs.Panel>
 
-          <Tabs.Tab label="Reference" />
+          <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant="h3">Prop reference</Typography>
-            <Table data={data} columns={columns} constrainHeight={false} />
+            <Typography variant='h3'>Prop reference</Typography>
+            <Table
+              data={data}
+              columns={columns}
+              constrainHeight={false}
+            />
           </Tabs.Panel>
         </Tabs>
 
         <Button
-          size="lg"
+          size='lg'
           onClick={() => navigate(-1)}
           style={{ marginTop: theme.spacing(1) }}
         >

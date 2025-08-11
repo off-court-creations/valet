@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.24.0]
+- Setup ESLint and Prettier
+- linted valet and docs
+
 ## [0.23.5]
 - Auto-hide `Skeleton` when wrapped image finishes loading
 
@@ -343,6 +347,7 @@ responsive logic uses the selected `Surface` element to handle persistent margin
 ### Other
 - vibe coded
 
+[v0.24.0]: https://github.com/off-court-creations/valet/releases/tag/v0.24.0
 [v0.23.5]: https://github.com/off-court-creations/valet/releases/tag/v0.23.5
 [v0.23.4]: https://github.com/off-court-creations/valet/releases/tag/v0.23.4
 [v0.23.3]: https://github.com/off-court-creations/valet/releases/tag/v0.23.3

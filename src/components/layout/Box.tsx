@@ -8,9 +8,7 @@ import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import type { Presettable } from '../../types';
 
-export interface BoxProps
-  extends React.ComponentProps<'div'>,
-    Presettable {
+export interface BoxProps extends React.ComponentProps<'div'>, Presettable {
   background?: string | undefined;
   textColor?: string | undefined;
   centered?: boolean;
@@ -27,14 +25,14 @@ const Base = styled('div')<{
   box-sizing: border-box;
 
   /* Boundary & overflow guards */
-  max-width  : 100%;
-  max-height : 100%;
-  min-width  : 0;
-  min-height : 0;
-  overflow   : hidden;
+  max-width: 100%;
+  max-height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
 
   display: ${({ $center }) => ($center ? 'flex' : 'block')};
-  margin : ${({ $margin }) => $margin};
+  margin: ${({ $margin }) => $margin};
   & > * {
     padding: ${({ $pad }) => $pad};
   }
@@ -46,10 +44,9 @@ const Base = styled('div')<{
       align-items: center;
     `}
 
-  ${({ $bg })   => $bg && `background: ${$bg}; --valet-bg: ${$bg};`}  
+  ${({ $bg }) => $bg && `background: ${$bg}; --valet-bg: ${$bg};`}  
   ${({ $text }) => $text && `color: ${$text}; --valet-text-color: ${$text};`}
-  ${({ $center }) =>
-    $center !== undefined && `--valet-centered: ${$center ? '1' : '0'};`}
+  ${({ $center }) => $center !== undefined && `--valet-centered: ${$center ? '1' : '0'};`}
 `;
 
 export const Box: React.FC<BoxProps> = ({
@@ -71,10 +68,10 @@ export const Box: React.FC<BoxProps> = ({
       background === theme.colors.primary
         ? theme.colors.primaryText
         : background === theme.colors.secondary
-        ? theme.colors.secondaryText
-        : background === theme.colors.tertiary
-        ? theme.colors.tertiaryText
-        : undefined;
+          ? theme.colors.secondaryText
+          : background === theme.colors.tertiary
+            ? theme.colors.tertiaryText
+            : undefined;
   }
 
   const pad = theme.spacing(1);

@@ -10,51 +10,80 @@ export type AIProvider = 'openai' | 'anthropic';
 /* ---- 1. simple AES-GCM helpers ---------------------------------- */
 const algo = { name: 'AES-GCM', length: 256 } as const;
 
-async function deriveKey(passphrase: string, salt: Uint8Array) {
+// TS 5.8 typed arrays can be ArrayBufferLike; WebCrypto wants BufferSource (ArrayBuffer)
+async function deriveKey(passphrase: string, salt: ArrayBuffer) {
   const enc = new TextEncoder();
   const keyMaterial = await crypto.subtle.importKey(
-    'raw', enc.encode(passphrase), { name: 'PBKDF2' }, false, ['deriveKey'],
+    'raw',
+    enc.encode(passphrase),
+    { name: 'PBKDF2' },
+    false,
+    ['deriveKey'],
   );
   return crypto.subtle.deriveKey(
     { name: 'PBKDF2', salt, iterations: 120_000, hash: 'SHA-256' },
-    keyMaterial, algo, false, ['encrypt', 'decrypt'],
+    keyMaterial,
+    algo,
+    false,
+    ['encrypt', 'decrypt'],
   );
 }
 
+type CipherPayload = { iv: number[]; salt: number[]; data: number[] };
+
 export async function encrypt(plaintext: string, passphrase: string) {
-  const enc   = new TextEncoder();
-  const salt  = crypto.getRandomValues(new Uint8Array(16));
-  const iv    = crypto.getRandomValues(new Uint8Array(12));
-  const key   = await deriveKey(passphrase, salt);
-  const data  = await crypto.subtle.encrypt(
-    { name: 'AES-GCM', iv }, key, enc.encode(plaintext),
+  const enc = new TextEncoder();
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const key = await deriveKey(passphrase, salt.buffer);
+  const data = await crypto.subtle.encrypt(
+    { name: 'AES-GCM', iv: iv.buffer },
+    key,
+    enc.encode(plaintext),
   );
   return btoa(
-    JSON.stringify({ iv: [...iv], salt: [...salt], data: [...new Uint8Array(data)] }),
+    JSON.stringify({
+      iv: [...iv],
+      salt: [...salt],
+      data: [...new Uint8Array(data)],
+    }),
   );
 }
 
 export async function decrypt(cipherB64: string, passphrase: string) {
-  const { iv, salt, data } = JSON.parse(atob(cipherB64));
-  const key  = await deriveKey(passphrase, new Uint8Array(salt));
-  const dec  = await crypto.subtle.decrypt(
-    { name: 'AES-GCM', iv: new Uint8Array(iv) }, key, new Uint8Array(data),
+  const { iv, salt, data } = JSON.parse(atob(cipherB64)) as CipherPayload;
+  const key = await deriveKey(passphrase, new Uint8Array(salt).buffer);
+  const dec = await crypto.subtle.decrypt(
+    { name: 'AES-GCM', iv: new Uint8Array(iv).buffer },
+    key,
+    new Uint8Array(data).buffer,
   );
   return new TextDecoder().decode(dec);
 }
 
 /* ---- 2. custom storage routing ---------------------------------- */
+function hasCipherState(x: unknown): x is { state: { cipher?: unknown } } {
+  if (typeof x !== 'object' || x === null) return false;
+  if (!('state' in x)) return false;
+  const s = (x as { state: unknown }).state;
+  return typeof s === 'object' && s !== null && 'cipher' in s;
+}
+
 const dynamicStorage: StateStorage = {
   getItem: (n) => localStorage.getItem(n) ?? sessionStorage.getItem(n),
   setItem: (n, v) => {
     try {
-      const p = JSON.parse(v);
-      if (p.state?.cipher) {
+      const parsed = JSON.parse(v) as unknown;
+      if (hasCipherState(parsed) && parsed.state.cipher) {
+        // Encrypted records live in localStorage; clear any session copy
         localStorage.setItem(n, v);
         sessionStorage.removeItem(n);
         return;
       }
-    } catch {}
+    } catch {
+      // ignore invalid JSON; fall back to sessionStorage
+      void 0;
+    }
     sessionStorage.setItem(n, v);
   },
   removeItem: (n) => {
@@ -89,7 +118,13 @@ export const useAIKey = create<KeyState>()(
           const cipher = await encrypt(k, pass);
           set({ apiKey: k, provider, model: null, cipher, passphrase: pass });
         } else {
-          set({ apiKey: k, provider, model: null, cipher: null, passphrase: null });
+          set({
+            apiKey: k,
+            provider,
+            model: null,
+            cipher: null,
+            passphrase: null,
+          });
         }
       },
       setModel: (m) => set({ model: m }),
@@ -106,20 +141,42 @@ export const useAIKey = create<KeyState>()(
       },
       clearKey: () => {
         dynamicStorage.removeItem('valet-ai-key');
-        set({ apiKey: null, provider: null, model: null, cipher: null, passphrase: null });
+        set({
+          apiKey: null,
+          provider: null,
+          model: null,
+          cipher: null,
+          passphrase: null,
+        });
       },
     }),
     {
       name: 'valet-ai-key',
       storage: createJSONStorage(() => dynamicStorage),
-      partialize: (s) => ({ cipher: s.cipher, provider: s.provider, model: s.model }),
+      partialize: (s) => ({
+        cipher: s.cipher,
+        provider: s.provider,
+        model: s.model,
+      }),
     },
   ),
 );
 
 /* ---- 4. helper for chat requests -------------------------------- */
+
+export type ChatMessage = {
+  role: 'system' | 'user' | 'assistant' | 'function' | 'tool';
+  content: string;
+  name?: string;
+};
+
+type AnthropicResponse = {
+  role: 'assistant' | 'user';
+  content: string | Array<{ type: string; text?: string }>;
+};
+
 export async function sendChat(
-  messages: any[],
+  messages: ChatMessage[],
   model?: string,
   provider?: AIProvider,
   apiKey?: string,
@@ -128,7 +185,8 @@ export async function sendChat(
   const state = useAIKey.getState();
   const key = apiKey ?? state.apiKey;
   const prov = provider ?? state.provider;
-  const mdl = model ?? state.model ?? (prov === 'anthropic' ? 'claude-sonnet-4-20250514' : 'gpt-4o');
+  const mdl =
+    model ?? state.model ?? (prov === 'anthropic' ? 'claude-sonnet-4-20250514' : 'gpt-4o');
 
   if (!key || !prov) throw new Error('No API key set yet');
 
@@ -138,7 +196,7 @@ export async function sendChat(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${key}`,
+        Authorization: `Bearer ${key}`,
       },
       body: JSON.stringify({ model: mdl, messages }),
     });
@@ -146,9 +204,10 @@ export async function sendChat(
     return res.json();
   }
 
+  // Anthrop(ic)
   const url = endpoint ?? 'https://api.anthropic.com/v1/messages';
   let system: string | undefined;
-  let msgs = messages;
+  let msgs: ChatMessage[] = messages;
   if (Array.isArray(messages) && messages[0]?.role === 'system') {
     system = messages[0].content;
     msgs = messages.slice(1);
@@ -161,18 +220,28 @@ export async function sendChat(
       'anthropic-version': '2023-06-01',
       'anthropic-dangerous-direct-browser-access': 'true',
     },
-    body: JSON.stringify({ model: mdl, system, messages: msgs, max_tokens: 1024 }),
+    body: JSON.stringify({
+      model: mdl,
+      system,
+      messages: msgs,
+      max_tokens: 1024,
+    }),
   });
   if (!res.ok) throw new Error(await res.text());
-  const json = await res.json();
+
+  const json = (await res.json()) as AnthropicResponse;
+
+  const contentText =
+    typeof json.content === 'string'
+      ? json.content
+      : json.content.map((block) => (typeof block.text === 'string' ? block.text : '')).join('');
+
   return {
     choices: [
       {
         message: {
           role: json.role,
-          content: Array.isArray(json.content)
-            ? json.content.map((p: any) => p.text ?? '').join('')
-            : '',
+          content: contentText,
         },
       },
     ],

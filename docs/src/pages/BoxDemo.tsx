@@ -19,7 +19,7 @@ import NavDrawer from '../components/NavDrawer';
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Demo page                                                                  */
 export default function BoxDemoPage() {
-  const { theme, toggleMode } = useTheme();   // live theme switch
+  const { theme, toggleMode } = useTheme(); // live theme switch
 
   interface Row {
     prop: ReactNode;
@@ -72,38 +72,41 @@ export default function BoxDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography variant="h2" bold>
+        <Typography
+          variant='h2'
+          bold
+        >
           Box Showcase
         </Typography>
 
-        <Typography variant="subtitle">
-          Baseline container for backgrounds and centring
-        </Typography>
+        <Typography variant='subtitle'>Baseline container for backgrounds and centring</Typography>
 
         <Tabs>
-          <Tabs.Tab label="Usage" />
+          <Tabs.Tab label='Usage' />
           <Tabs.Panel>
-            <Typography variant="h3">1. Default Box</Typography>
+            <Typography variant='h3'>1. Default Box</Typography>
             <Box>
-              <Typography>(no props) — inherits parent background, uses theme text colour</Typography>
+              <Typography>
+                (no props) — inherits parent background, uses theme text colour
+              </Typography>
             </Box>
 
-            <Typography variant="h3">2. background&nbsp;prop</Typography>
+            <Typography variant='h3'>2. background&nbsp;prop</Typography>
             <Stack>
               <Box background={theme.colors['primary']}>
-                <Typography variant="h4">{`background=${theme.colors['primary']}`}</Typography>
+                <Typography variant='h4'>{`background=${theme.colors['primary']}`}</Typography>
               </Box>
               <Box background={theme.colors['secondary']}>
-                <Typography variant="h4">{`background=${theme.colors['secondary']}`}</Typography>
+                <Typography variant='h4'>{`background=${theme.colors['secondary']}`}</Typography>
               </Box>
               <Box background={theme.colors['tertiary']}>
-                <Typography variant="h4">{`background=${theme.colors['tertiary']}`}</Typography>
+                <Typography variant='h4'>{`background=${theme.colors['tertiary']}`}</Typography>
               </Box>
             </Stack>
 
-            <Typography variant="h3">3. textColor&nbsp;override</Typography>
+            <Typography variant='h3'>3. textColor&nbsp;override</Typography>
             <Box
-              background="#333333"
+              background='#333333'
               textColor={theme.colors['tertiary']}
               style={{ padding: theme.spacing(1) }}
             >
@@ -114,7 +117,7 @@ export default function BoxDemoPage() {
               </Typography>
             </Box>
 
-            <Typography variant="h3">4. Inline style</Typography>
+            <Typography variant='h3'>4. Inline style</Typography>
             <Box
               background={theme.colors['tertiary']}
               style={{
@@ -123,12 +126,20 @@ export default function BoxDemoPage() {
                 borderRadius: 12,
               }}
             >
-              <Typography>Dashed border, custom radius, padding via <code>style</code></Typography>
+              <Typography>
+                Dashed border, custom radius, padding via <code>style</code>
+              </Typography>
             </Box>
 
-            <Typography variant="h3">5. Nested Boxes</Typography>
-            <Box background={theme.colors['primary']} style={{ padding: theme.spacing(1) }}>
-              <Box background={theme.colors['secondary']} style={{ padding: theme.spacing(1) }}>
+            <Typography variant='h3'>5. Nested Boxes</Typography>
+            <Box
+              background={theme.colors['primary']}
+              style={{ padding: theme.spacing(1) }}
+            >
+              <Box
+                background={theme.colors['secondary']}
+                style={{ padding: theme.spacing(1) }}
+              >
                 <Typography>
                   Child automatically receives&nbsp;
                   <code style={{ color: 'var(--zero-text-color)' }}>--zero-text-color</code>
@@ -136,36 +147,45 @@ export default function BoxDemoPage() {
               </Box>
             </Box>
 
-            <Typography variant="h3">6. Presets</Typography>
+            <Typography variant='h3'>6. Presets</Typography>
             <Stack>
-              <Box preset="fancyHolder">
-                <Typography>preset="fancyHolder"</Typography>
+              <Box preset='fancyHolder'>
+                <Typography>preset=&quot;fancyHolder&quot;</Typography>
               </Box>
 
-              <Box preset="glassHolder">
-                <Typography>preset="glassHolder"</Typography>
+              <Box preset='glassHolder'>
+                <Typography>preset=&quot;glassHolder&quot;</Typography>
               </Box>
 
-              <Box preset="gradientHolder">
-                <Typography>preset="gradientHolder"</Typography>
+              <Box preset='gradientHolder'>
+                <Typography>preset=&quot;gradientHolder&quot;</Typography>
               </Box>
 
               <Box preset={['glassHolder', 'fancyHolder']}>
                 <Typography>
                   Combination&nbsp;
-                  <code>preset=['glassHolder','fancyHolder']</code>
+                  <code>preset=[&apos;glassHolder&apos;,&apos;fancyHolder&apos;]</code>
                 </Typography>
               </Box>
             </Stack>
 
-            <Typography variant="h3">7. Theme coupling</Typography>
-            <Button variant="outlined" onClick={toggleMode}>Toggle light / dark mode</Button>
+            <Typography variant='h3'>7. Theme coupling</Typography>
+            <Button
+              variant='outlined'
+              onClick={toggleMode}
+            >
+              Toggle light / dark mode
+            </Button>
           </Tabs.Panel>
 
-          <Tabs.Tab label="Reference" />
+          <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant="h3">Prop reference</Typography>
-            <Table data={data} columns={columns} constrainHeight={false} />
+            <Typography variant='h3'>Prop reference</Typography>
+            <Table
+              data={data}
+              columns={columns}
+              constrainHeight={false}
+            />
           </Tabs.Panel>
         </Tabs>
       </Stack>

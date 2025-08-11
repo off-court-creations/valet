@@ -2,19 +2,17 @@
 // src/components/primitives/Video.tsx  | valet
 // flexible <Video /> component with lazy loading & fullscreen
 // ─────────────────────────────────────────────────────────────
-import React, {
-  useRef,
-  useState,
-  useEffect,
-  KeyboardEvent,
-} from 'react';
+import React, { useRef, useState, useEffect, KeyboardEvent } from 'react';
 import { styled } from '../../css/createStyled';
 import { preset } from '../../css/stylePresets';
 import type { Presettable } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 /* Public types                                               */
-export interface VideoSource { src: string; type: 'video/mp4' | 'video/webm' | string; }
+export interface VideoSource {
+  src: string;
+  type: 'video/mp4' | 'video/webm' | string;
+}
 export interface VideoTrack {
   src: string;
   kind: 'subtitles' | 'captions' | 'chapters';
@@ -63,7 +61,11 @@ export interface VideoProps extends Presettable {
 
 /*───────────────────────────────────────────────────────────*/
 /* Styled primitives                                          */
-const VideoWrapper = styled('div')<{ $w?: string; $h?: string; $fit: 'contain' | 'cover' }>`
+const VideoWrapper = styled('div')<{
+  $w?: string;
+  $h?: string;
+  $fit: 'contain' | 'cover';
+}>`
   position: relative;
   width: ${({ $w }) => $w || '100%'};
   height: ${({ $h }) => $h || 'auto'};
@@ -75,7 +77,6 @@ const VideoWrapper = styled('div')<{ $w?: string; $h?: string; $fit: 'contain' |
     object-fit: ${({ $fit }) => $fit};
   }
 `;
-
 
 /*───────────────────────────────────────────────────────────*/
 /* Component                                                 */
@@ -106,9 +107,12 @@ export const Video: React.FC<VideoProps> = ({
     if (!lazy || ready || !('IntersectionObserver' in window)) return;
     const vid = ref.current;
     if (!vid) return;
-    const io = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) setReady(true);
-    }, { threshold: 0.1 });
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) setReady(true);
+      },
+      { threshold: 0.1 },
+    );
     io.observe(vid);
     return () => io.disconnect();
   }, [lazy, ready]);
@@ -124,7 +128,8 @@ export const Video: React.FC<VideoProps> = ({
   const togglePlay = () => {
     const vid = ref.current;
     if (!vid) return;
-    if (vid.paused) vid.play().catch(() => void 0); else vid.pause();
+    if (vid.paused) vid.play().catch(() => void 0);
+    else vid.pause();
   };
 
   const handleKey = (e: KeyboardEvent<HTMLVideoElement>) => {
@@ -155,7 +160,7 @@ export const Video: React.FC<VideoProps> = ({
         muted={muted}
         loop={loop}
         playsInline
-        preload="metadata"
+        preload='metadata'
         poster={poster}
         tabIndex={0}
         onPlay={onPlay}
@@ -163,12 +168,21 @@ export const Video: React.FC<VideoProps> = ({
         onError={(e) => onError?.(e as unknown as ErrorEvent)}
         onKeyDown={handleKey}
       >
-        {ready && sources.map((s, i) => (
-          <source key={i} src={s.src} type={s.type} />
-        ))}
-        {ready && tracks?.map((t, i) => (
-          <track key={i} {...t} />
-        ))}
+        {ready &&
+          sources.map((s, i) => (
+            <source
+              key={i}
+              src={s.src}
+              type={s.type}
+            />
+          ))}
+        {ready &&
+          tracks?.map((t, i) => (
+            <track
+              key={i}
+              {...t}
+            />
+          ))}
       </video>
     </VideoWrapper>
   );

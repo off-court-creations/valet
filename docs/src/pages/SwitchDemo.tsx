@@ -1,8 +1,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// src/pages/SwitchDemoPage.tsx | valet
+// src/pages/SwitchDemo.tsx | valet docs
 // Comprehensive live demo for <Switch /> – showcases uncontrolled,
 // controlled, form-bound, sizes, disabled, and live theme coupling.
-// Now zero reference to ReactNode → no duplicate-type clash.
 // ─────────────────────────────────────────────────────────────────────────────
 import { useState } from 'react';
 import type { JSX } from 'react';
@@ -25,20 +24,20 @@ import NavDrawer from '../components/NavDrawer';
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Local form store for demo                                                  */
 const usePrefsForm = createFormStore({
-  darkMode  : true,
+  darkMode: true,
   newsletter: false,
 });
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Helper row – explicit `control` prop (JSX only, no ReactNode)              */
 interface RowProps {
-  label  : string;
+  label: string;
   control: JSX.Element | null;
 }
 
 const Row = ({ label, control }: RowProps) => (
   <Stack
-    direction="row"
+    direction='row'
     style={{ maxWidth: 360 }}
   >
     {control}
@@ -49,14 +48,14 @@ const Row = ({ label, control }: RowProps) => (
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Demo page                                                                  */
 export default function SwitchDemoPage() {
-  const { theme, toggleMode } = useTheme();           // live theme switch
+  const { theme, toggleMode } = useTheme(); // live theme switch
 
   /* Controlled example state --------------------------------------------- */
   const [wifi, setWifi] = useState(false);
 
   /* Form submit handler --------------------------------------------------- */
   const handleSubmit = (values: { darkMode: boolean; newsletter: boolean }) =>
-    // eslint-disable-next-line no-alert – demo only
+    // eslint-disable-next-line no-alert -- demo only
     alert(JSON.stringify(values, null, 2));
 
   interface Row {
@@ -100,8 +99,8 @@ export default function SwitchDemoPage() {
     },
     {
       prop: <code>size</code>,
-      type: <code>'sm' | 'md' | 'lg'</code>,
-      default: <code>'md'</code>,
+      type: <code>&apos;sm&apos; | &apos;md&apos; | &apos;lg&apos;</code>,
+      default: <code>&apos;md&apos;</code>,
       description: 'Switch size',
     },
     {
@@ -123,111 +122,155 @@ export default function SwitchDemoPage() {
       <NavDrawer />
       <Stack>
         {/* Page header ----------------------------------------------------- */}
-        <Typography variant="h2" bold>
+        <Typography
+          variant='h2'
+          bold
+        >
           Switch Showcase
         </Typography>
-        <Typography variant="subtitle">
-          Every prop, every trick, all in one place
-        </Typography>
+        <Typography variant='subtitle'>Every prop, every trick, all in one place</Typography>
 
         <Tabs>
-          <Tabs.Tab label="Usage" />
+          <Tabs.Tab label='Usage' />
           <Tabs.Panel>
+            {/* 1. Uncontrolled -------------------------------------------------- */}
+            <Typography variant='h3'>1. Uncontrolled</Typography>
+            <Stack>
+              <Row
+                label='Default unchecked'
+                control={<Switch name='uc1' />}
+              />
+              <Row
+                label='Default checked (defaultChecked)'
+                control={
+                  <Switch
+                    name='uc2'
+                    defaultChecked
+                  />
+                }
+              />
+            </Stack>
 
-        {/* 1. Uncontrolled -------------------------------------------------- */}
-        <Typography variant="h3">1. Uncontrolled</Typography>
-        <Stack>
-          <Row
-            label="Default unchecked"
-            control={<Switch name="uc1" />}
-          />
-          <Row
-            label="Default checked (defaultChecked)"
-            control={<Switch name="uc2" defaultChecked />}
-          />
-        </Stack>
-
-        {/* 2. Controlled ---------------------------------------------------- */}
-        <Typography variant="h3">2. Controlled</Typography>
-        <Row
-          label={`Wi-Fi – ${wifi ? 'on' : 'off'}`}
-          control={
-            <Switch
-              name="wifi"
-              checked={wifi}
-              onChange={setWifi}
+            {/* 2. Controlled ---------------------------------------------------- */}
+            <Typography variant='h3'>2. Controlled</Typography>
+            <Row
+              label={`Wi-Fi – ${wifi ? 'on' : 'off'}`}
+              control={
+                <Switch
+                  name='wifi'
+                  checked={wifi}
+                  onChange={setWifi}
+                />
+              }
             />
-          }
-        />
 
-        {/* 3. Sizes --------------------------------------------------------- */}
-        <Typography variant="h3">3. Sizes</Typography>
-        <Stack>
-          <Row
-            label="size='sm'"
-            control={<Switch name="sm" size="sm" defaultChecked />}
-          />
-          <Row
-            label="size='md'"
-            control={<Switch name="md" size="md" defaultChecked />}
-          />
-          <Row
-            label="size='lg'"
-            control={<Switch name="lg" size="lg" defaultChecked />}
-          />
-        </Stack>
+            {/* 3. Sizes --------------------------------------------------------- */}
+            <Typography variant='h3'>3. Sizes</Typography>
+            <Stack>
+              <Row
+                label="size='sm'"
+                control={
+                  <Switch
+                    name='sm'
+                    size='sm'
+                    defaultChecked
+                  />
+                }
+              />
+              <Row
+                label="size='md'"
+                control={
+                  <Switch
+                    name='md'
+                    size='md'
+                    defaultChecked
+                  />
+                }
+              />
+              <Row
+                label="size='lg'"
+                control={
+                  <Switch
+                    name='lg'
+                    size='lg'
+                    defaultChecked
+                  />
+                }
+              />
+            </Stack>
 
-        {/* 4. Disabled ------------------------------------------------------ */}
-        <Typography variant="h3">4. Disabled</Typography>
-        <Stack>
-          <Row
-            label="disabled & checked"
-            control={<Switch name="d1" defaultChecked disabled />}
-          />
-          <Row
-            label="disabled & unchecked"
-            control={<Switch name="d2" disabled />}
-          />
-        </Stack>
+            {/* 4. Disabled ------------------------------------------------------ */}
+            <Typography variant='h3'>4. Disabled</Typography>
+            <Stack>
+              <Row
+                label='disabled & checked'
+                control={
+                  <Switch
+                    name='d1'
+                    defaultChecked
+                    disabled
+                  />
+                }
+              />
+              <Row
+                label='disabled & unchecked'
+                control={
+                  <Switch
+                    name='d2'
+                    disabled
+                  />
+                }
+              />
+            </Stack>
 
-        {/* 5. FormControl integration -------------------------------------- */}
-        <Typography variant="h3">5. FormControl Binding</Typography>
-        <FormControl
-          useStore={usePrefsForm}
-          onSubmitValues={handleSubmit}
-          style={{
-            display      : 'flex',
-            flexDirection: 'column',
-            gap          : theme.spacing(1),
-          }}
-        >
-          <Row
-            label="Dark mode"
-            control={<Switch name="darkMode" />}
-          />
-          <Row
-            label="Join newsletter"
-            control={<Switch name="newsletter" />}
-          />
-          <Button type="submit" variant="contained" size="lg">
-            Save preferences
-          </Button>
-        </FormControl>
+            {/* 5. FormControl integration -------------------------------------- */}
+            <Typography variant='h3'>5. FormControl Binding</Typography>
+            <FormControl
+              useStore={usePrefsForm}
+              onSubmitValues={handleSubmit}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: theme.spacing(1),
+              }}
+            >
+              <Row
+                label='Dark mode'
+                control={<Switch name='darkMode' />}
+              />
+              <Row
+                label='Join newsletter'
+                control={<Switch name='newsletter' />}
+              />
+              <Button
+                type='submit'
+                variant='contained'
+                size='lg'
+              >
+                Save preferences
+              </Button>
+            </FormControl>
 
-        {/* 6. Live theme validation ---------------------------------------- */}
-        <Typography variant="h3">6. Theme coupling</Typography>
-        <Button variant="outlined" onClick={toggleMode}>
-          Toggle light / dark mode
-        </Button>
+            {/* 6. Live theme validation ---------------------------------------- */}
+            <Typography variant='h3'>6. Theme coupling</Typography>
+            <Button
+              variant='outlined'
+              onClick={toggleMode}
+            >
+              Toggle light / dark mode
+            </Button>
           </Tabs.Panel>
 
-          <Tabs.Tab label="Reference" />
+          <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant="h3">Prop reference</Typography>
-            <Table data={data} columns={columns} constrainHeight={false} />
+            <Typography variant='h3'>Prop reference</Typography>
+            <Table
+              data={data}
+              columns={columns}
+              constrainHeight={false}
+            />
           </Tabs.Panel>
         </Tabs>
-
       </Stack>
     </Surface>
   );

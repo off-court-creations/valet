@@ -48,7 +48,7 @@ export interface DrawerProps extends Presettable {
 /*───────────────────────────────────────────────────────────*/
 /* Styled primitives                                         */
 
-const Backdrop = styled('div')<{$fade: boolean}>`
+const Backdrop = styled('div')<{ $fade: boolean }>`
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.55);
@@ -72,22 +72,19 @@ const Panel = styled('div')<{
   z-index: ${({ $persistent }) => ($persistent ? 9998 : 9999)};
   display: flex;
   flex-direction: column;
-  overflow-y: ${({ $anchor }) =>
-    $anchor === 'left' || $anchor === 'right' ? 'auto' : 'visible'};
-  overflow-x: ${({ $anchor }) =>
-    $anchor === 'top' || $anchor === 'bottom' ? 'auto' : 'visible'};
+  overflow-y: ${({ $anchor }) => ($anchor === 'left' || $anchor === 'right' ? 'auto' : 'visible')};
+  overflow-x: ${({ $anchor }) => ($anchor === 'top' || $anchor === 'bottom' ? 'auto' : 'visible')};
   background: ${({ $bg }) => $bg};
   color: ${({ $text }) => $text};
-  box-shadow: ${({ $adaptive }) =>
-    $adaptive ? 'none' : '0 4px 16px rgba(0, 0, 0, 0.3)'};
+  box-shadow: ${({ $adaptive }) => ($adaptive ? 'none' : '0 4px 16px rgba(0, 0, 0, 0.3)')};
   ${({ $anchor, $primary }) =>
     $anchor === 'left'
       ? `border-right:0.25rem solid ${$primary};`
       : $anchor === 'right'
-      ? `border-left:0.25rem solid ${$primary};`
-      : $anchor === 'top'
-      ? `border-bottom:0.25rem solid ${$primary};`
-      : `border-top:0.25rem solid ${$primary};`}
+        ? `border-left:0.25rem solid ${$primary};`
+        : $anchor === 'top'
+          ? `border-bottom:0.25rem solid ${$primary};`
+          : `border-top:0.25rem solid ${$primary};`}
   ${({ $anchor, $size }) =>
     $anchor === 'left' || $anchor === 'right'
       ? `width:${$size}; height:100%;`
@@ -96,20 +93,20 @@ const Panel = styled('div')<{
     $anchor === 'left'
       ? 'top:0; left:0;'
       : $anchor === 'right'
-      ? 'top:0; right:0;'
-      : $anchor === 'top'
-      ? 'top:0; left:0;'
-      : 'bottom:0; left:0;'}
+        ? 'top:0; right:0;'
+        : $anchor === 'top'
+          ? 'top:0; left:0;'
+          : 'bottom:0; left:0;'}
   transform: ${({ $anchor, $fade, $persistent }) =>
     $persistent
       ? 'none'
       : $anchor === 'left'
-      ? `translateX(${$fade ? '-100%' : '0'})`
-      : $anchor === 'right'
-      ? `translateX(${$fade ? '100%' : '0'})`
-      : $anchor === 'top'
-      ? `translateY(${$fade ? '-100%' : '0'})`
-      : `translateY(${$fade ? '100%' : '0'})`};
+        ? `translateX(${$fade ? '-100%' : '0'})`
+        : $anchor === 'right'
+          ? `translateX(${$fade ? '100%' : '0'})`
+          : $anchor === 'top'
+            ? `translateY(${$fade ? '-100%' : '0'})`
+            : `translateY(${$fade ? '100%' : '0'})`};
   transition: ${({ $persistent }) => ($persistent ? 'none' : 'transform 200ms ease')};
 `;
 
@@ -133,12 +130,10 @@ export const Drawer: React.FC<DrawerProps> = ({
 }) => {
   const { theme } = useTheme();
   const { width, height, element } = useSurface(
-    s => ({ width: s.width, height: s.height, element: s.element }),
+    (s) => ({ width: s.width, height: s.height, element: s.element }),
     shallow,
   );
-  const surfOffset = element
-    ? parseFloat(window.getComputedStyle(element).marginTop || '0')
-    : 0;
+  const surfOffset = element ? parseFloat(window.getComputedStyle(element).marginTop || '0') : 0;
   const presetClasses = presetKey ? preset(presetKey) : '';
   const toggleBg = withAlpha(theme.colors.primary, 0.7);
   const portrait = height > width;
@@ -148,11 +143,7 @@ export const Drawer: React.FC<DrawerProps> = ({
 
   const uncontrolled = controlledOpen === undefined;
   const [openState, setOpenState] = useState(defaultOpen);
-  const open = persistentEffective
-    ? true
-    : uncontrolled
-    ? openState
-    : controlledOpen!;
+  const open = persistentEffective ? true : uncontrolled ? openState : controlledOpen!;
   const [fade, setFade] = useState(true);
 
   useEffect(() => {
@@ -190,19 +181,23 @@ export const Drawer: React.FC<DrawerProps> = ({
 
   // When persistent, offset the current surface so content isn't hidden
   useLayoutEffect(() => {
-    const node = element;
-    if (!node) return;
+    if (!(element instanceof HTMLElement)) return;
+
     const horizontal = anchor === 'left' || anchor === 'right';
     if (persistentEffective && horizontal) {
       const px = typeof size === 'number' ? `${size}px` : size;
-      const prop = anchor === 'left' ? 'marginLeft' : 'marginRight';
-      const prev = (node.style as any)[prop];
-      (node.style as any)[prop] = px;
+
+      // type-safe instead of (as any)[prop]
+      type MarginSide = 'marginLeft' | 'marginRight';
+      const prop: MarginSide = anchor === 'left' ? 'marginLeft' : 'marginRight';
+
+      const prev = element.style[prop];
+      element.style[prop] = px;
+
       return () => {
-        (node.style as any)[prop] = prev;
+        element.style[prop] = prev;
       };
     }
-    return;
   }, [element, persistentEffective, anchor, size]);
 
   if (!open && !persistentEffective) {
@@ -218,7 +213,7 @@ export const Drawer: React.FC<DrawerProps> = ({
             zIndex: 9999,
             background: toggleBg,
           }}
-          aria-label="Open drawer"
+          aria-label='Open drawer'
         />
       );
     }
@@ -228,7 +223,10 @@ export const Drawer: React.FC<DrawerProps> = ({
   const drawerElement = (
     <>
       {!persistentEffective && (
-        <Backdrop $fade={fade} onClick={handleBackdropClick} />
+        <Backdrop
+          $fade={fade}
+          onClick={handleBackdropClick}
+        />
       )}
       <Panel
         $anchor={anchor}
@@ -255,10 +253,10 @@ export const Drawer: React.FC<DrawerProps> = ({
           >
             <IconButton
               icon={closeIcon}
-              size="sm"
-              variant="outlined"
+              size='sm'
+              variant='outlined'
               onClick={requestClose}
-              aria-label="Close drawer"
+              aria-label='Close drawer'
             />
           </div>
         )}

@@ -2,13 +2,7 @@
 // src/components/widgets/LLMChat.tsx  | valet
 // LLM style chat component with height constraint
 // ─────────────────────────────────────────────────────────────
-import React, {
-  useState,
-  useRef,
-  useId,
-  useEffect,
-  useLayoutEffect,
-} from 'react';
+import React, { useState, useRef, useId, useEffect, useLayoutEffect, useCallback } from 'react';
 import { styled, keyframes } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { useSurface } from '../../system/surfaceStore';
@@ -28,9 +22,7 @@ import type { Presettable } from '../../types';
 
 const models: Record<AIProvider, string[]> = {
   openai: ['gpt-4o', 'gpt-4-turbo', 'gpt-3.5-turbo'],
-  anthropic: [
-    'claude-sonnet-4-20250514'
-  ],
+  anthropic: ['claude-sonnet-4-20250514'],
 };
 
 /*───────────────────────────────────────────────────────────*/
@@ -47,7 +39,7 @@ export interface ChatMessage {
 
 export interface ChatProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onSubmit'>,
-  Presettable {
+    Presettable {
   messages: ChatMessage[];
   onSend?: (message: ChatMessage) => void;
   /** Avatar image for user messages */
@@ -65,19 +57,19 @@ export interface ChatProps
 
 /*───────────────────────────────────────────────────────────*/
 /* Styled primitives                                         */
-const Wrapper = styled('div') <{ $gap: string }>`
+const Wrapper = styled('div')<{ $gap: string }>`
   display: flex;
   flex-direction: column;
   gap: ${({ $gap }) => $gap};
 `;
 
-const Messages = styled('div') <{ $gap: string }>`
+const Messages = styled('div')<{ $gap: string }>`
   display: flex;
   flex-direction: column;
   gap: ${({ $gap }) => $gap};
 `;
 
-const Row = styled('div') <{
+const Row = styled('div')<{
   $from: 'user' | 'assistant' | 'system' | 'function' | 'tool';
   $left: string;
   $right: string;
@@ -88,7 +80,6 @@ const Row = styled('div') <{
   padding-left: ${({ $left }) => $left};
   padding-right: ${({ $right }) => $right};
 `;
-
 
 const Bar = styled('div')<{ $bg: string; $text: string; $gap: string }>`
   display: flex;
@@ -123,8 +114,12 @@ const Typing = styled('div')<{ $color: string }>`
     background: ${({ $color }) => $color};
     animation: ${typingDot} 1s infinite;
   }
-  & span:nth-child(2) { animation-delay: 0.2s; }
-  & span:nth-child(3) { animation-delay: 0.4s; }
+  & span:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  & span:nth-child(3) {
+    animation-delay: 0.4s;
+  }
 `;
 
 /*───────────────────────────────────────────────────────────*/
@@ -148,7 +143,7 @@ export const LLMChat: React.FC<ChatProps> = ({
 }) => {
   const { theme } = useTheme();
   const surface = useSurface(
-    s => ({
+    (s) => ({
       element: s.element,
       width: s.width,
       height: s.height,
@@ -165,12 +160,7 @@ export const LLMChat: React.FC<ChatProps> = ({
   const constraintRef = useRef(false);
 
   const [text, setText] = useState('');
-  const {
-    apiKey: storeKey,
-    provider: storeProv,
-    model: storeModel,
-    setModel,
-  } = useAIKey();
+  const { apiKey: storeKey, provider: storeProv, model: storeModel, setModel } = useAIKey();
   const [showKeyModal, setShowKeyModal] = useState(false);
   const key = propKey ?? storeKey;
   const provider = (propProvider ?? storeProv) as AIProvider | null;
@@ -199,13 +189,11 @@ export const LLMChat: React.FC<ChatProps> = ({
 
   const calcCutoff = () => {
     if (typeof document === 'undefined') return 32;
-    const fs = parseFloat(
-      getComputedStyle(document.documentElement).fontSize,
-    );
+    const fs = parseFloat(getComputedStyle(document.documentElement).fontSize);
     return (isNaN(fs) ? 16 : fs) * 2;
   };
 
-  const update = () => {
+  const update = useCallback(() => {
     const node = wrapRef.current;
     const surfEl = surface.element;
     if (!node || !surfEl) return;
@@ -232,7 +220,7 @@ export const LLMChat: React.FC<ChatProps> = ({
       setShouldConstrain(false);
       setMaxHeight(undefined);
     }
-  };
+  }, [surface.element, surface.height]);
 
   useEffect(() => {
     if (!constrainHeight) {
@@ -255,12 +243,12 @@ export const LLMChat: React.FC<ChatProps> = ({
       surface.unregisterChild(uniqueId);
       ro.disconnect();
     };
-  }, [constrainHeight, surface.element]);
+  }, [constrainHeight, surface, uniqueId, update]);
 
   useLayoutEffect(() => {
     if (!constrainHeight || !wrapRef.current || !surface.element) return;
     update();
-  }, [constrainHeight, surface.height, surface.element]);
+  }, [constrainHeight, surface.height, surface.element, update]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -277,133 +265,172 @@ export const LLMChat: React.FC<ChatProps> = ({
   return (
     <>
       {!propKey && (
-        <KeyModal open={showKeyModal} onClose={() => setShowKeyModal(false)} />
+        <KeyModal
+          open={showKeyModal}
+          onClose={() => setShowKeyModal(false)}
+        />
       )}
       <Panel
         {...rest}
         compact
         fullWidth
-        variant="alt"
+        variant='alt'
         style={style}
         className={cls}
       >
-        <Bar $bg={theme.colors.secondary} $text={theme.colors.secondaryText} $gap={theme.spacing(0.5)}>
+        <Bar
+          $bg={theme.colors.secondary}
+          $text={theme.colors.secondaryText}
+          $gap={theme.spacing(0.5)}
+        >
           {provider && key ? (
             <Select
-              size="sm"
+              size='sm'
               value={model}
               onChange={(v) => handleModelChange(v as string)}
             >
-              {models[provider].map(m => (
-                <Select.Option key={m} value={m}>{m}</Select.Option>
+              {models[provider].map((m) => (
+                <Select.Option
+                  key={m}
+                  value={m}
+                >
+                  {m}
+                </Select.Option>
               ))}
             </Select>
           ) : (
             <span />
           )}
           <span
-            style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: theme.spacing(0.5) }}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              cursor: 'pointer',
+              gap: theme.spacing(0.5),
+            }}
             onClick={() => !propKey && setShowKeyModal(true)}
           >
-            <Typography variant="subtitle">
-              {key ? 'Connected' : 'Disconnected'}
-            </Typography>
+            <Typography variant='subtitle'>{key ? 'Connected' : 'Disconnected'}</Typography>
             <IconButton
               icon={key ? 'carbon:checkmark' : 'carbon:circle-dash'}
-              aria-label="Set API key"
+              aria-label='Set API key'
             />
           </span>
         </Bar>
-        <Wrapper ref={wrapRef} $gap={theme.spacing(3)} style={{ overflow: 'hidden' }}>
-        <Messages
-          $gap={theme.spacing(1.5)}
-          style={shouldConstrain ? { overflowY: 'auto', maxHeight } : undefined}
+        <Wrapper
+          ref={wrapRef}
+          $gap={theme.spacing(3)}
+          style={{ overflow: 'hidden' }}
         >
-          {messages
-            .filter(m => m.role !== 'system')
-            .map((m, i) => {
-            const sidePad = portrait ? theme.spacing(8) : theme.spacing(24);
-            const avatarPad = theme.spacing(1);
-            return (
-              <Row
-                key={i}
-                $from={m.role}
-                $left={m.role === 'user' ? sidePad : avatarPad}
-                $right={m.role === 'user' ? avatarPad : sidePad}
-              >
-              {m.role !== 'user' && systemAvatar && (
-                <Avatar
-                  src={systemAvatar}
-                  size="s"
-                  variant="outline"
-                  style={{ marginRight: theme.spacing(1) }}
-                />
-              )}
-              <Panel
-                compact
-                variant="main"
-                background={m.role === 'user' ? theme.colors.primary : undefined}
-                style={{
-                  maxWidth: '100%',
-                  width: 'fit-content',
-                  borderRadius: theme.spacing(0.5),
-                  animation: m.animate ? `${fadeIn} 0.2s ease-out` : undefined,
-                }}
-              >
-                {m.name && (
-                  <Typography variant="subtitle" bold>
-                    {m.name}
-                  </Typography>
-                )}
-                {m.typing ? (
-                  <Typing $color={m.role === 'user' ? theme.colors.primaryText : theme.colors.text}>
-                    <span />
-                    <span />
-                    <span />
-                  </Typing>
-                ) : m.role === 'assistant' ? (
-                  <Markdown data={m.content} codeBackground={theme.colors.background} />
-                ) : (
-                  <Typography>{m.content}</Typography>
-                )}
-              </Panel>
-              {m.role === 'user' && userAvatar && (
-                <Avatar
-                  src={userAvatar}
-                  size="s"
-                  variant="outline"
-                  style={{ marginLeft: theme.spacing(1) }}
-                />
-              )}
-              </Row>
-            );
-          })}
-        </Messages>
+          <Messages
+            $gap={theme.spacing(1.5)}
+            style={shouldConstrain ? { overflowY: 'auto', maxHeight } : undefined}
+          >
+            {messages
+              .filter((m) => m.role !== 'system')
+              .map((m, i) => {
+                const sidePad = portrait ? theme.spacing(8) : theme.spacing(24);
+                const avatarPad = theme.spacing(1);
+                return (
+                  <Row
+                    key={i}
+                    $from={m.role}
+                    $left={m.role === 'user' ? sidePad : avatarPad}
+                    $right={m.role === 'user' ? avatarPad : sidePad}
+                  >
+                    {m.role !== 'user' && systemAvatar && (
+                      <Avatar
+                        src={systemAvatar}
+                        size='s'
+                        variant='outline'
+                        style={{ marginRight: theme.spacing(1) }}
+                      />
+                    )}
+                    <Panel
+                      compact
+                      variant='main'
+                      background={m.role === 'user' ? theme.colors.primary : undefined}
+                      style={{
+                        maxWidth: '100%',
+                        width: 'fit-content',
+                        borderRadius: theme.spacing(0.5),
+                        animation: m.animate ? `${fadeIn} 0.2s ease-out` : undefined,
+                      }}
+                    >
+                      {m.name && (
+                        <Typography
+                          variant='subtitle'
+                          bold
+                        >
+                          {m.name}
+                        </Typography>
+                      )}
+                      {m.typing ? (
+                        <Typing
+                          $color={m.role === 'user' ? theme.colors.primaryText : theme.colors.text}
+                        >
+                          <span />
+                          <span />
+                          <span />
+                        </Typing>
+                      ) : m.role === 'assistant' ? (
+                        <Markdown
+                          data={m.content}
+                          codeBackground={theme.colors.background}
+                        />
+                      ) : (
+                        <Typography>{m.content}</Typography>
+                      )}
+                    </Panel>
+                    {m.role === 'user' && userAvatar && (
+                      <Avatar
+                        src={userAvatar}
+                        size='s'
+                        variant='outline'
+                        style={{ marginLeft: theme.spacing(1) }}
+                      />
+                    )}
+                  </Row>
+                );
+              })}
+          </Messages>
 
-        {!disableInput && (
-          <form onSubmit={handleSubmit} style={{ width: '100%' }}>
-            <Stack direction="row" spacing={1} compact>
-              <TextField
-                as="textarea"
-                name="chat-message"
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSubmit(e as any);
-                  }
-                }}
-                rows={1}
-                placeholder={placeholder}
-                fullWidth
-              />
-              <IconButton icon="carbon:send" type="submit" aria-label="Send" />
-            </Stack>
-          </form>
-        )}
-      </Wrapper>
-    </Panel>
+          {!disableInput && (
+            <form
+              onSubmit={handleSubmit}
+              style={{ width: '100%' }}
+            >
+              <Stack
+                direction='row'
+                spacing={1}
+                compact
+              >
+                <TextField
+                  as='textarea'
+                  name='chat-message'
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
+                  onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      const form = e.currentTarget.form;
+                      form?.requestSubmit();
+                    }
+                  }}
+                  rows={1}
+                  placeholder={placeholder}
+                  fullWidth
+                />
+                <IconButton
+                  icon='carbon:send'
+                  type='submit'
+                  aria-label='Send'
+                />
+              </Stack>
+            </form>
+          )}
+        </Wrapper>
+      </Panel>
     </>
   );
 };

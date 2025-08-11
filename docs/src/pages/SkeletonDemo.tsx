@@ -2,7 +2,7 @@
 // src/pages/SkeletonDemo.tsx | valet
 // Showcase of Skeleton component
 // ─────────────────────────────────────────────────────────────
-import { 
+import {
   Surface,
   Stack,
   Typography,
@@ -49,7 +49,7 @@ export default function SkeletonDemoPage() {
     },
     {
       prop: <code>variant</code>,
-      type: <code>'text' | 'rect' | 'circle'</code>,
+      type: <code>&#39;text&#39; | &#39;rect&#39; | &#39;circle&#39;</code>,
       default: <code>-</code>,
       description: 'Override inferred placeholder shape',
     },
@@ -71,14 +71,12 @@ export default function SkeletonDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography variant="h2">Skeleton</Typography>
+        <Typography variant='h2'>Skeleton</Typography>
 
         <Tabs>
-          <Tabs.Tab label="Usage" />
+          <Tabs.Tab label='Usage' />
           <Tabs.Panel>
-            <Typography variant="subtitle">
-              Adaptive placeholder with pulsing animation
-            </Typography>
+            <Typography variant='subtitle'>Adaptive placeholder with pulsing animation</Typography>
 
             <Button
               onClick={() => setLoading((l) => !l)}
@@ -89,25 +87,28 @@ export default function SkeletonDemoPage() {
 
             <Stack compact>
               <Stack compact>
-                <Typography variant="subtitle">Text</Typography>
+                <Typography variant='subtitle'>Text</Typography>
                 <Skeleton loading={loading}>
-                  <Typography variant="body">Text loads in…</Typography>
+                  <Typography variant='body'>Text loads in…</Typography>
                 </Skeleton>
               </Stack>
 
               <Stack compact>
-                <Typography variant="subtitle">Avatar</Typography>
+                <Typography variant='subtitle'>Avatar</Typography>
                 <Skeleton loading={loading}>
-                  <Avatar email="support@gravatar.com" size="l" />
+                  <Avatar
+                    email='support@gravatar.com'
+                    size='l'
+                  />
                 </Skeleton>
               </Stack>
 
               <Stack compact>
-                <Typography variant="subtitle">Image</Typography>
+                <Typography variant='subtitle'>Image</Typography>
                 <Skeleton loading={loading}>
                   <Image
-                    src="https://picsum.photos/400/300"
-                    alt="Loading kitten"
+                    src='https://picsum.photos/400/300'
+                    alt='Loading kitten'
                     width={160}
                     height={80}
                     rounded={4}
@@ -116,8 +117,8 @@ export default function SkeletonDemoPage() {
               </Stack>
 
               <Stack compact>
-                <Typography variant="subtitle">Rect</Typography>
-                <Skeleton variant="rect">
+                <Typography variant='subtitle'>Rect</Typography>
+                <Skeleton variant='rect'>
                   <div
                     style={{
                       width: 160,
@@ -129,21 +130,21 @@ export default function SkeletonDemoPage() {
               </Stack>
 
               <Stack compact>
-                <Typography variant="subtitle">With icon</Typography>
+                <Typography variant='subtitle'>With icon</Typography>
                 <Skeleton
                   loading={loading}
-                  icon={<Icon icon="mdi:clock-outline" />}
+                  icon={<Icon icon='mdi:clock-outline' />}
                 >
-                  <Typography variant="body">Loading with icon…</Typography>
+                  <Typography variant='body'>Loading with icon…</Typography>
                 </Skeleton>
               </Stack>
 
               <Stack compact>
-                <Typography variant="subtitle">Image</Typography>
+                <Typography variant='subtitle'>Image</Typography>
                 <Skeleton>
                   <Image
-                    src="https://picsum.photos/400/301"
-                    alt="Random scenic"
+                    src='https://picsum.photos/400/301'
+                    alt='Random scenic'
                     width={160}
                     height={80}
                     rounded={4}
@@ -153,15 +154,19 @@ export default function SkeletonDemoPage() {
             </Stack>
           </Tabs.Panel>
 
-          <Tabs.Tab label="Reference" />
+          <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant="h3">Prop reference</Typography>
-            <Table data={data} columns={columns} constrainHeight={false} />
+            <Typography variant='h3'>Prop reference</Typography>
+            <Table
+              data={data}
+              columns={columns}
+              constrainHeight={false}
+            />
           </Tabs.Panel>
         </Tabs>
 
         <Button
-          size="lg"
+          size='lg'
           onClick={() => navigate(-1)}
           style={{ marginTop: theme.spacing(1) }}
         >

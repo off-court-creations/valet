@@ -4,12 +4,7 @@
 // ─────────────────────────────────────────────────────────────
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import {
-  Drawer,
-  Tree,
-  type TreeNode,
-  useTheme,
-} from '@archway/valet';
+import { Drawer, Tree, type TreeNode, useTheme } from '@archway/valet';
 
 interface Item {
   label: string;
@@ -45,6 +40,7 @@ const fields: [string, string][] = [
   ['Checkbox', '/checkbox-demo'],
   ['Date Selector', '/dateselector-demo'],
   ['Icon Button', '/icon-button-demo'],
+  ['Radio Group', '/radio-demo'],
   ['Select', '/select-demo'],
   ['Metro Select', '/metroselect-demo'],
   ['Iterator', '/iterator-demo'],
@@ -93,9 +89,15 @@ const treeData: TreeNode<Item>[] = [
     data: { label: 'Getting Started' },
     children: [
       { id: '/overview', data: { label: 'Overview', path: '/overview' } },
-      { id: '/installation', data: { label: 'Installation', path: '/installation' } },
+      {
+        id: '/installation',
+        data: { label: 'Installation', path: '/installation' },
+      },
       { id: '/usage', data: { label: 'Usage', path: '/usage' } },
-      { id: '/prop-patterns', data: { label: 'Prop Patterns', path: '/prop-patterns' } },
+      {
+        id: '/prop-patterns',
+        data: { label: 'Prop Patterns', path: '/prop-patterns' },
+      },
     ],
   },
   {
@@ -168,11 +170,15 @@ export default function NavDrawer() {
     }
   };
   return (
-    <Drawer adaptive anchor="left" size="16rem">
+    <Drawer
+      adaptive
+      anchor='left'
+      size='16rem'
+    >
       <Tree<Item>
         nodes={treeData}
         getLabel={(n) => n.label}
-        variant="list"
+        variant='list'
         selected={location.pathname}
         expanded={expanded}
         onExpandedChange={handleExpandedChange}

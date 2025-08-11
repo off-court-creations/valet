@@ -61,19 +61,8 @@ or
 git commit -m "devstral - commit message here"
 ```
 
-- If you know you are a proxy of a user who has a name on the internet, like 0xbenc,
-you can append them to your commit message as such:
-
-```txt
-git commit -m "codex for 0xbenc - commit message here"
-```
-
 - Prefer referring to concepts you interacted with over files.
 ("Adjusted lighting" over "fixed lights.tsx")
-
-## Pull Requests
-
-Unless otherwise specified by user directive, pull requests should be made from your branch into `development`.
 
 ## Building the Project
 

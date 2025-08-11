@@ -3,20 +3,13 @@
 // Theme-aware, accessible Checkbox – consistent outline, no blue flash,
 // greyed-out disabled styling (Accordion-style).
 // ─────────────────────────────────────────────────────────────────────────────
-import React, {
-  forwardRef,
-  useCallback,
-  useId,
-  useState,
-  ChangeEvent,
-  ReactNode,
-} from 'react';
-import { styled }         from '../../css/createStyled';
-import { useTheme }       from '../../system/themeStore';
-import { preset }         from '../../css/stylePresets';
-import { useForm }        from './FormControl';
+import React, { forwardRef, useCallback, useId, useState, ChangeEvent, ReactNode } from 'react';
+import { styled } from '../../css/createStyled';
+import { useTheme } from '../../system/themeStore';
+import { preset } from '../../css/stylePresets';
+import { useOptionalForm } from './FormControl';
 import { toRgb, mix, toHex } from '../../helpers/color';
-import type { Theme }     from '../../system/themeStore';
+import type { Theme } from '../../system/themeStore';
 import type { Presettable } from '../../types';
 
 /*───────────────────────────────────────────────────────────────────────────*/
@@ -39,13 +32,14 @@ export interface CheckboxProps
 
 /*───────────────────────────────────────────────────────────────────────────*/
 /* Size map helper                                                          */
-const createSizeMap = (t: Theme) => ({
-  xs: { box: '0.75rem', tick: 'calc(0.75rem * 0.6)', gap: t.spacing(1) },
-  sm: { box: '1rem',   tick: 'calc(1rem * 0.6)',   gap: t.spacing(1) },
-  md: { box: '1.25rem',tick: 'calc(1.25rem * 0.6)',gap: t.spacing(1) },
-  lg: { box: '1.5rem', tick: 'calc(1.5rem * 0.6)', gap: t.spacing(1) },
-  xl: { box: '1.75rem',tick: 'calc(1.75rem * 0.6)',gap: t.spacing(1) },
-} as const);
+const createSizeMap = (t: Theme) =>
+  ({
+    xs: { box: '0.75rem', tick: 'calc(0.75rem * 0.6)', gap: t.spacing(1) },
+    sm: { box: '1rem', tick: 'calc(1rem * 0.6)', gap: t.spacing(1) },
+    md: { box: '1.25rem', tick: 'calc(1.25rem * 0.6)', gap: t.spacing(1) },
+    lg: { box: '1.5rem', tick: 'calc(1.5rem * 0.6)', gap: t.spacing(1) },
+    xl: { box: '1.75rem', tick: 'calc(1.75rem * 0.6)', gap: t.spacing(1) },
+  }) as const;
 
 /*───────────────────────────────────────────────────────────────────────────*/
 /* Styled primitives                                                        */
@@ -58,8 +52,7 @@ const Wrapper = styled('label')<{
   gap: var(--checkbox-gap);
   cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
   user-select: none;
-  color: ${({ $disabled, $disabledColor }) =>
-    $disabled ? $disabledColor : 'inherit'};
+  color: ${({ $disabled, $disabledColor }) => ($disabled ? $disabledColor : 'inherit')};
 
   /* Prevent blue flash on mobile */
   -webkit-tap-highlight-color: transparent;
@@ -74,7 +67,12 @@ const HiddenInput = styled('input')`
   height: 0;
 `;
 
+/* Note: This local props type is used in styled<...>. To satisfy createStyled’s
+   generic constraint (P extends Record<string, unknown>), we add a string
+   index signature. This is type-safe because all specific properties are
+   subtypes of `unknown`. */
 interface BoxProps {
+  [key: string]: unknown;
   $size: string;
   $checked: boolean;
   $primary: string;
@@ -86,7 +84,7 @@ interface BoxProps {
 const Box = styled('span')<BoxProps>`
   position: relative;
   display: inline-block;
-  width:  ${({ $size }) => $size};
+  width: ${({ $size }) => $size};
   height: ${({ $size }) => $size};
   min-width: ${({ $size }) => $size};
   border-radius: 4px;
@@ -94,18 +92,15 @@ const Box = styled('span')<BoxProps>`
 
   /* Outline always visible, greyed when disabled */
   border: 2px solid
-    ${({ $disabled, $disabledColor, $text }) =>
-      $disabled ? $disabledColor : $text};
+    ${({ $disabled, $disabledColor, $text }) => ($disabled ? $disabledColor : $text)};
 
   /* Fill when checked, swap to disabled colour if disabled */
   background: ${({ $checked, $disabled, $primary, $disabledColor }) =>
-    $checked
-      ? $disabled
-        ? $disabledColor
-        : $primary
-      : 'transparent'};
+    $checked ? ($disabled ? $disabledColor : $primary) : 'transparent'};
 
-  transition: background 120ms ease, border-color 120ms ease;
+  transition:
+    background 120ms ease,
+    border-color 120ms ease;
 
   /* Remove tap highlight */
   -webkit-tap-highlight-color: transparent;
@@ -126,13 +121,11 @@ const Box = styled('span')<BoxProps>`
     margin: auto;
     opacity: ${({ $checked }) => ($checked ? 1 : 0)};
     transform: ${({ $checked }) => ($checked ? 'scale(1)' : 'scale(0.85)')};
-    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' " +
-                    "xmlns='http://www.w3.org/2000/svg' "          +
-                    "fill='none' stroke='%23fff' stroke-width='3' " +
-                    "stroke-linecap='round' stroke-linejoin='round'%3E" +
-                    "%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E")
-               center/contain no-repeat;
-    transition: opacity 120ms ease, transform 120ms ease;
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' " + "xmlns='http://www.w3.org/2000/svg' " + "fill='none' stroke='%23fff' stroke-width='3' " + "stroke-linecap='round' stroke-linejoin='round'%3E" + "%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E")
+      center/contain no-repeat;
+    transition:
+      opacity 120ms ease,
+      transform 120ms ease;
     /* Fade tick when disabled */
     filter: ${({ $disabled }) => ($disabled ? 'grayscale(1)' : 'none')};
   }
@@ -175,38 +168,35 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
 
     /* Disabled colour (same recipe as Accordion) ------------------------ */
     const disabledColor = toHex(
-      mix(
-        toRgb(theme.colors.text),
-        toRgb(mode === 'dark' ? '#000' : '#fff'),
-        0.4,
-      ),
+      mix(toRgb(theme.colors.text), toRgb(mode === 'dark' ? '#000' : '#fff'), 0.4),
     );
 
     /* Optional FormControl binding -------------------------------------- */
-    let form: ReturnType<typeof useForm<any>> | null = null;
-    try { form = useForm<any>(); } catch {}
+    const form = useOptionalForm<Record<string, unknown>>();
 
     /* Controlled vs uncontrolled logic ---------------------------------- */
-    const controlled   = checkedProp !== undefined;
-    const formBound    = Boolean(form);
-    const initialState =
-      controlled         ? checkedProp! :
-      formBound          ? Boolean(form!.values[name]) :
-      Boolean(defaultChecked);
+    const controlled = checkedProp !== undefined;
+    const formBound = Boolean(form);
+    const initialState = controlled
+      ? checkedProp!
+      : formBound
+        ? Boolean(form!.values[name])
+        : Boolean(defaultChecked);
 
     const [internal, setInternal] = useState(initialState);
 
-    const currentChecked =
-      controlled ? checkedProp! :
-      formBound  ? Boolean(form!.values[name]) :
-      internal;
+    const currentChecked = controlled
+      ? checkedProp!
+      : formBound
+        ? Boolean(form!.values[name])
+        : internal;
 
     /* Event handler – updates state, FormStore, and user callback -------- */
     const handleChange = useCallback(
       (e: ChangeEvent<HTMLInputElement>) => {
         const next = e.target.checked;
         if (!controlled && !formBound) setInternal(next);
-        form?.setField(name as any, next);
+        if (form && name) form.setField(name as keyof Record<string, unknown>, next as unknown);
         onChange?.(next, e);
       },
       [controlled, formBound, form, name, onChange],
@@ -233,7 +223,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           id={id}
           ref={ref}
           name={name}
-          type="checkbox"
+          type='checkbox'
           disabled={disabled}
           checked={currentChecked}
           onChange={handleChange}

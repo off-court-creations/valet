@@ -24,15 +24,9 @@ export * from './components/fields/FormControl';
 export * from './components/fields/IconButton';
 export * from './components/fields/RadioGroup';
 export { default as Select } from './components/fields/Select';
-export type {
-  SelectProps,
-  OptionProps as SelectOptionProps,
-} from './components/fields/Select';
+export type { SelectProps, OptionProps as SelectOptionProps } from './components/fields/Select';
 export { default as MetroSelect } from './components/fields/MetroSelect';
-export type {
-  MetroSelectProps,
-  MetroOptionProps,
-} from './components/fields/MetroSelect';
+export type { MetroSelectProps, MetroOptionProps } from './components/fields/MetroSelect';
 export * from './components/fields/Slider';
 export * from './components/fields/Switch';
 export * from './components/fields/TextField';
@@ -41,8 +35,17 @@ export * from './components/fields/Iterator';
 // ─── Widgets ─────────────────────────────────────────────────
 export * from './components/layout/Accordion';
 export * from './components/layout/AppBar';
-export * from './components/widgets/LLMChat';
-export * from './components/widgets/RichChat';
+
+// Avoid DTS name collisions by using explicit, aliased re-exports for chat widgets
+export { default as LLMChat } from './components/widgets/LLMChat';
+export type {
+  ChatProps as LLMChatProps,
+  ChatMessage as LLMChatMessage,
+} from './components/widgets/LLMChat';
+
+export { default as RichChat } from './components/widgets/RichChat';
+export type { RichChatProps, RichMessage } from './components/widgets/RichChat';
+
 export * from './components/layout/Drawer';
 export * from './components/fields/DateSelector';
 export * from './components/layout/List';

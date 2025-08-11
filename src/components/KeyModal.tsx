@@ -28,18 +28,34 @@ export default function KeyModal({ open, onClose }: KeyModalProps) {
   if (!open) return null;
 
   return (
-    <Modal open={open} onClose={onClose}>
-      <Panel centered compact style={{ maxWidth: 480 }}>
+    <Modal
+      open={open}
+      onClose={onClose}
+    >
+      <Panel
+        centered
+        compact
+        style={{ maxWidth: 480 }}
+      >
         <Stack spacing={1}>
-          <Typography variant="h3" bold>
-            {cipher ? `Unlock ${prov === 'anthropic' ? 'Anthropic' : 'OpenAI'} key` : 'Paste your API key'}
+          <Typography
+            variant='h3'
+            bold
+          >
+            {cipher
+              ? `Unlock ${prov === 'anthropic' ? 'Anthropic' : 'OpenAI'} key`
+              : 'Paste your API key'}
           </Typography>
 
           {!cipher && (
             <input
-              style={{ fontFamily: 'monospace', width: '100%', padding: '0.5rem' }}
-              type="password"
-              placeholder="sk-..."
+              style={{
+                fontFamily: 'monospace',
+                width: '100%',
+                padding: '0.5rem',
+              }}
+              type='password'
+              placeholder='sk-...'
               value={value}
               onChange={(e) => {
                 setValue(e.target.value);
@@ -50,8 +66,8 @@ export default function KeyModal({ open, onClose }: KeyModalProps) {
 
           {(remember || cipher) && (
             <input
-              type="password"
-              placeholder="passphrase"
+              type='password'
+              placeholder='passphrase'
               value={passphrase}
               onChange={(e) => {
                 setPassphrase(e.target.value);
@@ -67,19 +83,17 @@ export default function KeyModal({ open, onClose }: KeyModalProps) {
               onChange={(e) => setProv(e.target.value as AIProvider)}
               style={{ width: '100%', padding: '0.5rem' }}
             >
-              <option value="openai">OpenAI</option>
-              <option value="anthropic">Anthropic</option>
+              <option value='openai'>OpenAI</option>
+              <option value='anthropic'>Anthropic</option>
             </select>
           )}
 
-          {error && (
-            <Typography color={theme.colors.secondary}>{error}</Typography>
-          )}
+          {error && <Typography color={theme.colors.secondary}>{error}</Typography>}
 
           {!cipher && (
             <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <input
-                type="checkbox"
+                type='checkbox'
                 checked={remember}
                 onChange={(e) => setRemember(e.target.checked)}
               />
@@ -89,7 +103,7 @@ export default function KeyModal({ open, onClose }: KeyModalProps) {
 
           <Button
             fullWidth
-            disabled={cipher ? !passphrase : (!value.trim() || (remember && !passphrase))}
+            disabled={cipher ? !passphrase : !value.trim() || (remember && !passphrase)}
             onClick={async () => {
               setError('');
               if (cipher) {
@@ -99,11 +113,7 @@ export default function KeyModal({ open, onClose }: KeyModalProps) {
                   return;
                 }
               } else {
-                await setKey(
-                  value.trim(),
-                  prov,
-                  remember ? passphrase : undefined,
-                );
+                await setKey(value.trim(), prov, remember ? passphrase : undefined);
               }
               onClose?.();
             }}
@@ -112,7 +122,14 @@ export default function KeyModal({ open, onClose }: KeyModalProps) {
           </Button>
 
           {(cipher || apiKey) && (
-            <Button variant="outlined" fullWidth onClick={() => { clearKey(); onClose?.(); }}>
+            <Button
+              variant='outlined'
+              fullWidth
+              onClick={() => {
+                clearKey();
+                onClose?.();
+              }}
+            >
               Delete stored key
             </Button>
           )}
@@ -121,4 +138,3 @@ export default function KeyModal({ open, onClose }: KeyModalProps) {
     </Modal>
   );
 }
-

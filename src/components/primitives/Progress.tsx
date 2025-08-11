@@ -1,19 +1,18 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/primitives/Progress.tsx  | valet
-// strict‑optional clean build
+// strict-optional clean build
 // ─────────────────────────────────────────────────────────────
 import React, { forwardRef } from 'react';
-import { styled, keyframes }           from '../../css/createStyled';
-import { useTheme }                    from '../../system/themeStore';
-import { preset }                      from '../../css/stylePresets';
-import type { Presettable }            from '../../types';
-import type { Theme }                  from '../../system/themeStore';
+import { styled, keyframes } from '../../css/createStyled';
+import { useTheme } from '../../system/themeStore';
+import { preset } from '../../css/stylePresets';
+import type { Presettable } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 /* Public API                                                */
 export type ProgressVariant = 'linear' | 'circular';
-export type ProgressMode    = 'determinate' | 'indeterminate' | 'buffer';
-export type ProgressSize    = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+export type ProgressMode = 'determinate' | 'indeterminate' | 'buffer';
+export type ProgressSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 export interface ProgressProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'>,
@@ -22,42 +21,47 @@ export interface ProgressProps
   variant?: ProgressVariant;
   /** determinate (default), indeterminate, or (linear-only) buffer. */
   mode?: ProgressMode;
-  /** 0 – 100 value for determinate / buffer foreground. */
+  /** 0 - 100 value for determinate / buffer foreground. */
   value?: number;
-  /** 0 – 100 secondary/buffer value (linear‑buffer only). */
+  /** 0 - 100 secondary/buffer value (linear-buffer only). */
   buffer?: number;
   /** xs – xl token or custom CSS size */
   size?: ProgressSize | number | string;
-  /** Show numeric % inside Circular centre. */
+  /** Show numeric % inside Circular center. */
   showLabel?: boolean;
-  /** Colour override (defaults to theme.primary). */
+  /** Color override (defaults to theme.primary). */
   color?: string | undefined;
 }
 
 /*───────────────────────────────────────────────────────────*/
 /* Size tokens, strongly typed                               */
-interface CircularToken { box: string; stroke: string }
-interface LinearToken   { h: string }
+interface CircularToken {
+  box: string;
+  stroke: string;
+}
+interface LinearToken {
+  h: string;
+}
 
 type Tokens = {
   circular: Record<ProgressSize, CircularToken>;
-  linear  : Record<ProgressSize, LinearToken>;
+  linear: Record<ProgressSize, LinearToken>;
 };
 
-const geom = (_t: Theme): Tokens => ({
+const geom = (): Tokens => ({
   circular: {
     xs: { box: '0.75rem', stroke: '0.09375rem' },
-    sm: { box: '1.5rem',  stroke: '0.1875rem'  },
-    md: { box: '2.25rem', stroke: '0.25rem'    },
-    lg: { box: '3rem',    stroke: '0.375rem'   },
+    sm: { box: '1.5rem', stroke: '0.1875rem' },
+    md: { box: '2.25rem', stroke: '0.25rem' },
+    lg: { box: '3rem', stroke: '0.375rem' },
     xl: { box: '3.75rem', stroke: '0.46875rem' },
   },
   linear: {
-    xs: { h: '0.125rem'  },
-    sm: { h: '0.25rem'   },
-    md: { h: '0.375rem'  },
-    lg: { h: '0.5rem'    },
-    xl: { h: '0.625rem'  },
+    xs: { h: '0.125rem' },
+    sm: { h: '0.25rem' },
+    md: { h: '0.375rem' },
+    lg: { h: '0.5rem' },
+    xl: { h: '0.625rem' },
   },
 });
 
@@ -151,12 +155,12 @@ const Bar = styled('div')<{
 export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
   (
     {
-      variant    = 'linear',
-      mode       = 'determinate',
-      value      = 0,
-      buffer     = 0,
-      size       = 'md',
-      showLabel  = false,
+      variant = 'linear',
+      mode = 'determinate',
+      value = 0,
+      buffer = 0,
+      size = 'md',
+      showLabel = false,
       color,
       preset: p,
       className,
@@ -166,8 +170,8 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
     ref,
   ) => {
     const { theme } = useTheme();
-    const tokens    = geom(theme);
-    const primary   = (color ?? theme.colors.primary) as string;
+    const tokens = geom();
+    const primary = (color ?? theme.colors.primary) as string;
 
     /* preset → classes merge */
     const presetCls = p ? preset(p) : '';
@@ -189,33 +193,26 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
     /*─────────────────────────────────────────────────────────*/
     if (variant === 'circular') {
       let box: string;
-      let stroke: string;
+      let boxPx: number;
+      let strokePx: number;
 
       if (typeof size === 'number') {
-        box = `${size}px`;
-        stroke = `calc(${box} / 8)`;
+        boxPx = size;
+        box = `${boxPx}px`;
+        strokePx = boxPx / 8;
       } else if (tokens.circular[size as ProgressSize]) {
-        ({ box, stroke } = tokens.circular[size as ProgressSize]);
+        const tok = tokens.circular[size as ProgressSize];
+        box = tok.box;
+        boxPx = toPx(tok.box);
+        strokePx = toPx(tok.stroke);
       } else {
         box = size as string;
-        stroke = `calc(${box} / 8)`;
+        boxPx = toPx(box);
+        strokePx = boxPx / 8;
       }
 
-      const boxPx =
-        typeof size === 'number'
-          ? size
-          : tokens.circular[size as ProgressSize]
-            ? toPx(tokens.circular[size as ProgressSize].box)
-            : toPx(size as string);
-      const strokePx =
-        typeof size === 'number'
-          ? boxPx / 8
-          : tokens.circular[size as ProgressSize]
-            ? toPx(tokens.circular[size as ProgressSize].stroke)
-            : boxPx / 8;
-
       const radius = (boxPx - strokePx) / 2;
-      const circ   = 2 * Math.PI * radius;
+      const circ = 2 * Math.PI * radius;
       const offset = ((100 - value) / 100) * circ;
 
       const svgProps =
@@ -233,9 +230,9 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
               },
             }
           : {
-              strokeDasharray : circ,
+              strokeDasharray: circ,
               strokeDashoffset: offset,
-              transition      : 'stroke-dashoffset 0.2s linear',
+              transition: 'stroke-dashoffset 0.2s linear',
             };
 
       return (
@@ -257,17 +254,15 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
                 cx={boxPx / 2}
                 cy={boxPx / 2}
                 r={radius}
-                fill="none"
+                fill='none'
                 stroke={primary}
                 strokeWidth={strokePx}
-                strokeLinecap="round"
+                strokeLinecap='round'
                 {...circleProps}
               />
             </svg>
             {showLabel && mode !== 'indeterminate' && (
-              <CenterLabel $font={theme.typography.body.md}>
-                {Math.round(value)}%
-              </CenterLabel>
+              <CenterLabel $font={theme.typography.body.md}>{Math.round(value)}%</CenterLabel>
             )}
           </CircleWrap>
         </Root>
@@ -287,14 +282,14 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
       h = `calc(${size} / 6)`;
     }
     const barStyle: React.CSSProperties = {
-      width : `${value}%`,
-      right : 'auto',
-      left  : 0,
+      width: `${value}%`,
+      right: 'auto',
+      left: 0,
     };
     const bufferStyle: React.CSSProperties = {
-      width : `${buffer}%`,
-      right : 'auto',
-      left  : 0,
+      width: `${buffer}%`,
+      right: 'auto',
+      left: 0,
       background: primary + '55',
     };
 
@@ -309,16 +304,30 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
         <Track $h={h}>
           {/* BUFFER BAR */}
           {mode === 'buffer' && (
-            <Bar $color={primary + '55'} style={bufferStyle} />
+            <Bar
+              $color={primary + '55'}
+              style={bufferStyle}
+            />
           )}
           {/* MAIN BAR */}
           {mode === 'indeterminate' ? (
             <>
-              <Bar $color={primary} $indet $index={1} />
-              <Bar $color={primary} $indet $index={2} />
+              <Bar
+                $color={primary}
+                $indet
+                $index={1}
+              />
+              <Bar
+                $color={primary}
+                $indet
+                $index={2}
+              />
             </>
           ) : (
-            <Bar $color={primary} style={barStyle} />
+            <Bar
+              $color={primary}
+              style={barStyle}
+            />
           )}
         </Track>
       </Root>

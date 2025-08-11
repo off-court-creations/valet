@@ -1,15 +1,6 @@
 // src/pages/StepperDemo.tsx
 import { useState } from 'react';
-import {
-  Surface,
-  Stack,
-  Typography,
-  Button,
-  Stepper,
-  useTheme,
-  Tabs,
-  Table,
-} from '@archway/valet';
+import { Surface, Stack, Typography, Button, Stepper, useTheme, Tabs, Table } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -61,33 +52,50 @@ export default function StepperDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography variant="h2" bold>Stepper Showcase</Typography>
-        <Typography variant="subtitle">Simple progress indicator</Typography>
+        <Typography
+          variant='h2'
+          bold
+        >
+          Stepper Showcase
+        </Typography>
+        <Typography variant='subtitle'>Simple progress indicator</Typography>
 
         <Tabs>
-          <Tabs.Tab label="Usage" />
+          <Tabs.Tab label='Usage' />
           <Tabs.Panel>
             <Stack>
-              <Stepper steps={steps} active={active} />
-              <Stack direction="row">
+              <Stepper
+                steps={steps}
+                active={active}
+              />
+              <Stack direction='row'>
                 <Button onClick={() => setActive((a) => Math.max(0, a - 1))}>Back</Button>
-                <Button onClick={() => setActive((a) => Math.min(steps.length - 1, a + 1))}>Next</Button>
+                <Button onClick={() => setActive((a) => Math.min(steps.length - 1, a + 1))}>
+                  Next
+                </Button>
               </Stack>
-              <Button variant="outlined" onClick={toggleMode}>
+              <Button
+                variant='outlined'
+                onClick={toggleMode}
+              >
                 Toggle light / dark
               </Button>
             </Stack>
           </Tabs.Panel>
 
-          <Tabs.Tab label="Reference" />
+          <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant="h3">Prop reference</Typography>
-            <Table data={data} columns={columns} constrainHeight={false} />
+            <Typography variant='h3'>Prop reference</Typography>
+            <Table
+              data={data}
+              columns={columns}
+              constrainHeight={false}
+            />
           </Tabs.Panel>
         </Tabs>
 
         <Button
-          size="lg"
+          size='lg'
           onClick={() => navigate(-1)}
           style={{ marginTop: theme.spacing(1) }}
         >

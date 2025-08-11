@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/fields/FormControl.tsx  | valet
+// src/components/fields/FormControl.tsx | valet
 // form context provider wiring labels, errors and disabled state
 // ─────────────────────────────────────────────────────────────
 import React, { createContext, useContext } from 'react';
@@ -9,20 +9,29 @@ import type { FormStore } from '../../system/createFormStore';
 import type { StoreApi, UseBoundStore } from 'zustand';
 
 /*───────────────────────────────────────────────────────────────*/
-/* Context & public hook                                         */
-const FormCtx = createContext<FormStore<any> | null>(null);
+/* Context & hooks (store erased to avoid invariance issues) */
+const FormCtx = createContext<unknown | null>(null);
 
-export const useForm = <T extends Record<string, any>>() => {
+export const useForm = <
+  T extends Record<string, unknown> = Record<string, unknown>,
+>(): FormStore<T> => {
   const ctx = useContext(FormCtx);
-  if (!ctx)
+  if (ctx === null) {
     throw new Error('useForm must be used inside a <FormControl> component');
+  }
   return ctx as FormStore<T>;
+};
+
+export const useOptionalForm = <
+  T extends Record<string, unknown> = Record<string, unknown>,
+>(): FormStore<T> | null => {
+  const ctx = useContext(FormCtx);
+  return ctx as FormStore<T> | null;
 };
 
 /*───────────────────────────────────────────────────────────────*/
 /* Props & component                                             */
-export interface FormControlProps<T extends Record<string, any>>
-  /*  Exclude the native onSubmit so we can supply our typed version  */
+export interface FormControlProps<T extends Record<string, unknown>>
   extends Omit<React.FormHTMLAttributes<HTMLFormElement>, 'onSubmit'>,
     Presettable {
   /**
@@ -33,13 +42,10 @@ export interface FormControlProps<T extends Record<string, any>>
   /**
    * Fires after native submit is intercepted – gives you typed values.
    */
-  onSubmitValues?: (
-    values: T,
-    event: React.FormEvent<HTMLFormElement>
-  ) => void;
+  onSubmitValues?: (values: T, event: React.FormEvent<HTMLFormElement>) => void;
 }
 
-export function FormControl<T extends Record<string, any>>({
+export function FormControl<T extends Record<string, unknown>>({
   useStore,
   onSubmitValues,
   preset: p,
@@ -47,12 +53,12 @@ export function FormControl<T extends Record<string, any>>({
   children,
   ...rest
 }: FormControlProps<T>) {
-  const store = useStore();                 // ← typed FormStore<T>
+  const store = useStore(); // ← FormStore<T>
   const presetClasses = p ? preset(p) : '';
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    onSubmitValues?.(store.values, e);      // values is <T>
+    onSubmitValues?.(store.values, e); // values is <T>
   };
 
   return (

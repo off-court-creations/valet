@@ -24,13 +24,16 @@ export default function RichChatDemoPage() {
   const navigate = useNavigate();
   const { theme, toggleMode } = useTheme();
   const [step, setStep] = useState(0);
-  const [scheduled, setScheduled] = useState<boolean | null>(null);
+  const [, setScheduled] = useState<boolean | null>(null);
   const [messages, setMessages] = useState<RichMessage[]>([
     {
       role: 'assistant',
       content: <Typography>Do you have a party scheduled?</Typography>,
       form: ({ onSubmit }) => (
-        <Stack direction="row" spacing={1}>
+        <Stack
+          direction='row'
+          spacing={1}
+        >
           <Button onClick={() => onSubmit('Yes')}>Yes</Button>
           <Button onClick={() => onSubmit('No')}>No</Button>
         </Stack>
@@ -42,11 +45,17 @@ export default function RichChatDemoPage() {
   const DateForm = ({ onSubmit }: { onSubmit: (val: string) => void }) => {
     const [date, setDate] = useState('');
     return (
-      <Stack direction="row" spacing={1}>
-        <DateSelector value={date} onChange={setDate} />
+      <Stack
+        direction='row'
+        spacing={1}
+      >
+        <DateSelector
+          value={date}
+          onChange={setDate}
+        />
         <IconButton
-          icon="carbon:checkmark"
-          aria-label="Confirm"
+          icon='carbon:checkmark'
+          aria-label='Confirm'
           onClick={() => onSubmit(date)}
         />
       </Stack>
@@ -56,11 +65,19 @@ export default function RichChatDemoPage() {
   const AgeForm = ({ onSubmit }: { onSubmit: (val: string) => void }) => {
     const [age, setAge] = useState(7);
     return (
-      <Stack direction="row" spacing={1}>
-        <Iterator value={age} onChange={setAge} min={1} max={12} />
+      <Stack
+        direction='row'
+        spacing={1}
+      >
+        <Iterator
+          value={age}
+          onChange={setAge}
+          min={1}
+          max={12}
+        />
         <IconButton
-          icon="carbon:checkmark"
-          aria-label="Confirm"
+          icon='carbon:checkmark'
+          aria-label='Confirm'
           onClick={() => onSubmit(String(age))}
         />
       </Stack>
@@ -70,7 +87,10 @@ export default function RichChatDemoPage() {
   const KidsForm = ({ onSubmit }: { onSubmit: (val: string) => void }) => {
     const [kids, setKids] = useState(15);
     return (
-      <Stack direction="row" spacing={1}>
+      <Stack
+        direction='row'
+        spacing={1}
+      >
         <Iterator
           value={kids}
           onChange={setKids}
@@ -79,8 +99,8 @@ export default function RichChatDemoPage() {
           step={5}
         />
         <IconButton
-          icon="carbon:checkmark"
-          aria-label="Confirm"
+          icon='carbon:checkmark'
+          aria-label='Confirm'
           onClick={() => onSubmit(String(kids))}
         />
       </Stack>
@@ -88,11 +108,13 @@ export default function RichChatDemoPage() {
   };
 
   const handleAnswer = (reply: string) => {
-    setMessages(prev => {
+    setMessages((prev) => {
       const base = prev.map((m, idx) => {
         if (idx === prev.length - 1) {
-          const { form, ...rest } = m as any;
-          return rest as RichMessage;
+          // Create a shallow clone, remove the `form` key entirely to avoid type conflicts
+          const clone = { ...(m as unknown as object) } as Record<string, unknown>;
+          delete clone['form'];
+          return clone as unknown as RichMessage;
         }
         return m;
       });
@@ -133,7 +155,7 @@ export default function RichChatDemoPage() {
       } else if (step === 2) {
         next = {
           role: 'assistant',
-          content: <Typography>What is your child's name?</Typography>,
+          content: <Typography>What is your child&#39;s name?</Typography>,
           animate: true,
         };
         setStep(3);
@@ -151,7 +173,7 @@ export default function RichChatDemoPage() {
   };
 
   const handleSend = (m: RichMessage) => {
-    setMessages(prev => {
+    setMessages((prev) => {
       let nextMsgs = [...prev, m];
       if (step === 3) {
         nextMsgs = [
@@ -173,26 +195,32 @@ export default function RichChatDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography variant="h2" bold>
+        <Typography
+          variant='h2'
+          bold
+        >
           RichChat Demo
         </Typography>
-        <Typography variant="subtitle">Local chat with embeddable components</Typography>
+        <Typography variant='subtitle'>Local chat with embeddable components</Typography>
 
         <RichChat
           messages={messages}
           onSend={handleSend}
-          onFormSubmit={reply => handleAnswer(reply)}
+          onFormSubmit={handleAnswer}
           constrainHeight
           userAvatar={present}
           systemAvatar={monkey}
         />
 
-        <Button variant="outlined" onClick={toggleMode}>
+        <Button
+          variant='outlined'
+          onClick={toggleMode}
+        >
           Toggle light / dark mode
         </Button>
 
         <Button
-          size="lg"
+          size='lg'
           onClick={() => navigate('/richchat')}
           style={{ marginTop: theme.spacing(1) }}
         >

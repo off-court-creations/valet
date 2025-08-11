@@ -68,16 +68,22 @@ export const Dropzone: React.FC<DropzoneProps> = ({
     [files, multiple, maxFiles, onFilesChange, onDropCb],
   );
 
-  const {
-    getRootProps,
-    getInputProps,
-    isDragActive,
-  } = useDropzone({ accept, maxFiles, multiple, onDrop: handleDrop });
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    accept,
+    maxFiles,
+    multiple,
+    onDrop: handleDrop,
+  });
   const presetCls = p ? preset(p) : '';
 
   const previews = showPreviews && files.length > 0 && (
-    <Grid columns={4} gap={0.5} style={{ width: '100%' }}>
+    <Grid
+      columns={4}
+      gap={0.5}
+      style={{ width: '100%' }}
+    >
       {files.map((f, i) => (
+        // Note: object URLs are not revoked here; callers can re-mount to clear
         <img
           key={i}
           src={URL.createObjectURL(f)}
@@ -122,24 +128,51 @@ export const Dropzone: React.FC<DropzoneProps> = ({
   };
 
   const fileList = showFileList && !showPreviews && files.length > 0 && (
-    <Stack spacing={0.5} style={{ width: '100%' }}>
+    <Stack
+      spacing={0.5}
+      style={{ width: '100%' }}
+    >
       {files.map((f, i) => (
-        <Stack key={i} direction="row" spacing={0.5} style={{ alignItems: 'center' }}>
+        <Stack
+          key={i}
+          direction='row'
+          spacing={0.5}
+          style={{ alignItems: 'center' }}
+        >
           <Icon icon={fileIcon(f.name)} />
-          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{f.name}</span>
+          <span
+            style={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {f.name}
+          </span>
         </Stack>
       ))}
     </Stack>
   );
 
-  const rootProps = getRootProps();
+  // Pull out dropzone's ref so we can forward a typed ref without `any`
+  const { ref: dropzoneRef, ...rootProps } = getRootProps();
+
+  const setPanelRef: React.RefCallback<HTMLDivElement> = (node) => {
+    if (!dropzoneRef) return;
+    if (typeof dropzoneRef === 'function') {
+      // react-dropzone expects to receive the root element
+      (dropzoneRef as (instance: HTMLDivElement | null) => void)(node);
+    } else {
+      (dropzoneRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+    }
+  };
 
   return (
     <Panel
       {...rest}
       {...rootProps}
-      ref={rootProps.ref as any}
-      variant="alt"
+      ref={setPanelRef}
+      variant='alt'
       fullWidth={fullWidth}
       style={{
         width: fullWidth ? `calc(100% - ${theme.spacing(1)} * 2)` : undefined,
@@ -152,7 +185,10 @@ export const Dropzone: React.FC<DropzoneProps> = ({
         .join(' ')}
     >
       <input {...getInputProps()} />
-      <Icon icon="mdi:cloud-upload" size="lg" />
+      <Icon
+        icon='mdi:cloud-upload'
+        size='lg'
+      />
       <div>{isDragActive ? 'Drop files here…' : 'Drag files or click to browse'}</div>
       {previews || fileList}
     </Panel>

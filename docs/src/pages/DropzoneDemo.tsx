@@ -38,7 +38,7 @@ export default function DropzoneDemoPage() {
   const data: Row[] = [
     {
       prop: <code>accept</code>,
-      type: <code>DropzoneOptions['accept']</code>,
+      type: <code>DropzoneOptions[&apos;accept&apos;]</code>,
       default: <code>-</code>,
       description: 'Allowed file types',
     },
@@ -80,7 +80,7 @@ export default function DropzoneDemoPage() {
     },
     {
       prop: <code>onDrop</code>,
-      type: <code>DropzoneOptions['onDrop']</code>,
+      type: <code>DropzoneOptions[&apos;onDrop&apos;]</code>,
       default: <code>-</code>,
       description: 'Low-level drop callback',
     },
@@ -96,54 +96,67 @@ export default function DropzoneDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography variant="h2" bold>
+        <Typography
+          variant='h2'
+          bold
+        >
           Dropzone
         </Typography>
-        <Typography variant="subtitle">
-          Drag-and-drop uploads with optional previews
-        </Typography>
+        <Typography variant='subtitle'>Drag-and-drop uploads with optional previews</Typography>
 
         <Tabs>
-          <Tabs.Tab label="Usage" />
+          <Tabs.Tab label='Usage' />
           <Tabs.Panel>
             <Stack>
-              <Typography variant="h3">1. Default</Typography>
+              <Typography variant='h3'>1. Default</Typography>
               <Dropzone />
 
-              <Typography variant="h3">2. Image only</Typography>
+              <Typography variant='h3'>2. Image only</Typography>
               <Dropzone accept={{ 'image/*': [] }} />
 
-              <Typography variant="h3">3. Limit to two files</Typography>
+              <Typography variant='h3'>3. Limit to two files</Typography>
               <Dropzone maxFiles={2} />
 
-              <Typography variant="h3">4. File list</Typography>
-              <Dropzone showPreviews={false} showFileList />
+              <Typography variant='h3'>4. File list</Typography>
+              <Dropzone
+                showPreviews={false}
+                showFileList
+              />
 
-              <Typography variant="h3">5. No previews</Typography>
+              <Typography variant='h3'>5. No previews</Typography>
               <Dropzone showPreviews={false} />
 
-              <Typography variant="h3">6. Full width</Typography>
+              <Typography variant='h3'>6. Full width</Typography>
               <Dropzone fullWidth />
 
-              <Typography variant="h3">7. Theme toggle</Typography>
-              <Button variant="outlined" onClick={toggleMode}>
+              <Typography variant='h3'>7. Theme toggle</Typography>
+              <Button
+                variant='outlined'
+                onClick={toggleMode}
+              >
                 Toggle light / dark
               </Button>
             </Stack>
           </Tabs.Panel>
 
-          <Tabs.Tab label="Reference" />
+          <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant="h3">Prop reference</Typography>
-            <Table data={data} columns={columns} constrainHeight={false} />
+            <Typography variant='h3'>Prop reference</Typography>
+            <Table
+              data={data}
+              columns={columns}
+              constrainHeight={false}
+            />
           </Tabs.Panel>
         </Tabs>
 
-        <Button onClick={() => navigate(-1)} style={{ marginTop: theme.spacing(2) }}>
+        <Button
+          onClick={() => navigate(-1)}
+          style={{ marginTop: theme.spacing(2) }}
+        >
           ← Back
         </Button>
       </Stack>
     </Surface>
   );
 }
-

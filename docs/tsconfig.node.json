@@ -4,7 +4,7 @@
   // ---------------------------------------------------------------------------
   "compilerOptions": {
     "target": "ES2020",
-    "module": "ESNext",                    // your package.json is `"type": "module"`
+    "module": "ESNext", // your package.json is `"type": "module"`
     "moduleResolution": "bundler",
     "lib": ["ES2020"],
     "allowImportingTsExtensions": true,
@@ -23,9 +23,6 @@
   },
 
   /* Files that live exclusively in a Node context -------------------------- */
-  "include": [
-    "vite.config.ts",
-    "scripts/**/*.ts"
-  ],
+  "include": ["vite.config.ts", "scripts/**/*.ts"],
   "exclude": ["node_modules"]
 }

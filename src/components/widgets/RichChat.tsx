@@ -2,13 +2,7 @@
 // src/components/widgets/RichChat.tsx  | valet
 // Local chat component with embeddable content; add fontFamily prop
 // ─────────────────────────────────────────────────────────────
-import React, {
-  useState,
-  useRef,
-  useId,
-  useEffect,
-  useLayoutEffect,
-} from 'react';
+import React, { useState, useRef, useId, useEffect, useLayoutEffect, useCallback } from 'react';
 import { styled, keyframes } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { useSurface } from '../../system/surfaceStore';
@@ -98,8 +92,12 @@ const Typing = styled('div')<{ $color: string }>`
     background: ${({ $color }) => $color};
     animation: ${typingDot} 1s infinite;
   }
-  & span:nth-child(2) { animation-delay: 0.2s; }
-  & span:nth-child(3) { animation-delay: 0.4s; }
+  & span:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  & span:nth-child(3) {
+    animation-delay: 0.4s;
+  }
 `;
 
 /*───────────────────────────────────────────────────────────*/
@@ -121,7 +119,7 @@ export const RichChat: React.FC<RichChatProps> = ({
 }) => {
   const { theme } = useTheme();
   const surface = useSurface(
-    s => ({
+    (s) => ({
       element: s.element,
       width: s.width,
       height: s.height,
@@ -130,7 +128,10 @@ export const RichChat: React.FC<RichChatProps> = ({
     }),
     shallow,
   );
-  const portrait = surface.height > surface.width;
+
+  const { element, width, height, registerChild, unregisterChild } = surface;
+
+  const portrait = height > width;
   const wrapRef = useRef<HTMLDivElement>(null);
   const uniqueId = useId();
   const [maxHeight, setMaxHeight] = useState<number>();
@@ -139,19 +140,17 @@ export const RichChat: React.FC<RichChatProps> = ({
 
   const [text, setText] = useState('');
 
-  const inputDisabled = disableInput || messages.some(m => m.form);
+  const inputDisabled = disableInput || messages.some((m) => m.form);
 
   const calcCutoff = () => {
     if (typeof document === 'undefined') return 32;
-    const fs = parseFloat(
-      getComputedStyle(document.documentElement).fontSize,
-    );
+    const fs = parseFloat(getComputedStyle(document.documentElement).fontSize);
     return (isNaN(fs) ? 16 : fs) * 2;
   };
 
-  const update = () => {
+  const update = useCallback(() => {
     const node = wrapRef.current;
-    const surfEl = surface.element;
+    const surfEl = element;
     if (!node || !surfEl) return;
     const sRect = surfEl.getBoundingClientRect();
     const nRect = node.getBoundingClientRect();
@@ -159,7 +158,7 @@ export const RichChat: React.FC<RichChatProps> = ({
     const bottomSpace = Math.round(
       surfEl.scrollHeight - (nRect.bottom - sRect.top + surfEl.scrollTop),
     );
-    const available = Math.round(surface.height - top - bottomSpace);
+    const available = Math.round(height - top - bottomSpace);
     const cutoff = calcCutoff();
 
     const next = available >= cutoff;
@@ -176,7 +175,7 @@ export const RichChat: React.FC<RichChatProps> = ({
       setShouldConstrain(false);
       setMaxHeight(undefined);
     }
-  };
+  }, [element, height]);
 
   useEffect(() => {
     if (!constrainHeight) {
@@ -189,29 +188,33 @@ export const RichChat: React.FC<RichChatProps> = ({
   }, [constrainHeight]);
 
   useLayoutEffect(() => {
-    if (!constrainHeight || !wrapRef.current || !surface.element) return;
+    if (!constrainHeight || !wrapRef.current || !element) return;
     const node = wrapRef.current;
-    surface.registerChild(uniqueId, node, update);
+    registerChild(uniqueId, node, update);
     const ro = new ResizeObserver(update);
     ro.observe(node);
     update();
     return () => {
-      surface.unregisterChild(uniqueId);
+      unregisterChild(uniqueId);
       ro.disconnect();
     };
-  }, [constrainHeight, surface.element]);
+  }, [constrainHeight, element, uniqueId, registerChild, unregisterChild, update]);
 
   useLayoutEffect(() => {
-    if (!constrainHeight || !wrapRef.current || !surface.element) return;
+    if (!constrainHeight || !wrapRef.current || !element) return;
     update();
-  }, [constrainHeight, surface.height, surface.element]);
+  }, [constrainHeight, element, update]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const doSubmit = () => {
     if (!text.trim()) return;
     const msg: RichMessage = { role: 'user', content: text.trim() };
     onSend?.(msg);
     setText('');
+  };
+
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault();
+    doSubmit();
   };
 
   const presetClasses = p ? preset(p) : '';
@@ -222,17 +225,21 @@ export const RichChat: React.FC<RichChatProps> = ({
       {...rest}
       compact
       fullWidth
-      variant="alt"
+      variant='alt'
       style={style}
       className={cls}
     >
-      <Wrapper ref={wrapRef} $gap={theme.spacing(3)} style={{ overflow: 'hidden' }}>
+      <Wrapper
+        ref={wrapRef}
+        $gap={theme.spacing(3)}
+        style={{ overflow: 'hidden' }}
+      >
         <Messages
           $gap={theme.spacing(1.5)}
           style={shouldConstrain ? { overflowY: 'auto', maxHeight } : undefined}
         >
           {messages
-            .filter(m => m.role !== 'system')
+            .filter((m) => m.role !== 'system')
             .map((m, i) => {
               const sidePad = portrait ? theme.spacing(8) : theme.spacing(24);
               const avatarPad = theme.spacing(1);
@@ -260,14 +267,14 @@ export const RichChat: React.FC<RichChatProps> = ({
                   {m.role !== 'user' && systemAvatar && (
                     <Avatar
                       src={systemAvatar}
-                      size="s"
-                      variant="outline"
+                      size='s'
+                      variant='outline'
                       style={{ marginRight: theme.spacing(1) }}
                     />
                   )}
                   <Panel
                     compact
-                    variant="main"
+                    variant='main'
                     background={m.role === 'user' ? theme.colors.primary : undefined}
                     style={{
                       maxWidth: '100%',
@@ -279,12 +286,17 @@ export const RichChat: React.FC<RichChatProps> = ({
                   >
                     <div>
                       {m.name && (
-                        <Typography variant="subtitle" bold>
+                        <Typography
+                          variant='subtitle'
+                          bold
+                        >
                           {m.name}
                         </Typography>
                       )}
                       {m.typing ? (
-                        <Typing $color={m.role === 'user' ? theme.colors.primaryText : theme.colors.text}>
+                        <Typing
+                          $color={m.role === 'user' ? theme.colors.primaryText : theme.colors.text}
+                        >
                           <span />
                           <span />
                           <span />
@@ -298,8 +310,8 @@ export const RichChat: React.FC<RichChatProps> = ({
                   {m.role === 'user' && userAvatar && (
                     <Avatar
                       src={userAvatar}
-                      size="s"
-                      variant="outline"
+                      size='s'
+                      variant='outline'
                       style={{ marginLeft: theme.spacing(1) }}
                     />
                   )}
@@ -309,17 +321,24 @@ export const RichChat: React.FC<RichChatProps> = ({
         </Messages>
 
         {!inputDisabled && (
-          <form onSubmit={handleSubmit} style={{ width: '100%' }}>
-            <Stack direction="row" spacing={1} compact>
+          <form
+            onSubmit={handleSubmit}
+            style={{ width: '100%' }}
+          >
+            <Stack
+              direction='row'
+              spacing={1}
+              compact
+            >
               <TextField
-                as="textarea"
-                name="chat-message"
+                as='textarea'
+                name='chat-message'
                 value={text}
                 onChange={(e) => setText(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
-                    handleSubmit(e as any);
+                    doSubmit();
                   }
                 }}
                 rows={1}
@@ -327,7 +346,11 @@ export const RichChat: React.FC<RichChatProps> = ({
                 fullWidth
                 fontFamily={fontFamily}
               />
-              <IconButton icon="carbon:send" type="submit" aria-label="Send" />
+              <IconButton
+                icon='carbon:send'
+                type='submit'
+                aria-label='Send'
+              />
             </Stack>
           </form>
         )}

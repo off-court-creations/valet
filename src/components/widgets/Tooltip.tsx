@@ -13,9 +13,9 @@ import React, {
   useState,
 } from 'react';
 import { createPortal } from 'react-dom';
-import { styled }    from '../../css/createStyled';
-import { useTheme }  from '../../system/themeStore';
-import { preset }    from '../../css/stylePresets';
+import { styled } from '../../css/createStyled';
+import { useTheme } from '../../system/themeStore';
+import { preset } from '../../css/stylePresets';
 import type { Presettable } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
@@ -65,22 +65,30 @@ const Bubble = styled('div')<{
   pointer-events: none;
 
   opacity: ${({ $show }) => ($show ? 1 : 0)};
-  transition: opacity 140ms ease, transform 140ms ease;
+  transition:
+    opacity 140ms ease,
+    transform 140ms ease;
 
   transform-origin: ${({ $placement }) =>
-    ({
-      top: 'bottom center',
-      bottom: 'top center',
-      left: 'center right',
-      right: 'center left',
-    } as Record<Placement, string>)[$placement]};
+    (
+      ({
+        top: 'bottom center',
+        bottom: 'top center',
+        left: 'center right',
+        right: 'center left',
+      }) as Record<Placement, string>
+    )[$placement]};
   transform: ${({ $show, $placement }) => {
-    const dist = $show ? 0 : ({
-      top: 4,
-      bottom: -4,
-      left: 4,
-      right: -4,
-    } as Record<Placement, number>)[$placement];
+    const dist = $show
+      ? 0
+      : (
+          {
+            top: 4,
+            bottom: -4,
+            left: 4,
+            right: -4,
+          } as Record<Placement, number>
+        )[$placement];
     return $placement === 'top' || $placement === 'bottom'
       ? `translate(-50%, ${dist}px)`
       : `translate(${dist}px, -50%)`;
@@ -98,12 +106,14 @@ const Arrow = styled('span')<{
   transform: rotate(45deg);
 
   ${({ $placement }) =>
-    ({
-      top   : `bottom: calc(-0.5 * var(--s)); left: 50%; transform: translateX(-50%) rotate(45deg);`,
-      bottom: `top:    calc(-0.5 * var(--s)); left: 50%; transform: translateX(-50%) rotate(45deg);`,
-      left  : `right:  calc(-0.5 * var(--s)); top: 50%; transform: translateY(-50%) rotate(45deg);`,
-      right : `left:   calc(-0.5 * var(--s)); top: 50%; transform: translateY(-50%) rotate(45deg);`,
-    } as Record<Placement, string>)[$placement as Placement]}
+    (
+      ({
+        top: `bottom: calc(-0.5 * var(--s)); left: 50%; transform: translateX(-50%) rotate(45deg);`,
+        bottom: `top:    calc(-0.5 * var(--s)); left: 50%; transform: translateX(-50%) rotate(45deg);`,
+        left: `right:  calc(-0.5 * var(--s)); top: 50%; transform: translateY(-50%) rotate(45deg);`,
+        right: `left:   calc(-0.5 * var(--s)); top: 50%; transform: translateY(-50%) rotate(45deg);`,
+      }) as Record<Placement, string>
+    )[$placement as Placement]}
 `;
 
 /*───────────────────────────────────────────────────────────*/
@@ -145,19 +155,22 @@ export const Tooltip: React.FC<TooltipProps> = ({
   children,
 }) => {
   const { theme } = useTheme();
-  const id        = useId();
+  const id = useId();
   const hasPreset = Boolean(presetKey);
   const wrapperRef = useRef<HTMLSpanElement>(null);
   const bubbleRef = useRef<HTMLDivElement>(null);
-  const [pos, setPos] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
+  const [pos, setPos] = useState<{ top: number; left: number }>({
+    top: 0,
+    left: 0,
+  });
 
   /* uncontrolled ↔ controlled gate */
   const [internalShow, setInternalShow] = useState(defaultOpen);
   const show = controlled ?? internalShow;
 
   /* timers */
-  const inT   = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const outT  = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const inT = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const outT = useRef<ReturnType<typeof setTimeout> | null>(null);
   const clear = () => {
     if (inT.current) clearTimeout(inT.current);
     if (outT.current) clearTimeout(outT.current);
@@ -176,11 +189,14 @@ export const Tooltip: React.FC<TooltipProps> = ({
     registerTooltip(close);
   }, [controlled, onOpen, close]);
 
-  const handleOutside = useCallback((e: PointerEvent) => {
-    if (!wrapperRef.current?.contains(e.target as Node)) {
-      close();
-    }
-  }, [close]);
+  const handleOutside = useCallback(
+    (e: PointerEvent) => {
+      if (!wrapperRef.current?.contains(e.target as Node)) {
+        close();
+      }
+    },
+    [close],
+  );
 
   /* listeners */
   const handleEnter = () => {
@@ -302,7 +318,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
           ref={bubbleRef}
           $show={show}
           $placement={placement}
-          role="tooltip"
+          role='tooltip'
           id={`tooltip-${id}`}
           className={presetClasses}
           style={{
@@ -319,7 +335,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
           {title}
           {arrow && <Arrow $placement={placement} />}
         </Bubble>,
-        document.body
+        document.body,
       )}
     </Wrapper>
   );

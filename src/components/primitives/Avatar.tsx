@@ -12,9 +12,7 @@ import { md5 } from '../../helpers/md5';
 export type AvatarSize = 'xs' | 's' | 'm' | 'l' | 'xl';
 export type AvatarVariant = 'plain' | 'outline';
 
-export interface AvatarProps
-  extends React.ImgHTMLAttributes<HTMLImageElement>,
-    Presettable {
+export interface AvatarProps extends React.ImgHTMLAttributes<HTMLImageElement>, Presettable {
   /** Image URL override. */
   src?: string;
   /** Email used for Gravatar lookup when src missing. */
@@ -29,9 +27,9 @@ export interface AvatarProps
 
 const sizeMap: Record<AvatarSize, string> = {
   xs: '1.5rem',
-  s : '2rem',
-  m : '3rem',
-  l : '4rem',
+  s: '2rem',
+  m: '3rem',
+  l: '4rem',
   xl: '6rem',
 };
 

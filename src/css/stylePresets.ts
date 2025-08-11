@@ -2,20 +2,20 @@
 // src/css/stylePresets.ts  | valet
 // registry of reusable style presets via definePreset()
 // ─────────────────────────────────────────────────────────────
-import { hashStr }          from './hash';
-import { Theme, useTheme }  from '../system/themeStore';
+import { hashStr } from './hash';
+import { Theme, useTheme } from '../system/themeStore';
 import { styleCache, globalSheet } from './createStyled';
 
 type CSSFn = (theme: Theme) => string;
 
 interface PresetEntry {
-  cssFn : CSSFn;
-  class : string;
-  rule  : CSSStyleRule;
+  cssFn: CSSFn;
+  class: string;
+  rule: CSSStyleRule;
 }
 
-const registry  = new Map<string, PresetEntry>();   // name → entry
-let   subscribed = false;
+const registry = new Map<string, PresetEntry>(); // name → entry
+let subscribed = false;
 
 /* ─────────────────────────────────────────────── */
 function normalise(css: string) {
@@ -27,7 +27,7 @@ function ensureSubscription() {
   subscribed = true;
   /* Re-run every preset whenever the theme changes */
   useTheme.subscribe(({ theme }) => {
-    for (const { cssFn, class: cls, rule } of registry.values()) {
+    for (const { cssFn, rule } of registry.values()) {
       const nextCSS = normalise(cssFn(theme));
       rule.style.cssText = nextCSS;
     }
@@ -43,16 +43,16 @@ export function definePreset(name: string, cssFn: CSSFn) {
   ensureSubscription();
 
   /* Stable class name = readable prefix + hash */
-  const prefix    = name.toLowerCase().replace(/[^a-z0-9_-]+/g, '');
+  const prefix = name.toLowerCase().replace(/[^a-z0-9_-]+/g, '');
   const className = `zp-${prefix}-${hashStr(name)}`;
 
   /* Initial render */
   const { theme } = useTheme.getState();
-  const rawCSS    = normalise(cssFn(theme));
+  const rawCSS = normalise(cssFn(theme));
 
   const ruleText = `.${className}{${rawCSS}}`;
-  const index    = globalSheet.insertRule(ruleText, globalSheet.cssRules.length);
-  const rule     = globalSheet.cssRules[index] as CSSStyleRule;
+  const index = globalSheet.insertRule(ruleText, globalSheet.cssRules.length);
+  const rule = globalSheet.cssRules[index] as CSSStyleRule;
   styleCache.set(className, rawCSS);
 
   registry.set(name, { cssFn, class: className, rule });
@@ -69,10 +69,7 @@ export function preset(names: string | string[]) {
     .join(' ');
 }
 
-export function presetHas(
-  names: string | string[],
-  property: string,
-): boolean {
+export function presetHas(names: string | string[], property: string): boolean {
   const list = Array.isArray(names) ? names : [names];
   for (const name of list) {
     const entry = registry.get(name);

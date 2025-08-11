@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/widgets/DateSelector.tsx | valet
+// src/components/fields/DateSelector.tsx | valet
 // interactive month calendar for picking dates
 // ─────────────────────────────────────────────────────────────
 import React, { useState } from 'react';
@@ -8,7 +8,7 @@ import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { IconButton } from './IconButton';
 import { Select } from './Select';
-import { useForm } from './FormControl';
+import { useOptionalForm } from './FormControl';
 import { toRgb, mix, toHex } from '../../helpers/color';
 import type { Presettable } from '../../types';
 
@@ -78,21 +78,20 @@ const Cell = styled('button')<{
   padding: 0.25rem 0;
   border: none;
   background: ${({ $start, $end, $inRange, $primary, $secondary, $rangeBg }) =>
-    $start
-      ? $primary
-      : $end
-      ? $secondary
-      : $inRange
-      ? $rangeBg
-      : 'transparent'};
+    $start ? $primary : $end ? $secondary : $inRange ? $rangeBg : 'transparent'};
   color: inherit;
   border-radius: 4px;
   cursor: pointer;
   font: inherit;
   font-weight: ${({ $start, $end }) => ($start || $end ? 'bold' : 'inherit')};
   height: 2rem;
-  &:hover:not(:disabled) { filter: brightness(1.2); }
-  &:disabled { opacity: 0.4; cursor: default; }
+  &:hover:not(:disabled) {
+    filter: brightness(1.2);
+  }
+  &:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
 `;
 
 /*───────────────────────────────────────────────────────────*/
@@ -130,8 +129,9 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   ...rest
 }) => {
   const { theme } = useTheme();
-  let form: ReturnType<typeof useForm<any>> | null = null;
-  try { form = useForm<any>(); } catch {}
+
+  /* optional FormControl binding --------------------------- */
+  const form = useOptionalForm<Record<string, string | undefined>>();
 
   const formVal = form && name ? (form.values[name] as string | undefined) : undefined;
   const controlled = value !== undefined || formVal !== undefined;
@@ -151,9 +151,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   const maxYear = max.getFullYear();
 
   const startDate = controlled ? parseDate(value ?? formVal) : startInt;
-  const endDate = range
-    ? (endValue !== undefined ? parseDate(endValue) : endInt)
-    : startDate;
+  const endDate = range ? (endValue !== undefined ? parseDate(endValue) : endInt) : startDate;
 
   const [viewYear, setViewYear] = useState(startDate.getFullYear());
   const [viewMonth, setViewMonth] = useState(startDate.getMonth());
@@ -172,7 +170,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   const commit = (d: number) => {
     const iso = new Date(viewYear, viewMonth, d).toISOString().slice(0, 10);
     if (!controlled) setStartInt(new Date(viewYear, viewMonth, d));
-    if (form && name) form.setField(name as any, iso);
+    if (form && name) form.setField(name as keyof Record<string, string | undefined>, iso);
     onChange?.(iso);
   };
 
@@ -206,8 +204,14 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
     setViewMonth((m) => {
       let next = m + delta;
       let yr = viewYear;
-      while (next < 0) { next += 12; yr--; }
-      while (next > 11) { next -= 12; yr++; }
+      while (next < 0) {
+        next += 12;
+        yr--;
+      }
+      while (next > 11) {
+        next -= 12;
+        yr++;
+      }
       const start = new Date(yr, next, 1);
       const end = new Date(yr, next + 1, 0);
       if (end < min || start > max) return m;
@@ -219,9 +223,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   const presetCls = p ? preset(p) : '';
   const cls = [presetCls, className].filter(Boolean).join(' ') || undefined;
 
-  const rangeBg = toHex(
-    mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.25),
-  );
+  const rangeBg = toHex(mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.25));
 
   return (
     <Wrapper
@@ -234,10 +236,10 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
       <Header $gap={theme.spacing(1)}>
         <div style={{ display: 'flex', gap: theme.spacing(0.5) }}>
           <IconButton
-            size="sm"
-            variant="outlined"
-            icon="mdi:chevron-double-left"
-            aria-label="Previous year"
+            size='sm'
+            variant='outlined'
+            icon='mdi:chevron-double-left'
+            aria-label='Previous year'
             onClick={() => {
               const yr = viewYear - 1;
               let m = viewMonth;
@@ -248,10 +250,10 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
             disabled={new Date(viewYear - 1, 11, 31) < min}
           />
           <IconButton
-            size="sm"
-            variant="outlined"
-            icon="mdi:chevron-left"
-            aria-label="Previous month"
+            size='sm'
+            variant='outlined'
+            icon='mdi:chevron-left'
+            aria-label='Previous month'
             onClick={() => changeMonth(-1)}
             disabled={new Date(viewYear, viewMonth, 0) < min}
           />
@@ -265,19 +267,22 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
           }}
         >
           <Select
-            size="xs"
+            size='xs'
             value={viewMonth}
             onChange={(v) => setViewMonth(Number(v))}
             style={{ flex: 1 }}
           >
             {months.map((idx) => (
-              <Select.Option key={monthNames[idx]} value={idx}>
+              <Select.Option
+                key={monthNames[idx]}
+                value={idx}
+              >
                 {monthNames[idx]}
               </Select.Option>
             ))}
           </Select>
           <Select
-            size="xs"
+            size='xs'
             value={viewYear}
             onChange={(v) => {
               const yr = Number(v);
@@ -290,7 +295,10 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
             style={{ flex: 1 }}
           >
             {years.map((y) => (
-              <Select.Option key={y} value={y}>
+              <Select.Option
+                key={y}
+                value={y}
+              >
                 {y}
               </Select.Option>
             ))}
@@ -298,18 +306,18 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
         </div>
         <div style={{ display: 'flex', gap: theme.spacing(0.5) }}>
           <IconButton
-            size="sm"
-            variant="outlined"
-            icon="mdi:chevron-right"
-            aria-label="Next month"
+            size='sm'
+            variant='outlined'
+            icon='mdi:chevron-right'
+            aria-label='Next month'
             onClick={() => changeMonth(1)}
             disabled={new Date(viewYear, viewMonth + 1, 1) > max}
           />
           <IconButton
-            size="sm"
-            variant="outlined"
-            icon="mdi:chevron-double-right"
-            aria-label="Next year"
+            size='sm'
+            variant='outlined'
+            icon='mdi:chevron-double-right'
+            aria-label='Next year'
             onClick={() => {
               const yr = viewYear + 1;
               let m = viewMonth;
@@ -341,10 +349,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
             endDate.getFullYear() === viewYear &&
             endDate.getMonth() === viewMonth &&
             endDate.getDate() === day;
-          const inRange =
-            range &&
-            date > startDate &&
-            date < endDate;
+          const inRange = range && date > startDate && date < endDate;
           return (
             <Cell
               key={day}
@@ -354,9 +359,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
               $primary={theme.colors.primary}
               $secondary={theme.colors.secondary}
               $rangeBg={rangeBg}
-              onClick={() =>
-                !disabled && (range ? commitRange(day) : commit(day))
-              }
+              onClick={() => !disabled && (range ? commitRange(day) : commit(day))}
               disabled={disabled}
             >
               {day}

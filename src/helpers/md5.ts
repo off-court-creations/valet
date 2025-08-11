@@ -7,8 +7,8 @@ export function md5(str: string): string {
   const x = str2binl(str);
   const len = str.length * 8;
 
-  x[len >> 5] |= 0x80 << (len % 32);
-  x[((len + 64 >>> 9) << 4) + 14] = len;
+  x[len >> 5] |= 0x80 << len % 32;
+  x[(((len + 64) >>> 9) << 4) + 14] = len;
 
   let a = 1732584193;
   let b = -271733879;
@@ -125,7 +125,7 @@ function str2binl(str: string) {
   const bin: number[] = [];
   const mask = 0xff;
   for (let i = 0; i < str.length * 8; i += 8) {
-    bin[i >> 5] |= (str.charCodeAt(i / 8) & mask) << (i % 32);
+    bin[i >> 5] |= (str.charCodeAt(i / 8) & mask) << i % 32;
   }
   return bin;
 }

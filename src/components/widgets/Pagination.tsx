@@ -52,19 +52,17 @@ const PageBtn = styled('button')<{
 }>`
   position: relative;
   font-weight: ${({ $active }) => ($active ? 700 : 400)};
-  color: ${({ $active, $primary, $text }) =>
-    $active ? $primary : $text};
+  color: ${({ $active, $primary, $text }) => ($active ? $primary : $text)};
 
   &::after {
     content: '';
     position: absolute;
     left: 0;
     right: 0;
-    bottom: -0.3rem;       /* hugs text baseline */
-    height: 0.25rem;       /* thicker than normal underline */
+    bottom: -0.3rem; /* hugs text baseline */
+    height: 0.25rem; /* thicker than normal underline */
     border-radius: 2px 2px 0 0;
-    background: ${({ $active, $primary }) =>
-      $active ? $primary : 'transparent'};
+    background: ${({ $active, $primary }) => ($active ? $primary : 'transparent')};
     transition: background 150ms ease;
   }
 `;
@@ -85,16 +83,14 @@ export const Pagination: React.FC<PaginationProps> = ({
 
   /* preset → utility class merge */
   const presetClass = p ? preset(p) : '';
-  const mergedClass = [presetClass, className]
-    .filter(Boolean)
-    .join(' ') || undefined;
+  const mergedClass = [presetClass, className].filter(Boolean).join(' ') || undefined;
 
   const nav = (p: number) => () => onChange?.(p);
 
   return (
     <Root
       {...rest}
-      aria-label="pagination"
+      aria-label='pagination'
       $text={theme.colors.text}
       className={mergedClass}
       style={style}

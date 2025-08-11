@@ -2,6 +2,7 @@
 // src/components/layout/Tabs.tsx | valet
 // Grid-based <Tabs>; optional heading centering + tab tooltips
 // ─────────────────────────────────────────────────────────────
+/* eslint-disable react/prop-types */
 import React, {
   createContext,
   forwardRef,
@@ -14,21 +15,21 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { styled }           from '../../css/createStyled';
-import { useTheme }         from '../../system/themeStore';
-import { preset }           from '../../css/stylePresets';
-import { Tooltip }          from '../widgets/Tooltip';
+import { styled } from '../../css/createStyled';
+import { useTheme } from '../../system/themeStore';
+import { preset } from '../../css/stylePresets';
+import { Tooltip } from '../widgets/Tooltip';
 import type { Presettable } from '../../types';
-import { Typography }       from '../primitives/Typography';
+import { Typography } from '../primitives/Typography';
 
 /*───────────────────────────────────────────────────────────*/
 /* Context                                                   */
 interface Ctx {
-  active      : number;
-  setActive   : (i: number) => void;
-  orientation : 'horizontal' | 'vertical';
-  registerTab : (i: number, el: HTMLButtonElement | null) => void;
-  totalTabs   : number;
+  active: number;
+  setActive: (i: number) => void;
+  orientation: 'horizontal' | 'vertical';
+  registerTab: (i: number, el: HTMLButtonElement | null) => void;
+  totalTabs: number;
 }
 const TabsCtx = createContext<Ctx | null>(null);
 const useTabs = () => {
@@ -41,7 +42,7 @@ const useTabs = () => {
 /* Grid container                                            */
 const Root = styled('div')<{
   $orientation: 'horizontal' | 'vertical';
-  $placement : 'top' | 'bottom' | 'left' | 'right';
+  $placement: 'top' | 'bottom' | 'left' | 'right';
   $gap: string;
 }>`
   width: 100%;
@@ -59,17 +60,13 @@ const Root = styled('div')<{
   `
       : `
     /* cols: tab-strip + panel */
-    grid-template-columns: ${
-      $placement === 'left' ? 'max-content 1fr' : '1fr max-content'
-    };
+    grid-template-columns: ${$placement === 'left' ? 'max-content 1fr' : '1fr max-content'};
     align-items: start; /* keep panel aligned to top of tabs */
   `}
 
   /* Gutter only for vertical-left layout */
   ${({ $orientation, $placement }) =>
-    $orientation === 'vertical' && $placement === 'left'
-      ? 'column-gap: 1rem;'
-      : ''}
+    $orientation === 'vertical' && $placement === 'left' ? 'column-gap: 1rem;' : ''}
 `;
 
 /*───────────────────────────────────────────────────────────*/
@@ -78,8 +75,7 @@ const TabList = styled('div')<{
   $center?: boolean;
 }>`
   display: flex;
-  flex-direction: ${({ $orientation }) =>
-    $orientation === 'vertical' ? 'column' : 'row'};
+  flex-direction: ${({ $orientation }) => ($orientation === 'vertical' ? 'column' : 'row')};
   gap: 0;
 
   ${({ $orientation, $center }) => {
@@ -94,9 +90,9 @@ const TabList = styled('div')<{
 /*───────────────────────────────────────────────────────────*/
 /* Added -webkit-tap-highlight-color + touch-action to kill blue flash */
 const TabBtn = styled('button')<{
-  $active  : boolean;
-  $primary : string;
-  $orient  : 'horizontal' | 'vertical';
+  $active: boolean;
+  $primary: string;
+  $orient: 'horizontal' | 'vertical';
 }>`
   background: transparent;
   border: none;
@@ -109,8 +105,7 @@ const TabBtn = styled('button')<{
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
 
-  ${({ $orient }) =>
-    $orient === 'vertical' ? 'width: 100%;' : 'min-width: 4rem;'}
+  ${({ $orient }) => ($orient === 'vertical' ? 'width: 100%;' : 'min-width: 4rem;')}
 
   position: relative;
   text-align: center;
@@ -140,14 +135,15 @@ const Panel = styled('div')`
   overflow-y: auto;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE & Edge */
-  &::-webkit-scrollbar { display: none; }
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
   box-sizing: border-box;
   min-height: 0;
   max-height: 100%;
   max-width: 100%;
 `;
-
 
 /*───────────────────────────────────────────────────────────*/
 export interface TabsProps
@@ -160,16 +156,12 @@ export interface TabsProps
   placement?: 'top' | 'bottom' | 'left' | 'right';
   centered?: boolean;
 }
-export interface TabProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    Presettable {
+export interface TabProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, Presettable {
   index?: number;
   label?: ReactNode;
   tooltip?: ReactNode;
 }
-export interface TabPanelProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    Presettable {
+export interface TabPanelProps extends React.HTMLAttributes<HTMLDivElement>, Presettable {
   index?: number;
   keepMounted?: boolean;
 }
@@ -191,18 +183,16 @@ export const Tabs: React.FC<TabsProps> & {
   ...divProps
 }) => {
   const { theme } = useTheme();
-  const placement =
-    placementProp ?? (orientation === 'horizontal' ? 'top' : 'left');
+  const placement = placementProp ?? (orientation === 'horizontal' ? 'top' : 'left');
 
-  const controlled      = controlledActive !== undefined;
+  const controlled = controlledActive !== undefined;
   const [self, setSelf] = useState(defaultActive);
-  const active          = controlled ? controlledActive! : self;
+  const active = controlled ? controlledActive! : self;
 
   const refs = useRef<Record<number, HTMLButtonElement | null>>({});
-  const registerTab = useCallback(
-    (i: number, el: HTMLButtonElement | null) => (refs.current[i] = el),
-    [],
-  );
+  const registerTab = useCallback((i: number, el: HTMLButtonElement | null) => {
+    refs.current[i] = el;
+  }, []);
   const setActive = useCallback(
     (i: number) => {
       if (!controlled) setSelf(i);
@@ -212,19 +202,33 @@ export const Tabs: React.FC<TabsProps> & {
     [controlled, onTabChange],
   );
 
-  const tabs: ReactElement[]   = [];
+  const tabs: ReactElement[] = [];
   const panels: ReactElement[] = [];
   React.Children.forEach(children, (child) => {
     if (!React.isValidElement(child)) return;
-    const name = (child.type as any).displayName;
-    if (name === 'Tabs.Tab')
+    const name =
+      typeof child.type === 'string'
+        ? child.type
+        : (child.type as { displayName?: string }).displayName;
+
+    if (name === 'Tabs.Tab') {
+      const el = child as React.ReactElement<TabProps>;
       tabs.push(
-        React.cloneElement(child, { index: tabs.length, key: tabs.length } as any),
+        React.cloneElement(el, {
+          index: tabs.length,
+          key: tabs.length,
+        }),
       );
-    if (name === 'Tabs.Panel')
+    }
+    if (name === 'Tabs.Panel') {
+      const el = child as React.ReactElement<TabPanelProps>;
       panels.push(
-        React.cloneElement(child, { index: panels.length, key: panels.length } as any),
+        React.cloneElement(el, {
+          index: panels.length,
+          key: panels.length,
+        }),
       );
+    }
   });
 
   const ctx = useMemo<Ctx>(
@@ -235,14 +239,14 @@ export const Tabs: React.FC<TabsProps> & {
       registerTab,
       totalTabs: tabs.length,
     }),
-    [active, orientation, setActive, tabs.length],
+    [active, orientation, setActive, registerTab, tabs.length],
   );
 
   const cls = [p ? preset(p) : '', className].filter(Boolean).join(' ');
   const gap = theme.spacing(1);
   const stripFirst =
     (orientation === 'horizontal' && placement === 'top') ||
-    (orientation === 'vertical'   && placement === 'left');
+    (orientation === 'vertical' && placement === 'left');
 
   return (
     <TabsCtx.Provider value={ctx}>
@@ -254,7 +258,10 @@ export const Tabs: React.FC<TabsProps> & {
         className={cls}
       >
         {stripFirst && (
-          <TabList $orientation={orientation} $center={centered}>
+          <TabList
+            $orientation={orientation}
+            $center={centered}
+          >
             {tabs}
           </TabList>
         )}
@@ -262,7 +269,10 @@ export const Tabs: React.FC<TabsProps> & {
         <Panel>{panels}</Panel>
 
         {!stripFirst && (
-          <TabList $orientation={orientation} $center={centered}>
+          <TabList
+            $orientation={orientation}
+            $center={centered}
+          >
             {tabs}
           </TabList>
         )}
@@ -280,8 +290,8 @@ const Tab: React.FC<TabProps> = forwardRef<HTMLButtonElement, TabProps>(
 
     const nav = (e: KeyboardEvent<HTMLButtonElement>) => {
       const horiz = orientation === 'horizontal';
-      const prev  = horiz ? 'ArrowLeft'  : 'ArrowUp';
-      const next  = horiz ? 'ArrowRight' : 'ArrowDown';
+      const prev = horiz ? 'ArrowLeft' : 'ArrowUp';
+      const next = horiz ? 'ArrowRight' : 'ArrowDown';
       if (e.key === prev || e.key === next) {
         e.preventDefault();
         setActive((active + (e.key === next ? 1 : -1) + totalTabs) % totalTabs);
@@ -297,9 +307,11 @@ const Tab: React.FC<TabProps> = forwardRef<HTMLButtonElement, TabProps>(
         ref={(el: HTMLButtonElement | null) => {
           registerTab(index, el);
           if (typeof ref === 'function') ref(el);
-          else if (ref) (ref as any).current = el;
+          else if (ref) {
+            (ref as React.MutableRefObject<HTMLButtonElement | null>).current = el;
+          }
         }}
-        role="tab"
+        role='tab'
         id={`tab-${index}`}
         aria-selected={selected}
         aria-controls={`panel-${index}`}
@@ -315,7 +327,10 @@ const Tab: React.FC<TabProps> = forwardRef<HTMLButtonElement, TabProps>(
         className={[p ? preset(p) : '', className].filter(Boolean).join(' ')}
       >
         {typeof content === 'string' || typeof content === 'number' ? (
-          <Typography variant="button" noSelect>
+          <Typography
+            variant='button'
+            noSelect
+          >
             {content}
           </Typography>
         ) : (
@@ -344,7 +359,7 @@ const TabPanel: React.FC<TabPanelProps> = ({
   return (
     <div
       {...rest}
-      role="tabpanel"
+      role='tabpanel'
       id={`panel-${index}`}
       aria-labelledby={`tab-${index}`}
       className={[p ? preset(p) : '', className].filter(Boolean).join(' ')}
@@ -356,7 +371,7 @@ const TabPanel: React.FC<TabPanelProps> = ({
 TabPanel.displayName = 'Tabs.Panel';
 
 /*───────────────────────────────────────────────────────────*/
-Tabs.Tab   = Tab;
+Tabs.Tab = Tab;
 Tabs.Panel = TabPanel;
 
 export default Tabs;

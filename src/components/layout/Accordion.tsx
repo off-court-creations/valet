@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types -- Fully typed TSX: runtime PropTypes not used */
 // ─────────────────────────────────────────────────────────────
 // src/components/widgets/Accordion.tsx | valet
 // Fully-typed, theme-aware <Accordion /> component
@@ -19,22 +20,22 @@ import React, {
   useEffect,
 } from 'react';
 import type { JSX } from 'react';
-import { styled }               from '../../css/createStyled';
-import { useTheme }             from '../../system/themeStore';
-import { preset }               from '../../css/stylePresets';
-import { toRgb, mix, toHex }    from '../../helpers/color';
-import { useSurface }           from '../../system/surfaceStore';
-import { shallow }              from 'zustand/shallow';
-import type { Presettable }     from '../../types';
-import { Typography }          from '../primitives/Typography';
+import { styled } from '../../css/createStyled';
+import { useTheme } from '../../system/themeStore';
+import { preset } from '../../css/stylePresets';
+import { toRgb, mix, toHex } from '../../helpers/color';
+import { useSurface } from '../../system/surfaceStore';
+import { shallow } from 'zustand/shallow';
+import type { Presettable } from '../../types';
+import { Typography } from '../primitives/Typography';
 
 /*───────────────────────────────────────────────────────────*/
 /* Context                                                   */
 interface Ctx {
-  open       : number[];
-  toggle     : (idx: number) => void;
-  multiple   : boolean;
-  headerTag  : keyof JSX.IntrinsicElements;
+  open: number[];
+  toggle: (idx: number) => void;
+  multiple: boolean;
+  headerTag: keyof JSX.IntrinsicElements;
 }
 
 const AccordionCtx = createContext<Ctx | null>(null);
@@ -47,19 +48,19 @@ const useAccordion = () => {
 /*───────────────────────────────────────────────────────────*/
 /* Styled primitives                                         */
 const Root = styled('div')<{ $gap: string }>`
-  width      : 100%;
-  box-sizing : border-box;
-  margin     : ${({ $gap }) => $gap};
+  width: 100%;
+  box-sizing: border-box;
+  margin: ${({ $gap }) => $gap};
   & > * {
     padding: ${({ $gap }) => $gap};
   }
 `;
 
 const Wrapper = styled('div')`
-  width:100%;
-  display:block;
-  box-sizing:border-box;
-  min-height:0;
+  width: 100%;
+  display: block;
+  box-sizing: border-box;
+  min-height: 0;
 `;
 
 const ItemWrapper = styled('div')`
@@ -75,22 +76,22 @@ const HeaderBtn = styled('button')<{
   $skipHover: boolean;
   $hoverBg: string;
 }>`
-  width           : 100%;
-  display         : flex;
-  justify-content : space-between;
-  align-items     : center;
-  gap             : 1rem;
-  padding         : 1rem ${({ $shift }) => $shift};
-  background      : transparent;
-  border          : none;
-  color           : inherit;
-  font            : inherit;
-  cursor          : pointer;
-  text-align      : left;
-  appearance      : none;
-  box-sizing      : border-box;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem ${({ $shift }) => $shift};
+  background: transparent;
+  border: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+  appearance: none;
+  box-sizing: border-box;
   margin-inline-start: -${({ $shift }) => $shift};
-  margin-inline-end  : -${({ $shift }) => $shift};
+  margin-inline-end: -${({ $shift }) => $shift};
 
   /* Disable blue tap-highlight on mobile */
   -webkit-tap-highlight-color: transparent;
@@ -100,35 +101,34 @@ const HeaderBtn = styled('button')<{
   /* Hover tint – only on devices that actually support hover */
   @media (hover: hover) {
     &:hover:not(:disabled) {
-      ${({ $skipHover, $hoverBg }) =>
-        $skipHover ? '' : `background:${$hoverBg};`}
+      ${({ $skipHover, $hoverBg }) => ($skipHover ? '' : `background:${$hoverBg};`)}
     }
   }
 
   ${({ $open, $highlight }) => $open && `background:${$highlight};`}
 
   &:focus-visible {
-    outline       : 2px solid ${({ $primary }) => $primary};
+    outline: 2px solid ${({ $primary }) => $primary};
     outline-offset: 2px;
   }
 
   &:disabled {
-    color : ${({ $disabledColor }) => $disabledColor};
+    color: ${({ $disabledColor }) => $disabledColor};
     cursor: not-allowed;
   }
 `;
 
 const Chevron = styled('svg')<{ $open: boolean }>`
-  width      : 1em;
-  height     : 1em;
+  width: 1em;
+  height: 1em;
   flex-shrink: 0;
-  transition : transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
-  transform  : rotate(${({ $open }) => ($open ? 0 : 180)}deg);
+  transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  transform: rotate(${({ $open }) => ($open ? 0 : 180)}deg);
 `;
 
 const Content = styled('div')<{ $open: boolean; $height: number }>`
-  overflow : hidden;
-  height   : ${({ $open, $height }) => ($open ? `${$height}px` : '0')};
+  overflow: hidden;
+  height: ${({ $open, $height }) => ($open ? `${$height}px` : '0')};
   transition: height 300ms cubic-bezier(0.4, 0, 0.2, 1);
   will-change: height;
 `;
@@ -146,9 +146,7 @@ export interface AccordionProps
   constrainHeight?: boolean;
 }
 
-export interface AccordionItemProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    Presettable {
+export interface AccordionItemProps extends React.HTMLAttributes<HTMLDivElement>, Presettable {
   header: ReactNode;
   index?: number;
   disabled?: boolean;
@@ -173,7 +171,7 @@ export const Accordion: React.FC<AccordionProps> & {
 }) => {
   const { theme } = useTheme();
   const surface = useSurface(
-    s => ({
+    (s) => ({
       element: s.element,
       height: s.height,
       registerChild: s.registerChild,
@@ -187,8 +185,7 @@ export const Accordion: React.FC<AccordionProps> & {
   const [shouldConstrain, setShouldConstrain] = useState(false);
   const constraintRef = useRef(false);
   const controlled = openProp !== undefined;
-  const toArray = (v?: number | number[]) =>
-    v === undefined ? [] : Array.isArray(v) ? v : [v];
+  const toArray = (v?: number | number[]) => (v === undefined ? [] : Array.isArray(v) ? v : [v]);
 
   const [selfOpen, setSelfOpen] = useState(() => toArray(defaultOpen));
   const open = controlled ? toArray(openProp) : selfOpen;
@@ -222,9 +219,7 @@ export const Accordion: React.FC<AccordionProps> & {
 
   const calcCutoff = () => {
     if (typeof document === 'undefined') return 32;
-    const fs = parseFloat(
-      getComputedStyle(document.documentElement).fontSize,
-    );
+    const fs = parseFloat(getComputedStyle(document.documentElement).fontSize);
     return (isNaN(fs) ? 16 : fs) * 2;
   };
 
@@ -233,7 +228,7 @@ export const Accordion: React.FC<AccordionProps> & {
   const prevHeightRef = useRef<number | undefined>(undefined);
   const prevConstrainedRef = useRef(false);
 
-  const runUpdate = () => {
+  const runUpdate = useCallback(() => {
     const node = wrapRef.current;
     const surfEl = surface.element;
     if (!node || !surfEl) return;
@@ -247,8 +242,7 @@ export const Accordion: React.FC<AccordionProps> & {
     const available = Math.round(surface.height - top - bottomRef.current);
     const cutoff = calcCutoff();
 
-    const shouldClamp =
-      node.scrollHeight - available > 1 && available >= cutoff;
+    const shouldClamp = node.scrollHeight - available > 1 && available >= cutoff;
 
     if (shouldClamp) {
       if (!constraintRef.current) {
@@ -277,12 +271,12 @@ export const Accordion: React.FC<AccordionProps> & {
         setMaxHeight(undefined);
       }
     }
-  };
+  }, [surface]);
 
-  const update = () => {
+  const update = useCallback(() => {
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     rafRef.current = requestAnimationFrame(runUpdate);
-  };
+  }, [runUpdate]);
 
   useEffect(() => {
     if (!constrainHeight) {
@@ -306,20 +300,18 @@ export const Accordion: React.FC<AccordionProps> & {
       ro.disconnect();
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [constrainHeight, surface.element]);
+  }, [constrainHeight, surface, uniqueId, update]);
 
   useLayoutEffect(() => {
     if (!constrainHeight || !wrapRef.current || !surface.element) return;
     update();
-  }, [constrainHeight, surface.height, surface.element]);
+  }, [constrainHeight, surface.height, surface.element, update]);
 
   return (
     <AccordionCtx.Provider value={ctx}>
       <Wrapper
         ref={wrapRef}
-        style={
-          shouldConstrain ? { overflow: 'auto', maxHeight } : undefined
-        }
+        style={shouldConstrain ? { overflow: 'auto', maxHeight } : undefined}
       >
         <Root
           {...divProps}
@@ -328,7 +320,9 @@ export const Accordion: React.FC<AccordionProps> & {
         >
           {React.Children.map(children, (child, idx) =>
             React.isValidElement(child)
-              ? React.cloneElement(child as React.ReactElement<any>, { index: idx })
+              ? React.cloneElement(child as React.ReactElement<{ index?: number }>, {
+                  index: idx,
+                })
               : child,
           )}
         </Root>
@@ -348,12 +342,12 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   index = 0,
   ...divProps
 }) => {
-  const { theme, mode }          = useTheme();
+  const { theme, mode } = useTheme();
   const { open, toggle, headerTag } = useAccordion();
 
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const wasLongPress = useRef(false);
-  const contentRef   = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState(0);
   const [skipHover, setSkipHover] = useState(false);
   const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -378,7 +372,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
     hoverTimer.current = setTimeout(remove, 1000);
   };
 
-  const isOpen   = open.includes(index);
+  const isOpen = open.includes(index);
 
   useLayoutEffect(() => {
     if (contentRef.current) {
@@ -386,34 +380,29 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
     }
   }, [children, isOpen]);
   const headerId = `acc-btn-${index}`;
-  const panelId  = `acc-panel-${index}`;
+  const panelId = `acc-panel-${index}`;
 
   /* ----- compute disabled colour (greyed-out, mode-aware) -- */
   const disabledColor = toHex(
-    mix(
-      toRgb(theme.colors.text),
-      toRgb(mode === 'dark' ? '#000' : '#fff'),
-      0.4,
-    ),
+    mix(toRgb(theme.colors.text), toRgb(mode === 'dark' ? '#000' : '#fff'), 0.4),
   );
 
   const presetClasses = p ? preset(p) : '';
   const HeaderTag = headerTag as keyof JSX.IntrinsicElements;
 
-  const highlight = toHex(
-    mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.15),
-  );
-  const hoverBg = toHex(
-    mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.6),
-  );
+  const highlight = toHex(mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.15));
+  const hoverBg = toHex(mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.6));
   const shift = theme.spacing(1);
 
   return (
-    <ItemWrapper {...divProps} className={[presetClasses, className].filter(Boolean).join(' ')}>
+    <ItemWrapper
+      {...divProps}
+      className={[presetClasses, className].filter(Boolean).join(' ')}
+    >
       <HeaderTag style={{ margin: 0 }}>
         <HeaderBtn
           id={headerId}
-          type="button"
+          type='button'
           aria-expanded={isOpen}
           aria-controls={panelId}
           disabled={disabled}
@@ -489,39 +478,52 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
           $skipHover={skipHover}
         >
           {typeof header === 'string' || typeof header === 'number' ? (
-            <Typography variant="subtitle" noSelect style={{ font: 'inherit' }}>
+            <Typography
+              variant='subtitle'
+              noSelect
+              style={{ font: 'inherit' }}
+            >
               {header}
             </Typography>
           ) : (
             header
           )}
-          <Chevron aria-hidden $open={isOpen} viewBox="0 0 24 24">
+          <Chevron
+            aria-hidden
+            $open={isOpen}
+            viewBox='0 0 24 24'
+          >
             <path
-              d="M6 9l6 6 6-6"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+              d='M6 9l6 6 6-6'
+              fill='none'
+              stroke='currentColor'
+              strokeWidth='2'
+              strokeLinecap='round'
+              strokeLinejoin='round'
             />
           </Chevron>
         </HeaderBtn>
       </HeaderTag>
 
       <Content
-        role="region"
+        role='region'
         id={panelId}
         aria-labelledby={headerId}
         $open={isOpen}
         $height={height}
       >
-        <div ref={contentRef} style={{ padding: '0.75rem 0' }}>{children}</div>
+        <div
+          ref={contentRef}
+          style={{ padding: '0.75rem 0' }}
+        >
+          {children}
+        </div>
       </Content>
     </ItemWrapper>
   );
 };
 AccordionItem.displayName = 'Accordion.Item';
-Accordion.Item           = AccordionItem;
+Accordion.Item = AccordionItem;
 
 /*───────────────────────────────────────────────────────────*/
 export default Accordion;

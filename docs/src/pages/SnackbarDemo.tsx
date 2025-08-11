@@ -25,7 +25,11 @@ const DismissBtn: React.FC = () => {
   const close = useSnackbar();
   if (!close) return null;
   return (
-    <Button size="sm" variant="outlined" onClick={close}>
+    <Button
+      size='sm'
+      variant='outlined'
+      onClick={close}
+    >
       Dismiss
     </Button>
   );
@@ -35,11 +39,11 @@ const DismissBtn: React.FC = () => {
 /* Demo page                                                                   */
 export default function SnackbarDemoPage() {
   const { theme, toggleMode } = useTheme();
-  const navigate              = useNavigate();
+  const navigate = useNavigate();
 
   /* Demo state ----------------------------------------------------------- */
-  const [autoOpen,    setAutoOpen]    = useState(false);
-  const [ctrlOpen,    setCtrlOpen]    = useState(false);
+  const [autoOpen, setAutoOpen] = useState(false);
+  const [ctrlOpen, setCtrlOpen] = useState(false);
   const [noStackOpen, setNoStackOpen] = useState(false);
 
   interface Row {
@@ -100,17 +104,20 @@ export default function SnackbarDemoPage() {
       <NavDrawer />
       <Stack>
         {/* Header --------------------------------------------------------- */}
-        <Typography variant="h2" bold>
+        <Typography
+          variant='h2'
+          bold
+        >
           Snackbar Showcase
         </Typography>
 
         <Tabs>
-          <Tabs.Tab label="Usage" />
+          <Tabs.Tab label='Usage' />
           <Tabs.Panel>
             {/* 1. Uncontrolled auto-hide -------------------------------------- */}
-            <Typography variant="h3">1. Uncontrolled (auto-hide)</Typography>
+            <Typography variant='h3'>1. Uncontrolled (auto-hide)</Typography>
             <Button
-              size="sm"
+              size='sm'
               onClick={() => setAutoOpen(true)}
               style={{ alignSelf: 'flex-start' }}
             >
@@ -118,24 +125,33 @@ export default function SnackbarDemoPage() {
             </Button>
             {autoOpen && (
               <Snackbar
-                message="Profile saved successfully!"
+                message='Profile saved successfully!'
                 onClose={() => setAutoOpen(false)}
               />
             )}
 
             {/* 2. Controlled snackbar ---------------------------------------- */}
-            <Typography variant="h3">2. Controlled (manual dismiss)</Typography>
+            <Typography variant='h3'>2. Controlled (manual dismiss)</Typography>
             <Button
-              size="sm"
-              variant="outlined"
+              size='sm'
+              variant='outlined'
               onClick={() => setCtrlOpen(true)}
               style={{ alignSelf: 'flex-start' }}
             >
               Trigger controlled snackbar
             </Button>
-            <Snackbar open={ctrlOpen} onClose={() => setCtrlOpen(false)}>
-              <Stack direction="row" wrap={false}>
-                <Typography variant="body" autoSize>
+            <Snackbar
+              open={ctrlOpen}
+              onClose={() => setCtrlOpen(false)}
+            >
+              <Stack
+                direction='row'
+                wrap={false}
+              >
+                <Typography
+                  variant='body'
+                  autoSize
+                >
                   Draft saved – click to dismiss
                 </Typography>
                 <DismissBtn />
@@ -143,10 +159,10 @@ export default function SnackbarDemoPage() {
             </Snackbar>
 
             {/* 3. noStack layout --------------------------------------------- */}
-            <Typography variant="h3">3. Custom layout (noStack)</Typography>
+            <Typography variant='h3'>3. Custom layout (noStack)</Typography>
             <Button
-              size="sm"
-              variant="outlined"
+              size='sm'
+              variant='outlined'
               onClick={() => setNoStackOpen(true)}
               style={{ alignSelf: 'flex-start' }}
             >
@@ -159,28 +175,39 @@ export default function SnackbarDemoPage() {
               onClose={() => setNoStackOpen(false)}
             >
               {/* Custom free-form children */}
-              <Typography variant="body" autoSize bold>
+              <Typography
+                variant='body'
+                autoSize
+                bold
+              >
                 Free-form layout – no internal flex
               </Typography>
             </Snackbar>
 
             {/* 4. Theme coupling --------------------------------------------- */}
-            <Typography variant="h3">4. Theme coupling</Typography>
-            <Button variant="outlined" onClick={toggleMode}>
+            <Typography variant='h3'>4. Theme coupling</Typography>
+            <Button
+              variant='outlined'
+              onClick={toggleMode}
+            >
               Toggle light / dark mode
             </Button>
           </Tabs.Panel>
 
-          <Tabs.Tab label="Reference" />
+          <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant="h3">Prop reference</Typography>
-            <Table data={data} columns={columns} constrainHeight={false} />
+            <Typography variant='h3'>Prop reference</Typography>
+            <Table
+              data={data}
+              columns={columns}
+              constrainHeight={false}
+            />
           </Tabs.Panel>
         </Tabs>
 
         {/* Back nav -------------------------------------------------------- */}
         <Button
-          size="lg"
+          size='lg'
           onClick={() => navigate(-1)}
           style={{ marginTop: theme.spacing(1) }}
         >
