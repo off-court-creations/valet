@@ -89,6 +89,7 @@ const Cell = styled('button')<{
   font: inherit;
   font-weight: ${({ $start, $end }) => ($start || $end ? 'bold' : 'inherit')};
   height: 2rem;
+  transition: background-color 120ms ease; /* ← add this */
   &:hover:not(:disabled) {
     background: ${({
       $start,
@@ -236,7 +237,8 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   const cls = [presetCls, className].filter(Boolean).join(' ') || undefined;
 
   const rangeBg = toHex(mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.25));
-  const hoverDefault = toHex(mix(toRgb(theme.colors.text), toRgb(theme.colors.background), 0.1));
+  // Use the wrapper's background (backgroundAlt) and nudge ~4% toward text
+  const hoverDefault = toHex(mix(toRgb(theme.colors.backgroundAlt), toRgb(theme.colors.text), 0.04));
   const hoverStart = toHex(mix(toRgb(theme.colors.primary), toRgb(theme.colors.text), 0.3));
   const hoverEnd = toHex(mix(toRgb(theme.colors.secondary), toRgb(theme.colors.text), 0.3));
   const hoverRange = toHex(mix(toRgb(rangeBg), toRgb(theme.colors.text), 0.2));
