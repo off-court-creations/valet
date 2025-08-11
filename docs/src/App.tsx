@@ -9,7 +9,7 @@ import brandonUrl from './assets/fonts/BrandonGrotesque.otf';
 
 /*───────────────────────────────────────────────────────────*/
 /* Helper – terse lazy() wrapper                            */
-const page = <T extends { default: React.FC<any> }>(p: () => Promise<T>) =>
+const page = <T extends { default: React.ComponentType }>(p: () => Promise<T>) =>
   lazy(() => p().then((m) => ({ default: m.default })));
 
 /*───────────────────────────────────────────────────────────*/
