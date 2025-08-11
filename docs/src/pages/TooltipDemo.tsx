@@ -3,6 +3,7 @@
 // Live showcase of the Tooltip component: placements, arrow toggle, controlled
 // visibility, enter/leave delays, presets, and theme coupling.
 // ─────────────────────────────────────────────────────────────────────────────
+import type React from 'react';
 import { useMemo, useState } from 'react';
 import {
   Surface,
@@ -36,14 +37,16 @@ export default function TooltipDemoPage() {
 
   const [controlledOpen, setControlledOpen] = useState(false);
 
-  const placements = useMemo(
-    () =>
-      [
-        { key: 'top', label: 'Top' },
-        { key: 'right', label: 'Right' },
-        { key: 'bottom', label: 'Bottom' },
-        { key: 'left', label: 'Left' },
-      ] as const,
+  // Use the Tooltip component's own prop type to avoid `any`
+  type TooltipPlacement = NonNullable<React.ComponentProps<typeof Tooltip>['placement']>;
+
+  const placements = useMemo<ReadonlyArray<{ key: TooltipPlacement; label: string }>>(
+    () => [
+      { key: 'top' as TooltipPlacement, label: 'Top' },
+      { key: 'right' as TooltipPlacement, label: 'Right' },
+      { key: 'bottom' as TooltipPlacement, label: 'Bottom' },
+      { key: 'left' as TooltipPlacement, label: 'Left' },
+    ],
     [],
   );
 
@@ -77,7 +80,7 @@ export default function TooltipDemoPage() {
           {placements.map(({ key, label }) => (
             <Tooltip
               key={key}
-              placement={key as any}
+              placement={key}
               title={`placement="${key}"`}
             >
               <Button>{label}</Button>
@@ -118,7 +121,7 @@ export default function TooltipDemoPage() {
         {/* 5. Custom enter / leave delays ---------------------------------- */}
         <Typography variant='h3'>5. Custom enter / leave delays</Typography>
         <Tooltip
-          title='500 ms open / 1 s close'
+          title='500 ms open / 1 s close'
           enterDelay={500}
           leaveDelay={1000}
         >

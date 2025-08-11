@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../components/NavDrawer';
 
 export default function PaginationDemoPage() {
-  const { theme, toggleMode } = useTheme();
+  const { toggleMode } = useTheme();
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
 

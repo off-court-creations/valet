@@ -2,7 +2,7 @@
 // src/pages/MetroSelectDemo.tsx | valet
 // Showcase of MetroSelect component
 // ─────────────────────────────────────────────────────────────
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Surface,
   Stack,

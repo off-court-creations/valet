@@ -62,7 +62,7 @@ export default function RadioGroupDemoPage() {
 
   /* Form submit handler --------------------------------------------------- */
   const handleSubmit = (values: { color: string; pet: string }) => {
-    // eslint-disable-next-line no-alert // demo purposes only
+    // eslint-disable-next-line no-alert
     alert(JSON.stringify(values, null, 2));
   };
 
