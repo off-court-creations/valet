@@ -37,20 +37,6 @@ definePreset(
 );
 
 /*─────────────────────────────────────────────────────────────────────────────*/
-/* Example custom SVGs                                                         */
-const HeartSvg = (
-  <svg
-    viewBox='0 0 24 24'
-    stroke='none'
-  >
-    <path
-      d='M12 21s-6.4-4.35-9.32-7.27C.9 11.94.5 8.77 2.53 6.5 4.08 4.69 6.89 4.21 9 5.44c2.11-1.23 4.92-.75 6.47 1.06 2.03 2.27 1.63 5.44-.15 7.23C18.4 16.65 12 21 12 21Z'
-      fill='currentColor'
-    />
-  </svg>
-);
-
-/*─────────────────────────────────────────────────────────────────────────────*/
 /* Demo page                                                                   */
 export default function IconDemoPage() {
   const { theme, toggleMode } = useTheme();
@@ -85,8 +71,12 @@ export default function IconDemoPage() {
     },
     {
       prop: <code>size</code>,
-      type: <code>'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string</code>,
-      default: <code>'md'</code>,
+      type: (
+        <code>
+          &#39;xs&#39; | &#39;sm&#39; | &#39;md&#39; | &#39;lg&#39; | &#39;xl&#39; | number | string
+        </code>
+      ),
+      default: <code>&#39;md&#39;</code>,
       description: 'Icon dimensions',
     },
     {

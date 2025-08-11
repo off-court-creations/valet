@@ -21,7 +21,7 @@ import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../components/NavDrawer';
 
 /*───────────────────────────────────────────────────────────*/
-interface FormVals {
+interface FormVals extends Record<string, unknown> {
   amount: number;
 }
 const useFormStore = createFormStore<FormVals>({ amount: 1 });
@@ -91,7 +91,7 @@ export default function IteratorDemoPage() {
     {
       prop: <code>width</code>,
       type: <code>number | string</code>,
-      default: <code>'3.5rem'</code>,
+      default: <code>&#39;3.5rem&#39;</code>,
       description: 'Field width',
     },
     {

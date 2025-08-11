@@ -71,14 +71,19 @@ export default function IconButtonDemoPage() {
   const data: Row[] = [
     {
       prop: <code>variant</code>,
-      type: <code>'contained' | 'outlined'</code>,
-      default: <code>'contained'</code>,
+      type: <code>&apos;contained&apos; | &apos;outlined&apos;</code>,
+      default: <code>&apos;contained&apos;</code>,
       description: 'Button style',
     },
     {
       prop: <code>size</code>,
-      type: <code>'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string</code>,
-      default: <code>'md'</code>,
+      type: (
+        <code>
+          &apos;xs&apos; | &apos;sm&apos; | &apos;md&apos; | &apos;lg&apos; | &apos;xl&apos; |
+          number | string
+        </code>
+      ),
+      default: <code>&apos;md&apos;</code>,
       description: 'Overall button dimensions',
     },
     {

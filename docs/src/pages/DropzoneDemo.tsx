@@ -38,7 +38,7 @@ export default function DropzoneDemoPage() {
   const data: Row[] = [
     {
       prop: <code>accept</code>,
-      type: <code>DropzoneOptions['accept']</code>,
+      type: <code>DropzoneOptions[&apos;accept&apos;]</code>,
       default: <code>-</code>,
       description: 'Allowed file types',
     },
@@ -80,7 +80,7 @@ export default function DropzoneDemoPage() {
     },
     {
       prop: <code>onDrop</code>,
-      type: <code>DropzoneOptions['onDrop']</code>,
+      type: <code>DropzoneOptions[&apos;onDrop&apos;]</code>,
       default: <code>-</code>,
       description: 'Low-level drop callback',
     },

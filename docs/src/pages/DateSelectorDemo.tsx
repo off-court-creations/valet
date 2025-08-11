@@ -74,13 +74,13 @@ export default function DateSelectorDemoPage() {
     {
       prop: <code>minDate</code>,
       type: <code>string</code>,
-      default: <code>'120y ago'</code>,
+      default: <code>&#39;120y ago&#39;</code>,
       description: 'Earliest selectable date',
     },
     {
       prop: <code>maxDate</code>,
       type: <code>string</code>,
-      default: <code>'120y ahead'</code>,
+      default: <code>&#39;120y ahead&#39;</code>,
       description: 'Latest selectable date',
     },
     {

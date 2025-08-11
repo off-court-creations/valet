@@ -150,21 +150,21 @@ export default function BoxDemoPage() {
             <Typography variant='h3'>6. Presets</Typography>
             <Stack>
               <Box preset='fancyHolder'>
-                <Typography>preset="fancyHolder"</Typography>
+                <Typography>preset=&quot;fancyHolder&quot;</Typography>
               </Box>
 
               <Box preset='glassHolder'>
-                <Typography>preset="glassHolder"</Typography>
+                <Typography>preset=&quot;glassHolder&quot;</Typography>
               </Box>
 
               <Box preset='gradientHolder'>
-                <Typography>preset="gradientHolder"</Typography>
+                <Typography>preset=&quot;gradientHolder&quot;</Typography>
               </Box>
 
               <Box preset={['glassHolder', 'fancyHolder']}>
                 <Typography>
                   Combination&nbsp;
-                  <code>preset=['glassHolder','fancyHolder']</code>
+                  <code>preset=[&apos;glassHolder&apos;,&apos;fancyHolder&apos;]</code>
                 </Typography>
               </Box>
             </Stack>

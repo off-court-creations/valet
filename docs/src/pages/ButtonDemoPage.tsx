@@ -40,26 +40,30 @@ export default function ButtonDemoPage() {
   const data: Row[] = [
     {
       prop: <code>color</code>,
-      type: <code>'primary' | 'secondary' | 'tertiary' | string</code>,
-      default: <code>'primary'</code>,
+      type: <code>&#39;primary&#39; | &#39;secondary&#39; | &#39;tertiary&#39; | string</code>,
+      default: <code>&#39;primary&#39;</code>,
       description: 'Background palette or custom colour',
     },
     {
       prop: <code>textColor</code>,
-      type: <code>'primary' | 'secondary' | 'tertiary' | string</code>,
+      type: <code>&#39;primary&#39; | &#39;secondary&#39; | &#39;tertiary&#39; | string</code>,
       default: <code>-</code>,
       description: 'Label colour override',
     },
     {
       prop: <code>variant</code>,
-      type: <code>'contained' | 'outlined'</code>,
-      default: <code>'contained'</code>,
+      type: <code>&#39;contained&#39; | &#39;outlined&#39;</code>,
+      default: <code>&#39;contained&#39;</code>,
       description: 'Visual style',
     },
     {
       prop: <code>size</code>,
-      type: <code>'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string</code>,
-      default: <code>'md'</code>,
+      type: (
+        <code>
+          &#39;xs&#39; | &#39;sm&#39; | &#39;md&#39; | &#39;lg&#39; | &#39;xl&#39; | number | string
+        </code>
+      ),
+      default: <code>&#39;md&#39;</code>,
       description: 'Overall button size or custom CSS length',
     },
     {

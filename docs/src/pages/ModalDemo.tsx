@@ -80,7 +80,7 @@ export default function ModalDemoPage() {
           }
         >
           <Typography>
-            This is a standard <code>role="dialog"</code> modal.
+            This is a standard <code>role=&quot;dialog&quot;</code> modal.
           </Typography>
         </Modal>
 
