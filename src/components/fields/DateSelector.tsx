@@ -74,6 +74,10 @@ const Cell = styled('button')<{
   $primary: string;
   $secondary: string;
   $rangeBg: string;
+  $hoverStart: string;
+  $hoverEnd: string;
+  $hoverRange: string;
+  $hoverDefault: string;
 }>`
   padding: 0.25rem 0;
   border: none;
@@ -86,7 +90,15 @@ const Cell = styled('button')<{
   font-weight: ${({ $start, $end }) => ($start || $end ? 'bold' : 'inherit')};
   height: 2rem;
   &:hover:not(:disabled) {
-    filter: brightness(1.2);
+    background: ${({
+      $start,
+      $end,
+      $inRange,
+      $hoverStart,
+      $hoverEnd,
+      $hoverRange,
+      $hoverDefault,
+    }) => ($start ? $hoverStart : $end ? $hoverEnd : $inRange ? $hoverRange : $hoverDefault)};
   }
   &:disabled {
     opacity: 0.4;
@@ -224,6 +236,10 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   const cls = [presetCls, className].filter(Boolean).join(' ') || undefined;
 
   const rangeBg = toHex(mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.25));
+  const hoverDefault = toHex(mix(toRgb(theme.colors.text), toRgb(theme.colors.background), 0.1));
+  const hoverStart = toHex(mix(toRgb(theme.colors.primary), toRgb(theme.colors.text), 0.3));
+  const hoverEnd = toHex(mix(toRgb(theme.colors.secondary), toRgb(theme.colors.text), 0.3));
+  const hoverRange = toHex(mix(toRgb(rangeBg), toRgb(theme.colors.text), 0.2));
 
   return (
     <Wrapper
@@ -359,6 +375,10 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
               $primary={theme.colors.primary}
               $secondary={theme.colors.secondary}
               $rangeBg={rangeBg}
+              $hoverStart={hoverStart}
+              $hoverEnd={hoverEnd}
+              $hoverRange={hoverRange}
+              $hoverDefault={hoverDefault}
               onClick={() => !disabled && (range ? commitRange(day) : commit(day))}
               disabled={disabled}
             >
