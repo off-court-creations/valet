@@ -5,12 +5,16 @@ frontend:
       commands:
         - nvm install      # reads .nvmrc
         - nvm use          # activates it
-        - node -v
+        - cd docs
         - npm ci
     build:
       commands:
         - npm run build
   artifacts:
-    baseDirectory: dist
+    baseDirectory: docs/dist
     files:
       - '**/*'
+  cache:
+    paths:
+      - docs/node_modules/**/*
+      
