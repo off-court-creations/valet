@@ -7,7 +7,7 @@ import React, { forwardRef, useCallback, useId, useState, MouseEventHandler } fr
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
-import { useForm } from './FormControl';
+import { useOptionalForm } from './FormControl';
 import type { Presettable } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
@@ -28,26 +28,6 @@ const createSizeMap = (): Record<SwitchSize, SizeTokens> => ({
 });
 
 /*───────────────────────────────────────────────────────────*/
-/* Form helper (safe in/out of provider)                     */
-interface MinimalForm {
-  values: Record<string, unknown>;
-  setField?: (field: string, value: unknown) => void;
-}
-
-/** Custom hook that returns a form API if inside a provider, otherwise `null`. */
-function useOptionalForm(): MinimalForm | null {
-  try {
-    /* eslint-disable react-hooks/rules-of-hooks */
-    // Always call the hook; if not within a provider, the implementation may throw.
-    // We intentionally catch that to fall back to uncontrolled behavior.
-    const f = useForm<Record<string, unknown>>() as unknown as MinimalForm;
-    /* eslint-enable react-hooks/rules-of-hooks */
-    return f;
-  } catch {
-    return null;
-  }
-}
-
 /*───────────────────────────────────────────────────────────*/
 /* Styled primitives                                         */
 const Track = styled('button')<{
@@ -159,7 +139,7 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
         /* update uncontrolled state */
         if (!controlled) setSelf(next);
         /* notify FormControl */
-        if (name && form?.setField) form.setField(name, next);
+        if (name && form) form.setField(name as keyof Record<string, unknown>, next as unknown);
         /* fire user callback */
         onChange?.(next);
         /* propagate native click */

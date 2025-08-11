@@ -12,7 +12,7 @@ import React, {
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
-import { useForm } from './FormControl';
+import { useOptionalForm } from './FormControl';
 import type { Theme } from '../../system/themeStore';
 import type { Presettable } from '../../types';
 
@@ -112,18 +112,8 @@ export const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
     const id = useId();
     const { theme } = useTheme();
 
-    /** Optional FormControl wiring (safe-cast to a minimal interface) */
-    type FormApi = {
-      values: Record<string, unknown>;
-      setField: (field: string, value: unknown) => void;
-    } | null;
-
-    let form: FormApi = null;
-    try {
-      form = useForm() as unknown as FormApi;
-    } catch {
-      /* No FormControl context available */
-    }
+    /** Optional FormControl wiring */
+    const form = useOptionalForm<Record<string, unknown>>();
 
     const presetClasses = presetName ? preset(presetName) : '';
     const wrapperStyle = fullWidth ? { flex: 1, width: '100%', ...styleProp } : styleProp;
@@ -150,7 +140,8 @@ export const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
                 | undefined;
 
               const handleChange: ChangeEventHandler<HTMLTextAreaElement> = (e) => {
-                if (form?.setField) form.setField(name, e.target.value);
+                if (form && name)
+                  form.setField(name as keyof Record<string, unknown>, e.target.value);
                 onChangeTextarea?.(e);
               };
 
@@ -180,7 +171,8 @@ export const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
                 | undefined;
 
               const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
-                if (form?.setField) form.setField(name, e.target.value);
+                if (form && name)
+                  form.setField(name as keyof Record<string, unknown>, e.target.value);
                 onChangeInput?.(e);
               };
 

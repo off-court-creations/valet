@@ -19,7 +19,7 @@ import React, {
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
-import { useForm } from './FormControl';
+import { useOptionalForm } from './FormControl';
 import type { Presettable } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
@@ -193,12 +193,6 @@ export interface SliderProps
   disabled?: boolean;
 }
 
-/* Minimal form shape we rely on (values + optional setField) */
-type NumForm = {
-  values: Record<string, number | undefined>;
-  setField?: (name: string, value: number) => void;
-};
-
 /*───────────────────────────────────────────────────────────*/
 /* Component                                                 */
 export const Slider = forwardRef<HTMLDivElement, SliderProps>(
@@ -255,12 +249,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
 
     /* optional FormControl binding --------------------------- */
     // We only rely on `values` and an optional `setField`.
-    let form: NumForm | null = null;
-    try {
-      form = useForm<Record<string, number | undefined>>() as unknown as NumForm;
-    } catch {
-      /* No FormControl context available */
-    }
+    const form = useOptionalForm<Record<string, number | undefined>>();
 
     /* controlled hierarchy ---------------------------------- */
     const formVal = name ? form?.values[name] : undefined;
@@ -320,7 +309,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
         const rounded = roundTo(snapped, precision);
 
         if (!controlled) setSelf(rounded);
-        if (name && form?.setField) form.setField(name, rounded);
+        if (name && form) form.setField(name as keyof Record<string, number | undefined>, rounded);
         onChange?.(rounded);
         renderVisual(rounded);
       },

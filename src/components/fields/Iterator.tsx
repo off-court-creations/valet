@@ -7,7 +7,7 @@ import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { IconButton } from './IconButton';
-import { useForm } from './FormControl';
+import { useOptionalForm } from './FormControl';
 import type { Presettable } from '../../types';
 import type { Theme } from '../../system/themeStore';
 
@@ -81,15 +81,12 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
       (node: HTMLInputElement | null) => {
         localRef.current = node;
         if (typeof ref === 'function') ref(node);
-        else if (ref) (ref as any).current = node;
+        else if (ref) (ref as React.MutableRefObject<HTMLInputElement | null>).current = node;
       },
       [ref],
     );
 
-    let form: ReturnType<typeof useForm<any>> | null = null;
-    try {
-      form = useForm<any>();
-    } catch {}
+    const form = useOptionalForm<Record<string, number | undefined>>();
 
     const formVal = form && name ? (form.values[name] as number | undefined) : undefined;
     const controlled = valueProp !== undefined || formVal !== undefined;
@@ -101,14 +98,17 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
       setText(String(current));
     }, [current]);
 
-    const commit = (next: number) => {
-      if (min !== undefined && next < min) next = min;
-      if (max !== undefined && next > max) next = max;
-      if (!controlled) setInternal(next);
-      form?.setField(name as any, next);
-      onChange?.(next);
-      setText(String(next));
-    };
+    const commit = useCallback(
+      (next: number) => {
+        if (min !== undefined && next < min) next = min;
+        if (max !== undefined && next > max) next = max;
+        if (!controlled) setInternal(next);
+        if (form && name) form.setField(name as keyof Record<string, number | undefined>, next);
+        onChange?.(next);
+        setText(String(next));
+      },
+      [controlled, form, max, min, name, onChange],
+    );
 
     const handleInput: React.ChangeEventHandler<HTMLInputElement> = (e) => {
       const val = e.target.value;
@@ -127,7 +127,7 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
       (dir: number) => {
         commit(current + dir * step);
       },
-      [current, step],
+      [commit, current, step],
     );
 
     const handleWheel = useCallback(

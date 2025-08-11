@@ -7,7 +7,7 @@ import React, { forwardRef, useCallback, useId, useMemo, useRef, useState } from
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
-import { useForm } from './FormControl';
+import { useOptionalForm } from './FormControl';
 import type { Presettable } from '../../types';
 import type { Theme } from '../../system/themeStore';
 
@@ -151,12 +151,6 @@ const Item = styled('li')<{
 const eq = (a: Primitive, b: Primitive) => String(a) === String(b);
 const array = <T,>(v: T | T[]) => (Array.isArray(v) ? v : [v]);
 
-/* Minimal FormControl subset for typing */
-interface MinimalForm {
-  values: Record<string, unknown>;
-  setField: (name: string, value: unknown) => void;
-}
-
 /*───────────────────────────────────────────────────────────*/
 /* JSX helper component                                      */
 export const Option: React.FC<OptionProps> = ({ children }) => <>{children}</>;
@@ -203,12 +197,7 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLDivElement>) => {
   const primary = theme.colors.primary;
 
   /* optional FormControl hook ------------------------------ */
-  let form: MinimalForm | null = null;
-  try {
-    form = useForm<Record<string, unknown>>() as unknown as MinimalForm;
-  } catch {
-    /* No FormControl context available */
-  }
+  const form = useOptionalForm<Record<string, unknown>>();
 
   /* value management --------------------------------------- */
   const formVal =
@@ -222,7 +211,7 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLDivElement>) => {
   const commit = useCallback(
     (next: Primitive | Primitive[]) => {
       if (!controlled) setSelf(next);
-      if (form && name) form.setField(name, next);
+      if (form && name) form.setField(name as keyof Record<string, unknown>, next as unknown);
       onChange?.(next);
     },
     [controlled, form, name, onChange],
