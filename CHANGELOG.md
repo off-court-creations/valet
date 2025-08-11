@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+- Add subtle hover to `DateSelector` dates
+
 ## [0.24.0]
 - Setup ESLint and Prettier
 - linted valet and docs
