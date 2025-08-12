@@ -21,6 +21,7 @@ import { preset } from '../../css/stylePresets';
 import { Tooltip } from '../widgets/Tooltip';
 import type { Presettable } from '../../types';
 import { Typography } from '../primitives/Typography';
+import { resolveSpace } from '../../utils/resolveSpace';
 
 /*───────────────────────────────────────────────────────────*/
 /* Context                                                   */
@@ -50,6 +51,9 @@ const Root = styled('div')<{
   display: grid;
   padding: ${({ $pad }) => $pad};
 
+  ${({ $orientation, $gap }) =>
+    $orientation === 'horizontal' ? `row-gap: ${$gap};` : `column-gap: ${$gap};`}
+
   ${({ $orientation, $placement }) =>
     $orientation === 'horizontal'
       ? `
@@ -61,10 +65,6 @@ const Root = styled('div')<{
     grid-template-columns: ${$placement === 'left' ? 'max-content 1fr' : '1fr max-content'};
     align-items: start; /* keep panel aligned to top of tabs */
   `}
-
-  /* Gutter only for vertical-left layout */
-  ${({ $orientation, $placement }) =>
-    $orientation === 'vertical' && $placement === 'left' ? 'column-gap: 1rem;' : ''}
 `;
 
 /*───────────────────────────────────────────────────────────*/
@@ -249,20 +249,8 @@ export const Tabs: React.FC<TabsProps> & {
   );
 
   const cls = [p ? preset(p) : '', className].filter(Boolean).join(' ');
-  const gap = compact
-    ? '0'
-    : typeof gapProp === 'number'
-      ? theme.spacing(gapProp)
-      : gapProp !== undefined
-        ? String(gapProp)
-        : theme.spacing(1);
-  const pad = compact
-    ? '0'
-    : typeof padProp === 'number'
-      ? theme.spacing(padProp)
-      : padProp !== undefined
-        ? String(padProp)
-        : theme.spacing(1);
+  const gap = resolveSpace(gapProp, theme, compact, 1);
+  const pad = resolveSpace(padProp, theme, compact, 1);
   const stripFirst =
     (orientation === 'horizontal' && placement === 'top') ||
     (orientation === 'vertical' && placement === 'left');

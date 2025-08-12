@@ -7,6 +7,7 @@ import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import type { Presettable } from '../../types';
+import { resolveSpace } from '../../utils/resolveSpace';
 
 /*───────────────────────────────────────────────────────────*/
 export interface StackProps extends React.HTMLAttributes<HTMLDivElement>, Presettable {
@@ -15,8 +16,6 @@ export interface StackProps extends React.HTMLAttributes<HTMLDivElement>, Preset
   gap?: number | string | undefined;
   /** Container inner padding in units or CSS length. */
   pad?: number | string | undefined;
-  /** Deprecated alias for gap. */
-  spacing?: number | string | undefined;
   /** If `true`, children wrap when they run out of space. Defaults to
    *  `true` for `row`, `false` for `column`. */
   wrap?: boolean;
@@ -63,7 +62,6 @@ export const Stack: React.FC<StackProps> = ({
   direction = 'column',
   gap: gapProp,
   pad: padProp,
-  spacing,
   wrap,
   compact,
   preset: p,
@@ -74,27 +72,13 @@ export const Stack: React.FC<StackProps> = ({
 }) => {
   const { theme } = useTheme();
 
-  /* Resolve number → theme spacing; compact overrides to zero */
-  const effectiveGapInput: number | string | undefined = gapProp ?? spacing;
-  const gap = compact
-    ? '0'
-    : typeof effectiveGapInput === 'number'
-      ? theme.spacing(effectiveGapInput)
-      : effectiveGapInput !== undefined
-        ? String(effectiveGapInput)
-        : theme.spacing(1);
+  const gap = resolveSpace(gapProp, theme, compact, 1);
 
   /* Enable wrapping by default for rows */
   const shouldWrap = typeof wrap === 'boolean' ? wrap : direction === 'row';
 
   const presetClasses = p ? preset(p) : '';
-  const pad = compact
-    ? '0'
-    : typeof padProp === 'number'
-      ? theme.spacing(padProp)
-      : padProp !== undefined
-        ? String(padProp)
-        : theme.spacing(1);
+  const pad = resolveSpace(padProp, theme, compact, 1);
 
   return (
     <StackContainer
