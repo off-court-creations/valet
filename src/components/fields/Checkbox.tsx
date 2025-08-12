@@ -87,11 +87,11 @@ const Box = styled('span')<BoxProps>`
   width: ${({ $size }) => $size};
   height: ${({ $size }) => $size};
   min-width: ${({ $size }) => $size};
-  border-radius: 4px;
+  border-radius: var(--valet-checkbox-radius, 4px);
   box-sizing: border-box;
 
   /* Outline always visible, greyed when disabled */
-  border: 2px solid
+  border: var(--valet-checkbox-stroke, 2px) solid
     ${({ $disabled, $disabledColor, $text }) => ($disabled ? $disabledColor : $text)};
 
   /* Fill when checked, swap to disabled colour if disabled */
@@ -116,8 +116,8 @@ const Box = styled('span')<BoxProps>`
     position: absolute;
     inset: 0;
     display: block;
-    width: ${({ $size }) => `calc(${$size} - 4px)`};
-    height: ${({ $size }) => `calc(${$size} - 4px)`};
+    width: ${({ $size }) => `calc(${$size} - var(--valet-checkbox-inset, 4px))`};
+    height: ${({ $size }) => `calc(${$size} - var(--valet-checkbox-inset, 4px))`};
     margin: auto;
     opacity: ${({ $checked }) => ($checked ? 1 : 0)};
     transform: ${({ $checked }) => ($checked ? 'scale(1)' : 'scale(0.85)')};
@@ -235,6 +235,13 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           $text={theme.colors.text}
           $disabled={disabled}
           $disabledColor={disabledColor}
+          style={
+            {
+              '--valet-checkbox-radius': theme.radius(1),
+              '--valet-checkbox-stroke': theme.stroke(2),
+              '--valet-checkbox-inset': `calc(${theme.stroke(2)} * 2)`,
+            } as React.CSSProperties
+          }
           aria-hidden
         />
         {label ?? children}

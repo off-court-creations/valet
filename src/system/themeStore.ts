@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 // src/system/themeStore.ts | valet
-// add density + var-based spacing unit
+// add density + var-based spacing unit + radius/stroke helpers
 // ─────────────────────────────────────────────────────────────
 import { createWithEqualityFn as create } from 'zustand/traditional';
 
@@ -14,6 +14,14 @@ export interface Theme {
   spacing: (units: number) => string;
   /** Base unit used by the spacing helper */
   spacingUnit: string;
+  /** Returns a CSS length for border radii using a relative base */
+  radius: (units: number) => string;
+  /** Base unit used by the radius helper */
+  radiusUnit: string;
+  /** Returns a CSS length for strokes/borders using a relative base */
+  stroke: (units: number) => string;
+  /** Base unit used by the stroke helper */
+  strokeUnit: string;
   breakpoints: Record<Breakpoint, number>;
   typography: Record<string, Record<Breakpoint, string>>;
   fonts: {
@@ -37,11 +45,6 @@ interface ThemeStore {
 
 const spacingUnit = '0.5rem';
 
-/* ── extract “0.25” and “rem” ──────────────────────────────── */
-const [, baseStr, unitSuffix] = spacingUnit.match(/^([0-9.]+)([a-zA-Z%]+)$/)!; // e.g. ["0.25rem","0.25","rem"]
-
-const base = parseFloat(baseStr); // 0.25
-
 /* ── theme object with the fixed spacing helper ────────────── */
 const common: Omit<Theme, 'colors'> = {
   // Spacing is expressed in terms of a CSS custom property so density
@@ -49,6 +52,16 @@ const common: Omit<Theme, 'colors'> = {
   // Example: spacing(4) → `calc(var(--valet-space, 0.5rem) * 4)`
   spacing: (u: number) => `calc(var(--valet-space, ${spacingUnit}) * ${u})`,
   spacingUnit: spacingUnit,
+  // Radius defaults to a fraction of the spacing unit so it scales with density
+  // Example: radius(2) → `calc(var(--valet-radius, calc(var(--valet-space, 0.5rem) * 0.75)) * 2)`
+  radius: (u: number) =>
+    `calc(var(--valet-radius, calc(var(--valet-space, ${spacingUnit}) * 0.75)) * ${u})`,
+  radiusUnit: `calc(var(--valet-space, ${spacingUnit}) * 0.75)`,
+  // Stroke defaults to a thin thickness derived from spacing (≈1px at 16px base)
+  // Example: stroke(2) → `calc(var(--valet-stroke, calc(var(--valet-space, 0.5rem) * 0.125)) * 2)`
+  stroke: (u: number) =>
+    `calc(var(--valet-stroke, calc(var(--valet-space, ${spacingUnit}) * 0.125)) * ${u})`,
+  strokeUnit: `calc(var(--valet-space, ${spacingUnit}) * 0.125)`,
   breakpoints: { xs: 0, sm: 600, md: 960, lg: 1280, xl: 1920 },
   typography: {
     h1: { xs: '2rem', sm: '2.5rem', md: '3rem', lg: '3.5rem', xl: '4rem' },

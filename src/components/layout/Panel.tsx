@@ -29,6 +29,7 @@ const Base = styled('div')<{
   $full?: boolean;
   $center?: boolean;
   $outline?: string;
+  $strokeW: string;
   $bg?: string;
   $text?: string;
   $pad: string;
@@ -73,8 +74,8 @@ const Base = styled('div')<{
     `}
 
   /* Variant “alt” gets outline ------------------------------ */
-  ${({ $variant, $outline }) =>
-    $variant === 'alt' && $outline ? `border: 1px solid ${$outline};` : ''}
+  ${({ $variant, $outline, $strokeW }) =>
+    $variant === 'alt' && $outline ? `border: ${$strokeW} solid ${$outline};` : ''}
 
   ${({ $text }) =>
     $text &&
@@ -133,6 +134,7 @@ export const Panel: React.FC<PanelProps> = ({
       $full={fullWidth}
       $center={centered}
       $outline={theme.colors.backgroundAlt}
+      $strokeW={theme.stroke(1)}
       $bg={bg}
       $text={textColour}
       $pad={pad}

@@ -18,6 +18,9 @@ import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import type { Presettable } from '../../types';
 
+// Allow CSS custom properties on style objects
+type CSSPropertiesWithVars = React.CSSProperties & { [key: `--${string}`]: string | number };
+
 /*───────────────────────────────────────────────────────────*/
 /* Global helpers                                            */
 
@@ -38,7 +41,7 @@ const unregisterTooltip = (close: () => void) => {
 /* Styled primitives                                         */
 
 type Placement = 'top' | 'bottom' | 'left' | 'right';
-const GAP = 8;
+const GAP = 8; // used for DOMRect pixel math (positioning)
 
 const Wrapper = styled('span')`
   position: relative;
@@ -53,13 +56,14 @@ const Bubble = styled('div')<{
   $placement: Placement;
   $padV: string;
   $padH: string;
+  $radius: string;
+  $animDist: string;
 }>`
-  --gap: ${GAP}px;
   position: fixed;
   z-index: 9999;
   max-width: 22rem;
   padding: ${({ $padV, $padH }) => `${$padV} ${$padH}`};
-  border-radius: 4px;
+  border-radius: ${({ $radius }) => $radius};
   background: var(--tt-bg, #000);
   color: var(--tt-fg, #fff);
   font-size: 0.75rem;
@@ -80,40 +84,40 @@ const Bubble = styled('div')<{
         right: 'center left',
       }) as Record<Placement, string>
     )[$placement]};
-  transform: ${({ $show, $placement }) => {
+  transform: ${({ $show, $placement, $animDist }) => {
     const dist = $show
-      ? 0
+      ? '0'
       : (
           {
-            top: 4,
-            bottom: -4,
-            left: 4,
-            right: -4,
-          } as Record<Placement, number>
+            top: $animDist,
+            bottom: `calc(-1 * ${$animDist})`,
+            left: $animDist,
+            right: `calc(-1 * ${$animDist})`,
+          } as Record<Placement, string>
         )[$placement];
     return $placement === 'top' || $placement === 'bottom'
-      ? `translate(-50%, ${dist}px)`
-      : `translate(${dist}px, -50%)`;
+      ? `translate(-50%, ${dist})`
+      : `translate(${dist}, -50%)`;
   }};
 `;
 
 const Arrow = styled('span')<{
   $placement: Placement;
+  $size: string;
 }>`
-  --s: 8px;
   position: absolute;
-  width: var(--s);
-  height: var(--s);
+  width: ${({ $size }) => $size};
+  height: ${({ $size }) => $size};
   background: var(--tt-bg, #000);
   transform: rotate(45deg);
 
   ${({ $placement }) =>
     (
       ({
-        top: `bottom: calc(-0.5 * var(--s)); left: 50%; transform: translateX(-50%) rotate(45deg);`,
-        bottom: `top:    calc(-0.5 * var(--s)); left: 50%; transform: translateX(-50%) rotate(45deg);`,
-        left: `right:  calc(-0.5 * var(--s)); top: 50%; transform: translateY(-50%) rotate(45deg);`,
-        right: `left:   calc(-0.5 * var(--s)); top: 50%; transform: translateY(-50%) rotate(45deg);`,
+        top: `bottom: calc(-0.5 * var(--valet-tooltip-arrow-size, 1rem)); left: 50%; transform: translateX(-50%) rotate(45deg);`,
+        bottom: `top:    calc(-0.5 * var(--valet-tooltip-arrow-size, 1rem)); left: 50%; transform: translateX(-50%) rotate(45deg);`,
+        left: `right:  calc(-0.5 * var(--valet-tooltip-arrow-size, 1rem)); top: 50%; transform: translateY(-50%) rotate(45deg);`,
+        right: `left:   calc(-0.5 * var(--valet-tooltip-arrow-size, 1rem)); top: 50%; transform: translateY(-50%) rotate(45deg);`,
       }) as Record<Placement, string>
     )[$placement as Placement]}
 `;
@@ -321,23 +325,33 @@ export const Tooltip: React.FC<TooltipProps> = ({
           $show={show}
           $placement={placement}
           $padV={theme.spacing(1)}
-          $padH={theme.spacing(1.5 as unknown as number)}
+          $padH={theme.spacing(1.5)}
+          $radius={theme.radius(1)}
+          $animDist={theme.spacing(0.5)}
           role='tooltip'
           id={`tooltip-${id}`}
           className={presetClasses}
-          style={{
-            top: pos.top,
-            left: pos.left,
-            ...(hasPreset
-              ? undefined
-              : ({
-                  '--tt-bg': theme.colors.text,
-                  '--tt-fg': theme.colors.background,
-                } as React.CSSProperties)),
-          }}
+          style={
+            {
+              top: pos.top,
+              left: pos.left,
+              '--valet-tooltip-arrow-size': theme.spacing(1),
+              ...(hasPreset
+                ? undefined
+                : {
+                    '--tt-bg': theme.colors.text,
+                    '--tt-fg': theme.colors.background,
+                  }),
+            } as CSSPropertiesWithVars
+          }
         >
           {title}
-          {arrow && <Arrow $placement={placement} />}
+          {arrow && (
+            <Arrow
+              $placement={placement}
+              $size={theme.spacing(1)}
+            />
+          )}
         </Bubble>,
         document.body,
       )}

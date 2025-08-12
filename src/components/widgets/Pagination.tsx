@@ -59,9 +59,9 @@ const PageBtn = styled('button')<{
     position: absolute;
     left: 0;
     right: 0;
-    bottom: -0.3rem; /* hugs text baseline */
-    height: 0.25rem; /* thicker than normal underline */
-    border-radius: 2px 2px 0 0;
+    bottom: calc(-0.5 * var(--valet-underline-width, 2px));
+    height: var(--valet-underline-width, 2px);
+    border-radius: var(--valet-underline-radius, 2px) var(--valet-underline-radius, 2px) 0 0;
     background: ${({ $active, $primary }) => ($active ? $primary : 'transparent')};
     transition: background 150ms ease;
   }
@@ -94,9 +94,15 @@ export const Pagination: React.FC<PaginationProps> = ({
       $text={theme.colors.text}
       $gap={theme.spacing(1)}
       $padV={theme.spacing(1)}
-      $padH={theme.spacing(1.5 as unknown as number)}
+      $padH={theme.spacing(1.5)}
       className={mergedClass}
-      style={style}
+      style={
+        {
+          '--valet-underline-width': theme.stroke(4),
+          '--valet-underline-radius': theme.radius(0.5),
+          ...(style as object),
+        } as React.CSSProperties
+      }
     >
       {/* Prev/Next – simple text buttons (no underline) */}
       <button

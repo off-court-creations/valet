@@ -49,15 +49,15 @@ interface StyledFieldProps {
 
 const sharedFieldCSS = ({ theme, $error }: StyledFieldProps) => `
   padding: ${theme.spacing(1)} ${theme.spacing(1)};
-  border: 1px solid ${($error ? theme.colors.secondary : theme.colors.text) + '44'};
-  border-radius: 4px;
+  border: ${theme.stroke(1)} solid ${($error ? theme.colors.secondary : theme.colors.text) + '44'};
+  border-radius: ${theme.radius(1)};
   background: ${theme.colors.background};
   color: ${theme.colors.text};
   font-size: 0.875rem;
   width: 100%;
   &:focus {
-    outline: 2px solid ${theme.colors.primary};
-    outline-offset: 1px;
+    outline: ${theme.stroke(2)} solid ${theme.colors.primary};
+    outline-offset: ${theme.stroke(1)};
   }
 `;
 

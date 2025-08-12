@@ -33,10 +33,10 @@ const StepItem = styled('div')<{ $active: boolean; $primary: string }>`
   &::before {
     counter-increment: step;
     content: counter(step);
-    border: 1px solid ${({ $primary }) => $primary};
+    border: var(--valet-stepper-stroke, 1px) solid ${({ $primary }) => $primary};
     background: ${({ $active, $primary }) => ($active ? $primary : 'transparent')};
     color: ${({ $active }) => ($active ? '#fff' : 'inherit')};
-    border-radius: 999px;
+    border-radius: var(--valet-stepper-radius, 9999px);
     width: 1.5rem;
     height: 1.5rem;
     line-height: 1.5rem;
@@ -62,7 +62,13 @@ export const Stepper: React.FC<StepperProps> = ({
       {...rest}
       $primary={primary}
       className={[presetClass, className].filter(Boolean).join(' ')}
-      style={style}
+      style={
+        {
+          '--valet-stepper-stroke': theme.stroke(1),
+          '--valet-stepper-radius': theme.radius(999),
+          ...(style as object),
+        } as React.CSSProperties
+      }
     >
       {steps.map((label, idx) => (
         <StepItem

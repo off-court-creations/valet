@@ -96,7 +96,10 @@ export const AppBar: React.FC<AppBarProps> = ({
         ? theme.colors[`${textColor}Text`]
         : textColor;
   const presetClass = p ? preset(p) : '';
-  const pad = typeof padProp === 'number' ? theme.spacing(padProp) : padProp ?? `${theme.spacing(1)} ${theme.spacing(2)}`;
+  const pad =
+    typeof padProp === 'number'
+      ? theme.spacing(padProp)
+      : (padProp ?? `${theme.spacing(1)} ${theme.spacing(2)}`);
   const gap = theme.spacing(2);
 
   useLayoutEffect(() => {

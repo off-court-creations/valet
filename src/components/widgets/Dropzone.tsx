@@ -128,9 +128,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
   };
 
   const fileList = showFileList && !showPreviews && files.length > 0 && (
-    <Stack
-      style={{ width: '100%' }}
-    >
+    <Stack style={{ width: '100%' }}>
       {files.map((f, i) => (
         <Stack
           key={i}

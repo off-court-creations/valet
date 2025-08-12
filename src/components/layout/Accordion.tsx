@@ -61,7 +61,7 @@ const Wrapper = styled('div')`
 `;
 
 const ItemWrapper = styled('div')`
-  border-bottom: 1px solid currentColor;
+  border-bottom: var(--valet-divider-stroke, 1px) solid currentColor;
 `;
 
 const HeaderBtn = styled('button')<{
@@ -106,8 +106,8 @@ const HeaderBtn = styled('button')<{
   ${({ $open, $highlight }) => $open && `background:${$highlight};`}
 
   &:focus-visible {
-    outline: 2px solid ${({ $primary }) => $primary};
-    outline-offset: 2px;
+    outline: var(--valet-focus-width, 2px) solid ${({ $primary }) => $primary};
+    outline-offset: var(--valet-focus-offset, 2px);
   }
 
   &:disabled {
@@ -317,7 +317,13 @@ export const Accordion: React.FC<AccordionProps> & {
       >
         <Root
           {...divProps}
-          $pad={compact ? '0' : (typeof padProp === 'number' ? theme.spacing(padProp) : padProp ?? theme.spacing(1))}
+          $pad={
+            compact
+              ? '0'
+              : typeof padProp === 'number'
+                ? theme.spacing(padProp)
+                : (padProp ?? theme.spacing(1))
+          }
           className={[presetClasses, className].filter(Boolean).join(' ')}
         >
           {React.Children.map(children, (child, idx) =>
@@ -518,7 +524,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
       >
         <div
           ref={contentRef}
-          style={{ padding: `${theme.spacing(1.5 as unknown as number)} 0` }}
+          style={{ padding: `${theme.spacing(1.5)} 0` }}
         >
           {children}
         </div>

@@ -49,14 +49,14 @@ const Box = styled('div')<{
 
   background: ${({ $bg }) => $bg};
   color: ${({ $text }) => $text};
-  border-radius: 6px;
+  border-radius: var(--valet-modal-radius, 6px);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 
   display: flex;
   flex-direction: column;
 `;
 
-const Header = styled('header')<{$pt: string; $px: string; $pb: string}>`
+const Header = styled('header')<{ $pt: string; $px: string; $pb: string }>`
   padding-top: ${({ $pt }) => $pt};
   padding-right: ${({ $px }) => $px};
   padding-left: ${({ $px }) => $px};
@@ -65,7 +65,7 @@ const Header = styled('header')<{$pt: string; $px: string; $pb: string}>`
   font-size: 1.125rem;
 `;
 
-const Content = styled('section')<{$px: string; $pb: string}>`
+const Content = styled('section')<{ $px: string; $pb: string }>`
   padding-top: 0;
   padding-right: ${({ $px }) => $px};
   padding-left: ${({ $px }) => $px};
@@ -74,7 +74,7 @@ const Content = styled('section')<{$px: string; $pb: string}>`
   overflow: auto;
 `;
 
-const Actions = styled('footer')<{$pt: string; $px: string; $pb: string; $gap: string}>`
+const Actions = styled('footer')<{ $pt: string; $px: string; $pb: string; $gap: string }>`
   padding-top: ${({ $pt }) => $pt};
   padding-right: ${({ $px }) => $px};
   padding-left: ${({ $px }) => $px};
@@ -239,8 +239,15 @@ export const Modal: React.FC<ModalProps> = ({
         $fade={fade}
         $maxW={maxWidth}
         $full={fullWidth}
-        $pad={compact ? '0' : (typeof padProp === 'number' ? theme.spacing(padProp) : padProp ?? theme.spacing(1))}
+        $pad={
+          compact
+            ? '0'
+            : typeof padProp === 'number'
+              ? theme.spacing(padProp)
+              : (padProp ?? theme.spacing(1))
+        }
         className={presetClasses}
+        style={{ '--valet-modal-radius': theme.radius(1) } as React.CSSProperties}
       >
         {title && (
           <Header

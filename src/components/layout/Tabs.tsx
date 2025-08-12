@@ -93,6 +93,7 @@ const TabBtn = styled('button')<{
   $orient: 'horizontal' | 'vertical';
   $padV: string;
   $padH: string;
+  $barW: string;
 }>`
   background: transparent;
   border: none;
@@ -111,17 +112,17 @@ const TabBtn = styled('button')<{
   text-align: center;
 
   &:focus-visible {
-    outline: 2px solid ${({ $primary }) => $primary};
-    outline-offset: 2px;
+    outline: var(--valet-focus-width, 2px) solid ${({ $primary }) => $primary};
+    outline-offset: var(--valet-focus-offset, 2px);
   }
 
   &::after {
     content: '';
     position: absolute;
-    ${({ $orient }) =>
+    ${({ $orient, $barW }) =>
       $orient === 'horizontal'
-        ? `left: 0; right: 0; bottom: -1px; height: 2px;`
-        : `top: 0; bottom: 0; right: -1px; width: 2px;`}
+        ? `left: 0; right: 0; bottom: calc(-0.5 * var(--valet-underline-width, ${$barW})); height: var(--valet-underline-width, ${$barW});`
+        : `top: 0; bottom: 0; right: calc(-0.5 * var(--valet-underline-width, ${$barW})); width: var(--valet-underline-width, ${$barW});`}
     background: ${({ $primary, $active }) => ($active ? $primary : 'transparent')};
     transition: background 150ms ease;
   }
@@ -334,6 +335,7 @@ const Tab: React.FC<TabProps> = forwardRef<HTMLButtonElement, TabProps>(
         $orient={orientation}
         $padV={theme.spacing(2)}
         $padH={theme.spacing(3)}
+        $barW={theme.stroke(2)}
         className={[p ? preset(p) : '', className].filter(Boolean).join(' ')}
       >
         {typeof content === 'string' || typeof content === 'number' ? (

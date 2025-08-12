@@ -62,8 +62,8 @@ const ItemRow = styled('div')<{
   ${({ $hoverBg }) => `@media(hover:hover){&:hover{background:${$hoverBg};}}`}
   ${({ $selected, $selectedBg }) => ($selected ? `background:${$selectedBg};` : '')}
   &:focus-visible {
-    outline: 2px solid currentColor;
-    outline-offset: 2px;
+    outline: var(--valet-focus-width, 2px) solid currentColor;
+    outline-offset: var(--valet-focus-offset, 2px);
   }
 `;
 
@@ -97,7 +97,7 @@ const BranchItem = styled('li')<{ $line: string; $root?: boolean; $indent: strin
         top: 0.875rem; /* minor visual tweak left as rem */
         left: calc(-1 * var(--indent, 1rem) + 0.75em);
         width: calc(var(--indent, 1rem) + 0.25rem - 0.75em);
-        border-top: 1px solid ${$line};
+        border-top: var(--valet-divider-stroke, 1px) solid ${$line};
       }
     `}
   &::after {
@@ -106,7 +106,7 @@ const BranchItem = styled('li')<{ $line: string; $root?: boolean; $indent: strin
     top: 0;
     bottom: 0;
     left: calc(-1 * var(--indent, 1rem) + 0.75em);
-    border-left: 1px solid ${({ $line }) => $line};
+    border-left: var(--valet-divider-stroke, 1px) solid ${({ $line }) => $line};
   }
 `;
 
@@ -126,8 +126,8 @@ const ListRow = styled('div')<{
   ${({ $hoverBg }) => `@media(hover:hover){&:hover{background:${$hoverBg};}}`}
   ${({ $selected, $selectedBg }) => ($selected ? `background:${$selectedBg};` : '')}
   &:focus-visible {
-    outline: 2px solid currentColor;
-    outline-offset: 2px;
+    outline: var(--valet-focus-width, 2px) solid currentColor;
+    outline-offset: var(--valet-focus-offset, 2px);
   }
 `;
 
@@ -139,7 +139,7 @@ const BoxIcon = styled('span')<{
   display: inline-block;
   width: 0.75em;
   height: 0.75em;
-  border: 1px solid ${({ $line }) => $line};
+  border: var(--valet-divider-stroke, 1px) solid ${({ $line }) => $line};
   background: ${({ $open, $fill }) => ($open ? $fill : 'transparent')};
   margin-right: 0.25rem;
   box-sizing: border-box;
@@ -356,6 +356,13 @@ export function Tree<T>({
       onKeyDown={keyNav}
       $border={theme.colors.backgroundAlt}
       className={[p ? preset(p) : '', className].filter(Boolean).join(' ')}
+      style={
+        {
+          '--valet-tree-stroke': theme.stroke(1),
+          '--valet-tree-outline': theme.stroke(2),
+          '--valet-tree-offset': theme.stroke(2),
+        } as React.CSSProperties
+      }
     >
       {variant === 'chevron'
         ? flat.map(({ node, level }) => (
