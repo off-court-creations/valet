@@ -23,14 +23,14 @@ export interface PaginationProps
 
 /*───────────────────────────────────────────────────────────*/
 /* Layout wrapper                                            */
-const Root = styled('nav')<{ $text: string }>`
+const Root = styled('nav')<{ $text: string; $gap: string; $padV: string; $padH: string }>`
   display: flex;
-  gap: 0.5rem;
+  gap: ${({ $gap }) => $gap};
 
   button {
     background: none;
     border: none;
-    padding: 0.5rem 0.75rem;
+    padding: ${({ $padV, $padH }) => `${$padV} ${$padH}`};
     cursor: pointer;
     color: ${({ $text }) => $text};
     font: inherit;
@@ -92,6 +92,9 @@ export const Pagination: React.FC<PaginationProps> = ({
       {...rest}
       aria-label='pagination'
       $text={theme.colors.text}
+      $gap={theme.spacing(1)}
+      $padV={theme.spacing(1)}
+      $padH={theme.spacing(1.5 as unknown as number)}
       className={mergedClass}
       style={style}
     >

@@ -57,11 +57,14 @@ const Root = styled('div')<{
   $outline: string;
   $bg: string;
   $flex: boolean;
+  $padV: string;
+  $padH: string;
+  $offset: string;
 }>`
   position: fixed;
   left: 50%;
   bottom: ${({ $spacing }) => $spacing};
-  transform: translateX(-50%) translateY(${({ $visible }) => ($visible ? '0' : '0.75rem')});
+  transform: translateX(-50%) translateY(${({ $visible, $offset }) => ($visible ? '0' : $offset)});
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};
   pointer-events: ${({ $visible }) => ($visible ? 'auto' : 'none')};
   transition:
@@ -71,7 +74,7 @@ const Root = styled('div')<{
   background: ${({ $bg }) => $bg};
   outline: 0.25rem solid ${({ $outline }) => $outline};
   border-radius: 0.375rem;
-  padding: 0.5rem 1rem;
+  padding: ${({ $padV, $padH }) => `${$padV} ${$padH}`};
   max-width: 95vw;
   box-sizing: border-box;
   z-index: 1000;
@@ -184,6 +187,9 @@ export const Snackbar: React.FC<SnackbarProps> = ({
         $spacing={theme.spacing(1)}
         $outline={theme.colors.primary}
         $bg={theme.colors.background}
+        $padV={theme.spacing(1)}
+        $padH={theme.spacing(2)}
+        $offset={theme.spacing(1.5 as unknown as number)}
         className={classes}
         style={style}
       >

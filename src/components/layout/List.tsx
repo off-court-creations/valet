@@ -40,6 +40,8 @@ const Root = styled('ul')<{
   $border: string;
   $stripe: string;
   $hoverBg: string;
+  $padV: string;
+  $padH: string;
 }>`
   list-style: none;
   margin: 0;
@@ -50,7 +52,7 @@ const Root = styled('ul')<{
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
-    padding: 0.5rem 0.75rem;
+    padding: ${({ $padV, $padH }) => `${$padV} ${$padH}`};
     border-bottom: 1px solid ${({ $border }) => $border};
     cursor: grab;
     user-select: none;
@@ -147,6 +149,8 @@ export function List<T>({
       $border={theme.colors.backgroundAlt}
       $stripe={stripeColor}
       $hoverBg={hoverBg}
+      $padV={theme.spacing(2)}
+      $padH={theme.spacing(3)}
       className={cls}
       style={style}
     >

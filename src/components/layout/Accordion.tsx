@@ -47,13 +47,10 @@ const useAccordion = () => {
 
 /*───────────────────────────────────────────────────────────*/
 /* Styled primitives                                         */
-const Root = styled('div')<{ $gap: string }>`
+const Root = styled('div')<{ $pad: string }>`
   width: 100%;
   box-sizing: border-box;
-  margin: ${({ $gap }) => $gap};
-  & > * {
-    padding: ${({ $gap }) => $gap};
-  }
+  padding: ${({ $pad }) => $pad};
 `;
 
 const Wrapper = styled('div')`
@@ -75,13 +72,14 @@ const HeaderBtn = styled('button')<{
   $shift: string;
   $skipHover: boolean;
   $hoverBg: string;
+  $padV: string;
 }>`
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  padding: 1rem ${({ $shift }) => $shift};
+  padding: ${({ $padV }) => $padV} ${({ $shift }) => $shift};
   background: transparent;
   border: none;
   color: inherit;
@@ -144,6 +142,8 @@ export interface AccordionProps
   onOpenChange?: (open: number[]) => void;
   headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
   constrainHeight?: boolean;
+  pad?: number | string;
+  compact?: boolean;
 }
 
 export interface AccordionItemProps extends React.HTMLAttributes<HTMLDivElement>, Presettable {
@@ -164,6 +164,8 @@ export const Accordion: React.FC<AccordionProps> & {
   onOpenChange,
   headingLevel = 3,
   constrainHeight = true,
+  pad: padProp,
+  compact = false,
   preset: p,
   className,
   children,
@@ -315,7 +317,7 @@ export const Accordion: React.FC<AccordionProps> & {
       >
         <Root
           {...divProps}
-          $gap={theme.spacing(1)}
+          $pad={compact ? '0' : (typeof padProp === 'number' ? theme.spacing(padProp) : padProp ?? theme.spacing(1))}
           className={[presetClasses, className].filter(Boolean).join(' ')}
         >
           {React.Children.map(children, (child, idx) =>
@@ -393,6 +395,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   const highlight = toHex(mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.15));
   const hoverBg = toHex(mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.6));
   const shift = theme.spacing(1);
+  const padV = theme.spacing(2);
 
   return (
     <ItemWrapper
@@ -469,6 +472,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
             }
             wasLongPress.current = false;
           }}
+          $padV={padV}
           $open={isOpen}
           $primary={theme.colors.primary}
           $disabledColor={disabledColor}
@@ -514,7 +518,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
       >
         <div
           ref={contentRef}
-          style={{ padding: '0.75rem 0' }}
+          style={{ padding: `${theme.spacing(1.5 as unknown as number)} 0` }}
         >
           {children}
         </div>

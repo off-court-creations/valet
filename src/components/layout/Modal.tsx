@@ -1,5 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/primitives/Modal.tsx | valet
+// spacing refactor: container pad; rem→spacing; compact – 2025‑08‑12
 // Accessible, theme-aware Modal component that supports both “dialog” and
 // “alert” semantics. Fully controlled/uncontrolled, focus-trapping, backdrop &
 // ESC/Click dismissal, no external deps.
@@ -30,7 +31,7 @@ const Box = styled('div')<{
   $fade: boolean;
   $maxW?: string | number;
   $full: boolean;
-  $gap: string;
+  $pad: string;
 }>`
   position: fixed;
   top: 50%;
@@ -44,10 +45,7 @@ const Box = styled('div')<{
 
   max-width: ${({ $maxW, $full }) => ($full ? 'none' : $maxW || '32rem')};
   width: ${({ $full }) => ($full ? 'calc(100% - 2rem)' : 'auto')};
-  margin: ${({ $gap }) => $gap};
-  & > * {
-    padding: ${({ $gap }) => $gap};
-  }
+  padding: ${({ $pad }) => $pad};
 
   background: ${({ $bg }) => $bg};
   color: ${({ $text }) => $text};
@@ -58,23 +56,32 @@ const Box = styled('div')<{
   flex-direction: column;
 `;
 
-const Header = styled('header')`
-  padding: 1rem 1.25rem 0.75rem;
+const Header = styled('header')<{$pt: string; $px: string; $pb: string}>`
+  padding-top: ${({ $pt }) => $pt};
+  padding-right: ${({ $px }) => $px};
+  padding-left: ${({ $px }) => $px};
+  padding-bottom: ${({ $pb }) => $pb};
   font-weight: 600;
   font-size: 1.125rem;
 `;
 
-const Content = styled('section')`
-  padding: 0 1.25rem 1.25rem;
+const Content = styled('section')<{$px: string; $pb: string}>`
+  padding-top: 0;
+  padding-right: ${({ $px }) => $px};
+  padding-left: ${({ $px }) => $px};
+  padding-bottom: ${({ $pb }) => $pb};
   flex: 1 1 auto;
   overflow: auto;
 `;
 
-const Actions = styled('footer')`
-  padding: 0.75rem 1.25rem 1.25rem;
+const Actions = styled('footer')<{$pt: string; $px: string; $pb: string; $gap: string}>`
+  padding-top: ${({ $pt }) => $pt};
+  padding-right: ${({ $px }) => $px};
+  padding-left: ${({ $px }) => $px};
+  padding-bottom: ${({ $pb }) => $pb};
   display: flex;
   justify-content: flex-end;
-  gap: 0.5rem;
+  gap: ${({ $gap }) => $gap};
 `;
 
 /*───────────────────────────────────────────────────────────*/
@@ -107,6 +114,10 @@ export interface ModalProps extends Presettable {
   children?: ReactNode;
   /** Action buttons */
   actions?: ReactNode;
+  /** Container padding override */
+  pad?: number | string;
+  /** Compact removes container + internal paddings */
+  compact?: boolean;
   /** Disable closing via backdrop click */
   disableBackdropClick?: boolean;
   /** Disable closing via ESC key */
@@ -128,6 +139,8 @@ export const Modal: React.FC<ModalProps> = ({
   title,
   children,
   actions,
+  pad: padProp,
+  compact = false,
   disableBackdropClick = false,
   disableEscapeKeyDown = false,
   maxWidth,
@@ -226,12 +239,35 @@ export const Modal: React.FC<ModalProps> = ({
         $fade={fade}
         $maxW={maxWidth}
         $full={fullWidth}
-        $gap={theme.spacing(1)}
+        $pad={compact ? '0' : (typeof padProp === 'number' ? theme.spacing(padProp) : padProp ?? theme.spacing(1))}
         className={presetClasses}
       >
-        {title && <Header id={idTitle}>{title}</Header>}
-        <Content>{children}</Content>
-        {actions && <Actions>{actions}</Actions>}
+        {title && (
+          <Header
+            id={idTitle}
+            $pt={compact ? '0' : theme.spacing(2)}
+            $px={compact ? '0' : theme.spacing(3)}
+            $pb={compact ? '0' : theme.spacing(2)}
+          >
+            {title}
+          </Header>
+        )}
+        <Content
+          $px={compact ? '0' : theme.spacing(3)}
+          $pb={compact ? '0' : theme.spacing(3)}
+        >
+          {children}
+        </Content>
+        {actions && (
+          <Actions
+            $pt={compact ? '0' : theme.spacing(2)}
+            $px={compact ? '0' : theme.spacing(3)}
+            $pb={compact ? '0' : theme.spacing(3)}
+            $gap={compact ? '0' : theme.spacing(1)}
+          >
+            {actions}
+          </Actions>
+        )}
       </Box>
     </>
   );

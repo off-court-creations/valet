@@ -94,6 +94,7 @@ const treeData: TreeNode<Item>[] = [
         data: { label: 'Installation', path: '/installation' },
       },
       { id: '/usage', data: { label: 'Usage', path: '/usage' } },
+      { id: '/spacing', data: { label: 'Spacing & Density', path: '/spacing' } },
       {
         id: '/prop-patterns',
         data: { label: 'Prop Patterns', path: '/prop-patterns' },

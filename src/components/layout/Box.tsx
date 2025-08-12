@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/layout/Box.tsx  | valet
-// overhaul: internal scrollbars & boundary guards – 2025‑07‑17
+// spacing refactor: container pad + compact – 2025‑08‑12
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
 import { styled } from '../../css/createStyled';
@@ -13,13 +13,13 @@ export interface BoxProps extends React.ComponentProps<'div'>, Presettable {
   textColor?: string | undefined;
   centered?: boolean;
   compact?: boolean;
+  pad?: number | string | undefined;
 }
 
 const Base = styled('div')<{
   $bg?: string;
   $text?: string;
   $center?: boolean;
-  $margin: string;
   $pad: string;
 }>`
   box-sizing: border-box;
@@ -32,10 +32,7 @@ const Base = styled('div')<{
   overflow: hidden;
 
   display: ${({ $center }) => ($center ? 'flex' : 'block')};
-  margin: ${({ $margin }) => $margin};
-  & > * {
-    padding: ${({ $pad }) => $pad};
-  }
+  padding: ${({ $pad }) => $pad};
 
   ${({ $center }) =>
     $center &&
@@ -56,6 +53,7 @@ export const Box: React.FC<BoxProps> = ({
   textColor,
   centered,
   compact,
+  pad: padProp,
   style,
   ...rest
 }) => {
@@ -74,8 +72,13 @@ export const Box: React.FC<BoxProps> = ({
             : undefined;
   }
 
-  const pad = theme.spacing(1);
-  const margin = compact ? '0' : pad;
+  const pad = compact
+    ? '0'
+    : typeof padProp === 'number'
+      ? theme.spacing(padProp)
+      : padProp !== undefined
+        ? String(padProp)
+        : theme.spacing(1);
 
   return (
     <Base
@@ -83,7 +86,6 @@ export const Box: React.FC<BoxProps> = ({
       $bg={background}
       $text={resolvedText}
       $center={centered}
-      $margin={margin}
       $pad={pad}
       style={style}
       className={[presetClass, className].filter(Boolean).join(' ')}

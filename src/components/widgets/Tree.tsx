@@ -46,11 +46,17 @@ const ItemRow = styled('div')<{
   $hoverBg: string;
   $selectedBg: string;
   $selected: boolean;
+  $padV: string;
+  $padH: string;
+  $indent: string;
 }>`
   display: flex;
   align-items: center;
   gap: 0.25rem;
-  padding: 0.25rem 0.5rem 0.25rem ${({ $level }) => $level * 1.25}rem;
+  padding-top: ${({ $padV }) => $padV};
+  padding-bottom: ${({ $padV }) => $padV};
+  padding-right: ${({ $padH }) => $padH};
+  padding-left: ${({ $level, $indent }) => `calc(${$indent} * ${$level})`};
   cursor: pointer;
   user-select: none;
   ${({ $hoverBg }) => `@media(hover:hover){&:hover{background:${$hoverBg};}}`}
@@ -69,26 +75,28 @@ const ExpandIcon = styled('span')<{ $open: boolean }>`
   transition: transform 150ms ease;
 `;
 
-const Branch = styled('ul')<{ $line: string; $root?: boolean }>`
+const Branch = styled('ul')<{ $line: string; $root?: boolean; $indent: string }>`
   list-style: none;
   margin: 0;
-  padding-left: ${({ $root }) => ($root ? 0 : '1rem')};
+  padding-left: ${({ $root, $indent }) => ($root ? 0 : $indent)};
   position: relative;
+  --indent: ${({ $indent }) => $indent};
 `;
 
-const BranchItem = styled('li')<{ $line: string; $root?: boolean }>`
+const BranchItem = styled('li')<{ $line: string; $root?: boolean; $indent: string }>`
   position: relative;
   margin: 0;
   padding: 0;
+  --indent: ${({ $indent }) => $indent};
   ${({ $root, $line }) =>
     !$root &&
     `
       &::before {
         content: '';
         position: absolute;
-        top: 0.875rem;
-        left: calc(-1rem + 0.75em);
-        width: calc(1.25rem - 0.75em);
+        top: 0.875rem; /* minor visual tweak left as rem */
+        left: calc(-1 * var(--indent, 1rem) + 0.75em);
+        width: calc(var(--indent, 1rem) + 0.25rem - 0.75em);
         border-top: 1px solid ${$line};
       }
     `}
@@ -97,7 +105,7 @@ const BranchItem = styled('li')<{ $line: string; $root?: boolean }>`
     position: absolute;
     top: 0;
     bottom: 0;
-    left: calc(-1rem + 0.75em);
+    left: calc(-1 * var(--indent, 1rem) + 0.75em);
     border-left: 1px solid ${({ $line }) => $line};
   }
 `;
@@ -106,11 +114,13 @@ const ListRow = styled('div')<{
   $hoverBg: string;
   $selectedBg: string;
   $selected: boolean;
+  $padV: string;
+  $padH: string;
 }>`
   display: flex;
   align-items: center;
   gap: 0.25rem;
-  padding: 0.25rem 0.5rem;
+  padding: ${({ $padV, $padH }) => `${$padV} ${$padH}`};
   cursor: pointer;
   user-select: none;
   ${({ $hoverBg }) => `@media(hover:hover){&:hover{background:${$hoverBg};}}`}
@@ -260,12 +270,14 @@ export function Tree<T>({
       role={level ? 'group' : undefined}
       $line={line}
       $root={level === 0}
+      $indent={theme.spacing(2)}
     >
       {items.map((node) => (
         <BranchItem
           key={node.id}
           $line={line}
           $root={level === 0}
+          $indent={theme.spacing(2)}
           role='none'
         >
           <ListRow
@@ -279,6 +291,8 @@ export function Tree<T>({
             $hoverBg={hoverBg}
             $selectedBg={selectedBg}
             $selected={selected === node.id}
+            $padV={theme.spacing(0.5)}
+            $padH={theme.spacing(1)}
             onClick={() => {
               focusItem(node.id);
               if (!controlled) setSelfSelected(node.id);
@@ -361,6 +375,9 @@ export function Tree<T>({
                 $hoverBg={hoverBg}
                 $selectedBg={selectedBg}
                 $selected={selected === node.id}
+                $padV={theme.spacing(0.5)}
+                $padH={theme.spacing(1)}
+                $indent={theme.spacing(2)}
                 onClick={() => {
                   focusItem(node.id);
                   if (!controlled) setSelfSelected(node.id);

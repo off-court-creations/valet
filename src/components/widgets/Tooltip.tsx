@@ -51,12 +51,14 @@ const Wrapper = styled('span')`
 const Bubble = styled('div')<{
   $show: boolean;
   $placement: Placement;
+  $padV: string;
+  $padH: string;
 }>`
   --gap: ${GAP}px;
   position: fixed;
   z-index: 9999;
   max-width: 22rem;
-  padding: 0.4rem 0.7rem;
+  padding: ${({ $padV, $padH }) => `${$padV} ${$padH}`};
   border-radius: 4px;
   background: var(--tt-bg, #000);
   color: var(--tt-fg, #fff);
@@ -318,6 +320,8 @@ export const Tooltip: React.FC<TooltipProps> = ({
           ref={bubbleRef}
           $show={show}
           $placement={placement}
+          $padV={theme.spacing(1)}
+          $padH={theme.spacing(1.5 as unknown as number)}
           role='tooltip'
           id={`tooltip-${id}`}
           className={presetClasses}

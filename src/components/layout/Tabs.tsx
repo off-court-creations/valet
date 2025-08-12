@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/layout/Tabs.tsx | valet
-// Grid-based <Tabs>; optional heading centering + tab tooltips
+// spacing refactor: container pad + gap; rem→spacing – 2025‑08‑12
 // ─────────────────────────────────────────────────────────────
 /* eslint-disable react/prop-types */
 import React, {
@@ -44,13 +44,11 @@ const Root = styled('div')<{
   $orientation: 'horizontal' | 'vertical';
   $placement: 'top' | 'bottom' | 'left' | 'right';
   $gap: string;
+  $pad: string;
 }>`
   width: 100%;
   display: grid;
-  margin: ${({ $gap }) => $gap};
-  & > * {
-    padding: ${({ $gap }) => $gap};
-  }
+  padding: ${({ $pad }) => $pad};
 
   ${({ $orientation, $placement }) =>
     $orientation === 'horizontal'
@@ -93,12 +91,14 @@ const TabBtn = styled('button')<{
   $active: boolean;
   $primary: string;
   $orient: 'horizontal' | 'vertical';
+  $padV: string;
+  $padH: string;
 }>`
   background: transparent;
   border: none;
   color: inherit;
   font: inherit;
-  padding: 0.75rem 1.25rem;
+  padding: ${({ $padV, $padH }) => `${$padV} ${$padH}`};
   cursor: pointer;
   appearance: none;
 
@@ -128,7 +128,7 @@ const TabBtn = styled('button')<{
 `;
 
 const Panel = styled('div')`
-  padding: 1rem 0;
+  padding: 0;
 
   /* Strictly vertical scrolling */
   overflow-x: hidden;
@@ -155,6 +155,9 @@ export interface TabsProps
   orientation?: 'horizontal' | 'vertical';
   placement?: 'top' | 'bottom' | 'left' | 'right';
   centered?: boolean;
+  gap?: number | string;
+  pad?: number | string;
+  compact?: boolean;
 }
 export interface TabProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, Presettable {
   index?: number;
@@ -177,6 +180,9 @@ export const Tabs: React.FC<TabsProps> & {
   placement: placementProp,
   onTabChange,
   centered = false,
+  gap: gapProp,
+  pad: padProp,
+  compact = false,
   preset: p,
   className,
   children,
@@ -243,7 +249,20 @@ export const Tabs: React.FC<TabsProps> & {
   );
 
   const cls = [p ? preset(p) : '', className].filter(Boolean).join(' ');
-  const gap = theme.spacing(1);
+  const gap = compact
+    ? '0'
+    : typeof gapProp === 'number'
+      ? theme.spacing(gapProp)
+      : gapProp !== undefined
+        ? String(gapProp)
+        : theme.spacing(1);
+  const pad = compact
+    ? '0'
+    : typeof padProp === 'number'
+      ? theme.spacing(padProp)
+      : padProp !== undefined
+        ? String(padProp)
+        : theme.spacing(1);
   const stripFirst =
     (orientation === 'horizontal' && placement === 'top') ||
     (orientation === 'vertical' && placement === 'left');
@@ -255,6 +274,7 @@ export const Tabs: React.FC<TabsProps> & {
         $orientation={orientation}
         $placement={placement}
         $gap={gap}
+        $pad={pad}
         className={cls}
       >
         {stripFirst && (
@@ -324,6 +344,8 @@ const Tab: React.FC<TabProps> = forwardRef<HTMLButtonElement, TabProps>(
         $active={selected}
         $primary={theme.colors.primary}
         $orient={orientation}
+        $padV={theme.spacing(2)}
+        $padH={theme.spacing(3)}
         className={[p ? preset(p) : '', className].filter(Boolean).join(' ')}
       >
         {typeof content === 'string' || typeof content === 'number' ? (

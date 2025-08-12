@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/layout/Stack.tsx  | valet
-// overhaul: internal scrollbars & boundary guards – 2025-07-17
+// overhaul: spacing refactor (container pad + gap, compact) – 2025-08-12
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
 import { styled } from '../../css/createStyled';
@@ -11,12 +11,16 @@ import type { Presettable } from '../../types';
 /*───────────────────────────────────────────────────────────*/
 export interface StackProps extends React.HTMLAttributes<HTMLDivElement>, Presettable {
   direction?: 'row' | 'column';
-  /** Number of spacing units or any CSS length. */
+  /** Inter-child spacing in units or CSS length (container-owned). */
+  gap?: number | string | undefined;
+  /** Container inner padding in units or CSS length. */
+  pad?: number | string | undefined;
+  /** Deprecated alias for gap. */
   spacing?: number | string | undefined;
   /** If `true`, children wrap when they run out of space. Defaults to
    *  `true` for `row`, `false` for `column`. */
   wrap?: boolean;
-  /** Remove built-in margin and padding */
+  /** Compact mode removes both gap and padding. */
   compact?: boolean;
 }
 
@@ -25,7 +29,6 @@ const StackContainer = styled('div')<{
   $dir: 'row' | 'column';
   $gap: string;
   $wrap: boolean;
-  $margin: string;
   $pad: string;
 }>`
   display: flex;
@@ -52,16 +55,14 @@ const StackContainer = styled('div')<{
   }
 
   box-sizing: border-box;
-
-  margin: ${({ $margin }) => $margin};
-  & > * {
-    margin: ${({ $pad }) => $pad};
-  }
+  padding: ${({ $pad }) => $pad};
 `;
 
 /*───────────────────────────────────────────────────────────*/
 export const Stack: React.FC<StackProps> = ({
   direction = 'column',
+  gap: gapProp,
+  pad: padProp,
   spacing,
   wrap,
   compact,
@@ -73,16 +74,27 @@ export const Stack: React.FC<StackProps> = ({
 }) => {
   const { theme } = useTheme();
 
-  /* Resolve number → theme spacing */
-  const gapInput: number | string = spacing === undefined ? (compact ? 0 : 1) : spacing;
-  const gap = typeof gapInput === 'number' ? theme.spacing(gapInput) : String(gapInput);
+  /* Resolve number → theme spacing; compact overrides to zero */
+  const effectiveGapInput: number | string | undefined = gapProp ?? spacing;
+  const gap = compact
+    ? '0'
+    : typeof effectiveGapInput === 'number'
+      ? theme.spacing(effectiveGapInput)
+      : effectiveGapInput !== undefined
+        ? String(effectiveGapInput)
+        : theme.spacing(1);
 
   /* Enable wrapping by default for rows */
   const shouldWrap = typeof wrap === 'boolean' ? wrap : direction === 'row';
 
   const presetClasses = p ? preset(p) : '';
-  const pad = theme.spacing(1);
-  const margin = compact ? '0' : pad;
+  const pad = compact
+    ? '0'
+    : typeof padProp === 'number'
+      ? theme.spacing(padProp)
+      : padProp !== undefined
+        ? String(padProp)
+        : theme.spacing(1);
 
   return (
     <StackContainer
@@ -90,7 +102,6 @@ export const Stack: React.FC<StackProps> = ({
       $dir={direction}
       $gap={gap}
       $wrap={shouldWrap}
-      $margin={margin}
       $pad={pad}
       className={[presetClasses, className].filter(Boolean).join(' ')}
       style={style}

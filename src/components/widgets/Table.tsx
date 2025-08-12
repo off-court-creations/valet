@@ -65,6 +65,8 @@ const Root = styled('table')<{
   $stripe: string;
   $hoverBg: string;
   $gutter: string;
+  $padV: string;
+  $padH: string;
 }>`
   /* leave a subtle gutter so right border never clips */
   width: calc(100% - ${({ $gutter }) => $gutter} * 2);
@@ -78,7 +80,7 @@ const Root = styled('table')<{
 
   th,
   td {
-    padding: 0.5rem 0.75rem;
+    padding: ${({ $padV, $padH }) => `${$padV} ${$padH}`};
     text-align: left;
     border-bottom: 1px solid ${({ $border }) => $border};
     transition: background 120ms ease;
@@ -376,6 +378,8 @@ export function Table<T extends object>({
         $stripe={stripeColor}
         $hoverBg={hoverBg}
         $gutter={pad}
+        $padV={theme.spacing(2)}
+        $padH={theme.spacing(3)}
         className={cls}
         style={style}
       >

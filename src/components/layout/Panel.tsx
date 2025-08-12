@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/layout/Panel.tsx  | valet
-// overhaul: internal scrollbars & boundary guards – 2025‑07‑17
+// spacing refactor: container pad + compact – 2025‑08‑12
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
 import { styled } from '../../css/createStyled';
@@ -19,6 +19,8 @@ export interface PanelProps extends React.ComponentProps<'div'>, Presettable {
   centered?: boolean;
   /** Remove built‑in margin and padding */
   compact?: boolean;
+  /** Container inner padding */
+  pad?: number | string | undefined;
 }
 
 const Base = styled('div')<{
@@ -28,7 +30,6 @@ const Base = styled('div')<{
   $outline?: string;
   $bg?: string;
   $text?: string;
-  $margin: string;
   $pad: string;
 }>`
   box-sizing: border-box;
@@ -53,10 +54,7 @@ const Base = styled('div')<{
     display: none;
   }
 
-  margin: ${({ $margin }) => $margin};
-  & > * {
-    padding: ${({ $pad }) => $pad};
-  }
+  padding: ${({ $pad }) => $pad};
 
   ${({ $center }) =>
     $center &&
@@ -96,6 +94,7 @@ export const Panel: React.FC<PanelProps> = ({
   style,
   background,
   compact,
+  pad: padProp,
   children,
   ...rest
 }) => {
@@ -123,8 +122,13 @@ export const Panel: React.FC<PanelProps> = ({
             : theme.colors.text;
   }
 
-  const pad = theme.spacing(1);
-  const margin = compact ? '0' : pad;
+  const pad = compact
+    ? '0'
+    : typeof padProp === 'number'
+      ? theme.spacing(padProp)
+      : padProp !== undefined
+        ? String(padProp)
+        : theme.spacing(1);
   const presetClasses = p ? preset(p) : '';
 
   return (
@@ -136,7 +140,6 @@ export const Panel: React.FC<PanelProps> = ({
       $outline={theme.colors.backgroundAlt}
       $bg={bg}
       $text={textColour}
-      $margin={margin}
       $pad={pad}
       style={style}
       className={[presetClasses, className].filter(Boolean).join(' ')}

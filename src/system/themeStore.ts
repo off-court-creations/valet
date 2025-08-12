@@ -1,10 +1,12 @@
 // ─────────────────────────────────────────────────────────────
 // src/system/themeStore.ts | valet
+// add density + var-based spacing unit
 // ─────────────────────────────────────────────────────────────
 import { createWithEqualityFn as create } from 'zustand/traditional';
 
 export type Breakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type ThemeMode = 'light' | 'dark';
+export type Density = 'comfortable' | 'compact' | 'tight' | 'zero';
 
 export interface Theme {
   colors: Record<string, string>;
@@ -25,10 +27,12 @@ export interface Theme {
 interface ThemeStore {
   mode: ThemeMode;
   theme: Theme;
+  density: Density;
 
   setMode: (m: ThemeMode) => void;
   toggleMode: () => void;
   setTheme: (patch: Partial<Theme>) => void;
+  setDensity: (d: Density) => void;
 }
 
 const spacingUnit = '0.5rem';
@@ -40,7 +44,10 @@ const base = parseFloat(baseStr); // 0.25
 
 /* ── theme object with the fixed spacing helper ────────────── */
 const common: Omit<Theme, 'colors'> = {
-  spacing: (u: number) => `${u * base}${unitSuffix}`, // spacing(4) → "1rem"
+  // Spacing is expressed in terms of a CSS custom property so density
+  // can be adjusted per-Surface. The var defaults to spacingUnit.
+  // Example: spacing(4) → `calc(var(--valet-space, 0.5rem) * 4)`
+  spacing: (u: number) => `calc(var(--valet-space, ${spacingUnit}) * ${u})`,
   spacingUnit: spacingUnit,
   breakpoints: { xs: 0, sm: 600, md: 960, lg: 1280, xl: 1920 },
   typography: {
@@ -117,6 +124,7 @@ export const useTheme = create<ThemeStore>((set, get) => ({
     ...common,
     colors: darkColors,
   },
+  density: 'comfortable',
 
   setMode: (mode) =>
     set((state) => ({
@@ -131,4 +139,6 @@ export const useTheme = create<ThemeStore>((set, get) => ({
   toggleMode: () => get().setMode(get().mode === 'dark' ? 'light' : 'dark'),
 
   setTheme: (patch) => set((state) => ({ theme: { ...state.theme, ...patch } })),
+
+  setDensity: (density) => set(() => ({ density })),
 }));
