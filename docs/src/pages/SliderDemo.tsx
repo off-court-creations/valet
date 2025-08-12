@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// src/pages/SliderDemo.tsx | valet
+// src/pages/SliderDemo.tsx | valet-docs
 // Comprehensive live demo showcasing every Slider feature & edge-case
 // – Updated: section #5 now snaps to its custom tick marks
 // – Removed: preset-styling showcase (simplifies demo focus)

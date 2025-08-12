@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// src/pages/TableDemoPage.tsx | valet
+// src/pages/TableDemoPage.tsx | valet-docs
 // Comprehensive live-demo of <Table/> showcasing zebra stripes, hover effects,
 // column-dividers, and single / multi-row selection toggles, now strict-TS safe
 // ─────────────────────────────────────────────────────────────────────────────

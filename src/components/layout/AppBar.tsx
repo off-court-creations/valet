@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/layout/AppBar.tsx  | valet
-// left/right parking slots
+// spacing refactor: controlled pad; remove child padding – 2025‑08‑12
 // ─────────────────────────────────────────────────────────────
 import React, { useLayoutEffect, useRef, useId } from 'react';
 import { createPortal } from 'react-dom';
@@ -9,7 +9,8 @@ import { useTheme } from '../../system/themeStore';
 import { useSurface } from '../../system/surfaceStore';
 import { shallow } from 'zustand/shallow';
 import { preset } from '../../css/stylePresets';
-import type { Presettable } from '../../types';
+import type { Presettable, Space } from '../../types';
+import { resolveSpace } from '../../utils/resolveSpace';
 
 /*───────────────────────────────────────────────────────────*/
 export type AppBarToken = 'primary' | 'secondary' | 'tertiary';
@@ -19,6 +20,7 @@ export interface AppBarProps extends React.HTMLAttributes<HTMLElement>, Presetta
   textColor?: AppBarToken | string;
   left?: React.ReactNode;
   right?: React.ReactNode;
+  pad?: Space;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -26,16 +28,13 @@ const Bar = styled('header')<{ $text: string; $pad: string }>`
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  padding: 0.5rem 1rem;
+  padding: ${({ $pad }) => $pad};
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 10000;
   color: ${({ $text }) => $text};
-  & > * {
-    padding: ${({ $pad }) => $pad};
-  }
 `;
 
 const BarBg = styled('div')<{ $bg: string }>`
@@ -64,6 +63,7 @@ export const AppBar: React.FC<AppBarProps> = ({
   textColor,
   left,
   right,
+  pad: padProp,
   preset: p,
   className,
   style,
@@ -97,7 +97,9 @@ export const AppBar: React.FC<AppBarProps> = ({
         ? theme.colors[`${textColor}Text`]
         : textColor;
   const presetClass = p ? preset(p) : '';
-  const pad = theme.spacing(1);
+  // Standardize numeric mapping via resolveSpace; retain two-value default
+  const padSingle = resolveSpace(padProp, theme, false, 1);
+  const pad = padProp === undefined ? `${theme.spacing(1)} ${theme.spacing(2)}` : padSingle;
   const gap = theme.spacing(2);
 
   useLayoutEffect(() => {

@@ -4,7 +4,23 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
-- Add subtle hover to `DateSelector` dates
+- Add theme.radius() and theme.stroke() helpers derived from density-aware spacing
+- Surface now exposes `--valet-radius` and `--valet-stroke` CSS vars per-surface
+- Replace hard-coded borders/radii with relative helpers in: Button, Panel, Tabs, Tooltip, Table,
+  Snackbar, Accordion, List, TextField, Checkbox, Iterator, Select, Modal, Tree, Stepper
+- Convert remaining spacing casts to plain numbers (removed `as unknown as number` where updated)
+- Add underline thickness/radius vars for Table and Pagination underlines
+- Add Switch/Accordion/Tree outline and thickness vars for consistent a11y rings
+- Add DateSelector wrapper/cell radius vars
+- Add Select menu/item paddings and radius using spacing helpers
+- Add Tooltip arrow size, bubble radius, and animation distances via spacing helpers
+- Add List/Table/Panel border thickness via theme.stroke()
+- Add width fix for Table checkbox column using `theme.spacing(6)`
+- Add Unreleased notes for spacing/density overhaul groundwork
+ - Add shared `Space`/`SpacingProps` types for pad/gap ergonomics
+ - Standardize default gap to 1 in `Grid` (aligns with `Stack`/`Tabs`)
+ - Use `resolveSpace` in `Accordion` and `AppBar` for consistent numeric mapping
+ - Fix file header paths and adopt `| valet-docs` marker for docs headers
 
 ## [0.24.0]
 - Setup ESLint and Prettier

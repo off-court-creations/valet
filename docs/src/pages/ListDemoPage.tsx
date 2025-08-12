@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// src/pages/ListDemoPage.tsx | valet
+// src/pages/ListDemoPage.tsx | valet-docs
 // Comprehensive live‑demo showcasing every <List/> feature & edge‑case
 // ─────────────────────────────────────────────────────────────────────────────
 import { useState, useMemo } from 'react';

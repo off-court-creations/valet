@@ -66,6 +66,8 @@ const InstallationPage = page(() => import('./pages/Installation'));
 const UsagePage = page(() => import('./pages/Usage'));
 const SurfaceExplainerPage = page(() => import('./pages/SurfaceExplainer'));
 const PropPatternsPage = page(() => import('./pages/PropPatterns'));
+const ComplicatedDashboardPage = page(() => import('./pages/ComplicatedDashboard'));
+const SpacingContractPage = page(() => import('./pages/SpacingContract'));
 
 /*───────────────────────────────────────────────────────────*/
 export function App() {
@@ -113,6 +115,10 @@ export function App() {
         <Route
           path='/surface'
           element={<SurfaceExplainerPage />}
+        />
+        <Route
+          path='/spacing'
+          element={<SpacingContractPage />}
         />
         <Route
           path='/typography'
@@ -301,6 +307,10 @@ export function App() {
         <Route
           path='/prop-patterns'
           element={<PropPatternsPage />}
+        />
+        <Route
+          path='/dashboard-demo'
+          element={<ComplicatedDashboardPage />}
         />
       </Routes>
     </Suspense>

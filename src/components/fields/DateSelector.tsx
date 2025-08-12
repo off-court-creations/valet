@@ -44,7 +44,7 @@ const Wrapper = styled('div')<{ $bg: string; $text: string }>`
   padding: 0.5rem;
   background: ${({ $bg }) => $bg};
   color: ${({ $text }) => $text};
-  border-radius: 4px;
+  border-radius: var(--valet-date-radius, 4px);
   user-select: none;
 `;
 
@@ -84,7 +84,7 @@ const Cell = styled('button')<{
   background: ${({ $start, $end, $inRange, $primary, $secondary, $rangeBg }) =>
     $start ? $primary : $end ? $secondary : $inRange ? $rangeBg : 'transparent'};
   color: inherit;
-  border-radius: 4px;
+  border-radius: var(--valet-date-cell-radius, 4px);
   cursor: pointer;
   font: inherit;
   font-weight: ${({ $start, $end }) => ($start || $end ? 'bold' : 'inherit')};
@@ -238,7 +238,9 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
 
   const rangeBg = toHex(mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.25));
   // Use the wrapper's background (backgroundAlt) and nudge ~4% toward text
-  const hoverDefault = toHex(mix(toRgb(theme.colors.backgroundAlt), toRgb(theme.colors.text), 0.04));
+  const hoverDefault = toHex(
+    mix(toRgb(theme.colors.backgroundAlt), toRgb(theme.colors.text), 0.04),
+  );
   const hoverStart = toHex(mix(toRgb(theme.colors.primary), toRgb(theme.colors.text), 0.3));
   const hoverEnd = toHex(mix(toRgb(theme.colors.secondary), toRgb(theme.colors.text), 0.3));
   const hoverRange = toHex(mix(toRgb(rangeBg), toRgb(theme.colors.text), 0.2));
@@ -249,7 +251,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
       $bg={theme.colors.backgroundAlt}
       $text={theme.colors.text}
       className={cls}
-      style={style}
+      style={{ '--valet-date-radius': theme.radius(1), ...style } as React.CSSProperties}
     >
       <Header $gap={theme.spacing(1)}>
         <div style={{ display: 'flex', gap: theme.spacing(0.5) }}>
@@ -381,6 +383,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
               $hoverEnd={hoverEnd}
               $hoverRange={hoverRange}
               $hoverDefault={hoverDefault}
+              style={{ '--valet-date-cell-radius': theme.radius(1) } as React.CSSProperties}
               onClick={() => !disabled && (range ? commitRange(day) : commit(day))}
               disabled={disabled}
             >

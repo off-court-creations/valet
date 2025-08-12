@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/pages/IteratorDemo.tsx | valet
+// src/pages/IteratorDemo.tsx | valet-docs
 // Showcase of Iterator component
 // ─────────────────────────────────────────────────────────────
 import { useState } from 'react';

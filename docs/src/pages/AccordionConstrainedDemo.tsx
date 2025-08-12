@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// src/pages/AccordionConstrainedDemo.tsx | valet
+// src/pages/AccordionConstrainedDemo.tsx | valet-docs
 // Demo for <Accordion> with constrainHeight enabled
 // ─────────────────────────────────────────────────────────────────────────────
 import { Surface, Stack, Typography, Accordion, Button, Panel } from '@archway/valet';

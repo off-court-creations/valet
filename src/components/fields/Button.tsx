@@ -69,6 +69,8 @@ const Root = styled('button')<{
   $label: string;
   $hoverLabel: string;
   $outline: string;
+  $strokeW: string;
+  $radius: string;
   $ripple: string;
   $full: boolean;
 }>`
@@ -86,9 +88,9 @@ const Root = styled('button')<{
   align-self: ${({ $full }) => ($full ? 'stretch' : 'flex-start')};
   width: ${({ $full }) => ($full ? '100%' : 'auto')};
 
-  border-radius: 4px;
-  border: ${({ $variant, $outline }) =>
-    $variant === 'outlined' ? `1px solid ${$outline}` : 'none'};
+  border-radius: ${({ $radius }) => $radius};
+  border: ${({ $variant, $outline, $strokeW }) =>
+    $variant === 'outlined' ? `${$strokeW} solid ${$outline}` : 'none'};
 
   background: ${({ $variant, $bg }) => ($variant === 'contained' ? $bg : 'transparent')};
 
@@ -290,6 +292,8 @@ export const Button: React.FC<ButtonProps> = ({
       $label={labelColor}
       $hoverLabel={hoverLabel}
       $outline={outlineNeutral}
+      $strokeW={theme.stroke(1)}
+      $radius={theme.radius(1)}
       $ripple={ripple}
       $full={fullWidth}
     >

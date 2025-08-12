@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/pages/StackDemo.tsx | valet
+// src/pages/StackDemo.tsx | valet-docs
 // Showcase of Stack layout primitive
 // ─────────────────────────────────────────────────────────────
 import { Surface, Stack, Typography, Box, Button, Tabs, Table, useTheme } from '@archway/valet';

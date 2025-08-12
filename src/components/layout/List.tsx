@@ -38,20 +38,23 @@ const Root = styled('ul')<{
   $striped: boolean;
   $hover: boolean;
   $border: string;
+  $strokeW: string;
   $stripe: string;
   $hoverBg: string;
+  $padV: string;
+  $padH: string;
 }>`
   list-style: none;
   margin: 0;
   padding: 0;
-  border: 1px solid ${({ $border }) => $border};
+  border: ${({ $strokeW }) => $strokeW} solid ${({ $border }) => $border};
 
   li {
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
-    padding: 0.5rem 0.75rem;
-    border-bottom: 1px solid ${({ $border }) => $border};
+    padding: ${({ $padV, $padH }) => `${$padV} ${$padH}`};
+    border-bottom: ${({ $strokeW }) => $strokeW} solid ${({ $border }) => $border};
     cursor: grab;
     user-select: none;
     transition: background 120ms ease;
@@ -145,8 +148,11 @@ export function List<T>({
       $striped={striped}
       $hover={enableHover}
       $border={theme.colors.backgroundAlt}
+      $strokeW={theme.stroke(1)}
       $stripe={stripeColor}
       $hoverBg={hoverBg}
+      $padV={theme.spacing(2)}
+      $padH={theme.spacing(3)}
       className={cls}
       style={style}
     >

@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// src/pages/SelectDemoPage.tsx | valet
+// src/pages/SelectDemoPage.tsx | valet-docs
 // Exhaustive playground – now demonstrating FormControl integration.
 // ─────────────────────────────────────────────────────────────────────────────
 import { useState } from 'react';

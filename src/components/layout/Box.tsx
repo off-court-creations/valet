@@ -1,25 +1,27 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/layout/Box.tsx  | valet
-// overhaul: internal scrollbars & boundary guards – 2025‑07‑17
+// spacing refactor: container pad + compact – 2025‑08‑12
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
-import type { Presettable } from '../../types';
+import type { Presettable, SpacingProps } from '../../types';
+import { resolveSpace } from '../../utils/resolveSpace';
 
-export interface BoxProps extends React.ComponentProps<'div'>, Presettable {
+export interface BoxProps
+  extends React.ComponentProps<'div'>,
+    Presettable,
+    Pick<SpacingProps, 'pad' | 'compact'> {
   background?: string | undefined;
   textColor?: string | undefined;
   centered?: boolean;
-  compact?: boolean;
 }
 
 const Base = styled('div')<{
   $bg?: string;
   $text?: string;
   $center?: boolean;
-  $margin: string;
   $pad: string;
 }>`
   box-sizing: border-box;
@@ -32,10 +34,7 @@ const Base = styled('div')<{
   overflow: hidden;
 
   display: ${({ $center }) => ($center ? 'flex' : 'block')};
-  margin: ${({ $margin }) => $margin};
-  & > * {
-    padding: ${({ $pad }) => $pad};
-  }
+  padding: ${({ $pad }) => $pad};
 
   ${({ $center }) =>
     $center &&
@@ -56,6 +55,7 @@ export const Box: React.FC<BoxProps> = ({
   textColor,
   centered,
   compact,
+  pad: padProp,
   style,
   ...rest
 }) => {
@@ -74,8 +74,7 @@ export const Box: React.FC<BoxProps> = ({
             : undefined;
   }
 
-  const pad = theme.spacing(1);
-  const margin = compact ? '0' : pad;
+  const pad = resolveSpace(padProp, theme, compact, 1);
 
   return (
     <Base
@@ -83,7 +82,6 @@ export const Box: React.FC<BoxProps> = ({
       $bg={background}
       $text={resolvedText}
       $center={centered}
-      $margin={margin}
       $pad={pad}
       style={style}
       className={[presetClass, className].filter(Boolean).join(' ')}

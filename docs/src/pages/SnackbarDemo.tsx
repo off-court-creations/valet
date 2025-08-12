@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// src/pages/SnackbarDemoPage.tsx | valet
+// src/pages/SnackbarDemoPage.tsx | valet-docs
 // Comprehensive live demo for <Snackbar/>
 // ─────────────────────────────────────────────────────────────────────────────
 import React, { useState } from 'react';

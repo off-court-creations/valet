@@ -1,9 +1,9 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/layout/Surface.tsx  | valet
-// overhaul: surfaces never show scrollbars – 2025-07-17
+// overhaul: density-controlled spacing via --valet-space – 2025-08-12
 // ─────────────────────────────────────────────────────────────
 import React, { useContext, useEffect, useRef, useState, useCallback } from 'react';
-import { Breakpoint, useTheme } from '../../system/themeStore';
+import { Breakpoint, Density, useTheme } from '../../system/themeStore';
 import { useFonts } from '../../system/fontStore';
 import LoadingBackdrop from '../widgets/LoadingBackdrop';
 import {
@@ -22,6 +22,8 @@ type CSSVarStyles = React.CSSProperties & Record<CSSVarName, string | number>;
 export interface SurfaceProps extends React.HTMLAttributes<HTMLDivElement>, Presettable {
   /** Fixed-position full-screen surface when true (default). */
   fullscreen?: boolean;
+  /** Optional density override for spacing scale */
+  density?: Density;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -31,6 +33,7 @@ export const Surface: React.FC<SurfaceProps> = ({
   preset: p,
   className,
   fullscreen = true,
+  density,
   ...props
 }) => {
   /* Prevent nested surfaces ------------------------------------------- */
@@ -43,7 +46,7 @@ export const Surface: React.FC<SurfaceProps> = ({
   const useStore = storeRef.current;
 
   const ref = useRef<HTMLDivElement>(null);
-  const { theme } = useTheme();
+  const { theme, density: globalDensity } = useTheme();
   const fontsReady = useFonts((s) => s.ready);
   const [showBackdrop, setShowBackdrop] = useState(!fontsReady);
   const [fade, setFade] = useState(false);
@@ -151,10 +154,21 @@ export const Surface: React.FC<SurfaceProps> = ({
 
   const gap = theme.spacing(1);
 
+  /* Density → --valet-space ------------------------------------------- */
+  const dens: Density = density ?? globalDensity;
+  const scale = dens === 'comfortable' ? 1 : dens === 'compact' ? 0.75 : dens === 'tight' ? 0.5 : 0;
+  const spaceVar = `calc(${theme.spacingUnit} * ${scale})`;
+
   const containerStyle: CSSVarStyles = {
     ...layoutStyles,
     ...defaults,
     ...cssVars,
+    '--valet-space': spaceVar,
+    '--valet-radius': theme.radiusUnit,
+    '--valet-stroke': theme.strokeUnit,
+    '--valet-focus-width': theme.stroke(2),
+    '--valet-focus-offset': theme.stroke(2),
+    '--valet-divider-stroke': theme.stroke(1),
     '--valet-screen-width': `${width}px`,
     '--valet-screen-height': `${Math.round(height)}px`,
     ...(style ?? {}),

@@ -62,9 +62,12 @@ const Root = styled('table')<{
   $hover: boolean;
   $lines: boolean;
   $border: string;
+  $strokeW: string;
   $stripe: string;
   $hoverBg: string;
   $gutter: string;
+  $padV: string;
+  $padH: string;
 }>`
   /* leave a subtle gutter so right border never clips */
   width: calc(100% - ${({ $gutter }) => $gutter} * 2);
@@ -73,14 +76,16 @@ const Root = styled('table')<{
 
   border-collapse: collapse;
   box-sizing: border-box;
-  border: 1px solid ${({ $border }) => $border};
+  border: var(--valet-divider-stroke, ${({ $strokeW }) => $strokeW}) solid
+    ${({ $border }) => $border};
   table-layout: fixed; /* prevents cells pushing past width */
 
   th,
   td {
-    padding: 0.5rem 0.75rem;
+    padding: ${({ $padV, $padH }) => `${$padV} ${$padH}`};
     text-align: left;
-    border-bottom: 1px solid ${({ $border }) => $border};
+    border-bottom: var(--valet-divider-stroke, ${({ $strokeW }) => $strokeW}) solid
+      ${({ $border }) => $border};
     transition: background 120ms ease;
     word-break: break-word;
     overflow-wrap: anywhere;
@@ -109,10 +114,10 @@ const Root = styled('table')<{
       : ''}
 
   /* Column dividers */
-  ${({ $lines, $border }) =>
+  ${({ $lines, $border, $strokeW }) =>
     $lines
       ? `
-    th:not(:last-child), td:not(:last-child) { border-right: 1px solid ${$border}; }
+    th:not(:last-child), td:not(:last-child) { border-right: var(--valet-divider-stroke, ${$strokeW}) solid ${$border}; }
   `
       : ''}
 `;
@@ -134,8 +139,8 @@ const Th = styled('th')<{
     position: absolute;
     left: 0;
     right: 0;
-    bottom: -1px;
-    height: 4px;
+    bottom: calc(-0.5 * var(--valet-underline-width, 1px));
+    height: var(--valet-underline-width, 1px);
     background: ${({ $primary, $active }) => ($active ? $primary : 'transparent')};
     transition: background 150ms ease;
   }
@@ -373,11 +378,19 @@ export function Table<T extends object>({
         $hover={hoverable}
         $lines={dividers}
         $border={theme.colors.backgroundAlt}
+        $strokeW={theme.stroke(1)}
         $stripe={stripeColor}
         $hoverBg={hoverBg}
         $gutter={pad}
+        $padV={theme.spacing(2)}
+        $padH={theme.spacing(3)}
         className={cls}
-        style={style}
+        style={
+          {
+            '--valet-table-underline': theme.stroke(4),
+            ...(style as object),
+          } as React.CSSProperties
+        }
       >
         <thead>
           <tr>
@@ -387,7 +400,7 @@ export function Table<T extends object>({
                 $sortable={false}
                 $active={false}
                 $primary={theme.colors.primary}
-                style={{ width: 48 }}
+                style={{ width: theme.spacing(6) }}
               />
             ) : null}
             {columns.map((c, i) => (

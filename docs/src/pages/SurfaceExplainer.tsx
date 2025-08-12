@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/pages/SurfaceExplainer.tsx | valet docs
+// src/pages/SurfaceExplainer.tsx | valet-docs
 // Explainer for using <Surface>
 // ─────────────────────────────────────────────────────────────
 import { Surface, Stack, Typography, Panel, Button } from '@archway/valet';

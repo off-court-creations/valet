@@ -45,6 +45,7 @@ const Skin = styled('button')<{
   $text: string;
   $primaryText: string;
   $ripple: string;
+  $strokeW: string;
 }>`
   display: inline-flex;
   align-items: center;
@@ -53,7 +54,8 @@ const Skin = styled('button')<{
   overflow: hidden;
   box-sizing: border-box;
 
-  border: ${({ $variant, $text }) => ($variant === 'outlined' ? `1px solid ${$text}` : 'none')};
+  border: ${({ $variant, $text, $strokeW }) =>
+    $variant === 'outlined' ? `${$strokeW} solid ${$text}` : 'none'};
 
   background: ${({ $variant, $primary }) => ($variant === 'contained' ? $primary : 'transparent')};
 
@@ -158,6 +160,7 @@ export const IconButton: React.FC<IconButtonProps> = ({
       $text={theme.colors.text}
       $primaryText={theme.colors.primaryText}
       $ripple={ripple}
+      $strokeW={theme.stroke(1)}
       style={{ ...geomStyle, ...style }}
       className={[presetClasses, className].filter(Boolean).join(' ')}
     >

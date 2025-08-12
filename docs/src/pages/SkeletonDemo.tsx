@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/pages/SkeletonDemo.tsx | valet
+// src/pages/SkeletonDemo.tsx | valet-docs
 // Showcase of Skeleton component
 // ─────────────────────────────────────────────────────────────
 import {

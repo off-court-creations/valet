@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/pages/Installation.tsx  | valet
+// src/pages/Installation.tsx  | valet-docs
 // Getting started installation page
 // ─────────────────────────────────────────────────────────────
 import { Surface, Stack, Typography, Button, Panel } from '@archway/valet';

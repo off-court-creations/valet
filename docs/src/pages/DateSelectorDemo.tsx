@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/pages/DateSelectorDemo.tsx | valet
+// src/pages/DateSelectorDemo.tsx | valet-docs
 // Showcase of DateSelector component
 // ─────────────────────────────────────────────────────────────
 import { useState } from 'react';

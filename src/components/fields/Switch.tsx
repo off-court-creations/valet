@@ -54,8 +54,8 @@ const Track = styled('button')<{
   transition: background 150ms ease;
 
   &:focus-visible {
-    outline: 2px solid ${({ $primary }) => $primary};
-    outline-offset: 2px;
+    outline: var(--valet-switch-outline, 2px) solid ${({ $primary }) => $primary};
+    outline-offset: var(--valet-switch-offset, 2px);
   }
   &:disabled {
     opacity: 0.5;
@@ -70,7 +70,7 @@ const Thumb = styled('span')<{
 }>`
   position: absolute;
   top: 50%;
-  left: 2px; /* 2-px gutter */
+  left: var(--valet-switch-pad, 2px); /* gutter */
   transform: translate(${({ $checked, $offset }) => ($checked ? `${$offset}px` : '0')}, -50%);
   width: ${({ $size }) => $size}px;
   height: ${({ $size }) => $size}px;
@@ -169,7 +169,14 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
         $h={geom.trackH}
         $primary={theme.colors.primary}
         className={[presetClasses, className].filter(Boolean).join(' ')}
-        style={style}
+        style={
+          {
+            '--valet-switch-outline': theme.stroke(2),
+            '--valet-switch-offset': theme.stroke(2),
+            '--valet-switch-pad': theme.stroke(2),
+            ...style,
+          } as React.CSSProperties
+        }
       >
         <Thumb
           $checked={checked}

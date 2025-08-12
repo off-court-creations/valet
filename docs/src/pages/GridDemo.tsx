@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/pages/GridDemo.tsx | valet
+// src/pages/GridDemo.tsx | valet-docs
 // Showcase of Grid layout primitive
 // ─────────────────────────────────────────────────────────────
 import { Surface, Stack, Typography, Grid, Box, Tabs, Table, useTheme } from '@archway/valet';

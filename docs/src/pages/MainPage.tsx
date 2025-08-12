@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/pages/MainPage.tsx  | valet
+// src/pages/MainPage.tsx  | valet-docs
 // Doc home with adaptive drawer navigation
 // ─────────────────────────────────────────────────────────────
 

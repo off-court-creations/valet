@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/presets/globalPresets.ts | valet
+// src/presets/globalPresets.ts | valet-docs
 // Central registry for presets shared across multiple pages.
 // This module is imported once on startup, so every route
 // can safely reference these presets without pulling in
