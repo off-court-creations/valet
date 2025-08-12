@@ -21,6 +21,14 @@ All notable changes to this project will be documented in this file. The format 
  - Standardize default gap to 1 in `Grid` (aligns with `Stack`/`Tabs`)
  - Use `resolveSpace` in `Accordion` and `AppBar` for consistent numeric mapping
  - Fix file header paths and adopt `| valet-docs` marker for docs headers
+- Docs: Add Quickstart, Hello Valet tutorial, Mental Model (with MUI mapping), Styled Engine, Theme Store, and Components Primer pages
+- Docs: Update routes and navigation with new Getting Started and Concepts sections
+- Docs: Add copy buttons to larger Quickstart code blocks
+- Docs: Add reusable CodeBlock component for docs snippets
+  - Includes Snackbar feedback on copy ("copied")
+ - Polish Quickstart Step 5 with an action panel and links
+ - CodeBlock: vertically center single-line content for better alignment
+ - Use CodeBlock on Installation page for command snippet
 
 ## [0.24.0]
 - Setup ESLint and Prettier

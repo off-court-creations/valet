@@ -26,6 +26,8 @@ export interface TypographyProps extends React.HTMLAttributes<HTMLElement>, Pres
   /** Choose a theme font family */
   family?: 'heading' | 'body' | 'mono' | 'button';
   fontFamily?: string;
+  /** Control whitespace handling for multi-line/code text */
+  whitespace?: 'normal' | 'pre' | 'pre-wrap' | 'pre-line';
 }
 
 const mapping: Record<Variant, keyof JSX.IntrinsicElements> = {
@@ -52,6 +54,7 @@ export const Typography: React.FC<TypographyProps> = ({
   fontFamily,
   centered,
   noSelect = false,
+  whitespace = 'normal',
   preset: p,
   className,
   children,
@@ -79,6 +82,7 @@ export const Typography: React.FC<TypographyProps> = ({
       $italic: boolean;
       $center?: boolean;
       $noSelect: boolean;
+      $ws: 'normal' | 'pre' | 'pre-wrap' | 'pre-line';
     }>`
       margin: 0;
       color: ${({ $color }) => $color || 'var(--valet-text-color, inherit)'};
@@ -110,7 +114,7 @@ export const Typography: React.FC<TypographyProps> = ({
           `};
 
       /* Newline & wrapping guards */
-      white-space: normal;
+      white-space: ${({ $ws }) => $ws};
       overflow-wrap: anywhere;
       word-break: break-word;
       max-width: 100%;
@@ -130,6 +134,7 @@ export const Typography: React.FC<TypographyProps> = ({
       $italic={italic}
       $center={centered}
       $noSelect={noSelect}
+      $ws={whitespace}
       className={[presetClasses, className].filter(Boolean).join(' ')}
     >
       {children}

@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/App.tsx  |  valet
+// src/App.tsx  | valet-docs
 // Route-level code-splitting with React.lazy + Suspense
 // ─────────────────────────────────────────────────────────────
 import React, { Suspense, lazy } from 'react';
@@ -62,8 +62,12 @@ const DropzoneDemoPage = page(() => import('./pages/DropzoneDemo'));
 const DateSelectorDemoPage = page(() => import('./pages/DateSelectorDemo'));
 const MarkdownDemoPage = page(() => import('./pages/MarkdownDemo'));
 const OverviewPage = page(() => import('./pages/Overview'));
-const InstallationPage = page(() => import('./pages/Installation'));
-const UsagePage = page(() => import('./pages/Usage'));
+const QuickstartPage = page(() => import('./pages/Quickstart'));
+const HelloValetPage = page(() => import('./pages/HelloValet'));
+const MentalModelPage = page(() => import('./pages/MentalModel'));
+const StyledEnginePage = page(() => import('./pages/StyledEngine'));
+const ThemePage = page(() => import('./pages/Theme'));
+const ComponentsPrimerPage = page(() => import('./pages/ComponentsPrimer'));
 const SurfaceExplainerPage = page(() => import('./pages/SurfaceExplainer'));
 const PropPatternsPage = page(() => import('./pages/PropPatterns'));
 const ComplicatedDashboardPage = page(() => import('./pages/ComplicatedDashboard'));
@@ -105,12 +109,30 @@ export function App() {
           element={<OverviewPage />}
         />
         <Route
-          path='/installation'
-          element={<InstallationPage />}
+          path='/quickstart'
+          element={<QuickstartPage />}
+        />
+        
+        
+        <Route
+          path='/hello-valet'
+          element={<HelloValetPage />}
         />
         <Route
-          path='/usage'
-          element={<UsagePage />}
+          path='/mental-model'
+          element={<MentalModelPage />}
+        />
+        <Route
+          path='/styled'
+          element={<StyledEnginePage />}
+        />
+        <Route
+          path='/theme'
+          element={<ThemePage />}
+        />
+        <Route
+          path='/components-primer'
+          element={<ComponentsPrimerPage />}
         />
         <Route
           path='/surface'

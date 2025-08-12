@@ -89,16 +89,26 @@ const treeData: TreeNode<Item>[] = [
     id: 'getting-started',
     data: { label: 'Getting Started' },
     children: [
+      { id: '/quickstart', data: { label: 'Quickstart', path: '/quickstart' } },
       { id: '/overview', data: { label: 'Overview', path: '/overview' } },
-      {
-        id: '/installation',
-        data: { label: 'Installation', path: '/installation' },
-      },
-      { id: '/usage', data: { label: 'Usage', path: '/usage' } },
+      { id: '/hello-valet', data: { label: 'Hello Valet', path: '/hello-valet' } },
+      { id: '/mental-model', data: { label: 'Mental Model', path: '/mental-model' } },
       { id: '/spacing', data: { label: 'Spacing Contract', path: '/spacing' } },
       {
         id: '/prop-patterns',
         data: { label: 'Prop Patterns', path: '/prop-patterns' },
+      },
+    ],
+  },
+  {
+    id: 'concepts',
+    data: { label: 'Concepts' },
+    children: [
+      { id: '/theme', data: { label: 'Theme Store', path: '/theme' } },
+      { id: '/styled', data: { label: 'Styled Engine', path: '/styled' } },
+      {
+        id: '/components-primer',
+        data: { label: 'Components Primer', path: '/components-primer' },
       },
     ],
   },
