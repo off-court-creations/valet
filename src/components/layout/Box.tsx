@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/layout/Box.tsx  | valet
-// optional fullWidth; default inline sizing
+// width modes: content-left (default), content-right, centered, full
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
 import { styled } from '../../css/createStyled';
@@ -15,25 +15,36 @@ export interface BoxProps
     Pick<SpacingProps, 'pad' | 'compact'> {
   background?: string | undefined;
   textColor?: string | undefined;
-  centered?: boolean;
+  /** Center inner content (layout inside the box) */
+  centerContent?: boolean;
   /** Stretch to 100% width of container when true */
   fullWidth?: boolean;
+  /** Horizontal placement of the box when not fullWidth */
+  alignX?: 'left' | 'right' | 'center' | 'centered';
+  /** Deprecated: old prop name retained for BC */
+  centered?: boolean;
 }
 
 const Base = styled('div')<{
   $bg?: string;
   $text?: string;
-  $center?: boolean;
+  $centerContent?: boolean;
   $full?: boolean;
+  $alignX: 'left' | 'right' | 'center';
   $pad: string;
 }>`
   box-sizing: border-box;
   vertical-align: top;
 
   /* Sizing and layout */
-  display: ${({ $center, $full }) => ($center ? 'flex' : $full ? 'block' : 'inline-block')};
-  width: ${({ $full }) => ($full ? '100%' : 'auto')};
+  display: ${({ $centerContent }) => ($centerContent ? 'flex' : 'block')};
+  width: ${({ $full }) => ($full ? '100%' : 'max-content')};
   align-self: ${({ $full }) => ($full ? 'stretch' : 'flex-start')};
+  /* Anchor when in content mode: occupy intrinsic width and push to edge */
+  margin-left: ${({ $full, $alignX }) =>
+    $full ? '0' : $alignX === 'right' ? 'auto' : $alignX === 'center' ? 'auto' : '0'};
+  margin-right: ${({ $full, $alignX }) =>
+    $full ? '0' : $alignX === 'left' ? 'auto' : $alignX === 'center' ? 'auto' : '0'};
 
   /* Boundary guards */
   max-width: 100%;
@@ -43,8 +54,8 @@ const Base = styled('div')<{
 
   padding: ${({ $pad }) => $pad};
 
-  ${({ $center }) =>
-    $center &&
+  ${({ $centerContent }) =>
+    $centerContent &&
     `
       justify-content: center;
       align-items: center;
@@ -52,7 +63,8 @@ const Base = styled('div')<{
 
   ${({ $bg }) => $bg && `background: ${$bg}; --valet-bg: ${$bg};`}  
   ${({ $text }) => $text && `color: ${$text}; --valet-text-color: ${$text};`}
-  ${({ $center }) => $center !== undefined && `--valet-centered: ${$center ? '1' : '0'};`}
+  ${({ $centerContent }) =>
+    $centerContent !== undefined && `--valet-centered: ${$centerContent ? '1' : '0'};`}
 `;
 
 export const Box: React.FC<BoxProps> = ({
@@ -60,8 +72,10 @@ export const Box: React.FC<BoxProps> = ({
   className,
   background,
   textColor,
-  centered,
+  centerContent,
   fullWidth = false,
+  alignX,
+  centered, // deprecated alias
   compact,
   pad: padProp,
   style,
@@ -84,13 +98,22 @@ export const Box: React.FC<BoxProps> = ({
 
   const pad = resolveSpace(padProp, theme, compact, 1);
 
+  // Back-compat + normalization
+  const internalCenter = centerContent ?? centered ?? false;
+  const normalizedAlign: 'left' | 'right' | 'center' = (() => {
+    const raw = (alignX ?? 'left') as 'left' | 'right' | 'center' | 'centered';
+    if (raw === 'centered') return 'center';
+    return (raw as 'left' | 'right' | 'center') || 'left';
+  })();
+
   return (
     <Base
       {...rest}
       $bg={background}
       $text={resolvedText}
-      $center={centered}
-      $full={fullWidth}
+      $centerContent={internalCenter}
+      $full={!!fullWidth}
+      $alignX={normalizedAlign}
       $pad={pad}
       style={style}
       className={[presetClass, className].filter(Boolean).join(' ')}

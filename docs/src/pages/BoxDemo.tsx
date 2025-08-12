@@ -28,8 +28,9 @@ export default function BoxDemoPage() {
   const { theme, toggleMode } = useTheme(); // live theme switch
   const [bgKey, setBgKey] = useState<'none' | 'primary' | 'secondary' | 'tertiary'>('none');
   const [pad, setPad] = useState<number>(1);
-  const [centered, setCentered] = useState(false);
-  const [fullWidth, setFullWidth] = useState(true);
+  const [centerContent, setCenterContent] = useState(false);
+  const [fullWidth, setFullWidth] = useState(false);
+  const [alignX, setAlignX] = useState<'left' | 'right' | 'center'>('left');
   const bgValue: string | undefined =
     bgKey === 'none'
       ? undefined
@@ -75,16 +76,27 @@ export default function BoxDemoPage() {
         'Container padding. Numbers map via theme.spacing(n); strings pass through (e.g., \"12px\").',
     },
     {
-      prop: <code>centered</code>,
+      prop: <code>centerContent</code>,
       type: <code>boolean</code>,
       default: <code>false</code>,
-      description: 'Center contents using flexbox',
+      description: 'Center inner content using flexbox',
     },
     {
       prop: <code>fullWidth</code>,
       type: <code>boolean</code>,
       default: <code>false</code>,
-      description: 'Stretch to 100% width of the container',
+      description: 'Stretch to 100% width of the parent container',
+    },
+    {
+      prop: <code>alignX</code>,
+      type: <code>'left' | 'right' | 'center'</code>,
+      default: <code>'left'</code>,
+      description: (
+        <>
+          When not <code>fullWidth</code>, horizontally places the box within its parent. Use
+          {' '}<code>alignX='right'</code> for right‑bound, or <code>alignX='center'</code> to center it.
+        </>
+      ),
     },
     {
       prop: <code>compact</code>,
@@ -171,17 +183,32 @@ export default function BoxDemoPage() {
               <Typography variant='h3'>5. Width behaviour</Typography>
               <Stack>
                 <Box style={{ border: `1px dashed ${theme.colors['text']}` }}>
-                  <Typography>Default width: shrinks to content (inline-block)</Typography>
+                  <Typography>Default: content width anchored left</Typography>
                 </Box>
-                <Box
-                  fullWidth
-                  style={{ border: `1px dashed ${theme.colors['text']}` }}
-                >
-                  <Typography>fullWidth: stretches to the width of the parent</Typography>
+                <Box fullWidth style={{ border: `1px dashed ${theme.colors['text']}` }}>
+                  <Typography>Full width: stretches to the width of the parent</Typography>
                 </Box>
               </Stack>
 
-              <Typography variant='h3'>6. Nested Boxes</Typography>
+              <Typography variant='h3'>6. Right‑bound content</Typography>
+              <Box
+                alignX='right'
+                style={{ border: `1px dashed ${theme.colors['text']}` }}
+              >
+                <Typography>
+                  Anchored to the right with intrinsic width (alignX='right')
+                </Typography>
+              </Box>
+
+              <Typography variant='h3'>7. Centered placement</Typography>
+              <Box
+                alignX='center'
+                style={{ border: `1px dashed ${theme.colors['text']}` }}
+              >
+                <Typography>Horizontally centered with intrinsic width (alignX='center')</Typography>
+              </Box>
+
+              <Typography variant='h3'>8. Nested Boxes</Typography>
               <Box background={theme.colors['primary']}>
                 <Box background={theme.colors['tertiary']}>
                   <Typography>
@@ -191,7 +218,7 @@ export default function BoxDemoPage() {
                 </Box>
               </Box>
 
-              <Typography variant='h3'>7. Presets</Typography>
+              <Typography variant='h3'>9. Presets</Typography>
               <Panel variant='alt'>
                 <Stack>
                   <Box preset='fancyHolder'>
@@ -215,7 +242,7 @@ export default function BoxDemoPage() {
                 </Stack>
               </Panel>
 
-              <Typography variant='h3'>8. Theme coupling</Typography>
+              <Typography variant='h3'>10. Theme coupling</Typography>
               <Button
                 variant='outlined'
                 onClick={toggleMode}
@@ -223,7 +250,7 @@ export default function BoxDemoPage() {
                 Toggle light / dark mode
               </Button>
 
-              <Typography variant='h3'>9. Pass-through HTML props</Typography>
+              <Typography variant='h3'>11. Pass-through HTML props</Typography>
               <Typography>
                 Box forwards standard <code>div</code> attributes and events to the DOM element.
                 Example:
@@ -314,12 +341,8 @@ export default function BoxDemoPage() {
                   gap={1}
                   style={{ alignItems: 'center' }}
                 >
-                  <Typography variant='subtitle'>centered</Typography>
-                  <Switch
-                    checked={centered}
-                    onChange={setCentered}
-                    aria-label='Toggle centered'
-                  />
+                  <Typography variant='subtitle'>center content</Typography>
+                  <Switch checked={centerContent} onChange={setCenterContent} aria-label='Toggle centerContent' />
                 </Stack>
                 <Stack
                   direction='row'
@@ -328,18 +351,29 @@ export default function BoxDemoPage() {
                   style={{ alignItems: 'center' }}
                 >
                   <Typography variant='subtitle'>fullWidth</Typography>
-                  <Switch
-                    checked={fullWidth}
-                    onChange={setFullWidth}
-                    aria-label='Toggle fullWidth'
-                  />
+                  <Switch checked={fullWidth} onChange={setFullWidth} aria-label='Toggle fullWidth' />
+                </Stack>
+                <Stack gap={0.25}>
+                  <Typography variant='subtitle'>alignX</Typography>
+                  <Select
+                    placeholder='alignX'
+                    value={alignX}
+                    onChange={(v) => setAlignX(v as 'left' | 'right' | 'center')}
+                    style={{ width: 160 }}
+                    disabled={fullWidth}
+                  >
+                    <Select.Option value='left'>left</Select.Option>
+                    <Select.Option value='center'>center</Select.Option>
+                    <Select.Option value='right'>right</Select.Option>
+                  </Select>
                 </Stack>
               </Stack>
               <Box
                 background={bgValue}
                 pad={pad}
-                centered={centered}
+                centerContent={centerContent}
                 fullWidth={fullWidth}
+                alignX={alignX}
                 style={{
                   background: bgValue,
                   border: `1px dashed ${theme.colors['text']}`,

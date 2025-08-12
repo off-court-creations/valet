@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Added
+- Box: right-bound and centered content placement via `alignX` ('left'|'right'|'center')
+
+### Changed
+- Box: revert to `fullWidth` boolean; rename `centered` → `centerContent` (keep alias); remove deprecated `edge` prop
+
 - MetroSelect: add subtle hover for selected tiles using color mix akin to DateSelector (primary → text blend)
 
 - MetroSelect: add valet-esque hover tint on options (primary × background mix with hover gating)
