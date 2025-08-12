@@ -29,9 +29,15 @@ export default function CodeBlock({ code, fullWidth, ariaLabel, title }: CodeBlo
       <Stack
         direction='row'
         wrap={false}
-        style={{ justifyContent: 'space-between', alignItems: isMultiline ? 'flex-start' : 'center' }}
+        style={{
+          justifyContent: 'space-between',
+          alignItems: isMultiline ? 'flex-start' : 'center',
+        }}
       >
-        <Typography family='mono' whitespace='pre'>
+        <Typography
+          family='mono'
+          whitespace='pre'
+        >
           <code>{displayCode}</code>
         </Typography>
         <IconButton

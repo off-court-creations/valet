@@ -15,8 +15,7 @@ export const meta: DocMeta = {
   description:
     'valet is a performant, AI-forward UI library for React with predictable primitives, runtime theming, and accessibility by default.',
   pageType: 'landing',
-  tldr:
-    'One Surface per route, tiny styled engine, typed theme store, presets for shared styles, and more than two dozen accessible components.',
+  tldr: 'One Surface per route, tiny styled engine, typed theme store, presets for shared styles, and more than two dozen accessible components.',
 };
 
 export default function OverviewPage() {
@@ -25,8 +24,14 @@ export default function OverviewPage() {
   return (
     <Surface>
       <NavDrawer />
-      <Stack gap={2} style={{ padding: '1rem', maxWidth: 1000 }}>
-        <Typography variant='h2' bold>
+      <Stack
+        gap={2}
+        style={{ padding: '1rem', maxWidth: 1000 }}
+      >
+        <Typography
+          variant='h2'
+          bold
+        >
           Meet valet
         </Typography>
         <Typography>
@@ -36,22 +41,33 @@ export default function OverviewPage() {
           theming and agent-driven behavior.
         </Typography>
 
-        <Panel fullWidth variant='alt' pad={2}>
+        <Panel
+          fullWidth
+          variant='alt'
+          pad={2}
+        >
           <Stack gap={1}>
             <Typography bold>Why valet</Typography>
             <Typography>
-              • Blazing fast: atomic styles, hashed classnames, minimal runtime<br />• Accessible by
-              default: keyboard, focus, and ARIA patterns baked in<br />• AI-forward: chat widgets,
-              secure key storage, and a roadmap for a Semantic Interface Layer + Web Action Graph<br />•
-              Predictable: small set of primitives, consistent spacing and density controls
+              • Blazing fast: atomic styles, hashed classnames, minimal runtime
+              <br />• Accessible by default: keyboard, focus, and ARIA patterns baked in
+              <br />• AI-forward: chat widgets, secure key storage, and a roadmap for a Semantic
+              Interface Layer + Web Action Graph
+              <br />• Predictable: small set of primitives, consistent spacing and density controls
             </Typography>
           </Stack>
         </Panel>
 
-        <Typography variant='h3' bold>
+        <Typography
+          variant='h3'
+          bold
+        >
           The big pieces
         </Typography>
-        <Panel fullWidth pad={2}>
+        <Panel
+          fullWidth
+          pad={2}
+        >
           <Stack gap={1}>
             <Typography>
               <b>Surface</b>: a top-level wrapper per route. It owns a local store that tracks
@@ -65,8 +81,8 @@ export default function OverviewPage() {
             </Typography>
             <Typography>
               <b>Theme store</b>: a typed Zustand store with tokens for colors, spacing, radius,
-              stroke, breakpoints, and fonts. Initialize once with <code>useInitialTheme</code>; read
-              and update with <code>useTheme</code>.
+              stroke, breakpoints, and fonts. Initialize once with <code>useInitialTheme</code>;
+              read and update with <code>useTheme</code>.
             </Typography>
             <Typography>
               <b>Style presets</b>: register reusable styles via <code>definePreset()</code> and
@@ -84,7 +100,10 @@ export default function OverviewPage() {
           </Stack>
         </Panel>
 
-        <Typography variant='h3' bold>
+        <Typography
+          variant='h3'
+          bold
+        >
           Your first minute with valet
         </Typography>
         <Typography>Install and render a first screen. See Quickstart for full steps.</Typography>
@@ -120,50 +139,96 @@ export function App() {
           ariaLabel='Copy minimal app snippet'
         />
 
-        <Typography variant='h3' bold>
+        <Typography
+          variant='h3'
+          bold
+        >
           Best practices at a glance
         </Typography>
-        <Panel fullWidth pad={2}>
+        <Panel
+          fullWidth
+          pad={2}
+        >
           <Typography>
             • Mount <code>BrowserRouter</code> in <code>main.tsx</code> and render <code>App</code>
-            inside it<br />• Import global presets before the app renders<br />• Call
+            inside it
+            <br />• Import global presets before the app renders
+            <br />• Call
             <code> useInitialTheme</code> once in <code>App</code> to apply theme and preload fonts
-            <br />• Wrap each route in a single <code>Surface</code> (do not nest)<br />• Split
-            routes with <code>React.lazy</code> and <code>Suspense</code><br />• Use
-            <code> Stack</code> and <code>Panel</code> for consistent, responsive layout<br />• Define
-            shared styles with <code>definePreset()</code> and the <code>preset</code> prop<br />• Read
-            and update tokens via <code>useTheme</code> (avoid hard-coded colors)<br />• Prefer valet
-            components over raw HTML to maintain accessibility and theme cohesion
+            <br />• Wrap each route in a single <code>Surface</code> (do not nest)
+            <br />• Split routes with <code>React.lazy</code> and <code>Suspense</code>
+            <br />• Use
+            <code> Stack</code> and <code>Panel</code> for consistent, responsive layout
+            <br />• Define shared styles with <code>definePreset()</code> and the{' '}
+            <code>preset</code> prop
+            <br />• Read and update tokens via <code>useTheme</code> (avoid hard-coded colors)
+            <br />• Prefer valet components over raw HTML to maintain accessibility and theme
+            cohesion
           </Typography>
         </Panel>
 
-        <Typography variant='h3' bold>
+        <Typography
+          variant='h3'
+          bold
+        >
           Where to go next
         </Typography>
         <Panel fullWidth>
-          <Stack direction='row' gap={1} wrap style={{ alignItems: 'center' }}>
-            <Button variant='outlined' onClick={() => navigate('/quickstart')}>
-              <Icon icon='mdi:flash-outline' />&nbsp;Quickstart
+          <Stack
+            direction='row'
+            gap={1}
+            wrap
+            style={{ alignItems: 'center' }}
+          >
+            <Button
+              variant='outlined'
+              onClick={() => navigate('/quickstart')}
+            >
+              <Icon icon='mdi:flash-outline' />
+              &nbsp;Quickstart
             </Button>
-            <Button variant='outlined' onClick={() => navigate('/hello-valet')}>
-              <Icon icon='mdi:rocket-launch-outline' />&nbsp;Hello Valet
+            <Button
+              variant='outlined'
+              onClick={() => navigate('/hello-valet')}
+            >
+              <Icon icon='mdi:rocket-launch-outline' />
+              &nbsp;Hello Valet
             </Button>
-            <Button variant='outlined' onClick={() => navigate('/mental-model')}>
-              <Icon icon='mdi:brain' />&nbsp;Mental model
+            <Button
+              variant='outlined'
+              onClick={() => navigate('/mental-model')}
+            >
+              <Icon icon='mdi:brain' />
+              &nbsp;Mental model
             </Button>
-            <Button variant='outlined' onClick={() => navigate('/components-primer')}>
-              <Icon icon='mdi:book-open-variant' />&nbsp;Components primer
+            <Button
+              variant='outlined'
+              onClick={() => navigate('/components-primer')}
+            >
+              <Icon icon='mdi:book-open-variant' />
+              &nbsp;Components primer
             </Button>
-            <Button variant='outlined' onClick={() => navigate('/theme')}>
-              <Icon icon='mdi:palette-outline' />&nbsp;Theme store
+            <Button
+              variant='outlined'
+              onClick={() => navigate('/theme')}
+            >
+              <Icon icon='mdi:palette-outline' />
+              &nbsp;Theme store
             </Button>
-            <Button variant='outlined' onClick={() => navigate('/styled')}>
-              <Icon icon='mdi:xml' />&nbsp;Styled engine
+            <Button
+              variant='outlined'
+              onClick={() => navigate('/styled')}
+            >
+              <Icon icon='mdi:xml' />
+              &nbsp;Styled engine
             </Button>
           </Stack>
         </Panel>
 
-        <Typography variant='subtitle' color='var(--valet-text-color)'>
+        <Typography
+          variant='subtitle'
+          color='var(--valet-text-color)'
+        >
           Built for performance and accessibility. Designed for the next generation of AI‑assisted
           interfaces.
         </Typography>

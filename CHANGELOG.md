@@ -29,6 +29,7 @@ All notable changes to this project will be documented in this file. The format 
  - Polish Quickstart Step 5 with an action panel and links
  - CodeBlock: vertically center single-line content for better alignment
  - Use CodeBlock on Installation page for command snippet
+ - Box: default to inline sizing; add `fullWidth` prop and update docs demo/reference
 
 ## [0.24.0]
 - Setup ESLint and Prettier

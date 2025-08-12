@@ -110,7 +110,6 @@ export default function MentalModelPage() {
           intent.
         </Typography>
 
-        
         <Button onClick={() => navigate(-1)}>← Back</Button>
       </Stack>
     </Surface>

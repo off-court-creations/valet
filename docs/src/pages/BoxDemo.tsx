@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/pages/BoxDemo.tsx | valet-docs
+// docs/src/pages/BoxDemo.tsx  | valet-docs
 // Showcase of Box component
 // ─────────────────────────────────────────────────────────────
 import {
@@ -55,10 +55,16 @@ export default function BoxDemoPage() {
       description: 'Center contents using flexbox',
     },
     {
+      prop: <code>fullWidth</code>,
+      type: <code>boolean</code>,
+      default: <code>false</code>,
+      description: 'Stretch to 100% width of the container',
+    },
+    {
       prop: <code>compact</code>,
       type: <code>boolean</code>,
       default: <code>false</code>,
-      description: 'Remove default margin and padding',
+      description: 'Reduce default internal padding',
     },
     {
       prop: <code>preset</code>,
@@ -108,7 +114,6 @@ export default function BoxDemoPage() {
             <Box
               background='#333333'
               textColor={theme.colors['tertiary']}
-              style={{ padding: theme.spacing(1) }}
             >
               <Typography>
                 Greetings Programs!
@@ -131,15 +136,22 @@ export default function BoxDemoPage() {
               </Typography>
             </Box>
 
-            <Typography variant='h3'>5. Nested Boxes</Typography>
-            <Box
-              background={theme.colors['primary']}
-              style={{ padding: theme.spacing(1) }}
-            >
+            <Typography variant='h3'>5. Width behaviour</Typography>
+            <Stack>
+              <Box style={{ border: `1px dashed ${theme.colors['text']}` }}>
+                <Typography>Default width: shrinks to content (inline-block)</Typography>
+              </Box>
               <Box
-                background={theme.colors['secondary']}
-                style={{ padding: theme.spacing(1) }}
+                fullWidth
+                style={{ border: `1px dashed ${theme.colors['text']}` }}
               >
+                <Typography>fullWidth: stretches to the width of the parent</Typography>
+              </Box>
+            </Stack>
+
+            <Typography variant='h3'>6. Nested Boxes</Typography>
+            <Box background={theme.colors['primary']}>
+              <Box background={theme.colors['secondary']}>
                 <Typography>
                   Child automatically receives&nbsp;
                   <code style={{ color: 'var(--zero-text-color)' }}>--zero-text-color</code>
@@ -147,7 +159,7 @@ export default function BoxDemoPage() {
               </Box>
             </Box>
 
-            <Typography variant='h3'>6. Presets</Typography>
+            <Typography variant='h3'>7. Presets</Typography>
             <Stack>
               <Box preset='fancyHolder'>
                 <Typography>preset=&quot;fancyHolder&quot;</Typography>
@@ -169,7 +181,7 @@ export default function BoxDemoPage() {
               </Box>
             </Stack>
 
-            <Typography variant='h3'>7. Theme coupling</Typography>
+            <Typography variant='h3'>8. Theme coupling</Typography>
             <Button
               variant='outlined'
               onClick={toggleMode}

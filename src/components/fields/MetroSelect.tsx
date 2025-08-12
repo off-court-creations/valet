@@ -164,6 +164,7 @@ export const MetroSelect: MetroSelectComponent = ({
         direction='row'
         wrap
         compact
+        gap={gap}
         {...rest}
         style={style}
         className={[presetCls, className].filter(Boolean).join(' ')}

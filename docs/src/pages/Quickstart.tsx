@@ -151,27 +151,50 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         >
           5) Next steps
         </Typography>
-        <Panel variant='alt' fullWidth>
+        <Panel
+          variant='alt'
+          fullWidth
+        >
           <Stack gap={2}>
             <Typography>
               Add <code>Typography</code>, <code>Box</code>, and a simple form via{' '}
               <code>FormControl</code> + <code>TextField</code>. Read and update tokens using{' '}
               <code>useTheme</code>. Avoid nesting <code>Surface</code>.
             </Typography>
-            <Stack direction='row' gap={1} wrap style={{ alignItems: 'center' }}>
-              <Button variant='outlined' onClick={() => navigate('/hello-valet')}>
-                <Icon name='mdi:rocket-launch-outline' />&nbsp;Hello Valet tutorial
+            <Stack
+              direction='row'
+              gap={1}
+              wrap
+              style={{ alignItems: 'center' }}
+            >
+              <Button
+                variant='outlined'
+                onClick={() => navigate('/hello-valet')}
+              >
+                <Icon name='mdi:rocket-launch-outline' />
+                &nbsp;Hello Valet tutorial
               </Button>
-              <Button variant='outlined' onClick={() => navigate('/components-primer')}>
-                <Icon name='mdi:book-open-variant' />&nbsp;Components primer
+              <Button
+                variant='outlined'
+                onClick={() => navigate('/components-primer')}
+              >
+                <Icon name='mdi:book-open-variant' />
+                &nbsp;Components primer
               </Button>
-              <Button variant='outlined' onClick={() => navigate('/styled')}>
-                <Icon name='mdi:xml' />&nbsp;Styled engine
+              <Button
+                variant='outlined'
+                onClick={() => navigate('/styled')}
+              >
+                <Icon name='mdi:xml' />
+                &nbsp;Styled engine
               </Button>
-              <Button variant='outlined' onClick={() => navigate('/theme')}>
-                <Icon name='mdi:palette-outline' />&nbsp;Theme store
+              <Button
+                variant='outlined'
+                onClick={() => navigate('/theme')}
+              >
+                <Icon name='mdi:palette-outline' />
+                &nbsp;Theme store
               </Button>
-              
             </Stack>
           </Stack>
         </Panel>

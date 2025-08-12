@@ -114,7 +114,7 @@ export default function SpacingContractPage() {
             background='var(--valet-bg)'
           >
             <Typography bold>Strings pass through</Typography>
-            <Typography>pad='1rem' uses exact CSS value</Typography>
+            <Typography>pad=&apos;1rem&apos; uses exact CSS value</Typography>
           </Box>
           <Box
             pad={2}

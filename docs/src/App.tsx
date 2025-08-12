@@ -112,8 +112,7 @@ export function App() {
           path='/quickstart'
           element={<QuickstartPage />}
         />
-        
-        
+
         <Route
           path='/hello-valet'
           element={<HelloValetPage />}
