@@ -64,9 +64,9 @@ const Root = styled('div')<{
   $radius: string;
 }>`
   position: fixed;
-  left: 50%;
+  right: ${({ $spacing }) => $spacing};
   bottom: ${({ $spacing }) => $spacing};
-  transform: translateX(-50%) translateY(${({ $visible, $offset }) => ($visible ? '0' : $offset)});
+  transform: translateY(${({ $visible, $offset }) => ($visible ? '0' : $offset)});
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};
   pointer-events: ${({ $visible }) => ($visible ? 'auto' : 'none')};
   transition:
@@ -124,6 +124,8 @@ export const Snackbar: React.FC<SnackbarProps> = ({
   const [internalOpen, setInternalOpen] = useState(open !== undefined ? open : true);
   const visible = open !== undefined ? open : internalOpen;
   const [exiting, setExiting] = useState(false);
+  // Local flag to drive CSS visibility so we can animate on enter
+  const [show, setShow] = useState(false);
 
   /* Unified close handler (supports fade-out first) --------*/
   const handleClose: DismissFn = useCallback(() => {
@@ -160,6 +162,29 @@ export const Snackbar: React.FC<SnackbarProps> = ({
     return () => clearTimeout(timer);
   }, [visible, autoHideDuration, handleClose]);
 
+  /* Enter animation: when becoming visible, render hidden for a frame,
+     then flip to visible so CSS transitions run (avoids pop-in). */
+  useEffect(() => {
+    if (visible) {
+      setShow(false);
+      const id = requestAnimationFrame(() => {
+        // second RAF ensures layout is committed before transition
+        const id2 = requestAnimationFrame(() => setShow(true));
+        // store nested id on outer id for cleanup
+        (window as any).__valet_snackbar_enter_id2 = id2;
+      });
+      return () => {
+        cancelAnimationFrame(id);
+        if ((window as any).__valet_snackbar_enter_id2) {
+          cancelAnimationFrame((window as any).__valet_snackbar_enter_id2);
+          (window as any).__valet_snackbar_enter_id2 = undefined;
+        }
+      };
+    } else {
+      setShow(false);
+    }
+  }, [visible]);
+
   /* Don’t render once fully hidden in uncontrolled mode ----*/
   if (!visible && !exiting) return null;
 
@@ -184,7 +209,7 @@ export const Snackbar: React.FC<SnackbarProps> = ({
       <Root
         ref={ref}
         {...rest}
-        $visible={!exiting && visible}
+        $visible={!exiting && show}
         $flex={!noStack}
         $spacing={theme.spacing(1)}
         $outline={theme.colors.primary}

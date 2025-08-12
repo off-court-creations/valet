@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+- MetroSelect: add subtle hover for selected tiles using color mix akin to DateSelector (primary → text blend)
+
+- MetroSelect: add valet-esque hover tint on options (primary × background mix with hover gating)
+
+- MetroSelect: support multiple selection via `multiple` prop; allow array `value`/`defaultValue`
+- Docs: MetroSelect page adds a multi-select example starting with two non-adjacent items selected
+
+- Snackbar: anchor to bottom-right of viewport with slide-in/out transitions
+
 - Add theme.radius() and theme.stroke() helpers derived from density-aware spacing
 - Surface now exposes `--valet-radius` and `--valet-stroke` CSS vars per-surface
 - Replace hard-coded borders/radii with relative helpers in: Button, Panel, Tabs, Tooltip, Table,
