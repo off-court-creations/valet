@@ -9,6 +9,7 @@ import { useTheme } from '../../system/themeStore';
 import { useSurface } from '../../system/surfaceStore';
 import { shallow } from 'zustand/shallow';
 import type { Presettable } from '../../types';
+import { resolveSpace } from '../../utils/resolveSpace';
 
 /*───────────────────────────────────────────────────────────*/
 export interface GridProps extends React.HTMLAttributes<HTMLDivElement>, Presettable {
@@ -50,19 +51,8 @@ export const Grid: React.FC<GridProps> = ({
   const portrait = height > width;
   const effectiveCols = adaptive && portrait ? 1 : columns;
 
-  const g: string = compact
-    ? '0'
-    : typeof gapProp === 'number'
-      ? theme.spacing(gapProp)
-      : String(gapProp);
-
-  const pad: string = compact
-    ? '0'
-    : typeof padProp === 'number'
-      ? theme.spacing(padProp)
-      : padProp !== undefined
-        ? String(padProp)
-        : theme.spacing(1);
+  const g = resolveSpace(gapProp, theme, compact, 2);
+  const pad = resolveSpace(padProp, theme, compact, 1);
 
   const presetClass = p ? preset(p) : '';
 

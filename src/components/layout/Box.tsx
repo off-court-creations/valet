@@ -7,6 +7,7 @@ import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import type { Presettable } from '../../types';
+import { resolveSpace } from '../../utils/resolveSpace';
 
 export interface BoxProps extends React.ComponentProps<'div'>, Presettable {
   background?: string | undefined;
@@ -72,13 +73,7 @@ export const Box: React.FC<BoxProps> = ({
             : undefined;
   }
 
-  const pad = compact
-    ? '0'
-    : typeof padProp === 'number'
-      ? theme.spacing(padProp)
-      : padProp !== undefined
-        ? String(padProp)
-        : theme.spacing(1);
+  const pad = resolveSpace(padProp, theme, compact, 1);
 
   return (
     <Base

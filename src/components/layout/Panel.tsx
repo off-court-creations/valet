@@ -7,6 +7,7 @@ import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset, presetHas } from '../../css/stylePresets';
 import type { Presettable } from '../../types';
+import { resolveSpace } from '../../utils/resolveSpace';
 
 export type PanelVariant = 'main' | 'alt';
 
@@ -122,13 +123,7 @@ export const Panel: React.FC<PanelProps> = ({
             : theme.colors.text;
   }
 
-  const pad = compact
-    ? '0'
-    : typeof padProp === 'number'
-      ? theme.spacing(padProp)
-      : padProp !== undefined
-        ? String(padProp)
-        : theme.spacing(1);
+  const pad = resolveSpace(padProp, theme, compact, 1);
   const presetClasses = p ? preset(p) : '';
 
   return (
