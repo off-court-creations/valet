@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// src/pages/TabsDemoPage.tsx | valet
+// src/pages/TabsDemoPage.tsx | valet-docs
 // Demonstrates placement-aware <Tabs/> with varied panel content.
 // ─────────────────────────────────────────────────────────────────────────────
 import { useState } from 'react';

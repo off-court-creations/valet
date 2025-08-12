@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types -- Fully typed TSX: runtime PropTypes not used */
 // ─────────────────────────────────────────────────────────────
-// src/components/widgets/Accordion.tsx | valet
+// src/components/layout/Accordion.tsx  | valet
 // Fully-typed, theme-aware <Accordion /> component
 // – Composition API (Accordion.Item / .Header / .Content)
 // – Controlled & uncontrolled modes, single- or multi-expand
@@ -26,7 +26,8 @@ import { preset } from '../../css/stylePresets';
 import { toRgb, mix, toHex } from '../../helpers/color';
 import { useSurface } from '../../system/surfaceStore';
 import { shallow } from 'zustand/shallow';
-import type { Presettable } from '../../types';
+import type { Presettable, SpacingProps } from '../../types';
+import { resolveSpace } from '../../utils/resolveSpace';
 import { Typography } from '../primitives/Typography';
 
 /*───────────────────────────────────────────────────────────*/
@@ -135,15 +136,14 @@ const Content = styled('div')<{ $open: boolean; $height: number }>`
 /* Public API                                                */
 export interface AccordionProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'>,
-    Presettable {
+    Presettable,
+    Pick<SpacingProps, 'pad' | 'compact'> {
   defaultOpen?: number | number[];
   open?: number | number[];
   multiple?: boolean;
   onOpenChange?: (open: number[]) => void;
   headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
   constrainHeight?: boolean;
-  pad?: number | string;
-  compact?: boolean;
 }
 
 export interface AccordionItemProps extends React.HTMLAttributes<HTMLDivElement>, Presettable {
@@ -317,13 +317,7 @@ export const Accordion: React.FC<AccordionProps> & {
       >
         <Root
           {...divProps}
-          $pad={
-            compact
-              ? '0'
-              : typeof padProp === 'number'
-                ? theme.spacing(padProp)
-                : (padProp ?? theme.spacing(1))
-          }
+          $pad={resolveSpace(padProp, theme, compact, 1)}
           className={[presetClasses, className].filter(Boolean).join(' ')}
         >
           {React.Children.map(children, (child, idx) =>

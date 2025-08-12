@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// src/pages/TooltipDemoPage.tsx | valet
+// src/pages/TooltipDemoPage.tsx | valet-docs
 // Live showcase of the Tooltip component: placements, arrow toggle, controlled
 // visibility, enter/leave delays, presets, and theme coupling.
 // ─────────────────────────────────────────────────────────────────────────────

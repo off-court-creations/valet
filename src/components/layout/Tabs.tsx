@@ -19,7 +19,7 @@ import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { Tooltip } from '../widgets/Tooltip';
-import type { Presettable } from '../../types';
+import type { Presettable, SpacingProps } from '../../types';
 import { Typography } from '../primitives/Typography';
 import { resolveSpace } from '../../utils/resolveSpace';
 
@@ -149,16 +149,14 @@ const Panel = styled('div')`
 /*───────────────────────────────────────────────────────────*/
 export interface TabsProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'>,
-    Presettable {
+    Presettable,
+    Pick<SpacingProps, 'gap' | 'pad' | 'compact'> {
   active?: number;
   defaultActive?: number;
   onTabChange?: (i: number) => void;
   orientation?: 'horizontal' | 'vertical';
   placement?: 'top' | 'bottom' | 'left' | 'right';
   centered?: boolean;
-  gap?: number | string;
-  pad?: number | string;
-  compact?: boolean;
 }
 export interface TabProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, Presettable {
   index?: number;

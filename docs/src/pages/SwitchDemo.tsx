@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// src/pages/SwitchDemo.tsx | valet docs
+// src/pages/SwitchDemo.tsx | valet-docs
 // Comprehensive live demo for <Switch /> – showcases uncontrolled,
 // controlled, form-bound, sizes, disabled, and live theme coupling.
 // ─────────────────────────────────────────────────────────────────────────────

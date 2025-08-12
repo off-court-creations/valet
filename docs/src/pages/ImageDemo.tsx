@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/pages/ImageDemo.tsx | valet
+// src/pages/ImageDemo.tsx | valet-docs
 // Showcase of Image component
 // ─────────────────────────────────────────────────────────────
 import { Surface, Stack, Typography, Image, Button, useTheme } from '@archway/valet';

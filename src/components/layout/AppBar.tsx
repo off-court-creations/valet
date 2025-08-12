@@ -9,7 +9,8 @@ import { useTheme } from '../../system/themeStore';
 import { useSurface } from '../../system/surfaceStore';
 import { shallow } from 'zustand/shallow';
 import { preset } from '../../css/stylePresets';
-import type { Presettable } from '../../types';
+import type { Presettable, Space } from '../../types';
+import { resolveSpace } from '../../utils/resolveSpace';
 
 /*───────────────────────────────────────────────────────────*/
 export type AppBarToken = 'primary' | 'secondary' | 'tertiary';
@@ -19,7 +20,7 @@ export interface AppBarProps extends React.HTMLAttributes<HTMLElement>, Presetta
   textColor?: AppBarToken | string;
   left?: React.ReactNode;
   right?: React.ReactNode;
-  pad?: number | string;
+  pad?: Space;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -96,10 +97,9 @@ export const AppBar: React.FC<AppBarProps> = ({
         ? theme.colors[`${textColor}Text`]
         : textColor;
   const presetClass = p ? preset(p) : '';
-  const pad =
-    typeof padProp === 'number'
-      ? theme.spacing(padProp)
-      : (padProp ?? `${theme.spacing(1)} ${theme.spacing(2)}`);
+  // Standardize numeric mapping via resolveSpace; retain two-value default
+  const padSingle = resolveSpace(padProp, theme, false, 1);
+  const pad = padProp === undefined ? `${theme.spacing(1)} ${theme.spacing(2)}` : padSingle;
   const gap = theme.spacing(2);
 
   useLayoutEffect(() => {

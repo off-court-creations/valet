@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/pages/components/LLMChat.tsx | valet
+// src/pages/components/LLMChat.tsx | valet-docs
 // ─────────────────────────────────────────────────────────────
 import { Surface, Stack, Typography, Tabs, Table, Button, useTheme } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';

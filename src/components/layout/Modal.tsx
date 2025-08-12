@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/primitives/Modal.tsx | valet
+// src/components/layout/Modal.tsx  | valet
 // spacing refactor: container pad; rem→spacing; compact – 2025‑08‑12
 // Accessible, theme-aware Modal component that supports both “dialog” and
 // “alert” semantics. Fully controlled/uncontrolled, focus-trapping, backdrop &

@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/pages/PropPatterns.tsx  | valet
+// src/pages/PropPatterns.tsx  | valet-docs
 // Getting started usage page
 // ─────────────────────────────────────────────────────────────
 import { Surface, Stack, Typography, Button, Table } from '@archway/valet';
@@ -30,6 +30,21 @@ export default function UsagePage() {
       components: 'All components (besides Surface&apos;s internal LoadingBackdrop)',
     },
     {
+      prop: (
+        <>
+          <code>gap</code>, <code>pad</code>
+        </>
+      ),
+      purpose: (
+        <>
+          <b>Space</b> = <code>number | string</code>. Numbers map to <code>theme.spacing(n)</code>;
+          strings pass through. Defaults: <code>gap=1</code> (Stack, Grid, Tabs) and
+          <code> pad=1</code> (Stack, Grid, Tabs, Box, Panel, Accordion, Modal).
+        </>
+      ),
+      components: 'Stack, Grid, Tabs, Box (pad), Panel (pad), Accordion (pad), Modal (pad)',
+    },
+    {
       prop: <code>size</code>,
       purpose: (
         <p>
@@ -58,13 +73,24 @@ export default function UsagePage() {
     },
     {
       prop: <code>compact</code>,
-      purpose: 'Remove default spacing',
-      components: 'Box, Panel, Stack',
+      purpose: 'Remove container pad/gap; in Modal also zeros internal sections',
+      components: 'Stack, Grid, Tabs, Box, Panel, Accordion, Modal',
     },
     {
       prop: <code>centered</code>,
       purpose: 'Center content or text',
       components: 'Box, Typography, Panel',
+    },
+    {
+      prop: <code>density</code>,
+      purpose: (
+        <>
+          Controls <code>--valet-space</code> on <code>&lt;Surface&gt;</code> to scale numeric
+          spacing across the subtree: <code>comfortable</code>, <code>compact</code>,
+          <code> tight</code>, <code>zero</code>.
+        </>
+      ),
+      components: 'Surface (prop), all children (effect)',
     },
     {
       prop: <code>open</code>,

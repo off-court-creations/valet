@@ -8,16 +8,15 @@ import { preset } from '../../css/stylePresets';
 import { useTheme } from '../../system/themeStore';
 import { useSurface } from '../../system/surfaceStore';
 import { shallow } from 'zustand/shallow';
-import type { Presettable } from '../../types';
+import type { Presettable, SpacingProps, Space } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
 
 /*───────────────────────────────────────────────────────────*/
-export interface GridProps extends React.HTMLAttributes<HTMLDivElement>, Presettable {
+export interface GridProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+    Presettable,
+    Pick<SpacingProps, 'gap' | 'pad' | 'compact'> {
   columns?: number;
-  /** Inter-child spacing in units or CSS length. */
-  gap?: number | string;
-  /** Container inner padding in units or CSS length. */
-  pad?: number | string;
   /** Auto switch to 1 column in portrait */
   adaptive?: boolean;
   /** Compact zeros both pad and gap */
@@ -35,7 +34,7 @@ const Root = styled('div')<{ $cols: number; $gap: string; $pad: string }>`
 /*───────────────────────────────────────────────────────────*/
 export const Grid: React.FC<GridProps> = ({
   columns = 2,
-  gap: gapProp = 2,
+  gap: gapProp,
   pad: padProp,
   compact = false,
   adaptive = false,
@@ -51,7 +50,8 @@ export const Grid: React.FC<GridProps> = ({
   const portrait = height > width;
   const effectiveCols = adaptive && portrait ? 1 : columns;
 
-  const g = resolveSpace(gapProp, theme, compact, 2);
+  // Standardize default gap to 1 for consistency with Stack/Tabs
+  const g = resolveSpace(gapProp as Space, theme, compact, 1);
   const pad = resolveSpace(padProp, theme, compact, 1);
 
   const presetClass = p ? preset(p) : '';

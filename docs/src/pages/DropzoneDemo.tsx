@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/pages/DropzoneDemo.tsx | valet
+// src/pages/DropzoneDemo.tsx | valet-docs
 // Showcase of Dropzone widget
 // ─────────────────────────────────────────────────────────────
 import {

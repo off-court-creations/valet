@@ -6,22 +6,21 @@ import React from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset, presetHas } from '../../css/stylePresets';
-import type { Presettable } from '../../types';
+import type { Presettable, SpacingProps } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
 
 export type PanelVariant = 'main' | 'alt';
 
-export interface PanelProps extends React.ComponentProps<'div'>, Presettable {
+export interface PanelProps
+  extends React.ComponentProps<'div'>,
+    Presettable,
+    Pick<SpacingProps, 'pad' | 'compact'> {
   variant?: PanelVariant;
   fullWidth?: boolean;
   /** Explicit background override */
   background?: string | undefined;
   /** Centre contents & propagate intent via CSS var */
   centered?: boolean;
-  /** Remove built‑in margin and padding */
-  compact?: boolean;
-  /** Container inner padding */
-  pad?: number | string | undefined;
 }
 
 const Base = styled('div')<{

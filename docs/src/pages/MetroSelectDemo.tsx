@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/pages/MetroSelectDemo.tsx | valet
+// src/pages/MetroSelectDemo.tsx | valet-docs
 // Showcase of MetroSelect component
 // ─────────────────────────────────────────────────────────────
 import { useState } from 'react';

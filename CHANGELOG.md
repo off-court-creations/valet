@@ -17,6 +17,10 @@ All notable changes to this project will be documented in this file. The format 
 - Add List/Table/Panel border thickness via theme.stroke()
 - Add width fix for Table checkbox column using `theme.spacing(6)`
 - Add Unreleased notes for spacing/density overhaul groundwork
+ - Add shared `Space`/`SpacingProps` types for pad/gap ergonomics
+ - Standardize default gap to 1 in `Grid` (aligns with `Stack`/`Tabs`)
+ - Use `resolveSpace` in `Accordion` and `AppBar` for consistent numeric mapping
+ - Fix file header paths and adopt `| valet-docs` marker for docs headers
 
 ## [0.24.0]
 - Setup ESLint and Prettier

@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/pages/BoxDemo.tsx | valet
+// src/pages/BoxDemo.tsx | valet-docs
 // Showcase of Box component
 // ─────────────────────────────────────────────────────────────
 import {

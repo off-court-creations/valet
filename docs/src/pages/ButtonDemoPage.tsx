@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/pages/ButtonDemoPage.tsx | valet
+// src/pages/ButtonDemoPage.tsx | valet-docs
 // Comprehensive Button showcase (no redundancy, toggle last)
 // ─────────────────────────────────────────────────────────────
 import {

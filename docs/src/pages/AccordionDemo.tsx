@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// src/pages/AccordionDemoPage.tsx | valet
+// src/pages/AccordionDemoPage.tsx | valet-docs
 // Comprehensive live demo for <Accordion/> – showcases single & multi-expand,
 // controlled vs. uncontrolled, disabled items, heading levels, presets,
 // and live theme coupling.

@@ -6,21 +6,18 @@ import React from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
-import type { Presettable } from '../../types';
+import type { Presettable, SpacingProps } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
 
 /*───────────────────────────────────────────────────────────*/
-export interface StackProps extends React.HTMLAttributes<HTMLDivElement>, Presettable {
+export interface StackProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+    Presettable,
+    SpacingProps {
   direction?: 'row' | 'column';
-  /** Inter-child spacing in units or CSS length (container-owned). */
-  gap?: number | string | undefined;
-  /** Container inner padding in units or CSS length. */
-  pad?: number | string | undefined;
   /** If `true`, children wrap when they run out of space. Defaults to
    *  `true` for `row`, `false` for `column`. */
   wrap?: boolean;
-  /** Compact mode removes both gap and padding. */
-  compact?: boolean;
 }
 
 /*───────────────────────────────────────────────────────────*/

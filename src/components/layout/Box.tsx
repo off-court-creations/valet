@@ -6,15 +6,16 @@ import React from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
-import type { Presettable } from '../../types';
+import type { Presettable, SpacingProps } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
 
-export interface BoxProps extends React.ComponentProps<'div'>, Presettable {
+export interface BoxProps
+  extends React.ComponentProps<'div'>,
+    Presettable,
+    Pick<SpacingProps, 'pad' | 'compact'> {
   background?: string | undefined;
   textColor?: string | undefined;
   centered?: boolean;
-  compact?: boolean;
-  pad?: number | string | undefined;
 }
 
 const Base = styled('div')<{
