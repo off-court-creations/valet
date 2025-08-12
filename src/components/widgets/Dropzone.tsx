@@ -129,14 +129,12 @@ export const Dropzone: React.FC<DropzoneProps> = ({
 
   const fileList = showFileList && !showPreviews && files.length > 0 && (
     <Stack
-      spacing={0.5}
       style={{ width: '100%' }}
     >
       {files.map((f, i) => (
         <Stack
           key={i}
           direction='row'
-          spacing={0.5}
           style={{ alignItems: 'center' }}
         >
           <Icon icon={fileIcon(f.name)} />

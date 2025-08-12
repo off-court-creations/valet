@@ -327,7 +327,6 @@ export const RichChat: React.FC<RichChatProps> = ({
           >
             <Stack
               direction='row'
-              spacing={1}
               compact
             >
               <TextField

@@ -37,7 +37,7 @@ export default function KeyModal({ open, onClose }: KeyModalProps) {
         compact
         style={{ maxWidth: 480 }}
       >
-        <Stack spacing={1}>
+        <Stack>
           <Typography
             variant='h3'
             bold

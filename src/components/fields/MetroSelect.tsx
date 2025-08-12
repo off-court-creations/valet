@@ -163,7 +163,6 @@ export const MetroSelect: MetroSelectComponent = ({
       <Stack
         direction='row'
         wrap
-        spacing={0.5 * Number(gap)}
         compact
         {...rest}
         style={style}

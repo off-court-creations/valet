@@ -401,7 +401,6 @@ export const LLMChat: React.FC<ChatProps> = ({
             >
               <Stack
                 direction='row'
-                spacing={1}
                 compact
               >
                 <TextField
