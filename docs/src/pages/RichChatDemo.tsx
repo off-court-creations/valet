@@ -32,7 +32,7 @@ export default function RichChatDemoPage() {
       form: ({ onSubmit }) => (
         <Stack
           direction='row'
-          spacing={1}
+          gap={1}
         >
           <Button onClick={() => onSubmit('Yes')}>Yes</Button>
           <Button onClick={() => onSubmit('No')}>No</Button>
@@ -47,7 +47,7 @@ export default function RichChatDemoPage() {
     return (
       <Stack
         direction='row'
-        spacing={1}
+        gap={1}
       >
         <DateSelector
           value={date}
@@ -67,7 +67,7 @@ export default function RichChatDemoPage() {
     return (
       <Stack
         direction='row'
-        spacing={1}
+        gap={1}
       >
         <Iterator
           value={age}
@@ -89,7 +89,7 @@ export default function RichChatDemoPage() {
     return (
       <Stack
         direction='row'
-        spacing={1}
+        gap={1}
       >
         <Iterator
           value={kids}
