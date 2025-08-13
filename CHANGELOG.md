@@ -6,6 +6,8 @@ All notable changes to this project will be documented in this file. The format 
 
 ### Added
 - Box: right-bound and centered content placement via `alignX` ('left'|'right'|'center')
+- List: optional single-selection with `selectable`, `selected`, `defaultSelected`, and `onSelect`
+- List: `reorderable` prop (default `true`) to enable/disable drag-and-drop
 
 ### Changed
 - Box: revert to `fullWidth` boolean; rename `centered` → `centerContent` (keep alias); remove deprecated `edge` prop
@@ -45,6 +47,7 @@ All notable changes to this project will be documented in this file. The format 
  - CodeBlock: vertically center single-line content for better alignment
  - Use CodeBlock on Installation page for command snippet
  - Box: default to inline sizing; add `fullWidth` prop and update docs demo/reference
+ - List: kinetic padding now animates linearly; docs page now organized into Usage, Playground, Reference with prop table
 
 ## [0.24.0]
 - Setup ESLint and Prettier
