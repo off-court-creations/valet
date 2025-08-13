@@ -54,8 +54,8 @@ export default function CodeBlock({
         title={title ?? 'Copy'}
         onClick={handleCopy}
         style={{
-          marginLeft: theme.spacing(1),
-          marginTop: theme.spacing(0.5),
+          marginLeft: theme.spacing(0.5),
+          marginTop: theme.spacing(2),
         }}
       />
       {copied && (
