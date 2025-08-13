@@ -14,10 +14,10 @@ import {
   Switch,
   Button,
   useTheme,
+  CodeBlock,
 } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import NavDrawer from '../components/NavDrawer';
-import CodeBlock from '../components/CodeBlock';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Demo data                                                                  */
@@ -137,12 +137,9 @@ export default function ListDemoPage() {
     },
     {
       prop: <code>HTML ul props</code>,
-      type: (
-        <code>Omit&lt;React.HTMLAttributes&lt;HTMLUListElement&gt;, 'children'&gt;</code>
-      ),
+      type: <code>Omit&lt;React.HTMLAttributes&lt;HTMLUListElement&gt;, 'children'&gt;</code>,
       def: <code>-</code>,
-      description:
-        "Standard HTML attributes for <ul> (excluding 'children') pass through.",
+      description: "Standard HTML attributes for <ul> (excluding 'children') pass through.",
     },
   ];
 

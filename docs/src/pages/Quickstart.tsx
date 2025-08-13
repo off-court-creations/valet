@@ -2,8 +2,7 @@
 // src/pages/Quickstart.tsx  | valet-docs
 // 10‑minute quickstart: install, bootstrap, first screen
 // ─────────────────────────────────────────────────────────────
-import { Surface, Stack, Typography, Panel, Button, Icon } from '@archway/valet';
-import CodeBlock from '../components/CodeBlock';
+import { Surface, Stack, Typography, Panel, Button, Icon, CodeBlock } from '@archway/valet';
 import NavDrawer from '../components/NavDrawer';
 import { useNavigate } from 'react-router-dom';
 import type { DocMeta } from '../types';

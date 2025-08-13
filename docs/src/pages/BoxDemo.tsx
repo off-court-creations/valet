@@ -15,12 +15,12 @@ import {
   Select,
   Iterator,
   Switch,
+  CodeBlock,
 } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 import NavDrawer from '../components/NavDrawer';
-import CodeBlock from '../components/CodeBlock';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Demo page                                                                  */

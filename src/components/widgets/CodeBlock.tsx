@@ -1,9 +1,12 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/CodeBlock.tsx  | valet-docs
+// src/components/widgets/CodeBlock.tsx  | valet
 // Reusable code block with Markdown highlighting, copy button, and snackbar feedback
 // ─────────────────────────────────────────────────────────────
-import { Markdown, IconButton, Snackbar, useTheme } from '@archway/valet';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import IconButton from '../fields/IconButton';
+import { Markdown } from './Markdown';
+import Snackbar from './Snackbar';
+import { useTheme } from '../../system/themeStore';
 
 export interface CodeBlockProps {
   code: string;
@@ -13,13 +16,13 @@ export interface CodeBlockProps {
   title?: string;
 }
 
-export default function CodeBlock({
+export const CodeBlock: React.FC<CodeBlockProps> = ({
   code,
   language = 'typescript',
   fullWidth,
   ariaLabel,
   title,
-}: CodeBlockProps) {
+}) => {
   const [copied, setCopied] = useState(false);
   const { mode, theme } = useTheme();
   const isMultiline = code.includes('\n');
@@ -66,4 +69,6 @@ export default function CodeBlock({
       )}
     </div>
   );
-}
+};
+
+export default CodeBlock;
