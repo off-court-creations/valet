@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file. The format 
 - Embed GitHub light and dark highlight.js themes locally
 - Lower `CodeBlock` copy button for better alignment
 - Promote `CodeBlock` to core widget
+- Document `CodeBlock` widget with dedicated docs page
 
 ## [0.25.1]
 
