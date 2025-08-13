@@ -171,13 +171,19 @@ export const Snackbar: React.FC<SnackbarProps> = ({
         // second RAF ensures layout is committed before transition
         const id2 = requestAnimationFrame(() => setShow(true));
         // store nested id on outer id for cleanup
-        (window as any).__valet_snackbar_enter_id2 = id2;
+        const w = window as typeof window & {
+          __valet_snackbar_enter_id2?: number;
+        };
+        w.__valet_snackbar_enter_id2 = id2;
       });
       return () => {
         cancelAnimationFrame(id);
-        if ((window as any).__valet_snackbar_enter_id2) {
-          cancelAnimationFrame((window as any).__valet_snackbar_enter_id2);
-          (window as any).__valet_snackbar_enter_id2 = undefined;
+        const w = window as typeof window & {
+          __valet_snackbar_enter_id2?: number;
+        };
+        if (w.__valet_snackbar_enter_id2) {
+          cancelAnimationFrame(w.__valet_snackbar_enter_id2);
+          w.__valet_snackbar_enter_id2 = undefined;
         }
       };
     } else {
