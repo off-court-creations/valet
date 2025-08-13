@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+- Fix: eliminate resize-induced leak with persistent `Drawer`
+  - Skip registering portalled elements in styled engine (no child RO churn)
+  - Avoid subscribing to surface width/height unless `adaptive` is on
+
 - Highlight Markdown code blocks with language-aware `CodeBlock`
 - Preserve whitespace in highlighted Markdown code blocks
 - Make Markdown code block highlighting theme-aware

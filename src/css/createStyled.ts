@@ -122,6 +122,11 @@ export function styled<Tag extends keyof JSX.IntrinsicElements>(tag: Tag) {
       useLayoutEffect(() => {
         const el = localRef.current;
         if (!surface || !el) return;
+        const root = surface.getState().element;
+        // Skip registration for elements rendered outside the surface root
+        // (e.g. portalled overlays like Drawer/Modal). This avoids tracking
+        // and ResizeObserver churn during window resizes.
+        if (!root || !root.contains(el)) return;
         const id = idRef.current;
         surface.getState().registerChild(id, el, (m) => {
           el.style.setProperty('--valet-el-width', `${m.width}px`);
