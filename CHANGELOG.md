@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+- Docs improvements
+- `Drawer`, `Typography`, `Tree` interplay improvements. 
+
 ## [0.25.1]
 - Fix: eliminate resize-induced leak with persistent `Drawer`
 - Improved `Codeblock`

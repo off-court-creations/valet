@@ -16,6 +16,10 @@ import type { Presettable } from '../../types';
 import { IconButton } from '../fields/IconButton';
 import { withAlpha } from '../../helpers/color';
 
+/* Allow strongly-typed CSS custom properties (e.g. --valet-*) */
+type CSSVarName = `--${string}`;
+type CSSVarStyles = React.CSSProperties & Record<CSSVarName, string | number>;
+
 /*───────────────────────────────────────────────────────────*/
 export type DrawerAnchor = 'left' | 'right' | 'top' | 'bottom';
 
@@ -282,9 +286,17 @@ export const Drawer: React.FC<DrawerProps> = ({
         $adaptive={adaptiveMode}
         className={presetClasses}
         style={
-          anchor === 'left' || anchor === 'right' || anchor === 'top'
-            ? { top: `${surfOffset}px` }
-            : undefined
+          {
+            // Preserve top offset when docked on sides/top
+            ...(anchor === 'left' || anchor === 'right' || anchor === 'top'
+              ? { top: `${surfOffset}px` }
+              : null),
+            // Mirror Surface font variables so portalled content retains typography
+            '--valet-font-heading': `'${theme.fonts.heading}', sans-serif`,
+            '--valet-font-body': `'${theme.fonts.body}', sans-serif`,
+            '--valet-font-mono': `'${theme.fonts.mono}', monospace`,
+            '--valet-font-button': `'${theme.fonts.button}', sans-serif`,
+          } as CSSVarStyles
         }
       >
         {adaptiveMode && portrait && (

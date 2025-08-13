@@ -128,10 +128,11 @@ export const Surface: React.FC<SurfaceProps> = ({
   const cssVars: CSSVarStyles = {
     '--valet-bg': theme.colors.background,
     '--valet-text-color': theme.colors.text,
-    '--valet-font-heading': theme.fonts.heading,
-    '--valet-font-body': theme.fonts.body,
-    '--valet-font-mono': theme.fonts.mono,
-    '--valet-font-button': theme.fonts.button,
+    // Quote family names to preserve spaces; include sensible fallbacks
+    '--valet-font-heading': `'${theme.fonts.heading}', sans-serif`,
+    '--valet-font-body': `'${theme.fonts.body}', sans-serif`,
+    '--valet-font-mono': `'${theme.fonts.mono}', monospace`,
+    '--valet-font-button': `'${theme.fonts.button}', sans-serif`,
   };
 
   /* Layout: fixed full-screen or flow-based ---------------------------- */
