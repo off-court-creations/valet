@@ -150,18 +150,27 @@ export const Drawer: React.FC<DrawerProps> = ({
     let mql: MediaQueryList | null = null;
     try {
       mql = window.matchMedia('(orientation: portrait)');
-      const handler = (e: MediaQueryListEvent | MediaQueryList) => {
-        setPortrait('matches' in e ? e.matches : (e as MediaQueryList).matches);
+      const onChange = (e: MediaQueryListEvent) => {
+        setPortrait(e.matches);
       };
       // Set initial synchronously (covers Safari oddities)
       setPortrait(mql.matches);
-      if ('addEventListener' in mql) mql.addEventListener('change', handler as EventListener);
-      else (mql as any).addListener?.(handler);
+      type MediaQueryListLegacy = MediaQueryList & {
+        addListener: (listener: (this: MediaQueryList, ev: MediaQueryListEvent) => void) => void;
+        removeListener: (listener: (this: MediaQueryList, ev: MediaQueryListEvent) => void) => void;
+      };
+      if (typeof mql.addEventListener === 'function') {
+        mql.addEventListener('change', onChange);
+      } else if (typeof (mql as MediaQueryListLegacy).addListener === 'function') {
+        (mql as MediaQueryListLegacy).addListener(onChange);
+      }
       return () => {
         if (!mql) return;
-        if ('removeEventListener' in mql)
-          mql.removeEventListener('change', handler as EventListener);
-        else (mql as any).removeListener?.(handler);
+        if (typeof mql.removeEventListener === 'function') {
+          mql.removeEventListener('change', onChange);
+        } else if (typeof (mql as MediaQueryListLegacy).removeListener === 'function') {
+          (mql as MediaQueryListLegacy).removeListener(onChange);
+        }
       };
     } catch {
       // no-op
