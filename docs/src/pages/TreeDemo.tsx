@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// docs/src/pages/TreeDemo.tsx | valet
+// docs/src/pages/TreeDemo.tsx | valet-docs
 // Showcase of Tree component
 // ─────────────────────────────────────────────────────────────
 import {

@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// src/pages/LLMChatDemo.tsx | valet
+// src/pages/LLMChatDemo.tsx | valet-docs
 // Simple showcase for <LLMChat /> component
 // ─────────────────────────────────────────────────────────────────────────────
 import { useState } from 'react';

@@ -34,8 +34,8 @@ const Wrapper = styled('div')<{ theme: Theme }>`
 
 const Field = styled('input')<{ theme: Theme; $w: string }>`
   padding: ${({ theme }) => theme.spacing(0.5)};
-  border: 1px solid ${({ theme }) => theme.colors.text + '44'};
-  border-radius: 4px;
+  border: ${({ theme }) => theme.stroke(1)} solid ${({ theme }) => theme.colors.text + '44'};
+  border-radius: ${({ theme }) => theme.radius(1)};
   background: ${({ theme }) => theme.colors.background};
   color: ${({ theme }) => theme.colors.text};
   font-size: 0.875rem;
@@ -49,8 +49,8 @@ const Field = styled('input')<{ theme: Theme; $w: string }>`
     margin: 0;
   }
   &:focus {
-    outline: 2px solid ${({ theme }) => theme.colors.primary};
-    outline-offset: 1px;
+    outline: ${({ theme }) => theme.stroke(2)} solid ${({ theme }) => theme.colors.primary};
+    outline-offset: ${({ theme }) => theme.stroke(1)};
   }
 `;
 

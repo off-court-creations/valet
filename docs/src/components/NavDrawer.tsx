@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/NavDrawer.tsx  | valet docs
+// src/components/NavDrawer.tsx  | valet-docs
 // Reusable navigation drawer for docs
 // ─────────────────────────────────────────────────────────────
 import { useState } from 'react';
@@ -68,6 +68,7 @@ const examples: [string, string][] = [
   ['Presets', '/presets'],
   ['LLMChat', '/chat-demo'],
   ['RichChat', '/rich-chat-demo'],
+  ['Complicated Dashboard', '/dashboard-demo'],
 ];
 
 const DEFAULT_EXPANDED = [
@@ -88,15 +89,25 @@ const treeData: TreeNode<Item>[] = [
     id: 'getting-started',
     data: { label: 'Getting Started' },
     children: [
+      { id: '/quickstart', data: { label: 'Quickstart', path: '/quickstart' } },
       { id: '/overview', data: { label: 'Overview', path: '/overview' } },
-      {
-        id: '/installation',
-        data: { label: 'Installation', path: '/installation' },
-      },
-      { id: '/usage', data: { label: 'Usage', path: '/usage' } },
       {
         id: '/prop-patterns',
         data: { label: 'Prop Patterns', path: '/prop-patterns' },
+      },
+    ],
+  },
+  {
+    id: 'concepts',
+    data: { label: 'Concepts' },
+    children: [
+      { id: '/mental-model', data: { label: 'Mental Model', path: '/mental-model' } },
+      { id: '/theme', data: { label: 'Theme Store', path: '/theme' } },
+      { id: '/styled', data: { label: 'Styled Engine', path: '/styled' } },
+      { id: '/spacing', data: { label: 'Spacing Contract', path: '/spacing' } },
+      {
+        id: '/components-primer',
+        data: { label: 'Components Primer', path: '/components-primer' },
       },
     ],
   },

@@ -55,13 +55,18 @@ const Root = styled('div')<{
   $visible: boolean;
   $spacing: string;
   $outline: string;
+  $outlineW: string;
   $bg: string;
   $flex: boolean;
+  $padV: string;
+  $padH: string;
+  $offset: string;
+  $radius: string;
 }>`
   position: fixed;
-  left: 50%;
+  right: ${({ $spacing }) => $spacing};
   bottom: ${({ $spacing }) => $spacing};
-  transform: translateX(-50%) translateY(${({ $visible }) => ($visible ? '0' : '0.75rem')});
+  transform: translateY(${({ $visible, $offset }) => ($visible ? '0' : $offset)});
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};
   pointer-events: ${({ $visible }) => ($visible ? 'auto' : 'none')};
   transition:
@@ -69,9 +74,9 @@ const Root = styled('div')<{
     transform 200ms ease;
 
   background: ${({ $bg }) => $bg};
-  outline: 0.25rem solid ${({ $outline }) => $outline};
-  border-radius: 0.375rem;
-  padding: 0.5rem 1rem;
+  outline: ${({ $outlineW }) => $outlineW} solid ${({ $outline }) => $outline};
+  border-radius: ${({ $radius }) => $radius};
+  padding: ${({ $padV, $padH }) => `${$padV} ${$padH}`};
   max-width: 95vw;
   box-sizing: border-box;
   z-index: 1000;
@@ -119,6 +124,8 @@ export const Snackbar: React.FC<SnackbarProps> = ({
   const [internalOpen, setInternalOpen] = useState(open !== undefined ? open : true);
   const visible = open !== undefined ? open : internalOpen;
   const [exiting, setExiting] = useState(false);
+  // Local flag to drive CSS visibility so we can animate on enter
+  const [show, setShow] = useState(false);
 
   /* Unified close handler (supports fade-out first) --------*/
   const handleClose: DismissFn = useCallback(() => {
@@ -155,6 +162,29 @@ export const Snackbar: React.FC<SnackbarProps> = ({
     return () => clearTimeout(timer);
   }, [visible, autoHideDuration, handleClose]);
 
+  /* Enter animation: when becoming visible, render hidden for a frame,
+     then flip to visible so CSS transitions run (avoids pop-in). */
+  useEffect(() => {
+    if (visible) {
+      setShow(false);
+      const id = requestAnimationFrame(() => {
+        // second RAF ensures layout is committed before transition
+        const id2 = requestAnimationFrame(() => setShow(true));
+        // store nested id on outer id for cleanup
+        (window as any).__valet_snackbar_enter_id2 = id2;
+      });
+      return () => {
+        cancelAnimationFrame(id);
+        if ((window as any).__valet_snackbar_enter_id2) {
+          cancelAnimationFrame((window as any).__valet_snackbar_enter_id2);
+          (window as any).__valet_snackbar_enter_id2 = undefined;
+        }
+      };
+    } else {
+      setShow(false);
+    }
+  }, [visible]);
+
   /* Don’t render once fully hidden in uncontrolled mode ----*/
   if (!visible && !exiting) return null;
 
@@ -179,11 +209,16 @@ export const Snackbar: React.FC<SnackbarProps> = ({
       <Root
         ref={ref}
         {...rest}
-        $visible={!exiting && visible}
+        $visible={!exiting && show}
         $flex={!noStack}
         $spacing={theme.spacing(1)}
         $outline={theme.colors.primary}
+        $outlineW={theme.stroke(4)}
         $bg={theme.colors.background}
+        $padV={theme.spacing(1)}
+        $padH={theme.spacing(2)}
+        $offset={theme.spacing(1.5)}
+        $radius={theme.radius(1)}
         className={classes}
         style={style}
       >

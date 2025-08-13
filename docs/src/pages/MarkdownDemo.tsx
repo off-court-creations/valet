@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/pages/MarkdownDemo.tsx | valet
+// src/pages/MarkdownDemo.tsx | valet-docs
 // Demo of Markdown component
 // ─────────────────────────────────────────────────────────────
 import {

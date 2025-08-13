@@ -81,16 +81,14 @@ const Row = styled('div')<{
   padding-right: ${({ $right }) => $right};
 `;
 
-const Bar = styled('div')<{ $bg: string; $text: string; $gap: string }>`
+const Bar = styled('div')<{ $bg: string; $text: string; $gap: string; $pad: string }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.5rem 1rem;
+  padding: ${({ $pad }) => $pad};
   background: ${({ $bg }) => $bg};
   color: ${({ $text }) => $text};
-  & > * {
-    padding: ${({ $gap }) => $gap};
-  }
+  /* Consumers can space inner content explicitly; no blanket child padding */
 `;
 
 const typingDot = keyframes`
@@ -282,6 +280,7 @@ export const LLMChat: React.FC<ChatProps> = ({
           $bg={theme.colors.secondary}
           $text={theme.colors.secondaryText}
           $gap={theme.spacing(0.5)}
+          $pad={`${theme.spacing(1)} ${theme.spacing(2)}`}
         >
           {provider && key ? (
             <Select
@@ -402,7 +401,6 @@ export const LLMChat: React.FC<ChatProps> = ({
             >
               <Stack
                 direction='row'
-                spacing={1}
                 compact
               >
                 <TextField

@@ -36,6 +36,17 @@ Welcome to **@archway/valet**, a performant, AI-forward UI library designed as a
   // ─────────────────────────────────────────────────────────────
   ```
 
+  - For docs pages, use the docs marker:
+
+  ```tsx
+  // ─────────────────────────────────────────────────────────────
+  // src/pages/Overview.tsx  | valet-docs
+  // docs page description
+  // ─────────────────────────────────────────────────────────────
+  ```
+
+  The part after `|` is a short product marker: use `valet` for the library source and `valet-docs` for files under `docs/src`.
+
 - Code is primarily authored by 0xbenc (and his agent proxies)
   - Tech debt is to be avoided
   - Radical thinking is encouraged when it doesn't produce hacky code

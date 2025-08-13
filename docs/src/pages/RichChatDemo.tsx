@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// src/pages/RichChatDemo.tsx | valet
+// src/pages/RichChatDemo.tsx | valet-docs
 // Showcase for <RichChat /> component with local logic
 // ─────────────────────────────────────────────────────────────────────────────
 import { useState } from 'react';

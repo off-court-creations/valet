@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// docs/src/pages/RadioGroupDemo.tsx | valet
+// docs/src/pages/RadioGroupDemo.tsx | valet-docs
 // Full-feature playground showcase for <RadioGroup /> + <Radio />
 // – Uncontrolled, controlled, sizes, disabled, row vs column, presets,
 //   FormControl binding, keyboard navigation, and live theme validation.

@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/pages/AvatarDemo.tsx | valet
+// src/pages/AvatarDemo.tsx | valet-docs
 // Showcase of Avatar component
 // ─────────────────────────────────────────────────────────────
 import {

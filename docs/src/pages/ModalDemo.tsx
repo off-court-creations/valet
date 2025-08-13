@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// src/pages/ModalDemoPage.tsx | valet
+// src/pages/ModalDemoPage.tsx | valet-docs
 // Interactive playground demonstrating every capability of the Modal component
 // (dialog vs alert, controlled / uncontrolled, backdrop & ESC toggles, maxW,
 // fullWidth, preset styling, theme coupling).

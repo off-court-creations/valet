@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/main.tsx
+// src/main.tsx  | valet-docs
 // Bootstraps React + valet, *plus* eagerly registers presets.
 // ─────────────────────────────────────────────────────────────
 import React from 'react';

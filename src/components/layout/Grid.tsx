@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/layout/Grid.tsx  | valet
-// simple css grid container
+// spacing refactor: container pad + gap, compact – 2025-08-12
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
 import { styled } from '../../css/createStyled';
@@ -8,13 +8,19 @@ import { preset } from '../../css/stylePresets';
 import { useTheme } from '../../system/themeStore';
 import { useSurface } from '../../system/surfaceStore';
 import { shallow } from 'zustand/shallow';
-import type { Presettable } from '../../types';
+import type { Presettable, SpacingProps, Space } from '../../types';
+import { resolveSpace } from '../../utils/resolveSpace';
 
 /*───────────────────────────────────────────────────────────*/
-export interface GridProps extends React.HTMLAttributes<HTMLDivElement>, Presettable {
+export interface GridProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+    Presettable,
+    Pick<SpacingProps, 'gap' | 'pad' | 'compact'> {
   columns?: number;
-  gap?: number | string;
+  /** Auto switch to 1 column in portrait */
   adaptive?: boolean;
+  /** Compact zeros both pad and gap */
+  compact?: boolean;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -22,16 +28,15 @@ const Root = styled('div')<{ $cols: number; $gap: string; $pad: string }>`
   display: grid;
   grid-template-columns: repeat(${({ $cols }) => $cols}, 1fr);
   gap: ${({ $gap }) => $gap};
-  margin: ${({ $pad }) => $pad};
-  & > * {
-    padding: ${({ $pad }) => $pad};
-  }
+  padding: ${({ $pad }) => $pad};
 `;
 
 /*───────────────────────────────────────────────────────────*/
 export const Grid: React.FC<GridProps> = ({
   columns = 2,
-  gap = 2,
+  gap: gapProp,
+  pad: padProp,
+  compact = false,
   adaptive = false,
   preset: p,
   style,
@@ -45,14 +50,9 @@ export const Grid: React.FC<GridProps> = ({
   const portrait = height > width;
   const effectiveCols = adaptive && portrait ? 1 : columns;
 
-  let g: string;
-  if (typeof gap === 'number') {
-    g = theme.spacing(gap);
-  } else {
-    g = String(gap);
-  }
-
-  const pad = theme.spacing(1);
+  // Standardize default gap to 1 for consistency with Stack/Tabs
+  const g = resolveSpace(gapProp as Space, theme, compact, 1);
+  const pad = resolveSpace(padProp, theme, compact, 1);
 
   const presetClass = p ? preset(p) : '';
 

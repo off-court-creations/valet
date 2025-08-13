@@ -1,24 +1,26 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/layout/Panel.tsx  | valet
-// overhaul: internal scrollbars & boundary guards – 2025‑07‑17
+// spacing refactor: container pad + compact – 2025‑08‑12
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset, presetHas } from '../../css/stylePresets';
-import type { Presettable } from '../../types';
+import type { Presettable, SpacingProps } from '../../types';
+import { resolveSpace } from '../../utils/resolveSpace';
 
 export type PanelVariant = 'main' | 'alt';
 
-export interface PanelProps extends React.ComponentProps<'div'>, Presettable {
+export interface PanelProps
+  extends React.ComponentProps<'div'>,
+    Presettable,
+    Pick<SpacingProps, 'pad' | 'compact'> {
   variant?: PanelVariant;
   fullWidth?: boolean;
   /** Explicit background override */
   background?: string | undefined;
   /** Centre contents & propagate intent via CSS var */
   centered?: boolean;
-  /** Remove built‑in margin and padding */
-  compact?: boolean;
 }
 
 const Base = styled('div')<{
@@ -26,9 +28,9 @@ const Base = styled('div')<{
   $full?: boolean;
   $center?: boolean;
   $outline?: string;
+  $strokeW: string;
   $bg?: string;
   $text?: string;
-  $margin: string;
   $pad: string;
 }>`
   box-sizing: border-box;
@@ -53,10 +55,7 @@ const Base = styled('div')<{
     display: none;
   }
 
-  margin: ${({ $margin }) => $margin};
-  & > * {
-    padding: ${({ $pad }) => $pad};
-  }
+  padding: ${({ $pad }) => $pad};
 
   ${({ $center }) =>
     $center &&
@@ -74,8 +73,8 @@ const Base = styled('div')<{
     `}
 
   /* Variant “alt” gets outline ------------------------------ */
-  ${({ $variant, $outline }) =>
-    $variant === 'alt' && $outline ? `border: 1px solid ${$outline};` : ''}
+  ${({ $variant, $outline, $strokeW }) =>
+    $variant === 'alt' && $outline ? `border: ${$strokeW} solid ${$outline};` : ''}
 
   ${({ $text }) =>
     $text &&
@@ -96,6 +95,7 @@ export const Panel: React.FC<PanelProps> = ({
   style,
   background,
   compact,
+  pad: padProp,
   children,
   ...rest
 }) => {
@@ -123,8 +123,7 @@ export const Panel: React.FC<PanelProps> = ({
             : theme.colors.text;
   }
 
-  const pad = theme.spacing(1);
-  const margin = compact ? '0' : pad;
+  const pad = resolveSpace(padProp, theme, compact, 1);
   const presetClasses = p ? preset(p) : '';
 
   return (
@@ -134,9 +133,9 @@ export const Panel: React.FC<PanelProps> = ({
       $full={fullWidth}
       $center={centered}
       $outline={theme.colors.backgroundAlt}
+      $strokeW={theme.stroke(1)}
       $bg={bg}
       $text={textColour}
-      $margin={margin}
       $pad={pad}
       style={style}
       className={[presetClasses, className].filter(Boolean).join(' ')}

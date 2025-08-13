@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/pages/MetroSelectDemo.tsx | valet
+// src/pages/MetroSelectDemo.tsx | valet-docs
 // Showcase of MetroSelect component
 // ─────────────────────────────────────────────────────────────
 import { useState } from 'react';
@@ -39,15 +39,15 @@ export default function MetroSelectDemoPage() {
   const data: Row[] = [
     {
       prop: <code>value</code>,
-      type: <code>string | number</code>,
+      type: <code>string | number | (string | number)[]</code>,
       default: <code>-</code>,
-      description: 'Controlled value',
+      description: 'Controlled value (array when multiple)',
     },
     {
       prop: <code>defaultValue</code>,
-      type: <code>string | number</code>,
+      type: <code>string | number | (string | number)[]</code>,
       default: <code>-</code>,
-      description: 'Uncontrolled initial value',
+      description: 'Uncontrolled initial value (array when multiple)',
     },
     {
       prop: <code>gap</code>,
@@ -56,10 +56,16 @@ export default function MetroSelectDemoPage() {
       description: 'Spacing between tiles (theme units if number)',
     },
     {
+      prop: <code>multiple</code>,
+      type: <code>boolean</code>,
+      default: <code>false</code>,
+      description: 'Enable selecting more than one option',
+    },
+    {
       prop: <code>onChange</code>,
-      type: <code>(val: Primitive) =&gt; void</code>,
+      type: <code>(val: Primitive | Primitive[]) =&gt; void</code>,
       default: <code>-</code>,
-      description: 'Change handler',
+      description: 'Change handler (array when multiple)',
     },
     {
       prop: <code>preset</code>,
@@ -196,6 +202,21 @@ export default function MetroSelectDemoPage() {
             <Typography variant='h3'>3. Many options</Typography>
             <MetroSelect gap={4}>
               {many.map((o) => (
+                <MetroSelect.Option
+                  key={o.value}
+                  {...o}
+                />
+              ))}
+            </MetroSelect>
+
+            <Typography variant='h3'>4. Multi-select</Typography>
+            <Typography variant='subtitle'>Start with two non-adjacent items selected</Typography>
+            <MetroSelect
+              multiple
+              defaultValue={['home', 'travel']}
+              gap={4}
+            >
+              {basic.map((o) => (
                 <MetroSelect.Option
                   key={o.value}
                   {...o}

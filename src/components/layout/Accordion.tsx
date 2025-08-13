@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types -- Fully typed TSX: runtime PropTypes not used */
 // ─────────────────────────────────────────────────────────────
-// src/components/widgets/Accordion.tsx | valet
+// src/components/layout/Accordion.tsx  | valet
 // Fully-typed, theme-aware <Accordion /> component
 // – Composition API (Accordion.Item / .Header / .Content)
 // – Controlled & uncontrolled modes, single- or multi-expand
@@ -26,7 +26,8 @@ import { preset } from '../../css/stylePresets';
 import { toRgb, mix, toHex } from '../../helpers/color';
 import { useSurface } from '../../system/surfaceStore';
 import { shallow } from 'zustand/shallow';
-import type { Presettable } from '../../types';
+import type { Presettable, SpacingProps } from '../../types';
+import { resolveSpace } from '../../utils/resolveSpace';
 import { Typography } from '../primitives/Typography';
 
 /*───────────────────────────────────────────────────────────*/
@@ -47,13 +48,10 @@ const useAccordion = () => {
 
 /*───────────────────────────────────────────────────────────*/
 /* Styled primitives                                         */
-const Root = styled('div')<{ $gap: string }>`
+const Root = styled('div')<{ $pad: string }>`
   width: 100%;
   box-sizing: border-box;
-  margin: ${({ $gap }) => $gap};
-  & > * {
-    padding: ${({ $gap }) => $gap};
-  }
+  padding: ${({ $pad }) => $pad};
 `;
 
 const Wrapper = styled('div')`
@@ -64,7 +62,7 @@ const Wrapper = styled('div')`
 `;
 
 const ItemWrapper = styled('div')`
-  border-bottom: 1px solid currentColor;
+  border-bottom: var(--valet-divider-stroke, 1px) solid currentColor;
 `;
 
 const HeaderBtn = styled('button')<{
@@ -75,13 +73,14 @@ const HeaderBtn = styled('button')<{
   $shift: string;
   $skipHover: boolean;
   $hoverBg: string;
+  $padV: string;
 }>`
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  padding: 1rem ${({ $shift }) => $shift};
+  padding: ${({ $padV }) => $padV} ${({ $shift }) => $shift};
   background: transparent;
   border: none;
   color: inherit;
@@ -108,8 +107,8 @@ const HeaderBtn = styled('button')<{
   ${({ $open, $highlight }) => $open && `background:${$highlight};`}
 
   &:focus-visible {
-    outline: 2px solid ${({ $primary }) => $primary};
-    outline-offset: 2px;
+    outline: var(--valet-focus-width, 2px) solid ${({ $primary }) => $primary};
+    outline-offset: var(--valet-focus-offset, 2px);
   }
 
   &:disabled {
@@ -137,7 +136,8 @@ const Content = styled('div')<{ $open: boolean; $height: number }>`
 /* Public API                                                */
 export interface AccordionProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'>,
-    Presettable {
+    Presettable,
+    Pick<SpacingProps, 'pad' | 'compact'> {
   defaultOpen?: number | number[];
   open?: number | number[];
   multiple?: boolean;
@@ -164,6 +164,8 @@ export const Accordion: React.FC<AccordionProps> & {
   onOpenChange,
   headingLevel = 3,
   constrainHeight = true,
+  pad: padProp,
+  compact = false,
   preset: p,
   className,
   children,
@@ -315,7 +317,7 @@ export const Accordion: React.FC<AccordionProps> & {
       >
         <Root
           {...divProps}
-          $gap={theme.spacing(1)}
+          $pad={resolveSpace(padProp, theme, compact, 1)}
           className={[presetClasses, className].filter(Boolean).join(' ')}
         >
           {React.Children.map(children, (child, idx) =>
@@ -393,6 +395,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   const highlight = toHex(mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.15));
   const hoverBg = toHex(mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.6));
   const shift = theme.spacing(1);
+  const padV = theme.spacing(2);
 
   return (
     <ItemWrapper
@@ -469,6 +472,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
             }
             wasLongPress.current = false;
           }}
+          $padV={padV}
           $open={isOpen}
           $primary={theme.colors.primary}
           $disabledColor={disabledColor}
@@ -514,7 +518,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
       >
         <div
           ref={contentRef}
-          style={{ padding: '0.75rem 0' }}
+          style={{ padding: `${theme.spacing(1.5)} 0` }}
         >
           {children}
         </div>

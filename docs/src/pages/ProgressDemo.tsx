@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// src/pages/ProgressDemoPage.tsx | valet
+// src/pages/ProgressDemoPage.tsx | valet-docs
 // Interactive playground showcasing every <Progress/> capability – circular &
 // linear, determinate / indeterminate / buffer modes, all sizes, colour /
 // theme coupling, and live control via Slider, Button, & IconButton.

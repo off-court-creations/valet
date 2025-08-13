@@ -63,6 +63,9 @@ const Trigger = styled('button')<{
   $bg: string;
   $text: string;
   $primary: string;
+  $radius: string;
+  $outlineW: string;
+  $outlineOffset: string;
 }>`
   all: unset;
   box-sizing: border-box;
@@ -75,7 +78,7 @@ const Trigger = styled('button')<{
   gap: 6px;
 
   border: 1px solid var(--valet-border, #ffffff22);
-  border-radius: 6px;
+  border-radius: ${({ $radius }) => $radius};
   background: var(--valet-bg, ${({ $bg }) => $bg});
   color: var(--valet-text, ${({ $text }) => $text});
   cursor: pointer;
@@ -85,8 +88,8 @@ const Trigger = styled('button')<{
     border-color: ${({ $primary }) => $primary};
   }
   &:focus-visible {
-    outline: 2px solid ${({ $primary }) => $primary};
-    outline-offset: 2px;
+    outline: ${({ $outlineW }) => $outlineW} solid ${({ $primary }) => $primary};
+    outline-offset: ${({ $outlineOffset }) => $outlineOffset};
   }
   &[disabled] {
     opacity: 0.45;
@@ -112,6 +115,8 @@ const Menu = styled('ul')<{
   $top: number;
   $left: number;
   $bg: string;
+  $radius: string;
+  $padY: string;
 }>`
   position: absolute;
   min-width: ${({ $w }) => $w}px;
@@ -121,9 +126,9 @@ const Menu = styled('ul')<{
   top: ${({ $top }) => $top}px;
   left: ${({ $left }) => $left}px;
   margin: 0;
-  padding: 4px 0;
+  padding: ${({ $padY }) => `${$padY} 0`};
   list-style: none;
-  border-radius: 6px;
+  border-radius: ${({ $radius }) => $radius};
   background: ${({ $bg }) => $bg};
   box-shadow: 0 8px 24px #00000040;
   overflow-y: auto;
@@ -132,11 +137,12 @@ const Menu = styled('ul')<{
 
 const Item = styled('li')<{
   $pad: string;
+  $padY: string;
   $active?: boolean;
   $disabled?: boolean;
   $primary: string;
 }>`
-  padding: 6px ${({ $pad }) => $pad};
+  padding: ${({ $padY, $pad }) => `${$padY} ${$pad}`};
   cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
   opacity: ${({ $disabled }) => ($disabled ? 0.45 : 1)};
   background: ${({ $active, $primary }) => ($active ? $primary + '22' : 'transparent')};
@@ -325,6 +331,9 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLDivElement>) => {
         $bg={bg}
         $text={textCol}
         $primary={primary}
+        $radius={theme.radius(1)}
+        $outlineW={theme.stroke(2)}
+        $outlineOffset={theme.stroke(2)}
         type='button'
         role='combobox'
         aria-haspopup='listbox'
@@ -370,6 +379,8 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLDivElement>) => {
             $top={pos.top}
             $left={pos.left}
             $bg={bgElev}
+            $radius={theme.radius(1)}
+            $padY={theme.spacing(0.5)}
             role='listbox'
             id={listId}
             aria-multiselectable={multiple || undefined}
@@ -383,6 +394,7 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLDivElement>) => {
                   aria-selected={sel}
                   data-disabled={o.props.disabled}
                   $pad={g.pad}
+                  $padY={theme.spacing(0.75)}
                   $active={i === active}
                   $disabled={o.props.disabled}
                   $primary={primary}
@@ -394,7 +406,7 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLDivElement>) => {
                       type='checkbox'
                       readOnly
                       checked={sel}
-                      style={{ marginRight: 6 }}
+                      style={{ marginRight: theme.spacing(0.75) }}
                     />
                   )}
                   {o.props.children}
