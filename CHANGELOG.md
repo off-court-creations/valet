@@ -4,58 +4,10 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
-### Added
-- Box: right-bound and centered content placement via `alignX` ('left'|'right'|'center')
-- List: optional single-selection with `selectable`, `selected`, `defaultSelected`, and `onSelect`
-- List: `reorderable` prop (default `true`) to enable/disable drag-and-drop
-
-### Changed
-- Box: revert to `fullWidth` boolean; rename `centered` → `centerContent` (keep alias); remove deprecated `edge` prop
-
-- MetroSelect: add subtle hover for selected tiles using color mix akin to DateSelector (primary → text blend)
-
-- MetroSelect: add valet-esque hover tint on options (primary × background mix with hover gating)
-
-- MetroSelect: support multiple selection via `multiple` prop; allow array `value`/`defaultValue`
-- Docs: MetroSelect page adds a multi-select example starting with two non-adjacent items selected
-
-- Snackbar: anchor to bottom-right of viewport with slide-in/out transitions
-
-- Add theme.radius() and theme.stroke() helpers derived from density-aware spacing
-- Surface now exposes `--valet-radius` and `--valet-stroke` CSS vars per-surface
-- Replace hard-coded borders/radii with relative helpers in: Button, Panel, Tabs, Tooltip, Table,
-  Snackbar, Accordion, List, TextField, Checkbox, Iterator, Select, Modal, Tree, Stepper
-- Convert remaining spacing casts to plain numbers (removed `as unknown as number` where updated)
-- Add underline thickness/radius vars for Table and Pagination underlines
-- Add Switch/Accordion/Tree outline and thickness vars for consistent a11y rings
-- Add DateSelector wrapper/cell radius vars
-- Add Select menu/item paddings and radius using spacing helpers
-- Add Tooltip arrow size, bubble radius, and animation distances via spacing helpers
-- Add List/Table/Panel border thickness via theme.stroke()
-- Add width fix for Table checkbox column using `theme.spacing(6)`
-- Add Unreleased notes for spacing/density overhaul groundwork
- - Add shared `Space`/`SpacingProps` types for pad/gap ergonomics
- - Standardize default gap to 1 in `Grid` (aligns with `Stack`/`Tabs`)
- - Use `resolveSpace` in `Accordion` and `AppBar` for consistent numeric mapping
- - Fix file header paths and adopt `| valet-docs` marker for docs headers
-- Docs: Add Quickstart, Hello Valet tutorial, Mental Model (with MUI mapping), Styled Engine, Theme Store, and Components Primer pages
-- Docs: Update routes and navigation with new Getting Started and Concepts sections
-- Docs: Add copy buttons to larger Quickstart code blocks
-- Docs: Add reusable CodeBlock component for docs snippets
-  - Includes Snackbar feedback on copy ("copied")
- - Polish Quickstart Step 5 with an action panel and links
- - CodeBlock: vertically center single-line content for better alignment
- - Use CodeBlock on Installation page for command snippet
-- Box: default to inline sizing; add `fullWidth` prop and update docs demo/reference
-- List: kinetic padding now animates linearly; docs page now organized into Usage, Playground, Reference with prop table
-
-### Fixed
-- List: eliminate hover artifacting by applying hover/selected/drag background on the row only and using background-clip to prevent seams
- - List: lock active highlight to the dragged row regardless of `hoverable`; suppress hover on other items while dragging to prevent flicker
- - List: enable mobile/touch reordering via Pointer Events and lock page scroll during drag (`touch-action: none` while dragging)
-
-### Removed
-- Docs: Delete Hello Valet page and remove Hello Valet and Mental Model links from the navbar
+## [0.25.0]
+- Revamped spacing systems
+- Improved `List` and `Box`
+- Improved docs
 
 ## [0.24.0]
 - Setup ESLint and Prettier
@@ -400,6 +352,7 @@ responsive logic uses the selected `Surface` element to handle persistent margin
 ### Other
 - vibe coded
 
+[v0.25.0]: https://github.com/off-court-creations/valet/releases/tag/v0.25.0
 [v0.24.0]: https://github.com/off-court-creations/valet/releases/tag/v0.24.0
 [v0.23.5]: https://github.com/off-court-creations/valet/releases/tag/v0.23.5
 [v0.23.4]: https://github.com/off-court-creations/valet/releases/tag/v0.23.4
