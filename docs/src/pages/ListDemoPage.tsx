@@ -37,7 +37,7 @@ const INITIAL: Character[] = [
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Demo page                                                                  */
 export default function ListDemoPage() {
-  const { theme, toggleMode } = useTheme();
+  const { toggleMode } = useTheme();
 
   // Playground state
   const [items, setItems] = useState<Character[]>(INITIAL);
@@ -137,9 +137,12 @@ export default function ListDemoPage() {
     },
     {
       prop: <code>HTML ul props</code>,
-      type: <code>Omit&lt;React.HTMLAttributes&lt;HTMLUListElement&gt;, 'children'&gt;</code>,
+      type: (
+        <code>Omit&lt;React.HTMLAttributes&lt;HTMLUListElement&gt;, &apos;children&apos;&gt;</code>
+      ),
       def: <code>-</code>,
-      description: "Standard HTML attributes for <ul> (excluding 'children') pass through.",
+      description:
+        'Standard HTML attributes for <ul> (excluding &apos;children&apos;) pass through.',
     },
   ];
 
@@ -191,9 +194,7 @@ const data: Person[] = [
               />
 
               <Typography variant='h3'>2. Code</Typography>
-              <CodeBlock
-                code={usage}
-              />
+              <CodeBlock code={usage} />
             </Stack>
           </Tabs.Panel>
 

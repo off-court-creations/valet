@@ -45,7 +45,7 @@ export default function CodeBlockDemoPage() {
     {
       prop: <code>language</code>,
       type: <code>string</code>,
-      default: <code>'typescript'</code>,
+      default: <code>&apos;typescript&apos;</code>,
       description: 'Highlight.js language key',
     },
     {

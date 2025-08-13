@@ -98,7 +98,8 @@ const Root = styled('ul')<{
 
   /* Hover highlight (opt-in, disabled while dragging) */
   ${({ $hover, $hoverBg, $dragging }) =>
-    $hover && !$dragging &&
+    $hover &&
+    !$dragging &&
     `
       li:hover { background:${$hoverBg}; }
     `}
@@ -107,7 +108,9 @@ const Root = styled('ul')<{
   ${({ $hoverBg }) => `li[data-dragging="true"] { background:${$hoverBg}; }`}
 
   /* Selected row persistent highlight */
-  li[aria-selected="true"] { background: ${({ $selectedBg }) => $selectedBg}; }
+  li[aria-selected="true"] {
+    background: ${({ $selectedBg }) => $selectedBg};
+  }
 
   /* Kinetic padding on dragged row */
   li[data-dragging='true'] {
@@ -166,17 +169,22 @@ export function List<T>({
 
   const lockBodyScroll = () => {
     if (touchLockActiveRef.current) return;
-    bodyOverflowPrev.current = document.body.style.overflow || '';
-    bodyTouchActionPrev.current = (document.body.style as any).touchAction || '';
-    document.body.style.overflow = 'hidden';
-    (document.body.style as any).touchAction = 'none';
+    const bodyStyle = document.body.style as CSSStyleDeclaration & {
+      touchAction?: string;
+    };
+    bodyOverflowPrev.current = bodyStyle.overflow || '';
+    bodyTouchActionPrev.current = bodyStyle.touchAction || '';
+    bodyStyle.overflow = 'hidden';
+    bodyStyle.touchAction = 'none';
     touchLockActiveRef.current = true;
   };
   const unlockBodyScrollIfLocked = () => {
     if (!touchLockActiveRef.current) return;
-    if (bodyOverflowPrev.current !== null) document.body.style.overflow = bodyOverflowPrev.current;
-    if (bodyTouchActionPrev.current !== null)
-      (document.body.style as any).touchAction = bodyTouchActionPrev.current;
+    const bodyStyle = document.body.style as CSSStyleDeclaration & {
+      touchAction?: string;
+    };
+    if (bodyOverflowPrev.current !== null) bodyStyle.overflow = bodyOverflowPrev.current;
+    if (bodyTouchActionPrev.current !== null) bodyStyle.touchAction = bodyTouchActionPrev.current;
     touchLockActiveRef.current = false;
   };
   // stable keys for items to ensure DOM persistence across reorders (for FLIP)
@@ -208,7 +216,7 @@ export function List<T>({
     const preventMove = (e: TouchEvent) => {
       if (touchLockActiveRef.current) e.preventDefault();
     };
-    const onStart = (e: TouchEvent) => {
+    const onStart = () => {
       // lock at first touch to prevent browser scroll heuristics
       lockBodyScroll();
     };
@@ -223,10 +231,10 @@ export function List<T>({
     window.addEventListener('touchend', onEnd, { passive: false, capture: true });
     window.addEventListener('touchcancel', onEnd, { passive: false, capture: true });
     return () => {
-      root.removeEventListener('touchstart', onStart, { capture: true } as any);
-      window.removeEventListener('touchmove', preventMove as any, { capture: true } as any);
-      window.removeEventListener('touchend', onEnd as any, { capture: true } as any);
-      window.removeEventListener('touchcancel', onEnd as any, { capture: true } as any);
+      root.removeEventListener('touchstart', onStart, { capture: true });
+      window.removeEventListener('touchmove', preventMove, { capture: true });
+      window.removeEventListener('touchend', onEnd, { capture: true });
+      window.removeEventListener('touchcancel', onEnd, { capture: true });
       unlockBodyScrollIfLocked();
     };
   }, []);
@@ -327,10 +335,10 @@ export function List<T>({
     };
 
     const finish = () => {
-      window.removeEventListener('pointermove', onMove as any, false as any);
-      window.removeEventListener('pointerup', finish as any, false as any);
-      window.removeEventListener('pointercancel', finish as any, false as any);
-      window.removeEventListener('touchmove', touchBlocker as any, false as any);
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', finish);
+      window.removeEventListener('pointercancel', finish);
+      window.removeEventListener('touchmove', touchBlocker);
       // Restore body scroll state
       unlockBodyScrollIfLocked();
       pointerIdRef.current = null;
@@ -339,10 +347,10 @@ export function List<T>({
       handleDragEnd();
     };
 
-    window.addEventListener('pointermove', onMove, { passive: false } as AddEventListenerOptions);
+    window.addEventListener('pointermove', onMove, { passive: false });
     window.addEventListener('pointerup', finish);
     window.addEventListener('pointercancel', finish);
-    window.addEventListener('touchmove', touchBlocker, { passive: false } as AddEventListenerOptions);
+    window.addEventListener('touchmove', touchBlocker, { passive: false });
   };
   const handleDragStart = (idx: number) => (e: React.DragEvent<HTMLLIElement>) => {
     dragFrom.current = idx;
