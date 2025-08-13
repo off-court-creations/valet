@@ -4,12 +4,25 @@
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
 import { marked } from 'marked';
+import { markedHighlight } from 'marked-highlight';
+import hljs from 'highlight.js';
+import 'highlight.js/styles/github.css';
 import type { TokensList, Token, Tokens } from 'marked';
 import Stack from '../layout/Stack';
 import Panel from '../layout/Panel';
 import Typography, { type Variant } from '../primitives/Typography';
 import Image from '../primitives/Image';
 import Table, { type TableColumn } from './Table';
+
+marked.use(
+  markedHighlight({
+    langPrefix: 'hljs language-',
+    highlight(code, lang) {
+      const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+      return hljs.highlight(code, { language }).value;
+    },
+  }),
+);
 
 export interface MarkdownProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Raw markdown text */
@@ -102,6 +115,9 @@ const renderTokens = (tokens: TokensList, codeBg?: string): React.ReactNode =>
       }
       case 'code': {
         const code = t as Tokens.Code;
+        const lang = code.lang ?? 'plaintext';
+        const validLang = hljs.getLanguage(lang) ? lang : 'plaintext';
+        const html = hljs.highlight(code.text, { language: validLang }).value;
         return (
           <Panel
             key={i}
@@ -109,7 +125,10 @@ const renderTokens = (tokens: TokensList, codeBg?: string): React.ReactNode =>
             background={codeBg}
             style={{ margin: '0.5rem 0' }}
           >
-            <code>{code.text}</code>
+            <code
+              className={`hljs language-${validLang}`}
+              dangerouslySetInnerHTML={{ __html: html }}
+            />
           </Panel>
         );
       }

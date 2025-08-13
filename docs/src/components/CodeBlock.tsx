@@ -1,21 +1,23 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/CodeBlock.tsx  | valet-docs
-// Reusable code block with Panel, mono text, pre wrap, copy button, and snackbar feedback
+// Reusable code block with Markdown highlighting, copy button, and snackbar feedback
 // ─────────────────────────────────────────────────────────────
-import { Panel, Stack, Typography, IconButton, Snackbar } from '@archway/valet';
+import { Markdown, IconButton, Snackbar } from '@archway/valet';
 import { useState } from 'react';
 
 export interface CodeBlockProps {
   code: string;
+  language?: string;
   fullWidth?: boolean;
   ariaLabel?: string;
   title?: string;
 }
 
-export default function CodeBlock({ code, fullWidth, ariaLabel, title }: CodeBlockProps) {
+export default function CodeBlock({ code, language = 'typescript', fullWidth, ariaLabel, title }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
   const isMultiline = code.includes('\n');
   const displayCode = isMultiline ? code.replace(/\n+$/, '') : code;
+  const markdown = `\`\`\`${language}\n${displayCode}\n\`\`\``;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(code).then(
@@ -25,36 +27,31 @@ export default function CodeBlock({ code, fullWidth, ariaLabel, title }: CodeBlo
   };
 
   return (
-    <Panel fullWidth={fullWidth ?? false}>
-      <Stack
-        direction='row'
-        wrap={false}
-        style={{
-          justifyContent: 'space-between',
-          alignItems: isMultiline ? 'flex-start' : 'center',
-        }}
-      >
-        <Typography
-          family='mono'
-          whitespace='pre'
-        >
-          <code>{displayCode}</code>
-        </Typography>
-        <IconButton
-          variant='outlined'
-          size='sm'
-          icon='mdi:content-copy'
-          aria-label={ariaLabel ?? 'Copy code snippet'}
-          title={title ?? 'Copy'}
-          onClick={handleCopy}
-        />
-      </Stack>
+    <div
+      style={{
+        position: 'relative',
+        width: fullWidth ? '100%' : 'fit-content',
+      }}
+    >
+      <Markdown
+        data={markdown}
+        style={{ margin: 0 }}
+      />
+      <IconButton
+        variant='outlined'
+        size='sm'
+        icon='mdi:content-copy'
+        aria-label={ariaLabel ?? 'Copy code snippet'}
+        title={title ?? 'Copy'}
+        onClick={handleCopy}
+        style={{ position: 'absolute', top: '0.75rem', right: '0.75rem' }}
+      />
       {copied && (
         <Snackbar
           message='copied'
           onClose={() => setCopied(false)}
         />
       )}
-    </Panel>
+    </div>
   );
 }

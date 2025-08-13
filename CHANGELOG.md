@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+- Highlight Markdown code blocks with language-aware `CodeBlock`
+
 ## [0.25.1]
 - Improved docs
 
