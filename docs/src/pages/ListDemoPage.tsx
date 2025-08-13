@@ -114,7 +114,7 @@ export default function ListDemoPage() {
     {
       prop: <code>defaultSelected</code>,
       type: <code>T | null</code>,
-      def: <code>-</code>,
+      def: <code>null</code>,
       description: 'Uncontrolled initial selected item.',
     },
     {
@@ -137,9 +137,12 @@ export default function ListDemoPage() {
     },
     {
       prop: <code>HTML ul props</code>,
-      type: <code>React.ComponentProps&lt;'ul'&gt;</code>,
+      type: (
+        <code>Omit&lt;React.HTMLAttributes&lt;HTMLUListElement&gt;, 'children'&gt;</code>
+      ),
       def: <code>-</code>,
-      description: 'Standard HTML attributes and events pass through.',
+      description:
+        "Standard HTML attributes for <ul> (excluding 'children') pass through.",
     },
   ];
 
@@ -180,23 +183,17 @@ const data: Person[] = [
           <Tabs.Tab label='Usage' />
           <Tabs.Panel>
             <Stack>
-              <Typography variant='h3'>1. Default</Typography>
-              <List<Character>
-                data={INITIAL}
-                hoverable
-                getTitle={(c) => c.name}
-              />
-
-              <Typography variant='h3'>2. Title + subtitle</Typography>
+              <Typography variant='h3'>1. Example</Typography>
               <List<Character>
                 data={INITIAL}
                 striped
                 hoverable
+                selectable
                 getTitle={(c) => c.name}
                 getSubtitle={(c) => c.role}
               />
 
-              <Typography variant='h3'>3. Code</Typography>
+              <Typography variant='h3'>2. Code</Typography>
               <CodeBlock
                 fullWidth
                 code={usage}

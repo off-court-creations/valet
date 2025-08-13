@@ -49,6 +49,11 @@ All notable changes to this project will be documented in this file. The format 
 - Box: default to inline sizing; add `fullWidth` prop and update docs demo/reference
 - List: kinetic padding now animates linearly; docs page now organized into Usage, Playground, Reference with prop table
 
+### Fixed
+- List: eliminate hover artifacting by applying hover/selected/drag background on the row only and using background-clip to prevent seams
+ - List: lock active highlight to the dragged row regardless of `hoverable`; suppress hover on other items while dragging to prevent flicker
+ - List: enable mobile/touch reordering via Pointer Events and lock page scroll during drag (`touch-action: none` while dragging)
+
 ### Removed
 - Docs: Delete Hello Valet page and remove Hello Valet and Mental Model links from the navbar
 

@@ -5,6 +5,7 @@
 // and persistent drag highlight.
 // patch: add linear kinetic padding for drag state – 2025‑08‑12
 // patch: single‑selection support with optional enable flag – 2025‑08‑12
+// patch: mobile/touch drag reorder via Pointer Events with scroll lock – 2025‑08‑13
 // ─────────────────────────────────────────────────────────────
 import React, { useEffect, useRef, useState } from 'react';
 import { styled } from '../../css/createStyled';
@@ -58,11 +59,15 @@ const Root = styled('ul')<{
   $selectedBg: string;
   $padV: string;
   $padH: string;
+  $dragging: boolean;
 }>`
   list-style: none;
   margin: 0;
   padding: 0;
   border: ${({ $strokeW }) => $strokeW} solid ${({ $border }) => $border};
+  /* Disable page panning while reordering on touch */
+  touch-action: ${({ $dragging }) => ($dragging ? 'none' : 'auto')};
+  overscroll-behavior: contain;
 
   li {
     display: flex;
@@ -76,7 +81,11 @@ const Root = styled('ul')<{
     transition:
       background 120ms ease,
       padding 120ms linear;
+    background-clip: padding-box; /* avoid overlap seams under borders */
+    position: relative; /* create a stable painting context */
+    isolation: isolate; /* ensure uniform compositing */
     will-change: transform; /* hint for FLIP animations */
+    -webkit-user-drag: none; /* prevent iOS element ghost dragging */
   }
   li:last-child {
     border-bottom: none;
@@ -85,29 +94,27 @@ const Root = styled('ul')<{
   /* Zebra stripes */
   ${({ $striped, $stripe }) => $striped && `li:nth-of-type(odd){background:${$stripe};}`}
 
-  /* Hover + drag highlight (row AND its cells) */
-  ${({ $hover, $hoverBg }) =>
-    $hover &&
+  /* Hover highlight (opt-in, disabled while dragging) */
+  ${({ $hover, $hoverBg, $dragging }) =>
+    $hover && !$dragging &&
     `
-      li:hover,
-      li:hover > *,
-      li[data-dragging="true"],
-      li[data-dragging="true"] > * {
-        background:${$hoverBg};
-      }
+      li:hover { background:${$hoverBg}; }
     `}
 
+  /* Drag highlight (always on while dragging, regardless of hoverable) */
+  ${({ $hoverBg }) => `li[data-dragging="true"] { background:${$hoverBg}; }`}
+
   /* Selected row persistent highlight */
-  li[aria-selected="true"],
-  li[aria-selected="true"] > * {
-    background: ${({ $selectedBg }) => $selectedBg};
-  }
+  li[aria-selected="true"] { background: ${({ $selectedBg }) => $selectedBg}; }
 
   /* Kinetic padding on dragged row */
   li[data-dragging='true'] {
     /* subtle vertical expansion to indicate movement */
     padding-top: calc(${({ $padV }) => $padV} * 1.12);
     padding-bottom: calc(${({ $padV }) => $padV} * 1.12);
+    /* ensure the active touch target cannot pan the page */
+    touch-action: none;
+    cursor: grabbing;
   }
 `;
 
@@ -145,6 +152,9 @@ export function List<T>({
   const rootRef = useRef<HTMLUListElement>(null);
   const dragFrom = useRef<number | null>(null);
   const [dragIdx, setDragIdx] = useState<number | null>(null);
+  const pointerIdRef = useRef<number | null>(null);
+  const bodyOverflowPrev = useRef<string | null>(null);
+  const bodyTouchActionPrev = useRef<string | null>(null);
   // stable keys for items to ensure DOM persistence across reorders (for FLIP)
   const keyMap = useRef(new WeakMap<object, number>());
   const keySeq = useRef(0);
@@ -167,6 +177,115 @@ export function List<T>({
   useEffect(() => setItems(data), [data]);
 
   /* Handlers -------------------------------------------------------------- */
+  // Pointer-based drag for touch/pen (mobile). Mouse continues to use HTML5 DnD.
+  const calcInsertIndex = (clientY: number): number => {
+    const list = rootRef.current;
+    if (!list) return dragFrom.current ?? 0;
+    const nodes: HTMLElement[] = Array.from(list.children) as HTMLElement[];
+    for (let i = 0; i < nodes.length; i++) {
+      const rect = nodes[i].getBoundingClientRect();
+      const mid = rect.top + rect.height / 2;
+      if (clientY < mid) return i;
+    }
+    return nodes.length;
+  };
+
+  const runFlip = (firstRects: Map<HTMLElement, DOMRect>) => {
+    requestAnimationFrame(() => {
+      const list2 = rootRef.current;
+      if (!list2) return;
+      const nextNodes: HTMLElement[] = Array.from(list2.children) as HTMLElement[];
+      nextNodes.forEach((n) => {
+        const a = firstRects.get(n);
+        if (!a) return;
+        const b = n.getBoundingClientRect();
+        const dy = a.top - b.top;
+        if (dy) {
+          n.style.transform = `translateY(${dy}px)`;
+          n.style.transition = 'transform 0s';
+          void n.offsetHeight; // reflow
+          n.style.transition = 'transform 120ms ease';
+          n.style.transform = 'translateY(0)';
+          const cleanup = () => {
+            n.style.transition = '';
+            n.style.transform = '';
+            n.removeEventListener('transitionend', cleanup);
+          };
+          n.addEventListener('transitionend', cleanup);
+        }
+      });
+    });
+  };
+
+  const startPointerDrag = (idx: number, e: React.PointerEvent<HTMLLIElement>) => {
+    dragFrom.current = idx;
+    setDragIdx(idx);
+    pointerIdRef.current = e.pointerId;
+    // Lock body scroll for the duration of a touch drag
+    bodyOverflowPrev.current = document.body.style.overflow || '';
+    bodyTouchActionPrev.current = (document.body.style as any).touchAction || '';
+    document.body.style.overflow = 'hidden';
+    (document.body.style as any).touchAction = 'none';
+    // selection sync (mirror dragStart)
+    if (selectable) {
+      const item = items[idx];
+      if (item !== selected) {
+        if (!controlled) setSelfSelected(item);
+        onSelectionChange?.(item, idx);
+      }
+    }
+
+    const onMove = (ev: PointerEvent) => {
+      if (ev.pointerId !== pointerIdRef.current) return;
+      ev.preventDefault();
+      const from = dragFrom.current;
+      if (from === null) return;
+
+      // Snapshot pre-layout for FLIP
+      const list = rootRef.current;
+      const nodes: HTMLElement[] = list ? (Array.from(list.children) as HTMLElement[]) : [];
+      const first = new Map<HTMLElement, DOMRect>();
+      nodes.forEach((n) => first.set(n, n.getBoundingClientRect()));
+
+      const targetIndex = calcInsertIndex(ev.clientY);
+      let insertIndex = targetIndex;
+      if (targetIndex > from) insertIndex = targetIndex - 1;
+      if (insertIndex === from) return;
+
+      setItems((prev) => {
+        const arr = [...prev];
+        const [moved] = arr.splice(from, 1);
+        const clamped = Math.max(0, Math.min(arr.length, insertIndex));
+        arr.splice(clamped, 0, moved);
+        dragFrom.current = clamped;
+        return arr;
+      });
+      setDragIdx(dragFrom.current);
+      runFlip(first);
+    };
+
+    const touchBlocker = (tev: TouchEvent) => {
+      tev.preventDefault();
+    };
+
+    const finish = () => {
+      window.removeEventListener('pointermove', onMove as any, false as any);
+      window.removeEventListener('pointerup', finish as any, false as any);
+      window.removeEventListener('pointercancel', finish as any, false as any);
+      window.removeEventListener('touchmove', touchBlocker as any, false as any);
+      // Restore body scroll state
+      if (bodyOverflowPrev.current !== null) document.body.style.overflow = bodyOverflowPrev.current;
+      if (bodyTouchActionPrev.current !== null)
+        (document.body.style as any).touchAction = bodyTouchActionPrev.current;
+      pointerIdRef.current = null;
+      handleDragEnd();
+    };
+
+    window.addEventListener('pointermove', onMove, { passive: false } as AddEventListenerOptions);
+    window.addEventListener('pointerup', finish);
+    window.addEventListener('pointercancel', finish);
+    window.addEventListener('touchmove', touchBlocker, { passive: false } as AddEventListenerOptions);
+  };
   const handleDragStart = (idx: number) => (e: React.DragEvent<HTMLLIElement>) => {
     dragFrom.current = idx;
     setDragIdx(idx);
@@ -257,6 +376,13 @@ export function List<T>({
     if (!controlled) setSelfSelected(item);
     onSelectionChange?.(item, idx);
   };
+  const handlePointerDown = (idx: number) => (e: React.PointerEvent<HTMLLIElement>) => {
+    if (!reorderable) return;
+    // Only engage custom path for touch/pen to avoid conflicting with HTML5 DnD on mouse
+    if (e.pointerType === 'touch' || e.pointerType === 'pen') {
+      startPointerDrag(idx, e);
+    }
+  };
 
   /* Class merge */
   const cls = [p ? preset(p) : '', className].filter(Boolean).join(' ') || undefined;
@@ -268,6 +394,7 @@ export function List<T>({
       ref={rootRef}
       $striped={striped}
       $hover={enableHover}
+      $dragging={dragIdx !== null}
       $border={theme.colors.backgroundAlt}
       $strokeW={theme.stroke(1)}
       $stripe={stripeColor}
@@ -286,6 +413,7 @@ export function List<T>({
           draggable={reorderable || undefined}
           data-dragging={dragIdx === idx || undefined}
           aria-selected={selectable && item === selected ? true : undefined}
+          onPointerDown={handlePointerDown(idx)}
           onDragStart={reorderable ? handleDragStart(idx) : undefined}
           onDragOver={reorderable ? handleDragOver(idx) : undefined}
           onDragEnd={reorderable ? handleDragEnd : undefined}
