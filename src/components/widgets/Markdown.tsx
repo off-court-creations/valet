@@ -4,12 +4,26 @@
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
 import { marked } from 'marked';
+import { markedHighlight } from 'marked-highlight';
+import hljs from 'highlight.js';
 import type { TokensList, Token, Tokens } from 'marked';
 import Stack from '../layout/Stack';
 import Panel from '../layout/Panel';
 import Typography, { type Variant } from '../primitives/Typography';
 import Image from '../primitives/Image';
 import Table, { type TableColumn } from './Table';
+import { useTheme } from '../../system/themeStore';
+import { HLJS_LIGHT, HLJS_DARK } from '../../css/hljsThemes';
+
+marked.use(
+  markedHighlight({
+    langPrefix: 'hljs language-',
+    highlight(code, lang) {
+      const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+      return hljs.highlight(code, { language }).value;
+    },
+  }),
+);
 
 export interface MarkdownProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Raw markdown text */
@@ -17,6 +31,9 @@ export interface MarkdownProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Optional override for code block background */
   codeBackground?: string;
 }
+
+const LIGHT_BG = '#f6f8fa';
+const DARK_BG = '#0d1117';
 
 const renderInline = (tokens?: Token[]): React.ReactNode => {
   if (!tokens) return null;
@@ -60,7 +77,7 @@ const renderInline = (tokens?: Token[]): React.ReactNode => {
   });
 };
 
-const renderTokens = (tokens: TokensList, codeBg?: string): React.ReactNode =>
+const renderTokens = (tokens: TokensList, codeBg: string): React.ReactNode =>
   tokens.map((t: Token, i: number) => {
     switch (t.type) {
       case 'heading': {
@@ -102,6 +119,9 @@ const renderTokens = (tokens: TokensList, codeBg?: string): React.ReactNode =>
       }
       case 'code': {
         const code = t as Tokens.Code;
+        const lang = code.lang ?? 'plaintext';
+        const validLang = hljs.getLanguage(lang) ? lang : 'plaintext';
+        const html = hljs.highlight(code.text, { language: validLang }).value;
         return (
           <Panel
             key={i}
@@ -109,7 +129,12 @@ const renderTokens = (tokens: TokensList, codeBg?: string): React.ReactNode =>
             background={codeBg}
             style={{ margin: '0.5rem 0' }}
           >
-            <code>{code.text}</code>
+            <pre style={{ margin: 0, background: 'transparent' }}>
+              <code
+                className={`hljs language-${validLang}`}
+                dangerouslySetInnerHTML={{ __html: html }}
+              />
+            </pre>
           </Panel>
         );
       }
@@ -151,14 +176,28 @@ export const Markdown: React.FC<MarkdownProps> = ({
   style,
   ...rest
 }) => {
+  const { mode } = useTheme();
+  React.useEffect(() => {
+    const id = 'hljs-theme';
+    const existing = document.getElementById(id);
+    if (existing && existing.tagName === 'LINK') existing.remove();
+    let styleEl = existing as HTMLStyleElement | null;
+    if (!styleEl || styleEl.tagName !== 'STYLE') {
+      styleEl = document.createElement('style');
+      styleEl.id = id;
+      document.head.appendChild(styleEl);
+    }
+    styleEl.textContent = mode === 'dark' ? HLJS_DARK : HLJS_LIGHT;
+  }, [mode]);
   const tokens = React.useMemo(() => marked.lexer(data) as TokensList, [data]);
+  const resolvedBg = codeBackground ?? (mode === 'dark' ? DARK_BG : LIGHT_BG);
   return (
     <Stack
       {...rest}
       className={className}
       style={style}
     >
-      {renderTokens(tokens, codeBackground)}
+      {renderTokens(tokens, resolvedBg)}
     </Stack>
   );
 };

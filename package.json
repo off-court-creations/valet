@@ -1,6 +1,6 @@
 {
   "name": "@archway/valet",
-  "version": "0.25.1",
+  "version": "0.25.2",
   "description": "valet is a CSS-in-JS engine, a UI component kit, and an accessibility layer that treats all humans and their AI proxies as first-class users.",
   "keywords": [
     "react",
@@ -44,7 +44,9 @@
   },
   "dependencies": {
     "@iconify/react": "^6.0.0",
+    "highlight.js": "^11.11.1",
     "marked": "^16.1.1",
+    "marked-highlight": "^2.2.2",
     "react-dropzone": "^14.2.3",
     "siphash": "^1.2.0",
     "zustand": "^4.5.7"

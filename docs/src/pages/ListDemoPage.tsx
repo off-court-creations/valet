@@ -14,10 +14,10 @@ import {
   Switch,
   Button,
   useTheme,
+  CodeBlock,
 } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import NavDrawer from '../components/NavDrawer';
-import CodeBlock from '../components/CodeBlock';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Demo data                                                                  */
@@ -37,7 +37,7 @@ const INITIAL: Character[] = [
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Demo page                                                                  */
 export default function ListDemoPage() {
-  const { theme, toggleMode } = useTheme();
+  const { toggleMode } = useTheme();
 
   // Playground state
   const [items, setItems] = useState<Character[]>(INITIAL);
@@ -138,11 +138,11 @@ export default function ListDemoPage() {
     {
       prop: <code>HTML ul props</code>,
       type: (
-        <code>Omit&lt;React.HTMLAttributes&lt;HTMLUListElement&gt;, 'children'&gt;</code>
+        <code>Omit&lt;React.HTMLAttributes&lt;HTMLUListElement&gt;, &apos;children&apos;&gt;</code>
       ),
       def: <code>-</code>,
       description:
-        "Standard HTML attributes for <ul> (excluding 'children') pass through.",
+        'Standard HTML attributes for <ul> (excluding &apos;children&apos;) pass through.',
     },
   ];
 
@@ -194,10 +194,7 @@ const data: Person[] = [
               />
 
               <Typography variant='h3'>2. Code</Typography>
-              <CodeBlock
-                fullWidth
-                code={usage}
-              />
+              <CodeBlock code={usage} />
             </Stack>
           </Tabs.Panel>
 

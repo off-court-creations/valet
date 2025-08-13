@@ -1,7 +1,8 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/widgets/Drawer.tsx  | valet
+// src/components/layout/Drawer.tsx  | valet
 // Minimal sliding drawer component akin to MUI's Drawer.
 // Controlled/uncontrolled, with backdrop and escape handling.
+// patched: avoid resize thrash for persistent drawers
 // ─────────────────────────────────────────────────────────────
 
 import React, { useCallback, useLayoutEffect, useState, useEffect } from 'react';
@@ -14,6 +15,10 @@ import { preset } from '../../css/stylePresets';
 import type { Presettable } from '../../types';
 import { IconButton } from '../fields/IconButton';
 import { withAlpha } from '../../helpers/color';
+
+/* Allow strongly-typed CSS custom properties (e.g. --valet-*) */
+type CSSVarName = `--${string}`;
+type CSSVarStyles = React.CSSProperties & Record<CSSVarName, string | number>;
 
 /*───────────────────────────────────────────────────────────*/
 export type DrawerAnchor = 'left' | 'right' | 'top' | 'bottom';
@@ -129,14 +134,56 @@ export const Drawer: React.FC<DrawerProps> = ({
   preset: presetKey,
 }) => {
   const { theme } = useTheme();
-  const { width, height, element } = useSurface(
-    (s) => ({ width: s.width, height: s.height, element: s.element }),
-    shallow,
-  );
+  // Only subscribe to width/height when adaptive logic is enabled to
+  // prevent unnecessary renders during horizontal window resize with
+  // persistent drawers. Always read the surface element for offset.
+  const { element } = useSurface((s) => ({ element: s.element }), shallow);
+  // Orientation: use matchMedia to avoid flip-flop near square and
+  // decouple from Surface size updates and margin changes.
+  const [portrait, setPortrait] = useState<boolean>(() => {
+    if (typeof window === 'undefined' || !adaptive) return false;
+    try {
+      return window.matchMedia('(orientation: portrait)').matches;
+    } catch {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    if (!adaptive || typeof window === 'undefined') return;
+    let mql: MediaQueryList | null = null;
+    try {
+      mql = window.matchMedia('(orientation: portrait)');
+      const onChange = (e: MediaQueryListEvent) => {
+        setPortrait(e.matches);
+      };
+      // Set initial synchronously (covers Safari oddities)
+      setPortrait(mql.matches);
+      type MediaQueryListLegacy = MediaQueryList & {
+        addListener: (listener: (this: MediaQueryList, ev: MediaQueryListEvent) => void) => void;
+        removeListener: (listener: (this: MediaQueryList, ev: MediaQueryListEvent) => void) => void;
+      };
+      if (typeof mql.addEventListener === 'function') {
+        mql.addEventListener('change', onChange);
+      } else if (typeof (mql as MediaQueryListLegacy).addListener === 'function') {
+        (mql as MediaQueryListLegacy).addListener(onChange);
+      }
+      return () => {
+        if (!mql) return;
+        if (typeof mql.removeEventListener === 'function') {
+          mql.removeEventListener('change', onChange);
+        } else if (typeof (mql as MediaQueryListLegacy).removeListener === 'function') {
+          (mql as MediaQueryListLegacy).removeListener(onChange);
+        }
+      };
+    } catch {
+      // no-op
+      return;
+    }
+  }, [adaptive]);
   const surfOffset = element ? parseFloat(window.getComputedStyle(element).marginTop || '0') : 0;
   const presetClasses = presetKey ? preset(presetKey) : '';
   const toggleBg = withAlpha(theme.colors.primary, 0.7);
-  const portrait = height > width;
   const adaptiveMode = adaptive && (anchor === 'left' || anchor === 'right');
   const orientationPersistent = adaptiveMode && !portrait;
   const persistentEffective = persistent || orientationPersistent;
@@ -239,9 +286,17 @@ export const Drawer: React.FC<DrawerProps> = ({
         $adaptive={adaptiveMode}
         className={presetClasses}
         style={
-          anchor === 'left' || anchor === 'right' || anchor === 'top'
-            ? { top: `${surfOffset}px` }
-            : undefined
+          {
+            // Preserve top offset when docked on sides/top
+            ...(anchor === 'left' || anchor === 'right' || anchor === 'top'
+              ? { top: `${surfOffset}px` }
+              : null),
+            // Mirror Surface font variables so portalled content retains typography
+            '--valet-font-heading': `'${theme.fonts.heading}', sans-serif`,
+            '--valet-font-body': `'${theme.fonts.body}', sans-serif`,
+            '--valet-font-mono': `'${theme.fonts.mono}', monospace`,
+            '--valet-font-button': `'${theme.fonts.button}', sans-serif`,
+          } as CSSVarStyles
         }
       >
         {adaptiveMode && portrait && (

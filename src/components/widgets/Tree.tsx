@@ -336,7 +336,7 @@ export function Tree<T>({
             )}
             <Typography
               variant='body'
-              family='body'
+              family='mono'
               style={{ display: 'inline' }}
             >
               {getLabel(node.data)}
@@ -406,7 +406,7 @@ export function Tree<T>({
                 )}
                 <Typography
                   variant='body'
-                  family='body'
+                  family='mono'
                   style={{ display: 'inline' }}
                 >
                   {getLabel(node.data)}

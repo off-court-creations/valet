@@ -61,6 +61,7 @@ export * from './components/layout/Tabs';
 export * from './components/widgets/Tooltip';
 export * from './components/widgets/Tree';
 export * from './components/widgets/Markdown';
+export * from './components/widgets/CodeBlock';
 export { default as KeyModal } from './components/KeyModal';
 
 // ─── AI Helpers ─────────────────────────────────────────────

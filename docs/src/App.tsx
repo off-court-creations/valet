@@ -5,7 +5,7 @@
 import React, { Suspense, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { useInitialTheme, Surface, Stack, Typography } from '@archway/valet';
-import brandonUrl from './assets/fonts/BrandonGrotesque.otf';
+import { DemoFontLoader } from './components/DemoFontLoader';
 
 /*───────────────────────────────────────────────────────────*/
 /* Helper – terse lazy() wrapper                            */
@@ -60,6 +60,7 @@ const SnackbarDemoPage = page(() => import('./pages/SnackbarDemo'));
 const TreeDemoPage = page(() => import('./pages/TreeDemo'));
 const DropzoneDemoPage = page(() => import('./pages/DropzoneDemo'));
 const DateSelectorDemoPage = page(() => import('./pages/DateSelectorDemo'));
+const CodeBlockDemoPage = page(() => import('./pages/CodeBlockDemo'));
 const MarkdownDemoPage = page(() => import('./pages/MarkdownDemo'));
 const OverviewPage = page(() => import('./pages/Overview'));
 const QuickstartPage = page(() => import('./pages/Quickstart'));
@@ -78,13 +79,13 @@ export function App() {
   useInitialTheme(
     {
       fonts: {
-        heading: { name: 'Brandon', src: brandonUrl },
-        body: 'Cabin',
-        mono: 'Ubuntu Mono',
-        button: 'Ubuntu',
+        heading: 'Kumbh Sans',
+        body: 'Inter',
+        mono: 'JetBrains Mono',
+        button: 'Kumbh Sans',
       },
     },
-    [{ name: 'Brandon', src: brandonUrl }, 'Ubuntu', 'Ubuntu Mono', 'Cabin'],
+    ['Kumbh Sans', 'JetBrains Mono', 'Inter'],
   );
 
   /* Simple fallback – swap for a branded spinner when ready */
@@ -98,6 +99,8 @@ export function App() {
 
   return (
     <Suspense fallback={Fallback}>
+      {/* Load demo fonts globally without affecting theme defaults */}
+      <DemoFontLoader />
       <Routes>
         <Route
           path='/'
@@ -315,6 +318,10 @@ export function App() {
         <Route
           path='/dateselector-demo'
           element={<DateSelectorDemoPage />}
+        />
+        <Route
+          path='/codeblock-demo'
+          element={<CodeBlockDemoPage />}
         />
         <Route
           path='/markdown-demo'

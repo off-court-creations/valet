@@ -109,18 +109,18 @@ export const Box: React.FC<BoxProps> = ({
 
   // Promote background/text overrides to inline style so they always win the cascade.
   // Never clobber an explicit style prop from the caller.
-  const inlineStyle: React.CSSProperties & Record<string, string> = {
+  const inlineStyle: React.CSSProperties & Record<string, string | number> = {
     ...(style || {}),
-  } as any;
+  };
 
   if (background && inlineStyle.background == null) {
     inlineStyle.background = background;
     // Expose as CSS var for children that key off --valet-bg
-    (inlineStyle as any)['--valet-bg'] = background;
+    (inlineStyle as Record<string, string | number>)['--valet-bg'] = background;
   }
   if (resolvedText && inlineStyle.color == null) {
     inlineStyle.color = resolvedText;
-    (inlineStyle as any)['--valet-text-color'] = resolvedText;
+    (inlineStyle as Record<string, string | number>)['--valet-text-color'] = resolvedText;
   }
 
   return (

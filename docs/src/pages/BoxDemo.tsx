@@ -15,12 +15,12 @@ import {
   Select,
   Iterator,
   Switch,
+  CodeBlock,
 } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 import NavDrawer from '../components/NavDrawer';
-import CodeBlock from '../components/CodeBlock';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Demo page                                                                  */
@@ -73,7 +73,7 @@ export default function BoxDemoPage() {
       type: <code>number | string</code>,
       default: <code>1</code>,
       description:
-        'Container padding. Numbers map via theme.spacing(n); strings pass through (e.g., \"12px\").',
+        'Container padding. Numbers map via theme.spacing(n); strings pass through (e.g., "12px").',
     },
     {
       prop: <code>centerContent</code>,
@@ -89,12 +89,13 @@ export default function BoxDemoPage() {
     },
     {
       prop: <code>alignX</code>,
-      type: <code>'left' | 'right' | 'center'</code>,
-      default: <code>'left'</code>,
+      type: <code>&apos;left&apos; | &apos;right&apos; | &apos;center&apos;</code>,
+      default: <code>&apos;left&apos;</code>,
       description: (
         <>
           When not <code>fullWidth</code>, horizontally places the box within its parent. Use{' '}
-          <code>alignX='right'</code> for right‑bound, or <code>alignX='center'</code> to center it.
+          <code>alignX=&apos;right&apos;</code> for right‑bound, or{' '}
+          <code>alignX=&apos;center&apos;</code> to center it.
         </>
       ),
     },
@@ -112,7 +113,7 @@ export default function BoxDemoPage() {
     },
     {
       prop: <code>HTML div props</code>,
-      type: <code>React.ComponentProps&lt;'div'&gt;</code>,
+      type: <code>React.ComponentProps&lt;&apos;div&apos;&gt;</code>,
       default: <code>-</code>,
       description: (
         <>
@@ -198,7 +199,9 @@ export default function BoxDemoPage() {
                 alignX='right'
                 style={{ border: `1px dashed ${theme.colors['text']}` }}
               >
-                <Typography>Anchored to the right with intrinsic width (alignX='right')</Typography>
+                <Typography>
+                  Anchored to the right with intrinsic width (alignX=&apos;right&apos;)
+                </Typography>
               </Box>
 
               <Typography variant='h3'>7. Centered placement</Typography>
@@ -207,7 +210,7 @@ export default function BoxDemoPage() {
                 style={{ border: `1px dashed ${theme.colors['text']}` }}
               >
                 <Typography>
-                  Horizontally centered with intrinsic width (alignX='center')
+                  Horizontally centered with intrinsic width (alignX=&apos;center&apos;)
                 </Typography>
               </Box>
 
@@ -259,7 +262,6 @@ export default function BoxDemoPage() {
                 Example:
               </Typography>
               <CodeBlock
-                fullWidth
                 code={`<Box
   id="hero"
   role="region"

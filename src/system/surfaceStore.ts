@@ -26,6 +26,8 @@ export interface SurfaceState {
 export const createSurfaceStore = () =>
   create<SurfaceState>((set, get) => {
     const nodes = new Map<string, { node: HTMLElement; cb?: (m: ChildMetrics) => void }>();
+    // Fast reverse lookup to avoid O(n^2) scans on ResizeObserver callbacks
+    const byNode = new WeakMap<HTMLElement, { id: string; cb?: (m: ChildMetrics) => void }>();
 
     const ro = new ResizeObserver((entries) => {
       const surfEl = get().element;
@@ -33,25 +35,30 @@ export const createSurfaceStore = () =>
       const scrollTop = surfEl ? surfEl.scrollTop : 0;
       const scrollLeft = surfEl ? surfEl.scrollLeft : 0;
 
+      // Batch children updates into a single set() to reduce churn
+      const changed = new Map<string, ChildMetrics>();
+
       for (const entry of entries) {
-        for (const [id, meta] of nodes) {
-          if (meta.node === entry.target) {
-            const rect = entry.target.getBoundingClientRect();
-            const metrics: ChildMetrics = {
-              width: rect.width,
-              height: Math.round(rect.height),
-              top: rect.top - sRect.top + scrollTop,
-              left: rect.left - sRect.left + scrollLeft,
-            };
-            set((s) => {
-              const next = new Map(s.children);
-              next.set(id, metrics);
-              return { children: next };
-            });
-            meta.cb?.(metrics);
-            break;
-          }
-        }
+        const target = entry.target as HTMLElement;
+        const meta = byNode.get(target);
+        if (!meta) continue;
+        const rect = target.getBoundingClientRect();
+        const metrics: ChildMetrics = {
+          width: rect.width,
+          height: Math.round(rect.height),
+          top: rect.top - sRect.top + scrollTop,
+          left: rect.left - sRect.left + scrollLeft,
+        };
+        changed.set(meta.id, metrics);
+        meta.cb?.(metrics);
+      }
+
+      if (changed.size) {
+        set((s) => {
+          const next = new Map(s.children);
+          for (const [id, m] of changed) next.set(id, m);
+          return { children: next };
+        });
       }
     });
 
@@ -64,6 +71,7 @@ export const createSurfaceStore = () =>
       children: new Map(),
       registerChild: (id, node, cb) => {
         nodes.set(id, { node, cb });
+        byNode.set(node, { id, cb });
         ro.observe(node);
 
         const surfEl = get().element;
@@ -91,6 +99,7 @@ export const createSurfaceStore = () =>
         const entry = nodes.get(id);
         if (entry) {
           ro.unobserve(entry.node);
+          byNode.delete(entry.node);
           nodes.delete(id);
         }
         set((s) => {
