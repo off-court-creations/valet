@@ -6,7 +6,7 @@ import React from 'react';
 import { marked } from 'marked';
 import { markedHighlight } from 'marked-highlight';
 import hljs from 'highlight.js';
-import 'highlight.js/styles/github.css';
+import 'highlight.js/styles/github-dark.css';
 import type { TokensList, Token, Tokens } from 'marked';
 import Stack from '../layout/Stack';
 import Panel from '../layout/Panel';
@@ -30,6 +30,8 @@ export interface MarkdownProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Optional override for code block background */
   codeBackground?: string;
 }
+
+const DEFAULT_CODE_BG = '#0d1117';
 
 const renderInline = (tokens?: Token[]): React.ReactNode => {
   if (!tokens) return null;
@@ -122,10 +124,10 @@ const renderTokens = (tokens: TokensList, codeBg?: string): React.ReactNode =>
           <Panel
             key={i}
             preset='codePanel'
-            background={codeBg}
+            background={codeBg ?? DEFAULT_CODE_BG}
             style={{ margin: '0.5rem 0' }}
           >
-            <pre style={{ margin: 0 }}>
+            <pre style={{ margin: 0, background: 'transparent' }}>
               <code
                 className={`hljs language-${validLang}`}
                 dangerouslySetInnerHTML={{ __html: html }}
