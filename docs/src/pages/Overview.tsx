@@ -3,9 +3,8 @@
 // A newcomer-friendly tour of valet: what it is, why it exists,
 // the mental model, and your first steps.
 // ─────────────────────────────────────────────────────────────
-import { Surface, Stack, Typography, Button, Panel, Icon } from '@archway/valet';
+import { Surface, Stack, Typography, Button, Panel, Icon, CodeBlock } from '@archway/valet';
 import NavDrawer from '../components/NavDrawer';
-import CodeBlock from '../components/CodeBlock';
 import { useNavigate } from 'react-router-dom';
 import type { DocMeta } from '../types';
 

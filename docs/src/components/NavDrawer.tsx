@@ -50,6 +50,7 @@ const fields: [string, string][] = [
 ];
 
 const widgets: [string, string][] = [
+  ['CodeBlock', '/codeblock-demo'],
   ['LLMChat', '/llmchat'],
   ['RichChat', '/richchat'],
   ['Pagination', '/pagination-demo'],

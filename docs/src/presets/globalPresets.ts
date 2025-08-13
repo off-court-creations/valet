@@ -49,7 +49,7 @@ definePreset(
 definePreset(
   'codePanel',
   (t) => `
-    padding         : ${t.spacing(1)};
-    margin-bottom : ${t.spacing(4)} !important;
+    padding      : ${t.spacing(1)};
+    margin-bottom: ${t.spacing(4)} !important;
   `,
 );
