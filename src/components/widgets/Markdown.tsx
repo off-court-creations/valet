@@ -13,7 +13,7 @@ import Typography, { type Variant } from '../primitives/Typography';
 import Image from '../primitives/Image';
 import Table, { type TableColumn } from './Table';
 import { useTheme } from '../../system/themeStore';
-import { HLJS_LIGHT, HLJS_DARK } from './hljsThemes';
+import { HLJS_LIGHT, HLJS_DARK } from '../../css/hljsThemes';
 
 marked.use(
   markedHighlight({
