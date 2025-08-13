@@ -34,7 +34,7 @@ export default function StackDemoPage() {
       description: 'Layout direction',
     },
     {
-      prop: <code>spacing</code>,
+      prop: <code>gap</code>,
       type: <code>number | string</code>,
       default: <code>1</code>,
       description: 'Gap between children',
@@ -71,7 +71,7 @@ export default function StackDemoPage() {
             <Typography variant='h3'>1. Row layout</Typography>
             <Stack
               direction='row'
-              spacing={2}
+              gap={2}
             >
               <Box background={theme.colors['primary']}>A</Box>
               <Box background={theme.colors['secondary']}>B</Box>
@@ -81,7 +81,7 @@ export default function StackDemoPage() {
             <Typography variant='h3'>2. Wrapping</Typography>
             <Stack
               direction='row'
-              spacing={1}
+              gap={1}
               wrap
               style={{ maxWidth: 200 }}
             >

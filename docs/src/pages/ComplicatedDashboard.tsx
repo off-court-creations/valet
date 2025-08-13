@@ -27,11 +27,14 @@ type Order = {
   status: 'Pending' | 'Shipped' | 'Delivered' | 'Cancelled';
 };
 
+const customerNames = ['Alice', 'Bob', 'Chloe', 'Diego', 'Eve', 'Fay', 'Gus'] as const;
+const orderStatuses = ['Pending', 'Shipped', 'Delivered', 'Cancelled'] as const;
+
 const orders: Order[] = Array.from({ length: 12 }).map((_, i) => ({
   id: `ORD-${1000 + i}`,
-  customer: ['Alice', 'Bob', 'Chloe', 'Diego', 'Eve', 'Fay', 'Gus'][i % 7],
+  customer: customerNames[i % customerNames.length]!,
   total: Math.round(50 + Math.random() * 950),
-  status: (['Pending', 'Shipped', 'Delivered', 'Cancelled'] as const)[i % 4],
+  status: orderStatuses[i % orderStatuses.length]!,
 }));
 
 const orderCols: TableColumn<Order>[] = [
