@@ -36,14 +36,15 @@ export default function CodeBlock({
   return (
     <div
       style={{
-        position: 'relative',
+        display: 'flex',
+        alignItems: 'flex-start',
         width: fullWidth ? '100%' : 'fit-content',
       }}
     >
       <Markdown
         data={markdown}
         codeBackground={mode === 'dark' ? '#0d1117' : '#f6f8fa'}
-        style={{ margin: 0 }}
+        style={{ margin: 0, flex: 1 }}
       />
       <IconButton
         variant='outlined'
@@ -52,7 +53,7 @@ export default function CodeBlock({
         aria-label={ariaLabel ?? 'Copy code snippet'}
         title={title ?? 'Copy'}
         onClick={handleCopy}
-        style={{ position: 'absolute', top: theme.spacing(1), right: theme.spacing(2) }}
+        style={{ marginLeft: theme.spacing(1) }}
       />
       {copied && (
         <Snackbar
