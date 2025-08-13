@@ -4,10 +4,9 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.25.2]
 - Docs improvements
-- `Drawer`, `Typography`, `Tree` interplay improvements. 
-
-## [0.25.1]
+- `Drawer`, `Typography`, `Tree` interplay improvements
 - Fix: eliminate resize-induced leak with persistent `Drawer`
 - Improved `Codeblock`
 
@@ -481,6 +480,7 @@ All notable changes to this project will be documented in this file. The format 
 
 - vibe coded
 
+[v0.25.2]: https://github.com/off-court-creations/valet/releases/tag/v0.25.2
 [v0.25.1]: https://github.com/off-court-creations/valet/releases/tag/v0.25.1
 [v0.25.0]: https://github.com/off-court-creations/valet/releases/tag/v0.25.0
 [v0.24.0]: https://github.com/off-court-creations/valet/releases/tag/v0.24.0
