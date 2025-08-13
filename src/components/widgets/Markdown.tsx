@@ -125,10 +125,12 @@ const renderTokens = (tokens: TokensList, codeBg?: string): React.ReactNode =>
             background={codeBg}
             style={{ margin: '0.5rem 0' }}
           >
-            <code
-              className={`hljs language-${validLang}`}
-              dangerouslySetInnerHTML={{ __html: html }}
-            />
+            <pre style={{ margin: 0 }}>
+              <code
+                className={`hljs language-${validLang}`}
+                dangerouslySetInnerHTML={{ __html: html }}
+              />
+            </pre>
           </Panel>
         );
       }
