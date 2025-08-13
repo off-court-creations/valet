@@ -1,6 +1,7 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// src/pages/TextFieldDemoPage.tsx
-// ─────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// src/pages/TextFormDemo.tsx  | valet-docs
+// TextField and FormControl showcase
+// ─────────────────────────────────────────────────────────────
 import { useState } from 'react';
 import {
   Surface,
@@ -22,6 +23,7 @@ interface ContactValues {
   name: string;
   email: string;
   message: string;
+  [key: string]: unknown;
 }
 
 const useContactForm = createFormStore<ContactValues>({

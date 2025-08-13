@@ -25,7 +25,7 @@ export default function CodeBlock({ code, fullWidth, ariaLabel, title }: CodeBlo
   };
 
   return (
-    <Panel fullWidth={fullWidth}>
+    <Panel fullWidth={fullWidth ?? false}>
       <Stack
         direction='row'
         wrap={false}
