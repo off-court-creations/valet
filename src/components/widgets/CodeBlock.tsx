@@ -11,7 +11,6 @@ import { useTheme } from '../../system/themeStore';
 export interface CodeBlockProps {
   code: string;
   language?: string;
-  fullWidth?: boolean;
   ariaLabel?: string;
   title?: string;
 }
@@ -19,7 +18,6 @@ export interface CodeBlockProps {
 export const CodeBlock: React.FC<CodeBlockProps> = ({
   code,
   language = 'typescript',
-  fullWidth,
   ariaLabel,
   title,
 }) => {
@@ -41,7 +39,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
       style={{
         display: 'flex',
         alignItems: 'flex-start',
-        width: fullWidth ? '100%' : 'fit-content',
+        width: '100%',
       }}
     >
       <Markdown

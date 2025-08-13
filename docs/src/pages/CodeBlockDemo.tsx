@@ -9,7 +9,6 @@ import {
   Tabs,
   Table,
   Select,
-  Switch,
   TextField,
   CodeBlock,
   type TableColumn,
@@ -21,7 +20,6 @@ import NavDrawer from '../components/NavDrawer';
 export default function CodeBlockDemoPage() {
   const [language, setLanguage] = useState<'typescript' | 'javascript' | 'css'>('typescript');
   const [code, setCode] = useState<string>("const hello = 'world';\nconsole.log(hello);");
-  const [fullWidth, setFullWidth] = useState(false);
 
   interface Row {
     prop: ReactNode;
@@ -49,12 +47,6 @@ export default function CodeBlockDemoPage() {
       type: <code>string</code>,
       default: <code>'typescript'</code>,
       description: 'Highlight.js language key',
-    },
-    {
-      prop: <code>fullWidth</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Stretch block to fill its container',
     },
     {
       prop: <code>ariaLabel</code>,
@@ -99,37 +91,18 @@ export default function CodeBlockDemoPage() {
           <Tabs.Tab label='Playground' />
           <Tabs.Panel>
             <Stack gap={1}>
-              <Stack
-                direction='row'
-                gap={1}
-                wrap={false}
-              >
-                <Stack gap={0.25}>
-                  <Typography variant='subtitle'>language</Typography>
-                  <Select
-                    placeholder='language'
-                    value={language}
-                    onChange={(v) => setLanguage(v as 'typescript' | 'javascript' | 'css')}
-                    style={{ width: 160 }}
-                  >
-                    <Select.Option value='typescript'>typescript</Select.Option>
-                    <Select.Option value='javascript'>javascript</Select.Option>
-                    <Select.Option value='css'>css</Select.Option>
-                  </Select>
-                </Stack>
-                <Stack
-                  direction='row'
-                  gap={1}
-                  wrap={false}
-                  style={{ alignItems: 'center' }}
+              <Stack gap={0.25}>
+                <Typography variant='subtitle'>language</Typography>
+                <Select
+                  placeholder='language'
+                  value={language}
+                  onChange={(v) => setLanguage(v as 'typescript' | 'javascript' | 'css')}
+                  style={{ width: 160 }}
                 >
-                  <Typography variant='subtitle'>fullWidth</Typography>
-                  <Switch
-                    checked={fullWidth}
-                    onChange={setFullWidth}
-                    aria-label='Toggle fullWidth'
-                  />
-                </Stack>
+                  <Select.Option value='typescript'>typescript</Select.Option>
+                  <Select.Option value='javascript'>javascript</Select.Option>
+                  <Select.Option value='css'>css</Select.Option>
+                </Select>
               </Stack>
               <TextField
                 as='textarea'
@@ -143,7 +116,6 @@ export default function CodeBlockDemoPage() {
               <CodeBlock
                 code={code}
                 language={language}
-                fullWidth={fullWidth}
               />
             </Stack>
           </Tabs.Panel>

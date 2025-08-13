@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file. The format 
 - Lower `CodeBlock` copy button for better alignment
 - Promote `CodeBlock` to core widget
 - Document `CodeBlock` widget with dedicated docs page
+- Remove `fullWidth` prop from `CodeBlock`
 
 ## [0.25.1]
 

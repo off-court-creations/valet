@@ -259,7 +259,6 @@ export default function BoxDemoPage() {
                 Example:
               </Typography>
               <CodeBlock
-                fullWidth
                 code={`<Box
   id="hero"
   role="region"

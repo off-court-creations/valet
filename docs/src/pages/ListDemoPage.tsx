@@ -192,7 +192,6 @@ const data: Person[] = [
 
               <Typography variant='h3'>2. Code</Typography>
               <CodeBlock
-                fullWidth
                 code={usage}
               />
             </Stack>
