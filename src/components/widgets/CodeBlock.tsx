@@ -39,7 +39,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
       style={{
         display: 'flex',
         alignItems: 'flex-start',
-        width: '100%',
+        width: 'fit-content',
       }}
     >
       <Markdown
