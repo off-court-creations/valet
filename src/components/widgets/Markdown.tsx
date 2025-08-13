@@ -6,13 +6,13 @@ import React from 'react';
 import { marked } from 'marked';
 import { markedHighlight } from 'marked-highlight';
 import hljs from 'highlight.js';
-import 'highlight.js/styles/github-dark.css';
 import type { TokensList, Token, Tokens } from 'marked';
 import Stack from '../layout/Stack';
 import Panel from '../layout/Panel';
 import Typography, { type Variant } from '../primitives/Typography';
 import Image from '../primitives/Image';
 import Table, { type TableColumn } from './Table';
+import { useTheme } from '../../system/themeStore';
 
 marked.use(
   markedHighlight({
@@ -31,7 +31,8 @@ export interface MarkdownProps extends React.HTMLAttributes<HTMLDivElement> {
   codeBackground?: string;
 }
 
-const DEFAULT_CODE_BG = '#0d1117';
+const LIGHT_BG = '#f6f8fa';
+const DARK_BG = '#0d1117';
 
 const renderInline = (tokens?: Token[]): React.ReactNode => {
   if (!tokens) return null;
@@ -75,7 +76,7 @@ const renderInline = (tokens?: Token[]): React.ReactNode => {
   });
 };
 
-const renderTokens = (tokens: TokensList, codeBg?: string): React.ReactNode =>
+const renderTokens = (tokens: TokensList, codeBg: string): React.ReactNode =>
   tokens.map((t: Token, i: number) => {
     switch (t.type) {
       case 'heading': {
@@ -124,7 +125,7 @@ const renderTokens = (tokens: TokensList, codeBg?: string): React.ReactNode =>
           <Panel
             key={i}
             preset='codePanel'
-            background={codeBg ?? DEFAULT_CODE_BG}
+            background={codeBg}
             style={{ margin: '0.5rem 0' }}
           >
             <pre style={{ margin: 0, background: 'transparent' }}>
@@ -174,14 +175,21 @@ export const Markdown: React.FC<MarkdownProps> = ({
   style,
   ...rest
 }) => {
+  const { mode } = useTheme();
+  React.useEffect(() => {
+    void import(
+      mode === 'dark' ? 'highlight.js/styles/github-dark.css' : 'highlight.js/styles/github.css'
+    );
+  }, [mode]);
   const tokens = React.useMemo(() => marked.lexer(data) as TokensList, [data]);
+  const resolvedBg = codeBackground ?? (mode === 'dark' ? DARK_BG : LIGHT_BG);
   return (
     <Stack
       {...rest}
       className={className}
       style={style}
     >
-      {renderTokens(tokens, codeBackground)}
+      {renderTokens(tokens, resolvedBg)}
     </Stack>
   );
 };
