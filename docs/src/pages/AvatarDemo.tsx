@@ -140,7 +140,7 @@ export default function AvatarDemoPage() {
               {(['xl', 'l', 'm', 's', 'xs'] as const).map((s) => (
                 <Stack
                   key={s}
-                  spacing={0.5}
+                  gap={0.5}
                   style={{ alignItems: 'center' }}
                 >
                   <Avatar

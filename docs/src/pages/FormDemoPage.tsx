@@ -1,4 +1,7 @@
-// src/pages/FormDemoPage.tsx
+// ─────────────────────────────────────────────────────────────
+// src/pages/FormDemoPage.tsx  | valet-docs
+// Contact form example with typed store and presets
+// ─────────────────────────────────────────────────────────────
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -21,6 +24,7 @@ interface ContactValues {
   name: string;
   email: string;
   message: string;
+  [key: string]: unknown;
 }
 const useContactForm = createFormStore<ContactValues>({
   name: '',
@@ -73,7 +77,7 @@ export default function FormDemoPage() {
           // <- custom callback passes (values, event)
           onSubmitValues={(values) => {
             console.log('FORM SUBMIT', values);
-            setSubmitted(values);
+            setSubmitted(values as ContactValues);
           }}
         >
           <Stack>

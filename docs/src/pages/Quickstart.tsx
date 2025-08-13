@@ -172,21 +172,21 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                 variant='outlined'
                 onClick={() => navigate('/components-primer')}
               >
-                <Icon name='mdi:book-open-variant' />
+                <Icon icon='mdi:book-open-variant' />
                 &nbsp;Components primer
               </Button>
               <Button
                 variant='outlined'
                 onClick={() => navigate('/styled')}
               >
-                <Icon name='mdi:xml' />
+                <Icon icon='mdi:xml' />
                 &nbsp;Styled engine
               </Button>
               <Button
                 variant='outlined'
                 onClick={() => navigate('/theme')}
               >
-                <Icon name='mdi:palette-outline' />
+                <Icon icon='mdi:palette-outline' />
                 &nbsp;Theme store
               </Button>
             </Stack>
