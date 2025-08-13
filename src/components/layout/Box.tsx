@@ -1,6 +1,7 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/layout/Box.tsx  | valet
 // width modes: content-left (default), content-right, centered, full
+// patch: ensure background/text overrides always apply (inline style when set)
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
 import { styled } from '../../css/createStyled';
@@ -106,6 +107,22 @@ export const Box: React.FC<BoxProps> = ({
     return (raw as 'left' | 'right' | 'center') || 'left';
   })();
 
+  // Promote background/text overrides to inline style so they always win the cascade.
+  // Never clobber an explicit style prop from the caller.
+  const inlineStyle: React.CSSProperties & Record<string, string> = {
+    ...(style || {}),
+  } as any;
+
+  if (background && inlineStyle.background == null) {
+    inlineStyle.background = background;
+    // Expose as CSS var for children that key off --valet-bg
+    (inlineStyle as any)['--valet-bg'] = background;
+  }
+  if (resolvedText && inlineStyle.color == null) {
+    inlineStyle.color = resolvedText;
+    (inlineStyle as any)['--valet-text-color'] = resolvedText;
+  }
+
   return (
     <Base
       {...rest}
@@ -115,7 +132,7 @@ export const Box: React.FC<BoxProps> = ({
       $full={!!fullWidth}
       $alignX={normalizedAlign}
       $pad={pad}
-      style={style}
+      style={inlineStyle}
       className={[presetClass, className].filter(Boolean).join(' ')}
     />
   );

@@ -63,7 +63,12 @@ export default function ListDemoPage() {
     { header: 'Description', accessor: 'description' },
   ];
   const data: Row[] = [
-    { prop: <code>data</code>, type: <code>T[]</code>, def: <code>-</code>, description: 'Items to render.' },
+    {
+      prop: <code>data</code>,
+      type: <code>T[]</code>,
+      def: <code>-</code>,
+      description: 'Items to render.',
+    },
     {
       prop: <code>getTitle</code>,
       type: <code>(item: T) =&gt; ReactNode</code>,
@@ -76,7 +81,12 @@ export default function ListDemoPage() {
       def: <code>-</code>,
       description: 'Optional secondary line for each row.',
     },
-    { prop: <code>striped</code>, type: <code>boolean</code>, def: <code>false</code>, description: 'Apply zebra striping.' },
+    {
+      prop: <code>striped</code>,
+      type: <code>boolean</code>,
+      def: <code>false</code>,
+      description: 'Apply zebra striping.',
+    },
     {
       prop: <code>hoverable</code>,
       type: <code>boolean</code>,
@@ -156,17 +166,26 @@ const data: Person[] = [
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography variant='h2' bold>
+        <Typography
+          variant='h2'
+          bold
+        >
           List Showcase
         </Typography>
-        <Typography variant='subtitle'>Selectable list with optional drag‑and‑drop reordering</Typography>
+        <Typography variant='subtitle'>
+          Selectable list with optional drag‑and‑drop reordering
+        </Typography>
 
         <Tabs>
           <Tabs.Tab label='Usage' />
           <Tabs.Panel>
             <Stack>
               <Typography variant='h3'>1. Default</Typography>
-              <List<Character> data={INITIAL} hoverable getTitle={(c) => c.name} />
+              <List<Character>
+                data={INITIAL}
+                hoverable
+                getTitle={(c) => c.name}
+              />
 
               <Typography variant='h3'>2. Title + subtitle</Typography>
               <List<Character>
@@ -178,25 +197,49 @@ const data: Person[] = [
               />
 
               <Typography variant='h3'>3. Code</Typography>
-              <CodeBlock fullWidth code={usage} />
+              <CodeBlock
+                fullWidth
+                code={usage}
+              />
             </Stack>
           </Tabs.Panel>
 
           <Tabs.Tab label='Playground' />
           <Tabs.Panel>
             <Stack gap={1}>
-              <Stack direction='row' wrap={false} gap={1} style={{ alignItems: 'center' }}>
+              <Stack
+                direction='row'
+                wrap={false}
+                gap={1}
+                style={{ alignItems: 'center' }}
+              >
                 <Typography variant='subtitle'>striped</Typography>
-                <Switch checked={striped} onChange={setStriped} aria-label='Toggle striped' />
+                <Switch
+                  checked={striped}
+                  onChange={setStriped}
+                  aria-label='Toggle striped'
+                />
 
                 <Typography variant='subtitle'>hoverable</Typography>
-                <Switch checked={hoverable} onChange={setHoverable} aria-label='Toggle hoverable' />
+                <Switch
+                  checked={hoverable}
+                  onChange={setHoverable}
+                  aria-label='Toggle hoverable'
+                />
 
                 <Typography variant='subtitle'>selectable</Typography>
-                <Switch checked={selectable} onChange={setSelectable} aria-label='Toggle selectable' />
+                <Switch
+                  checked={selectable}
+                  onChange={setSelectable}
+                  aria-label='Toggle selectable'
+                />
 
                 <Typography variant='subtitle'>reorderable</Typography>
-                <Switch checked={reorderable} onChange={setReorderable} aria-label='Toggle reorderable' />
+                <Switch
+                  checked={reorderable}
+                  onChange={setReorderable}
+                  aria-label='Toggle reorderable'
+                />
               </Stack>
 
               <Panel variant='alt'>
@@ -214,20 +257,31 @@ const data: Person[] = [
               </Panel>
 
               {reorderable && (
-                <Typography variant='body'>Current order:&nbsp;<code>{orderLabel}</code></Typography>
+                <Typography variant='body'>
+                  Current order:&nbsp;<code>{orderLabel}</code>
+                </Typography>
               )}
               {selectable && (
                 <Typography variant='body'>
                   Selected:&nbsp;<code>{selected ? selected.name : 'None'}</code>
                 </Typography>
               )}
-              <Button variant='outlined' onClick={toggleMode}>Toggle light / dark mode</Button>
+              <Button
+                variant='outlined'
+                onClick={toggleMode}
+              >
+                Toggle light / dark mode
+              </Button>
             </Stack>
           </Tabs.Panel>
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Table data={data} columns={columns} constrainHeight={false} />
+            <Table
+              data={data}
+              columns={columns}
+              constrainHeight={false}
+            />
           </Tabs.Panel>
         </Tabs>
       </Stack>

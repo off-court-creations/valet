@@ -93,8 +93,8 @@ export default function BoxDemoPage() {
       default: <code>'left'</code>,
       description: (
         <>
-          When not <code>fullWidth</code>, horizontally places the box within its parent. Use
-          {' '}<code>alignX='right'</code> for right‑bound, or <code>alignX='center'</code> to center it.
+          When not <code>fullWidth</code>, horizontally places the box within its parent. Use{' '}
+          <code>alignX='right'</code> for right‑bound, or <code>alignX='center'</code> to center it.
         </>
       ),
     },
@@ -185,7 +185,10 @@ export default function BoxDemoPage() {
                 <Box style={{ border: `1px dashed ${theme.colors['text']}` }}>
                   <Typography>Default: content width anchored left</Typography>
                 </Box>
-                <Box fullWidth style={{ border: `1px dashed ${theme.colors['text']}` }}>
+                <Box
+                  fullWidth
+                  style={{ border: `1px dashed ${theme.colors['text']}` }}
+                >
                   <Typography>Full width: stretches to the width of the parent</Typography>
                 </Box>
               </Stack>
@@ -195,9 +198,7 @@ export default function BoxDemoPage() {
                 alignX='right'
                 style={{ border: `1px dashed ${theme.colors['text']}` }}
               >
-                <Typography>
-                  Anchored to the right with intrinsic width (alignX='right')
-                </Typography>
+                <Typography>Anchored to the right with intrinsic width (alignX='right')</Typography>
               </Box>
 
               <Typography variant='h3'>7. Centered placement</Typography>
@@ -205,7 +206,9 @@ export default function BoxDemoPage() {
                 alignX='center'
                 style={{ border: `1px dashed ${theme.colors['text']}` }}
               >
-                <Typography>Horizontally centered with intrinsic width (alignX='center')</Typography>
+                <Typography>
+                  Horizontally centered with intrinsic width (alignX='center')
+                </Typography>
               </Box>
 
               <Typography variant='h3'>8. Nested Boxes</Typography>
@@ -342,7 +345,11 @@ export default function BoxDemoPage() {
                   style={{ alignItems: 'center' }}
                 >
                   <Typography variant='subtitle'>center content</Typography>
-                  <Switch checked={centerContent} onChange={setCenterContent} aria-label='Toggle centerContent' />
+                  <Switch
+                    checked={centerContent}
+                    onChange={setCenterContent}
+                    aria-label='Toggle centerContent'
+                  />
                 </Stack>
                 <Stack
                   direction='row'
@@ -351,7 +358,11 @@ export default function BoxDemoPage() {
                   style={{ alignItems: 'center' }}
                 >
                   <Typography variant='subtitle'>fullWidth</Typography>
-                  <Switch checked={fullWidth} onChange={setFullWidth} aria-label='Toggle fullWidth' />
+                  <Switch
+                    checked={fullWidth}
+                    onChange={setFullWidth}
+                    aria-label='Toggle fullWidth'
+                  />
                 </Stack>
                 <Stack gap={0.25}>
                   <Typography variant='subtitle'>alignX</Typography>

@@ -73,7 +73,9 @@ const Root = styled('ul')<{
     border-bottom: ${({ $strokeW }) => $strokeW} solid ${({ $border }) => $border};
     cursor: ${({ $reorderable }) => ($reorderable ? 'grab' : 'default')};
     user-select: none;
-    transition: background 120ms ease, padding 120ms linear;
+    transition:
+      background 120ms ease,
+      padding 120ms linear;
     will-change: transform; /* hint for FLIP animations */
   }
   li:last-child {
@@ -102,7 +104,7 @@ const Root = styled('ul')<{
   }
 
   /* Kinetic padding on dragged row */
-  li[data-dragging="true"] {
+  li[data-dragging='true'] {
     /* subtle vertical expansion to indicate movement */
     padding-top: calc(${({ $padV }) => $padV} * 1.12);
     padding-bottom: calc(${({ $padV }) => $padV} * 1.12);
@@ -191,7 +193,7 @@ export function List<T>({
     const after = e.clientY > halfway; // cursor is past the midpoint
 
     // Compute intended insertion index based on cursor half
-    let targetIndex = idx + (after ? 1 : 0);
+    const targetIndex = idx + (after ? 1 : 0);
     // Determine insertion index in the array AFTER removal of 'from'
     let insertIndex = targetIndex;
     if (targetIndex > from) insertIndex = targetIndex - 1;

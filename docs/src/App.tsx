@@ -63,7 +63,6 @@ const DateSelectorDemoPage = page(() => import('./pages/DateSelectorDemo'));
 const MarkdownDemoPage = page(() => import('./pages/MarkdownDemo'));
 const OverviewPage = page(() => import('./pages/Overview'));
 const QuickstartPage = page(() => import('./pages/Quickstart'));
-const HelloValetPage = page(() => import('./pages/HelloValet'));
 const MentalModelPage = page(() => import('./pages/MentalModel'));
 const StyledEnginePage = page(() => import('./pages/StyledEngine'));
 const ThemePage = page(() => import('./pages/Theme'));
@@ -113,10 +112,6 @@ export function App() {
           element={<QuickstartPage />}
         />
 
-        <Route
-          path='/hello-valet'
-          element={<HelloValetPage />}
-        />
         <Route
           path='/mental-model'
           element={<MentalModelPage />}

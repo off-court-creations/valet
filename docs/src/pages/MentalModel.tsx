@@ -62,9 +62,11 @@ export default function MentalModelPage() {
             <code>preset</code> prop for reusable styles.
           </Typography>
           <Typography>
-            <b>Box + sx={{ p: 2 }}:</b> Prefer <code>Stack</code> with <code>gap</code> and a
-            wrapping <code>Panel</code> for visual grouping; spacing comes from the theme scale via{' '}
-            <code>theme.spacing(n)</code>.
+            <b>
+              Box + <code>{'sx={{ p: 2 }}'}</code>:
+            </b>{' '}
+            Prefer <code>Stack</code> with <code>gap</code> and a wrapping <code>Panel</code> for
+            visual grouping; spacing comes from the theme scale via <code>theme.spacing(n)</code>.
           </Typography>
           <Typography>
             <b>Typography variants:</b> Use <code>Typography</code> with named <code>variant</code>{' '}

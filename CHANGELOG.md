@@ -46,8 +46,11 @@ All notable changes to this project will be documented in this file. The format 
  - Polish Quickstart Step 5 with an action panel and links
  - CodeBlock: vertically center single-line content for better alignment
  - Use CodeBlock on Installation page for command snippet
- - Box: default to inline sizing; add `fullWidth` prop and update docs demo/reference
- - List: kinetic padding now animates linearly; docs page now organized into Usage, Playground, Reference with prop table
+- Box: default to inline sizing; add `fullWidth` prop and update docs demo/reference
+- List: kinetic padding now animates linearly; docs page now organized into Usage, Playground, Reference with prop table
+
+### Removed
+- Docs: Delete Hello Valet page and remove Hello Valet and Mental Model links from the navbar
 
 ## [0.24.0]
 - Setup ESLint and Prettier

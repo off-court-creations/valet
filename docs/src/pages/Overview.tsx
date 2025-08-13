@@ -187,20 +187,7 @@ export function App() {
               <Icon icon='mdi:flash-outline' />
               &nbsp;Quickstart
             </Button>
-            <Button
-              variant='outlined'
-              onClick={() => navigate('/hello-valet')}
-            >
-              <Icon icon='mdi:rocket-launch-outline' />
-              &nbsp;Hello Valet
-            </Button>
-            <Button
-              variant='outlined'
-              onClick={() => navigate('/mental-model')}
-            >
-              <Icon icon='mdi:brain' />
-              &nbsp;Mental model
-            </Button>
+            {/* Hello Valet and Mental Model removed */}
             <Button
               variant='outlined'
               onClick={() => navigate('/components-primer')}

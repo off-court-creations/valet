@@ -224,7 +224,10 @@ export const MetroSelect: MetroSelectComponent = ({
 
   const presetCls = p ? preset(p) : '';
 
-  const ctx = useMemo<MetroCtx>(() => ({ value: val ?? null, setValue, multiple }), [val, setValue, multiple]);
+  const ctx = useMemo<MetroCtx>(
+    () => ({ value: val ?? null, setValue, multiple }),
+    [val, setValue, multiple],
+  );
 
   return (
     <MetroCtx.Provider value={ctx}>

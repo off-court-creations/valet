@@ -167,13 +167,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               wrap
               style={{ alignItems: 'center' }}
             >
-              <Button
-                variant='outlined'
-                onClick={() => navigate('/hello-valet')}
-              >
-                <Icon name='mdi:rocket-launch-outline' />
-                &nbsp;Hello Valet tutorial
-              </Button>
+              {/* Hello Valet removed */}
               <Button
                 variant='outlined'
                 onClick={() => navigate('/components-primer')}
