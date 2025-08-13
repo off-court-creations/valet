@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file. The format 
 - Preserve whitespace in highlighted Markdown code blocks
 - Make Markdown code block highlighting theme-aware
 - Fix mixed code block styles when toggling theme repeatedly
+- Space `CodeBlock` copy button away from highlighted code
 
 ## [0.25.1]
 - Improved docs

@@ -13,9 +13,15 @@ export interface CodeBlockProps {
   title?: string;
 }
 
-export default function CodeBlock({ code, language = 'typescript', fullWidth, ariaLabel, title }: CodeBlockProps) {
+export default function CodeBlock({
+  code,
+  language = 'typescript',
+  fullWidth,
+  ariaLabel,
+  title,
+}: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
-  const { mode } = useTheme();
+  const { mode, theme } = useTheme();
   const isMultiline = code.includes('\n');
   const displayCode = isMultiline ? code.replace(/\n+$/, '') : code;
   const markdown = `\`\`\`${language}\n${displayCode}\n\`\`\``;
@@ -46,7 +52,7 @@ export default function CodeBlock({ code, language = 'typescript', fullWidth, ar
         aria-label={ariaLabel ?? 'Copy code snippet'}
         title={title ?? 'Copy'}
         onClick={handleCopy}
-        style={{ position: 'absolute', top: '0.75rem', right: '0.75rem' }}
+        style={{ position: 'absolute', top: theme.spacing(1), right: theme.spacing(2) }}
       />
       {copied && (
         <Snackbar

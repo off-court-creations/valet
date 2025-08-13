@@ -50,6 +50,8 @@ definePreset(
   'codePanel',
   (t) => `
     padding         : ${t.spacing(1)};
+    padding-top   : calc(${t.spacing(1)} * 6);
+    padding-right : calc(${t.spacing(1)} * 5);
     margin-bottom : ${t.spacing(4)} !important;
   `,
 );
