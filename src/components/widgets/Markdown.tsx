@@ -13,6 +13,7 @@ import Typography, { type Variant } from '../primitives/Typography';
 import Image from '../primitives/Image';
 import Table, { type TableColumn } from './Table';
 import { useTheme } from '../../system/themeStore';
+import { HLJS_LIGHT, HLJS_DARK } from './hljsThemes';
 
 marked.use(
   markedHighlight({
@@ -178,18 +179,15 @@ export const Markdown: React.FC<MarkdownProps> = ({
   const { mode } = useTheme();
   React.useEffect(() => {
     const id = 'hljs-theme';
-    const href =
-      mode === 'dark'
-        ? 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css'
-        : 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css';
-    let link = document.getElementById(id) as HTMLLinkElement | null;
-    if (!link) {
-      link = document.createElement('link');
-      link.id = id;
-      link.rel = 'stylesheet';
-      document.head.appendChild(link);
+    const existing = document.getElementById(id);
+    if (existing && existing.tagName === 'LINK') existing.remove();
+    let styleEl = existing as HTMLStyleElement | null;
+    if (!styleEl || styleEl.tagName !== 'STYLE') {
+      styleEl = document.createElement('style');
+      styleEl.id = id;
+      document.head.appendChild(styleEl);
     }
-    link.href = href;
+    styleEl.textContent = mode === 'dark' ? HLJS_DARK : HLJS_LIGHT;
   }, [mode]);
   const tokens = React.useMemo(() => marked.lexer(data) as TokensList, [data]);
   const resolvedBg = codeBackground ?? (mode === 'dark' ? DARK_BG : LIGHT_BG);

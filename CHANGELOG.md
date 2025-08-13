@@ -9,6 +9,8 @@ All notable changes to this project will be documented in this file. The format 
 - Make Markdown code block highlighting theme-aware
 - Fix mixed code block styles when toggling theme repeatedly
 - Move `CodeBlock` copy button outside highlighted code
+- Embed GitHub light and dark highlight.js themes locally
+- Lower `CodeBlock` copy button for better alignment
 
 ## [0.25.1]
 - Improved docs

@@ -53,7 +53,10 @@ export default function CodeBlock({
         aria-label={ariaLabel ?? 'Copy code snippet'}
         title={title ?? 'Copy'}
         onClick={handleCopy}
-        style={{ marginLeft: theme.spacing(1) }}
+        style={{
+          marginLeft: theme.spacing(1),
+          marginTop: theme.spacing(0.5),
+        }}
       />
       {copied && (
         <Snackbar
