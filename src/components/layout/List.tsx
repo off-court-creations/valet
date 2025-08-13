@@ -6,6 +6,8 @@
 // patch: add linear kinetic padding for drag state – 2025‑08‑12
 // patch: single‑selection support with optional enable flag – 2025‑08‑12
 // patch: mobile/touch drag reorder via Pointer Events with scroll lock – 2025‑08‑13
+// patch: amplify breathe effect, press-to-breathe, and blanket list touch scroll lock – 2025‑08‑13
+// patch: immediate, robust scroll lock on any touch within list (non-passive listeners) – 2025‑08‑13
 // ─────────────────────────────────────────────────────────────
 import React, { useEffect, useRef, useState } from 'react';
 import { styled } from '../../css/createStyled';
@@ -65,8 +67,8 @@ const Root = styled('ul')<{
   margin: 0;
   padding: 0;
   border: ${({ $strokeW }) => $strokeW} solid ${({ $border }) => $border};
-  /* Disable page panning while reordering on touch */
-  touch-action: ${({ $dragging }) => ($dragging ? 'none' : 'auto')};
+  /* Disable page panning for any touch interactions inside the list */
+  touch-action: none;
   overscroll-behavior: contain;
 
   li {
@@ -110,8 +112,8 @@ const Root = styled('ul')<{
   /* Kinetic padding on dragged row */
   li[data-dragging='true'] {
     /* subtle vertical expansion to indicate movement */
-    padding-top: calc(${({ $padV }) => $padV} * 1.12);
-    padding-bottom: calc(${({ $padV }) => $padV} * 1.12);
+    padding-top: calc(${({ $padV }) => $padV} * 1.24);
+    padding-bottom: calc(${({ $padV }) => $padV} * 1.24);
     /* ensure the active touch target cannot pan the page */
     touch-action: none;
     cursor: grabbing;
@@ -155,6 +157,28 @@ export function List<T>({
   const pointerIdRef = useRef<number | null>(null);
   const bodyOverflowPrev = useRef<string | null>(null);
   const bodyTouchActionPrev = useRef<string | null>(null);
+  const dragItemRef = useRef<T | null>(null); // identity of dragged item for stable styling
+  const startYRef = useRef<number>(0);
+  const movedEnoughRef = useRef<boolean>(false);
+  const hasDragStartedRef = useRef<boolean>(false);
+  const touchInsideRef = useRef<boolean>(false);
+  const touchLockActiveRef = useRef<boolean>(false);
+
+  const lockBodyScroll = () => {
+    if (touchLockActiveRef.current) return;
+    bodyOverflowPrev.current = document.body.style.overflow || '';
+    bodyTouchActionPrev.current = (document.body.style as any).touchAction || '';
+    document.body.style.overflow = 'hidden';
+    (document.body.style as any).touchAction = 'none';
+    touchLockActiveRef.current = true;
+  };
+  const unlockBodyScrollIfLocked = () => {
+    if (!touchLockActiveRef.current) return;
+    if (bodyOverflowPrev.current !== null) document.body.style.overflow = bodyOverflowPrev.current;
+    if (bodyTouchActionPrev.current !== null)
+      (document.body.style as any).touchAction = bodyTouchActionPrev.current;
+    touchLockActiveRef.current = false;
+  };
   // stable keys for items to ensure DOM persistence across reorders (for FLIP)
   const keyMap = useRef(new WeakMap<object, number>());
   const keySeq = useRef(0);
@@ -177,6 +201,35 @@ export function List<T>({
   useEffect(() => setItems(data), [data]);
 
   /* Handlers -------------------------------------------------------------- */
+  // Strong, immediate scroll locking for any touch within the list
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const preventMove = (e: TouchEvent) => {
+      if (touchLockActiveRef.current) e.preventDefault();
+    };
+    const onStart = (e: TouchEvent) => {
+      // lock at first touch to prevent browser scroll heuristics
+      lockBodyScroll();
+    };
+    const onEnd = () => {
+      // unlock when touches end if no active drag path holds lock
+      if (!hasDragStartedRef.current) unlockBodyScrollIfLocked();
+    };
+
+    // Use capture + non-passive to ensure preventDefault works on iOS Safari
+    root.addEventListener('touchstart', onStart, { passive: false, capture: true });
+    window.addEventListener('touchmove', preventMove, { passive: false, capture: true });
+    window.addEventListener('touchend', onEnd, { passive: false, capture: true });
+    window.addEventListener('touchcancel', onEnd, { passive: false, capture: true });
+    return () => {
+      root.removeEventListener('touchstart', onStart, { capture: true } as any);
+      window.removeEventListener('touchmove', preventMove as any, { capture: true } as any);
+      window.removeEventListener('touchend', onEnd as any, { capture: true } as any);
+      window.removeEventListener('touchcancel', onEnd as any, { capture: true } as any);
+      unlockBodyScrollIfLocked();
+    };
+  }, []);
   // Pointer-based drag for touch/pen (mobile). Mouse continues to use HTML5 DnD.
   const calcInsertIndex = (clientY: number): number => {
     const list = rootRef.current;
@@ -221,11 +274,12 @@ export function List<T>({
     dragFrom.current = idx;
     setDragIdx(idx);
     pointerIdRef.current = e.pointerId;
+    dragItemRef.current = items[idx];
+    startYRef.current = e.clientY;
+    movedEnoughRef.current = false;
+    hasDragStartedRef.current = true;
     // Lock body scroll for the duration of a touch drag
-    bodyOverflowPrev.current = document.body.style.overflow || '';
-    bodyTouchActionPrev.current = (document.body.style as any).touchAction || '';
-    document.body.style.overflow = 'hidden';
-    (document.body.style as any).touchAction = 'none';
+    lockBodyScroll();
     // selection sync (mirror dragStart)
     if (selectable) {
       const item = items[idx];
@@ -238,6 +292,10 @@ export function List<T>({
     const onMove = (ev: PointerEvent) => {
       if (ev.pointerId !== pointerIdRef.current) return;
       ev.preventDefault();
+      if (!movedEnoughRef.current) {
+        if (Math.abs(ev.clientY - startYRef.current) < 6) return; // wait to reorder until slight move
+        movedEnoughRef.current = true;
+      }
       const from = dragFrom.current;
       if (from === null) return;
 
@@ -274,10 +332,10 @@ export function List<T>({
       window.removeEventListener('pointercancel', finish as any, false as any);
       window.removeEventListener('touchmove', touchBlocker as any, false as any);
       // Restore body scroll state
-      if (bodyOverflowPrev.current !== null) document.body.style.overflow = bodyOverflowPrev.current;
-      if (bodyTouchActionPrev.current !== null)
-        (document.body.style as any).touchAction = bodyTouchActionPrev.current;
+      unlockBodyScrollIfLocked();
       pointerIdRef.current = null;
+      dragItemRef.current = null;
+      hasDragStartedRef.current = false;
       handleDragEnd();
     };
 
@@ -291,6 +349,8 @@ export function List<T>({
     setDragIdx(idx);
     e.dataTransfer.setDragImage(EMPTY_IMG, 0, 0); // hide ghost
     e.dataTransfer.effectAllowed = 'move';
+    dragItemRef.current = items[idx];
+    hasDragStartedRef.current = true;
     // If selection is enabled and a different item is dragged, update selection
     if (selectable) {
       const item = items[idx];
@@ -383,6 +443,22 @@ export function List<T>({
       startPointerDrag(idx, e);
     }
   };
+  const handleMouseDown = (idx: number) => () => {
+    // Pre-activate breathe on press even before drag actually starts (desktop polish)
+    if (dragItemRef.current == null) {
+      dragItemRef.current = items[idx];
+      setDragIdx(idx);
+      hasDragStartedRef.current = false;
+      const clear = () => {
+        if (!hasDragStartedRef.current) {
+          dragItemRef.current = null;
+          setDragIdx(null);
+        }
+        window.removeEventListener('mouseup', clear);
+      };
+      window.addEventListener('mouseup', clear);
+    }
+  };
 
   /* Class merge */
   const cls = [p ? preset(p) : '', className].filter(Boolean).join(' ') || undefined;
@@ -392,6 +468,16 @@ export function List<T>({
     <Root
       {...rest}
       ref={rootRef}
+      onTouchStart={() => {
+        // Synthetic fallback; true prevention handled by non-passive listeners below
+        touchInsideRef.current = true;
+      }}
+      onTouchEnd={() => {
+        touchInsideRef.current = false;
+      }}
+      onTouchCancel={() => {
+        touchInsideRef.current = false;
+      }}
       $striped={striped}
       $hover={enableHover}
       $dragging={dragIdx !== null}
@@ -411,9 +497,10 @@ export function List<T>({
         <li
           key={keyOf(item, idx)}
           draggable={reorderable || undefined}
-          data-dragging={dragIdx === idx || undefined}
+          data-dragging={dragItemRef.current === item || undefined}
           aria-selected={selectable && item === selected ? true : undefined}
           onPointerDown={handlePointerDown(idx)}
+          onMouseDown={handleMouseDown(idx)}
           onDragStart={reorderable ? handleDragStart(idx) : undefined}
           onDragOver={reorderable ? handleDragOver(idx) : undefined}
           onDragEnd={reorderable ? handleDragEnd : undefined}
