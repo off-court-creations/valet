@@ -4,20 +4,9 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.25.1]
 - Fix: eliminate resize-induced leak with persistent `Drawer`
-  - Skip registering portalled elements in styled engine (no child RO churn)
-  - Avoid subscribing to surface width/height unless `adaptive` is on
-
-- Highlight Markdown code blocks with language-aware `CodeBlock`
-- Preserve whitespace in highlighted Markdown code blocks
-- Make Markdown code block highlighting theme-aware
-- Fix mixed code block styles when toggling theme repeatedly
-- Move `CodeBlock` copy button outside highlighted code
-- Embed GitHub light and dark highlight.js themes locally
-- Lower `CodeBlock` copy button for better alignment
-- Promote `CodeBlock` to core widget
-- Document `CodeBlock` widget with dedicated docs page
-- Remove `fullWidth` prop from `CodeBlock`
+- Improved `Codeblock`
 
 ## [0.25.1]
 

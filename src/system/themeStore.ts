@@ -93,10 +93,10 @@ const common: Omit<Theme, 'colors'> = {
     },
   },
   fonts: {
-    heading: 'Roboto',
-    body: 'Roboto Serif',
-    mono: 'Roboto Mono',
-    button: 'Roboto Mono',
+    heading: 'Kumbh Sans',
+    body: 'Inter',
+    mono: 'JetBrains Mono',
+    button: 'Kumbh Sans',
   },
 };
 

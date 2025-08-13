@@ -5,7 +5,7 @@
 import React, { Suspense, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { useInitialTheme, Surface, Stack, Typography } from '@archway/valet';
-import brandonUrl from './assets/fonts/BrandonGrotesque.otf';
+import { DemoFontLoader } from './components/DemoFontLoader';
 
 /*───────────────────────────────────────────────────────────*/
 /* Helper – terse lazy() wrapper                            */
@@ -79,13 +79,13 @@ export function App() {
   useInitialTheme(
     {
       fonts: {
-        heading: { name: 'Brandon', src: brandonUrl },
-        body: 'Cabin',
-        mono: 'Ubuntu Mono',
-        button: 'Ubuntu',
+        heading: 'Kumbh Sans',
+        body: 'Inter',
+        mono: 'JetBrains Mono',
+        button: 'Kumbh Sans',
       },
     },
-    [{ name: 'Brandon', src: brandonUrl }, 'Ubuntu', 'Ubuntu Mono', 'Cabin'],
+    ['Kumbh Sans', 'JetBrains Mono', 'Inter'],
   );
 
   /* Simple fallback – swap for a branded spinner when ready */
@@ -99,6 +99,8 @@ export function App() {
 
   return (
     <Suspense fallback={Fallback}>
+      {/* Load demo fonts globally without affecting theme defaults */}
+      <DemoFontLoader />
       <Routes>
         <Route
           path='/'
