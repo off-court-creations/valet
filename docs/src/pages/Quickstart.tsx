@@ -39,11 +39,13 @@ export default function QuickstartPage() {
         </Typography>
         <CodeBlock
           code={`npm create vite@latest my-app -- --template react-ts`}
+          language='bash'
           ariaLabel='Copy create-app command'
         />
         <Typography>Then install valet in your app folder:</Typography>
         <CodeBlock
           code={`cd my-app && npm install @archway/valet`}
+          language='bash'
           ariaLabel='Copy install command'
         />
 
@@ -73,6 +75,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   </React.StrictMode>,
 );
 `}
+          language='tsx'
           ariaLabel='Copy main.tsx snippet'
         />
 
@@ -90,7 +93,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           code={`// src/App.tsx
   import { useInitialTheme } from '@archway/valet';
   import brandonUrl from './assets/fonts/BrandonGrotesque.otf';
-  
+
   export function App() {
     useInitialTheme(
       {
@@ -106,6 +109,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     // ...
   }
   `}
+          language='tsx'
           ariaLabel='Copy App.tsx snippet'
         />
 
@@ -122,7 +126,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <CodeBlock
           code={`import { Routes, Route } from 'react-router-dom';
   import { Surface, Stack, Typography, Button } from '@archway/valet';
-  
+
   function Home() {
     return (
       <Surface>
@@ -133,7 +137,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       </Surface>
     );
   }
-  
+
   export function App() {
     return (
       <Routes>
@@ -142,6 +146,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     );
   }
   `}
+          language='tsx'
           ariaLabel='Copy first screen snippet'
         />
 

@@ -44,6 +44,8 @@
   },
   "dependencies": {
     "@iconify/react": "^6.0.0",
+    "highlight.js": "^11.10.0",
+    "marked-highlight": "^2.2.2",
     "marked": "^16.1.1",
     "react-dropzone": "^14.2.3",
     "siphash": "^1.2.0",

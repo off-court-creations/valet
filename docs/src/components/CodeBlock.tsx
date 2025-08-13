@@ -1,21 +1,23 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/CodeBlock.tsx  | valet-docs
-// Reusable code block with Panel, mono text, pre wrap, copy button, and snackbar feedback
+// Reusable code block with syntax highlighting, copy button, and snackbar feedback
 // ─────────────────────────────────────────────────────────────
-import { Panel, Stack, Typography, IconButton, Snackbar } from '@archway/valet';
+import { Panel, Stack, IconButton, Snackbar, Markdown } from '@archway/valet';
 import { useState } from 'react';
 
 export interface CodeBlockProps {
   code: string;
+  language?: string;
   fullWidth?: boolean;
   ariaLabel?: string;
   title?: string;
 }
 
-export default function CodeBlock({ code, fullWidth, ariaLabel, title }: CodeBlockProps) {
+export default function CodeBlock({ code, language, fullWidth, ariaLabel, title }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
   const isMultiline = code.includes('\n');
   const displayCode = isMultiline ? code.replace(/\n+$/, '') : code;
+  const markdown = '```' + (language ?? '') + '\n' + displayCode + '\n```';
 
   const handleCopy = () => {
     navigator.clipboard.writeText(code).then(
@@ -34,12 +36,10 @@ export default function CodeBlock({ code, fullWidth, ariaLabel, title }: CodeBlo
           alignItems: isMultiline ? 'flex-start' : 'center',
         }}
       >
-        <Typography
-          family='mono'
-          whitespace='pre'
-        >
-          <code>{displayCode}</code>
-        </Typography>
+        <Markdown
+          data={markdown}
+          codeBackground='transparent'
+        />
         <IconButton
           variant='outlined'
           size='sm'

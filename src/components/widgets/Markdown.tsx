@@ -4,9 +4,11 @@
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
 import { marked } from 'marked';
+import { markedHighlight } from 'marked-highlight';
+import hljs from 'highlight.js';
+import 'highlight.js/styles/github.css';
 import type { TokensList, Token, Tokens } from 'marked';
 import Stack from '../layout/Stack';
-import Panel from '../layout/Panel';
 import Typography, { type Variant } from '../primitives/Typography';
 import Image from '../primitives/Image';
 import Table, { type TableColumn } from './Table';
@@ -60,6 +62,16 @@ const renderInline = (tokens?: Token[]): React.ReactNode => {
   });
 };
 
+marked.use(
+  markedHighlight({
+    langPrefix: 'hljs language-',
+    highlight(code, lang) {
+      const language = hljs.getLanguage(lang ?? '') ? lang : 'plaintext';
+      return hljs.highlight(code, { language }).value;
+    },
+  }),
+);
+
 const renderTokens = (tokens: TokensList, codeBg?: string): React.ReactNode =>
   tokens.map((t: Token, i: number) => {
     switch (t.type) {
@@ -103,14 +115,19 @@ const renderTokens = (tokens: TokensList, codeBg?: string): React.ReactNode =>
       case 'code': {
         const code = t as Tokens.Code;
         return (
-          <Panel
+          <pre
             key={i}
-            preset='codePanel'
-            background={codeBg}
-            style={{ margin: '0.5rem 0' }}
+            style={{
+              margin: '0.5rem 0',
+              overflowX: 'auto',
+            }}
           >
-            <code>{code.text}</code>
-          </Panel>
+            <code
+              className={code.lang ? `hljs language-${code.lang}` : 'hljs'}
+              style={{ background: codeBg }}
+              dangerouslySetInnerHTML={{ __html: code.text }}
+            />
+          </pre>
         );
       }
       case 'table': {
