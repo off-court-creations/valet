@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file. The format 
 - Highlight Markdown code blocks with language-aware `CodeBlock`
 - Preserve whitespace in highlighted Markdown code blocks
 - Make Markdown code block highlighting theme-aware
+- Fix mixed code block styles when toggling theme repeatedly
 
 ## [0.25.1]
 - Improved docs

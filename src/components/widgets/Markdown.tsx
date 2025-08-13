@@ -177,9 +177,19 @@ export const Markdown: React.FC<MarkdownProps> = ({
 }) => {
   const { mode } = useTheme();
   React.useEffect(() => {
-    void import(
-      mode === 'dark' ? 'highlight.js/styles/github-dark.css' : 'highlight.js/styles/github.css'
-    );
+    const id = 'hljs-theme';
+    const href =
+      mode === 'dark'
+        ? 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css'
+        : 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css';
+    let link = document.getElementById(id) as HTMLLinkElement | null;
+    if (!link) {
+      link = document.createElement('link');
+      link.id = id;
+      link.rel = 'stylesheet';
+      document.head.appendChild(link);
+    }
+    link.href = href;
   }, [mode]);
   const tokens = React.useMemo(() => marked.lexer(data) as TokensList, [data]);
   const resolvedBg = codeBackground ?? (mode === 'dark' ? DARK_BG : LIGHT_BG);
