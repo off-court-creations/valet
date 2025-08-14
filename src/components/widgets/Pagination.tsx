@@ -36,6 +36,9 @@ const Root = styled('nav')<{ $text: string; $gap: string; $padV: string; $padH: 
     color: ${({ $text }) => $text};
     font: inherit;
     line-height: 1;
+    transition:
+      color 180ms ease,
+      opacity 220ms ease; /* smooth fades for disabled/enabled */
   }
 
   button:disabled {
@@ -54,6 +57,9 @@ const PageBtn = styled('button')<{
   position: relative;
   font-weight: ${({ $active }) => ($active ? 700 : 400)};
   color: ${({ $active, $primary, $text }) => ($active ? $primary : $text)};
+  transition:
+    color 180ms ease,
+    opacity 220ms ease;
 
   /* previous underline pseudo-element replaced by shared slider */
 `;
@@ -67,8 +73,6 @@ const PagesWrap = styled('div')`
 /* Underline rail that slides under the active page */
 const Underline = styled('div')<{
   $height: string;
-  $radius: string;
-  $color: string;
   $x: number;
   $w: number;
   $transX: string;
@@ -104,7 +108,6 @@ const elasticPulse = keyframes`
 `;
 
 const UnderlineFill = styled('div')<{
-  $radius: string;
   $color: string;
   $scale: number;
   $scaleTrans: string;
@@ -114,10 +117,12 @@ const UnderlineFill = styled('div')<{
   width: 100%;
   height: 100%;
   background: ${({ $color }) => $color};
-  border-radius: ${({ $radius }) => `${$radius} ${$radius} 0 0`};
+  border-radius: 0; /* Always a right-angle rectangle */
   transform-origin: ${({ $origin }) => $origin} center;
   transform: ${({ $scale }) => `scaleX(${Number.isFinite($scale) ? $scale : 1})`};
   transition: transform ${({ $scaleTrans }) => $scaleTrans} ${({ $scaleEase }) => $scaleEase};
+  will-change: transform;
+  backface-visibility: hidden;
 `;
 
 /*───────────────────────────────────────────────────────────*/
@@ -162,6 +167,7 @@ export const Pagination: React.FC<PaginationProps> = ({
     pulsing: false,
   });
   const animatingRef = React.useRef(false);
+  const [isAnimating, setIsAnimating] = React.useState(false);
 
   const updateUnderline = React.useCallback(() => {
     const wrap = wrapRef.current;
@@ -225,98 +231,156 @@ export const Pagination: React.FC<PaginationProps> = ({
 
     // map distance to durations and pulse scale
     const clamp = (n: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, n));
-    const stretchMs = Math.round(clamp(150 + farDist * 0.6, 180, 520));
+    // Slow down Phase 1 (near-edge stretch) for a more deliberate motion
+    const stretchMs = Math.round(clamp(240 + farDist * 0.9, 260, 760));
     const settleMs = Math.round(clamp(120 + farDist * 0.45, 140, 420));
+    const settleDur = settleMs * 2;
     // keep pulse subtle: amplitude ~2%..8%
     const pulseAmp = clamp(0.03 + farDist / 2000, 0.02, 0.08);
 
     // Phase 1: stretch only the closer edge using fill scaling
     animatingRef.current = true;
+    setIsAnimating(true);
     const prevW = Math.max(1, prevR - prevL);
     const scaleFactor = movingRight
       ? Math.max(0.0001, (nextR - prevL) / prevW)
       : Math.max(0.0001, (prevR - nextL) / prevW);
 
-    setAnim({
-      // keep container static in phase 1
-      x: prevL,
-      w: prevW,
-      transX: '0ms',
-      transW: '0ms',
-      easeX: 'linear',
-      easeW: 'linear',
-      pulseAmp,
-      // scale the fill toward the near edge
-      scale: scaleFactor,
-      scaleTrans: `${stretchMs}ms`,
-      scaleEase: 'cubic-bezier(0.2, 0.8, 0.2, 1.1)',
-      origin: movingRight ? 'left' : 'right',
-      pulsing: false,
-    });
+    if (movingRight) {
+      // Baseline first to ensure smooth compositor-start for scale
+      setAnim({
+        x: prevL,
+        w: prevW,
+        transX: '0ms',
+        transW: '0ms',
+        easeX: 'linear',
+        easeW: 'linear',
+        pulseAmp,
+        scale: 1,
+        scaleTrans: '0ms',
+        scaleEase: 'linear',
+        origin: 'left',
+        pulsing: false,
+      });
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      void wrapRef.current?.offsetWidth;
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setAnim((a) => ({
+            ...a,
+            scale: scaleFactor,
+            scaleTrans: `${stretchMs}ms`,
+            scaleEase: 'cubic-bezier(0.2, 0.8, 0.2, 1.1)',
+            origin: 'left',
+          }));
+        });
+      });
+    } else {
+      setAnim({
+        // keep container static in phase 1
+        x: prevL,
+        w: prevW,
+        transX: '0ms',
+        transW: '0ms',
+        easeX: 'linear',
+        easeW: 'linear',
+        pulseAmp,
+        // scale the fill toward the near edge
+        scale: scaleFactor,
+        scaleTrans: `${stretchMs}ms`,
+        scaleEase: 'cubic-bezier(0.2, 0.8, 0.2, 1.1)',
+        origin: 'right',
+        pulsing: false,
+      });
+    }
 
     const phase2 = () => {
       // Snap container to stretched geometry equivalent and reset fill scale instantly
       if (movingRight) {
         // geometry visually is [prevL, nextR]
+        const stretchedW = Math.max(0, nextR - prevL);
         setAnim((a) => ({
           ...a,
           x: prevL,
-          w: Math.max(0, nextR - prevL),
+          w: stretchedW,
           transX: '0ms',
           transW: '0ms',
           scale: 1,
           scaleTrans: '0ms',
           scaleEase: 'linear',
-          origin: 'center',
+          origin: 'right', // anchor right; shrink from right keeps right edge fixed
         }));
 
-        // Animate far edge (left) to nextL while right stays fixed
+        // Animate far edge (left) using transform scale from the right origin for smoother motion
+        const targetScale = stretchedW > 0 ? target.w / stretchedW : 1;
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        void wrapRef.current?.offsetWidth;
         requestAnimationFrame(() => {
-          setAnim((a) => ({
-            ...a,
-            x: nextL,
-            w: target.w,
-            transX: `${settleMs}ms`,
-            transW: `${settleMs}ms`,
-            easeX: 'cubic-bezier(0.2, 0.7, 0.1, 1)',
-            easeW: 'cubic-bezier(0.2, 0.7, 0.1, 1)',
-          }));
+          requestAnimationFrame(() => {
+            setAnim((a) => ({
+              ...a,
+              scale: targetScale,
+              scaleTrans: `${settleDur}ms`,
+              scaleEase: 'cubic-bezier(0.2, 0.7, 0.1, 1)',
+              origin: 'right',
+            }));
+          });
         });
       } else {
         // geometry visually is [nextL, prevR]
+        const stretchedW = Math.max(0, prevR - nextL);
         setAnim((a) => ({
           ...a,
           x: nextL,
-          w: Math.max(0, prevR - nextL),
+          w: stretchedW,
           transX: '0ms',
           transW: '0ms',
           scale: 1,
           scaleTrans: '0ms',
           scaleEase: 'linear',
-          origin: 'center',
+          origin: 'left', // leading edge anchored (moving left)
         }));
 
-        // Animate far edge (right) to nextR by changing width only
+        // Animate far edge (right) using transform scale from the left origin for smoother motion
+        const targetScale = stretchedW > 0 ? target.w / stretchedW : 1;
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        void wrapRef.current?.offsetWidth;
         requestAnimationFrame(() => {
-          setAnim((a) => ({
-            ...a,
-            w: target.w,
-            transX: '0ms',
-            transW: `${settleMs}ms`,
-            easeX: 'linear',
-            easeW: 'cubic-bezier(0.2, 0.7, 0.1, 1)',
-          }));
+          requestAnimationFrame(() => {
+            setAnim((a) => ({
+              ...a,
+              scale: targetScale,
+              scaleTrans: `${settleDur}ms`,
+              scaleEase: 'cubic-bezier(0.2, 0.7, 0.1, 1)',
+              origin: 'left',
+            }));
+          });
         });
       }
 
       // remember final target for next baseline after settle duration
       window.setTimeout(() => {
+        // Snap container to final geometry and reset scale instantly
+        setAnim((a) => ({
+          ...a,
+          x: nextL,
+          w: target.w,
+          transX: '0ms',
+          transW: '0ms',
+          scale: 1,
+          scaleTrans: '0ms',
+          scaleEase: 'linear',
+          origin: movingRight ? 'right' : 'left',
+        }));
         prevUxRef.current = { x: nextL, w: target.w };
         animatingRef.current = false;
         // trigger subtle pulse only on the trailing edge: set origin to leading edge
-        setAnim((a) => ({ ...a, origin: movingRight ? 'right' : 'left', pulsing: true }));
-        window.setTimeout(() => setAnim((a) => ({ ...a, pulsing: false })), 320);
-      }, settleMs + 10);
+        setAnim((a) => ({ ...a, pulsing: true }));
+        window.setTimeout(() => {
+          setAnim((a) => ({ ...a, pulsing: false }));
+          setIsAnimating(false);
+        }, 220);
+      }, settleDur + 10);
     };
 
     const timer = window.setTimeout(phase2, stretchMs + 24); // buffer so near edge fully lands
@@ -340,7 +404,6 @@ export const Pagination: React.FC<PaginationProps> = ({
       style={
         {
           '--valet-underline-width': theme.stroke(4),
-          '--valet-underline-radius': theme.radius(0.5),
           ...(style as object),
         } as React.CSSProperties
       }
@@ -348,7 +411,7 @@ export const Pagination: React.FC<PaginationProps> = ({
       {/* Prev/Next – simple text buttons (no underline) */}
       <button
         onClick={nav(Math.max(1, page - 1))}
-        disabled={page === 1}
+        disabled={page === 1 || isAnimating}
       >
         Prev
       </button>
@@ -366,6 +429,7 @@ export const Pagination: React.FC<PaginationProps> = ({
             $primary={theme.colors.primary}
             $text={theme.colors.text}
             aria-current={n === page ? 'page' : undefined}
+            disabled={isAnimating}
           >
             <Typography
               variant='button'
@@ -384,8 +448,6 @@ export const Pagination: React.FC<PaginationProps> = ({
           $x={anim.x}
           $w={anim.w}
           $height={theme.stroke(4)}
-          $radius={theme.radius(0.5)}
-          $color={theme.colors.primary}
           $transX={anim.transX}
           $transW={anim.transW}
           $easeX={anim.easeX}
@@ -395,7 +457,6 @@ export const Pagination: React.FC<PaginationProps> = ({
           {/* remount on page change to replay pulse */}
           <UnderlineFill
             key={`pulse-${page}`}
-            $radius={theme.radius(0.5)}
             $color={theme.colors.primary}
             $scale={anim.scale}
             $scaleTrans={anim.scaleTrans}
@@ -403,7 +464,7 @@ export const Pagination: React.FC<PaginationProps> = ({
             $origin={anim.origin}
             style={{
               animationName: anim.pulsing ? elasticPulse : 'none',
-              animationDuration: '360ms',
+              animationDuration: '220ms',
               animationTimingFunction: 'cubic-bezier(0.2, 0.8, 0.2, 1.05)',
             }}
           />
@@ -412,7 +473,7 @@ export const Pagination: React.FC<PaginationProps> = ({
 
       <button
         onClick={nav(Math.min(count, page + 1))}
-        disabled={page === count}
+        disabled={page === count || isAnimating}
       >
         Next
       </button>
