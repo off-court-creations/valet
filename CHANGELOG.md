@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+- Refine `Pagination` underline animation with stretch-and-snap elastic bounce
+
 ## [0.25.4]
 - Improved vertically aligned `Tabs` styling.
 - Improved `Accordion` styling. 

@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/widgets/Pagination.tsx  | valet
-// Tab-style pagination with sliding elastic underline for active page
+// Tab-style pagination with stretch-and-snap underline for active page
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
 import { styled, keyframes } from '../../css/createStyled';
@@ -79,8 +79,8 @@ const Underline = styled('div')<{
   width: ${({ $w }) => `${Math.max(0, Math.round($w))}px`};
   transform: ${({ $x }) => `translateX(${Math.round($x)}px)`};
   transition:
-    transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1),
-    width 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    transform 260ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    width 260ms cubic-bezier(0.34, 1.56, 0.64, 1);
   will-change: transform, width;
   pointer-events: none;
   overflow: visible;
@@ -92,8 +92,8 @@ const Underline = styled('div')<{
 /* Elastic pulse on underline width via child to avoid transform clobber */
 const elasticPulse = keyframes`
   0% { transform: scaleX(1); }
-  45% { transform: scaleX(1.5); }
-  65% { transform: scaleX(0.75); }
+  50% { transform: scaleX(1.3); }
+  70% { transform: scaleX(0.9); }
   100% { transform: scaleX(1); }
 `;
 
@@ -132,30 +132,77 @@ export const Pagination: React.FC<PaginationProps> = ({
   const wrapRef = React.useRef<HTMLDivElement | null>(null);
   const btnRefs = React.useRef<Array<HTMLButtonElement | null>>([]);
   const [ux, setUx] = React.useState({ x: 0, w: 0 });
+  const prevRef = React.useRef({ page, x: 0, w: 0 });
+  const timerRef = React.useRef<number | undefined>(undefined);
 
-  const updateUnderline = React.useCallback(() => {
+  const measure = React.useCallback((p: number) => {
     const wrap = wrapRef.current;
-    const btn = btnRefs.current[page] ?? null; // indexed by page number
-    if (!wrap || !btn) return;
+    const btn = btnRefs.current[p] ?? null;
+    if (!wrap || !btn) return null;
     const wRect = wrap.getBoundingClientRect();
     const bRect = btn.getBoundingClientRect();
-    setUx({ x: bRect.left - wRect.left, w: bRect.width });
-  }, [page]);
+    return { x: bRect.left - wRect.left, w: bRect.width };
+  }, []);
 
   React.useLayoutEffect(() => {
-    updateUnderline();
-  }, [updateUnderline, count]);
+    const target = measure(page);
+    if (!target) return;
+    const prev = prevRef.current;
+
+    // skip animation on first render or when page unchanged
+    if (prev.page === page) {
+      setUx(target);
+      prevRef.current = { page, ...target };
+      return;
+    }
+
+    const rightPrev = prev.x + prev.w;
+    const rightTarget = target.x + target.w;
+
+    if (page > prev.page) {
+      // moving right: stretch towards new right edge
+      setUx({ x: prev.x, w: rightTarget - prev.x });
+    } else {
+      // moving left: stretch towards new left edge
+      setUx({ x: target.x, w: rightPrev - target.x });
+    }
+
+    window.clearTimeout(timerRef.current);
+    timerRef.current = window.setTimeout(() => {
+      setUx(target);
+      prevRef.current = { page, ...target };
+    }, 260);
+  }, [page, measure]);
 
   React.useLayoutEffect(() => {
-    const ro = new ResizeObserver(() => updateUnderline());
+    const target = measure(page);
+    if (!target) return;
+    setUx(target);
+    prevRef.current = { page, ...target };
+  }, [count, measure, page]);
+
+  React.useLayoutEffect(() => {
+    const ro = new ResizeObserver(() => {
+      const target = measure(page);
+      if (!target) return;
+      setUx(target);
+      prevRef.current = { page, ...target };
+    });
     if (wrapRef.current) ro.observe(wrapRef.current);
-    const handler = () => updateUnderline();
+    const handler = () => {
+      const target = measure(page);
+      if (!target) return;
+      setUx(target);
+      prevRef.current = { page, ...target };
+    };
     window.addEventListener('resize', handler, { passive: true } as AddEventListenerOptions);
     return () => {
       ro.disconnect();
       window.removeEventListener('resize', handler as EventListener);
     };
-  }, [updateUnderline]);
+  }, [measure, page]);
+
+  React.useEffect(() => () => window.clearTimeout(timerRef.current), []);
 
   return (
     <Root
@@ -224,7 +271,7 @@ export const Pagination: React.FC<PaginationProps> = ({
             style={{
               animationName: elasticPulse,
               animationDuration: '360ms',
-              animationTimingFunction: 'cubic-bezier(0.2, 0.8, 0.2, 1)',
+              animationTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
             }}
           />
         </Underline>
