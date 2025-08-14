@@ -142,31 +142,31 @@ export default function BoxDemoPage() {
           <Tabs.Tab label='Usage' />
           <Tabs.Panel>
             <Stack>
-              <Typography variant='h4'>Best Practices</Typography>
-              <Typography>
-                - Use <code>Box</code> as a neutral container for background, padding, and width
-                anchoring. Compose layout with <code>Stack</code>/<code>Grid</code>; keep{' '}
-                <code>Surface</code> for page-level backgrounds.
-              </Typography>
-              <Typography>
-                - Prefer theme tones (<code>primary</code>/<code>secondary</code>/
-                <code>tertiary</code>) to get automatic text contrast. When using custom colours,
-                set <code>textColor</code> to maintain accessibility.
-              </Typography>
-              <Typography>
-                - Reach for <code>Panel</code> when you need outlines or separators.{' '}
-                <code>Box</code> stays minimal and opinionated so the theme can do the heavy
-                lifting.
-              </Typography>
-              <Typography>
-                - Control placement with <code>alignX</code> and <code>fullWidth</code>. Use{' '}
-                <code>centerContent</code>
-                only when you truly want to center the child content.
-              </Typography>
-              <Typography>
-                - Reuse styles with <code>preset</code> via <code>definePreset()</code> instead of
-                sprinkling inline styles.
-              </Typography>
+              <Panel fullWidth>
+                <Typography variant='h4'>Best Practices</Typography>
+                <Typography>
+                  - Use <code>Box</code> as a neutral container for background, padding, and width
+                  anchoring. Compose layout with <code>Stack</code>/<code>Grid</code>; keep{' '}
+                  <code>Surface</code> for page-level backgrounds.
+                </Typography>
+                <Typography>
+                  - Prefer theme tones (<code>primary</code>/<code>secondary</code>/
+                  <code>tertiary</code>) to get automatic text contrast. When using custom colours,
+                  set <code>textColor</code> to maintain accessibility.
+                </Typography>
+                <Typography>
+                  - Reach for <code>Panel</code> when you need outlines or separators.{' '}
+                  <code>Box</code> stays minimal and opinionated so the theme can do the heavy
+                  lifting.
+                </Typography>
+                <Typography>
+                  - Control placement with <code>alignX</code> and <code>fullWidth</code>.
+                </Typography>
+                <Typography>
+                  - Reuse styles with <code>preset</code> via <code>definePreset()</code> instead of
+                  sprinkling inline styles.
+                </Typography>
+              </Panel>
 
               <Divider />
 
@@ -266,7 +266,9 @@ export default function BoxDemoPage() {
                   fullWidth
                   style={{ border: `1px dashed ${theme.colors['text']}` }}
                 >
-                  <Typography><b>fullWidth</b>: stretches to the width of the parent</Typography>
+                  <Typography>
+                    <b>fullWidth</b>: stretches to the width of the parent
+                  </Typography>
                 </Box>
               </Stack>
 
