@@ -156,7 +156,17 @@ export const Pagination: React.FC<PaginationProps> = ({
   const presetClass = p ? preset(p) : '';
   const mergedClass = [presetClass, className].filter(Boolean).join(' ') || undefined;
 
-  const nav = (p: number) => () => onChange?.(p);
+  // stable click handler shared by all page buttons
+  const handlePageClick = React.useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      const target = e.currentTarget as HTMLButtonElement;
+      const n = Number(target.dataset.page || 0);
+      if (!Number.isFinite(n) || n < 1) return;
+      if (n === page) return;
+      onChange?.(n);
+    },
+    [onChange, page],
+  );
 
   /* measure active page for underline position/width */
   const wrapRef = React.useRef<HTMLDivElement | null>(null);
@@ -181,6 +191,7 @@ export const Pagination: React.FC<PaginationProps> = ({
   });
   const animatingRef = React.useRef(false);
   const [isAnimating, setIsAnimating] = React.useState(false);
+  const animationRunIdRef = React.useRef(0);
 
   // windowing state
   const [winStart, setWinStart] = React.useState(1);
@@ -284,6 +295,9 @@ export const Pagination: React.FC<PaginationProps> = ({
     // Phase 1: stretch only the closer edge using fill scaling
     animatingRef.current = true;
     setIsAnimating(true);
+    // run id guards all timers/frames in this effect so quick page changes don't
+    // leak state updates from stale animations
+    const runId = (animationRunIdRef.current += 1);
     const prevW = Math.max(1, prevR - prevL);
     const scaleFactor = movingRight
       ? Math.max(0.0001, (nextR - prevL) / prevW)
@@ -309,6 +323,7 @@ export const Pagination: React.FC<PaginationProps> = ({
       void wrapRef.current?.offsetWidth;
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
+          if (animationRunIdRef.current !== runId) return;
           setAnim((a) => ({
             ...a,
             scale: scaleFactor,
@@ -338,6 +353,7 @@ export const Pagination: React.FC<PaginationProps> = ({
     }
 
     const phase2 = () => {
+      if (animationRunIdRef.current !== runId) return;
       // Snap container to stretched geometry equivalent and reset fill scale instantly
       if (movingRight) {
         // geometry visually is [prevL, nextR]
@@ -360,6 +376,7 @@ export const Pagination: React.FC<PaginationProps> = ({
         void wrapRef.current?.offsetWidth;
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
+            if (animationRunIdRef.current !== runId) return;
             setAnim((a) => ({
               ...a,
               scale: targetScale,
@@ -390,6 +407,7 @@ export const Pagination: React.FC<PaginationProps> = ({
         void wrapRef.current?.offsetWidth;
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
+            if (animationRunIdRef.current !== runId) return;
             setAnim((a) => ({
               ...a,
               scale: targetScale,
@@ -403,6 +421,7 @@ export const Pagination: React.FC<PaginationProps> = ({
 
       // remember final target for next baseline after settle duration
       window.setTimeout(() => {
+        if (animationRunIdRef.current !== runId) return;
         // Snap container to final geometry and reset scale instantly
         setAnim((a) => ({
           ...a,
@@ -420,6 +439,7 @@ export const Pagination: React.FC<PaginationProps> = ({
         // trigger subtle pulse only on the trailing edge: set origin to leading edge
         setAnim((a) => ({ ...a, pulsing: true }));
         window.setTimeout(() => {
+          if (animationRunIdRef.current !== runId) return;
           setAnim((a) => ({ ...a, pulsing: false }));
           setIsAnimating(false);
         }, 220);
@@ -434,6 +454,44 @@ export const Pagination: React.FC<PaginationProps> = ({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
+
+  // memo visible pages to avoid recomputing on unrelated state changes
+  const visiblePages = React.useMemo(
+    () => (hasWindow ? pages.slice(winStart - 1, winEnd) : pages),
+    [hasWindow, pages, winEnd, winStart],
+  );
+
+  // stable handlers for nav controls and window scroll
+  const handlePrev = React.useCallback(() => {
+    if (page <= 1) return;
+    onChange?.(Math.max(1, page - 1));
+  }, [onChange, page]);
+
+  const handleNext = React.useCallback(() => {
+    if (page >= count) return;
+    onChange?.(Math.min(count, page + 1));
+  }, [onChange, page, count]);
+
+  const scrollLeft = React.useCallback(() => {
+    setWinStart((s) => Math.max(1, s - winSize));
+  }, [winSize]);
+
+  const scrollRight = React.useCallback(() => {
+    setWinStart((s) => Math.min(Math.max(1, count - winSize + 1), s + winSize));
+  }, [count, winSize]);
+
+  // Keep a stable ref callback per page index to avoid recreating closures
+  const refCache = React.useRef(new Map<number, (el: HTMLButtonElement | null) => void>());
+  const getBtnRef = React.useCallback((n: number) => {
+    const cache = refCache.current;
+    const hit = cache.get(n);
+    if (hit) return hit;
+    const fn = (el: HTMLButtonElement | null) => {
+      btnRefs.current[n] = el;
+    };
+    cache.set(n, fn);
+    return fn;
+  }, []);
 
   return (
     <Root
@@ -453,7 +511,7 @@ export const Pagination: React.FC<PaginationProps> = ({
     >
       {/* Prev/Next – simple text buttons (no underline) */}
       <button
-        onClick={nav(Math.max(1, page - 1))}
+        onClick={handlePrev}
         disabled={page === 1 || isAnimating}
       >
         Prev
@@ -463,7 +521,7 @@ export const Pagination: React.FC<PaginationProps> = ({
       {hasWindow && (
         <button
           aria-label='Scroll pages left'
-          onClick={() => setWinStart((s) => Math.max(1, s - winSize))}
+          onClick={scrollLeft}
           disabled={winStart <= 1 || isAnimating}
         >
           «
@@ -472,18 +530,16 @@ export const Pagination: React.FC<PaginationProps> = ({
 
       {/* Page numbers – tab-style with shared sliding underline */}
       <PagesWrap ref={wrapRef}>
-        {(hasWindow ? pages.slice(winStart - 1, winEnd) : pages).map((n) => (
+        {visiblePages.map((n) => (
           <PageBtn
             key={n}
-            ref={(el) => {
-              btnRefs.current[n] = el;
-            }}
-            onClick={nav(n)}
+            ref={getBtnRef(n)}
+            data-page={n}
+            onClick={handlePageClick}
             $active={n === page}
             $primary={theme.colors.primary}
             $text={theme.colors.text}
             aria-current={n === page ? 'page' : undefined}
-            disabled={isAnimating}
           >
             <Typography
               variant='button'
@@ -529,9 +585,7 @@ export const Pagination: React.FC<PaginationProps> = ({
       {hasWindow && (
         <button
           aria-label='Scroll pages right'
-          onClick={() =>
-            setWinStart((s) => Math.min(Math.max(1, count - winSize + 1), s + winSize))
-          }
+          onClick={scrollRight}
           disabled={winEnd >= count || isAnimating}
         >
           »
@@ -539,7 +593,7 @@ export const Pagination: React.FC<PaginationProps> = ({
       )}
 
       <button
-        onClick={nav(Math.min(count, page + 1))}
+        onClick={handleNext}
         disabled={page === count || isAnimating}
       >
         Next

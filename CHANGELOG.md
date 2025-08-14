@@ -4,7 +4,8 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
-- Enhance `Pagination` with windowed view via `visibleWindow` and non-destructive window scroll controls; optional `autoFollowActive` keeps active page visible when changing pages.
+- Enhanced `Pagination` with windowed view via `visibleWindow` and non-destructive window scroll controls
+- Performance: optimize `Pagination`
 
 ## [0.25.4]
 - Improved vertically aligned `Tabs` styling.

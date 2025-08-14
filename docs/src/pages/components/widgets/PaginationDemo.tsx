@@ -18,7 +18,6 @@ import NavDrawer from '../../../components/NavDrawer';
 
 export default function PaginationDemoPage() {
   const [usagePage, setUsagePage] = useState(1);
-  const [usagePageRows, setUsagePageRows] = useState(1);
   const [count, setCount] = useState<number>(7);
   const [page, setPage] = useState<number>(3);
   const [visibleWindow, setVisibleWindow] = useState<number>(0);
