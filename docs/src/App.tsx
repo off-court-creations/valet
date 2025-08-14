@@ -14,64 +14,67 @@ const page = <T extends { default: React.ComponentType }>(p: () => Promise<T>) =
 
 /*───────────────────────────────────────────────────────────*/
 /* Lazy-loaded pages                                         */
-const MainPage = page(() => import('./pages/MainPage'));
-const TypographyDemoPage = page(() => import('./pages/TypographyDemoPage'));
-const PresetDemoPage = page(() => import('./pages/PresetDemoPage'));
-const FormDemoPage = page(() => import('./pages/FormDemoPage'));
-const ParallaxDemo = page(() => import('./pages/ParallaxDemo'));
-const TestPage = page(() => import('./pages/Test'));
-const BoxDemo = page(() => import('./pages/BoxDemo'));
-const ButtonDemoPage = page(() => import('./pages/ButtonDemoPage'));
-const TextFieldDemoPage = page(() => import('./pages/TextFormDemo'));
-const IconDemoPage = page(() => import('./pages/IconDemoPage'));
-const IconButtonDemoPage = page(() => import('./pages/IconButtonDemoPage'));
-const ImageDemoPage = page(() => import('./pages/ImageDemo'));
-const AvatarDemoPage = page(() => import('./pages/AvatarDemo'));
-const LLMChatDemoPage = page(() => import('./pages/LLMChatDemo'));
-const RichChatDemoPage = page(() => import('./pages/RichChatDemo'));
-const LLMChatPage = page(() => import('./pages/components/LLMChat'));
-const RichChatPage = page(() => import('./pages/components/RichChat'));
-const PanelDemoPage = page(() => import('./pages/components/Panel'));
-const CheckboxDemoPage = page(() => import('./pages/CheckBoxDemo'));
-const TooltipDemoPage = page(() => import('./pages/TooltipDemo'));
-const IteratorDemoPage = page(() => import('./pages/IteratorDemo'));
-const ModalDemoPage = page(() => import('./pages/ModalDemo'));
-const SwitchDemoPage = page(() => import('./pages/SwitchDemo'));
-const AccordionDemoPage = page(() => import('./pages/AccordionDemo'));
-const AccordionConstrainedDemoPage = page(() => import('./pages/AccordionConstrainedDemo'));
-const TabsDemoPage = page(() => import('./pages/TabsDemo'));
-const SliderDemoPage = page(() => import('./pages/SliderDemo'));
-const ProgressDemoPage = page(() => import('./pages/ProgressDemo'));
-const SkeletonDemoPage = page(() => import('./pages/SkeletonDemo'));
-const SelectDemoPage = page(() => import('./pages/SelectDemo'));
-const TablePlaygroundPage = page(() => import('./pages/TableDemo'));
-const ListDemoPage = page(() => import('./pages/ListDemoPage'));
-const DrawerDemoPage = page(() => import('./pages/DrawerDemo'));
-const AppBarDemoPage = page(() => import('./pages/AppBarDemo'));
-const GridDemoPage = page(() => import('./pages/GridDemo'));
-const StackDemoPage = page(() => import('./pages/StackDemo'));
-const PaginationDemoPage = page(() => import('./pages/PaginationDemo'));
-const SpeedDialDemoPage = page(() => import('./pages/SpeedDialDemo'));
-const StepperDemoPage = page(() => import('./pages/StepperDemo'));
-const RadioGroupDemoPage = page(() => import('./pages/RadioGroupDemo'));
-const MetroSelectDemoPage = page(() => import('./pages/MetroSelectDemo'));
-const VideoDemoPage = page(() => import('./pages/VideoDemo'));
-const SnackbarDemoPage = page(() => import('./pages/SnackbarDemo'));
-const TreeDemoPage = page(() => import('./pages/TreeDemo'));
-const DropzoneDemoPage = page(() => import('./pages/DropzoneDemo'));
-const DateSelectorDemoPage = page(() => import('./pages/DateSelectorDemo'));
-const CodeBlockDemoPage = page(() => import('./pages/CodeBlockDemo'));
-const MarkdownDemoPage = page(() => import('./pages/MarkdownDemo'));
-const OverviewPage = page(() => import('./pages/Overview'));
-const QuickstartPage = page(() => import('./pages/Quickstart'));
-const MentalModelPage = page(() => import('./pages/MentalModel'));
-const StyledEnginePage = page(() => import('./pages/StyledEngine'));
-const ThemePage = page(() => import('./pages/Theme'));
-const ComponentsPrimerPage = page(() => import('./pages/ComponentsPrimer'));
-const SurfaceExplainerPage = page(() => import('./pages/SurfaceExplainer'));
-const PropPatternsPage = page(() => import('./pages/PropPatterns'));
-const ComplicatedDashboardPage = page(() => import('./pages/ComplicatedDashboard'));
-const SpacingContractPage = page(() => import('./pages/SpacingContract'));
+const MainPage = page(() => import('./pages/concepts/MainPage'));
+const TypographyDemoPage = page(() => import('./pages/components/primitives/TypographyDemoPage'));
+const PresetDemoPage = page(() => import('./pages/examples/PresetDemoPage'));
+const FormDemoPage = page(() => import('./pages/examples/FormDemoPage'));
+const ParallaxDemo = page(() => import('./pages/components/widgets/ParallaxDemo'));
+const TestPage = page(() => import('./pages/examples/Test'));
+const BoxDemo = page(() => import('./pages/components/layout/BoxDemo'));
+const ButtonDemoPage = page(() => import('./pages/components/field/ButtonDemoPage'));
+const TextFieldDemoPage = page(() => import('./pages/components/field/TextFormDemo'));
+const IconDemoPage = page(() => import('./pages/components/primitives/IconDemoPage'));
+const IconButtonDemoPage = page(() => import('./pages/components/field/IconButtonDemoPage'));
+const ImageDemoPage = page(() => import('./pages/components/primitives/ImageDemo'));
+const DividerDemoPage = page(() => import('./pages/components/primitives/DividerDemo'));
+const AvatarDemoPage = page(() => import('./pages/components/primitives/AvatarDemo'));
+const LLMChatDemoPage = page(() => import('./pages/components/widgets/LLMChatDemo'));
+const RichChatDemoPage = page(() => import('./pages/components/widgets/RichChatDemo'));
+const LLMChatPage = page(() => import('./pages/components/widgets/LLMChat'));
+const RichChatPage = page(() => import('./pages/components/widgets/RichChat'));
+const PanelDemoPage = page(() => import('./pages/components/layout/Panel'));
+const CheckboxDemoPage = page(() => import('./pages/components/field/CheckBoxDemo'));
+const TooltipDemoPage = page(() => import('./pages/components/widgets/TooltipDemo'));
+const IteratorDemoPage = page(() => import('./pages/components/field/IteratorDemo'));
+const ModalDemoPage = page(() => import('./pages/components/layout/ModalDemo'));
+const SwitchDemoPage = page(() => import('./pages/components/field/SwitchDemo'));
+const AccordionDemoPage = page(() => import('./pages/components/layout/AccordionDemo'));
+const AccordionConstrainedDemoPage = page(
+  () => import('./pages/components/layout/AccordionConstrainedDemo'),
+);
+const TabsDemoPage = page(() => import('./pages/components/layout/TabsDemo'));
+const SliderDemoPage = page(() => import('./pages/components/field/SliderDemo'));
+const ProgressDemoPage = page(() => import('./pages/components/primitives/ProgressDemo'));
+const SkeletonDemoPage = page(() => import('./pages/components/primitives/SkeletonDemo'));
+const SelectDemoPage = page(() => import('./pages/components/field/SelectDemo'));
+const TablePlaygroundPage = page(() => import('./pages/components/widgets/TableDemo'));
+const ListDemoPage = page(() => import('./pages/components/layout/ListDemoPage'));
+const DrawerDemoPage = page(() => import('./pages/components/layout/DrawerDemo'));
+const AppBarDemoPage = page(() => import('./pages/components/layout/AppBarDemo'));
+const GridDemoPage = page(() => import('./pages/components/layout/GridDemo'));
+const StackDemoPage = page(() => import('./pages/components/layout/StackDemo'));
+const PaginationDemoPage = page(() => import('./pages/components/widgets/PaginationDemo'));
+const SpeedDialDemoPage = page(() => import('./pages/components/widgets/SpeedDialDemo'));
+const StepperDemoPage = page(() => import('./pages/components/widgets/StepperDemo'));
+const RadioGroupDemoPage = page(() => import('./pages/components/field/RadioGroupDemo'));
+const MetroSelectDemoPage = page(() => import('./pages/components/field/MetroSelectDemo'));
+const VideoDemoPage = page(() => import('./pages/components/primitives/VideoDemo'));
+const SnackbarDemoPage = page(() => import('./pages/components/widgets/SnackbarDemo'));
+const TreeDemoPage = page(() => import('./pages/components/widgets/TreeDemo'));
+const DropzoneDemoPage = page(() => import('./pages/components/widgets/DropzoneDemo'));
+const DateSelectorDemoPage = page(() => import('./pages/components/field/DateSelectorDemo'));
+const CodeBlockDemoPage = page(() => import('./pages/components/widgets/CodeBlockDemo'));
+const MarkdownDemoPage = page(() => import('./pages/components/widgets/MarkdownDemo'));
+const OverviewPage = page(() => import('./pages/concepts/Overview'));
+const QuickstartPage = page(() => import('./pages/concepts/Quickstart'));
+const MentalModelPage = page(() => import('./pages/concepts/MentalModel'));
+const StyledEnginePage = page(() => import('./pages/concepts/StyledEngine'));
+const ThemePage = page(() => import('./pages/concepts/Theme'));
+const ComponentsPrimerPage = page(() => import('./pages/concepts/ComponentsPrimer'));
+const SurfaceExplainerPage = page(() => import('./pages/concepts/SurfaceExplainer'));
+const PropPatternsPage = page(() => import('./pages/concepts/PropPatterns'));
+const ComplicatedDashboardPage = page(() => import('./pages/examples/ComplicatedDashboard'));
+const SpacingContractPage = page(() => import('./pages/concepts/SpacingContract'));
 
 /*───────────────────────────────────────────────────────────*/
 export function App() {
@@ -178,6 +181,10 @@ export function App() {
         <Route
           path='/image-demo'
           element={<ImageDemoPage />}
+        />
+        <Route
+          path='/divider-demo'
+          element={<DividerDemoPage />}
         />
         <Route
           path='/icon-button-demo'
