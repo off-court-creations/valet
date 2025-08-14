@@ -20,6 +20,17 @@ export interface PaginationProps
   page?: number;
   /** Called with **new page** when user clicks. */
   onChange?: (page: number) => void;
+  /**
+   * Limit how many page buttons are visible at once. When set and less than `count`,
+   * pagination renders a sliding window of page numbers plus window scroll controls.
+   * Does not affect the currently selected page.
+   */
+  visibleWindow?: number;
+  /**
+   * If true, forces the active page to remain visible by auto-shifting the window
+   * whenever `page` changes outside the current window. Defaults to true.
+   */
+  autoFollowActive?: boolean;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -131,13 +142,15 @@ export const Pagination: React.FC<PaginationProps> = ({
   count,
   page = 1,
   onChange,
+  visibleWindow,
+  autoFollowActive = true,
   preset: p,
   className,
   style,
   ...rest
 }) => {
   const { theme } = useTheme();
-  const pages = Array.from({ length: count }, (_, i) => i + 1);
+  const pages = React.useMemo(() => Array.from({ length: count }, (_, i) => i + 1), [count]);
 
   /* preset → utility class merge */
   const presetClass = p ? preset(p) : '';
@@ -169,10 +182,45 @@ export const Pagination: React.FC<PaginationProps> = ({
   const animatingRef = React.useRef(false);
   const [isAnimating, setIsAnimating] = React.useState(false);
 
+  // windowing state
+  const [winStart, setWinStart] = React.useState(1);
+  const winSize = Math.max(
+    1,
+    Number.isFinite(visibleWindow || 0) ? (visibleWindow as number) : count,
+  );
+  const hasWindow = visibleWindow !== undefined && winSize < count;
+  const winEnd = Math.min(count, winStart + winSize - 1);
+
+  // keep window in a valid range on mount/prop change
+  React.useEffect(() => {
+    if (!hasWindow) {
+      setWinStart(1);
+      return;
+    }
+    // clamp window if count or size changed
+    setWinStart((s) => Math.max(1, Math.min(s, Math.max(1, count - winSize + 1))));
+  }, [count, winSize, hasWindow]);
+
+  // follow active page if requested (when outside window)
+  React.useEffect(() => {
+    if (!hasWindow || !autoFollowActive) return;
+    if (page < winStart || page > winEnd) {
+      const half = Math.floor(winSize / 2);
+      const centeredStart = Math.max(1, Math.min(page - half, Math.max(1, count - winSize + 1)));
+      setWinStart(centeredStart);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, hasWindow, autoFollowActive, count, winSize]);
+
   const updateUnderline = React.useCallback(() => {
     const wrap = wrapRef.current;
     const btn = btnRefs.current[page] ?? null; // indexed by page number
-    if (!wrap || !btn) return;
+    if (!wrap) return;
+    if (!btn) {
+      // active page not in current window; hide underline by collapsing width
+      setUx((u) => (u.w === 0 ? u : { x: 0, w: 0 }));
+      return;
+    }
     const wRect = wrap.getBoundingClientRect();
     const bRect = btn.getBoundingClientRect();
     setUx({ x: bRect.left - wRect.left, w: bRect.width });
@@ -193,12 +241,7 @@ export const Pagination: React.FC<PaginationProps> = ({
     };
   }, [updateUnderline]);
 
-  // Keep anim state in sync on mount and when measurements change without a page change
-  React.useLayoutEffect(() => {
-    // On first measurement, snap anim to ux
-    setAnim((a) => ({ ...a, x: ux.x, w: ux.w }));
-    prevUxRef.current = { x: ux.x, w: ux.w };
-  }, []);
+  // Keep anim state in sync with measurements when not mid-animation
 
   // Keep underline aligned on container/label resizes when not mid-animation
   React.useEffect(() => {
@@ -416,9 +459,20 @@ export const Pagination: React.FC<PaginationProps> = ({
         Prev
       </button>
 
+      {/* Optional window scroll left */}
+      {hasWindow && (
+        <button
+          aria-label='Scroll pages left'
+          onClick={() => setWinStart((s) => Math.max(1, s - winSize))}
+          disabled={winStart <= 1 || isAnimating}
+        >
+          «
+        </button>
+      )}
+
       {/* Page numbers – tab-style with shared sliding underline */}
       <PagesWrap ref={wrapRef}>
-        {pages.map((n) => (
+        {(hasWindow ? pages.slice(winStart - 1, winEnd) : pages).map((n) => (
           <PageBtn
             key={n}
             ref={(el) => {
@@ -470,6 +524,19 @@ export const Pagination: React.FC<PaginationProps> = ({
           />
         </Underline>
       </PagesWrap>
+
+      {/* Optional window scroll right */}
+      {hasWindow && (
+        <button
+          aria-label='Scroll pages right'
+          onClick={() =>
+            setWinStart((s) => Math.min(Math.max(1, count - winSize + 1), s + winSize))
+          }
+          disabled={winEnd >= count || isAnimating}
+        >
+          »
+        </button>
+      )}
 
       <button
         onClick={nav(Math.min(count, page + 1))}
