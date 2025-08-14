@@ -89,10 +89,8 @@ const Underline = styled('div')<{
   will-change: transform, width;
   pointer-events: none;
   overflow: visible;
-
   /* visual */
   background: transparent; /* actual colour on the fill */
-
   /* expose pulse amplitude to children */
   --valet-pulse-amp: ${({ $pulseAmp }) => $pulseAmp};
 `;
@@ -315,9 +313,9 @@ export const Pagination: React.FC<PaginationProps> = ({
       window.setTimeout(() => {
         prevUxRef.current = { x: nextL, w: target.w };
         animatingRef.current = false;
-        // trigger subtle pulse once everything is settled
-        setAnim((a) => ({ ...a, pulsing: true }));
-        window.setTimeout(() => setAnim((a) => ({ ...a, pulsing: false })), 380);
+        // trigger subtle pulse only on the trailing edge: set origin to leading edge
+        setAnim((a) => ({ ...a, origin: movingRight ? 'right' : 'left', pulsing: true }));
+        window.setTimeout(() => setAnim((a) => ({ ...a, pulsing: false })), 320);
       }, settleMs + 10);
     };
 
