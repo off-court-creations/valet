@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file. The format 
 ## Unreleased
 
 - Add Divider component with spacing ergonomics and docs page (Usage/Playground/Reference); wired into docs Nav.
+- Enhance `Pagination` with animated sliding underline and subtle elastic width pulse for active page
+- Improved docs
 
 
 ## [0.25.2]

@@ -16,6 +16,7 @@ import {
   Iterator,
   Switch,
   CodeBlock,
+  Divider,
 } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
@@ -141,24 +142,81 @@ export default function BoxDemoPage() {
           <Tabs.Tab label='Usage' />
           <Tabs.Panel>
             <Stack>
-              <Typography variant='h3'>1. Default Box</Typography>
+              <Typography variant='h4'>Best Practices</Typography>
+              <Typography>
+                - Use <code>Box</code> as a neutral container for background, padding, and width
+                anchoring. Compose layout with <code>Stack</code>/<code>Grid</code>; keep{' '}
+                <code>Surface</code> for page-level backgrounds.
+              </Typography>
+              <Typography>
+                - Prefer theme tones (<code>primary</code>/<code>secondary</code>/
+                <code>tertiary</code>) to get automatic text contrast. When using custom colours,
+                set <code>textColor</code> to maintain accessibility.
+              </Typography>
+              <Typography>
+                - Reach for <code>Panel</code> when you need outlines or separators.{' '}
+                <code>Box</code> stays minimal and opinionated so the theme can do the heavy
+                lifting.
+              </Typography>
+              <Typography>
+                - Control placement with <code>alignX</code> and <code>fullWidth</code>. Use{' '}
+                <code>centerContent</code>
+                only when you truly want to center the child content.
+              </Typography>
+              <Typography>
+                - Reuse styles with <code>preset</code> via <code>definePreset()</code> instead of
+                sprinkling inline styles.
+              </Typography>
+
+              <Divider />
+
+              <Typography variant='h3'>Default Box</Typography>
+              <CodeBlock
+                code={`<Box>
+  <Typography>
+    (no props) — inherits parent background, uses theme text colour
+  </Typography>
+</Box>`}
+              />
               <Box>
                 <Typography>
                   (no props) — inherits parent background, uses theme text colour
                 </Typography>
               </Box>
 
-              <Typography variant='h3'>2. background&nbsp;prop</Typography>
+              {/* Visualize bounds of the default box */}
+              <Box style={{ border: `1px dashed ${theme.colors['text']}` }}>
+                <Typography>
+                  (no props) — inherits parent background, uses theme text colour
+                </Typography>
+              </Box>
+              <Typography variant='subtitle'>
+                Boundary visualization — dashed border added only for demonstration so you can see
+                the default Box&apos;s intrinsic bounds.
+              </Typography>
+
+              <Button
+                variant='outlined'
+                onClick={toggleMode}
+              >
+                Toggle light / dark mode
+              </Button>
+
+              <Divider />
+
+              <Typography variant='h3'>background&nbsp;prop</Typography>
               <Stack>
                 <Box background={theme.colors['secondary']}>
-                  <Typography variant='h4'>{`background=${theme.colors['secondary']}`}</Typography>
+                  <Typography>{`background=${theme.colors['secondary']}`}</Typography>
                 </Box>
                 <Box background={theme.colors['tertiary']}>
-                  <Typography variant='h4'>{`background=${theme.colors['tertiary']}`}</Typography>
+                  <Typography>{`background=${theme.colors['tertiary']}`}</Typography>
                 </Box>
               </Stack>
 
-              <Typography variant='h3'>3. textColor&nbsp;override</Typography>
+              <Divider />
+
+              <Typography variant='h3'>textColor&nbsp;override</Typography>
               <Box textColor={theme.colors['primaryText']}>
                 <Typography>
                   Greetings Programs!
@@ -167,7 +225,23 @@ export default function BoxDemoPage() {
                 </Typography>
               </Box>
 
-              <Typography variant='h3'>4. Inline style</Typography>
+              <Divider />
+
+              <Typography variant='h3'>Inline style</Typography>
+              <CodeBlock
+                code={`<Box
+  background={theme.colors['tertiary']}
+  style={{
+    border: \`2px dashed \${theme.colors['text']}\`,
+    padding: theme.spacing(1),
+    borderRadius: 12,
+  }}
+>
+  <Typography>
+    Dashed border, custom radius, padding via <code>style</code>
+  </Typography>
+</Box>`}
+              />
               <Box
                 background={theme.colors['tertiary']}
                 style={{
@@ -181,7 +255,9 @@ export default function BoxDemoPage() {
                 </Typography>
               </Box>
 
-              <Typography variant='h3'>5. Width behaviour</Typography>
+              <Divider />
+
+              <Typography variant='h3'>Width behaviour</Typography>
               <Stack>
                 <Box style={{ border: `1px dashed ${theme.colors['text']}` }}>
                   <Typography>Default: content width anchored left</Typography>
@@ -190,11 +266,13 @@ export default function BoxDemoPage() {
                   fullWidth
                   style={{ border: `1px dashed ${theme.colors['text']}` }}
                 >
-                  <Typography>Full width: stretches to the width of the parent</Typography>
+                  <Typography><b>fullWidth</b>: stretches to the width of the parent</Typography>
                 </Box>
               </Stack>
 
-              <Typography variant='h3'>6. Right‑bound content</Typography>
+              <Divider />
+
+              <Typography variant='h3'>Right‑bound content</Typography>
               <Box
                 alignX='right'
                 style={{ border: `1px dashed ${theme.colors['text']}` }}
@@ -204,7 +282,9 @@ export default function BoxDemoPage() {
                 </Typography>
               </Box>
 
-              <Typography variant='h3'>7. Centered placement</Typography>
+              <Divider />
+
+              <Typography variant='h3'>Centered placement</Typography>
               <Box
                 alignX='center'
                 style={{ border: `1px dashed ${theme.colors['text']}` }}
@@ -214,7 +294,9 @@ export default function BoxDemoPage() {
                 </Typography>
               </Box>
 
-              <Typography variant='h3'>8. Nested Boxes</Typography>
+              <Divider />
+
+              <Typography variant='h3'>Nested Boxes</Typography>
               <Box background={theme.colors['primary']}>
                 <Box background={theme.colors['tertiary']}>
                   <Typography>
@@ -224,7 +306,9 @@ export default function BoxDemoPage() {
                 </Box>
               </Box>
 
-              <Typography variant='h3'>9. Presets</Typography>
+              <Divider />
+
+              <Typography variant='h3'>Presets</Typography>
               <Panel variant='alt'>
                 <Stack>
                   <Box preset='fancyHolder'>
@@ -248,15 +332,9 @@ export default function BoxDemoPage() {
                 </Stack>
               </Panel>
 
-              <Typography variant='h3'>10. Theme coupling</Typography>
-              <Button
-                variant='outlined'
-                onClick={toggleMode}
-              >
-                Toggle light / dark mode
-              </Button>
+              <Divider />
 
-              <Typography variant='h3'>11. Pass-through HTML props</Typography>
+              <Typography variant='h3'>Pass-through HTML props</Typography>
               <Typography>
                 Box forwards standard <code>div</code> attributes and events to the DOM element.
                 Example:
@@ -285,24 +363,6 @@ export default function BoxDemoPage() {
               >
                 <Typography>content</Typography>
               </Box>
-
-              <Typography variant='h4'>Best Practices</Typography>
-              <Typography>
-                - Use <code>Box</code> for backgrounds and centering; use <code>Stack</code>/
-                <code>Grid</code> for spacing/layout.
-              </Typography>
-              <Typography>
-                - Prefer theme tones to get automatic contrast; set <code>textColor</code> when
-                using custom backgrounds.
-              </Typography>
-              <Typography>
-                - Reach for <code>Panel</code> when you need outlines/dividers; keep{' '}
-                <code>Surface</code> for page-level.
-              </Typography>
-              <Typography>
-                - Add <code>role</code>/<code>aria-*</code>/<code>tabIndex</code> for interactive
-                semantics as needed.
-              </Typography>
             </Stack>
           </Tabs.Panel>
 

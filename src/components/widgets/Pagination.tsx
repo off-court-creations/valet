@@ -1,9 +1,10 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/widgets/Pagination.tsx  | valet
-// Tab-style pagination with thick underline for active page
+// Tab-style pagination with sliding elastic underline for active page
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
-import { styled } from '../../css/createStyled';
+import { styled, keyframes } from '../../css/createStyled';
+import Typography from '../primitives/Typography';
 import { preset } from '../../css/stylePresets';
 import { useTheme } from '../../system/themeStore';
 import type { Presettable } from '../../types';
@@ -54,17 +55,57 @@ const PageBtn = styled('button')<{
   font-weight: ${({ $active }) => ($active ? 700 : 400)};
   color: ${({ $active, $primary, $text }) => ($active ? $primary : $text)};
 
-  &::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: calc(-0.5 * var(--valet-underline-width, 2px));
-    height: var(--valet-underline-width, 2px);
-    border-radius: var(--valet-underline-radius, 2px) var(--valet-underline-radius, 2px) 0 0;
-    background: ${({ $active, $primary }) => ($active ? $primary : 'transparent')};
-    transition: background 150ms ease;
-  }
+  /* previous underline pseudo-element replaced by shared slider */
+`;
+
+/* Pages wrapper (relative for underline positioning) */
+const PagesWrap = styled('div')`
+  position: relative;
+  display: inline-flex;
+`;
+
+/* Underline rail that slides under the active page */
+const Underline = styled('div')<{
+  $height: string;
+  $radius: string;
+  $color: string;
+  $x: number;
+  $w: number;
+}>`
+  position: absolute;
+  left: 0;
+  bottom: calc(-0.5 * var(--valet-underline-width, 2px));
+  height: ${({ $height }) => $height};
+  width: ${({ $w }) => `${Math.max(0, Math.round($w))}px`};
+  transform: ${({ $x }) => `translateX(${Math.round($x)}px)`};
+  transition:
+    transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    width 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform, width;
+  pointer-events: none;
+  overflow: visible;
+
+  /* visual */
+  background: transparent; /* actual colour on the fill */
+`;
+
+/* Elastic pulse on underline width via child to avoid transform clobber */
+const elasticPulse = keyframes`
+  0% { transform: scaleX(1); }
+  45% { transform: scaleX(1.5); }
+  65% { transform: scaleX(0.75); }
+  100% { transform: scaleX(1); }
+`;
+
+const UnderlineFill = styled('div')<{
+  $radius: string;
+  $color: string;
+}>`
+  width: 100%;
+  height: 100%;
+  background: ${({ $color }) => $color};
+  border-radius: ${({ $radius }) => `${$radius} ${$radius} 0 0`};
+  transform-origin: center;
 `;
 
 /*───────────────────────────────────────────────────────────*/
@@ -86,6 +127,35 @@ export const Pagination: React.FC<PaginationProps> = ({
   const mergedClass = [presetClass, className].filter(Boolean).join(' ') || undefined;
 
   const nav = (p: number) => () => onChange?.(p);
+
+  /* measure active page for underline position/width */
+  const wrapRef = React.useRef<HTMLDivElement | null>(null);
+  const btnRefs = React.useRef<Array<HTMLButtonElement | null>>([]);
+  const [ux, setUx] = React.useState({ x: 0, w: 0 });
+
+  const updateUnderline = React.useCallback(() => {
+    const wrap = wrapRef.current;
+    const btn = btnRefs.current[page] ?? null; // indexed by page number
+    if (!wrap || !btn) return;
+    const wRect = wrap.getBoundingClientRect();
+    const bRect = btn.getBoundingClientRect();
+    setUx({ x: bRect.left - wRect.left, w: bRect.width });
+  }, [page]);
+
+  React.useLayoutEffect(() => {
+    updateUnderline();
+  }, [updateUnderline, count]);
+
+  React.useLayoutEffect(() => {
+    const ro = new ResizeObserver(() => updateUnderline());
+    if (wrapRef.current) ro.observe(wrapRef.current);
+    const handler = () => updateUnderline();
+    window.addEventListener('resize', handler, { passive: true } as AddEventListenerOptions);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', handler as EventListener);
+    };
+  }, [updateUnderline]);
 
   return (
     <Root
@@ -112,19 +182,53 @@ export const Pagination: React.FC<PaginationProps> = ({
         Prev
       </button>
 
-      {/* Page numbers – tab-style with underline */}
-      {pages.map((n) => (
-        <PageBtn
-          key={n}
-          onClick={nav(n)}
-          $active={n === page}
-          $primary={theme.colors.primary}
-          $text={theme.colors.text}
-          aria-current={n === page ? 'page' : undefined}
+      {/* Page numbers – tab-style with shared sliding underline */}
+      <PagesWrap ref={wrapRef}>
+        {pages.map((n) => (
+          <PageBtn
+            key={n}
+            ref={(el) => {
+              btnRefs.current[n] = el;
+            }}
+            onClick={nav(n)}
+            $active={n === page}
+            $primary={theme.colors.primary}
+            $text={theme.colors.text}
+            aria-current={n === page ? 'page' : undefined}
+          >
+            <Typography
+              variant='button'
+              family='mono'
+              noSelect
+              bold={n === page}
+            >
+              {n}
+            </Typography>
+          </PageBtn>
+        ))}
+
+        {/* Underline slider */}
+        <Underline
+          aria-hidden
+          $x={ux.x}
+          $w={ux.w}
+          $height={theme.stroke(4)}
+          $radius={theme.radius(0.5)}
+          $color={theme.colors.primary}
         >
-          {n}
-        </PageBtn>
-      ))}
+          {/* remount on page change to replay pulse */}
+          <UnderlineFill
+            key={`pulse-${page}`}
+            $radius={theme.radius(0.5)}
+            $color={theme.colors.primary}
+            style={{
+              animationName: elasticPulse,
+              animationDuration: '360ms',
+              animationTimingFunction: 'cubic-bezier(0.2, 0.8, 0.2, 1)',
+            }}
+          />
+        </Underline>
+      </PagesWrap>
 
       <button
         onClick={nav(Math.min(count, page + 1))}
