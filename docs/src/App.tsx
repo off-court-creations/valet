@@ -26,6 +26,7 @@ const TextFieldDemoPage = page(() => import('./pages/TextFormDemo'));
 const IconDemoPage = page(() => import('./pages/IconDemoPage'));
 const IconButtonDemoPage = page(() => import('./pages/IconButtonDemoPage'));
 const ImageDemoPage = page(() => import('./pages/ImageDemo'));
+const DividerDemoPage = page(() => import('./pages/DividerDemo'));
 const AvatarDemoPage = page(() => import('./pages/AvatarDemo'));
 const LLMChatDemoPage = page(() => import('./pages/LLMChatDemo'));
 const RichChatDemoPage = page(() => import('./pages/RichChatDemo'));
@@ -178,6 +179,10 @@ export function App() {
         <Route
           path='/image-demo'
           element={<ImageDemoPage />}
+        />
+        <Route
+          path='/divider-demo'
+          element={<DividerDemoPage />}
         />
         <Route
           path='/icon-button-demo'

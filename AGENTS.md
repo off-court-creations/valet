@@ -21,6 +21,21 @@ Welcome to **@archway/valet**, a performant, AI-forward UI library designed as a
 - **Web Action Graph** capturing interactions for introspection and adaptation.
 - **Integrated AI-centric architecture** that unifies semantics, state, and actions.
 
+## NPM Scripts and Agent Testing Behavior
+
+Before finishing your task, if you made changes to the code, ensure the following in order:
+
+- You are in an environment where the valet docs have been `npm link @archway/valet` linked to the local
+valet 
+- no linting issues after running `npm run lint:fix`
+  - if there are linting issues rinse and repeat until it's fixed
+- valet will successfully build `npm run build`
+  - if it wont rinse and repeat until it's fixed
+- valet docs will successfully build `npm run build`
+  - if it wont rinse and repeat until it's fixed
+
+^ IMPORTANT ^
+
 ## Coding Standards
 
 - Code is written in **TypeScript**. Keep types strict and explicit.
@@ -106,6 +121,8 @@ npm run dev
 - Follow [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/) for `CHANGELOG.md`.
 - Use the `Unreleased` section at the top.
 - If your changes are changelog worthy in a given dev commit add them to the `Unreleased section`
+- If there are already comments related to the same concept or component, you can preferably
+re-edit the last `Unreleased` change of that nature to be more descriptive to all changes
 
 ## Surface state and child registry
 
@@ -121,49 +138,63 @@ component rather than the page. Pass `constrainHeight={false}` to opt out.
 
 ## Component Overview
 
-- **Accordion** – accessible expand/collapse container with composition API.
-- **AppBar** – responsive top navigation bar.
+### Primitives
+
 - **Avatar** – Gravatar wrapper with custom image support.
-- **Box** – baseline container that handles background, text colour and centring.
-- **Button** – theme-aware button with variants and sizes.
+- **Divider** – theme‑aware separator; horizontal/vertical with precise thickness, colour, length, spacing.
+- **Icon** – wrapper around `@iconify/react` icons with size theming.
+- **Image** – responsive image with lazy loading.
+- **Progress** – linear or circular indicator supporting determinate/indeterminate.
+- **Skeleton** – adaptive loading placeholder (text/rect/circle), auto‑hides on content load.
+- **Typography** – semantic text variants with responsive sizes.
+- **Video** – multi‑source video with lazy loading, fullscreen, and captions.
+
+### Fields
+
+- **Button** – theme‑aware button with variants and sizes.
 - **Checkbox** – controlled/uncontrolled checkbox adhering to accessibility.
 - **DateSelector** – date picker with optional range mode.
-- **Drawer** – sliding overlay panel with escape handling and backdrop.
-- **Dropzone** – file drag-and-drop area with previews.
-- **FormControl** – context provider wiring labels, errors and disabled state.
-- **Grid** – CSS grid layout helper with gaps and spans.
-- **Icon** – wrapper around `@iconify/react` icons with size theming.
-- **IconButton** – icon-only button sharing Button’s theming.
-- **Image** – responsive image component with lazy loading.
+- **FormControl** – context provider wiring labels, errors, and disabled state.
+- **IconButton** – icon‑only button sharing Button theming.
 - **Iterator** – numeric stepper input.
+- **MetroSelect** – segmented switch for discrete choices.
+- **RadioGroup** – grouped radio inputs managed via FormControl.
+- **Select** – typed single or multi‑select input.
+- **Slider** – pointer and keyboard‑friendly value slider.
+- **Switch** – boolean toggle styled like a physical switch.
+- **TextField** – controlled text input integrating with FormControl.
+
+### Layout
+
+- **Accordion** – accessible expand/collapse container with composition API.
+- **AppBar** – responsive top navigation bar.
+- **Box** – baseline container handling background, text colour, and centring.
+- **Drawer** – sliding overlay panel with escape handling and backdrop.
+- **Grid** – CSS grid layout helper with gaps and spans.
+- **List** – simple list with optional drag/keyboard reordering.
+- **Modal** – accessible dialog component with optional backdrop.
+- **Panel** – lightweight container with `main` and `alt` variants.
+- **Stack** – flexbox‑based layout helper for consistent spacing.
+- **Surface** – top‑level wrapper applying theme backgrounds and breakpoints.
+- **Tabs** – grid‑based tab list with placement options.
+
+### Widgets
+
+- **CodeBlock** – syntax‑highlighted code with copy button and snackbar feedback.
+- **Dropzone** – file drag‑and‑drop area with previews.
 - **KeyModal** – overlay for capturing API keys.
-- **LLMChat** – conversation UI with OpenAI message format and optional height constraint.
-- **List** – simple list with optional drag and keyboard reordering.
+- **LLMChat** – conversation UI with OpenAI message format; optional height constraint.
 - **LoadingBackdrop** – fullscreen loading overlay for async operations.
 - **Markdown** – render Markdown text with valet primitives.
-- **MetroSelect** – segmented switch for discrete choices.
-- **Modal** – accessible dialog component with optional backdrop.
 - **Pagination** – page selector with first/last controls.
-- **Panel** – lightweight container with `main` and `alt` variants.
-- **Parallax** – scroll-aware container for simple parallax effects.
-- **Progress** – linear or circular indicator supporting determinate/indeterminate.
-- **RadioGroup** – grouped radio inputs managed via FormControl.
+- **Parallax** – scroll‑aware container for simple parallax effects.
 - **RichChat** – embeddable chat that supports custom JSX messages.
-- **Select** – typed single or multi-select input.
-- **Slider** – pointer and keyboard friendly value slider.
 - **Snackbar** – transient message bar with stacking.
 - **SpeedDial** – radial quick action menu.
-- **Stack** – flexbox-based layout helper for consistent spacing.
 - **Stepper** – horizontal or vertical step progress indicator.
-- **Surface** – top-level wrapper that applies theme backgrounds and breakpoints.
-- **Switch** – boolean toggle styled like a physical switch.
 - **Table** – sortable, selectable table with zebra and hover styling.
-- **Tabs** – grid-based tab list with placement options.
-- **TextField** – controlled text input integrating with FormControl.
-- **Tooltip** – hover/focus tooltip with theme-aware styling.
+- **Tooltip** – hover/focus tooltip with theme‑aware styling.
 - **Tree** – nested list with collapsible branches.
-- **Typography** – semantic text variants with responsive sizes.
-- **Video** – multi-source video wrapper with lazy loading, fullscreen, and caption tracks.
 
 ## Internal Files
 

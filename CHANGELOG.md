@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+- Add Divider component with spacing ergonomics and docs page (Usage/Playground/Reference); wired into docs Nav.
+
+
 ## [0.25.2]
 - Docs improvements
 - `Drawer`, `Typography`, `Tree` interplay improvements
