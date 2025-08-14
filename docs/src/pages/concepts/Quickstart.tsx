@@ -60,7 +60,6 @@ export default function QuickstartPage() {
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
-import '@archway/valet/styles.css'; // if using a global CSS entry
 import './presets/globalPresets';   // import your preset registry
 import { App } from './App';
 
