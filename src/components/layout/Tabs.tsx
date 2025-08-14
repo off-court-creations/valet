@@ -31,6 +31,7 @@ interface Ctx {
   orientation: 'horizontal' | 'vertical';
   registerTab: (i: number, el: HTMLButtonElement | null) => void;
   totalTabs: number;
+  placement: 'top' | 'bottom' | 'left' | 'right';
 }
 const TabsCtx = createContext<Ctx | null>(null);
 const useTabs = () => {
@@ -71,6 +72,8 @@ const Root = styled('div')<{
 const TabList = styled('div')<{
   $orientation: 'horizontal' | 'vertical';
   $center?: boolean;
+  $place: 'top' | 'bottom' | 'left' | 'right';
+  $edgeGap?: string;
 }>`
   display: flex;
   flex-direction: ${({ $orientation }) => ($orientation === 'vertical' ? 'column' : 'row')};
@@ -83,6 +86,13 @@ const TabList = styled('div')<{
         : 'width: max-content;';
     return $center ? 'justify-content: center;' : '';
   }}
+
+  /* Extra breathing room for right-placed vertical tabs:
+     push the indicator away from the container edge */
+  ${({ $orientation, $place, $edgeGap }) =>
+    $orientation === 'vertical' && $place === 'right' && $edgeGap
+      ? `padding-right: ${$edgeGap};`
+      : ''}
 `;
 
 /*───────────────────────────────────────────────────────────*/
@@ -91,6 +101,7 @@ const TabBtn = styled('button')<{
   $active: boolean;
   $primary: string;
   $orient: 'horizontal' | 'vertical';
+  $place: 'top' | 'bottom' | 'left' | 'right';
   $padV: string;
   $padH: string;
   $barW: string;
@@ -119,10 +130,12 @@ const TabBtn = styled('button')<{
   &::after {
     content: '';
     position: absolute;
-    ${({ $orient, $barW }) =>
+    ${({ $orient, $place, $barW }) =>
       $orient === 'horizontal'
         ? `left: 0; right: 0; bottom: calc(-0.5 * var(--valet-underline-width, ${$barW})); height: var(--valet-underline-width, ${$barW});`
-        : `top: 0; bottom: 0; right: calc(-0.5 * var(--valet-underline-width, ${$barW})); width: var(--valet-underline-width, ${$barW});`}
+        : $place === 'left'
+          ? `top: 0; bottom: 0; left: calc(-0.5 * var(--valet-underline-width, ${$barW})); width: var(--valet-underline-width, ${$barW});`
+          : `top: 0; bottom: 0; right: calc(-0.5 * var(--valet-underline-width, ${$barW})); width: var(--valet-underline-width, ${$barW});`}
     background: ${({ $primary, $active }) => ($active ? $primary : 'transparent')};
     transition: background 150ms ease;
   }
@@ -243,8 +256,9 @@ export const Tabs: React.FC<TabsProps> & {
       orientation,
       registerTab,
       totalTabs: tabs.length,
+      placement,
     }),
-    [active, orientation, setActive, registerTab, tabs.length],
+    [active, orientation, placement, setActive, registerTab, tabs.length],
   );
 
   const cls = [p ? preset(p) : '', className].filter(Boolean).join(' ');
@@ -253,6 +267,7 @@ export const Tabs: React.FC<TabsProps> & {
   const stripFirst =
     (orientation === 'horizontal' && placement === 'top') ||
     (orientation === 'vertical' && placement === 'left');
+  const edgeGap = theme.spacing(1);
 
   return (
     <TabsCtx.Provider value={ctx}>
@@ -267,6 +282,8 @@ export const Tabs: React.FC<TabsProps> & {
         {stripFirst && (
           <TabList
             $orientation={orientation}
+            $place={placement}
+            $edgeGap={edgeGap}
             $center={centered}
           >
             {tabs}
@@ -278,6 +295,8 @@ export const Tabs: React.FC<TabsProps> & {
         {!stripFirst && (
           <TabList
             $orientation={orientation}
+            $place={placement}
+            $edgeGap={edgeGap}
             $center={centered}
           >
             {tabs}
@@ -292,7 +311,7 @@ export const Tabs: React.FC<TabsProps> & {
 const Tab: React.FC<TabProps> = forwardRef<HTMLButtonElement, TabProps>(
   ({ index = 0, label, tooltip, preset: p, className, onKeyDown, onClick, ...rest }, ref) => {
     const { theme } = useTheme();
-    const { active, setActive, orientation, registerTab, totalTabs } = useTabs();
+    const { active, setActive, orientation, registerTab, totalTabs, placement } = useTabs();
     const selected = active === index;
 
     const nav = (e: KeyboardEvent<HTMLButtonElement>) => {
@@ -331,6 +350,7 @@ const Tab: React.FC<TabProps> = forwardRef<HTMLButtonElement, TabProps>(
         $active={selected}
         $primary={theme.colors.primary}
         $orient={orientation}
+        $place={placement}
         $padV={theme.spacing(2)}
         $padH={theme.spacing(3)}
         $barW={theme.stroke(2)}

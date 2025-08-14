@@ -483,9 +483,8 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
         >
           {typeof header === 'string' || typeof header === 'number' ? (
             <Typography
-              variant='subtitle'
+              variant='h4'
               noSelect
-              style={{ font: 'inherit' }}
             >
               {header}
             </Typography>
