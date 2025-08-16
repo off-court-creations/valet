@@ -54,6 +54,11 @@ export interface Theme {
       linear: string;
       ease: string;
     };
+    /** Default hover interaction tokens */
+    hover: {
+      duration: string;
+      easing: string;
+    };
     /** Tuned values for tab/underline-style follow animations */
     underline: {
       stretch: { baseMs: number; distanceCoef: number; minMs: number; maxMs: number };
@@ -121,6 +126,11 @@ const common: Omit<Theme, 'colors'> = {
       overshoot: 'cubic-bezier(0.2, 0.8, 0.2, 1.05)',
       linear: 'linear',
       ease: 'ease',
+    },
+    /** Default hover interactions */
+    hover: {
+      duration: '120ms',
+      easing: 'cubic-bezier(0.2, 0.7, 0.1, 1)', // align with standard
     },
     underline: {
       // Phase 1: near-edge stretch

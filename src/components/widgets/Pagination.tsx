@@ -199,7 +199,7 @@ export const Pagination: React.FC<PaginationProps> = ({
   const [isAnimating, setIsAnimating] = React.useState(false);
   const animationRunIdRef = React.useRef(0);
   const prevPageRef = React.useRef<number>(page);
-  
+
   // stable click handler shared by all page buttons
   const handlePageClick = React.useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -326,7 +326,7 @@ export const Pagination: React.FC<PaginationProps> = ({
     // map distance to durations and pulse scale
     const clamp = (n: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, n));
     // Phase timings pulled from theme motion tokens (distance-aware)
-    const { stretch, settle, pulse } = theme.motion.underline;
+    const { stretch, settle } = theme.motion.underline;
     const stretchMs = Math.round(
       clamp(stretch.baseMs + farDist * stretch.distanceCoef, stretch.minMs, stretch.maxMs),
     );

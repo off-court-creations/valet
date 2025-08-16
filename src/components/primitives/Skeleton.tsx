@@ -100,7 +100,7 @@ export const Skeleton = forwardRef<HTMLSpanElement, SkeletonProps>(
     const [internalLoading, setInternalLoading] = useState(loading ?? true);
     const activeLoading = isControlled ? (loading as boolean) : internalLoading;
 
-    const fadeMs = 400;
+    const fadeDur = theme.motion.duration.long;
     const [show, setShow] = useState(activeLoading);
     const phRef = useRef<HTMLSpanElement>(null);
 
@@ -142,7 +142,7 @@ export const Skeleton = forwardRef<HTMLSpanElement, SkeletonProps>(
             $loading={activeLoading}
             style={{
               opacity: activeLoading ? 1 : 0,
-              transition: `opacity ${fadeMs}ms ease`,
+              transition: `opacity ${fadeDur} ${theme.motion.easing.standard}`,
               willChange: 'opacity',
             }}
           >
@@ -159,7 +159,7 @@ export const Skeleton = forwardRef<HTMLSpanElement, SkeletonProps>(
                 : null),
               visibility: activeLoading ? 'hidden' : undefined,
               opacity: activeLoading ? 0 : 1,
-              transition: `opacity ${fadeMs}ms ease`,
+              transition: `opacity ${fadeDur} ${theme.motion.easing.standard}`,
               willChange: 'opacity',
             },
             ...(isControlled
