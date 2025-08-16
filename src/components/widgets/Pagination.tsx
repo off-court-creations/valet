@@ -250,9 +250,15 @@ export const Pagination: React.FC<PaginationProps> = ({
   const [isAnimating, setIsAnimating] = React.useState(false);
   const animationRunIdRef = React.useRef(0);
   const prevPageRef = React.useRef<number>(page);
+  // When true, the next page change will snap underline without stretch/settle animation
+  const suppressNextUnderlineAnim = React.useRef(false);
 
   // window sliding state (for « and »)
   const [isSliding, setIsSliding] = React.useState(false);
+  // Distinguish slide kinds so we can preserve underline on edge-step
+  const [slideKind, setSlideKind] = React.useState<
+    'none' | 'window-left' | 'window-right' | 'edge-left' | 'edge-right'
+  >('none');
   const [slideX, setSlideX] = React.useState(0);
   const [underlineVisible, setUnderlineVisible] = React.useState(true);
   // When hiding due to slide start, snap opacity to 0 (no fade out);
@@ -273,6 +279,7 @@ export const Pagination: React.FC<PaginationProps> = ({
     prevStart: number;
     currentPages: number[];
     nextPages: number[];
+    after?: () => void;
   }>(null);
 
   // stable click handler shared by all page buttons
@@ -323,9 +330,12 @@ export const Pagination: React.FC<PaginationProps> = ({
     const btn = btnRefs.current[page] ?? null; // indexed by page number
     if (!wrap) return;
     if (!btn) {
-      // active page not in current window; hide underline by collapsing width
+      // active page not in current window; preserve underline during edge-step slides
+      if (isSliding && (slideKind === 'edge-left' || slideKind === 'edge-right')) {
+        return;
+      }
+      // Otherwise, hide underline by collapsing width
       setUx((u) => (u.w === 0 ? u : { x: 0, w: 0 }));
-      // fully hide when no active page is visible
       setUnderlineFadeInstant(true);
       setUnderlineVisible(false);
       return;
@@ -338,7 +348,7 @@ export const Pagination: React.FC<PaginationProps> = ({
       setUnderlineFadeInstant(false);
       setUnderlineVisible(true);
     }
-  }, [page, isSliding]);
+  }, [page, isSliding, slideKind]);
 
   React.useLayoutEffect(() => {
     updateUnderline();
@@ -374,6 +384,29 @@ export const Pagination: React.FC<PaginationProps> = ({
     const bRect = btn.getBoundingClientRect();
     const target = { x: bRect.left - wRect.left, w: bRect.width };
     let prev = prevUxRef.current ?? { x: anim.x, w: anim.w };
+
+    // If an edge-step slide just completed, snap underline to the new target without anim
+    if (suppressNextUnderlineAnim.current) {
+      suppressNextUnderlineAnim.current = false;
+      animatingRef.current = false;
+      setIsAnimating(false);
+      setAnim((a) => ({
+        ...a,
+        x: target.x,
+        w: target.w,
+        transX: '0ms',
+        transW: '0ms',
+        easeX: theme.motion.easing.linear,
+        easeW: theme.motion.easing.linear,
+        scale: 1,
+        scaleTrans: '0ms',
+        scaleEase: theme.motion.easing.linear,
+        origin: 'center',
+        pulsing: false,
+      }));
+      prevUxRef.current = { x: target.x, w: target.w };
+      return;
+    }
 
     // Special handling: if the previously active page was outside the current window,
     // make the underline "enter" from the visible edge (leftmost/rightmost button).
@@ -602,24 +635,132 @@ export const Pagination: React.FC<PaginationProps> = ({
   );
 
   // stable handlers for nav controls and window scroll
+  // Edge-step helpers (slide by one at window boundaries) ---------------------------------
+  const edgeSlideRight = React.useCallback(
+    (after?: () => void) => {
+      if (!hasWindow || isAnimating || isSliding) return;
+      // cannot step right if already at final window end
+      if (winEnd >= count) return;
+      const wrapRect = wrapRef.current?.getBoundingClientRect();
+      const wrapWidth = wrapRect?.width ?? 0;
+      const wrapHeight = wrapRect?.height ?? undefined;
+      // width of the leftmost visible page (element that slides out)
+      const leftBtn = btnRefs.current[winStart] as HTMLButtonElement | null;
+      let delta = leftBtn?.getBoundingClientRect().width ?? 0;
+      if (!delta && wrapWidth && winSize) delta = wrapWidth / winSize;
+
+      const currentPages = hasWindow ? pages.slice(winStart - 1, winEnd) : pages;
+      const incoming = winEnd + 1;
+
+      // Lock viewport to current size; mount [current | incoming]
+      setViewportW(wrapWidth);
+      setViewportH(wrapHeight);
+      setGroupA(currentPages);
+      setGroupB([incoming]);
+      setIsSliding(true);
+      setSlideKind('edge-right');
+      setSlideX(0);
+      // Animate left by the width of the first visible button
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setSlideX(-Math.round(delta));
+          window.setTimeout(() => {
+            // Logically advance window by one
+            setWinStart((s) => s + 1);
+            requestAnimationFrame(() => {
+              setIsSliding(false);
+              setSlideKind('none');
+              requestAnimationFrame(() => {
+                updateUnderline();
+                setGroupA(null);
+                setGroupB(null);
+                setViewportW(undefined);
+                setViewportH(undefined);
+                setSlideX(0);
+                after?.();
+              });
+            });
+          }, slideDurMs + 20);
+        });
+      });
+    },
+    [
+      hasWindow,
+      isAnimating,
+      isSliding,
+      winEnd,
+      count,
+      winStart,
+      winSize,
+      pages,
+      slideDurMs,
+      updateUnderline,
+    ],
+  );
+
+  const edgeSlideLeft = React.useCallback(
+    (after?: () => void) => {
+      if (!hasWindow || isAnimating || isSliding) return;
+      if (winStart <= 1) return;
+      const prevStart = winStart - 1;
+      const currentPages = hasWindow ? pages.slice(winStart - 1, winEnd) : pages;
+      const nextPages = [prevStart]; // incoming single page on the left
+      const wrapRect = wrapRef.current?.getBoundingClientRect();
+      const wrapWidth = wrapRect?.width ?? 0;
+      const wrapHeight = wrapRect?.height ?? undefined;
+      setViewportW(wrapWidth);
+      setViewportH(wrapHeight);
+      // measure width of incoming single page, then perform left-slide from -width to 0
+      pendingSlideRef.current = {
+        dir: 'left',
+        nextStart: prevStart,
+        prevStart: winStart,
+        currentPages,
+        nextPages,
+        after,
+      };
+      setSlideKind('edge-left');
+      setMeasureSet(nextPages);
+    },
+    [hasWindow, isAnimating, isSliding, winStart, pages, winEnd],
+  );
+
   const handlePrev = React.useCallback(() => {
     if (page <= 1) return;
+    if (hasWindow && page === winStart) {
+      // edge-step to the left: slide one and update page after
+      edgeSlideLeft(() => {
+        suppressNextUnderlineAnim.current = true;
+        onChange?.(Math.max(1, page - 1));
+      });
+      return;
+    }
     onChange?.(Math.max(1, page - 1));
-  }, [onChange, page]);
+  }, [onChange, page, hasWindow, winStart, edgeSlideLeft]);
 
   const handleNext = React.useCallback(() => {
     if (page >= count) return;
+    if (hasWindow && page === winEnd) {
+      // edge-step to the right: slide one and update page after
+      edgeSlideRight(() => {
+        suppressNextUnderlineAnim.current = true;
+        onChange?.(Math.min(count, page + 1));
+      });
+      return;
+    }
     onChange?.(Math.min(count, page + 1));
-  }, [onChange, page, count]);
+  }, [onChange, page, count, hasWindow, winEnd, edgeSlideRight]);
 
   const scrollLeft = React.useCallback(() => {
     if (isAnimating || isSliding) return;
     setUnderlineFadeInstant(true);
     setUnderlineVisible(false);
     setIsSliding(true);
+    setSlideKind('window-left');
     const prevStart = Math.max(1, winStart - winSize);
     if (prevStart === winStart) {
       setIsSliding(false);
+      setSlideKind('none');
       return;
     }
     const currentPages = visiblePages;
@@ -645,10 +786,12 @@ export const Pagination: React.FC<PaginationProps> = ({
     setUnderlineFadeInstant(true);
     setUnderlineVisible(false);
     setIsSliding(true);
+    setSlideKind('window-right');
     const maxStart = Math.max(1, count - winSize + 1);
     const nextStart = Math.min(maxStart, winStart + winSize);
     if (nextStart === winStart) {
       setIsSliding(false);
+      setSlideKind('none');
       return;
     }
     const currentPages = visiblePages;
@@ -672,6 +815,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           // First frame after animation: switch to static track content
           requestAnimationFrame(() => {
             setIsSliding(false);
+            setSlideKind('none');
             // Next frame: measure underline and then clear temp groups/viewport locks
             requestAnimationFrame(() => {
               updateUnderline();
@@ -725,6 +869,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           // First frame: exit sliding mode
           requestAnimationFrame(() => {
             setIsSliding(false);
+            setSlideKind('none');
             // Next frame: measure underline, then clear temp state
             requestAnimationFrame(() => {
               updateUnderline();
@@ -735,6 +880,7 @@ export const Pagination: React.FC<PaginationProps> = ({
               setGroupB(null);
               setViewportW(undefined);
               setViewportH(undefined);
+              req.after?.();
             });
           });
         }, slideDurMs + 20);

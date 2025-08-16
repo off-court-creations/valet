@@ -3,14 +3,11 @@
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-### Added
-- Theme motion tokens (`theme.motion.duration`, `theme.motion.easing`, `theme.motion.underline`) for consistent animations across components.
-- `Pagination` now consumes motion tokens for button fades, underline follow, and pulse timing.
-- `Pagination`: sliding window animation for « and » controls; numbers smoothly slide horizontally while the pagination width stays fixed during the transition.
-### Fixed
-- `Pagination`: disable/fade Prev/Next while the page window slides so controls reflect transient non-interactive state.
-### Changed
-- `Pagination`: make left/right sliding slightly slower with stronger ease-out deceleration for a clearer slow-down at the end of motion.
+
+## [0.26.0]
+- Added theme tokens for motion!
+- `Pagination` now powered by theme token.
+- `Pagination` now has fancy animations.
 
 ## [0.25.5]
 - Enhanced `Pagination` with windowed view via `visibleWindow` and non-destructive window scroll controls
@@ -503,6 +500,7 @@ All notable changes to this project will be documented in this file. The format 
 
 - vibe coded
 
+[v0.26.0]: https://github.com/off-court-creations/valet/releases/tag/v0.26.0
 [v0.25.5]: https://github.com/off-court-creations/valet/releases/tag/v0.25.5
 [v0.25.4]: https://github.com/off-court-creations/valet/releases/tag/v0.25.4
 [v0.25.3]: https://github.com/off-court-creations/valet/releases/tag/v0.25.3
