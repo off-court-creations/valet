@@ -35,6 +35,8 @@ const Track = styled('button')<{
   $w: number;
   $h: number;
   $primary: string;
+  $dur: string;
+  $ease: string;
 }>`
   display: inline-flex;
   align-items: center;
@@ -51,7 +53,7 @@ const Track = styled('button')<{
   border-radius: 9999px;
   background: ${({ $checked, $primary }) => ($checked ? $primary : '#0003')};
   cursor: pointer;
-  transition: background 150ms ease;
+  transition: background ${({ $dur }) => $dur} ${({ $ease }) => $ease};
 
   &:focus-visible {
     outline: var(--valet-switch-outline, 2px) solid ${({ $primary }) => $primary};
@@ -67,6 +69,8 @@ const Thumb = styled('span')<{
   $checked: boolean;
   $size: number;
   $offset: number;
+  $dur: string;
+  $ease: string;
 }>`
   position: absolute;
   top: 50%;
@@ -77,7 +81,7 @@ const Thumb = styled('span')<{
   border-radius: 50%;
   background: #fff;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
-  transition: transform 150ms ease;
+  transition: transform ${({ $dur }) => $dur} ${({ $ease }) => $ease};
   pointer-events: none; /* retain click on Track */
 `;
 
@@ -168,6 +172,8 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
         $w={geom.trackW}
         $h={geom.trackH}
         $primary={theme.colors.primary}
+        $dur={theme.motion.duration.short}
+        $ease={theme.motion.easing.standard}
         className={[presetClasses, className].filter(Boolean).join(' ')}
         style={
           {
@@ -182,6 +188,8 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
           $checked={checked}
           $size={geom.thumb}
           $offset={geom.offset}
+          $dur={theme.motion.duration.short}
+          $ease={theme.motion.easing.standard}
         />
       </Track>
     );

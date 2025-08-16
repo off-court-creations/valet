@@ -62,6 +62,8 @@ const Root = styled('div')<{
   $padH: string;
   $offset: string;
   $radius: string;
+  $dur: string;
+  $ease: string;
 }>`
   position: fixed;
   right: ${({ $spacing }) => $spacing};
@@ -70,8 +72,8 @@ const Root = styled('div')<{
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};
   pointer-events: ${({ $visible }) => ($visible ? 'auto' : 'none')};
   transition:
-    opacity 200ms ease,
-    transform 200ms ease;
+    opacity ${({ $dur }) => $dur} ${({ $ease }) => $ease},
+    transform ${({ $dur }) => $dur} ${({ $ease }) => $ease};
 
   background: ${({ $bg }) => $bg};
   outline: ${({ $outlineW }) => $outlineW} solid ${({ $outline }) => $outline};
@@ -225,6 +227,8 @@ export const Snackbar: React.FC<SnackbarProps> = ({
         $padH={theme.spacing(2)}
         $offset={theme.spacing(1.5)}
         $radius={theme.radius(1)}
+        $dur={theme.motion.duration.base}
+        $ease={theme.motion.easing.standard}
         className={classes}
         style={style}
       >

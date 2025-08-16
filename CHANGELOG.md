@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.26.0]
+- Added theme tokens for motion!
+- `Pagination` now powered by theme token.
+- `Pagination` now has fancy animations.
+
 ## [0.25.5]
 - Enhanced `Pagination` with windowed view via `visibleWindow` and non-destructive window scroll controls
 - Performance: optimize `Pagination`
@@ -495,6 +500,7 @@ All notable changes to this project will be documented in this file. The format 
 
 - vibe coded
 
+[v0.26.0]: https://github.com/off-court-creations/valet/releases/tag/v0.26.0
 [v0.25.5]: https://github.com/off-court-creations/valet/releases/tag/v0.25.5
 [v0.25.4]: https://github.com/off-court-creations/valet/releases/tag/v0.25.4
 [v0.25.3]: https://github.com/off-court-creations/valet/releases/tag/v0.25.3
