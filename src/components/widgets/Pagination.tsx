@@ -35,7 +35,15 @@ export interface PaginationProps
 
 /*───────────────────────────────────────────────────────────*/
 /* Layout wrapper                                            */
-const Root = styled('nav')<{ $text: string; $gap: string; $padV: string; $padH: string }>`
+const Root = styled('nav')<{
+  $text: string;
+  $gap: string;
+  $padV: string;
+  $padH: string;
+  $durColor: string;
+  $durOpacity: string;
+  $ease: string;
+}>`
   display: flex;
   gap: ${({ $gap }) => $gap};
 
@@ -48,8 +56,8 @@ const Root = styled('nav')<{ $text: string; $gap: string; $padV: string; $padH: 
     font: inherit;
     line-height: 1;
     transition:
-      color 180ms ease,
-      opacity 220ms ease; /* smooth fades for disabled/enabled */
+      color ${({ $durColor }) => $durColor} ${({ $ease }) => $ease},
+      opacity ${({ $durOpacity }) => $durOpacity} ${({ $ease }) => $ease}; /* smooth fades for disabled/enabled */
   }
 
   button:disabled {
@@ -64,13 +72,16 @@ const PageBtn = styled('button')<{
   $active: boolean;
   $primary: string;
   $text: string;
+  $durColor: string;
+  $durOpacity: string;
+  $ease: string;
 }>`
   position: relative;
   font-weight: ${({ $active }) => ($active ? 700 : 400)};
   color: ${({ $active, $primary, $text }) => ($active ? $primary : $text)};
   transition:
-    color 180ms ease,
-    opacity 220ms ease;
+    color ${({ $durColor }) => $durColor} ${({ $ease }) => $ease},
+    opacity ${({ $durOpacity }) => $durOpacity} ${({ $ease }) => $ease};
 
   /* previous underline pseudo-element replaced by shared slider */
 `;
@@ -161,17 +172,7 @@ export const Pagination: React.FC<PaginationProps> = ({
   const presetClass = p ? preset(p) : '';
   const mergedClass = [presetClass, className].filter(Boolean).join(' ') || undefined;
 
-  // stable click handler shared by all page buttons
-  const handlePageClick = React.useCallback(
-    (e: React.MouseEvent<HTMLButtonElement>) => {
-      const target = e.currentTarget as HTMLButtonElement;
-      const n = Number(target.dataset.page || 0);
-      if (!Number.isFinite(n) || n < 1) return;
-      if (n === page) return;
-      onChange?.(n);
-    },
-    [onChange, page],
-  );
+  // stable click handler shared by all page buttons (defined after animation refs)
 
   /* measure active page for underline position/width */
   const wrapRef = React.useRef<HTMLDivElement | null>(null);
@@ -185,12 +186,12 @@ export const Pagination: React.FC<PaginationProps> = ({
     w: 0,
     transX: '0ms',
     transW: '0ms',
-    easeX: 'linear',
-    easeW: 'linear',
-    pulseAmp: 0.06,
+    easeX: theme.motion.easing.linear,
+    easeW: theme.motion.easing.linear,
+    pulseAmp: theme.motion.underline.pulse.amplitudeBase,
     scale: 1,
     scaleTrans: '0ms',
-    scaleEase: 'linear',
+    scaleEase: theme.motion.easing.linear,
     origin: 'center' as 'left' | 'right' | 'center',
     pulsing: false,
   });
@@ -198,6 +199,19 @@ export const Pagination: React.FC<PaginationProps> = ({
   const [isAnimating, setIsAnimating] = React.useState(false);
   const animationRunIdRef = React.useRef(0);
   const prevPageRef = React.useRef<number>(page);
+  
+  // stable click handler shared by all page buttons
+  const handlePageClick = React.useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      if (animatingRef.current || isAnimating) return; // prevent page changes mid-animation
+      const target = e.currentTarget as HTMLButtonElement;
+      const n = Number(target.dataset.page || 0);
+      if (!Number.isFinite(n) || n < 1) return;
+      if (n === page) return;
+      onChange?.(n);
+    },
+    [onChange, page, isAnimating],
+  );
 
   // windowing state
   const [winStart, setWinStart] = React.useState(1);
@@ -311,13 +325,22 @@ export const Pagination: React.FC<PaginationProps> = ({
 
     // map distance to durations and pulse scale
     const clamp = (n: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, n));
-    // Slow down Phase 1 (near-edge stretch) for a more deliberate motion
-    const stretchMs = Math.round(clamp(240 + farDist * 0.9, 260, 760));
-    const settleMs = Math.round(clamp(120 + farDist * 0.45, 140, 420));
+    // Phase timings pulled from theme motion tokens (distance-aware)
+    const { stretch, settle, pulse } = theme.motion.underline;
+    const stretchMs = Math.round(
+      clamp(stretch.baseMs + farDist * stretch.distanceCoef, stretch.minMs, stretch.maxMs),
+    );
+    const settleMs = Math.round(
+      clamp(settle.baseMs + farDist * settle.distanceCoef, settle.minMs, settle.maxMs),
+    );
     // Phase 2 is 50% faster than before (previously 2x settleMs)
     const settleDur = settleMs; // 50% of old duration
-    // keep pulse subtle: amplitude ~2%..8%
-    const pulseAmp = clamp(0.03 + farDist / 2000, 0.02, 0.08);
+    // keep pulse subtle: amplitude pulled from theme bounds
+    const pulseAmp = clamp(
+      0.03 + farDist / 2000,
+      theme.motion.underline.pulse.amplitudeMin,
+      theme.motion.underline.pulse.amplitudeMax,
+    );
 
     // Phase 1: stretch only the closer edge using fill scaling
     animatingRef.current = true;
@@ -337,12 +360,12 @@ export const Pagination: React.FC<PaginationProps> = ({
         w: prevW,
         transX: '0ms',
         transW: '0ms',
-        easeX: 'linear',
-        easeW: 'linear',
+        easeX: theme.motion.easing.linear,
+        easeW: theme.motion.easing.linear,
         pulseAmp,
         scale: 1,
         scaleTrans: '0ms',
-        scaleEase: 'linear',
+        scaleEase: theme.motion.easing.linear,
         origin: 'left',
         pulsing: false,
       });
@@ -356,7 +379,7 @@ export const Pagination: React.FC<PaginationProps> = ({
             scale: scaleFactor,
             scaleTrans: `${stretchMs}ms`,
             // No overshoot: keep leading edge from "reverberating"
-            scaleEase: 'cubic-bezier(0.22, 0.8, 0.2, 1)',
+            scaleEase: theme.motion.easing.emphasized,
             origin: 'left',
           }));
         });
@@ -368,14 +391,14 @@ export const Pagination: React.FC<PaginationProps> = ({
         w: prevW,
         transX: '0ms',
         transW: '0ms',
-        easeX: 'linear',
-        easeW: 'linear',
+        easeX: theme.motion.easing.linear,
+        easeW: theme.motion.easing.linear,
         pulseAmp,
         // scale the fill toward the near edge
         scale: scaleFactor,
         scaleTrans: `${stretchMs}ms`,
         // No overshoot: keep leading edge from "reverberating"
-        scaleEase: 'cubic-bezier(0.22, 0.8, 0.2, 1)',
+        scaleEase: theme.motion.easing.emphasized,
         origin: 'right',
         pulsing: false,
       });
@@ -395,7 +418,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           transW: '0ms',
           scale: 1,
           scaleTrans: '0ms',
-          scaleEase: 'linear',
+          scaleEase: theme.motion.easing.linear,
           origin: 'right', // anchor right; shrink from right keeps right edge fixed
         }));
 
@@ -410,7 +433,7 @@ export const Pagination: React.FC<PaginationProps> = ({
               ...a,
               scale: targetScale,
               scaleTrans: `${settleDur}ms`,
-              scaleEase: 'cubic-bezier(0.2, 0.7, 0.1, 1)',
+              scaleEase: theme.motion.easing.standard,
               origin: 'right',
             }));
           });
@@ -426,7 +449,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           transW: '0ms',
           scale: 1,
           scaleTrans: '0ms',
-          scaleEase: 'linear',
+          scaleEase: theme.motion.easing.linear,
           origin: 'left', // leading edge anchored (moving left)
         }));
 
@@ -441,7 +464,7 @@ export const Pagination: React.FC<PaginationProps> = ({
               ...a,
               scale: targetScale,
               scaleTrans: `${settleDur}ms`,
-              scaleEase: 'cubic-bezier(0.2, 0.7, 0.1, 1)',
+              scaleEase: theme.motion.easing.standard,
               origin: 'left',
             }));
           });
@@ -460,7 +483,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           transW: '0ms',
           scale: 1,
           scaleTrans: '0ms',
-          scaleEase: 'linear',
+          scaleEase: theme.motion.easing.linear,
           origin: movingRight ? 'right' : 'left',
         }));
         prevUxRef.current = { x: nextL, w: target.w };
@@ -535,6 +558,9 @@ export const Pagination: React.FC<PaginationProps> = ({
       $gap={theme.spacing(1)}
       $padV={theme.spacing(1)}
       $padH={theme.spacing(1.5)}
+      $durColor={theme.motion.duration.medium}
+      $durOpacity={theme.motion.duration.base}
+      $ease={theme.motion.easing.standard}
       className={mergedClass}
       style={
         {
@@ -570,9 +596,13 @@ export const Pagination: React.FC<PaginationProps> = ({
             ref={getBtnRef(n)}
             data-page={n}
             onClick={handlePageClick}
+            disabled={isAnimating}
             $active={n === page}
             $primary={theme.colors.primary}
             $text={theme.colors.text}
+            $durColor={theme.motion.duration.medium}
+            $durOpacity={theme.motion.duration.base}
+            $ease={theme.motion.easing.standard}
             aria-current={n === page ? 'page' : undefined}
           >
             <Typography
@@ -608,9 +638,9 @@ export const Pagination: React.FC<PaginationProps> = ({
             $origin={anim.origin}
             style={{
               animationName: anim.pulsing ? elasticPulse : 'none',
-              // Significantly faster pulse, containing two oscillations
-              animationDuration: '160ms',
-              animationTimingFunction: 'cubic-bezier(0.2, 0.8, 0.2, 1.05)',
+              // Two quick oscillations tuned by theme motion tokens
+              animationDuration: theme.motion.underline.pulse.duration,
+              animationTimingFunction: theme.motion.easing.overshoot,
             }}
           />
         </Underline>

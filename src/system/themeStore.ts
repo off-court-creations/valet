@@ -22,6 +22,50 @@ export interface Theme {
   stroke: (units: number) => string;
   /** Base unit used by the stroke helper */
   strokeUnit: string;
+  /**
+   * Motion and animation tokens: common durations, easing curves,
+   * and a small set of tuned values for reusable interactions.
+   */
+  motion: {
+    /** Canonical durations to keep motion consistent across components */
+    duration: {
+      /** e.g. micro feedback, tap highlights */
+      xshort: string; // ~120 ms
+      /** e.g. tooltip fade, small nudge */
+      short: string; // ~140 ms
+      /** e.g. color or small position transitions */
+      medium: string; // ~180 ms
+      /** e.g. base UI enters/exits (snackbars, toasts) */
+      base: string; // ~200 ms
+      /** e.g. larger layout shifts or content settles */
+      long: string; // ~420 ms
+      /** e.g. exaggerated distances or elastic UI sweeps */
+      xlong: string; // ~760 ms
+    };
+    /** Named cubic-bezier curves for consistent feel */
+    easing: {
+      /** Crisp ease-out; good general-purpose settle */
+      standard: string; // cubic-bezier(0.2, 0.7, 0.1, 1)
+      /** Slightly punchier ease for emphasized motion */
+      emphasized: string; // cubic-bezier(0.22, 0.8, 0.2, 1)
+      /** Gentle overshoot for micro pulses */
+      overshoot: string; // cubic-bezier(0.2, 0.8, 0.2, 1.05)
+      /** Pass-throughs for convenience */
+      linear: string;
+      ease: string;
+    };
+    /** Tuned values for tab/underline-style follow animations */
+    underline: {
+      stretch: { baseMs: number; distanceCoef: number; minMs: number; maxMs: number };
+      settle: { baseMs: number; distanceCoef: number; minMs: number; maxMs: number };
+      pulse: {
+        duration: string;
+        amplitudeBase: number;
+        amplitudeMin: number;
+        amplitudeMax: number;
+      };
+    };
+  };
   breakpoints: Record<Breakpoint, number>;
   typography: Record<string, Record<Breakpoint, string>>;
   fonts: {
@@ -62,6 +106,31 @@ const common: Omit<Theme, 'colors'> = {
   stroke: (u: number) =>
     `calc(var(--valet-stroke, calc(var(--valet-space, ${spacingUnit}) * 0.125)) * ${u})`,
   strokeUnit: `calc(var(--valet-space, ${spacingUnit}) * 0.125)`,
+  motion: {
+    duration: {
+      xshort: '120ms',
+      short: '140ms',
+      medium: '180ms',
+      base: '200ms',
+      long: '420ms',
+      xlong: '760ms',
+    },
+    easing: {
+      standard: 'cubic-bezier(0.2, 0.7, 0.1, 1)',
+      emphasized: 'cubic-bezier(0.22, 0.8, 0.2, 1)',
+      overshoot: 'cubic-bezier(0.2, 0.8, 0.2, 1.05)',
+      linear: 'linear',
+      ease: 'ease',
+    },
+    underline: {
+      // Phase 1: near-edge stretch
+      stretch: { baseMs: 240, distanceCoef: 0.9, minMs: 260, maxMs: 760 },
+      // Phase 2: far-edge settle/shrink
+      settle: { baseMs: 120, distanceCoef: 0.45, minMs: 140, maxMs: 420 },
+      // Micro pulse when landing on target
+      pulse: { duration: '160ms', amplitudeBase: 0.06, amplitudeMin: 0.02, amplitudeMax: 0.08 },
+    },
+  },
   breakpoints: { xs: 0, sm: 600, md: 960, lg: 1280, xl: 1920 },
   typography: {
     h1: { xs: '2rem', sm: '2.5rem', md: '3rem', lg: '3.5rem', xl: '4rem' },
