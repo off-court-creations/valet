@@ -197,6 +197,7 @@ export const Pagination: React.FC<PaginationProps> = ({
   const animatingRef = React.useRef(false);
   const [isAnimating, setIsAnimating] = React.useState(false);
   const animationRunIdRef = React.useRef(0);
+  const prevPageRef = React.useRef<number>(page);
 
   // windowing state
   const [winStart, setWinStart] = React.useState(1);
@@ -275,7 +276,27 @@ export const Pagination: React.FC<PaginationProps> = ({
     const wRect = wrap.getBoundingClientRect();
     const bRect = btn.getBoundingClientRect();
     const target = { x: bRect.left - wRect.left, w: bRect.width };
-    const prev = prevUxRef.current ?? { x: anim.x, w: anim.w };
+    let prev = prevUxRef.current ?? { x: anim.x, w: anim.w };
+
+    // Special handling: if the previously active page was outside the current window,
+    // make the underline "enter" from the visible edge (leftmost/rightmost button).
+    // This creates the requested edge-origin animation when jumping across windows.
+    if (
+      hasWindow &&
+      prevPageRef.current != null &&
+      (prevPageRef.current < winStart || prevPageRef.current > winEnd)
+    ) {
+      const leftmostIdx = hasWindow ? Math.max(winStart, 1) : 1;
+      const rightmostIdx = hasWindow ? Math.min(winEnd, count) : count;
+      // Determine which edge to start from based on where the previous active page was
+      const startFromRight = prevPageRef.current > winEnd; // previous was to the right → enter from right edge
+      const edgePage = startFromRight ? rightmostIdx : leftmostIdx;
+      const edgeBtn = btnRefs.current[edgePage] ?? null;
+      if (edgeBtn) {
+        const eRect = edgeBtn.getBoundingClientRect();
+        prev = { x: eRect.left - wRect.left, w: eRect.width };
+      }
+    }
 
     // derive edges
     const prevL = prev.x;
@@ -461,6 +482,11 @@ export const Pagination: React.FC<PaginationProps> = ({
       window.clearTimeout(timer);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page]);
+
+  // Track previous page to detect cross-window jumps
+  React.useEffect(() => {
+    prevPageRef.current = page;
   }, [page]);
 
   // memo visible pages to avoid recomputing on unrelated state changes
