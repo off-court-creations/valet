@@ -250,8 +250,11 @@ export const Pagination: React.FC<PaginationProps> = ({
   const [isAnimating, setIsAnimating] = React.useState(false);
   const animationRunIdRef = React.useRef(0);
   const prevPageRef = React.useRef<number>(page);
+  const currentPageRef = React.useRef<number>(page);
   // When true, the next page change will snap underline without stretch/settle animation
   const suppressNextUnderlineAnim = React.useRef(false);
+  // Freeze underline position/size during edge handoff
+  const underlineLockRef = React.useRef(false);
 
   // window sliding state (for « and »)
   const [isSliding, setIsSliding] = React.useState(false);
@@ -329,9 +332,22 @@ export const Pagination: React.FC<PaginationProps> = ({
     const wrap = wrapRef.current;
     const btn = btnRefs.current[page] ?? null; // indexed by page number
     if (!wrap) return;
+    // If locked (edge handoff), do not change underline geometry
+    if (underlineLockRef.current) return;
+    // During edge-step handoff, we intentionally keep the underline fixed.
+    // Suppression flag is set just before `onChange` so avoid all realignments
+    // until the page-change effect snaps the underline with 0ms transitions.
+    if (suppressNextUnderlineAnim.current) {
+      return;
+    }
     if (!btn) {
-      // active page not in current window; preserve underline during edge-step slides
-      if (isSliding && (slideKind === 'edge-left' || slideKind === 'edge-right')) {
+      // active page not in current window
+      // Preserve underline during edge-step slides, and also while we are
+      // about to snap the underline (after edge-step) to avoid a blink.
+      if (
+        (isSliding && (slideKind === 'edge-left' || slideKind === 'edge-right')) ||
+        suppressNextUnderlineAnim.current
+      ) {
         return;
       }
       // Otherwise, hide underline by collapsing width
@@ -626,6 +642,7 @@ export const Pagination: React.FC<PaginationProps> = ({
   // Track previous page to detect cross-window jumps
   React.useEffect(() => {
     prevPageRef.current = page;
+    currentPageRef.current = page;
   }, [page]);
 
   // memo visible pages to avoid recomputing on unrelated state changes
@@ -708,8 +725,10 @@ export const Pagination: React.FC<PaginationProps> = ({
       const wrapRect = wrapRef.current?.getBoundingClientRect();
       const wrapWidth = wrapRect?.width ?? 0;
       const wrapHeight = wrapRect?.height ?? undefined;
+      // Lock viewport; we'll enter sliding mode after we measure to avoid a blank frame
       setViewportW(wrapWidth);
       setViewportH(wrapHeight);
+      underlineLockRef.current = true; // keep underline pinned throughout
       // measure width of incoming single page, then perform left-slide from -width to 0
       pendingSlideRef.current = {
         dir: 'left',
@@ -856,6 +875,7 @@ export const Pagination: React.FC<PaginationProps> = ({
     pendingSlideRef.current = null;
     setMeasureSet(null);
     // Arrange [prev | current], start with X = -prevWidth (current visible), animate to 0
+    setIsSliding(true); // enter sliding mode with groups ready to render
     setGroupA(req.nextPages);
     setGroupB(req.currentPages);
     setSlideX(-widthPrev);
@@ -870,17 +890,47 @@ export const Pagination: React.FC<PaginationProps> = ({
           requestAnimationFrame(() => {
             setIsSliding(false);
             setSlideKind('none');
-            // Next frame: measure underline, then clear temp state
+            // Next frame: trigger after-callback first to set suppression flag
+            // and allow the parent to update `page`; then, a frame later,
+            // snap underline to the new leftmost active page (0ms) while locked.
             requestAnimationFrame(() => {
-              updateUnderline();
-              const willShow =
-                page >= req.nextStart && page <= Math.min(count, req.nextStart + winSize - 1);
-              setUnderlineVisible(willShow);
-              setGroupA(null);
-              setGroupB(null);
-              setViewportW(undefined);
-              setViewportH(undefined);
               req.after?.();
+              requestAnimationFrame(() => {
+                if (req.dir === 'left') {
+                  const wrap = wrapRef.current;
+                  const newPage = currentPageRef.current;
+                  const btn = btnRefs.current[newPage] ?? null;
+                  if (wrap && btn) {
+                    const wRect = wrap.getBoundingClientRect();
+                    const bRect = btn.getBoundingClientRect();
+                    const targetX = bRect.left - wRect.left;
+                    const targetW = bRect.width;
+                    setAnim((a) => ({
+                      ...a,
+                      x: targetX,
+                      w: targetW,
+                      transX: '0ms',
+                      transW: '0ms',
+                      easeX: theme.motion.easing.linear,
+                      easeW: theme.motion.easing.linear,
+                      scale: 1,
+                      scaleTrans: '0ms',
+                      scaleEase: theme.motion.easing.linear,
+                      origin: 'center',
+                      pulsing: false,
+                    }));
+                    prevUxRef.current = { x: targetX, w: targetW };
+                  }
+                  underlineLockRef.current = false; // unlock after we pin to new page
+                } else {
+                  updateUnderline();
+                }
+                // Do not change underline visibility for edge-left; keep it steady
+                setGroupA(null);
+                setGroupB(null);
+                setViewportW(undefined);
+                setViewportH(undefined);
+              });
             });
           });
         }, slideDurMs + 20);

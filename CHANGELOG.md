@@ -3,6 +3,7 @@
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+- Fix: `Pagination` edge-left prev step now slides the number track symmetrically with edge-right next, keeping underline stationary and avoiding blink.
 
 ## [0.26.0]
 - Added theme tokens for motion!
