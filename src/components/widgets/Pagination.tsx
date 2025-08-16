@@ -110,11 +110,16 @@ const Underline = styled('div')<{
   --valet-pulse-amp: ${({ $pulseAmp }) => $pulseAmp};
 `;
 
-/* Subtle elastic pulse width using amplitude var --valet-pulse-amp */
+/* Dual elastic pulse: two quick oscillations, second smaller amplitude */
 const elasticPulse = keyframes`
   0% { transform: scaleX(1); }
-  45% { transform: scaleX(calc(1 + var(--valet-pulse-amp, 0.06))); }
-  70% { transform: scaleX(calc(1 - (var(--valet-pulse-amp, 0.06) * 0.55))); }
+  /* First, stronger pulse */
+  20% { transform: scaleX(calc(1 + var(--valet-pulse-amp, 0.06))); }
+  35% { transform: scaleX(calc(1 - (var(--valet-pulse-amp, 0.06) * 0.55))); }
+  50% { transform: scaleX(1); }
+  /* Second, quicker and lower-magnitude pulse (~60% of amp) */
+  70% { transform: scaleX(calc(1 + (var(--valet-pulse-amp, 0.06) * 0.6))); }
+  85% { transform: scaleX(calc(1 - (var(--valet-pulse-amp, 0.06) * 0.33))); }
   100% { transform: scaleX(1); }
 `;
 
@@ -288,7 +293,8 @@ export const Pagination: React.FC<PaginationProps> = ({
     // Slow down Phase 1 (near-edge stretch) for a more deliberate motion
     const stretchMs = Math.round(clamp(240 + farDist * 0.9, 260, 760));
     const settleMs = Math.round(clamp(120 + farDist * 0.45, 140, 420));
-    const settleDur = settleMs * 2;
+    // Phase 2 is 50% faster than before (previously 2x settleMs)
+    const settleDur = settleMs; // 50% of old duration
     // keep pulse subtle: amplitude ~2%..8%
     const pulseAmp = clamp(0.03 + farDist / 2000, 0.02, 0.08);
 
@@ -328,7 +334,8 @@ export const Pagination: React.FC<PaginationProps> = ({
             ...a,
             scale: scaleFactor,
             scaleTrans: `${stretchMs}ms`,
-            scaleEase: 'cubic-bezier(0.2, 0.8, 0.2, 1.1)',
+            // No overshoot: keep leading edge from "reverberating"
+            scaleEase: 'cubic-bezier(0.22, 0.8, 0.2, 1)',
             origin: 'left',
           }));
         });
@@ -346,7 +353,8 @@ export const Pagination: React.FC<PaginationProps> = ({
         // scale the fill toward the near edge
         scale: scaleFactor,
         scaleTrans: `${stretchMs}ms`,
-        scaleEase: 'cubic-bezier(0.2, 0.8, 0.2, 1.1)',
+        // No overshoot: keep leading edge from "reverberating"
+        scaleEase: 'cubic-bezier(0.22, 0.8, 0.2, 1)',
         origin: 'right',
         pulsing: false,
       });
@@ -574,7 +582,8 @@ export const Pagination: React.FC<PaginationProps> = ({
             $origin={anim.origin}
             style={{
               animationName: anim.pulsing ? elasticPulse : 'none',
-              animationDuration: '220ms',
+              // Significantly faster pulse, containing two oscillations
+              animationDuration: '160ms',
               animationTimingFunction: 'cubic-bezier(0.2, 0.8, 0.2, 1.05)',
             }}
           />
