@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.26.1]
+- Adjusted `Pagination` component
+- Adjusted theme values for motion
+
 ## [0.26.0]
 - Added theme tokens for motion!
 - `Pagination` now powered by theme token.
