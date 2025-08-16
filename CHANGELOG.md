@@ -6,6 +6,11 @@ All notable changes to this project will be documented in this file. The format 
 ### Added
 - Theme motion tokens (`theme.motion.duration`, `theme.motion.easing`, `theme.motion.underline`) for consistent animations across components.
 - `Pagination` now consumes motion tokens for button fades, underline follow, and pulse timing.
+- `Pagination`: sliding window animation for « and » controls; numbers smoothly slide horizontally while the pagination width stays fixed during the transition.
+### Fixed
+- `Pagination`: disable/fade Prev/Next while the page window slides so controls reflect transient non-interactive state.
+### Changed
+- `Pagination`: make left/right sliding slightly slower with stronger ease-out deceleration for a clearer slow-down at the end of motion.
 
 ## [0.25.5]
 - Enhanced `Pagination` with windowed view via `visibleWindow` and non-destructive window scroll controls

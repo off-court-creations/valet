@@ -113,11 +113,11 @@ const common: Omit<Theme, 'colors'> = {
   strokeUnit: `calc(var(--valet-space, ${spacingUnit}) * 0.125)`,
   motion: {
     duration: {
-      xshort: '120ms',
+      xshort: '100ms',
       short: '140ms',
       medium: '180ms',
       base: '200ms',
-      long: '420ms',
+      long: '380ms',
       xlong: '760ms',
     },
     easing: {

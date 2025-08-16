@@ -1,6 +1,7 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/widgets/Pagination.tsx  | valet
 // Tab-style pagination with stretch-follow elastic underline for active page
+// Adds horizontal sliding window animation for « and » controls
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
 import { styled, keyframes } from '../../css/createStyled';
@@ -77,6 +78,10 @@ const PageBtn = styled('button')<{
   $ease: string;
 }>`
   position: relative;
+  display: inline-flex;
+  flex: 0 0 auto; /* prevent flex shrink during slides so text never wraps */
+  align-items: center;
+  white-space: nowrap; /* never wrap digits like 10 into two lines */
   font-weight: ${({ $active }) => ($active ? 700 : 400)};
   color: ${({ $active, $primary, $text }) => ($active ? $primary : $text)};
   transition:
@@ -84,11 +89,52 @@ const PageBtn = styled('button')<{
     opacity ${({ $durOpacity }) => $durOpacity} ${({ $ease }) => $ease};
 
   /* previous underline pseudo-element replaced by shared slider */
+
+  /* Ensure embedded text never breaks mid-number while sliding */
+  & > * {
+    white-space: nowrap;
+    word-break: keep-all;
+    overflow-wrap: normal;
+  }
 `;
 
 /* Pages wrapper (relative for underline positioning) */
 const PagesWrap = styled('div')`
   position: relative;
+  display: inline-flex;
+`;
+
+// Viewport that holds the sliding track. Width can be frozen during slide.
+const PagesViewport = styled('div')<{ $width?: number; $height?: number }>`
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: middle; /* align with surrounding inline controls */
+  line-height: 1; /* normalize inline-block baseline height */
+  width: ${({ $width }) => ($width && $width > 0 ? `${Math.round($width)}px` : 'auto')};
+  height: ${({ $height }) => ($height && $height > 0 ? `${Math.round($height)}px` : 'auto')};
+`;
+
+// Track containing one or two page groups that translate horizontally.
+const PagesTrack = styled('div')<{
+  $x: number;
+  $dur: string;
+  $ease: string;
+}>`
+  display: inline-flex;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  will-change: transform;
+  transform: ${({ $x }) => `translateX(${Math.round($x)}px)`};
+  transition: transform ${({ $dur }) => $dur} ${({ $ease }) => $ease};
+`;
+
+// Hidden measurer used to compute the width of a page group without visual flicker
+const HiddenMeasure = styled('div')`
+  position: absolute;
+  visibility: hidden;
+  pointer-events: none;
+  left: -99999px;
+  top: -99999px;
   display: inline-flex;
 `;
 
@@ -102,6 +148,9 @@ const Underline = styled('div')<{
   $easeX: string;
   $easeW: string;
   $pulseAmp: number;
+  $opacity: number;
+  $fadeDur: string;
+  $fadeEase: string;
 }>`
   position: absolute;
   left: 0;
@@ -111,10 +160,12 @@ const Underline = styled('div')<{
   transform: ${({ $x }) => `translateX(${Math.round($x)}px)`};
   transition:
     transform ${({ $transX }) => $transX} ${({ $easeX }) => $easeX},
-    width ${({ $transW }) => $transW} ${({ $easeW }) => $easeW};
+    width ${({ $transW }) => $transW} ${({ $easeW }) => $easeW},
+    opacity ${({ $fadeDur }) => $fadeDur} ${({ $fadeEase }) => $fadeEase};
   will-change: transform, width;
   pointer-events: none;
   overflow: visible;
+  opacity: ${({ $opacity }) => (Number.isFinite($opacity) ? $opacity : 1)};
   /* visual */
   background: transparent; /* actual colour on the fill */
   /* expose pulse amplitude to children */
@@ -200,6 +251,30 @@ export const Pagination: React.FC<PaginationProps> = ({
   const animationRunIdRef = React.useRef(0);
   const prevPageRef = React.useRef<number>(page);
 
+  // window sliding state (for « and »)
+  const [isSliding, setIsSliding] = React.useState(false);
+  const [slideX, setSlideX] = React.useState(0);
+  const [underlineVisible, setUnderlineVisible] = React.useState(true);
+  // When hiding due to slide start, snap opacity to 0 (no fade out);
+  // when revealing after measurement, allow fade in.
+  const [underlineFadeInstant, setUnderlineFadeInstant] = React.useState(false);
+  const [viewportW, setViewportW] = React.useState<number | undefined>(undefined);
+  const [viewportH, setViewportH] = React.useState<number | undefined>(undefined);
+  const [groupA, setGroupA] = React.useState<number[] | null>(null);
+  const [groupB, setGroupB] = React.useState<number[] | null>(null);
+  const slideDurMs = 320; // slightly slower to accentuate deceleration
+  const slideEase = theme.motion.easing.emphasized; // stronger ease-out for more noticeable slow-down
+  const trackRef = React.useRef<HTMLDivElement | null>(null);
+  const [measureSet, setMeasureSet] = React.useState<number[] | null>(null);
+  const measureRef = React.useRef<HTMLDivElement | null>(null);
+  const pendingSlideRef = React.useRef<null | {
+    dir: 'left' | 'right';
+    nextStart: number;
+    prevStart: number;
+    currentPages: number[];
+    nextPages: number[];
+  }>(null);
+
   // stable click handler shared by all page buttons
   const handlePageClick = React.useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -250,12 +325,20 @@ export const Pagination: React.FC<PaginationProps> = ({
     if (!btn) {
       // active page not in current window; hide underline by collapsing width
       setUx((u) => (u.w === 0 ? u : { x: 0, w: 0 }));
+      // fully hide when no active page is visible
+      setUnderlineFadeInstant(true);
+      setUnderlineVisible(false);
       return;
     }
     const wRect = wrap.getBoundingClientRect();
     const bRect = btn.getBoundingClientRect();
     setUx({ x: bRect.left - wRect.left, w: bRect.width });
-  }, [page]);
+    // ensure underline is visible when the active button exists and we're not sliding
+    if (!isSliding) {
+      setUnderlineFadeInstant(false);
+      setUnderlineVisible(true);
+    }
+  }, [page, isSliding]);
 
   React.useLayoutEffect(() => {
     updateUnderline();
@@ -530,12 +613,135 @@ export const Pagination: React.FC<PaginationProps> = ({
   }, [onChange, page, count]);
 
   const scrollLeft = React.useCallback(() => {
-    setWinStart((s) => Math.max(1, s - winSize));
-  }, [winSize]);
+    if (isAnimating || isSliding) return;
+    setUnderlineFadeInstant(true);
+    setUnderlineVisible(false);
+    setIsSliding(true);
+    const prevStart = Math.max(1, winStart - winSize);
+    if (prevStart === winStart) {
+      setIsSliding(false);
+      return;
+    }
+    const currentPages = visiblePages;
+    const nextPages = hasWindow ? pages.slice(prevStart - 1, prevStart - 1 + winSize) : pages;
+    const wrapRect = wrapRef.current?.getBoundingClientRect();
+    const wrapWidth = wrapRect?.width ?? 0;
+    const wrapHeight = wrapRect?.height ?? undefined;
+    setViewportW(wrapWidth);
+    setViewportH(wrapHeight);
+    // measure width of the previous window to establish initial offset
+    pendingSlideRef.current = {
+      dir: 'left',
+      nextStart: prevStart,
+      prevStart: winStart,
+      currentPages,
+      nextPages,
+    };
+    setMeasureSet(nextPages);
+  }, [hasWindow, isAnimating, isSliding, pages, visiblePages, winSize, winStart]);
 
   const scrollRight = React.useCallback(() => {
-    setWinStart((s) => Math.min(Math.max(1, count - winSize + 1), s + winSize));
-  }, [count, winSize]);
+    if (isAnimating || isSliding) return;
+    setUnderlineFadeInstant(true);
+    setUnderlineVisible(false);
+    setIsSliding(true);
+    const maxStart = Math.max(1, count - winSize + 1);
+    const nextStart = Math.min(maxStart, winStart + winSize);
+    if (nextStart === winStart) {
+      setIsSliding(false);
+      return;
+    }
+    const currentPages = visiblePages;
+    const nextPages = hasWindow ? pages.slice(nextStart - 1, nextStart - 1 + winSize) : pages;
+    const wrapRect = wrapRef.current?.getBoundingClientRect();
+    const wrapWidth = wrapRect?.width ?? 0;
+    const wrapHeight = wrapRect?.height ?? undefined;
+    setViewportW(wrapWidth);
+    setViewportH(wrapHeight);
+    // Arrange [current | next], animate X from 0 to -wrapWidth
+    setGroupA(currentPages);
+    setGroupB(nextPages);
+    setSlideX(0);
+    // ensure layout applied before animating
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setSlideX(-wrapWidth);
+        window.setTimeout(() => {
+          // Update logical window, keep groups mounted until we flip isSliding
+          setWinStart(nextStart);
+          // First frame after animation: switch to static track content
+          requestAnimationFrame(() => {
+            setIsSliding(false);
+            // Next frame: measure underline and then clear temp groups/viewport locks
+            requestAnimationFrame(() => {
+              updateUnderline();
+              // Reveal underline only if active page is visible in this window
+              const willShow =
+                page >= nextStart && page <= Math.min(count, nextStart + winSize - 1);
+              setUnderlineVisible(willShow);
+              // Reset slide position for next interaction (no visual effect when idle)
+              setSlideX(0);
+              setGroupA(null);
+              setGroupB(null);
+              setViewportW(undefined);
+              setViewportH(undefined);
+            });
+          });
+        }, slideDurMs + 20);
+      });
+    });
+  }, [
+    count,
+    hasWindow,
+    isAnimating,
+    isSliding,
+    pages,
+    slideDurMs,
+    visiblePages,
+    winSize,
+    winStart,
+    updateUnderline,
+    page,
+  ]);
+
+  // When measuring a hidden group completes, kick off a left-slide
+  React.useLayoutEffect(() => {
+    if (!measureSet || !measureRef.current || !pendingSlideRef.current) return;
+    const widthPrev = measureRef.current.getBoundingClientRect().width;
+    const req = pendingSlideRef.current;
+    pendingSlideRef.current = null;
+    setMeasureSet(null);
+    // Arrange [prev | current], start with X = -prevWidth (current visible), animate to 0
+    setGroupA(req.nextPages);
+    setGroupB(req.currentPages);
+    setSlideX(-widthPrev);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setSlideX(0);
+        window.setTimeout(() => {
+          // Update logical window, keep groups until flip
+          setWinStart(req.nextStart);
+          setSlideX(0);
+          // First frame: exit sliding mode
+          requestAnimationFrame(() => {
+            setIsSliding(false);
+            // Next frame: measure underline, then clear temp state
+            requestAnimationFrame(() => {
+              updateUnderline();
+              const willShow =
+                page >= req.nextStart && page <= Math.min(count, req.nextStart + winSize - 1);
+              setUnderlineVisible(willShow);
+              setGroupA(null);
+              setGroupB(null);
+              setViewportW(undefined);
+              setViewportH(undefined);
+            });
+          });
+        }, slideDurMs + 20);
+      });
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [measureSet, updateUnderline, page, winSize, count]);
 
   // Keep a stable ref callback per page index to avoid recreating closures
   const refCache = React.useRef(new Map<number, (el: HTMLButtonElement | null) => void>());
@@ -572,7 +778,7 @@ export const Pagination: React.FC<PaginationProps> = ({
       {/* Prev/Next – simple text buttons (no underline) */}
       <button
         onClick={handlePrev}
-        disabled={page === 1 || isAnimating}
+        disabled={page === 1 || isAnimating || isSliding}
       >
         Prev
       </button>
@@ -588,35 +794,135 @@ export const Pagination: React.FC<PaginationProps> = ({
         </button>
       )}
 
-      {/* Page numbers – tab-style with shared sliding underline */}
+      {/* Page numbers – now rendered inside a sliding viewport/track */}
       <PagesWrap ref={wrapRef}>
-        {visiblePages.map((n) => (
-          <PageBtn
-            key={n}
-            ref={getBtnRef(n)}
-            data-page={n}
-            onClick={handlePageClick}
-            disabled={isAnimating}
-            $active={n === page}
-            $primary={theme.colors.primary}
-            $text={theme.colors.text}
-            $durColor={theme.motion.duration.medium}
-            $durOpacity={theme.motion.duration.base}
-            $ease={theme.motion.easing.standard}
-            aria-current={n === page ? 'page' : undefined}
-          >
-            <Typography
-              variant='button'
-              family='mono'
-              noSelect
-              bold={n === page}
-            >
-              {n}
-            </Typography>
-          </PageBtn>
-        ))}
+        {/* Hidden measurer for computing group width without flashing */}
+        {measureSet && (
+          <HiddenMeasure ref={measureRef}>
+            {measureSet.map((n) => (
+              <PageBtn
+                key={`m-${n}`}
+                ref={getBtnRef(n)}
+                data-page={n}
+                onClick={handlePageClick}
+                disabled
+                $active={n === page}
+                $primary={theme.colors.primary}
+                $text={theme.colors.text}
+                $durColor={theme.motion.duration.medium}
+                $durOpacity={theme.motion.duration.base}
+                $ease={theme.motion.easing.standard}
+                aria-hidden
+              >
+                <Typography
+                  variant='button'
+                  family='mono'
+                  whitespace='pre'
+                  noSelect
+                  bold={n === page}
+                >
+                  {n}
+                </Typography>
+              </PageBtn>
+            ))}
+          </HiddenMeasure>
+        )}
 
-        {/* Underline slider */}
+        <PagesViewport
+          $width={viewportW}
+          $height={viewportH}
+        >
+          <PagesTrack
+            ref={trackRef}
+            $x={isSliding ? slideX : 0}
+            $dur={isSliding ? `${slideDurMs}ms` : '0ms'}
+            $ease={slideEase}
+          >
+            {isSliding
+              ? [
+                  ...(groupA || []).map((n) => (
+                    <PageBtn
+                      key={`a-${n}`}
+                      ref={getBtnRef(n)}
+                      data-page={n}
+                      onClick={handlePageClick}
+                      disabled
+                      $active={n === page}
+                      $primary={theme.colors.primary}
+                      $text={theme.colors.text}
+                      $durColor={theme.motion.duration.medium}
+                      $durOpacity={theme.motion.duration.base}
+                      $ease={theme.motion.easing.standard}
+                      aria-hidden
+                    >
+                      <Typography
+                        variant='button'
+                        family='mono'
+                        whitespace='pre'
+                        noSelect
+                        bold={n === page}
+                      >
+                        {n}
+                      </Typography>
+                    </PageBtn>
+                  )),
+                  ...(groupB || []).map((n) => (
+                    <PageBtn
+                      key={`b-${n}`}
+                      ref={getBtnRef(n)}
+                      data-page={n}
+                      onClick={handlePageClick}
+                      disabled
+                      $active={n === page}
+                      $primary={theme.colors.primary}
+                      $text={theme.colors.text}
+                      $durColor={theme.motion.duration.medium}
+                      $durOpacity={theme.motion.duration.base}
+                      $ease={theme.motion.easing.standard}
+                      aria-hidden
+                    >
+                      <Typography
+                        variant='button'
+                        family='mono'
+                        whitespace='pre'
+                        noSelect
+                        bold={n === page}
+                      >
+                        {n}
+                      </Typography>
+                    </PageBtn>
+                  )),
+                ]
+              : visiblePages.map((n) => (
+                  <PageBtn
+                    key={n}
+                    ref={getBtnRef(n)}
+                    data-page={n}
+                    onClick={handlePageClick}
+                    disabled={isAnimating || isSliding}
+                    $active={n === page}
+                    $primary={theme.colors.primary}
+                    $text={theme.colors.text}
+                    $durColor={theme.motion.duration.medium}
+                    $durOpacity={theme.motion.duration.base}
+                    $ease={theme.motion.easing.standard}
+                    aria-current={n === page ? 'page' : undefined}
+                  >
+                    <Typography
+                      variant='button'
+                      family='mono'
+                      whitespace='pre'
+                      noSelect
+                      bold={n === page}
+                    >
+                      {n}
+                    </Typography>
+                  </PageBtn>
+                ))}
+          </PagesTrack>
+        </PagesViewport>
+
+        {/* Underline slider – always mounted, visibility faded to avoid flicker */}
         <Underline
           aria-hidden
           $x={anim.x}
@@ -627,8 +933,10 @@ export const Pagination: React.FC<PaginationProps> = ({
           $easeX={anim.easeX}
           $easeW={anim.easeW}
           $pulseAmp={anim.pulseAmp}
+          $opacity={underlineVisible ? 1 : 0}
+          $fadeDur={underlineFadeInstant ? '0ms' : theme.motion.duration.medium}
+          $fadeEase={theme.motion.easing.standard}
         >
-          {/* remount on page change to replay pulse */}
           <UnderlineFill
             key={`pulse-${page}`}
             $color={theme.colors.primary}
@@ -638,7 +946,6 @@ export const Pagination: React.FC<PaginationProps> = ({
             $origin={anim.origin}
             style={{
               animationName: anim.pulsing ? elasticPulse : 'none',
-              // Two quick oscillations tuned by theme motion tokens
               animationDuration: theme.motion.underline.pulse.duration,
               animationTimingFunction: theme.motion.easing.overshoot,
             }}
@@ -651,7 +958,7 @@ export const Pagination: React.FC<PaginationProps> = ({
         <button
           aria-label='Scroll pages right'
           onClick={scrollRight}
-          disabled={winEnd >= count || isAnimating}
+          disabled={winEnd >= count || isAnimating || isSliding}
         >
           »
         </button>
@@ -659,7 +966,7 @@ export const Pagination: React.FC<PaginationProps> = ({
 
       <button
         onClick={handleNext}
-        disabled={page === count || isAnimating}
+        disabled={page === count || isAnimating || isSliding}
       >
         Next
       </button>
