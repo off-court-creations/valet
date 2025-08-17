@@ -63,12 +63,6 @@ export interface Theme {
     underline: {
       stretch: { baseMs: number; distanceCoef: number; minMs: number; maxMs: number };
       settle: { baseMs: number; distanceCoef: number; minMs: number; maxMs: number };
-      pulse: {
-        duration: string;
-        amplitudeBase: number;
-        amplitudeMin: number;
-        amplitudeMax: number;
-      };
     };
   };
   breakpoints: Record<Breakpoint, number>;
@@ -134,11 +128,9 @@ const common: Omit<Theme, 'colors'> = {
     },
     underline: {
       // Phase 1: near-edge stretch
-      stretch: { baseMs: 240, distanceCoef: 0.9, minMs: 260, maxMs: 760 },
+      stretch: { baseMs: 100, distanceCoef: 0.9, minMs: 90, maxMs: 420 },
       // Phase 2: far-edge settle/shrink
       settle: { baseMs: 120, distanceCoef: 0.45, minMs: 140, maxMs: 420 },
-      // Micro pulse when landing on target
-      pulse: { duration: '160ms', amplitudeBase: 0.06, amplitudeMin: 0.02, amplitudeMax: 0.08 },
     },
   },
   breakpoints: { xs: 0, sm: 600, md: 960, lg: 1280, xl: 1920 },
