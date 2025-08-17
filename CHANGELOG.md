@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+- Docs: Expand `Grid` page with Best Practices, interactive Playground, rich examples; fix prop defaults and add `pad`/`compact` to reference.
+
 ## [0.26.2]
 - Enhance `SpeedDial` with slide-out/in animation for actions with direction-aware offsets and staggered transitions. 
 
