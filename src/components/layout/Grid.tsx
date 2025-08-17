@@ -26,9 +26,13 @@ export interface GridProps
 /*───────────────────────────────────────────────────────────*/
 const Root = styled('div')<{ $cols: number; $gap: string; $pad: string }>`
   display: grid;
-  grid-template-columns: repeat(${({ $cols }) => $cols}, 1fr);
+  /* Prevent content from dictating track min-size; allow wrapping */
+  grid-template-columns: repeat(${({ $cols }) => $cols}, minmax(0, 1fr));
   gap: ${({ $gap }) => $gap};
   padding: ${({ $pad }) => $pad};
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
 `;
 
 /*───────────────────────────────────────────────────────────*/
