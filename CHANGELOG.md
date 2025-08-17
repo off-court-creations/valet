@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.27.0]
+- `Grid` behavior change to improve `adpative` behavior
+
 ## [0.26.2]
 - Enhance `SpeedDial` with slide-out/in animation for actions with direction-aware offsets and staggered transitions. 
 
@@ -507,6 +510,7 @@ All notable changes to this project will be documented in this file. The format 
 
 - vibe coded
 
+[v0.27.0]: https://github.com/off-court-creations/valet/releases/tag/v0.27.0
 [v0.26.2]: https://github.com/off-court-creations/valet/releases/tag/v0.26.2
 [v0.26.1]: https://github.com/off-court-creations/valet/releases/tag/v0.26.1
 [v0.26.0]: https://github.com/off-court-creations/valet/releases/tag/v0.26.0
