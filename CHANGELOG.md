@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.26.2]
+- Enhance `SpeedDial` with slide-out/in animation for actions with direction-aware offsets and staggered transitions. 
+
 ## [0.26.1]
 - Adjusted `Pagination` component
 - Adjusted theme values for motion
@@ -504,6 +507,8 @@ All notable changes to this project will be documented in this file. The format 
 
 - vibe coded
 
+[v0.26.2]: https://github.com/off-court-creations/valet/releases/tag/v0.26.2
+[v0.26.1]: https://github.com/off-court-creations/valet/releases/tag/v0.26.1
 [v0.26.0]: https://github.com/off-court-creations/valet/releases/tag/v0.26.0
 [v0.25.5]: https://github.com/off-court-creations/valet/releases/tag/v0.25.5
 [v0.25.4]: https://github.com/off-court-creations/valet/releases/tag/v0.25.4

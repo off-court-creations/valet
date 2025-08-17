@@ -171,13 +171,6 @@ export default function BoxDemoPage() {
               <Divider />
 
               <Typography variant='h3'>Default Box</Typography>
-              <CodeBlock
-                code={`<Box>
-  <Typography>
-    (no props) — inherits parent background, uses theme text colour
-  </Typography>
-</Box>`}
-              />
               <Box>
                 <Typography>
                   (no props) — inherits parent background, uses theme text colour
@@ -194,6 +187,14 @@ export default function BoxDemoPage() {
                 Boundary visualization — dashed border added only for demonstration so you can see
                 the default Box&apos;s intrinsic bounds.
               </Typography>
+
+              <CodeBlock
+                code={`<Box>
+  <Typography>
+    (no props) — inherits parent background, uses theme text colour
+  </Typography>
+</Box>`}
+              />
 
               <Button
                 variant='outlined'
