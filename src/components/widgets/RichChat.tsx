@@ -1,6 +1,7 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/widgets/RichChat.tsx  | valet
 // Local chat component with embeddable content; add fontFamily prop
+// patched: height constraint logic aligned with Table/Accordion; account for input/footer height
 // ─────────────────────────────────────────────────────────────
 import React, { useState, useRef, useId, useEffect, useLayoutEffect, useCallback } from 'react';
 import { styled, keyframes } from '../../css/createStyled';
@@ -53,12 +54,16 @@ const Wrapper = styled('div')<{ $gap: string }>`
   display: flex;
   flex-direction: column;
   gap: ${({ $gap }) => $gap};
+  min-height: 0; /* allow children to shrink inside flex column */
 `;
 
-const Messages = styled('div')<{ $gap: string }>`
+const Messages = styled('div')<{ $gap: string; $pad: string }>`
   display: flex;
   flex-direction: column;
   gap: ${({ $gap }) => $gap};
+  padding: ${({ $pad }) => $pad};
+  box-sizing: border-box;
+  min-height: 0; /* enable internal scrolling when constrained */
 `;
 
 const Row = styled('div')<{
@@ -135,10 +140,21 @@ export const RichChat: React.FC<RichChatProps> = ({
 
   const portrait = height > width;
   const wrapRef = useRef<HTMLDivElement>(null);
+  const messagesRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLFormElement>(null);
   const uniqueId = useId();
   const [maxHeight, setMaxHeight] = useState<number>();
   const [shouldConstrain, setShouldConstrain] = useState(false);
+  const [squelchScrollbars, setSquelchScrollbars] = useState(false);
   const constraintRef = useRef(false);
+  // Retained for parity with other constrained components; not used in RichChat's
+  // "take remaining page height" behavior.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const bottomRef = useRef(0);
+  const rafRef = useRef<number>(0);
+  const squelchRafRef = useRef<number>(0);
+  const prevHeightRef = useRef<number | undefined>(undefined);
+  const prevConstrainedRef = useRef(false);
 
   const [text, setText] = useState('');
 
@@ -150,34 +166,77 @@ export const RichChat: React.FC<RichChatProps> = ({
     return (isNaN(fs) ? 16 : fs) * 2;
   };
 
-  const update = useCallback(() => {
+  const runUpdate = useCallback(() => {
     const node = wrapRef.current;
+    const msgs = messagesRef.current;
     const surfEl = element;
-    if (!node || !surfEl) return;
+    if (!node || !surfEl || !msgs) return;
     const sRect = surfEl.getBoundingClientRect();
     const nRect = node.getBoundingClientRect();
     const top = Math.round(nRect.top - sRect.top + surfEl.scrollTop);
-    const bottomSpace = Math.round(
-      surfEl.scrollHeight - (nRect.bottom - sRect.top + surfEl.scrollTop),
-    );
-    const available = Math.round(height - top - bottomSpace);
+    // For RichChat we WANT it to take the remainder of the page,
+    // pushing below content past the fold if necessary.
+    // So we ignore dynamic bottom siblings and compute against screen bottom.
+    const availableForWrapper = Math.round(height - top);
+
+    // Measure footer/input height and the actual CSS row gap (px) so messages get the remainder
+    const footerH = inputDisabled
+      ? 0
+      : Math.round(inputRef.current?.getBoundingClientRect().height ?? 0);
+    let gapPx = 0;
+    try {
+      const styles = getComputedStyle(node);
+      const rowGap = parseFloat(styles.rowGap || styles.gap || '0');
+      gapPx = Number.isFinite(rowGap) ? rowGap : 0;
+    } catch {
+      gapPx = 0;
+    }
+
+    const availableForMessages = Math.max(0, availableForWrapper - footerH - gapPx);
     const cutoff = calcCutoff();
 
-    const next = available >= cutoff;
-    if (next) {
+    // Clamp as soon as we have enough room to grow to the bottom; scrollbar appears only if needed
+    const shouldClamp = availableForMessages >= cutoff;
+
+    if (shouldClamp) {
       if (!constraintRef.current) {
         surfEl.scrollTop = 0;
         surfEl.scrollLeft = 0;
       }
       constraintRef.current = true;
-      setShouldConstrain(true);
-      setMaxHeight(Math.max(0, available));
+      if (!prevConstrainedRef.current) {
+        prevConstrainedRef.current = true;
+        setShouldConstrain(true);
+      }
+      const newHeight = Math.max(0, availableForMessages);
+      if (prevHeightRef.current !== newHeight) {
+        prevHeightRef.current = newHeight;
+        setMaxHeight(newHeight);
+      }
     } else {
       constraintRef.current = false;
-      setShouldConstrain(false);
-      setMaxHeight(undefined);
+      if (prevConstrainedRef.current) {
+        prevConstrainedRef.current = false;
+        setShouldConstrain(false);
+      }
+      if (prevHeightRef.current !== undefined) {
+        prevHeightRef.current = undefined;
+        setMaxHeight(undefined);
+      }
     }
-  }, [element, height]);
+  }, [element, height, inputDisabled]);
+
+  const update = useCallback(() => {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    // Hide scrollbars for the measuring frame to avoid a flash
+    if (!squelchScrollbars) setSquelchScrollbars(true);
+    rafRef.current = requestAnimationFrame(() => {
+      runUpdate();
+      if (squelchRafRef.current) cancelAnimationFrame(squelchRafRef.current);
+      // Release the squelch on the next frame after layout settles
+      squelchRafRef.current = requestAnimationFrame(() => setSquelchScrollbars(false));
+    });
+  }, [runUpdate, squelchScrollbars]);
 
   useEffect(() => {
     if (!constrainHeight) {
@@ -195,10 +254,17 @@ export const RichChat: React.FC<RichChatProps> = ({
     registerChild(uniqueId, node, update);
     const ro = new ResizeObserver(update);
     ro.observe(node);
+    // Also observe messages and input for internal content changes
+    const roInner = new ResizeObserver(update);
+    if (messagesRef.current) roInner.observe(messagesRef.current);
+    if (inputRef.current) roInner.observe(inputRef.current);
     update();
     return () => {
       unregisterChild(uniqueId);
       ro.disconnect();
+      roInner.disconnect();
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      if (squelchRafRef.current) cancelAnimationFrame(squelchRafRef.current);
     };
   }, [constrainHeight, element, uniqueId, registerChild, unregisterChild, update]);
 
@@ -206,6 +272,12 @@ export const RichChat: React.FC<RichChatProps> = ({
     if (!constrainHeight || !wrapRef.current || !element) return;
     update();
   }, [constrainHeight, element, update]);
+
+  // Recalculate when input presence toggles (form messages)
+  useLayoutEffect(() => {
+    if (!constrainHeight || !wrapRef.current || !element) return;
+    update();
+  }, [inputDisabled, constrainHeight, element, update]);
 
   const doSubmit = () => {
     if (!text.trim()) return;
@@ -225,7 +297,6 @@ export const RichChat: React.FC<RichChatProps> = ({
   return (
     <Panel
       {...rest}
-      compact
       fullWidth
       variant='alt'
       sx={sx}
@@ -237,8 +308,19 @@ export const RichChat: React.FC<RichChatProps> = ({
         style={{ overflow: 'hidden' }}
       >
         <Messages
+          ref={messagesRef}
           $gap={theme.spacing(1.5)}
-          style={shouldConstrain ? { overflowY: 'auto', maxHeight } : undefined}
+          $pad={theme.spacing(1.5)}
+          style={
+            shouldConstrain
+              ? {
+                  overflowY: squelchScrollbars ? 'hidden' : 'auto',
+                  maxHeight,
+                  scrollbarGutter: 'stable',
+                  overscrollBehavior: 'contain',
+                }
+              : undefined
+          }
         >
           {messages
             .filter((m) => m.role !== 'system')
@@ -275,15 +357,16 @@ export const RichChat: React.FC<RichChatProps> = ({
                     />
                   )}
                   <Panel
-                    compact
                     variant='main'
                     background={m.role === 'user' ? theme.colors.primary : undefined}
                     sx={{
-                      maxWidth: '100%',
+                      maxWidth: 'min(75%, 48rem)',
                       width: 'fit-content',
-                      borderRadius: theme.spacing(0.5),
+                      borderRadius: theme.spacing(1),
+                      padding: theme.spacing(2),
                       animation: m.animate ? `${fadeIn} 0.2s ease-out` : undefined,
                       position: 'relative',
+                      minInlineSize: '12ch',
                     }}
                   >
                     <div>
@@ -324,6 +407,7 @@ export const RichChat: React.FC<RichChatProps> = ({
 
         {!inputDisabled && (
           <form
+            ref={inputRef}
             onSubmit={handleSubmit}
             style={{ width: '100%' }}
           >
