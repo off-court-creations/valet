@@ -181,7 +181,52 @@ export const Drawer: React.FC<DrawerProps> = ({
       return;
     }
   }, [adaptive]);
-  const surfOffset = element ? parseFloat(window.getComputedStyle(element).marginTop || '0') : 0;
+  // Track Surface's marginTop set by AppBar so persistent drawers sit below it
+  const [offsetTop, setOffsetTop] = useState<number>(() => {
+    if (!(element instanceof HTMLElement)) return 0;
+    const mt = window.getComputedStyle(element).marginTop || '0';
+    const n = parseFloat(mt);
+    return Number.isFinite(n) ? n : 0;
+  });
+
+  useLayoutEffect(() => {
+    if (!(element instanceof HTMLElement)) return;
+    const el = element;
+
+    const read = () => {
+      const mt = window.getComputedStyle(el).marginTop || '0';
+      const n = parseFloat(mt);
+      const v = Number.isFinite(n) ? n : 0;
+      setOffsetTop((prev) => (prev !== v ? v : prev));
+    };
+
+    // Initial read after mount/layout
+    read();
+
+    // Observe inline style mutations (AppBar updates marginTop imperatively)
+    const mo = new MutationObserver((mutations) => {
+      for (const m of mutations) {
+        if (m.type === 'attributes' && m.attributeName === 'style') {
+          read();
+          break;
+        }
+      }
+    });
+    try {
+      mo.observe(el, { attributes: true, attributeFilter: ['style'] });
+    } catch {
+      // no-op
+    }
+
+    // Fallback: also re-check on resize as AppBar can change height with breakpoints
+    const onResize = () => read();
+    window.addEventListener('resize', onResize, { passive: true });
+
+    return () => {
+      mo.disconnect();
+      window.removeEventListener('resize', onResize);
+    };
+  }, [element]);
   const presetClasses = presetKey ? preset(presetKey) : '';
   const toggleBg = withAlpha(theme.colors.primary, 0.7);
   const adaptiveMode = adaptive && (anchor === 'left' || anchor === 'right');
@@ -256,7 +301,7 @@ export const Drawer: React.FC<DrawerProps> = ({
           sx={
             {
               position: 'fixed',
-              top: `calc(${theme.spacing(1)} + ${surfOffset}px)`,
+              top: `calc(${theme.spacing(1)} + ${offsetTop}px)`,
               [anchor]: theme.spacing(1),
               zIndex: 9999,
               background: toggleBg,
@@ -291,7 +336,11 @@ export const Drawer: React.FC<DrawerProps> = ({
           {
             // Preserve top offset when docked on sides/top
             ...(anchor === 'left' || anchor === 'right' || anchor === 'top'
-              ? { top: `${surfOffset}px` }
+              ? { top: `${offsetTop}px` }
+              : null),
+            // When persistent and vertical, reduce height to avoid overlapping the AppBar area
+            ...(persistentEffective && (anchor === 'left' || anchor === 'right')
+              ? { height: `calc(100% - ${offsetTop}px)` }
               : null),
             // Mirror Surface font variables so portalled content retains typography
             '--valet-font-heading': `'${theme.fonts.heading}', sans-serif`,

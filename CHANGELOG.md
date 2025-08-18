@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.28.1]
+- Fix: persistent Drawer now respects AppBar offset and no longer renders under the AppBar; height adjusts to avoid overlap. Also offsets the adaptive toggle button.
+
 ## [0.28.0]
 - `style={{}}` behavior changed to `sx={{}}` for all Valet components
 
@@ -513,6 +516,8 @@ All notable changes to this project will be documented in this file. The format 
 
 - vibe coded
 
+[v0.28.1]: https://github.com/off-court-creations/valet/releases/tag/v0.28.1
+[v0.28.0]: https://github.com/off-court-creations/valet/releases/tag/v0.28.0
 [v0.27.0]: https://github.com/off-court-creations/valet/releases/tag/v0.27.0
 [v0.26.2]: https://github.com/off-court-creations/valet/releases/tag/v0.26.2
 [v0.26.1]: https://github.com/off-court-creations/valet/releases/tag/v0.26.1
