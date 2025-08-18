@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.28.6]
+- RichChat styling
+
 ## [0.28.5]
 - RichChat: auto-scrolls to bottom on new messages when scrollable, ensuring latest user/system messages are visible.
 
@@ -528,6 +531,7 @@ All notable changes to this project will be documented in this file. The format 
 
 - vibe coded
 
+[v0.28.6]: https://github.com/off-court-creations/valet/releases/tag/v0.28.6
 [v0.28.5]: https://github.com/off-court-creations/valet/releases/tag/v0.28.5
 [v0.28.4]: https://github.com/off-court-creations/valet/releases/tag/v0.28.4
 [v0.28.3]: https://github.com/off-court-creations/valet/releases/tag/v0.28.3
