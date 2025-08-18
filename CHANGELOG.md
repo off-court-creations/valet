@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+- DateSelector: auto-compact mode for narrow containers; prevents cropping inside RichChat on mobile by wrapping header, shrinking controls, and abbreviating month/day labels. Grid now fills parent width.
 ## [0.28.1]
 - Fix: persistent Drawer now respects AppBar offset and no longer renders under the AppBar; height adjusts to avoid overlap. Also offsets the adaptive toggle button.
 

@@ -2,7 +2,7 @@
 // src/components/fields/DateSelector.tsx | valet
 // interactive month calendar for picking dates
 // ─────────────────────────────────────────────────────────────
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
@@ -38,11 +38,23 @@ export interface DateSelectorProps
   onRangeChange?: (start: string, end: string) => void;
   /** Inline styles (with CSS var support) */
   sx?: Sx;
+  /**
+   * Control how compact mode engages.
+   * - 'auto' (default): measure container and switch at thresholds.
+   * - 'on': force compact layout always.
+   * - 'off': disable compact behavior entirely.
+   */
+  compactMode?: 'auto' | 'on' | 'off';
+  /** Width below which compact turns on (when compactMode='auto'). Default: 340 */
+  compactThresholdIn?: number;
+  /** Width above which compact turns off (when compactMode='auto'). Default: 380 */
+  compactThresholdOut?: number;
 }
 
 /*───────────────────────────────────────────────────────────*/
-const Wrapper = styled('div')<{ $bg: string; $text: string }>`
-  display: inline-block;
+const Wrapper = styled('div')<{ $bg: string; $text: string; $compact: boolean }>`
+  ${({ $compact }) =>
+    $compact ? 'display: block; width: 100%; max-width: 100%;' : 'display: inline-block;'}
   padding: 0.5rem;
   background: ${({ $bg }) => $bg};
   color: ${({ $text }) => $text};
@@ -55,16 +67,22 @@ const Header = styled('div')<{ $gap: string }>`
   align-items: center;
   gap: ${({ $gap }) => $gap};
   margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+  /* Ensure internal flex children can shrink */
+  & > * {
+    min-width: 0;
+  }
 `;
 
-const Grid = styled('div')`
+const Grid = styled('div')<{ $compact?: boolean }>`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 0.25rem;
+  ${({ $compact }) => ($compact ? 'width: 100%;' : '')}
 `;
 
-const DayLabel = styled('div')`
-  font-size: 0.75rem;
+const DayLabel = styled('div')<{ $compact?: boolean }>`
+  font-size: ${({ $compact }) => ($compact ? '0.625rem' : '0.75rem')};
   text-align: center;
   opacity: 0.8;
 `;
@@ -80,6 +98,7 @@ const Cell = styled('button')<{
   $hoverEnd: string;
   $hoverRange: string;
   $hoverDefault: string;
+  $compact?: boolean;
 }>`
   padding: 0.25rem 0;
   border: none;
@@ -90,7 +109,7 @@ const Cell = styled('button')<{
   cursor: pointer;
   font: inherit;
   font-weight: ${({ $start, $end }) => ($start || $end ? 'bold' : 'inherit')};
-  height: 2rem;
+  height: ${({ $compact }) => ($compact ? '1.5rem' : '2rem')};
   transition: background-color 120ms ease; /* ← add this */
   &:hover:not(:disabled) {
     background: ${({
@@ -141,9 +160,61 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   preset: p,
   className,
   sx,
+  compactMode = 'auto',
+  compactThresholdIn = 340,
+  compactThresholdOut = 380,
   ...rest
 }) => {
   const { theme } = useTheme();
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [compact, setCompact] = useState(false);
+  const compactRef = useRef(false);
+  const ENTER_W = compactThresholdIn; // go compact when narrower than this
+  const EXIT_W = compactThresholdOut; // leave compact when wider than this (hysteresis)
+
+  // Compact detection with optional override via compactMode
+  useEffect(() => {
+    const node = wrapRef.current;
+    if (!node) return;
+
+    if (compactMode === 'on') {
+      compactRef.current = true;
+      setCompact(true);
+      return;
+    }
+    if (compactMode === 'off') {
+      compactRef.current = false;
+      setCompact(false);
+      return;
+    }
+
+    // auto
+    const measured = node.parentElement ?? node;
+    let raf = 0;
+
+    const compute = () => {
+      const w = measured.clientWidth;
+      if (!w) return;
+      const prev = compactRef.current;
+      const next = prev ? w < EXIT_W : w < ENTER_W;
+      if (next !== prev) {
+        compactRef.current = next;
+        setCompact(next);
+      }
+    };
+
+    const ro = new ResizeObserver(() => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(compute);
+    });
+    ro.observe(measured);
+    // Initialize immediately
+    raf = requestAnimationFrame(compute);
+    return () => {
+      ro.disconnect();
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [compactMode, ENTER_W, EXIT_W]);
 
   /* optional FormControl binding --------------------------- */
   const form = useOptionalForm<Record<string, string | undefined>>();
@@ -171,13 +242,19 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   const [viewYear, setViewYear] = useState(startDate.getFullYear());
   const [viewMonth, setViewMonth] = useState(startDate.getMonth());
 
-  const years = Array.from({ length: maxYear - minYear + 1 }, (_, i) => minYear + i);
+  const years = useMemo(
+    () => Array.from({ length: maxYear - minYear + 1 }, (_, i) => minYear + i),
+    [maxYear, minYear],
+  );
 
   const minMonth = min.getMonth();
   const maxMonth = max.getMonth();
   const firstMonth = viewYear === minYear ? minMonth : 0;
   const lastMonth = viewYear === maxYear ? maxMonth : 11;
-  const months = Array.from({ length: lastMonth - firstMonth + 1 }, (_, i) => firstMonth + i);
+  const months = useMemo(
+    () => Array.from({ length: lastMonth - firstMonth + 1 }, (_, i) => firstMonth + i),
+    [firstMonth, lastMonth],
+  );
 
   const startDay = new Date(viewYear, viewMonth, 1).getDay();
   const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
@@ -250,29 +327,33 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   return (
     <Wrapper
       {...rest}
+      ref={wrapRef}
       $bg={theme.colors.backgroundAlt}
       $text={theme.colors.text}
+      $compact={compact}
       className={cls}
       style={{ '--valet-date-radius': theme.radius(1), ...sx } as React.CSSProperties}
     >
       <Header $gap={theme.spacing(1)}>
         <div style={{ display: 'flex', gap: theme.spacing(0.5) }}>
+          {!compact && (
+            <IconButton
+              size='sm'
+              variant='outlined'
+              icon='mdi:chevron-double-left'
+              aria-label='Previous year'
+              onClick={() => {
+                const yr = viewYear - 1;
+                let m = viewMonth;
+                if (yr === minYear && m < minMonth) m = minMonth;
+                setViewYear(yr);
+                setViewMonth(m);
+              }}
+              disabled={new Date(viewYear - 1, 11, 31) < min}
+            />
+          )}
           <IconButton
-            size='sm'
-            variant='outlined'
-            icon='mdi:chevron-double-left'
-            aria-label='Previous year'
-            onClick={() => {
-              const yr = viewYear - 1;
-              let m = viewMonth;
-              if (yr === minYear && m < minMonth) m = minMonth;
-              setViewYear(yr);
-              setViewMonth(m);
-            }}
-            disabled={new Date(viewYear - 1, 11, 31) < min}
-          />
-          <IconButton
-            size='sm'
+            size={compact ? 'xs' : 'sm'}
             variant='outlined'
             icon='mdi:chevron-left'
             aria-label='Previous month'
@@ -280,26 +361,19 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
             disabled={new Date(viewYear, viewMonth, 0) < min}
           />
         </div>
-        <div
-          style={{
-            display: 'flex',
-            gap: theme.spacing(0.5),
-            flex: 1,
-            alignItems: 'center',
-          }}
-        >
+        <div style={{ display: 'flex', gap: theme.spacing(0.5), flex: 1, minWidth: 0 }}>
           <Select
             size='xs'
             value={viewMonth}
             onChange={(v) => setViewMonth(Number(v))}
-            sx={{ flex: 1 }}
+            sx={{ flex: 1, minWidth: 0 }}
           >
             {months.map((idx) => (
               <Select.Option
                 key={monthNames[idx]}
                 value={idx}
               >
-                {monthNames[idx]}
+                {compact ? monthNames[idx].slice(0, 3) : monthNames[idx]}
               </Select.Option>
             ))}
           </Select>
@@ -314,7 +388,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
               setViewYear(yr);
               setViewMonth(m);
             }}
-            sx={{ flex: 1 }}
+            sx={{ flex: 1, minWidth: 0 }}
           >
             {years.map((y) => (
               <Select.Option
@@ -328,32 +402,39 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
         </div>
         <div style={{ display: 'flex', gap: theme.spacing(0.5) }}>
           <IconButton
-            size='sm'
+            size={compact ? 'xs' : 'sm'}
             variant='outlined'
             icon='mdi:chevron-right'
             aria-label='Next month'
             onClick={() => changeMonth(1)}
             disabled={new Date(viewYear, viewMonth + 1, 1) > max}
           />
-          <IconButton
-            size='sm'
-            variant='outlined'
-            icon='mdi:chevron-double-right'
-            aria-label='Next year'
-            onClick={() => {
-              const yr = viewYear + 1;
-              let m = viewMonth;
-              if (yr === maxYear && m > maxMonth) m = maxMonth;
-              setViewYear(yr);
-              setViewMonth(m);
-            }}
-            disabled={new Date(viewYear + 1, 0, 1) > max}
-          />
+          {!compact && (
+            <IconButton
+              size='sm'
+              variant='outlined'
+              icon='mdi:chevron-double-right'
+              aria-label='Next year'
+              onClick={() => {
+                const yr = viewYear + 1;
+                let m = viewMonth;
+                if (yr === maxYear && m > maxMonth) m = maxMonth;
+                setViewYear(yr);
+                setViewMonth(m);
+              }}
+              disabled={new Date(viewYear + 1, 0, 1) > max}
+            />
+          )}
         </div>
       </Header>
-      <Grid>
+      <Grid $compact={compact}>
         {days.map((d) => (
-          <DayLabel key={d}>{d}</DayLabel>
+          <DayLabel
+            key={d}
+            $compact={compact}
+          >
+            {compact ? d[0] : d}
+          </DayLabel>
         ))}
         {Array.from({ length: startDay }).map((_, i) => (
           <span key={`blank-${i}`} />
@@ -385,6 +466,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
               $hoverEnd={hoverEnd}
               $hoverRange={hoverRange}
               $hoverDefault={hoverDefault}
+              $compact={compact}
               style={{ '--valet-date-cell-radius': theme.radius(1) } as React.CSSProperties}
               onClick={() => !disabled && (range ? commitRange(day) : commit(day))}
               disabled={disabled}

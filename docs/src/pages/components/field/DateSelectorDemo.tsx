@@ -107,6 +107,24 @@ export default function DateSelectorDemoPage() {
       default: <code>-</code>,
       description: 'Fires when range selection changes',
     },
+    {
+      prop: <code>compactMode</code>,
+      type: <code>&apos;auto&apos; | &apos;on&apos; | &apos;off&apos;</code>,
+      default: <code>&apos;auto&apos;</code>,
+      description: 'Control compact behavior: auto-detect, force on, or disable entirely',
+    },
+    {
+      prop: <code>compactThresholdIn</code>,
+      type: <code>number</code>,
+      default: <code>340</code>,
+      description: 'Width below which compact turns on (only when compactMode=auto)',
+    },
+    {
+      prop: <code>compactThresholdOut</code>,
+      type: <code>number</code>,
+      default: <code>380</code>,
+      description: 'Width above which compact turns off (only when compactMode=auto)',
+    },
   ];
 
   return (
@@ -158,6 +176,38 @@ export default function DateSelectorDemoPage() {
               endValue={rangeDates[1]}
               onRangeChange={(s, e) => setRangeDates([s, e])}
             />
+
+            <Typography variant='h3'>5. Compact controls</Typography>
+            <Stack direction='row'>
+              <Stack>
+                <Typography variant='subtitle'>Force compact</Typography>
+                <DateSelector
+                  compactMode='on'
+                  value={selected}
+                  onChange={setSelected}
+                />
+              </Stack>
+              <Stack>
+                <Typography variant='subtitle'>Force non-compact</Typography>
+                <DateSelector
+                  compactMode='off'
+                  value={selected}
+                  onChange={setSelected}
+                />
+              </Stack>
+              <Stack>
+                <Typography variant='subtitle'>Custom thresholds</Typography>
+                <div style={{ maxWidth: 320 }}>
+                  <DateSelector
+                    compactMode='auto'
+                    compactThresholdIn={300}
+                    compactThresholdOut={340}
+                    value={selected}
+                    onChange={setSelected}
+                  />
+                </div>
+              </Stack>
+            </Stack>
 
             <Stack direction='row'>
               <Button
