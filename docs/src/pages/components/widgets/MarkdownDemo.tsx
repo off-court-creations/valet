@@ -83,7 +83,7 @@ export default function MarkdownDemoPage() {
               <Button
                 variant='outlined'
                 onClick={toggleMode}
-                style={{ marginTop: theme.spacing(1) }}
+                sx={{ marginTop: theme.spacing(1) }}
               >
                 Toggle light / dark mode
               </Button>
@@ -101,7 +101,7 @@ export default function MarkdownDemoPage() {
         <Button
           size='lg'
           onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing(1) }}
+          sx={{ marginTop: theme.spacing(1) }}
         >
           ← Back
         </Button>

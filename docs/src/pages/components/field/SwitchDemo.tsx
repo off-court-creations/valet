@@ -38,10 +38,10 @@ interface RowProps {
 const Row = ({ label, control }: RowProps) => (
   <Stack
     direction='row'
-    style={{ maxWidth: 360 }}
+    sx={{ maxWidth: 360 }}
   >
     {control}
-    <Typography style={{ flex: 1 }}>{label}</Typography>
+    <Typography sx={{ flex: 1 }}>{label}</Typography>
   </Stack>
 );
 
@@ -228,7 +228,7 @@ export default function SwitchDemoPage() {
             <FormControl
               useStore={usePrefsForm}
               onSubmitValues={handleSubmit}
-              style={{
+              sx={{
                 display: 'flex',
                 flexDirection: 'column',
                 gap: theme.spacing(1),

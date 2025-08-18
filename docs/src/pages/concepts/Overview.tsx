@@ -25,7 +25,7 @@ export default function OverviewPage() {
       <NavDrawer />
       <Stack
         gap={2}
-        style={{ padding: '1rem', maxWidth: 1000 }}
+        sx={{ padding: '1rem', maxWidth: 1000 }}
       >
         <Typography
           variant='h2'
@@ -117,7 +117,7 @@ import { Surface, Stack, Typography, Button, useInitialTheme } from '@archway/va
 function Home() {
   return (
     <Surface>
-      <Stack gap={2} style={{ padding: '1rem' }}>
+      <Stack gap={2} sx={{ padding: '1rem' }}>
         <Typography variant="h2">Hello, valet</Typography>
         <Button variant="primary">Click me</Button>
       </Stack>
@@ -177,7 +177,7 @@ export function App() {
             direction='row'
             gap={1}
             wrap
-            style={{ alignItems: 'center' }}
+            sx={{ alignItems: 'center' }}
           >
             <Button
               variant='outlined'

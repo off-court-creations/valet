@@ -125,7 +125,7 @@ export default function RichChatPage() {
         <Button
           size='lg'
           onClick={() => navigate('/rich-chat-demo')}
-          style={{ marginTop: theme.spacing(1) }}
+          sx={{ marginTop: theme.spacing(1) }}
         >
           View Example →
         </Button>

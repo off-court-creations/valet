@@ -17,7 +17,7 @@ export default function TestPage() {
   const [method, setMethod] = useState('standard');
 
   return (
-    <Surface style={{ backgroundColor: theme.colors['background'] }}>
+    <Surface sx={{ backgroundColor: theme.colors['background'] }}>
       <Stack direction='row'>
         <Button>
           <Typography>Really Long Button</Typography>
@@ -36,7 +36,7 @@ export default function TestPage() {
       <br />
 
       <Panel
-        style={{
+        sx={{
           padding: theme.spacing(1),
           margin: theme.spacing(1),
           borderRadius: theme.spacing(1),

@@ -99,7 +99,7 @@ export default function ModalDemoPage() {
           onClose={() => setAlertOpen(false)}
           title={
             <>
-              <Icon style={{ marginRight: 8 }} /> Confirm delete
+              <Icon sx={{ marginRight: 8 }} /> Confirm delete
             </>
           }
           preset='alertDanger'
@@ -176,7 +176,7 @@ export default function ModalDemoPage() {
         <Button
           size='lg'
           onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing(1) }}
+          sx={{ marginTop: theme.spacing(1) }}
         >
           ← Back
         </Button>

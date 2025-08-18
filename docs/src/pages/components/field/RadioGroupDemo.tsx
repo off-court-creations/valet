@@ -380,7 +380,7 @@ export default function RadioGroupDemoPage() {
             <FormControl
               useStore={useSurveyForm}
               onSubmitValues={handleSubmit}
-              style={{
+              sx={{
                 display: 'flex',
                 flexDirection: 'column',
                 gap: theme.spacing(1),

@@ -4,7 +4,7 @@
 // ─────────────────────────────────────────────────────────────
 import React, { createContext, useContext } from 'react';
 import { preset } from '../../css/stylePresets';
-import type { Presettable } from '../../types';
+import type { Presettable, Sx } from '../../types';
 import type { FormStore } from '../../system/createFormStore';
 import type { StoreApi, UseBoundStore } from 'zustand';
 
@@ -32,7 +32,7 @@ export const useOptionalForm = <
 /*───────────────────────────────────────────────────────────────*/
 /* Props & component                                             */
 export interface FormControlProps<T extends Record<string, unknown>>
-  extends Omit<React.FormHTMLAttributes<HTMLFormElement>, 'onSubmit'>,
+  extends Omit<React.FormHTMLAttributes<HTMLFormElement>, 'onSubmit' | 'style'>,
     Presettable {
   /**
    * The **Zustand hook** produced by `createFormStore(initialValues)`.
@@ -43,6 +43,8 @@ export interface FormControlProps<T extends Record<string, unknown>>
    * Fires after native submit is intercepted – gives you typed values.
    */
   onSubmitValues?: (values: T, event: React.FormEvent<HTMLFormElement>) => void;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 export function FormControl<T extends Record<string, unknown>>({
@@ -50,6 +52,7 @@ export function FormControl<T extends Record<string, unknown>>({
   onSubmitValues,
   preset: p,
   className,
+  sx,
   children,
   ...rest
 }: FormControlProps<T>) {
@@ -67,6 +70,7 @@ export function FormControl<T extends Record<string, unknown>>({
         {...rest}
         onSubmit={handleSubmit}
         className={[presetClasses, className].filter(Boolean).join(' ')}
+        style={sx}
       >
         {children}
       </form>

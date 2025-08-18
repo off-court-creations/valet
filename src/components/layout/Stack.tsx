@@ -6,18 +6,20 @@ import React from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
-import type { Presettable, SpacingProps } from '../../types';
+import type { Presettable, SpacingProps, Sx } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
 
 /*───────────────────────────────────────────────────────────*/
 export interface StackProps
-  extends React.HTMLAttributes<HTMLDivElement>,
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'>,
     Presettable,
     SpacingProps {
   direction?: 'row' | 'column';
   /** If `true`, children wrap when they run out of space. Defaults to
    *  `true` for `row`, `false` for `column`. */
   wrap?: boolean;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -64,7 +66,7 @@ export const Stack: React.FC<StackProps> = ({
   preset: p,
   className,
   children,
-  style,
+  sx,
   ...rest
 }) => {
   const { theme } = useTheme();
@@ -85,7 +87,7 @@ export const Stack: React.FC<StackProps> = ({
       $wrap={shouldWrap}
       $pad={pad}
       className={[presetClasses, className].filter(Boolean).join(' ')}
-      style={style}
+      style={sx}
     >
       {children}
     </StackContainer>

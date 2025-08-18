@@ -97,7 +97,7 @@ export default function CodeBlockDemoPage() {
                   placeholder='language'
                   value={language}
                   onChange={(v) => setLanguage(v as 'typescript' | 'javascript' | 'css')}
-                  style={{ width: 160 }}
+                  sx={{ width: 160 }}
                 >
                   <Select.Option value='typescript'>typescript</Select.Option>
                   <Select.Option value='javascript'>javascript</Select.Option>

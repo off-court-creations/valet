@@ -94,8 +94,8 @@ export default function PaginationDemoPage() {
       description: (
         <>
           Standard attributes pass through to the root <code>nav</code> element (e.g.,{' '}
-          <code>id</code>, <code>role</code>, <code>aria-*</code>, <code>className</code>,{' '}
-          <code>style</code>).
+          <code>id</code>, <code>role</code>, <code>aria-*</code>, <code>className</code>). Use the{' '}
+          <code>sx</code> prop for inline style overrides.
         </>
       ),
     },

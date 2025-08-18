@@ -14,7 +14,7 @@ export default function VideoDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack
-        style={{
+        sx={{
           padding: theme.spacing(1),
           maxWidth: 1024,
           margin: '0 auto',

@@ -166,7 +166,7 @@ export default function DividerDemoPage() {
               <Panel variant='alt'>
                 <Stack gap={1}>
                   <Divider length='10rem' />
-                  <Box style={{ width: '12rem' }}>
+                  <Box sx={{ width: '12rem' }}>
                     <Typography>
                       Wrapped box with <code>length=10rem</code>
                     </Typography>
@@ -189,7 +189,7 @@ export default function DividerDemoPage() {
                   <Select
                     value={orientation}
                     onChange={(v) => setOrientation(v as Orient)}
-                    style={{ width: 180 }}
+                    sx={{ width: 180 }}
                   >
                     <Select.Option value='horizontal'>horizontal</Select.Option>
                     <Select.Option value='vertical'>vertical</Select.Option>
@@ -224,7 +224,7 @@ export default function DividerDemoPage() {
                     placeholder='e.g., 50%, 12rem, 200'
                     value={length}
                     onChange={(e) => setLength(e.target.value)}
-                    style={{ width: 220 }}
+                    sx={{ width: 220 }}
                   />
                 </Stack>
                 <Stack gap={0.25}>
@@ -234,14 +234,14 @@ export default function DividerDemoPage() {
                     placeholder='css color'
                     value={customColor}
                     onChange={(e) => setCustomColor(e.target.value)}
-                    style={{ width: 180 }}
+                    sx={{ width: 180 }}
                   />
                 </Stack>
                 <Stack
                   direction='row'
                   wrap={false}
                   gap={1}
-                  style={{ alignItems: 'center' }}
+                  sx={{ alignItems: 'center' }}
                 >
                   <Typography variant='subtitle'>compact</Typography>
                   <Switch

@@ -63,7 +63,7 @@ export default function TabsDemoPage() {
         <Typography variant='h3'>3. Vertical – left (default)</Typography>
         <Tabs
           orientation='vertical'
-          style={{ height: 200 }}
+          sx={{ height: 200 }}
         >
           <Tabs.Tab label='Apple' />
           <Tabs.Panel>{'Apple → ' + ONE}</Tabs.Panel>
@@ -80,7 +80,7 @@ export default function TabsDemoPage() {
         <Tabs
           orientation='vertical'
           placement='right'
-          style={{ height: 200 }}
+          sx={{ height: 200 }}
         >
           <Tabs.Tab label='Left Brain' />
           <Tabs.Panel>{'Left → ' + FOUR}</Tabs.Panel>
@@ -95,7 +95,7 @@ export default function TabsDemoPage() {
           size='sm'
           variant='outlined'
           onClick={() => setActiveCtl((prev) => (prev === 2 ? 0 : prev + 1))}
-          style={{ alignSelf: 'flex-start' }}
+          sx={{ alignSelf: 'flex-start' }}
         >
           Next tab programmatically
         </Button>
@@ -145,7 +145,7 @@ export default function TabsDemoPage() {
             label={
               <Stack
                 direction='row'
-                style={{ alignItems: 'center', gap: theme.spacing(0.5) }}
+                sx={{ alignItems: 'center', gap: theme.spacing(0.5) }}
               >
                 <Icon icon='mdi:home' />
                 <Typography>Home</Typography>
@@ -158,7 +158,7 @@ export default function TabsDemoPage() {
             label={
               <Stack
                 direction='row'
-                style={{ alignItems: 'center', gap: theme.spacing(0.5) }}
+                sx={{ alignItems: 'center', gap: theme.spacing(0.5) }}
               >
                 <Icon icon='mdi:account' />
                 <Typography>Profile</Typography>
@@ -171,7 +171,7 @@ export default function TabsDemoPage() {
             label={
               <Stack
                 direction='row'
-                style={{ alignItems: 'center', gap: theme.spacing(0.5) }}
+                sx={{ alignItems: 'center', gap: theme.spacing(0.5) }}
               >
                 <Icon icon='mdi:cog' />
                 <Typography>Settings</Typography>
@@ -186,7 +186,7 @@ export default function TabsDemoPage() {
         <Tabs
           orientation='vertical'
           centered
-          style={{ height: 200 }}
+          sx={{ height: 200 }}
         >
           <Tabs.Tab
             label={<Icon icon='mdi:home' />}
@@ -223,7 +223,7 @@ export default function TabsDemoPage() {
         <Button
           size='lg'
           onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing(1) }}
+          sx={{ marginTop: theme.spacing(1) }}
         >
           ← Back
         </Button>

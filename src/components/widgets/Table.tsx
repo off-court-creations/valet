@@ -18,7 +18,7 @@ import { shallow } from 'zustand/shallow';
 import { preset } from '../../css/stylePresets';
 import { Checkbox } from '../fields/Checkbox';
 import { stripe, toRgb, mix, toHex } from '../../helpers/color';
-import type { Presettable } from '../../types';
+import type { Presettable, Sx } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 /* Column definition                                          */
@@ -33,7 +33,7 @@ export interface TableColumn<T> {
 /*───────────────────────────────────────────────────────────*/
 /* Public props                                               */
 export interface TableProps<T>
-  extends Omit<React.TableHTMLAttributes<HTMLTableElement>, 'children'>,
+  extends Omit<React.TableHTMLAttributes<HTMLTableElement>, 'children' | 'style'>,
     Presettable {
   data: T[];
   columns: TableColumn<T>[];
@@ -45,6 +45,8 @@ export interface TableProps<T>
   onSortChange?: (index: number, desc: boolean) => void;
   onSelectionChange?: (selected: T[]) => void;
   constrainHeight?: boolean;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -164,7 +166,7 @@ export function Table<T extends object>({
   constrainHeight = true,
   preset: p,
   className,
-  style,
+  sx,
   ...rest
 }: TableProps<T>) {
   const { theme } = useTheme();
@@ -388,7 +390,7 @@ export function Table<T extends object>({
         style={
           {
             '--valet-table-underline': theme.stroke(4),
-            ...(style as object),
+            ...(sx as object),
           } as React.CSSProperties
         }
       >

@@ -48,13 +48,13 @@ export default function ImageDemoPage() {
           width='100%'
           height='300px'
           objectFit='contain'
-          style={{ background: '#0003' }}
+          sx={{ background: '#0003' }}
         />
 
         <Button
           size='lg'
           onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing(1) }}
+          sx={{ marginTop: theme.spacing(1) }}
         >
           ← Back
         </Button>

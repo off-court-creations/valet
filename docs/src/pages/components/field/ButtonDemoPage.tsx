@@ -120,7 +120,7 @@ export default function ButtonDemoPage() {
 
             {/* 3 ▸ Full-width ---------------------------------------------- */}
             <Typography variant='h3'>3. fullWidth</Typography>
-            <Box style={{ maxWidth: 360 }}>
+            <Box sx={{ maxWidth: 360 }}>
               <Button fullWidth>Stretch to parent</Button>
             </Box>
 
@@ -144,7 +144,7 @@ export default function ButtonDemoPage() {
             <Button>
               <Icon
                 icon='carbon:chat'
-                style={{ marginRight: theme.spacing(1) }}
+                sx={{ marginRight: theme.spacing(1) }}
               />
               With icon
             </Button>
@@ -229,7 +229,7 @@ export default function ButtonDemoPage() {
         <Button
           size='lg'
           onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing(1) }}
+          sx={{ marginTop: theme.spacing(1) }}
         >
           ← Back
         </Button>

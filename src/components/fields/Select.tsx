@@ -8,7 +8,7 @@ import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { useOptionalForm } from './FormControl';
-import type { Presettable } from '../../types';
+import type { Presettable, Sx } from '../../types';
 import type { Theme } from '../../system/themeStore';
 
 type Primitive = string | number;
@@ -18,7 +18,10 @@ type Primitive = string | number;
 export type SelectSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 export interface SelectProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'defaultValue' | 'children'>,
+  extends Omit<
+      React.HTMLAttributes<HTMLDivElement>,
+      'onChange' | 'defaultValue' | 'children' | 'style'
+    >,
     Presettable {
   /** Controlled value (single) or array (multiple). */
   value?: Primitive | Primitive[];
@@ -37,6 +40,8 @@ export interface SelectProps
   name?: string;
   /** Option nodes (see Select.Option). */
   children: React.ReactNode;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 export interface OptionProps extends React.LiHTMLAttributes<HTMLLIElement> {
@@ -177,7 +182,7 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLDivElement>) => {
     children,
     preset: presetKey,
     className,
-    style,
+    sx,
     ...divRest
   } = props;
 
@@ -321,7 +326,7 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLDivElement>) => {
       {...divRest}
       ref={ref}
       className={mergedCls}
-      style={{ ...style, position: 'relative', display: 'inline-block' }}
+      style={{ ...sx, position: 'relative', display: 'inline-block' }}
     >
       {/* Trigger */}
       <Trigger

@@ -12,24 +12,28 @@ import {
   useSurface as useSurfaceState,
 } from '../../system/surfaceStore';
 import { preset } from '../../css/stylePresets';
-import type { Presettable } from '../../types';
+import type { Presettable, Sx } from '../../types';
 
 /* Allow strongly-typed CSS custom properties (e.g. --valet-*) */
 type CSSVarName = `--${string}`;
 type CSSVarStyles = React.CSSProperties & Record<CSSVarName, string | number>;
 
 /*───────────────────────────────────────────────────────────*/
-export interface SurfaceProps extends React.HTMLAttributes<HTMLDivElement>, Presettable {
+export interface SurfaceProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'>,
+    Presettable {
   /** Fixed-position full-screen surface when true (default). */
   fullscreen?: boolean;
   /** Optional density override for spacing scale */
   density?: Density;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 /*───────────────────────────────────────────────────────────*/
 export const Surface: React.FC<SurfaceProps> = ({
   children,
-  style,
+  sx,
   preset: p,
   className,
   fullscreen = true,
@@ -172,7 +176,7 @@ export const Surface: React.FC<SurfaceProps> = ({
     '--valet-divider-stroke': theme.stroke(1),
     '--valet-screen-width': `${width}px`,
     '--valet-screen-height': `${Math.round(height)}px`,
-    ...(style ?? {}),
+    ...(sx ?? {}),
   };
 
   return (

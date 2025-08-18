@@ -15,7 +15,7 @@ import Panel from '../layout/Panel';
 import Typography from '../primitives/Typography';
 import Markdown from './Markdown';
 import Avatar from '../primitives/Avatar';
-import type { Presettable } from '../../types';
+import type { Presettable, Sx } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 /* Types                                                      */
@@ -30,7 +30,7 @@ export interface RichMessage {
 }
 
 export interface RichChatProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onSubmit'>,
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onSubmit' | 'style'>,
     Presettable {
   messages: RichMessage[];
   /** Called when a form message collects a response */
@@ -43,6 +43,8 @@ export interface RichChatProps
   constrainHeight?: boolean;
   /** Override input font */
   fontFamily?: string;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -114,7 +116,7 @@ export const RichChat: React.FC<RichChatProps> = ({
   fontFamily,
   preset: p,
   className,
-  style,
+  sx,
   ...rest
 }) => {
   const { theme } = useTheme();
@@ -226,7 +228,7 @@ export const RichChat: React.FC<RichChatProps> = ({
       compact
       fullWidth
       variant='alt'
-      style={style}
+      sx={sx}
       className={cls}
     >
       <Wrapper
@@ -269,14 +271,14 @@ export const RichChat: React.FC<RichChatProps> = ({
                       src={systemAvatar}
                       size='s'
                       variant='outline'
-                      style={{ marginRight: theme.spacing(1) }}
+                      sx={{ marginRight: theme.spacing(1) }}
                     />
                   )}
                   <Panel
                     compact
                     variant='main'
                     background={m.role === 'user' ? theme.colors.primary : undefined}
-                    style={{
+                    sx={{
                       maxWidth: '100%',
                       width: 'fit-content',
                       borderRadius: theme.spacing(0.5),
@@ -312,7 +314,7 @@ export const RichChat: React.FC<RichChatProps> = ({
                       src={userAvatar}
                       size='s'
                       variant='outline'
-                      style={{ marginLeft: theme.spacing(1) }}
+                      sx={{ marginLeft: theme.spacing(1) }}
                     />
                   )}
                 </Row>

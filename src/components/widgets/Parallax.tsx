@@ -4,7 +4,7 @@
 // ─────────────────────────────────────────────────────────────
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { preset } from '../../css/stylePresets';
-import type { Presettable } from '../../types';
+import type { Presettable, Sx } from '../../types';
 
 /*───────────────────────────────────────────────────────────────*/
 /* 1 ▸ Shared context & hook                                     */
@@ -36,16 +36,20 @@ const findScrollParent = (node: HTMLElement | null): HTMLElement | Window => {
 /*───────────────────────────────────────────────────────────────*/
 /* 3 ▸ ParallaxScroll – root wrapper                             */
 
-export interface ParallaxScrollProps extends React.HTMLAttributes<HTMLDivElement>, Presettable {
+export interface ParallaxScrollProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'>,
+    Presettable {
   /** Track horizontal scroll in addition to vertical. */
   trackX?: boolean;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 export const ParallaxScroll: React.FC<ParallaxScrollProps> = ({
   children,
   trackX = false,
   preset: p,
-  style,
+  sx,
   className,
   ...props
 }) => {
@@ -86,7 +90,7 @@ export const ParallaxScroll: React.FC<ParallaxScrollProps> = ({
       <div
         ref={selfRef}
         className={[presetClasses, className].filter(Boolean).join(' ')}
-        style={{ position: 'relative', overflow: 'hidden', ...style }}
+        style={{ position: 'relative', overflow: 'hidden', ...sx }}
         {...props}
       >
         {children}
@@ -98,9 +102,13 @@ export const ParallaxScroll: React.FC<ParallaxScrollProps> = ({
 /*───────────────────────────────────────────────────────────────*/
 /* 4 ▸ Generic ParallaxLayer                                     */
 
-export interface ParallaxLayerProps extends React.HTMLAttributes<HTMLDivElement>, Presettable {
+export interface ParallaxLayerProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'>,
+    Presettable {
   speed?: number; // 1 = native, 0.5 = slower, 2 = faster
   axis?: 'y' | 'x';
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 export const ParallaxLayer: React.FC<ParallaxLayerProps> = ({
@@ -108,7 +116,7 @@ export const ParallaxLayer: React.FC<ParallaxLayerProps> = ({
   speed = 0.5,
   axis = 'y',
   preset: p,
-  style,
+  sx,
   className,
   ...props
 }) => {
@@ -130,7 +138,7 @@ export const ParallaxLayer: React.FC<ParallaxLayerProps> = ({
         position: 'relative',
         willChange: 'transform',
         transform,
-        ...style,
+        ...sx,
       }}
       {...props}
     >
@@ -167,7 +175,7 @@ export const ParallaxBackground: React.FC<ParallaxBackgroundProps> = ({
   axis = 'y',
   preset: p,
   className,
-  style,
+  sx,
   loop = true,
   muted = true,
   autoPlay = true,
@@ -234,11 +242,11 @@ export const ParallaxBackground: React.FC<ParallaxBackgroundProps> = ({
       axis={axis}
       preset={p}
       className={[presetClasses, className].filter(Boolean).join(' ')}
-      style={{
+      sx={{
         position: 'absolute',
         inset: 0,
         pointerEvents: 'none', // let UI on top be interactive
-        ...style,
+        ...sx,
       }}
       {...props}
     >

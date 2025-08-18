@@ -83,13 +83,13 @@ export default function StackDemoPage() {
               direction='row'
               gap={1}
               wrap
-              style={{ maxWidth: 200 }}
+              sx={{ maxWidth: 200 }}
             >
               {['1', '2', '3', '4', '5', '6'].map((n) => (
                 <Box
                   key={n}
                   background={theme.colors['primary']}
-                  style={{ padding: theme.spacing(0.5) }}
+                  sx={{ padding: theme.spacing(0.5) }}
                 >
                   {n}
                 </Box>
@@ -111,14 +111,14 @@ export default function StackDemoPage() {
         <Button
           variant='outlined'
           onClick={toggleMode}
-          style={{ marginTop: theme.spacing(1) }}
+          sx={{ marginTop: theme.spacing(1) }}
         >
           Toggle light / dark
         </Button>
         <Button
           size='lg'
           onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing(1) }}
+          sx={{ marginTop: theme.spacing(1) }}
         >
           ← Back
         </Button>

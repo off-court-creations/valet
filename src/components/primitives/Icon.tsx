@@ -6,11 +6,13 @@ import React, { ReactElement, isValidElement, PropsWithChildren } from 'react';
 import { Icon as Iconify } from '@iconify/react';
 import { styled } from '../../css/createStyled';
 import { preset } from '../../css/stylePresets';
-import type { Presettable } from '../../types';
+import type { Presettable, Sx } from '../../types';
 
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
-export interface IconProps extends React.HTMLAttributes<HTMLSpanElement>, Presettable {
+export interface IconProps
+  extends Omit<React.HTMLAttributes<HTMLSpanElement>, 'style'>,
+    Presettable {
   /** Iconify icon name, e.g. "mdi:home". */
   icon?: string;
   /**
@@ -23,6 +25,8 @@ export interface IconProps extends React.HTMLAttributes<HTMLSpanElement>, Preset
   size?: IconSize | number | string;
   /** Explicit colour override; otherwise inherits `currentColor`. */
   color?: string | undefined;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 const Wrapper = styled('span')<{ $size: string }>`
@@ -55,7 +59,7 @@ export const Icon: React.FC<PropsWithChildren<IconProps>> = ({
   color,
   preset: p,
   className,
-  style,
+  sx,
   children,
   ...spanRest
 }) => {
@@ -111,7 +115,7 @@ export const Icon: React.FC<PropsWithChildren<IconProps>> = ({
     <Wrapper
       $size={finalSize}
       className={[presetClasses, className].filter(Boolean).join(' ')}
-      style={{ ...colourStyle, ...style }}
+      style={{ ...colourStyle, ...sx }}
       {...spanRest}
     >
       {content}

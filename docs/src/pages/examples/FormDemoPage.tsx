@@ -62,12 +62,12 @@ export default function FormDemoPage() {
   const [submitted, setSubmitted] = useState<ContactValues | null>(null);
 
   return (
-    <Surface style={{ backgroundColor: theme.colors['background'] }}>
+    <Surface sx={{ backgroundColor: theme.colors['background'] }}>
       <NavDrawer />
       <Box preset='cardForm'>
         <Typography
           variant='h3'
-          style={{ marginBottom: theme.spacing(1) }}
+          sx={{ marginBottom: theme.spacing(1) }}
         >
           Contact Form Demo
         </Typography>
@@ -118,7 +118,7 @@ export default function FormDemoPage() {
 
       {/* Echo submitted payload */}
       {submitted && (
-        <Box style={{ padding: theme.spacing(1) }}>
+        <Box sx={{ padding: theme.spacing(1) }}>
           <Typography variant='h4'>Server Echo</Typography>
           <pre style={{ color: theme.colors['text'] }}>{JSON.stringify(submitted, null, 2)}</pre>
         </Box>
@@ -127,7 +127,7 @@ export default function FormDemoPage() {
       {/* Nav back */}
       <Stack
         direction='row'
-        style={{ padding: theme.spacing(1) }}
+        sx={{ padding: theme.spacing(1) }}
       >
         <Button
           variant='contained'

@@ -20,7 +20,7 @@ import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { useOptionalForm } from './FormControl';
-import type { Presettable } from '../../types';
+import type { Presettable, Sx } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 /* Size map                                                  */
@@ -154,7 +154,7 @@ function assignRef<T>(ref: React.Ref<T> | null | undefined, value: T | null) {
 /*───────────────────────────────────────────────────────────*/
 /* Public props                                              */
 export interface SliderProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'>,
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'style'>,
     Presettable {
   /** Controlled value. */
   value?: number;
@@ -191,6 +191,8 @@ export interface SliderProps
 
   size?: SliderSize | number | string;
   disabled?: boolean;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -216,7 +218,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
       disabled = false,
       preset: p,
       className,
-      style,
+      sx,
       ...rest
     },
     forwardedRef,
@@ -381,7 +383,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
         {...rest}
         ref={setWrapperRef}
         className={mergedCls}
-        style={style}
+        style={sx}
       >
         {/* track + fill */}
         <Track

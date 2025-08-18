@@ -6,17 +6,21 @@ import React, { useEffect, useState, forwardRef, useRef } from 'react';
 import { styled, keyframes } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
-import type { Presettable } from '../../types';
+import type { Presettable, Sx } from '../../types';
 
 export type SkeletonVariant = 'text' | 'rect' | 'circle';
 
-export interface SkeletonProps extends React.HTMLAttributes<HTMLSpanElement>, Presettable {
+export interface SkeletonProps
+  extends Omit<React.HTMLAttributes<HTMLSpanElement>, 'style'>,
+    Presettable {
   /** Show placeholder while true */
   loading?: boolean;
   /** Override detected placeholder shape */
   variant?: SkeletonVariant;
   /** Optional icon rendered while loading */
   icon?: React.ReactNode;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -88,7 +92,7 @@ function radiusFor(v: SkeletonVariant): string {
 /*───────────────────────────────────────────────────────────*/
 /* Component                                                 */
 export const Skeleton = forwardRef<HTMLSpanElement, SkeletonProps>(
-  ({ loading, variant, icon, preset: p, className, children, style, ...rest }, ref) => {
+  ({ loading, variant, icon, preset: p, className, children, sx, ...rest }, ref) => {
     const child = React.Children.count(children) === 1 ? children : null;
     const resolved = variant || inferVariant(child);
     const radius = radiusFor(resolved);
@@ -129,7 +133,7 @@ export const Skeleton = forwardRef<HTMLSpanElement, SkeletonProps>(
       <Wrapper
         {...rest}
         ref={ref}
-        style={style}
+        style={sx}
         className={[presetCls, className].filter(Boolean).join(' ')}
         aria-busy={activeLoading}
       >

@@ -253,13 +253,15 @@ export const Drawer: React.FC<DrawerProps> = ({
         <IconButton
           icon={toggleIcon}
           onClick={() => setOpenState(true)}
-          style={{
-            position: 'fixed',
-            top: `calc(${theme.spacing(1)} + ${surfOffset}px)`,
-            [anchor]: theme.spacing(1),
-            zIndex: 9999,
-            background: toggleBg,
-          }}
+          sx={
+            {
+              position: 'fixed',
+              top: `calc(${theme.spacing(1)} + ${surfOffset}px)`,
+              [anchor]: theme.spacing(1),
+              zIndex: 9999,
+              background: toggleBg,
+            } as unknown as import('../../types').Sx
+          }
           aria-label='Open drawer'
         />
       );

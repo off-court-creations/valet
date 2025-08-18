@@ -244,7 +244,7 @@ export default function MetroSelectDemoPage() {
             />
             <Typography
               variant='h3'
-              style={{ marginTop: theme.spacing(3) }}
+              sx={{ marginTop: theme.spacing(3) }}
             >
               Option props
             </Typography>

@@ -203,7 +203,7 @@ export default function IconDemoPage() {
                 <Icon
                   icon='mdi:thumb-up'
                   size={18}
-                  style={{ marginRight: 8 }}
+                  sx={{ marginRight: 8 }}
                 />
                 Like
               </Button>
@@ -211,7 +211,7 @@ export default function IconDemoPage() {
                 <Icon
                   icon='mdi:share-variant'
                   size={18}
-                  style={{ marginRight: 8 }}
+                  sx={{ marginRight: 8 }}
                 />
                 Share
               </Button>
@@ -242,7 +242,7 @@ export default function IconDemoPage() {
         <Button
           size='lg'
           onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing(1) }}
+          sx={{ marginTop: theme.spacing(1) }}
         >
           ← Back
         </Button>

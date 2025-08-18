@@ -18,7 +18,7 @@ export default function DrawerDemoPage() {
         anchor='left'
         size='16rem'
       >
-        <Stack style={{ padding: theme.spacing(1) }}>
+        <Stack sx={{ padding: theme.spacing(1) }}>
           <Typography
             variant='h4'
             bold
@@ -28,7 +28,7 @@ export default function DrawerDemoPage() {
           <Typography>Always visible on the left.</Typography>
         </Stack>
       </Drawer>
-      <Stack style={{ padding: theme.spacing(1), maxWidth: 980, margin: '0 auto' }}>
+      <Stack sx={{ padding: theme.spacing(1), maxWidth: 980, margin: '0 auto' }}>
         <Typography
           variant='h2'
           bold
@@ -44,7 +44,7 @@ export default function DrawerDemoPage() {
           open={overlayOpen}
           onClose={() => setOverlayOpen(false)}
         >
-          <Stack style={{ padding: theme.spacing(1) }}>
+          <Stack sx={{ padding: theme.spacing(1) }}>
             <Typography
               variant='h4'
               bold
@@ -66,7 +66,7 @@ export default function DrawerDemoPage() {
           open={rightOpen}
           onClose={() => setRightOpen(false)}
         >
-          <Stack style={{ padding: theme.spacing(1) }}>
+          <Stack sx={{ padding: theme.spacing(1) }}>
             <Typography
               variant='h4'
               bold
@@ -87,7 +87,7 @@ export default function DrawerDemoPage() {
           disableBackdropClick
           disableEscapeKeyDown
         >
-          <Stack style={{ padding: theme.spacing(1) }}>
+          <Stack sx={{ padding: theme.spacing(1) }}>
             <Typography
               variant='h4'
               bold
@@ -105,7 +105,7 @@ export default function DrawerDemoPage() {
           anchor='right'
           size='16rem'
         >
-          <Stack style={{ padding: theme.spacing(1) }}>
+          <Stack sx={{ padding: theme.spacing(1) }}>
             <Typography
               variant='h4'
               bold

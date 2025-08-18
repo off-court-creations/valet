@@ -7,11 +7,11 @@ import React from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
-import type { Presettable, SpacingProps } from '../../types';
+import type { Presettable, SpacingProps, Sx } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
 
 export interface BoxProps
-  extends React.ComponentProps<'div'>,
+  extends Omit<React.ComponentProps<'div'>, 'style'>,
     Presettable,
     Pick<SpacingProps, 'pad' | 'compact'> {
   background?: string | undefined;
@@ -24,6 +24,8 @@ export interface BoxProps
   alignX?: 'left' | 'right' | 'center' | 'centered';
   /** Deprecated: old prop name retained for BC */
   centered?: boolean;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 const Base = styled('div')<{
@@ -79,7 +81,7 @@ export const Box: React.FC<BoxProps> = ({
   centered, // deprecated alias
   compact,
   pad: padProp,
-  style,
+  sx,
   ...rest
 }) => {
   const { theme } = useTheme();
@@ -110,7 +112,7 @@ export const Box: React.FC<BoxProps> = ({
   // Promote background/text overrides to inline style so they always win the cascade.
   // Never clobber an explicit style prop from the caller.
   const inlineStyle: React.CSSProperties & Record<string, string | number> = {
-    ...(style || {}),
+    ...(sx || {}),
   };
 
   if (background && inlineStyle.background == null) {

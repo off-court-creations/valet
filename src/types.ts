@@ -20,3 +20,6 @@ export interface SpacingProps {
   /** Compact mode zeros gap and pad where supported. */
   compact?: boolean;
 }
+
+/** Sx prop: inline CSS with support for CSS custom properties (e.g. --valet-*) */
+export type Sx = React.CSSProperties & { [key: `--${string}`]: string | number };

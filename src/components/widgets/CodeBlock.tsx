@@ -45,7 +45,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
       <Markdown
         data={markdown}
         codeBackground={mode === 'dark' ? '#0d1117' : '#f6f8fa'}
-        style={{ margin: 0, flex: 1 }}
+        sx={{ margin: 0, flex: 1 }}
       />
       <IconButton
         variant='outlined'
@@ -54,7 +54,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
         aria-label={ariaLabel ?? 'Copy code snippet'}
         title={title ?? 'Copy'}
         onClick={handleCopy}
-        style={{
+        sx={{
           marginLeft: theme.spacing(0.5),
           marginTop: theme.spacing(2),
         }}

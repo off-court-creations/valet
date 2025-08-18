@@ -21,7 +21,7 @@ import { preset } from '../../css/stylePresets';
 import { useTheme } from '../../system/themeStore';
 import { toRgb, mix, toHex } from '../../helpers/color';
 import type { Theme } from '../../system/themeStore';
-import type { Presettable } from '../../types';
+import type { Presettable, Sx } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 /* Context                                                   */
@@ -99,7 +99,7 @@ const HiddenInput = styled('input')`
 /*───────────────────────────────────────────────────────────*/
 /* Public prop contracts                                     */
 export interface RadioGroupProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'>,
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'style'>,
     Presettable {
   value?: string;
   defaultValue?: string;
@@ -110,15 +110,19 @@ export interface RadioGroupProps
   spacing?: number | string;
   onChange?: (val: string) => void;
   children: ReactNode;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 export interface RadioProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type' | 'size' | 'onChange'>,
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type' | 'size' | 'onChange' | 'style'>,
     Presettable {
   value: string;
   label?: string;
   size?: RadioSize | number | string;
   children?: ReactNode;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -132,7 +136,7 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
   spacing,
   onChange,
   preset: p,
-  style,
+  sx,
   className,
   children,
   ...rest
@@ -206,7 +210,7 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
           flexDirection: row ? 'row' : 'column',
           alignItems: row ? 'center' : 'flex-start',
           gap: gapCss,
-          ...style,
+          ...sx,
         }}
       >
         {children}
@@ -281,7 +285,7 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
       disabled = false,
       preset: p,
       children,
-      style,
+      sx,
       className,
       ...inputRest
     },
@@ -330,7 +334,7 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
     return (
       <OptionLabel
         className={mergedCls}
-        style={{ gap: SZ.gapInner, ...style }}
+        style={{ gap: SZ.gapInner, ...sx }}
         $disabled={disabled}
         $disabledColor={disabledColor}
       >

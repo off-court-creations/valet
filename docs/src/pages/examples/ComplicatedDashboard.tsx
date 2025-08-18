@@ -106,7 +106,7 @@ export default function ComplicatedDashboard() {
                 <Box
                   key={i}
                   background='var(--valet-bg)'
-                  style={{ minWidth: '12rem', flex: '1 1 auto' }}
+                  sx={{ minWidth: '12rem', flex: '1 1 auto' }}
                 >
                   <Typography variant='subtitle'>{label}</Typography>
                   <Typography
@@ -131,7 +131,7 @@ export default function ComplicatedDashboard() {
                       key={n}
                       src={`https://picsum.photos/seed/${n}/300/200`}
                       alt={`random-${n}`}
-                      style={{ width: '100%', height: 'auto', display: 'block' }}
+                      sx={{ width: '100%', height: 'auto', display: 'block' }}
                       lazy
                     />
                   ))}
@@ -173,7 +173,7 @@ export default function ComplicatedDashboard() {
               getSubtitle={(x) => x.s}
               striped
               hoverable
-              style={{ marginTop: '0.5rem' }}
+              sx={{ marginTop: '0.5rem' }}
             />
           </Panel>
 
@@ -201,7 +201,7 @@ export default function ComplicatedDashboard() {
               hoverable
               dividers
               constrainHeight
-              style={{ marginTop: '0.5rem' }}
+              sx={{ marginTop: '0.5rem' }}
             />
           </Panel>
         </Grid>

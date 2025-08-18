@@ -119,7 +119,8 @@ export default function BoxDemoPage() {
       description: (
         <>
           Standard HTML attributes and events pass through, e.g. <code>id</code>, <code>role</code>,{' '}
-          <code>aria-*</code>, <code>onClick</code>, <code>className</code>, <code>style</code>.
+          <code>aria-*</code>, <code>onClick</code>, <code>className</code>. Use <code>sx</code> for
+          inline style overrides.
         </>
       ),
     },
@@ -178,7 +179,7 @@ export default function BoxDemoPage() {
               </Box>
 
               {/* Visualize bounds of the default box */}
-              <Box style={{ border: `1px dashed ${theme.colors['text']}` }}>
+              <Box sx={{ border: `1px dashed ${theme.colors['text']}` }}>
                 <Typography>
                   (no props) — inherits parent background, uses theme text colour
                 </Typography>
@@ -228,31 +229,31 @@ export default function BoxDemoPage() {
 
               <Divider />
 
-              <Typography variant='h3'>Inline style</Typography>
+              <Typography variant='h3'>Inline sx</Typography>
               <CodeBlock
                 code={`<Box
   background={theme.colors['tertiary']}
-  style={{
+  sx={{
     border: \`2px dashed \${theme.colors['text']}\`,
     padding: theme.spacing(1),
     borderRadius: 12,
   }}
 >
   <Typography>
-    Dashed border, custom radius, padding via <code>style</code>
+    Dashed border, custom radius, padding via <code>sx</code>
   </Typography>
 </Box>`}
               />
               <Box
                 background={theme.colors['tertiary']}
-                style={{
+                sx={{
                   border: `2px dashed ${theme.colors['text']}`,
                   padding: theme.spacing(1),
                   borderRadius: 12,
                 }}
               >
                 <Typography>
-                  Dashed border, custom radius, padding via <code>style</code>
+                  Dashed border, custom radius, padding via <code>sx</code>
                 </Typography>
               </Box>
 
@@ -260,12 +261,12 @@ export default function BoxDemoPage() {
 
               <Typography variant='h3'>Width behaviour</Typography>
               <Stack>
-                <Box style={{ border: `1px dashed ${theme.colors['text']}` }}>
+                <Box sx={{ border: `1px dashed ${theme.colors['text']}` }}>
                   <Typography>Default: content width anchored left</Typography>
                 </Box>
                 <Box
                   fullWidth
-                  style={{ border: `1px dashed ${theme.colors['text']}` }}
+                  sx={{ border: `1px dashed ${theme.colors['text']}` }}
                 >
                   <Typography>
                     <b>fullWidth</b>: stretches to the width of the parent
@@ -278,7 +279,7 @@ export default function BoxDemoPage() {
               <Typography variant='h3'>Right‑bound content</Typography>
               <Box
                 alignX='right'
-                style={{ border: `1px dashed ${theme.colors['text']}` }}
+                sx={{ border: `1px dashed ${theme.colors['text']}` }}
               >
                 <Typography>
                   Anchored to the right with intrinsic width (alignX=&apos;right&apos;)
@@ -290,7 +291,7 @@ export default function BoxDemoPage() {
               <Typography variant='h3'>Centered placement</Typography>
               <Box
                 alignX='center'
-                style={{ border: `1px dashed ${theme.colors['text']}` }}
+                sx={{ border: `1px dashed ${theme.colors['text']}` }}
               >
                 <Typography>
                   Horizontally centered with intrinsic width (alignX=&apos;center&apos;)
@@ -348,7 +349,7 @@ export default function BoxDemoPage() {
   role="region"
   aria-label="Hero banner"
   onClick={() => console.log('clicked')}
-  style={{ border: '1px solid currentColor' }}
+  sx={{ border: '1px solid currentColor' }}
 >
   Content
 </Box>`}
@@ -358,7 +359,7 @@ export default function BoxDemoPage() {
                 role='region'
                 aria-label='Hero banner'
                 onClick={() => console.log('clicked')}
-                style={{
+                sx={{
                   border: `1px solid ${theme.colors['text']}`,
                   padding: theme.spacing(1),
                   cursor: 'pointer',
@@ -383,7 +384,7 @@ export default function BoxDemoPage() {
                     placeholder='background'
                     value={bgKey}
                     onChange={(v) => setBgKey(v as 'none' | 'primary' | 'secondary' | 'tertiary')}
-                    style={{ width: 200 }}
+                    sx={{ width: 200 }}
                   >
                     <Select.Option value='none'>no background</Select.Option>
                     <Select.Option value='primary'>primary</Select.Option>
@@ -407,7 +408,7 @@ export default function BoxDemoPage() {
                   direction='row'
                   wrap={false}
                   gap={1}
-                  style={{ alignItems: 'center' }}
+                  sx={{ alignItems: 'center' }}
                 >
                   <Typography variant='subtitle'>center content</Typography>
                   <Switch
@@ -420,7 +421,7 @@ export default function BoxDemoPage() {
                   direction='row'
                   wrap={false}
                   gap={1}
-                  style={{ alignItems: 'center' }}
+                  sx={{ alignItems: 'center' }}
                 >
                   <Typography variant='subtitle'>fullWidth</Typography>
                   <Switch
@@ -435,7 +436,7 @@ export default function BoxDemoPage() {
                     placeholder='alignX'
                     value={alignX}
                     onChange={(v) => setAlignX(v as 'left' | 'right' | 'center')}
-                    style={{ width: 160 }}
+                    sx={{ width: 160 }}
                     disabled={fullWidth}
                   >
                     <Select.Option value='left'>left</Select.Option>
@@ -450,7 +451,7 @@ export default function BoxDemoPage() {
                 centerContent={centerContent}
                 fullWidth={fullWidth}
                 alignX={alignX}
-                style={{
+                sx={{
                   background: bgValue,
                   border: `1px dashed ${theme.colors['text']}`,
                 }}

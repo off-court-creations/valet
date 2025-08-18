@@ -8,12 +8,12 @@ import { styled } from '../../css/createStyled';
 import Typography from '../primitives/Typography';
 import { preset } from '../../css/stylePresets';
 import { useTheme } from '../../system/themeStore';
-import type { Presettable } from '../../types';
+import type { Presettable, Sx } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 /* Public props                                              */
 export interface PaginationProps
-  extends Omit<React.HTMLAttributes<HTMLElement>, 'onChange'>,
+  extends Omit<React.HTMLAttributes<HTMLElement>, 'onChange' | 'style'>,
     Presettable {
   /** Total number of pages (≥ 1). */
   count: number;
@@ -32,6 +32,8 @@ export interface PaginationProps
    * whenever `page` changes outside the current window. Defaults to true.
    */
   autoFollowActive?: boolean;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -197,7 +199,7 @@ export const Pagination: React.FC<PaginationProps> = ({
   autoFollowActive = true,
   preset: p,
   className,
-  style,
+  sx,
   ...rest
 }) => {
   const { theme } = useTheme();
@@ -1002,7 +1004,7 @@ export const Pagination: React.FC<PaginationProps> = ({
       style={
         {
           '--valet-underline-width': theme.stroke(4),
-          ...(style as object),
+          ...(sx as object),
         } as React.CSSProperties
       }
     >

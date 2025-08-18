@@ -15,7 +15,7 @@ import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { Typography } from '../primitives/Typography';
 import { stripe, toRgb, mix, toHex } from '../../helpers/color';
-import type { Presettable } from '../../types';
+import type { Presettable, Sx } from '../../types';
 
 /* 1 × 1 transparent GIF to suppress the default drag preview */
 const EMPTY_IMG = (() => {
@@ -27,7 +27,7 @@ const EMPTY_IMG = (() => {
 /*───────────────────────────────────────────────────────────*/
 /* Props                                                     */
 export interface ListProps<T>
-  extends Omit<React.HTMLAttributes<HTMLUListElement>, 'children'>,
+  extends Omit<React.HTMLAttributes<HTMLUListElement>, 'children' | 'style'>,
     Presettable {
   data: T[];
   getTitle: (item: T) => React.ReactNode;
@@ -46,6 +46,8 @@ export interface ListProps<T>
   defaultSelected?: T | null;
   /** Fired when selection changes (click or drag-select). */
   onSelectionChange?: (item: T, index: number) => void;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -139,7 +141,7 @@ export function List<T>({
   onSelectionChange,
   preset: p,
   className,
-  style,
+  sx,
   ...rest
 }: ListProps<T>) {
   const { theme } = useTheme();
@@ -498,7 +500,7 @@ export function List<T>({
       $padV={theme.spacing(2)}
       $padH={theme.spacing(3)}
       className={cls}
-      style={style}
+      style={sx}
       role={selectable ? 'listbox' : 'list'}
     >
       {items.map((item, idx) => (

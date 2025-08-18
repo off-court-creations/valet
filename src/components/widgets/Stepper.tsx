@@ -6,12 +6,16 @@ import React from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
-import type { Presettable } from '../../types';
+import type { Presettable, Sx } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
-export interface StepperProps extends React.HTMLAttributes<HTMLDivElement>, Presettable {
+export interface StepperProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'>,
+    Presettable {
   steps: React.ReactNode[];
   active?: number;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -50,7 +54,7 @@ export const Stepper: React.FC<StepperProps> = ({
   active = 0,
   preset: p,
   className,
-  style,
+  sx,
   ...rest
 }) => {
   const { theme } = useTheme();
@@ -66,7 +70,7 @@ export const Stepper: React.FC<StepperProps> = ({
         {
           '--valet-stepper-stroke': theme.stroke(1),
           '--valet-stepper-radius': theme.radius(999),
-          ...(style as object),
+          ...(sx as object),
         } as React.CSSProperties
       }
     >

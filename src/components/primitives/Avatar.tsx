@@ -6,13 +6,15 @@ import React from 'react';
 import { styled } from '../../css/createStyled';
 import { preset } from '../../css/stylePresets';
 import { useTheme } from '../../system/themeStore';
-import type { Presettable } from '../../types';
+import type { Presettable, Sx } from '../../types';
 import { md5 } from '../../helpers/md5';
 
 export type AvatarSize = 'xs' | 's' | 'm' | 'l' | 'xl';
 export type AvatarVariant = 'plain' | 'outline';
 
-export interface AvatarProps extends React.ImgHTMLAttributes<HTMLImageElement>, Presettable {
+export interface AvatarProps
+  extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'style'>,
+    Presettable {
   /** Image URL override. */
   src?: string;
   /** Email used for Gravatar lookup when src missing. */
@@ -23,6 +25,8 @@ export interface AvatarProps extends React.ImgHTMLAttributes<HTMLImageElement>, 
   variant?: AvatarVariant;
   /** Fallback style when no avatar exists. */
   gravatarDefault?: string;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 const sizeMap: Record<AvatarSize, string> = {
@@ -55,6 +59,7 @@ export const Avatar: React.FC<AvatarProps> = ({
   gravatarDefault = 'identicon',
   preset: p,
   className,
+  sx,
   ...rest
 }) => {
   const rem = sizeMap[size];
@@ -77,6 +82,7 @@ export const Avatar: React.FC<AvatarProps> = ({
       $size={rem}
       $variant={variant}
       $stroke={stroke}
+      style={sx}
       className={[presetCls, className].filter(Boolean).join(' ')}
     />
   );

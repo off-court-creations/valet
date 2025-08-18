@@ -93,7 +93,7 @@ export default function ProgressDemoPage() {
         <Typography variant='h3'>2. Circular – determinate (controlled)</Typography>
         <Stack
           direction='row'
-          style={{ alignItems: 'center' }}
+          sx={{ alignItems: 'center' }}
         >
           <Progress
             variant='circular'
@@ -138,7 +138,7 @@ export default function ProgressDemoPage() {
         {/* 6. Interactive controls ---------------------------------------- */}
         <Typography variant='h3'>6. Play with value</Typography>
         <Stack>
-          <Box style={{ maxWidth: 480 }}>
+          <Box sx={{ maxWidth: 480 }}>
             <Slider
               value={value}
               onChange={setValue}
@@ -166,7 +166,7 @@ export default function ProgressDemoPage() {
         <Button
           size='lg'
           onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing(1) }}
+          sx={{ marginTop: theme.spacing(1) }}
         >
           ← Back
         </Button>

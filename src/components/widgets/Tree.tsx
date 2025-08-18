@@ -9,7 +9,7 @@ import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { toRgb, mix, toHex } from '../../helpers/color';
-import type { Presettable } from '../../types';
+import type { Presettable, Sx } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 export interface TreeNode<T> {
@@ -19,7 +19,7 @@ export interface TreeNode<T> {
 }
 
 export interface TreeProps<T>
-  extends Omit<React.HTMLAttributes<HTMLUListElement>, 'children'>,
+  extends Omit<React.HTMLAttributes<HTMLUListElement>, 'children' | 'style'>,
     Presettable {
   nodes: TreeNode<T>[];
   getLabel: (node: T) => React.ReactNode;
@@ -32,6 +32,8 @@ export interface TreeProps<T>
   defaultSelected?: string;
   onNodeSelect?: (node: T) => void;
   variant?: 'chevron' | 'list' | 'files';
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -158,6 +160,7 @@ export function Tree<T>({
   variant = 'chevron',
   preset: p,
   className,
+  sx,
   ...rest
 }: TreeProps<T>) {
   const { theme } = useTheme();
@@ -322,7 +325,7 @@ export function Tree<T>({
                     : 'carbon:document'
                 }
                 size={16}
-                style={{ marginRight: '0.25rem' }}
+                sx={{ marginRight: '0.25rem' }}
                 aria-hidden
                 onClick={
                   node.children
@@ -337,7 +340,7 @@ export function Tree<T>({
             <Typography
               variant='body'
               family='mono'
-              style={{ display: 'inline' }}
+              sx={{ display: 'inline' }}
             >
               {getLabel(node.data)}
             </Typography>
@@ -361,6 +364,7 @@ export function Tree<T>({
           '--valet-tree-stroke': theme.stroke(1),
           '--valet-tree-outline': theme.stroke(2),
           '--valet-tree-offset': theme.stroke(2),
+          ...(sx as object),
         } as React.CSSProperties
       }
     >
@@ -407,7 +411,7 @@ export function Tree<T>({
                 <Typography
                   variant='body'
                   family='mono'
-                  style={{ display: 'inline' }}
+                  sx={{ display: 'inline' }}
                 >
                   {getLabel(node.data)}
                 </Typography>

@@ -15,11 +15,11 @@ import Stack from '../layout/Stack';
 import Icon from '../primitives/Icon';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
-import type { Presettable } from '../../types';
+import type { Presettable, Sx } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 export interface DropzoneProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onDrop'>,
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onDrop' | 'style'>,
     Presettable {
   /** Allowable file types (same as react-dropzone `accept`) */
   accept?: DropzoneOptions['accept'];
@@ -37,6 +37,8 @@ export interface DropzoneProps
   onDrop?: DropzoneOptions['onDrop'];
   /** Stretch to fill parent width */
   fullWidth?: boolean;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -51,7 +53,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
   preset: p,
   fullWidth = false,
   className,
-  style,
+  sx,
   ...rest
 }) => {
   const [files, setFiles] = useState<File[]>([]);
@@ -80,7 +82,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
     <Grid
       columns={4}
       gap={0.5}
-      style={{ width: '100%' }}
+      sx={{ width: '100%' }}
     >
       {files.map((f, i) => (
         // Note: object URLs are not revoked here; callers can re-mount to clear
@@ -128,12 +130,12 @@ export const Dropzone: React.FC<DropzoneProps> = ({
   };
 
   const fileList = showFileList && !showPreviews && files.length > 0 && (
-    <Stack style={{ width: '100%' }}>
+    <Stack sx={{ width: '100%' }}>
       {files.map((f, i) => (
         <Stack
           key={i}
           direction='row'
-          style={{ alignItems: 'center' }}
+          sx={{ alignItems: 'center' }}
         >
           <Icon icon={fileIcon(f.name)} />
           <span
@@ -170,11 +172,11 @@ export const Dropzone: React.FC<DropzoneProps> = ({
       ref={setPanelRef}
       variant='alt'
       fullWidth={fullWidth}
-      style={{
+      sx={{
         width: fullWidth ? `calc(100% - ${theme.spacing(1)} * 2)` : undefined,
         textAlign: 'center',
         cursor: 'pointer',
-        ...style,
+        ...sx,
       }}
       className={[presetCls, className, isDragActive ? 'drag-active' : '']
         .filter(Boolean)

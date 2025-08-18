@@ -10,7 +10,7 @@ import { preset } from '../../css/stylePresets';
 import { useOptionalForm } from './FormControl';
 import { toRgb, mix, toHex } from '../../helpers/color';
 import type { Theme } from '../../system/themeStore';
-import type { Presettable } from '../../types';
+import type { Presettable, Sx } from '../../types';
 
 /*───────────────────────────────────────────────────────────────────────────*/
 /* Public prop contracts                                                    */
@@ -19,7 +19,7 @@ export type CheckboxSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export interface CheckboxProps
   extends Omit<
       React.InputHTMLAttributes<HTMLInputElement>,
-      'type' | 'size' | 'onChange' | 'value' | 'defaultValue'
+      'type' | 'size' | 'onChange' | 'value' | 'defaultValue' | 'style'
     >,
     Presettable {
   checked?: boolean;
@@ -28,6 +28,8 @@ export interface CheckboxProps
   label?: ReactNode;
   size?: CheckboxSize | number | string;
   onChange?: (checked: boolean, event: ChangeEvent<HTMLInputElement>) => void;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 /*───────────────────────────────────────────────────────────────────────────*/
@@ -145,7 +147,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
       onChange,
       preset: presetKey,
       className,
-      style,
+      sx,
       children,
       ...inputRest
     },
@@ -213,7 +215,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
     return (
       <Wrapper
         htmlFor={id}
-        style={{ '--checkbox-gap': SZ.gap, ...style } as React.CSSProperties}
+        style={{ '--checkbox-gap': SZ.gap, ...sx } as React.CSSProperties}
         className={mergedCls}
         $disabled={disabled}
         $disabledColor={disabledColor}

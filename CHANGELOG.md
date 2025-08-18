@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.28.0]
+- `style={{}}` behavior changed to `sx={{}}` for all Valet components
+
 ## [0.27.0]
 - `Grid` behavior change to improve `adpative` behavior
 

@@ -151,7 +151,7 @@ export default function LLMChatPage() {
         <Button
           size='lg'
           onClick={() => navigate('/chat-demo')}
-          style={{ marginTop: theme.spacing(1) }}
+          sx={{ marginTop: theme.spacing(1) }}
         >
           View Example →
         </Button>

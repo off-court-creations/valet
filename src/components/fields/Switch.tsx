@@ -8,7 +8,7 @@ import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { useOptionalForm } from './FormControl';
-import type { Presettable } from '../../types';
+import type { Presettable, Sx } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 /* Size map helper                                           */
@@ -88,7 +88,7 @@ const Thumb = styled('span')<{
 /*───────────────────────────────────────────────────────────*/
 /* Public props                                              */
 export interface SwitchProps
-  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onChange'>,
+  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onChange' | 'style'>,
     Presettable {
   /** Controlled checked state. */
   checked?: boolean;
@@ -100,6 +100,8 @@ export interface SwitchProps
   name?: string;
   /** Visual size; defaults to `md`. */
   size?: SwitchSize;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -115,7 +117,7 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
       disabled = false,
       preset: p,
       className,
-      style,
+      sx,
       ...btnProps
     },
     ref,
@@ -180,7 +182,7 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
             '--valet-switch-outline': theme.stroke(2),
             '--valet-switch-offset': theme.stroke(2),
             '--valet-switch-pad': theme.stroke(2),
-            ...style,
+            ...sx,
           } as React.CSSProperties
         }
       >

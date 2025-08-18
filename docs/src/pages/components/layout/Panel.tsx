@@ -127,7 +127,7 @@ export default function PanelDemoPage() {
               </Typography>
               <Panel
                 fullWidth
-                style={{ marginBottom: theme.spacing(4) }}
+                sx={{ marginBottom: theme.spacing(4) }}
               >
                 <Typography>
                   Stretch me edge-to-edge with <code>fullWidth</code>
@@ -135,16 +135,16 @@ export default function PanelDemoPage() {
               </Panel>
 
               {/* 5. Inline style overrides --------------------------------------- */}
-              <Typography variant='h3'>Inline style</Typography>
+              <Typography variant='h3'>Inline sx</Typography>
               <Panel
-                style={{
+                sx={{
                   borderRadius: 12,
                   border: `2px dashed ${theme.colors['text']}`,
                 }}
                 preset='codePanel'
               >
                 <Typography>
-                  Custom dashed border &amp; radius via <code>style</code>
+                  Custom dashed border &amp; radius via <code>sx</code>
                 </Typography>
               </Panel>
 
@@ -152,7 +152,7 @@ export default function PanelDemoPage() {
               <Typography variant='h3'>Nested Panels</Typography>
               <Panel
                 background={theme.colors['primary']}
-                style={{
+                sx={{
                   padding: theme.spacing(1),
                   marginBottom: theme.spacing(4),
                 }}
@@ -160,7 +160,7 @@ export default function PanelDemoPage() {
                 <Panel
                   variant='alt'
                   fullWidth
-                  style={{ padding: theme.spacing(1) }}
+                  sx={{ padding: theme.spacing(1) }}
                 >
                   <Typography>
                     Parent sets&nbsp;
@@ -172,7 +172,7 @@ export default function PanelDemoPage() {
 
               {/* 7. Preset demos -------------------------------------------------- */}
               <Typography variant='h3'>Presets</Typography>
-              <Stack style={{ marginBottom: theme.spacing(4) }}>
+              <Stack sx={{ marginBottom: theme.spacing(4) }}>
                 <Panel preset='fancyHolder'>
                   <Typography>preset=&quot;fancyHolder&quot;</Typography>
                 </Panel>

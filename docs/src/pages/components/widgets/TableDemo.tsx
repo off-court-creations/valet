@@ -110,7 +110,7 @@ export default function TableDemoPage() {
         >
           <Stack
             direction='row'
-            style={{ alignItems: 'center', flexWrap: 'wrap' }}
+            sx={{ alignItems: 'center', flexWrap: 'wrap' }}
           >
             <Typography
               variant='h2'
@@ -134,7 +134,7 @@ export default function TableDemoPage() {
         >
           <Stack
             direction='row'
-            style={{ flexWrap: 'wrap', alignItems: 'flex-end' }}
+            sx={{ flexWrap: 'wrap', alignItems: 'flex-end' }}
           >
             <TextField
               as='input'
@@ -147,7 +147,7 @@ export default function TableDemoPage() {
               onChange={(e) =>
                 setRows(Math.max(1, Math.min(500, Number((e.target as HTMLInputElement).value))))
               }
-              style={{ width: 120 }}
+              sx={{ width: 120 }}
             />
 
             <Checkbox
@@ -211,7 +211,7 @@ export default function TableDemoPage() {
         <Button
           size='lg'
           onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing(1) }}
+          sx={{ marginTop: theme.spacing(1) }}
         >
           ← Back
         </Button>
