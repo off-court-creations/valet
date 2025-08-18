@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.28.4]
+- Fix: RichChat always keeps input visible and makes messages the scroll container. Resolves portrait screens not showing newest chat or input; messages now scroll under the input instead of hiding it.
+
 ## [0.28.3]
 - Pagination: normalize WebKit button appearance with transparent background
 
@@ -522,6 +525,7 @@ All notable changes to this project will be documented in this file. The format 
 
 - vibe coded
 
+[v0.28.4]: https://github.com/off-court-creations/valet/releases/tag/v0.28.4
 [v0.28.3]: https://github.com/off-court-creations/valet/releases/tag/v0.28.3
 [v0.28.2]: https://github.com/off-court-creations/valet/releases/tag/v0.28.2
 [v0.28.1]: https://github.com/off-court-creations/valet/releases/tag/v0.28.1
