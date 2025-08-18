@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+- Pagination: normalize WebKit button appearance with transparent background
+
 ## [0.28.2]
 - DateSelector: auto-compact mode for narrow containers
 
