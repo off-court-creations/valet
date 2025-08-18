@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.28.2]
+- DateSelector: auto-compact mode for narrow containers
+
 ## [0.28.1]
 - Fix: persistent Drawer now respects AppBar offset and no longer renders under the AppBar; height adjusts to avoid overlap. Also offsets the adaptive toggle button.
 
