@@ -35,7 +35,7 @@ export default function KeyModal({ open, onClose }: KeyModalProps) {
       <Panel
         centered
         compact
-        style={{ maxWidth: 480 }}
+        sx={{ maxWidth: 480 }}
       >
         <Stack>
           <Typography

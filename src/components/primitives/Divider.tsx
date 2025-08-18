@@ -6,13 +6,13 @@ import React from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
-import type { Presettable, SpacingProps, Space } from '../../types';
+import type { Presettable, SpacingProps, Space, Sx } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
 
 export type DividerOrientation = 'horizontal' | 'vertical';
 
 export interface DividerProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'color'>,
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'color' | 'style'>,
     Presettable,
     Pick<SpacingProps, 'pad' | 'compact'> {
   /** Orientation of the divider line. */
@@ -23,6 +23,8 @@ export interface DividerProps
   thickness?: number | string;
   /** Length along the main axis; number ⇒ px, string passes through. */
   length?: number | string | undefined;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 /* Wrapper provides spacing envelope; child renders the actual line.
@@ -61,7 +63,7 @@ export const Divider: React.FC<DividerProps> = ({
   compact,
   preset: p,
   className,
-  style,
+  sx,
   ...rest
 }) => {
   const { theme } = useTheme();
@@ -80,7 +82,7 @@ export const Divider: React.FC<DividerProps> = ({
       $orient={orientation}
       $len={len}
       className={[presetClass, className].filter(Boolean).join(' ')}
-      style={style}
+      style={sx}
     >
       <Line
         role='separator'

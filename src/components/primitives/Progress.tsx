@@ -6,7 +6,7 @@ import React, { forwardRef } from 'react';
 import { styled, keyframes } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
-import type { Presettable } from '../../types';
+import type { Presettable, Sx } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 /* Public API                                                */
@@ -15,7 +15,7 @@ export type ProgressMode = 'determinate' | 'indeterminate' | 'buffer';
 export type ProgressSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 export interface ProgressProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'>,
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children' | 'style'>,
     Presettable {
   /** Linear (default) or Circular. */
   variant?: ProgressVariant;
@@ -31,6 +31,8 @@ export interface ProgressProps
   showLabel?: boolean;
   /** Color override (defaults to theme.primary). */
   color?: string | undefined;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -164,7 +166,7 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
       color,
       preset: p,
       className,
-      style,
+      sx,
       ...divProps
     },
     ref,
@@ -241,7 +243,7 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
           {...ariaProps}
           ref={ref}
           className={mergedCls}
-          style={style}
+          style={sx}
         >
           <CircleWrap $d={box}>
             <svg
@@ -299,7 +301,7 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
         {...ariaProps}
         ref={ref}
         className={mergedCls}
-        style={style}
+        style={sx}
       >
         <Track $h={h}>
           {/* BUFFER BAR */}

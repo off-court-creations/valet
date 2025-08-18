@@ -8,12 +8,12 @@ import { preset } from '../../css/stylePresets';
 import { useTheme } from '../../system/themeStore';
 import { useSurface } from '../../system/surfaceStore';
 import { shallow } from 'zustand/shallow';
-import type { Presettable, SpacingProps, Space } from '../../types';
+import type { Presettable, SpacingProps, Space, Sx } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
 
 /*───────────────────────────────────────────────────────────*/
 export interface GridProps
-  extends React.HTMLAttributes<HTMLDivElement>,
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'>,
     Presettable,
     Pick<SpacingProps, 'gap' | 'pad' | 'compact'> {
   columns?: number;
@@ -21,6 +21,8 @@ export interface GridProps
   adaptive?: boolean;
   /** Compact zeros both pad and gap */
   compact?: boolean;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -43,7 +45,7 @@ export const Grid: React.FC<GridProps> = ({
   compact = false,
   adaptive = false,
   preset: p,
-  style,
+  sx,
   className,
   children,
   ...rest
@@ -66,7 +68,7 @@ export const Grid: React.FC<GridProps> = ({
       $cols={effectiveCols}
       $gap={g}
       $pad={pad}
-      style={style}
+      style={sx}
       className={[presetClass, className].filter(Boolean).join(' ')}
     >
       {children}

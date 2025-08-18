@@ -124,7 +124,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   function Home() {
     return (
       <Surface>
-        <Stack gap={2} style={{ padding: '1.5rem' }}>
+        <Stack gap={2} sx={{ padding: '1.5rem' }}>
           <Typography variant="h2">Hello, valet</Typography>
           <Button variant="primary">Click me</Button>
         </Stack>
@@ -163,7 +163,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               direction='row'
               gap={1}
               wrap
-              style={{ alignItems: 'center' }}
+              sx={{ alignItems: 'center' }}
             >
               {/* Hello Valet removed */}
               <Button

@@ -10,11 +10,11 @@ import { IconButton } from './IconButton';
 import { Select } from './Select';
 import { useOptionalForm } from './FormControl';
 import { toRgb, mix, toHex } from '../../helpers/color';
-import type { Presettable } from '../../types';
+import type { Presettable, Sx } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 export interface DateSelectorProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'>,
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'style'>,
     Presettable {
   /** Controlled ISO date value (YYYY-MM-DD). */
   value?: string;
@@ -36,6 +36,8 @@ export interface DateSelectorProps
   defaultEndValue?: string;
   /** Fires with start and end ISO values when range changes. */
   onRangeChange?: (start: string, end: string) => void;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -138,7 +140,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   maxDate: maxDateProp,
   preset: p,
   className,
-  style,
+  sx,
   ...rest
 }) => {
   const { theme } = useTheme();
@@ -251,7 +253,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
       $bg={theme.colors.backgroundAlt}
       $text={theme.colors.text}
       className={cls}
-      style={{ '--valet-date-radius': theme.radius(1), ...style } as React.CSSProperties}
+      style={{ '--valet-date-radius': theme.radius(1), ...sx } as React.CSSProperties}
     >
       <Header $gap={theme.spacing(1)}>
         <div style={{ display: 'flex', gap: theme.spacing(0.5) }}>
@@ -290,7 +292,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
             size='xs'
             value={viewMonth}
             onChange={(v) => setViewMonth(Number(v))}
-            style={{ flex: 1 }}
+            sx={{ flex: 1 }}
           >
             {months.map((idx) => (
               <Select.Option
@@ -312,7 +314,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
               setViewYear(yr);
               setViewMonth(m);
             }}
-            style={{ flex: 1 }}
+            sx={{ flex: 1 }}
           >
             {years.map((y) => (
               <Select.Option

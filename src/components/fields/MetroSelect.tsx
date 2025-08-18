@@ -14,7 +14,7 @@ import { Typography } from '../primitives/Typography';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { toHex, toRgb, mix } from '../../helpers/color';
-import type { Presettable } from '../../types';
+import type { Presettable, Sx } from '../../types';
 import { styled } from '../../css/createStyled';
 
 export type Primitive = string | number;
@@ -33,7 +33,10 @@ const useMetro = () => {
 };
 
 export interface MetroSelectProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'value' | 'defaultValue'>,
+  extends Omit<
+      React.HTMLAttributes<HTMLDivElement>,
+      'onChange' | 'value' | 'defaultValue' | 'style'
+    >,
     Presettable {
   value?: Primitive | Primitive[];
   defaultValue?: Primitive | Primitive[];
@@ -41,13 +44,19 @@ export interface MetroSelectProps
   multiple?: boolean;
   onChange?: (v: Primitive | Primitive[]) => void;
   children: React.ReactNode;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
-export interface MetroOptionProps extends React.HTMLAttributes<HTMLDivElement>, Presettable {
+export interface MetroOptionProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'>,
+    Presettable {
   value: Primitive;
   icon: string | React.ReactElement;
   label: React.ReactNode;
   disabled?: boolean;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 const HoverWrap = styled('div')<{
@@ -85,7 +94,7 @@ export const Option: React.FC<MetroOptionProps> = ({
   label,
   disabled = false,
   preset: p,
-  style,
+  sx,
   className,
   ...rest
 }) => {
@@ -143,7 +152,7 @@ export const Option: React.FC<MetroOptionProps> = ({
         variant='alt'
         compact
         onClick={() => !disabled && setValue(value)}
-        style={{
+        sx={{
           width: '6rem',
           height: '6rem',
           overflow: 'hidden',
@@ -158,7 +167,7 @@ export const Option: React.FC<MetroOptionProps> = ({
           color: disabled ? disabledColor : selected ? theme.colors.primaryText : undefined,
           opacity: disabled ? 0.45 : 1,
           transition: 'background 120ms ease, border-color 120ms ease, color 120ms ease',
-          ...style,
+          ...sx,
         }}
       >
         <div className='valet-hover-bg' />
@@ -197,7 +206,7 @@ export const MetroSelect: MetroSelectComponent = ({
   multiple = false,
   preset: p,
   className,
-  style,
+  sx,
   children,
   ...rest
 }) => {
@@ -237,7 +246,7 @@ export const MetroSelect: MetroSelectComponent = ({
         compact
         gap={gap}
         {...rest}
-        style={style}
+        sx={sx}
         className={[presetCls, className].filter(Boolean).join(' ')}
       >
         {children}

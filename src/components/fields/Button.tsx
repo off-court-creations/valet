@@ -8,19 +8,23 @@ import { useTheme } from '../../system/themeStore';
 import type { Theme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { Typography } from '../primitives/Typography';
-import type { Presettable } from '../../types';
+import type { Presettable, Sx } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 export type ButtonVariant = 'contained' | 'outlined';
 export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type ButtonToken = 'primary' | 'secondary' | 'tertiary';
 
-export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, Presettable {
+export interface ButtonProps
+  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'style'>,
+    Presettable {
   color?: ButtonToken | string;
   textColor?: ButtonToken | string;
   variant?: ButtonVariant;
   size?: ButtonSize | number | string;
   fullWidth?: boolean;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -156,6 +160,7 @@ export const Button: React.FC<ButtonProps> = ({
   preset: p,
   className,
   children,
+  sx,
   ...rest
 }) => {
   const { theme, mode } = useTheme();
@@ -281,7 +286,7 @@ export const Button: React.FC<ButtonProps> = ({
   return (
     <Root
       {...rest}
-      style={{ '--valet-text-color': labelColor } as React.CSSProperties}
+      style={{ '--valet-text-color': labelColor, ...(sx as object) } as React.CSSProperties}
       className={[presetClasses, className].filter(Boolean).join(' ')}
       $variant={variant}
       $height={height}

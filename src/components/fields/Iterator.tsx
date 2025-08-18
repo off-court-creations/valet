@@ -8,12 +8,12 @@ import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { IconButton } from './IconButton';
 import { useOptionalForm } from './FormControl';
-import type { Presettable } from '../../types';
+import type { Presettable, Sx } from '../../types';
 import type { Theme } from '../../system/themeStore';
 
 /*───────────────────────────────────────────────────────────*/
 export interface IteratorProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'>,
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'style'>,
     Presettable {
   value?: number;
   defaultValue?: number;
@@ -23,6 +23,8 @@ export interface IteratorProps
   max?: number;
   step?: number;
   width?: number | string;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -69,7 +71,7 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
       disabled = false,
       preset: p,
       className,
-      style,
+      sx,
       ...rest
     },
     ref,
@@ -155,7 +157,7 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
       <Wrapper
         theme={theme}
         className={cls}
-        style={style}
+        style={sx}
       >
         <IconButton
           size='xs'

@@ -121,7 +121,7 @@ export default function LLMChatDemoPage() {
         <Button
           size='lg'
           onClick={() => navigate('/llmchat')}
-          style={{ marginTop: theme.spacing(1) }}
+          sx={{ marginTop: theme.spacing(1) }}
         >
           Docs →
         </Button>
@@ -129,7 +129,7 @@ export default function LLMChatDemoPage() {
         <Button
           size='lg'
           onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing(1) }}
+          sx={{ marginTop: theme.spacing(1) }}
         >
           ← Back
         </Button>

@@ -88,12 +88,12 @@ export default function TextFieldDemoPage() {
         <Typography variant='h3'>2. FormControl demo</Typography>
         <Panel
           variant='alt'
-          style={{ padding: theme.spacing(1) }}
+          sx={{ padding: theme.spacing(1) }}
         >
           <FormControl
             useStore={useContactForm}
             onSubmitValues={(vals) => alert(JSON.stringify(vals, null, 2))}
-            style={{
+            sx={{
               display: 'flex',
               flexDirection: 'column',
               gap: theme.spacing(1),
@@ -140,7 +140,7 @@ export default function TextFieldDemoPage() {
         <Button
           size='lg'
           onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing(1) }}
+          sx={{ marginTop: theme.spacing(1) }}
         >
           ← Back
         </Button>

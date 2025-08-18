@@ -6,13 +6,13 @@ import React from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset, presetHas } from '../../css/stylePresets';
-import type { Presettable, SpacingProps } from '../../types';
+import type { Presettable, SpacingProps, Sx } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
 
 export type PanelVariant = 'main' | 'alt';
 
 export interface PanelProps
-  extends React.ComponentProps<'div'>,
+  extends Omit<React.ComponentProps<'div'>, 'style'>,
     Presettable,
     Pick<SpacingProps, 'pad' | 'compact'> {
   variant?: PanelVariant;
@@ -21,6 +21,11 @@ export interface PanelProps
   background?: string | undefined;
   /** Centre contents & propagate intent via CSS var */
   centered?: boolean;
+}
+
+/** Inline styles (with CSS var support) */
+export interface PanelProps {
+  sx?: Sx;
 }
 
 const Base = styled('div')<{
@@ -92,7 +97,7 @@ export const Panel: React.FC<PanelProps> = ({
   centered,
   preset: p,
   className,
-  style,
+  sx,
   background,
   compact,
   pad: padProp,
@@ -137,7 +142,7 @@ export const Panel: React.FC<PanelProps> = ({
       $bg={bg}
       $text={textColour}
       $pad={pad}
-      style={style}
+      style={sx}
       className={[presetClasses, className].filter(Boolean).join(' ')}
     >
       {children}

@@ -68,7 +68,7 @@ export default function PresetDemoPage() {
 
         <Typography
           variant='body'
-          style={{ marginBottom: theme.spacing(1) }}
+          sx={{ marginBottom: theme.spacing(1) }}
         >
           Every component below uses a different <code>preset</code>.
         </Typography>
@@ -81,7 +81,7 @@ export default function PresetDemoPage() {
           <Button
             preset='ghostButton'
             size='md'
-            style={{ marginLeft: theme.spacing(1) }}
+            sx={{ marginLeft: theme.spacing(1) }}
           >
             Ghost 1
           </Button>
@@ -95,14 +95,14 @@ export default function PresetDemoPage() {
       </Box>
 
       {/* Default-styled Box for contrast */}
-      <Box style={{ padding: theme.spacing(1) }}>
+      <Box sx={{ padding: theme.spacing(1) }}>
         <Typography>Default Box (no preset)</Typography>
       </Box>
 
       {/* Navigation */}
       <Stack
         direction='row'
-        style={{ padding: theme.spacing(1) }}
+        sx={{ padding: theme.spacing(1) }}
       >
         <Button
           variant='contained'

@@ -222,7 +222,7 @@ export default function RichChatDemoPage() {
         <Button
           size='lg'
           onClick={() => navigate('/richchat')}
-          style={{ marginTop: theme.spacing(1) }}
+          sx={{ marginTop: theme.spacing(1) }}
         >
           Docs →
         </Button>

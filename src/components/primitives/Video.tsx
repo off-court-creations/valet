@@ -5,7 +5,7 @@
 import React, { useRef, useState, useEffect, KeyboardEvent } from 'react';
 import { styled } from '../../css/createStyled';
 import { preset } from '../../css/stylePresets';
-import type { Presettable } from '../../types';
+import type { Presettable, Sx } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 /* Public types                                               */
@@ -55,8 +55,8 @@ export interface VideoProps extends Presettable {
   onError?(e: ErrorEvent): void;
   /** Class name passthrough. */
   className?: string;
-  /** Style passthrough. */
-  style?: React.CSSProperties;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -97,7 +97,7 @@ export const Video: React.FC<VideoProps> = ({
   onLoop,
   onError,
   className,
-  style,
+  sx,
   preset: p,
 }) => {
   const ref = useRef<HTMLVideoElement>(null);
@@ -151,7 +151,7 @@ export const Video: React.FC<VideoProps> = ({
       $h={height}
       $fit={objectFit}
       className={[presetCls, className].filter(Boolean).join(' ')}
-      style={style}
+      style={sx}
     >
       <video
         ref={ref}

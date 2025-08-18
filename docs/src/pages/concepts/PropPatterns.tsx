@@ -30,6 +30,11 @@ export default function UsagePage() {
       components: 'All components (besides Surface&apos;s internal LoadingBackdrop)',
     },
     {
+      prop: <code>sx</code>,
+      purpose: 'Inline style overrides (object of CSS rules)',
+      components: 'All components',
+    },
+    {
       prop: (
         <>
           <code>gap</code>, <code>pad</code>

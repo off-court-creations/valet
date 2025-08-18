@@ -14,7 +14,7 @@ import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { useOptionalForm } from './FormControl';
 import type { Theme } from '../../system/themeStore';
-import type { Presettable } from '../../types';
+import type { Presettable, Sx } from '../../types';
 
 /*───────────────────────────────────────────────────────────────────────────*/
 /* Prop contracts                                                            */
@@ -31,6 +31,8 @@ interface FieldCommon extends Presettable {
   fullWidth?: boolean;
   /** Override input font */
   fontFamily?: string;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 export type TextFieldProps =
@@ -102,7 +104,7 @@ export const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
       preset: presetName,
       className,
       rows,
-      style: styleProp,
+      sx: sxProp,
       ...rawRest
     } = props;
 
@@ -116,7 +118,7 @@ export const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
     const form = useOptionalForm<Record<string, unknown>>();
 
     const presetClasses = presetName ? preset(presetName) : '';
-    const wrapperStyle = fullWidth ? { flex: 1, width: '100%', ...styleProp } : styleProp;
+    const wrapperStyle = fullWidth ? { flex: 1, width: '100%', ...sxProp } : sxProp;
 
     return (
       <Wrapper

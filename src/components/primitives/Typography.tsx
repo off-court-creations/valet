@@ -9,11 +9,13 @@ import { useTheme } from '../../system/themeStore';
 import { useSurface } from '../../system/surfaceStore';
 import { shallow } from 'zustand/shallow';
 import { preset } from '../../css/stylePresets';
-import type { Presettable } from '../../types';
+import type { Presettable, Sx } from '../../types';
 
 export type Variant = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'body' | 'subtitle' | 'button';
 
-export interface TypographyProps extends React.HTMLAttributes<HTMLElement>, Presettable {
+export interface TypographyProps
+  extends Omit<React.HTMLAttributes<HTMLElement>, 'style'>,
+    Presettable {
   variant?: Variant;
   bold?: boolean;
   italic?: boolean;
@@ -28,6 +30,8 @@ export interface TypographyProps extends React.HTMLAttributes<HTMLElement>, Pres
   fontFamily?: string;
   /** Control whitespace handling for multi-line/code text */
   whitespace?: 'normal' | 'pre' | 'pre-wrap' | 'pre-line';
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 const mapping: Record<Variant, keyof JSX.IntrinsicElements> = {
@@ -57,6 +61,7 @@ export const Typography: React.FC<TypographyProps> = ({
   whitespace = 'normal',
   preset: p,
   className,
+  sx,
   children,
   ...props
 }) => {
@@ -136,6 +141,7 @@ export const Typography: React.FC<TypographyProps> = ({
       $noSelect={noSelect}
       $ws={whitespace}
       className={[presetClasses, className].filter(Boolean).join(' ')}
+      style={sx}
     >
       {children}
     </Component>

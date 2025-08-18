@@ -150,7 +150,7 @@ export default function SelectDemoPage() {
             <Typography variant='h3'>2. Controlled – single</Typography>
             <Stack
               direction='row'
-              style={{ alignItems: 'center' }}
+              sx={{ alignItems: 'center' }}
             >
               <Select
                 value={pet}
@@ -169,7 +169,7 @@ export default function SelectDemoPage() {
             <Typography variant='h3'>3. Controlled – multiple</Typography>
             <Stack
               direction='row'
-              style={{ alignItems: 'center' }}
+              sx={{ alignItems: 'center' }}
             >
               <Select
                 multiple
@@ -177,7 +177,7 @@ export default function SelectDemoPage() {
                 onChange={(v) => setLangs(v as string[])}
                 placeholder='Languages'
                 size='lg'
-                style={{ minWidth: 260 }}
+                sx={{ minWidth: 260 }}
               >
                 <Select.Option value='js'>JavaScript</Select.Option>
                 <Select.Option value='ts'>TypeScript</Select.Option>
@@ -247,7 +247,7 @@ export default function SelectDemoPage() {
                   name='country'
                   placeholder='Country'
                   size='md'
-                  style={{ maxWidth: 260 }}
+                  sx={{ maxWidth: 260 }}
                 >
                   <Select.Option value='us'>United States</Select.Option>
                   <Select.Option value='ca'>Canada</Select.Option>
@@ -259,7 +259,7 @@ export default function SelectDemoPage() {
                   multiple
                   placeholder='Hobbies'
                   size='sm'
-                  style={{ maxWidth: 300 }}
+                  sx={{ maxWidth: 300 }}
                 >
                   <Select.Option value='coding'>Coding</Select.Option>
                   <Select.Option value='music'>Music</Select.Option>
@@ -272,7 +272,7 @@ export default function SelectDemoPage() {
 
             {submitted && (
               <Box
-                style={{
+                sx={{
                   background: theme.colors['surfaceElevated'],
                   padding: theme.spacing(1),
                   borderRadius: 6,

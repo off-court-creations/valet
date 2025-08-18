@@ -66,7 +66,7 @@ export default function AccordionDemoPage() {
           size='sm'
           variant='outlined'
           onClick={() => setOpenSingle((prev) => (prev[0] === 1 ? [] : [1]))}
-          style={{ alignSelf: 'flex-start' }}
+          sx={{ alignSelf: 'flex-start' }}
         >
           Toggle second item programmatically
         </Button>
@@ -142,7 +142,7 @@ export default function AccordionDemoPage() {
         <Button
           size='lg'
           onClick={() => navigate('/')}
-          style={{ marginTop: theme.spacing(1) }}
+          sx={{ marginTop: theme.spacing(1) }}
         >
           ← Back
         </Button>

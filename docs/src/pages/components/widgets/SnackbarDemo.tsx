@@ -119,7 +119,7 @@ export default function SnackbarDemoPage() {
             <Button
               size='sm'
               onClick={() => setAutoOpen(true)}
-              style={{ alignSelf: 'flex-start' }}
+              sx={{ alignSelf: 'flex-start' }}
             >
               Trigger auto-hide snackbar
             </Button>
@@ -136,7 +136,7 @@ export default function SnackbarDemoPage() {
               size='sm'
               variant='outlined'
               onClick={() => setCtrlOpen(true)}
-              style={{ alignSelf: 'flex-start' }}
+              sx={{ alignSelf: 'flex-start' }}
             >
               Trigger controlled snackbar
             </Button>
@@ -164,7 +164,7 @@ export default function SnackbarDemoPage() {
               size='sm'
               variant='outlined'
               onClick={() => setNoStackOpen(true)}
-              style={{ alignSelf: 'flex-start' }}
+              sx={{ alignSelf: 'flex-start' }}
             >
               Trigger noStack snackbar
             </Button>
@@ -209,7 +209,7 @@ export default function SnackbarDemoPage() {
         <Button
           size='lg'
           onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing(1) }}
+          sx={{ marginTop: theme.spacing(1) }}
         >
           ← Back
         </Button>

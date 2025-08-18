@@ -5,10 +5,10 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { styled } from '../../css/createStyled';
 import { preset } from '../../css/stylePresets';
-import type { Presettable } from '../../types';
+import type { Presettable, Sx } from '../../types';
 
 export interface ImageProps
-  extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'width' | 'height'>,
+  extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'width' | 'height' | 'style'>,
     Presettable {
   /** Image source URL */
   src: string;
@@ -24,6 +24,8 @@ export interface ImageProps
   lazy?: boolean;
   /** Placeholder src until loaded */
   placeholder?: string;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 const Img = styled('img')<{
@@ -51,7 +53,7 @@ export const Image: React.FC<ImageProps> = ({
   placeholder,
   preset: p,
   className,
-  style,
+  sx,
   draggable,
   onDragStart,
   loading: loadingAttr,
@@ -90,7 +92,7 @@ export const Image: React.FC<ImageProps> = ({
       $radius={r}
       loading={lazy ? 'lazy' : loadingAttr}
       className={[presetCls, className].filter(Boolean).join(' ')}
-      style={style}
+      style={sx}
       draggable={draggable ?? false}
       onDragStart={(e) => {
         e.preventDefault();

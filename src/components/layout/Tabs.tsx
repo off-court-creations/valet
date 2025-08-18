@@ -19,7 +19,7 @@ import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { Tooltip } from '../widgets/Tooltip';
-import type { Presettable, SpacingProps } from '../../types';
+import type { Presettable, SpacingProps, Sx } from '../../types';
 import { Typography } from '../primitives/Typography';
 import { resolveSpace } from '../../utils/resolveSpace';
 
@@ -161,7 +161,7 @@ const Panel = styled('div')`
 
 /*───────────────────────────────────────────────────────────*/
 export interface TabsProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'>,
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'style'>,
     Presettable,
     Pick<SpacingProps, 'gap' | 'pad' | 'compact'> {
   active?: number;
@@ -170,6 +170,8 @@ export interface TabsProps
   orientation?: 'horizontal' | 'vertical';
   placement?: 'top' | 'bottom' | 'left' | 'right';
   centered?: boolean;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 export interface TabProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, Presettable {
   index?: number;
@@ -198,6 +200,7 @@ export const Tabs: React.FC<TabsProps> & {
   preset: p,
   className,
   children,
+  sx,
   ...divProps
 }) => {
   const { theme } = useTheme();
@@ -278,6 +281,7 @@ export const Tabs: React.FC<TabsProps> & {
         $gap={gap}
         $pad={pad}
         className={cls}
+        style={sx}
       >
         {stripFirst && (
           <TabList

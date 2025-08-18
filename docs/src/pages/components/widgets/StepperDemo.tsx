@@ -97,7 +97,7 @@ export default function StepperDemoPage() {
         <Button
           size='lg'
           onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing(1) }}
+          sx={{ marginTop: theme.spacing(1) }}
         >
           ← Back
         </Button>

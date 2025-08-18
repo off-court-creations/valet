@@ -9,18 +9,20 @@ import { useTheme } from '../../system/themeStore';
 import { useSurface } from '../../system/surfaceStore';
 import { shallow } from 'zustand/shallow';
 import { preset } from '../../css/stylePresets';
-import type { Presettable, Space } from '../../types';
+import type { Presettable, Space, Sx } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
 
 /*───────────────────────────────────────────────────────────*/
 export type AppBarToken = 'primary' | 'secondary' | 'tertiary';
 
-export interface AppBarProps extends React.HTMLAttributes<HTMLElement>, Presettable {
+export interface AppBarProps extends Omit<React.HTMLAttributes<HTMLElement>, 'style'>, Presettable {
   color?: AppBarToken | string;
   textColor?: AppBarToken | string;
   left?: React.ReactNode;
   right?: React.ReactNode;
   pad?: Space;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -66,7 +68,7 @@ export const AppBar: React.FC<AppBarProps> = ({
   pad: padProp,
   preset: p,
   className,
-  style,
+  sx,
   children,
   ...rest
 }) => {
@@ -134,7 +136,7 @@ export const AppBar: React.FC<AppBarProps> = ({
           '--valet-text-color': text,
           background: bg,
           color: text,
-          ...style,
+          ...sx,
         } as React.CSSProperties
       }
     >

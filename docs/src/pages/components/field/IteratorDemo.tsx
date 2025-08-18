@@ -137,7 +137,7 @@ export default function IteratorDemoPage() {
               <Typography variant='h3'>2. Controlled</Typography>
               <Stack
                 direction='row'
-                style={{ alignItems: 'center' }}
+                sx={{ alignItems: 'center' }}
               >
                 <Iterator
                   value={count}
@@ -198,7 +198,7 @@ export default function IteratorDemoPage() {
         <Button
           size='lg'
           onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing(1) }}
+          sx={{ marginTop: theme.spacing(1) }}
         >
           ← Back
         </Button>

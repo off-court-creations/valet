@@ -25,11 +25,13 @@ marked.use(
   }),
 );
 
-export interface MarkdownProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface MarkdownProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'> {
   /** Raw markdown text */
   data: string;
   /** Optional override for code block background */
   codeBackground?: string;
+  /** Inline styles (with CSS var support) */
+  sx?: import('../../types').Sx;
 }
 
 const LIGHT_BG = '#f6f8fa';
@@ -64,7 +66,7 @@ const renderInline = (tokens?: Token[]): React.ReactNode => {
             key={i}
             src={img.href}
             alt={img.text}
-            style={{ maxWidth: '100%' }}
+            sx={{ maxWidth: '100%' }}
           />
         );
       }
@@ -98,7 +100,7 @@ const renderTokens = (tokens: TokensList, codeBg: string): React.ReactNode =>
         return (
           <Typography
             key={i}
-            style={{ margin: '0.5rem 0' }}
+            sx={{ margin: '0.5rem 0' }}
           >
             {renderInline(p.tokens)}
           </Typography>
@@ -127,7 +129,7 @@ const renderTokens = (tokens: TokensList, codeBg: string): React.ReactNode =>
             key={i}
             preset='codePanel'
             background={codeBg}
-            style={{ margin: '0.5rem 0' }}
+            sx={{ margin: '0.5rem 0' }}
           >
             <pre style={{ margin: 0, background: 'transparent' }}>
               <code
@@ -173,7 +175,7 @@ export const Markdown: React.FC<MarkdownProps> = ({
   data,
   codeBackground,
   className,
-  style,
+  sx,
   ...rest
 }) => {
   const { mode } = useTheme();
@@ -195,7 +197,7 @@ export const Markdown: React.FC<MarkdownProps> = ({
     <Stack
       {...rest}
       className={className}
-      style={style}
+      sx={sx}
     >
       {renderTokens(tokens, resolvedBg)}
     </Stack>

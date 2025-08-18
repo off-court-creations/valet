@@ -82,7 +82,8 @@ export default function GridDemoPage() {
       description: (
         <>
           Standard attributes and events pass through (e.g., <code>id</code>, <code>role</code>,{' '}
-          <code>aria-*</code>, <code>onClick</code>, <code>style</code>, <code>className</code>).
+          <code>aria-*</code>, <code>onClick</code>, <code>className</code>). Use the{' '}
+          <code>sx</code> prop for inline style overrides.
         </>
       ),
     },
@@ -111,7 +112,7 @@ export default function GridDemoPage() {
                 </Typography>
                 <Typography>
                   - Keep tracks simple. Prefer <code>columns</code> with equal tracks; use{' '}
-                  <code>{`style={{ gridColumn: 'span N' }}`}</code> on children to span.
+                  <code>{`sx={{ gridColumn: 'span N' }}`}</code> on children to span.
                 </Typography>
                 <Typography>
                   - Share spacing with the system: gap and pad use the same spacing scale as other
@@ -132,7 +133,7 @@ export default function GridDemoPage() {
               >
                 <Box
                   fullWidth
-                  style={{
+                  sx={{
                     background: theme.colors['primary'] as string,
                     color: theme.colors['primaryText'] as string,
                     padding: theme.spacing(1),
@@ -142,7 +143,7 @@ export default function GridDemoPage() {
                 </Box>
                 <Box
                   fullWidth
-                  style={{
+                  sx={{
                     background: theme.colors['secondary'] as string,
                     color: theme.colors['secondaryText'] as string,
                     padding: theme.spacing(1),
@@ -163,7 +164,7 @@ export default function GridDemoPage() {
                   <Box
                     fullWidth
                     key={n}
-                    style={{
+                    sx={{
                       background: theme.colors['primary'] as string,
                       color: theme.colors['primaryText'] as string,
                       padding: theme.spacing(1),
@@ -190,7 +191,7 @@ export default function GridDemoPage() {
                   <Box
                     fullWidth
                     key={n}
-                    style={{
+                    sx={{
                       background: theme.colors['secondary'] as string,
                       color: theme.colors['secondaryText'] as string,
                       padding: theme.spacing(1),
@@ -215,25 +216,25 @@ export default function GridDemoPage() {
                 >
                   <Box
                     fullWidth
-                    style={{ padding: theme.spacing(1), textAlign: 'center' }}
+                    sx={{ padding: theme.spacing(1), textAlign: 'center' }}
                   >
                     A1
                   </Box>
                   <Box
                     fullWidth
-                    style={{ padding: theme.spacing(1), textAlign: 'center' }}
+                    sx={{ padding: theme.spacing(1), textAlign: 'center' }}
                   >
                     A2
                   </Box>
                   <Box
                     fullWidth
-                    style={{ padding: theme.spacing(1), textAlign: 'center' }}
+                    sx={{ padding: theme.spacing(1), textAlign: 'center' }}
                   >
                     A3
                   </Box>
                   <Box
                     fullWidth
-                    style={{ padding: theme.spacing(1), textAlign: 'center' }}
+                    sx={{ padding: theme.spacing(1), textAlign: 'center' }}
                   >
                     A4
                   </Box>
@@ -246,7 +247,7 @@ export default function GridDemoPage() {
                     <Box
                       fullWidth
                       key={n}
-                      style={{ padding: theme.spacing(1), textAlign: 'center' }}
+                      sx={{ padding: theme.spacing(1), textAlign: 'center' }}
                     >
                       {n}
                     </Box>
@@ -264,7 +265,11 @@ export default function GridDemoPage() {
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
             <Typography variant='h3'>Prop reference</Typography>
-            <Table data={data} columns={columns} constrainHeight={false} />
+            <Table
+              data={data}
+              columns={columns}
+              constrainHeight={false}
+            />
           </Tabs.Panel>
         </Tabs>
       </Stack>
@@ -287,7 +292,7 @@ function GridPlayground() {
         direction='row'
         wrap={false}
         gap={1}
-        style={{ alignItems: 'center' }}
+        sx={{ alignItems: 'center' }}
       >
         <Stack gap={0.25}>
           <Typography variant='subtitle'>columns</Typography>
@@ -329,7 +334,7 @@ function GridPlayground() {
           direction='row'
           wrap={false}
           gap={1}
-          style={{ alignItems: 'center' }}
+          sx={{ alignItems: 'center' }}
         >
           <Typography variant='subtitle'>adaptive</Typography>
           <Switch
@@ -349,7 +354,7 @@ function GridPlayground() {
           <Box
             fullWidth
             key={n}
-            style={{
+            sx={{
               background: theme.colors['tertiary'] as string,
               color: theme.colors['tertiaryText'] as string,
               padding: theme.spacing(1),

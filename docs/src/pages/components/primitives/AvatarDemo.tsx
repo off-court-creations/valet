@@ -141,7 +141,7 @@ export default function AvatarDemoPage() {
                 <Stack
                   key={s}
                   gap={0.5}
-                  style={{ alignItems: 'center' }}
+                  sx={{ alignItems: 'center' }}
                 >
                   <Avatar
                     email='support@gravatar.com'
@@ -174,7 +174,7 @@ export default function AvatarDemoPage() {
         <Button
           size='lg'
           onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing(1) }}
+          sx={{ marginTop: theme.spacing(1) }}
         >
           ← Back
         </Button>

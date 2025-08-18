@@ -152,7 +152,7 @@ export default function DropzoneDemoPage() {
 
         <Button
           onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing(2) }}
+          sx={{ marginTop: theme.spacing(2) }}
         >
           ← Back
         </Button>

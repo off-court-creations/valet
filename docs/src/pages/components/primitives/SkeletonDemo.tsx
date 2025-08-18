@@ -80,7 +80,7 @@ export default function SkeletonDemoPage() {
 
             <Button
               onClick={() => setLoading((l) => !l)}
-              style={{ alignSelf: 'flex-start', marginTop: theme.spacing(1) }}
+              sx={{ alignSelf: 'flex-start', marginTop: theme.spacing(1) }}
             >
               {loading ? 'Show content' : 'Show skeleton'}
             </Button>
@@ -168,7 +168,7 @@ export default function SkeletonDemoPage() {
         <Button
           size='lg'
           onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing(1) }}
+          sx={{ marginTop: theme.spacing(1) }}
         >
           ← Back
         </Button>

@@ -7,7 +7,7 @@ import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import type { Theme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
-import type { Presettable } from '../../types';
+import type { Presettable, Sx } from '../../types';
 import { Icon } from '../primitives/Icon';
 
 /*───────────────────────────────────────────────────────────*/
@@ -16,7 +16,7 @@ export type IconButtonVariant = 'contained' | 'outlined';
 export type IconButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 export interface IconButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'style'>,
     Presettable {
   variant?: IconButtonVariant;
   size?: IconButtonSize | number | string;
@@ -24,6 +24,8 @@ export interface IconButtonProps
   svg?: string | ReactElement<SVGProps<SVGSVGElement>>;
   /** Colour override for the glyph */
   iconColor?: string | undefined;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -119,7 +121,7 @@ export const IconButton: React.FC<IconButtonProps> = ({
   iconColor,
   preset: p,
   className,
-  style,
+  sx,
   ...rest
 }) => {
   const { theme } = useTheme();
@@ -161,7 +163,7 @@ export const IconButton: React.FC<IconButtonProps> = ({
       $primaryText={theme.colors.primaryText}
       $ripple={ripple}
       $strokeW={theme.stroke(1)}
-      style={{ ...geomStyle, ...style }}
+      style={{ ...geomStyle, ...sx }}
       className={[presetClasses, className].filter(Boolean).join(' ')}
     >
       <Icon

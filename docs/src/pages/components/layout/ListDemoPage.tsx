@@ -205,7 +205,7 @@ const data: Person[] = [
                 direction='row'
                 wrap={false}
                 gap={1}
-                style={{ alignItems: 'center' }}
+                sx={{ alignItems: 'center' }}
               >
                 <Typography variant='subtitle'>striped</Typography>
                 <Switch

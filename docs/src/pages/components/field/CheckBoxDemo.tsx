@@ -227,7 +227,7 @@ export default function CheckboxDemoPage() {
             <FormControl
               useStore={useSignupForm}
               onSubmitValues={handleSubmit}
-              style={{
+              sx={{
                 display: 'flex',
                 flexDirection: 'column',
                 gap: theme.spacing(1),
@@ -276,7 +276,7 @@ export default function CheckboxDemoPage() {
         <Button
           size='lg'
           onClick={() => navigate(-1)}
-          style={{ marginTop: theme.spacing(1) }}
+          sx={{ marginTop: theme.spacing(1) }}
         >
           ← Back
         </Button>

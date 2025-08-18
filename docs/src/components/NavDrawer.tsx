@@ -196,7 +196,7 @@ export default function NavDrawer() {
         expanded={expanded}
         onExpandedChange={handleExpandedChange}
         onNodeSelect={(n) => n.path && navigate(n.path)}
-        style={{ padding: theme.spacing(1) }}
+        sx={{ padding: theme.spacing(1) }}
       />
     </Drawer>
   );

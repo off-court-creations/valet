@@ -25,7 +25,7 @@ import { useSurface } from '../../system/surfaceStore';
 import { shallow } from 'zustand/shallow';
 import { preset } from '../../css/stylePresets';
 import { Typography } from '../primitives/Typography';
-import type { Presettable } from '../../types';
+import type { Presettable, Sx } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 /* Dismiss-context so nested children (e.g. IconButton) can
@@ -36,7 +36,9 @@ export const useSnackbar = () => useContext(SnackbarCtx);
 
 /*───────────────────────────────────────────────────────────*/
 /* Props                                                     */
-export interface SnackbarProps extends React.HTMLAttributes<HTMLDivElement>, Presettable {
+export interface SnackbarProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'>,
+    Presettable {
   /** Controlled open state – omit for uncontrolled */
   open?: boolean;
   /** Called when the snackbar has fully hidden */
@@ -47,6 +49,8 @@ export interface SnackbarProps extends React.HTMLAttributes<HTMLDivElement>, Pre
   message?: React.ReactNode;
   /** Disable the internal flex stack (children render 1:1)    */
   noStack?: boolean;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -105,7 +109,7 @@ export const Snackbar: React.FC<SnackbarProps> = ({
   /* Styling + passthrough ---------------------------------*/
   preset: p,
   className,
-  style,
+  sx,
   ...rest
 }) => {
   const { theme } = useTheme();
@@ -230,7 +234,7 @@ export const Snackbar: React.FC<SnackbarProps> = ({
         $dur={theme.motion.duration.base}
         $ease={theme.motion.easing.standard}
         className={classes}
-        style={style}
+        style={sx}
       >
         {body}
       </Root>

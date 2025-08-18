@@ -94,7 +94,7 @@ export function App() {
   /* Simple fallback – swap for a branded spinner when ready */
   const Fallback = (
     <Surface>
-      <Stack style={{ padding: '2rem', alignItems: 'center' }}>
+      <Stack sx={{ padding: '2rem', alignItems: 'center' }}>
         <Typography variant='subtitle'>Loading…</Typography>
       </Stack>
     </Surface>
