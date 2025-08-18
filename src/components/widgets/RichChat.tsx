@@ -250,14 +250,18 @@ export const RichChat: React.FC<RichChatProps> = ({
     update();
   }, [inputDisabled, element, update]);
 
-  // Auto-scroll to bottom if user is near the bottom when messages change
+  // Auto-scroll to bottom when new messages arrive if scrolling is possible
   useEffect(() => {
     const el = messagesRef.current;
     if (!el) return;
-    const nearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 40;
-    if (nearBottom) {
+    // Only act when there is vertical overflow (scrollbar present)
+    const shouldScroll = el.scrollHeight > el.clientHeight;
+    if (!shouldScroll) return;
+    // Defer to next frame to ensure layout reflects newly rendered message
+    const id = requestAnimationFrame(() => {
       el.scrollTop = el.scrollHeight;
-    }
+    });
+    return () => cancelAnimationFrame(id);
   }, [messages.length]);
 
   const doSubmit = () => {
@@ -343,7 +347,6 @@ export const RichChat: React.FC<RichChatProps> = ({
                       padding: theme.spacing(2),
                       animation: m.animate ? `${fadeIn} 0.2s ease-out` : undefined,
                       position: 'relative',
-                      minInlineSize: '12ch',
                     }}
                   >
                     <div>
