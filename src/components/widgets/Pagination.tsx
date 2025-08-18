@@ -51,7 +51,10 @@ const Root = styled('nav')<{
   gap: ${({ $gap }) => $gap};
 
   button {
+    -webkit-appearance: none;
+    appearance: none;
     background: none;
+    background-color: transparent;
     border: none;
     padding: ${({ $padV, $padH }) => `${$padV} ${$padH}`};
     cursor: pointer;

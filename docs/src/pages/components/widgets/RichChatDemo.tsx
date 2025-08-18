@@ -12,17 +12,13 @@ import {
   DateSelector,
   Iterator,
   IconButton,
-  useTheme,
 } from '@archway/valet';
-import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
 import type { RichMessage } from '@archway/valet';
 import monkey from '../../../assets/monkey.jpg';
 import present from '../../../assets/present.jpg';
 
 export default function RichChatDemoPage() {
-  const navigate = useNavigate();
-  const { theme, toggleMode } = useTheme();
   const [step, setStep] = useState(0);
   const [, setScheduled] = useState<boolean | null>(null);
   const [messages, setMessages] = useState<RichMessage[]>([
@@ -211,21 +207,6 @@ export default function RichChatDemoPage() {
           userAvatar={present}
           systemAvatar={monkey}
         />
-
-        <Button
-          variant='outlined'
-          onClick={toggleMode}
-        >
-          Toggle light / dark mode
-        </Button>
-
-        <Button
-          size='lg'
-          onClick={() => navigate('/richchat')}
-          sx={{ marginTop: theme.spacing(1) }}
-        >
-          Docs →
-        </Button>
       </Stack>
     </Surface>
   );

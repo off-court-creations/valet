@@ -144,15 +144,14 @@ export const RichChat: React.FC<RichChatProps> = ({
   const inputRef = useRef<HTMLFormElement>(null);
   const uniqueId = useId();
   const [maxHeight, setMaxHeight] = useState<number>();
-  const [shouldConstrain, setShouldConstrain] = useState(false);
-  const [squelchScrollbars, setSquelchScrollbars] = useState(false);
+  // Constrain messages area height; keep input visible.
+  // Avoid scroll locking by keeping scrollbars active; no squelch frames
   const constraintRef = useRef(false);
   // Retained for parity with other constrained components; not used in RichChat's
   // "take remaining page height" behavior.
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const bottomRef = useRef(0);
   const rafRef = useRef<number>(0);
-  const squelchRafRef = useRef<number>(0);
   const prevHeightRef = useRef<number | undefined>(undefined);
   const prevConstrainedRef = useRef(false);
 
@@ -160,11 +159,7 @@ export const RichChat: React.FC<RichChatProps> = ({
 
   const inputDisabled = disableInput || messages.some((m) => m.form);
 
-  const calcCutoff = () => {
-    if (typeof document === 'undefined') return 32;
-    const fs = parseFloat(getComputedStyle(document.documentElement).fontSize);
-    return (isNaN(fs) ? 16 : fs) * 2;
-  };
+  // cutoff logic no longer used; we always constrain
 
   const runUpdate = useCallback(() => {
     const node = wrapRef.current;
@@ -193,63 +188,40 @@ export const RichChat: React.FC<RichChatProps> = ({
     }
 
     const availableForMessages = Math.max(0, availableForWrapper - footerH - gapPx);
-    const cutoff = calcCutoff();
 
-    // Clamp as soon as we have enough room to grow to the bottom; scrollbar appears only if needed
-    const shouldClamp = availableForMessages >= cutoff;
-
-    if (shouldClamp) {
-      if (!constraintRef.current) {
-        surfEl.scrollTop = 0;
-        surfEl.scrollLeft = 0;
-      }
-      constraintRef.current = true;
-      if (!prevConstrainedRef.current) {
-        prevConstrainedRef.current = true;
-        setShouldConstrain(true);
-      }
-      const newHeight = Math.max(0, availableForMessages);
-      if (prevHeightRef.current !== newHeight) {
-        prevHeightRef.current = newHeight;
-        setMaxHeight(newHeight);
-      }
-    } else {
-      constraintRef.current = false;
-      if (prevConstrainedRef.current) {
-        prevConstrainedRef.current = false;
-        setShouldConstrain(false);
-      }
-      if (prevHeightRef.current !== undefined) {
-        prevHeightRef.current = undefined;
-        setMaxHeight(undefined);
-      }
+    // Always constrain RichChat so the input stays visible and
+    // the messages list becomes the scroll container.
+    // Do not force parent Surface scroll position; allow user scroll
+    // and rely solely on internal Messages scrolling.
+    constraintRef.current = true;
+    prevConstrainedRef.current = true;
+    const newHeight = Math.max(1, availableForMessages); // ensure overflow engages
+    if (prevHeightRef.current !== newHeight) {
+      prevHeightRef.current = newHeight;
+      setMaxHeight(newHeight);
     }
   }, [element, height, inputDisabled]);
 
   const update = useCallback(() => {
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    // Hide scrollbars for the measuring frame to avoid a flash
-    if (!squelchScrollbars) setSquelchScrollbars(true);
     rafRef.current = requestAnimationFrame(() => {
       runUpdate();
-      if (squelchRafRef.current) cancelAnimationFrame(squelchRafRef.current);
-      // Release the squelch on the next frame after layout settles
-      squelchRafRef.current = requestAnimationFrame(() => setSquelchScrollbars(false));
     });
-  }, [runUpdate, squelchScrollbars]);
+  }, [runUpdate]);
 
   useEffect(() => {
     if (!constrainHeight) {
       constraintRef.current = false;
-      setShouldConstrain(false);
       setMaxHeight(undefined);
     } else {
+      // force refresh when re-enabling constraints
       constraintRef.current = false;
+      runUpdate();
     }
-  }, [constrainHeight]);
+  }, [constrainHeight, runUpdate]);
 
   useLayoutEffect(() => {
-    if (!constrainHeight || !wrapRef.current || !element) return;
+    if (!wrapRef.current || !element) return;
     const node = wrapRef.current;
     registerChild(uniqueId, node, update);
     const ro = new ResizeObserver(update);
@@ -264,20 +236,29 @@ export const RichChat: React.FC<RichChatProps> = ({
       ro.disconnect();
       roInner.disconnect();
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      if (squelchRafRef.current) cancelAnimationFrame(squelchRafRef.current);
     };
-  }, [constrainHeight, element, uniqueId, registerChild, unregisterChild, update]);
+  }, [element, uniqueId, registerChild, unregisterChild, update]);
 
   useLayoutEffect(() => {
-    if (!constrainHeight || !wrapRef.current || !element) return;
+    if (!wrapRef.current || !element) return;
     update();
-  }, [constrainHeight, element, update]);
+  }, [element, update]);
 
   // Recalculate when input presence toggles (form messages)
   useLayoutEffect(() => {
-    if (!constrainHeight || !wrapRef.current || !element) return;
+    if (!wrapRef.current || !element) return;
     update();
-  }, [inputDisabled, constrainHeight, element, update]);
+  }, [inputDisabled, element, update]);
+
+  // Auto-scroll to bottom if user is near the bottom when messages change
+  useEffect(() => {
+    const el = messagesRef.current;
+    if (!el) return;
+    const nearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 40;
+    if (nearBottom) {
+      el.scrollTop = el.scrollHeight;
+    }
+  }, [messages.length]);
 
   const doSubmit = () => {
     if (!text.trim()) return;
@@ -299,7 +280,7 @@ export const RichChat: React.FC<RichChatProps> = ({
       {...rest}
       fullWidth
       variant='alt'
-      sx={sx}
+      sx={{ overflowY: 'visible', overflowX: 'hidden', ...sx }}
       className={cls}
     >
       <Wrapper
@@ -311,16 +292,12 @@ export const RichChat: React.FC<RichChatProps> = ({
           ref={messagesRef}
           $gap={theme.spacing(1.5)}
           $pad={theme.spacing(1.5)}
-          style={
-            shouldConstrain
-              ? {
-                  overflowY: squelchScrollbars ? 'hidden' : 'auto',
-                  maxHeight,
-                  scrollbarGutter: 'stable',
-                  overscrollBehavior: 'contain',
-                }
-              : undefined
-          }
+          style={{
+            overflowY: 'auto',
+            maxHeight,
+            scrollbarGutter: 'stable',
+            touchAction: 'auto',
+          }}
         >
           {messages
             .filter((m) => m.role !== 'system')
