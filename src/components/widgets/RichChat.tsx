@@ -284,6 +284,8 @@ export const RichChat: React.FC<RichChatProps> = ({
       {...rest}
       fullWidth
       variant='alt'
+      /* Remove outer padding on small portrait screens */
+      compact={portrait}
       sx={{ overflowY: 'visible', overflowX: 'hidden', ...sx }}
       className={cls}
     >
@@ -295,7 +297,8 @@ export const RichChat: React.FC<RichChatProps> = ({
         <Messages
           ref={messagesRef}
           $gap={theme.spacing(1.5)}
-          $pad={theme.spacing(1.5)}
+          /* Tighter padding in portrait to maximize horizontal space */
+          $pad={portrait ? theme.spacing(0.5) : theme.spacing(1.5)}
           style={{
             overflowY: 'auto',
             maxHeight,
@@ -306,8 +309,9 @@ export const RichChat: React.FC<RichChatProps> = ({
           {messages
             .filter((m) => m.role !== 'system')
             .map((m, i) => {
-              const sidePad = portrait ? theme.spacing(8) : theme.spacing(24);
-              const avatarPad = theme.spacing(1);
+              /* Reduce left/right padding around bubbles on portrait */
+              const sidePad = portrait ? theme.spacing(1) : theme.spacing(24);
+              const avatarPad = portrait ? theme.spacing(0.5) : theme.spacing(1);
               const content =
                 typeof m.content === 'string' ? (
                   m.role === 'assistant' ? (
@@ -334,17 +338,18 @@ export const RichChat: React.FC<RichChatProps> = ({
                       src={systemAvatar}
                       size='s'
                       variant='outline'
-                      sx={{ marginRight: theme.spacing(1) }}
+                      sx={{ marginRight: portrait ? theme.spacing(0.5) : theme.spacing(1) }}
                     />
                   )}
                   <Panel
                     variant='main'
                     background={m.role === 'user' ? theme.colors.primary : undefined}
                     sx={{
-                      maxWidth: 'min(75%, 48rem)',
+                      /* Allow near full-width bubbles on portrait */
+                      maxWidth: portrait ? '100%' : 'min(75%, 48rem)',
                       width: 'fit-content',
                       borderRadius: theme.spacing(1),
-                      padding: theme.spacing(2),
+                      padding: portrait ? theme.spacing(1.25) : theme.spacing(2),
                       animation: m.animate ? `${fadeIn} 0.2s ease-out` : undefined,
                       position: 'relative',
                     }}
@@ -377,7 +382,7 @@ export const RichChat: React.FC<RichChatProps> = ({
                       src={userAvatar}
                       size='s'
                       variant='outline'
-                      sx={{ marginLeft: theme.spacing(1) }}
+                      sx={{ marginLeft: portrait ? theme.spacing(0.5) : theme.spacing(1) }}
                     />
                   )}
                 </Row>

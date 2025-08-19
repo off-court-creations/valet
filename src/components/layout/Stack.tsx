@@ -1,6 +1,9 @@
 // ─────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
 // src/components/layout/Stack.tsx  | valet
 // overhaul: spacing refactor (container pad + gap, compact) – 2025-08-12
+// patched: overflow/max-height via CSS vars to cooperate with Grid adaptive on iOS
+// ─────────────────────────────────────────────────────────────
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
 import { styled } from '../../css/createStyled';
@@ -37,13 +40,15 @@ const StackContainer = styled('div')<{
 
   /* Boundary guards */
   max-width: 100%;
-  max-height: 100%;
+  /* Allow parents (Grid in adaptive portrait) to relax height */
+  max-height: var(--valet-stack-max-h, 100%);
   min-width: 0;
   min-height: 0;
 
   /* No horizontal scrolling, vertical allowed */
   overflow-x: hidden;
-  overflow-y: auto;
+  /* Allow parents to opt out of inner scroll when stacking */
+  overflow-y: var(--valet-stack-ov-y, auto);
 
   /* Hide native scrollbars where supported */
   scrollbar-width: none; /* Firefox */

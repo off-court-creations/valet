@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.28.7]
+- Fix: Adaptive `Grid` on older iOS/WebKit no longer forces an inner scrollbar on the first item. Panels now respect CSS vars for overflow/max-height, and `Grid` relaxes them in single‑column portrait so content stacks and the page scrolls naturally.
+
+## [0.28.6]
+- RichChat styling
+
 ## [0.28.5]
 - RichChat: auto-scrolls to bottom on new messages when scrollable, ensuring latest user/system messages are visible.
 
@@ -528,6 +534,8 @@ All notable changes to this project will be documented in this file. The format 
 
 - vibe coded
 
+[v0.28.7]: https://github.com/off-court-creations/valet/releases/tag/v0.28.7
+[v0.28.6]: https://github.com/off-court-creations/valet/releases/tag/v0.28.6
 [v0.28.5]: https://github.com/off-court-creations/valet/releases/tag/v0.28.5
 [v0.28.4]: https://github.com/off-court-creations/valet/releases/tag/v0.28.4
 [v0.28.3]: https://github.com/off-court-creations/valet/releases/tag/v0.28.3
