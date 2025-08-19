@@ -51,7 +51,7 @@ interface StyledFieldProps {
 
 const sharedFieldCSS = ({ theme, $error }: StyledFieldProps) => `
   padding: ${theme.spacing(1)} ${theme.spacing(1)};
-  border: ${theme.stroke(1)} solid ${($error ? theme.colors.secondary : theme.colors.text) + '44'};
+  border: ${theme.stroke(1)} solid ${($error ? theme.colors.error : theme.colors.text) + '44'};
   border-radius: ${theme.radius(1)};
   background: ${theme.colors.background};
   color: ${theme.colors.text};
@@ -85,7 +85,7 @@ const Label = styled('label')<{ theme: Theme }>`
 
 const Helper = styled('span')<{ theme: Theme; $error?: boolean }>`
   font-size: 0.75rem;
-  color: ${({ theme, $error }) => ($error ? theme.colors.secondary : theme.colors.text) + 'AA'};
+  color: ${({ theme, $error }) => ($error ? theme.colors.error : theme.colors.text) + 'AA'};
 `;
 
 /*───────────────────────────────────────────────────────────────────────────*/

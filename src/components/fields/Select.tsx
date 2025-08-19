@@ -85,7 +85,7 @@ const Trigger = styled('button')<{
   border: 1px solid var(--valet-border, #ffffff22);
   border-radius: ${({ $radius }) => $radius};
   background: var(--valet-bg, ${({ $bg }) => $bg});
-  color: var(--valet-text, ${({ $text }) => $text});
+  color: var(--valet-text-color, ${({ $text }) => $text});
   cursor: pointer;
   transition: border-color 0.15s;
 
@@ -203,8 +203,9 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLDivElement>) => {
   }
 
   const textCol = theme.colors.text;
-  const bg = theme.colors.surface;
-  const bgElev = theme.colors.surfaceElevated ?? theme.colors.backgroundAlt ?? bg;
+  // Use backgroundAlt for control backgrounds; avoid non-existent `surface` tokens
+  const bg = theme.colors.backgroundAlt;
+  const bgElev = theme.colors.backgroundAlt;
   const primary = theme.colors.primary;
 
   /* optional FormControl hook ------------------------------ */

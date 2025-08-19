@@ -722,58 +722,7 @@ export const Pagination: React.FC<PaginationProps> = ({
     [hasWindow, isAnimating, isSliding, winStart, pages, winEnd],
   );
 
-  // Intra-window nudge slide used for arrow navigation when window doesn't change
-  const nudgeSlide = React.useCallback(
-    (dir: 'left' | 'right', after: () => void) => {
-      if (isAnimating || isSliding) return;
-      const wrapRect = wrapRef.current?.getBoundingClientRect();
-      const wrapWidth = wrapRect?.width ?? 0;
-      const wrapHeight = wrapRect?.height ?? undefined;
-      // measure width of the button that determines our nudge distance
-      const activeBtn = btnRefs.current[page] as HTMLButtonElement | null;
-      const neighbor = btnRefs.current[
-        dir === 'right' ? page + 1 : page - 1
-      ] as HTMLButtonElement | null;
-      // Prefer neighbor width; fallback to active
-      let delta =
-        neighbor?.getBoundingClientRect().width ?? activeBtn?.getBoundingClientRect().width ?? 0;
-      if (!delta && wrapWidth && winSize) delta = wrapWidth / winSize;
-
-      // Lock the viewport and slide the existing set without changing window
-      setViewportW(wrapWidth);
-      setViewportH(wrapHeight);
-      setGroupA(visiblePages);
-      setGroupB([]);
-      setUnderlineFadeInstant(true);
-      setUnderlineVisible(false);
-      setIsSliding(true);
-      setSlideKind(dir === 'right' ? 'intra-right' : 'intra-left');
-      setSlideX(0);
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          setSlideX(dir === 'right' ? -Math.round(delta) : Math.round(delta));
-          window.setTimeout(() => {
-            // After slide completes, trigger the logical page change and snap back to base
-            suppressNextUnderlineAnim.current = true;
-            after();
-            requestAnimationFrame(() => {
-              setIsSliding(false);
-              setSlideKind('none');
-              requestAnimationFrame(() => {
-                updateUnderline();
-                setGroupA(null);
-                setGroupB(null);
-                setViewportW(undefined);
-                setViewportH(undefined);
-                setSlideX(0);
-              });
-            });
-          }, slideDurMs + 20);
-        });
-      });
-    },
-    [isAnimating, isSliding, page, visiblePages, winSize, slideDurMs, updateUnderline],
-  );
+  // (Removed unused nudgeSlide helper: redundant with other slide paths)
 
   const handlePrev = React.useCallback(() => {
     if (page <= 1) return;
@@ -791,7 +740,7 @@ export const Pagination: React.FC<PaginationProps> = ({
       return;
     }
     onChange?.(Math.max(1, page - 1));
-  }, [onChange, page, hasWindow, winStart, edgeSlideLeft, nudgeSlide]);
+  }, [onChange, page, hasWindow, winStart, edgeSlideLeft]);
 
   const handleNext = React.useCallback(() => {
     if (page >= count) return;
@@ -809,7 +758,7 @@ export const Pagination: React.FC<PaginationProps> = ({
       return;
     }
     onChange?.(Math.min(count, page + 1));
-  }, [onChange, page, count, hasWindow, winEnd, edgeSlideRight, nudgeSlide]);
+  }, [onChange, page, count, hasWindow, winEnd, edgeSlideRight]);
 
   const scrollLeft = React.useCallback(() => {
     if (isAnimating || isSliding) return;

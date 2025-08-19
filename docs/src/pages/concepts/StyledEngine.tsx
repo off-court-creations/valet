@@ -48,8 +48,8 @@ const Badge = styled('span', ({ theme }) => ({
   borderRadius: 999,
   paddingInline: theme.spacing(1),
   height: 24,
-  background: theme.colors.primary[9],
-  color: theme.colors.primary[1],
+  background: theme.colors.primary,
+  color: theme.colors.primaryText,
 }));
 `}</code>
           </pre>

@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.29.0]
+- Theme: add `error`/`errorText` tokens to light and dark palettes.
+- Fields: use `theme.colors.error` for `TextField` borders/helpers and `KeyModal` error text.
+- `Select`: fix `--valet-text-color` usage and standardize control backgrounds on `backgroundAlt`.
+- `Modal`: switch dialog background to `backgroundAlt` for consistency with controls.
+- `Pagination`: remove unused `nudgeSlide` helper and clean up dependencies.
+- Docs: update Styled Engine badge example to `primary`/`primaryText` tokens.
+
 ## [0.28.7]
 - Fix: Adaptive `Grid` on older iOS/WebKit no longer forces an inner scrollbar on the first item. Panels now respect CSS vars for overflow/max-height, and `Grid` relaxes them in single‑column portrait so content stacks and the page scrolls naturally.
 
