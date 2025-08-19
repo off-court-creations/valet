@@ -88,7 +88,7 @@ export default function KeyModal({ open, onClose }: KeyModalProps) {
             </select>
           )}
 
-          {error && <Typography color={theme.colors.secondary}>{error}</Typography>}
+          {error && <Typography color={theme.colors.error}>{error}</Typography>}
 
           {!cipher && (
             <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
