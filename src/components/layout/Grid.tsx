@@ -35,6 +35,22 @@ const Root = styled('div')<{ $cols: number; $gap: string; $pad: string }>`
   box-sizing: border-box;
   width: 100%;
   max-width: 100%;
+
+  /* When collapsed to a single column (adaptive portrait),
+     relax child overflow/height so content stacks naturally and
+     the page scrolls instead of nested scrollers (older iOS fix). */
+  ${({ $cols }) =>
+    $cols === 1
+      ? `
+    & > * {
+      --valet-panel-ov-y: visible;
+      --valet-panel-max-h: none;
+      --valet-stack-ov-y: visible;
+      --valet-stack-max-h: none;
+      --valet-box-max-h: none;
+    }
+  `
+      : ''}
 `;
 
 /*───────────────────────────────────────────────────────────*/

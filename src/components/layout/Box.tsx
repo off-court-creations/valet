@@ -51,7 +51,8 @@ const Base = styled('div')<{
 
   /* Boundary guards */
   max-width: 100%;
-  max-height: 100%;
+  /* Allow parents (Grid adaptive) to relax height if needed */
+  max-height: var(--valet-box-max-h, 100%);
   min-width: 0;
   min-height: 0;
 

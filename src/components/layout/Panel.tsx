@@ -1,6 +1,9 @@
 // ─────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
 // src/components/layout/Panel.tsx  | valet
 // spacing refactor: container pad + compact – 2025‑08‑12
+// patched: overflow/max-height via CSS vars for adaptive Grid behavior
+// ─────────────────────────────────────────────────────────────
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
 import { styled } from '../../css/createStyled';
@@ -47,13 +50,15 @@ const Base = styled('div')<{
 
   /* Boundary guards */
   max-width: 100%;
-  max-height: 100%;
+  /* Use CSS var so parents (e.g., Grid adaptive stack) can relax it */
+  max-height: var(--valet-panel-max-h, 100%);
   min-width: 0;
   min-height: 0;
 
   /* Prevent horizontal scrolling */
   overflow-x: hidden;
-  overflow-y: auto;
+  /* Use CSS var so parents can opt out of inner scroll on stack */
+  overflow-y: var(--valet-panel-ov-y, auto);
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE & Edge */
   &::-webkit-scrollbar {
