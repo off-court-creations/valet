@@ -3,6 +3,7 @@
 // windows 8 start screen style grid select
 // patch: add valet-esque hover tint on options – 2025‑08‑12
 // patch: support multiple selection via `multiple` prop – 2025‑08‑12
+// patch: sync --valet-text-color with Option color – 2025‑08‑19
 // ─────────────────────────────────────────────────────────────
 /* eslint-disable react/prop-types */
 
@@ -147,6 +148,10 @@ export const Option: React.FC<MetroOptionProps> = ({
       $selected={selected && !disabled}
       className={[presetCls, className].filter(Boolean).join(' ')}
     >
+      {/**
+       * Ensure Typography inside the option tracks the same color as icons.
+       * We do this by setting --valet-text-color in lockstep with the computed color.
+       */}
       <Panel
         {...rest}
         variant='alt'
@@ -164,7 +169,11 @@ export const Option: React.FC<MetroOptionProps> = ({
           borderColor:
             selected && !disabled ? theme.colors.primary : disabled ? disabledColor : undefined,
           background: selected && !disabled ? theme.colors.primary : undefined,
+          // Compute text color for icons and labels; keep Typography in sync via CSS var.
           color: disabled ? disabledColor : selected ? theme.colors.primaryText : undefined,
+          ['--valet-text-color' as const]:
+            (disabled ? disabledColor : selected ? theme.colors.primaryText : undefined) ??
+            'currentColor',
           opacity: disabled ? 0.45 : 1,
           transition: 'background 120ms ease, border-color 120ms ease, color 120ms ease',
           ...sx,

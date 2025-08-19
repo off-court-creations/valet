@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.29.1]
+- `MetroSelect` color theme adjustments
+
 ## [0.29.0]
 - Theme: add `error`/`errorText` tokens to light and dark palettes.
 - Fields: use `theme.colors.error` for `TextField` borders/helpers and `KeyModal` error text.
@@ -542,6 +545,8 @@ All notable changes to this project will be documented in this file. The format 
 
 - vibe coded
 
+[v0.29.1]: https://github.com/off-court-creations/valet/releases/tag/v0.29.1
+[v0.29.0]: https://github.com/off-court-creations/valet/releases/tag/v0.29.0
 [v0.28.7]: https://github.com/off-court-creations/valet/releases/tag/v0.28.7
 [v0.28.6]: https://github.com/off-court-creations/valet/releases/tag/v0.28.6
 [v0.28.5]: https://github.com/off-court-creations/valet/releases/tag/v0.28.5
