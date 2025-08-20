@@ -3,8 +3,10 @@
 // Demonstrates placement-aware <Tabs/> with varied panel content.
 // ─────────────────────────────────────────────────────────────────────────────
 import { useState } from 'react';
-import { Surface, Stack, Typography, Button, Tabs, Icon, useTheme } from '@archway/valet';
+import { Surface, Stack, Typography, Button, Tabs, Icon, useTheme, Table } from '@archway/valet';
+import type { TableColumn } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
+import NavDrawer from '../../../components/NavDrawer';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Simple lorem snippets so every panel differs                               */
@@ -23,8 +25,95 @@ export default function TabsDemoPage() {
   /* Controlled example state -------------------------------------------- */
   const [activeCtl, setActiveCtl] = useState(0);
 
+  /* Reference table ----------------------------------------------------- */
+  interface Row {
+    prop: React.ReactNode;
+    type: React.ReactNode;
+    default: React.ReactNode;
+    description: React.ReactNode;
+  }
+
+  const columns: TableColumn<Row>[] = [
+    { header: 'Prop', accessor: 'prop' },
+    { header: 'Type', accessor: 'type' },
+    { header: 'Default', accessor: 'default' },
+    { header: 'Description', accessor: 'description' },
+  ];
+
+  const data: Row[] = [
+    {
+      prop: <code>alignX</code>,
+      type: <code>{`'left' | 'right' | 'center' | 'centered'`}</code>,
+      default: <code>{`'left'`}</code>,
+      description: 'Horizontal alignment of the tab strip (horizontal orientation).',
+    },
+    {
+      prop: <code>orientation</code>,
+      type: <code>{`'horizontal' | 'vertical'`}</code>,
+      default: <code>{`'horizontal'`}</code>,
+      description: 'Layout direction for the tab strip and panel.',
+    },
+    {
+      prop: <code>placement</code>,
+      type: <code>{`'top' | 'bottom' | 'left' | 'right'`}</code>,
+      default: <code>{`'top'`}</code>,
+      description: 'Which side the tab strip sits on relative to the panel.',
+    },
+    {
+      prop: <code>active</code>,
+      type: <code>number</code>,
+      default: <code>-</code>,
+      description: 'Controlled index of the active tab.',
+    },
+    {
+      prop: <code>defaultActive</code>,
+      type: <code>number</code>,
+      default: <code>0</code>,
+      description: 'Uncontrolled initial active tab index.',
+    },
+    {
+      prop: <code>onTabChange</code>,
+      type: <code>(i: number) =&gt; void</code>,
+      default: <code>-</code>,
+      description: 'Callback when the active tab changes.',
+    },
+    {
+      prop: (
+        <>
+          <code>gap</code>, <code>pad</code>
+        </>
+      ),
+      type: <code>number | string</code>,
+      default: (
+        <>
+          <code>gap=1</code>, <code>pad=1</code>
+        </>
+      ),
+      description: 'Spacing tokens; numbers map to theme.spacing(n), strings pass through.',
+    },
+    {
+      prop: <code>compact</code>,
+      type: <code>boolean</code>,
+      default: <code>false</code>,
+      description: 'Reduce internal spacing density.',
+    },
+    {
+      prop: <code>preset</code>,
+      type: <code>string | string[]</code>,
+      default: <code>-</code>,
+      description: 'Apply style presets to the container.',
+    },
+    {
+      prop: <code>sx</code>,
+      type: <code>object</code>,
+      default: <code>-</code>,
+      description: 'Inline style overrides (CSS object; supports CSS vars).',
+    },
+  ];
+
   return (
     <Surface>
+      <NavDrawer />
       <Stack>
         <Typography
           variant='h2'
@@ -140,7 +229,7 @@ export default function TabsDemoPage() {
 
         {/* 7. Centered headings ------------------------------------------- */}
         <Typography variant='h3'>7. Centered headings</Typography>
-        <Tabs centered>
+        <Tabs alignX='center'>
           <Tabs.Tab
             label={
               <Stack
@@ -185,7 +274,7 @@ export default function TabsDemoPage() {
         <Typography variant='h3'>8. Vertical – left centered</Typography>
         <Tabs
           orientation='vertical'
-          centered
+          alignX='center'
           sx={{ height: 200 }}
         >
           <Tabs.Tab
@@ -218,6 +307,14 @@ export default function TabsDemoPage() {
         >
           Toggle light / dark
         </Button>
+
+        {/* Reference ------------------------------------------------------- */}
+        <Typography variant='h3'>10. Reference</Typography>
+        <Table
+          data={data}
+          columns={columns}
+          constrainHeight={false}
+        />
 
         {/* Back nav -------------------------------------------------------- */}
         <Button

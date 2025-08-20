@@ -82,9 +82,14 @@ export default function UsagePage() {
       components: 'Stack, Grid, Tabs, Box, Panel, Accordion, Modal',
     },
     {
-      prop: <code>centered</code>,
-      purpose: 'Center content or text',
-      components: 'Box, Typography, Panel',
+      prop: <code>centerContent</code>,
+      purpose: 'Center inner content (layout)',
+      components: 'Box, Panel',
+    },
+    {
+      prop: <code>alignX</code>,
+      purpose: 'Horizontal placement when not fullWidth',
+      components: 'Box, Panel, Tabs (strip)',
     },
     {
       prop: <code>density</code>,

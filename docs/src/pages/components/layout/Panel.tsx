@@ -42,10 +42,16 @@ export default function PanelDemoPage() {
       description: 'Explicit background override',
     },
     {
-      prop: <code>centered</code>,
+      prop: <code>centerContent</code>,
       type: <code>boolean</code>,
       default: <code>false</code>,
       description: 'Center contents using flexbox',
+    },
+    {
+      prop: <code>alignX</code>,
+      type: <code>{`'left' | 'right' | 'center' | 'centered'`}</code>,
+      default: <code>{`'left'`}</code>,
+      description: 'Horizontal placement when not fullWidth',
     },
     {
       prop: <code>compact</code>,
@@ -193,16 +199,16 @@ export default function PanelDemoPage() {
                 </Panel>
               </Stack>
 
-              {/* 8. centered prop ----------------------------------------------- */}
+              {/* 8. centerContent prop ------------------------------------------ */}
               <Typography variant='h3'>
-                <code>centered</code> prop
+                <code>centerContent</code> prop
               </Typography>
               <Panel
-                centered
+                centerContent
                 fullWidth
               >
                 <Typography>
-                  Contents centered with <code>centered</code>
+                  Contents centered with <code>centerContent</code>
                 </Typography>
               </Panel>
             </Stack>

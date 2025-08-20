@@ -3,6 +3,7 @@
 // src/components/layout/Panel.tsx  | valet
 // spacing refactor: container pad + compact – 2025‑08‑12
 // patched: overflow/max-height via CSS vars for adaptive Grid behavior
+// patched: support alignX like Box; rename centered→centerContent – 2025‑08‑20
 // ─────────────────────────────────────────────────────────────
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
@@ -23,7 +24,9 @@ export interface PanelProps
   /** Explicit background override */
   background?: string | undefined;
   /** Centre contents & propagate intent via CSS var */
-  centered?: boolean;
+  centerContent?: boolean;
+  /** Horizontal placement of the panel when not fullWidth */
+  alignX?: 'left' | 'right' | 'center' | 'centered';
 }
 
 /** Inline styles (with CSS var support) */
@@ -35,6 +38,7 @@ const Base = styled('div')<{
   $variant: PanelVariant;
   $full?: boolean;
   $center?: boolean;
+  $alignX: 'left' | 'right' | 'center';
   $outline?: string;
   $strokeW: string;
   $bg?: string;
@@ -47,6 +51,11 @@ const Base = styled('div')<{
   display: ${({ $center, $full }) => ($center ? 'flex' : $full ? 'block' : 'inline-block')};
   width: ${({ $full }) => ($full ? '100%' : 'auto')};
   align-self: ${({ $full }) => ($full ? 'stretch' : 'flex-start')};
+  /* Anchor when not full width */
+  margin-left: ${({ $full, $alignX }) =>
+    $full ? '0' : $alignX === 'right' ? 'auto' : $alignX === 'center' ? 'auto' : '0'};
+  margin-right: ${({ $full, $alignX }) =>
+    $full ? '0' : $alignX === 'left' ? 'auto' : $alignX === 'center' ? 'auto' : '0'};
 
   /* Boundary guards */
   max-width: 100%;
@@ -99,7 +108,8 @@ const Base = styled('div')<{
 export const Panel: React.FC<PanelProps> = ({
   variant = 'main',
   fullWidth = false,
-  centered,
+  centerContent,
+  alignX,
   preset: p,
   className,
   sx,
@@ -136,12 +146,19 @@ export const Panel: React.FC<PanelProps> = ({
   const pad = resolveSpace(padProp, theme, compact, 1);
   const presetClasses = p ? preset(p) : '';
 
+  // Normalize alignX with Box semantics, keep 'centered' as alias for 'center'.
+  const normalizedAlign: 'left' | 'right' | 'center' = (() => {
+    const raw = (alignX ?? 'left') as 'left' | 'right' | 'center' | 'centered';
+    return raw === 'centered' ? 'center' : (raw as 'left' | 'right' | 'center');
+  })();
+
   return (
     <Base
       {...rest}
       $variant={variant}
       $full={fullWidth}
-      $center={centered}
+      $center={centerContent}
+      $alignX={normalizedAlign}
       $outline={theme.colors.backgroundAlt}
       $strokeW={theme.stroke(1)}
       $bg={bg}

@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.30.0]
+- Tabs: replace `centered` with Box-like `alignX` prop for tab strip alignment. Removed `centered`.
+- Panel: add Box-like `alignX` and rename `centered` (content centering) to `centerContent`.
+
 ## [0.29.1]
 - `MetroSelect` color theme adjustments
 
@@ -545,6 +549,7 @@ All notable changes to this project will be documented in this file. The format 
 
 - vibe coded
 
+[v0.30.0]: https://github.com/off-court-creations/valet/releases/tag/v0.30.0
 [v0.29.1]: https://github.com/off-court-creations/valet/releases/tag/v0.29.1
 [v0.29.0]: https://github.com/off-court-creations/valet/releases/tag/v0.29.0
 [v0.28.7]: https://github.com/off-court-creations/valet/releases/tag/v0.28.7
