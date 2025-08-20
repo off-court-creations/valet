@@ -33,7 +33,7 @@ export default function KeyModal({ open, onClose }: KeyModalProps) {
       onClose={onClose}
     >
       <Panel
-        centered
+        centerContent
         compact
         sx={{ maxWidth: 480 }}
       >

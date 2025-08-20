@@ -1,6 +1,7 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/layout/Tabs.tsx | valet
 // spacing refactor: container pad + gap; rem→spacing – 2025‑08‑12
+// patched: replace centered with Box-like alignX (no alias) – 2025‑08‑20
 // ─────────────────────────────────────────────────────────────
 /* eslint-disable react/prop-types */
 import React, {
@@ -71,7 +72,7 @@ const Root = styled('div')<{
 /*───────────────────────────────────────────────────────────*/
 const TabList = styled('div')<{
   $orientation: 'horizontal' | 'vertical';
-  $center?: boolean;
+  $align: 'left' | 'right' | 'center';
   $place: 'top' | 'bottom' | 'left' | 'right';
   $edgeGap?: string;
 }>`
@@ -79,12 +80,18 @@ const TabList = styled('div')<{
   flex-direction: ${({ $orientation }) => ($orientation === 'vertical' ? 'column' : 'row')};
   gap: 0;
 
-  ${({ $orientation, $center }) => {
-    if ($orientation === 'vertical')
-      return $center
+  ${({ $orientation, $align }) => {
+    if ($orientation === 'vertical') {
+      // For vertical tabs, treat center as vertical centering for parity with before.
+      return $align === 'center'
         ? 'align-self: stretch; height: 100%; justify-content: center;'
         : 'width: max-content;';
-    return $center ? 'justify-content: center;' : '';
+    }
+    return $align === 'right'
+      ? 'justify-content: flex-end;'
+      : $align === 'center'
+        ? 'justify-content: center;'
+        : '';
   }}
 
   /* Extra breathing room for right-placed vertical tabs:
@@ -169,7 +176,8 @@ export interface TabsProps
   onTabChange?: (i: number) => void;
   orientation?: 'horizontal' | 'vertical';
   placement?: 'top' | 'bottom' | 'left' | 'right';
-  centered?: boolean;
+  /** Horizontal alignment of the tab strip (horizontal orientation). */
+  alignX?: 'left' | 'right' | 'center' | 'centered';
   /** Inline styles (with CSS var support) */
   sx?: Sx;
 }
@@ -193,7 +201,7 @@ export const Tabs: React.FC<TabsProps> & {
   orientation = 'horizontal',
   placement: placementProp,
   onTabChange,
-  centered = false,
+  alignX,
   gap: gapProp,
   pad: padProp,
   compact = false,
@@ -272,6 +280,12 @@ export const Tabs: React.FC<TabsProps> & {
     (orientation === 'vertical' && placement === 'left');
   const edgeGap = theme.spacing(1);
 
+  // Normalize alignX with Box semantics.
+  const normalizedAlign: 'left' | 'right' | 'center' = (() => {
+    const raw = (alignX ?? 'left') as 'left' | 'right' | 'center' | 'centered';
+    return raw === 'centered' ? 'center' : (raw as 'left' | 'right' | 'center');
+  })();
+
   return (
     <TabsCtx.Provider value={ctx}>
       <Root
@@ -288,7 +302,7 @@ export const Tabs: React.FC<TabsProps> & {
             $orientation={orientation}
             $place={placement}
             $edgeGap={edgeGap}
-            $center={centered}
+            $align={normalizedAlign}
           >
             {tabs}
           </TabList>
@@ -301,7 +315,7 @@ export const Tabs: React.FC<TabsProps> & {
             $orientation={orientation}
             $place={placement}
             $edgeGap={edgeGap}
-            $center={centered}
+            $align={normalizedAlign}
           >
             {tabs}
           </TabList>
