@@ -347,8 +347,8 @@ export default function TabsDemoPage() {
         <Typography variant='body'>
           Resize the window narrow or on a phone to see the tab list wrap into multiple rows.
         </Typography>
-        <Box sx={{ maxWidth: 420 }}>
-          <Tabs sx={{ '--valet-tab-min': '7rem' }}>
+        <Box>
+          <Tabs>
             {months.map((m) => (
               <Tabs.Tab
                 key={`t-${m}`}

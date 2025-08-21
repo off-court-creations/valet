@@ -2,6 +2,7 @@
 // src/components/layout/Tabs.tsx | valet
 // spacing refactor: container pad + gap; rem→spacing – 2025‑08‑12
 // patched: replace centered with Box-like alignX (no alias) – 2025‑08‑20
+// patched: horizontal overflow scroll + drag with styled scrollbar – 2025‑08‑21
 // ─────────────────────────────────────────────────────────────
 /* eslint-disable react/prop-types */
 import React, {
@@ -24,6 +25,7 @@ import { Tooltip } from '../widgets/Tooltip';
 import type { Presettable, SpacingProps, Sx } from '../../types';
 import { Typography } from '../primitives/Typography';
 import { resolveSpace } from '../../utils/resolveSpace';
+import { withAlpha } from '../../helpers/color';
 
 /*───────────────────────────────────────────────────────────*/
 /* Context                                                   */
@@ -76,34 +78,38 @@ const TabList = styled('div')<{
   $align: 'left' | 'right' | 'center';
   $place: 'top' | 'bottom' | 'left' | 'right';
   $edgeGap?: string;
-  $wrap?: boolean;
-  $rowGap?: string;
+  $fadeLeft?: boolean;
+  $fadeRight?: boolean;
+  $scrollbarH?: string;
+  $thumb?: string;
+  $track?: string;
+  $fadeCol?: string;
+  $overflow?: boolean;
 }>`
   /* Ensure horizontal tab strip takes the full grid track width */
   ${({ $orientation }) => ($orientation === 'horizontal' ? 'width: 100%;' : '')}
 
-  ${({ $wrap, $orientation }) =>
-    $wrap && $orientation === 'horizontal' ? 'display: grid;' : 'display: flex;'}
-  flex-direction: ${({ $orientation, $wrap }) =>
-    $wrap && $orientation === 'horizontal'
-      ? 'initial'
-      : $orientation === 'vertical'
-        ? 'column'
-        : 'row'};
+  /* Always render as a single-row flex strip; enable horizontal scrolling */
+  display: flex;
+  flex-direction: ${({ $orientation }) => ($orientation === 'vertical' ? 'column' : 'row')};
   gap: 0;
 
-  /* Allow natural multi-line wrapping for horizontal tabs when not using grid */
-  ${({ $orientation, $wrap, $rowGap }) =>
-    $orientation === 'horizontal' && !$wrap ? `flex-wrap: wrap; row-gap: ${$rowGap ?? '0'};` : ''}
-
-  /* When wrapping is active, switch to a responsive grid
-     so tabs stack into multiple rows instead of overflowing. */
-  ${({ $wrap, $orientation, $rowGap }) =>
-    $wrap && $orientation === 'horizontal'
-      ? `grid-template-columns: repeat(auto-fit, minmax(var(--valet-tab-min, 8rem), 1fr)); row-gap: ${$rowGap ?? '0'}; column-gap: 0;`
+  /* Horizontal scrolling behavior with smooth momentum */
+  ${({ $orientation }) =>
+    $orientation === 'horizontal'
+      ? `
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    position: relative;
+    /* Improve drag hint */
+    cursor: grab;
+  `
       : ''}
 
-  ${({ $orientation, $align }) => {
+  ${({ $orientation, $align, $overflow }) => {
     if ($orientation === 'vertical') {
       // For vertical tabs, treat center as vertical centering for parity with before.
       return $align === 'center'
@@ -111,20 +117,13 @@ const TabList = styled('div')<{
         : 'width: max-content;';
     }
     // Horizontal alignment for non-wrapping mode
+    // If the strip overflows, force flex-start to avoid negative scroll origins
+    // that can clip the leftmost tab off-screen.
+    if ($overflow) return 'justify-content: flex-start;';
     if ($align === 'right') return 'justify-content: flex-end;';
     if ($align === 'center') return 'justify-content: center;';
     return '';
   }}
-
-  /* Horizontal alignment when grid wrap is active */
-  ${({ $wrap, $orientation, $align }) =>
-    $wrap && $orientation === 'horizontal'
-      ? $align === 'right'
-        ? 'justify-items: end;'
-        : $align === 'center'
-          ? 'justify-items: center;'
-          : 'justify-items: start;'
-      : ''}
 
   /* Extra breathing room for right-placed vertical tabs:
      push the indicator away from the container edge */
@@ -132,10 +131,74 @@ const TabList = styled('div')<{
     $orientation === 'vertical' && $place === 'right' && $edgeGap
       ? `padding-right: ${$edgeGap};`
       : ''}
+
+  /* Aesthetic horizontal scrollbar styling */
+  &::-webkit-scrollbar {
+    /* Hover-reveal scrollbar: default hidden, visible on hover */
+    height: var(--_sb-h, 0px);
+  }
+  &::-webkit-scrollbar-track {
+    background: ${({ $track }) => $track ?? 'transparent'};
+    border-radius: 999px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: ${({ $thumb }) => $thumb ?? 'rgba(127,127,127,0.35)'};
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  /* Firefox */
+  scrollbar-width: none;
+  ${({ $thumb, $track }) =>
+    $thumb || $track
+      ? `
+    &:hover{ scrollbar-width: thin; scrollbar-color: ${$thumb ?? '#808080'} ${$track ?? 'transparent'}; }
+  `
+      : `
+    &:hover{ scrollbar-width: thin; }
+  `}
+
+  /* set hover height var */
+  --_sb-hover-h: ${({ $scrollbarH }) => $scrollbarH ?? '8px'};
+  &:hover {
+    --_sb-h: var(--_sb-hover-h);
+  }
+
+  /* Fading edges to imply overflow */
+  &::before,
+  &::after {
+    content: '';
+    position: sticky;
+    top: 0;
+    bottom: 0;
+    width: 24px;
+    pointer-events: none;
+    z-index: 1;
+  }
+  &::before {
+    left: 0;
+    display: ${({ $fadeLeft }) => ($fadeLeft ? 'block' : 'none')};
+    background: linear-gradient(
+      to right,
+      ${({ $fadeCol }) => $fadeCol ?? 'rgba(0,0,0,0.18)'},
+      rgba(0, 0, 0, 0)
+    );
+  }
+  &::after {
+    right: 0;
+    display: ${({ $fadeRight }) => ($fadeRight ? 'block' : 'none')};
+    background: linear-gradient(
+      to left,
+      ${({ $fadeCol }) => $fadeCol ?? 'rgba(0,0,0,0.18)'},
+      rgba(0, 0, 0, 0)
+    );
+  }
 `;
 
 /*───────────────────────────────────────────────────────────*/
-/* Added -webkit-tap-highlight-color + touch-action to kill blue flash */
+/* Added -webkit-tap-highlight-color + touch-action to kill blue flash
+   Flex no-shrink is critical: it preserves intrinsic tab widths so text
+   stays on one line while the container scrolls horizontally. */
 const TabBtn = styled('button')<{
   $active: boolean;
   $primary: string;
@@ -145,6 +208,9 @@ const TabBtn = styled('button')<{
   $padH: string;
   $barW: string;
 }>`
+  /* Do not let tabs shrink in the horizontal strip; size to content */
+  flex: 0 0 auto;
+  flex-shrink: 0;
   background: transparent;
   border: none;
   color: inherit;
@@ -312,48 +378,132 @@ export const Tabs: React.FC<TabsProps> & {
     (orientation === 'horizontal' && placement === 'top') ||
     (orientation === 'vertical' && placement === 'left');
   const edgeGap = theme.spacing(1);
-  const rowGap = theme.spacing(1);
 
-  // Detect horizontal overflow and enable wrapping grid when needed
+  // Horizontal overflow handling and UX affordances
   const listRef = useRef<HTMLDivElement | null>(null);
-  const [wrap, setWrap] = useState(false);
+  const [fadeL, setFadeL] = useState(false);
+  const [fadeR, setFadeR] = useState(false);
+  const [overflowing, setOverflowing] = useState(false);
 
   useEffect(() => {
-    if (orientation !== 'horizontal') {
-      setWrap(false);
+    // Manage overflow fades based on scroll position
+    const el = listRef.current;
+    if (!el || orientation !== 'horizontal') {
+      setFadeL(false);
+      setFadeR(false);
       return;
     }
-    const el = listRef.current;
-    if (!el) return;
-    const assess = () => {
-      // Strategy 1: scroll/client width check (fast path)
-      let shouldWrap = el.scrollWidth > el.clientWidth + 1;
-      // Strategy 2: any child clipped relative to container rect (robust path)
-      if (!shouldWrap) {
-        const rect = el.getBoundingClientRect();
-        const rightEdge = rect.left + rect.width;
-        for (let i = 0; i < el.children.length; i++) {
-          const ch = el.children[i] as HTMLElement;
-          const cr = ch.getBoundingClientRect();
-          if (cr.right > rightEdge + 0.5) {
-            shouldWrap = true;
-            break;
-          }
-        }
-      }
-      setWrap(shouldWrap);
+    const update = () => {
+      const ov = el.scrollWidth > el.clientWidth + 1;
+      setOverflowing(ov);
+      const canL = el.scrollLeft > 0;
+      const canR = el.scrollLeft + el.clientWidth < el.scrollWidth - 1;
+      setFadeL(canL);
+      setFadeR(canR);
     };
-    assess();
-    const ro = new ResizeObserver(assess);
+    update();
+    const onScroll = () => update();
+    const ro = new ResizeObserver(update);
     ro.observe(el);
-    // Observe children as well to catch label/icon size changes
-    Array.from(el.children).forEach((ch) => ro.observe(ch as Element));
-    window.addEventListener('resize', assess);
+    el.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', update);
     return () => {
       ro.disconnect();
-      window.removeEventListener('resize', assess);
+      el.removeEventListener('scroll', onScroll as EventListener);
+      window.removeEventListener('resize', update);
     };
-  }, [orientation, tabs.length, placement]);
+  }, [orientation, tabs.length]);
+
+  // When becoming overflowing, reset scroll to show the first tab
+  useEffect(() => {
+    const el = listRef.current;
+    if (!el || orientation !== 'horizontal') return;
+    if (overflowing) {
+      el.scrollLeft = 0;
+    }
+  }, [overflowing, orientation]);
+
+  // Drag-to-scroll behaviour for the horizontal strip
+  useEffect(() => {
+    const el = listRef.current;
+    if (!el || orientation !== 'horizontal') return;
+
+    let dragging = false;
+    let maybeDrag = false;
+    let moved = false;
+    let startX = 0;
+    let startScroll = 0;
+
+    const onPointerDown = (e: PointerEvent) => {
+      if (e.button !== 0) return; // only primary
+      if (el.scrollWidth <= el.clientWidth + 1) return; // no overflow
+
+      // Ignore pointer downs in the scrollbar hover band to prevent
+      // fighting with the native scrollbar interaction.
+      const rect = el.getBoundingClientRect();
+      const scrollbarBandPx = 24; // conservative band to match hover-reveal height
+      const inScrollbar = e.clientY >= rect.bottom - scrollbarBandPx;
+      if (inScrollbar) return;
+
+      maybeDrag = true;
+      moved = false;
+      startX = e.clientX;
+      startScroll = el.scrollLeft;
+    };
+    const onPointerMove = (e: PointerEvent) => {
+      if (!maybeDrag && !dragging) return;
+      const dx = e.clientX - startX;
+      if (!dragging) {
+        if (Math.abs(dx) <= 5) return; // threshold before initiating drag
+        dragging = true;
+        el.setPointerCapture?.(e.pointerId);
+        el.style.cursor = 'grabbing';
+      }
+      moved = true;
+      el.scrollLeft = startScroll - dx;
+      e.preventDefault();
+    };
+    const endDrag = (e: PointerEvent) => {
+      if (!maybeDrag && !dragging) return;
+      maybeDrag = false;
+      if (!dragging) return;
+      dragging = false;
+      el.releasePointerCapture?.(e.pointerId);
+      el.style.cursor = '';
+    };
+    const onClickCapture = (e: MouseEvent) => {
+      // If we moved during this pointer interaction, swallow the click
+      if (moved) {
+        e.preventDefault();
+        e.stopPropagation();
+        moved = false;
+      }
+    };
+
+    el.addEventListener('pointerdown', onPointerDown);
+    el.addEventListener('pointermove', onPointerMove);
+    el.addEventListener('pointerup', endDrag);
+    el.addEventListener('pointercancel', endDrag);
+    el.addEventListener('click', onClickCapture, true);
+    const onWheel = (e: WheelEvent) => {
+      if (el.scrollWidth <= el.clientWidth) return; // no overflow
+      // Convert vertical wheel to horizontal scroll for mouse users
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        e.preventDefault();
+        e.stopPropagation();
+        el.scrollLeft += e.deltaY;
+      }
+    };
+    el.addEventListener('wheel', onWheel, { passive: false });
+    return () => {
+      el.removeEventListener('pointerdown', onPointerDown);
+      el.removeEventListener('pointermove', onPointerMove);
+      el.removeEventListener('pointerup', endDrag);
+      el.removeEventListener('pointercancel', endDrag);
+      el.removeEventListener('click', onClickCapture, true);
+      el.removeEventListener('wheel', onWheel as unknown as EventListener);
+    };
+  }, [orientation]);
 
   // Normalize alignX with Box semantics.
   const normalizedAlign: 'left' | 'right' | 'center' = (() => {
@@ -379,8 +529,13 @@ export const Tabs: React.FC<TabsProps> & {
             $place={placement}
             $edgeGap={edgeGap}
             $align={normalizedAlign}
-            $wrap={wrap}
-            $rowGap={rowGap}
+            $fadeLeft={fadeL}
+            $fadeRight={fadeR}
+            $scrollbarH={theme.stroke(5)}
+            $thumb={withAlpha(theme.colors.primary, 0.5)}
+            $track={withAlpha(theme.colors.text, 0.06)}
+            $fadeCol={withAlpha(theme.colors.text, 0.18)}
+            $overflow={overflowing}
           >
             {tabs}
           </TabList>
@@ -395,8 +550,13 @@ export const Tabs: React.FC<TabsProps> & {
             $place={placement}
             $edgeGap={edgeGap}
             $align={normalizedAlign}
-            $wrap={wrap}
-            $rowGap={rowGap}
+            $fadeLeft={fadeL}
+            $fadeRight={fadeR}
+            $scrollbarH={theme.stroke(5)}
+            $thumb={withAlpha(theme.colors.primary, 0.5)}
+            $track={withAlpha(theme.colors.text, 0.06)}
+            $fadeCol={withAlpha(theme.colors.text, 0.18)}
+            $overflow={overflowing}
           >
             {tabs}
           </TabList>

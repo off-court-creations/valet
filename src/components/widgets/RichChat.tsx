@@ -68,14 +68,16 @@ const Messages = styled('div')<{ $gap: string; $pad: string }>`
 
 const Row = styled('div')<{
   $from: 'user' | 'assistant' | 'system' | 'function' | 'tool';
-  $left: string;
-  $right: string;
+  $gap: string;
+  $padX: string;
 }>`
-  display: flex;
-  align-items: center;
-  justify-content: ${({ $from }) => ($from === 'user' ? 'flex-end' : 'flex-start')};
-  padding-left: ${({ $left }) => $left};
-  padding-right: ${({ $right }) => $right};
+  /* Two‑column lane: avatar | bubble (assistant) or bubble | avatar (user) */
+  display: grid;
+  grid-template-columns: ${({ $from }) => ($from === 'user' ? '1fr auto' : 'auto 1fr')};
+  align-items: start;
+  column-gap: ${({ $gap }) => $gap};
+  padding-left: ${({ $padX }) => $padX};
+  padding-right: ${({ $padX }) => $padX};
 `;
 
 const typingDot = keyframes`
@@ -309,9 +311,9 @@ export const RichChat: React.FC<RichChatProps> = ({
           {messages
             .filter((m) => m.role !== 'system')
             .map((m, i) => {
-              /* Reduce left/right padding around bubbles on portrait */
-              const sidePad = portrait ? theme.spacing(1) : theme.spacing(24);
-              const avatarPad = portrait ? theme.spacing(0.5) : theme.spacing(1);
+              /* Tight, symmetric gutters and consistent gap between avatar and bubble */
+              const padX = portrait ? theme.spacing(1) : theme.spacing(2);
+              const laneGap = portrait ? theme.spacing(0.5) : theme.spacing(1);
               const content =
                 typeof m.content === 'string' ? (
                   m.role === 'assistant' ? (
@@ -330,28 +332,29 @@ export const RichChat: React.FC<RichChatProps> = ({
                 <Row
                   key={i}
                   $from={m.role}
-                  $left={m.role === 'user' ? sidePad : avatarPad}
-                  $right={m.role === 'user' ? avatarPad : sidePad}
+                  $gap={laneGap}
+                  $padX={padX}
                 >
                   {m.role !== 'user' && systemAvatar && (
                     <Avatar
                       src={systemAvatar}
                       size='s'
                       variant='outline'
-                      sx={{ marginRight: portrait ? theme.spacing(0.5) : theme.spacing(1) }}
                     />
                   )}
                   <Panel
                     variant='main'
                     background={m.role === 'user' ? theme.colors.primary : undefined}
+                    alignX={m.role === 'user' ? 'right' : 'left'}
                     sx={{
-                      /* Allow near full-width bubbles on portrait */
+                      /* Readable max width and clean right/left alignment */
                       maxWidth: portrait ? '100%' : 'min(75%, 48rem)',
                       width: 'fit-content',
                       borderRadius: theme.spacing(1),
                       padding: portrait ? theme.spacing(1.25) : theme.spacing(2),
                       animation: m.animate ? `${fadeIn} 0.2s ease-out` : undefined,
                       position: 'relative',
+                      justifySelf: m.role === 'user' ? 'end' : 'start',
                     }}
                   >
                     <div>
@@ -382,7 +385,6 @@ export const RichChat: React.FC<RichChatProps> = ({
                       src={userAvatar}
                       size='s'
                       variant='outline'
-                      sx={{ marginLeft: portrait ? theme.spacing(0.5) : theme.spacing(1) }}
                     />
                   )}
                 </Row>
