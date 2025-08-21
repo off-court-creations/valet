@@ -80,9 +80,6 @@ const TabList = styled('div')<{
   $edgeGap?: string;
   $fadeLeft?: boolean;
   $fadeRight?: boolean;
-  $scrollbarH?: string;
-  $thumb?: string;
-  $track?: string;
   $fadeCol?: string;
   $overflow?: boolean;
 }>`
@@ -109,6 +106,8 @@ const TabList = styled('div')<{
   `
       : ''}
 
+  /* No extra padding for custom scrollbar; gradients imply overflow */
+
   ${({ $orientation, $align, $overflow }) => {
     if ($orientation === 'vertical') {
       // For vertical tabs, treat center as vertical centering for parity with before.
@@ -132,68 +131,70 @@ const TabList = styled('div')<{
       ? `padding-right: ${$edgeGap};`
       : ''}
 
-  /* Aesthetic horizontal scrollbar styling */
+  /* Hide native scrollbars for a clean gradient-only affordance */
   &::-webkit-scrollbar {
-    /* Hover-reveal scrollbar: default hidden, visible on hover */
-    height: var(--_sb-h, 0px);
+    display: none;
   }
-  &::-webkit-scrollbar-track {
-    background: ${({ $track }) => $track ?? 'transparent'};
-    border-radius: 999px;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: ${({ $thumb }) => $thumb ?? 'rgba(127,127,127,0.35)'};
-    border-radius: 999px;
-    border: 2px solid transparent;
-    background-clip: content-box;
-  }
-  /* Firefox */
-  scrollbar-width: none;
-  ${({ $thumb, $track }) =>
-    $thumb || $track
-      ? `
-    &:hover{ scrollbar-width: thin; scrollbar-color: ${$thumb ?? '#808080'} ${$track ?? 'transparent'}; }
-  `
-      : `
-    &:hover{ scrollbar-width: thin; }
-  `}
-
-  /* set hover height var */
-  --_sb-hover-h: ${({ $scrollbarH }) => $scrollbarH ?? '8px'};
-  &:hover {
-    --_sb-h: var(--_sb-hover-h);
-  }
+  scrollbar-width: none; /* Firefox */
 
   /* Fading edges to imply overflow */
+  /* Edge fades handled by outer wrapper for broader compatibility */
+`;
+
+/* Wrapper that hosts non-scrolling edge fades so they stay pinned */
+const TabStripWrap = styled('div')<{
+  $fadeLeft?: boolean;
+  $fadeRight?: boolean;
+  $fadeCol?: string;
+  $dur?: string;
+  $ease?: string;
+  $slide?: string;
+}>`
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+
   &::before,
   &::after {
     content: '';
-    position: sticky;
+    position: absolute;
     top: 0;
     bottom: 0;
-    width: 24px;
+    width: 40px;
     pointer-events: none;
-    z-index: 1;
+    z-index: 5;
+    transition:
+      opacity ${({ $dur }) => $dur ?? '160ms'}
+        ${({ $ease }) => $ease ?? 'cubic-bezier(0.2, 0.7, 0.1, 1)'},
+      transform ${({ $dur }) => $dur ?? '160ms'}
+        ${({ $ease }) => $ease ?? 'cubic-bezier(0.2, 0.7, 0.1, 1)'};
+    will-change: opacity, transform;
   }
   &::before {
     left: 0;
-    display: ${({ $fadeLeft }) => ($fadeLeft ? 'block' : 'none')};
+    opacity: ${({ $fadeLeft }) => ($fadeLeft ? 1 : 0)};
+    transform: translateX(${({ $fadeLeft, $slide }) => ($fadeLeft ? '0' : `-${$slide ?? '8px'}`)});
     background: linear-gradient(
-      to right,
-      ${({ $fadeCol }) => $fadeCol ?? 'rgba(0,0,0,0.18)'},
-      rgba(0, 0, 0, 0)
+      to left,
+      rgba(0, 0, 0, 0) 0%,
+      ${({ $fadeCol }) => ($fadeCol ? withAlpha($fadeCol, 0.35) : 'rgba(0,0,0,0.35)')} 60%,
+      ${({ $fadeCol }) => ($fadeCol ? withAlpha($fadeCol, 0.5) : 'rgba(0,0,0,0.5)')} 100%
     );
   }
   &::after {
     right: 0;
-    display: ${({ $fadeRight }) => ($fadeRight ? 'block' : 'none')};
+    opacity: ${({ $fadeRight }) => ($fadeRight ? 1 : 0)};
+    transform: translateX(${({ $fadeRight, $slide }) => ($fadeRight ? '0' : `${$slide ?? '8px'}`)});
     background: linear-gradient(
-      to left,
-      ${({ $fadeCol }) => $fadeCol ?? 'rgba(0,0,0,0.18)'},
-      rgba(0, 0, 0, 0)
+      to right,
+      rgba(0, 0, 0, 0) 0%,
+      ${({ $fadeCol }) => ($fadeCol ? withAlpha($fadeCol, 0.35) : 'rgba(0,0,0,0.35)')} 60%,
+      ${({ $fadeCol }) => ($fadeCol ? withAlpha($fadeCol, 0.5) : 'rgba(0,0,0,0.5)')} 100%
     );
   }
 `;
+
+/* Custom scroll hint removed: edge fades imply scrollability */
 
 /*───────────────────────────────────────────────────────────*/
 /* Added -webkit-tap-highlight-color + touch-action to kill blue flash
@@ -523,43 +524,57 @@ export const Tabs: React.FC<TabsProps> & {
         style={sx}
       >
         {stripFirst && (
-          <TabList
-            ref={listRef}
-            $orientation={orientation}
-            $place={placement}
-            $edgeGap={edgeGap}
-            $align={normalizedAlign}
+          <TabStripWrap
             $fadeLeft={fadeL}
             $fadeRight={fadeR}
-            $scrollbarH={theme.stroke(5)}
-            $thumb={withAlpha(theme.colors.primary, 0.5)}
-            $track={withAlpha(theme.colors.text, 0.06)}
-            $fadeCol={withAlpha(theme.colors.text, 0.18)}
-            $overflow={overflowing}
+            $fadeCol={theme.colors.primary}
+            $dur={theme.motion.duration.xlong}
+            $ease={theme.motion.easing.emphasized}
+            $slide={theme.spacing(2)}
           >
-            {tabs}
-          </TabList>
+            <TabList
+              ref={listRef}
+              $orientation={orientation}
+              $place={placement}
+              $edgeGap={edgeGap}
+              $align={normalizedAlign}
+              $fadeLeft={fadeL}
+              $fadeRight={fadeR}
+              $fadeCol={theme.colors.primary}
+              $overflow={overflowing}
+            >
+              {tabs}
+            </TabList>
+            {/* Custom scroll hint removed */}
+          </TabStripWrap>
         )}
 
         <Panel>{panels}</Panel>
 
         {!stripFirst && (
-          <TabList
-            ref={listRef}
-            $orientation={orientation}
-            $place={placement}
-            $edgeGap={edgeGap}
-            $align={normalizedAlign}
+          <TabStripWrap
             $fadeLeft={fadeL}
             $fadeRight={fadeR}
-            $scrollbarH={theme.stroke(5)}
-            $thumb={withAlpha(theme.colors.primary, 0.5)}
-            $track={withAlpha(theme.colors.text, 0.06)}
-            $fadeCol={withAlpha(theme.colors.text, 0.18)}
-            $overflow={overflowing}
+            $fadeCol={theme.colors.primary}
+            $dur={theme.motion.duration.xlong}
+            $ease={theme.motion.easing.emphasized}
+            $slide={theme.spacing(2)}
           >
-            {tabs}
-          </TabList>
+            <TabList
+              ref={listRef}
+              $orientation={orientation}
+              $place={placement}
+              $edgeGap={edgeGap}
+              $align={normalizedAlign}
+              $fadeLeft={fadeL}
+              $fadeRight={fadeR}
+              $fadeCol={theme.colors.primary}
+              $overflow={overflowing}
+            >
+              {tabs}
+            </TabList>
+            {/* Custom scroll hint removed */}
+          </TabStripWrap>
         )}
       </Root>
     </TabsCtx.Provider>
@@ -612,7 +627,7 @@ const Tab: React.FC<TabProps> = forwardRef<HTMLButtonElement, TabProps>(
         $place={placement}
         $padV={theme.spacing(2)}
         $padH={theme.spacing(3)}
-        $barW={theme.stroke(2)}
+        $barW={theme.stroke(4)}
         className={[p ? preset(p) : '', className].filter(Boolean).join(' ')}
       >
         {typeof content === 'string' || typeof content === 'number' ? (
