@@ -3,7 +3,17 @@
 // Demonstrates placement-aware <Tabs/> with varied panel content.
 // ─────────────────────────────────────────────────────────────────────────────
 import { useState } from 'react';
-import { Surface, Stack, Typography, Button, Tabs, Icon, useTheme, Table } from '@archway/valet';
+import {
+  Surface,
+  Stack,
+  Typography,
+  Button,
+  Tabs,
+  Icon,
+  useTheme,
+  Table,
+  Box,
+} from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
@@ -109,6 +119,22 @@ export default function TabsDemoPage() {
       default: <code>-</code>,
       description: 'Inline style overrides (CSS object; supports CSS vars).',
     },
+  ];
+
+  // Many tabs to demonstrate wrapping on narrow widths
+  const months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
   ];
 
   return (
@@ -315,6 +341,25 @@ export default function TabsDemoPage() {
           columns={columns}
           constrainHeight={false}
         />
+
+        {/* 11. Many tabs – wrapping demo --------------------------------- */}
+        <Typography variant='h3'>11. Many tabs – wrapping demo</Typography>
+        <Typography variant='body'>
+          Resize the window narrow or on a phone to see the tab list wrap into multiple rows.
+        </Typography>
+        <Box>
+          <Tabs>
+            {months.map((m) => (
+              <Tabs.Tab
+                key={`t-${m}`}
+                label={m}
+              />
+            ))}
+            {months.map((m, i) => (
+              <Tabs.Panel key={`p-${m}-${i}`}>{m + ' → Lorem ipsum dolor sit amet.'}</Tabs.Panel>
+            ))}
+          </Tabs>
+        </Box>
 
         {/* Back nav -------------------------------------------------------- */}
         <Button
