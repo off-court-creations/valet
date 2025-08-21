@@ -3,11 +3,10 @@
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-### Added
-- Tabs: drag-to-scroll with mouse when the tab strip overflows horizontally; vertical mouse wheel converts to horizontal scroll for usability.
 
-### Changed
-- Tabs: switch overflow behavior to single-row horizontal scroll with edge fade indicators; removes multi-row wrapping when tab strip exceeds width. Improves discoverability with a subtle gradient implying more content.
+## [0.30.1]
+- `Tabs`: switch overflow behavior to single-row horizontal scroll with edge fade indicators; removes multi-row wrapping when tab strip exceeds width. Improves discoverability with a subtle gradient implying more content.
+- `Tabs`: drag-to-scroll with mouse when the tab strip overflows horizontally; vertical mouse wheel converts to horizontal scroll for usability.
 
 ## [0.30.0]
 - Tabs: replace `centered` with Box-like `alignX` prop for tab strip alignment. Removed `centered`.
@@ -554,6 +553,7 @@ All notable changes to this project will be documented in this file. The format 
 
 - vibe coded
 
+[v0.30.1]: https://github.com/off-court-creations/valet/releases/tag/v0.30.1
 [v0.30.0]: https://github.com/off-court-creations/valet/releases/tag/v0.30.0
 [v0.29.1]: https://github.com/off-court-creations/valet/releases/tag/v0.29.1
 [v0.29.0]: https://github.com/off-court-creations/valet/releases/tag/v0.29.0
