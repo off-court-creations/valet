@@ -12,6 +12,7 @@ import React, {
   ReactNode,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -75,10 +76,32 @@ const TabList = styled('div')<{
   $align: 'left' | 'right' | 'center';
   $place: 'top' | 'bottom' | 'left' | 'right';
   $edgeGap?: string;
+  $wrap?: boolean;
+  $rowGap?: string;
 }>`
-  display: flex;
-  flex-direction: ${({ $orientation }) => ($orientation === 'vertical' ? 'column' : 'row')};
+  /* Ensure horizontal tab strip takes the full grid track width */
+  ${({ $orientation }) => ($orientation === 'horizontal' ? 'width: 100%;' : '')}
+
+  ${({ $wrap, $orientation }) =>
+    $wrap && $orientation === 'horizontal' ? 'display: grid;' : 'display: flex;'}
+  flex-direction: ${({ $orientation, $wrap }) =>
+    $wrap && $orientation === 'horizontal'
+      ? 'initial'
+      : $orientation === 'vertical'
+        ? 'column'
+        : 'row'};
   gap: 0;
+
+  /* Allow natural multi-line wrapping for horizontal tabs when not using grid */
+  ${({ $orientation, $wrap, $rowGap }) =>
+    $orientation === 'horizontal' && !$wrap ? `flex-wrap: wrap; row-gap: ${$rowGap ?? '0'};` : ''}
+
+  /* When wrapping is active, switch to a responsive grid
+     so tabs stack into multiple rows instead of overflowing. */
+  ${({ $wrap, $orientation, $rowGap }) =>
+    $wrap && $orientation === 'horizontal'
+      ? `grid-template-columns: repeat(auto-fit, minmax(var(--valet-tab-min, 8rem), 1fr)); row-gap: ${$rowGap ?? '0'}; column-gap: 0;`
+      : ''}
 
   ${({ $orientation, $align }) => {
     if ($orientation === 'vertical') {
@@ -87,12 +110,21 @@ const TabList = styled('div')<{
         ? 'align-self: stretch; height: 100%; justify-content: center;'
         : 'width: max-content;';
     }
-    return $align === 'right'
-      ? 'justify-content: flex-end;'
-      : $align === 'center'
-        ? 'justify-content: center;'
-        : '';
+    // Horizontal alignment for non-wrapping mode
+    if ($align === 'right') return 'justify-content: flex-end;';
+    if ($align === 'center') return 'justify-content: center;';
+    return '';
   }}
+
+  /* Horizontal alignment when grid wrap is active */
+  ${({ $wrap, $orientation, $align }) =>
+    $wrap && $orientation === 'horizontal'
+      ? $align === 'right'
+        ? 'justify-items: end;'
+        : $align === 'center'
+          ? 'justify-items: center;'
+          : 'justify-items: start;'
+      : ''}
 
   /* Extra breathing room for right-placed vertical tabs:
      push the indicator away from the container edge */
@@ -128,6 +160,7 @@ const TabBtn = styled('button')<{
 
   position: relative;
   text-align: center;
+  white-space: nowrap; /* keep labels on one line for reliable wrap behavior */
 
   &:focus-visible {
     outline: var(--valet-focus-width, 2px) solid ${({ $primary }) => $primary};
@@ -279,6 +312,48 @@ export const Tabs: React.FC<TabsProps> & {
     (orientation === 'horizontal' && placement === 'top') ||
     (orientation === 'vertical' && placement === 'left');
   const edgeGap = theme.spacing(1);
+  const rowGap = theme.spacing(1);
+
+  // Detect horizontal overflow and enable wrapping grid when needed
+  const listRef = useRef<HTMLDivElement | null>(null);
+  const [wrap, setWrap] = useState(false);
+
+  useEffect(() => {
+    if (orientation !== 'horizontal') {
+      setWrap(false);
+      return;
+    }
+    const el = listRef.current;
+    if (!el) return;
+    const assess = () => {
+      // Strategy 1: scroll/client width check (fast path)
+      let shouldWrap = el.scrollWidth > el.clientWidth + 1;
+      // Strategy 2: any child clipped relative to container rect (robust path)
+      if (!shouldWrap) {
+        const rect = el.getBoundingClientRect();
+        const rightEdge = rect.left + rect.width;
+        for (let i = 0; i < el.children.length; i++) {
+          const ch = el.children[i] as HTMLElement;
+          const cr = ch.getBoundingClientRect();
+          if (cr.right > rightEdge + 0.5) {
+            shouldWrap = true;
+            break;
+          }
+        }
+      }
+      setWrap(shouldWrap);
+    };
+    assess();
+    const ro = new ResizeObserver(assess);
+    ro.observe(el);
+    // Observe children as well to catch label/icon size changes
+    Array.from(el.children).forEach((ch) => ro.observe(ch as Element));
+    window.addEventListener('resize', assess);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', assess);
+    };
+  }, [orientation, tabs.length, placement]);
 
   // Normalize alignX with Box semantics.
   const normalizedAlign: 'left' | 'right' | 'center' = (() => {
@@ -299,10 +374,13 @@ export const Tabs: React.FC<TabsProps> & {
       >
         {stripFirst && (
           <TabList
+            ref={listRef}
             $orientation={orientation}
             $place={placement}
             $edgeGap={edgeGap}
             $align={normalizedAlign}
+            $wrap={wrap}
+            $rowGap={rowGap}
           >
             {tabs}
           </TabList>
@@ -312,10 +390,13 @@ export const Tabs: React.FC<TabsProps> & {
 
         {!stripFirst && (
           <TabList
+            ref={listRef}
             $orientation={orientation}
             $place={placement}
             $edgeGap={edgeGap}
             $align={normalizedAlign}
+            $wrap={wrap}
+            $rowGap={rowGap}
           >
             {tabs}
           </TabList>
