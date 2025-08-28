@@ -1,0 +1,131 @@
+{
+  "name": "Box",
+  "category": "layout",
+  "slug": "components/layout/box",
+  "summary": "Box component",
+  "props": [
+    {
+      "name": "background",
+      "type": "string",
+      "required": true,
+      "default": "-",
+      "description": "Background colour override. When set to a theme tone (primary/secondary/tertiary), text colour is derived automatically."
+    },
+    {
+      "name": "textColor",
+      "type": "string",
+      "required": true,
+      "default": "-",
+      "description": "Explicit text colour"
+    },
+    {
+      "name": "centerContent",
+      "type": "boolean",
+      "required": true,
+      "default": "false",
+      "description": "Center inner content using flexbox"
+    },
+    {
+      "name": "fullWidth",
+      "type": "boolean",
+      "required": true,
+      "default": "false",
+      "description": "Stretch to 100% width of the parent container"
+    },
+    {
+      "name": "alignX",
+      "type": "'left' | 'right' | 'center'",
+      "required": true,
+      "default": "'left'"
+    },
+    {
+      "name": "centered",
+      "type": "boolean",
+      "required": true,
+      "deprecated": true
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": true
+    },
+    {
+      "name": "pad",
+      "type": "number | string",
+      "required": false,
+      "default": "1",
+      "description": "Container padding. Numbers map via theme.spacing(n); strings pass through (e.g., \"12px\")."
+    },
+    {
+      "name": "compact",
+      "type": "boolean",
+      "required": false,
+      "default": "false",
+      "description": "Zero out internal padding (overrides pad)."
+    },
+    {
+      "name": "preset",
+      "type": "string | string[]",
+      "required": false,
+      "default": "-",
+      "description": "Apply style presets"
+    },
+    {
+      "name": "HTML div props",
+      "type": "React.ComponentProps<'div'>",
+      "required": false,
+      "default": "-"
+    }
+  ],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": [
+      "style"
+    ]
+  },
+  "cssVars": [
+    "--valet-box-max-h",
+    "--valet-bg",
+    "--valet-text-color",
+    "--valet-centered"
+  ],
+  "bestPractices": [
+    "Use `Box` as a neutral container for background, padding, and width anchoring. Compose layout with `Stack` / `Grid` ; keep   `Surface` for page-level backgrounds.",
+    "Prefer theme tones ( `primary` / `secondary` / `tertiary` ) to get automatic text contrast. When using custom colours, set `textColor` to maintain accessibility.",
+    "Reach for `Panel` when you need outlines or separators.   `Box` stays minimal and opinionated so the theme can do the heavy lifting.",
+    "Control placement with `alignX` and `fullWidth` .",
+    "Reuse styles with `preset` via `definePreset()` instead of sprinkling inline styles."
+  ],
+  "examples": [
+    {
+      "id": "box-example-1",
+      "code": "<Box>\n  <Typography>\n    (no props) — inherits parent background, uses theme text colour\n  </Typography>\n</Box>",
+      "lang": "tsx",
+      "source": {
+        "file": "/home/xbenc/occ/valet/docs/src/pages/components/layout/BoxDemo.tsx"
+      }
+    },
+    {
+      "id": "box-example-2",
+      "code": "<Box\n  background={theme.colors['tertiary']}\n  sx={{\n    border: `2px dashed ${theme.colors['text']}`,\n    padding: theme.spacing(1),\n    borderRadius: 12,\n  }}\n>\n  <Typography>\n    Dashed border, custom radius, padding via <code>sx</code>\n  </Typography>\n</Box>",
+      "lang": "tsx",
+      "source": {
+        "file": "/home/xbenc/occ/valet/docs/src/pages/components/layout/BoxDemo.tsx"
+      }
+    },
+    {
+      "id": "box-example-3",
+      "code": "<Box\n  id=\"hero\"\n  role=\"region\"\n  aria-label=\"Hero banner\"\n  onClick={() => console.log('clicked')}\n  sx={{ border: '1px solid currentColor' }}\n>\n  Content\n</Box>",
+      "lang": "tsx",
+      "source": {
+        "file": "/home/xbenc/occ/valet/docs/src/pages/components/layout/BoxDemo.tsx"
+      }
+    }
+  ],
+  "docsUrl": "/components/layout/BoxDemo",
+  "sourceFiles": [
+    "src/components/layout/Box.tsx",
+    "docs/src/pages/components/layout/BoxDemo.tsx"
+  ],
+  "version": "0.30.1"
+}

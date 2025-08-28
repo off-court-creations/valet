@@ -4,10 +4,15 @@
 // ─────────────────────────────────────────────────────────────
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
 import { Readable } from 'node:stream';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
+const requireFromHere = createRequire(import.meta.url);
+const pkg = requireFromHere('../package.json') as { version?: string; name?: string };
+const MCP_VERSION = pkg.version ?? '0.0.0';
 
 type ValetIndexItem = {
   name: string;
@@ -40,28 +45,57 @@ type ValetComponentDoc = {
   version: string;
 };
 
-function findDataDir(): string {
+type DataSource = 'env-root+dir' | 'env-dir' | 'nearest-cwd' | 'bundled' | 'package' | 'fallback-cwd';
+
+function getDataInfo(): { dir: string; source: DataSource } {
   const explicitRoot = process.env.VALET_ROOT && path.isAbsolute(process.env.VALET_ROOT)
     ? process.env.VALET_ROOT
     : undefined;
   const explicit = process.env.VALET_MCP_DATA_DIR
     ? (explicitRoot ? path.resolve(explicitRoot, process.env.VALET_MCP_DATA_DIR) : path.resolve(process.cwd(), process.env.VALET_MCP_DATA_DIR))
     : undefined;
-  if (explicit && fs.existsSync(explicit)) return explicit;
+  if (explicit && fs.existsSync(explicit)) return { dir: explicit, source: explicitRoot ? 'env-root+dir' : 'env-dir' };
 
   // Walk up to find a folder named mcp-data
   let dir = process.cwd();
   for (let i = 0; i < 6; i++) {
     const candidate = path.join(dir, 'mcp-data');
-    if (fs.existsSync(candidate)) return candidate;
+    if (fs.existsSync(candidate)) return { dir: candidate, source: 'nearest-cwd' };
     const parent = path.dirname(dir);
     if (parent === dir) break;
     dir = parent;
   }
+  // Check package-local data (bundled with this package)
+  try {
+    const fileDir = path.dirname(fileURLToPath(import.meta.url)); // ..../dist
+    const pkgRoot = path.resolve(fileDir, '..');
+    const localCandidates = [
+      path.join(pkgRoot, 'mcp-data'),
+      path.join(fileDir, 'mcp-data'),
+    ];
+    for (const c of localCandidates) {
+      if (fs.existsSync(c)) return { dir: c, source: 'bundled' };
+    }
+  } catch {
+    // ignore
+  }
+
+  // Try resolving an optional data package
+  try {
+    const req = createRequire(import.meta.url);
+    const dataEntry = req.resolve('@archway/valet-mcp-data/mcp-data/index.json');
+    const pkgDataDir = path.dirname(dataEntry);
+    const maybeDir = path.resolve(pkgDataDir, '..');
+    if (fs.existsSync(maybeDir)) return { dir: maybeDir, source: 'package' };
+  } catch {
+    // ignore if not installed
+  }
+
   // Fallback to cwd/mcp-data
-  return path.resolve(process.cwd(), 'mcp-data');
+  return { dir: path.resolve(process.cwd(), 'mcp-data'), source: 'fallback-cwd' };
 }
-const DATA_DIR = findDataDir();
+const DATA_INFO = getDataInfo();
+const DATA_DIR = DATA_INFO.dir;
 
 function ensureDataDir(): void {
   if (!fs.existsSync(DATA_DIR)) {
@@ -85,6 +119,17 @@ function getComponentBySlug(slug: string): ValetComponentDoc | null {
   const file = path.join(DATA_DIR, 'components', `${slug.replace(/\//g, '_')}.json`);
   if (!fs.existsSync(file)) return null;
   return readJSON<ValetComponentDoc>(file);
+}
+
+function getMeta(): { valetVersion?: string; generatedAt?: string } | null {
+  try {
+    const file = path.join(DATA_DIR, '_meta.json');
+    if (!fs.existsSync(file)) return null;
+    const raw = readJSON<{ version?: string; builtAt?: string }>(file);
+    return { valetVersion: raw.version, generatedAt: raw.builtAt };
+  } catch {
+    return null;
+  }
 }
 
 function resolveSlug(input: { name?: string; slug?: string }): string | null {
@@ -129,7 +174,7 @@ const SearchParamsShape = {
 const GetExamplesParamsShape = GetComponentParamsShape;
 
 async function createServer() {
-  const server = new McpServer({ name: '@archway/valet-mcp', version: '0.1.0' });
+  const server = new McpServer({ name: '@archway/valet-mcp', version: MCP_VERSION });
 
   // list_components
   server.tool('list_components', async () => ({
@@ -193,12 +238,25 @@ async function main() {
       const index = getIndex();
       const box = index.find((i) => i.name === 'Box');
       const hasBox = !!(box && getComponentBySlug(box.slug));
+      const meta = getMeta();
+      const mcpMinor = MCP_VERSION.split('.').slice(0, 2).join('.');
+      const valetMinor = meta?.valetVersion ? meta.valetVersion.split('.').slice(0, 2).join('.') : undefined;
+      const parity = valetMinor ? (mcpMinor === valetMinor) : undefined;
       // eslint-disable-next-line no-console
-      console.log(JSON.stringify({ ok: true, components: index.length, hasBox }, null, 2));
+      console.log(JSON.stringify({
+        ok: true,
+        components: index.length,
+        hasBox,
+        mcpVersion: MCP_VERSION,
+        dataSource: (DATA_INFO as any).source,
+        valetVersion: meta?.valetVersion,
+        generatedAt: meta?.generatedAt,
+        versionParity: parity,
+      }, null, 2));
       process.exit(0);
     } catch (err) {
       // eslint-disable-next-line no-console
-      console.error(JSON.stringify({ ok: false, error: (err as Error).message }));
+      console.error(JSON.stringify({ ok: false, error: (err as Error).message, mcpVersion: MCP_VERSION }));
       process.exit(1);
     }
     return;

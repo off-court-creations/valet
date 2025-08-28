@@ -1,0 +1,71 @@
+{
+  "name": "Divider",
+  "category": "primitives",
+  "slug": "components/primitives/divider",
+  "summary": "Divider component",
+  "props": [
+    {
+      "name": "orientation",
+      "type": "'horizontal' | 'vertical'",
+      "required": true,
+      "default": "'horizontal'",
+      "description": "Direction of the line separator."
+    },
+    {
+      "name": "lineColor",
+      "type": "string",
+      "required": true,
+      "default": "theme.colors.text",
+      "description": "Explicit colour. By default, Divider uses the text colour that contrasts the page background."
+    },
+    {
+      "name": "thickness",
+      "type": "number | string",
+      "required": true,
+      "default": "1",
+      "description": "Line thickness. Numbers map via theme.stroke(n); strings pass through (e.g., \"2px\")."
+    },
+    {
+      "name": "length",
+      "type": "number | string",
+      "required": true,
+      "default": "'100%'",
+      "description": "Length along the main axis. Numbers → px; strings pass through (e.g., \"50%\", \"12rem\")."
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": true
+    },
+    {
+      "name": "pad",
+      "type": "number | string",
+      "required": false,
+      "default": "0",
+      "description": "Outer spacing envelope. Numbers map via theme.spacing(n); strings pass through. Obeys compact."
+    },
+    {
+      "name": "compact",
+      "type": "boolean",
+      "required": false,
+      "default": "false",
+      "description": "Zero out padding for compact density."
+    },
+    {
+      "name": "preset",
+      "type": "string | string[]",
+      "required": false,
+      "default": "-",
+      "description": "Apply style presets."
+    }
+  ],
+  "cssVars": [],
+  "bestPractices": [],
+  "examples": [],
+  "docsUrl": "/components/primitives/DividerDemo",
+  "sourceFiles": [
+    "src/components/primitives/Divider.tsx",
+    "docs/src/pages/components/primitives/DividerDemo.tsx"
+  ],
+  "version": "0.30.1"
+}

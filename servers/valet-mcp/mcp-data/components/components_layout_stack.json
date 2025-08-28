@@ -1,0 +1,60 @@
+{
+  "name": "Stack",
+  "category": "layout",
+  "slug": "components/layout/stack",
+  "summary": "Stack component",
+  "props": [
+    {
+      "name": "direction",
+      "type": "'row' | 'column'",
+      "required": true,
+      "default": "'column'",
+      "description": "Layout direction"
+    },
+    {
+      "name": "wrap",
+      "type": "boolean",
+      "required": true,
+      "default": "false for column, true for row",
+      "description": "Allow children to wrap"
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": true
+    },
+    {
+      "name": "gap",
+      "type": "number | string",
+      "required": false,
+      "default": "1",
+      "description": "Gap between children"
+    },
+    {
+      "name": "compact",
+      "type": "boolean",
+      "required": false,
+      "default": "false",
+      "description": "Remove margin and padding"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[]",
+      "required": false,
+      "default": "-",
+      "description": "Apply style presets"
+    }
+  ],
+  "cssVars": [
+    "--valet-stack-max-h",
+    "--valet-stack-ov-y"
+  ],
+  "bestPractices": [],
+  "examples": [],
+  "docsUrl": "/components/layout/StackDemo",
+  "sourceFiles": [
+    "src/components/layout/Stack.tsx",
+    "docs/src/pages/components/layout/StackDemo.tsx"
+  ],
+  "version": "0.30.1"
+}

@@ -48,7 +48,8 @@
     "mcp:server:build": "cd servers/valet-mcp && npm run build",
     "mcp:server:selfcheck": "cd servers/valet-mcp && npm run selfcheck",
     "mcp:server:start": "cd servers/valet-mcp && npm run start",
-    "mcp:server:link": "cd servers/valet-mcp && npm link"
+    "mcp:server:link": "cd servers/valet-mcp && npm link",
+    "mcp:server:publish": "npm run mcp:build && cd servers/valet-mcp && npm publish --access public"
   },
   "dependencies": {
     "@iconify/react": "^6.0.0",

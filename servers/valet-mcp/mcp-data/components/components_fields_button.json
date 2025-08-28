@@ -1,0 +1,66 @@
+{
+  "name": "Button",
+  "category": "fields",
+  "slug": "components/fields/button",
+  "summary": "Button component",
+  "props": [
+    {
+      "name": "color",
+      "type": "'primary' | 'secondary' | 'tertiary' | string",
+      "required": true,
+      "default": "'primary'",
+      "description": "Background palette or custom colour"
+    },
+    {
+      "name": "textColor",
+      "type": "'primary' | 'secondary' | 'tertiary' | string",
+      "required": true,
+      "default": "-",
+      "description": "Label colour override"
+    },
+    {
+      "name": "variant",
+      "type": "'contained' | 'outlined'",
+      "required": true,
+      "default": "'contained'",
+      "description": "Visual style"
+    },
+    {
+      "name": "size",
+      "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string",
+      "required": true,
+      "default": "'md'",
+      "description": "Overall button size or custom CSS length"
+    },
+    {
+      "name": "fullWidth",
+      "type": "boolean",
+      "required": true,
+      "default": "false",
+      "description": "Stretch to fill parent width"
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": true
+    },
+    {
+      "name": "preset",
+      "type": "string | string[]",
+      "required": false,
+      "default": "-",
+      "description": "Apply style presets"
+    }
+  ],
+  "cssVars": [
+    "--valet-text-color"
+  ],
+  "bestPractices": [],
+  "examples": [],
+  "docsUrl": "/components/field/ButtonDemoPage",
+  "sourceFiles": [
+    "src/components/fields/Button.tsx",
+    "docs/src/pages/components/field/ButtonDemoPage.tsx"
+  ],
+  "version": "0.30.1"
+}

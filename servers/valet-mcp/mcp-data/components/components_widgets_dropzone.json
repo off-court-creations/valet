@@ -1,0 +1,85 @@
+{
+  "name": "Dropzone",
+  "category": "widgets",
+  "slug": "components/widgets/dropzone",
+  "summary": "Dropzone component",
+  "props": [
+    {
+      "name": "accept",
+      "type": "DropzoneOptions['accept']",
+      "required": true,
+      "default": "-",
+      "description": "Allowed file types"
+    },
+    {
+      "name": "showPreviews",
+      "type": "boolean",
+      "required": true,
+      "default": "true",
+      "description": "Show preview thumbnails"
+    },
+    {
+      "name": "showFileList",
+      "type": "boolean",
+      "required": true,
+      "default": "false",
+      "description": "Show icons and names"
+    },
+    {
+      "name": "onFilesChange",
+      "type": "(files: File[]) => void",
+      "required": true,
+      "default": "-",
+      "description": "Called when accepted files change"
+    },
+    {
+      "name": "maxFiles",
+      "type": "number",
+      "required": true,
+      "default": "-",
+      "description": "Maximum file count"
+    },
+    {
+      "name": "multiple",
+      "type": "boolean",
+      "required": true,
+      "default": "true",
+      "description": "Allow multiple file selection"
+    },
+    {
+      "name": "onDrop",
+      "type": "DropzoneOptions['onDrop']",
+      "required": true,
+      "default": "-",
+      "description": "Low-level drop callback"
+    },
+    {
+      "name": "fullWidth",
+      "type": "boolean",
+      "required": true,
+      "default": "false",
+      "description": "Stretch to fill parent width"
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": true
+    },
+    {
+      "name": "preset",
+      "type": "string | string[]",
+      "required": false,
+      "default": "-",
+      "description": "Style preset(s)"
+    }
+  ],
+  "cssVars": [],
+  "bestPractices": [],
+  "examples": [],
+  "docsUrl": "/components/widgets/DropzoneDemo",
+  "sourceFiles": [
+    "src/components/widgets/Dropzone.tsx",
+    "docs/src/pages/components/widgets/DropzoneDemo.tsx"
+  ],
+  "version": "0.30.1"
+}

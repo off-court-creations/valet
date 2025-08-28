@@ -1,0 +1,81 @@
+{
+  "name": "Grid",
+  "category": "layout",
+  "slug": "components/layout/grid",
+  "summary": "Grid component",
+  "props": [
+    {
+      "name": "columns",
+      "type": "number",
+      "required": true,
+      "default": "2",
+      "description": "Number of equal‑width tracks (repeat(n, 1fr))."
+    },
+    {
+      "name": "adaptive",
+      "type": "boolean",
+      "required": true,
+      "default": "false",
+      "description": "Switch to a single column when the surface is in portrait."
+    },
+    {
+      "name": "compact",
+      "type": "boolean",
+      "required": true,
+      "default": "false",
+      "description": "Zero out both pad and gap for a tight layout."
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": true
+    },
+    {
+      "name": "gap",
+      "type": "number | string",
+      "required": false,
+      "default": "1",
+      "description": "Space between cells. Numbers map via theme.spacing(n); strings pass through."
+    },
+    {
+      "name": "pad",
+      "type": "number | string",
+      "required": false,
+      "default": "1",
+      "description": "Inner padding for the grid container. Same mapping as gap."
+    },
+    {
+      "name": "preset",
+      "type": "string | string[]",
+      "required": false,
+      "default": "-",
+      "description": "Apply style presets via definePreset/preset registry."
+    },
+    {
+      "name": "HTML div props",
+      "type": "React.ComponentProps<'div'>",
+      "required": false,
+      "default": "-"
+    }
+  ],
+  "cssVars": [
+    "--valet-panel-ov-y",
+    "--valet-panel-max-h",
+    "--valet-stack-ov-y",
+    "--valet-stack-max-h",
+    "--valet-box-max-h"
+  ],
+  "bestPractices": [
+    "Use `Grid` for two‑dimensional layouts where items align in both axes. Reach for `Stack` for linear flows.",
+    "Keep tracks simple. Prefer `columns` with equal tracks; use   `` on children to span.",
+    "Share spacing with the system: gap and pad use the same spacing scale as other layout primitives ( `Stack` , `Tabs` ).",
+    "Toggle `adaptive` when you want predictable single‑column layout in portrait across breakpoints. Avoid ad‑hoc media queries."
+  ],
+  "examples": [],
+  "docsUrl": "/components/layout/GridDemo",
+  "sourceFiles": [
+    "src/components/layout/Grid.tsx",
+    "docs/src/pages/components/layout/GridDemo.tsx"
+  ],
+  "version": "0.30.1"
+}

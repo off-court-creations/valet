@@ -1,0 +1,73 @@
+{
+  "name": "MetroSelect",
+  "category": "fields",
+  "slug": "components/fields/metroselect",
+  "summary": "MetroSelect component",
+  "props": [
+    {
+      "name": "value",
+      "type": "string | number | (string | number)[]",
+      "required": true,
+      "default": "-",
+      "description": "Controlled value (array when multiple)"
+    },
+    {
+      "name": "defaultValue",
+      "type": "string | number | (string | number)[]",
+      "required": true,
+      "default": "-",
+      "description": "Uncontrolled initial value (array when multiple)"
+    },
+    {
+      "name": "gap",
+      "type": "number | string",
+      "required": true,
+      "default": "4",
+      "description": "Spacing between tiles (theme units if number)"
+    },
+    {
+      "name": "multiple",
+      "type": "boolean",
+      "required": true,
+      "default": "false",
+      "description": "Enable selecting more than one option"
+    },
+    {
+      "name": "onChange",
+      "type": "(val: Primitive | Primitive[]) => void",
+      "required": true,
+      "default": "-",
+      "description": "Change handler (array when multiple)"
+    },
+    {
+      "name": "children",
+      "type": "React.ReactNode",
+      "required": true,
+      "default": "-",
+      "description": "MetroSelect.Option elements"
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": true
+    },
+    {
+      "name": "preset",
+      "type": "string | string[]",
+      "required": false,
+      "default": "-",
+      "description": "Apply style presets"
+    }
+  ],
+  "cssVars": [
+    "--valet-text-color"
+  ],
+  "bestPractices": [],
+  "examples": [],
+  "docsUrl": "/components/field/MetroSelectDemo",
+  "sourceFiles": [
+    "src/components/fields/MetroSelect.tsx",
+    "docs/src/pages/components/field/MetroSelectDemo.tsx"
+  ],
+  "version": "0.30.1"
+}

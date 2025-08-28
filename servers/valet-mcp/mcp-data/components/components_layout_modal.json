@@ -1,0 +1,88 @@
+{
+  "name": "Modal",
+  "category": "layout",
+  "slug": "components/layout/modal",
+  "summary": "Modal component",
+  "props": [
+    {
+      "name": "open",
+      "type": "boolean",
+      "required": true
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "required": true,
+      "default": "false"
+    },
+    {
+      "name": "onClose",
+      "type": "() => void",
+      "required": true
+    },
+    {
+      "name": "variant",
+      "type": "'dialog' | 'alert'",
+      "required": true,
+      "default": "'dialog'"
+    },
+    {
+      "name": "title",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "actions",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "pad",
+      "type": "number | string",
+      "required": true
+    },
+    {
+      "name": "compact",
+      "type": "boolean",
+      "required": true,
+      "default": "false"
+    },
+    {
+      "name": "disableBackdropClick",
+      "type": "boolean",
+      "required": true,
+      "default": "false"
+    },
+    {
+      "name": "disableEscapeKeyDown",
+      "type": "boolean",
+      "required": true,
+      "default": "false"
+    },
+    {
+      "name": "maxWidth",
+      "type": "number | string",
+      "required": true
+    },
+    {
+      "name": "fullWidth",
+      "type": "boolean",
+      "required": true,
+      "default": "false"
+    }
+  ],
+  "cssVars": [
+    "--valet-modal-radius"
+  ],
+  "bestPractices": [],
+  "examples": [],
+  "sourceFiles": [
+    "src/components/layout/Modal.tsx"
+  ],
+  "version": "0.30.1"
+}

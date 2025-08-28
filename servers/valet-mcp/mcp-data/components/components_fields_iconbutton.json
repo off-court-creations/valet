@@ -1,0 +1,64 @@
+{
+  "name": "IconButton",
+  "category": "fields",
+  "slug": "components/fields/iconbutton",
+  "summary": "IconButton component",
+  "props": [
+    {
+      "name": "variant",
+      "type": "'contained' | 'outlined'",
+      "required": true,
+      "default": "'contained'",
+      "description": "Button style"
+    },
+    {
+      "name": "size",
+      "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string",
+      "required": true,
+      "default": "'md'",
+      "description": "Overall button dimensions"
+    },
+    {
+      "name": "icon",
+      "type": "string",
+      "required": true,
+      "default": "-",
+      "description": "Iconify name"
+    },
+    {
+      "name": "svg",
+      "type": "string | ReactElement",
+      "required": true,
+      "default": "-",
+      "description": "Custom SVG content"
+    },
+    {
+      "name": "iconColor",
+      "type": "string",
+      "required": true,
+      "default": "-",
+      "description": "Glyph colour override"
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": true
+    },
+    {
+      "name": "preset",
+      "type": "string | string[]",
+      "required": false,
+      "default": "-",
+      "description": "Apply style presets"
+    }
+  ],
+  "cssVars": [],
+  "bestPractices": [],
+  "examples": [],
+  "docsUrl": "/components/field/IconButtonDemoPage",
+  "sourceFiles": [
+    "src/components/fields/IconButton.tsx",
+    "docs/src/pages/components/field/IconButtonDemoPage.tsx"
+  ],
+  "version": "0.30.1"
+}

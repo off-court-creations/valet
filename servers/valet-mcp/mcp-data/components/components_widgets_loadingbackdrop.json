@@ -1,0 +1,25 @@
+{
+  "name": "LoadingBackdrop",
+  "category": "widgets",
+  "slug": "components/widgets/loadingbackdrop",
+  "summary": "LoadingBackdrop component",
+  "props": [
+    {
+      "name": "fading",
+      "type": "boolean",
+      "required": true
+    },
+    {
+      "name": "showSpinner",
+      "type": "boolean",
+      "required": true
+    }
+  ],
+  "cssVars": [],
+  "bestPractices": [],
+  "examples": [],
+  "sourceFiles": [
+    "src/components/widgets/LoadingBackdrop.tsx"
+  ],
+  "version": "0.30.1"
+}

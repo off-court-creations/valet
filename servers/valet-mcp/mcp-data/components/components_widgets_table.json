@@ -1,0 +1,74 @@
+{
+  "name": "Table",
+  "category": "widgets",
+  "slug": "components/widgets/table",
+  "summary": "Table component",
+  "props": [
+    {
+      "name": "data",
+      "type": "T[]",
+      "required": true
+    },
+    {
+      "name": "columns",
+      "type": "TableColumn<T>[]",
+      "required": true
+    },
+    {
+      "name": "striped",
+      "type": "boolean",
+      "required": true
+    },
+    {
+      "name": "hoverable",
+      "type": "boolean",
+      "required": true
+    },
+    {
+      "name": "dividers",
+      "type": "boolean",
+      "required": true
+    },
+    {
+      "name": "selectable",
+      "type": "'single' | 'multi' | undefined",
+      "required": true
+    },
+    {
+      "name": "initialSort",
+      "type": "{ index: number; desc?: boolean }",
+      "required": true
+    },
+    {
+      "name": "onSortChange",
+      "type": "(index: number, desc: boolean) => void",
+      "required": true
+    },
+    {
+      "name": "onSelectionChange",
+      "type": "(selected: T[]) => void",
+      "required": true
+    },
+    {
+      "name": "constrainHeight",
+      "type": "boolean",
+      "required": true
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": true
+    }
+  ],
+  "cssVars": [
+    "--valet-divider-stroke",
+    "--valet-underline-width",
+    "--valet-table-underline"
+  ],
+  "bestPractices": [],
+  "examples": [],
+  "sourceFiles": [
+    "src/components/widgets/Table.tsx"
+  ],
+  "version": "0.30.1"
+}

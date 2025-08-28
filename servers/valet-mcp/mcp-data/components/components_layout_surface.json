@@ -1,0 +1,46 @@
+{
+  "name": "Surface",
+  "category": "layout",
+  "slug": "components/layout/surface",
+  "summary": "Surface component",
+  "props": [
+    {
+      "name": "fullscreen",
+      "type": "boolean",
+      "required": true,
+      "default": "true"
+    },
+    {
+      "name": "density",
+      "type": "Density",
+      "required": true
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": true
+    }
+  ],
+  "cssVars": [
+    "--valet-space",
+    "--valet-bg",
+    "--valet-text-color",
+    "--valet-font-heading",
+    "--valet-font-body",
+    "--valet-font-mono",
+    "--valet-font-button",
+    "--valet-radius",
+    "--valet-stroke",
+    "--valet-focus-width",
+    "--valet-focus-offset",
+    "--valet-divider-stroke",
+    "--valet-screen-width",
+    "--valet-screen-height"
+  ],
+  "bestPractices": [],
+  "examples": [],
+  "sourceFiles": [
+    "src/components/layout/Surface.tsx"
+  ],
+  "version": "0.30.1"
+}

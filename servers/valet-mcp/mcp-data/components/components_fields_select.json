@@ -1,0 +1,94 @@
+{
+  "name": "Select",
+  "category": "fields",
+  "slug": "components/fields/select",
+  "summary": "Select component",
+  "props": [
+    {
+      "name": "value",
+      "type": "string | number | (string | number)[]",
+      "required": true,
+      "default": "-",
+      "description": "Controlled value"
+    },
+    {
+      "name": "initialValue",
+      "type": "string | number | (string | number)[]",
+      "required": true,
+      "default": "-",
+      "description": "Uncontrolled initial value"
+    },
+    {
+      "name": "onChange",
+      "type": "(v: Primitive | Primitive[]) => void",
+      "required": true,
+      "default": "-",
+      "description": "Change handler"
+    },
+    {
+      "name": "multiple",
+      "type": "boolean",
+      "required": true,
+      "default": "false",
+      "description": "Allow multiple values"
+    },
+    {
+      "name": "placeholder",
+      "type": "string",
+      "required": true,
+      "default": "'Select…'",
+      "description": "Label when empty"
+    },
+    {
+      "name": "size",
+      "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string",
+      "required": true,
+      "default": "'md'",
+      "description": "Control height"
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "required": true,
+      "default": "false",
+      "description": "Disable interaction"
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "required": true,
+      "default": "-",
+      "description": "Form field name"
+    },
+    {
+      "name": "children",
+      "type": "React.ReactNode",
+      "required": true
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": true
+    },
+    {
+      "name": "preset",
+      "type": "string | string[]",
+      "required": false,
+      "default": "-",
+      "description": "Apply style presets"
+    }
+  ],
+  "cssVars": [
+    "--valet-border",
+    "--valet-bg",
+    "--valet-text-color"
+  ],
+  "bestPractices": [],
+  "examples": [],
+  "docsUrl": "/components/field/SelectDemo",
+  "sourceFiles": [
+    "src/components/fields/Select.tsx",
+    "docs/src/pages/components/field/SelectDemo.tsx"
+  ],
+  "version": "0.30.1"
+}

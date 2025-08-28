@@ -1,0 +1,32 @@
+{
+  "name": "Overview",
+  "category": "unknown",
+  "slug": "components/unknown/overview",
+  "summary": "Overview component",
+  "props": [],
+  "cssVars": [],
+  "bestPractices": [],
+  "examples": [
+    {
+      "id": "overview-example-1",
+      "code": "npm install @archway/valet",
+      "lang": "tsx",
+      "source": {
+        "file": "/home/xbenc/occ/valet/docs/src/pages/concepts/Overview.tsx"
+      }
+    },
+    {
+      "id": "overview-example-2",
+      "code": "import { Routes, Route, BrowserRouter } from 'react-router-dom';\nimport { Surface, Stack, Typography, Button, useInitialTheme } from '@archway/valet';\n\nfunction Home() {\n  return (\n    <Surface>\n      <Stack gap={2} sx={{ padding: '1rem' }}>\n        <Typography variant=\"h2\">Hello, valet</Typography>\n        <Button variant=\"primary\">Click me</Button>\n      </Stack>\n    </Surface>\n  );\n}\n\nexport function App() {\n  useInitialTheme({ fonts: { body: 'Cabin', heading: 'Cabin', mono: 'Ubuntu Mono', button: 'Ubuntu' } });\n  return (\n    <BrowserRouter>\n      <Routes>\n        <Route path=\"/\" element={<Home />} />\n      </Routes>\n    </BrowserRouter>\n  );\n}",
+      "lang": "tsx",
+      "source": {
+        "file": "/home/xbenc/occ/valet/docs/src/pages/concepts/Overview.tsx"
+      }
+    }
+  ],
+  "docsUrl": "/concepts/Overview",
+  "sourceFiles": [
+    "docs/src/pages/concepts/Overview.tsx"
+  ],
+  "version": "0.30.1"
+}

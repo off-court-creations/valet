@@ -1,0 +1,49 @@
+{
+  "name": "Pagination",
+  "category": "widgets",
+  "slug": "components/widgets/pagination",
+  "summary": "Pagination component",
+  "props": [
+    {
+      "name": "count",
+      "type": "number",
+      "required": true
+    },
+    {
+      "name": "page",
+      "type": "number",
+      "required": true,
+      "default": "1"
+    },
+    {
+      "name": "onChange",
+      "type": "(page: number) => void",
+      "required": true
+    },
+    {
+      "name": "visibleWindow",
+      "type": "number",
+      "required": true
+    },
+    {
+      "name": "autoFollowActive",
+      "type": "boolean",
+      "required": true,
+      "default": "true"
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": true
+    }
+  ],
+  "cssVars": [
+    "--valet-underline-width"
+  ],
+  "bestPractices": [],
+  "examples": [],
+  "sourceFiles": [
+    "src/components/widgets/Pagination.tsx"
+  ],
+  "version": "0.30.1"
+}

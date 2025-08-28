@@ -1,0 +1,45 @@
+{
+  "name": "CodeBlock",
+  "category": "widgets",
+  "slug": "components/widgets/codeblock",
+  "summary": "CodeBlock component",
+  "props": [
+    {
+      "name": "code",
+      "type": "string",
+      "required": true,
+      "default": "-",
+      "description": "Source code to render"
+    },
+    {
+      "name": "language",
+      "type": "string",
+      "required": true,
+      "default": "'typescript'",
+      "description": "Highlight.js language key"
+    },
+    {
+      "name": "ariaLabel",
+      "type": "string",
+      "required": true,
+      "default": "-",
+      "description": "Copy button aria-label"
+    },
+    {
+      "name": "title",
+      "type": "string",
+      "required": true,
+      "default": "-",
+      "description": "Copy button tooltip"
+    }
+  ],
+  "cssVars": [],
+  "bestPractices": [],
+  "examples": [],
+  "docsUrl": "/components/widgets/CodeBlockDemo",
+  "sourceFiles": [
+    "src/components/widgets/CodeBlock.tsx",
+    "docs/src/pages/components/widgets/CodeBlockDemo.tsx"
+  ],
+  "version": "0.30.1"
+}

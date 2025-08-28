@@ -1,0 +1,40 @@
+{
+  "name": "Radio",
+  "category": "fields",
+  "slug": "components/fields/radio",
+  "summary": "Radio component",
+  "props": [
+    {
+      "name": "value",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "size",
+      "type": "RadioSize | number | string",
+      "required": true
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": true
+    }
+  ],
+  "cssVars": [],
+  "bestPractices": [],
+  "examples": [],
+  "sourceFiles": [
+    "src/components/fields/RadioGroup.tsx"
+  ],
+  "version": "0.30.1"
+}
