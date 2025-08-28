@@ -1,0 +1,5 @@
+[mcp_servers.valet]
+command = "node"
+args = ["servers/valet-mcp/dist/index.js"]
+# Ensure the server can always find the component data directory
+env = { "VALET_MCP_DATA_DIR" = "mcp-data" }

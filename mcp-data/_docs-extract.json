@@ -1,5 +1,5 @@
 {
-  "ButtonDemoPage": {
+  "Button": {
     "propsRows": [
       {
         "prop": "`color`",
@@ -43,7 +43,7 @@
     "docsUrl": "/components/field/ButtonDemoPage",
     "sourceFile": "docs/src/pages/components/field/ButtonDemoPage.tsx"
   },
-  "CheckBoxDemo": {
+  "CheckBox": {
     "propsRows": [
       {
         "prop": "`name`",
@@ -99,7 +99,7 @@
     "docsUrl": "/components/field/CheckBoxDemo",
     "sourceFile": "docs/src/pages/components/field/CheckBoxDemo.tsx"
   },
-  "DateSelectorDemo": {
+  "DateSelector": {
     "propsRows": [
       {
         "prop": "`value`",
@@ -191,7 +191,7 @@
     "docsUrl": "/components/field/DateSelectorDemo",
     "sourceFile": "docs/src/pages/components/field/DateSelectorDemo.tsx"
   },
-  "IconButtonDemoPage": {
+  "IconButton": {
     "propsRows": [
       {
         "prop": "`variant`",
@@ -235,7 +235,7 @@
     "docsUrl": "/components/field/IconButtonDemoPage",
     "sourceFile": "docs/src/pages/components/field/IconButtonDemoPage.tsx"
   },
-  "IteratorDemo": {
+  "Iterator": {
     "propsRows": [
       {
         "prop": "`value`",
@@ -303,7 +303,7 @@
     "docsUrl": "/components/field/IteratorDemo",
     "sourceFile": "docs/src/pages/components/field/IteratorDemo.tsx"
   },
-  "MetroSelectDemo": {
+  "MetroSelect": {
     "propsRows": [
       {
         "prop": "`value`",
@@ -353,7 +353,7 @@
     "docsUrl": "/components/field/MetroSelectDemo",
     "sourceFile": "docs/src/pages/components/field/MetroSelectDemo.tsx"
   },
-  "RadioGroupDemo": {
+  "RadioGroup": {
     "propsRows": [
       {
         "prop": "`value`",
@@ -409,7 +409,7 @@
     "docsUrl": "/components/field/RadioGroupDemo",
     "sourceFile": "docs/src/pages/components/field/RadioGroupDemo.tsx"
   },
-  "SelectDemo": {
+  "Select": {
     "propsRows": [
       {
         "prop": "`value`",
@@ -471,7 +471,7 @@
     "docsUrl": "/components/field/SelectDemo",
     "sourceFile": "docs/src/pages/components/field/SelectDemo.tsx"
   },
-  "SliderDemo": {
+  "Slider": {
     "propsRows": [
       {
         "prop": "`value`",
@@ -569,7 +569,7 @@
     "docsUrl": "/components/field/SliderDemo",
     "sourceFile": "docs/src/pages/components/field/SliderDemo.tsx"
   },
-  "SwitchDemo": {
+  "Switch": {
     "propsRows": [
       {
         "prop": "`checked`",
@@ -619,7 +619,7 @@
     "docsUrl": "/components/field/SwitchDemo",
     "sourceFile": "docs/src/pages/components/field/SwitchDemo.tsx"
   },
-  "BoxDemo": {
+  "Box": {
     "propsRows": [
       {
         "prop": "`background`",
@@ -678,7 +678,7 @@
     ],
     "examples": [
       {
-        "id": "boxdemo-example-1",
+        "id": "box-example-1",
         "code": "<Box>\n  <Typography>\n    (no props) — inherits parent background, uses theme text colour\n  </Typography>\n</Box>",
         "lang": "tsx",
         "source": {
@@ -686,7 +686,7 @@
         }
       },
       {
-        "id": "boxdemo-example-2",
+        "id": "box-example-2",
         "code": "<Box\n  background={theme.colors['tertiary']}\n  sx={{\n    border: `2px dashed ${theme.colors['text']}`,\n    padding: theme.spacing(1),\n    borderRadius: 12,\n  }}\n>\n  <Typography>\n    Dashed border, custom radius, padding via <code>sx</code>\n  </Typography>\n</Box>",
         "lang": "tsx",
         "source": {
@@ -694,7 +694,7 @@
         }
       },
       {
-        "id": "boxdemo-example-3",
+        "id": "box-example-3",
         "code": "<Box\n  id=\"hero\"\n  role=\"region\"\n  aria-label=\"Hero banner\"\n  onClick={() => console.log('clicked')}\n  sx={{ border: '1px solid currentColor' }}\n>\n  Content\n</Box>",
         "lang": "tsx",
         "source": {
@@ -712,7 +712,7 @@
     "docsUrl": "/components/layout/BoxDemo",
     "sourceFile": "docs/src/pages/components/layout/BoxDemo.tsx"
   },
-  "GridDemo": {
+  "Grid": {
     "propsRows": [
       {
         "prop": "`columns`",
@@ -767,7 +767,7 @@
     "docsUrl": "/components/layout/GridDemo",
     "sourceFile": "docs/src/pages/components/layout/GridDemo.tsx"
   },
-  "ListDemoPage": {
+  "List": {
     "propsRows": [
       {
         "prop": "`data`",
@@ -903,7 +903,7 @@
     "docsUrl": "/components/layout/Panel",
     "sourceFile": "docs/src/pages/components/layout/Panel.tsx"
   },
-  "StackDemo": {
+  "Stack": {
     "propsRows": [
       {
         "prop": "`direction`",
@@ -941,7 +941,7 @@
     "docsUrl": "/components/layout/StackDemo",
     "sourceFile": "docs/src/pages/components/layout/StackDemo.tsx"
   },
-  "TabsDemo": {
+  "Tabs": {
     "propsRows": [
       {
         "prop": "`alignX`",
@@ -1003,7 +1003,7 @@
     "docsUrl": "/components/layout/TabsDemo",
     "sourceFile": "docs/src/pages/components/layout/TabsDemo.tsx"
   },
-  "AvatarDemo": {
+  "Avatar": {
     "propsRows": [
       {
         "prop": "`src`",
@@ -1053,7 +1053,7 @@
     "docsUrl": "/components/primitives/AvatarDemo",
     "sourceFile": "docs/src/pages/components/primitives/AvatarDemo.tsx"
   },
-  "DividerDemo": {
+  "Divider": {
     "propsRows": [
       {
         "prop": "`orientation`",
@@ -1103,7 +1103,7 @@
     "docsUrl": "/components/primitives/DividerDemo",
     "sourceFile": "docs/src/pages/components/primitives/DividerDemo.tsx"
   },
-  "IconDemoPage": {
+  "Icon": {
     "propsRows": [
       {
         "prop": "`icon`",
@@ -1141,7 +1141,7 @@
     "docsUrl": "/components/primitives/IconDemoPage",
     "sourceFile": "docs/src/pages/components/primitives/IconDemoPage.tsx"
   },
-  "SkeletonDemo": {
+  "Skeleton": {
     "propsRows": [
       {
         "prop": "`loading`",
@@ -1173,7 +1173,7 @@
     "docsUrl": "/components/primitives/SkeletonDemo",
     "sourceFile": "docs/src/pages/components/primitives/SkeletonDemo.tsx"
   },
-  "TypographyDemoPage": {
+  "Typography": {
     "propsRows": [
       {
         "prop": "`variant`",
@@ -1247,7 +1247,7 @@
     "docsUrl": "/components/primitives/TypographyDemoPage",
     "sourceFile": "docs/src/pages/components/primitives/TypographyDemoPage.tsx"
   },
-  "CodeBlockDemo": {
+  "CodeBlock": {
     "propsRows": [
       {
         "prop": "`code`",
@@ -1279,7 +1279,7 @@
     "docsUrl": "/components/widgets/CodeBlockDemo",
     "sourceFile": "docs/src/pages/components/widgets/CodeBlockDemo.tsx"
   },
-  "DropzoneDemo": {
+  "Dropzone": {
     "propsRows": [
       {
         "prop": "`accept`",
@@ -1421,7 +1421,7 @@
     "docsUrl": "/components/widgets/LLMChat",
     "sourceFile": "docs/src/pages/components/widgets/LLMChat.tsx"
   },
-  "MarkdownDemo": {
+  "Markdown": {
     "propsRows": [
       {
         "prop": "`data`",
@@ -1503,7 +1503,7 @@
     "docsUrl": "/components/widgets/RichChat",
     "sourceFile": "docs/src/pages/components/widgets/RichChat.tsx"
   },
-  "SnackbarDemo": {
+  "Snackbar": {
     "propsRows": [
       {
         "prop": "`open`",
@@ -1547,7 +1547,7 @@
     "docsUrl": "/components/widgets/SnackbarDemo",
     "sourceFile": "docs/src/pages/components/widgets/SnackbarDemo.tsx"
   },
-  "SpeedDialDemo": {
+  "SpeedDial": {
     "propsRows": [
       {
         "prop": "`icon`",
@@ -1579,7 +1579,7 @@
     "docsUrl": "/components/widgets/SpeedDialDemo",
     "sourceFile": "docs/src/pages/components/widgets/SpeedDialDemo.tsx"
   },
-  "StepperDemo": {
+  "Stepper": {
     "propsRows": [
       {
         "prop": "`steps`",
@@ -1605,7 +1605,7 @@
     "docsUrl": "/components/widgets/StepperDemo",
     "sourceFile": "docs/src/pages/components/widgets/StepperDemo.tsx"
   },
-  "TreeDemo": {
+  "Tree": {
     "propsRows": [
       {
         "prop": "`nodes`",
