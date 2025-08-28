@@ -1,0 +1,79 @@
+{
+  "name": "SelectDemo",
+  "category": "unknown",
+  "slug": "components/unknown/selectdemo",
+  "summary": "SelectDemo component",
+  "props": [
+    {
+      "name": "value",
+      "type": "string | number | (string | number)[]",
+      "required": false,
+      "default": "-",
+      "description": "Controlled value"
+    },
+    {
+      "name": "initialValue",
+      "type": "string | number | (string | number)[]",
+      "required": false,
+      "default": "-",
+      "description": "Uncontrolled initial value"
+    },
+    {
+      "name": "onChange",
+      "type": "(v: Primitive | Primitive[]) => void",
+      "required": false,
+      "default": "-",
+      "description": "Change handler"
+    },
+    {
+      "name": "multiple",
+      "type": "boolean",
+      "required": false,
+      "default": "false",
+      "description": "Allow multiple values"
+    },
+    {
+      "name": "placeholder",
+      "type": "string",
+      "required": false,
+      "default": "'Select…'",
+      "description": "Label when empty"
+    },
+    {
+      "name": "size",
+      "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string",
+      "required": false,
+      "default": "'md'",
+      "description": "Control height"
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "required": false,
+      "default": "false",
+      "description": "Disable interaction"
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "required": false,
+      "default": "-",
+      "description": "Form field name"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[]",
+      "required": false,
+      "default": "-",
+      "description": "Apply style presets"
+    }
+  ],
+  "cssVars": [],
+  "bestPractices": [],
+  "examples": [],
+  "docsUrl": "/components/field/SelectDemo",
+  "sourceFiles": [
+    "docs/src/pages/components/field/SelectDemo.tsx"
+  ],
+  "version": "0.30.1"
+}

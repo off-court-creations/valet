@@ -1,0 +1,78 @@
+{
+  "name": "Panel",
+  "category": "layout",
+  "slug": "components/layout/panel",
+  "summary": "Panel component",
+  "props": [
+    {
+      "name": "variant",
+      "type": "",
+      "required": true,
+      "default": "",
+      "description": "Visual style: filled or outlined"
+    },
+    {
+      "name": "fullWidth",
+      "type": "boolean",
+      "required": true,
+      "default": "false",
+      "description": "Stretch to 100% width"
+    },
+    {
+      "name": "background",
+      "type": "string",
+      "required": true,
+      "default": "-",
+      "description": "Explicit background override"
+    },
+    {
+      "name": "centerContent",
+      "type": "boolean",
+      "required": true,
+      "default": "false",
+      "description": "Center contents using flexbox"
+    },
+    {
+      "name": "alignX",
+      "type": "",
+      "required": true,
+      "default": "",
+      "description": "Horizontal placement when not fullWidth"
+    },
+    {
+      "name": "compact",
+      "type": "boolean",
+      "required": false,
+      "default": "false",
+      "description": "Remove default margin and padding"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[]",
+      "required": false,
+      "default": "-",
+      "description": "Apply style presets"
+    }
+  ],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": [
+      "style"
+    ]
+  },
+  "cssVars": [
+    "--valet-panel-max-h",
+    "--valet-panel-ov-y",
+    "--valet-bg",
+    "--valet-text-color",
+    "--valet-centered"
+  ],
+  "bestPractices": [],
+  "examples": [],
+  "docsUrl": "/components/layout/Panel",
+  "sourceFiles": [
+    "src/components/layout/Panel.tsx",
+    "docs/src/pages/components/layout/Panel.tsx"
+  ],
+  "version": "0.30.1"
+}

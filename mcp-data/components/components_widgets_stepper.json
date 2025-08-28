@@ -1,0 +1,46 @@
+{
+  "name": "Stepper",
+  "category": "widgets",
+  "slug": "components/widgets/stepper",
+  "summary": "Stepper component",
+  "props": [
+    {
+      "name": "steps",
+      "type": "React.ReactNode[]",
+      "required": true,
+      "default": "-",
+      "description": "Labels for each step"
+    },
+    {
+      "name": "active",
+      "type": "number",
+      "required": true,
+      "default": "0",
+      "description": "Index of the active step"
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": true
+    },
+    {
+      "name": "preset",
+      "type": "string | string[]",
+      "required": false,
+      "default": "-",
+      "description": "Apply style presets"
+    }
+  ],
+  "cssVars": [
+    "--valet-stepper-stroke",
+    "--valet-stepper-radius"
+  ],
+  "bestPractices": [],
+  "examples": [],
+  "docsUrl": "/components/widgets/StepperDemo",
+  "sourceFiles": [
+    "src/components/widgets/Stepper.tsx",
+    "docs/src/pages/components/widgets/StepperDemo.tsx"
+  ],
+  "version": "0.30.1"
+}

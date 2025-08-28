@@ -1,0 +1,54 @@
+{
+  "name": "Checkbox",
+  "category": "fields",
+  "slug": "components/fields/checkbox",
+  "summary": "Checkbox component",
+  "props": [
+    {
+      "name": "checked",
+      "type": "boolean",
+      "required": true
+    },
+    {
+      "name": "defaultChecked",
+      "type": "boolean",
+      "required": true
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "label",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "size",
+      "type": "CheckboxSize | number | string",
+      "required": true
+    },
+    {
+      "name": "onChange",
+      "type": "(checked: boolean, event: ChangeEvent<HTMLInputElement>) => void",
+      "required": true
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": true
+    }
+  ],
+  "cssVars": [
+    "--valet-checkbox-radius",
+    "--valet-checkbox-stroke",
+    "--valet-checkbox-inset"
+  ],
+  "bestPractices": [],
+  "examples": [],
+  "sourceFiles": [
+    "src/components/fields/Checkbox.tsx"
+  ],
+  "version": "0.30.1"
+}

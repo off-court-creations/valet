@@ -1,0 +1,84 @@
+{
+  "name": "Tabs",
+  "category": "layout",
+  "slug": "components/layout/tabs",
+  "summary": "Tabs component",
+  "props": [
+    {
+      "name": "active",
+      "type": "number",
+      "required": true,
+      "default": "-",
+      "description": "Controlled index of the active tab."
+    },
+    {
+      "name": "defaultActive",
+      "type": "number",
+      "required": true,
+      "default": "0",
+      "description": "Uncontrolled initial active tab index."
+    },
+    {
+      "name": "onTabChange",
+      "type": "(i: number) => void",
+      "required": true,
+      "default": "-",
+      "description": "Callback when the active tab changes."
+    },
+    {
+      "name": "orientation",
+      "type": "",
+      "required": true,
+      "default": "",
+      "description": "Layout direction for the tab strip and panel."
+    },
+    {
+      "name": "placement",
+      "type": "",
+      "required": true,
+      "default": "",
+      "description": "Which side the tab strip sits on relative to the panel."
+    },
+    {
+      "name": "alignX",
+      "type": "",
+      "required": true,
+      "default": "",
+      "description": "Horizontal alignment of the tab strip (horizontal orientation)."
+    },
+    {
+      "name": "sx",
+      "type": "object",
+      "required": true,
+      "default": "-",
+      "description": "Inline style overrides (CSS object; supports CSS vars)."
+    },
+    {
+      "name": "compact",
+      "type": "boolean",
+      "required": false,
+      "default": "false",
+      "description": "Reduce internal spacing density."
+    },
+    {
+      "name": "preset",
+      "type": "string | string[]",
+      "required": false,
+      "default": "-",
+      "description": "Apply style presets to the container."
+    }
+  ],
+  "cssVars": [
+    "--valet-focus-width",
+    "--valet-focus-offset",
+    "--valet-underline-width"
+  ],
+  "bestPractices": [],
+  "examples": [],
+  "docsUrl": "/components/layout/TabsDemo",
+  "sourceFiles": [
+    "src/components/layout/Tabs.tsx",
+    "docs/src/pages/components/layout/TabsDemo.tsx"
+  ],
+  "version": "0.30.1"
+}

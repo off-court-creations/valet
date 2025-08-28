@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "valet": {
+      "command": "node",
+      "args": ["servers/valet-mcp/dist/index.js"],
+      "env": {
+        "VALET_ROOT": "${workspaceRoot}",
+        "VALET_MCP_DATA_DIR": "mcp-data"
+      }
+    }
+  }
+}

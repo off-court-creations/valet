@@ -1,0 +1,36 @@
+{
+  "name": "Markdown",
+  "category": "widgets",
+  "slug": "components/widgets/markdown",
+  "summary": "Markdown component",
+  "props": [
+    {
+      "name": "data",
+      "type": "string",
+      "required": true,
+      "default": "-",
+      "description": "Markdown source text"
+    },
+    {
+      "name": "codeBackground",
+      "type": "string",
+      "required": true,
+      "default": "-",
+      "description": "Override background for fenced code blocks"
+    },
+    {
+      "name": "sx",
+      "type": "import('../../types').Sx",
+      "required": true
+    }
+  ],
+  "cssVars": [],
+  "bestPractices": [],
+  "examples": [],
+  "docsUrl": "/components/widgets/MarkdownDemo",
+  "sourceFiles": [
+    "src/components/widgets/Markdown.tsx",
+    "docs/src/pages/components/widgets/MarkdownDemo.tsx"
+  ],
+  "version": "0.30.1"
+}

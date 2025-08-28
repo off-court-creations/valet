@@ -1,0 +1,50 @@
+{
+  "name": "Skeleton",
+  "category": "primitives",
+  "slug": "components/primitives/skeleton",
+  "summary": "Skeleton component",
+  "props": [
+    {
+      "name": "loading",
+      "type": "boolean",
+      "required": true,
+      "default": "true",
+      "description": "Show placeholder while true"
+    },
+    {
+      "name": "variant",
+      "type": "'text' | 'rect' | 'circle'",
+      "required": true,
+      "default": "-",
+      "description": "Override inferred placeholder shape"
+    },
+    {
+      "name": "icon",
+      "type": "ReactNode",
+      "required": true,
+      "default": "-",
+      "description": "Optional icon shown while loading"
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": true
+    },
+    {
+      "name": "preset",
+      "type": "string | string[]",
+      "required": false,
+      "default": "-",
+      "description": "Apply style presets"
+    }
+  ],
+  "cssVars": [],
+  "bestPractices": [],
+  "examples": [],
+  "docsUrl": "/components/primitives/SkeletonDemo",
+  "sourceFiles": [
+    "src/components/primitives/Skeleton.tsx",
+    "docs/src/pages/components/primitives/SkeletonDemo.tsx"
+  ],
+  "version": "0.30.1"
+}

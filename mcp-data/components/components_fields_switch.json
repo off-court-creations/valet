@@ -1,0 +1,75 @@
+{
+  "name": "Switch",
+  "category": "fields",
+  "slug": "components/fields/switch",
+  "summary": "Switch component",
+  "props": [
+    {
+      "name": "checked",
+      "type": "boolean",
+      "required": true,
+      "default": "-",
+      "description": "Controlled state"
+    },
+    {
+      "name": "defaultChecked",
+      "type": "boolean",
+      "required": true,
+      "default": "false",
+      "description": "Uncontrolled initial state"
+    },
+    {
+      "name": "onChange",
+      "type": "(checked: boolean) => void",
+      "required": true,
+      "default": "-",
+      "description": "State change handler"
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "required": true,
+      "default": "-",
+      "description": "Form field name"
+    },
+    {
+      "name": "size",
+      "type": "'sm' | 'md' | 'lg'",
+      "required": true,
+      "default": "'md'",
+      "description": "Switch size"
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": true
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "required": false,
+      "default": "false",
+      "description": "Disable interaction"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[]",
+      "required": false,
+      "default": "-",
+      "description": "Apply style presets"
+    }
+  ],
+  "cssVars": [
+    "--valet-switch-outline",
+    "--valet-switch-offset",
+    "--valet-switch-pad"
+  ],
+  "bestPractices": [],
+  "examples": [],
+  "docsUrl": "/components/field/SwitchDemo",
+  "sourceFiles": [
+    "src/components/fields/Switch.tsx",
+    "docs/src/pages/components/field/SwitchDemo.tsx"
+  ],
+  "version": "0.30.1"
+}

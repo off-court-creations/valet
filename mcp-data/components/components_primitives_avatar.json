@@ -1,0 +1,71 @@
+{
+  "name": "Avatar",
+  "category": "primitives",
+  "slug": "components/primitives/avatar",
+  "summary": "Avatar component",
+  "props": [
+    {
+      "name": "src",
+      "type": "string",
+      "required": true,
+      "default": "-",
+      "description": "Image URL override"
+    },
+    {
+      "name": "email",
+      "type": "string",
+      "required": true,
+      "default": "-",
+      "description": "Email used for Gravatar lookup"
+    },
+    {
+      "name": "size",
+      "type": "'xs' | 's' | 'm' | 'l' | 'xl'",
+      "required": true,
+      "default": "'m'",
+      "description": "Relative size token"
+    },
+    {
+      "name": "variant",
+      "type": "'plain' | 'outline'",
+      "required": true,
+      "default": "'plain'",
+      "description": "Visual style variant"
+    },
+    {
+      "name": "gravatarDefault",
+      "type": "string",
+      "required": true,
+      "default": "'identicon'",
+      "description": "Fallback style when no avatar exists"
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": true
+    },
+    {
+      "name": "alt",
+      "type": "string",
+      "required": false,
+      "default": "-",
+      "description": "Image alt text"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[]",
+      "required": false,
+      "default": "-",
+      "description": "Apply style presets"
+    }
+  ],
+  "cssVars": [],
+  "bestPractices": [],
+  "examples": [],
+  "docsUrl": "/components/primitives/AvatarDemo",
+  "sourceFiles": [
+    "src/components/primitives/Avatar.tsx",
+    "docs/src/pages/components/primitives/AvatarDemo.tsx"
+  ],
+  "version": "0.30.1"
+}

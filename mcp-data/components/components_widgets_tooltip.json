@@ -1,0 +1,90 @@
+{
+  "name": "Tooltip",
+  "category": "widgets",
+  "slug": "components/widgets/tooltip",
+  "summary": "Tooltip component",
+  "props": [
+    {
+      "name": "title",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "placement",
+      "type": "Placement",
+      "required": true,
+      "default": "'top'"
+    },
+    {
+      "name": "arrow",
+      "type": "boolean",
+      "required": true,
+      "default": "true"
+    },
+    {
+      "name": "enterDelay",
+      "type": "number",
+      "required": true,
+      "default": "100"
+    },
+    {
+      "name": "leaveDelay",
+      "type": "number",
+      "required": true,
+      "default": "100"
+    },
+    {
+      "name": "open",
+      "type": "boolean",
+      "required": true
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "required": true,
+      "default": "false"
+    },
+    {
+      "name": "disableHoverListener",
+      "type": "boolean",
+      "required": true,
+      "default": "false"
+    },
+    {
+      "name": "disableFocusListener",
+      "type": "boolean",
+      "required": true,
+      "default": "false"
+    },
+    {
+      "name": "disableTouchListener",
+      "type": "boolean",
+      "required": true,
+      "default": "false"
+    },
+    {
+      "name": "onOpen",
+      "type": "() => void",
+      "required": true
+    },
+    {
+      "name": "onClose",
+      "type": "() => void",
+      "required": true
+    },
+    {
+      "name": "children",
+      "type": "ReactElement",
+      "required": true
+    }
+  ],
+  "cssVars": [
+    "--valet-tooltip-arrow-size"
+  ],
+  "bestPractices": [],
+  "examples": [],
+  "sourceFiles": [
+    "src/components/widgets/Tooltip.tsx"
+  ],
+  "version": "0.30.1"
+}

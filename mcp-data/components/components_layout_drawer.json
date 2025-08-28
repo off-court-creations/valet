@@ -1,0 +1,89 @@
+{
+  "name": "Drawer",
+  "category": "layout",
+  "slug": "components/layout/drawer",
+  "summary": "Drawer component",
+  "props": [
+    {
+      "name": "open",
+      "type": "boolean",
+      "required": true
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "required": true,
+      "default": "false"
+    },
+    {
+      "name": "anchor",
+      "type": "DrawerAnchor",
+      "required": true,
+      "default": "'left'"
+    },
+    {
+      "name": "onClose",
+      "type": "() => void",
+      "required": true
+    },
+    {
+      "name": "size",
+      "type": "number | string",
+      "required": true,
+      "default": "'16rem'"
+    },
+    {
+      "name": "disableBackdropClick",
+      "type": "boolean",
+      "required": true,
+      "default": "false"
+    },
+    {
+      "name": "disableEscapeKeyDown",
+      "type": "boolean",
+      "required": true,
+      "default": "false"
+    },
+    {
+      "name": "persistent",
+      "type": "boolean",
+      "required": true,
+      "default": "false"
+    },
+    {
+      "name": "adaptive",
+      "type": "boolean",
+      "required": true,
+      "default": "false"
+    },
+    {
+      "name": "toggleIcon",
+      "type": "string",
+      "required": true,
+      "default": "'mdi:menu'"
+    },
+    {
+      "name": "closeIcon",
+      "type": "string",
+      "required": true,
+      "default": "'mdi:close'"
+    },
+    {
+      "name": "children",
+      "type": "React.ReactNode",
+      "required": true
+    }
+  ],
+  "cssVars": [
+    "--valet-font-heading",
+    "--valet-font-body",
+    "--valet-font-mono",
+    "--valet-font-button"
+  ],
+  "bestPractices": [],
+  "examples": [],
+  "sourceFiles": [
+    "src/components/layout/Drawer.tsx"
+  ],
+  "version": "0.30.1"
+}
