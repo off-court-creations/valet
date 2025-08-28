@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 // ─────────────────────────────────────────────────────────────
 // servers/valet-mcp/src/index.ts  | valet-mcp
 // MCP server exposing Valet component data from mcp-data/
