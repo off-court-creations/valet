@@ -8,7 +8,7 @@
       "name": "checked",
       "type": "boolean",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Controlled state"
     },
     {
@@ -22,14 +22,14 @@
       "name": "onChange",
       "type": "(checked: boolean) => void",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "State change handler"
     },
     {
       "name": "name",
       "type": "string",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Form field name"
     },
     {
@@ -55,7 +55,7 @@
       "name": "preset",
       "type": "string | string[]",
       "required": false,
-      "default": "-",
+      "default": "—",
       "description": "Apply style presets"
     }
   ],
@@ -80,6 +80,6 @@
     "src/components/fields/Switch.tsx",
     "docs/src/pages/components/field/SwitchDemo.tsx"
   ],
-  "version": "0.30.2",
+  "version": "0.30.3",
   "schemaVersion": "1.1"
 }

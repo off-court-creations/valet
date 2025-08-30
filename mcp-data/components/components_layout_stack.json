@@ -64,6 +64,6 @@
     "src/components/layout/Stack.tsx",
     "docs/src/pages/components/layout/StackDemo.tsx"
   ],
-  "version": "0.30.2",
+  "version": "0.30.3",
   "schemaVersion": "1.1"
 }

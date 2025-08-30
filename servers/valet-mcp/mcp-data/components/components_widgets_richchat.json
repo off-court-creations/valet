@@ -8,35 +8,35 @@
       "name": "messages",
       "type": "RichMessage[]",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Conversation history with JSX content"
     },
     {
       "name": "onFormSubmit",
       "type": "(value: string, index: number) => void",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Called when a form message submits"
     },
     {
       "name": "onSend",
       "type": "(m: RichMessage) => void",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Called when user sends a message"
     },
     {
       "name": "userAvatar",
       "type": "string",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "URL for user avatar image"
     },
     {
       "name": "systemAvatar",
       "type": "string",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "URL for assistant avatar image"
     },
     {
@@ -74,7 +74,7 @@
       "name": "preset",
       "type": "string | string[]",
       "required": false,
-      "default": "-",
+      "default": "—",
       "description": "Apply style presets"
     }
   ],
@@ -99,6 +99,6 @@
     "src/components/widgets/RichChat.tsx",
     "docs/src/pages/components/widgets/RichChat.tsx"
   ],
-  "version": "0.30.2",
+  "version": "0.30.3",
   "schemaVersion": "1.1"
 }

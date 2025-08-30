@@ -112,6 +112,6 @@
     "src/components/widgets/Tooltip.tsx",
     "docs/src/pages/components/widgets/TooltipDemo.tsx"
   ],
-  "version": "0.30.2",
+  "version": "0.30.3",
   "schemaVersion": "1.1"
 }

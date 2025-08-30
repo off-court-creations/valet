@@ -8,14 +8,14 @@
       "name": "data",
       "type": "string",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Markdown source text"
     },
     {
       "name": "codeBackground",
       "type": "string",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Override background for fenced code blocks"
     },
     {
@@ -36,6 +36,6 @@
     "src/components/widgets/Markdown.tsx",
     "docs/src/pages/components/widgets/MarkdownDemo.tsx"
   ],
-  "version": "0.30.2",
+  "version": "0.30.3",
   "schemaVersion": "1.1"
 }

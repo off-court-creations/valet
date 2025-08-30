@@ -76,6 +76,6 @@
     "src/components/layout/Grid.tsx",
     "docs/src/pages/components/layout/GridDemo.tsx"
   ],
-  "version": "0.30.2",
+  "version": "0.30.3",
   "schemaVersion": "1.1"
 }

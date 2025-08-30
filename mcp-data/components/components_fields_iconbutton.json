@@ -68,6 +68,6 @@
     "src/components/fields/IconButton.tsx",
     "docs/src/pages/components/field/IconButtonDemoPage.tsx"
   ],
-  "version": "0.30.2",
+  "version": "0.30.3",
   "schemaVersion": "1.1"
 }

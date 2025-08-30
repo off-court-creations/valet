@@ -8,7 +8,7 @@
       "name": "value",
       "type": "number",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Controlled value"
     },
     {
@@ -22,28 +22,28 @@
       "name": "onChange",
       "type": "(value: number) => void",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Change handler"
     },
     {
       "name": "name",
       "type": "string",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Form field name"
     },
     {
       "name": "min",
       "type": "number",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Minimum value"
     },
     {
       "name": "max",
       "type": "number",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Maximum value"
     },
     {
@@ -76,7 +76,7 @@
       "name": "preset",
       "type": "string | string[]",
       "required": false,
-      "default": "-",
+      "default": "—",
       "description": "Apply style presets"
     }
   ],
@@ -97,6 +97,6 @@
     "src/components/fields/Iterator.tsx",
     "docs/src/pages/components/field/IteratorDemo.tsx"
   ],
-  "version": "0.30.2",
+  "version": "0.30.3",
   "schemaVersion": "1.1"
 }

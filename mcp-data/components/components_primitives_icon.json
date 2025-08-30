@@ -61,6 +61,6 @@
     "src/components/primitives/Icon.tsx",
     "docs/src/pages/components/primitives/IconDemoPage.tsx"
   ],
-  "version": "0.30.2",
+  "version": "0.30.3",
   "schemaVersion": "1.1"
 }

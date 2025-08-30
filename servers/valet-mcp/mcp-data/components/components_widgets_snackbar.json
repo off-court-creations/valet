@@ -15,7 +15,7 @@
       "name": "onClose",
       "type": "",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Called when fully hidden"
     },
     {
@@ -29,7 +29,7 @@
       "name": "message",
       "type": "React.ReactNode",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Convenience message"
     },
     {
@@ -48,7 +48,7 @@
       "name": "preset",
       "type": "string | string[]",
       "required": false,
-      "default": "-",
+      "default": "—",
       "description": "Apply style presets"
     }
   ],
@@ -72,6 +72,6 @@
     "src/components/widgets/Snackbar.tsx",
     "docs/src/pages/components/widgets/SnackbarDemo.tsx"
   ],
-  "version": "0.30.2",
+  "version": "0.30.3",
   "schemaVersion": "1.1"
 }

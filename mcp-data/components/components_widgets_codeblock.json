@@ -45,6 +45,6 @@
     "src/components/widgets/CodeBlock.tsx",
     "docs/src/pages/components/widgets/CodeBlockDemo.tsx"
   ],
-  "version": "0.30.2",
+  "version": "0.30.3",
   "schemaVersion": "1.1"
 }

@@ -90,6 +90,6 @@
     "src/components/widgets/Dropzone.tsx",
     "docs/src/pages/components/widgets/DropzoneDemo.tsx"
   ],
-  "version": "0.30.2",
+  "version": "0.30.3",
   "schemaVersion": "1.1"
 }

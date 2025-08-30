@@ -8,7 +8,7 @@
       "name": "checked",
       "type": "boolean",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Controlled checked state"
     },
     {
@@ -22,14 +22,14 @@
       "name": "name",
       "type": "string",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Unique field name"
     },
     {
       "name": "label",
       "type": "ReactNode",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Label text or element"
     },
     {
@@ -43,7 +43,7 @@
       "name": "onChange",
       "type": "(checked: boolean, e: ChangeEvent<HTMLInputElement>) => void",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Change callback"
     },
     {
@@ -62,7 +62,7 @@
       "name": "preset",
       "type": "string | string[]",
       "required": false,
-      "default": "-",
+      "default": "—",
       "description": "Apply style presets"
     }
   ],
@@ -91,6 +91,6 @@
     "src/components/fields/Checkbox.tsx",
     "docs/src/pages/components/field/CheckBoxDemo.tsx"
   ],
-  "version": "0.30.2",
+  "version": "0.30.3",
   "schemaVersion": "1.1"
 }

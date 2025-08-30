@@ -8,7 +8,7 @@
       "name": "steps",
       "type": "React.ReactNode[]",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Labels for each step"
     },
     {
@@ -27,7 +27,7 @@
       "name": "preset",
       "type": "string | string[]",
       "required": false,
-      "default": "-",
+      "default": "—",
       "description": "Apply style presets"
     }
   ],
@@ -50,6 +50,6 @@
     "src/components/widgets/Stepper.tsx",
     "docs/src/pages/components/widgets/StepperDemo.tsx"
   ],
-  "version": "0.30.2",
+  "version": "0.30.3",
   "schemaVersion": "1.1"
 }
