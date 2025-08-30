@@ -48,7 +48,14 @@
       "name": "icon"
     }
   ],
-  "bestPractices": [],
+  "bestPractices": [
+    "Use sparingly. SpeedDial is for a small cluster of high‑value actions (typically 2–5). If you have more, consider a toolbar or menu instead.",
+    "Place with intent. Default bottom‑right works well; adjust offsets with spacing tokens to avoid overlapping content or platform UI (e.g., safe areas).",
+    "Label actions clearly. Provide short, specific labels; the component exposes them via `title` and keyboard focus when open.",
+    "Close on action. After invoking an action, collapse the dial so the UI returns to a stable state and prevents accidental re‑taps.",
+    "Pick direction by context. Choose `up` / `left` when anchored to bottom/right edges to prevent overflow. Keep action order predictable.",
+    "Motion tokens. Animations use theme motion tokens; keep custom presets aligned for a cohesive feel with the rest of the app."
+  ],
   "examples": [],
   "docsUrl": "/components/widgets/SpeedDialDemo",
   "sourceFiles": [

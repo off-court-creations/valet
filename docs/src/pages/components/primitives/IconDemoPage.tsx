@@ -13,6 +13,7 @@ import {
   definePreset,
   Tabs,
   Table,
+  Panel,
 } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
@@ -246,6 +247,33 @@ export default function IconDemoPage() {
         >
           ← Back
         </Button>
+
+        {/* Best Practices -------------------------------------------------- */}
+        <Panel fullWidth>
+          <Typography variant='h4'>Best Practices</Typography>
+          <Typography>
+            - Use semantic sizing. When icons appear inline with text, size in <code>em</code> so
+            they scale with the surrounding type (<code>size=&quot;1.25em&quot;</code> pairs well
+            with headings).
+          </Typography>
+          <Typography>
+            - Accessible naming. Decorative icons should be <code>aria-hidden</code>; icons that
+            convey meaning should have a label via the parent control (e.g., <code>aria-label</code>
+            on <code>IconButton</code>).
+          </Typography>
+          <Typography>
+            - Prefer theme colours. Let icons inherit current color or set tokens; avoid arbitrary
+            hex values that fight the theme.
+          </Typography>
+          <Typography>
+            - Choose <code>icon</code> vs <code>svg</code> wisely. Use <code>icon</code> for Iconify
+            glyphs; provide <code>svg</code> for custom/brand artwork only. Do not pass both.
+          </Typography>
+          <Typography>
+            - Motion restraint. Avoid animating icons excessively; keep motion consistent with theme
+            motion tokens and user expectations.
+          </Typography>
+        </Panel>
       </Stack>
     </Surface>
   );

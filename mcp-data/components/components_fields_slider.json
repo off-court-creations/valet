@@ -138,7 +138,15 @@
   ],
   "actions": [],
   "slots": [],
-  "bestPractices": [],
+  "bestPractices": [
+    "Use Slider for continuous ranges. For a handful of discrete options, prefer `RadioGroup` (single‑select) or `Select` .",
+    "Declare real bounds. Set `min` / `max` to meaningful limits and show context with `showMinMax` and/or `showValue` .",
+    "Snap intentionally. Use `step` or supply `presets` with `snap='presets'` to make targeting easy; adjust `precision` to avoid jittery decimals.",
+    "Keyboard precision. Arrow keys adjust by one step; ensure `step` is small enough, and consider pairing with an `Iterator` or numeric input for exact entry.",
+    "Ticks with purpose. Only enable `showTicks` when markers aid comprehension; avoid dense, unreadable tick forests.",
+    "Size for touch. Use `size` tokens or numbers to keep comfortable thumb and track sizes; avoid tiny controls on mobile.",
+    "Controlled effects. When controlled, debounce or batch expensive side‑effects in `onChange` to keep sliding smooth."
+  ],
   "examples": [],
   "docsUrl": "/components/field/SliderDemo",
   "sourceFiles": [

@@ -261,6 +261,18 @@ export default function GridDemoPage() {
             - Maintain logical DOM order for keyboard and screen readers; don’t rely on grid
             placement to imply reading order.
           </Typography>
+          <Typography>
+            - Cooperate with <code>&lt;Surface&gt;</code>. In adaptive portrait, let content stack
+            and the page scroll naturally; avoid creating nested scroll areas inside cells.
+          </Typography>
+          <Typography>
+            - Size items with tokens. Use <code>theme.spacing</code> and percent/flex spans rather
+            than fixed pixels so density and breakpoints scale predictably.
+          </Typography>
+          <Typography>
+            - Avoid complex selector cascades. Keep item styles shallow and prefer presets for
+            repeatable patterns to maintain performance and readability.
+          </Typography>
         </Panel>
       </Stack>
     </Surface>

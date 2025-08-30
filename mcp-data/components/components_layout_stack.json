@@ -57,7 +57,13 @@
   "events": [],
   "actions": [],
   "slots": [],
-  "bestPractices": [],
+  "bestPractices": [
+    "Use numeric `gap` with theme spacing. Prefer small integers (e.g., `1` , `2` ) so density changes propagate via `theme.spacing` .",
+    "Let rows wrap by default. `direction='row'` enables wrapping unless you set `wrap=` . This keeps content readable on narrow screens.",
+    "Pad the container, not children. Use the `pad` prop for outer breathing room and `gap` for inter-item rhythm; avoid ad‑hoc margins on each child.",
+    "Control scroll intentionally. Stacks hide horizontal overflow; when nesting inside constrained parents (e.g., `` ), tune `--valet-stack-ov-y` and `--valet-stack-max-h` to prevent nested scrollbars.",
+    "Use `preset` for common layouts. Capture repeated alignment and spacing in a preset to keep markup clean and consistent."
+  ],
   "examples": [],
   "docsUrl": "/components/layout/StackDemo",
   "sourceFiles": [

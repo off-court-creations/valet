@@ -65,7 +65,14 @@
       "name": "message"
     }
   ],
-  "bestPractices": [],
+  "bestPractices": [
+    "Keep messages short and specific. Snackbars confirm actions or provide brief status; avoid long instructions or multi‑step interactions.",
+    "Provide a single, clear action. If an action is present, use a short verb (e.g., 'Undo'). Avoid multiple competing actions.",
+    "Respect motion and timing. Use `autoHideDuration` for transient messages (3–6s typical); longer durations should be deliberate.",
+    "Don’t stack excessively. Keep concurrent snackbars minimal; if necessary, queue them and ensure important ones aren’t missed.",
+    "Keep focus behavior intact. Snackbars are non‑modal; they should not steal focus. If a button is provided, ensure it is reachable via keyboard.",
+    "Style via tokens/presets. Use theme colors for status (e.g., `primary` / `error` ) and consolidate variants with `preset` ."
+  ],
   "examples": [],
   "docsUrl": "/components/widgets/SnackbarDemo",
   "sourceFiles": [

@@ -59,10 +59,19 @@
   "events": [],
   "actions": [],
   "slots": [],
-  "bestPractices": [],
+  "bestPractices": [
+    "Write meaningful `alt` text. Describe the content/purpose; use `alt=\"\"` for purely decorative images to avoid noise for screen readers.",
+    "Reserve layout space. Provide `width` and `height` (or a styled container) to prevent cumulative layout shift when images load.",
+    "Lazy‑load offscreen media. Enable `lazy` with a tiny `placeholder` for non‑critical images; avoid lazy‑loading above‑the‑fold hero images.",
+    "Choose the right `objectFit` . Use `cover` for fills and `contain` for letterboxed media; provide a background colour for pleasant letterboxing.",
+    "Prevent drag ghosts. The component disables dragging by default; only enable dragging when there is a genuine use‑case.",
+    "Optimize assets. Serve appropriately sized and compressed images; avoid shipping multi‑MB originals for small containers."
+  ],
   "examples": [],
+  "docsUrl": "/components/primitives/ImageDemo",
   "sourceFiles": [
-    "src/components/primitives/Image.tsx"
+    "src/components/primitives/Image.tsx",
+    "docs/src/pages/components/primitives/ImageDemo.tsx"
   ],
   "version": "0.30.3",
   "schemaVersion": "1.1"

@@ -2,7 +2,7 @@
 // src/pages/VideoDemoPage.tsx | valet-playground
 // Simple showcase of the <Video /> component
 // ─────────────────────────────────────────────────────────────
-import { Surface, Stack, Typography, Video, useTheme } from '@archway/valet';
+import { Surface, Stack, Typography, Video, useTheme, Panel } from '@archway/valet';
 import NavDrawer from '../../../components/NavDrawer';
 
 /*─────────────────────────────────────────────────────────────*/
@@ -48,6 +48,36 @@ export default function VideoDemoPage() {
           height='auto'
           objectFit='contain'
         />
+      </Stack>
+      {/* Best Practices ---------------------------------------------------- */}
+      <Stack sx={{ padding: theme.spacing(1), maxWidth: 1024, margin: '0 auto' }}>
+        <Panel fullWidth>
+          <Typography variant='h4'>Best Practices</Typography>
+          <Typography>
+            - Provide multiple sources. Include <code>webm</code> and <code>mp4</code> encodings
+            when possible to maximize browser support.
+          </Typography>
+          <Typography>
+            - Use a <code>poster</code> and reserve space. Set a poster image and explicit
+            <code> width</code>/<code> height</code> (or container) to avoid layout shift.
+          </Typography>
+          <Typography>
+            - Captions matter. Supply <code>tracks</code> for subtitles/captions and allow users to
+            toggle them; the component supports keyboard toggling (C) for the first track.
+          </Typography>
+          <Typography>
+            - Autoplay etiquette. Browsers require <code>muted</code> for autoplay; keep controls on
+            for accessibility and allow users to pause.
+          </Typography>
+          <Typography>
+            - Object fit by context. Use <code>contain</code> to show entire frame (letterbox) or
+            <code> cover</code> for edge-to-edge hero media.
+          </Typography>
+          <Typography>
+            - Performance. Use CDN delivery and sensible <code>preload</code> policy; avoid heavy
+            background loops that compete with page interactivity.
+          </Typography>
+        </Panel>
       </Stack>
     </Surface>
   );

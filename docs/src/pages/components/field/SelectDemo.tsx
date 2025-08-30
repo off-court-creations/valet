@@ -334,6 +334,19 @@ export default function SelectDemoPage() {
             - When using <code>FormControl</code>, set a stable <code>name</code>, and avoid mixing
             primitive types within the same field.
           </Typography>
+          <Typography>
+            - Accessibility: ensure the field has a programmatic label (visible caption or
+            <code> aria-label</code>). Keyboard users should be able to focus and select without a
+            mouse.
+          </Typography>
+          <Typography>
+            - Performance: for large option sets, group options logically or load progressively
+            instead of rendering hundreds of nodes at once.
+          </Typography>
+          <Typography>
+            - Tokens/presets: size with <code>size</code> tokens or numbers and use a
+            <code> preset</code> for visual variants so controls adapt to density and branding.
+          </Typography>
         </Panel>
       </Stack>
     </Surface>

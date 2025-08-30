@@ -73,7 +73,14 @@
   ],
   "actions": [],
   "slots": [],
-  "bestPractices": [],
+  "bestPractices": [
+    "Use Switch for immediate effects. Switch communicates an on/off state that applies instantly; for form submissions that save later, prefer `Checkbox` .",
+    "Always pair with a clear label. The label should describe the effect, not the control (e.g., 'Wi‑Fi' rather than 'Enable'). Set a stable `name` when used with `FormControl` .",
+    "Choose the control model deliberately. Use `checked` / `onChange` when the state drives app logic; otherwise `defaultChecked` is fine.",
+    "Maintain comfortable targets. Pick size tokens ( `'sm'` / `'md'` / `'lg'` ) that keep tap areas ~40–48px in dense UIs.",
+    "Accessible semantics. Switch exposes `role=\"switch\"` and `aria-checked` ; do not rely on colour alone to convey state.",
+    "Motion and theme. Let default motion and colours come from the theme; keep overrides in presets to stay consistent with the rest of the UI."
+  ],
   "examples": [],
   "docsUrl": "/components/field/SwitchDemo",
   "sourceFiles": [

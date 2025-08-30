@@ -388,6 +388,19 @@ export default function TabsDemoPage() {
             - Keep DOM order logical (Tab → Panel pairs) to preserve keyboard and screen‑reader
             flow.
           </Typography>
+          <Typography>
+            - Respect overflow ergonomics. When tabs exceed width, valet keeps a single row with
+            horizontal scroll and edge fades; avoid forcing multi‑row tabs, which harms
+            discoverability.
+          </Typography>
+          <Typography>
+            - Lean on motion tokens. The active underline should feel crisp; pair durations/easing
+            to <code>theme.motion</code> for consistent UX across components.
+          </Typography>
+          <Typography>
+            - Route integration. When tabs represent routes, control them from the router and keep
+            URLs canonical so reload/share preserves the active view.
+          </Typography>
         </Panel>
 
         {/* Back nav -------------------------------------------------------- */}

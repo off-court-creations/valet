@@ -64,7 +64,13 @@
   "events": [],
   "actions": [],
   "slots": [],
-  "bestPractices": [],
+  "bestPractices": [
+    "Use sparingly. Dividers communicate separation; prefer intrinsic spacing (Stack pad/gap) for rhythm and only add lines where hierarchy needs emphasis.",
+    "Share spacing tokens. Set `pad` and `thickness` via numeric tokens so density matches other components; avoid hard‑coded pixels.",
+    "Orientation follows layout. Use vertical dividers within horizontal stacks and vice versa; keep `length` proportional to nearby content.",
+    "Keep contrast subtle. Default line color derives from text; override sparingly to avoid heavy or distracting separators.",
+    "Don’t imply semantics. Dividers are visual; use headings and landmarks for document structure, not lines."
+  ],
   "examples": [],
   "docsUrl": "/components/primitives/DividerDemo",
   "sourceFiles": [

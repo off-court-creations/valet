@@ -287,6 +287,30 @@ export default function DividerDemoPage() {
             />
           </Tabs.Panel>
         </Tabs>
+        {/* Best Practices ------------------------------------------------- */}
+        <Panel fullWidth>
+          <Typography variant='h4'>Best Practices</Typography>
+          <Typography>
+            - Use sparingly. Dividers communicate separation; prefer intrinsic spacing (Stack
+            pad/gap) for rhythm and only add lines where hierarchy needs emphasis.
+          </Typography>
+          <Typography>
+            - Share spacing tokens. Set <code>pad</code> and <code>thickness</code> via numeric
+            tokens so density matches other components; avoid hard‑coded pixels.
+          </Typography>
+          <Typography>
+            - Orientation follows layout. Use vertical dividers within horizontal stacks and vice
+            versa; keep <code>length</code> proportional to nearby content.
+          </Typography>
+          <Typography>
+            - Keep contrast subtle. Default line color derives from text; override sparingly to
+            avoid heavy or distracting separators.
+          </Typography>
+          <Typography>
+            - Don’t imply semantics. Dividers are visual; use headings and landmarks for document
+            structure, not lines.
+          </Typography>
+        </Panel>
       </Stack>
     </Surface>
   );

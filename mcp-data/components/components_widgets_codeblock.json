@@ -38,7 +38,13 @@
   "events": [],
   "actions": [],
   "slots": [],
-  "bestPractices": [],
+  "bestPractices": [
+    "Specify the language. Pass a valid Highlight.js key (e.g., 'typescript') so tokens and keywords render correctly.",
+    "Use a monospace font and preserve whitespace. Pair with `Typography` `whitespace` controls when embedding code fragments elsewhere.",
+    "Keep snippets focused. Avoid very large blocks; extract long examples into files and link out to keep pages readable and fast.",
+    "Accessible copy affordance. Provide a descriptive `ariaLabel` (e.g., \"Copy code\") and a `title` tooltip for clarity.",
+    "Security hygiene. Never render untrusted code as executable; CodeBlock is purely presentational and should not eval content."
+  ],
   "examples": [],
   "docsUrl": "/components/widgets/CodeBlockDemo",
   "sourceFiles": [

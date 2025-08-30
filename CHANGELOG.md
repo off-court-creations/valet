@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.30.4]
+- docs: add Best Practices sections for Surface, Styled Engine, and Theme concept pages; plus AppBar, Stack, and Drawer component demos for consistent guidance.
+- docs: add Best Practices sections for Pagination, Snackbar, and RadioGroup demos to strengthen accessibility, motion, and state guidance.
+- docs: enhance Best Practices for Tabs, Grid, and Select demos with surface-aware overflow, tokenized motion/spacing, and accessibility guidance.
+- docs: add Best Practices for List, Tree, and Dropzone demos to cover selection/reorder ergonomics, keyboard navigation patterns, and secure file handling.
+- docs: add Best Practices for Stepper, SpeedDial, and Checkbox demos; emphasize presentational vs. navigational roles, safe action clusters, and accessible toggle semantics.
+- docs: add Best Practices for Switch, Slider, and Typography demos; clarify instant vs. form toggles, snapping/precision and keyboard support, and semantic heading usage with tokenized type scale.
+- docs: add Best Practices for IconButton, Image, and Progress demos; strengthen accessible naming, layout stability, and mode/ARIA guidance.
+- docs: add Best Practices for Icon, Skeleton, and Video demos; emphasize semantic sizing and labeling, realistic placeholders, and media accessibility/performance.
+
 ## [0.30.3]
 
 - Updated docs to represent the changes and upgrades to `@archway/valet-mcp`!

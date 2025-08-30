@@ -49,10 +49,19 @@
   ],
   "actions": [],
   "slots": [],
-  "bestPractices": [],
+  "bestPractices": [
+    "Keep visible pages small. For large `count` , set `visibleWindow` to 5–7 so navigation remains scannable and the underline motion stays legible.",
+    "Keep the active page in view. Leave `autoFollowActive` on when the current page can change outside of user clicks (e.g., programmatic navigation or router updates).",
+    "Disable bounds appropriately. At `page === 1` or `page === count` , disable previous/next buttons to reduce noise and convey state.",
+    "Sync with URL when relevant. For paged routes, mirror state in the router (query or path) so refresh/share keeps position; keep Pagination controlled via `page` and `onChange` .",
+    "Use tokens for rhythm. Rely on theme motion tokens for underline animation and spacing so density or brand changes do not require component edits.",
+    "Prefer Pagination for finite sets. For unknown or unbounded results, use windowed lists or infinite scroll with clear load affordances."
+  ],
   "examples": [],
+  "docsUrl": "/components/widgets/PaginationDemo",
   "sourceFiles": [
-    "src/components/widgets/Pagination.tsx"
+    "src/components/widgets/Pagination.tsx",
+    "docs/src/pages/components/widgets/PaginationDemo.tsx"
   ],
   "version": "0.30.3",
   "schemaVersion": "1.1"

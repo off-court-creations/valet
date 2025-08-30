@@ -85,7 +85,14 @@
       "name": "children"
     }
   ],
-  "bestPractices": [],
+  "bestPractices": [
+    "Label the group clearly. Provide a visible prompt (e.g., a preceding `Typography` ) and ensure `name` is set so the group behaves as a single form field.",
+    "Choose controlled vs uncontrolled deliberately. Use `value` / `onChange` when the selection drives app state; otherwise, `defaultValue` is sufficient.",
+    "Align to available space. Use `row` for short option lists in wide layouts; prefer a column for long labels or narrow screens.",
+    "Keep targets comfortable. Use token sizes ( `'sm'` .. `'xl'` ) or numeric values to maintain touch targets ≥ 40–48px depending on density.",
+    "Avoid nesting interactive content inside labels. Keep each option’s label succinct and non-interactive so keyboard and screen reader navigation remain predictable.",
+    "Use presets for visual variants. Capture chip/pill styles with `definePreset` and apply via `preset` so branding and states stay consistent."
+  ],
   "examples": [],
   "docsUrl": "/components/field/RadioGroupDemo",
   "sourceFiles": [

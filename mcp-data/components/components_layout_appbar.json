@@ -50,10 +50,18 @@
       "name": "right"
     }
   ],
-  "bestPractices": [],
+  "bestPractices": [
+    "Use a single AppBar per route. It registers with the current `` and automatically offsets content; avoid adding manual top padding/margins.",
+    "Prefer tokens and presets. Set `color` to `'primary'` , `'secondary'` , or `'tertiary'` and adjust spacing via the `pad` prop using `theme.spacing` . Use `preset` to standardize variants.",
+    "Keep slot content purposeful. Place brand/navigation in `left` and primary actions in `right` . For icon-only controls, provide `aria-label` for accessibility.",
+    "Avoid fixed heights. Let padding and typography define height so the AppBar adapts to density, fonts, and breakpoints without magic numbers.",
+    "Mind stacking contexts. The AppBar is portalled to `document.body` with a high z-index. Avoid creating local stacking contexts that unintentionally cover it."
+  ],
   "examples": [],
+  "docsUrl": "/components/layout/AppBarDemo",
   "sourceFiles": [
-    "src/components/layout/AppBar.tsx"
+    "src/components/layout/AppBar.tsx",
+    "docs/src/pages/components/layout/AppBarDemo.tsx"
   ],
   "version": "0.30.3",
   "schemaVersion": "1.1"

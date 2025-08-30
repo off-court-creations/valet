@@ -87,6 +87,41 @@ const Spinner = styled('div', () => ({
           Define shared styles with <code>definePreset</code> and apply via the <code>preset</code>{' '}
           prop to keep markup clean and consistent across the app.
         </Typography>
+
+        {/* Best Practices -------------------------------------------------- */}
+        <Panel fullWidth>
+          <Typography variant='h4'>Best Practices</Typography>
+          <Typography>
+            - Prefer presets for shared patterns. Use <code>definePreset</code> for repeatable
+            styles and apply them with <code>preset</code> to avoid copy‑pasted CSS and keep
+            semantics focused on structure.
+          </Typography>
+          <Typography>
+            - Keep style functions stable and token‑driven. Reference <code>theme.spacing</code>,
+            <code> theme.radius</code>, <code>theme.motion</code>, and color tokens rather than
+            hard‑coding pixel values. This preserves density/theming controls.
+          </Typography>
+          <Typography>
+            - Avoid heavy dynamic branching inside style templates. Let props select presets or set
+            a small number of CSS variables. Fewer unique rule strings → more cache hits and smaller
+            stylesheets.
+          </Typography>
+          <Typography>
+            - Keep selectors shallow. The engine emits atomic rules for performance; prefer single
+            class selectors and avoid deep descendant chains that are brittle and costly.
+          </Typography>
+          <Typography>
+            - Use <code>keyframes</code> for animations and consume motion tokens. Pair
+            <code> animation-duration</code> with <code>theme.motion.duration</code> and
+            <code> animation-timing-function</code> with <code>theme.motion.easing</code> for a
+            cohesive feel.
+          </Typography>
+          <Typography>
+            - Hide transient props with a <code>$</code> prefix. Pass configuration like
+            <code> $variant</code> or <code>$size</code> to styled elements without leaking unknown
+            attributes to the DOM.
+          </Typography>
+        </Panel>
       </Stack>
     </Surface>
   );
