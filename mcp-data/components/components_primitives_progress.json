@@ -48,10 +48,15 @@
   "cssVars": [
     "--valet-text-color"
   ],
+  "cssPresets": [],
+  "events": [],
+  "actions": [],
+  "slots": [],
   "bestPractices": [],
   "examples": [],
   "sourceFiles": [
     "src/components/primitives/Progress.tsx"
   ],
-  "version": "0.30.1"
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
 }

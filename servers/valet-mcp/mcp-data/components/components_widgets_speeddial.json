@@ -23,6 +23,12 @@
       "type": "'up' | 'down' | 'left' | 'right'",
       "required": true,
       "default": "'up'",
+      "enumValues": [
+        "up",
+        "down",
+        "left",
+        "right"
+      ],
       "description": "Expansion direction"
     },
     {
@@ -34,6 +40,14 @@
     }
   ],
   "cssVars": [],
+  "cssPresets": [],
+  "events": [],
+  "actions": [],
+  "slots": [
+    {
+      "name": "icon"
+    }
+  ],
   "bestPractices": [],
   "examples": [],
   "docsUrl": "/components/widgets/SpeedDialDemo",
@@ -41,5 +55,6 @@
     "src/components/widgets/SpeedDial.tsx",
     "docs/src/pages/components/widgets/SpeedDialDemo.tsx"
   ],
-  "version": "0.30.1"
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
 }

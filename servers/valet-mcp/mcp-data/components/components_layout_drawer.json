@@ -80,10 +80,23 @@
     "--valet-font-mono",
     "--valet-font-button"
   ],
+  "cssPresets": [],
+  "events": [
+    {
+      "name": "onClose"
+    }
+  ],
+  "actions": [],
+  "slots": [
+    {
+      "name": "children"
+    }
+  ],
   "bestPractices": [],
   "examples": [],
   "sourceFiles": [
     "src/components/layout/Drawer.tsx"
   ],
-  "version": "0.30.1"
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
 }

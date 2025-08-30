@@ -23,7 +23,14 @@
       "name": "objectFit",
       "type": "'cover' | 'contain' | 'fill' | 'none' | 'scale-down'",
       "required": true,
-      "default": "'cover'"
+      "default": "'cover'",
+      "enumValues": [
+        "cover",
+        "contain",
+        "fill",
+        "none",
+        "scale-down"
+      ]
     },
     {
       "name": "rounded",
@@ -48,10 +55,15 @@
     }
   ],
   "cssVars": [],
+  "cssPresets": [],
+  "events": [],
+  "actions": [],
+  "slots": [],
   "bestPractices": [],
   "examples": [],
   "sourceFiles": [
     "src/components/primitives/Image.tsx"
   ],
-  "version": "0.30.1"
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
 }

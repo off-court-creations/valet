@@ -36,6 +36,12 @@
       "name": "alignX",
       "type": "'left' | 'right' | 'center'",
       "required": true,
+      "enumValues": [
+        "left",
+        "right",
+        "center",
+        "centered"
+      ],
       "default": "'left'"
     },
     {
@@ -89,12 +95,18 @@
     "--valet-text-color",
     "--valet-centered"
   ],
+  "cssPresets": [],
+  "events": [],
+  "actions": [],
+  "slots": [],
   "bestPractices": [
-    "Use `Box` as a neutral container for background, padding, and width anchoring. Compose layout with `Stack` / `Grid` ; keep   `Surface` for page-level backgrounds.",
-    "Prefer theme tones ( `primary` / `secondary` / `tertiary` ) to get automatic text contrast. When using custom colours, set `textColor` to maintain accessibility.",
-    "Reach for `Panel` when you need outlines or separators.   `Box` stays minimal and opinionated so the theme can do the heavy lifting.",
-    "Control placement with `alignX` and `fullWidth` .",
-    "Reuse styles with `preset` via `definePreset()` instead of sprinkling inline styles."
+    "Treat `Box` as the neutral building block: backgrounds, padding, and simple width anchoring. Use `Surface` for page‑level canvas and compose layouts with `Stack` and `Grid` .",
+    "Prefer theme tokens ( `primary` , `secondary` , `tertiary` ) to inherit correct contrast automatically. If you pass a custom colour to `background` , explicitly set `textColor` to preserve accessibility.",
+    "Reach for `Panel` when you need separation (borders, elevation). Keep `Box` visually minimal so the theme does the heavy lifting.",
+    "Use spacing tokens: prefer numeric `pad` values over hardcoded CSS so density matches the spacing contract across components.",
+    "Align purposefully: use `alignX` and `fullWidth` for placement; avoid deprecated `centered` .",
+    "Reuse styles via `preset` ( `definePreset()` ) instead of duplicating `sx` .",
+    "When Box represents a semantic region, add appropriate roles/labels (e.g., `role=\"region\"` , `aria-label` ) via DOM passthrough."
   ],
   "examples": [
     {
@@ -103,6 +115,11 @@
       "lang": "tsx",
       "source": {
         "file": "/home/xbenc/occ/valet/docs/src/pages/components/layout/BoxDemo.tsx"
+      },
+      "runnable": true,
+      "minimalProps": {
+        "centered": false,
+        "sx": null
       }
     },
     {
@@ -111,6 +128,11 @@
       "lang": "tsx",
       "source": {
         "file": "/home/xbenc/occ/valet/docs/src/pages/components/layout/BoxDemo.tsx"
+      },
+      "runnable": true,
+      "minimalProps": {
+        "centered": false,
+        "sx": null
       }
     },
     {
@@ -119,6 +141,11 @@
       "lang": "tsx",
       "source": {
         "file": "/home/xbenc/occ/valet/docs/src/pages/components/layout/BoxDemo.tsx"
+      },
+      "runnable": true,
+      "minimalProps": {
+        "centered": false,
+        "sx": null
       }
     }
   ],
@@ -127,5 +154,6 @@
     "src/components/layout/Box.tsx",
     "docs/src/pages/components/layout/BoxDemo.tsx"
   ],
-  "version": "0.30.1"
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
 }

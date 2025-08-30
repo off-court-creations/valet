@@ -76,11 +76,16 @@
     }
   ],
   "cssVars": [],
+  "cssPresets": [],
+  "events": [],
+  "actions": [],
+  "slots": [],
   "bestPractices": [],
   "examples": [],
   "docsUrl": "/concepts/PropPatterns",
   "sourceFiles": [
     "docs/src/pages/concepts/PropPatterns.tsx"
   ],
-  "version": "0.30.1"
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
 }

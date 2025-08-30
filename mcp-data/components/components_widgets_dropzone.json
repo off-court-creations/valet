@@ -74,6 +74,15 @@
     }
   ],
   "cssVars": [],
+  "cssPresets": [],
+  "events": [
+    {
+      "name": "onFilesChange",
+      "payloadType": "File[]"
+    }
+  ],
+  "actions": [],
+  "slots": [],
   "bestPractices": [],
   "examples": [],
   "docsUrl": "/components/widgets/DropzoneDemo",
@@ -81,5 +90,6 @@
     "src/components/widgets/Dropzone.tsx",
     "docs/src/pages/components/widgets/DropzoneDemo.tsx"
   ],
-  "version": "0.30.1"
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
 }

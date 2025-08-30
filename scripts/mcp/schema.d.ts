@@ -13,6 +13,7 @@ export interface ValetProp {
   description?: string;
   deprecated?: true | { reason?: string; replacement?: string };
   source?: { file: string; line?: number };
+  enumValues?: string[];
 }
 
 export interface ValetExample {
@@ -21,6 +22,8 @@ export interface ValetExample {
   code: string;
   lang?: 'tsx' | 'js' | 'css';
   source?: { file: string; line?: number };
+  runnable?: boolean;
+  minimalProps?: Record<string, unknown>;
 }
 
 export interface ValetComponentDoc {
@@ -32,10 +35,14 @@ export interface ValetComponentDoc {
   props: ValetProp[];
   domPassthrough?: { element: 'div' | 'button' | 'input' | 'span' | string; omitted?: string[] };
   cssVars?: string[];
+  cssPresets?: string[];
+  events?: Array<{ name: string; payloadType?: string; description?: string }>;
+  actions?: Array<{ name: string; signature?: string; description?: string }>;
+  slots?: Array<{ name: string; description?: string }>;
   bestPractices?: string[];
   examples?: ValetExample[];
   docsUrl?: string;
   sourceFiles: string[];
   version: string;
+  schemaVersion?: string;
 }
-

@@ -41,7 +41,12 @@
       "name": "preload",
       "type": "'none' | 'metadata' | 'auto'",
       "required": true,
-      "default": "'auto'"
+      "default": "'auto'",
+      "enumValues": [
+        "none",
+        "metadata",
+        "auto"
+      ]
     },
     {
       "name": "speed",
@@ -57,10 +62,15 @@
     }
   ],
   "cssVars": [],
+  "cssPresets": [],
+  "events": [],
+  "actions": [],
+  "slots": [],
   "bestPractices": [],
   "examples": [],
   "sourceFiles": [
     "src/components/widgets/Parallax.tsx"
   ],
-  "version": "0.30.1"
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
 }

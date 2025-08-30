@@ -81,6 +81,15 @@
     }
   ],
   "cssVars": [],
+  "cssPresets": [],
+  "events": [
+    {
+      "name": "onChange",
+      "payloadType": "number"
+    }
+  ],
+  "actions": [],
+  "slots": [],
   "bestPractices": [],
   "examples": [],
   "docsUrl": "/components/field/IteratorDemo",
@@ -88,5 +97,6 @@
     "src/components/fields/Iterator.tsx",
     "docs/src/pages/components/field/IteratorDemo.tsx"
   ],
-  "version": "0.30.1"
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
 }

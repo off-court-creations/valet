@@ -129,6 +129,15 @@
     "--valet-bg",
     "--valet-text-color"
   ],
+  "cssPresets": [],
+  "events": [
+    {
+      "name": "onChange",
+      "payloadType": "number"
+    }
+  ],
+  "actions": [],
+  "slots": [],
   "bestPractices": [],
   "examples": [],
   "docsUrl": "/components/field/SliderDemo",
@@ -136,5 +145,6 @@
     "src/components/fields/Slider.tsx",
     "docs/src/pages/components/field/SliderDemo.tsx"
   ],
-  "version": "0.30.1"
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
 }

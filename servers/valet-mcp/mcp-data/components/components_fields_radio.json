@@ -7,7 +7,9 @@
     {
       "name": "value",
       "type": "string",
-      "required": true
+      "required": true,
+      "default": "-",
+      "description": "Controlled value"
     },
     {
       "name": "label",
@@ -16,8 +18,10 @@
     },
     {
       "name": "size",
-      "type": "RadioSize | number | string",
-      "required": true
+      "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string",
+      "required": true,
+      "default": "'md'",
+      "description": "Radio size token or custom CSS measurement"
     },
     {
       "name": "children",
@@ -28,13 +32,66 @@
       "name": "sx",
       "type": "Sx",
       "required": true
+    },
+    {
+      "name": "defaultValue",
+      "type": "string",
+      "required": false,
+      "default": "-",
+      "description": "Uncontrolled initial value"
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "required": false,
+      "default": "-",
+      "description": "Field name for forms"
+    },
+    {
+      "name": "row",
+      "type": "boolean",
+      "required": false,
+      "default": "false",
+      "description": "Horizontal layout"
+    },
+    {
+      "name": "spacing",
+      "type": "number | string",
+      "required": false,
+      "default": "-",
+      "description": "Gap between options"
+    },
+    {
+      "name": "onChange",
+      "type": "(val: string) => void",
+      "required": false,
+      "default": "-",
+      "description": "Change handler"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[]",
+      "required": false,
+      "default": "-",
+      "description": "Apply style presets"
     }
   ],
   "cssVars": [],
+  "cssPresets": [],
+  "events": [],
+  "actions": [],
+  "slots": [
+    {
+      "name": "children"
+    }
+  ],
   "bestPractices": [],
   "examples": [],
+  "docsUrl": "/components/field/RadioGroupDemo",
   "sourceFiles": [
-    "src/components/fields/RadioGroup.tsx"
+    "src/components/fields/RadioGroup.tsx",
+    "docs/src/pages/components/field/RadioGroupDemo.tsx"
   ],
-  "version": "0.30.1"
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
 }

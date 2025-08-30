@@ -65,11 +65,16 @@
     "--valet-stack-max-h",
     "--valet-box-max-h"
   ],
+  "cssPresets": [],
+  "events": [],
+  "actions": [],
+  "slots": [],
   "bestPractices": [
-    "Use `Grid` for two‑dimensional layouts where items align in both axes. Reach for `Stack` for linear flows.",
-    "Keep tracks simple. Prefer `columns` with equal tracks; use   `` on children to span.",
-    "Share spacing with the system: gap and pad use the same spacing scale as other layout primitives ( `Stack` , `Tabs` ).",
-    "Toggle `adaptive` when you want predictable single‑column layout in portrait across breakpoints. Avoid ad‑hoc media queries."
+    "Use `Grid` for two‑axis alignment. Prefer `Stack` for linear flows where only one axis matters.",
+    "Keep tracks simple: equal‑width `columns` are fast and readable; let children span using `` .",
+    "Share spacing with the system. Use numeric `gap` / `pad` so density matches other primitives.",
+    "Use `adaptive` to collapse to a single column on portrait/narrow screens instead of ad‑hoc media queries.",
+    "Maintain logical DOM order for keyboard and screen readers; don’t rely on grid placement to imply reading order."
   ],
   "examples": [],
   "docsUrl": "/components/layout/GridDemo",
@@ -77,5 +82,6 @@
     "src/components/layout/Grid.tsx",
     "docs/src/pages/components/layout/GridDemo.tsx"
   ],
-  "version": "0.30.1"
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
 }

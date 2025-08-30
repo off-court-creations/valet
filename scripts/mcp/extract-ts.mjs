@@ -39,7 +39,9 @@ export function extractFromTs(projectRoot) {
   /** @type {Record<string, any>} */
   const result = {};
 
-  const files = project.getSourceFiles();
+  const files = project
+    .getSourceFiles()
+    .filter((sf) => sf.getFilePath().includes(`${path.sep}src${path.sep}components${path.sep}`) && sf.getFilePath().endsWith('.tsx'));
   for (const sf of files) {
     const exports = sf.getExportedDeclarations();
     // Find default export component name if any
@@ -57,6 +59,13 @@ export function extractFromTs(projectRoot) {
     }
 
     if (!componentName) continue;
+
+    // Guard: ensure file contains JSX – exclude utility/contexts/constants
+    const hasJsx =
+      sf.getDescendantsOfKind(SyntaxKind.JsxElement).length > 0 ||
+      sf.getDescendantsOfKind(SyntaxKind.JsxSelfClosingElement).length > 0 ||
+      sf.getDescendantsOfKind(SyntaxKind.JsxFragment).length > 0;
+    if (!hasJsx) continue;
 
     const filePath = sf.getFilePath();
     const category = guessCategoryFromPath(filePath);
@@ -80,6 +89,12 @@ export function extractFromTs(projectRoot) {
     const propSet = new Set();
 
     let domPassthrough = undefined;
+    /** @type {Array<{ name: string; payloadType?: string }>} */
+    const events = [];
+    /** @type {Array<{ name: string; signature?: string }>} */
+    const actions = [];
+    /** @type {Array<{ name: string }>} */
+    const slots = [];
 
     if (iface) {
       // Heritage clauses: extends <...>
@@ -115,7 +130,22 @@ export function extractFromTs(projectRoot) {
           if (/deprecated/i.test(text)) deprecated = true;
         }
 
-        props.push({ name, type: type.replace(/\s+/g, ' '), required, deprecated });
+        const cleanType = type.replace(/\s+/g, ' ');
+        props.push({ name, type: cleanType, required, deprecated });
+
+        // Event heuristic: onXxx prop as function
+        if (/^on[A-Z]/.test(name) && /=>/.test(cleanType)) {
+          // Try to grab first parameter type if present
+          const m = cleanType.match(/\(([^)]*)\)\s*=>/);
+          const firstParam = m ? m[1].split(',')[0]?.trim() : '';
+          const payload = firstParam && firstParam.includes(':') ? firstParam.split(':').slice(1).join(':').trim() : undefined;
+          events.push({ name, payloadType: payload });
+        }
+
+        // Slot heuristic: ReactNode/ReactElement typed props
+        if (/React\.(ReactNode|ReactElement)|JSX\.Element|ReactNode|ReactElement/.test(cleanType)) {
+          slots.push({ name });
+        }
       }
     }
 
@@ -146,6 +176,70 @@ export function extractFromTs(projectRoot) {
       }
     }
 
+    // Infer enum values for union literal types like 'a' | 'b'
+    for (const p of props) {
+      const m = p.type.match(/'[^']*'(?:\s*\|\s*'[^']*')+/g);
+      if (m) {
+        const vals = p.type
+          .split('|')
+          .map((s) => s.trim())
+          .filter((s) => /^'[^']*'$/.test(s))
+          .map((s) => s.slice(1, -1));
+        if (vals.length > 0) {
+          // @ts-ignore - extend at runtime
+          p.enumValues = vals;
+        }
+      }
+    }
+
+    // Detect actions via useImperativeHandle(() => ({ ... }))
+    try {
+      const calls = sf.getDescendantsOfKind(SyntaxKind.CallExpression);
+      for (const call of calls) {
+        const exprText = call.getExpression().getText();
+        if (!/useImperativeHandle$/.test(exprText)) continue;
+        const args = call.getArguments();
+        const factory = args[1];
+        if (factory && (factory.getKind() === SyntaxKind.ArrowFunction || factory.getKind() === SyntaxKind.FunctionExpression)) {
+          // Find returned object literal
+          const returns = factory.getDescendantsOfKind(SyntaxKind.ReturnStatement);
+          for (const ret of returns) {
+            const obj = ret.getExpression();
+            if (obj && obj.getKind() === SyntaxKind.ObjectLiteralExpression) {
+              for (const prop of obj.getProperties()) {
+                const name = prop.getName?.();
+                if (name && /^[a-zA-Z_$][\w$]*$/.test(name)) {
+                  actions.push({ name });
+                }
+              }
+            }
+          }
+        }
+      }
+    } catch {
+      // ignore
+    }
+
+    // Collect CSS preset names referenced via preset('name')
+    const cssPresets = (() => {
+      try {
+        const callExprs = sf.getDescendantsOfKind(SyntaxKind.CallExpression);
+        const names = new Set();
+        for (const ce of callExprs) {
+          if (ce.getExpression().getText() === 'preset') {
+            const arg = ce.getArguments()?.[0];
+            const t = arg?.getText?.() || '';
+            const m = t.match(/'([^']+)'|"([^"]+)"/);
+            const val = m?.[1] || m?.[2];
+            if (val) names.add(val);
+          }
+        }
+        return Array.from(names);
+      } catch {
+        return [];
+      }
+    })();
+
     // summary: derive from file header comments if present
     let summary = '';
     const headerComment = sf.getLeadingCommentRanges()?.[0]?.getText?.();
@@ -163,6 +257,10 @@ export function extractFromTs(projectRoot) {
       props,
       domPassthrough,
       cssVars,
+      cssPresets,
+      events,
+      actions,
+      slots,
       sourceFiles: [path.relative(projectRoot, filePath)],
     };
   }

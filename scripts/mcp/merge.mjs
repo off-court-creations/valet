@@ -1,7 +1,10 @@
 import fs from 'fs';
 import path from 'path';
+import crypto from 'crypto';
 import { extractFromTs } from './extract-ts.mjs';
 import { extractFromDocs } from './extract-docs.mjs';
+
+const SCHEMA_VERSION = '1.1';
 
 function merge(tsMap, docsMap, version) {
   /** @type {Record<string, any>} */
@@ -38,10 +41,29 @@ function merge(tsMap, docsMap, version) {
     // DOM passthrough & css vars from ts
     const domPassthrough = ts.domPassthrough;
     const cssVars = ts.cssVars || [];
+    const cssPresets = ts.cssPresets || [];
 
     // summary/description
     const summary = ts.summary || `${name} component`;
     const description = undefined;
+
+    // Compute minimalProps for runnable examples: required props without defaults
+    const minimalProps = (() => {
+      const out = {};
+      for (const p of props) {
+        if (!p.required) continue;
+        if (p.default != null) continue;
+        const t = (p.type || '').toLowerCase();
+        if (/^boolean\b/.test(t)) out[p.name] = false;
+        else if (/^number\b/.test(t)) out[p.name] = 0;
+        else if (/^string\b/.test(t)) out[p.name] = (p.enumValues && p.enumValues[0]) ? p.enumValues[0] : '';
+        else if (/react\./.test(p.type) || /jsx\./i.test(p.type)) out[p.name] = '<div />';
+        else if (/=>/.test(p.type) || /^function/i.test(p.type) || /^\(/.test(p.type)) out[p.name] = '() => {}';
+        else if (/\[\]/.test(p.type)) out[p.name] = [];
+        else out[p.name] = null;
+      }
+      return out;
+    })();
 
     out[name] = {
       name,
@@ -52,11 +74,16 @@ function merge(tsMap, docsMap, version) {
       props,
       domPassthrough,
       cssVars,
+      cssPresets,
+      events: ts.events || [],
+      actions: ts.actions || [],
+      slots: ts.slots || [],
       bestPractices: docs.bestPractices || [],
-      examples: docs.examples || [],
+      examples: (docs.examples || []).map((ex) => ({ ...ex, runnable: ex.runnable ?? true, minimalProps })),
       docsUrl: docs.docsUrl,
       sourceFiles: [...new Set([...(ts.sourceFiles || []), docs.sourceFile].filter(Boolean))],
       version,
+      schemaVersion: SCHEMA_VERSION,
     };
   }
 
@@ -100,11 +127,14 @@ function main() {
   fs.writeFileSync(path.join(outDir, 'index.json'), JSON.stringify(index, null, 2));
 
   // meta
-  const meta = { version, builtAt: new Date().toISOString() };
+  const hash = crypto
+    .createHash('sha1')
+    .update(JSON.stringify({ merged, index }))
+    .digest('hex');
+  const meta = { version, builtAt: new Date().toISOString(), schemaVersion: SCHEMA_VERSION, buildHash: hash };
   fs.writeFileSync(path.join(outDir, '_meta.json'), JSON.stringify(meta, null, 2));
 
   console.log(`MCP data written to ${outDir}`);
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) main();
-

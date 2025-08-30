@@ -21,10 +21,20 @@
     }
   ],
   "cssVars": [],
+  "cssPresets": [],
+  "events": [
+    {
+      "name": "onSubmitValues",
+      "payloadType": "T"
+    }
+  ],
+  "actions": [],
+  "slots": [],
   "bestPractices": [],
   "examples": [],
   "sourceFiles": [
     "src/components/fields/FormControl.tsx"
   ],
-  "version": "0.30.1"
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
 }

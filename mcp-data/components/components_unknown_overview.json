@@ -5,6 +5,10 @@
   "summary": "Overview component",
   "props": [],
   "cssVars": [],
+  "cssPresets": [],
+  "events": [],
+  "actions": [],
+  "slots": [],
   "bestPractices": [],
   "examples": [
     {
@@ -13,7 +17,9 @@
       "lang": "tsx",
       "source": {
         "file": "/home/xbenc/occ/valet/docs/src/pages/concepts/Overview.tsx"
-      }
+      },
+      "runnable": true,
+      "minimalProps": {}
     },
     {
       "id": "overview-example-2",
@@ -21,12 +27,15 @@
       "lang": "tsx",
       "source": {
         "file": "/home/xbenc/occ/valet/docs/src/pages/concepts/Overview.tsx"
-      }
+      },
+      "runnable": true,
+      "minimalProps": {}
     }
   ],
   "docsUrl": "/concepts/Overview",
   "sourceFiles": [
     "docs/src/pages/concepts/Overview.tsx"
   ],
-  "version": "0.30.1"
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
 }

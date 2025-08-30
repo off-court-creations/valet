@@ -64,6 +64,15 @@
     "--valet-switch-offset",
     "--valet-switch-pad"
   ],
+  "cssPresets": [],
+  "events": [
+    {
+      "name": "onChange",
+      "payloadType": "boolean"
+    }
+  ],
+  "actions": [],
+  "slots": [],
   "bestPractices": [],
   "examples": [],
   "docsUrl": "/components/field/SwitchDemo",
@@ -71,5 +80,6 @@
     "src/components/fields/Switch.tsx",
     "docs/src/pages/components/field/SwitchDemo.tsx"
   ],
-  "version": "0.30.1"
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
 }

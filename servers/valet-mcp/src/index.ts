@@ -122,12 +122,12 @@ function getComponentBySlug(slug: string): ValetComponentDoc | null {
   return readJSON<ValetComponentDoc>(file);
 }
 
-function getMeta(): { valetVersion?: string; generatedAt?: string } | null {
+function getMeta(): { valetVersion?: string; generatedAt?: string; schemaVersion?: string; buildHash?: string } | null {
   try {
     const file = path.join(DATA_DIR, '_meta.json');
     if (!fs.existsSync(file)) return null;
-    const raw = readJSON<{ version?: string; builtAt?: string }>(file);
-    return { valetVersion: raw.version, generatedAt: raw.builtAt };
+    const raw = readJSON<{ version?: string; builtAt?: string; schemaVersion?: string; buildHash?: string }>(file);
+    return { valetVersion: raw.version, generatedAt: raw.builtAt, schemaVersion: raw.schemaVersion, buildHash: raw.buildHash };
   } catch {
     return null;
   }
@@ -146,17 +146,59 @@ function resolveSlug(input: { name?: string; slug?: string }): string | null {
   return null;
 }
 
-function simpleSearch(query: string, items: ValetIndexItem[]): Array<{ item: ValetIndexItem; score: number }> {
+type SynonymsMap = Record<string, string[]>; // alias -> target names
+
+function loadSynonyms(): SynonymsMap {
+  try {
+    const p = path.join(DATA_DIR, 'synonyms.json');
+    if (fs.existsSync(p)) return readJSON<SynonymsMap>(p);
+  } catch {}
+  // Built-in minimal aliases
+  return {
+    textinput: ['TextField'],
+    input: ['TextField'],
+    textbox: ['TextField'],
+    textarea: ['TextField'],
+    modal: ['Modal'],
+    dialog: ['Modal'],
+    navbar: ['AppBar'],
+    appbar: ['AppBar'],
+    dropdown: ['Select'],
+    combobox: ['Select'],
+    select: ['Select'],
+    daterange: ['DateSelector'],
+    datepicker: ['DateSelector'],
+    toast: ['Snackbar'],
+    notification: ['Snackbar'],
+    tooltip: ['Tooltip'],
+    chip: ['MetroSelect'],
+    segmented: ['MetroSelect'],
+    tabs: ['Tabs'],
+    grid: ['Grid'],
+    table: ['Table'],
+  };
+}
+
+function simpleSearch(query: string, items: ValetIndexItem[], opts?: { category?: string }): Array<{ item: ValetIndexItem; score: number }> {
   const q = query.trim().toLowerCase();
   if (!q) return [];
-  const scored = items.map((it) => {
-    const hay = `${it.name} ${it.summary} ${it.category}`.toLowerCase();
+  const synonyms = loadSynonyms();
+  const byCategory = opts?.category ? items.filter((i) => i.category === opts.category) : items;
+
+  const scored = byCategory.map((it) => {
+    const name = it.name.toLowerCase();
+    const hay = `${name} ${it.summary.toLowerCase()} ${it.category.toLowerCase()}`;
     let score = 0;
     if (hay.includes(q)) score += 2;
-    // bonus for prefix on name
-    if (it.name.toLowerCase().startsWith(q)) score += 1;
+    if (name.startsWith(q)) score += 3; // strong prefix on name
+    if (name === q) score += 5; // exact name
+    if (it.category.toLowerCase() === q) score += 2; // exact category query
+    // synonyms: if query alias maps to this component name
+    const targets = synonyms[q] || [];
+    if (targets.map((t) => t.toLowerCase()).includes(it.name.toLowerCase())) score += 4;
     return { item: it, score };
   }).filter((s) => s.score > 0);
+
   scored.sort((a, b) => b.score - a.score || a.item.name.localeCompare(b.item.name));
   return scored;
 }
@@ -170,6 +212,7 @@ const GetComponentParamsShape = {
 const SearchParamsShape = {
   query: z.string().min(1).describe('Search string across names and summaries'),
   limit: z.number().int().positive().max(100).optional(),
+  category: z.string().optional().describe('Optional category filter: primitives|fields|layout|widgets'),
 } as const;
 
 const GetExamplesParamsShape = GetComponentParamsShape;
@@ -193,9 +236,9 @@ async function createServer() {
 
   // search_components
   server.tool('search_components', SearchParamsShape, async (args) => {
-    const { query, limit = 10 } = args as { query: string; limit?: number };
+    const { query, limit = 10, category } = args as { query: string; limit?: number; category?: string };
     const index = getIndex();
-    const scored = simpleSearch(query, index).slice(0, limit);
+    const scored = simpleSearch(query, index, { category }).slice(0, limit);
     return { content: [{ type: 'text', text: JSON.stringify(scored.map((s) => ({ ...s.item, score: s.score }))) }] };
   });
 
@@ -253,6 +296,8 @@ async function main() {
         valetVersion: meta?.valetVersion,
         generatedAt: meta?.generatedAt,
         versionParity: parity,
+        schemaVersion: meta?.schemaVersion,
+        buildHash: meta?.buildHash,
       }, null, 2));
       process.exit(0);
     } catch (err) {

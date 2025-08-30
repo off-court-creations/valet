@@ -44,6 +44,8 @@
     "mcp:extract:ts": "node scripts/mcp/extract-ts.mjs",
     "mcp:extract:docs": "node scripts/mcp/extract-docs.mjs",
     "mcp:build": "node scripts/mcp/merge.mjs",
+    "mcp:watch": "node --watch scripts/mcp/merge.mjs",
+    "mcp:schema:check": "node scripts/mcp/validate.mjs",
     "mcp:server:install": "cd servers/valet-mcp && npm install",
     "mcp:server:build": "cd servers/valet-mcp && npm run build",
     "mcp:server:selfcheck": "cd servers/valet-mcp && npm run selfcheck",

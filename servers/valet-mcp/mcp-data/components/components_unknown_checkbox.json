@@ -62,11 +62,16 @@
     }
   ],
   "cssVars": [],
+  "cssPresets": [],
+  "events": [],
+  "actions": [],
+  "slots": [],
   "bestPractices": [],
   "examples": [],
   "docsUrl": "/components/field/CheckBoxDemo",
   "sourceFiles": [
     "docs/src/pages/components/field/CheckBoxDemo.tsx"
   ],
-  "version": "0.30.1"
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
 }

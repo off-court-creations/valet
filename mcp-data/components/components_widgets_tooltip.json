@@ -81,10 +81,37 @@
   "cssVars": [
     "--valet-tooltip-arrow-size"
   ],
-  "bestPractices": [],
-  "examples": [],
-  "sourceFiles": [
-    "src/components/widgets/Tooltip.tsx"
+  "cssPresets": [],
+  "events": [
+    {
+      "name": "onOpen"
+    },
+    {
+      "name": "onClose"
+    }
   ],
-  "version": "0.30.1"
+  "actions": [],
+  "slots": [
+    {
+      "name": "title"
+    },
+    {
+      "name": "children"
+    }
+  ],
+  "bestPractices": [
+    "Use tooltips for supplemental hints, not essential instructions. The UI should remain usable without hovering.",
+    "Ensure the trigger is focusable and labelled. For icon‑only controls, provide `aria-label` on the target.",
+    "Keep content concise; avoid interactive controls inside tooltips. Prefer short phrases over sentences.",
+    "Prefer `placement='top'` when space allows; adjust placement to avoid clipping and viewport edges.",
+    "Use sensible delays. Avoid long `enterDelay` / `leaveDelay` that make tooltips feel sluggish or sticky, especially on touch devices."
+  ],
+  "examples": [],
+  "docsUrl": "/components/widgets/TooltipDemo",
+  "sourceFiles": [
+    "src/components/widgets/Tooltip.tsx",
+    "docs/src/pages/components/widgets/TooltipDemo.tsx"
+  ],
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
 }

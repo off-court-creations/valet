@@ -90,6 +90,10 @@
     }
   ],
   "cssVars": [],
+  "cssPresets": [],
+  "events": [],
+  "actions": [],
+  "slots": [],
   "bestPractices": [],
   "examples": [],
   "docsUrl": "/components/widgets/LLMChat",
@@ -97,5 +101,6 @@
     "src/components/widgets/LLMChat.tsx",
     "docs/src/pages/components/widgets/LLMChat.tsx"
   ],
-  "version": "0.30.1"
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
 }

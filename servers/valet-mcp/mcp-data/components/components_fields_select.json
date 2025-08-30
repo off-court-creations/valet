@@ -83,12 +83,33 @@
     "--valet-bg",
     "--valet-text-color"
   ],
-  "bestPractices": [],
+  "cssPresets": [],
+  "events": [
+    {
+      "name": "onChange",
+      "payloadType": "Primitive | Primitive[]"
+    }
+  ],
+  "actions": [],
+  "slots": [
+    {
+      "name": "children"
+    }
+  ],
+  "bestPractices": [
+    "Choose controlled vs uncontrolled deliberately: use `value` + `onChange` to integrate with app state; use `initialValue` for lightweight forms.",
+    "Keep option labels short, distinct, and ordered predictably (alphabetical or by frequency). Avoid duplicating values with different labels.",
+    "Use `multiple` only when necessary and present selections clearly. Consider `size` and a minimum width ( `` ) to avoid layout jump.",
+    "Prefer `RadioGroup` for a small, mutually exclusive set and `Checkbox` es for a small multi‑select; reserve `Select` for larger sets.",
+    "Provide a helpful `placeholder` when no value is selected. Persist value types (string/number) consistently across your app.",
+    "When using `FormControl` , set a stable `name` , and avoid mixing primitive types within the same field."
+  ],
   "examples": [],
   "docsUrl": "/components/field/SelectDemo",
   "sourceFiles": [
     "src/components/fields/Select.tsx",
     "docs/src/pages/components/field/SelectDemo.tsx"
   ],
-  "version": "0.30.1"
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
 }

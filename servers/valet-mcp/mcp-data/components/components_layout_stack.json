@@ -9,6 +9,10 @@
       "type": "'row' | 'column'",
       "required": true,
       "default": "'column'",
+      "enumValues": [
+        "row",
+        "column"
+      ],
       "description": "Layout direction"
     },
     {
@@ -49,6 +53,10 @@
     "--valet-stack-max-h",
     "--valet-stack-ov-y"
   ],
+  "cssPresets": [],
+  "events": [],
+  "actions": [],
+  "slots": [],
   "bestPractices": [],
   "examples": [],
   "docsUrl": "/components/layout/StackDemo",
@@ -56,5 +64,6 @@
     "src/components/layout/Stack.tsx",
     "docs/src/pages/components/layout/StackDemo.tsx"
   ],
-  "version": "0.30.1"
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
 }

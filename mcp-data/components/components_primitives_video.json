@@ -62,7 +62,11 @@
       "name": "objectFit",
       "type": "'contain' | 'cover'",
       "required": true,
-      "default": "'contain'"
+      "default": "'contain'",
+      "enumValues": [
+        "contain",
+        "cover"
+      ]
     },
     {
       "name": "className",
@@ -76,10 +80,15 @@
     }
   ],
   "cssVars": [],
+  "cssPresets": [],
+  "events": [],
+  "actions": [],
+  "slots": [],
   "bestPractices": [],
   "examples": [],
   "sourceFiles": [
     "src/components/primitives/Video.tsx"
   ],
-  "version": "0.30.1"
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
 }

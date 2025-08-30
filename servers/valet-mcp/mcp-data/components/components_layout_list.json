@@ -89,6 +89,26 @@
     }
   ],
   "cssVars": [],
+  "cssPresets": [],
+  "events": [
+    {
+      "name": "onReorder",
+      "payloadType": "T[]"
+    },
+    {
+      "name": "onSelectionChange",
+      "payloadType": "T"
+    }
+  ],
+  "actions": [],
+  "slots": [
+    {
+      "name": "getTitle"
+    },
+    {
+      "name": "getSubtitle"
+    }
+  ],
   "bestPractices": [],
   "examples": [],
   "docsUrl": "/components/layout/ListDemoPage",
@@ -96,5 +116,6 @@
     "src/components/layout/List.tsx",
     "docs/src/pages/components/layout/ListDemoPage.tsx"
   ],
-  "version": "0.30.1"
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
 }

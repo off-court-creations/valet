@@ -127,6 +127,31 @@ export default function TableDemoPage() {
           </Stack>
         </Panel>
 
+        {/* Best Practices ------------------------------------------------- */}
+        <Panel fullWidth>
+          <Typography variant='h4'>Best Practices</Typography>
+          <Typography>
+            - Keep tables readable: enable <code>striped</code> and/or <code>hoverable</code> for
+            large datasets, but avoid heavy styling that competes with content.
+          </Typography>
+          <Typography>
+            - Constrain height (<code>constrainHeight</code>) so the body scrolls inside the table
+            instead of the page scrolling in two directions.
+          </Typography>
+          <Typography>
+            - Provide an initial sort (<code>initialSort</code>), align numeric columns to the
+            right, and format dates consistently.
+          </Typography>
+          <Typography>
+            - Enable selection only when follow‑up actions operate on selected rows; choose
+            <code>single</code> vs <code>multi</code> to match the action design.
+          </Typography>
+          <Typography>
+            - Keep column count reasonable on narrow screens; prefer fewer, more meaningful columns
+            over many cramped ones. Use succinct headers.
+          </Typography>
+        </Panel>
+
         {/* Controls --------------------------------------------------------- */}
         <Panel
           variant='alt'

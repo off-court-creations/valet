@@ -32,7 +32,11 @@
     {
       "name": "selectable",
       "type": "'single' | 'multi' | undefined",
-      "required": true
+      "required": true,
+      "enumValues": [
+        "single",
+        "multi"
+      ]
     },
     {
       "name": "initialSort",
@@ -65,10 +69,32 @@
     "--valet-underline-width",
     "--valet-table-underline"
   ],
-  "bestPractices": [],
-  "examples": [],
-  "sourceFiles": [
-    "src/components/widgets/Table.tsx"
+  "cssPresets": [],
+  "events": [
+    {
+      "name": "onSortChange",
+      "payloadType": "number"
+    },
+    {
+      "name": "onSelectionChange",
+      "payloadType": "T[]"
+    }
   ],
-  "version": "0.30.1"
+  "actions": [],
+  "slots": [],
+  "bestPractices": [
+    "Keep tables readable: enable `striped` and/or `hoverable` for large datasets, but avoid heavy styling that competes with content.",
+    "Constrain height ( `constrainHeight` ) so the body scrolls inside the table instead of the page scrolling in two directions.",
+    "Provide an initial sort ( `initialSort` ), align numeric columns to the right, and format dates consistently.",
+    "Enable selection only when follow‑up actions operate on selected rows; choose `single` vs `multi` to match the action design.",
+    "Keep column count reasonable on narrow screens; prefer fewer, more meaningful columns over many cramped ones. Use succinct headers."
+  ],
+  "examples": [],
+  "docsUrl": "/components/widgets/TableDemo",
+  "sourceFiles": [
+    "src/components/widgets/Table.tsx",
+    "docs/src/pages/components/widgets/TableDemo.tsx"
+  ],
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
 }
