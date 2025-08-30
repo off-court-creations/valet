@@ -54,13 +54,19 @@
       "name": "svg"
     }
   ],
-  "bestPractices": [],
+  "bestPractices": [
+    "Use semantic sizing. When icons appear inline with text, size in `em` so they scale with the surrounding type ( `size=\"1.25em\"` pairs well with headings).",
+    "Accessible naming. Decorative icons should be `aria-hidden` ; icons that convey meaning should have a label via the parent control (e.g., `aria-label` on `IconButton` ).",
+    "Prefer theme colours. Let icons inherit current color or set tokens; avoid arbitrary hex values that fight the theme.",
+    "Choose `icon` vs `svg` wisely. Use `icon` for Iconify glyphs; provide `svg` for custom/brand artwork only. Do not pass both.",
+    "Motion restraint. Avoid animating icons excessively; keep motion consistent with theme motion tokens and user expectations."
+  ],
   "examples": [],
   "docsUrl": "/components/primitives/IconDemoPage",
   "sourceFiles": [
     "src/components/primitives/Icon.tsx",
     "docs/src/pages/components/primitives/IconDemoPage.tsx"
   ],
-  "version": "0.30.3",
+  "version": "0.30.4",
   "schemaVersion": "1.1"
 }

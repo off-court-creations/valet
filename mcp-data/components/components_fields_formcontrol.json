@@ -35,6 +35,6 @@
   "sourceFiles": [
     "src/components/fields/FormControl.tsx"
   ],
-  "version": "0.30.3",
+  "version": "0.30.4",
   "schemaVersion": "1.1"
 }

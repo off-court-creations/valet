@@ -47,13 +47,19 @@
       "name": "icon"
     }
   ],
-  "bestPractices": [],
+  "bestPractices": [
+    "Skeleton the right things. Use Skeleton when the shape/size of incoming content is known; avoid for unknown lists where layout may jump.",
+    "Match shapes. Let the component infer `variant` or override it to match the target (text, circle, rect) for believable placeholders.",
+    "Prefer quick hide. Hide skeletons as soon as content is ready; uncontrolled usage will auto-hide on `onLoad` / `onError` for common elements.",
+    "Keep motion subtle. The pulse is intentionally gentle; avoid stacking many animated placeholders in view.",
+    "Provide context. Use brief text nearby (e.g., \"Loading data…\") when appropriate; don’t rely on shimmer alone to communicate state."
+  ],
   "examples": [],
   "docsUrl": "/components/primitives/SkeletonDemo",
   "sourceFiles": [
     "src/components/primitives/Skeleton.tsx",
     "docs/src/pages/components/primitives/SkeletonDemo.tsx"
   ],
-  "version": "0.30.3",
+  "version": "0.30.4",
   "schemaVersion": "1.1"
 }

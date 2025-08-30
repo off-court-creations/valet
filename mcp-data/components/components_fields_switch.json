@@ -87,6 +87,6 @@
     "src/components/fields/Switch.tsx",
     "docs/src/pages/components/field/SwitchDemo.tsx"
   ],
-  "version": "0.30.3",
+  "version": "0.30.4",
   "schemaVersion": "1.1"
 }

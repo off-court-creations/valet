@@ -129,6 +129,6 @@
     "src/components/layout/List.tsx",
     "docs/src/pages/components/layout/ListDemoPage.tsx"
   ],
-  "version": "0.30.3",
+  "version": "0.30.4",
   "schemaVersion": "1.1"
 }

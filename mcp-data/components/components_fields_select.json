@@ -113,6 +113,6 @@
     "src/components/fields/Select.tsx",
     "docs/src/pages/components/field/SelectDemo.tsx"
   ],
-  "version": "0.30.3",
+  "version": "0.30.4",
   "schemaVersion": "1.1"
 }

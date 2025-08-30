@@ -77,6 +77,6 @@
     "src/components/primitives/Avatar.tsx",
     "docs/src/pages/components/primitives/AvatarDemo.tsx"
   ],
-  "version": "0.30.3",
+  "version": "0.30.4",
   "schemaVersion": "1.1"
 }

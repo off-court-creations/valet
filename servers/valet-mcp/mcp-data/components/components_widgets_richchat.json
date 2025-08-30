@@ -99,6 +99,6 @@
     "src/components/widgets/RichChat.tsx",
     "docs/src/pages/components/widgets/RichChat.tsx"
   ],
-  "version": "0.30.3",
+  "version": "0.30.4",
   "schemaVersion": "1.1"
 }

@@ -64,13 +64,19 @@
   "events": [],
   "actions": [],
   "slots": [],
-  "bestPractices": [],
+  "bestPractices": [
+    "Provide meaningful `alt` text when avatars convey identity (e.g., \"Ada Lovelace\"). Use `alt=\"\"` for purely decorative avatars.",
+    "Prefer `src` for known assets; use `email` for Gravatar only when appropriate for your privacy posture. Consider caching and strict HTTPS.",
+    "Keep sizes consistent across lists. Use size tokens ( `'xs'` .. `'xl'` ) for coherent density and predictable alignment.",
+    "Ensure visibility on busy backgrounds. Use `variant='outline'` or place avatars inside a container with sufficient contrast.",
+    "Non‑interactive by default. Wrap avatars with a `Button` or link for navigation; avoid attaching click handlers directly without clear affordance."
+  ],
   "examples": [],
   "docsUrl": "/components/primitives/AvatarDemo",
   "sourceFiles": [
     "src/components/primitives/Avatar.tsx",
     "docs/src/pages/components/primitives/AvatarDemo.tsx"
   ],
-  "version": "0.30.3",
+  "version": "0.30.4",
   "schemaVersion": "1.1"
 }

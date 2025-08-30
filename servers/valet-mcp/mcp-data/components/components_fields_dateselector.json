@@ -137,6 +137,6 @@
     "src/components/fields/DateSelector.tsx",
     "docs/src/pages/components/field/DateSelectorDemo.tsx"
   ],
-  "version": "0.30.3",
+  "version": "0.30.4",
   "schemaVersion": "1.1"
 }

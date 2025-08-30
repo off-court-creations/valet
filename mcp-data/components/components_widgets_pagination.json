@@ -63,6 +63,6 @@
     "src/components/widgets/Pagination.tsx",
     "docs/src/pages/components/widgets/PaginationDemo.tsx"
   ],
-  "version": "0.30.3",
+  "version": "0.30.4",
   "schemaVersion": "1.1"
 }

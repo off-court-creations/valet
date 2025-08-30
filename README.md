@@ -91,7 +91,7 @@ React 19.x setup.
 | `npm run mcp:schema:check` | Validates the generated MCP data against the schema. Use to sanity‑check before publishing or integrating.
 | `npm run mcp:server:install` | Installs MCP server dependencies. Use on first setup or after dependency changes.
 | `npm run mcp:server:build` | Builds the MCP server (`servers/valet-mcp`). Use after server code changes or before publishing the server.
-| `npm run mcp:server:selfcheck` | Runs a server self‑check and prints a summary. Use to confirm data is present and endpoints are healthy.
+| `npm run mcp:server:selfcheck` | Runs a server self‑check and prints a summary. Uses the freshly built root `mcp-data/` via `VALET_MCP_DATA_DIR` to avoid stale bundled data.
 | `npm run mcp:server:start` | Starts the MCP server locally. Use to serve `mcp-data/` to tools during development.
 | `npm run mcp:server:link` | Links the MCP server globally as `valet-mcp`. Use if your environment discovers global bins.
 | `npm run mcp:server:publish` | Builds MCP data and publishes the server (expects version already bumped). Use for releases where you’ve handled versioning manually.
@@ -103,4 +103,14 @@ Note: To publish a data‑only MCP version, run:
 - npm run mcp:build
 - npm run mcp:server:selfcheck
 - npm run mcp:server:publish:patch
+
+About bundling: you do not need to run a separate “bundle data” step in normal flows. The MCP server packages the current root `mcp-data/` at publish time via its `prepublishOnly` hook. If you want to verify the server using its locally bundled copy before publishing, you can run inside `servers/valet-mcp`:
+
+```
+cd servers/valet-mcp
+npm run bundle:data
+npm run selfcheck
+```
+
+The top‑level `mcp:server:selfcheck` already points to the root `mcp-data/`, so it will always reflect your latest `npm run mcp:build` output.
 ```

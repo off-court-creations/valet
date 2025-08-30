@@ -48,7 +48,7 @@
     "mcp:schema:check": "node scripts/mcp/validate.mjs",
     "mcp:server:install": "cd servers/valet-mcp && npm install",
     "mcp:server:build": "cd servers/valet-mcp && npm run build",
-    "mcp:server:selfcheck": "cd servers/valet-mcp && npm run selfcheck",
+    "mcp:server:selfcheck": "cd servers/valet-mcp && VALET_MCP_DATA_DIR=../../mcp-data npm run selfcheck",
     "mcp:server:start": "cd servers/valet-mcp && npm run start",
     "mcp:server:link": "cd servers/valet-mcp && npm link",
     "mcp:server:publish": "npm run mcp:build && cd servers/valet-mcp && npm publish --access public",

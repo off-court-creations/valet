@@ -105,6 +105,6 @@
     "src/components/layout/Drawer.tsx",
     "docs/src/pages/components/layout/DrawerDemo.tsx"
   ],
-  "version": "0.30.3",
+  "version": "0.30.4",
   "schemaVersion": "1.1"
 }

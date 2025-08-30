@@ -84,11 +84,20 @@
   "events": [],
   "actions": [],
   "slots": [],
-  "bestPractices": [],
-  "examples": [],
-  "sourceFiles": [
-    "src/components/primitives/Video.tsx"
+  "bestPractices": [
+    "Provide multiple sources. Include `webm` and `mp4` encodings when possible to maximize browser support.",
+    "Use a `poster` and reserve space. Set a poster image and explicit `width` / `height` (or container) to avoid layout shift.",
+    "Captions matter. Supply `tracks` for subtitles/captions and allow users to toggle them; the component supports keyboard toggling (C) for the first track.",
+    "Autoplay etiquette. Browsers require `muted` for autoplay; keep controls on for accessibility and allow users to pause.",
+    "Object fit by context. Use `contain` to show entire frame (letterbox) or `cover` for edge-to-edge hero media.",
+    "Performance. Use CDN delivery and sensible `preload` policy; avoid heavy background loops that compete with page interactivity."
   ],
-  "version": "0.30.3",
+  "examples": [],
+  "docsUrl": "/components/primitives/VideoDemo",
+  "sourceFiles": [
+    "src/components/primitives/Video.tsx",
+    "docs/src/pages/components/primitives/VideoDemo.tsx"
+  ],
+  "version": "0.30.4",
   "schemaVersion": "1.1"
 }

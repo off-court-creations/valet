@@ -83,13 +83,19 @@
   ],
   "actions": [],
   "slots": [],
-  "bestPractices": [],
+  "bestPractices": [
+    "Be explicit about file types. Set `accept` to the precise MIME patterns you support and validate on the server; do not rely solely on client hints.",
+    "Communicate limits. If using `maxFiles` or size limits, reflect them in the UI copy and error handling; provide clear feedback for rejected files.",
+    "Keep previews purposeful. Thumbnails help with images; for other types, prefer a simple file list with clear names and types.",
+    "Accessibility first. Ensure the dropzone is focusable and operable via keyboard; users should be able to choose files without drag‑and‑drop.",
+    "Progressive uploads. For large files or slow networks, show progress and allow cancel; avoid blocking the UI with synchronous work."
+  ],
   "examples": [],
   "docsUrl": "/components/widgets/DropzoneDemo",
   "sourceFiles": [
     "src/components/widgets/Dropzone.tsx",
     "docs/src/pages/components/widgets/DropzoneDemo.tsx"
   ],
-  "version": "0.30.3",
+  "version": "0.30.4",
   "schemaVersion": "1.1"
 }

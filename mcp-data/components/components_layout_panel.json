@@ -84,6 +84,6 @@
     "src/components/layout/Panel.tsx",
     "docs/src/pages/components/layout/Panel.tsx"
   ],
-  "version": "0.30.3",
+  "version": "0.30.4",
   "schemaVersion": "1.1"
 }

@@ -110,13 +110,20 @@
       "name": "getLabel"
     }
   ],
-  "bestPractices": [],
+  "bestPractices": [
+    "Use stable ids. Provide deterministic `id` s for nodes so expanded/selected state can be controlled and persisted across renders.",
+    "Keep labels compact. Tree rows should be glanceable; favor short labels and use variants ( `list` or `files` ) to convey structure.",
+    "Align behavior with expectations. Support Arrow keys, Enter/Space for selection, and Left/Right to collapse/expand; let double‑click toggle when appropriate.",
+    "Choose control model. Use `expanded` / `onExpandedChange` and `selected` / `onNodeSelect` when external state or routing must drive the tree; otherwise use defaults.",
+    "Avoid over‑nesting. Deep hierarchies are hard to scan; flatten where possible and consider search/filter affordances for large trees.",
+    "Tokenized spacing. Use theme spacing for indentation so density and breakpoints scale predictably."
+  ],
   "examples": [],
   "docsUrl": "/components/widgets/TreeDemo",
   "sourceFiles": [
     "src/components/widgets/Tree.tsx",
     "docs/src/pages/components/widgets/TreeDemo.tsx"
   ],
-  "version": "0.30.3",
+  "version": "0.30.4",
   "schemaVersion": "1.1"
 }
