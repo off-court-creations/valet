@@ -104,32 +104,6 @@ export default function GridDemoPage() {
           <Tabs.Tab label='Usage' />
           <Tabs.Panel>
             <Stack>
-              <Panel fullWidth>
-                <Typography variant='h4'>Best Practices</Typography>
-                <Typography>
-                  - Use <code>Grid</code> for two‑axis alignment. Prefer <code>Stack</code> for
-                  linear flows where only one axis matters.
-                </Typography>
-                <Typography>
-                  - Keep tracks simple: equal‑width <code>columns</code> are fast and readable;
-                  let children span using <code>{`sx={{ gridColumn: 'span N' }}`}</code>.
-                </Typography>
-                <Typography>
-                  - Share spacing with the system. Use numeric <code>gap</code>/<code>pad</code>
-                  so density matches other primitives.
-                </Typography>
-                <Typography>
-                  - Use <code>adaptive</code> to collapse to a single column on portrait/narrow
-                  screens instead of ad‑hoc media queries.
-                </Typography>
-                <Typography>
-                  - Maintain logical DOM order for keyboard and screen readers; don’t rely on grid
-                  placement to imply reading order.
-                </Typography>
-              </Panel>
-
-              <Divider />
-
               <Typography variant='h3'>Two columns</Typography>
               <Grid
                 columns={2}
@@ -276,6 +250,30 @@ export default function GridDemoPage() {
             />
           </Tabs.Panel>
         </Tabs>
+        {/* Best Practices ------------------------------------------------- */}
+        <Panel fullWidth>
+          <Typography variant='h4'>Best Practices</Typography>
+          <Typography>
+            - Use <code>Grid</code> for two‑axis alignment. Prefer <code>Stack</code> for linear
+            flows where only one axis matters.
+          </Typography>
+          <Typography>
+            - Keep tracks simple: equal‑width <code>columns</code> are fast and readable; let
+            children span using <code>{`sx={{ gridColumn: 'span N' }}`}</code>.
+          </Typography>
+          <Typography>
+            - Share spacing with the system. Use numeric <code>gap</code>/<code>pad</code> so
+            density matches other primitives.
+          </Typography>
+          <Typography>
+            - Use <code>adaptive</code> to collapse to a single column on portrait/narrow screens
+            instead of ad‑hoc media queries.
+          </Typography>
+          <Typography>
+            - Maintain logical DOM order for keyboard and screen readers; don’t rely on grid
+            placement to imply reading order.
+          </Typography>
+        </Panel>
       </Stack>
     </Surface>
   );

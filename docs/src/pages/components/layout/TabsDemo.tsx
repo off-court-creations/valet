@@ -152,33 +152,6 @@ export default function TabsDemoPage() {
           Demonstrates top / bottom / left / right placements
         </Typography>
 
-        {/* Best Practices ------------------------------------------------- */}
-        <Panel fullWidth>
-          <Typography variant='h4'>Best Practices</Typography>
-          <Typography>
-            - Keep tab labels short and predictable. Prefer 1–2 words; avoid wrapping when possible.
-          </Typography>
-          <Typography>
-            - Choose placement by layout: <code>top</code> is the default; use vertical placement
-            for dense navigation sidebars.
-          </Typography>
-          <Typography>
-            - Reflect app state with controlled tabs (<code>active</code> +<code>onTabChange</code>)
-            when routes or external state should drive selection.
-          </Typography>
-          <Typography>
-            - Use <code>gap</code>/<code>pad</code> to match surrounding density; apply
-            <code>alignX</code> to align the strip with nearby content.
-          </Typography>
-          <Typography>
-            - For icon‑only tabs, supply <code>aria-label</code> and (optionally) a
-            <code>tooltip</code> for discoverability.
-          </Typography>
-          <Typography>
-            - Keep DOM order logical (Tab → Panel pairs) to preserve keyboard and screen‑reader flow.
-          </Typography>
-        </Panel>
-
         {/* 1. Horizontal - top (default) ---------------------------------- */}
         <Typography variant='h3'>1. Horizontal – top (default)</Typography>
         <Tabs>
@@ -388,6 +361,34 @@ export default function TabsDemoPage() {
             ))}
           </Tabs>
         </Box>
+
+        {/* Best Practices ------------------------------------------------- */}
+        <Panel fullWidth>
+          <Typography variant='h4'>Best Practices</Typography>
+          <Typography>
+            - Keep tab labels short and predictable. Prefer 1–2 words; avoid wrapping when possible.
+          </Typography>
+          <Typography>
+            - Choose placement by layout: <code>top</code> is the default; use vertical placement
+            for dense navigation sidebars.
+          </Typography>
+          <Typography>
+            - Reflect app state with controlled tabs (<code>active</code> +<code>onTabChange</code>)
+            when routes or external state should drive selection.
+          </Typography>
+          <Typography>
+            - Use <code>gap</code>/<code>pad</code> to match surrounding density; apply
+            <code>alignX</code> to align the strip with nearby content.
+          </Typography>
+          <Typography>
+            - For icon‑only tabs, supply <code>aria-label</code> and (optionally) a
+            <code>tooltip</code> for discoverability.
+          </Typography>
+          <Typography>
+            - Keep DOM order logical (Tab → Panel pairs) to preserve keyboard and screen‑reader
+            flow.
+          </Typography>
+        </Panel>
 
         {/* Back nav -------------------------------------------------------- */}
         <Button
