@@ -48,14 +48,8 @@
       "name": "preset",
       "type": "string | string[]",
       "required": false,
-      "default": "-",
+      "default": "—",
       "description": "Apply style presets via definePreset/preset registry."
-    },
-    {
-      "name": "HTML div props",
-      "type": "React.ComponentProps<'div'>",
-      "required": false,
-      "default": "-"
     }
   ],
   "cssVars": [

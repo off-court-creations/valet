@@ -8,7 +8,7 @@
       "name": "value",
       "type": "number",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Controlled value"
     },
     {
@@ -90,7 +90,7 @@
       "name": "ticks",
       "type": "number[]",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Custom tick positions"
     },
     {
@@ -121,7 +121,7 @@
       "name": "preset",
       "type": "string | string[]",
       "required": false,
-      "default": "-",
+      "default": "—",
       "description": "Apply style presets"
     }
   ],

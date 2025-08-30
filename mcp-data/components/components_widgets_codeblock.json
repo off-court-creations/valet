@@ -8,7 +8,7 @@
       "name": "code",
       "type": "string",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Source code to render"
     },
     {
@@ -22,14 +22,14 @@
       "name": "ariaLabel",
       "type": "string",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Copy button aria-label"
     },
     {
       "name": "title",
       "type": "string",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Copy button tooltip"
     }
   ],

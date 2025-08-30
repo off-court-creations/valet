@@ -8,14 +8,14 @@
       "name": "icon",
       "type": "React.ReactNode",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Main floating action button icon"
     },
     {
       "name": "actions",
       "type": "SpeedDialAction[]",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Array of action buttons"
     },
     {
@@ -35,7 +35,7 @@
       "name": "preset",
       "type": "string | string[]",
       "required": false,
-      "default": "-",
+      "default": "—",
       "description": "Apply style presets"
     }
   ],

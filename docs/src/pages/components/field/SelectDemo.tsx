@@ -61,19 +61,19 @@ export default function SelectDemoPage() {
     {
       prop: <code>value</code>,
       type: <code>string | number | (string | number)[]</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Controlled value',
     },
     {
       prop: <code>initialValue</code>,
       type: <code>string | number | (string | number)[]</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Uncontrolled initial value',
     },
     {
       prop: <code>onChange</code>,
       type: <code>(v: Primitive | Primitive[]) =&gt; void</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Change handler',
     },
     {
@@ -108,13 +108,13 @@ export default function SelectDemoPage() {
     {
       prop: <code>name</code>,
       type: <code>string</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Form field name',
     },
     {
       prop: <code>preset</code>,
       type: <code>string | string[]</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Apply style presets',
     },
   ];

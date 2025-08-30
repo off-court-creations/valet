@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.30.3]
+
+- Updated docs to represent the changes and upgrades to `@archway/valet-mcp`!
+
 ## [0.30.2]
 - Updated AGENTS.md and the docs to represent the changes and upgrades to `@archway/valet-mcp`!
 

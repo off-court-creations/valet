@@ -53,96 +53,87 @@ export default function ListDemoPage() {
   interface Row {
     prop: React.ReactNode;
     type: React.ReactNode;
-    def: React.ReactNode;
+    default: React.ReactNode;
     description: React.ReactNode;
   }
   const columns: TableColumn<Row>[] = [
     { header: 'Prop', accessor: 'prop' },
     { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'def' },
+    { header: 'Default', accessor: 'default' },
     { header: 'Description', accessor: 'description' },
   ];
   const data: Row[] = [
     {
       prop: <code>data</code>,
       type: <code>T[]</code>,
-      def: <code>-</code>,
+      default: <code>—</code>,
       description: 'Items to render.',
     },
     {
       prop: <code>getTitle</code>,
       type: <code>(item: T) =&gt; ReactNode</code>,
-      def: <code>-</code>,
+      default: <code>—</code>,
       description: 'Primary content for each row.',
     },
     {
       prop: <code>getSubtitle</code>,
       type: <code>(item: T) =&gt; ReactNode</code>,
-      def: <code>-</code>,
+      default: <code>—</code>,
       description: 'Optional secondary line for each row.',
     },
     {
       prop: <code>striped</code>,
       type: <code>boolean</code>,
-      def: <code>false</code>,
+      default: <code>false</code>,
       description: 'Apply zebra striping.',
     },
     {
       prop: <code>hoverable</code>,
       type: <code>boolean</code>,
-      def: <code>!striped</code>,
+      default: <code>!striped</code>,
       description: 'Hover tint. Enabled by default for non‑striped lists.',
     },
     {
       prop: <code>reorderable</code>,
       type: <code>boolean</code>,
-      def: <code>true</code>,
+      default: <code>true</code>,
       description: 'Enable drag‑and‑drop reordering. When false, drag is disabled.',
     },
     {
       prop: <code>selectable</code>,
       type: <code>boolean</code>,
-      def: <code>false</code>,
+      default: <code>false</code>,
       description: 'Enable single selection. Click or drag to select the active item.',
     },
     {
       prop: <code>selected</code>,
       type: <code>T | null</code>,
-      def: <code>-</code>,
+      default: <code>—</code>,
       description: 'Controlled selected item (by reference).',
     },
     {
       prop: <code>defaultSelected</code>,
       type: <code>T | null</code>,
-      def: <code>null</code>,
+      default: <code>null</code>,
       description: 'Uncontrolled initial selected item.',
     },
     {
       prop: <code>onSelectionChange</code>,
       type: <code>(item: T, index: number) =&gt; void</code>,
-      def: <code>-</code>,
+      default: <code>—</code>,
       description: 'Fires on selection change (click or drag‑select).',
     },
     {
       prop: <code>onReorder</code>,
       type: <code>(items: T[]) =&gt; void</code>,
-      def: <code>-</code>,
+      default: <code>—</code>,
       description: 'Fires after a drag operation ends with the new order.',
     },
     {
       prop: <code>preset</code>,
       type: <code>string | string[]</code>,
-      def: <code>-</code>,
+      default: <code>—</code>,
       description: 'Apply style presets.',
-    },
-    {
-      prop: <code>HTML ul props</code>,
-      type: (
-        <code>Omit&lt;React.HTMLAttributes&lt;HTMLUListElement&gt;, &apos;children&apos;&gt;</code>
-      ),
-      def: <code>-</code>,
-      description:
-        'Standard HTML attributes for <ul> (excluding &apos;children&apos;) pass through.',
     },
   ];
 

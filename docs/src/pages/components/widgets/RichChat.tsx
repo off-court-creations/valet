@@ -29,31 +29,31 @@ export default function RichChatPage() {
     {
       prop: <code>messages</code>,
       type: <code>RichMessage[]</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Conversation history with JSX content',
     },
     {
       prop: <code>onFormSubmit</code>,
       type: <code>(value: string, index: number) =&gt; void</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Called when a form message submits',
     },
     {
       prop: <code>onSend</code>,
       type: <code>(m: RichMessage) =&gt; void</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Called when user sends a message',
     },
     {
       prop: <code>userAvatar</code>,
       type: <code>string</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'URL for user avatar image',
     },
     {
       prop: <code>systemAvatar</code>,
       type: <code>string</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'URL for assistant avatar image',
     },
     {
@@ -77,7 +77,7 @@ export default function RichChatPage() {
     {
       prop: <code>preset</code>,
       type: <code>string | string[]</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Apply style presets',
     },
   ];

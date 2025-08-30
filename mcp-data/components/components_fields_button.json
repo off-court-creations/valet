@@ -15,7 +15,7 @@
       "name": "textColor",
       "type": "'primary' | 'secondary' | 'tertiary' | string",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Label colour override"
     },
     {
@@ -48,7 +48,7 @@
       "name": "preset",
       "type": "string | string[]",
       "required": false,
-      "default": "-",
+      "default": "—",
       "description": "Apply style presets"
     }
   ],

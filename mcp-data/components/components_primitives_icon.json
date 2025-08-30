@@ -8,14 +8,14 @@
       "name": "icon",
       "type": "string",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Iconify name"
     },
     {
       "name": "svg",
       "type": "string | ReactElement",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Custom SVG content"
     },
     {
@@ -29,7 +29,7 @@
       "name": "color",
       "type": "string",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Colour override"
     },
     {
@@ -41,7 +41,7 @@
       "name": "preset",
       "type": "string | string[]",
       "required": false,
-      "default": "-",
+      "default": "—",
       "description": "Apply style presets"
     }
   ],

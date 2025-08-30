@@ -8,14 +8,14 @@
       "name": "data",
       "type": "string",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Markdown source text"
     },
     {
       "name": "codeBackground",
       "type": "string",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Override background for fenced code blocks"
     },
     {

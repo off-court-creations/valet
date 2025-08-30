@@ -29,25 +29,25 @@ export default function LLMChatPage() {
     {
       prop: <code>messages</code>,
       type: <code>ChatMessage[]</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Conversation history',
     },
     {
       prop: <code>onSend</code>,
       type: <code>(m: ChatMessage) =&gt; void</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Called when user submits a message',
     },
     {
       prop: <code>userAvatar</code>,
       type: <code>string</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'URL for user avatar image',
     },
     {
       prop: <code>systemAvatar</code>,
       type: <code>string</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'URL for assistant avatar image',
     },
     {
@@ -71,31 +71,31 @@ export default function LLMChatPage() {
     {
       prop: <code>apiKey</code>,
       type: <code>string</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Override global API key',
     },
     {
       prop: <code>provider</code>,
       type: <code>AIProvider</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Model provider',
     },
     {
       prop: <code>model</code>,
       type: <code>string</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Model name',
     },
     {
       prop: <code>onModelChange</code>,
       type: <code>(m: string) =&gt; void</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Handle model changes',
     },
     {
       prop: <code>preset</code>,
       type: <code>string | string[]</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Apply style presets',
     },
   ];

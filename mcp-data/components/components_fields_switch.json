@@ -8,7 +8,7 @@
       "name": "checked",
       "type": "boolean",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Controlled state"
     },
     {
@@ -22,14 +22,14 @@
       "name": "onChange",
       "type": "(checked: boolean) => void",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "State change handler"
     },
     {
       "name": "name",
       "type": "string",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Form field name"
     },
     {
@@ -55,7 +55,7 @@
       "name": "preset",
       "type": "string | string[]",
       "required": false,
-      "default": "-",
+      "default": "—",
       "description": "Apply style presets"
     }
   ],

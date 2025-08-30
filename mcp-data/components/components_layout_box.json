@@ -8,14 +8,14 @@
       "name": "background",
       "type": "string",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Background colour override. When set to a theme tone (primary/secondary/tertiary), text colour is derived automatically."
     },
     {
       "name": "textColor",
       "type": "string",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Explicit text colour"
     },
     {
@@ -73,14 +73,8 @@
       "name": "preset",
       "type": "string | string[]",
       "required": false,
-      "default": "-",
+      "default": "—",
       "description": "Apply style presets"
-    },
-    {
-      "name": "HTML div props",
-      "type": "React.ComponentProps<'div'>",
-      "required": false,
-      "default": "-"
     }
   ],
   "domPassthrough": {

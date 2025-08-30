@@ -8,66 +8,77 @@
       "name": "data",
       "type": "T[]",
       "required": true,
+      "default": "—",
       "description": "Items to render."
     },
     {
       "name": "getTitle",
       "type": "(item: T) => ReactNode",
       "required": true,
+      "default": "—",
       "description": "Primary content for each row."
     },
     {
       "name": "getSubtitle",
       "type": "(item: T) => ReactNode",
       "required": true,
+      "default": "—",
       "description": "Optional secondary line for each row."
     },
     {
       "name": "striped",
       "type": "boolean",
       "required": true,
+      "default": "false",
       "description": "Apply zebra striping."
     },
     {
       "name": "hoverable",
       "type": "boolean",
       "required": true,
+      "default": "!striped",
       "description": "Hover tint. Enabled by default for non‑striped lists."
     },
     {
       "name": "onReorder",
       "type": "(items: T[]) => void",
       "required": true,
+      "default": "—",
       "description": "Fires after a drag operation ends with the new order."
     },
     {
       "name": "reorderable",
       "type": "boolean",
       "required": true,
+      "default": "true",
       "description": "Enable drag‑and‑drop reordering. When false, drag is disabled."
     },
     {
       "name": "selectable",
       "type": "boolean",
       "required": true,
+      "default": "false",
       "description": "Enable single selection. Click or drag to select the active item."
     },
     {
       "name": "selected",
       "type": "T | null",
       "required": true,
+      "default": "—",
       "description": "Controlled selected item (by reference)."
     },
     {
       "name": "defaultSelected",
       "type": "T | null",
       "required": true,
+      "default": "null",
       "description": "Uncontrolled initial selected item."
     },
     {
       "name": "onSelectionChange",
       "type": "(item: T, index: number) => void",
       "required": true,
+      "default": "—",
       "description": "Fires on selection change (click or drag‑select)."
     },
     {
@@ -79,13 +90,8 @@
       "name": "preset",
       "type": "string | string[]",
       "required": false,
+      "default": "—",
       "description": "Apply style presets."
-    },
-    {
-      "name": "HTML ul props",
-      "type": "Omit<React.HTMLAttributes<HTMLUListElement>, 'children'>",
-      "required": false,
-      "description": "Standard HTML attributes for <ul> (excluding &apos;children&apos;) pass through."
     }
   ],
   "cssVars": [],

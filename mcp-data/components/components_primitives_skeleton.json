@@ -15,14 +15,14 @@
       "name": "variant",
       "type": "'text' | 'rect' | 'circle'",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Override inferred placeholder shape"
     },
     {
       "name": "icon",
       "type": "ReactNode",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Optional icon shown while loading"
     },
     {
@@ -34,7 +34,7 @@
       "name": "preset",
       "type": "string | string[]",
       "required": false,
-      "default": "-",
+      "default": "—",
       "description": "Apply style presets"
     }
   ],

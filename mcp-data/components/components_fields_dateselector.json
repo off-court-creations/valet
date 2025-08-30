@@ -8,28 +8,28 @@
       "name": "value",
       "type": "string",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Controlled ISO date value (YYYY-MM-DD)"
     },
     {
       "name": "defaultValue",
       "type": "string",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Initial uncontrolled value"
     },
     {
       "name": "onChange",
       "type": "(value: string) => void",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Fires when selection changes"
     },
     {
       "name": "name",
       "type": "string",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "FormControl field name"
     },
     {
@@ -57,21 +57,21 @@
       "name": "endValue",
       "type": "string",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Controlled end date when range is true"
     },
     {
       "name": "defaultEndValue",
       "type": "string",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Uncontrolled end date default"
     },
     {
       "name": "onRangeChange",
       "type": "(start: string, end: string) => void",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Fires when range selection changes"
     },
     {
@@ -109,7 +109,7 @@
       "name": "preset",
       "type": "string | string[]",
       "required": false,
-      "default": "-",
+      "default": "—",
       "description": "Apply style presets"
     }
   ],

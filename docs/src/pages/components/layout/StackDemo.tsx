@@ -54,7 +54,7 @@ export default function StackDemoPage() {
     {
       prop: <code>preset</code>,
       type: <code>string | string[]</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Apply style presets',
     },
   ];

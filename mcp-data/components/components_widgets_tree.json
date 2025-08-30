@@ -8,14 +8,14 @@
       "name": "nodes",
       "type": "TreeNode<T>[]",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Array of tree nodes"
     },
     {
       "name": "getLabel",
       "type": "(n: T) => ReactNode",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Return label for a node"
     },
     {
@@ -29,35 +29,35 @@
       "name": "expanded",
       "type": "string[]",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Controlled expanded node ids"
     },
     {
       "name": "onExpandedChange",
       "type": "(ids: string[]) => void",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Handle expand/collapse changes"
     },
     {
       "name": "selected",
       "type": "string",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Controlled selected node id"
     },
     {
       "name": "defaultSelected",
       "type": "string",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Uncontrolled starting selection"
     },
     {
       "name": "onNodeSelect",
       "type": "(n: T) => void",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Called when a node is selected"
     },
     {
@@ -81,7 +81,7 @@
       "name": "preset",
       "type": "string | string[]",
       "required": false,
-      "default": "-",
+      "default": "—",
       "description": "Apply style presets"
     }
   ],

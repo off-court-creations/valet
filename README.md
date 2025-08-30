@@ -72,3 +72,35 @@ We welcome issues and pull requests. If you are a person, please make pull reque
 
 valet targets the React ecosystem. Improvements and examples should assume a
 React 19.x setup.
+
+## NPM Scripts
+
+| Command | What + When |
+| --- | --- |
+| `npm run clean` | Removes the `dist/` folder for a fresh build. Use when cached outputs might interfere or before a clean publish.
+| `npm run build` | Builds the library with tsup (ESM, CJS, and TypeScript dts). Use before publishing or linking the package into another app.
+| `npm run dev` | Builds in watch mode for rapid local iteration. Use while developing components and testing via linked docs.
+| `npm run lint` | Runs ESLint over `src` and `docs`. Use to check code quality in CI or before commits.
+| `npm run lint:fix` | Runs ESLint with auto‑fix. Use after refactors to apply standard rules automatically.
+| `npm run format` | Runs Prettier in check mode. Use in CI or to verify formatting consistency.
+| `npm run format:fix` | Runs Prettier and writes changes. Use to normalize formatting across the repo.
+| `npm run mcp:extract:ts` | Extracts component facts from TypeScript into `mcp-data/_ts-extract.json`. Use for debugging the TS extraction phase.
+| `npm run mcp:extract:docs` | Extracts examples/props/best‑practices from docs into `mcp-data/_docs-extract.json`. Use for debugging the docs parsing phase.
+| `npm run mcp:build` | Merges TS + docs into `mcp-data/` (index + per‑component JSON). Use whenever components or docs change before using MCP tools.
+| `npm run mcp:watch` | Rebuilds `mcp-data/` on file changes. Use during active development for instant MCP data refresh.
+| `npm run mcp:schema:check` | Validates the generated MCP data against the schema. Use to sanity‑check before publishing or integrating.
+| `npm run mcp:server:install` | Installs MCP server dependencies. Use on first setup or after dependency changes.
+| `npm run mcp:server:build` | Builds the MCP server (`servers/valet-mcp`). Use after server code changes or before publishing the server.
+| `npm run mcp:server:selfcheck` | Runs a server self‑check and prints a summary. Use to confirm data is present and endpoints are healthy.
+| `npm run mcp:server:start` | Starts the MCP server locally. Use to serve `mcp-data/` to tools during development.
+| `npm run mcp:server:link` | Links the MCP server globally as `valet-mcp`. Use if your environment discovers global bins.
+| `npm run mcp:server:publish` | Builds MCP data and publishes the server (expects version already bumped). Use for releases where you’ve handled versioning manually.
+| `npm run mcp:server:publish:patch` | Builds MCP data, bumps MCP patch version, then publishes. Use for data‑only refreshes within the same valet minor version.
+
+Note: To publish a data‑only MCP version, run:
+
+```
+- npm run mcp:build
+- npm run mcp:server:selfcheck
+- npm run mcp:server:publish:patch
+```

@@ -39,7 +39,7 @@ export default function CodeBlockDemoPage() {
     {
       prop: <code>code</code>,
       type: <code>string</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Source code to render',
     },
     {
@@ -51,13 +51,13 @@ export default function CodeBlockDemoPage() {
     {
       prop: <code>ariaLabel</code>,
       type: <code>string</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Copy button aria-label',
     },
     {
       prop: <code>title</code>,
       type: <code>string</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Copy button tooltip',
     },
   ];

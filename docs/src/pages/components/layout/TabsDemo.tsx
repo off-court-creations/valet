@@ -73,7 +73,7 @@ export default function TabsDemoPage() {
     {
       prop: <code>active</code>,
       type: <code>number</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Controlled index of the active tab.',
     },
     {
@@ -85,7 +85,7 @@ export default function TabsDemoPage() {
     {
       prop: <code>onTabChange</code>,
       type: <code>(i: number) =&gt; void</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Callback when the active tab changes.',
     },
     {
@@ -111,13 +111,13 @@ export default function TabsDemoPage() {
     {
       prop: <code>preset</code>,
       type: <code>string | string[]</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Apply style presets to the container.',
     },
     {
       prop: <code>sx</code>,
       type: <code>object</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Inline style overrides (CSS object; supports CSS vars).',
     },
   ];

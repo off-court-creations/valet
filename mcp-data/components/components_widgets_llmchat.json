@@ -29,63 +29,63 @@
       "name": "messages",
       "type": "ChatMessage[]",
       "required": false,
-      "default": "-",
+      "default": "—",
       "description": "Conversation history"
     },
     {
       "name": "onSend",
       "type": "(m: ChatMessage) => void",
       "required": false,
-      "default": "-",
+      "default": "—",
       "description": "Called when user submits a message"
     },
     {
       "name": "userAvatar",
       "type": "string",
       "required": false,
-      "default": "-",
+      "default": "—",
       "description": "URL for user avatar image"
     },
     {
       "name": "systemAvatar",
       "type": "string",
       "required": false,
-      "default": "-",
+      "default": "—",
       "description": "URL for assistant avatar image"
     },
     {
       "name": "apiKey",
       "type": "string",
       "required": false,
-      "default": "-",
+      "default": "—",
       "description": "Override global API key"
     },
     {
       "name": "provider",
       "type": "AIProvider",
       "required": false,
-      "default": "-",
+      "default": "—",
       "description": "Model provider"
     },
     {
       "name": "model",
       "type": "string",
       "required": false,
-      "default": "-",
+      "default": "—",
       "description": "Model name"
     },
     {
       "name": "onModelChange",
       "type": "(m: string) => void",
       "required": false,
-      "default": "-",
+      "default": "—",
       "description": "Handle model changes"
     },
     {
       "name": "preset",
       "type": "string | string[]",
       "required": false,
-      "default": "-",
+      "default": "—",
       "description": "Apply style presets"
     }
   ],

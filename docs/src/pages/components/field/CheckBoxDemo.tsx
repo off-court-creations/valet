@@ -55,19 +55,19 @@ export default function CheckboxDemoPage() {
     {
       prop: <code>name</code>,
       type: <code>string</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Unique field name',
     },
     {
       prop: <code>label</code>,
       type: <code>ReactNode</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Label text or element',
     },
     {
       prop: <code>checked</code>,
       type: <code>boolean</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Controlled checked state',
     },
     {
@@ -96,13 +96,13 @@ export default function CheckboxDemoPage() {
     {
       prop: <code>onChange</code>,
       type: <code>(checked: boolean, e: ChangeEvent&lt;HTMLInputElement&gt;) =&gt; void</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Change callback',
     },
     {
       prop: <code>preset</code>,
       type: <code>string | string[]</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Apply style presets',
     },
   ];

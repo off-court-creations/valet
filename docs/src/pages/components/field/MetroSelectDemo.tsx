@@ -40,13 +40,13 @@ export default function MetroSelectDemoPage() {
     {
       prop: <code>value</code>,
       type: <code>string | number | (string | number)[]</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Controlled value (array when multiple)',
     },
     {
       prop: <code>defaultValue</code>,
       type: <code>string | number | (string | number)[]</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Uncontrolled initial value (array when multiple)',
     },
     {
@@ -64,19 +64,19 @@ export default function MetroSelectDemoPage() {
     {
       prop: <code>onChange</code>,
       type: <code>(val: Primitive | Primitive[]) =&gt; void</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Change handler (array when multiple)',
     },
     {
       prop: <code>preset</code>,
       type: <code>string | string[]</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Apply style presets',
     },
     {
       prop: <code>children</code>,
       type: <code>React.ReactNode</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'MetroSelect.Option elements',
     },
   ];
@@ -92,19 +92,19 @@ export default function MetroSelectDemoPage() {
     {
       prop: <code>value</code>,
       type: <code>string | number</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Value for selection',
     },
     {
       prop: <code>icon</code>,
       type: <code>string | ReactElement</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Icon element or Iconify name',
     },
     {
       prop: <code>label</code>,
       type: <code>React.ReactNode</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Text displayed below the icon',
     },
     {
@@ -116,7 +116,7 @@ export default function MetroSelectDemoPage() {
     {
       prop: <code>preset</code>,
       type: <code>string | string[]</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Apply style presets',
     },
   ];

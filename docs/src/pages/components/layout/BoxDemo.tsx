@@ -59,14 +59,14 @@ export default function BoxDemoPage() {
     {
       prop: <code>background</code>,
       type: <code>string</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description:
         'Background colour override. When set to a theme tone (primary/secondary/tertiary), text colour is derived automatically.',
     },
     {
       prop: <code>textColor</code>,
       type: <code>string</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Explicit text colour',
     },
     {
@@ -109,20 +109,8 @@ export default function BoxDemoPage() {
     {
       prop: <code>preset</code>,
       type: <code>string | string[]</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Apply style presets',
-    },
-    {
-      prop: <code>HTML div props</code>,
-      type: <code>React.ComponentProps&lt;&apos;div&apos;&gt;</code>,
-      default: <code>-</code>,
-      description: (
-        <>
-          Standard HTML attributes and events pass through, e.g. <code>id</code>, <code>role</code>,{' '}
-          <code>aria-*</code>, <code>onClick</code>, <code>className</code>. Use <code>sx</code> for
-          inline style overrides.
-        </>
-      ),
     },
   ];
 
