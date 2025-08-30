@@ -36,6 +36,55 @@ valet
 
 ^ IMPORTANT ^
 
+## MCP: Valet Introspection (for @openai/codex)
+
+This repo ships a Model Context Protocol (MCP) data pipeline and server exposing structured metadata for valet components. When running inside an @openai/codex setup that has the valet MCP wired in, agents can call dedicated valet introspection tools to discover components, props, examples, and best practices.
+
+What you get:
+
+- Tools: `valet__list_components`, `valet__search_components`, `valet__get_component`, `valet__get_examples`.
+- Data: generated into `mcp-data/` from TypeScript source and docs.
+- Server: optional MCP server at `servers/valet-mcp` for external LLM tools.
+
+Typical flows:
+
+- Discover: use `valet__list_components` to enumerate all components with `{ name, category, summary, slug }`.
+- Search: use `valet__search_components { query }` for fuzzy search over names/summaries.
+- Inspect: use `valet__get_component { name? | slug? }` to retrieve full metadata:
+  - `props[]`: name, type, required, default, description
+  - `domPassthrough`: supported intrinsic element props (if any)
+  - `cssVars[]`: exposed CSS variables
+  - `bestPractices[]`, `examples[]`, `docsUrl`, `sourceFiles[]`, `version`
+- Examples only: use `valet__get_examples { name | slug }` to fetch example snippets.
+
+Codex usage examples:
+
+- “List all valet components” → calls `valet__list_components`.
+- “Search components for ‘table zebra’” → calls `valet__search_components` with `{ query: "table zebra" }`.
+- “Show props for Panel” → calls `valet__get_component` with `{ name: "Panel" }`.
+- “Give example usage of Tooltip” → calls `valet__get_examples` with `{ name: "Tooltip" }`.
+
+Keeping the MCP data fresh:
+
+- Build data after changing components or docs:
+  - `npm run mcp:build` (writes JSON into `mcp-data/`)
+- Validate data/server quickly:
+  - `npm run mcp:server:selfcheck` (prints `{ ok, components, hasBox }`)
+
+Running the local MCP server (optional):
+
+1. Install server deps: `npm run mcp:server:install`
+2. Build: `npm run mcp:server:build`
+3. Start (dev use): `npm run mcp:server:start`
+4. Self-check: `npm run mcp:server:selfcheck`
+5. Link globally (if your Codex host discovers global bins): `npm run mcp:server:link` (provides `valet-mcp`)
+
+Notes:
+
+- The Codex harness may expose the introspection tools directly without the server; still keep `mcp-data/` up to date via `npm run mcp:build`.
+- Node ≥ 18 is required. This repo targets Node 20+ in practice; CI/dev here runs Node 22.
+- If `components` in selfcheck is 0, re-run `npm run mcp:build` and ensure docs and src are present.
+
 ## Coding Standards
 
 - Code is written in **TypeScript**. Keep types strict and explicit.

@@ -1,0 +1,59 @@
+{
+  "name": "@archway/valet-mcp",
+  "version": "0.30.3",
+  "description": "Model Context Protocol server exposing @archway/valet component metadata (props, css vars, examples).",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "valet-mcp": "bin/valet-mcp.js"
+  },
+  "files": [
+    "dist",
+    "mcp-data",
+    "README.md",
+    "LICENSE",
+    "package.json"
+  ],
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "valet",
+    "archway",
+    "ui",
+    "components",
+    "introspection"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "selfcheck": "MCP_SELFCHECK=1 node dist/index.js",
+    "bundle:data": "rm -rf mcp-data && mkdir -p mcp-data && cp -R ../../mcp-data/* mcp-data/",
+    "prepublishOnly": "npm run build && npm run bundle:data"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.3.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "~5.8.3"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/off-court-creations/valet.git",
+    "directory": "servers/valet-mcp"
+  },
+  "bugs": {
+    "url": "https://github.com/off-court-creations/valet/issues"
+  },
+  "homepage": "https://github.com/off-court-creations/valet#readme"
+}

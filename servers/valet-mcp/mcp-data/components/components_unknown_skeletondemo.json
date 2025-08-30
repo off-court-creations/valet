@@ -1,0 +1,44 @@
+{
+  "name": "SkeletonDemo",
+  "category": "unknown",
+  "slug": "components/unknown/skeletondemo",
+  "summary": "SkeletonDemo component",
+  "props": [
+    {
+      "name": "loading",
+      "type": "boolean",
+      "required": false,
+      "default": "true",
+      "description": "Show placeholder while true"
+    },
+    {
+      "name": "variant",
+      "type": "'text' | 'rect' | 'circle'",
+      "required": false,
+      "default": "-",
+      "description": "Override inferred placeholder shape"
+    },
+    {
+      "name": "icon",
+      "type": "ReactNode",
+      "required": false,
+      "default": "-",
+      "description": "Optional icon shown while loading"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[]",
+      "required": false,
+      "default": "-",
+      "description": "Apply style presets"
+    }
+  ],
+  "cssVars": [],
+  "bestPractices": [],
+  "examples": [],
+  "docsUrl": "/components/primitives/SkeletonDemo",
+  "sourceFiles": [
+    "docs/src/pages/components/primitives/SkeletonDemo.tsx"
+  ],
+  "version": "0.30.1"
+}

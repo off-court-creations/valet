@@ -1,0 +1,69 @@
+{
+  "name": "Image",
+  "category": "primitives",
+  "slug": "components/primitives/image",
+  "summary": "Image component",
+  "props": [
+    {
+      "name": "src",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "width",
+      "type": "number | string",
+      "required": true
+    },
+    {
+      "name": "height",
+      "type": "number | string",
+      "required": true
+    },
+    {
+      "name": "objectFit",
+      "type": "'cover' | 'contain' | 'fill' | 'none' | 'scale-down'",
+      "required": true,
+      "default": "'cover'",
+      "enumValues": [
+        "cover",
+        "contain",
+        "fill",
+        "none",
+        "scale-down"
+      ]
+    },
+    {
+      "name": "rounded",
+      "type": "number | string",
+      "required": true
+    },
+    {
+      "name": "lazy",
+      "type": "boolean",
+      "required": true,
+      "default": "false"
+    },
+    {
+      "name": "placeholder",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": true
+    }
+  ],
+  "cssVars": [],
+  "cssPresets": [],
+  "events": [],
+  "actions": [],
+  "slots": [],
+  "bestPractices": [],
+  "examples": [],
+  "sourceFiles": [
+    "src/components/primitives/Image.tsx"
+  ],
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
+}

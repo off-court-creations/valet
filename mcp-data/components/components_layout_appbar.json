@@ -1,0 +1,60 @@
+{
+  "name": "AppBar",
+  "category": "layout",
+  "slug": "components/layout/appbar",
+  "summary": "AppBar component",
+  "props": [
+    {
+      "name": "color",
+      "type": "AppBarToken | string",
+      "required": true
+    },
+    {
+      "name": "textColor",
+      "type": "AppBarToken | string",
+      "required": true
+    },
+    {
+      "name": "left",
+      "type": "React.ReactNode",
+      "required": true
+    },
+    {
+      "name": "right",
+      "type": "React.ReactNode",
+      "required": true
+    },
+    {
+      "name": "pad",
+      "type": "Space",
+      "required": true
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": true
+    }
+  ],
+  "cssVars": [
+    "--valet-bg",
+    "--valet-text-color"
+  ],
+  "cssPresets": [],
+  "events": [],
+  "actions": [],
+  "slots": [
+    {
+      "name": "left"
+    },
+    {
+      "name": "right"
+    }
+  ],
+  "bestPractices": [],
+  "examples": [],
+  "sourceFiles": [
+    "src/components/layout/AppBar.tsx"
+  ],
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
+}

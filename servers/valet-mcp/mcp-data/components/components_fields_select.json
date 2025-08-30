@@ -1,0 +1,115 @@
+{
+  "name": "Select",
+  "category": "fields",
+  "slug": "components/fields/select",
+  "summary": "Select component",
+  "props": [
+    {
+      "name": "value",
+      "type": "string | number | (string | number)[]",
+      "required": true,
+      "default": "-",
+      "description": "Controlled value"
+    },
+    {
+      "name": "initialValue",
+      "type": "string | number | (string | number)[]",
+      "required": true,
+      "default": "-",
+      "description": "Uncontrolled initial value"
+    },
+    {
+      "name": "onChange",
+      "type": "(v: Primitive | Primitive[]) => void",
+      "required": true,
+      "default": "-",
+      "description": "Change handler"
+    },
+    {
+      "name": "multiple",
+      "type": "boolean",
+      "required": true,
+      "default": "false",
+      "description": "Allow multiple values"
+    },
+    {
+      "name": "placeholder",
+      "type": "string",
+      "required": true,
+      "default": "'Select…'",
+      "description": "Label when empty"
+    },
+    {
+      "name": "size",
+      "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string",
+      "required": true,
+      "default": "'md'",
+      "description": "Control height"
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "required": true,
+      "default": "false",
+      "description": "Disable interaction"
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "required": true,
+      "default": "-",
+      "description": "Form field name"
+    },
+    {
+      "name": "children",
+      "type": "React.ReactNode",
+      "required": true
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": true
+    },
+    {
+      "name": "preset",
+      "type": "string | string[]",
+      "required": false,
+      "default": "-",
+      "description": "Apply style presets"
+    }
+  ],
+  "cssVars": [
+    "--valet-border",
+    "--valet-bg",
+    "--valet-text-color"
+  ],
+  "cssPresets": [],
+  "events": [
+    {
+      "name": "onChange",
+      "payloadType": "Primitive | Primitive[]"
+    }
+  ],
+  "actions": [],
+  "slots": [
+    {
+      "name": "children"
+    }
+  ],
+  "bestPractices": [
+    "Choose controlled vs uncontrolled deliberately: use `value` + `onChange` to integrate with app state; use `initialValue` for lightweight forms.",
+    "Keep option labels short, distinct, and ordered predictably (alphabetical or by frequency). Avoid duplicating values with different labels.",
+    "Use `multiple` only when necessary and present selections clearly. Consider `size` and a minimum width ( `` ) to avoid layout jump.",
+    "Prefer `RadioGroup` for a small, mutually exclusive set and `Checkbox` es for a small multi‑select; reserve `Select` for larger sets.",
+    "Provide a helpful `placeholder` when no value is selected. Persist value types (string/number) consistently across your app.",
+    "When using `FormControl` , set a stable `name` , and avoid mixing primitive types within the same field."
+  ],
+  "examples": [],
+  "docsUrl": "/components/field/SelectDemo",
+  "sourceFiles": [
+    "src/components/fields/Select.tsx",
+    "docs/src/pages/components/field/SelectDemo.tsx"
+  ],
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
+}

@@ -1,0 +1,117 @@
+{
+  "name": "Tooltip",
+  "category": "widgets",
+  "slug": "components/widgets/tooltip",
+  "summary": "Tooltip component",
+  "props": [
+    {
+      "name": "title",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "placement",
+      "type": "Placement",
+      "required": true,
+      "default": "'top'"
+    },
+    {
+      "name": "arrow",
+      "type": "boolean",
+      "required": true,
+      "default": "true"
+    },
+    {
+      "name": "enterDelay",
+      "type": "number",
+      "required": true,
+      "default": "100"
+    },
+    {
+      "name": "leaveDelay",
+      "type": "number",
+      "required": true,
+      "default": "100"
+    },
+    {
+      "name": "open",
+      "type": "boolean",
+      "required": true
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "required": true,
+      "default": "false"
+    },
+    {
+      "name": "disableHoverListener",
+      "type": "boolean",
+      "required": true,
+      "default": "false"
+    },
+    {
+      "name": "disableFocusListener",
+      "type": "boolean",
+      "required": true,
+      "default": "false"
+    },
+    {
+      "name": "disableTouchListener",
+      "type": "boolean",
+      "required": true,
+      "default": "false"
+    },
+    {
+      "name": "onOpen",
+      "type": "() => void",
+      "required": true
+    },
+    {
+      "name": "onClose",
+      "type": "() => void",
+      "required": true
+    },
+    {
+      "name": "children",
+      "type": "ReactElement",
+      "required": true
+    }
+  ],
+  "cssVars": [
+    "--valet-tooltip-arrow-size"
+  ],
+  "cssPresets": [],
+  "events": [
+    {
+      "name": "onOpen"
+    },
+    {
+      "name": "onClose"
+    }
+  ],
+  "actions": [],
+  "slots": [
+    {
+      "name": "title"
+    },
+    {
+      "name": "children"
+    }
+  ],
+  "bestPractices": [
+    "Use tooltips for supplemental hints, not essential instructions. The UI should remain usable without hovering.",
+    "Ensure the trigger is focusable and labelled. For icon‑only controls, provide `aria-label` on the target.",
+    "Keep content concise; avoid interactive controls inside tooltips. Prefer short phrases over sentences.",
+    "Prefer `placement='top'` when space allows; adjust placement to avoid clipping and viewport edges.",
+    "Use sensible delays. Avoid long `enterDelay` / `leaveDelay` that make tooltips feel sluggish or sticky, especially on touch devices."
+  ],
+  "examples": [],
+  "docsUrl": "/components/widgets/TooltipDemo",
+  "sourceFiles": [
+    "src/components/widgets/Tooltip.tsx",
+    "docs/src/pages/components/widgets/TooltipDemo.tsx"
+  ],
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
+}

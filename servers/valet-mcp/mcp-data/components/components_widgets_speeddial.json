@@ -1,0 +1,60 @@
+{
+  "name": "SpeedDial",
+  "category": "widgets",
+  "slug": "components/widgets/speeddial",
+  "summary": "SpeedDial component",
+  "props": [
+    {
+      "name": "icon",
+      "type": "React.ReactNode",
+      "required": true,
+      "default": "-",
+      "description": "Main floating action button icon"
+    },
+    {
+      "name": "actions",
+      "type": "SpeedDialAction[]",
+      "required": true,
+      "default": "-",
+      "description": "Array of action buttons"
+    },
+    {
+      "name": "direction",
+      "type": "'up' | 'down' | 'left' | 'right'",
+      "required": true,
+      "default": "'up'",
+      "enumValues": [
+        "up",
+        "down",
+        "left",
+        "right"
+      ],
+      "description": "Expansion direction"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[]",
+      "required": false,
+      "default": "-",
+      "description": "Apply style presets"
+    }
+  ],
+  "cssVars": [],
+  "cssPresets": [],
+  "events": [],
+  "actions": [],
+  "slots": [
+    {
+      "name": "icon"
+    }
+  ],
+  "bestPractices": [],
+  "examples": [],
+  "docsUrl": "/components/widgets/SpeedDialDemo",
+  "sourceFiles": [
+    "src/components/widgets/SpeedDial.tsx",
+    "docs/src/pages/components/widgets/SpeedDialDemo.tsx"
+  ],
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
+}

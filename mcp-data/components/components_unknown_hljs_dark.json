@@ -1,0 +1,14 @@
+{
+  "name": "HLJS_DARK",
+  "category": "unknown",
+  "slug": "components/unknown/hljs_dark",
+  "summary": "HLJS_DARK component",
+  "props": [],
+  "cssVars": [],
+  "bestPractices": [],
+  "examples": [],
+  "sourceFiles": [
+    "src/css/hljsThemes.ts"
+  ],
+  "version": "0.30.1"
+}

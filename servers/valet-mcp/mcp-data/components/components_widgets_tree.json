@@ -1,0 +1,122 @@
+{
+  "name": "Tree",
+  "category": "widgets",
+  "slug": "components/widgets/tree",
+  "summary": "Tree component",
+  "props": [
+    {
+      "name": "nodes",
+      "type": "TreeNode<T>[]",
+      "required": true,
+      "default": "-",
+      "description": "Array of tree nodes"
+    },
+    {
+      "name": "getLabel",
+      "type": "(n: T) => ReactNode",
+      "required": true,
+      "default": "-",
+      "description": "Return label for a node"
+    },
+    {
+      "name": "defaultExpanded",
+      "type": "string[]",
+      "required": true,
+      "default": "[]",
+      "description": "Node ids expanded on mount"
+    },
+    {
+      "name": "expanded",
+      "type": "string[]",
+      "required": true,
+      "default": "-",
+      "description": "Controlled expanded node ids"
+    },
+    {
+      "name": "onExpandedChange",
+      "type": "(ids: string[]) => void",
+      "required": true,
+      "default": "-",
+      "description": "Handle expand/collapse changes"
+    },
+    {
+      "name": "selected",
+      "type": "string",
+      "required": true,
+      "default": "-",
+      "description": "Controlled selected node id"
+    },
+    {
+      "name": "defaultSelected",
+      "type": "string",
+      "required": true,
+      "default": "-",
+      "description": "Uncontrolled starting selection"
+    },
+    {
+      "name": "onNodeSelect",
+      "type": "(n: T) => void",
+      "required": true,
+      "default": "-",
+      "description": "Called when a node is selected"
+    },
+    {
+      "name": "variant",
+      "type": "'chevron' | 'list' | 'files'",
+      "required": true,
+      "enumValues": [
+        "chevron",
+        "list",
+        "files"
+      ],
+      "default": "'chevron'",
+      "description": "Visual style of branches"
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": true
+    },
+    {
+      "name": "preset",
+      "type": "string | string[]",
+      "required": false,
+      "default": "-",
+      "description": "Apply style presets"
+    }
+  ],
+  "cssVars": [
+    "--valet-focus-width",
+    "--valet-focus-offset",
+    "--valet-divider-stroke",
+    "--valet-tree-stroke",
+    "--valet-tree-outline",
+    "--valet-tree-offset"
+  ],
+  "cssPresets": [],
+  "events": [
+    {
+      "name": "onExpandedChange",
+      "payloadType": "string[]"
+    },
+    {
+      "name": "onNodeSelect",
+      "payloadType": "T"
+    }
+  ],
+  "actions": [],
+  "slots": [
+    {
+      "name": "getLabel"
+    }
+  ],
+  "bestPractices": [],
+  "examples": [],
+  "docsUrl": "/components/widgets/TreeDemo",
+  "sourceFiles": [
+    "src/components/widgets/Tree.tsx",
+    "docs/src/pages/components/widgets/TreeDemo.tsx"
+  ],
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
+}

@@ -40,7 +40,18 @@
     "lint": "eslint --ignore-path .gitignore \"{src,docs}/**/*.{ts,tsx}\"",
     "lint:fix": "eslint --ignore-path .gitignore \"{src,docs}/**/*.{ts,tsx}\" --fix",
     "format": "prettier --ignore-path .gitignore \"{src,docs}/**/*.{ts,tsx,js,jsx,json,md,css}\" --check",
-    "format:fix": "prettier --ignore-path .gitignore \"{src,docs}/**/*.{ts,tsx,js,jsx,json,md,css}\" --write"
+    "format:fix": "prettier --ignore-path .gitignore \"{src,docs}/**/*.{ts,tsx,js,jsx,json,md,css}\" --write",
+    "mcp:extract:ts": "node scripts/mcp/extract-ts.mjs",
+    "mcp:extract:docs": "node scripts/mcp/extract-docs.mjs",
+    "mcp:build": "node scripts/mcp/merge.mjs",
+    "mcp:watch": "node --watch scripts/mcp/merge.mjs",
+    "mcp:schema:check": "node scripts/mcp/validate.mjs",
+    "mcp:server:install": "cd servers/valet-mcp && npm install",
+    "mcp:server:build": "cd servers/valet-mcp && npm run build",
+    "mcp:server:selfcheck": "cd servers/valet-mcp && npm run selfcheck",
+    "mcp:server:start": "cd servers/valet-mcp && npm run start",
+    "mcp:server:link": "cd servers/valet-mcp && npm link",
+    "mcp:server:publish": "npm run mcp:build && cd servers/valet-mcp && npm publish --access public"
   },
   "dependencies": {
     "@iconify/react": "^6.0.0",
@@ -60,6 +71,8 @@
     "@babel/preset-env": "^7.27.2",
     "@babel/preset-react": "^7.27.1",
     "@babel/preset-typescript": "^7.27.1",
+    "@babel/parser": "^7.27.2",
+    "@babel/traverse": "^7.25.9",
     "@types/prop-types": "^15.7.15",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.0.0",
@@ -73,6 +86,7 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "prettier": "^3.2.5",
     "rimraf": "^5.0.5",
+    "ts-morph": "^23.0.0",
     "tsup": "^8.4.0",
     "typescript": "^5.8.3"
   },

@@ -1,0 +1,2385 @@
+{
+  "CodeBlock": {
+    "name": "CodeBlock",
+    "category": "widgets",
+    "slug": "components/widgets/codeblock",
+    "summary": "CodeBlock component",
+    "props": [
+      {
+        "name": "code",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "language",
+        "type": "string",
+        "required": true,
+        "default": "'typescript'"
+      },
+      {
+        "name": "ariaLabel",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "title",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "cssVars": [],
+    "sourceFiles": [
+      "src/components/widgets/CodeBlock.tsx"
+    ]
+  },
+  "HLJS_DARK": {
+    "name": "HLJS_DARK",
+    "category": "unknown",
+    "slug": "components/unknown/hljs_dark",
+    "summary": "HLJS_DARK component",
+    "props": [],
+    "cssVars": [],
+    "sourceFiles": [
+      "src/css/hljsThemes.ts"
+    ]
+  },
+  "SurfaceCtx": {
+    "name": "SurfaceCtx",
+    "category": "unknown",
+    "slug": "components/unknown/surfacectx",
+    "summary": "SurfaceCtx component",
+    "props": [],
+    "cssVars": [],
+    "sourceFiles": [
+      "src/system/surfaceStore.ts"
+    ]
+  },
+  "Button": {
+    "name": "Button",
+    "category": "fields",
+    "slug": "components/fields/button",
+    "summary": "Button component",
+    "props": [
+      {
+        "name": "color",
+        "type": "ButtonToken | string",
+        "required": true
+      },
+      {
+        "name": "textColor",
+        "type": "ButtonToken | string",
+        "required": true
+      },
+      {
+        "name": "variant",
+        "type": "ButtonVariant",
+        "required": true,
+        "default": "'contained'"
+      },
+      {
+        "name": "size",
+        "type": "ButtonSize | number | string",
+        "required": true,
+        "default": "'md'"
+      },
+      {
+        "name": "fullWidth",
+        "type": "boolean",
+        "required": true,
+        "default": "false"
+      },
+      {
+        "name": "sx",
+        "type": "Sx",
+        "required": true
+      }
+    ],
+    "cssVars": [
+      "--valet-text-color"
+    ],
+    "sourceFiles": [
+      "src/components/fields/Button.tsx"
+    ]
+  },
+  "Checkbox": {
+    "name": "Checkbox",
+    "category": "fields",
+    "slug": "components/fields/checkbox",
+    "summary": "Checkbox component",
+    "props": [
+      {
+        "name": "checked",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "defaultChecked",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "label",
+        "type": "ReactNode",
+        "required": true
+      },
+      {
+        "name": "size",
+        "type": "CheckboxSize | number | string",
+        "required": true
+      },
+      {
+        "name": "onChange",
+        "type": "(checked: boolean, event: ChangeEvent<HTMLInputElement>) => void",
+        "required": true
+      },
+      {
+        "name": "sx",
+        "type": "Sx",
+        "required": true
+      }
+    ],
+    "cssVars": [
+      "--valet-checkbox-radius",
+      "--valet-checkbox-stroke",
+      "--valet-checkbox-inset"
+    ],
+    "sourceFiles": [
+      "src/components/fields/Checkbox.tsx"
+    ]
+  },
+  "DateSelector": {
+    "name": "DateSelector",
+    "category": "fields",
+    "slug": "components/fields/dateselector",
+    "summary": "DateSelector component",
+    "props": [
+      {
+        "name": "value",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "defaultValue",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "onChange",
+        "type": "(value: string) => void",
+        "required": true
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "minDate",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "maxDate",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "range",
+        "type": "boolean",
+        "required": true,
+        "default": "false"
+      },
+      {
+        "name": "endValue",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "defaultEndValue",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "onRangeChange",
+        "type": "(start: string, end: string) => void",
+        "required": true
+      },
+      {
+        "name": "sx",
+        "type": "Sx",
+        "required": true
+      },
+      {
+        "name": "compactMode",
+        "type": "'auto' | 'on' | 'off'",
+        "required": true,
+        "default": "'auto'"
+      },
+      {
+        "name": "compactThresholdIn",
+        "type": "number",
+        "required": true,
+        "default": "340"
+      },
+      {
+        "name": "compactThresholdOut",
+        "type": "number",
+        "required": true,
+        "default": "380"
+      }
+    ],
+    "cssVars": [
+      "--valet-date-radius",
+      "--valet-date-cell-radius"
+    ],
+    "sourceFiles": [
+      "src/components/fields/DateSelector.tsx"
+    ]
+  },
+  "FormControl": {
+    "name": "FormControl",
+    "category": "fields",
+    "slug": "components/fields/formcontrol",
+    "summary": "FormControl component",
+    "props": [
+      {
+        "name": "useStore",
+        "type": "UseBoundStore<StoreApi<FormStore<T>>>",
+        "required": true
+      },
+      {
+        "name": "onSubmitValues",
+        "type": "(values: T, event: React.FormEvent<HTMLFormElement>) => void",
+        "required": true
+      },
+      {
+        "name": "sx",
+        "type": "Sx",
+        "required": true
+      }
+    ],
+    "cssVars": [],
+    "sourceFiles": [
+      "src/components/fields/FormControl.tsx"
+    ]
+  },
+  "IconButton": {
+    "name": "IconButton",
+    "category": "fields",
+    "slug": "components/fields/iconbutton",
+    "summary": "IconButton component",
+    "props": [
+      {
+        "name": "variant",
+        "type": "IconButtonVariant",
+        "required": true,
+        "default": "'contained'"
+      },
+      {
+        "name": "size",
+        "type": "IconButtonSize | number | string",
+        "required": true,
+        "default": "'md'"
+      },
+      {
+        "name": "icon",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "svg",
+        "type": "string | ReactElement<SVGProps<SVGSVGElement>>",
+        "required": true
+      },
+      {
+        "name": "iconColor",
+        "type": "string | undefined",
+        "required": true
+      },
+      {
+        "name": "sx",
+        "type": "Sx",
+        "required": true
+      }
+    ],
+    "cssVars": [],
+    "sourceFiles": [
+      "src/components/fields/IconButton.tsx"
+    ]
+  },
+  "Iterator": {
+    "name": "Iterator",
+    "category": "fields",
+    "slug": "components/fields/iterator",
+    "summary": "Iterator component",
+    "props": [
+      {
+        "name": "value",
+        "type": "number",
+        "required": true
+      },
+      {
+        "name": "defaultValue",
+        "type": "number",
+        "required": true
+      },
+      {
+        "name": "onChange",
+        "type": "(value: number) => void",
+        "required": true
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "min",
+        "type": "number",
+        "required": true
+      },
+      {
+        "name": "max",
+        "type": "number",
+        "required": true
+      },
+      {
+        "name": "step",
+        "type": "number",
+        "required": true
+      },
+      {
+        "name": "width",
+        "type": "number | string",
+        "required": true
+      },
+      {
+        "name": "sx",
+        "type": "Sx",
+        "required": true
+      }
+    ],
+    "cssVars": [],
+    "sourceFiles": [
+      "src/components/fields/Iterator.tsx"
+    ]
+  },
+  "MetroSelect": {
+    "name": "MetroSelect",
+    "category": "fields",
+    "slug": "components/fields/metroselect",
+    "summary": "MetroSelect component",
+    "props": [
+      {
+        "name": "value",
+        "type": "Primitive | Primitive[]",
+        "required": true
+      },
+      {
+        "name": "defaultValue",
+        "type": "Primitive | Primitive[]",
+        "required": true
+      },
+      {
+        "name": "gap",
+        "type": "number | string",
+        "required": true,
+        "default": "0"
+      },
+      {
+        "name": "multiple",
+        "type": "boolean",
+        "required": true,
+        "default": "false"
+      },
+      {
+        "name": "onChange",
+        "type": "(v: Primitive | Primitive[]) => void",
+        "required": true
+      },
+      {
+        "name": "children",
+        "type": "React.ReactNode",
+        "required": true
+      },
+      {
+        "name": "sx",
+        "type": "Sx",
+        "required": true
+      }
+    ],
+    "cssVars": [
+      "--valet-text-color"
+    ],
+    "sourceFiles": [
+      "src/components/fields/MetroSelect.tsx"
+    ]
+  },
+  "Radio": {
+    "name": "Radio",
+    "category": "fields",
+    "slug": "components/fields/radio",
+    "summary": "Radio component",
+    "props": [
+      {
+        "name": "value",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "label",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "size",
+        "type": "RadioSize | number | string",
+        "required": true
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true
+      },
+      {
+        "name": "sx",
+        "type": "Sx",
+        "required": true
+      }
+    ],
+    "cssVars": [],
+    "sourceFiles": [
+      "src/components/fields/RadioGroup.tsx"
+    ]
+  },
+  "Select": {
+    "name": "Select",
+    "category": "fields",
+    "slug": "components/fields/select",
+    "summary": "Select component",
+    "props": [
+      {
+        "name": "value",
+        "type": "Primitive | Primitive[]",
+        "required": true
+      },
+      {
+        "name": "initialValue",
+        "type": "Primitive | Primitive[]",
+        "required": true
+      },
+      {
+        "name": "onChange",
+        "type": "(v: Primitive | Primitive[]) => void",
+        "required": true
+      },
+      {
+        "name": "multiple",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "placeholder",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "size",
+        "type": "SelectSize | number | string",
+        "required": true
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "children",
+        "type": "React.ReactNode",
+        "required": true
+      },
+      {
+        "name": "sx",
+        "type": "Sx",
+        "required": true
+      }
+    ],
+    "cssVars": [
+      "--valet-border",
+      "--valet-bg",
+      "--valet-text-color"
+    ],
+    "sourceFiles": [
+      "src/components/fields/Select.tsx"
+    ]
+  },
+  "Slider": {
+    "name": "Slider",
+    "category": "fields",
+    "slug": "components/fields/slider",
+    "summary": "Slider component",
+    "props": [
+      {
+        "name": "value",
+        "type": "number",
+        "required": true
+      },
+      {
+        "name": "defaultValue",
+        "type": "number",
+        "required": true
+      },
+      {
+        "name": "onChange",
+        "type": "(value: number) => void",
+        "required": true
+      },
+      {
+        "name": "min",
+        "type": "number",
+        "required": true
+      },
+      {
+        "name": "max",
+        "type": "number",
+        "required": true
+      },
+      {
+        "name": "step",
+        "type": "number",
+        "required": true
+      },
+      {
+        "name": "presets",
+        "type": "number[]",
+        "required": true
+      },
+      {
+        "name": "snap",
+        "type": "SnapMode",
+        "required": true
+      },
+      {
+        "name": "precision",
+        "type": "number",
+        "required": true
+      },
+      {
+        "name": "showValue",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "showMinMax",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "showTicks",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "ticks",
+        "type": "number[]",
+        "required": true
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "size",
+        "type": "SliderSize | number | string",
+        "required": true
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "sx",
+        "type": "Sx",
+        "required": true
+      }
+    ],
+    "cssVars": [
+      "--valet-bg",
+      "--valet-text-color"
+    ],
+    "sourceFiles": [
+      "src/components/fields/Slider.tsx"
+    ]
+  },
+  "Switch": {
+    "name": "Switch",
+    "category": "fields",
+    "slug": "components/fields/switch",
+    "summary": "Switch component",
+    "props": [
+      {
+        "name": "checked",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "defaultChecked",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "onChange",
+        "type": "(checked: boolean) => void",
+        "required": true
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "size",
+        "type": "SwitchSize",
+        "required": true
+      },
+      {
+        "name": "sx",
+        "type": "Sx",
+        "required": true
+      }
+    ],
+    "cssVars": [
+      "--valet-switch-outline",
+      "--valet-switch-offset",
+      "--valet-switch-pad"
+    ],
+    "sourceFiles": [
+      "src/components/fields/Switch.tsx"
+    ]
+  },
+  "TextField": {
+    "name": "TextField",
+    "category": "fields",
+    "slug": "components/fields/textfield",
+    "summary": "TextField component",
+    "props": [],
+    "cssVars": [],
+    "sourceFiles": [
+      "src/components/fields/TextField.tsx"
+    ]
+  },
+  "Accordion": {
+    "name": "Accordion",
+    "category": "layout",
+    "slug": "components/layout/accordion",
+    "summary": "Accordion component",
+    "props": [
+      {
+        "name": "defaultOpen",
+        "type": "number | number[]",
+        "required": true
+      },
+      {
+        "name": "open",
+        "type": "number | number[]",
+        "required": true
+      },
+      {
+        "name": "multiple",
+        "type": "boolean",
+        "required": true,
+        "default": "false"
+      },
+      {
+        "name": "onOpenChange",
+        "type": "(open: number[]) => void",
+        "required": true
+      },
+      {
+        "name": "headingLevel",
+        "type": "1 | 2 | 3 | 4 | 5 | 6",
+        "required": true,
+        "default": "3"
+      },
+      {
+        "name": "constrainHeight",
+        "type": "boolean",
+        "required": true,
+        "default": "true"
+      },
+      {
+        "name": "compact",
+        "type": "unknown",
+        "required": false,
+        "default": "false"
+      }
+    ],
+    "cssVars": [
+      "--valet-divider-stroke",
+      "--valet-focus-width",
+      "--valet-focus-offset"
+    ],
+    "sourceFiles": [
+      "src/components/layout/Accordion.tsx"
+    ]
+  },
+  "AppBar": {
+    "name": "AppBar",
+    "category": "layout",
+    "slug": "components/layout/appbar",
+    "summary": "AppBar component",
+    "props": [
+      {
+        "name": "color",
+        "type": "AppBarToken | string",
+        "required": true
+      },
+      {
+        "name": "textColor",
+        "type": "AppBarToken | string",
+        "required": true
+      },
+      {
+        "name": "left",
+        "type": "React.ReactNode",
+        "required": true
+      },
+      {
+        "name": "right",
+        "type": "React.ReactNode",
+        "required": true
+      },
+      {
+        "name": "pad",
+        "type": "Space",
+        "required": true
+      },
+      {
+        "name": "sx",
+        "type": "Sx",
+        "required": true
+      }
+    ],
+    "cssVars": [
+      "--valet-bg",
+      "--valet-text-color"
+    ],
+    "sourceFiles": [
+      "src/components/layout/AppBar.tsx"
+    ]
+  },
+  "Box": {
+    "name": "Box",
+    "category": "layout",
+    "slug": "components/layout/box",
+    "summary": "Box component",
+    "props": [
+      {
+        "name": "background",
+        "type": "string | undefined",
+        "required": true
+      },
+      {
+        "name": "textColor",
+        "type": "string | undefined",
+        "required": true
+      },
+      {
+        "name": "centerContent",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "fullWidth",
+        "type": "boolean",
+        "required": true,
+        "default": "false"
+      },
+      {
+        "name": "alignX",
+        "type": "'left' | 'right' | 'center' | 'centered'",
+        "required": true
+      },
+      {
+        "name": "centered",
+        "type": "boolean",
+        "required": true,
+        "deprecated": true
+      },
+      {
+        "name": "sx",
+        "type": "Sx",
+        "required": true
+      }
+    ],
+    "domPassthrough": {
+      "element": "div",
+      "omitted": [
+        "style"
+      ]
+    },
+    "cssVars": [
+      "--valet-box-max-h",
+      "--valet-bg",
+      "--valet-text-color",
+      "--valet-centered"
+    ],
+    "sourceFiles": [
+      "src/components/layout/Box.tsx"
+    ]
+  },
+  "Drawer": {
+    "name": "Drawer",
+    "category": "layout",
+    "slug": "components/layout/drawer",
+    "summary": "Drawer component",
+    "props": [
+      {
+        "name": "open",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "defaultOpen",
+        "type": "boolean",
+        "required": true,
+        "default": "false"
+      },
+      {
+        "name": "anchor",
+        "type": "DrawerAnchor",
+        "required": true,
+        "default": "'left'"
+      },
+      {
+        "name": "onClose",
+        "type": "() => void",
+        "required": true
+      },
+      {
+        "name": "size",
+        "type": "number | string",
+        "required": true,
+        "default": "'16rem'"
+      },
+      {
+        "name": "disableBackdropClick",
+        "type": "boolean",
+        "required": true,
+        "default": "false"
+      },
+      {
+        "name": "disableEscapeKeyDown",
+        "type": "boolean",
+        "required": true,
+        "default": "false"
+      },
+      {
+        "name": "persistent",
+        "type": "boolean",
+        "required": true,
+        "default": "false"
+      },
+      {
+        "name": "adaptive",
+        "type": "boolean",
+        "required": true,
+        "default": "false"
+      },
+      {
+        "name": "toggleIcon",
+        "type": "string",
+        "required": true,
+        "default": "'mdi:menu'"
+      },
+      {
+        "name": "closeIcon",
+        "type": "string",
+        "required": true,
+        "default": "'mdi:close'"
+      },
+      {
+        "name": "children",
+        "type": "React.ReactNode",
+        "required": true
+      }
+    ],
+    "cssVars": [
+      "--valet-font-heading",
+      "--valet-font-body",
+      "--valet-font-mono",
+      "--valet-font-button"
+    ],
+    "sourceFiles": [
+      "src/components/layout/Drawer.tsx"
+    ]
+  },
+  "Grid": {
+    "name": "Grid",
+    "category": "layout",
+    "slug": "components/layout/grid",
+    "summary": "Grid component",
+    "props": [
+      {
+        "name": "columns",
+        "type": "number",
+        "required": true,
+        "default": "2"
+      },
+      {
+        "name": "adaptive",
+        "type": "boolean",
+        "required": true,
+        "default": "false"
+      },
+      {
+        "name": "compact",
+        "type": "boolean",
+        "required": true,
+        "default": "false"
+      },
+      {
+        "name": "sx",
+        "type": "Sx",
+        "required": true
+      }
+    ],
+    "cssVars": [
+      "--valet-panel-ov-y",
+      "--valet-panel-max-h",
+      "--valet-stack-ov-y",
+      "--valet-stack-max-h",
+      "--valet-box-max-h"
+    ],
+    "sourceFiles": [
+      "src/components/layout/Grid.tsx"
+    ]
+  },
+  "List": {
+    "name": "List",
+    "category": "layout",
+    "slug": "components/layout/list",
+    "summary": "List component",
+    "props": [
+      {
+        "name": "data",
+        "type": "T[]",
+        "required": true
+      },
+      {
+        "name": "getTitle",
+        "type": "(item: T) => React.ReactNode",
+        "required": true
+      },
+      {
+        "name": "getSubtitle",
+        "type": "(item: T) => React.ReactNode",
+        "required": true
+      },
+      {
+        "name": "striped",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "hoverable",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "onReorder",
+        "type": "(items: T[]) => void",
+        "required": true
+      },
+      {
+        "name": "reorderable",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "selectable",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "selected",
+        "type": "T | null",
+        "required": true
+      },
+      {
+        "name": "defaultSelected",
+        "type": "T | null",
+        "required": true
+      },
+      {
+        "name": "onSelectionChange",
+        "type": "(item: T, index: number) => void",
+        "required": true
+      },
+      {
+        "name": "sx",
+        "type": "Sx",
+        "required": true
+      }
+    ],
+    "cssVars": [],
+    "sourceFiles": [
+      "src/components/layout/List.tsx"
+    ]
+  },
+  "Modal": {
+    "name": "Modal",
+    "category": "layout",
+    "slug": "components/layout/modal",
+    "summary": "Modal component",
+    "props": [
+      {
+        "name": "open",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "defaultOpen",
+        "type": "boolean",
+        "required": true,
+        "default": "false"
+      },
+      {
+        "name": "onClose",
+        "type": "() => void",
+        "required": true
+      },
+      {
+        "name": "variant",
+        "type": "'dialog' | 'alert'",
+        "required": true,
+        "default": "'dialog'"
+      },
+      {
+        "name": "title",
+        "type": "ReactNode",
+        "required": true
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true
+      },
+      {
+        "name": "actions",
+        "type": "ReactNode",
+        "required": true
+      },
+      {
+        "name": "pad",
+        "type": "number | string",
+        "required": true
+      },
+      {
+        "name": "compact",
+        "type": "boolean",
+        "required": true,
+        "default": "false"
+      },
+      {
+        "name": "disableBackdropClick",
+        "type": "boolean",
+        "required": true,
+        "default": "false"
+      },
+      {
+        "name": "disableEscapeKeyDown",
+        "type": "boolean",
+        "required": true,
+        "default": "false"
+      },
+      {
+        "name": "maxWidth",
+        "type": "number | string",
+        "required": true
+      },
+      {
+        "name": "fullWidth",
+        "type": "boolean",
+        "required": true,
+        "default": "false"
+      }
+    ],
+    "cssVars": [
+      "--valet-modal-radius"
+    ],
+    "sourceFiles": [
+      "src/components/layout/Modal.tsx"
+    ]
+  },
+  "Panel": {
+    "name": "Panel",
+    "category": "layout",
+    "slug": "components/layout/panel",
+    "summary": "Panel component",
+    "props": [
+      {
+        "name": "variant",
+        "type": "PanelVariant",
+        "required": true,
+        "default": "'main'"
+      },
+      {
+        "name": "fullWidth",
+        "type": "boolean",
+        "required": true,
+        "default": "false"
+      },
+      {
+        "name": "background",
+        "type": "string | undefined",
+        "required": true
+      },
+      {
+        "name": "centerContent",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "alignX",
+        "type": "'left' | 'right' | 'center' | 'centered'",
+        "required": true
+      }
+    ],
+    "domPassthrough": {
+      "element": "div",
+      "omitted": [
+        "style"
+      ]
+    },
+    "cssVars": [
+      "--valet-panel-max-h",
+      "--valet-panel-ov-y",
+      "--valet-bg",
+      "--valet-text-color",
+      "--valet-centered"
+    ],
+    "sourceFiles": [
+      "src/components/layout/Panel.tsx"
+    ]
+  },
+  "Stack": {
+    "name": "Stack",
+    "category": "layout",
+    "slug": "components/layout/stack",
+    "summary": "Stack component",
+    "props": [
+      {
+        "name": "direction",
+        "type": "'row' | 'column'",
+        "required": true,
+        "default": "'column'"
+      },
+      {
+        "name": "wrap",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "sx",
+        "type": "Sx",
+        "required": true
+      }
+    ],
+    "cssVars": [
+      "--valet-stack-max-h",
+      "--valet-stack-ov-y"
+    ],
+    "sourceFiles": [
+      "src/components/layout/Stack.tsx"
+    ]
+  },
+  "Surface": {
+    "name": "Surface",
+    "category": "layout",
+    "slug": "components/layout/surface",
+    "summary": "Surface component",
+    "props": [
+      {
+        "name": "fullscreen",
+        "type": "boolean",
+        "required": true,
+        "default": "true"
+      },
+      {
+        "name": "density",
+        "type": "Density",
+        "required": true
+      },
+      {
+        "name": "sx",
+        "type": "Sx",
+        "required": true
+      }
+    ],
+    "cssVars": [
+      "--valet-space",
+      "--valet-bg",
+      "--valet-text-color",
+      "--valet-font-heading",
+      "--valet-font-body",
+      "--valet-font-mono",
+      "--valet-font-button",
+      "--valet-radius",
+      "--valet-stroke",
+      "--valet-focus-width",
+      "--valet-focus-offset",
+      "--valet-divider-stroke",
+      "--valet-screen-width",
+      "--valet-screen-height"
+    ],
+    "sourceFiles": [
+      "src/components/layout/Surface.tsx"
+    ]
+  },
+  "Tabs": {
+    "name": "Tabs",
+    "category": "layout",
+    "slug": "components/layout/tabs",
+    "summary": "Tabs component",
+    "props": [
+      {
+        "name": "active",
+        "type": "number",
+        "required": true
+      },
+      {
+        "name": "defaultActive",
+        "type": "number",
+        "required": true,
+        "default": "0"
+      },
+      {
+        "name": "onTabChange",
+        "type": "(i: number) => void",
+        "required": true
+      },
+      {
+        "name": "orientation",
+        "type": "'horizontal' | 'vertical'",
+        "required": true,
+        "default": "'horizontal'"
+      },
+      {
+        "name": "placement",
+        "type": "'top' | 'bottom' | 'left' | 'right'",
+        "required": true
+      },
+      {
+        "name": "alignX",
+        "type": "'left' | 'right' | 'center' | 'centered'",
+        "required": true
+      },
+      {
+        "name": "sx",
+        "type": "Sx",
+        "required": true
+      },
+      {
+        "name": "compact",
+        "type": "unknown",
+        "required": false,
+        "default": "false"
+      }
+    ],
+    "cssVars": [
+      "--valet-focus-width",
+      "--valet-focus-offset",
+      "--valet-underline-width"
+    ],
+    "sourceFiles": [
+      "src/components/layout/Tabs.tsx"
+    ]
+  },
+  "Avatar": {
+    "name": "Avatar",
+    "category": "primitives",
+    "slug": "components/primitives/avatar",
+    "summary": "Avatar component",
+    "props": [
+      {
+        "name": "src",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "email",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "size",
+        "type": "AvatarSize",
+        "required": true,
+        "default": "'m'"
+      },
+      {
+        "name": "variant",
+        "type": "AvatarVariant",
+        "required": true,
+        "default": "'plain'"
+      },
+      {
+        "name": "gravatarDefault",
+        "type": "string",
+        "required": true,
+        "default": "'identicon'"
+      },
+      {
+        "name": "sx",
+        "type": "Sx",
+        "required": true
+      }
+    ],
+    "cssVars": [],
+    "sourceFiles": [
+      "src/components/primitives/Avatar.tsx"
+    ]
+  },
+  "Divider": {
+    "name": "Divider",
+    "category": "primitives",
+    "slug": "components/primitives/divider",
+    "summary": "Divider component",
+    "props": [
+      {
+        "name": "orientation",
+        "type": "DividerOrientation",
+        "required": true,
+        "default": "'horizontal'"
+      },
+      {
+        "name": "lineColor",
+        "type": "string | undefined",
+        "required": true
+      },
+      {
+        "name": "thickness",
+        "type": "number | string",
+        "required": true,
+        "default": "1"
+      },
+      {
+        "name": "length",
+        "type": "number | string | undefined",
+        "required": true
+      },
+      {
+        "name": "sx",
+        "type": "Sx",
+        "required": true
+      }
+    ],
+    "cssVars": [],
+    "sourceFiles": [
+      "src/components/primitives/Divider.tsx"
+    ]
+  },
+  "Icon": {
+    "name": "Icon",
+    "category": "primitives",
+    "slug": "components/primitives/icon",
+    "summary": "Icon component",
+    "props": [
+      {
+        "name": "icon",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "svg",
+        "type": "string | ReactElement<React.SVGProps<SVGSVGElement>>",
+        "required": true
+      },
+      {
+        "name": "size",
+        "type": "IconSize | number | string",
+        "required": true,
+        "default": "'md'"
+      },
+      {
+        "name": "color",
+        "type": "string | undefined",
+        "required": true
+      },
+      {
+        "name": "sx",
+        "type": "Sx",
+        "required": true
+      }
+    ],
+    "cssVars": [],
+    "sourceFiles": [
+      "src/components/primitives/Icon.tsx"
+    ]
+  },
+  "Image": {
+    "name": "Image",
+    "category": "primitives",
+    "slug": "components/primitives/image",
+    "summary": "Image component",
+    "props": [
+      {
+        "name": "src",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "width",
+        "type": "number | string",
+        "required": true
+      },
+      {
+        "name": "height",
+        "type": "number | string",
+        "required": true
+      },
+      {
+        "name": "objectFit",
+        "type": "'cover' | 'contain' | 'fill' | 'none' | 'scale-down'",
+        "required": true,
+        "default": "'cover'"
+      },
+      {
+        "name": "rounded",
+        "type": "number | string",
+        "required": true
+      },
+      {
+        "name": "lazy",
+        "type": "boolean",
+        "required": true,
+        "default": "false"
+      },
+      {
+        "name": "placeholder",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "sx",
+        "type": "Sx",
+        "required": true
+      }
+    ],
+    "cssVars": [],
+    "sourceFiles": [
+      "src/components/primitives/Image.tsx"
+    ]
+  },
+  "Progress": {
+    "name": "Progress",
+    "category": "primitives",
+    "slug": "components/primitives/progress",
+    "summary": "Progress component",
+    "props": [
+      {
+        "name": "variant",
+        "type": "ProgressVariant",
+        "required": true
+      },
+      {
+        "name": "mode",
+        "type": "ProgressMode",
+        "required": true
+      },
+      {
+        "name": "value",
+        "type": "number",
+        "required": true
+      },
+      {
+        "name": "buffer",
+        "type": "number",
+        "required": true
+      },
+      {
+        "name": "size",
+        "type": "ProgressSize | number | string",
+        "required": true
+      },
+      {
+        "name": "showLabel",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "color",
+        "type": "string | undefined",
+        "required": true
+      },
+      {
+        "name": "sx",
+        "type": "Sx",
+        "required": true
+      }
+    ],
+    "cssVars": [
+      "--valet-text-color"
+    ],
+    "sourceFiles": [
+      "src/components/primitives/Progress.tsx"
+    ]
+  },
+  "Skeleton": {
+    "name": "Skeleton",
+    "category": "primitives",
+    "slug": "components/primitives/skeleton",
+    "summary": "Skeleton component",
+    "props": [
+      {
+        "name": "loading",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "variant",
+        "type": "SkeletonVariant",
+        "required": true
+      },
+      {
+        "name": "icon",
+        "type": "React.ReactNode",
+        "required": true
+      },
+      {
+        "name": "sx",
+        "type": "Sx",
+        "required": true
+      }
+    ],
+    "cssVars": [],
+    "sourceFiles": [
+      "src/components/primitives/Skeleton.tsx"
+    ]
+  },
+  "Typography": {
+    "name": "Typography",
+    "category": "primitives",
+    "slug": "components/primitives/typography",
+    "summary": "Typography component",
+    "props": [
+      {
+        "name": "variant",
+        "type": "Variant",
+        "required": true,
+        "default": "'body'"
+      },
+      {
+        "name": "bold",
+        "type": "boolean",
+        "required": true,
+        "default": "false"
+      },
+      {
+        "name": "italic",
+        "type": "boolean",
+        "required": true,
+        "default": "false"
+      },
+      {
+        "name": "centered",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "noSelect",
+        "type": "boolean",
+        "required": true,
+        "default": "false"
+      },
+      {
+        "name": "fontSize",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "scale",
+        "type": "number",
+        "required": true
+      },
+      {
+        "name": "autoSize",
+        "type": "boolean",
+        "required": true,
+        "default": "false"
+      },
+      {
+        "name": "color",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "family",
+        "type": "'heading' | 'body' | 'mono' | 'button'",
+        "required": true
+      },
+      {
+        "name": "fontFamily",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "whitespace",
+        "type": "'normal' | 'pre' | 'pre-wrap' | 'pre-line'",
+        "required": true,
+        "default": "'normal'"
+      },
+      {
+        "name": "sx",
+        "type": "Sx",
+        "required": true
+      }
+    ],
+    "cssVars": [
+      "--valet-text-color",
+      "--valet-font-"
+    ],
+    "sourceFiles": [
+      "src/components/primitives/Typography.tsx"
+    ]
+  },
+  "Video": {
+    "name": "Video",
+    "category": "primitives",
+    "slug": "components/primitives/video",
+    "summary": "Video component",
+    "props": [
+      {
+        "name": "sources",
+        "type": "VideoSource[]",
+        "required": true
+      },
+      {
+        "name": "poster",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "tracks",
+        "type": "VideoTrack[]",
+        "required": true
+      },
+      {
+        "name": "controls",
+        "type": "boolean",
+        "required": true,
+        "default": "true"
+      },
+      {
+        "name": "autoPlay",
+        "type": "boolean",
+        "required": true,
+        "default": "true"
+      },
+      {
+        "name": "muted",
+        "type": "boolean",
+        "required": true,
+        "default": "true"
+      },
+      {
+        "name": "loop",
+        "type": "boolean",
+        "required": true,
+        "default": "false"
+      },
+      {
+        "name": "width",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "height",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "lazy",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "objectFit",
+        "type": "'contain' | 'cover'",
+        "required": true,
+        "default": "'contain'"
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "sx",
+        "type": "Sx",
+        "required": true
+      }
+    ],
+    "cssVars": [],
+    "sourceFiles": [
+      "src/components/primitives/Video.tsx"
+    ]
+  },
+  "Dropzone": {
+    "name": "Dropzone",
+    "category": "widgets",
+    "slug": "components/widgets/dropzone",
+    "summary": "Dropzone component",
+    "props": [
+      {
+        "name": "accept",
+        "type": "DropzoneOptions['accept']",
+        "required": true
+      },
+      {
+        "name": "showPreviews",
+        "type": "boolean",
+        "required": true,
+        "default": "true"
+      },
+      {
+        "name": "showFileList",
+        "type": "boolean",
+        "required": true,
+        "default": "false"
+      },
+      {
+        "name": "onFilesChange",
+        "type": "(files: File[]) => void",
+        "required": true
+      },
+      {
+        "name": "maxFiles",
+        "type": "number",
+        "required": true
+      },
+      {
+        "name": "multiple",
+        "type": "boolean",
+        "required": true,
+        "default": "true"
+      },
+      {
+        "name": "onDrop",
+        "type": "DropzoneOptions['onDrop']",
+        "required": true
+      },
+      {
+        "name": "fullWidth",
+        "type": "boolean",
+        "required": true,
+        "default": "false"
+      },
+      {
+        "name": "sx",
+        "type": "Sx",
+        "required": true
+      }
+    ],
+    "cssVars": [],
+    "sourceFiles": [
+      "src/components/widgets/Dropzone.tsx"
+    ]
+  },
+  "LLMChat": {
+    "name": "LLMChat",
+    "category": "widgets",
+    "slug": "components/widgets/llmchat",
+    "summary": "LLMChat component",
+    "props": [
+      {
+        "name": "placeholder",
+        "type": "unknown",
+        "required": false,
+        "default": "'Message…'"
+      },
+      {
+        "name": "disableInput",
+        "type": "unknown",
+        "required": false,
+        "default": "false"
+      },
+      {
+        "name": "constrainHeight",
+        "type": "unknown",
+        "required": false,
+        "default": "true"
+      }
+    ],
+    "cssVars": [],
+    "sourceFiles": [
+      "src/components/widgets/LLMChat.tsx"
+    ]
+  },
+  "LoadingBackdrop": {
+    "name": "LoadingBackdrop",
+    "category": "widgets",
+    "slug": "components/widgets/loadingbackdrop",
+    "summary": "LoadingBackdrop component",
+    "props": [
+      {
+        "name": "fading",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "showSpinner",
+        "type": "boolean",
+        "required": true
+      }
+    ],
+    "cssVars": [],
+    "sourceFiles": [
+      "src/components/widgets/LoadingBackdrop.tsx"
+    ]
+  },
+  "Markdown": {
+    "name": "Markdown",
+    "category": "widgets",
+    "slug": "components/widgets/markdown",
+    "summary": "Markdown component",
+    "props": [
+      {
+        "name": "data",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "codeBackground",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "sx",
+        "type": "import('../../types').Sx",
+        "required": true
+      }
+    ],
+    "cssVars": [],
+    "sourceFiles": [
+      "src/components/widgets/Markdown.tsx"
+    ]
+  },
+  "Pagination": {
+    "name": "Pagination",
+    "category": "widgets",
+    "slug": "components/widgets/pagination",
+    "summary": "Pagination component",
+    "props": [
+      {
+        "name": "count",
+        "type": "number",
+        "required": true
+      },
+      {
+        "name": "page",
+        "type": "number",
+        "required": true,
+        "default": "1"
+      },
+      {
+        "name": "onChange",
+        "type": "(page: number) => void",
+        "required": true
+      },
+      {
+        "name": "visibleWindow",
+        "type": "number",
+        "required": true
+      },
+      {
+        "name": "autoFollowActive",
+        "type": "boolean",
+        "required": true,
+        "default": "true"
+      },
+      {
+        "name": "sx",
+        "type": "Sx",
+        "required": true
+      }
+    ],
+    "cssVars": [
+      "--valet-underline-width"
+    ],
+    "sourceFiles": [
+      "src/components/widgets/Pagination.tsx"
+    ]
+  },
+  "ParallaxBackground": {
+    "name": "ParallaxBackground",
+    "category": "widgets",
+    "slug": "components/widgets/parallaxbackground",
+    "summary": "ParallaxBackground component",
+    "props": [
+      {
+        "name": "src",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "mediaType",
+        "type": "MediaType",
+        "required": true
+      },
+      {
+        "name": "poster",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "loop",
+        "type": "boolean",
+        "required": true,
+        "default": "true"
+      },
+      {
+        "name": "muted",
+        "type": "boolean",
+        "required": true,
+        "default": "true"
+      },
+      {
+        "name": "autoPlay",
+        "type": "boolean",
+        "required": true,
+        "default": "true"
+      },
+      {
+        "name": "preload",
+        "type": "'none' | 'metadata' | 'auto'",
+        "required": true,
+        "default": "'auto'"
+      },
+      {
+        "name": "speed",
+        "type": "unknown",
+        "required": false,
+        "default": "0.5"
+      },
+      {
+        "name": "axis",
+        "type": "unknown",
+        "required": false,
+        "default": "'y'"
+      }
+    ],
+    "cssVars": [],
+    "sourceFiles": [
+      "src/components/widgets/Parallax.tsx"
+    ]
+  },
+  "RichChat": {
+    "name": "RichChat",
+    "category": "widgets",
+    "slug": "components/widgets/richchat",
+    "summary": "RichChat component",
+    "props": [
+      {
+        "name": "messages",
+        "type": "RichMessage[]",
+        "required": true
+      },
+      {
+        "name": "onFormSubmit",
+        "type": "(value: string, index: number) => void",
+        "required": true
+      },
+      {
+        "name": "onSend",
+        "type": "(message: RichMessage) => void",
+        "required": true
+      },
+      {
+        "name": "userAvatar",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "systemAvatar",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "placeholder",
+        "type": "string",
+        "required": true,
+        "default": "'Message…'"
+      },
+      {
+        "name": "disableInput",
+        "type": "boolean",
+        "required": true,
+        "default": "false"
+      },
+      {
+        "name": "constrainHeight",
+        "type": "boolean",
+        "required": true,
+        "default": "true"
+      },
+      {
+        "name": "fontFamily",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "sx",
+        "type": "Sx",
+        "required": true
+      }
+    ],
+    "cssVars": [],
+    "sourceFiles": [
+      "src/components/widgets/RichChat.tsx"
+    ]
+  },
+  "Snackbar": {
+    "name": "Snackbar",
+    "category": "widgets",
+    "slug": "components/widgets/snackbar",
+    "summary": "Snackbar component",
+    "props": [
+      {
+        "name": "open",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "onClose",
+        "type": "() => void",
+        "required": true
+      },
+      {
+        "name": "autoHideDuration",
+        "type": "number | null",
+        "required": true,
+        "default": "4000"
+      },
+      {
+        "name": "message",
+        "type": "React.ReactNode",
+        "required": true
+      },
+      {
+        "name": "noStack",
+        "type": "boolean",
+        "required": true,
+        "default": "false"
+      },
+      {
+        "name": "sx",
+        "type": "Sx",
+        "required": true
+      }
+    ],
+    "cssVars": [],
+    "sourceFiles": [
+      "src/components/widgets/Snackbar.tsx"
+    ]
+  },
+  "SpeedDial": {
+    "name": "SpeedDial",
+    "category": "widgets",
+    "slug": "components/widgets/speeddial",
+    "summary": "SpeedDial component",
+    "props": [
+      {
+        "name": "icon",
+        "type": "React.ReactNode",
+        "required": true
+      },
+      {
+        "name": "actions",
+        "type": "SpeedDialAction[]",
+        "required": true
+      },
+      {
+        "name": "direction",
+        "type": "'up' | 'down' | 'left' | 'right'",
+        "required": true,
+        "default": "'up'"
+      }
+    ],
+    "cssVars": [],
+    "sourceFiles": [
+      "src/components/widgets/SpeedDial.tsx"
+    ]
+  },
+  "Stepper": {
+    "name": "Stepper",
+    "category": "widgets",
+    "slug": "components/widgets/stepper",
+    "summary": "Stepper component",
+    "props": [
+      {
+        "name": "steps",
+        "type": "React.ReactNode[]",
+        "required": true
+      },
+      {
+        "name": "active",
+        "type": "number",
+        "required": true,
+        "default": "0"
+      },
+      {
+        "name": "sx",
+        "type": "Sx",
+        "required": true
+      }
+    ],
+    "cssVars": [
+      "--valet-stepper-stroke",
+      "--valet-stepper-radius"
+    ],
+    "sourceFiles": [
+      "src/components/widgets/Stepper.tsx"
+    ]
+  },
+  "Table": {
+    "name": "Table",
+    "category": "widgets",
+    "slug": "components/widgets/table",
+    "summary": "Table component",
+    "props": [
+      {
+        "name": "data",
+        "type": "T[]",
+        "required": true
+      },
+      {
+        "name": "columns",
+        "type": "TableColumn<T>[]",
+        "required": true
+      },
+      {
+        "name": "striped",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "hoverable",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "dividers",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "selectable",
+        "type": "'single' | 'multi' | undefined",
+        "required": true
+      },
+      {
+        "name": "initialSort",
+        "type": "{ index: number; desc?: boolean }",
+        "required": true
+      },
+      {
+        "name": "onSortChange",
+        "type": "(index: number, desc: boolean) => void",
+        "required": true
+      },
+      {
+        "name": "onSelectionChange",
+        "type": "(selected: T[]) => void",
+        "required": true
+      },
+      {
+        "name": "constrainHeight",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "sx",
+        "type": "Sx",
+        "required": true
+      }
+    ],
+    "cssVars": [
+      "--valet-divider-stroke",
+      "--valet-underline-width",
+      "--valet-table-underline"
+    ],
+    "sourceFiles": [
+      "src/components/widgets/Table.tsx"
+    ]
+  },
+  "Tooltip": {
+    "name": "Tooltip",
+    "category": "widgets",
+    "slug": "components/widgets/tooltip",
+    "summary": "Tooltip component",
+    "props": [
+      {
+        "name": "title",
+        "type": "ReactNode",
+        "required": true
+      },
+      {
+        "name": "placement",
+        "type": "Placement",
+        "required": true,
+        "default": "'top'"
+      },
+      {
+        "name": "arrow",
+        "type": "boolean",
+        "required": true,
+        "default": "true"
+      },
+      {
+        "name": "enterDelay",
+        "type": "number",
+        "required": true,
+        "default": "100"
+      },
+      {
+        "name": "leaveDelay",
+        "type": "number",
+        "required": true,
+        "default": "100"
+      },
+      {
+        "name": "open",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "defaultOpen",
+        "type": "boolean",
+        "required": true,
+        "default": "false"
+      },
+      {
+        "name": "disableHoverListener",
+        "type": "boolean",
+        "required": true,
+        "default": "false"
+      },
+      {
+        "name": "disableFocusListener",
+        "type": "boolean",
+        "required": true,
+        "default": "false"
+      },
+      {
+        "name": "disableTouchListener",
+        "type": "boolean",
+        "required": true,
+        "default": "false"
+      },
+      {
+        "name": "onOpen",
+        "type": "() => void",
+        "required": true
+      },
+      {
+        "name": "onClose",
+        "type": "() => void",
+        "required": true
+      },
+      {
+        "name": "children",
+        "type": "ReactElement",
+        "required": true
+      }
+    ],
+    "cssVars": [
+      "--valet-tooltip-arrow-size"
+    ],
+    "sourceFiles": [
+      "src/components/widgets/Tooltip.tsx"
+    ]
+  },
+  "Tree": {
+    "name": "Tree",
+    "category": "widgets",
+    "slug": "components/widgets/tree",
+    "summary": "Tree component",
+    "props": [
+      {
+        "name": "nodes",
+        "type": "TreeNode<T>[]",
+        "required": true
+      },
+      {
+        "name": "getLabel",
+        "type": "(node: T) => React.ReactNode",
+        "required": true
+      },
+      {
+        "name": "defaultExpanded",
+        "type": "string[]",
+        "required": true
+      },
+      {
+        "name": "expanded",
+        "type": "string[]",
+        "required": true
+      },
+      {
+        "name": "onExpandedChange",
+        "type": "(expanded: string[]) => void",
+        "required": true
+      },
+      {
+        "name": "selected",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "defaultSelected",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "onNodeSelect",
+        "type": "(node: T) => void",
+        "required": true
+      },
+      {
+        "name": "variant",
+        "type": "'chevron' | 'list' | 'files'",
+        "required": true
+      },
+      {
+        "name": "sx",
+        "type": "Sx",
+        "required": true
+      }
+    ],
+    "cssVars": [
+      "--valet-focus-width",
+      "--valet-focus-offset",
+      "--valet-divider-stroke",
+      "--valet-tree-stroke",
+      "--valet-tree-outline",
+      "--valet-tree-offset"
+    ],
+    "sourceFiles": [
+      "src/components/widgets/Tree.tsx"
+    ]
+  }
+}

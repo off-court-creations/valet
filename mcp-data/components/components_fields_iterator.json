@@ -1,0 +1,102 @@
+{
+  "name": "Iterator",
+  "category": "fields",
+  "slug": "components/fields/iterator",
+  "summary": "Iterator component",
+  "props": [
+    {
+      "name": "value",
+      "type": "number",
+      "required": true,
+      "default": "-",
+      "description": "Controlled value"
+    },
+    {
+      "name": "defaultValue",
+      "type": "number",
+      "required": true,
+      "default": "0",
+      "description": "Uncontrolled initial value"
+    },
+    {
+      "name": "onChange",
+      "type": "(value: number) => void",
+      "required": true,
+      "default": "-",
+      "description": "Change handler"
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "required": true,
+      "default": "-",
+      "description": "Form field name"
+    },
+    {
+      "name": "min",
+      "type": "number",
+      "required": true,
+      "default": "-",
+      "description": "Minimum value"
+    },
+    {
+      "name": "max",
+      "type": "number",
+      "required": true,
+      "default": "-",
+      "description": "Maximum value"
+    },
+    {
+      "name": "step",
+      "type": "number",
+      "required": true,
+      "default": "1",
+      "description": "Increment step"
+    },
+    {
+      "name": "width",
+      "type": "number | string",
+      "required": true,
+      "default": "'3.5rem'",
+      "description": "Field width"
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": true
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "required": false,
+      "default": "false",
+      "description": "Disable interaction"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[]",
+      "required": false,
+      "default": "-",
+      "description": "Apply style presets"
+    }
+  ],
+  "cssVars": [],
+  "cssPresets": [],
+  "events": [
+    {
+      "name": "onChange",
+      "payloadType": "number"
+    }
+  ],
+  "actions": [],
+  "slots": [],
+  "bestPractices": [],
+  "examples": [],
+  "docsUrl": "/components/field/IteratorDemo",
+  "sourceFiles": [
+    "src/components/fields/Iterator.tsx",
+    "docs/src/pages/components/field/IteratorDemo.tsx"
+  ],
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
+}

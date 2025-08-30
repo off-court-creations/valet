@@ -1,0 +1,150 @@
+{
+  "name": "Slider",
+  "category": "fields",
+  "slug": "components/fields/slider",
+  "summary": "Slider component",
+  "props": [
+    {
+      "name": "value",
+      "type": "number",
+      "required": true,
+      "default": "-",
+      "description": "Controlled value"
+    },
+    {
+      "name": "defaultValue",
+      "type": "number",
+      "required": true,
+      "default": "0",
+      "description": "Uncontrolled start value"
+    },
+    {
+      "name": "onChange",
+      "type": "(value: number) => void",
+      "required": true
+    },
+    {
+      "name": "min",
+      "type": "number",
+      "required": true,
+      "default": "0",
+      "description": "Minimum value"
+    },
+    {
+      "name": "max",
+      "type": "number",
+      "required": true,
+      "default": "100",
+      "description": "Maximum value"
+    },
+    {
+      "name": "step",
+      "type": "number",
+      "required": true,
+      "default": "1",
+      "description": "Step increment"
+    },
+    {
+      "name": "presets",
+      "type": "number[]",
+      "required": true,
+      "default": "[]",
+      "description": "Preset snap points"
+    },
+    {
+      "name": "snap",
+      "type": "'none' | 'step' | 'presets'",
+      "required": true,
+      "default": "'none'",
+      "description": "Snap behaviour"
+    },
+    {
+      "name": "precision",
+      "type": "number",
+      "required": true,
+      "default": "0",
+      "description": "Decimal places"
+    },
+    {
+      "name": "showValue",
+      "type": "boolean",
+      "required": true,
+      "default": "false",
+      "description": "Display current value"
+    },
+    {
+      "name": "showMinMax",
+      "type": "boolean",
+      "required": true,
+      "default": "false",
+      "description": "Display min and max labels"
+    },
+    {
+      "name": "showTicks",
+      "type": "boolean",
+      "required": true,
+      "default": "false",
+      "description": "Show tick marks"
+    },
+    {
+      "name": "ticks",
+      "type": "number[]",
+      "required": true,
+      "default": "-",
+      "description": "Custom tick positions"
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "size",
+      "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string",
+      "required": true,
+      "default": "'md'",
+      "description": "Slider size"
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "required": true,
+      "default": "false",
+      "description": "Disable interaction"
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": true
+    },
+    {
+      "name": "preset",
+      "type": "string | string[]",
+      "required": false,
+      "default": "-",
+      "description": "Apply style presets"
+    }
+  ],
+  "cssVars": [
+    "--valet-bg",
+    "--valet-text-color"
+  ],
+  "cssPresets": [],
+  "events": [
+    {
+      "name": "onChange",
+      "payloadType": "number"
+    }
+  ],
+  "actions": [],
+  "slots": [],
+  "bestPractices": [],
+  "examples": [],
+  "docsUrl": "/components/field/SliderDemo",
+  "sourceFiles": [
+    "src/components/fields/Slider.tsx",
+    "docs/src/pages/components/field/SliderDemo.tsx"
+  ],
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
+}

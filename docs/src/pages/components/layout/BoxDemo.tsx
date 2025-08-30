@@ -146,26 +146,35 @@ export default function BoxDemoPage() {
               <Panel fullWidth>
                 <Typography variant='h4'>Best Practices</Typography>
                 <Typography>
-                  - Use <code>Box</code> as a neutral container for background, padding, and width
-                  anchoring. Compose layout with <code>Stack</code>/<code>Grid</code>; keep{' '}
-                  <code>Surface</code> for page-level backgrounds.
+                  - Treat <code>Box</code> as the neutral building block: backgrounds, padding,
+                  and simple width anchoring. Use <code>Surface</code> for page‑level canvas and
+                  compose layouts with <code>Stack</code> and <code>Grid</code>.
                 </Typography>
                 <Typography>
-                  - Prefer theme tones (<code>primary</code>/<code>secondary</code>/
-                  <code>tertiary</code>) to get automatic text contrast. When using custom colours,
-                  set <code>textColor</code> to maintain accessibility.
+                  - Prefer theme tokens (<code>primary</code>, <code>secondary</code>,
+                  <code>tertiary</code>) to inherit correct contrast automatically. If you pass a
+                  custom colour to <code>background</code>, explicitly set <code>textColor</code>
+                  to preserve accessibility.
                 </Typography>
                 <Typography>
-                  - Reach for <code>Panel</code> when you need outlines or separators.{' '}
-                  <code>Box</code> stays minimal and opinionated so the theme can do the heavy
-                  lifting.
+                  - Reach for <code>Panel</code> when you need separation (borders, elevation).
+                  Keep <code>Box</code> visually minimal so the theme does the heavy lifting.
                 </Typography>
                 <Typography>
-                  - Control placement with <code>alignX</code> and <code>fullWidth</code>.
+                  - Use spacing tokens: prefer numeric <code>pad</code> values over hardcoded
+                  CSS so density matches the spacing contract across components.
                 </Typography>
                 <Typography>
-                  - Reuse styles with <code>preset</code> via <code>definePreset()</code> instead of
-                  sprinkling inline styles.
+                  - Align purposefully: use <code>alignX</code> and <code>fullWidth</code> for
+                  placement; avoid deprecated <code>centered</code>.
+                </Typography>
+                <Typography>
+                  - Reuse styles via <code>preset</code> (<code>definePreset()</code>) instead of
+                  duplicating <code>sx</code>.
+                </Typography>
+                <Typography>
+                  - When Box represents a semantic region, add appropriate roles/labels (e.g.,
+                  <code>role="region"</code>, <code>aria-label</code>) via DOM passthrough.
                 </Typography>
               </Panel>
 

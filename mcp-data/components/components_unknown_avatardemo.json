@@ -1,0 +1,65 @@
+{
+  "name": "AvatarDemo",
+  "category": "unknown",
+  "slug": "components/unknown/avatardemo",
+  "summary": "AvatarDemo component",
+  "props": [
+    {
+      "name": "src",
+      "type": "string",
+      "required": false,
+      "default": "-",
+      "description": "Image URL override"
+    },
+    {
+      "name": "email",
+      "type": "string",
+      "required": false,
+      "default": "-",
+      "description": "Email used for Gravatar lookup"
+    },
+    {
+      "name": "size",
+      "type": "'xs' | 's' | 'm' | 'l' | 'xl'",
+      "required": false,
+      "default": "'m'",
+      "description": "Relative size token"
+    },
+    {
+      "name": "variant",
+      "type": "'plain' | 'outline'",
+      "required": false,
+      "default": "'plain'",
+      "description": "Visual style variant"
+    },
+    {
+      "name": "gravatarDefault",
+      "type": "string",
+      "required": false,
+      "default": "'identicon'",
+      "description": "Fallback style when no avatar exists"
+    },
+    {
+      "name": "alt",
+      "type": "string",
+      "required": false,
+      "default": "-",
+      "description": "Image alt text"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[]",
+      "required": false,
+      "default": "-",
+      "description": "Apply style presets"
+    }
+  ],
+  "cssVars": [],
+  "bestPractices": [],
+  "examples": [],
+  "docsUrl": "/components/primitives/AvatarDemo",
+  "sourceFiles": [
+    "docs/src/pages/components/primitives/AvatarDemo.tsx"
+  ],
+  "version": "0.30.1"
+}
