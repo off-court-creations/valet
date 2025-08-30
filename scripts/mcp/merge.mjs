@@ -10,7 +10,8 @@ function merge(tsMap, docsMap, version) {
   /** @type {Record<string, any>} */
   const out = {};
 
-  const allNames = new Set([...Object.keys(tsMap), ...Object.keys(docsMap)]);
+  // Only include components that exist in TS. Docs enrich them.
+  const allNames = new Set(Object.keys(tsMap));
   for (const name of allNames) {
     const ts = tsMap[name] || {};
     const docs = docsMap[name] || {};
@@ -113,6 +114,8 @@ function main() {
 
   const outDir = path.join(root, 'mcp-data');
   const compDir = path.join(outDir, 'components');
+  // Clean output dir to avoid stale entries (e.g., old docs pages)
+  fs.rmSync(compDir, { recursive: true, force: true });
   fs.mkdirSync(compDir, { recursive: true });
 
   // Write per-component

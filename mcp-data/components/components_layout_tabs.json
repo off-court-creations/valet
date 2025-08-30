@@ -8,7 +8,7 @@
       "name": "active",
       "type": "number",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Controlled index of the active tab."
     },
     {
@@ -22,7 +22,7 @@
       "name": "onTabChange",
       "type": "(i: number) => void",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Callback when the active tab changes."
     },
     {
@@ -66,7 +66,7 @@
       "name": "sx",
       "type": "object",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Inline style overrides (CSS object; supports CSS vars)."
     },
     {
@@ -80,7 +80,7 @@
       "name": "preset",
       "type": "string | string[]",
       "required": false,
-      "default": "-",
+      "default": "—",
       "description": "Apply style presets to the container."
     }
   ],
@@ -112,6 +112,6 @@
     "src/components/layout/Tabs.tsx",
     "docs/src/pages/components/layout/TabsDemo.tsx"
   ],
-  "version": "0.30.1",
+  "version": "0.30.3",
   "schemaVersion": "1.1"
 }

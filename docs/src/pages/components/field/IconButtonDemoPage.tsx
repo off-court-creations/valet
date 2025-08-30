@@ -89,25 +89,25 @@ export default function IconButtonDemoPage() {
     {
       prop: <code>icon</code>,
       type: <code>string</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Iconify name',
     },
     {
       prop: <code>svg</code>,
       type: <code>string | ReactElement</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Custom SVG content',
     },
     {
       prop: <code>iconColor</code>,
       type: <code>string</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Glyph colour override',
     },
     {
       prop: <code>preset</code>,
       type: <code>string | string[]</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Apply style presets',
     },
   ];

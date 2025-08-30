@@ -8,21 +8,21 @@
       "name": "value",
       "type": "string | number | (string | number)[]",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Controlled value"
     },
     {
       "name": "initialValue",
       "type": "string | number | (string | number)[]",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Uncontrolled initial value"
     },
     {
       "name": "onChange",
       "type": "(v: Primitive | Primitive[]) => void",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Change handler"
     },
     {
@@ -57,7 +57,7 @@
       "name": "name",
       "type": "string",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Form field name"
     },
     {
@@ -74,7 +74,7 @@
       "name": "preset",
       "type": "string | string[]",
       "required": false,
-      "default": "-",
+      "default": "—",
       "description": "Apply style presets"
     }
   ],
@@ -110,6 +110,6 @@
     "src/components/fields/Select.tsx",
     "docs/src/pages/components/field/SelectDemo.tsx"
   ],
-  "version": "0.30.1",
+  "version": "0.30.3",
   "schemaVersion": "1.1"
 }

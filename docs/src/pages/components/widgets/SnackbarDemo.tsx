@@ -70,7 +70,7 @@ export default function SnackbarDemoPage() {
     {
       prop: <code>onClose</code>,
       type: <code>{'() => void'}</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Called when fully hidden',
     },
     {
@@ -82,7 +82,7 @@ export default function SnackbarDemoPage() {
     {
       prop: <code>message</code>,
       type: <code>React.ReactNode</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Convenience message',
     },
     {
@@ -94,7 +94,7 @@ export default function SnackbarDemoPage() {
     {
       prop: <code>preset</code>,
       type: <code>string | string[]</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Apply style presets',
     },
   ];

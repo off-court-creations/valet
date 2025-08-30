@@ -49,7 +49,7 @@ export default function IteratorDemoPage() {
     {
       prop: <code>value</code>,
       type: <code>number</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Controlled value',
     },
     {
@@ -61,25 +61,25 @@ export default function IteratorDemoPage() {
     {
       prop: <code>onChange</code>,
       type: <code>(value: number) =&gt; void</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Change handler',
     },
     {
       prop: <code>name</code>,
       type: <code>string</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Form field name',
     },
     {
       prop: <code>min</code>,
       type: <code>number</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Minimum value',
     },
     {
       prop: <code>max</code>,
       type: <code>number</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Maximum value',
     },
     {
@@ -103,7 +103,7 @@ export default function IteratorDemoPage() {
     {
       prop: <code>preset</code>,
       type: <code>string | string[]</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Apply style presets',
     },
   ];

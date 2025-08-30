@@ -22,7 +22,7 @@
       "name": "background",
       "type": "string",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Explicit background override"
     },
     {
@@ -56,7 +56,7 @@
       "name": "preset",
       "type": "string | string[]",
       "required": false,
-      "default": "-",
+      "default": "—",
       "description": "Apply style presets"
     }
   ],
@@ -84,6 +84,6 @@
     "src/components/layout/Panel.tsx",
     "docs/src/pages/components/layout/Panel.tsx"
   ],
-  "version": "0.30.1",
+  "version": "0.30.3",
   "schemaVersion": "1.1"
 }

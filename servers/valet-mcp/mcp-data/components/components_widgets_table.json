@@ -95,6 +95,6 @@
     "src/components/widgets/Table.tsx",
     "docs/src/pages/components/widgets/TableDemo.tsx"
   ],
-  "version": "0.30.1",
+  "version": "0.30.3",
   "schemaVersion": "1.1"
 }

@@ -8,7 +8,7 @@
       "name": "accept",
       "type": "DropzoneOptions['accept']",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Allowed file types"
     },
     {
@@ -29,14 +29,14 @@
       "name": "onFilesChange",
       "type": "(files: File[]) => void",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Called when accepted files change"
     },
     {
       "name": "maxFiles",
       "type": "number",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Maximum file count"
     },
     {
@@ -50,7 +50,7 @@
       "name": "onDrop",
       "type": "DropzoneOptions['onDrop']",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Low-level drop callback"
     },
     {
@@ -69,7 +69,7 @@
       "name": "preset",
       "type": "string | string[]",
       "required": false,
-      "default": "-",
+      "default": "—",
       "description": "Style preset(s)"
     }
   ],
@@ -90,6 +90,6 @@
     "src/components/widgets/Dropzone.tsx",
     "docs/src/pages/components/widgets/DropzoneDemo.tsx"
   ],
-  "version": "0.30.1",
+  "version": "0.30.3",
   "schemaVersion": "1.1"
 }

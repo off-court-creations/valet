@@ -41,13 +41,13 @@ export default function PaginationDemoPage() {
     {
       prop: <code>count</code>,
       type: <code>number</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: <>Total number of pages (≥ 1).</>,
     },
     {
       prop: <code>visibleWindow</code>,
       type: <code>number</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: (
         <>
           Limit how many page buttons render at once; enables window scrolling controls when less
@@ -74,28 +74,16 @@ export default function PaginationDemoPage() {
     {
       prop: <code>onChange</code>,
       type: <code>(page: number) =&gt; void</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: <>Called with the next page when a page button is clicked.</>,
     },
     {
       prop: <code>preset</code>,
       type: <code>string | string[]</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: (
         <>
           Apply style presets registered via <code>definePreset()</code>.
-        </>
-      ),
-    },
-    {
-      prop: <code>HTML nav props</code>,
-      type: <code>React.ComponentProps&lt;&apos;nav&apos;&gt;</code>,
-      default: <code>-</code>,
-      description: (
-        <>
-          Standard attributes pass through to the root <code>nav</code> element (e.g.,{' '}
-          <code>id</code>, <code>role</code>, <code>aria-*</code>, <code>className</code>). Use the{' '}
-          <code>sx</code> prop for inline style overrides.
         </>
       ),
     },

@@ -93,13 +93,13 @@ const data: Row[] = [
   {
     prop: <code>nodes</code>,
     type: <code>TreeNode&lt;T&gt;[]</code>,
-    default: <code>-</code>,
+    default: <code>—</code>,
     description: 'Array of tree nodes',
   },
   {
     prop: <code>getLabel</code>,
     type: <code>(n: T) =&gt; ReactNode</code>,
-    default: <code>-</code>,
+    default: <code>—</code>,
     description: 'Return label for a node',
   },
   {
@@ -111,31 +111,31 @@ const data: Row[] = [
   {
     prop: <code>expanded</code>,
     type: <code>string[]</code>,
-    default: <code>-</code>,
+    default: <code>—</code>,
     description: 'Controlled expanded node ids',
   },
   {
     prop: <code>onExpandedChange</code>,
     type: <code>(ids: string[]) =&gt; void</code>,
-    default: <code>-</code>,
+    default: <code>—</code>,
     description: 'Handle expand/collapse changes',
   },
   {
     prop: <code>selected</code>,
     type: <code>string</code>,
-    default: <code>-</code>,
+    default: <code>—</code>,
     description: 'Controlled selected node id',
   },
   {
     prop: <code>defaultSelected</code>,
     type: <code>string</code>,
-    default: <code>-</code>,
+    default: <code>—</code>,
     description: 'Uncontrolled starting selection',
   },
   {
     prop: <code>onNodeSelect</code>,
     type: <code>(n: T) =&gt; void</code>,
-    default: <code>-</code>,
+    default: <code>—</code>,
     description: 'Called when a node is selected',
   },
   {
@@ -147,7 +147,7 @@ const data: Row[] = [
   {
     prop: <code>preset</code>,
     type: <code>string | string[]</code>,
-    default: <code>-</code>,
+    default: <code>—</code>,
     description: 'Apply style presets',
   },
 ];

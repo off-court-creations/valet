@@ -41,7 +41,7 @@ export default function SliderDemoPage() {
     {
       prop: <code>value</code>,
       type: <code>number</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Controlled value',
     },
     {
@@ -107,7 +107,7 @@ export default function SliderDemoPage() {
     {
       prop: <code>ticks</code>,
       type: <code>number[]</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Custom tick positions',
     },
     {
@@ -129,7 +129,7 @@ export default function SliderDemoPage() {
     {
       prop: <code>preset</code>,
       type: <code>string | string[]</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Apply style presets',
     },
   ];

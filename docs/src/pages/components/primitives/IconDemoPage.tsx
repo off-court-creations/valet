@@ -60,13 +60,13 @@ export default function IconDemoPage() {
     {
       prop: <code>icon</code>,
       type: <code>string</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Iconify name',
     },
     {
       prop: <code>svg</code>,
       type: <code>string | ReactElement</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Custom SVG content',
     },
     {
@@ -82,13 +82,13 @@ export default function IconDemoPage() {
     {
       prop: <code>color</code>,
       type: <code>string</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Colour override',
     },
     {
       prop: <code>preset</code>,
       type: <code>string | string[]</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Apply style presets',
     },
   ];

@@ -55,13 +55,13 @@ export default function SpeedDialDemoPage() {
     {
       prop: <code>icon</code>,
       type: <code>React.ReactNode</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Main floating action button icon',
     },
     {
       prop: <code>actions</code>,
       type: <code>SpeedDialAction[]</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Array of action buttons',
     },
     {
@@ -73,7 +73,7 @@ export default function SpeedDialDemoPage() {
     {
       prop: <code>preset</code>,
       type: <code>string | string[]</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Apply style presets',
     },
   ];

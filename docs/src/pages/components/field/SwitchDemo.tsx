@@ -76,7 +76,7 @@ export default function SwitchDemoPage() {
     {
       prop: <code>checked</code>,
       type: <code>boolean</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Controlled state',
     },
     {
@@ -88,13 +88,13 @@ export default function SwitchDemoPage() {
     {
       prop: <code>onChange</code>,
       type: <code>(checked: boolean) =&gt; void</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'State change handler',
     },
     {
       prop: <code>name</code>,
       type: <code>string</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Form field name',
     },
     {
@@ -112,7 +112,7 @@ export default function SwitchDemoPage() {
     {
       prop: <code>preset</code>,
       type: <code>string | string[]</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Apply style presets',
     },
   ];

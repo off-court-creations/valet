@@ -39,7 +39,7 @@ export default function DropzoneDemoPage() {
     {
       prop: <code>accept</code>,
       type: <code>DropzoneOptions[&apos;accept&apos;]</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Allowed file types',
     },
     {
@@ -57,13 +57,13 @@ export default function DropzoneDemoPage() {
     {
       prop: <code>onFilesChange</code>,
       type: <code>(files: File[]) =&gt; void</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Called when accepted files change',
     },
     {
       prop: <code>maxFiles</code>,
       type: <code>number</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Maximum file count',
     },
     {
@@ -81,13 +81,13 @@ export default function DropzoneDemoPage() {
     {
       prop: <code>onDrop</code>,
       type: <code>DropzoneOptions[&apos;onDrop&apos;]</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Low-level drop callback',
     },
     {
       prop: <code>preset</code>,
       type: <code>string | string[]</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Style preset(s)',
     },
   ];

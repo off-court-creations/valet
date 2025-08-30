@@ -42,13 +42,13 @@ export default function MarkdownDemoPage() {
     {
       prop: <code>data</code>,
       type: <code>string</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Markdown source text',
     },
     {
       prop: <code>codeBackground</code>,
       type: <code>string</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Override background for fenced code blocks',
     },
   ];

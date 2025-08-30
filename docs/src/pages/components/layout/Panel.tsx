@@ -38,7 +38,7 @@ export default function PanelDemoPage() {
     {
       prop: <code>background</code>,
       type: <code>string</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Explicit background override',
     },
     {
@@ -68,7 +68,7 @@ export default function PanelDemoPage() {
     {
       prop: <code>preset</code>,
       type: <code>string | string[]</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Apply style presets',
     },
     {

@@ -48,14 +48,8 @@
       "name": "preset",
       "type": "string | string[]",
       "required": false,
-      "default": "-",
+      "default": "—",
       "description": "Apply style presets via definePreset/preset registry."
-    },
-    {
-      "name": "HTML div props",
-      "type": "React.ComponentProps<'div'>",
-      "required": false,
-      "default": "-"
     }
   ],
   "cssVars": [
@@ -82,6 +76,6 @@
     "src/components/layout/Grid.tsx",
     "docs/src/pages/components/layout/GridDemo.tsx"
   ],
-  "version": "0.30.1",
+  "version": "0.30.3",
   "schemaVersion": "1.1"
 }

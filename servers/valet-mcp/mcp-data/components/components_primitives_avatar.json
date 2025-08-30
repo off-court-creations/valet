@@ -8,14 +8,14 @@
       "name": "src",
       "type": "string",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Image URL override"
     },
     {
       "name": "email",
       "type": "string",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Email used for Gravatar lookup"
     },
     {
@@ -48,14 +48,14 @@
       "name": "alt",
       "type": "string",
       "required": false,
-      "default": "-",
+      "default": "—",
       "description": "Image alt text"
     },
     {
       "name": "preset",
       "type": "string | string[]",
       "required": false,
-      "default": "-",
+      "default": "—",
       "description": "Apply style presets"
     }
   ],
@@ -71,6 +71,6 @@
     "src/components/primitives/Avatar.tsx",
     "docs/src/pages/components/primitives/AvatarDemo.tsx"
   ],
-  "version": "0.30.1",
+  "version": "0.30.3",
   "schemaVersion": "1.1"
 }

@@ -22,21 +22,21 @@
       "name": "icon",
       "type": "string",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Iconify name"
     },
     {
       "name": "svg",
       "type": "string | ReactElement",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Custom SVG content"
     },
     {
       "name": "iconColor",
       "type": "string",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Glyph colour override"
     },
     {
@@ -48,7 +48,7 @@
       "name": "preset",
       "type": "string | string[]",
       "required": false,
-      "default": "-",
+      "default": "—",
       "description": "Apply style presets"
     }
   ],
@@ -68,6 +68,6 @@
     "src/components/fields/IconButton.tsx",
     "docs/src/pages/components/field/IconButtonDemoPage.tsx"
   ],
-  "version": "0.30.1",
+  "version": "0.30.3",
   "schemaVersion": "1.1"
 }

@@ -50,19 +50,19 @@ export default function SkeletonDemoPage() {
     {
       prop: <code>variant</code>,
       type: <code>&#39;text&#39; | &#39;rect&#39; | &#39;circle&#39;</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Override inferred placeholder shape',
     },
     {
       prop: <code>icon</code>,
       type: <code>ReactNode</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Optional icon shown while loading',
     },
     {
       prop: <code>preset</code>,
       type: <code>string | string[]</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Apply style presets',
     },
   ];

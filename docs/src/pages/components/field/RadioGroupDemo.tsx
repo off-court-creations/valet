@@ -84,19 +84,19 @@ export default function RadioGroupDemoPage() {
     {
       prop: <code>value</code>,
       type: <code>string</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Controlled value',
     },
     {
       prop: <code>defaultValue</code>,
       type: <code>string</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Uncontrolled initial value',
     },
     {
       prop: <code>name</code>,
       type: <code>string</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Field name for forms',
     },
     {
@@ -119,19 +119,19 @@ export default function RadioGroupDemoPage() {
     {
       prop: <code>spacing</code>,
       type: <code>number | string</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Gap between options',
     },
     {
       prop: <code>onChange</code>,
       type: <code>(val: string) =&gt; void</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Change handler',
     },
     {
       prop: <code>preset</code>,
       type: <code>string | string[]</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Apply style presets',
     },
   ];

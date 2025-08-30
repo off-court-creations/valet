@@ -53,13 +53,13 @@ export default function AvatarDemoPage() {
     {
       prop: <code>src</code>,
       type: <code>string</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Image URL override',
     },
     {
       prop: <code>email</code>,
       type: <code>string</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Email used for Gravatar lookup',
     },
     {
@@ -85,13 +85,13 @@ export default function AvatarDemoPage() {
     {
       prop: <code>alt</code>,
       type: <code>string</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Image alt text',
     },
     {
       prop: <code>preset</code>,
       type: <code>string | string[]</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Apply style presets',
     },
   ];

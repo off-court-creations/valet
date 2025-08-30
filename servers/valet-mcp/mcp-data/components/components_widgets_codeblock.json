@@ -8,7 +8,7 @@
       "name": "code",
       "type": "string",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Source code to render"
     },
     {
@@ -22,14 +22,14 @@
       "name": "ariaLabel",
       "type": "string",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Copy button aria-label"
     },
     {
       "name": "title",
       "type": "string",
       "required": true,
-      "default": "-",
+      "default": "—",
       "description": "Copy button tooltip"
     }
   ],
@@ -45,6 +45,6 @@
     "src/components/widgets/CodeBlock.tsx",
     "docs/src/pages/components/widgets/CodeBlockDemo.tsx"
   ],
-  "version": "0.30.1",
+  "version": "0.30.3",
   "schemaVersion": "1.1"
 }

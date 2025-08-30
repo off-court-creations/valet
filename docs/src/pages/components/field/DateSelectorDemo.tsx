@@ -44,31 +44,31 @@ export default function DateSelectorDemoPage() {
     {
       prop: <code>value</code>,
       type: <code>string</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Controlled ISO date value (YYYY-MM-DD)',
     },
     {
       prop: <code>defaultValue</code>,
       type: <code>string</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Initial uncontrolled value',
     },
     {
       prop: <code>onChange</code>,
       type: <code>(value: string) =&gt; void</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Fires when selection changes',
     },
     {
       prop: <code>name</code>,
       type: <code>string</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'FormControl field name',
     },
     {
       prop: <code>preset</code>,
       type: <code>string | string[]</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Apply style presets',
     },
     {
@@ -92,19 +92,19 @@ export default function DateSelectorDemoPage() {
     {
       prop: <code>endValue</code>,
       type: <code>string</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Controlled end date when range is true',
     },
     {
       prop: <code>defaultEndValue</code>,
       type: <code>string</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Uncontrolled end date default',
     },
     {
       prop: <code>onRangeChange</code>,
       type: <code>(start: string, end: string) =&gt; void</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Fires when range selection changes',
     },
     {

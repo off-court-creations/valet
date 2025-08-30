@@ -31,7 +31,7 @@ export default function StepperDemoPage() {
     {
       prop: <code>steps</code>,
       type: <code>React.ReactNode[]</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Labels for each step',
     },
     {
@@ -43,7 +43,7 @@ export default function StepperDemoPage() {
     {
       prop: <code>preset</code>,
       type: <code>string | string[]</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Apply style presets',
     },
   ];

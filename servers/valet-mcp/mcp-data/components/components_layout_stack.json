@@ -45,7 +45,7 @@
       "name": "preset",
       "type": "string | string[]",
       "required": false,
-      "default": "-",
+      "default": "—",
       "description": "Apply style presets"
     }
   ],
@@ -64,6 +64,6 @@
     "src/components/layout/Stack.tsx",
     "docs/src/pages/components/layout/StackDemo.tsx"
   ],
-  "version": "0.30.1",
+  "version": "0.30.3",
   "schemaVersion": "1.1"
 }

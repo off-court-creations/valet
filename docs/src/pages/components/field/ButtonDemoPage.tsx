@@ -48,7 +48,7 @@ export default function ButtonDemoPage() {
     {
       prop: <code>textColor</code>,
       type: <code>&#39;primary&#39; | &#39;secondary&#39; | &#39;tertiary&#39; | string</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Label colour override',
     },
     {
@@ -76,7 +76,7 @@ export default function ButtonDemoPage() {
     {
       prop: <code>preset</code>,
       type: <code>string | string[]</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Apply style presets',
     },
   ];

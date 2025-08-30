@@ -72,20 +72,8 @@ export default function GridDemoPage() {
     {
       prop: <code>preset</code>,
       type: <code>string | string[]</code>,
-      default: <code>-</code>,
+      default: <code>—</code>,
       description: 'Apply style presets via definePreset/preset registry.',
-    },
-    {
-      prop: <code>HTML div props</code>,
-      type: <code>React.ComponentProps&lt;&apos;div&apos;&gt;</code>,
-      default: <code>-</code>,
-      description: (
-        <>
-          Standard attributes and events pass through (e.g., <code>id</code>, <code>role</code>,{' '}
-          <code>aria-*</code>, <code>onClick</code>, <code>className</code>). Use the{' '}
-          <code>sx</code> prop for inline style overrides.
-        </>
-      ),
     },
   ];
 
