@@ -1,59 +1,4 @@
 {
-  "CodeBlock": {
-    "name": "CodeBlock",
-    "category": "widgets",
-    "slug": "components/widgets/codeblock",
-    "summary": "CodeBlock component",
-    "props": [
-      {
-        "name": "code",
-        "type": "string",
-        "required": true
-      },
-      {
-        "name": "language",
-        "type": "string",
-        "required": true,
-        "default": "'typescript'"
-      },
-      {
-        "name": "ariaLabel",
-        "type": "string",
-        "required": true
-      },
-      {
-        "name": "title",
-        "type": "string",
-        "required": true
-      }
-    ],
-    "cssVars": [],
-    "sourceFiles": [
-      "src/components/widgets/CodeBlock.tsx"
-    ]
-  },
-  "HLJS_DARK": {
-    "name": "HLJS_DARK",
-    "category": "unknown",
-    "slug": "components/unknown/hljs_dark",
-    "summary": "HLJS_DARK component",
-    "props": [],
-    "cssVars": [],
-    "sourceFiles": [
-      "src/css/hljsThemes.ts"
-    ]
-  },
-  "SurfaceCtx": {
-    "name": "SurfaceCtx",
-    "category": "unknown",
-    "slug": "components/unknown/surfacectx",
-    "summary": "SurfaceCtx component",
-    "props": [],
-    "cssVars": [],
-    "sourceFiles": [
-      "src/system/surfaceStore.ts"
-    ]
-  },
   "Button": {
     "name": "Button",
     "category": "fields",
@@ -97,6 +42,10 @@
     "cssVars": [
       "--valet-text-color"
     ],
+    "cssPresets": [],
+    "events": [],
+    "actions": [],
+    "slots": [],
     "sourceFiles": [
       "src/components/fields/Button.tsx"
     ]
@@ -147,6 +96,19 @@
       "--valet-checkbox-radius",
       "--valet-checkbox-stroke",
       "--valet-checkbox-inset"
+    ],
+    "cssPresets": [],
+    "events": [
+      {
+        "name": "onChange",
+        "payloadType": "boolean"
+      }
+    ],
+    "actions": [],
+    "slots": [
+      {
+        "name": "label"
+      }
     ],
     "sourceFiles": [
       "src/components/fields/Checkbox.tsx"
@@ -218,7 +180,12 @@
         "name": "compactMode",
         "type": "'auto' | 'on' | 'off'",
         "required": true,
-        "default": "'auto'"
+        "default": "'auto'",
+        "enumValues": [
+          "auto",
+          "on",
+          "off"
+        ]
       },
       {
         "name": "compactThresholdIn",
@@ -237,6 +204,19 @@
       "--valet-date-radius",
       "--valet-date-cell-radius"
     ],
+    "cssPresets": [],
+    "events": [
+      {
+        "name": "onChange",
+        "payloadType": "string"
+      },
+      {
+        "name": "onRangeChange",
+        "payloadType": "string"
+      }
+    ],
+    "actions": [],
+    "slots": [],
     "sourceFiles": [
       "src/components/fields/DateSelector.tsx"
     ]
@@ -264,6 +244,15 @@
       }
     ],
     "cssVars": [],
+    "cssPresets": [],
+    "events": [
+      {
+        "name": "onSubmitValues",
+        "payloadType": "T"
+      }
+    ],
+    "actions": [],
+    "slots": [],
     "sourceFiles": [
       "src/components/fields/FormControl.tsx"
     ]
@@ -308,6 +297,14 @@
       }
     ],
     "cssVars": [],
+    "cssPresets": [],
+    "events": [],
+    "actions": [],
+    "slots": [
+      {
+        "name": "svg"
+      }
+    ],
     "sourceFiles": [
       "src/components/fields/IconButton.tsx"
     ]
@@ -365,6 +362,15 @@
       }
     ],
     "cssVars": [],
+    "cssPresets": [],
+    "events": [
+      {
+        "name": "onChange",
+        "payloadType": "number"
+      }
+    ],
+    "actions": [],
+    "slots": [],
     "sourceFiles": [
       "src/components/fields/Iterator.tsx"
     ]
@@ -416,6 +422,19 @@
     "cssVars": [
       "--valet-text-color"
     ],
+    "cssPresets": [],
+    "events": [
+      {
+        "name": "onChange",
+        "payloadType": "Primitive | Primitive[]"
+      }
+    ],
+    "actions": [],
+    "slots": [
+      {
+        "name": "children"
+      }
+    ],
     "sourceFiles": [
       "src/components/fields/MetroSelect.tsx"
     ]
@@ -453,6 +472,14 @@
       }
     ],
     "cssVars": [],
+    "cssPresets": [],
+    "events": [],
+    "actions": [],
+    "slots": [
+      {
+        "name": "children"
+      }
+    ],
     "sourceFiles": [
       "src/components/fields/RadioGroup.tsx"
     ]
@@ -518,6 +545,19 @@
       "--valet-border",
       "--valet-bg",
       "--valet-text-color"
+    ],
+    "cssPresets": [],
+    "events": [
+      {
+        "name": "onChange",
+        "payloadType": "Primitive | Primitive[]"
+      }
+    ],
+    "actions": [],
+    "slots": [
+      {
+        "name": "children"
+      }
     ],
     "sourceFiles": [
       "src/components/fields/Select.tsx"
@@ -619,6 +659,15 @@
       "--valet-bg",
       "--valet-text-color"
     ],
+    "cssPresets": [],
+    "events": [
+      {
+        "name": "onChange",
+        "payloadType": "number"
+      }
+    ],
+    "actions": [],
+    "slots": [],
     "sourceFiles": [
       "src/components/fields/Slider.tsx"
     ]
@@ -665,6 +714,15 @@
       "--valet-switch-offset",
       "--valet-switch-pad"
     ],
+    "cssPresets": [],
+    "events": [
+      {
+        "name": "onChange",
+        "payloadType": "boolean"
+      }
+    ],
+    "actions": [],
+    "slots": [],
     "sourceFiles": [
       "src/components/fields/Switch.tsx"
     ]
@@ -676,6 +734,10 @@
     "summary": "TextField component",
     "props": [],
     "cssVars": [],
+    "cssPresets": [],
+    "events": [],
+    "actions": [],
+    "slots": [],
     "sourceFiles": [
       "src/components/fields/TextField.tsx"
     ]
@@ -731,6 +793,15 @@
       "--valet-focus-width",
       "--valet-focus-offset"
     ],
+    "cssPresets": [],
+    "events": [
+      {
+        "name": "onOpenChange",
+        "payloadType": "number[]"
+      }
+    ],
+    "actions": [],
+    "slots": [],
     "sourceFiles": [
       "src/components/layout/Accordion.tsx"
     ]
@@ -776,6 +847,17 @@
       "--valet-bg",
       "--valet-text-color"
     ],
+    "cssPresets": [],
+    "events": [],
+    "actions": [],
+    "slots": [
+      {
+        "name": "left"
+      },
+      {
+        "name": "right"
+      }
+    ],
     "sourceFiles": [
       "src/components/layout/AppBar.tsx"
     ]
@@ -810,7 +892,13 @@
       {
         "name": "alignX",
         "type": "'left' | 'right' | 'center' | 'centered'",
-        "required": true
+        "required": true,
+        "enumValues": [
+          "left",
+          "right",
+          "center",
+          "centered"
+        ]
       },
       {
         "name": "centered",
@@ -836,6 +924,10 @@
       "--valet-text-color",
       "--valet-centered"
     ],
+    "cssPresets": [],
+    "events": [],
+    "actions": [],
+    "slots": [],
     "sourceFiles": [
       "src/components/layout/Box.tsx"
     ]
@@ -922,6 +1014,18 @@
       "--valet-font-mono",
       "--valet-font-button"
     ],
+    "cssPresets": [],
+    "events": [
+      {
+        "name": "onClose"
+      }
+    ],
+    "actions": [],
+    "slots": [
+      {
+        "name": "children"
+      }
+    ],
     "sourceFiles": [
       "src/components/layout/Drawer.tsx"
     ]
@@ -963,6 +1067,10 @@
       "--valet-stack-max-h",
       "--valet-box-max-h"
     ],
+    "cssPresets": [],
+    "events": [],
+    "actions": [],
+    "slots": [],
     "sourceFiles": [
       "src/components/layout/Grid.tsx"
     ]
@@ -1035,6 +1143,26 @@
       }
     ],
     "cssVars": [],
+    "cssPresets": [],
+    "events": [
+      {
+        "name": "onReorder",
+        "payloadType": "T[]"
+      },
+      {
+        "name": "onSelectionChange",
+        "payloadType": "T"
+      }
+    ],
+    "actions": [],
+    "slots": [
+      {
+        "name": "getTitle"
+      },
+      {
+        "name": "getSubtitle"
+      }
+    ],
     "sourceFiles": [
       "src/components/layout/List.tsx"
     ]
@@ -1065,7 +1193,11 @@
         "name": "variant",
         "type": "'dialog' | 'alert'",
         "required": true,
-        "default": "'dialog'"
+        "default": "'dialog'",
+        "enumValues": [
+          "dialog",
+          "alert"
+        ]
       },
       {
         "name": "title",
@@ -1120,6 +1252,24 @@
     "cssVars": [
       "--valet-modal-radius"
     ],
+    "cssPresets": [],
+    "events": [
+      {
+        "name": "onClose"
+      }
+    ],
+    "actions": [],
+    "slots": [
+      {
+        "name": "title"
+      },
+      {
+        "name": "children"
+      },
+      {
+        "name": "actions"
+      }
+    ],
     "sourceFiles": [
       "src/components/layout/Modal.tsx"
     ]
@@ -1155,7 +1305,13 @@
       {
         "name": "alignX",
         "type": "'left' | 'right' | 'center' | 'centered'",
-        "required": true
+        "required": true,
+        "enumValues": [
+          "left",
+          "right",
+          "center",
+          "centered"
+        ]
       }
     ],
     "domPassthrough": {
@@ -1171,6 +1327,10 @@
       "--valet-text-color",
       "--valet-centered"
     ],
+    "cssPresets": [],
+    "events": [],
+    "actions": [],
+    "slots": [],
     "sourceFiles": [
       "src/components/layout/Panel.tsx"
     ]
@@ -1185,7 +1345,11 @@
         "name": "direction",
         "type": "'row' | 'column'",
         "required": true,
-        "default": "'column'"
+        "default": "'column'",
+        "enumValues": [
+          "row",
+          "column"
+        ]
       },
       {
         "name": "wrap",
@@ -1202,6 +1366,10 @@
       "--valet-stack-max-h",
       "--valet-stack-ov-y"
     ],
+    "cssPresets": [],
+    "events": [],
+    "actions": [],
+    "slots": [],
     "sourceFiles": [
       "src/components/layout/Stack.tsx"
     ]
@@ -1245,6 +1413,10 @@
       "--valet-screen-width",
       "--valet-screen-height"
     ],
+    "cssPresets": [],
+    "events": [],
+    "actions": [],
+    "slots": [],
     "sourceFiles": [
       "src/components/layout/Surface.tsx"
     ]
@@ -1275,17 +1447,33 @@
         "name": "orientation",
         "type": "'horizontal' | 'vertical'",
         "required": true,
-        "default": "'horizontal'"
+        "default": "'horizontal'",
+        "enumValues": [
+          "horizontal",
+          "vertical"
+        ]
       },
       {
         "name": "placement",
         "type": "'top' | 'bottom' | 'left' | 'right'",
-        "required": true
+        "required": true,
+        "enumValues": [
+          "top",
+          "bottom",
+          "left",
+          "right"
+        ]
       },
       {
         "name": "alignX",
         "type": "'left' | 'right' | 'center' | 'centered'",
-        "required": true
+        "required": true,
+        "enumValues": [
+          "left",
+          "right",
+          "center",
+          "centered"
+        ]
       },
       {
         "name": "sx",
@@ -1304,6 +1492,15 @@
       "--valet-focus-offset",
       "--valet-underline-width"
     ],
+    "cssPresets": [],
+    "events": [
+      {
+        "name": "onTabChange",
+        "payloadType": "number"
+      }
+    ],
+    "actions": [],
+    "slots": [],
     "sourceFiles": [
       "src/components/layout/Tabs.tsx"
     ]
@@ -1349,6 +1546,10 @@
       }
     ],
     "cssVars": [],
+    "cssPresets": [],
+    "events": [],
+    "actions": [],
+    "slots": [],
     "sourceFiles": [
       "src/components/primitives/Avatar.tsx"
     ]
@@ -1388,6 +1589,10 @@
       }
     ],
     "cssVars": [],
+    "cssPresets": [],
+    "events": [],
+    "actions": [],
+    "slots": [],
     "sourceFiles": [
       "src/components/primitives/Divider.tsx"
     ]
@@ -1426,6 +1631,14 @@
       }
     ],
     "cssVars": [],
+    "cssPresets": [],
+    "events": [],
+    "actions": [],
+    "slots": [
+      {
+        "name": "svg"
+      }
+    ],
     "sourceFiles": [
       "src/components/primitives/Icon.tsx"
     ]
@@ -1455,7 +1668,14 @@
         "name": "objectFit",
         "type": "'cover' | 'contain' | 'fill' | 'none' | 'scale-down'",
         "required": true,
-        "default": "'cover'"
+        "default": "'cover'",
+        "enumValues": [
+          "cover",
+          "contain",
+          "fill",
+          "none",
+          "scale-down"
+        ]
       },
       {
         "name": "rounded",
@@ -1480,6 +1700,10 @@
       }
     ],
     "cssVars": [],
+    "cssPresets": [],
+    "events": [],
+    "actions": [],
+    "slots": [],
     "sourceFiles": [
       "src/components/primitives/Image.tsx"
     ]
@@ -1534,6 +1758,10 @@
     "cssVars": [
       "--valet-text-color"
     ],
+    "cssPresets": [],
+    "events": [],
+    "actions": [],
+    "slots": [],
     "sourceFiles": [
       "src/components/primitives/Progress.tsx"
     ]
@@ -1566,6 +1794,14 @@
       }
     ],
     "cssVars": [],
+    "cssPresets": [],
+    "events": [],
+    "actions": [],
+    "slots": [
+      {
+        "name": "icon"
+      }
+    ],
     "sourceFiles": [
       "src/components/primitives/Skeleton.tsx"
     ]
@@ -1629,7 +1865,13 @@
       {
         "name": "family",
         "type": "'heading' | 'body' | 'mono' | 'button'",
-        "required": true
+        "required": true,
+        "enumValues": [
+          "heading",
+          "body",
+          "mono",
+          "button"
+        ]
       },
       {
         "name": "fontFamily",
@@ -1640,7 +1882,13 @@
         "name": "whitespace",
         "type": "'normal' | 'pre' | 'pre-wrap' | 'pre-line'",
         "required": true,
-        "default": "'normal'"
+        "default": "'normal'",
+        "enumValues": [
+          "normal",
+          "pre",
+          "pre-wrap",
+          "pre-line"
+        ]
       },
       {
         "name": "sx",
@@ -1652,6 +1900,10 @@
       "--valet-text-color",
       "--valet-font-"
     ],
+    "cssPresets": [],
+    "events": [],
+    "actions": [],
+    "slots": [],
     "sourceFiles": [
       "src/components/primitives/Typography.tsx"
     ]
@@ -1720,7 +1972,11 @@
         "name": "objectFit",
         "type": "'contain' | 'cover'",
         "required": true,
-        "default": "'contain'"
+        "default": "'contain'",
+        "enumValues": [
+          "contain",
+          "cover"
+        ]
       },
       {
         "name": "className",
@@ -1734,8 +1990,49 @@
       }
     ],
     "cssVars": [],
+    "cssPresets": [],
+    "events": [],
+    "actions": [],
+    "slots": [],
     "sourceFiles": [
       "src/components/primitives/Video.tsx"
+    ]
+  },
+  "CodeBlock": {
+    "name": "CodeBlock",
+    "category": "widgets",
+    "slug": "components/widgets/codeblock",
+    "summary": "CodeBlock component",
+    "props": [
+      {
+        "name": "code",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "language",
+        "type": "string",
+        "required": true,
+        "default": "'typescript'"
+      },
+      {
+        "name": "ariaLabel",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "title",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "cssVars": [],
+    "cssPresets": [],
+    "events": [],
+    "actions": [],
+    "slots": [],
+    "sourceFiles": [
+      "src/components/widgets/CodeBlock.tsx"
     ]
   },
   "Dropzone": {
@@ -1795,6 +2092,15 @@
       }
     ],
     "cssVars": [],
+    "cssPresets": [],
+    "events": [
+      {
+        "name": "onFilesChange",
+        "payloadType": "File[]"
+      }
+    ],
+    "actions": [],
+    "slots": [],
     "sourceFiles": [
       "src/components/widgets/Dropzone.tsx"
     ]
@@ -1825,6 +2131,10 @@
       }
     ],
     "cssVars": [],
+    "cssPresets": [],
+    "events": [],
+    "actions": [],
+    "slots": [],
     "sourceFiles": [
       "src/components/widgets/LLMChat.tsx"
     ]
@@ -1847,6 +2157,10 @@
       }
     ],
     "cssVars": [],
+    "cssPresets": [],
+    "events": [],
+    "actions": [],
+    "slots": [],
     "sourceFiles": [
       "src/components/widgets/LoadingBackdrop.tsx"
     ]
@@ -1874,6 +2188,10 @@
       }
     ],
     "cssVars": [],
+    "cssPresets": [],
+    "events": [],
+    "actions": [],
+    "slots": [],
     "sourceFiles": [
       "src/components/widgets/Markdown.tsx"
     ]
@@ -1920,6 +2238,15 @@
     "cssVars": [
       "--valet-underline-width"
     ],
+    "cssPresets": [],
+    "events": [
+      {
+        "name": "onChange",
+        "payloadType": "number"
+      }
+    ],
+    "actions": [],
+    "slots": [],
     "sourceFiles": [
       "src/components/widgets/Pagination.tsx"
     ]
@@ -1967,7 +2294,12 @@
         "name": "preload",
         "type": "'none' | 'metadata' | 'auto'",
         "required": true,
-        "default": "'auto'"
+        "default": "'auto'",
+        "enumValues": [
+          "none",
+          "metadata",
+          "auto"
+        ]
       },
       {
         "name": "speed",
@@ -1983,6 +2315,10 @@
       }
     ],
     "cssVars": [],
+    "cssPresets": [],
+    "events": [],
+    "actions": [],
+    "slots": [],
     "sourceFiles": [
       "src/components/widgets/Parallax.tsx"
     ]
@@ -2048,6 +2384,19 @@
       }
     ],
     "cssVars": [],
+    "cssPresets": [],
+    "events": [
+      {
+        "name": "onFormSubmit",
+        "payloadType": "string"
+      },
+      {
+        "name": "onSend",
+        "payloadType": "RichMessage"
+      }
+    ],
+    "actions": [],
+    "slots": [],
     "sourceFiles": [
       "src/components/widgets/RichChat.tsx"
     ]
@@ -2092,6 +2441,18 @@
       }
     ],
     "cssVars": [],
+    "cssPresets": [],
+    "events": [
+      {
+        "name": "onClose"
+      }
+    ],
+    "actions": [],
+    "slots": [
+      {
+        "name": "message"
+      }
+    ],
     "sourceFiles": [
       "src/components/widgets/Snackbar.tsx"
     ]
@@ -2116,10 +2477,24 @@
         "name": "direction",
         "type": "'up' | 'down' | 'left' | 'right'",
         "required": true,
-        "default": "'up'"
+        "default": "'up'",
+        "enumValues": [
+          "up",
+          "down",
+          "left",
+          "right"
+        ]
       }
     ],
     "cssVars": [],
+    "cssPresets": [],
+    "events": [],
+    "actions": [],
+    "slots": [
+      {
+        "name": "icon"
+      }
+    ],
     "sourceFiles": [
       "src/components/widgets/SpeedDial.tsx"
     ]
@@ -2150,6 +2525,14 @@
     "cssVars": [
       "--valet-stepper-stroke",
       "--valet-stepper-radius"
+    ],
+    "cssPresets": [],
+    "events": [],
+    "actions": [],
+    "slots": [
+      {
+        "name": "steps"
+      }
     ],
     "sourceFiles": [
       "src/components/widgets/Stepper.tsx"
@@ -2189,7 +2572,11 @@
       {
         "name": "selectable",
         "type": "'single' | 'multi' | undefined",
-        "required": true
+        "required": true,
+        "enumValues": [
+          "single",
+          "multi"
+        ]
       },
       {
         "name": "initialSort",
@@ -2222,6 +2609,19 @@
       "--valet-underline-width",
       "--valet-table-underline"
     ],
+    "cssPresets": [],
+    "events": [
+      {
+        "name": "onSortChange",
+        "payloadType": "number"
+      },
+      {
+        "name": "onSelectionChange",
+        "payloadType": "T[]"
+      }
+    ],
+    "actions": [],
+    "slots": [],
     "sourceFiles": [
       "src/components/widgets/Table.tsx"
     ]
@@ -2309,6 +2709,24 @@
     "cssVars": [
       "--valet-tooltip-arrow-size"
     ],
+    "cssPresets": [],
+    "events": [
+      {
+        "name": "onOpen"
+      },
+      {
+        "name": "onClose"
+      }
+    ],
+    "actions": [],
+    "slots": [
+      {
+        "name": "title"
+      },
+      {
+        "name": "children"
+      }
+    ],
     "sourceFiles": [
       "src/components/widgets/Tooltip.tsx"
     ]
@@ -2362,7 +2780,12 @@
       {
         "name": "variant",
         "type": "'chevron' | 'list' | 'files'",
-        "required": true
+        "required": true,
+        "enumValues": [
+          "chevron",
+          "list",
+          "files"
+        ]
       },
       {
         "name": "sx",
@@ -2377,6 +2800,23 @@
       "--valet-tree-stroke",
       "--valet-tree-outline",
       "--valet-tree-offset"
+    ],
+    "cssPresets": [],
+    "events": [
+      {
+        "name": "onExpandedChange",
+        "payloadType": "string[]"
+      },
+      {
+        "name": "onNodeSelect",
+        "payloadType": "T"
+      }
+    ],
+    "actions": [],
+    "slots": [
+      {
+        "name": "getLabel"
+      }
     ],
     "sourceFiles": [
       "src/components/widgets/Tree.tsx"

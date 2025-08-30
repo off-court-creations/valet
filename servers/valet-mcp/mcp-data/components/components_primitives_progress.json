@@ -57,6 +57,6 @@
   "sourceFiles": [
     "src/components/primitives/Progress.tsx"
   ],
-  "version": "0.30.1",
+  "version": "0.30.2",
   "schemaVersion": "1.1"
 }

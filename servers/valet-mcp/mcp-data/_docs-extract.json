@@ -39,11 +39,20 @@
       }
     ],
     "examples": [],
-    "bestPractices": [],
+    "bestPractices": [
+      "Establish a clear action hierarchy: use `contained` for the primary action and `outlined` for secondary/tertiary actions. Keep emphasis consistent within a view.",
+      "Choose sizes by density: `sm` / `md` for typical forms, `lg` for standout CTAs. Avoid mixing sizes within the same control group.",
+      "Prefer theme tokens ( `primary` , `secondary` , `tertiary` ) for automatic contrast. If you set a custom `color` , also set `textColor` to keep contrast accessible.",
+      "Use `fullWidth` in narrow or linear layouts (mobile, drawers) where the button should span the container. Otherwise let content define width.",
+      "Prefer succinct verb‑first labels. If the action is icon‑only, use `IconButton` and provide an accessible label via `aria-label` .",
+      "When combining icons and text, add a small gap (e.g., `` on the icon) for readable spacing.",
+      "Reuse styling with `preset` ( `definePreset()` ) rather than duplicating `sx` across instances.",
+      "Avoid multiple primary actions per view and reserve destructive styles for destructive operations."
+    ],
     "docsUrl": "/components/field/ButtonDemoPage",
     "sourceFile": "docs/src/pages/components/field/ButtonDemoPage.tsx"
   },
-  "CheckBox": {
+  "Checkbox": {
     "propsRows": [
       {
         "prop": "`name`",
@@ -353,7 +362,7 @@
     "docsUrl": "/components/field/MetroSelectDemo",
     "sourceFile": "docs/src/pages/components/field/MetroSelectDemo.tsx"
   },
-  "RadioGroup": {
+  "Radio": {
     "propsRows": [
       {
         "prop": "`value`",
@@ -467,7 +476,14 @@
       }
     ],
     "examples": [],
-    "bestPractices": [],
+    "bestPractices": [
+      "Choose controlled vs uncontrolled deliberately: use `value` + `onChange` to integrate with app state; use `initialValue` for lightweight forms.",
+      "Keep option labels short, distinct, and ordered predictably (alphabetical or by frequency). Avoid duplicating values with different labels.",
+      "Use `multiple` only when necessary and present selections clearly. Consider `size` and a minimum width ( `` ) to avoid layout jump.",
+      "Prefer `RadioGroup` for a small, mutually exclusive set and `Checkbox` es for a small multi‑select; reserve `Select` for larger sets.",
+      "Provide a helpful `placeholder` when no value is selected. Persist value types (string/number) consistently across your app.",
+      "When using `FormControl` , set a stable `name` , and avoid mixing primitive types within the same field."
+    ],
     "docsUrl": "/components/field/SelectDemo",
     "sourceFile": "docs/src/pages/components/field/SelectDemo.tsx"
   },
@@ -683,7 +699,8 @@
         "lang": "tsx",
         "source": {
           "file": "/home/xbenc/occ/valet/docs/src/pages/components/layout/BoxDemo.tsx"
-        }
+        },
+        "runnable": true
       },
       {
         "id": "box-example-2",
@@ -691,7 +708,8 @@
         "lang": "tsx",
         "source": {
           "file": "/home/xbenc/occ/valet/docs/src/pages/components/layout/BoxDemo.tsx"
-        }
+        },
+        "runnable": true
       },
       {
         "id": "box-example-3",
@@ -699,15 +717,18 @@
         "lang": "tsx",
         "source": {
           "file": "/home/xbenc/occ/valet/docs/src/pages/components/layout/BoxDemo.tsx"
-        }
+        },
+        "runnable": true
       }
     ],
     "bestPractices": [
-      "Use `Box` as a neutral container for background, padding, and width anchoring. Compose layout with `Stack` / `Grid` ; keep   `Surface` for page-level backgrounds.",
-      "Prefer theme tones ( `primary` / `secondary` / `tertiary` ) to get automatic text contrast. When using custom colours, set `textColor` to maintain accessibility.",
-      "Reach for `Panel` when you need outlines or separators.   `Box` stays minimal and opinionated so the theme can do the heavy lifting.",
-      "Control placement with `alignX` and `fullWidth` .",
-      "Reuse styles with `preset` via `definePreset()` instead of sprinkling inline styles."
+      "Treat `Box` as the neutral building block: backgrounds, padding, and simple width anchoring. Use `Surface` for page‑level canvas and compose layouts with `Stack` and `Grid` .",
+      "Prefer theme tokens ( `primary` , `secondary` , `tertiary` ) to inherit correct contrast automatically. If you pass a custom colour to `background` , explicitly set `textColor` to preserve accessibility.",
+      "Reach for `Panel` when you need separation (borders, elevation). Keep `Box` visually minimal so the theme does the heavy lifting.",
+      "Use spacing tokens: prefer numeric `pad` values over hardcoded CSS so density matches the spacing contract across components.",
+      "Align purposefully: use `alignX` and `fullWidth` for placement; avoid deprecated `centered` .",
+      "Reuse styles via `preset` ( `definePreset()` ) instead of duplicating `sx` .",
+      "When Box represents a semantic region, add appropriate roles/labels (e.g., `role=\"region\"` , `aria-label` ) via DOM passthrough."
     ],
     "docsUrl": "/components/layout/BoxDemo",
     "sourceFile": "docs/src/pages/components/layout/BoxDemo.tsx"
@@ -759,10 +780,11 @@
     ],
     "examples": [],
     "bestPractices": [
-      "Use `Grid` for two‑dimensional layouts where items align in both axes. Reach for `Stack` for linear flows.",
-      "Keep tracks simple. Prefer `columns` with equal tracks; use   `` on children to span.",
-      "Share spacing with the system: gap and pad use the same spacing scale as other layout primitives ( `Stack` , `Tabs` ).",
-      "Toggle `adaptive` when you want predictable single‑column layout in portrait across breakpoints. Avoid ad‑hoc media queries."
+      "Use `Grid` for two‑axis alignment. Prefer `Stack` for linear flows where only one axis matters.",
+      "Keep tracks simple: equal‑width `columns` are fast and readable; let children span using `` .",
+      "Share spacing with the system. Use numeric `gap` / `pad` so density matches other primitives.",
+      "Use `adaptive` to collapse to a single column on portrait/narrow screens instead of ad‑hoc media queries.",
+      "Maintain logical DOM order for keyboard and screen readers; don’t rely on grid placement to imply reading order."
     ],
     "docsUrl": "/components/layout/GridDemo",
     "sourceFile": "docs/src/pages/components/layout/GridDemo.tsx"
@@ -852,6 +874,20 @@
     "bestPractices": [],
     "docsUrl": "/components/layout/ListDemoPage",
     "sourceFile": "docs/src/pages/components/layout/ListDemoPage.tsx"
+  },
+  "Modal": {
+    "propsRows": [],
+    "examples": [],
+    "bestPractices": [
+      "Choose the right type: use `variant='dialog'` for neutral flows and `variant='alert'` for destructive or high‑attention confirmations.",
+      "Provide a clear `title` and unambiguous action labels (avoid vague “OK”/“Cancel”). Make the primary action visually dominant.",
+      "Keep escape hatches accessible. Only combine `disableBackdropClick` and `disableEscapeKeyDown` when the flow truly requires it.",
+      "Treat `open` as the single source of truth and wire `onClose` for all dismissal paths (buttons, ESC, backdrop). Return focus to the trigger on close.",
+      "Size with intent: prefer `maxWidth` for readability; reserve `fullWidth` for mobile or immersive flows. Let long content scroll inside.",
+      "Don’t nest modals. Transition content or sequence steps in a single modal instead of opening another."
+    ],
+    "docsUrl": "/components/layout/ModalDemo",
+    "sourceFile": "docs/src/pages/components/layout/ModalDemo.tsx"
   },
   "Panel": {
     "propsRows": [
@@ -999,7 +1035,14 @@
       }
     ],
     "examples": [],
-    "bestPractices": [],
+    "bestPractices": [
+      "Keep tab labels short and predictable. Prefer 1–2 words; avoid wrapping when possible.",
+      "Choose placement by layout: `top` is the default; use vertical placement for dense navigation sidebars.",
+      "Reflect app state with controlled tabs ( `active` + `onTabChange` ) when routes or external state should drive selection.",
+      "Use `gap` / `pad` to match surrounding density; apply `alignX` to align the strip with nearby content.",
+      "For icon‑only tabs, supply `aria-label` and (optionally) a `tooltip` for discoverability.",
+      "Keep DOM order logical (Tab → Panel pairs) to preserve keyboard and screen‑reader flow."
+    ],
     "docsUrl": "/components/layout/TabsDemo",
     "sourceFile": "docs/src/pages/components/layout/TabsDemo.tsx"
   },
@@ -1605,6 +1648,32 @@
     "docsUrl": "/components/widgets/StepperDemo",
     "sourceFile": "docs/src/pages/components/widgets/StepperDemo.tsx"
   },
+  "Table": {
+    "propsRows": [],
+    "examples": [],
+    "bestPractices": [
+      "Keep tables readable: enable `striped` and/or `hoverable` for large datasets, but avoid heavy styling that competes with content.",
+      "Constrain height ( `constrainHeight` ) so the body scrolls inside the table instead of the page scrolling in two directions.",
+      "Provide an initial sort ( `initialSort` ), align numeric columns to the right, and format dates consistently.",
+      "Enable selection only when follow‑up actions operate on selected rows; choose `single` vs `multi` to match the action design.",
+      "Keep column count reasonable on narrow screens; prefer fewer, more meaningful columns over many cramped ones. Use succinct headers."
+    ],
+    "docsUrl": "/components/widgets/TableDemo",
+    "sourceFile": "docs/src/pages/components/widgets/TableDemo.tsx"
+  },
+  "Tooltip": {
+    "propsRows": [],
+    "examples": [],
+    "bestPractices": [
+      "Use tooltips for supplemental hints, not essential instructions. The UI should remain usable without hovering.",
+      "Ensure the trigger is focusable and labelled. For icon‑only controls, provide `aria-label` on the target.",
+      "Keep content concise; avoid interactive controls inside tooltips. Prefer short phrases over sentences.",
+      "Prefer `placement='top'` when space allows; adjust placement to avoid clipping and viewport edges.",
+      "Use sensible delays. Avoid long `enterDelay` / `leaveDelay` that make tooltips feel sluggish or sticky, especially on touch devices."
+    ],
+    "docsUrl": "/components/widgets/TooltipDemo",
+    "sourceFile": "docs/src/pages/components/widgets/TooltipDemo.tsx"
+  },
   "Tree": {
     "propsRows": [
       {
@@ -1672,169 +1741,5 @@
     "bestPractices": [],
     "docsUrl": "/components/widgets/TreeDemo",
     "sourceFile": "docs/src/pages/components/widgets/TreeDemo.tsx"
-  },
-  "Overview": {
-    "propsRows": [],
-    "examples": [
-      {
-        "id": "overview-example-1",
-        "code": "npm install @archway/valet",
-        "lang": "tsx",
-        "source": {
-          "file": "/home/xbenc/occ/valet/docs/src/pages/concepts/Overview.tsx"
-        }
-      },
-      {
-        "id": "overview-example-2",
-        "code": "import { Routes, Route, BrowserRouter } from 'react-router-dom';\nimport { Surface, Stack, Typography, Button, useInitialTheme } from '@archway/valet';\n\nfunction Home() {\n  return (\n    <Surface>\n      <Stack gap={2} sx={{ padding: '1rem' }}>\n        <Typography variant=\"h2\">Hello, valet</Typography>\n        <Button variant=\"primary\">Click me</Button>\n      </Stack>\n    </Surface>\n  );\n}\n\nexport function App() {\n  useInitialTheme({ fonts: { body: 'Cabin', heading: 'Cabin', mono: 'Ubuntu Mono', button: 'Ubuntu' } });\n  return (\n    <BrowserRouter>\n      <Routes>\n        <Route path=\"/\" element={<Home />} />\n      </Routes>\n    </BrowserRouter>\n  );\n}",
-        "lang": "tsx",
-        "source": {
-          "file": "/home/xbenc/occ/valet/docs/src/pages/concepts/Overview.tsx"
-        }
-      }
-    ],
-    "bestPractices": [],
-    "docsUrl": "/concepts/Overview",
-    "sourceFile": "docs/src/pages/concepts/Overview.tsx"
-  },
-  "PropPatterns": {
-    "propsRows": [
-      {
-        "prop": "`preset`",
-        "type": "",
-        "default": "",
-        "description": ""
-      },
-      {
-        "prop": "`sx`",
-        "type": "",
-        "default": "",
-        "description": ""
-      },
-      {
-        "prop": "`size`",
-        "type": "",
-        "default": "",
-        "description": ""
-      },
-      {
-        "prop": "`variant`",
-        "type": "",
-        "default": "",
-        "description": ""
-      },
-      {
-        "prop": "`color`",
-        "type": "",
-        "default": "",
-        "description": ""
-      },
-      {
-        "prop": "`fullWidth`",
-        "type": "",
-        "default": "",
-        "description": ""
-      },
-      {
-        "prop": "`compact`",
-        "type": "",
-        "default": "",
-        "description": ""
-      },
-      {
-        "prop": "`centerContent`",
-        "type": "",
-        "default": "",
-        "description": ""
-      },
-      {
-        "prop": "`alignX`",
-        "type": "",
-        "default": "",
-        "description": ""
-      },
-      {
-        "prop": "`density`",
-        "type": "",
-        "default": "",
-        "description": ""
-      },
-      {
-        "prop": "`open`",
-        "type": "",
-        "default": "",
-        "description": ""
-      },
-      {
-        "prop": "`constrainHeight`",
-        "type": "",
-        "default": "",
-        "description": ""
-      },
-      {
-        "prop": "`value`",
-        "type": "",
-        "default": "",
-        "description": ""
-      },
-      {
-        "prop": "`orientation`",
-        "type": "",
-        "default": "",
-        "description": ""
-      }
-    ],
-    "examples": [],
-    "bestPractices": [],
-    "docsUrl": "/concepts/PropPatterns",
-    "sourceFile": "docs/src/pages/concepts/PropPatterns.tsx"
-  },
-  "Quickstart": {
-    "propsRows": [],
-    "examples": [
-      {
-        "id": "quickstart-example-1",
-        "code": "npm create vite@latest my-app -- --template react-ts",
-        "lang": "tsx",
-        "source": {
-          "file": "/home/xbenc/occ/valet/docs/src/pages/concepts/Quickstart.tsx"
-        }
-      },
-      {
-        "id": "quickstart-example-2",
-        "code": "cd my-app && npm install @archway/valet",
-        "lang": "tsx",
-        "source": {
-          "file": "/home/xbenc/occ/valet/docs/src/pages/concepts/Quickstart.tsx"
-        }
-      },
-      {
-        "id": "quickstart-example-3",
-        "code": "// src/main.tsx\nimport React from 'react';\nimport ReactDOM from 'react-dom/client';\nimport { BrowserRouter } from 'react-router-dom';\nimport './presets/globalPresets';   // import your preset registry\nimport { App } from './App';\n\nReactDOM.createRoot(document.getElementById('root')!).render(\n  <React.StrictMode>\n    <BrowserRouter>\n      <App />\n    </BrowserRouter>\n  </React.StrictMode>,\n);\n",
-        "lang": "tsx",
-        "source": {
-          "file": "/home/xbenc/occ/valet/docs/src/pages/concepts/Quickstart.tsx"
-        }
-      },
-      {
-        "id": "quickstart-example-4",
-        "code": "// src/App.tsx\n  import { useInitialTheme } from '@archway/valet';\n  import brandonUrl from './assets/fonts/BrandonGrotesque.otf';\n  \n  export function App() {\n    useInitialTheme(\n      {\n        fonts: {\n          heading: { name: 'Brandon', src: brandonUrl },\n          body: 'Cabin',\n          mono: 'Ubuntu Mono',\n          button: 'Ubuntu',\n        },\n      },\n      [{ name: 'Brandon', src: brandonUrl }, 'Ubuntu', 'Ubuntu Mono', 'Cabin'],\n    );\n    // ...\n  }\n  ",
-        "lang": "tsx",
-        "source": {
-          "file": "/home/xbenc/occ/valet/docs/src/pages/concepts/Quickstart.tsx"
-        }
-      },
-      {
-        "id": "quickstart-example-5",
-        "code": "import { Routes, Route } from 'react-router-dom';\n  import { Surface, Stack, Typography, Button } from '@archway/valet';\n  \n  function Home() {\n    return (\n      <Surface>\n        <Stack gap={2} sx={{ padding: '1.5rem' }}>\n          <Typography variant=\"h2\">Hello, valet</Typography>\n          <Button variant=\"primary\">Click me</Button>\n        </Stack>\n      </Surface>\n    );\n  }\n  \n  export function App() {\n    return (\n      <Routes>\n        <Route path=\"/\" element={<Home />} />\n      </Routes>\n    );\n  }\n  ",
-        "lang": "tsx",
-        "source": {
-          "file": "/home/xbenc/occ/valet/docs/src/pages/concepts/Quickstart.tsx"
-        }
-      }
-    ],
-    "bestPractices": [],
-    "docsUrl": "/concepts/Quickstart",
-    "sourceFile": "docs/src/pages/concepts/Quickstart.tsx"
   }
 }
