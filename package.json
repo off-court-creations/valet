@@ -52,7 +52,9 @@
     "mcp:server:start": "cd servers/valet-mcp && npm run start",
     "mcp:server:link": "cd servers/valet-mcp && npm link",
     "mcp:server:publish": "npm run mcp:build && cd servers/valet-mcp && npm publish --access public",
-    "mcp:server:publish:patch": "npm run mcp:build && cd servers/valet-mcp && npm version patch --no-git-tag-version && npm publish --access public"
+    "mcp:server:publish:patch": "npm run mcp:build && cd servers/valet-mcp && npm version patch --no-git-tag-version && npm publish --access public",
+    "mcp:server:publish:minor": "npm run mcp:build && cd servers/valet-mcp && npm version minor --no-git-tag-version && npm publish --access public",
+    "mcp:server:publish:major": "npm run mcp:build && cd servers/valet-mcp && npm version major --no-git-tag-version && npm publish --access public"
   },
   "dependencies": {
     "@iconify/react": "^6.0.0",

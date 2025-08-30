@@ -99,18 +99,15 @@ React 19.x setup.
 
 Note: To publish a data‑only MCP version, run:
 
-```
-- npm run mcp:build
-- npm run mcp:server:selfcheck
-- npm run mcp:server:publish:patch
+```shell
+npm run mcp:build
 
-About bundling: you do not need to run a separate “bundle data” step in normal flows. The MCP server packages the current root `mcp-data/` at publish time via its `prepublishOnly` hook. If you want to verify the server using its locally bundled copy before publishing, you can run inside `servers/valet-mcp`:
+# Check version during publish
 
-```
-cd servers/valet-mcp
-npm run bundle:data
-npm run selfcheck
-```
+# cd servers/valet-mcp
+# npm run bundle:data
+# npm run selfcheck
+# cd ../..
 
-The top‑level `mcp:server:selfcheck` already points to the root `mcp-data/`, so it will always reflect your latest `npm run mcp:build` output.
+npm run mcp:server:publish:patch
 ```
