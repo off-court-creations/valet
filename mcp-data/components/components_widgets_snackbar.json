@@ -72,6 +72,6 @@
     "src/components/widgets/Snackbar.tsx",
     "docs/src/pages/components/widgets/SnackbarDemo.tsx"
   ],
-  "version": "0.30.1",
+  "version": "0.30.2",
   "schemaVersion": "1.1"
 }
