@@ -82,6 +82,6 @@
     "src/components/fields/MetroSelect.tsx",
     "docs/src/pages/components/field/MetroSelectDemo.tsx"
   ],
-  "version": "0.30.4",
+  "version": "0.30.5",
   "schemaVersion": "1.2"
 }

@@ -75,6 +75,6 @@
     "src/components/fields/IconButton.tsx",
     "docs/src/pages/components/field/IconButtonDemoPage.tsx"
   ],
-  "version": "0.30.4",
+  "version": "0.30.5",
   "schemaVersion": "1.2"
 }

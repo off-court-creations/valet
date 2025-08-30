@@ -63,6 +63,6 @@
     "src/components/layout/AppBar.tsx",
     "docs/src/pages/components/layout/AppBarDemo.tsx"
   ],
-  "version": "0.30.4",
+  "version": "0.30.5",
   "schemaVersion": "1.2"
 }

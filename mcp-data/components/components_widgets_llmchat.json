@@ -101,6 +101,6 @@
     "src/components/widgets/LLMChat.tsx",
     "docs/src/pages/components/widgets/LLMChat.tsx"
   ],
-  "version": "0.30.4",
+  "version": "0.30.5",
   "schemaVersion": "1.2"
 }

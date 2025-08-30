@@ -60,6 +60,6 @@
     "src/components/primitives/Skeleton.tsx",
     "docs/src/pages/components/primitives/SkeletonDemo.tsx"
   ],
-  "version": "0.30.4",
+  "version": "0.30.5",
   "schemaVersion": "1.2"
 }

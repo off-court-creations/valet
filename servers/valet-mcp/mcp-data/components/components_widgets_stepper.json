@@ -57,6 +57,6 @@
     "src/components/widgets/Stepper.tsx",
     "docs/src/pages/components/widgets/StepperDemo.tsx"
   ],
-  "version": "0.30.4",
+  "version": "0.30.5",
   "schemaVersion": "1.2"
 }
