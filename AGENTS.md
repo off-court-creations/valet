@@ -21,6 +21,12 @@ Welcome to **@archway/valet**, a performant, AI-forward UI library designed as a
 - **Web Action Graph** capturing interactions for introspection and adaptation.
 - **Integrated AI-centric architecture** that unifies semantics, state, and actions.
 
+## MCP Era Quickstart (valet-mcp)
+
+You have access to the valet MCP. Use it whenever you are building UI with valet to search components, inspect typed props/defaults, and grab examples.
+
+See also the detailed MCP guide in docs at `docs/src/pages/concepts/MCP.tsx`.
+
 ## NPM Scripts and Agent Testing Behavior
 
 Before finishing your task, if you made changes to the code, ensure the following in order:
@@ -38,7 +44,7 @@ valet
 
 ## MCP: Valet Introspection (for @openai/codex)
 
-This repo ships a Model Context Protocol (MCP) data pipeline and server exposing structured metadata for valet components. When running inside an @openai/codex setup that has the valet MCP wired in, agents can call dedicated valet introspection tools to discover components, props, examples, and best practices.
+This repo ships a Model Context Protocol (MCP) data pipeline and server exposing structured metadata for valet components. When running inside an agentic setup that has the valet MCP wired in, agents can call dedicated valet introspection tools to discover components, props, examples, and best practices.
 
 What you get:
 
@@ -84,6 +90,16 @@ Notes:
 - The Codex harness may expose the introspection tools directly without the server; still keep `mcp-data/` up to date via `npm run mcp:build`.
 - Node ≥ 18 is required. This repo targets Node 20+ in practice; CI/dev here runs Node 22.
 - If `components` in selfcheck is 0, re-run `npm run mcp:build` and ensure docs and src are present.
+
+## End‑to‑End Flow (DX overview)
+
+- Scaffold component in `valet/src/components`, export from `valet/src/index.ts`.
+- Add examples + docs page; wire into docs navigation.
+- Link `@archway/valet` into docs and iterate locally with HMR.
+- Build MCP data (`mcp-data/`), self‑check, and (optionally) run local MCP server.
+- Point codex to local MCP (config.toml) and verify introspection.
+- Run lint/build gates (lib + docs), update CHANGELOG, version bump.
+- Publish valet; publish MCP server (if changed); tag and release.
 
 ## Coding Standards
 
@@ -184,66 +200,6 @@ Nested `<Surface>` components are disallowed.
 
 Tables respect available height by default. Their content scrolls inside the
 component rather than the page. Pass `constrainHeight={false}` to opt out.
-
-## Component Overview
-
-### Primitives
-
-- **Avatar** – Gravatar wrapper with custom image support.
-- **Divider** – theme‑aware separator; horizontal/vertical with precise thickness, colour, length, spacing.
-- **Icon** – wrapper around `@iconify/react` icons with size theming.
-- **Image** – responsive image with lazy loading.
-- **Progress** – linear or circular indicator supporting determinate/indeterminate.
-- **Skeleton** – adaptive loading placeholder (text/rect/circle), auto‑hides on content load.
-- **Typography** – semantic text variants with responsive sizes.
-- **Video** – multi‑source video with lazy loading, fullscreen, and captions.
-
-### Fields
-
-- **Button** – theme‑aware button with variants and sizes.
-- **Checkbox** – controlled/uncontrolled checkbox adhering to accessibility.
-- **DateSelector** – date picker with optional range mode.
-- **FormControl** – context provider wiring labels, errors, and disabled state.
-- **IconButton** – icon‑only button sharing Button theming.
-- **Iterator** – numeric stepper input.
-- **MetroSelect** – segmented switch for discrete choices.
-- **RadioGroup** – grouped radio inputs managed via FormControl.
-- **Select** – typed single or multi‑select input.
-- **Slider** – pointer and keyboard‑friendly value slider.
-- **Switch** – boolean toggle styled like a physical switch.
-- **TextField** – controlled text input integrating with FormControl.
-
-### Layout
-
-- **Accordion** – accessible expand/collapse container with composition API.
-- **AppBar** – responsive top navigation bar.
-- **Box** – baseline container handling background, text colour, and centring.
-- **Drawer** – sliding overlay panel with escape handling and backdrop.
-- **Grid** – CSS grid layout helper with gaps and spans.
-- **List** – simple list with optional drag/keyboard reordering.
-- **Modal** – accessible dialog component with optional backdrop.
-- **Panel** – lightweight container with `main` and `alt` variants.
-- **Stack** – flexbox‑based layout helper for consistent spacing.
-- **Surface** – top‑level wrapper applying theme backgrounds and breakpoints.
-- **Tabs** – grid‑based tab list with placement options.
-
-### Widgets
-
-- **CodeBlock** – syntax‑highlighted code with copy button and snackbar feedback.
-- **Dropzone** – file drag‑and‑drop area with previews.
-- **KeyModal** – overlay for capturing API keys.
-- **LLMChat** – conversation UI with OpenAI message format; optional height constraint.
-- **LoadingBackdrop** – fullscreen loading overlay for async operations.
-- **Markdown** – render Markdown text with valet primitives.
-- **Pagination** – page selector with first/last controls.
-- **Parallax** – scroll‑aware container for simple parallax effects.
-- **RichChat** – embeddable chat that supports custom JSX messages.
-- **Snackbar** – transient message bar with stacking.
-- **SpeedDial** – radial quick action menu.
-- **Stepper** – horizontal or vertical step progress indicator.
-- **Table** – sortable, selectable table with zebra and hover styling.
-- **Tooltip** – hover/focus tooltip with theme‑aware styling.
-- **Tree** – nested list with collapsible branches.
 
 ## Internal Files
 
