@@ -93,6 +93,7 @@ const treeData: TreeNode<Item>[] = [
     children: [
       { id: '/quickstart', data: { label: 'Quickstart', path: '/quickstart' } },
       { id: '/overview', data: { label: 'Overview', path: '/overview' } },
+      { id: '/mcp', data: { label: 'MCP & Introspection', path: '/mcp' } },
       {
         id: '/prop-patterns',
         data: { label: 'Prop Patterns', path: '/prop-patterns' },

@@ -143,43 +143,6 @@ export default function BoxDemoPage() {
           <Tabs.Tab label='Usage' />
           <Tabs.Panel>
             <Stack>
-              <Panel fullWidth>
-                <Typography variant='h4'>Best Practices</Typography>
-                <Typography>
-                  - Treat <code>Box</code> as the neutral building block: backgrounds, padding,
-                  and simple width anchoring. Use <code>Surface</code> for page‑level canvas and
-                  compose layouts with <code>Stack</code> and <code>Grid</code>.
-                </Typography>
-                <Typography>
-                  - Prefer theme tokens (<code>primary</code>, <code>secondary</code>,
-                  <code>tertiary</code>) to inherit correct contrast automatically. If you pass a
-                  custom colour to <code>background</code>, explicitly set <code>textColor</code>
-                  to preserve accessibility.
-                </Typography>
-                <Typography>
-                  - Reach for <code>Panel</code> when you need separation (borders, elevation).
-                  Keep <code>Box</code> visually minimal so the theme does the heavy lifting.
-                </Typography>
-                <Typography>
-                  - Use spacing tokens: prefer numeric <code>pad</code> values over hardcoded
-                  CSS so density matches the spacing contract across components.
-                </Typography>
-                <Typography>
-                  - Align purposefully: use <code>alignX</code> and <code>fullWidth</code> for
-                  placement; avoid deprecated <code>centered</code>.
-                </Typography>
-                <Typography>
-                  - Reuse styles via <code>preset</code> (<code>definePreset()</code>) instead of
-                  duplicating <code>sx</code>.
-                </Typography>
-                <Typography>
-                  - When Box represents a semantic region, add appropriate roles/labels (e.g.,
-                  <code>role="region"</code>, <code>aria-label</code>) via DOM passthrough.
-                </Typography>
-              </Panel>
-
-              <Divider />
-
               <Typography variant='h3'>Default Box</Typography>
               <Box>
                 <Typography>
@@ -479,6 +442,41 @@ export default function BoxDemoPage() {
             />
           </Tabs.Panel>
         </Tabs>
+        {/* Best Practices ------------------------------------------------- */}
+        <Panel fullWidth>
+          <Typography variant='h4'>Best Practices</Typography>
+          <Typography>
+            - Treat <code>Box</code> as the neutral building block: backgrounds, padding, and simple
+            width anchoring. Use <code>Surface</code> for page‑level canvas and compose layouts with
+            <code> Stack</code> and <code>Grid</code>.
+          </Typography>
+          <Typography>
+            - Prefer theme tokens (<code>primary</code>, <code>secondary</code>,
+            <code> tertiary</code>) to inherit correct contrast automatically. If you pass a custom
+            colour to <code>background</code>, explicitly set <code>textColor</code> to preserve
+            accessibility.
+          </Typography>
+          <Typography>
+            - Reach for <code>Panel</code> when you need separation (borders, elevation). Keep
+            <code> Box</code> visually minimal so the theme does the heavy lifting.
+          </Typography>
+          <Typography>
+            - Use spacing tokens: prefer numeric <code>pad</code> values over hardcoded CSS so
+            density matches the spacing contract across components.
+          </Typography>
+          <Typography>
+            - Align purposefully: use <code>alignX</code> and <code>fullWidth</code> for placement;
+            avoid deprecated <code>centered</code>.
+          </Typography>
+          <Typography>
+            - Reuse styles via <code>preset</code> (<code>definePreset()</code>) instead of
+            duplicating <code>sx</code>.
+          </Typography>
+          <Typography>
+            - When Box represents a semantic region, add appropriate roles/labels (e.g.,
+            <code> role=&quot;region&quot;</code>, <code>aria-label</code>) via DOM passthrough.
+          </Typography>
+        </Panel>
       </Stack>
     </Surface>
   );

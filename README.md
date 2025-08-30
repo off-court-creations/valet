@@ -33,6 +33,39 @@ npm link @archway/valet
 npm run dev
 ```
 
+### MCP
+
+We offer an expirimental MCP. Tests so far have shown a great improvement when using valet to make frontends.
+
+Install with:
+
+```shell
+npm i -g @archway/valet-mcp
+```
+
+#### `@openai/codex` MCP setup
+
+in your `config.toml` append:
+
+```toml
+[mcp_servers.valet]
+command = "valet-mcp"
+args = []
+```
+
+> This works in the home level config and the project level config
+
+#### Example `AGENTS.md` inclusion for the MCP
+
+```md
+## valet-mcp
+
+You have access to the valet-mcp MCP! 
+Use this when you are making front ends or dealing with UI.
+You can use it to search, find reference, and get examples.
+Whenever you use or add a valet component, use the MCP to ensure that you got the prop usage correct!
+```
+
 ## Contributing
 
 We welcome issues and pull requests. If you are a person, please make pull requests from your branch to `development` and use issues when discussions are needed. Please read `AGENTS.md` if you are an AI, agent, NLP, bot, or scraper. Humans may find the document insightful as well. Use the standard GitHub workflow at [valet issues](https://github.com/off-court-creations/valet/issues).
