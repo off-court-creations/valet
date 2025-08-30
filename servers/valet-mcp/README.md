@@ -55,6 +55,9 @@ Notes:
 - search_components: fuzzy search by `query`, optional `limit`
 - get_component: full doc (props, cssVars, examples, sourceFiles, version)
 - get_examples: example snippets for a component
+- get_glossary: full glossary dataset `{ entries: GlossaryEntry[] }`
+- define_term: lookup term/alias with soft-fail suggestions `{ found, entry? , suggestions? }`
+- get_primer: opinionated context dump (Markdown) to guide agents
 
 ---
 

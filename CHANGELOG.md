@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+- MCP: Add glossary pipeline and tools. New docs page at `/glossary` powers `glossary.json` via `scripts/mcp/extract-glossary.mjs`; server exposes `get_glossary` and `define_term` (soft-fail suggestions).
+- MCP: Add hardcoded `get_primer` tool and resources to guide agents on ethos, patterns, and recommended flows; selfcheck now reports `glossaryEntries` and `hasPrimer`.
+
 ## [0.30.4]
 - docs: add Best Practices sections for Surface, Styled Engine, and Theme concept pages; plus AppBar, Stack, and Drawer component demos for consistent guidance.
 - docs: add Best Practices sections for Pagination, Snackbar, and RadioGroup demos to strengthen accessibility, motion, and state guidance.

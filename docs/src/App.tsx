@@ -76,6 +76,7 @@ const PropPatternsPage = page(() => import('./pages/concepts/PropPatterns'));
 const ComplicatedDashboardPage = page(() => import('./pages/examples/ComplicatedDashboard'));
 const SpacingContractPage = page(() => import('./pages/concepts/SpacingContract'));
 const MCPGuidePage = page(() => import('./pages/concepts/MCP'));
+const GlossaryPage = page(() => import('./pages/concepts/Glossary'));
 
 /*───────────────────────────────────────────────────────────*/
 export function App() {
@@ -121,6 +122,10 @@ export function App() {
         <Route
           path='/mcp'
           element={<MCPGuidePage />}
+        />
+        <Route
+          path='/glossary'
+          element={<GlossaryPage />}
         />
 
         <Route

@@ -3,8 +3,9 @@ import path from 'path';
 import crypto from 'crypto';
 import { extractFromTs } from './extract-ts.mjs';
 import { extractFromDocs } from './extract-docs.mjs';
+import { extractGlossary } from './extract-glossary.mjs';
 
-const SCHEMA_VERSION = '1.1';
+const SCHEMA_VERSION = '1.2';
 
 function merge(tsMap, docsMap, version) {
   /** @type {Record<string, any>} */
@@ -136,6 +137,14 @@ function main() {
     .digest('hex');
   const meta = { version, builtAt: new Date().toISOString(), schemaVersion: SCHEMA_VERSION, buildHash: hash };
   fs.writeFileSync(path.join(outDir, '_meta.json'), JSON.stringify(meta, null, 2));
+
+  // Glossary
+  try {
+    const glossary = extractGlossary(root);
+    fs.writeFileSync(path.join(outDir, 'glossary.json'), JSON.stringify({ entries: glossary, version, builtAt: meta.builtAt }, null, 2));
+  } catch (e) {
+    console.warn('Glossary extraction error:', e.message);
+  }
 
   console.log(`MCP data written to ${outDir}`);
 }

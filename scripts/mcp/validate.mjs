@@ -51,11 +51,97 @@ function main() {
       warnings++;
     }
   }
+  // Glossary validation (optional)
+  let glossaryEntries = 0;
+  try {
+    const glossaryPath = path.join(dir, 'glossary.json');
+    if (!fs.existsSync(glossaryPath)) {
+      console.warn('[warn] glossary.json missing');
+      warnings++;
+    } else {
+      const g = readJSON(glossaryPath);
+      const entries = Array.isArray(g.entries) ? g.entries : [];
+      glossaryEntries = entries.length;
+      if (!Array.isArray(g.entries)) {
+        console.error('[error] glossary.json: entries must be an array');
+        errors++;
+      } else {
+        const termSet = new Set();
+        const allTermsLower = new Set();
+        for (const e of entries) {
+          if (!e || typeof e.term !== 'string' || !e.term.trim()) {
+            console.error('[error] glossary entry missing term');
+            errors++;
+            continue;
+          }
+          if (!e.definition || typeof e.definition !== 'string' || !e.definition.trim()) {
+            console.error(`[error] glossary ${e.term}: missing definition`);
+            errors++;
+          }
+          const key = e.term.trim().toLowerCase();
+          if (allTermsLower.has(key)) {
+            console.error(`[error] glossary duplicate term: ${e.term}`);
+            errors++;
+          }
+          termSet.add(e.term);
+          allTermsLower.add(key);
+          if (e.aliases && !Array.isArray(e.aliases)) {
+            console.error(`[error] glossary ${e.term}: aliases must be an array`);
+            errors++;
+          }
+          if (Array.isArray(e.aliases)) {
+            const aliasSet = new Set();
+            for (const a of e.aliases) {
+              if (typeof a !== 'string' || !a.trim()) {
+                console.error(`[error] glossary ${e.term}: invalid alias value`);
+                errors++;
+                continue;
+              }
+              if (aliasSet.has(a.toLowerCase())) {
+                console.warn(`[warn] glossary ${e.term}: duplicate alias '${a}'`);
+                warnings++;
+              }
+              aliasSet.add(a.toLowerCase());
+              if (allTermsLower.has(a.toLowerCase()) && a.toLowerCase() !== key) {
+                console.warn(`[warn] glossary ${e.term}: alias '${a}' conflicts with another term`);
+                warnings++;
+              }
+            }
+          }
+          if (e.seeAlso && !Array.isArray(e.seeAlso)) {
+            console.error(`[error] glossary ${e.term}: seeAlso must be an array`);
+            errors++;
+          }
+        }
+        // Validate seeAlso references if possible
+        for (const e of entries) {
+          if (!Array.isArray(e.seeAlso)) continue;
+          for (const ref of e.seeAlso) {
+            if (typeof ref !== 'string') continue;
+            if (!termSet.has(ref)) {
+              console.warn(`[warn] glossary ${e.term}: seeAlso '${ref}' not found`);
+              warnings++;
+            }
+          }
+        }
+        // Check sorted order (optional warn)
+        const sorted = [...entries].map((x) => x.term).sort((a, b) => a.localeCompare(b));
+        const actual = entries.map((x) => x.term);
+        if (sorted.join('\n') !== actual.join('\n')) {
+          console.warn('[warn] glossary entries not sorted by term');
+          warnings++;
+        }
+      }
+    }
+  } catch (e) {
+    console.error('[error] glossary validation failed:', e.message);
+    errors++;
+  }
+
   const ok = errors === 0;
-  const summary = { ok, errors, warnings, components: idx.length, schemaVersion: meta.schemaVersion, buildHash: meta.buildHash };
+  const summary = { ok, errors, warnings, components: idx.length, schemaVersion: meta.schemaVersion, buildHash: meta.buildHash, glossaryEntries };
   console.log(JSON.stringify(summary, null, 2));
   process.exit(ok ? 0 : 1);
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) main();
-

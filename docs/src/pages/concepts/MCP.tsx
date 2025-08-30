@@ -90,7 +90,10 @@ args = []`}
           Once registered, your agent gains tools like <code>valet__list_components</code>,
           <code> valet__search_components</code>, <code>valet__get_component</code>, and
           <code> valet__get_examples</code>. Ask it to list primitives, inspect props for
-          <code> Table</code>, or fetch examples for <code>Tooltip</code>.
+          <code> Table</code>, or fetch examples for <code>Tooltip</code>. New: use{' '}
+          <code>valet__get_glossary</code> to fetch all terms or
+          <code> valet__define_term</code> to look up a definition. Start every session with
+          <code> valet__get_primer</code> to align on valet’s expectations.
         </Typography>
 
         <Typography
