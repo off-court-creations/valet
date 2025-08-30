@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.30.2]
+- Updated AGENTS.md and the docs to represent the changes and upgrades to `@archway/valet-mcp`!
+
 ## [0.30.1]
 - `Tabs`: switch overflow behavior to single-row horizontal scroll with edge fade indicators; removes multi-row wrapping when tab strip exceeds width. Improves discoverability with a subtle gradient implying more content.
 - `Tabs`: drag-to-scroll with mouse when the tab strip overflows horizontally; vertical mouse wheel converts to horizontal scroll for usability.
