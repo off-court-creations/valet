@@ -102,7 +102,10 @@
     "Use `multiple` only when necessary and present selections clearly. Consider `size` and a minimum width ( `` ) to avoid layout jump.",
     "Prefer `RadioGroup` for a small, mutually exclusive set and `Checkbox` es for a small multi‑select; reserve `Select` for larger sets.",
     "Provide a helpful `placeholder` when no value is selected. Persist value types (string/number) consistently across your app.",
-    "When using `FormControl` , set a stable `name` , and avoid mixing primitive types within the same field."
+    "When using `FormControl` , set a stable `name` , and avoid mixing primitive types within the same field.",
+    "Accessibility: ensure the field has a programmatic label (visible caption or `aria-label` ). Keyboard users should be able to focus and select without a mouse.",
+    "Performance: for large option sets, group options logically or load progressively instead of rendering hundreds of nodes at once.",
+    "Tokens/presets: size with `size` tokens or numbers and use a `preset` for visual variants so controls adapt to density and branding."
   ],
   "examples": [],
   "docsUrl": "/components/field/SelectDemo",
@@ -110,6 +113,6 @@
     "src/components/fields/Select.tsx",
     "docs/src/pages/components/field/SelectDemo.tsx"
   ],
-  "version": "0.30.3",
-  "schemaVersion": "1.1"
+  "version": "0.30.5",
+  "schemaVersion": "1.2"
 }

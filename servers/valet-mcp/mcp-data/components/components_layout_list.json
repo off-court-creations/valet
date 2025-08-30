@@ -115,13 +115,20 @@
       "name": "getSubtitle"
     }
   ],
-  "bestPractices": [],
+  "bestPractices": [
+    "Keep rows scannable. Use `getTitle` for the primary line and a concise `getSubtitle` for secondary details; avoid overloading rows with extra UI.",
+    "Choose selection deliberately. Enable `selectable` only when follow‑up actions operate on the active row. Keep selected state controlled if it syncs with app state.",
+    "Reorder with care. Turn `reorderable` on when order matters and persist via `onReorder` . Provide immediate visual feedback and avoid conflicting drag handles.",
+    "Respect touch/scroll ergonomics. The list locks touch scroll while reordering; avoid nesting it inside other scroll containers to prevent competing gestures.",
+    "Tokenize spacing. Use presets and theme spacing rather than per‑row inline styles so density and theming remain consistent across the app.",
+    "Large data sets. For very long lists, consider windowing/virtualization and defer heavy per‑row work until visible."
+  ],
   "examples": [],
   "docsUrl": "/components/layout/ListDemoPage",
   "sourceFiles": [
     "src/components/layout/List.tsx",
     "docs/src/pages/components/layout/ListDemoPage.tsx"
   ],
-  "version": "0.30.3",
-  "schemaVersion": "1.1"
+  "version": "0.30.5",
+  "schemaVersion": "1.2"
 }

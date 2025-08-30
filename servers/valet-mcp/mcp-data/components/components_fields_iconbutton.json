@@ -61,13 +61,20 @@
       "name": "svg"
     }
   ],
-  "bestPractices": [],
+  "bestPractices": [
+    "Provide an accessible name. Icon‑only buttons must include `aria-label` describing the action (e.g., 'Delete item', 'Play'). Avoid vague labels.",
+    "Pick variants by emphasis. Use `contained` for primary/high‑affordance actions and `outlined` for secondary/tertiary actions. Keep colour from theme tokens and avoid unbounded custom colours.",
+    "Size for touch. Use token sizes ( `'xs'` … `'xl'` ) or numbers to maintain comfortable targets on mobile.",
+    "Toggle semantics. When the button toggles state, add `aria-pressed` to reflect the current state; tooltips are optional and should not replace labels.",
+    "Choose `icon` vs `svg` deliberately. Prefer `icon` for Iconify glyphs; use `svg` only for custom/brand artwork. Do not pass both at once.",
+    "Keep ripple/motion subtle. Align custom presets with the theme’s motion tokens for a cohesive feel."
+  ],
   "examples": [],
   "docsUrl": "/components/field/IconButtonDemoPage",
   "sourceFiles": [
     "src/components/fields/IconButton.tsx",
     "docs/src/pages/components/field/IconButtonDemoPage.tsx"
   ],
-  "version": "0.30.3",
-  "schemaVersion": "1.1"
+  "version": "0.30.5",
+  "schemaVersion": "1.2"
 }

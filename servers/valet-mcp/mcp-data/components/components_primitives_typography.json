@@ -119,13 +119,20 @@
   "events": [],
   "actions": [],
   "slots": [],
-  "bestPractices": [],
+  "bestPractices": [
+    "Match semantics to variants. Heading variants render semantic `h1–h6` elements; keep heading levels hierarchical and avoid skipping from `h1` to `h4` , etc. Prefer a single `h1` per page view.",
+    "Use tokens, not pixels. Prefer `autoSize` , `scale` , and theme typography tokens over hard‑coded `fontSize` so type adapts to density and breakpoints.",
+    "Choose families from the theme. Use `family` (heading/body/mono/button) or define fonts via `useInitialTheme` ; only use `fontFamily` overrides for special cases.",
+    "Maintain contrast. Set `color` via theme tokens or surrounding containers ( `Panel` ) to ensure accessible contrast in light/dark modes.",
+    "Don’t fake interactivity. Avoid attaching click handlers to Typography to mimic buttons/links; wrap it in `Button` or `<a>` for correct semantics and focus behaviour.",
+    "Whitespace control. Use `whitespace` and `noSelect` for code, labels, and UI text to keep wrapping and selection intentional."
+  ],
   "examples": [],
   "docsUrl": "/components/primitives/TypographyDemoPage",
   "sourceFiles": [
     "src/components/primitives/Typography.tsx",
     "docs/src/pages/components/primitives/TypographyDemoPage.tsx"
   ],
-  "version": "0.30.3",
-  "schemaVersion": "1.1"
+  "version": "0.30.5",
+  "schemaVersion": "1.2"
 }

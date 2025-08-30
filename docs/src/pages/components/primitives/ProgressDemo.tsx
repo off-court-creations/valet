@@ -15,6 +15,7 @@ import {
   Slider,
   Progress,
   useTheme,
+  Panel,
 } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
@@ -170,6 +171,38 @@ export default function ProgressDemoPage() {
         >
           ← Back
         </Button>
+
+        {/* Best Practices -------------------------------------------------- */}
+        <Panel fullWidth>
+          <Typography variant='h4'>Best Practices</Typography>
+          <Typography>
+            - Choose the right mode. Use <code>determinate</code> when you know progress,{' '}
+            <code>indeterminate</code> for unknown durations, and <code>buffer</code> when
+            prefetching or streaming.
+          </Typography>
+          <Typography>
+            - Provide context. Pair progress with nearby text (e.g., &quot;Uploading…&quot; or
+            &quot;Step 2 of 3&quot;). For circular, consider <code>showLabel</code> when exact
+            values add clarity.
+          </Typography>
+          <Typography>
+            - Don’t spin forever. If indeterminate lasts more than a few seconds, provide a fallback
+            (cancel, retry) or switch to determinate as soon as you can estimate progress.
+          </Typography>
+          <Typography>
+            - Respect accessibility. The component sets <code>role=&quot;progressbar&quot;</code>{' '}
+            and ARIA values; you can associate additional text via <code>aria-label</code> or
+            <code> aria-describedby</code> on the wrapper.
+          </Typography>
+          <Typography>
+            - Colour & size with tokens. Use theme colours to convey status (e.g.,
+            <code> error</code> for failures) and size via tokens/numbers to fit the context.
+          </Typography>
+          <Typography>
+            - Don’t block the page. Keep progress close to the affected region and allow unrelated
+            interactions when possible.
+          </Typography>
+        </Panel>
       </Stack>
     </Surface>
   );

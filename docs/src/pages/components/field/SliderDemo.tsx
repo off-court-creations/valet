@@ -5,7 +5,17 @@
 // – Removed: preset-styling showcase (simplifies demo focus)
 // ─────────────────────────────────────────────────────────────────────────────
 import { useState } from 'react';
-import { Surface, Stack, Typography, Button, Slider, useTheme, Tabs, Table } from '@archway/valet';
+import {
+  Surface,
+  Stack,
+  Typography,
+  Button,
+  Slider,
+  useTheme,
+  Tabs,
+  Table,
+  Panel,
+} from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import NavDrawer from '../../../components/NavDrawer';
@@ -276,6 +286,41 @@ export default function SliderDemoPage() {
             />
           </Tabs.Panel>
         </Tabs>
+
+        {/* Best Practices -------------------------------------------------- */}
+        <Panel fullWidth>
+          <Typography variant='h4'>Best Practices</Typography>
+          <Typography>
+            - Use Slider for continuous ranges. For a handful of discrete options, prefer
+            <code> RadioGroup</code> (single‑select) or <code>Select</code>.
+          </Typography>
+          <Typography>
+            - Declare real bounds. Set <code>min</code>/<code>max</code> to meaningful limits and
+            show context with <code>showMinMax</code> and/or <code>showValue</code>.
+          </Typography>
+          <Typography>
+            - Snap intentionally. Use <code>step</code> or supply <code>presets</code> with
+            <code> snap=&apos;presets&apos;</code> to make targeting easy; adjust{' '}
+            <code>precision</code> to avoid jittery decimals.
+          </Typography>
+          <Typography>
+            - Keyboard precision. Arrow keys adjust by one step; ensure <code>step</code> is small
+            enough, and consider pairing with an <code>Iterator</code> or numeric input for exact
+            entry.
+          </Typography>
+          <Typography>
+            - Ticks with purpose. Only enable <code>showTicks</code> when markers aid comprehension;
+            avoid dense, unreadable tick forests.
+          </Typography>
+          <Typography>
+            - Size for touch. Use <code>size</code> tokens or numbers to keep comfortable thumb and
+            track sizes; avoid tiny controls on mobile.
+          </Typography>
+          <Typography>
+            - Controlled effects. When controlled, debounce or batch expensive side‑effects in
+            <code> onChange</code> to keep sliding smooth.
+          </Typography>
+        </Panel>
       </Stack>
     </Surface>
   );

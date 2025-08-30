@@ -14,6 +14,7 @@ import {
   definePreset,
   Tabs,
   Table,
+  Panel,
 } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
@@ -289,6 +290,38 @@ export default function IconButtonDemoPage() {
         >
           ← Back
         </Button>
+
+        {/* Best Practices -------------------------------------------------- */}
+        <Panel fullWidth>
+          <Typography variant='h4'>Best Practices</Typography>
+          <Typography>
+            - Provide an accessible name. Icon‑only buttons must include <code>aria-label</code>
+            describing the action (e.g., &apos;Delete item&apos;, &apos;Play&apos;). Avoid vague
+            labels.
+          </Typography>
+          <Typography>
+            - Pick variants by emphasis. Use <code>contained</code> for primary/high‑affordance
+            actions and <code>outlined</code> for secondary/tertiary actions. Keep colour from theme
+            tokens and avoid unbounded custom colours.
+          </Typography>
+          <Typography>
+            - Size for touch. Use token sizes (<code>&apos;xs&apos;</code>…
+            <code>&apos;xl&apos;</code>) or numbers to maintain comfortable targets on mobile.
+          </Typography>
+          <Typography>
+            - Toggle semantics. When the button toggles state, add <code>aria-pressed</code> to
+            reflect the current state; tooltips are optional and should not replace labels.
+          </Typography>
+          <Typography>
+            - Choose <code>icon</code> vs <code>svg</code> deliberately. Prefer <code>icon</code>
+            for Iconify glyphs; use <code>svg</code> only for custom/brand artwork. Do not pass both
+            at once.
+          </Typography>
+          <Typography>
+            - Keep ripple/motion subtle. Align custom presets with the theme’s motion tokens for a
+            cohesive feel.
+          </Typography>
+        </Panel>
       </Stack>
     </Surface>
   );

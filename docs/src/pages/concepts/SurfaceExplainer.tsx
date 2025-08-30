@@ -46,6 +46,41 @@ export default function SurfaceExplainerPage() {
             {`</Surface>`}
           </Typography>
         </Panel>
+        {/* Best Practices -------------------------------------------------- */}
+        <Panel fullWidth>
+          <Typography variant='h4'>Best Practices</Typography>
+          <Typography>
+            - Use exactly one surface per route. Mount it at the highest level and never nest
+            surfaces so children can subscribe to a single store via <code>useSurface</code>.
+          </Typography>
+          <Typography>
+            - Prefer surface CSS variables over window APIs. Read
+            <code> --valet-screen-width</code> and <code>--valet-screen-height</code> in styles (or
+            query <code>useSurface</code>) instead of <code>window.innerWidth</code> to keep layout
+            deterministic and testable.
+          </Typography>
+          <Typography>
+            - Build on <code>createStyled</code>. Components made with <code>styled</code> register
+            automatically and expose <code>--valet-el-width</code> / <code>--valet-el-height</code>,
+            which the surface updates via ResizeObserver for responsive sizing without layout
+            thrash.
+          </Typography>
+          <Typography>
+            - Keep portalled overlays out of the registry. Drawers/Modals rendered outside the
+            surface root are intentionally not tracked to avoid unnecessary observers. Size them via
+            tokens and breakpoints, not child metrics.
+          </Typography>
+          <Typography>
+            - Respect height constraints. Tables are height‑aware by default; let their content
+            scroll inside the component. Only pass <code>{'constrainHeight={false}'}</code> when
+            page context requires full‑document scroll.
+          </Typography>
+          <Typography>
+            - Drive spacing and density with variables. Adjust <code>--valet-space</code>,
+            <code> --valet-radius</code>, and <code>--valet-stroke</code> on the surface to shift an
+            entire view without changing component code.
+          </Typography>
+        </Panel>
         <Button onClick={() => navigate(-1)}>← Back</Button>
       </Stack>
     </Surface>

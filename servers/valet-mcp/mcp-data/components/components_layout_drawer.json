@@ -92,11 +92,19 @@
       "name": "children"
     }
   ],
-  "bestPractices": [],
-  "examples": [],
-  "sourceFiles": [
-    "src/components/layout/Drawer.tsx"
+  "bestPractices": [
+    "Choose the right mode. Use `persistent` for primary navigation; use overlay drawers for transient tasks. Prefer `adaptive` so navigation docks in landscape and becomes a toggle in portrait.",
+    "Respect close affordances. Provide `onClose` for controlled drawers and keep backdrop/ESC enabled unless there is a strong reason to disable them.",
+    "Size with tokens. Set `size` in `rem` or via spacing so density changes keep proportions; avoid content-driven widths that cause reflow thrash.",
+    "Don’t manually offset for the AppBar. The drawer reads the current surface offset and adjusts itself (and persistent margins) automatically.",
+    "Keep content focused and scrollable. Put navigation and short lists inside; for long collections consider windowing/virtualization and offload heavy work from the drawer."
   ],
-  "version": "0.30.3",
-  "schemaVersion": "1.1"
+  "examples": [],
+  "docsUrl": "/components/layout/DrawerDemo",
+  "sourceFiles": [
+    "src/components/layout/Drawer.tsx",
+    "docs/src/pages/components/layout/DrawerDemo.tsx"
+  ],
+  "version": "0.30.5",
+  "schemaVersion": "1.2"
 }

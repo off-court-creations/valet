@@ -36,6 +36,6 @@
     "src/components/widgets/Markdown.tsx",
     "docs/src/pages/components/widgets/MarkdownDemo.tsx"
   ],
-  "version": "0.30.3",
-  "schemaVersion": "1.1"
+  "version": "0.30.5",
+  "schemaVersion": "1.2"
 }

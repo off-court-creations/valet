@@ -1,6 +1,6 @@
 {
   "name": "@archway/valet",
-  "version": "0.30.3",
+  "version": "0.30.5",
   "description": "valet is a CSS-in-JS engine, a UI component kit, and an accessibility layer that treats all humans and their AI proxies as first-class users.",
   "keywords": [
     "react",
@@ -48,11 +48,13 @@
     "mcp:schema:check": "node scripts/mcp/validate.mjs",
     "mcp:server:install": "cd servers/valet-mcp && npm install",
     "mcp:server:build": "cd servers/valet-mcp && npm run build",
-    "mcp:server:selfcheck": "cd servers/valet-mcp && npm run selfcheck",
+    "mcp:server:selfcheck": "cd servers/valet-mcp && VALET_MCP_DATA_DIR=../../mcp-data npm run selfcheck",
     "mcp:server:start": "cd servers/valet-mcp && npm run start",
     "mcp:server:link": "cd servers/valet-mcp && npm link",
     "mcp:server:publish": "npm run mcp:build && cd servers/valet-mcp && npm publish --access public",
-    "mcp:server:publish:patch": "npm run mcp:build && cd servers/valet-mcp && npm version patch --no-git-tag-version && npm publish --access public"
+    "mcp:server:publish:patch": "npm run mcp:build && cd servers/valet-mcp && npm version patch --no-git-tag-version && npm publish --access public",
+    "mcp:server:publish:minor": "npm run mcp:build && cd servers/valet-mcp && npm version minor --no-git-tag-version && npm publish --access public",
+    "mcp:server:publish:major": "npm run mcp:build && cd servers/valet-mcp && npm version major --no-git-tag-version && npm publish --access public"
   },
   "dependencies": {
     "@iconify/react": "^6.0.0",

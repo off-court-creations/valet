@@ -52,11 +52,20 @@
   "events": [],
   "actions": [],
   "slots": [],
-  "bestPractices": [],
-  "examples": [],
-  "sourceFiles": [
-    "src/components/primitives/Progress.tsx"
+  "bestPractices": [
+    "Choose the right mode. Use `determinate` when you know progress, `indeterminate` for unknown durations, and `buffer` when prefetching or streaming.",
+    "Provide context. Pair progress with nearby text (e.g., \"Uploading…\" or \"Step 2 of 3\"). For circular, consider `showLabel` when exact values add clarity.",
+    "Don’t spin forever. If indeterminate lasts more than a few seconds, provide a fallback (cancel, retry) or switch to determinate as soon as you can estimate progress.",
+    "Respect accessibility. The component sets `role=\"progressbar\"` and ARIA values; you can associate additional text via `aria-label` or `aria-describedby` on the wrapper.",
+    "Colour & size with tokens. Use theme colours to convey status (e.g., `error` for failures) and size via tokens/numbers to fit the context.",
+    "Don’t block the page. Keep progress close to the affected region and allow unrelated interactions when possible."
   ],
-  "version": "0.30.3",
-  "schemaVersion": "1.1"
+  "examples": [],
+  "docsUrl": "/components/primitives/ProgressDemo",
+  "sourceFiles": [
+    "src/components/primitives/Progress.tsx",
+    "docs/src/pages/components/primitives/ProgressDemo.tsx"
+  ],
+  "version": "0.30.5",
+  "schemaVersion": "1.2"
 }

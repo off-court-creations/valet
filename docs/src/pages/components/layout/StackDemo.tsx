@@ -2,7 +2,17 @@
 // src/pages/StackDemo.tsx | valet-docs
 // Showcase of Stack layout primitive
 // ─────────────────────────────────────────────────────────────
-import { Surface, Stack, Typography, Box, Button, Tabs, Table, useTheme } from '@archway/valet';
+import {
+  Surface,
+  Stack,
+  Typography,
+  Box,
+  Button,
+  Tabs,
+  Table,
+  Panel,
+  useTheme,
+} from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
@@ -115,6 +125,34 @@ export default function StackDemoPage() {
         >
           Toggle light / dark
         </Button>
+
+        {/* Best Practices ---------------------------------------------- */}
+        <Panel fullWidth>
+          <Typography variant='h4'>Best Practices</Typography>
+          <Typography>
+            - Use numeric <code>gap</code> with theme spacing. Prefer small integers (e.g.,
+            <code> 1</code>, <code>2</code>) so density changes propagate via
+            <code> theme.spacing</code>.
+          </Typography>
+          <Typography>
+            - Let rows wrap by default. <code>direction=&apos;row&apos;</code> enables wrapping
+            unless you set <code>wrap={false}</code>. This keeps content readable on narrow screens.
+          </Typography>
+          <Typography>
+            - Pad the container, not children. Use the <code>pad</code> prop for outer breathing
+            room and <code>gap</code> for inter-item rhythm; avoid ad‑hoc margins on each child.
+          </Typography>
+          <Typography>
+            - Control scroll intentionally. Stacks hide horizontal overflow; when nesting inside
+            constrained parents (e.g., <code>{'<Grid>'}</code>), tune
+            <code> --valet-stack-ov-y</code> and <code>--valet-stack-max-h</code> to prevent nested
+            scrollbars.
+          </Typography>
+          <Typography>
+            - Use <code>preset</code> for common layouts. Capture repeated alignment and spacing in
+            a preset to keep markup clean and consistent.
+          </Typography>
+        </Panel>
         <Button
           size='lg'
           onClick={() => navigate(-1)}

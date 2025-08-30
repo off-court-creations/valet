@@ -10,7 +10,7 @@
       {
         "prop": "`textColor`",
         "type": "`'primary' | 'secondary' | 'tertiary' | string`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Label colour override"
       },
       {
@@ -34,7 +34,7 @@
       {
         "prop": "`preset`",
         "type": "`string | string[]`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Apply style presets"
       }
     ],
@@ -57,19 +57,19 @@
       {
         "prop": "`name`",
         "type": "`string`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Unique field name"
       },
       {
         "prop": "`label`",
         "type": "`ReactNode`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Label text or element"
       },
       {
         "prop": "`checked`",
         "type": "`boolean`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Controlled checked state"
       },
       {
@@ -93,18 +93,26 @@
       {
         "prop": "`onChange`",
         "type": "`(checked: boolean, e: ChangeEvent<HTMLInputElement>) => void`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Change callback"
       },
       {
         "prop": "`preset`",
         "type": "`string | string[]`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Apply style presets"
       }
     ],
     "examples": [],
-    "bestPractices": [],
+    "bestPractices": [
+      "Use Checkbox for independent booleans. For mutually exclusive choices, prefer `RadioGroup` .",
+      "Always provide a clear label. The entire label should be clickable. In forms, set a stable `name` so values submit predictably.",
+      "Choose control model deliberately. Use `checked` / `onChange` when the value participates in app state; otherwise `defaultChecked` is fine for local forms.",
+      "Keep targets comfortable. Pick `size` tokens or numeric sizes that keep tap areas ≥ 40–48px in dense UIs.",
+      "Group with a visible question or caption when multiple checkboxes relate to one concept; don’t rely on proximity alone.",
+      "Disabled with context. If a checkbox is disabled, explain why nearby; avoid silently disabling without guidance.",
+      "Tokens/presets. Style with theme tokens and `preset` rather than ad‑hoc CSS to keep density and branding consistent."
+    ],
     "docsUrl": "/components/field/CheckBoxDemo",
     "sourceFile": "docs/src/pages/components/field/CheckBoxDemo.tsx"
   },
@@ -113,31 +121,31 @@
       {
         "prop": "`value`",
         "type": "`string`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Controlled ISO date value (YYYY-MM-DD)"
       },
       {
         "prop": "`defaultValue`",
         "type": "`string`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Initial uncontrolled value"
       },
       {
         "prop": "`onChange`",
         "type": "`(value: string) => void`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Fires when selection changes"
       },
       {
         "prop": "`name`",
         "type": "`string`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "FormControl field name"
       },
       {
         "prop": "`preset`",
         "type": "`string | string[]`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Apply style presets"
       },
       {
@@ -161,19 +169,19 @@
       {
         "prop": "`endValue`",
         "type": "`string`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Controlled end date when range is true"
       },
       {
         "prop": "`defaultEndValue`",
         "type": "`string`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Uncontrolled end date default"
       },
       {
         "prop": "`onRangeChange`",
         "type": "`(start: string, end: string) => void`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Fires when range selection changes"
       },
       {
@@ -217,30 +225,37 @@
       {
         "prop": "`icon`",
         "type": "`string`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Iconify name"
       },
       {
         "prop": "`svg`",
         "type": "`string | ReactElement`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Custom SVG content"
       },
       {
         "prop": "`iconColor`",
         "type": "`string`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Glyph colour override"
       },
       {
         "prop": "`preset`",
         "type": "`string | string[]`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Apply style presets"
       }
     ],
     "examples": [],
-    "bestPractices": [],
+    "bestPractices": [
+      "Provide an accessible name. Icon‑only buttons must include `aria-label` describing the action (e.g., 'Delete item', 'Play'). Avoid vague labels.",
+      "Pick variants by emphasis. Use `contained` for primary/high‑affordance actions and `outlined` for secondary/tertiary actions. Keep colour from theme tokens and avoid unbounded custom colours.",
+      "Size for touch. Use token sizes ( `'xs'` … `'xl'` ) or numbers to maintain comfortable targets on mobile.",
+      "Toggle semantics. When the button toggles state, add `aria-pressed` to reflect the current state; tooltips are optional and should not replace labels.",
+      "Choose `icon` vs `svg` deliberately. Prefer `icon` for Iconify glyphs; use `svg` only for custom/brand artwork. Do not pass both at once.",
+      "Keep ripple/motion subtle. Align custom presets with the theme’s motion tokens for a cohesive feel."
+    ],
     "docsUrl": "/components/field/IconButtonDemoPage",
     "sourceFile": "docs/src/pages/components/field/IconButtonDemoPage.tsx"
   },
@@ -249,7 +264,7 @@
       {
         "prop": "`value`",
         "type": "`number`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Controlled value"
       },
       {
@@ -261,25 +276,25 @@
       {
         "prop": "`onChange`",
         "type": "`(value: number) => void`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Change handler"
       },
       {
         "prop": "`name`",
         "type": "`string`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Form field name"
       },
       {
         "prop": "`min`",
         "type": "`number`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Minimum value"
       },
       {
         "prop": "`max`",
         "type": "`number`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Maximum value"
       },
       {
@@ -303,7 +318,7 @@
       {
         "prop": "`preset`",
         "type": "`string | string[]`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Apply style presets"
       }
     ],
@@ -317,13 +332,13 @@
       {
         "prop": "`value`",
         "type": "`string | number | (string | number)[]`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Controlled value (array when multiple)"
       },
       {
         "prop": "`defaultValue`",
         "type": "`string | number | (string | number)[]`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Uncontrolled initial value (array when multiple)"
       },
       {
@@ -341,19 +356,19 @@
       {
         "prop": "`onChange`",
         "type": "`(val: Primitive | Primitive[]) => void`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Change handler (array when multiple)"
       },
       {
         "prop": "`preset`",
         "type": "`string | string[]`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Apply style presets"
       },
       {
         "prop": "`children`",
         "type": "`React.ReactNode`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "MetroSelect.Option elements"
       }
     ],
@@ -367,19 +382,19 @@
       {
         "prop": "`value`",
         "type": "`string`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Controlled value"
       },
       {
         "prop": "`defaultValue`",
         "type": "`string`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Uncontrolled initial value"
       },
       {
         "prop": "`name`",
         "type": "`string`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Field name for forms"
       },
       {
@@ -397,24 +412,31 @@
       {
         "prop": "`spacing`",
         "type": "`number | string`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Gap between options"
       },
       {
         "prop": "`onChange`",
         "type": "`(val: string) => void`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Change handler"
       },
       {
         "prop": "`preset`",
         "type": "`string | string[]`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Apply style presets"
       }
     ],
     "examples": [],
-    "bestPractices": [],
+    "bestPractices": [
+      "Label the group clearly. Provide a visible prompt (e.g., a preceding `Typography` ) and ensure `name` is set so the group behaves as a single form field.",
+      "Choose controlled vs uncontrolled deliberately. Use `value` / `onChange` when the selection drives app state; otherwise, `defaultValue` is sufficient.",
+      "Align to available space. Use `row` for short option lists in wide layouts; prefer a column for long labels or narrow screens.",
+      "Keep targets comfortable. Use token sizes ( `'sm'` .. `'xl'` ) or numeric values to maintain touch targets ≥ 40–48px depending on density.",
+      "Avoid nesting interactive content inside labels. Keep each option’s label succinct and non-interactive so keyboard and screen reader navigation remain predictable.",
+      "Use presets for visual variants. Capture chip/pill styles with `definePreset` and apply via `preset` so branding and states stay consistent."
+    ],
     "docsUrl": "/components/field/RadioGroupDemo",
     "sourceFile": "docs/src/pages/components/field/RadioGroupDemo.tsx"
   },
@@ -423,19 +445,19 @@
       {
         "prop": "`value`",
         "type": "`string | number | (string | number)[]`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Controlled value"
       },
       {
         "prop": "`initialValue`",
         "type": "`string | number | (string | number)[]`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Uncontrolled initial value"
       },
       {
         "prop": "`onChange`",
         "type": "`(v: Primitive | Primitive[]) => void`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Change handler"
       },
       {
@@ -465,13 +487,13 @@
       {
         "prop": "`name`",
         "type": "`string`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Form field name"
       },
       {
         "prop": "`preset`",
         "type": "`string | string[]`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Apply style presets"
       }
     ],
@@ -482,7 +504,10 @@
       "Use `multiple` only when necessary and present selections clearly. Consider `size` and a minimum width ( `` ) to avoid layout jump.",
       "Prefer `RadioGroup` for a small, mutually exclusive set and `Checkbox` es for a small multi‑select; reserve `Select` for larger sets.",
       "Provide a helpful `placeholder` when no value is selected. Persist value types (string/number) consistently across your app.",
-      "When using `FormControl` , set a stable `name` , and avoid mixing primitive types within the same field."
+      "When using `FormControl` , set a stable `name` , and avoid mixing primitive types within the same field.",
+      "Accessibility: ensure the field has a programmatic label (visible caption or `aria-label` ). Keyboard users should be able to focus and select without a mouse.",
+      "Performance: for large option sets, group options logically or load progressively instead of rendering hundreds of nodes at once.",
+      "Tokens/presets: size with `size` tokens or numbers and use a `preset` for visual variants so controls adapt to density and branding."
     ],
     "docsUrl": "/components/field/SelectDemo",
     "sourceFile": "docs/src/pages/components/field/SelectDemo.tsx"
@@ -492,7 +517,7 @@
       {
         "prop": "`value`",
         "type": "`number`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Controlled value"
       },
       {
@@ -558,7 +583,7 @@
       {
         "prop": "`ticks`",
         "type": "`number[]`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Custom tick positions"
       },
       {
@@ -576,12 +601,20 @@
       {
         "prop": "`preset`",
         "type": "`string | string[]`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Apply style presets"
       }
     ],
     "examples": [],
-    "bestPractices": [],
+    "bestPractices": [
+      "Use Slider for continuous ranges. For a handful of discrete options, prefer `RadioGroup` (single‑select) or `Select` .",
+      "Declare real bounds. Set `min` / `max` to meaningful limits and show context with `showMinMax` and/or `showValue` .",
+      "Snap intentionally. Use `step` or supply `presets` with `snap='presets'` to make targeting easy; adjust `precision` to avoid jittery decimals.",
+      "Keyboard precision. Arrow keys adjust by one step; ensure `step` is small enough, and consider pairing with an `Iterator` or numeric input for exact entry.",
+      "Ticks with purpose. Only enable `showTicks` when markers aid comprehension; avoid dense, unreadable tick forests.",
+      "Size for touch. Use `size` tokens or numbers to keep comfortable thumb and track sizes; avoid tiny controls on mobile.",
+      "Controlled effects. When controlled, debounce or batch expensive side‑effects in `onChange` to keep sliding smooth."
+    ],
     "docsUrl": "/components/field/SliderDemo",
     "sourceFile": "docs/src/pages/components/field/SliderDemo.tsx"
   },
@@ -590,7 +623,7 @@
       {
         "prop": "`checked`",
         "type": "`boolean`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Controlled state"
       },
       {
@@ -602,13 +635,13 @@
       {
         "prop": "`onChange`",
         "type": "`(checked: boolean) => void`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "State change handler"
       },
       {
         "prop": "`name`",
         "type": "`string`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Form field name"
       },
       {
@@ -626,27 +659,47 @@
       {
         "prop": "`preset`",
         "type": "`string | string[]`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Apply style presets"
       }
     ],
     "examples": [],
-    "bestPractices": [],
+    "bestPractices": [
+      "Use Switch for immediate effects. Switch communicates an on/off state that applies instantly; for form submissions that save later, prefer `Checkbox` .",
+      "Always pair with a clear label. The label should describe the effect, not the control (e.g., 'Wi‑Fi' rather than 'Enable'). Set a stable `name` when used with `FormControl` .",
+      "Choose the control model deliberately. Use `checked` / `onChange` when the state drives app logic; otherwise `defaultChecked` is fine.",
+      "Maintain comfortable targets. Pick size tokens ( `'sm'` / `'md'` / `'lg'` ) that keep tap areas ~40–48px in dense UIs.",
+      "Accessible semantics. Switch exposes `role=\"switch\"` and `aria-checked` ; do not rely on colour alone to convey state.",
+      "Motion and theme. Let default motion and colours come from the theme; keep overrides in presets to stay consistent with the rest of the UI."
+    ],
     "docsUrl": "/components/field/SwitchDemo",
     "sourceFile": "docs/src/pages/components/field/SwitchDemo.tsx"
+  },
+  "AppBar": {
+    "propsRows": [],
+    "examples": [],
+    "bestPractices": [
+      "Use a single AppBar per route. It registers with the current `` and automatically offsets content; avoid adding manual top padding/margins.",
+      "Prefer tokens and presets. Set `color` to `'primary'` , `'secondary'` , or `'tertiary'` and adjust spacing via the `pad` prop using `theme.spacing` . Use `preset` to standardize variants.",
+      "Keep slot content purposeful. Place brand/navigation in `left` and primary actions in `right` . For icon-only controls, provide `aria-label` for accessibility.",
+      "Avoid fixed heights. Let padding and typography define height so the AppBar adapts to density, fonts, and breakpoints without magic numbers.",
+      "Mind stacking contexts. The AppBar is portalled to `document.body` with a high z-index. Avoid creating local stacking contexts that unintentionally cover it."
+    ],
+    "docsUrl": "/components/layout/AppBarDemo",
+    "sourceFile": "docs/src/pages/components/layout/AppBarDemo.tsx"
   },
   "Box": {
     "propsRows": [
       {
         "prop": "`background`",
         "type": "`string`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Background colour override. When set to a theme tone (primary/secondary/tertiary), text colour is derived automatically."
       },
       {
         "prop": "`textColor`",
         "type": "`string`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Explicit text colour"
       },
       {
@@ -682,14 +735,8 @@
       {
         "prop": "`preset`",
         "type": "`string | string[]`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Apply style presets"
-      },
-      {
-        "prop": "`HTML div props`",
-        "type": "`React.ComponentProps<'div'>`",
-        "default": "`-`",
-        "description": ""
       }
     ],
     "examples": [
@@ -733,6 +780,19 @@
     "docsUrl": "/components/layout/BoxDemo",
     "sourceFile": "docs/src/pages/components/layout/BoxDemo.tsx"
   },
+  "Drawer": {
+    "propsRows": [],
+    "examples": [],
+    "bestPractices": [
+      "Choose the right mode. Use `persistent` for primary navigation; use overlay drawers for transient tasks. Prefer `adaptive` so navigation docks in landscape and becomes a toggle in portrait.",
+      "Respect close affordances. Provide `onClose` for controlled drawers and keep backdrop/ESC enabled unless there is a strong reason to disable them.",
+      "Size with tokens. Set `size` in `rem` or via spacing so density changes keep proportions; avoid content-driven widths that cause reflow thrash.",
+      "Don’t manually offset for the AppBar. The drawer reads the current surface offset and adjusts itself (and persistent margins) automatically.",
+      "Keep content focused and scrollable. Put navigation and short lists inside; for long collections consider windowing/virtualization and offload heavy work from the drawer."
+    ],
+    "docsUrl": "/components/layout/DrawerDemo",
+    "sourceFile": "docs/src/pages/components/layout/DrawerDemo.tsx"
+  },
   "Grid": {
     "propsRows": [
       {
@@ -768,14 +828,8 @@
       {
         "prop": "`preset`",
         "type": "`string | string[]`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Apply style presets via definePreset/preset registry."
-      },
-      {
-        "prop": "`HTML div props`",
-        "type": "`React.ComponentProps<'div'>`",
-        "default": "`-`",
-        "description": ""
       }
     ],
     "examples": [],
@@ -784,7 +838,10 @@
       "Keep tracks simple: equal‑width `columns` are fast and readable; let children span using `` .",
       "Share spacing with the system. Use numeric `gap` / `pad` so density matches other primitives.",
       "Use `adaptive` to collapse to a single column on portrait/narrow screens instead of ad‑hoc media queries.",
-      "Maintain logical DOM order for keyboard and screen readers; don’t rely on grid placement to imply reading order."
+      "Maintain logical DOM order for keyboard and screen readers; don’t rely on grid placement to imply reading order.",
+      "Cooperate with `<Surface>` . In adaptive portrait, let content stack and the page scroll naturally; avoid creating nested scroll areas inside cells.",
+      "Size items with tokens. Use `theme.spacing` and percent/flex spans rather than fixed pixels so density and breakpoints scale predictably.",
+      "Avoid complex selector cascades. Keep item styles shallow and prefer presets for repeatable patterns to maintain performance and readability."
     ],
     "docsUrl": "/components/layout/GridDemo",
     "sourceFile": "docs/src/pages/components/layout/GridDemo.tsx"
@@ -794,84 +851,85 @@
       {
         "prop": "`data`",
         "type": "`T[]`",
-        "default": "",
+        "default": "`—`",
         "description": "Items to render."
       },
       {
         "prop": "`getTitle`",
         "type": "`(item: T) => ReactNode`",
-        "default": "",
+        "default": "`—`",
         "description": "Primary content for each row."
       },
       {
         "prop": "`getSubtitle`",
         "type": "`(item: T) => ReactNode`",
-        "default": "",
+        "default": "`—`",
         "description": "Optional secondary line for each row."
       },
       {
         "prop": "`striped`",
         "type": "`boolean`",
-        "default": "",
+        "default": "`false`",
         "description": "Apply zebra striping."
       },
       {
         "prop": "`hoverable`",
         "type": "`boolean`",
-        "default": "",
+        "default": "`!striped`",
         "description": "Hover tint. Enabled by default for non‑striped lists."
       },
       {
         "prop": "`reorderable`",
         "type": "`boolean`",
-        "default": "",
+        "default": "`true`",
         "description": "Enable drag‑and‑drop reordering. When false, drag is disabled."
       },
       {
         "prop": "`selectable`",
         "type": "`boolean`",
-        "default": "",
+        "default": "`false`",
         "description": "Enable single selection. Click or drag to select the active item."
       },
       {
         "prop": "`selected`",
         "type": "`T | null`",
-        "default": "",
+        "default": "`—`",
         "description": "Controlled selected item (by reference)."
       },
       {
         "prop": "`defaultSelected`",
         "type": "`T | null`",
-        "default": "",
+        "default": "`null`",
         "description": "Uncontrolled initial selected item."
       },
       {
         "prop": "`onSelectionChange`",
         "type": "`(item: T, index: number) => void`",
-        "default": "",
+        "default": "`—`",
         "description": "Fires on selection change (click or drag‑select)."
       },
       {
         "prop": "`onReorder`",
         "type": "`(items: T[]) => void`",
-        "default": "",
+        "default": "`—`",
         "description": "Fires after a drag operation ends with the new order."
       },
       {
         "prop": "`preset`",
         "type": "`string | string[]`",
-        "default": "",
+        "default": "`—`",
         "description": "Apply style presets."
-      },
-      {
-        "prop": "`HTML ul props`",
-        "type": "`Omit<React.HTMLAttributes<HTMLUListElement>, 'children'>`",
-        "default": "",
-        "description": "Standard HTML attributes for <ul> (excluding &apos;children&apos;) pass through."
       }
     ],
     "examples": [],
-    "bestPractices": [],
+    "bestPractices": [
+      "Keep rows scannable. Use `getTitle` for the primary line and a concise `getSubtitle` for secondary details; avoid overloading rows with extra UI.",
+      "Choose selection deliberately. Enable `selectable` only when follow‑up actions operate on the active row. Keep selected state controlled if it syncs with app state.",
+      "Reorder with care. Turn `reorderable` on when order matters and persist via `onReorder` . Provide immediate visual feedback and avoid conflicting drag handles.",
+      "Respect touch/scroll ergonomics. The list locks touch scroll while reordering; avoid nesting it inside other scroll containers to prevent competing gestures.",
+      "Tokenize spacing. Use presets and theme spacing rather than per‑row inline styles so density and theming remain consistent across the app.",
+      "Large data sets. For very long lists, consider windowing/virtualization and defer heavy per‑row work until visible."
+    ],
     "docsUrl": "/components/layout/ListDemoPage",
     "sourceFile": "docs/src/pages/components/layout/ListDemoPage.tsx"
   },
@@ -894,7 +952,7 @@
       {
         "prop": "`background`",
         "type": "`string`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Explicit background override"
       },
       {
@@ -924,7 +982,7 @@
       {
         "prop": "`preset`",
         "type": "`string | string[]`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Apply style presets"
       },
       {
@@ -968,12 +1026,18 @@
       {
         "prop": "`preset`",
         "type": "`string | string[]`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Apply style presets"
       }
     ],
     "examples": [],
-    "bestPractices": [],
+    "bestPractices": [
+      "Use numeric `gap` with theme spacing. Prefer small integers (e.g., `1` , `2` ) so density changes propagate via `theme.spacing` .",
+      "Let rows wrap by default. `direction='row'` enables wrapping unless you set `wrap=` . This keeps content readable on narrow screens.",
+      "Pad the container, not children. Use the `pad` prop for outer breathing room and `gap` for inter-item rhythm; avoid ad‑hoc margins on each child.",
+      "Control scroll intentionally. Stacks hide horizontal overflow; when nesting inside constrained parents (e.g., `` ), tune `--valet-stack-ov-y` and `--valet-stack-max-h` to prevent nested scrollbars.",
+      "Use `preset` for common layouts. Capture repeated alignment and spacing in a preset to keep markup clean and consistent."
+    ],
     "docsUrl": "/components/layout/StackDemo",
     "sourceFile": "docs/src/pages/components/layout/StackDemo.tsx"
   },
@@ -1000,7 +1064,7 @@
       {
         "prop": "`active`",
         "type": "`number`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Controlled index of the active tab."
       },
       {
@@ -1012,7 +1076,7 @@
       {
         "prop": "`onTabChange`",
         "type": "`(i: number) => void`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Callback when the active tab changes."
       },
       {
@@ -1024,13 +1088,13 @@
       {
         "prop": "`preset`",
         "type": "`string | string[]`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Apply style presets to the container."
       },
       {
         "prop": "`sx`",
         "type": "`object`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Inline style overrides (CSS object; supports CSS vars)."
       }
     ],
@@ -1041,7 +1105,10 @@
       "Reflect app state with controlled tabs ( `active` + `onTabChange` ) when routes or external state should drive selection.",
       "Use `gap` / `pad` to match surrounding density; apply `alignX` to align the strip with nearby content.",
       "For icon‑only tabs, supply `aria-label` and (optionally) a `tooltip` for discoverability.",
-      "Keep DOM order logical (Tab → Panel pairs) to preserve keyboard and screen‑reader flow."
+      "Keep DOM order logical (Tab → Panel pairs) to preserve keyboard and screen‑reader flow.",
+      "Respect overflow ergonomics. When tabs exceed width, valet keeps a single row with horizontal scroll and edge fades; avoid forcing multi‑row tabs, which harms discoverability.",
+      "Lean on motion tokens. The active underline should feel crisp; pair durations/easing to `theme.motion` for consistent UX across components.",
+      "Route integration. When tabs represent routes, control them from the router and keep URLs canonical so reload/share preserves the active view."
     ],
     "docsUrl": "/components/layout/TabsDemo",
     "sourceFile": "docs/src/pages/components/layout/TabsDemo.tsx"
@@ -1051,13 +1118,13 @@
       {
         "prop": "`src`",
         "type": "`string`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Image URL override"
       },
       {
         "prop": "`email`",
         "type": "`string`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Email used for Gravatar lookup"
       },
       {
@@ -1081,18 +1148,24 @@
       {
         "prop": "`alt`",
         "type": "`string`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Image alt text"
       },
       {
         "prop": "`preset`",
         "type": "`string | string[]`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Apply style presets"
       }
     ],
     "examples": [],
-    "bestPractices": [],
+    "bestPractices": [
+      "Provide meaningful `alt` text when avatars convey identity (e.g., \"Ada Lovelace\"). Use `alt=\"\"` for purely decorative avatars.",
+      "Prefer `src` for known assets; use `email` for Gravatar only when appropriate for your privacy posture. Consider caching and strict HTTPS.",
+      "Keep sizes consistent across lists. Use size tokens ( `'xs'` .. `'xl'` ) for coherent density and predictable alignment.",
+      "Ensure visibility on busy backgrounds. Use `variant='outline'` or place avatars inside a container with sufficient contrast.",
+      "Non‑interactive by default. Wrap avatars with a `Button` or link for navigation; avoid attaching click handlers directly without clear affordance."
+    ],
     "docsUrl": "/components/primitives/AvatarDemo",
     "sourceFile": "docs/src/pages/components/primitives/AvatarDemo.tsx"
   },
@@ -1137,12 +1210,18 @@
       {
         "prop": "`preset`",
         "type": "`string | string[]`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Apply style presets."
       }
     ],
     "examples": [],
-    "bestPractices": [],
+    "bestPractices": [
+      "Use sparingly. Dividers communicate separation; prefer intrinsic spacing (Stack pad/gap) for rhythm and only add lines where hierarchy needs emphasis.",
+      "Share spacing tokens. Set `pad` and `thickness` via numeric tokens so density matches other components; avoid hard‑coded pixels.",
+      "Orientation follows layout. Use vertical dividers within horizontal stacks and vice versa; keep `length` proportional to nearby content.",
+      "Keep contrast subtle. Default line color derives from text; override sparingly to avoid heavy or distracting separators.",
+      "Don’t imply semantics. Dividers are visual; use headings and landmarks for document structure, not lines."
+    ],
     "docsUrl": "/components/primitives/DividerDemo",
     "sourceFile": "docs/src/pages/components/primitives/DividerDemo.tsx"
   },
@@ -1151,13 +1230,13 @@
       {
         "prop": "`icon`",
         "type": "`string`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Iconify name"
       },
       {
         "prop": "`svg`",
         "type": "`string | ReactElement`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Custom SVG content"
       },
       {
@@ -1169,20 +1248,54 @@
       {
         "prop": "`color`",
         "type": "`string`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Colour override"
       },
       {
         "prop": "`preset`",
         "type": "`string | string[]`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Apply style presets"
       }
     ],
     "examples": [],
-    "bestPractices": [],
+    "bestPractices": [
+      "Use semantic sizing. When icons appear inline with text, size in `em` so they scale with the surrounding type ( `size=\"1.25em\"` pairs well with headings).",
+      "Accessible naming. Decorative icons should be `aria-hidden` ; icons that convey meaning should have a label via the parent control (e.g., `aria-label` on `IconButton` ).",
+      "Prefer theme colours. Let icons inherit current color or set tokens; avoid arbitrary hex values that fight the theme.",
+      "Choose `icon` vs `svg` wisely. Use `icon` for Iconify glyphs; provide `svg` for custom/brand artwork only. Do not pass both.",
+      "Motion restraint. Avoid animating icons excessively; keep motion consistent with theme motion tokens and user expectations."
+    ],
     "docsUrl": "/components/primitives/IconDemoPage",
     "sourceFile": "docs/src/pages/components/primitives/IconDemoPage.tsx"
+  },
+  "Image": {
+    "propsRows": [],
+    "examples": [],
+    "bestPractices": [
+      "Write meaningful `alt` text. Describe the content/purpose; use `alt=\"\"` for purely decorative images to avoid noise for screen readers.",
+      "Reserve layout space. Provide `width` and `height` (or a styled container) to prevent cumulative layout shift when images load.",
+      "Lazy‑load offscreen media. Enable `lazy` with a tiny `placeholder` for non‑critical images; avoid lazy‑loading above‑the‑fold hero images.",
+      "Choose the right `objectFit` . Use `cover` for fills and `contain` for letterboxed media; provide a background colour for pleasant letterboxing.",
+      "Prevent drag ghosts. The component disables dragging by default; only enable dragging when there is a genuine use‑case.",
+      "Optimize assets. Serve appropriately sized and compressed images; avoid shipping multi‑MB originals for small containers."
+    ],
+    "docsUrl": "/components/primitives/ImageDemo",
+    "sourceFile": "docs/src/pages/components/primitives/ImageDemo.tsx"
+  },
+  "Progress": {
+    "propsRows": [],
+    "examples": [],
+    "bestPractices": [
+      "Choose the right mode. Use `determinate` when you know progress, `indeterminate` for unknown durations, and `buffer` when prefetching or streaming.",
+      "Provide context. Pair progress with nearby text (e.g., \"Uploading…\" or \"Step 2 of 3\"). For circular, consider `showLabel` when exact values add clarity.",
+      "Don’t spin forever. If indeterminate lasts more than a few seconds, provide a fallback (cancel, retry) or switch to determinate as soon as you can estimate progress.",
+      "Respect accessibility. The component sets `role=\"progressbar\"` and ARIA values; you can associate additional text via `aria-label` or `aria-describedby` on the wrapper.",
+      "Colour & size with tokens. Use theme colours to convey status (e.g., `error` for failures) and size via tokens/numbers to fit the context.",
+      "Don’t block the page. Keep progress close to the affected region and allow unrelated interactions when possible."
+    ],
+    "docsUrl": "/components/primitives/ProgressDemo",
+    "sourceFile": "docs/src/pages/components/primitives/ProgressDemo.tsx"
   },
   "Skeleton": {
     "propsRows": [
@@ -1195,24 +1308,30 @@
       {
         "prop": "`variant`",
         "type": "`'text' | 'rect' | 'circle'`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Override inferred placeholder shape"
       },
       {
         "prop": "`icon`",
         "type": "`ReactNode`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Optional icon shown while loading"
       },
       {
         "prop": "`preset`",
         "type": "`string | string[]`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Apply style presets"
       }
     ],
     "examples": [],
-    "bestPractices": [],
+    "bestPractices": [
+      "Skeleton the right things. Use Skeleton when the shape/size of incoming content is known; avoid for unknown lists where layout may jump.",
+      "Match shapes. Let the component infer `variant` or override it to match the target (text, circle, rect) for believable placeholders.",
+      "Prefer quick hide. Hide skeletons as soon as content is ready; uncontrolled usage will auto-hide on `onLoad` / `onError` for common elements.",
+      "Keep motion subtle. The pulse is intentionally gentle; avoid stacking many animated placeholders in view.",
+      "Provide context. Use brief text nearby (e.g., \"Loading data…\") when appropriate; don’t rely on shimmer alone to communicate state."
+    ],
     "docsUrl": "/components/primitives/SkeletonDemo",
     "sourceFile": "docs/src/pages/components/primitives/SkeletonDemo.tsx"
   },
@@ -1286,16 +1405,37 @@
       }
     ],
     "examples": [],
-    "bestPractices": [],
+    "bestPractices": [
+      "Match semantics to variants. Heading variants render semantic `h1–h6` elements; keep heading levels hierarchical and avoid skipping from `h1` to `h4` , etc. Prefer a single `h1` per page view.",
+      "Use tokens, not pixels. Prefer `autoSize` , `scale` , and theme typography tokens over hard‑coded `fontSize` so type adapts to density and breakpoints.",
+      "Choose families from the theme. Use `family` (heading/body/mono/button) or define fonts via `useInitialTheme` ; only use `fontFamily` overrides for special cases.",
+      "Maintain contrast. Set `color` via theme tokens or surrounding containers ( `Panel` ) to ensure accessible contrast in light/dark modes.",
+      "Don’t fake interactivity. Avoid attaching click handlers to Typography to mimic buttons/links; wrap it in `Button` or `<a>` for correct semantics and focus behaviour.",
+      "Whitespace control. Use `whitespace` and `noSelect` for code, labels, and UI text to keep wrapping and selection intentional."
+    ],
     "docsUrl": "/components/primitives/TypographyDemoPage",
     "sourceFile": "docs/src/pages/components/primitives/TypographyDemoPage.tsx"
+  },
+  "Video": {
+    "propsRows": [],
+    "examples": [],
+    "bestPractices": [
+      "Provide multiple sources. Include `webm` and `mp4` encodings when possible to maximize browser support.",
+      "Use a `poster` and reserve space. Set a poster image and explicit `width` / `height` (or container) to avoid layout shift.",
+      "Captions matter. Supply `tracks` for subtitles/captions and allow users to toggle them; the component supports keyboard toggling (C) for the first track.",
+      "Autoplay etiquette. Browsers require `muted` for autoplay; keep controls on for accessibility and allow users to pause.",
+      "Object fit by context. Use `contain` to show entire frame (letterbox) or `cover` for edge-to-edge hero media.",
+      "Performance. Use CDN delivery and sensible `preload` policy; avoid heavy background loops that compete with page interactivity."
+    ],
+    "docsUrl": "/components/primitives/VideoDemo",
+    "sourceFile": "docs/src/pages/components/primitives/VideoDemo.tsx"
   },
   "CodeBlock": {
     "propsRows": [
       {
         "prop": "`code`",
         "type": "`string`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Source code to render"
       },
       {
@@ -1307,18 +1447,24 @@
       {
         "prop": "`ariaLabel`",
         "type": "`string`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Copy button aria-label"
       },
       {
         "prop": "`title`",
         "type": "`string`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Copy button tooltip"
       }
     ],
     "examples": [],
-    "bestPractices": [],
+    "bestPractices": [
+      "Specify the language. Pass a valid Highlight.js key (e.g., 'typescript') so tokens and keywords render correctly.",
+      "Use a monospace font and preserve whitespace. Pair with `Typography` `whitespace` controls when embedding code fragments elsewhere.",
+      "Keep snippets focused. Avoid very large blocks; extract long examples into files and link out to keep pages readable and fast.",
+      "Accessible copy affordance. Provide a descriptive `ariaLabel` (e.g., \"Copy code\") and a `title` tooltip for clarity.",
+      "Security hygiene. Never render untrusted code as executable; CodeBlock is purely presentational and should not eval content."
+    ],
     "docsUrl": "/components/widgets/CodeBlockDemo",
     "sourceFile": "docs/src/pages/components/widgets/CodeBlockDemo.tsx"
   },
@@ -1327,7 +1473,7 @@
       {
         "prop": "`accept`",
         "type": "`DropzoneOptions['accept']`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Allowed file types"
       },
       {
@@ -1345,13 +1491,13 @@
       {
         "prop": "`onFilesChange`",
         "type": "`(files: File[]) => void`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Called when accepted files change"
       },
       {
         "prop": "`maxFiles`",
         "type": "`number`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Maximum file count"
       },
       {
@@ -1369,18 +1515,24 @@
       {
         "prop": "`onDrop`",
         "type": "`DropzoneOptions['onDrop']`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Low-level drop callback"
       },
       {
         "prop": "`preset`",
         "type": "`string | string[]`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Style preset(s)"
       }
     ],
     "examples": [],
-    "bestPractices": [],
+    "bestPractices": [
+      "Be explicit about file types. Set `accept` to the precise MIME patterns you support and validate on the server; do not rely solely on client hints.",
+      "Communicate limits. If using `maxFiles` or size limits, reflect them in the UI copy and error handling; provide clear feedback for rejected files.",
+      "Keep previews purposeful. Thumbnails help with images; for other types, prefer a simple file list with clear names and types.",
+      "Accessibility first. Ensure the dropzone is focusable and operable via keyboard; users should be able to choose files without drag‑and‑drop.",
+      "Progressive uploads. For large files or slow networks, show progress and allow cancel; avoid blocking the UI with synchronous work."
+    ],
     "docsUrl": "/components/widgets/DropzoneDemo",
     "sourceFile": "docs/src/pages/components/widgets/DropzoneDemo.tsx"
   },
@@ -1389,25 +1541,25 @@
       {
         "prop": "`messages`",
         "type": "`ChatMessage[]`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Conversation history"
       },
       {
         "prop": "`onSend`",
         "type": "`(m: ChatMessage) => void`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Called when user submits a message"
       },
       {
         "prop": "`userAvatar`",
         "type": "`string`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "URL for user avatar image"
       },
       {
         "prop": "`systemAvatar`",
         "type": "`string`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "URL for assistant avatar image"
       },
       {
@@ -1431,31 +1583,31 @@
       {
         "prop": "`apiKey`",
         "type": "`string`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Override global API key"
       },
       {
         "prop": "`provider`",
         "type": "`AIProvider`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Model provider"
       },
       {
         "prop": "`model`",
         "type": "`string`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Model name"
       },
       {
         "prop": "`onModelChange`",
         "type": "`(m: string) => void`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Handle model changes"
       },
       {
         "prop": "`preset`",
         "type": "`string | string[]`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Apply style presets"
       }
     ],
@@ -1469,13 +1621,13 @@
       {
         "prop": "`data`",
         "type": "`string`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Markdown source text"
       },
       {
         "prop": "`codeBackground`",
         "type": "`string`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Override background for fenced code blocks"
       }
     ],
@@ -1484,36 +1636,50 @@
     "docsUrl": "/components/widgets/MarkdownDemo",
     "sourceFile": "docs/src/pages/components/widgets/MarkdownDemo.tsx"
   },
+  "Pagination": {
+    "propsRows": [],
+    "examples": [],
+    "bestPractices": [
+      "Keep visible pages small. For large `count` , set `visibleWindow` to 5–7 so navigation remains scannable and the underline motion stays legible.",
+      "Keep the active page in view. Leave `autoFollowActive` on when the current page can change outside of user clicks (e.g., programmatic navigation or router updates).",
+      "Disable bounds appropriately. At `page === 1` or `page === count` , disable previous/next buttons to reduce noise and convey state.",
+      "Sync with URL when relevant. For paged routes, mirror state in the router (query or path) so refresh/share keeps position; keep Pagination controlled via `page` and `onChange` .",
+      "Use tokens for rhythm. Rely on theme motion tokens for underline animation and spacing so density or brand changes do not require component edits.",
+      "Prefer Pagination for finite sets. For unknown or unbounded results, use windowed lists or infinite scroll with clear load affordances."
+    ],
+    "docsUrl": "/components/widgets/PaginationDemo",
+    "sourceFile": "docs/src/pages/components/widgets/PaginationDemo.tsx"
+  },
   "RichChat": {
     "propsRows": [
       {
         "prop": "`messages`",
         "type": "`RichMessage[]`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Conversation history with JSX content"
       },
       {
         "prop": "`onFormSubmit`",
         "type": "`(value: string, index: number) => void`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Called when a form message submits"
       },
       {
         "prop": "`onSend`",
         "type": "`(m: RichMessage) => void`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Called when user sends a message"
       },
       {
         "prop": "`userAvatar`",
         "type": "`string`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "URL for user avatar image"
       },
       {
         "prop": "`systemAvatar`",
         "type": "`string`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "URL for assistant avatar image"
       },
       {
@@ -1537,7 +1703,7 @@
       {
         "prop": "`preset`",
         "type": "`string | string[]`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Apply style presets"
       }
     ],
@@ -1557,7 +1723,7 @@
       {
         "prop": "`onClose`",
         "type": "``",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Called when fully hidden"
       },
       {
@@ -1569,7 +1735,7 @@
       {
         "prop": "`message`",
         "type": "`React.ReactNode`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Convenience message"
       },
       {
@@ -1581,12 +1747,19 @@
       {
         "prop": "`preset`",
         "type": "`string | string[]`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Apply style presets"
       }
     ],
     "examples": [],
-    "bestPractices": [],
+    "bestPractices": [
+      "Keep messages short and specific. Snackbars confirm actions or provide brief status; avoid long instructions or multi‑step interactions.",
+      "Provide a single, clear action. If an action is present, use a short verb (e.g., 'Undo'). Avoid multiple competing actions.",
+      "Respect motion and timing. Use `autoHideDuration` for transient messages (3–6s typical); longer durations should be deliberate.",
+      "Don’t stack excessively. Keep concurrent snackbars minimal; if necessary, queue them and ensure important ones aren’t missed.",
+      "Keep focus behavior intact. Snackbars are non‑modal; they should not steal focus. If a button is provided, ensure it is reachable via keyboard.",
+      "Style via tokens/presets. Use theme colors for status (e.g., `primary` / `error` ) and consolidate variants with `preset` ."
+    ],
     "docsUrl": "/components/widgets/SnackbarDemo",
     "sourceFile": "docs/src/pages/components/widgets/SnackbarDemo.tsx"
   },
@@ -1595,13 +1768,13 @@
       {
         "prop": "`icon`",
         "type": "`React.ReactNode`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Main floating action button icon"
       },
       {
         "prop": "`actions`",
         "type": "`SpeedDialAction[]`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Array of action buttons"
       },
       {
@@ -1613,12 +1786,19 @@
       {
         "prop": "`preset`",
         "type": "`string | string[]`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Apply style presets"
       }
     ],
     "examples": [],
-    "bestPractices": [],
+    "bestPractices": [
+      "Use sparingly. SpeedDial is for a small cluster of high‑value actions (typically 2–5). If you have more, consider a toolbar or menu instead.",
+      "Place with intent. Default bottom‑right works well; adjust offsets with spacing tokens to avoid overlapping content or platform UI (e.g., safe areas).",
+      "Label actions clearly. Provide short, specific labels; the component exposes them via `title` and keyboard focus when open.",
+      "Close on action. After invoking an action, collapse the dial so the UI returns to a stable state and prevents accidental re‑taps.",
+      "Pick direction by context. Choose `up` / `left` when anchored to bottom/right edges to prevent overflow. Keep action order predictable.",
+      "Motion tokens. Animations use theme motion tokens; keep custom presets aligned for a cohesive feel with the rest of the app."
+    ],
     "docsUrl": "/components/widgets/SpeedDialDemo",
     "sourceFile": "docs/src/pages/components/widgets/SpeedDialDemo.tsx"
   },
@@ -1627,7 +1807,7 @@
       {
         "prop": "`steps`",
         "type": "`React.ReactNode[]`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Labels for each step"
       },
       {
@@ -1639,12 +1819,19 @@
       {
         "prop": "`preset`",
         "type": "`string | string[]`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Apply style presets"
       }
     ],
     "examples": [],
-    "bestPractices": [],
+    "bestPractices": [
+      "Treat Stepper as presentation. It reflects progress; do not use it as the sole navigation control. Provide explicit Next/Back controls and validate each step.",
+      "Bind `active` to canonical state. Derive from router or form state rather than local UI assumptions. Clamp to `0…steps.length-1` when updating.",
+      "Keep labels short and stable. Prefer 1–2 words. For lengthy flows, consider numeric or icon labels and place detailed titles above the content.",
+      "Mind accessibility. Announce progress with text like `Step X of Y` near the Stepper so screen readers have context.",
+      "Use tokens/presets to style. Customize radius/stroke via CSS vars and presets rather than per-instance inline styles to keep density and branding coherent.",
+      "Keep step count reasonable. If there are many steps or non‑linear paths, a progress bar or checklist may be clearer."
+    ],
     "docsUrl": "/components/widgets/StepperDemo",
     "sourceFile": "docs/src/pages/components/widgets/StepperDemo.tsx"
   },
@@ -1679,13 +1866,13 @@
       {
         "prop": "`nodes`",
         "type": "`TreeNode<T>[]`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Array of tree nodes"
       },
       {
         "prop": "`getLabel`",
         "type": "`(n: T) => ReactNode`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Return label for a node"
       },
       {
@@ -1697,31 +1884,31 @@
       {
         "prop": "`expanded`",
         "type": "`string[]`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Controlled expanded node ids"
       },
       {
         "prop": "`onExpandedChange`",
         "type": "`(ids: string[]) => void`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Handle expand/collapse changes"
       },
       {
         "prop": "`selected`",
         "type": "`string`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Controlled selected node id"
       },
       {
         "prop": "`defaultSelected`",
         "type": "`string`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Uncontrolled starting selection"
       },
       {
         "prop": "`onNodeSelect`",
         "type": "`(n: T) => void`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Called when a node is selected"
       },
       {
@@ -1733,12 +1920,19 @@
       {
         "prop": "`preset`",
         "type": "`string | string[]`",
-        "default": "`-`",
+        "default": "`—`",
         "description": "Apply style presets"
       }
     ],
     "examples": [],
-    "bestPractices": [],
+    "bestPractices": [
+      "Use stable ids. Provide deterministic `id` s for nodes so expanded/selected state can be controlled and persisted across renders.",
+      "Keep labels compact. Tree rows should be glanceable; favor short labels and use variants ( `list` or `files` ) to convey structure.",
+      "Align behavior with expectations. Support Arrow keys, Enter/Space for selection, and Left/Right to collapse/expand; let double‑click toggle when appropriate.",
+      "Choose control model. Use `expanded` / `onExpandedChange` and `selected` / `onNodeSelect` when external state or routing must drive the tree; otherwise use defaults.",
+      "Avoid over‑nesting. Deep hierarchies are hard to scan; flatten where possible and consider search/filter affordances for large trees.",
+      "Tokenized spacing. Use theme spacing for indentation so density and breakpoints scale predictably."
+    ],
     "docsUrl": "/components/widgets/TreeDemo",
     "sourceFile": "docs/src/pages/components/widgets/TreeDemo.tsx"
   }

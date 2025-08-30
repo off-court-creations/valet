@@ -43,13 +43,20 @@
       "name": "steps"
     }
   ],
-  "bestPractices": [],
+  "bestPractices": [
+    "Treat Stepper as presentation. It reflects progress; do not use it as the sole navigation control. Provide explicit Next/Back controls and validate each step.",
+    "Bind `active` to canonical state. Derive from router or form state rather than local UI assumptions. Clamp to `0…steps.length-1` when updating.",
+    "Keep labels short and stable. Prefer 1–2 words. For lengthy flows, consider numeric or icon labels and place detailed titles above the content.",
+    "Mind accessibility. Announce progress with text like `Step X of Y` near the Stepper so screen readers have context.",
+    "Use tokens/presets to style. Customize radius/stroke via CSS vars and presets rather than per-instance inline styles to keep density and branding coherent.",
+    "Keep step count reasonable. If there are many steps or non‑linear paths, a progress bar or checklist may be clearer."
+  ],
   "examples": [],
   "docsUrl": "/components/widgets/StepperDemo",
   "sourceFiles": [
     "src/components/widgets/Stepper.tsx",
     "docs/src/pages/components/widgets/StepperDemo.tsx"
   ],
-  "version": "0.30.3",
-  "schemaVersion": "1.1"
+  "version": "0.30.5",
+  "schemaVersion": "1.2"
 }

@@ -2,7 +2,7 @@
 // src/pages/ImageDemo.tsx | valet-docs
 // Showcase of Image component
 // ─────────────────────────────────────────────────────────────
-import { Surface, Stack, Typography, Image, Button, useTheme } from '@archway/valet';
+import { Surface, Stack, Typography, Image, Button, useTheme, Panel } from '@archway/valet';
 import NavDrawer from '../../../components/NavDrawer';
 import { useNavigate } from 'react-router-dom';
 
@@ -58,6 +58,38 @@ export default function ImageDemoPage() {
         >
           ← Back
         </Button>
+
+        {/* Best Practices -------------------------------------------------- */}
+        <Panel fullWidth>
+          <Typography variant='h4'>Best Practices</Typography>
+          <Typography>
+            - Write meaningful <code>alt</code> text. Describe the content/purpose; use
+            <code> alt=&quot;&quot;</code> for purely decorative images to avoid noise for screen
+            readers.
+          </Typography>
+          <Typography>
+            - Reserve layout space. Provide <code>width</code> and <code>height</code> (or a styled
+            container) to prevent cumulative layout shift when images load.
+          </Typography>
+          <Typography>
+            - Lazy‑load offscreen media. Enable <code>lazy</code> with a tiny{' '}
+            <code>placeholder</code>
+            for non‑critical images; avoid lazy‑loading above‑the‑fold hero images.
+          </Typography>
+          <Typography>
+            - Choose the right <code>objectFit</code>. Use <code>cover</code> for fills and
+            <code> contain</code> for letterboxed media; provide a background colour for pleasant
+            letterboxing.
+          </Typography>
+          <Typography>
+            - Prevent drag ghosts. The component disables dragging by default; only enable dragging
+            when there is a genuine use‑case.
+          </Typography>
+          <Typography>
+            - Optimize assets. Serve appropriately sized and compressed images; avoid shipping
+            multi‑MB originals for small containers.
+          </Typography>
+        </Panel>
       </Stack>
     </Surface>
   );

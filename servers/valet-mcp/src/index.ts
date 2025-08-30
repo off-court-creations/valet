@@ -11,6 +11,7 @@ import { Readable } from 'node:stream';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
+import { PRIMER_TEXT } from './primer.js';
 const requireFromHere = createRequire(import.meta.url);
 const pkg = requireFromHere('../package.json') as { version?: string; name?: string };
 const MCP_VERSION = pkg.version ?? '0.0.0';
@@ -133,6 +134,15 @@ function getMeta(): { valetVersion?: string; generatedAt?: string; schemaVersion
   }
 }
 
+type GlossaryEntry = { term: string; definition: string; aliases?: string[]; seeAlso?: string[]; category?: string };
+
+function getGlossary(): { entries: GlossaryEntry[] } | null {
+  ensureDataDir();
+  const p = path.join(DATA_DIR, 'glossary.json');
+  if (!fs.existsSync(p)) return null;
+  return readJSON<{ entries: GlossaryEntry[] }>(p);
+}
+
 function resolveSlug(input: { name?: string; slug?: string }): string | null {
   const index = getIndex();
   if (input.slug) {
@@ -250,6 +260,38 @@ async function createServer() {
     return { content: [{ type: 'text', text: JSON.stringify(comp?.examples ?? []) }] };
   });
 
+  // get_glossary – full glossary dataset
+  server.tool('get_glossary', async () => {
+    const g = getGlossary();
+    if (!g) return { content: [{ type: 'text', text: JSON.stringify({ entries: [] }) }] };
+    return { content: [{ type: 'text', text: JSON.stringify(g) }] };
+  });
+
+  // define_term – lookup a term (exact, alias, then fuzzy/contains) with soft-fail suggestions
+  const DefineParamsShape = { word: z.string().min(1), limit: z.number().int().positive().max(10).optional() } as const;
+  server.tool('define_term', DefineParamsShape, async (args) => {
+    const { word, limit = 5 } = args as { word: string; limit?: number };
+    const g = getGlossary();
+    const q = word.trim().toLowerCase();
+    const entries = g?.entries ?? [];
+    const exact = entries.find((e) => e.term.toLowerCase() === q) || entries.find((e) => (e.aliases || []).some((a) => a.toLowerCase() === q));
+    if (exact) return { content: [{ type: 'text', text: JSON.stringify({ found: true, entry: exact }) }] };
+    // soft search: includes in term, alias, or definition
+    const scored = entries.map((e) => {
+      let s = 0;
+      const name = e.term.toLowerCase();
+      if (name.includes(q)) s += 3;
+      if ((e.aliases || []).some((a) => a.toLowerCase().includes(q))) s += 2;
+      if ((e.definition || '').toLowerCase().includes(q)) s += 1;
+      return { e, s };
+    }).filter((r) => r.s > 0).sort((a, b) => b.s - a.s || a.e.term.localeCompare(b.e.term));
+    const suggestions = scored.slice(0, limit).map((r) => r.e);
+    return { content: [{ type: 'text', text: JSON.stringify({ found: false, suggestions }) }] };
+  });
+
+  // get_primer – opinionated context dump for agents
+  server.tool('get_primer', async () => ({ content: [{ type: 'text', text: PRIMER_TEXT }] }));
+
   // Optional resources (component JSON as resources)
   server.resource('valet-index', 'mcp://valet/index', { mimeType: 'application/json', name: 'Valet Components Index' }, async () => ({
     contents: [{
@@ -271,6 +313,14 @@ async function createServer() {
   } catch {
     // ignore
   }
+
+  // Primer and Glossary as resources
+  server.resource('valet-primer', 'mcp://valet/primer', { mimeType: 'text/markdown', name: 'valet Primer' }, async () => ({
+    contents: [{ uri: 'mcp://valet/primer', mimeType: 'text/markdown', text: PRIMER_TEXT }],
+  }));
+  server.resource('valet-glossary', 'mcp://valet/glossary', { mimeType: 'application/json', name: 'valet Glossary' }, async () => ({
+    contents: [{ uri: 'mcp://valet/glossary', mimeType: 'application/json', text: JSON.stringify(getGlossary() ?? { entries: [] }, null, 2) }],
+  }));
 
   return server;
 }
@@ -298,6 +348,8 @@ async function main() {
         versionParity: parity,
         schemaVersion: meta?.schemaVersion,
         buildHash: meta?.buildHash,
+        glossaryEntries: (getGlossary()?.entries?.length) ?? 0,
+        hasPrimer: true,
       }, null, 2));
       process.exit(0);
     } catch (err) {

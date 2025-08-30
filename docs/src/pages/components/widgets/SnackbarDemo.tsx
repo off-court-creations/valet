@@ -13,6 +13,7 @@ import {
   useTheme,
   Tabs,
   Table,
+  Panel,
 } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
@@ -204,6 +205,36 @@ export default function SnackbarDemoPage() {
             />
           </Tabs.Panel>
         </Tabs>
+
+        {/* Best Practices -------------------------------------------------- */}
+        <Panel fullWidth>
+          <Typography variant='h4'>Best Practices</Typography>
+          <Typography>
+            - Keep messages short and specific. Snackbars confirm actions or provide brief status;
+            avoid long instructions or multi‑step interactions.
+          </Typography>
+          <Typography>
+            - Provide a single, clear action. If an action is present, use a short verb (e.g.,
+            &apos;Undo&apos;). Avoid multiple competing actions.
+          </Typography>
+          <Typography>
+            - Respect motion and timing. Use <code>autoHideDuration</code> for transient messages
+            (3–6s typical); longer durations should be deliberate.
+          </Typography>
+          <Typography>
+            - Don’t stack excessively. Keep concurrent snackbars minimal; if necessary, queue them
+            and ensure important ones aren’t missed.
+          </Typography>
+          <Typography>
+            - Keep focus behavior intact. Snackbars are non‑modal; they should not steal focus. If a
+            button is provided, ensure it is reachable via keyboard.
+          </Typography>
+          <Typography>
+            - Style via tokens/presets. Use theme colors for status (e.g.,
+            <code> primary</code>/<code> error</code>) and consolidate variants with
+            <code> preset</code>.
+          </Typography>
+        </Panel>
 
         {/* Back nav -------------------------------------------------------- */}
         <Button

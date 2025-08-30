@@ -15,6 +15,7 @@ import {
   useTheme,
   Tabs,
   Table,
+  Panel,
 } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
@@ -280,6 +281,40 @@ export default function CheckboxDemoPage() {
         >
           ← Back
         </Button>
+
+        {/* Best Practices -------------------------------------------------- */}
+        <Panel fullWidth>
+          <Typography variant='h4'>Best Practices</Typography>
+          <Typography>
+            - Use Checkbox for independent booleans. For mutually exclusive choices, prefer
+            <code> RadioGroup</code>.
+          </Typography>
+          <Typography>
+            - Always provide a clear label. The entire label should be clickable. In forms, set a
+            stable <code>name</code> so values submit predictably.
+          </Typography>
+          <Typography>
+            - Choose control model deliberately. Use <code>checked</code>/<code> onChange</code>{' '}
+            when the value participates in app state; otherwise <code>defaultChecked</code> is fine
+            for local forms.
+          </Typography>
+          <Typography>
+            - Keep targets comfortable. Pick <code>size</code> tokens or numeric sizes that keep tap
+            areas ≥ 40–48px in dense UIs.
+          </Typography>
+          <Typography>
+            - Group with a visible question or caption when multiple checkboxes relate to one
+            concept; don’t rely on proximity alone.
+          </Typography>
+          <Typography>
+            - Disabled with context. If a checkbox is disabled, explain why nearby; avoid silently
+            disabling without guidance.
+          </Typography>
+          <Typography>
+            - Tokens/presets. Style with theme tokens and <code>preset</code> rather than ad‑hoc CSS
+            to keep density and branding consistent.
+          </Typography>
+        </Panel>
       </Stack>
     </Surface>
   );

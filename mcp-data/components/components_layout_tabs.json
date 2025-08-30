@@ -104,7 +104,10 @@
     "Reflect app state with controlled tabs ( `active` + `onTabChange` ) when routes or external state should drive selection.",
     "Use `gap` / `pad` to match surrounding density; apply `alignX` to align the strip with nearby content.",
     "For icon‑only tabs, supply `aria-label` and (optionally) a `tooltip` for discoverability.",
-    "Keep DOM order logical (Tab → Panel pairs) to preserve keyboard and screen‑reader flow."
+    "Keep DOM order logical (Tab → Panel pairs) to preserve keyboard and screen‑reader flow.",
+    "Respect overflow ergonomics. When tabs exceed width, valet keeps a single row with horizontal scroll and edge fades; avoid forcing multi‑row tabs, which harms discoverability.",
+    "Lean on motion tokens. The active underline should feel crisp; pair durations/easing to `theme.motion` for consistent UX across components.",
+    "Route integration. When tabs represent routes, control them from the router and keep URLs canonical so reload/share preserves the active view."
   ],
   "examples": [],
   "docsUrl": "/components/layout/TabsDemo",
@@ -112,6 +115,6 @@
     "src/components/layout/Tabs.tsx",
     "docs/src/pages/components/layout/TabsDemo.tsx"
   ],
-  "version": "0.30.3",
-  "schemaVersion": "1.1"
+  "version": "0.30.5",
+  "schemaVersion": "1.2"
 }

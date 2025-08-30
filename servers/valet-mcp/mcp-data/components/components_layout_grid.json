@@ -68,7 +68,10 @@
     "Keep tracks simple: equal‑width `columns` are fast and readable; let children span using `` .",
     "Share spacing with the system. Use numeric `gap` / `pad` so density matches other primitives.",
     "Use `adaptive` to collapse to a single column on portrait/narrow screens instead of ad‑hoc media queries.",
-    "Maintain logical DOM order for keyboard and screen readers; don’t rely on grid placement to imply reading order."
+    "Maintain logical DOM order for keyboard and screen readers; don’t rely on grid placement to imply reading order.",
+    "Cooperate with `<Surface>` . In adaptive portrait, let content stack and the page scroll naturally; avoid creating nested scroll areas inside cells.",
+    "Size items with tokens. Use `theme.spacing` and percent/flex spans rather than fixed pixels so density and breakpoints scale predictably.",
+    "Avoid complex selector cascades. Keep item styles shallow and prefer presets for repeatable patterns to maintain performance and readability."
   ],
   "examples": [],
   "docsUrl": "/components/layout/GridDemo",
@@ -76,6 +79,6 @@
     "src/components/layout/Grid.tsx",
     "docs/src/pages/components/layout/GridDemo.tsx"
   ],
-  "version": "0.30.3",
-  "schemaVersion": "1.1"
+  "version": "0.30.5",
+  "schemaVersion": "1.2"
 }

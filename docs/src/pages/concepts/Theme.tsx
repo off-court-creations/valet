@@ -50,6 +50,40 @@ function Example() {
           Spacing helpers like <code>theme.spacing(n)</code> return pixel values from the scale,
           ensuring visual rhythm and consistent gutters across components.
         </Typography>
+
+        {/* Best Practices -------------------------------------------------- */}
+        <Panel fullWidth>
+          <Typography variant='h4'>Best Practices</Typography>
+          <Typography>
+            - Initialize once at the app root. Call <code>useInitialTheme</code> in
+            <code> App</code> to set tokens and preload fonts; avoid re‑initializing per route.
+          </Typography>
+          <Typography>
+            - Use tokens everywhere. Replace hard‑coded values with
+            <code> theme.spacing</code>, <code>theme.radius</code>, <code>theme.stroke</code>,
+            <code> theme.motion</code>, and color tokens so density, mode, and branding changes
+            propagate automatically.
+          </Typography>
+          <Typography>
+            - Toggle mode through the store. Use <code>useTheme().toggleMode()</code> or
+            <code> setMode</code>; do not fork palettes in component code.
+          </Typography>
+          <Typography>
+            - Load only the fonts you use. Provide overrides to <code>useInitialTheme</code> and use
+            the <code>extras</code> list for any additional faces; the loader dedupes so you keep
+            pages fast.
+          </Typography>
+          <Typography>
+            - Keep colours semantic. Map brand colours into <code>primary</code>,
+            <code> secondary</code>, <code>tertiary</code>, and <code>error</code> tokens, then
+            style components against those tokens for consistent light/dark contrast.
+          </Typography>
+          <Typography>
+            - Prefer store updates over inline overrides. Use <code>setTheme</code> to patch tokens
+            at runtime rather than scattering ad‑hoc CSS so docs, MCP data, and components remain in
+            sync.
+          </Typography>
+        </Panel>
       </Stack>
     </Surface>
   );

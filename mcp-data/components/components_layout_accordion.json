@@ -63,6 +63,6 @@
   "sourceFiles": [
     "src/components/layout/Accordion.tsx"
   ],
-  "version": "0.30.3",
-  "schemaVersion": "1.1"
+  "version": "0.30.5",
+  "schemaVersion": "1.2"
 }

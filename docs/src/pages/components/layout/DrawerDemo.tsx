@@ -1,7 +1,7 @@
 // src/pages/DrawerDemo.tsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Surface, Stack, Typography, Button, Drawer, useTheme } from '@archway/valet';
+import { Surface, Stack, Typography, Button, Drawer, Panel, useTheme } from '@archway/valet';
 
 export default function DrawerDemoPage() {
   const { theme, toggleMode } = useTheme();
@@ -126,6 +126,32 @@ export default function DrawerDemoPage() {
           </Button>
           <Button onClick={() => navigate(-1)}>← Back</Button>
         </Stack>
+
+        {/* Best Practices ---------------------------------------------- */}
+        <Panel fullWidth>
+          <Typography variant='h4'>Best Practices</Typography>
+          <Typography>
+            - Choose the right mode. Use <code>persistent</code> for primary navigation; use overlay
+            drawers for transient tasks. Prefer <code>adaptive</code> so navigation docks in
+            landscape and becomes a toggle in portrait.
+          </Typography>
+          <Typography>
+            - Respect close affordances. Provide <code>onClose</code> for controlled drawers and
+            keep backdrop/ESC enabled unless there is a strong reason to disable them.
+          </Typography>
+          <Typography>
+            - Size with tokens. Set <code>size</code> in <code>rem</code> or via spacing so density
+            changes keep proportions; avoid content-driven widths that cause reflow thrash.
+          </Typography>
+          <Typography>
+            - Don’t manually offset for the AppBar. The drawer reads the current surface offset and
+            adjusts itself (and persistent margins) automatically.
+          </Typography>
+          <Typography>
+            - Keep content focused and scrollable. Put navigation and short lists inside; for long
+            collections consider windowing/virtualization and offload heavy work from the drawer.
+          </Typography>
+        </Panel>
       </Stack>
     </Surface>
   );
