@@ -107,20 +107,24 @@ export default function GridDemoPage() {
               <Panel fullWidth>
                 <Typography variant='h4'>Best Practices</Typography>
                 <Typography>
-                  - Use <code>Grid</code> for two‑dimensional layouts where items align in both
-                  axes. Reach for <code>Stack</code> for linear flows.
+                  - Use <code>Grid</code> for two‑axis alignment. Prefer <code>Stack</code> for
+                  linear flows where only one axis matters.
                 </Typography>
                 <Typography>
-                  - Keep tracks simple. Prefer <code>columns</code> with equal tracks; use{' '}
-                  <code>{`sx={{ gridColumn: 'span N' }}`}</code> on children to span.
+                  - Keep tracks simple: equal‑width <code>columns</code> are fast and readable;
+                  let children span using <code>{`sx={{ gridColumn: 'span N' }}`}</code>.
                 </Typography>
                 <Typography>
-                  - Share spacing with the system: gap and pad use the same spacing scale as other
-                  layout primitives (<code>Stack</code>, <code>Tabs</code>).
+                  - Share spacing with the system. Use numeric <code>gap</code>/<code>pad</code>
+                  so density matches other primitives.
                 </Typography>
                 <Typography>
-                  - Toggle <code>adaptive</code> when you want predictable single‑column layout in
-                  portrait across breakpoints. Avoid ad‑hoc media queries.
+                  - Use <code>adaptive</code> to collapse to a single column on portrait/narrow
+                  screens instead of ad‑hoc media queries.
+                </Typography>
+                <Typography>
+                  - Maintain logical DOM order for keyboard and screen readers; don’t rely on grid
+                  placement to imply reading order.
                 </Typography>
               </Panel>
 

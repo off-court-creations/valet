@@ -1,0 +1,30 @@
+{
+  "name": "MarkdownDemo",
+  "category": "unknown",
+  "slug": "components/unknown/markdowndemo",
+  "summary": "MarkdownDemo component",
+  "props": [
+    {
+      "name": "data",
+      "type": "string",
+      "required": false,
+      "default": "-",
+      "description": "Markdown source text"
+    },
+    {
+      "name": "codeBackground",
+      "type": "string",
+      "required": false,
+      "default": "-",
+      "description": "Override background for fenced code blocks"
+    }
+  ],
+  "cssVars": [],
+  "bestPractices": [],
+  "examples": [],
+  "docsUrl": "/components/widgets/MarkdownDemo",
+  "sourceFiles": [
+    "docs/src/pages/components/widgets/MarkdownDemo.tsx"
+  ],
+  "version": "0.30.1"
+}

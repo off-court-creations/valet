@@ -1,0 +1,19 @@
+{
+  "name": "TextField",
+  "category": "fields",
+  "slug": "components/fields/textfield",
+  "summary": "TextField component",
+  "props": [],
+  "cssVars": [],
+  "cssPresets": [],
+  "events": [],
+  "actions": [],
+  "slots": [],
+  "bestPractices": [],
+  "examples": [],
+  "sourceFiles": [
+    "src/components/fields/TextField.tsx"
+  ],
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
+}

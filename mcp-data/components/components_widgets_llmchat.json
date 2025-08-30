@@ -1,0 +1,106 @@
+{
+  "name": "LLMChat",
+  "category": "widgets",
+  "slug": "components/widgets/llmchat",
+  "summary": "LLMChat component",
+  "props": [
+    {
+      "name": "placeholder",
+      "type": "string",
+      "required": false,
+      "default": "'Message…'",
+      "description": "Input placeholder"
+    },
+    {
+      "name": "disableInput",
+      "type": "boolean",
+      "required": false,
+      "default": "false",
+      "description": "Hide the compose bar"
+    },
+    {
+      "name": "constrainHeight",
+      "type": "boolean",
+      "required": false,
+      "default": "true",
+      "description": "Fit within surface height"
+    },
+    {
+      "name": "messages",
+      "type": "ChatMessage[]",
+      "required": false,
+      "default": "-",
+      "description": "Conversation history"
+    },
+    {
+      "name": "onSend",
+      "type": "(m: ChatMessage) => void",
+      "required": false,
+      "default": "-",
+      "description": "Called when user submits a message"
+    },
+    {
+      "name": "userAvatar",
+      "type": "string",
+      "required": false,
+      "default": "-",
+      "description": "URL for user avatar image"
+    },
+    {
+      "name": "systemAvatar",
+      "type": "string",
+      "required": false,
+      "default": "-",
+      "description": "URL for assistant avatar image"
+    },
+    {
+      "name": "apiKey",
+      "type": "string",
+      "required": false,
+      "default": "-",
+      "description": "Override global API key"
+    },
+    {
+      "name": "provider",
+      "type": "AIProvider",
+      "required": false,
+      "default": "-",
+      "description": "Model provider"
+    },
+    {
+      "name": "model",
+      "type": "string",
+      "required": false,
+      "default": "-",
+      "description": "Model name"
+    },
+    {
+      "name": "onModelChange",
+      "type": "(m: string) => void",
+      "required": false,
+      "default": "-",
+      "description": "Handle model changes"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[]",
+      "required": false,
+      "default": "-",
+      "description": "Apply style presets"
+    }
+  ],
+  "cssVars": [],
+  "cssPresets": [],
+  "events": [],
+  "actions": [],
+  "slots": [],
+  "bestPractices": [],
+  "examples": [],
+  "docsUrl": "/components/widgets/LLMChat",
+  "sourceFiles": [
+    "src/components/widgets/LLMChat.tsx",
+    "docs/src/pages/components/widgets/LLMChat.tsx"
+  ],
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
+}

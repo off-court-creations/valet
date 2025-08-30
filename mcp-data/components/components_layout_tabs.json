@@ -1,0 +1,117 @@
+{
+  "name": "Tabs",
+  "category": "layout",
+  "slug": "components/layout/tabs",
+  "summary": "Tabs component",
+  "props": [
+    {
+      "name": "active",
+      "type": "number",
+      "required": true,
+      "default": "-",
+      "description": "Controlled index of the active tab."
+    },
+    {
+      "name": "defaultActive",
+      "type": "number",
+      "required": true,
+      "default": "0",
+      "description": "Uncontrolled initial active tab index."
+    },
+    {
+      "name": "onTabChange",
+      "type": "(i: number) => void",
+      "required": true,
+      "default": "-",
+      "description": "Callback when the active tab changes."
+    },
+    {
+      "name": "orientation",
+      "type": "",
+      "required": true,
+      "default": "",
+      "enumValues": [
+        "horizontal",
+        "vertical"
+      ],
+      "description": "Layout direction for the tab strip and panel."
+    },
+    {
+      "name": "placement",
+      "type": "",
+      "required": true,
+      "enumValues": [
+        "top",
+        "bottom",
+        "left",
+        "right"
+      ],
+      "default": "",
+      "description": "Which side the tab strip sits on relative to the panel."
+    },
+    {
+      "name": "alignX",
+      "type": "",
+      "required": true,
+      "enumValues": [
+        "left",
+        "right",
+        "center",
+        "centered"
+      ],
+      "default": "",
+      "description": "Horizontal alignment of the tab strip (horizontal orientation)."
+    },
+    {
+      "name": "sx",
+      "type": "object",
+      "required": true,
+      "default": "-",
+      "description": "Inline style overrides (CSS object; supports CSS vars)."
+    },
+    {
+      "name": "compact",
+      "type": "boolean",
+      "required": false,
+      "default": "false",
+      "description": "Reduce internal spacing density."
+    },
+    {
+      "name": "preset",
+      "type": "string | string[]",
+      "required": false,
+      "default": "-",
+      "description": "Apply style presets to the container."
+    }
+  ],
+  "cssVars": [
+    "--valet-focus-width",
+    "--valet-focus-offset",
+    "--valet-underline-width"
+  ],
+  "cssPresets": [],
+  "events": [
+    {
+      "name": "onTabChange",
+      "payloadType": "number"
+    }
+  ],
+  "actions": [],
+  "slots": [],
+  "bestPractices": [
+    "Keep tab labels short and predictable. Prefer 1–2 words; avoid wrapping when possible.",
+    "Choose placement by layout: `top` is the default; use vertical placement for dense navigation sidebars.",
+    "Reflect app state with controlled tabs ( `active` + `onTabChange` ) when routes or external state should drive selection.",
+    "Use `gap` / `pad` to match surrounding density; apply `alignX` to align the strip with nearby content.",
+    "For icon‑only tabs, supply `aria-label` and (optionally) a `tooltip` for discoverability.",
+    "Keep DOM order logical (Tab → Panel pairs) to preserve keyboard and screen‑reader flow."
+  ],
+  "examples": [],
+  "docsUrl": "/components/layout/TabsDemo",
+  "sourceFiles": [
+    "src/components/layout/Tabs.tsx",
+    "docs/src/pages/components/layout/TabsDemo.tsx"
+  ],
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
+}

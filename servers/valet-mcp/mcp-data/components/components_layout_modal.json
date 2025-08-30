@@ -1,0 +1,120 @@
+{
+  "name": "Modal",
+  "category": "layout",
+  "slug": "components/layout/modal",
+  "summary": "Modal component",
+  "props": [
+    {
+      "name": "open",
+      "type": "boolean",
+      "required": true
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "required": true,
+      "default": "false"
+    },
+    {
+      "name": "onClose",
+      "type": "() => void",
+      "required": true
+    },
+    {
+      "name": "variant",
+      "type": "'dialog' | 'alert'",
+      "required": true,
+      "default": "'dialog'",
+      "enumValues": [
+        "dialog",
+        "alert"
+      ]
+    },
+    {
+      "name": "title",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "actions",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "pad",
+      "type": "number | string",
+      "required": true
+    },
+    {
+      "name": "compact",
+      "type": "boolean",
+      "required": true,
+      "default": "false"
+    },
+    {
+      "name": "disableBackdropClick",
+      "type": "boolean",
+      "required": true,
+      "default": "false"
+    },
+    {
+      "name": "disableEscapeKeyDown",
+      "type": "boolean",
+      "required": true,
+      "default": "false"
+    },
+    {
+      "name": "maxWidth",
+      "type": "number | string",
+      "required": true
+    },
+    {
+      "name": "fullWidth",
+      "type": "boolean",
+      "required": true,
+      "default": "false"
+    }
+  ],
+  "cssVars": [
+    "--valet-modal-radius"
+  ],
+  "cssPresets": [],
+  "events": [
+    {
+      "name": "onClose"
+    }
+  ],
+  "actions": [],
+  "slots": [
+    {
+      "name": "title"
+    },
+    {
+      "name": "children"
+    },
+    {
+      "name": "actions"
+    }
+  ],
+  "bestPractices": [
+    "Choose the right type: use `variant='dialog'` for neutral flows and `variant='alert'` for destructive or high‑attention confirmations.",
+    "Provide a clear `title` and unambiguous action labels (avoid vague “OK”/“Cancel”). Make the primary action visually dominant.",
+    "Keep escape hatches accessible. Only combine `disableBackdropClick` and `disableEscapeKeyDown` when the flow truly requires it.",
+    "Treat `open` as the single source of truth and wire `onClose` for all dismissal paths (buttons, ESC, backdrop). Return focus to the trigger on close.",
+    "Size with intent: prefer `maxWidth` for readability; reserve `fullWidth` for mobile or immersive flows. Let long content scroll inside.",
+    "Don’t nest modals. Transition content or sequence steps in a single modal instead of opening another."
+  ],
+  "examples": [],
+  "docsUrl": "/components/layout/ModalDemo",
+  "sourceFiles": [
+    "src/components/layout/Modal.tsx",
+    "docs/src/pages/components/layout/ModalDemo.tsx"
+  ],
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
+}

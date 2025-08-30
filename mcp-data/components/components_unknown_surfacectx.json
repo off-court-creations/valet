@@ -1,0 +1,14 @@
+{
+  "name": "SurfaceCtx",
+  "category": "unknown",
+  "slug": "components/unknown/surfacectx",
+  "summary": "SurfaceCtx component",
+  "props": [],
+  "cssVars": [],
+  "bestPractices": [],
+  "examples": [],
+  "sourceFiles": [
+    "src/system/surfaceStore.ts"
+  ],
+  "version": "0.30.1"
+}

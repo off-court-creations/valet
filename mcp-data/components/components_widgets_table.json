@@ -1,0 +1,100 @@
+{
+  "name": "Table",
+  "category": "widgets",
+  "slug": "components/widgets/table",
+  "summary": "Table component",
+  "props": [
+    {
+      "name": "data",
+      "type": "T[]",
+      "required": true
+    },
+    {
+      "name": "columns",
+      "type": "TableColumn<T>[]",
+      "required": true
+    },
+    {
+      "name": "striped",
+      "type": "boolean",
+      "required": true
+    },
+    {
+      "name": "hoverable",
+      "type": "boolean",
+      "required": true
+    },
+    {
+      "name": "dividers",
+      "type": "boolean",
+      "required": true
+    },
+    {
+      "name": "selectable",
+      "type": "'single' | 'multi' | undefined",
+      "required": true,
+      "enumValues": [
+        "single",
+        "multi"
+      ]
+    },
+    {
+      "name": "initialSort",
+      "type": "{ index: number; desc?: boolean }",
+      "required": true
+    },
+    {
+      "name": "onSortChange",
+      "type": "(index: number, desc: boolean) => void",
+      "required": true
+    },
+    {
+      "name": "onSelectionChange",
+      "type": "(selected: T[]) => void",
+      "required": true
+    },
+    {
+      "name": "constrainHeight",
+      "type": "boolean",
+      "required": true
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": true
+    }
+  ],
+  "cssVars": [
+    "--valet-divider-stroke",
+    "--valet-underline-width",
+    "--valet-table-underline"
+  ],
+  "cssPresets": [],
+  "events": [
+    {
+      "name": "onSortChange",
+      "payloadType": "number"
+    },
+    {
+      "name": "onSelectionChange",
+      "payloadType": "T[]"
+    }
+  ],
+  "actions": [],
+  "slots": [],
+  "bestPractices": [
+    "Keep tables readable: enable `striped` and/or `hoverable` for large datasets, but avoid heavy styling that competes with content.",
+    "Constrain height ( `constrainHeight` ) so the body scrolls inside the table instead of the page scrolling in two directions.",
+    "Provide an initial sort ( `initialSort` ), align numeric columns to the right, and format dates consistently.",
+    "Enable selection only when follow‑up actions operate on selected rows; choose `single` vs `multi` to match the action design.",
+    "Keep column count reasonable on narrow screens; prefer fewer, more meaningful columns over many cramped ones. Use succinct headers."
+  ],
+  "examples": [],
+  "docsUrl": "/components/widgets/TableDemo",
+  "sourceFiles": [
+    "src/components/widgets/Table.tsx",
+    "docs/src/pages/components/widgets/TableDemo.tsx"
+  ],
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
+}

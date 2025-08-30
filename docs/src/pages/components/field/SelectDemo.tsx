@@ -16,6 +16,7 @@ import {
   useTheme,
   Tabs,
   Table,
+  Panel,
 } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
@@ -135,6 +136,37 @@ export default function SelectDemoPage() {
         <Tabs>
           <Tabs.Tab label='Usage' />
           <Tabs.Panel>
+            {/* Best Practices ---------------------------------------------- */}
+            <Panel fullWidth>
+              <Typography variant='h4'>Best Practices</Typography>
+              <Typography>
+                - Choose controlled vs uncontrolled deliberately: use <code>value</code> +
+                <code>onChange</code> to integrate with app state; use <code>initialValue</code> for
+                lightweight forms.
+              </Typography>
+              <Typography>
+                - Keep option labels short, distinct, and ordered predictably (alphabetical or by
+                frequency). Avoid duplicating values with different labels.
+              </Typography>
+              <Typography>
+                - Use <code>multiple</code> only when necessary and present selections clearly.
+                Consider <code>size</code> and a minimum width (<code>{`sx={{ minWidth: 200 }}`}</code>)
+                to avoid layout jump.
+              </Typography>
+              <Typography>
+                - Prefer <code>RadioGroup</code> for a small, mutually exclusive set and
+                <code>Checkbox</code>es for a small multi‑select; reserve <code>Select</code> for
+                larger sets.
+              </Typography>
+              <Typography>
+                - Provide a helpful <code>placeholder</code> when no value is selected. Persist
+                value types (string/number) consistently across your app.
+              </Typography>
+              <Typography>
+                - When using <code>FormControl</code>, set a stable <code>name</code>, and avoid
+                mixing primitive types within the same field.
+              </Typography>
+            </Panel>
             {/* ————————————————— Uncontrolled */}
             <Typography variant='h3'>1. Uncontrolled (initialValue)</Typography>
             <Select

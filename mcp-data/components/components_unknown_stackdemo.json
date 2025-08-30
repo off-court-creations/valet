@@ -1,0 +1,51 @@
+{
+  "name": "StackDemo",
+  "category": "unknown",
+  "slug": "components/unknown/stackdemo",
+  "summary": "StackDemo component",
+  "props": [
+    {
+      "name": "direction",
+      "type": "'row' | 'column'",
+      "required": false,
+      "default": "'column'",
+      "description": "Layout direction"
+    },
+    {
+      "name": "gap",
+      "type": "number | string",
+      "required": false,
+      "default": "1",
+      "description": "Gap between children"
+    },
+    {
+      "name": "wrap",
+      "type": "boolean",
+      "required": false,
+      "default": "false for column, true for row",
+      "description": "Allow children to wrap"
+    },
+    {
+      "name": "compact",
+      "type": "boolean",
+      "required": false,
+      "default": "false",
+      "description": "Remove margin and padding"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[]",
+      "required": false,
+      "default": "-",
+      "description": "Apply style presets"
+    }
+  ],
+  "cssVars": [],
+  "bestPractices": [],
+  "examples": [],
+  "docsUrl": "/components/layout/StackDemo",
+  "sourceFiles": [
+    "docs/src/pages/components/layout/StackDemo.tsx"
+  ],
+  "version": "0.30.1"
+}

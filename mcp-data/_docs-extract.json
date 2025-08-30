@@ -1,0 +1,1840 @@
+{
+  "Button": {
+    "propsRows": [
+      {
+        "prop": "`color`",
+        "type": "`'primary' | 'secondary' | 'tertiary' | string`",
+        "default": "`'primary'`",
+        "description": "Background palette or custom colour"
+      },
+      {
+        "prop": "`textColor`",
+        "type": "`'primary' | 'secondary' | 'tertiary' | string`",
+        "default": "`-`",
+        "description": "Label colour override"
+      },
+      {
+        "prop": "`variant`",
+        "type": "`'contained' | 'outlined'`",
+        "default": "`'contained'`",
+        "description": "Visual style"
+      },
+      {
+        "prop": "`size`",
+        "type": "`'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string`",
+        "default": "`'md'`",
+        "description": "Overall button size or custom CSS length"
+      },
+      {
+        "prop": "`fullWidth`",
+        "type": "`boolean`",
+        "default": "`false`",
+        "description": "Stretch to fill parent width"
+      },
+      {
+        "prop": "`preset`",
+        "type": "`string | string[]`",
+        "default": "`-`",
+        "description": "Apply style presets"
+      }
+    ],
+    "examples": [],
+    "bestPractices": [],
+    "docsUrl": "/components/field/ButtonDemoPage",
+    "sourceFile": "docs/src/pages/components/field/ButtonDemoPage.tsx"
+  },
+  "CheckBox": {
+    "propsRows": [
+      {
+        "prop": "`name`",
+        "type": "`string`",
+        "default": "`-`",
+        "description": "Unique field name"
+      },
+      {
+        "prop": "`label`",
+        "type": "`ReactNode`",
+        "default": "`-`",
+        "description": "Label text or element"
+      },
+      {
+        "prop": "`checked`",
+        "type": "`boolean`",
+        "default": "`-`",
+        "description": "Controlled checked state"
+      },
+      {
+        "prop": "`defaultChecked`",
+        "type": "`boolean`",
+        "default": "`false`",
+        "description": "Uncontrolled initial state"
+      },
+      {
+        "prop": "`size`",
+        "type": "`'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string`",
+        "default": "`'md'`",
+        "description": "Checkbox dimensions"
+      },
+      {
+        "prop": "`disabled`",
+        "type": "`boolean`",
+        "default": "`false`",
+        "description": "Disable interaction"
+      },
+      {
+        "prop": "`onChange`",
+        "type": "`(checked: boolean, e: ChangeEvent<HTMLInputElement>) => void`",
+        "default": "`-`",
+        "description": "Change callback"
+      },
+      {
+        "prop": "`preset`",
+        "type": "`string | string[]`",
+        "default": "`-`",
+        "description": "Apply style presets"
+      }
+    ],
+    "examples": [],
+    "bestPractices": [],
+    "docsUrl": "/components/field/CheckBoxDemo",
+    "sourceFile": "docs/src/pages/components/field/CheckBoxDemo.tsx"
+  },
+  "DateSelector": {
+    "propsRows": [
+      {
+        "prop": "`value`",
+        "type": "`string`",
+        "default": "`-`",
+        "description": "Controlled ISO date value (YYYY-MM-DD)"
+      },
+      {
+        "prop": "`defaultValue`",
+        "type": "`string`",
+        "default": "`-`",
+        "description": "Initial uncontrolled value"
+      },
+      {
+        "prop": "`onChange`",
+        "type": "`(value: string) => void`",
+        "default": "`-`",
+        "description": "Fires when selection changes"
+      },
+      {
+        "prop": "`name`",
+        "type": "`string`",
+        "default": "`-`",
+        "description": "FormControl field name"
+      },
+      {
+        "prop": "`preset`",
+        "type": "`string | string[]`",
+        "default": "`-`",
+        "description": "Apply style presets"
+      },
+      {
+        "prop": "`minDate`",
+        "type": "`string`",
+        "default": "`'120y ago'`",
+        "description": "Earliest selectable date"
+      },
+      {
+        "prop": "`maxDate`",
+        "type": "`string`",
+        "default": "`'120y ahead'`",
+        "description": "Latest selectable date"
+      },
+      {
+        "prop": "`range`",
+        "type": "`boolean`",
+        "default": "`false`",
+        "description": "Enable dual start/end selection"
+      },
+      {
+        "prop": "`endValue`",
+        "type": "`string`",
+        "default": "`-`",
+        "description": "Controlled end date when range is true"
+      },
+      {
+        "prop": "`defaultEndValue`",
+        "type": "`string`",
+        "default": "`-`",
+        "description": "Uncontrolled end date default"
+      },
+      {
+        "prop": "`onRangeChange`",
+        "type": "`(start: string, end: string) => void`",
+        "default": "`-`",
+        "description": "Fires when range selection changes"
+      },
+      {
+        "prop": "`compactMode`",
+        "type": "`'auto' | 'on' | 'off'`",
+        "default": "`'auto'`",
+        "description": "Control compact behavior: auto-detect, force on, or disable entirely"
+      },
+      {
+        "prop": "`compactThresholdIn`",
+        "type": "`number`",
+        "default": "`340`",
+        "description": "Width below which compact turns on (only when compactMode=auto)"
+      },
+      {
+        "prop": "`compactThresholdOut`",
+        "type": "`number`",
+        "default": "`380`",
+        "description": "Width above which compact turns off (only when compactMode=auto)"
+      }
+    ],
+    "examples": [],
+    "bestPractices": [],
+    "docsUrl": "/components/field/DateSelectorDemo",
+    "sourceFile": "docs/src/pages/components/field/DateSelectorDemo.tsx"
+  },
+  "IconButton": {
+    "propsRows": [
+      {
+        "prop": "`variant`",
+        "type": "`'contained' | 'outlined'`",
+        "default": "`'contained'`",
+        "description": "Button style"
+      },
+      {
+        "prop": "`size`",
+        "type": "`'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string`",
+        "default": "`'md'`",
+        "description": "Overall button dimensions"
+      },
+      {
+        "prop": "`icon`",
+        "type": "`string`",
+        "default": "`-`",
+        "description": "Iconify name"
+      },
+      {
+        "prop": "`svg`",
+        "type": "`string | ReactElement`",
+        "default": "`-`",
+        "description": "Custom SVG content"
+      },
+      {
+        "prop": "`iconColor`",
+        "type": "`string`",
+        "default": "`-`",
+        "description": "Glyph colour override"
+      },
+      {
+        "prop": "`preset`",
+        "type": "`string | string[]`",
+        "default": "`-`",
+        "description": "Apply style presets"
+      }
+    ],
+    "examples": [],
+    "bestPractices": [],
+    "docsUrl": "/components/field/IconButtonDemoPage",
+    "sourceFile": "docs/src/pages/components/field/IconButtonDemoPage.tsx"
+  },
+  "Iterator": {
+    "propsRows": [
+      {
+        "prop": "`value`",
+        "type": "`number`",
+        "default": "`-`",
+        "description": "Controlled value"
+      },
+      {
+        "prop": "`defaultValue`",
+        "type": "`number`",
+        "default": "`0`",
+        "description": "Uncontrolled initial value"
+      },
+      {
+        "prop": "`onChange`",
+        "type": "`(value: number) => void`",
+        "default": "`-`",
+        "description": "Change handler"
+      },
+      {
+        "prop": "`name`",
+        "type": "`string`",
+        "default": "`-`",
+        "description": "Form field name"
+      },
+      {
+        "prop": "`min`",
+        "type": "`number`",
+        "default": "`-`",
+        "description": "Minimum value"
+      },
+      {
+        "prop": "`max`",
+        "type": "`number`",
+        "default": "`-`",
+        "description": "Maximum value"
+      },
+      {
+        "prop": "`step`",
+        "type": "`number`",
+        "default": "`1`",
+        "description": "Increment step"
+      },
+      {
+        "prop": "`width`",
+        "type": "`number | string`",
+        "default": "`'3.5rem'`",
+        "description": "Field width"
+      },
+      {
+        "prop": "`disabled`",
+        "type": "`boolean`",
+        "default": "`false`",
+        "description": "Disable interaction"
+      },
+      {
+        "prop": "`preset`",
+        "type": "`string | string[]`",
+        "default": "`-`",
+        "description": "Apply style presets"
+      }
+    ],
+    "examples": [],
+    "bestPractices": [],
+    "docsUrl": "/components/field/IteratorDemo",
+    "sourceFile": "docs/src/pages/components/field/IteratorDemo.tsx"
+  },
+  "MetroSelect": {
+    "propsRows": [
+      {
+        "prop": "`value`",
+        "type": "`string | number | (string | number)[]`",
+        "default": "`-`",
+        "description": "Controlled value (array when multiple)"
+      },
+      {
+        "prop": "`defaultValue`",
+        "type": "`string | number | (string | number)[]`",
+        "default": "`-`",
+        "description": "Uncontrolled initial value (array when multiple)"
+      },
+      {
+        "prop": "`gap`",
+        "type": "`number | string`",
+        "default": "`4`",
+        "description": "Spacing between tiles (theme units if number)"
+      },
+      {
+        "prop": "`multiple`",
+        "type": "`boolean`",
+        "default": "`false`",
+        "description": "Enable selecting more than one option"
+      },
+      {
+        "prop": "`onChange`",
+        "type": "`(val: Primitive | Primitive[]) => void`",
+        "default": "`-`",
+        "description": "Change handler (array when multiple)"
+      },
+      {
+        "prop": "`preset`",
+        "type": "`string | string[]`",
+        "default": "`-`",
+        "description": "Apply style presets"
+      },
+      {
+        "prop": "`children`",
+        "type": "`React.ReactNode`",
+        "default": "`-`",
+        "description": "MetroSelect.Option elements"
+      }
+    ],
+    "examples": [],
+    "bestPractices": [],
+    "docsUrl": "/components/field/MetroSelectDemo",
+    "sourceFile": "docs/src/pages/components/field/MetroSelectDemo.tsx"
+  },
+  "RadioGroup": {
+    "propsRows": [
+      {
+        "prop": "`value`",
+        "type": "`string`",
+        "default": "`-`",
+        "description": "Controlled value"
+      },
+      {
+        "prop": "`defaultValue`",
+        "type": "`string`",
+        "default": "`-`",
+        "description": "Uncontrolled initial value"
+      },
+      {
+        "prop": "`name`",
+        "type": "`string`",
+        "default": "`-`",
+        "description": "Field name for forms"
+      },
+      {
+        "prop": "`row`",
+        "type": "`boolean`",
+        "default": "`false`",
+        "description": "Horizontal layout"
+      },
+      {
+        "prop": "`size`",
+        "type": "`'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string`",
+        "default": "`'md'`",
+        "description": "Radio size token or custom CSS measurement"
+      },
+      {
+        "prop": "`spacing`",
+        "type": "`number | string`",
+        "default": "`-`",
+        "description": "Gap between options"
+      },
+      {
+        "prop": "`onChange`",
+        "type": "`(val: string) => void`",
+        "default": "`-`",
+        "description": "Change handler"
+      },
+      {
+        "prop": "`preset`",
+        "type": "`string | string[]`",
+        "default": "`-`",
+        "description": "Apply style presets"
+      }
+    ],
+    "examples": [],
+    "bestPractices": [],
+    "docsUrl": "/components/field/RadioGroupDemo",
+    "sourceFile": "docs/src/pages/components/field/RadioGroupDemo.tsx"
+  },
+  "Select": {
+    "propsRows": [
+      {
+        "prop": "`value`",
+        "type": "`string | number | (string | number)[]`",
+        "default": "`-`",
+        "description": "Controlled value"
+      },
+      {
+        "prop": "`initialValue`",
+        "type": "`string | number | (string | number)[]`",
+        "default": "`-`",
+        "description": "Uncontrolled initial value"
+      },
+      {
+        "prop": "`onChange`",
+        "type": "`(v: Primitive | Primitive[]) => void`",
+        "default": "`-`",
+        "description": "Change handler"
+      },
+      {
+        "prop": "`multiple`",
+        "type": "`boolean`",
+        "default": "`false`",
+        "description": "Allow multiple values"
+      },
+      {
+        "prop": "`placeholder`",
+        "type": "`string`",
+        "default": "`'Select…'`",
+        "description": "Label when empty"
+      },
+      {
+        "prop": "`size`",
+        "type": "`'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string`",
+        "default": "`'md'`",
+        "description": "Control height"
+      },
+      {
+        "prop": "`disabled`",
+        "type": "`boolean`",
+        "default": "`false`",
+        "description": "Disable interaction"
+      },
+      {
+        "prop": "`name`",
+        "type": "`string`",
+        "default": "`-`",
+        "description": "Form field name"
+      },
+      {
+        "prop": "`preset`",
+        "type": "`string | string[]`",
+        "default": "`-`",
+        "description": "Apply style presets"
+      }
+    ],
+    "examples": [],
+    "bestPractices": [],
+    "docsUrl": "/components/field/SelectDemo",
+    "sourceFile": "docs/src/pages/components/field/SelectDemo.tsx"
+  },
+  "Slider": {
+    "propsRows": [
+      {
+        "prop": "`value`",
+        "type": "`number`",
+        "default": "`-`",
+        "description": "Controlled value"
+      },
+      {
+        "prop": "`defaultValue`",
+        "type": "`number`",
+        "default": "`0`",
+        "description": "Uncontrolled start value"
+      },
+      {
+        "prop": "`min`",
+        "type": "`number`",
+        "default": "`0`",
+        "description": "Minimum value"
+      },
+      {
+        "prop": "`max`",
+        "type": "`number`",
+        "default": "`100`",
+        "description": "Maximum value"
+      },
+      {
+        "prop": "`step`",
+        "type": "`number`",
+        "default": "`1`",
+        "description": "Step increment"
+      },
+      {
+        "prop": "`presets`",
+        "type": "`number[]`",
+        "default": "`[]`",
+        "description": "Preset snap points"
+      },
+      {
+        "prop": "`snap`",
+        "type": "`'none' | 'step' | 'presets'`",
+        "default": "`'none'`",
+        "description": "Snap behaviour"
+      },
+      {
+        "prop": "`precision`",
+        "type": "`number`",
+        "default": "`0`",
+        "description": "Decimal places"
+      },
+      {
+        "prop": "`showValue`",
+        "type": "`boolean`",
+        "default": "`false`",
+        "description": "Display current value"
+      },
+      {
+        "prop": "`showMinMax`",
+        "type": "`boolean`",
+        "default": "`false`",
+        "description": "Display min and max labels"
+      },
+      {
+        "prop": "`showTicks`",
+        "type": "`boolean`",
+        "default": "`false`",
+        "description": "Show tick marks"
+      },
+      {
+        "prop": "`ticks`",
+        "type": "`number[]`",
+        "default": "`-`",
+        "description": "Custom tick positions"
+      },
+      {
+        "prop": "`size`",
+        "type": "`'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string`",
+        "default": "`'md'`",
+        "description": "Slider size"
+      },
+      {
+        "prop": "`disabled`",
+        "type": "`boolean`",
+        "default": "`false`",
+        "description": "Disable interaction"
+      },
+      {
+        "prop": "`preset`",
+        "type": "`string | string[]`",
+        "default": "`-`",
+        "description": "Apply style presets"
+      }
+    ],
+    "examples": [],
+    "bestPractices": [],
+    "docsUrl": "/components/field/SliderDemo",
+    "sourceFile": "docs/src/pages/components/field/SliderDemo.tsx"
+  },
+  "Switch": {
+    "propsRows": [
+      {
+        "prop": "`checked`",
+        "type": "`boolean`",
+        "default": "`-`",
+        "description": "Controlled state"
+      },
+      {
+        "prop": "`defaultChecked`",
+        "type": "`boolean`",
+        "default": "`false`",
+        "description": "Uncontrolled initial state"
+      },
+      {
+        "prop": "`onChange`",
+        "type": "`(checked: boolean) => void`",
+        "default": "`-`",
+        "description": "State change handler"
+      },
+      {
+        "prop": "`name`",
+        "type": "`string`",
+        "default": "`-`",
+        "description": "Form field name"
+      },
+      {
+        "prop": "`size`",
+        "type": "`'sm' | 'md' | 'lg'`",
+        "default": "`'md'`",
+        "description": "Switch size"
+      },
+      {
+        "prop": "`disabled`",
+        "type": "`boolean`",
+        "default": "`false`",
+        "description": "Disable interaction"
+      },
+      {
+        "prop": "`preset`",
+        "type": "`string | string[]`",
+        "default": "`-`",
+        "description": "Apply style presets"
+      }
+    ],
+    "examples": [],
+    "bestPractices": [],
+    "docsUrl": "/components/field/SwitchDemo",
+    "sourceFile": "docs/src/pages/components/field/SwitchDemo.tsx"
+  },
+  "Box": {
+    "propsRows": [
+      {
+        "prop": "`background`",
+        "type": "`string`",
+        "default": "`-`",
+        "description": "Background colour override. When set to a theme tone (primary/secondary/tertiary), text colour is derived automatically."
+      },
+      {
+        "prop": "`textColor`",
+        "type": "`string`",
+        "default": "`-`",
+        "description": "Explicit text colour"
+      },
+      {
+        "prop": "`pad`",
+        "type": "`number | string`",
+        "default": "`1`",
+        "description": "Container padding. Numbers map via theme.spacing(n); strings pass through (e.g., \"12px\")."
+      },
+      {
+        "prop": "`centerContent`",
+        "type": "`boolean`",
+        "default": "`false`",
+        "description": "Center inner content using flexbox"
+      },
+      {
+        "prop": "`fullWidth`",
+        "type": "`boolean`",
+        "default": "`false`",
+        "description": "Stretch to 100% width of the parent container"
+      },
+      {
+        "prop": "`alignX`",
+        "type": "`'left' | 'right' | 'center'`",
+        "default": "`'left'`",
+        "description": ""
+      },
+      {
+        "prop": "`compact`",
+        "type": "`boolean`",
+        "default": "`false`",
+        "description": "Zero out internal padding (overrides pad)."
+      },
+      {
+        "prop": "`preset`",
+        "type": "`string | string[]`",
+        "default": "`-`",
+        "description": "Apply style presets"
+      },
+      {
+        "prop": "`HTML div props`",
+        "type": "`React.ComponentProps<'div'>`",
+        "default": "`-`",
+        "description": ""
+      }
+    ],
+    "examples": [
+      {
+        "id": "box-example-1",
+        "code": "<Box>\n  <Typography>\n    (no props) — inherits parent background, uses theme text colour\n  </Typography>\n</Box>",
+        "lang": "tsx",
+        "source": {
+          "file": "/home/xbenc/occ/valet/docs/src/pages/components/layout/BoxDemo.tsx"
+        }
+      },
+      {
+        "id": "box-example-2",
+        "code": "<Box\n  background={theme.colors['tertiary']}\n  sx={{\n    border: `2px dashed ${theme.colors['text']}`,\n    padding: theme.spacing(1),\n    borderRadius: 12,\n  }}\n>\n  <Typography>\n    Dashed border, custom radius, padding via <code>sx</code>\n  </Typography>\n</Box>",
+        "lang": "tsx",
+        "source": {
+          "file": "/home/xbenc/occ/valet/docs/src/pages/components/layout/BoxDemo.tsx"
+        }
+      },
+      {
+        "id": "box-example-3",
+        "code": "<Box\n  id=\"hero\"\n  role=\"region\"\n  aria-label=\"Hero banner\"\n  onClick={() => console.log('clicked')}\n  sx={{ border: '1px solid currentColor' }}\n>\n  Content\n</Box>",
+        "lang": "tsx",
+        "source": {
+          "file": "/home/xbenc/occ/valet/docs/src/pages/components/layout/BoxDemo.tsx"
+        }
+      }
+    ],
+    "bestPractices": [
+      "Use `Box` as a neutral container for background, padding, and width anchoring. Compose layout with `Stack` / `Grid` ; keep   `Surface` for page-level backgrounds.",
+      "Prefer theme tones ( `primary` / `secondary` / `tertiary` ) to get automatic text contrast. When using custom colours, set `textColor` to maintain accessibility.",
+      "Reach for `Panel` when you need outlines or separators.   `Box` stays minimal and opinionated so the theme can do the heavy lifting.",
+      "Control placement with `alignX` and `fullWidth` .",
+      "Reuse styles with `preset` via `definePreset()` instead of sprinkling inline styles."
+    ],
+    "docsUrl": "/components/layout/BoxDemo",
+    "sourceFile": "docs/src/pages/components/layout/BoxDemo.tsx"
+  },
+  "Grid": {
+    "propsRows": [
+      {
+        "prop": "`columns`",
+        "type": "`number`",
+        "default": "`2`",
+        "description": "Number of equal‑width tracks (repeat(n, 1fr))."
+      },
+      {
+        "prop": "`gap`",
+        "type": "`number | string`",
+        "default": "`1`",
+        "description": "Space between cells. Numbers map via theme.spacing(n); strings pass through."
+      },
+      {
+        "prop": "`pad`",
+        "type": "`number | string`",
+        "default": "`1`",
+        "description": "Inner padding for the grid container. Same mapping as gap."
+      },
+      {
+        "prop": "`compact`",
+        "type": "`boolean`",
+        "default": "`false`",
+        "description": "Zero out both pad and gap for a tight layout."
+      },
+      {
+        "prop": "`adaptive`",
+        "type": "`boolean`",
+        "default": "`false`",
+        "description": "Switch to a single column when the surface is in portrait."
+      },
+      {
+        "prop": "`preset`",
+        "type": "`string | string[]`",
+        "default": "`-`",
+        "description": "Apply style presets via definePreset/preset registry."
+      },
+      {
+        "prop": "`HTML div props`",
+        "type": "`React.ComponentProps<'div'>`",
+        "default": "`-`",
+        "description": ""
+      }
+    ],
+    "examples": [],
+    "bestPractices": [
+      "Use `Grid` for two‑dimensional layouts where items align in both axes. Reach for `Stack` for linear flows.",
+      "Keep tracks simple. Prefer `columns` with equal tracks; use   `` on children to span.",
+      "Share spacing with the system: gap and pad use the same spacing scale as other layout primitives ( `Stack` , `Tabs` ).",
+      "Toggle `adaptive` when you want predictable single‑column layout in portrait across breakpoints. Avoid ad‑hoc media queries."
+    ],
+    "docsUrl": "/components/layout/GridDemo",
+    "sourceFile": "docs/src/pages/components/layout/GridDemo.tsx"
+  },
+  "List": {
+    "propsRows": [
+      {
+        "prop": "`data`",
+        "type": "`T[]`",
+        "default": "",
+        "description": "Items to render."
+      },
+      {
+        "prop": "`getTitle`",
+        "type": "`(item: T) => ReactNode`",
+        "default": "",
+        "description": "Primary content for each row."
+      },
+      {
+        "prop": "`getSubtitle`",
+        "type": "`(item: T) => ReactNode`",
+        "default": "",
+        "description": "Optional secondary line for each row."
+      },
+      {
+        "prop": "`striped`",
+        "type": "`boolean`",
+        "default": "",
+        "description": "Apply zebra striping."
+      },
+      {
+        "prop": "`hoverable`",
+        "type": "`boolean`",
+        "default": "",
+        "description": "Hover tint. Enabled by default for non‑striped lists."
+      },
+      {
+        "prop": "`reorderable`",
+        "type": "`boolean`",
+        "default": "",
+        "description": "Enable drag‑and‑drop reordering. When false, drag is disabled."
+      },
+      {
+        "prop": "`selectable`",
+        "type": "`boolean`",
+        "default": "",
+        "description": "Enable single selection. Click or drag to select the active item."
+      },
+      {
+        "prop": "`selected`",
+        "type": "`T | null`",
+        "default": "",
+        "description": "Controlled selected item (by reference)."
+      },
+      {
+        "prop": "`defaultSelected`",
+        "type": "`T | null`",
+        "default": "",
+        "description": "Uncontrolled initial selected item."
+      },
+      {
+        "prop": "`onSelectionChange`",
+        "type": "`(item: T, index: number) => void`",
+        "default": "",
+        "description": "Fires on selection change (click or drag‑select)."
+      },
+      {
+        "prop": "`onReorder`",
+        "type": "`(items: T[]) => void`",
+        "default": "",
+        "description": "Fires after a drag operation ends with the new order."
+      },
+      {
+        "prop": "`preset`",
+        "type": "`string | string[]`",
+        "default": "",
+        "description": "Apply style presets."
+      },
+      {
+        "prop": "`HTML ul props`",
+        "type": "`Omit<React.HTMLAttributes<HTMLUListElement>, 'children'>`",
+        "default": "",
+        "description": "Standard HTML attributes for <ul> (excluding &apos;children&apos;) pass through."
+      }
+    ],
+    "examples": [],
+    "bestPractices": [],
+    "docsUrl": "/components/layout/ListDemoPage",
+    "sourceFile": "docs/src/pages/components/layout/ListDemoPage.tsx"
+  },
+  "Panel": {
+    "propsRows": [
+      {
+        "prop": "`background`",
+        "type": "`string`",
+        "default": "`-`",
+        "description": "Explicit background override"
+      },
+      {
+        "prop": "`centerContent`",
+        "type": "`boolean`",
+        "default": "`false`",
+        "description": "Center contents using flexbox"
+      },
+      {
+        "prop": "`alignX`",
+        "type": "``",
+        "default": "``",
+        "description": "Horizontal placement when not fullWidth"
+      },
+      {
+        "prop": "`compact`",
+        "type": "`boolean`",
+        "default": "`false`",
+        "description": "Remove default margin and padding"
+      },
+      {
+        "prop": "`fullWidth`",
+        "type": "`boolean`",
+        "default": "`false`",
+        "description": "Stretch to 100% width"
+      },
+      {
+        "prop": "`preset`",
+        "type": "`string | string[]`",
+        "default": "`-`",
+        "description": "Apply style presets"
+      },
+      {
+        "prop": "`variant`",
+        "type": "``",
+        "default": "``",
+        "description": "Visual style: filled or outlined"
+      }
+    ],
+    "examples": [],
+    "bestPractices": [],
+    "docsUrl": "/components/layout/Panel",
+    "sourceFile": "docs/src/pages/components/layout/Panel.tsx"
+  },
+  "Stack": {
+    "propsRows": [
+      {
+        "prop": "`direction`",
+        "type": "`'row' | 'column'`",
+        "default": "`'column'`",
+        "description": "Layout direction"
+      },
+      {
+        "prop": "`gap`",
+        "type": "`number | string`",
+        "default": "`1`",
+        "description": "Gap between children"
+      },
+      {
+        "prop": "`wrap`",
+        "type": "`boolean`",
+        "default": "`false for column, true for row`",
+        "description": "Allow children to wrap"
+      },
+      {
+        "prop": "`compact`",
+        "type": "`boolean`",
+        "default": "`false`",
+        "description": "Remove margin and padding"
+      },
+      {
+        "prop": "`preset`",
+        "type": "`string | string[]`",
+        "default": "`-`",
+        "description": "Apply style presets"
+      }
+    ],
+    "examples": [],
+    "bestPractices": [],
+    "docsUrl": "/components/layout/StackDemo",
+    "sourceFile": "docs/src/pages/components/layout/StackDemo.tsx"
+  },
+  "Tabs": {
+    "propsRows": [
+      {
+        "prop": "`alignX`",
+        "type": "``",
+        "default": "``",
+        "description": "Horizontal alignment of the tab strip (horizontal orientation)."
+      },
+      {
+        "prop": "`orientation`",
+        "type": "``",
+        "default": "``",
+        "description": "Layout direction for the tab strip and panel."
+      },
+      {
+        "prop": "`placement`",
+        "type": "``",
+        "default": "``",
+        "description": "Which side the tab strip sits on relative to the panel."
+      },
+      {
+        "prop": "`active`",
+        "type": "`number`",
+        "default": "`-`",
+        "description": "Controlled index of the active tab."
+      },
+      {
+        "prop": "`defaultActive`",
+        "type": "`number`",
+        "default": "`0`",
+        "description": "Uncontrolled initial active tab index."
+      },
+      {
+        "prop": "`onTabChange`",
+        "type": "`(i: number) => void`",
+        "default": "`-`",
+        "description": "Callback when the active tab changes."
+      },
+      {
+        "prop": "`compact`",
+        "type": "`boolean`",
+        "default": "`false`",
+        "description": "Reduce internal spacing density."
+      },
+      {
+        "prop": "`preset`",
+        "type": "`string | string[]`",
+        "default": "`-`",
+        "description": "Apply style presets to the container."
+      },
+      {
+        "prop": "`sx`",
+        "type": "`object`",
+        "default": "`-`",
+        "description": "Inline style overrides (CSS object; supports CSS vars)."
+      }
+    ],
+    "examples": [],
+    "bestPractices": [],
+    "docsUrl": "/components/layout/TabsDemo",
+    "sourceFile": "docs/src/pages/components/layout/TabsDemo.tsx"
+  },
+  "Avatar": {
+    "propsRows": [
+      {
+        "prop": "`src`",
+        "type": "`string`",
+        "default": "`-`",
+        "description": "Image URL override"
+      },
+      {
+        "prop": "`email`",
+        "type": "`string`",
+        "default": "`-`",
+        "description": "Email used for Gravatar lookup"
+      },
+      {
+        "prop": "`size`",
+        "type": "`'xs' | 's' | 'm' | 'l' | 'xl'`",
+        "default": "`'m'`",
+        "description": "Relative size token"
+      },
+      {
+        "prop": "`variant`",
+        "type": "`'plain' | 'outline'`",
+        "default": "`'plain'`",
+        "description": "Visual style variant"
+      },
+      {
+        "prop": "`gravatarDefault`",
+        "type": "`string`",
+        "default": "`'identicon'`",
+        "description": "Fallback style when no avatar exists"
+      },
+      {
+        "prop": "`alt`",
+        "type": "`string`",
+        "default": "`-`",
+        "description": "Image alt text"
+      },
+      {
+        "prop": "`preset`",
+        "type": "`string | string[]`",
+        "default": "`-`",
+        "description": "Apply style presets"
+      }
+    ],
+    "examples": [],
+    "bestPractices": [],
+    "docsUrl": "/components/primitives/AvatarDemo",
+    "sourceFile": "docs/src/pages/components/primitives/AvatarDemo.tsx"
+  },
+  "Divider": {
+    "propsRows": [
+      {
+        "prop": "`orientation`",
+        "type": "`'horizontal' | 'vertical'`",
+        "default": "`'horizontal'`",
+        "description": "Direction of the line separator."
+      },
+      {
+        "prop": "`lineColor`",
+        "type": "`string`",
+        "default": "`theme.colors.text`",
+        "description": "Explicit colour. By default, Divider uses the text colour that contrasts the page background."
+      },
+      {
+        "prop": "`thickness`",
+        "type": "`number | string`",
+        "default": "`1`",
+        "description": "Line thickness. Numbers map via theme.stroke(n); strings pass through (e.g., \"2px\")."
+      },
+      {
+        "prop": "`length`",
+        "type": "`number | string`",
+        "default": "`'100%'`",
+        "description": "Length along the main axis. Numbers → px; strings pass through (e.g., \"50%\", \"12rem\")."
+      },
+      {
+        "prop": "`pad`",
+        "type": "`number | string`",
+        "default": "`0`",
+        "description": "Outer spacing envelope. Numbers map via theme.spacing(n); strings pass through. Obeys compact."
+      },
+      {
+        "prop": "`compact`",
+        "type": "`boolean`",
+        "default": "`false`",
+        "description": "Zero out padding for compact density."
+      },
+      {
+        "prop": "`preset`",
+        "type": "`string | string[]`",
+        "default": "`-`",
+        "description": "Apply style presets."
+      }
+    ],
+    "examples": [],
+    "bestPractices": [],
+    "docsUrl": "/components/primitives/DividerDemo",
+    "sourceFile": "docs/src/pages/components/primitives/DividerDemo.tsx"
+  },
+  "Icon": {
+    "propsRows": [
+      {
+        "prop": "`icon`",
+        "type": "`string`",
+        "default": "`-`",
+        "description": "Iconify name"
+      },
+      {
+        "prop": "`svg`",
+        "type": "`string | ReactElement`",
+        "default": "`-`",
+        "description": "Custom SVG content"
+      },
+      {
+        "prop": "`size`",
+        "type": "`'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string`",
+        "default": "`'md'`",
+        "description": "Icon dimensions"
+      },
+      {
+        "prop": "`color`",
+        "type": "`string`",
+        "default": "`-`",
+        "description": "Colour override"
+      },
+      {
+        "prop": "`preset`",
+        "type": "`string | string[]`",
+        "default": "`-`",
+        "description": "Apply style presets"
+      }
+    ],
+    "examples": [],
+    "bestPractices": [],
+    "docsUrl": "/components/primitives/IconDemoPage",
+    "sourceFile": "docs/src/pages/components/primitives/IconDemoPage.tsx"
+  },
+  "Skeleton": {
+    "propsRows": [
+      {
+        "prop": "`loading`",
+        "type": "`boolean`",
+        "default": "`true`",
+        "description": "Show placeholder while true"
+      },
+      {
+        "prop": "`variant`",
+        "type": "`'text' | 'rect' | 'circle'`",
+        "default": "`-`",
+        "description": "Override inferred placeholder shape"
+      },
+      {
+        "prop": "`icon`",
+        "type": "`ReactNode`",
+        "default": "`-`",
+        "description": "Optional icon shown while loading"
+      },
+      {
+        "prop": "`preset`",
+        "type": "`string | string[]`",
+        "default": "`-`",
+        "description": "Apply style presets"
+      }
+    ],
+    "examples": [],
+    "bestPractices": [],
+    "docsUrl": "/components/primitives/SkeletonDemo",
+    "sourceFile": "docs/src/pages/components/primitives/SkeletonDemo.tsx"
+  },
+  "Typography": {
+    "propsRows": [
+      {
+        "prop": "`variant`",
+        "type": "`'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'body' | 'subtitle' | 'button'`",
+        "default": "`'body'`",
+        "description": "Typography style preset"
+      },
+      {
+        "prop": "`bold`",
+        "type": "`boolean`",
+        "default": "`false`",
+        "description": "Use font-weight 700"
+      },
+      {
+        "prop": "`italic`",
+        "type": "`boolean`",
+        "default": "`false`",
+        "description": "Use italic font style"
+      },
+      {
+        "prop": "`centered`",
+        "type": "`boolean`",
+        "default": "`false`",
+        "description": "Center-align text and element within flex/grid parents"
+      },
+      {
+        "prop": "`family`",
+        "type": "`'heading' | 'body' | 'mono' | 'button'`",
+        "default": "`'-'`",
+        "description": "Select a theme font family"
+      },
+      {
+        "prop": "`fontFamily`",
+        "type": "`string`",
+        "default": "`'-'`",
+        "description": "Override theme font family"
+      },
+      {
+        "prop": "`fontSize`",
+        "type": "`string`",
+        "default": "`'-'`",
+        "description": "Explicit CSS font-size"
+      },
+      {
+        "prop": "`scale`",
+        "type": "`number`",
+        "default": "`'-'`",
+        "description": "Multiply the final size (autoSize aware)"
+      },
+      {
+        "prop": "`autoSize`",
+        "type": "`boolean`",
+        "default": "`false`",
+        "description": "Resize to the current breakpoint"
+      },
+      {
+        "prop": "`color`",
+        "type": "`string`",
+        "default": "`'-'`",
+        "description": "Override text colour"
+      },
+      {
+        "prop": "`preset`",
+        "type": "`string | string[]`",
+        "default": "`'-'`",
+        "description": "Apply style presets"
+      }
+    ],
+    "examples": [],
+    "bestPractices": [],
+    "docsUrl": "/components/primitives/TypographyDemoPage",
+    "sourceFile": "docs/src/pages/components/primitives/TypographyDemoPage.tsx"
+  },
+  "CodeBlock": {
+    "propsRows": [
+      {
+        "prop": "`code`",
+        "type": "`string`",
+        "default": "`-`",
+        "description": "Source code to render"
+      },
+      {
+        "prop": "`language`",
+        "type": "`string`",
+        "default": "`'typescript'`",
+        "description": "Highlight.js language key"
+      },
+      {
+        "prop": "`ariaLabel`",
+        "type": "`string`",
+        "default": "`-`",
+        "description": "Copy button aria-label"
+      },
+      {
+        "prop": "`title`",
+        "type": "`string`",
+        "default": "`-`",
+        "description": "Copy button tooltip"
+      }
+    ],
+    "examples": [],
+    "bestPractices": [],
+    "docsUrl": "/components/widgets/CodeBlockDemo",
+    "sourceFile": "docs/src/pages/components/widgets/CodeBlockDemo.tsx"
+  },
+  "Dropzone": {
+    "propsRows": [
+      {
+        "prop": "`accept`",
+        "type": "`DropzoneOptions['accept']`",
+        "default": "`-`",
+        "description": "Allowed file types"
+      },
+      {
+        "prop": "`showPreviews`",
+        "type": "`boolean`",
+        "default": "`true`",
+        "description": "Show preview thumbnails"
+      },
+      {
+        "prop": "`showFileList`",
+        "type": "`boolean`",
+        "default": "`false`",
+        "description": "Show icons and names"
+      },
+      {
+        "prop": "`onFilesChange`",
+        "type": "`(files: File[]) => void`",
+        "default": "`-`",
+        "description": "Called when accepted files change"
+      },
+      {
+        "prop": "`maxFiles`",
+        "type": "`number`",
+        "default": "`-`",
+        "description": "Maximum file count"
+      },
+      {
+        "prop": "`multiple`",
+        "type": "`boolean`",
+        "default": "`true`",
+        "description": "Allow multiple file selection"
+      },
+      {
+        "prop": "`fullWidth`",
+        "type": "`boolean`",
+        "default": "`false`",
+        "description": "Stretch to fill parent width"
+      },
+      {
+        "prop": "`onDrop`",
+        "type": "`DropzoneOptions['onDrop']`",
+        "default": "`-`",
+        "description": "Low-level drop callback"
+      },
+      {
+        "prop": "`preset`",
+        "type": "`string | string[]`",
+        "default": "`-`",
+        "description": "Style preset(s)"
+      }
+    ],
+    "examples": [],
+    "bestPractices": [],
+    "docsUrl": "/components/widgets/DropzoneDemo",
+    "sourceFile": "docs/src/pages/components/widgets/DropzoneDemo.tsx"
+  },
+  "LLMChat": {
+    "propsRows": [
+      {
+        "prop": "`messages`",
+        "type": "`ChatMessage[]`",
+        "default": "`-`",
+        "description": "Conversation history"
+      },
+      {
+        "prop": "`onSend`",
+        "type": "`(m: ChatMessage) => void`",
+        "default": "`-`",
+        "description": "Called when user submits a message"
+      },
+      {
+        "prop": "`userAvatar`",
+        "type": "`string`",
+        "default": "`-`",
+        "description": "URL for user avatar image"
+      },
+      {
+        "prop": "`systemAvatar`",
+        "type": "`string`",
+        "default": "`-`",
+        "description": "URL for assistant avatar image"
+      },
+      {
+        "prop": "`placeholder`",
+        "type": "`string`",
+        "default": "`'Message…'`",
+        "description": "Input placeholder"
+      },
+      {
+        "prop": "`disableInput`",
+        "type": "`boolean`",
+        "default": "`false`",
+        "description": "Hide the compose bar"
+      },
+      {
+        "prop": "`constrainHeight`",
+        "type": "`boolean`",
+        "default": "`true`",
+        "description": "Fit within surface height"
+      },
+      {
+        "prop": "`apiKey`",
+        "type": "`string`",
+        "default": "`-`",
+        "description": "Override global API key"
+      },
+      {
+        "prop": "`provider`",
+        "type": "`AIProvider`",
+        "default": "`-`",
+        "description": "Model provider"
+      },
+      {
+        "prop": "`model`",
+        "type": "`string`",
+        "default": "`-`",
+        "description": "Model name"
+      },
+      {
+        "prop": "`onModelChange`",
+        "type": "`(m: string) => void`",
+        "default": "`-`",
+        "description": "Handle model changes"
+      },
+      {
+        "prop": "`preset`",
+        "type": "`string | string[]`",
+        "default": "`-`",
+        "description": "Apply style presets"
+      }
+    ],
+    "examples": [],
+    "bestPractices": [],
+    "docsUrl": "/components/widgets/LLMChat",
+    "sourceFile": "docs/src/pages/components/widgets/LLMChat.tsx"
+  },
+  "Markdown": {
+    "propsRows": [
+      {
+        "prop": "`data`",
+        "type": "`string`",
+        "default": "`-`",
+        "description": "Markdown source text"
+      },
+      {
+        "prop": "`codeBackground`",
+        "type": "`string`",
+        "default": "`-`",
+        "description": "Override background for fenced code blocks"
+      }
+    ],
+    "examples": [],
+    "bestPractices": [],
+    "docsUrl": "/components/widgets/MarkdownDemo",
+    "sourceFile": "docs/src/pages/components/widgets/MarkdownDemo.tsx"
+  },
+  "RichChat": {
+    "propsRows": [
+      {
+        "prop": "`messages`",
+        "type": "`RichMessage[]`",
+        "default": "`-`",
+        "description": "Conversation history with JSX content"
+      },
+      {
+        "prop": "`onFormSubmit`",
+        "type": "`(value: string, index: number) => void`",
+        "default": "`-`",
+        "description": "Called when a form message submits"
+      },
+      {
+        "prop": "`onSend`",
+        "type": "`(m: RichMessage) => void`",
+        "default": "`-`",
+        "description": "Called when user sends a message"
+      },
+      {
+        "prop": "`userAvatar`",
+        "type": "`string`",
+        "default": "`-`",
+        "description": "URL for user avatar image"
+      },
+      {
+        "prop": "`systemAvatar`",
+        "type": "`string`",
+        "default": "`-`",
+        "description": "URL for assistant avatar image"
+      },
+      {
+        "prop": "`placeholder`",
+        "type": "`string`",
+        "default": "`'Message…'`",
+        "description": "Input placeholder"
+      },
+      {
+        "prop": "`disableInput`",
+        "type": "`boolean`",
+        "default": "`false`",
+        "description": "Hide the compose bar"
+      },
+      {
+        "prop": "`constrainHeight`",
+        "type": "`boolean`",
+        "default": "`true`",
+        "description": "Fit within surface height"
+      },
+      {
+        "prop": "`preset`",
+        "type": "`string | string[]`",
+        "default": "`-`",
+        "description": "Apply style presets"
+      }
+    ],
+    "examples": [],
+    "bestPractices": [],
+    "docsUrl": "/components/widgets/RichChat",
+    "sourceFile": "docs/src/pages/components/widgets/RichChat.tsx"
+  },
+  "Snackbar": {
+    "propsRows": [
+      {
+        "prop": "`open`",
+        "type": "`boolean`",
+        "default": "`false`",
+        "description": "Controlled visibility flag"
+      },
+      {
+        "prop": "`onClose`",
+        "type": "``",
+        "default": "`-`",
+        "description": "Called when fully hidden"
+      },
+      {
+        "prop": "`autoHideDuration`",
+        "type": "`number | null`",
+        "default": "`4000`",
+        "description": "Dismiss after N ms"
+      },
+      {
+        "prop": "`message`",
+        "type": "`React.ReactNode`",
+        "default": "`-`",
+        "description": "Convenience message"
+      },
+      {
+        "prop": "`noStack`",
+        "type": "`boolean`",
+        "default": "`false`",
+        "description": "Disable flex layout"
+      },
+      {
+        "prop": "`preset`",
+        "type": "`string | string[]`",
+        "default": "`-`",
+        "description": "Apply style presets"
+      }
+    ],
+    "examples": [],
+    "bestPractices": [],
+    "docsUrl": "/components/widgets/SnackbarDemo",
+    "sourceFile": "docs/src/pages/components/widgets/SnackbarDemo.tsx"
+  },
+  "SpeedDial": {
+    "propsRows": [
+      {
+        "prop": "`icon`",
+        "type": "`React.ReactNode`",
+        "default": "`-`",
+        "description": "Main floating action button icon"
+      },
+      {
+        "prop": "`actions`",
+        "type": "`SpeedDialAction[]`",
+        "default": "`-`",
+        "description": "Array of action buttons"
+      },
+      {
+        "prop": "`direction`",
+        "type": "`'up' | 'down' | 'left' | 'right'`",
+        "default": "`'up'`",
+        "description": "Expansion direction"
+      },
+      {
+        "prop": "`preset`",
+        "type": "`string | string[]`",
+        "default": "`-`",
+        "description": "Apply style presets"
+      }
+    ],
+    "examples": [],
+    "bestPractices": [],
+    "docsUrl": "/components/widgets/SpeedDialDemo",
+    "sourceFile": "docs/src/pages/components/widgets/SpeedDialDemo.tsx"
+  },
+  "Stepper": {
+    "propsRows": [
+      {
+        "prop": "`steps`",
+        "type": "`React.ReactNode[]`",
+        "default": "`-`",
+        "description": "Labels for each step"
+      },
+      {
+        "prop": "`active`",
+        "type": "`number`",
+        "default": "`0`",
+        "description": "Index of the active step"
+      },
+      {
+        "prop": "`preset`",
+        "type": "`string | string[]`",
+        "default": "`-`",
+        "description": "Apply style presets"
+      }
+    ],
+    "examples": [],
+    "bestPractices": [],
+    "docsUrl": "/components/widgets/StepperDemo",
+    "sourceFile": "docs/src/pages/components/widgets/StepperDemo.tsx"
+  },
+  "Tree": {
+    "propsRows": [
+      {
+        "prop": "`nodes`",
+        "type": "`TreeNode<T>[]`",
+        "default": "`-`",
+        "description": "Array of tree nodes"
+      },
+      {
+        "prop": "`getLabel`",
+        "type": "`(n: T) => ReactNode`",
+        "default": "`-`",
+        "description": "Return label for a node"
+      },
+      {
+        "prop": "`defaultExpanded`",
+        "type": "`string[]`",
+        "default": "`[]`",
+        "description": "Node ids expanded on mount"
+      },
+      {
+        "prop": "`expanded`",
+        "type": "`string[]`",
+        "default": "`-`",
+        "description": "Controlled expanded node ids"
+      },
+      {
+        "prop": "`onExpandedChange`",
+        "type": "`(ids: string[]) => void`",
+        "default": "`-`",
+        "description": "Handle expand/collapse changes"
+      },
+      {
+        "prop": "`selected`",
+        "type": "`string`",
+        "default": "`-`",
+        "description": "Controlled selected node id"
+      },
+      {
+        "prop": "`defaultSelected`",
+        "type": "`string`",
+        "default": "`-`",
+        "description": "Uncontrolled starting selection"
+      },
+      {
+        "prop": "`onNodeSelect`",
+        "type": "`(n: T) => void`",
+        "default": "`-`",
+        "description": "Called when a node is selected"
+      },
+      {
+        "prop": "`variant`",
+        "type": "`'chevron' | 'list' | 'files'`",
+        "default": "`'chevron'`",
+        "description": "Visual style of branches"
+      },
+      {
+        "prop": "`preset`",
+        "type": "`string | string[]`",
+        "default": "`-`",
+        "description": "Apply style presets"
+      }
+    ],
+    "examples": [],
+    "bestPractices": [],
+    "docsUrl": "/components/widgets/TreeDemo",
+    "sourceFile": "docs/src/pages/components/widgets/TreeDemo.tsx"
+  },
+  "Overview": {
+    "propsRows": [],
+    "examples": [
+      {
+        "id": "overview-example-1",
+        "code": "npm install @archway/valet",
+        "lang": "tsx",
+        "source": {
+          "file": "/home/xbenc/occ/valet/docs/src/pages/concepts/Overview.tsx"
+        }
+      },
+      {
+        "id": "overview-example-2",
+        "code": "import { Routes, Route, BrowserRouter } from 'react-router-dom';\nimport { Surface, Stack, Typography, Button, useInitialTheme } from '@archway/valet';\n\nfunction Home() {\n  return (\n    <Surface>\n      <Stack gap={2} sx={{ padding: '1rem' }}>\n        <Typography variant=\"h2\">Hello, valet</Typography>\n        <Button variant=\"primary\">Click me</Button>\n      </Stack>\n    </Surface>\n  );\n}\n\nexport function App() {\n  useInitialTheme({ fonts: { body: 'Cabin', heading: 'Cabin', mono: 'Ubuntu Mono', button: 'Ubuntu' } });\n  return (\n    <BrowserRouter>\n      <Routes>\n        <Route path=\"/\" element={<Home />} />\n      </Routes>\n    </BrowserRouter>\n  );\n}",
+        "lang": "tsx",
+        "source": {
+          "file": "/home/xbenc/occ/valet/docs/src/pages/concepts/Overview.tsx"
+        }
+      }
+    ],
+    "bestPractices": [],
+    "docsUrl": "/concepts/Overview",
+    "sourceFile": "docs/src/pages/concepts/Overview.tsx"
+  },
+  "PropPatterns": {
+    "propsRows": [
+      {
+        "prop": "`preset`",
+        "type": "",
+        "default": "",
+        "description": ""
+      },
+      {
+        "prop": "`sx`",
+        "type": "",
+        "default": "",
+        "description": ""
+      },
+      {
+        "prop": "`size`",
+        "type": "",
+        "default": "",
+        "description": ""
+      },
+      {
+        "prop": "`variant`",
+        "type": "",
+        "default": "",
+        "description": ""
+      },
+      {
+        "prop": "`color`",
+        "type": "",
+        "default": "",
+        "description": ""
+      },
+      {
+        "prop": "`fullWidth`",
+        "type": "",
+        "default": "",
+        "description": ""
+      },
+      {
+        "prop": "`compact`",
+        "type": "",
+        "default": "",
+        "description": ""
+      },
+      {
+        "prop": "`centerContent`",
+        "type": "",
+        "default": "",
+        "description": ""
+      },
+      {
+        "prop": "`alignX`",
+        "type": "",
+        "default": "",
+        "description": ""
+      },
+      {
+        "prop": "`density`",
+        "type": "",
+        "default": "",
+        "description": ""
+      },
+      {
+        "prop": "`open`",
+        "type": "",
+        "default": "",
+        "description": ""
+      },
+      {
+        "prop": "`constrainHeight`",
+        "type": "",
+        "default": "",
+        "description": ""
+      },
+      {
+        "prop": "`value`",
+        "type": "",
+        "default": "",
+        "description": ""
+      },
+      {
+        "prop": "`orientation`",
+        "type": "",
+        "default": "",
+        "description": ""
+      }
+    ],
+    "examples": [],
+    "bestPractices": [],
+    "docsUrl": "/concepts/PropPatterns",
+    "sourceFile": "docs/src/pages/concepts/PropPatterns.tsx"
+  },
+  "Quickstart": {
+    "propsRows": [],
+    "examples": [
+      {
+        "id": "quickstart-example-1",
+        "code": "npm create vite@latest my-app -- --template react-ts",
+        "lang": "tsx",
+        "source": {
+          "file": "/home/xbenc/occ/valet/docs/src/pages/concepts/Quickstart.tsx"
+        }
+      },
+      {
+        "id": "quickstart-example-2",
+        "code": "cd my-app && npm install @archway/valet",
+        "lang": "tsx",
+        "source": {
+          "file": "/home/xbenc/occ/valet/docs/src/pages/concepts/Quickstart.tsx"
+        }
+      },
+      {
+        "id": "quickstart-example-3",
+        "code": "// src/main.tsx\nimport React from 'react';\nimport ReactDOM from 'react-dom/client';\nimport { BrowserRouter } from 'react-router-dom';\nimport './presets/globalPresets';   // import your preset registry\nimport { App } from './App';\n\nReactDOM.createRoot(document.getElementById('root')!).render(\n  <React.StrictMode>\n    <BrowserRouter>\n      <App />\n    </BrowserRouter>\n  </React.StrictMode>,\n);\n",
+        "lang": "tsx",
+        "source": {
+          "file": "/home/xbenc/occ/valet/docs/src/pages/concepts/Quickstart.tsx"
+        }
+      },
+      {
+        "id": "quickstart-example-4",
+        "code": "// src/App.tsx\n  import { useInitialTheme } from '@archway/valet';\n  import brandonUrl from './assets/fonts/BrandonGrotesque.otf';\n  \n  export function App() {\n    useInitialTheme(\n      {\n        fonts: {\n          heading: { name: 'Brandon', src: brandonUrl },\n          body: 'Cabin',\n          mono: 'Ubuntu Mono',\n          button: 'Ubuntu',\n        },\n      },\n      [{ name: 'Brandon', src: brandonUrl }, 'Ubuntu', 'Ubuntu Mono', 'Cabin'],\n    );\n    // ...\n  }\n  ",
+        "lang": "tsx",
+        "source": {
+          "file": "/home/xbenc/occ/valet/docs/src/pages/concepts/Quickstart.tsx"
+        }
+      },
+      {
+        "id": "quickstart-example-5",
+        "code": "import { Routes, Route } from 'react-router-dom';\n  import { Surface, Stack, Typography, Button } from '@archway/valet';\n  \n  function Home() {\n    return (\n      <Surface>\n        <Stack gap={2} sx={{ padding: '1.5rem' }}>\n          <Typography variant=\"h2\">Hello, valet</Typography>\n          <Button variant=\"primary\">Click me</Button>\n        </Stack>\n      </Surface>\n    );\n  }\n  \n  export function App() {\n    return (\n      <Routes>\n        <Route path=\"/\" element={<Home />} />\n      </Routes>\n    );\n  }\n  ",
+        "lang": "tsx",
+        "source": {
+          "file": "/home/xbenc/occ/valet/docs/src/pages/concepts/Quickstart.tsx"
+        }
+      }
+    ],
+    "bestPractices": [],
+    "docsUrl": "/concepts/Quickstart",
+    "sourceFile": "docs/src/pages/concepts/Quickstart.tsx"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "name": "StepperDemo",
+  "category": "unknown",
+  "slug": "components/unknown/stepperdemo",
+  "summary": "StepperDemo component",
+  "props": [
+    {
+      "name": "steps",
+      "type": "React.ReactNode[]",
+      "required": false,
+      "default": "-",
+      "description": "Labels for each step"
+    },
+    {
+      "name": "active",
+      "type": "number",
+      "required": false,
+      "default": "0",
+      "description": "Index of the active step"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[]",
+      "required": false,
+      "default": "-",
+      "description": "Apply style presets"
+    }
+  ],
+  "cssVars": [],
+  "bestPractices": [],
+  "examples": [],
+  "docsUrl": "/components/widgets/StepperDemo",
+  "sourceFiles": [
+    "docs/src/pages/components/widgets/StepperDemo.tsx"
+  ],
+  "version": "0.30.1"
+}

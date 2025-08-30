@@ -1,0 +1,76 @@
+{
+  "name": "ParallaxBackground",
+  "category": "widgets",
+  "slug": "components/widgets/parallaxbackground",
+  "summary": "ParallaxBackground component",
+  "props": [
+    {
+      "name": "src",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "mediaType",
+      "type": "MediaType",
+      "required": true
+    },
+    {
+      "name": "poster",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "loop",
+      "type": "boolean",
+      "required": true,
+      "default": "true"
+    },
+    {
+      "name": "muted",
+      "type": "boolean",
+      "required": true,
+      "default": "true"
+    },
+    {
+      "name": "autoPlay",
+      "type": "boolean",
+      "required": true,
+      "default": "true"
+    },
+    {
+      "name": "preload",
+      "type": "'none' | 'metadata' | 'auto'",
+      "required": true,
+      "default": "'auto'",
+      "enumValues": [
+        "none",
+        "metadata",
+        "auto"
+      ]
+    },
+    {
+      "name": "speed",
+      "type": "unknown",
+      "required": false,
+      "default": "0.5"
+    },
+    {
+      "name": "axis",
+      "type": "unknown",
+      "required": false,
+      "default": "'y'"
+    }
+  ],
+  "cssVars": [],
+  "cssPresets": [],
+  "events": [],
+  "actions": [],
+  "slots": [],
+  "bestPractices": [],
+  "examples": [],
+  "sourceFiles": [
+    "src/components/widgets/Parallax.tsx"
+  ],
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
+}

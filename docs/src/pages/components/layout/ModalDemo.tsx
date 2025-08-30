@@ -14,6 +14,7 @@ import {
   useTheme,
   definePreset,
   Modal,
+  Panel,
 } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
@@ -54,6 +55,35 @@ export default function ModalDemoPage() {
         <Typography variant='subtitle'>
           Explore dialog vs alert semantics, controlled state, size props, and more.
         </Typography>
+
+        {/* Best Practices -------------------------------------------------- */}
+        <Panel fullWidth>
+          <Typography variant='h4'>Best Practices</Typography>
+          <Typography>
+            - Choose the right type: use <code>variant='dialog'</code> for neutral flows and
+            <code>variant='alert'</code> for destructive or high‑attention confirmations.
+          </Typography>
+          <Typography>
+            - Provide a clear <code>title</code> and unambiguous action labels (avoid vague
+            “OK”/“Cancel”). Make the primary action visually dominant.
+          </Typography>
+          <Typography>
+            - Keep escape hatches accessible. Only combine <code>disableBackdropClick</code> and
+            <code>disableEscapeKeyDown</code> when the flow truly requires it.
+          </Typography>
+          <Typography>
+            - Treat <code>open</code> as the single source of truth and wire <code>onClose</code>
+            for all dismissal paths (buttons, ESC, backdrop). Return focus to the trigger on close.
+          </Typography>
+          <Typography>
+            - Size with intent: prefer <code>maxWidth</code> for readability; reserve
+            <code>fullWidth</code> for mobile or immersive flows. Let long content scroll inside.
+          </Typography>
+          <Typography>
+            - Don’t nest modals. Transition content or sequence steps in a single modal instead of
+            opening another.
+          </Typography>
+        </Panel>
 
         {/* 1. Simple dialog ------------------------------------------------ */}
         <Typography variant='h3'>1. Dialog modal</Typography>

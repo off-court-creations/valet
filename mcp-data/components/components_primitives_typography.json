@@ -1,0 +1,131 @@
+{
+  "name": "Typography",
+  "category": "primitives",
+  "slug": "components/primitives/typography",
+  "summary": "Typography component",
+  "props": [
+    {
+      "name": "variant",
+      "type": "'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'body' | 'subtitle' | 'button'",
+      "required": true,
+      "default": "'body'",
+      "description": "Typography style preset"
+    },
+    {
+      "name": "bold",
+      "type": "boolean",
+      "required": true,
+      "default": "false",
+      "description": "Use font-weight 700"
+    },
+    {
+      "name": "italic",
+      "type": "boolean",
+      "required": true,
+      "default": "false",
+      "description": "Use italic font style"
+    },
+    {
+      "name": "centered",
+      "type": "boolean",
+      "required": true,
+      "default": "false",
+      "description": "Center-align text and element within flex/grid parents"
+    },
+    {
+      "name": "noSelect",
+      "type": "boolean",
+      "required": true,
+      "default": "false"
+    },
+    {
+      "name": "fontSize",
+      "type": "string",
+      "required": true,
+      "default": "'-'",
+      "description": "Explicit CSS font-size"
+    },
+    {
+      "name": "scale",
+      "type": "number",
+      "required": true,
+      "default": "'-'",
+      "description": "Multiply the final size (autoSize aware)"
+    },
+    {
+      "name": "autoSize",
+      "type": "boolean",
+      "required": true,
+      "default": "false",
+      "description": "Resize to the current breakpoint"
+    },
+    {
+      "name": "color",
+      "type": "string",
+      "required": true,
+      "default": "'-'",
+      "description": "Override text colour"
+    },
+    {
+      "name": "family",
+      "type": "'heading' | 'body' | 'mono' | 'button'",
+      "required": true,
+      "enumValues": [
+        "heading",
+        "body",
+        "mono",
+        "button"
+      ],
+      "default": "'-'",
+      "description": "Select a theme font family"
+    },
+    {
+      "name": "fontFamily",
+      "type": "string",
+      "required": true,
+      "default": "'-'",
+      "description": "Override theme font family"
+    },
+    {
+      "name": "whitespace",
+      "type": "'normal' | 'pre' | 'pre-wrap' | 'pre-line'",
+      "required": true,
+      "default": "'normal'",
+      "enumValues": [
+        "normal",
+        "pre",
+        "pre-wrap",
+        "pre-line"
+      ]
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": true
+    },
+    {
+      "name": "preset",
+      "type": "string | string[]",
+      "required": false,
+      "default": "'-'",
+      "description": "Apply style presets"
+    }
+  ],
+  "cssVars": [
+    "--valet-text-color",
+    "--valet-font-"
+  ],
+  "cssPresets": [],
+  "events": [],
+  "actions": [],
+  "slots": [],
+  "bestPractices": [],
+  "examples": [],
+  "docsUrl": "/components/primitives/TypographyDemoPage",
+  "sourceFiles": [
+    "src/components/primitives/Typography.tsx",
+    "docs/src/pages/components/primitives/TypographyDemoPage.tsx"
+  ],
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
+}

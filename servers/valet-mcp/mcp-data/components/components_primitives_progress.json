@@ -1,0 +1,62 @@
+{
+  "name": "Progress",
+  "category": "primitives",
+  "slug": "components/primitives/progress",
+  "summary": "Progress component",
+  "props": [
+    {
+      "name": "variant",
+      "type": "ProgressVariant",
+      "required": true
+    },
+    {
+      "name": "mode",
+      "type": "ProgressMode",
+      "required": true
+    },
+    {
+      "name": "value",
+      "type": "number",
+      "required": true
+    },
+    {
+      "name": "buffer",
+      "type": "number",
+      "required": true
+    },
+    {
+      "name": "size",
+      "type": "ProgressSize | number | string",
+      "required": true
+    },
+    {
+      "name": "showLabel",
+      "type": "boolean",
+      "required": true
+    },
+    {
+      "name": "color",
+      "type": "string | undefined",
+      "required": true
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": true
+    }
+  ],
+  "cssVars": [
+    "--valet-text-color"
+  ],
+  "cssPresets": [],
+  "events": [],
+  "actions": [],
+  "slots": [],
+  "bestPractices": [],
+  "examples": [],
+  "sourceFiles": [
+    "src/components/primitives/Progress.tsx"
+  ],
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
+}

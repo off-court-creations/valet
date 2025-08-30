@@ -1,0 +1,40 @@
+{
+  "name": "FormControl",
+  "category": "fields",
+  "slug": "components/fields/formcontrol",
+  "summary": "FormControl component",
+  "props": [
+    {
+      "name": "useStore",
+      "type": "UseBoundStore<StoreApi<FormStore<T>>>",
+      "required": true
+    },
+    {
+      "name": "onSubmitValues",
+      "type": "(values: T, event: React.FormEvent<HTMLFormElement>) => void",
+      "required": true
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": true
+    }
+  ],
+  "cssVars": [],
+  "cssPresets": [],
+  "events": [
+    {
+      "name": "onSubmitValues",
+      "payloadType": "T"
+    }
+  ],
+  "actions": [],
+  "slots": [],
+  "bestPractices": [],
+  "examples": [],
+  "sourceFiles": [
+    "src/components/fields/FormControl.tsx"
+  ],
+  "version": "0.30.1",
+  "schemaVersion": "1.1"
+}

@@ -14,6 +14,7 @@ import {
   Typography,
   useTheme,
   definePreset,
+  Panel,
 } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
@@ -64,6 +65,31 @@ export default function TooltipDemoPage() {
         <Typography variant='subtitle'>
           Hover, focus, or tap the elements below to explore every capability
         </Typography>
+
+        {/* Best Practices ------------------------------------------------- */}
+        <Panel fullWidth>
+          <Typography variant='h4'>Best Practices</Typography>
+          <Typography>
+            - Use tooltips for supplemental hints, not essential instructions. The UI should remain
+            usable without hovering.
+          </Typography>
+          <Typography>
+            - Ensure the trigger is focusable and labelled. For icon‑only controls, provide
+            <code>aria-label</code> on the target.
+          </Typography>
+          <Typography>
+            - Keep content concise; avoid interactive controls inside tooltips. Prefer short phrases
+            over sentences.
+          </Typography>
+          <Typography>
+            - Prefer <code>placement='top'</code> when space allows; adjust placement to avoid
+            clipping and viewport edges.
+          </Typography>
+          <Typography>
+            - Use sensible delays. Avoid long <code>enterDelay</code> / <code>leaveDelay</code> that
+            make tooltips feel sluggish or sticky, especially on touch devices.
+          </Typography>
+        </Panel>
 
         {/* 1. Basic usage -------------------------------------------------- */}
         <Typography variant='h3'>1. Default Tooltip</Typography>

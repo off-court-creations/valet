@@ -1,0 +1,94 @@
+{
+  "name": "ListDemoPage",
+  "category": "unknown",
+  "slug": "components/unknown/listdemopage",
+  "summary": "ListDemoPage component",
+  "props": [
+    {
+      "name": "data",
+      "type": "T[]",
+      "required": false,
+      "description": "Items to render."
+    },
+    {
+      "name": "getTitle",
+      "type": "(item: T) => ReactNode",
+      "required": false,
+      "description": "Primary content for each row."
+    },
+    {
+      "name": "getSubtitle",
+      "type": "(item: T) => ReactNode",
+      "required": false,
+      "description": "Optional secondary line for each row."
+    },
+    {
+      "name": "striped",
+      "type": "boolean",
+      "required": false,
+      "description": "Apply zebra striping."
+    },
+    {
+      "name": "hoverable",
+      "type": "boolean",
+      "required": false,
+      "description": "Hover tint. Enabled by default for non‑striped lists."
+    },
+    {
+      "name": "reorderable",
+      "type": "boolean",
+      "required": false,
+      "description": "Enable drag‑and‑drop reordering. When false, drag is disabled."
+    },
+    {
+      "name": "selectable",
+      "type": "boolean",
+      "required": false,
+      "description": "Enable single selection. Click or drag to select the active item."
+    },
+    {
+      "name": "selected",
+      "type": "T | null",
+      "required": false,
+      "description": "Controlled selected item (by reference)."
+    },
+    {
+      "name": "defaultSelected",
+      "type": "T | null",
+      "required": false,
+      "description": "Uncontrolled initial selected item."
+    },
+    {
+      "name": "onSelectionChange",
+      "type": "(item: T, index: number) => void",
+      "required": false,
+      "description": "Fires on selection change (click or drag‑select)."
+    },
+    {
+      "name": "onReorder",
+      "type": "(items: T[]) => void",
+      "required": false,
+      "description": "Fires after a drag operation ends with the new order."
+    },
+    {
+      "name": "preset",
+      "type": "string | string[]",
+      "required": false,
+      "description": "Apply style presets."
+    },
+    {
+      "name": "HTML ul props",
+      "type": "Omit<React.HTMLAttributes<HTMLUListElement>, 'children'>",
+      "required": false,
+      "description": "Standard HTML attributes for <ul> (excluding &apos;children&apos;) pass through."
+    }
+  ],
+  "cssVars": [],
+  "bestPractices": [],
+  "examples": [],
+  "docsUrl": "/components/layout/ListDemoPage",
+  "sourceFiles": [
+    "docs/src/pages/components/layout/ListDemoPage.tsx"
+  ],
+  "version": "0.30.1"
+}
