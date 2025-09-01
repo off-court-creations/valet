@@ -37,6 +37,7 @@
     "build": "npm run clean && tsup src/index.ts --format esm,cjs --dts --tsconfig tsconfig.build.json",
     "dev": "tsup src/index.ts --format esm,cjs --watch --dts",
     "prepublishOnly": "npm run build",
+    "dx": "npm install && npm --prefix ./docs install && npm run mcp:server:install",
     "lint": "eslint --ignore-path .gitignore \"{src,docs}/**/*.{ts,tsx}\"",
     "lint:fix": "eslint --ignore-path .gitignore \"{src,docs}/**/*.{ts,tsx}\" --fix",
     "format": "prettier --ignore-path .gitignore \"{src,docs}/**/*.{ts,tsx,js,jsx,json,md,css}\" --check",

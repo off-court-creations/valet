@@ -80,6 +80,7 @@ React 19.x setup.
 | `npm run clean` | Removes the `dist/` folder for a fresh build. Use when cached outputs might interfere or before a clean publish.
 | `npm run build` | Builds the library with tsup (ESM, CJS, and TypeScript dts). Use before publishing or linking the package into another app.
 | `npm run dev` | Builds in watch mode for rapid local iteration. Use while developing components and testing via linked docs.
+| `npm run dx` | Installs root deps, installs docs deps, then installs MCP server deps. Use on fresh checkouts to prep the full dev environment quickly.
 | `npm run lint` | Runs ESLint over `src` and `docs`. Use to check code quality in CI or before commits.
 | `npm run lint:fix` | Runs ESLint with auto‑fix. Use after refactors to apply standard rules automatically.
 | `npm run format` | Runs Prettier in check mode. Use in CI or to verify formatting consistency.
