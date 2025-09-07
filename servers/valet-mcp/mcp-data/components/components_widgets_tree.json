@@ -3,6 +3,10 @@
   "category": "widgets",
   "slug": "components/widgets/tree",
   "summary": "Tree component",
+  "aliases": [
+    "tree",
+    "treeview"
+  ],
   "props": [
     {
       "name": "nodes",
@@ -118,12 +122,20 @@
     "Avoid over‑nesting. Deep hierarchies are hard to scan; flatten where possible and consider search/filter affordances for large trees.",
     "Tokenized spacing. Use theme spacing for indentation so density and breakpoints scale predictably."
   ],
+  "bestPracticeSlugs": [
+    "use-stable-ids-provide-deterministic-s-for-nodes-so-expandedselected",
+    "keep-labels-compact-tree-rows-should-be-glanceable-favor-short-labels",
+    "align-behavior-with-expectations-support-arrow-keys-enterspace-for",
+    "choose-control-model-use-and-when-external-state-or-routing-must-drive",
+    "avoid-overnesting-deep-hierarchies-are-hard-to-scan-flatten-where",
+    "tokenized-spacing-use-theme-spacing-for-indentation-so-density-and"
+  ],
   "examples": [],
   "docsUrl": "/components/widgets/TreeDemo",
   "sourceFiles": [
     "src/components/widgets/Tree.tsx",
     "docs/src/pages/components/widgets/TreeDemo.tsx"
   ],
-  "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "version": "0.30.6",
+  "schemaVersion": "1.3"
 }

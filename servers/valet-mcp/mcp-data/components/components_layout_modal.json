@@ -3,6 +3,10 @@
   "category": "layout",
   "slug": "components/layout/modal",
   "summary": "Modal component",
+  "aliases": [
+    "modal",
+    "dialog"
+  ],
   "props": [
     {
       "name": "open",
@@ -109,12 +113,20 @@
     "Size with intent: prefer `maxWidth` for readability; reserve `fullWidth` for mobile or immersive flows. Let long content scroll inside.",
     "Don’t nest modals. Transition content or sequence steps in a single modal instead of opening another."
   ],
+  "bestPracticeSlugs": [
+    "choose-the-right-type-use-for-neutral-flows-and-for-destructive-or",
+    "provide-a-clear-and-unambiguous-action-labels-avoid-vague-okcancel-make",
+    "keep-escape-hatches-accessible-only-combine-and-when-the-flow-truly",
+    "treat-as-the-single-source-of-truth-and-wire-for-all-dismissal-paths",
+    "size-with-intent-prefer-for-readability-reserve-for-mobile-or-immersive",
+    "dont-nest-modals-transition-content-or-sequence-steps-in-a-single-modal"
+  ],
   "examples": [],
   "docsUrl": "/components/layout/ModalDemo",
   "sourceFiles": [
     "src/components/layout/Modal.tsx",
     "docs/src/pages/components/layout/ModalDemo.tsx"
   ],
-  "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "version": "0.30.6",
+  "schemaVersion": "1.3"
 }

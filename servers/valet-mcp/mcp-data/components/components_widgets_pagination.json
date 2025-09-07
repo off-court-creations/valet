@@ -3,6 +3,11 @@
   "category": "widgets",
   "slug": "components/widgets/pagination",
   "summary": "Pagination component",
+  "aliases": [
+    "pagination",
+    "pager",
+    "paginator"
+  ],
   "props": [
     {
       "name": "count",
@@ -57,12 +62,20 @@
     "Use tokens for rhythm. Rely on theme motion tokens for underline animation and spacing so density or brand changes do not require component edits.",
     "Prefer Pagination for finite sets. For unknown or unbounded results, use windowed lists or infinite scroll with clear load affordances."
   ],
+  "bestPracticeSlugs": [
+    "keep-visible-pages-small-for-large-set-to-57-so-navigation-remains",
+    "keep-the-active-page-in-view-leave-on-when-the-current-page-can-change",
+    "disable-bounds-appropriately-at-or-disable-previousnext-buttons-to",
+    "sync-with-url-when-relevant-for-paged-routes-mirror-state-in-the-router",
+    "use-tokens-for-rhythm-rely-on-theme-motion-tokens-for-underline",
+    "prefer-pagination-for-finite-sets-for-unknown-or-unbounded-results-use"
+  ],
   "examples": [],
   "docsUrl": "/components/widgets/PaginationDemo",
   "sourceFiles": [
     "src/components/widgets/Pagination.tsx",
     "docs/src/pages/components/widgets/PaginationDemo.tsx"
   ],
-  "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "version": "0.30.6",
+  "schemaVersion": "1.3"
 }

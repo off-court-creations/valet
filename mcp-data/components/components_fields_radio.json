@@ -3,6 +3,11 @@
   "category": "fields",
   "slug": "components/fields/radio",
   "summary": "Radio component",
+  "aliases": [
+    "radiogroup",
+    "radio",
+    "radio-group"
+  ],
   "props": [
     {
       "name": "value",
@@ -93,12 +98,20 @@
     "Avoid nesting interactive content inside labels. Keep each option’s label succinct and non-interactive so keyboard and screen reader navigation remain predictable.",
     "Use presets for visual variants. Capture chip/pill styles with `definePreset` and apply via `preset` so branding and states stay consistent."
   ],
+  "bestPracticeSlugs": [
+    "label-the-group-clearly-provide-a-visible-prompt-eg-a-preceding-and",
+    "choose-controlled-vs-uncontrolled-deliberately-use-when-the-selection",
+    "align-to-available-space-use-for-short-option-lists-in-wide-layouts",
+    "keep-targets-comfortable-use-token-sizes-or-numeric-values-to-maintain",
+    "avoid-nesting-interactive-content-inside-labels-keep-each-options-label",
+    "use-presets-for-visual-variants-capture-chippill-styles-with-and-apply"
+  ],
   "examples": [],
   "docsUrl": "/components/field/RadioGroupDemo",
   "sourceFiles": [
     "src/components/fields/RadioGroup.tsx",
     "docs/src/pages/components/field/RadioGroupDemo.tsx"
   ],
-  "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "version": "0.30.6",
+  "schemaVersion": "1.3"
 }

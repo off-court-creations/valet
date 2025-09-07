@@ -3,6 +3,9 @@
   "category": "layout",
   "slug": "components/layout/grid",
   "summary": "Grid component",
+  "aliases": [
+    "grid"
+  ],
   "props": [
     {
       "name": "columns",
@@ -73,12 +76,22 @@
     "Size items with tokens. Use `theme.spacing` and percent/flex spans rather than fixed pixels so density and breakpoints scale predictably.",
     "Avoid complex selector cascades. Keep item styles shallow and prefer presets for repeatable patterns to maintain performance and readability."
   ],
+  "bestPracticeSlugs": [
+    "use-for-twoaxis-alignment-prefer-for-linear-flows-where-only-one-axis",
+    "keep-tracks-simple-equalwidth-are-fast-and-readable-let-children-span",
+    "share-spacing-with-the-system-use-numeric-so-density-matches-other",
+    "use-to-collapse-to-a-single-column-on-portraitnarrow-screens-instead-of",
+    "maintain-logical-dom-order-for-keyboard-and-screen-readers-dont-rely-on",
+    "cooperate-with-in-adaptive-portrait-let-content-stack-and-the-page",
+    "size-items-with-tokens-use-and-percentflex-spans-rather-than-fixed",
+    "avoid-complex-selector-cascades-keep-item-styles-shallow-and-prefer"
+  ],
   "examples": [],
   "docsUrl": "/components/layout/GridDemo",
   "sourceFiles": [
     "src/components/layout/Grid.tsx",
     "docs/src/pages/components/layout/GridDemo.tsx"
   ],
-  "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "version": "0.30.6",
+  "schemaVersion": "1.3"
 }

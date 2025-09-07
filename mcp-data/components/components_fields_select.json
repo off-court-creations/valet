@@ -3,6 +3,11 @@
   "category": "fields",
   "slug": "components/fields/select",
   "summary": "Select component",
+  "aliases": [
+    "dropdown",
+    "combobox",
+    "select"
+  ],
   "props": [
     {
       "name": "value",
@@ -107,12 +112,23 @@
     "Performance: for large option sets, group options logically or load progressively instead of rendering hundreds of nodes at once.",
     "Tokens/presets: size with `size` tokens or numbers and use a `preset` for visual variants so controls adapt to density and branding."
   ],
+  "bestPracticeSlugs": [
+    "choose-controlled-vs-uncontrolled-deliberately-use-to-integrate-with-app",
+    "keep-option-labels-short-distinct-and-ordered-predictably-alphabetical",
+    "use-only-when-necessary-and-present-selections-clearly-consider-and-a",
+    "prefer-for-a-small-mutually-exclusive-set-and-es-for-a-small-multiselect",
+    "provide-a-helpful-when-no-value-is-selected-persist-value-types",
+    "when-using-set-a-stable-and-avoid-mixing-primitive-types-within-the-same",
+    "accessibility-ensure-the-field-has-a-programmatic-label-visible-caption",
+    "performance-for-large-option-sets-group-options-logically-or-load",
+    "tokenspresets-size-with-tokens-or-numbers-and-use-a-for-visual-variants"
+  ],
   "examples": [],
   "docsUrl": "/components/field/SelectDemo",
   "sourceFiles": [
     "src/components/fields/Select.tsx",
     "docs/src/pages/components/field/SelectDemo.tsx"
   ],
-  "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "version": "0.30.6",
+  "schemaVersion": "1.3"
 }

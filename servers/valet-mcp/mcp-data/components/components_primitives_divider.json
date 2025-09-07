@@ -3,6 +3,11 @@
   "category": "primitives",
   "slug": "components/primitives/divider",
   "summary": "Divider component",
+  "aliases": [
+    "divider",
+    "rule",
+    "hr"
+  ],
   "props": [
     {
       "name": "orientation",
@@ -71,12 +76,19 @@
     "Keep contrast subtle. Default line color derives from text; override sparingly to avoid heavy or distracting separators.",
     "Don’t imply semantics. Dividers are visual; use headings and landmarks for document structure, not lines."
   ],
+  "bestPracticeSlugs": [
+    "use-sparingly-dividers-communicate-separation-prefer-intrinsic-spacing",
+    "share-spacing-tokens-set-and-via-numeric-tokens-so-density-matches-other",
+    "orientation-follows-layout-use-vertical-dividers-within-horizontal",
+    "keep-contrast-subtle-default-line-color-derives-from-text-override",
+    "dont-imply-semantics-dividers-are-visual-use-headings-and-landmarks-for"
+  ],
   "examples": [],
   "docsUrl": "/components/primitives/DividerDemo",
   "sourceFiles": [
     "src/components/primitives/Divider.tsx",
     "docs/src/pages/components/primitives/DividerDemo.tsx"
   ],
-  "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "version": "0.30.6",
+  "schemaVersion": "1.3"
 }

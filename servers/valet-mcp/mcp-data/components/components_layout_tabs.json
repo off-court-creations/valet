@@ -3,6 +3,9 @@
   "category": "layout",
   "slug": "components/layout/tabs",
   "summary": "Tabs component",
+  "aliases": [
+    "tabs"
+  ],
   "props": [
     {
       "name": "active",
@@ -109,12 +112,23 @@
     "Lean on motion tokens. The active underline should feel crisp; pair durations/easing to `theme.motion` for consistent UX across components.",
     "Route integration. When tabs represent routes, control them from the router and keep URLs canonical so reload/share preserves the active view."
   ],
+  "bestPracticeSlugs": [
+    "keep-tab-labels-short-and-predictable-prefer-12-words-avoid-wrapping",
+    "choose-placement-by-layout-is-the-default-use-vertical-placement-for",
+    "reflect-app-state-with-controlled-tabs-when-routes-or-external-state",
+    "use-to-match-surrounding-density-apply-to-align-the-strip-with-nearby",
+    "for-icononly-tabs-supply-and-optionally-a-for-discoverability",
+    "keep-dom-order-logical-tab-panel-pairs-to-preserve-keyboard-and",
+    "respect-overflow-ergonomics-when-tabs-exceed-width-valet-keeps-a-single",
+    "lean-on-motion-tokens-the-active-underline-should-feel-crisp-pair",
+    "route-integration-when-tabs-represent-routes-control-them-from-the"
+  ],
   "examples": [],
   "docsUrl": "/components/layout/TabsDemo",
   "sourceFiles": [
     "src/components/layout/Tabs.tsx",
     "docs/src/pages/components/layout/TabsDemo.tsx"
   ],
-  "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "version": "0.30.6",
+  "schemaVersion": "1.3"
 }

@@ -3,6 +3,9 @@
   "category": "widgets",
   "slug": "components/widgets/parallaxbackground",
   "summary": "ParallaxBackground component",
+  "aliases": [
+    "parallax"
+  ],
   "props": [
     {
       "name": "src",
@@ -71,6 +74,6 @@
   "sourceFiles": [
     "src/components/widgets/Parallax.tsx"
   ],
-  "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "version": "0.30.6",
+  "schemaVersion": "1.3"
 }

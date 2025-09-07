@@ -3,6 +3,10 @@
   "category": "primitives",
   "slug": "components/primitives/icon",
   "summary": "Icon component",
+  "aliases": [
+    "icon",
+    "glyph"
+  ],
   "props": [
     {
       "name": "icon",
@@ -61,12 +65,19 @@
     "Choose `icon` vs `svg` wisely. Use `icon` for Iconify glyphs; provide `svg` for custom/brand artwork only. Do not pass both.",
     "Motion restraint. Avoid animating icons excessively; keep motion consistent with theme motion tokens and user expectations."
   ],
+  "bestPracticeSlugs": [
+    "use-semantic-sizing-when-icons-appear-inline-with-text-size-in-so-they",
+    "accessible-naming-decorative-icons-should-be-icons-that-convey-meaning",
+    "prefer-theme-colours-let-icons-inherit-current-color-or-set-tokens-avoid",
+    "choose-vs-wisely-use-for-iconify-glyphs-provide-for-custombrand-artwork",
+    "motion-restraint-avoid-animating-icons-excessively-keep-motion"
+  ],
   "examples": [],
   "docsUrl": "/components/primitives/IconDemoPage",
   "sourceFiles": [
     "src/components/primitives/Icon.tsx",
     "docs/src/pages/components/primitives/IconDemoPage.tsx"
   ],
-  "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "version": "0.30.6",
+  "schemaVersion": "1.3"
 }

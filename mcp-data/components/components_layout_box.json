@@ -3,6 +3,10 @@
   "category": "layout",
   "slug": "components/layout/box",
   "summary": "Box component",
+  "aliases": [
+    "box",
+    "container"
+  ],
   "props": [
     {
       "name": "background",
@@ -102,13 +106,22 @@
     "Reuse styles via `preset` ( `definePreset()` ) instead of duplicating `sx` .",
     "When Box represents a semantic region, add appropriate roles/labels (e.g., `role=\"region\"` , `aria-label` ) via DOM passthrough."
   ],
+  "bestPracticeSlugs": [
+    "treat-as-the-neutral-building-block-backgrounds-padding-and-simple-width",
+    "prefer-theme-tokens-to-inherit-correct-contrast-automatically-if-you",
+    "reach-for-when-you-need-separation-borders-elevation-keep-visually",
+    "use-spacing-tokens-prefer-numeric-values-over-hardcoded-css-so-density",
+    "align-purposefully-use-and-for-placement-avoid-deprecated",
+    "reuse-styles-via-instead-of-duplicating",
+    "when-box-represents-a-semantic-region-add-appropriate-roleslabels-eg-via"
+  ],
   "examples": [
     {
       "id": "box-example-1",
       "code": "<Box>\n  <Typography>\n    (no props) — inherits parent background, uses theme text colour\n  </Typography>\n</Box>",
       "lang": "tsx",
       "source": {
-        "file": "/home/xbenc/occ/valet/docs/src/pages/components/layout/BoxDemo.tsx"
+        "file": "/Users/xbenc/occ/valet/docs/src/pages/components/layout/BoxDemo.tsx"
       },
       "runnable": true,
       "minimalProps": {
@@ -121,7 +134,7 @@
       "code": "<Box\n  background={theme.colors['tertiary']}\n  sx={{\n    border: `2px dashed ${theme.colors['text']}`,\n    padding: theme.spacing(1),\n    borderRadius: 12,\n  }}\n>\n  <Typography>\n    Dashed border, custom radius, padding via <code>sx</code>\n  </Typography>\n</Box>",
       "lang": "tsx",
       "source": {
-        "file": "/home/xbenc/occ/valet/docs/src/pages/components/layout/BoxDemo.tsx"
+        "file": "/Users/xbenc/occ/valet/docs/src/pages/components/layout/BoxDemo.tsx"
       },
       "runnable": true,
       "minimalProps": {
@@ -134,7 +147,7 @@
       "code": "<Box\n  id=\"hero\"\n  role=\"region\"\n  aria-label=\"Hero banner\"\n  onClick={() => console.log('clicked')}\n  sx={{ border: '1px solid currentColor' }}\n>\n  Content\n</Box>",
       "lang": "tsx",
       "source": {
-        "file": "/home/xbenc/occ/valet/docs/src/pages/components/layout/BoxDemo.tsx"
+        "file": "/Users/xbenc/occ/valet/docs/src/pages/components/layout/BoxDemo.tsx"
       },
       "runnable": true,
       "minimalProps": {
@@ -148,6 +161,6 @@
     "src/components/layout/Box.tsx",
     "docs/src/pages/components/layout/BoxDemo.tsx"
   ],
-  "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "version": "0.30.6",
+  "schemaVersion": "1.3"
 }

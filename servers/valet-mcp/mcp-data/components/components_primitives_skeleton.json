@@ -3,6 +3,11 @@
   "category": "primitives",
   "slug": "components/primitives/skeleton",
   "summary": "Skeleton component",
+  "aliases": [
+    "skeleton",
+    "placeholder",
+    "shimmer"
+  ],
   "props": [
     {
       "name": "loading",
@@ -54,12 +59,19 @@
     "Keep motion subtle. The pulse is intentionally gentle; avoid stacking many animated placeholders in view.",
     "Provide context. Use brief text nearby (e.g., \"Loading data…\") when appropriate; don’t rely on shimmer alone to communicate state."
   ],
+  "bestPracticeSlugs": [
+    "skeleton-the-right-things-use-skeleton-when-the-shapesize-of-incoming",
+    "match-shapes-let-the-component-infer-or-override-it-to-match-the-target",
+    "prefer-quick-hide-hide-skeletons-as-soon-as-content-is-ready",
+    "keep-motion-subtle-the-pulse-is-intentionally-gentle-avoid-stacking-many",
+    "provide-context-use-brief-text-nearby-eg-loading-data-when-appropriate"
+  ],
   "examples": [],
   "docsUrl": "/components/primitives/SkeletonDemo",
   "sourceFiles": [
     "src/components/primitives/Skeleton.tsx",
     "docs/src/pages/components/primitives/SkeletonDemo.tsx"
   ],
-  "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "version": "0.30.6",
+  "schemaVersion": "1.3"
 }

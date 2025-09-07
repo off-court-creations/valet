@@ -3,6 +3,11 @@
   "category": "fields",
   "slug": "components/fields/metroselect",
   "summary": "MetroSelect component",
+  "aliases": [
+    "chip",
+    "segmented",
+    "segment"
+  ],
   "props": [
     {
       "name": "value",
@@ -82,6 +87,6 @@
     "src/components/fields/MetroSelect.tsx",
     "docs/src/pages/components/field/MetroSelectDemo.tsx"
   ],
-  "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "version": "0.30.6",
+  "schemaVersion": "1.3"
 }

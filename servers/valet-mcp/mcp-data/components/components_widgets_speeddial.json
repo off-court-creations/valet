@@ -3,6 +3,11 @@
   "category": "widgets",
   "slug": "components/widgets/speeddial",
   "summary": "SpeedDial component",
+  "aliases": [
+    "speeddial",
+    "speed-dial",
+    "fab"
+  ],
   "props": [
     {
       "name": "icon",
@@ -56,12 +61,20 @@
     "Pick direction by context. Choose `up` / `left` when anchored to bottom/right edges to prevent overflow. Keep action order predictable.",
     "Motion tokens. Animations use theme motion tokens; keep custom presets aligned for a cohesive feel with the rest of the app."
   ],
+  "bestPracticeSlugs": [
+    "use-sparingly-speeddial-is-for-a-small-cluster-of-highvalue-actions",
+    "place-with-intent-default-bottomright-works-well-adjust-offsets-with",
+    "label-actions-clearly-provide-short-specific-labels-the-component",
+    "close-on-action-after-invoking-an-action-collapse-the-dial-so-the-ui",
+    "pick-direction-by-context-choose-when-anchored-to-bottomright-edges-to",
+    "motion-tokens-animations-use-theme-motion-tokens-keep-custom-presets"
+  ],
   "examples": [],
   "docsUrl": "/components/widgets/SpeedDialDemo",
   "sourceFiles": [
     "src/components/widgets/SpeedDial.tsx",
     "docs/src/pages/components/widgets/SpeedDialDemo.tsx"
   ],
-  "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "version": "0.30.6",
+  "schemaVersion": "1.3"
 }

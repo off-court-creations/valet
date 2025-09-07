@@ -10,6 +10,17 @@ function validateComponent(c) {
   if (!c.name || typeof c.name !== 'string') problems.push('missing name');
   if (!c.slug || typeof c.slug !== 'string') problems.push('missing slug');
   if (!Array.isArray(c.props)) problems.push('props not array');
+  if (c.aliases && !Array.isArray(c.aliases)) problems.push('aliases must be an array');
+  if (Array.isArray(c.aliases)) {
+    const seen = new Set();
+    for (const a of c.aliases) {
+      if (typeof a !== 'string' || !a.trim()) problems.push('alias must be non-empty string');
+      const low = String(a).trim().toLowerCase();
+      if (seen.has(low)) problems.push(`duplicate alias: ${a}`);
+      seen.add(low);
+      if (/\s/.test(low)) problems.push(`alias should not contain spaces: ${a}`);
+    }
+  }
   const seen = new Set();
   for (const p of c.props || []) {
     if (!p || typeof p.name !== 'string') problems.push('prop missing name');
@@ -30,6 +41,7 @@ function main() {
   const idx = readJSON(path.join(dir, 'index.json'));
   const compDir = path.join(dir, 'components');
   const meta = readJSON(path.join(dir, '_meta.json'));
+  const compNames = new Set(idx.map((i) => i.name));
   let errors = 0;
   let warnings = 0;
   for (const item of idx) {
@@ -50,6 +62,51 @@ function main() {
       console.warn(`[warn] ${item.name}: schemaVersion ${doc.schemaVersion} != meta ${meta.schemaVersion}`);
       warnings++;
     }
+  }
+  // Component synonyms validation
+  try {
+    const synPath = path.join(dir, 'component_synonyms.json');
+    if (!fs.existsSync(synPath)) {
+      console.warn('[warn] component_synonyms.json missing');
+      warnings++;
+    } else {
+      const syn = readJSON(synPath);
+      if (!syn || typeof syn !== 'object') {
+        console.error('[error] component_synonyms.json must be an object');
+        errors++;
+      } else {
+        for (const [alias, targets] of Object.entries(syn)) {
+          if (!/^[a-z0-9-]+$/.test(alias)) {
+            console.warn(`[warn] component_synonyms alias '${alias}' contains unusual characters`);
+            warnings++;
+          }
+          if (!Array.isArray(targets) || targets.length === 0) {
+            console.error(`[error] alias '${alias}' must map to a non-empty array of component names`);
+            errors++;
+            continue;
+          }
+          const seen = new Set();
+          for (const t of targets) {
+            if (seen.has(t)) {
+              console.warn(`[warn] alias '${alias}' has duplicate target '${t}'`);
+              warnings++;
+            }
+            seen.add(t);
+            if (!compNames.has(t)) {
+              console.error(`[error] alias '${alias}' references missing component '${t}'`);
+              errors++;
+            }
+          }
+          if (targets.length > 3) {
+            console.warn(`[warn] alias '${alias}' maps to ${targets.length} components; consider narrowing`);
+            warnings++;
+          }
+        }
+      }
+    }
+  } catch (e) {
+    console.error('[error] component_synonyms validation failed:', e.message);
+    errors++;
   }
   // Glossary validation (optional)
   let glossaryEntries = 0;

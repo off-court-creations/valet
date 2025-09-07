@@ -3,6 +3,10 @@
   "category": "fields",
   "slug": "components/fields/iconbutton",
   "summary": "IconButton component",
+  "aliases": [
+    "iconbutton",
+    "icon-button"
+  ],
   "props": [
     {
       "name": "variant",
@@ -69,12 +73,20 @@
     "Choose `icon` vs `svg` deliberately. Prefer `icon` for Iconify glyphs; use `svg` only for custom/brand artwork. Do not pass both at once.",
     "Keep ripple/motion subtle. Align custom presets with the theme’s motion tokens for a cohesive feel."
   ],
+  "bestPracticeSlugs": [
+    "provide-an-accessible-name-icononly-buttons-must-include-describing-the",
+    "pick-variants-by-emphasis-use-for-primaryhighaffordance-actions-and-for",
+    "size-for-touch-use-token-sizes-or-numbers-to-maintain-comfortable",
+    "toggle-semantics-when-the-button-toggles-state-add-to-reflect-the",
+    "choose-vs-deliberately-prefer-for-iconify-glyphs-use-only-for",
+    "keep-ripplemotion-subtle-align-custom-presets-with-the-themes-motion"
+  ],
   "examples": [],
   "docsUrl": "/components/field/IconButtonDemoPage",
   "sourceFiles": [
     "src/components/fields/IconButton.tsx",
     "docs/src/pages/components/field/IconButtonDemoPage.tsx"
   ],
-  "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "version": "0.30.6",
+  "schemaVersion": "1.3"
 }

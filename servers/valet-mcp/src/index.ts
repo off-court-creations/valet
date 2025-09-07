@@ -40,11 +40,17 @@ type ValetComponentDoc = {
   }>;
   domPassthrough?: { element: string; omitted?: string[] };
   cssVars?: string[];
+  cssPresets?: string[];
+  events?: Array<{ name: string; payloadType?: string }>;
+  actions?: Array<{ name: string; signature?: string }>;
+  slots?: Array<{ name: string }>;
   bestPractices?: string[];
+  bestPracticeSlugs?: string[];
   examples?: Array<{ id: string; title?: string; code: string; lang?: string; source?: { file: string; line?: number } }>;
   docsUrl?: string;
   sourceFiles: string[];
   version: string;
+  schemaVersion?: string;
 };
 
 type DataSource = 'env-root+dir' | 'env-dir' | 'nearest-cwd' | 'bundled' | 'package' | 'fallback-cwd';
@@ -156,11 +162,11 @@ function resolveSlug(input: { name?: string; slug?: string }): string | null {
   return null;
 }
 
-type SynonymsMap = Record<string, string[]>; // alias -> target names
+type SynonymsMap = Record<string, string[]>; // alias -> target component names
 
 function loadSynonyms(): SynonymsMap {
   try {
-    const p = path.join(DATA_DIR, 'synonyms.json');
+    const p = path.join(DATA_DIR, 'component_synonyms.json');
     if (fs.existsSync(p)) return readJSON<SynonymsMap>(p);
   } catch {}
   // Built-in minimal aliases
@@ -168,11 +174,11 @@ function loadSynonyms(): SynonymsMap {
     textinput: ['TextField'],
     input: ['TextField'],
     textbox: ['TextField'],
-    textarea: ['TextField'],
     modal: ['Modal'],
     dialog: ['Modal'],
     navbar: ['AppBar'],
     appbar: ['AppBar'],
+    footer: ['AppBar'],
     dropdown: ['Select'],
     combobox: ['Select'],
     select: ['Select'],
@@ -186,6 +192,18 @@ function loadSynonyms(): SynonymsMap {
     tabs: ['Tabs'],
     grid: ['Grid'],
     table: ['Table'],
+    image: ['Image'],
+    icon: ['Icon'],
+    button: ['Button'],
+    box: ['Box'],
+    stack: ['Stack'],
+    surface: ['Surface'],
+    accordion: ['Accordion'],
+    list: ['List'],
+    typography: ['Typography'],
+    hero: ['Surface'],
+    card: ['Panel'],
+    form: ['FormControl'],
   };
 }
 
@@ -195,19 +213,39 @@ function simpleSearch(query: string, items: ValetIndexItem[], opts?: { category?
   const synonyms = loadSynonyms();
   const byCategory = opts?.category ? items.filter((i) => i.category === opts.category) : items;
 
-  const scored = byCategory.map((it) => {
-    const name = it.name.toLowerCase();
-    const hay = `${name} ${it.summary.toLowerCase()} ${it.category.toLowerCase()}`;
-    let score = 0;
-    if (hay.includes(q)) score += 2;
-    if (name.startsWith(q)) score += 3; // strong prefix on name
-    if (name === q) score += 5; // exact name
-    if (it.category.toLowerCase() === q) score += 2; // exact category query
-    // synonyms: if query alias maps to this component name
-    const targets = synonyms[q] || [];
-    if (targets.map((t) => t.toLowerCase()).includes(it.name.toLowerCase())) score += 4;
-    return { item: it, score };
-  }).filter((s) => s.score > 0);
+  // Tokenize to support "kitchen sink" queries containing many words.
+  // - Split on non-alphanumerics, keep tokens >= 2 chars to reduce noise.
+  // - Example: "hero card grid button navbar" → ["hero","card","grid","button","navbar"]
+  const tokens = Array.from(new Set(q.split(/[^a-z0-9]+/g).filter((t) => t.length >= 2)));
+
+  const scored = byCategory
+    .map((it) => {
+      const name = it.name.toLowerCase();
+      const cat = it.category.toLowerCase();
+      const hay = `${name} ${it.summary.toLowerCase()} ${cat}`;
+      let score = 0;
+
+      // Full-phrase boost (when query is a single term or meaningful phrase)
+      if (hay.includes(q)) score += 2;
+      if (name.startsWith(q)) score += 3; // strong prefix on name
+      if (name === q) score += 5; // exact name
+      if (cat === q) score += 2; // exact category query
+
+      // Token-wise scoring: accumulate for each token that matches
+      for (const t of tokens) {
+        if (!t) continue;
+        if (hay.includes(t)) score += 1;
+        if (name.startsWith(t)) score += 2;
+        if (name === t) score += 3;
+        if (cat === t) score += 1;
+        // synonyms: if token alias maps to this component name
+        const targets = (synonyms[t] || []).map((x) => x.toLowerCase());
+        if (targets.includes(name)) score += 3;
+      }
+
+      return { item: it, score };
+    })
+    .filter((s) => s.score > 0);
 
   scored.sort((a, b) => b.score - a.score || a.item.name.localeCompare(b.item.name));
   return scored;
@@ -258,6 +296,22 @@ async function createServer() {
     if (!slug) return { content: [{ type: 'text', text: '[]' }] };
     const comp = getComponentBySlug(slug);
     return { content: [{ type: 'text', text: JSON.stringify(comp?.examples ?? []) }] };
+  });
+
+  // get_docs_info – docs URL and best-practice slugs/text
+  server.tool('get_docs_info', GetComponentParamsShape, async (args) => {
+    const slug = resolveSlug(args as { name?: string; slug?: string });
+    if (!slug) return { content: [{ type: 'text', text: JSON.stringify({}) }] };
+    const comp = getComponentBySlug(slug);
+    if (!comp) return { content: [{ type: 'text', text: JSON.stringify({}) }] };
+    const payload = {
+      name: comp.name,
+      slug: comp.slug,
+      docsUrl: comp.docsUrl,
+      bestPracticeSlugs: comp.bestPracticeSlugs ?? [],
+      bestPractices: comp.bestPractices ?? [],
+    };
+    return { content: [{ type: 'text', text: JSON.stringify(payload) }] };
   });
 
   // get_glossary – full glossary dataset

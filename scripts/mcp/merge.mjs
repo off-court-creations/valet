@@ -4,10 +4,13 @@ import crypto from 'crypto';
 import { extractFromTs } from './extract-ts.mjs';
 import { extractFromDocs } from './extract-docs.mjs';
 import { extractGlossary } from './extract-glossary.mjs';
+import { loadComponentMeta } from './load-meta.mjs';
 
-const SCHEMA_VERSION = '1.2';
+const SCHEMA_VERSION = '1.3';
 
-function merge(tsMap, docsMap, version) {
+// Aliases are now sourced from per-component meta sidecars.
+
+function merge(tsMap, docsMap, version, metaMap) {
   /** @type {Record<string, any>} */
   const out = {};
 
@@ -67,12 +70,58 @@ function merge(tsMap, docsMap, version) {
       return out;
     })();
 
+    const aliases = (() => {
+      const fromMeta = Array.isArray(metaMap?.[name]?.aliases) ? metaMap[name].aliases : [];
+      const list = (fromMeta || []).map((s) => String(s).trim().toLowerCase());
+      return Array.from(new Set(list.filter(Boolean)));
+    })();
+
+    // Docs URL and best practice slugs integration
+    const docsUrl = docs.docsUrl || (metaMap?.[name]?.docs && metaMap[name].docs.docsUrl) || undefined;
+    const bestPracticeSlugs = (() => {
+      const shorten = (slug) => {
+        const limit = 72;
+        if (slug.length <= limit) return slug;
+        const parts = slug.split('-');
+        let out = '';
+        for (const p of parts) {
+          if (!p) continue;
+          if ((out ? out.length + 1 : 0) + p.length > limit) break;
+          out = out ? `${out}-${p}` : p;
+        }
+        return out || slug.slice(0, limit);
+      };
+      const metaSlugs = Array.isArray(metaMap?.[name]?.docs?.bestPracticeSlugs)
+        ? metaMap[name].docs.bestPracticeSlugs
+        : [];
+      const fromMeta = metaSlugs
+        .map((s) => String(s))
+        .map((s) => s.trim().toLowerCase())
+        .map((s) => s.replace(/\s+/g, '-').replace(/_/g, '-'))
+        .map((s) => s.replace(/[^a-z0-9-]/g, ''))
+      .filter(Boolean);
+      const fromDocs = Array.isArray(docs.bestPractices)
+        ? docs.bestPractices
+            .map((s) => String(s))
+            .map((s) => s.toLowerCase().trim())
+            .map((s) => s.replace(/`[^`]+`/g, ''))
+            .map((s) => s.replace(/[^a-z0-9\s-]/g, ''))
+            .map((s) => s.replace(/\s+/g, '-'))
+            .map((s) => s.replace(/-+/g, '-'))
+            .map((s) => s.replace(/^-+|-+$/g, ''))
+            .filter(Boolean)
+        : [];
+      const merged = Array.from(new Set([...fromMeta, ...fromDocs].map(shorten)));
+      return merged.length ? merged : undefined;
+    })();
+
     out[name] = {
       name,
       category: ts.category || 'unknown',
       slug: ts.slug || `components/${(ts.category || 'unknown')}/${name.toLowerCase()}`,
       summary,
       description,
+      aliases: aliases.length ? aliases : undefined,
       props,
       domPassthrough,
       cssVars,
@@ -81,8 +130,9 @@ function merge(tsMap, docsMap, version) {
       actions: ts.actions || [],
       slots: ts.slots || [],
       bestPractices: docs.bestPractices || [],
+      bestPracticeSlugs,
       examples: (docs.examples || []).map((ex) => ({ ...ex, runnable: ex.runnable ?? true, minimalProps })),
-      docsUrl: docs.docsUrl,
+      docsUrl,
       sourceFiles: [...new Set([...(ts.sourceFiles || []), docs.sourceFile].filter(Boolean))],
       version,
       schemaVersion: SCHEMA_VERSION,
@@ -96,12 +146,29 @@ function indexFromComponents(map) {
   return Object.values(map).map((c) => ({ name: c.name, category: c.category, summary: c.summary, slug: c.slug }));
 }
 
-function main() {
+async function main() {
   const root = process.cwd();
   const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
   const version = pkg.version || '0.0.0';
 
   const tsMap = extractFromTs(root);
+  // Per-component sidecar meta (aliases live here now)
+  let metaMap = {};
+  try {
+    metaMap = await loadComponentMeta(root);
+  } catch (e) {
+    console.warn('Meta sidecar load error:', e?.message || e);
+  }
+  // Validate meta against TS components and prune unknown entries
+  try {
+    const validNames = new Set(Object.keys(tsMap));
+    for (const k of Object.keys(metaMap)) {
+      if (!validNames.has(k)) {
+        console.warn(`[meta] Orphan meta for '${k}' (no matching TS component); ignoring.`);
+        delete metaMap[k];
+      }
+    }
+  } catch {}
   const docsMap = (() => {
     try {
       return extractFromDocs(root);
@@ -111,7 +178,7 @@ function main() {
     }
   })();
 
-  const merged = merge(tsMap, docsMap, version);
+  const merged = merge(tsMap, docsMap, version, metaMap);
 
   const outDir = path.join(root, 'mcp-data');
   const compDir = path.join(outDir, 'components');
@@ -137,6 +204,26 @@ function main() {
     .digest('hex');
   const meta = { version, builtAt: new Date().toISOString(), schemaVersion: SCHEMA_VERSION, buildHash: hash };
   fs.writeFileSync(path.join(outDir, '_meta.json'), JSON.stringify(meta, null, 2));
+
+  // Component synonyms (alias -> [component names])
+  /** @type {Record<string, string[]>} */
+  const synonyms = {};
+  for (const c of Object.values(merged)) {
+    const aliases = Array.isArray(c.aliases) ? c.aliases : [];
+    for (const a of aliases) {
+      const key = String(a).trim().toLowerCase();
+      if (!key) continue;
+      if (!synonyms[key]) synonyms[key] = [];
+      if (!synonyms[key].includes(c.name)) synonyms[key].push(c.name);
+    }
+  }
+  const synPath = path.join(outDir, 'component_synonyms.json');
+  if (Object.keys(synonyms).length > 0) {
+    fs.writeFileSync(synPath, JSON.stringify(synonyms, null, 2));
+  } else {
+    // No per-component aliases defined yet → let server use its built-in defaults
+    try { fs.rmSync(synPath, { force: true }); } catch {}
+  }
 
   // Glossary
   try {
