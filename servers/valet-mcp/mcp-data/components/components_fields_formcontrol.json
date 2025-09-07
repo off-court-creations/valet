@@ -3,6 +3,11 @@
   "category": "fields",
   "slug": "components/fields/formcontrol",
   "summary": "FormControl component",
+  "aliases": [
+    "form",
+    "field",
+    "control"
+  ],
   "props": [
     {
       "name": "useStore",
@@ -35,6 +40,6 @@
   "sourceFiles": [
     "src/components/fields/FormControl.tsx"
   ],
-  "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "version": "0.30.6",
+  "schemaVersion": "1.3"
 }

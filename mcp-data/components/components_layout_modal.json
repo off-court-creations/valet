@@ -127,6 +127,6 @@
     "src/components/layout/Modal.tsx",
     "docs/src/pages/components/layout/ModalDemo.tsx"
   ],
-  "version": "0.30.5",
+  "version": "0.30.6",
   "schemaVersion": "1.3"
 }

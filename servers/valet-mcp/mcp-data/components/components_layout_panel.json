@@ -3,6 +3,11 @@
   "category": "layout",
   "slug": "components/layout/panel",
   "summary": "Panel component",
+  "aliases": [
+    "panel",
+    "card",
+    "section"
+  ],
   "props": [
     {
       "name": "variant",
@@ -84,6 +89,6 @@
     "src/components/layout/Panel.tsx",
     "docs/src/pages/components/layout/Panel.tsx"
   ],
-  "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "version": "0.30.6",
+  "schemaVersion": "1.3"
 }

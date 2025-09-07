@@ -75,6 +75,6 @@
     "src/components/widgets/SpeedDial.tsx",
     "docs/src/pages/components/widgets/SpeedDialDemo.tsx"
   ],
-  "version": "0.30.5",
+  "version": "0.30.6",
   "schemaVersion": "1.3"
 }

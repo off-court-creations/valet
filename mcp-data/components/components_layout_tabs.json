@@ -129,6 +129,6 @@
     "src/components/layout/Tabs.tsx",
     "docs/src/pages/components/layout/TabsDemo.tsx"
   ],
-  "version": "0.30.5",
+  "version": "0.30.6",
   "schemaVersion": "1.3"
 }

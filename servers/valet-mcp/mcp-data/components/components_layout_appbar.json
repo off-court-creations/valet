@@ -3,6 +3,11 @@
   "category": "layout",
   "slug": "components/layout/appbar",
   "summary": "AppBar component",
+  "aliases": [
+    "navbar",
+    "appbar",
+    "footer"
+  ],
   "props": [
     {
       "name": "color",
@@ -57,12 +62,19 @@
     "Avoid fixed heights. Let padding and typography define height so the AppBar adapts to density, fonts, and breakpoints without magic numbers.",
     "Mind stacking contexts. The AppBar is portalled to `document.body` with a high z-index. Avoid creating local stacking contexts that unintentionally cover it."
   ],
+  "bestPracticeSlugs": [
+    "use-a-single-appbar-per-route-it-registers-with-the-current-and",
+    "prefer-tokens-and-presets-set-to-or-and-adjust-spacing-via-the-prop",
+    "keep-slot-content-purposeful-place-brandnavigation-in-and-primary",
+    "avoid-fixed-heights-let-padding-and-typography-define-height-so-the",
+    "mind-stacking-contexts-the-appbar-is-portalled-to-with-a-high-z-index"
+  ],
   "examples": [],
   "docsUrl": "/components/layout/AppBarDemo",
   "sourceFiles": [
     "src/components/layout/AppBar.tsx",
     "docs/src/pages/components/layout/AppBarDemo.tsx"
   ],
-  "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "version": "0.30.6",
+  "schemaVersion": "1.3"
 }

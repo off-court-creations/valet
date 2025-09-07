@@ -3,6 +3,10 @@
   "category": "fields",
   "slug": "components/fields/switch",
   "summary": "Switch component",
+  "aliases": [
+    "toggle",
+    "switch"
+  ],
   "props": [
     {
       "name": "checked",
@@ -81,12 +85,20 @@
     "Accessible semantics. Switch exposes `role=\"switch\"` and `aria-checked` ; do not rely on colour alone to convey state.",
     "Motion and theme. Let default motion and colours come from the theme; keep overrides in presets to stay consistent with the rest of the UI."
   ],
+  "bestPracticeSlugs": [
+    "use-switch-for-immediate-effects-switch-communicates-an-onoff-state-that",
+    "always-pair-with-a-clear-label-the-label-should-describe-the-effect-not",
+    "choose-the-control-model-deliberately-use-when-the-state-drives-app",
+    "maintain-comfortable-targets-pick-size-tokens-that-keep-tap-areas-4048px",
+    "accessible-semantics-switch-exposes-and-do-not-rely-on-colour-alone-to",
+    "motion-and-theme-let-default-motion-and-colours-come-from-the-theme-keep"
+  ],
   "examples": [],
   "docsUrl": "/components/field/SwitchDemo",
   "sourceFiles": [
     "src/components/fields/Switch.tsx",
     "docs/src/pages/components/field/SwitchDemo.tsx"
   ],
-  "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "version": "0.30.6",
+  "schemaVersion": "1.3"
 }

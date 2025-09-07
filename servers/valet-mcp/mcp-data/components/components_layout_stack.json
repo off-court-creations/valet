@@ -3,6 +3,9 @@
   "category": "layout",
   "slug": "components/layout/stack",
   "summary": "Stack component",
+  "aliases": [
+    "stack"
+  ],
   "props": [
     {
       "name": "direction",
@@ -64,12 +67,19 @@
     "Control scroll intentionally. Stacks hide horizontal overflow; when nesting inside constrained parents (e.g., `` ), tune `--valet-stack-ov-y` and `--valet-stack-max-h` to prevent nested scrollbars.",
     "Use `preset` for common layouts. Capture repeated alignment and spacing in a preset to keep markup clean and consistent."
   ],
+  "bestPracticeSlugs": [
+    "use-numeric-with-theme-spacing-prefer-small-integers-eg-so-density",
+    "let-rows-wrap-by-default-enables-wrapping-unless-you-set-this-keeps",
+    "pad-the-container-not-children-use-the-prop-for-outer-breathing-room-and",
+    "control-scroll-intentionally-stacks-hide-horizontal-overflow-when",
+    "use-for-common-layouts-capture-repeated-alignment-and-spacing-in-a"
+  ],
   "examples": [],
   "docsUrl": "/components/layout/StackDemo",
   "sourceFiles": [
     "src/components/layout/Stack.tsx",
     "docs/src/pages/components/layout/StackDemo.tsx"
   ],
-  "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "version": "0.30.6",
+  "schemaVersion": "1.3"
 }
