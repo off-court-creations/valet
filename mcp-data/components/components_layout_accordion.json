@@ -3,6 +3,9 @@
   "category": "layout",
   "slug": "components/layout/accordion",
   "summary": "Accordion component",
+  "aliases": [
+    "accordion"
+  ],
   "props": [
     {
       "name": "defaultOpen",
@@ -64,5 +67,5 @@
     "src/components/layout/Accordion.tsx"
   ],
   "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "schemaVersion": "1.3"
 }

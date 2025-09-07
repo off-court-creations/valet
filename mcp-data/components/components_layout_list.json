@@ -3,6 +3,11 @@
   "category": "layout",
   "slug": "components/layout/list",
   "summary": "List component",
+  "aliases": [
+    "list",
+    "ul",
+    "ol"
+  ],
   "props": [
     {
       "name": "data",
@@ -123,6 +128,14 @@
     "Tokenize spacing. Use presets and theme spacing rather than per‑row inline styles so density and theming remain consistent across the app.",
     "Large data sets. For very long lists, consider windowing/virtualization and defer heavy per‑row work until visible."
   ],
+  "bestPracticeSlugs": [
+    "keep-rows-scannable-use-for-the-primary-line-and-a-concise-for-secondary",
+    "choose-selection-deliberately-enable-only-when-followup-actions-operate",
+    "reorder-with-care-turn-on-when-order-matters-and-persist-via-provide",
+    "respect-touchscroll-ergonomics-the-list-locks-touch-scroll-while",
+    "tokenize-spacing-use-presets-and-theme-spacing-rather-than-perrow-inline",
+    "large-data-sets-for-very-long-lists-consider-windowingvirtualization-and"
+  ],
   "examples": [],
   "docsUrl": "/components/layout/ListDemoPage",
   "sourceFiles": [
@@ -130,5 +143,5 @@
     "docs/src/pages/components/layout/ListDemoPage.tsx"
   ],
   "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "schemaVersion": "1.3"
 }

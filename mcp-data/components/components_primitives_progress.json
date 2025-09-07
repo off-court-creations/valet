@@ -3,6 +3,11 @@
   "category": "primitives",
   "slug": "components/primitives/progress",
   "summary": "Progress component",
+  "aliases": [
+    "progress",
+    "spinner",
+    "loader"
+  ],
   "props": [
     {
       "name": "variant",
@@ -60,6 +65,14 @@
     "Colour & size with tokens. Use theme colours to convey status (e.g., `error` for failures) and size via tokens/numbers to fit the context.",
     "Don’t block the page. Keep progress close to the affected region and allow unrelated interactions when possible."
   ],
+  "bestPracticeSlugs": [
+    "choose-the-right-mode-use-when-you-know-progress-for-unknown-durations",
+    "provide-context-pair-progress-with-nearby-text-eg-uploading-or-step-2-of",
+    "dont-spin-forever-if-indeterminate-lasts-more-than-a-few-seconds-provide",
+    "respect-accessibility-the-component-sets-and-aria-values-you-can",
+    "colour-size-with-tokens-use-theme-colours-to-convey-status-eg-for",
+    "dont-block-the-page-keep-progress-close-to-the-affected-region-and-allow"
+  ],
   "examples": [],
   "docsUrl": "/components/primitives/ProgressDemo",
   "sourceFiles": [
@@ -67,5 +80,5 @@
     "docs/src/pages/components/primitives/ProgressDemo.tsx"
   ],
   "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "schemaVersion": "1.3"
 }

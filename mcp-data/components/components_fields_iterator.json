@@ -3,6 +3,9 @@
   "category": "fields",
   "slug": "components/fields/iterator",
   "summary": "Iterator component",
+  "aliases": [
+    "iterator"
+  ],
   "props": [
     {
       "name": "value",
@@ -98,5 +101,5 @@
     "docs/src/pages/components/field/IteratorDemo.tsx"
   ],
   "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "schemaVersion": "1.3"
 }

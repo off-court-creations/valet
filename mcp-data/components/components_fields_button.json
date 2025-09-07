@@ -3,6 +3,9 @@
   "category": "fields",
   "slug": "components/fields/button",
   "summary": "Button component",
+  "aliases": [
+    "button"
+  ],
   "props": [
     {
       "name": "color",
@@ -69,6 +72,16 @@
     "Reuse styling with `preset` ( `definePreset()` ) rather than duplicating `sx` across instances.",
     "Avoid multiple primary actions per view and reserve destructive styles for destructive operations."
   ],
+  "bestPracticeSlugs": [
+    "establish-a-clear-action-hierarchy-use-for-the-primary-action-and-for",
+    "choose-sizes-by-density-for-typical-forms-for-standout-ctas-avoid-mixing",
+    "prefer-theme-tokens-for-automatic-contrast-if-you-set-a-custom-also-set",
+    "use-in-narrow-or-linear-layouts-mobile-drawers-where-the-button-should",
+    "prefer-succinct-verbfirst-labels-if-the-action-is-icononly-use-and",
+    "when-combining-icons-and-text-add-a-small-gap-eg-on-the-icon-for",
+    "reuse-styling-with-rather-than-duplicating-across-instances",
+    "avoid-multiple-primary-actions-per-view-and-reserve-destructive-styles"
+  ],
   "examples": [],
   "docsUrl": "/components/field/ButtonDemoPage",
   "sourceFiles": [
@@ -76,5 +89,5 @@
     "docs/src/pages/components/field/ButtonDemoPage.tsx"
   ],
   "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "schemaVersion": "1.3"
 }

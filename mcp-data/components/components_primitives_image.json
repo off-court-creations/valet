@@ -3,6 +3,11 @@
   "category": "primitives",
   "slug": "components/primitives/image",
   "summary": "Image component",
+  "aliases": [
+    "image",
+    "img",
+    "picture"
+  ],
   "props": [
     {
       "name": "src",
@@ -67,6 +72,14 @@
     "Prevent drag ghosts. The component disables dragging by default; only enable dragging when there is a genuine use‑case.",
     "Optimize assets. Serve appropriately sized and compressed images; avoid shipping multi‑MB originals for small containers."
   ],
+  "bestPracticeSlugs": [
+    "write-meaningful-text-describe-the-contentpurpose-use-for-purely",
+    "reserve-layout-space-provide-and-or-a-styled-container-to-prevent",
+    "lazyload-offscreen-media-enable-with-a-tiny-for-noncritical-images-avoid",
+    "choose-the-right-use-for-fills-and-for-letterboxed-media-provide-a",
+    "prevent-drag-ghosts-the-component-disables-dragging-by-default-only",
+    "optimize-assets-serve-appropriately-sized-and-compressed-images-avoid"
+  ],
   "examples": [],
   "docsUrl": "/components/primitives/ImageDemo",
   "sourceFiles": [
@@ -74,5 +87,5 @@
     "docs/src/pages/components/primitives/ImageDemo.tsx"
   ],
   "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "schemaVersion": "1.3"
 }

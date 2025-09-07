@@ -3,6 +3,11 @@
   "category": "widgets",
   "slug": "components/widgets/dropzone",
   "summary": "Dropzone component",
+  "aliases": [
+    "dropzone",
+    "upload",
+    "uploader"
+  ],
   "props": [
     {
       "name": "accept",
@@ -90,6 +95,13 @@
     "Accessibility first. Ensure the dropzone is focusable and operable via keyboard; users should be able to choose files without drag‑and‑drop.",
     "Progressive uploads. For large files or slow networks, show progress and allow cancel; avoid blocking the UI with synchronous work."
   ],
+  "bestPracticeSlugs": [
+    "be-explicit-about-file-types-set-to-the-precise-mime-patterns-you",
+    "communicate-limits-if-using-or-size-limits-reflect-them-in-the-ui-copy",
+    "keep-previews-purposeful-thumbnails-help-with-images-for-other-types",
+    "accessibility-first-ensure-the-dropzone-is-focusable-and-operable-via",
+    "progressive-uploads-for-large-files-or-slow-networks-show-progress-and"
+  ],
   "examples": [],
   "docsUrl": "/components/widgets/DropzoneDemo",
   "sourceFiles": [
@@ -97,5 +109,5 @@
     "docs/src/pages/components/widgets/DropzoneDemo.tsx"
   ],
   "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "schemaVersion": "1.3"
 }

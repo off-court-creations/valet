@@ -3,6 +3,10 @@
   "category": "fields",
   "slug": "components/fields/dateselector",
   "summary": "DateSelector component",
+  "aliases": [
+    "datepicker",
+    "daterange"
+  ],
   "props": [
     {
       "name": "value",
@@ -138,5 +142,5 @@
     "docs/src/pages/components/field/DateSelectorDemo.tsx"
   ],
   "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "schemaVersion": "1.3"
 }

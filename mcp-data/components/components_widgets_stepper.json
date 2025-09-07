@@ -3,6 +3,11 @@
   "category": "widgets",
   "slug": "components/widgets/stepper",
   "summary": "Stepper component",
+  "aliases": [
+    "stepper",
+    "steps",
+    "wizard"
+  ],
   "props": [
     {
       "name": "steps",
@@ -51,6 +56,14 @@
     "Use tokens/presets to style. Customize radius/stroke via CSS vars and presets rather than per-instance inline styles to keep density and branding coherent.",
     "Keep step count reasonable. If there are many steps or non‑linear paths, a progress bar or checklist may be clearer."
   ],
+  "bestPracticeSlugs": [
+    "treat-stepper-as-presentation-it-reflects-progress-do-not-use-it-as-the",
+    "bind-to-canonical-state-derive-from-router-or-form-state-rather-than",
+    "keep-labels-short-and-stable-prefer-12-words-for-lengthy-flows-consider",
+    "mind-accessibility-announce-progress-with-text-like-near-the-stepper-so",
+    "use-tokenspresets-to-style-customize-radiusstroke-via-css-vars-and",
+    "keep-step-count-reasonable-if-there-are-many-steps-or-nonlinear-paths-a"
+  ],
   "examples": [],
   "docsUrl": "/components/widgets/StepperDemo",
   "sourceFiles": [
@@ -58,5 +71,5 @@
     "docs/src/pages/components/widgets/StepperDemo.tsx"
   ],
   "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "schemaVersion": "1.3"
 }

@@ -3,6 +3,10 @@
   "category": "widgets",
   "slug": "components/widgets/tooltip",
   "summary": "Tooltip component",
+  "aliases": [
+    "tooltip",
+    "hint"
+  ],
   "props": [
     {
       "name": "title",
@@ -106,6 +110,13 @@
     "Prefer `placement='top'` when space allows; adjust placement to avoid clipping and viewport edges.",
     "Use sensible delays. Avoid long `enterDelay` / `leaveDelay` that make tooltips feel sluggish or sticky, especially on touch devices."
   ],
+  "bestPracticeSlugs": [
+    "use-tooltips-for-supplemental-hints-not-essential-instructions-the-ui",
+    "ensure-the-trigger-is-focusable-and-labelled-for-icononly-controls",
+    "keep-content-concise-avoid-interactive-controls-inside-tooltips-prefer",
+    "prefer-when-space-allows-adjust-placement-to-avoid-clipping-and-viewport",
+    "use-sensible-delays-avoid-long-that-make-tooltips-feel-sluggish-or"
+  ],
   "examples": [],
   "docsUrl": "/components/widgets/TooltipDemo",
   "sourceFiles": [
@@ -113,5 +124,5 @@
     "docs/src/pages/components/widgets/TooltipDemo.tsx"
   ],
   "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "schemaVersion": "1.3"
 }

@@ -3,6 +3,12 @@
   "category": "primitives",
   "slug": "components/primitives/typography",
   "summary": "Typography component",
+  "aliases": [
+    "typography",
+    "text",
+    "heading",
+    "title"
+  ],
   "props": [
     {
       "name": "variant",
@@ -127,6 +133,14 @@
     "Don’t fake interactivity. Avoid attaching click handlers to Typography to mimic buttons/links; wrap it in `Button` or `<a>` for correct semantics and focus behaviour.",
     "Whitespace control. Use `whitespace` and `noSelect` for code, labels, and UI text to keep wrapping and selection intentional."
   ],
+  "bestPracticeSlugs": [
+    "match-semantics-to-variants-heading-variants-render-semantic-elements",
+    "use-tokens-not-pixels-prefer-and-theme-typography-tokens-over-hardcoded",
+    "choose-families-from-the-theme-use-headingbodymonobutton-or-define-fonts",
+    "maintain-contrast-set-via-theme-tokens-or-surrounding-containers-to",
+    "dont-fake-interactivity-avoid-attaching-click-handlers-to-typography-to",
+    "whitespace-control-use-and-for-code-labels-and-ui-text-to-keep-wrapping"
+  ],
   "examples": [],
   "docsUrl": "/components/primitives/TypographyDemoPage",
   "sourceFiles": [
@@ -134,5 +148,5 @@
     "docs/src/pages/components/primitives/TypographyDemoPage.tsx"
   ],
   "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "schemaVersion": "1.3"
 }

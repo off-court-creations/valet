@@ -3,6 +3,11 @@
   "category": "widgets",
   "slug": "components/widgets/codeblock",
   "summary": "CodeBlock component",
+  "aliases": [
+    "code",
+    "codeblock",
+    "snippet"
+  ],
   "props": [
     {
       "name": "code",
@@ -45,6 +50,13 @@
     "Accessible copy affordance. Provide a descriptive `ariaLabel` (e.g., \"Copy code\") and a `title` tooltip for clarity.",
     "Security hygiene. Never render untrusted code as executable; CodeBlock is purely presentational and should not eval content."
   ],
+  "bestPracticeSlugs": [
+    "specify-the-language-pass-a-valid-highlightjs-key-eg-typescript-so",
+    "use-a-monospace-font-and-preserve-whitespace-pair-with-controls-when",
+    "keep-snippets-focused-avoid-very-large-blocks-extract-long-examples-into",
+    "accessible-copy-affordance-provide-a-descriptive-eg-copy-code-and-a",
+    "security-hygiene-never-render-untrusted-code-as-executable-codeblock-is"
+  ],
   "examples": [],
   "docsUrl": "/components/widgets/CodeBlockDemo",
   "sourceFiles": [
@@ -52,5 +64,5 @@
     "docs/src/pages/components/widgets/CodeBlockDemo.tsx"
   ],
   "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "schemaVersion": "1.3"
 }

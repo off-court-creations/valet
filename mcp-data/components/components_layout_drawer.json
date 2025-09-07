@@ -3,6 +3,12 @@
   "category": "layout",
   "slug": "components/layout/drawer",
   "summary": "Drawer component",
+  "aliases": [
+    "drawer",
+    "sidenav",
+    "side-nav",
+    "sidebar"
+  ],
   "props": [
     {
       "name": "open",
@@ -99,6 +105,13 @@
     "Don’t manually offset for the AppBar. The drawer reads the current surface offset and adjusts itself (and persistent margins) automatically.",
     "Keep content focused and scrollable. Put navigation and short lists inside; for long collections consider windowing/virtualization and offload heavy work from the drawer."
   ],
+  "bestPracticeSlugs": [
+    "choose-the-right-mode-use-for-primary-navigation-use-overlay-drawers-for",
+    "respect-close-affordances-provide-for-controlled-drawers-and-keep",
+    "size-with-tokens-set-in-or-via-spacing-so-density-changes-keep",
+    "dont-manually-offset-for-the-appbar-the-drawer-reads-the-current-surface",
+    "keep-content-focused-and-scrollable-put-navigation-and-short-lists"
+  ],
   "examples": [],
   "docsUrl": "/components/layout/DrawerDemo",
   "sourceFiles": [
@@ -106,5 +119,5 @@
     "docs/src/pages/components/layout/DrawerDemo.tsx"
   ],
   "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "schemaVersion": "1.3"
 }

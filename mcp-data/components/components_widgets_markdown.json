@@ -3,6 +3,11 @@
   "category": "widgets",
   "slug": "components/widgets/markdown",
   "summary": "Markdown component",
+  "aliases": [
+    "markdown",
+    "md",
+    "richtext"
+  ],
   "props": [
     {
       "name": "data",
@@ -37,5 +42,5 @@
     "docs/src/pages/components/widgets/MarkdownDemo.tsx"
   ],
   "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "schemaVersion": "1.3"
 }

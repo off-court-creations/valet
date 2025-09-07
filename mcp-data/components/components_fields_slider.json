@@ -3,6 +3,10 @@
   "category": "fields",
   "slug": "components/fields/slider",
   "summary": "Slider component",
+  "aliases": [
+    "slider",
+    "range"
+  ],
   "props": [
     {
       "name": "value",
@@ -147,6 +151,15 @@
     "Size for touch. Use `size` tokens or numbers to keep comfortable thumb and track sizes; avoid tiny controls on mobile.",
     "Controlled effects. When controlled, debounce or batch expensive side‑effects in `onChange` to keep sliding smooth."
   ],
+  "bestPracticeSlugs": [
+    "use-slider-for-continuous-ranges-for-a-handful-of-discrete-options",
+    "declare-real-bounds-set-to-meaningful-limits-and-show-context-with-andor",
+    "snap-intentionally-use-or-supply-with-to-make-targeting-easy-adjust-to",
+    "keyboard-precision-arrow-keys-adjust-by-one-step-ensure-is-small-enough",
+    "ticks-with-purpose-only-enable-when-markers-aid-comprehension-avoid",
+    "size-for-touch-use-tokens-or-numbers-to-keep-comfortable-thumb-and-track",
+    "controlled-effects-when-controlled-debounce-or-batch-expensive"
+  ],
   "examples": [],
   "docsUrl": "/components/field/SliderDemo",
   "sourceFiles": [
@@ -154,5 +167,5 @@
     "docs/src/pages/components/field/SliderDemo.tsx"
   ],
   "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "schemaVersion": "1.3"
 }

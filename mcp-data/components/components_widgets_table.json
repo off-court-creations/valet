@@ -3,6 +3,11 @@
   "category": "widgets",
   "slug": "components/widgets/table",
   "summary": "Table component",
+  "aliases": [
+    "table",
+    "datagrid",
+    "data-grid"
+  ],
   "props": [
     {
       "name": "data",
@@ -89,6 +94,13 @@
     "Enable selection only when follow‑up actions operate on selected rows; choose `single` vs `multi` to match the action design.",
     "Keep column count reasonable on narrow screens; prefer fewer, more meaningful columns over many cramped ones. Use succinct headers."
   ],
+  "bestPracticeSlugs": [
+    "keep-tables-readable-enable-andor-for-large-datasets-but-avoid-heavy",
+    "constrain-height-so-the-body-scrolls-inside-the-table-instead-of-the",
+    "provide-an-initial-sort-align-numeric-columns-to-the-right-and-format",
+    "enable-selection-only-when-followup-actions-operate-on-selected-rows",
+    "keep-column-count-reasonable-on-narrow-screens-prefer-fewer-more"
+  ],
   "examples": [],
   "docsUrl": "/components/widgets/TableDemo",
   "sourceFiles": [
@@ -96,5 +108,5 @@
     "docs/src/pages/components/widgets/TableDemo.tsx"
   ],
   "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "schemaVersion": "1.3"
 }

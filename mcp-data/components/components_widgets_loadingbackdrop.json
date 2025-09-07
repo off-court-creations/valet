@@ -3,6 +3,10 @@
   "category": "widgets",
   "slug": "components/widgets/loadingbackdrop",
   "summary": "LoadingBackdrop component",
+  "aliases": [
+    "backdrop",
+    "loading"
+  ],
   "props": [
     {
       "name": "fading",
@@ -26,5 +30,5 @@
     "src/components/widgets/LoadingBackdrop.tsx"
   ],
   "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "schemaVersion": "1.3"
 }

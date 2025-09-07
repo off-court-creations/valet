@@ -3,6 +3,10 @@
   "category": "primitives",
   "slug": "components/primitives/avatar",
   "summary": "Avatar component",
+  "aliases": [
+    "avatar",
+    "badge"
+  ],
   "props": [
     {
       "name": "src",
@@ -71,6 +75,13 @@
     "Ensure visibility on busy backgrounds. Use `variant='outline'` or place avatars inside a container with sufficient contrast.",
     "Non‑interactive by default. Wrap avatars with a `Button` or link for navigation; avoid attaching click handlers directly without clear affordance."
   ],
+  "bestPracticeSlugs": [
+    "provide-meaningful-text-when-avatars-convey-identity-eg-ada-lovelace-use",
+    "prefer-for-known-assets-use-for-gravatar-only-when-appropriate-for-your",
+    "keep-sizes-consistent-across-lists-use-size-tokens-for-coherent-density",
+    "ensure-visibility-on-busy-backgrounds-use-or-place-avatars-inside-a",
+    "noninteractive-by-default-wrap-avatars-with-a-or-link-for-navigation"
+  ],
   "examples": [],
   "docsUrl": "/components/primitives/AvatarDemo",
   "sourceFiles": [
@@ -78,5 +89,5 @@
     "docs/src/pages/components/primitives/AvatarDemo.tsx"
   ],
   "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "schemaVersion": "1.3"
 }

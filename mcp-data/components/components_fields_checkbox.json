@@ -3,6 +3,9 @@
   "category": "fields",
   "slug": "components/fields/checkbox",
   "summary": "Checkbox component",
+  "aliases": [
+    "checkbox"
+  ],
   "props": [
     {
       "name": "checked",
@@ -93,6 +96,15 @@
     "Disabled with context. If a checkbox is disabled, explain why nearby; avoid silently disabling without guidance.",
     "Tokens/presets. Style with theme tokens and `preset` rather than ad‑hoc CSS to keep density and branding consistent."
   ],
+  "bestPracticeSlugs": [
+    "use-checkbox-for-independent-booleans-for-mutually-exclusive-choices",
+    "always-provide-a-clear-label-the-entire-label-should-be-clickable-in",
+    "choose-control-model-deliberately-use-when-the-value-participates-in-app",
+    "keep-targets-comfortable-pick-tokens-or-numeric-sizes-that-keep-tap",
+    "group-with-a-visible-question-or-caption-when-multiple-checkboxes-relate",
+    "disabled-with-context-if-a-checkbox-is-disabled-explain-why-nearby-avoid",
+    "tokenspresets-style-with-theme-tokens-and-rather-than-adhoc-css-to-keep"
+  ],
   "examples": [],
   "docsUrl": "/components/field/CheckBoxDemo",
   "sourceFiles": [
@@ -100,5 +112,5 @@
     "docs/src/pages/components/field/CheckBoxDemo.tsx"
   ],
   "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "schemaVersion": "1.3"
 }

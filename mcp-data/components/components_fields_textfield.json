@@ -3,6 +3,11 @@
   "category": "fields",
   "slug": "components/fields/textfield",
   "summary": "TextField component",
+  "aliases": [
+    "textinput",
+    "input",
+    "textbox"
+  ],
   "props": [],
   "cssVars": [],
   "cssPresets": [],
@@ -15,5 +20,5 @@
     "src/components/fields/TextField.tsx"
   ],
   "version": "0.30.5",
-  "schemaVersion": "1.2"
+  "schemaVersion": "1.3"
 }
