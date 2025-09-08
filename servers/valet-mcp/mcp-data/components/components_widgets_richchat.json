@@ -8,6 +8,21 @@
     "conversation",
     "thread"
   ],
+  "usage": {
+    "purpose": "Conversation UI for AI assistants with rich, tool‑augmented messages.",
+    "whenToUse": [
+      "Show structured outputs (tables, code, files) inline with messages",
+      "Capture tool calls, citations, or step‑wise reasoning artifacts"
+    ],
+    "whenNotToUse": [
+      "Basic chat without rich rendering (use LLMChat)"
+    ],
+    "alternatives": [
+      "LLMChat",
+      "Markdown",
+      "Table"
+    ]
+  },
   "props": [
     {
       "name": "messages",
@@ -105,5 +120,5 @@
     "docs/src/pages/components/widgets/RichChat.tsx"
   ],
   "version": "0.30.6",
-  "schemaVersion": "1.3"
+  "schemaVersion": "1.4"
 }

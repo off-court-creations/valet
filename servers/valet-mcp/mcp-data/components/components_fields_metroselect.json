@@ -8,6 +8,22 @@
     "segmented",
     "segment"
   ],
+  "usage": {
+    "purpose": "Segmented/chip‑based selector for compact, scannable choices (single or multiple).",
+    "whenToUse": [
+      "Tag pickers, filters, and quick toggles where visibility matters",
+      "Small to medium sets where chips communicate state effectively"
+    ],
+    "whenNotToUse": [
+      "Long option lists (use Select)",
+      "Exactly one choice when radio clarity is preferred (use Radio)"
+    ],
+    "alternatives": [
+      "Select",
+      "Radio",
+      "Checkbox"
+    ]
+  },
   "props": [
     {
       "name": "value",
@@ -88,5 +104,5 @@
     "docs/src/pages/components/field/MetroSelectDemo.tsx"
   ],
   "version": "0.30.6",
-  "schemaVersion": "1.3"
+  "schemaVersion": "1.4"
 }

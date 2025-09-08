@@ -7,6 +7,20 @@
     "iconbutton",
     "icon-button"
   ],
+  "usage": {
+    "purpose": "Compact, icon‑only button for secondary actions.",
+    "whenToUse": [
+      "Space‑constrained UIs, toolbars, lists, and cards",
+      "Actions with well‑known glyphs (edit, delete, settings)"
+    ],
+    "whenNotToUse": [
+      "Primary calls to action that need a label (use Button)",
+      "Ambiguous actions that require text"
+    ],
+    "alternatives": [
+      "Button"
+    ]
+  },
   "props": [
     {
       "name": "variant",
@@ -88,5 +102,5 @@
     "docs/src/pages/components/field/IconButtonDemoPage.tsx"
   ],
   "version": "0.30.6",
-  "schemaVersion": "1.3"
+  "schemaVersion": "1.4"
 }

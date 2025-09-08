@@ -8,6 +8,21 @@
     "spinner",
     "loader"
   ],
+  "usage": {
+    "purpose": "Communicate ongoing operations with determinate or indeterminate progress.",
+    "whenToUse": [
+      "Inline loading indicators within a component or form",
+      "Show percent complete when known; spinner when unknown"
+    ],
+    "whenNotToUse": [
+      "Blocking the entire page (use LoadingBackdrop)",
+      "Skeletonable content where layout should remain stable (use Skeleton)"
+    ],
+    "alternatives": [
+      "LoadingBackdrop",
+      "Skeleton"
+    ]
+  },
   "props": [
     {
       "name": "variant",
@@ -80,5 +95,5 @@
     "docs/src/pages/components/primitives/ProgressDemo.tsx"
   ],
   "version": "0.30.6",
-  "schemaVersion": "1.3"
+  "schemaVersion": "1.4"
 }

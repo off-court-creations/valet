@@ -7,6 +7,21 @@
     "video",
     "player"
   ],
+  "usage": {
+    "purpose": "Embed and control video playback with a11y‑first defaults.",
+    "whenToUse": [
+      "Marketing or educational clips within content",
+      "Short previews that benefit from poster images and preload control"
+    ],
+    "whenNotToUse": [
+      "Static imagery (use Image)",
+      "Heavy decorative backgrounds (consider ParallaxBackground or CSS background video carefully)"
+    ],
+    "alternatives": [
+      "Image",
+      "ParallaxBackground"
+    ]
+  },
   "props": [
     {
       "name": "sources",
@@ -111,5 +126,5 @@
     "docs/src/pages/components/primitives/VideoDemo.tsx"
   ],
   "version": "0.30.6",
-  "schemaVersion": "1.3"
+  "schemaVersion": "1.4"
 }

@@ -7,6 +7,24 @@
     "modal",
     "dialog"
   ],
+  "usage": {
+    "purpose": "Blocking overlay for focused tasks and decisions.",
+    "whenToUse": [
+      "Confirmations and destructive actions",
+      "Short, focused forms that must complete before returning to context",
+      "Content that benefits from dimming the background"
+    ],
+    "whenNotToUse": [
+      "Non‑critical feedback (use Snackbar)",
+      "Persistent side tools or navigation (use Drawer)",
+      "Large, document‑like content that should have its own route"
+    ],
+    "alternatives": [
+      "Drawer",
+      "Snackbar",
+      "Panel"
+    ]
+  },
   "props": [
     {
       "name": "open",
@@ -128,5 +146,5 @@
     "docs/src/pages/components/layout/ModalDemo.tsx"
   ],
   "version": "0.30.6",
-  "schemaVersion": "1.3"
+  "schemaVersion": "1.4"
 }

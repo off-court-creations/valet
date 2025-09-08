@@ -8,6 +8,21 @@
     "steps",
     "wizard"
   ],
+  "usage": {
+    "purpose": "Guide users through an ordered, multi‑step flow.",
+    "whenToUse": [
+      "Complex forms or configuration broken into logical steps",
+      "Tasks that benefit from progress indication and validation per step"
+    ],
+    "whenNotToUse": [
+      "Independent peer views (use Tabs)",
+      "Single‑screen tasks"
+    ],
+    "alternatives": [
+      "Tabs",
+      "Modal"
+    ]
+  },
   "props": [
     {
       "name": "steps",
@@ -71,5 +86,5 @@
     "docs/src/pages/components/widgets/StepperDemo.tsx"
   ],
   "version": "0.30.6",
-  "schemaVersion": "1.3"
+  "schemaVersion": "1.4"
 }
