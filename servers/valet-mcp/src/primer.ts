@@ -20,7 +20,8 @@ Use this primer to steer your first actions and avoid common pitfalls.
 2) Explore components: \`list_components\`, then \`search_components { query }\`.
 3) Inspect details: \`get_component { name|slug }\` and \`get_examples { name }\`.
 4) Clarify terminology: \`get_glossary\` or \`define_term { word }\`.
-5) Generate code that follows Best Practices from the component docs.
+5) Adjust the theme safely: \`adjust_theme { appPath, themePatch }\` to update \`useInitialTheme\` in the App file.
+6) Generate code that follows Best Practices from the component docs.
 
 Tip: Prefer exact component names. If unsure, try synonyms in \`search_components\` (e.g., 'dropdown' → Select).
 
@@ -64,6 +65,12 @@ Tip: Prefer exact component names. If unsure, try synonyms in \`search_component
 - Data sources resolve in this order: \`VALET_ROOT + VALET_MCP_DATA_DIR\` → \`VALET_MCP_DATA_DIR\` → nearest \`mcp-data\` from CWD → bundled → optional data package.
 - If self-check returns \`components: 0\`: rebuild the data with \`npm run mcp:build\` in the valet repo.
 - Node ≥ 18 (ideally 20+) recommended.
+
+Theme edits via MCP:
+
+- Use \`adjust_theme\` to modify the initial theme in your App file without risky AST surgery. It shallow‑merges a provided \`themePatch\` into the first argument of \`useInitialTheme\`, and writes a backup.
+- Typical call: \`adjust_theme { appPath: "src/App.tsx", themePatch: { colors: { primary: "#0EA5E9" }, spacingUnit: "0.4rem" } }\`.
+- If present, it respects the optional markers \`// valet-mcp:theme-begin\` … \`// valet-mcp:theme-end\` to limit edits.
 
 ## Quick Example: New Page Layout
 
