@@ -4,4 +4,16 @@
 // ─────────────────────────────────────────────────────────────
 import { defineComponentMeta } from '../../mcp/metaTypes';
 
-export default defineComponentMeta({ name: 'Stepper', aliases: ['stepper', 'steps', 'wizard'] });
+export default defineComponentMeta({
+  name: 'Stepper',
+  aliases: ['stepper', 'steps', 'wizard'],
+  usage: {
+    purpose: 'Guide users through an ordered, multi‑step flow.',
+    whenToUse: [
+      'Complex forms or configuration broken into logical steps',
+      'Tasks that benefit from progress indication and validation per step',
+    ],
+    whenNotToUse: ['Independent peer views (use Tabs)', 'Single‑screen tasks'],
+    alternatives: ['Tabs', 'Modal'],
+  },
+});

@@ -20,6 +20,12 @@ export type ValetComponentDoc = {
   slug: string;
   summary: string;
   description?: string;
+  usage?: {
+    purpose?: string | string[];
+    whenToUse?: string[];
+    whenNotToUse?: string[];
+    alternatives?: string[];
+  };
   props: Array<{
     name: string;
     type: string;
@@ -232,4 +238,3 @@ export function simpleSearch(query: string, items: ValetIndexItem[], opts?: { ca
   scored.sort((a, b) => b.score - a.score || a.item.name.localeCompare(b.item.name));
   return scored;
 }
-

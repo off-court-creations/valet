@@ -6,7 +6,7 @@ import { extractFromDocs } from './extract-docs.mjs';
 import { extractGlossary } from './extract-glossary.mjs';
 import { loadComponentMeta } from './load-meta.mjs';
 
-const SCHEMA_VERSION = '1.3';
+const SCHEMA_VERSION = '1.4';
 
 // Aliases are now sourced from per-component meta sidecars.
 
@@ -76,6 +76,19 @@ function merge(tsMap, docsMap, version, metaMap) {
       return Array.from(new Set(list.filter(Boolean)));
     })();
 
+    // Usage guidance from sidecar meta (normalized to arrays where applicable)
+    const usage = (() => {
+      const raw = metaMap?.[name]?.usage;
+      if (!raw) return undefined;
+      const normArr = (arr) => Array.isArray(arr) ? Array.from(new Set(arr.map((s) => String(s).trim()).filter(Boolean))) : undefined;
+      const purpose = typeof raw.purpose === 'string' ? raw.purpose.trim() : normArr(raw.purpose);
+      const whenToUse = normArr(raw.whenToUse);
+      const whenNotToUse = normArr(raw.whenNotToUse);
+      const alternatives = normArr(raw.alternatives);
+      const any = (purpose && (typeof purpose === 'string' ? purpose : purpose.length)) || (whenToUse && whenToUse.length) || (whenNotToUse && whenNotToUse.length) || (alternatives && alternatives.length);
+      return any ? { purpose, whenToUse, whenNotToUse, alternatives } : undefined;
+    })();
+
     // Docs URL and best practice slugs integration
     const docsUrl = docs.docsUrl || (metaMap?.[name]?.docs && metaMap[name].docs.docsUrl) || undefined;
     const bestPracticeSlugs = (() => {
@@ -122,6 +135,7 @@ function merge(tsMap, docsMap, version, metaMap) {
       summary,
       description,
       aliases: aliases.length ? aliases : undefined,
+      usage,
       props,
       domPassthrough,
       cssVars,

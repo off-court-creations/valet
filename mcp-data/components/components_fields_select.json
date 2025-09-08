@@ -8,6 +8,21 @@
     "combobox",
     "select"
   ],
+  "usage": {
+    "purpose": "Choose one option from many with a compact popup.",
+    "whenToUse": [
+      "Medium to large option sets that don’t fit as Radio",
+      "Forms where space is limited and search/typeahead may help"
+    ],
+    "whenNotToUse": [
+      "Multiple selections with visible chips (use MetroSelect)",
+      "Very small sets where all options should be visible (use Radio)"
+    ],
+    "alternatives": [
+      "Radio",
+      "MetroSelect"
+    ]
+  },
   "props": [
     {
       "name": "value",
@@ -130,5 +145,5 @@
     "docs/src/pages/components/field/SelectDemo.tsx"
   ],
   "version": "0.30.6",
-  "schemaVersion": "1.3"
+  "schemaVersion": "1.4"
 }

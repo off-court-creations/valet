@@ -4,4 +4,19 @@
 // ─────────────────────────────────────────────────────────────
 import { defineComponentMeta } from '../../mcp/metaTypes';
 
-export default defineComponentMeta({ name: 'Switch', aliases: ['toggle', 'switch'] });
+export default defineComponentMeta({
+  name: 'Switch',
+  aliases: ['toggle', 'switch'],
+  usage: {
+    purpose: 'Immediate on/off toggle for a single setting.',
+    whenToUse: [
+      'Binary state that applies instantly (Wi‑Fi on/off)',
+      'Settings panels and real‑time preferences',
+    ],
+    whenNotToUse: [
+      'Form submissions where value is saved on submit (use Checkbox)',
+      'Multiple exclusive options (use Radio)',
+    ],
+    alternatives: ['Checkbox', 'Radio'],
+  },
+});

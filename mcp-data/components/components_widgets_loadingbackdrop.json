@@ -7,6 +7,22 @@
     "backdrop",
     "loading"
   ],
+  "usage": {
+    "purpose": "Dim background content and show a blocker while async work completes.",
+    "whenToUse": [
+      "Block interactions during critical loads or transitions",
+      "Ensure a11y focus management while disabling the underlying UI"
+    ],
+    "whenNotToUse": [
+      "Inline/section‑level loading (use Progress)",
+      "Skeletonable content where layout should remain visible (use Skeleton)"
+    ],
+    "alternatives": [
+      "Progress",
+      "Skeleton",
+      "Modal"
+    ]
+  },
   "props": [
     {
       "name": "fading",
@@ -30,5 +46,5 @@
     "src/components/widgets/LoadingBackdrop.tsx"
   ],
   "version": "0.30.6",
-  "schemaVersion": "1.3"
+  "schemaVersion": "1.4"
 }

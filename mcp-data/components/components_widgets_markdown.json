@@ -8,6 +8,21 @@
     "md",
     "richtext"
   ],
+  "usage": {
+    "purpose": "Render trusted Markdown to themed, accessible HTML.",
+    "whenToUse": [
+      "Documentation, notes, and CMS content",
+      "Assistant output that should be formatted but not executable"
+    ],
+    "whenNotToUse": [
+      "Untrusted user HTML without sanitization",
+      "Highly interactive layouts (use regular components)"
+    ],
+    "alternatives": [
+      "Typography",
+      "CodeBlock"
+    ]
+  },
   "props": [
     {
       "name": "data",
@@ -42,5 +57,5 @@
     "docs/src/pages/components/widgets/MarkdownDemo.tsx"
   ],
   "version": "0.30.6",
-  "schemaVersion": "1.3"
+  "schemaVersion": "1.4"
 }
