@@ -414,6 +414,23 @@ async function main() {
     return;
   }
 
+  // If launched directly in a real terminal (not by an MCP host),
+  // print a friendly status line to stderr so users see something.
+  // Important: never write human messages to stdout as that carries MCP JSON-RPC.
+  if (
+    process.stdin.isTTY &&
+    process.stdout.isTTY &&
+    process.stderr.isTTY &&
+    process.env.MCP_QUIET !== '1'
+  ) {
+    // eslint-disable-next-line no-console
+    console.error(
+      `[valet-mcp ${MCP_VERSION}] Waiting for MCP client on stdio. ` +
+        `Data source: ${(DATA_INFO as any).source}; dir: ${DATA_DIR}. ` +
+        `Press Ctrl+C to exit.`
+    );
+  }
+
   const server = await createServer();
   const transport = new StdioServerTransport();
   await server.connect(transport);
