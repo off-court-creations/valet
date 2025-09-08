@@ -8,7 +8,6 @@ import { Readable } from 'node:stream';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { PRIMER_TEXT } from './primer.js';
-import { adjustTheme, type AdjustThemeParams } from './tools/adjustTheme.js';
 import { DATA_DIR, DATA_INFO, getComponentBySlug, getGlossary, getIndex, getMeta } from './tools/shared.js';
 import { registerListComponents } from './tools/listComponents.js';
 import { registerGetComponent } from './tools/getComponent.js';
@@ -18,7 +17,6 @@ import { registerGetDocsInfo } from './tools/getDocsInfo.js';
 import { registerGetGlossary } from './tools/getGlossary.js';
 import { registerDefineTerm } from './tools/defineTerm.js';
 import { registerGetPrimer } from './tools/getPrimer.js';
-import { z } from 'zod';
 const requireFromHere = createRequire(import.meta.url);
 const pkg = requireFromHere('../package.json') as { version?: string; name?: string };
 const MCP_VERSION = pkg.version ?? '0.0.0';
@@ -40,31 +38,7 @@ async function createServer() {
   registerDefineTerm(server);
   registerGetPrimer(server);
 
-  // adjust_theme – safe theme edit helper (MVP per docs)
-  const AdjustThemeParamsShape = {
-    appPath: z.string().min(1).describe('Path to App file, e.g., docs/src/App.tsx'),
-    themePatch: z
-      .object({
-        colors: z.record(z.string()).optional(),
-        spacingUnit: z.string().optional(),
-        radiusUnit: z.string().optional(),
-        strokeUnit: z.string().optional(),
-      })
-      .optional(),
-    fonts: z
-      .object({
-        overrides: z
-          .object({ heading: z.string().optional(), body: z.string().optional(), mono: z.string().optional(), button: z.string().optional() })
-          .optional(),
-        extras: z.array(z.string()).optional(),
-      })
-      .optional(),
-  } as const;
-
-  server.tool('adjust_theme', AdjustThemeParamsShape, async (args) => {
-    const res = adjustTheme(args as unknown as AdjustThemeParams);
-    return { content: [{ type: 'text', text: JSON.stringify(res) }] };
-  });
+  // adjust_theme tool removed
 
   // Optional resources (component JSON as resources)
   server.resource('valet-index', 'mcp://valet/index', { mimeType: 'application/json', name: 'Valet Components Index' }, async () => ({

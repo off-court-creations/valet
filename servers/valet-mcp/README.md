@@ -58,40 +58,7 @@ Notes:
 - get_glossary: full glossary dataset `{ entries: GlossaryEntry[] }`
 - define_term: lookup term/alias with soft-fail suggestions `{ found, entry? , suggestions? }`
 - get_primer: opinionated context dump (Markdown) to guide agents
-- adjust_theme: safely merge theme changes into an App file via `useInitialTheme`. Always applies changes and writes a backup.
-
-### adjust_theme
-
-Parameters (MVP):
-
-```
-{
-  appPath: string;                  // e.g., docs/src/App.tsx
-  themePatch?: {                    // shallow-merged into first arg
-    colors?: Record<string,string>;
-    spacingUnit?: string;
-    radiusUnit?: string;
-    strokeUnit?: string;
-  };
-  fonts?: {
-    overrides?: { heading?: string; body?: string; mono?: string; button?: string };
-    extras?: string[];              // merged & de-duped into second arg
-  };
-}
-```
-
-Behavior:
-- Edits only within theme markers if present: `// valet-mcp:theme-begin` … `// valet-mcp:theme-end`.
-- Otherwise locates the first `useInitialTheme(...)` call and merges args; markers are added.
-- If neither found, returns a placement snippet and does not modify the file.
-- Ensures an ESM import for `useInitialTheme` exists.
-- Always writes a backup to `.valet-mcp/backups/<ISO>/<basename>` before changing the file.
-
-Returns:
-
-```
-{ applied, appPath, summary: string[], diff?: string, warnings?: string[], snippet?: string }
-```
+ 
 
 ---
 
@@ -139,7 +106,7 @@ npm run mcp:server:publish   # builds data, bundles, publishes
 - `VALET_ROOT`: pairs with `VALET_MCP_DATA_DIR`
 - `MCP_SELFCHECK=1`: print selfcheck JSON then exit
 - Node 18+ (20+ recommended)
-- Security: reads JSON and serves over stdio. `adjust_theme` writes a backup and modifies the specified file.
+- Security: reads JSON and serves over stdio.
 
 ---
 
