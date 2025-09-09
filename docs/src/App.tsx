@@ -112,6 +112,10 @@ export function App() {
           element={<MainPage />}
         />
         <Route
+          path='*'
+          element={<MainPage />}
+        />
+        <Route
           path='/overview'
           element={<OverviewPage />}
         />
