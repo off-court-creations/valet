@@ -3,7 +3,7 @@
 // Next‑level docs homepage: hero, features, demos, playgrounds
 // ─────────────────────────────────────────────────────────────
 
-import { useMemo, useState, useRef, type ComponentProps } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import {
   Surface,
   Stack,
@@ -13,17 +13,22 @@ import {
   Button,
   Icon,
   Tabs,
-  Table,
   CodeBlock,
   AppBar,
-  SpeedDial,
-  RichChat,
-  KeyModal,
   styled,
   keyframes,
   useTheme,
+  Table,
+  DateSelector,
+  Pagination,
+  MetroSelect,
+  Tooltip,
+  IconButton,
+  Divider,
+  Box,
 } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
+// no table types needed in this page
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../components/NavDrawer';
 import Starfield from '../../components/Starfield';
@@ -164,7 +169,7 @@ const Halo = styled('div')<{ $opacity?: number; $dur?: string }>`
   }
 `;
 
-type MiniRow = { key: string; value: string };
+// —
 
 export default function MainPage() {
   const navigate = useNavigate();
@@ -183,42 +188,42 @@ export default function MainPage() {
       density === 'comfortable' ? 'compact' : density === 'compact' ? 'tight' : 'comfortable',
     );
 
-  // ── Table snapshot data (tiny, static)
-  const cols = useMemo<TableColumn<MiniRow>[]>(
+  // ── Live demo state
+  const [selectedDate, setSelectedDate] = useState('2025-01-01');
+  const [demoPage, setDemoPage] = useState(1);
+  const loremByPage = [
+    'Greetings, programs!',
+    'Stranger and stranger.',
+    'On the other side of the screen, it all looks so easy.',
+    'All that is visible must grow beyond itself, and extend into the realm of the invisible.',
+    'Hooray for our side.',
+    "Positive and negative, huh? You're a Bit, aren't you?",
+    'Bring in the logic probe!',
+    "He started small and he'll end small!",
+    "I wonder how you'll take to working in a pocket calculator.",
+    "That's the way it is for Programs, yes.",
+  ];
+  const [transport, setTransport] = useState('car');
+  // Table demo data: author → program pairs
+  type Pair = { author: string; program: string };
+  const tableCols = useMemo<TableColumn<Pair>[]>(
     () => [
-      { header: 'Key', accessor: 'key' },
-      { header: 'Value', accessor: 'value' },
+      { header: 'Author', accessor: 'author' },
+      { header: 'Program', accessor: 'program' },
     ],
     [],
   );
-  const rows = useMemo<MiniRow[]>(
+  const tableRows = useMemo<Pair[]>(
     () => [
-      { key: 'Bundle', value: '~0 deps' },
-      { key: 'Mode', value: mode },
-      { key: 'Density', value: density },
-      { key: 'Surface', value: 'CSS var metrics' },
+      { author: 'Alan Bradley', program: 'Tron' },
+      { author: 'Dr. Lora Baines Bradley', program: 'Yori' },
+      { author: 'Kevin Flynn', program: 'CLU' },
+      { author: 'Dr. Walter Gibbs', program: 'Dumont' },
     ],
-    [mode, density],
+    [],
   );
 
-  // ── RichChat mini demo: fully local
-  type R = Parameters<NonNullable<ComponentProps<typeof RichChat>['onSend']>>[0];
-  const [chat, setChat] = useState<ComponentProps<typeof RichChat>['messages']>([
-    {
-      role: 'assistant',
-      content: <Typography>Welcome to valet. Want a tour?</Typography>,
-      animate: true,
-    },
-  ]);
-  const onSend = (m: R) =>
-    setChat((prev) => [
-      ...prev,
-      { ...m, animate: true },
-      { role: 'assistant', content: <Typography>Try Quickstart next →</Typography>, animate: true },
-    ]);
-
-  // ── Key modal
-  const [keyOpen, setKeyOpen] = useState(false);
+  // no API key modal on main page
 
   return (
     <Surface>
@@ -234,46 +239,22 @@ export default function MainPage() {
           >
             <Icon icon='mdi:robot' />
             <Typography
+              fontFamily='Poppins'
               variant='h4'
-              bold
             >
               valet
             </Typography>
           </Stack>
         }
         right={
-          <Stack
-            direction='row'
-            sx={{ alignItems: 'center', gap: theme.spacing(1) }}
-          >
-            <Button
+          <Tooltip title='Toggle light / dark'>
+            <IconButton
               size='sm'
-              variant='outlined'
-              onClick={go('/quickstart')}
-            >
-              Quickstart
-            </Button>
-            <Button
-              size='sm'
-              variant='outlined'
-              onClick={go('/components-primer')}
-            >
-              Components
-            </Button>
-            <Button
-              size='sm'
-              variant='outlined'
-              onClick={() => setKeyOpen(true)}
-            >
-              API Key
-            </Button>
-            <Button
-              size='sm'
+              aria-label='Toggle theme mode'
+              icon={mode === 'dark' ? 'mdi:weather-night' : 'mdi:weather-sunny'}
               onClick={toggleMode}
-            >
-              {mode === 'dark' ? 'Light' : 'Dark'}
-            </Button>
-          </Stack>
+            />
+          </Tooltip>
         }
       />
 
@@ -290,7 +271,7 @@ export default function MainPage() {
             density={140}
             speed={126}
             streak={0.85}
-            opacity={0.40}
+            opacity={0.4}
             centerZero={0.05}
             centerFull={0.55}
             midOpacity={0.55}
@@ -733,18 +714,18 @@ export default function MainPage() {
         <Grid
           columns={3}
           adaptive
-          gap={2}
+          gap={1}
         >
           {[
             {
               icon: 'mdi:speedometer',
               title: 'Performance first',
-              body: 'Tiny runtime with zero heavy CSS deps. Scoped motion tokens and predictable paint.',
+              body: 'Micro‑runtime, zero CSS baggage. Predictable paint and jank‑free motion deliver instant‑feeling apps for everyone—with enough headroom to hit your frame budget.',
             },
             {
               icon: 'mdi:vector-arrange-above',
               title: 'Semantic interface layer',
-              body: 'Metadata on components designed for LLM tooling—introspection, props, and usage.',
+              body: 'Metadata on components designed for LLM tooling—introspection, props, and usage. Agents build valet and help you build valet well.',
             },
             {
               icon: 'mdi:palette-swatch-variant',
@@ -787,237 +768,186 @@ export default function MainPage() {
         </Grid>
       </Panel>
 
-      {/* Live demos */}
-      <Panel fullWidth>
-        <Typography
-          variant='h3'
-          bold
+      {/* Experience: Live demos + Theme playground */}
+      <Box fullWidth>
+        <Grid
+          columns={2}
+          adaptive
+          gap={2}
         >
-          Live Demos
-        </Typography>
-        <Tabs>
-          <Tabs.Tab label='Chat' />
-          <Tabs.Panel>
-            <Panel fullWidth>
-              <RichChat
-                messages={chat}
-                onSend={onSend}
-                constrainHeight
-              />
-            </Panel>
-          </Tabs.Panel>
+          {/* Live demos sub-area */}
+          <Box>
+            <Typography
+              variant='h3'
+              bold
+            >
+              Component Demos
+            </Typography>
+            <Tabs>
+              <Tabs.Tab label='Metro Select' />
+              <Tabs.Panel>
+                <Panel fullWidth>
+                  <Stack>
+                    <MetroSelect
+                      value={transport}
+                      onChange={(v) => setTransport(v as string)}
+                      gap={4}
+                    >
+                      {[
+                        { icon: 'mdi:car', label: 'Car', value: 'car' },
+                        { icon: 'mdi:bike', label: 'Bike', value: 'bike' },
+                        { icon: 'mdi:train', label: 'Train', value: 'train' },
+                      ].map((o) => (
+                        <MetroSelect.Option
+                          key={o.value}
+                          {...o}
+                        />
+                      ))}
+                    </MetroSelect>
+                    <Typography>Current: {transport}</Typography>
+                    <Tooltip title='See docs'>
+                      <IconButton
+                        icon='mdi:book-open-variant'
+                        aria-label='See docs'
+                        onClick={go('/metroselect-demo')}
+                        size='sm'
+                      />
+                    </Tooltip>
+                  </Stack>
+                </Panel>
+              </Tabs.Panel>
 
-          <Tabs.Tab label='Table' />
-          <Tabs.Panel>
-            <Panel fullWidth>
-              <Table
-                data={rows}
-                columns={cols}
-                constrainHeight
-              />
-            </Panel>
-          </Tabs.Panel>
+              <Tabs.Tab label='Pagination' />
+              <Tabs.Panel>
+                <Panel fullWidth>
+                  <Stack>
+                    <Typography
+                      variant='body'
+                      sx={{ marginBottom: theme.spacing(1) }}
+                    >
+                      {loremByPage[Math.max(0, Math.min(loremByPage.length - 1, demoPage - 1))]}
+                    </Typography>
+                    <Pagination
+                      count={loremByPage.length}
+                      visibleWindow={5}
+                      page={demoPage}
+                      onChange={setDemoPage}
+                    />
+                    <Typography>Current page: {demoPage}</Typography>
+                  </Stack>
+                  <Tooltip title='See docs'>
+                    <IconButton
+                      icon='mdi:book-open-variant'
+                      aria-label='See docs'
+                      onClick={go('/pagination-demo')}
+                      size='sm'
+                      sx={{marginLeft: theme.spacing(1)}}
+                    />
+                  </Tooltip>
+                </Panel>
+              </Tabs.Panel>
 
-          <Tabs.Tab label='SpeedDial' />
-          <Tabs.Panel>
-            <Panel fullWidth>
-              <SpeedDial
-                icon={<Icon icon='mdi:plus' />}
-                actions={[
-                  {
-                    icon: <Icon icon='mdi:content-copy' />,
-                    label: 'Copy',
-                    onClick: () => alert('Copy'),
-                  },
-                  {
-                    icon: <Icon icon='mdi:share-variant' />,
-                    label: 'Share',
-                    onClick: () => alert('Share'),
-                  },
-                  {
-                    icon: <Icon icon='mdi:delete' />,
-                    label: 'Delete',
-                    onClick: () => alert('Delete'),
-                  },
-                ]}
-              />
-            </Panel>
-          </Tabs.Panel>
-        </Tabs>
-      </Panel>
+              <Tabs.Tab label='Table' />
+              <Tabs.Panel>
+                <Stack>
+                  <Table
+                    data={tableRows}
+                    columns={tableCols}
+                    constrainHeight
+                  />
+                  <Tooltip title='See docs'>
+                    <IconButton
+                      icon='mdi:book-open-variant'
+                      aria-label='See docs'
+                      onClick={go('/table-demo')}
+                      size='sm'
+                      sx={{marginLeft: theme.spacing(2)}}
+                    />
+                  </Tooltip>
+                </Stack>
+              </Tabs.Panel>
 
-      {/* Theme & tokens playground */}
-      <Panel fullWidth>
-        <Typography
-          variant='h3'
-          bold
-        >
-          Theme playground
-        </Typography>
-        <Stack
-          direction='row'
-          sx={{ alignItems: 'center', gap: theme.spacing(1), flexWrap: 'wrap' }}
-        >
-          <Button
-            variant='outlined'
-            onClick={toggleMode}
-          >
-            Toggle {mode === 'dark' ? 'light' : 'dark'}
-          </Button>
-          <Button
-            variant='outlined'
-            onClick={nextDensity}
-          >
-            Density: {density}
-          </Button>
-          <Button onClick={() => setKeyOpen(true)}>Configure API key</Button>
-        </Stack>
-        <Stack sx={{ marginTop: theme.spacing(1) }}>
-          <Typography variant='subtitle'>CSS variables exposed on this Surface</Typography>
-          <CodeBlock
-            code={`--valet-screen-width: var(${`--valet-screen-width`});
+              <Tabs.Tab label='Date Selector' />
+              <Tabs.Panel>
+                <Panel fullWidth>
+                  <Stack>
+                    <DateSelector
+                      value={selectedDate}
+                      onChange={setSelectedDate}
+                    />
+                    <Typography>Selected: {selectedDate}</Typography>
+                    <Tooltip title='See docs'>
+                      <IconButton
+                        icon='mdi:book-open-variant'
+                        aria-label='See docs'
+                        onClick={go('/dateselector-demo')}
+                        size='sm'
+                      />
+                    </Tooltip>
+                  </Stack>
+                </Panel>
+              </Tabs.Panel>
+            </Tabs>
+          </Box>
+
+          {/* Theme playground sub-area */}
+          <Box fullWidth>
+            <Typography
+              variant='h3'
+              bold
+            >
+              Theme playground
+            </Typography>
+            <Stack
+              direction='row'
+              sx={{ alignItems: 'center', gap: theme.spacing(1), flexWrap: 'wrap' }}
+            >
+              <Button
+                variant='outlined'
+                onClick={toggleMode}
+              >
+                Toggle {mode === 'dark' ? 'light' : 'dark'}
+              </Button>
+              <Button
+                variant='outlined'
+                onClick={nextDensity}
+              >
+                Density: {density}
+              </Button>
+              {/* API key configuration removed on main page */}
+            </Stack>
+            <Stack sx={{ marginTop: theme.spacing(1) }}>
+              <Typography variant='subtitle'>CSS variables exposed on this Surface</Typography>
+              <CodeBlock
+                code={`--valet-screen-width: var(${`--valet-screen-width`});
 --valet-screen-height: var(${`--valet-screen-height`});
 --valet-space: var(${`--valet-space`});
 --valet-radius: var(${`--valet-radius`});
 --valet-stroke: var(${`--valet-stroke`});`}
-            ariaLabel='Surface CSS variables'
-          />
-        </Stack>
-      </Panel>
+                ariaLabel='Surface CSS variables'
+              />
+            </Stack>
+          </Box>
+        </Grid>
+      </Box>
 
-      {/* Quickstart snippet */}
-      <Panel fullWidth>
-        <Typography
-          variant='h3'
-          bold
-        >
-          Your first minute with valet
-        </Typography>
-        <Typography variant='body'>Install, theme, and render your first Surface.</Typography>
-        <CodeBlock
-          code={`npm install @archway/valet
-
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Surface, Stack, Typography, Button, useInitialTheme } from '@archway/valet';
-
-function Home() {
-  return (
-    <Surface>
-      <Stack gap={2} sx={{ padding: '1rem' }}>
-        <Typography variant="h2">Hello, valet</Typography>
-        <Button variant="primary">Click me</Button>
-      </Stack>
-    </Surface>
-  );
-}
-
-export function App() {
-  useInitialTheme({ fonts: { body: 'Inter', heading: 'Kumbh Sans', mono: 'JetBrains Mono', button: 'Kumbh Sans' } });
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-      </Routes>
-    </BrowserRouter>
-  );
-}`}
-          ariaLabel='Copy minimal app snippet'
-        />
-        <Stack
-          direction='row'
-          sx={{ gap: theme.spacing(1), flexWrap: 'wrap' }}
-        >
-          <Button
-            variant='outlined'
-            onClick={go('/quickstart')}
-          >
-            Quickstart
-          </Button>
-          <Button
-            variant='outlined'
-            onClick={go('/components-primer')}
-          >
-            Components primer
-          </Button>
-          <Button
-            variant='outlined'
-            onClick={go('/theme')}
-          >
-            Theme store
-          </Button>
-        </Stack>
-      </Panel>
-
-      {/* MCP section */}
-      <Panel
-        fullWidth
-        variant='alt'
-      >
-        <Typography
-          variant='h3'
-          bold
-        >
-          Model Context Protocol (MCP)
-        </Typography>
-        <Typography>
-          valet ships with a first‑class MCP pipeline and server exposing structured metadata for
-          components—props, css vars, best practices, and examples. Build data with{' '}
-          <code>npm run mcp:build</code> and self‑check with{' '}
-          <code>npm run mcp:server:selfcheck</code>.
-        </Typography>
-        <CodeBlock
-          code={`# Generate fresh MCP data (mcp-data/)
-npm run mcp:build
-
-# Quick self‑check
-npm run mcp:server:selfcheck
-
-# Optional: run the local MCP server
-npm run mcp:server:install
-npm run mcp:server:build
-npm run mcp:server:start`}
-          ariaLabel='MCP commands'
-        />
-        <Stack
-          direction='row'
-          sx={{ gap: theme.spacing(1), flexWrap: 'wrap' }}
-        >
-          <Button
-            onClick={go('/mcp')}
-            variant='outlined'
-          >
-            Learn MCP
-          </Button>
-          <Button
-            onClick={go('/glossary')}
-            variant='outlined'
-          >
-            Glossary
-          </Button>
-        </Stack>
-      </Panel>
+      <Divider />
 
       {/* Footer */}
-      <Panel
-        fullWidth
-        variant='alt'
-        pad={2}
-      >
+      <Box fullWidth>
         <Stack
           direction='row'
           sx={{ alignItems: 'center', gap: theme.spacing(1), flexWrap: 'wrap' }}
         >
-          <Typography variant='subtitle'>© {new Date().getFullYear()} valet</Typography>
+          <Typography variant='subtitle'>
+            <code>{new Date().getFullYear()} Off Court Creations</code>
+          </Typography>
           <div style={{ flex: 1 }} />
-          <Typography variant='subtitle'>Built with zero‑fluff primitives</Typography>
+          <Typography variant='subtitle'>
+            <code>valet</code>
+          </Typography>
         </Stack>
-      </Panel>
-
-      {/* Modals */}
-      <KeyModal
-        open={keyOpen}
-        onClose={() => setKeyOpen(false)}
-      />
+      </Box>
     </Surface>
   );
 }
