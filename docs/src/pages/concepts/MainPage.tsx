@@ -3,7 +3,7 @@
 // Next‑level docs homepage: hero, features, demos, playgrounds
 // ─────────────────────────────────────────────────────────────
 
-import { useMemo, useState, type ComponentProps } from 'react';
+import { useMemo, useState, useRef, type ComponentProps } from 'react';
 import {
   Surface,
   Stack,
@@ -26,6 +26,7 @@ import {
 import type { TableColumn } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../components/NavDrawer';
+import Starfield from '../../components/Starfield';
 
 // Animated gradient overlay (GPU-friendly transform rotation)
 const swirl = keyframes`
@@ -146,15 +147,17 @@ const Halo = styled('div')<{ $opacity?: number; $dur?: string }>`
   pointer-events: none;
   background: conic-gradient(
     from 0deg,
-    #ffffff00 0 20%,
-    #ffffff22 35%,
-    #ffffff00 60%,
-    #ffffff22 80%,
+    #ffffff00 0 18%,
+    #ffffff3b 32%,
+    #ffffff00 58%,
+    #ffffff3b 78%,
     #ffffff00 100%
   );
-  mask-image: radial-gradient(closest-side, transparent 60%, black 68%, black 72%, transparent 80%);
-  opacity: ${({ $opacity = 0.2 }) => String($opacity)};
+  mask-image: radial-gradient(closest-side, transparent 58%, black 67%, black 76%, transparent 85%);
+  opacity: ${({ $opacity = 0.3 }) => String($opacity)};
   animation: ${swirl} ${({ $dur = '160s' }) => $dur} linear infinite;
+  mix-blend-mode: screen;
+  filter: saturate(1.08) brightness(1.05);
   will-change: transform;
   @media (prefers-reduced-motion: reduce) {
     animation: none;
@@ -166,9 +169,10 @@ type MiniRow = { key: string; value: string };
 export default function MainPage() {
   const navigate = useNavigate();
   const { theme, mode, toggleMode, setDensity, density } = useTheme();
+  const heroAnchorRef = useRef<HTMLDivElement | null>(null);
 
   // Speed multiplier for hero animations (lower = faster)
-  const speed = 0.5; // 0.5 → ~2x faster
+  const speed = 0.25; // snappier blobs (~4x base durations)
 
   // ── Hero CTA targets
   const go = (p: string) => () => navigate(p);
@@ -281,6 +285,24 @@ export default function MainPage() {
         sx={{ borderRadius: theme.radius(2), overflow: 'hidden' }}
       >
         <div style={{ position: 'relative', minHeight: '60vh' }}>
+          {/* Hyperspace starfield (beneath blobs) */}
+          <Starfield
+            density={140}
+            speed={126}
+            streak={0.85}
+            opacity={0.40}
+            centerZero={0.05}
+            centerFull={0.55}
+            midOpacity={0.55}
+            outerOpacity={0.35}
+            anchorRef={heroAnchorRef}
+            startDelayMs={50}
+            fadeMs={8000}
+            preSimBoost={32}
+            minRevealSpreadRatio={1.2}
+            revealRadiusFrac={0.42}
+            hiddenSpawnMinRadiusFrac={0.45}
+          />
           {/* Gooey lava blobs */}
           <Goo
             aria-hidden
@@ -592,11 +614,42 @@ export default function MainPage() {
               $cy={34}
               $hue={28}
             />
+            {/* Additional pop for richer field (3 more blobs) */}
+            <Blob
+              $size={1100}
+              $color='#7c3aed'
+              $anim={floatB}
+              $duration={`${120 * speed}s`}
+              $delay={`${-66 * speed}s`}
+              $cx={12}
+              $cy={28}
+              $hue={10}
+            />
+            <Blob
+              $size={760}
+              $color='#a78bfa'
+              $anim={floatC}
+              $duration={`${98 * speed}s`}
+              $delay={`${-34 * speed}s`}
+              $cx={76}
+              $cy={12}
+              $hue={-18}
+            />
+            <Blob
+              $size={540}
+              $color='#5b21b6'
+              $anim={floatA}
+              $duration={`${88 * speed}s`}
+              $delay={`${-22 * speed}s`}
+              $cx={54}
+              $cy={88}
+              $hue={22}
+            />
           </Goo>
           {/* Subtle rotating halo */}
           <Halo
             aria-hidden
-            $opacity={0.18}
+            $opacity={0.31}
             $dur={`${180 * speed}s`}
           />
           {/* Background color swirl (very faint) */}
@@ -616,18 +669,31 @@ export default function MainPage() {
               zIndex: 1,
             }}
           >
-            <Typography
-              variant='h1'
-              bold
-              sx={{ textAlign: 'center', color: '#fff' }}
+            <div
+              ref={heroAnchorRef}
+              style={{ display: 'inline-block' }}
             >
-              The AI‑forward UI library
+              <Typography
+                variant='h1'
+                bold
+                sx={{ textAlign: 'center', color: '#fff' }}
+              >
+                One library. Everything UI.
+              </Typography>
+            </div>
+            <Typography
+              variant='h5'
+              sx={{ textAlign: 'center', color: '#fff', opacity: 0.9 }}
+            >
+              Beautiful by default. Limitless when customized.
+              {/* Predictable primitives. Typed theme. Semantics for agents. Built for speed. */}
             </Typography>
             <Typography
               variant='subtitle'
               sx={{ textAlign: 'center', color: '#fff', opacity: 0.9 }}
             >
-              Predictable primitives. Typed theme. Semantics for agents. Built for speed.
+              From AI to Zustand, <code>valet</code> is how it all connects.
+              {/* Predictable primitives. Typed theme. Semantics for agents. Built for speed. */}
             </Typography>
             <Stack
               direction='row'
@@ -635,10 +701,11 @@ export default function MainPage() {
             >
               <Button
                 size='lg'
+                variant='outlined'
                 onClick={go('/quickstart')}
               >
                 <Icon icon='mdi:flash-outline' />
-                &nbsp;Start in 60s
+                &nbsp;Start in 30s
               </Button>
               <Button
                 size='lg'
@@ -654,38 +721,11 @@ export default function MainPage() {
                 onClick={go('/mcp')}
               >
                 <Icon icon='mdi:database-search' />
-                &nbsp;MCP & introspection
+                &nbsp;valet MCP
               </Button>
             </Stack>
           </Stack>
         </div>
-      </Panel>
-
-      <Panel
-        fullWidth
-        variant='alt'
-        pad={2}
-      >
-        <Stack
-          direction='row'
-          sx={{ alignItems: 'center', gap: theme.spacing(2), flexWrap: 'wrap' }}
-        >
-          <Icon icon='mdi:speedometer' />
-          <Typography
-            variant='h3'
-            bold
-          >
-            Fast. Opinionated. Accessible.
-          </Typography>
-          <div style={{ flex: 1 }} />
-          <Button
-            variant='outlined'
-            size='sm'
-            onClick={go('/overview')}
-          >
-            Why valet
-          </Button>
-        </Stack>
       </Panel>
 
       {/* Feature grid */}
