@@ -74,17 +74,38 @@ const floatC = keyframes`
   100% { transform: translate3d(-10%, 15%, 0) scale(1.1) rotate(360deg); }
 `;
 
+// Additional path variety for denser field
+const floatD = keyframes`
+  0%   { transform: translate3d( 15%, -20%, 0) scale(1.05) rotate(0deg); }
+  25%  { transform: translate3d(-25%,  10%, 0) scale(1.18) rotate(70deg); }
+  50%  { transform: translate3d( 20%,  20%, 0) scale(0.95) rotate(190deg); }
+  75%  { transform: translate3d(-10%, -15%, 0) scale(1.12) rotate(280deg); }
+  100% { transform: translate3d( 15%, -20%, 0) scale(1.05) rotate(360deg); }
+`;
+
+const hueShift = keyframes`
+  0%   { filter: blur(var(--blob-blur)) hue-rotate(0deg); }
+  100% { filter: blur(var(--blob-blur)) hue-rotate(360deg); }
+`;
+
 const Goo = styled('div')<{
   $blur?: number;
   $opacity?: number;
+  $hueDur?: string;
 }>`
   position: absolute;
   inset: -8%;
   z-index: 0;
   pointer-events: none;
-  filter: ${({ $blur = 40 }) => `blur(${$blur}px)`};
+  --blob-blur: ${({ $blur = 40 }) => `${$blur}px`};
+  filter: blur(var(--blob-blur)) hue-rotate(0deg);
   opacity: ${({ $opacity = 0.45 }) => String($opacity)};
   mix-blend-mode: screen;
+  animation: ${hueShift} ${({ $hueDur = '160s' }) => $hueDur} linear infinite;
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    filter: blur(var(--blob-blur));
+  }
 `;
 
 const Blob = styled('div')<{
@@ -93,10 +114,13 @@ const Blob = styled('div')<{
   $anim: string;
   $duration: string;
   $delay?: string;
+  $cx?: number; // center X in % of container
+  $cy?: number; // center Y in % of container
+  $hue?: number; // base hue offset in degrees
 }>`
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top: ${({ $cy = 50 }) => `${$cy}%`};
+  left: ${({ $cx = 50 }) => `${$cx}%`};
   width: ${({ $size }) => `${$size}px`};
   height: ${({ $size }) => `${$size}px`};
   margin: ${({ $size }) => `-${$size / 2}px 0 0 -${$size / 2}px`};
@@ -106,6 +130,7 @@ const Blob = styled('div')<{
     ${({ $color }) => $color} 0%,
     transparent 70%
   );
+  filter: ${({ $hue = 0 }) => `hue-rotate(${$hue}deg)`};
   will-change: transform;
   animation: ${({ $anim }) => $anim} ${({ $duration }) => $duration}
     ${({ $delay = '0s' }) => $delay} cubic-bezier(0.22, 0.8, 0.2, 1) infinite;
@@ -141,6 +166,9 @@ type MiniRow = { key: string; value: string };
 export default function MainPage() {
   const navigate = useNavigate();
   const { theme, mode, toggleMode, setDensity, density } = useTheme();
+
+  // Speed multiplier for hero animations (lower = faster)
+  const speed = 0.5; // 0.5 → ~2x faster
 
   // ── Hero CTA targets
   const go = (p: string) => () => navigate(p);
@@ -254,53 +282,327 @@ export default function MainPage() {
       >
         <div style={{ position: 'relative', minHeight: '60vh' }}>
           {/* Gooey lava blobs */}
-          <Goo aria-hidden>
+          <Goo
+            aria-hidden
+            $hueDur={`${160 * speed}s`}
+          >
             <Blob
               $size={720}
-              $color='#7c3aed'
+              $color='#7c3aed' /* purple */
               $anim={floatA}
-              $duration='95s'
-              $delay='-10s'
+              $duration={`${95 * speed}s`}
+              $delay={`${-10 * speed}s`}
+              $cx={28}
+              $cy={38}
+              $hue={-12}
             />
             <Blob
               $size={640}
-              $color='#06b6d4'
+              $color='#8b5cf6' /* purple */
               $anim={floatB}
-              $duration='120s'
-              $delay='-35s'
+              $duration={`${120 * speed}s`}
+              $delay={`${-35 * speed}s`}
+              $cx={72}
+              $cy={30}
+              $hue={8}
             />
             <Blob
               $size={560}
-              $color='#f59e0b'
+              $color='#6d28d9' /* purple */
               $anim={floatC}
-              $duration='105s'
-              $delay='-20s'
+              $duration={`${105 * speed}s`}
+              $delay={`${-20 * speed}s`}
+              $cx={58}
+              $cy={72}
+              $hue={18}
             />
             <Blob
               $size={480}
-              $color='#ec4899'
+              $color='#a78bfa' /* purple */
               $anim={floatA}
-              $duration='130s'
-              $delay='-55s'
+              $duration={`${130 * speed}s`}
+              $delay={`${-55 * speed}s`}
+              $cx={34}
+              $cy={65}
+              $hue={-24}
             />
             <Blob
               $size={520}
-              $color='#22c55e'
+              $color='#5b21b6' /* purple */
               $anim={floatB}
-              $duration='140s'
-              $delay='-80s'
+              $duration={`${140 * speed}s`}
+              $delay={`${-80 * speed}s`}
+              $cx={78}
+              $cy={60}
+              $hue={30}
+            />
+
+            {/* Additional blobs for fuller coverage and overlap */}
+            <Blob
+              $size={2000}
+              $color='#7c3aed'
+              $anim={floatD}
+              $duration={`${150 * speed}s`}
+              $delay={`${-25 * speed}s`}
+              $cx={15}
+              $cy={22}
+              $hue={-16}
+            />
+            <Blob
+              $size={880}
+              $color='#6d28d9'
+              $anim={floatB}
+              $duration={`${135 * speed}s`}
+              $delay={`${-70 * speed}s`}
+              $cx={85}
+              $cy={78}
+              $hue={20}
+            />
+            <Blob
+              $size={680}
+              $color='#8b5cf6'
+              $anim={floatC}
+              $duration={`${125 * speed}s`}
+              $delay={`${-95 * speed}s`}
+              $cx={12}
+              $cy={68}
+              $hue={-6}
+            />
+            <Blob
+              $size={600}
+              $color='#5b21b6'
+              $anim={floatA}
+              $duration={`${110 * speed}s`}
+              $delay={`${-15 * speed}s`}
+              $cx={88}
+              $cy={24}
+              $hue={12}
+            />
+            <Blob
+              $size={540}
+              $color='#7c3aed'
+              $anim={floatD}
+              $duration={`${118 * speed}s`}
+              $delay={`${-45 * speed}s`}
+              $cx={50}
+              $cy={86}
+              $hue={-10}
+            />
+            <Blob
+              $size={420}
+              $color='#6d28d9'
+              $anim={floatB}
+              $duration={`${100 * speed}s`}
+              $delay={`${-30 * speed}s`}
+              $cx={10}
+              $cy={42}
+              $hue={26}
+            />
+            <Blob
+              $size={380}
+              $color='#8b5cf6'
+              $anim={floatC}
+              $duration={`${90 * speed}s`}
+              $delay={`${-62 * speed}s`}
+              $cx={90}
+              $cy={46}
+              $hue={-22}
+            />
+            <Blob
+              $size={340}
+              $color='#a78bfa'
+              $anim={floatA}
+              $duration={`${85 * speed}s`}
+              $delay={`${-12 * speed}s`}
+              $cx={42}
+              $cy={12}
+              $hue={14}
+            />
+            <Blob
+              $size={320}
+              $color='#5b21b6'
+              $anim={floatD}
+              $duration={`${82 * speed}s`}
+              $delay={`${-28 * speed}s`}
+              $cx={63}
+              $cy={18}
+              $hue={-8}
+            />
+            <Blob
+              $size={240}
+              $color='#7c3aed'
+              $anim={floatB}
+              $duration={`${78 * speed}s`}
+              $delay={`${-40 * speed}s`}
+              $cx={38}
+              $cy={82}
+              $hue={6}
+            />
+
+            {/* Extra 50% more blobs (8 new) for denser field */}
+            <Blob
+              $size={760}
+              $color='#6d28d9'
+              $anim={floatA}
+              $duration={`${128 * speed}s`}
+              $delay={`${-22 * speed}s`}
+              $cx={6}
+              $cy={30}
+              $hue={-18}
+            />
+            <Blob
+              $size={700}
+              $color='#8b5cf6'
+              $anim={floatD}
+              $duration={`${112 * speed}s`}
+              $delay={`${-38 * speed}s`}
+              $cx={94}
+              $cy={70}
+              $hue={22}
+            />
+            <Blob
+              $size={520}
+              $color='#7c3aed'
+              $anim={floatB}
+              $duration={`${108 * speed}s`}
+              $delay={`${-18 * speed}s`}
+              $cx={25}
+              $cy={88}
+              $hue={-14}
+            />
+            <Blob
+              $size={480}
+              $color='#a78bfa'
+              $anim={floatC}
+              $duration={`${96 * speed}s`}
+              $delay={`${-52 * speed}s`}
+              $cx={74}
+              $cy={12}
+              $hue={16}
+            />
+            <Blob
+              $size={420}
+              $color='#5b21b6'
+              $anim={floatA}
+              $duration={`${88 * speed}s`}
+              $delay={`${-8 * speed}s`}
+              $cx={55}
+              $cy={6}
+              $hue={-20}
+            />
+            <Blob
+              $size={360}
+              $color='#6d28d9'
+              $anim={floatD}
+              $duration={`${84 * speed}s`}
+              $delay={`${-68 * speed}s`}
+              $cx={5}
+              $cy={90}
+              $hue={24}
+            />
+            <Blob
+              $size={300}
+              $color='#8b5cf6'
+              $anim={floatB}
+              $duration={`${80 * speed}s`}
+              $delay={`${-48 * speed}s`}
+              $cx={96}
+              $cy={40}
+              $hue={-26}
+            />
+            <Blob
+              $size={260}
+              $color='#7c3aed'
+              $anim={floatC}
+              $duration={`${76 * speed}s`}
+              $delay={`${-32 * speed}s`}
+              $cx={48}
+              $cy={50}
+              $hue={28}
+            />
+
+            {/* +30% blobs: add 7 more for denser coverage with varied sizes */}
+            <Blob
+              $size={1600}
+              $color='#6d28d9'
+              $anim={floatA}
+              $duration={`${140 * speed}s`}
+              $delay={`${-58 * speed}s`}
+              $cx={50}
+              $cy={8}
+              $hue={18}
+            />
+            <Blob
+              $size={1400}
+              $color='#5b21b6'
+              $anim={floatB}
+              $duration={`${132 * speed}s`}
+              $delay={`${-12 * speed}s`}
+              $cx={6}
+              $cy={84}
+              $hue={-20}
+            />
+            <Blob
+              $size={960}
+              $color='#8b5cf6'
+              $anim={floatD}
+              $duration={`${126 * speed}s`}
+              $delay={`${-44 * speed}s`}
+              $cx={94}
+              $cy={56}
+              $hue={22}
+            />
+            <Blob
+              $size={720}
+              $color='#7c3aed'
+              $anim={floatC}
+              $duration={`${116 * speed}s`}
+              $delay={`${-26 * speed}s`}
+              $cx={30}
+              $cy={6}
+              $hue={-10}
+            />
+            <Blob
+              $size={520}
+              $color='#a78bfa'
+              $anim={floatA}
+              $duration={`${92 * speed}s`}
+              $delay={`${-72 * speed}s`}
+              $cx={70}
+              $cy={90}
+              $hue={12}
+            />
+            <Blob
+              $size={380}
+              $color='#6d28d9'
+              $anim={floatB}
+              $duration={`${82 * speed}s`}
+              $delay={`${-8 * speed}s`}
+              $cx={20}
+              $cy={50}
+              $hue={-14}
+            />
+            <Blob
+              $size={280}
+              $color='#8b5cf6'
+              $anim={floatD}
+              $duration={`${74 * speed}s`}
+              $delay={`${-52 * speed}s`}
+              $cx={80}
+              $cy={34}
+              $hue={28}
             />
           </Goo>
           {/* Subtle rotating halo */}
           <Halo
             aria-hidden
             $opacity={0.18}
-            $dur='180s'
+            $dur={`${180 * speed}s`}
           />
           {/* Background color swirl (very faint) */}
           <Trippy
             aria-hidden
-            $dur='200s'
+            $dur={`${200 * speed}s`}
             $ease='linear'
             $opacity={0.12}
           />
