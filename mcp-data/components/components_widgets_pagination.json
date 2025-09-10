@@ -8,6 +8,21 @@
     "pager",
     "paginator"
   ],
+  "usage": {
+    "purpose": "Navigate large result sets by page number or next/prev controls.",
+    "whenToUse": [
+      "Tables or lists with many items where pages are preferable to infinite scroll",
+      "Search results or archives where page position matters"
+    ],
+    "whenNotToUse": [
+      "Continuous feeds where infinite scroll is a better fit",
+      "Small collections that fit on a single page"
+    ],
+    "alternatives": [
+      "Table (built‑in paging)",
+      "Iterator"
+    ]
+  },
   "props": [
     {
       "name": "count",
@@ -77,5 +92,5 @@
     "docs/src/pages/components/widgets/PaginationDemo.tsx"
   ],
   "version": "0.30.6",
-  "schemaVersion": "1.3"
+  "schemaVersion": "1.4"
 }

@@ -8,6 +8,21 @@
     "placeholder",
     "shimmer"
   ],
+  "usage": {
+    "purpose": "Reserve layout with lightweight placeholders while content loads.",
+    "whenToUse": [
+      "Pages where the final layout is known and should not jump",
+      "Lists, cards, or form sections that hydrate after data fetch"
+    ],
+    "whenNotToUse": [
+      "Blocking UX where a spinner is clearer (use LoadingBackdrop or Progress)",
+      "Tiny, instantaneous loads that don’t warrant placeholders"
+    ],
+    "alternatives": [
+      "Progress",
+      "LoadingBackdrop"
+    ]
+  },
   "props": [
     {
       "name": "loading",
@@ -73,5 +88,5 @@
     "docs/src/pages/components/primitives/SkeletonDemo.tsx"
   ],
   "version": "0.30.6",
-  "schemaVersion": "1.3"
+  "schemaVersion": "1.4"
 }

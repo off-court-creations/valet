@@ -32,6 +32,12 @@ export interface ValetComponentDoc {
   slug: string;
   summary: string;
   description?: string;
+  usage?: {
+    purpose?: string | string[];
+    whenToUse?: string[];
+    whenNotToUse?: string[];
+    alternatives?: string[];
+  };
   aliases?: string[];
   props: ValetProp[];
   domPassthrough?: { element: 'div' | 'button' | 'input' | 'span' | string; omitted?: string[] };

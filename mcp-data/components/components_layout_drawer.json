@@ -9,6 +9,23 @@
     "side-nav",
     "sidebar"
   ],
+  "usage": {
+    "purpose": "Off‑canvas panel for navigation and contextual tools.",
+    "whenToUse": [
+      "Secondary navigation, filters, or details alongside primary content",
+      "Responsive navigation that collapses on small screens",
+      "Non‑blocking utilities that can be dismissed"
+    ],
+    "whenNotToUse": [
+      "Critical blocking decisions (use Modal)",
+      "Transient feedback (use Snackbar)"
+    ],
+    "alternatives": [
+      "Modal",
+      "AppBar",
+      "Panel"
+    ]
+  },
   "props": [
     {
       "name": "open",
@@ -119,5 +136,5 @@
     "docs/src/pages/components/layout/DrawerDemo.tsx"
   ],
   "version": "0.30.6",
-  "schemaVersion": "1.3"
+  "schemaVersion": "1.4"
 }

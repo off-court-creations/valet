@@ -11,6 +11,21 @@ function validateComponent(c) {
   if (!c.slug || typeof c.slug !== 'string') problems.push('missing slug');
   if (!Array.isArray(c.props)) problems.push('props not array');
   if (c.aliases && !Array.isArray(c.aliases)) problems.push('aliases must be an array');
+  // usage validation (optional, non-fatal)
+  if (c.usage && typeof c.usage !== 'object') problems.push('usage must be an object');
+  if (c.usage && typeof c.usage === 'object') {
+    const u = c.usage;
+    if (u.purpose && !(typeof u.purpose === 'string' || Array.isArray(u.purpose))) problems.push('usage.purpose must be string or string[]');
+    if (Array.isArray(u.purpose)) {
+      for (const p of u.purpose) if (typeof p !== 'string' || !p.trim()) problems.push('usage.purpose contains invalid entry');
+    }
+    if (u.whenToUse && !Array.isArray(u.whenToUse)) problems.push('usage.whenToUse must be string[]');
+    if (Array.isArray(u.whenToUse)) for (const it of u.whenToUse) if (typeof it !== 'string' || !it.trim()) problems.push('usage.whenToUse contains invalid entry');
+    if (u.whenNotToUse && !Array.isArray(u.whenNotToUse)) problems.push('usage.whenNotToUse must be string[]');
+    if (Array.isArray(u.whenNotToUse)) for (const it of u.whenNotToUse) if (typeof it !== 'string' || !it.trim()) problems.push('usage.whenNotToUse contains invalid entry');
+    if (u.alternatives && !Array.isArray(u.alternatives)) problems.push('usage.alternatives must be string[]');
+    if (Array.isArray(u.alternatives)) for (const it of u.alternatives) if (typeof it !== 'string' || !it.trim()) problems.push('usage.alternatives contains invalid entry');
+  }
   if (Array.isArray(c.aliases)) {
     const seen = new Set();
     for (const a of c.aliases) {

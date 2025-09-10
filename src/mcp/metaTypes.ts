@@ -19,6 +19,12 @@ export type ValetComponentMeta = {
   since?: string;
   category?: string;
   tags?: string[];
+  usage?: {
+    purpose?: string | string[];
+    whenToUse?: string[];
+    whenNotToUse?: string[];
+    alternatives?: string[];
+  };
   a11y?: {
     roles?: string[];
     aria?: string[];
@@ -79,6 +85,15 @@ export function defineComponentMeta<T extends ValetComponentMeta>(meta: T): T {
     if (related.replacedBy) related.replacedBy = normStrings(related.replacedBy);
   }
 
+  let usage: ValetComponentMeta['usage'] | undefined;
+  if (meta.usage) {
+    usage = { ...meta.usage };
+    if (Array.isArray(usage.purpose)) usage.purpose = normStrings(usage.purpose);
+    if (usage.whenToUse) usage.whenToUse = normStrings(usage.whenToUse);
+    if (usage.whenNotToUse) usage.whenNotToUse = normStrings(usage.whenNotToUse);
+    if (usage.alternatives) usage.alternatives = normStrings(usage.alternatives);
+  }
+
   let test: ValetComponentMeta['test'] | undefined;
   if (meta.test) {
     test = { ...meta.test };
@@ -96,6 +111,7 @@ export function defineComponentMeta<T extends ValetComponentMeta>(meta: T): T {
     name,
     aliases,
     tags,
+    usage,
     a11y,
     related,
     test,

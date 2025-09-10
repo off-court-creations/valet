@@ -6,6 +6,22 @@
   "aliases": [
     "checkbox"
   ],
+  "usage": {
+    "purpose": "Boolean input for independent or multi‑select choices.",
+    "whenToUse": [
+      "Enable/disable features that are submitted with a form",
+      "Select multiple items from a list of options"
+    ],
+    "whenNotToUse": [
+      "Immediate on/off toggles (use Switch)",
+      "Exactly one choice among few (use Radio)"
+    ],
+    "alternatives": [
+      "Switch",
+      "Radio",
+      "MetroSelect"
+    ]
+  },
   "props": [
     {
       "name": "checked",
@@ -112,5 +128,5 @@
     "docs/src/pages/components/field/CheckBoxDemo.tsx"
   ],
   "version": "0.30.6",
-  "schemaVersion": "1.3"
+  "schemaVersion": "1.4"
 }

@@ -7,6 +7,21 @@
     "toggle",
     "switch"
   ],
+  "usage": {
+    "purpose": "Immediate on/off toggle for a single setting.",
+    "whenToUse": [
+      "Binary state that applies instantly (Wi‑Fi on/off)",
+      "Settings panels and real‑time preferences"
+    ],
+    "whenNotToUse": [
+      "Form submissions where value is saved on submit (use Checkbox)",
+      "Multiple exclusive options (use Radio)"
+    ],
+    "alternatives": [
+      "Checkbox",
+      "Radio"
+    ]
+  },
   "props": [
     {
       "name": "checked",
@@ -100,5 +115,5 @@
     "docs/src/pages/components/field/SwitchDemo.tsx"
   ],
   "version": "0.30.6",
-  "schemaVersion": "1.3"
+  "schemaVersion": "1.4"
 }

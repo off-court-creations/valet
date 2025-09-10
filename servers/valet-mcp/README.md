@@ -58,6 +58,7 @@ Notes:
 - get_glossary: full glossary dataset `{ entries: GlossaryEntry[] }`
 - define_term: lookup term/alias with soft-fail suggestions `{ found, entry? , suggestions? }`
 - get_primer: opinionated context dump (Markdown) to guide agents
+ 
 
 ---
 
@@ -105,7 +106,7 @@ npm run mcp:server:publish   # builds data, bundles, publishes
 - `VALET_ROOT`: pairs with `VALET_MCP_DATA_DIR`
 - `MCP_SELFCHECK=1`: print selfcheck JSON then exit
 - Node 18+ (20+ recommended)
-- Security: reads JSON, serves over stdio; no network, no file writes
+- Security: reads JSON and serves over stdio.
 
 ---
 

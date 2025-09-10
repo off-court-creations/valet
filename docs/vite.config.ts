@@ -3,6 +3,9 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
+  // Allow building docs under a subpath (e.g., /valet/) by setting DOCS_BASE
+  // This pairs with BrowserRouter basename={import.meta.env.BASE_URL}
+  base: process.env.DOCS_BASE || '/',
   plugins: [react()],
   server: {
     host: true, // or '0.0.0.0' to listen on all interfaces

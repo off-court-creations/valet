@@ -8,6 +8,21 @@
     "img",
     "picture"
   ],
+  "usage": {
+    "purpose": "Optimized image rendering with sizing, fit modes, and a11y.",
+    "whenToUse": [
+      "Display photos, illustrations, or product images",
+      "Decorative images with proper alt text policies"
+    ],
+    "whenNotToUse": [
+      "Video or animated content (use Video)",
+      "Background effects that should not affect document flow (use ParallaxBackground or CSS backgrounds)"
+    ],
+    "alternatives": [
+      "Video",
+      "ParallaxBackground"
+    ]
+  },
   "props": [
     {
       "name": "src",
@@ -87,5 +102,5 @@
     "docs/src/pages/components/primitives/ImageDemo.tsx"
   ],
   "version": "0.30.6",
-  "schemaVersion": "1.3"
+  "schemaVersion": "1.4"
 }

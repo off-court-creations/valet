@@ -5,5 +5,11 @@
 import { defineComponentMeta } from '../valet-meta-shim.mjs';
 export default defineComponentMeta({
   name: 'List',
-  aliases: ['list', 'ul', 'ol']
+  aliases: ['list', 'ul', 'ol'],
+  usage: {
+    purpose: 'Semantic list of items with consistent spacing and a11y.',
+    whenToUse: ['Menus, option lists, settings, simple feeds', 'Collections where each item is a small self‑contained row'],
+    whenNotToUse: ['Dense tabular data (use Table)', 'Two‑dimensional arrangements (use Grid)', 'Deep hierarchies (use Tree)'],
+    alternatives: ['Table', 'Grid', 'Tree']
+  }
 });

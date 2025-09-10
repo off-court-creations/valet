@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+- docs: Add hyperspace starfield (light‑speed) motion layer under hero blobs. GPU-friendly canvas with trails, DPR aware, and respects reduced motion.
+- MCP: Add `adjust_theme` tool to safely update `useInitialTheme` in an App file. Supports marker-bound edits, merging theme and font overrides/extras, and always applies with a pre-write backup and diff.
+
 ## [0.30.5]
 - MCP: Add glossary pipeline and tools. New docs page at `/glossary` powers `glossary.json` via `scripts/mcp/extract-glossary.mjs`; server exposes `get_glossary` and `define_term` (soft-fail suggestions).
 - MCP: Add hardcoded `get_primer` tool and resources to guide agents on ethos, patterns, and recommended flows; selfcheck now reports `glossaryEntries` and `hasPrimer`.

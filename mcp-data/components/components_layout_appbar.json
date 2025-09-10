@@ -8,6 +8,23 @@
     "appbar",
     "footer"
   ],
+  "usage": {
+    "purpose": "Primary navigation and actions anchored to the top or bottom of a Surface.",
+    "whenToUse": [
+      "Global navigation, branding, and quick actions",
+      "Sticky headers that remain visible during scroll",
+      "Provide a home for search, menus, or primary CTAs"
+    ],
+    "whenNotToUse": [
+      "Dialog/tool palettes (use Drawer or Modal)",
+      "Section headers inside content (use Typography or a Panel header)"
+    ],
+    "alternatives": [
+      "Drawer",
+      "Tabs",
+      "Panel"
+    ]
+  },
   "props": [
     {
       "name": "color",
@@ -76,5 +93,5 @@
     "docs/src/pages/components/layout/AppBarDemo.tsx"
   ],
   "version": "0.30.6",
-  "schemaVersion": "1.3"
+  "schemaVersion": "1.4"
 }

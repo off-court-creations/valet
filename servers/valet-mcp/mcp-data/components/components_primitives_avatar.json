@@ -7,6 +7,20 @@
     "avatar",
     "badge"
   ],
+  "usage": {
+    "purpose": "Visual identity for people, teams, or entities.",
+    "whenToUse": [
+      "Show user profile images or initials",
+      "Compact identity chips in lists, menus, and headers"
+    ],
+    "whenNotToUse": [
+      "Content imagery (use Image)"
+    ],
+    "alternatives": [
+      "Image",
+      "Icon"
+    ]
+  },
   "props": [
     {
       "name": "src",
@@ -89,5 +103,5 @@
     "docs/src/pages/components/primitives/AvatarDemo.tsx"
   ],
   "version": "0.30.6",
-  "schemaVersion": "1.3"
+  "schemaVersion": "1.4"
 }

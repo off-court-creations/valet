@@ -7,6 +7,20 @@
     "icon",
     "glyph"
   ],
+  "usage": {
+    "purpose": "Crisp, scalable glyphs for actions, status, and decoration.",
+    "whenToUse": [
+      "Augment buttons and labels with recognizable symbols",
+      "Communicate status at a glance"
+    ],
+    "whenNotToUse": [
+      "Long labels or content (use Typography)"
+    ],
+    "alternatives": [
+      "Typography",
+      "Avatar"
+    ]
+  },
   "props": [
     {
       "name": "icon",
@@ -79,5 +93,5 @@
     "docs/src/pages/components/primitives/IconDemoPage.tsx"
   ],
   "version": "0.30.6",
-  "schemaVersion": "1.3"
+  "schemaVersion": "1.4"
 }
