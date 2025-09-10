@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 // src/pages/concepts/MCP.tsx  | valet-docs
-// Comprehensive guide for installing and using the valet MCP.
+// Comprehensive guide for using the valet MCP (user-focused).
 // ─────────────────────────────────────────────────────────────
 import { Surface, Stack, Typography, Panel, CodeBlock } from '@archway/valet';
 import NavDrawer from '../../components/NavDrawer';
@@ -13,7 +13,7 @@ export const meta: DocMeta = {
     'Install and use the valet Model Context Protocol (MCP) server to introspect components, props, CSS variables, and examples for AI-assisted development.',
   pageType: 'guide',
   prerequisites: ['overview', 'quickstart'],
-  tldr: 'Install @archway/valet-mcp, add it to your MCP host (e.g., @openai/codex), then list/search/inspect components and fetch examples from mcp-data.',
+  tldr: 'Install @archway/valet-mcp, add it to your MCP host (e.g., @openai/codex), then list/search/inspect components, fetch examples, get docs info, and use the glossary/primer.',
 };
 
 export default function MCPGuidePage() {
@@ -88,12 +88,13 @@ args = []`}
         />
         <Typography>
           Once registered, your agent gains tools like <code>valet__list_components</code>,
-          <code> valet__search_components</code>, <code>valet__get_component</code>, and
-          <code> valet__get_examples</code>. Ask it to list primitives, inspect props for
-          <code> Table</code>, or fetch examples for <code>Tooltip</code>. New: use{' '}
-          <code>valet__get_glossary</code> to fetch all terms or
-          <code> valet__define_term</code> to look up a definition. Start every session with
-          <code> valet__get_primer</code> to align on valet’s expectations.
+          <code> valet__search_components</code>, <code>valet__get_component</code>,
+          <code> valet__get_examples</code>, <code>valet__get_docs_info</code>,
+          <code> valet__get_glossary</code>, <code>valet__define_term</code>, and
+          <code> valet__get_primer</code>. Ask it to list primitives, inspect props for
+          <code> Table</code>, fetch examples for <code>Tooltip</code>, retrieve docs URL and best
+          practices for <code>Panel</code>, or define terms from the glossary. Start sessions with{' '}
+          <code>valet__get_primer</code> to align on valet’s expectations.
         </Typography>
 
         <Typography
@@ -157,6 +158,49 @@ args = []`}
           </Stack>
         </Panel>
 
+        {/* Additional tools */}
+        <Typography
+          variant='h3'
+          bold
+        >
+          More MCP tools
+        </Typography>
+        <Panel fullWidth>
+          <Stack gap={1}>
+            <Typography>
+              <b>get_docs_info</b> <code>{`{ name? | slug? }`}</code> → docs URL and best practices
+            </Typography>
+            <CodeBlock
+              code={`{\n  "name": "Panel",\n  "slug": "components/layout/panel",\n  "docsUrl": "/components/panel",\n  "bestPracticeSlugs": ["layout-consistency", "a11y-headings"],\n  "bestPractices": [\n    "Use clear headings for sections.",\n    "Prefer consistent padding across breakpoints."\n  ]\n}`}
+              ariaLabel='Copy get_docs_info example'
+              language='json'
+            />
+            <Typography>
+              <b>get_glossary</b> → full glossary dataset
+            </Typography>
+            <CodeBlock
+              code={`{\n  "entries": [\n    { "term": "Surface", "definition": "Route-level container owning screen state.", "aliases": ["root surface"] }\n  ]\n}`}
+              ariaLabel='Copy get_glossary example'
+              language='json'
+            />
+            <Typography>
+              <b>define_term</b> <code>{`{ word, limit? }`}</code> → exact match or suggestions
+            </Typography>
+            <CodeBlock
+              code={`{\n  "found": false,\n  "suggestions": [\n    { "term": "Surface", "definition": "Route-level container owning screen state." }\n  ]\n}`}
+              ariaLabel='Copy define_term example'
+              language='json'
+            />
+            <Typography>
+              <b>get_primer</b> → opinionated Markdown primer for agents
+            </Typography>
+            <CodeBlock
+              code={`"# valet Primer – Read Me First\n..."`}
+              ariaLabel='Copy get_primer example'
+            />
+          </Stack>
+        </Panel>
+
         <Typography
           variant='h3'
           bold
@@ -188,25 +232,7 @@ VALET_ROOT=/path/to/valet VALET_MCP_DATA_DIR=mcp-data valet-mcp`}
           </Stack>
         </Panel>
 
-        <Typography
-          variant='h3'
-          bold
-        >
-          Developing valet with MCP
-        </Typography>
-        <Typography>
-          When editing components or docs in this repository, regenerate MCP data and validate the
-          server:
-        </Typography>
-        <CodeBlock
-          code={`# in repo root
-npm run mcp:build            # writes JSON into mcp-data/
-npm run mcp:server:selfcheck # { ok, components, hasBox }
-
-# dev the MCP against fresh data
-VALET_MCP_DATA_DIR=./mcp-data npm run mcp:server:start`}
-          ariaLabel='Copy valet development flow for MCP'
-        />
+        {/* Developer-only MCP flows intentionally omitted on this page. */}
 
         <Typography
           variant='h3'

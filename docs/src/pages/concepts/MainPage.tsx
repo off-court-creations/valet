@@ -108,10 +108,6 @@ const Goo = styled('div')<{
   opacity: ${({ $opacity = 0.45 }) => String($opacity)};
   mix-blend-mode: screen;
   animation: ${hueShift} ${({ $hueDur = '160s' }) => $hueDur} linear infinite;
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-    filter: blur(var(--blob-blur));
-  }
 `;
 
 const Blob = styled('div')<{
@@ -140,9 +136,6 @@ const Blob = styled('div')<{
   will-change: transform;
   animation: ${({ $anim }) => $anim} ${({ $duration }) => $duration}
     ${({ $delay = '0s' }) => $delay} cubic-bezier(0.22, 0.8, 0.2, 1) infinite;
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-  }
 `;
 
 const Halo = styled('div')<{ $opacity?: number; $dur?: string }>`
@@ -164,9 +157,6 @@ const Halo = styled('div')<{ $opacity?: number; $dur?: string }>`
   mix-blend-mode: screen;
   filter: saturate(1.08) brightness(1.05);
   will-change: transform;
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-  }
 `;
 
 // —
@@ -841,7 +831,7 @@ export default function MainPage() {
                       aria-label='See docs'
                       onClick={go('/pagination-demo')}
                       size='sm'
-                      sx={{marginLeft: theme.spacing(1)}}
+                      sx={{ marginLeft: theme.spacing(1) }}
                     />
                   </Tooltip>
                 </Panel>
@@ -861,7 +851,7 @@ export default function MainPage() {
                       aria-label='See docs'
                       onClick={go('/table-demo')}
                       size='sm'
-                      sx={{marginLeft: theme.spacing(2)}}
+                      sx={{ marginLeft: theme.spacing(2) }}
                     />
                   </Tooltip>
                 </Stack>
