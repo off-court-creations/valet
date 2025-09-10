@@ -160,6 +160,9 @@ This ensures all components participate in RSC pages with clean hydration and mi
 
 ## 1.0 Migration Checklist
 
+- [ ] Prep: package `exports` include `./styles.css`, `./primitives`, `./react`, `./ssr`; ESM-first with `sideEffects: false`.
+- [ ] Prep: scaffolds exist (`src/ssr/ThemeScript.tsx`, `src/ssr/getFontLinkHints.ts`, `src/ssr/inheritSurfaceFontVars.ts`, root `styles.css`).
+- [ ] Prep: DOM audit complete; no top‑level `document`/`window`; client‑only effects gate DOM usage (notably `createStyled`, `fontLoader`).
 - [ ] `createStyled` guarded for SSR; no top‑level DOM access.
 - [ ] Deterministic class hashing verified in SSR + hydration.
 - [ ] Surface default shows content immediately; `blockUntilFonts` documented as opt‑in.
@@ -403,6 +406,16 @@ Ensure tree-shaking by avoiding side effects in entry modules.
 
 ## Implementation Plan (1.0)
 
+0) Prep (scaffolds, exports, audits)
+- Package exports: add explicit entries for `./styles.css`, `./primitives`, `./react`, and `./ssr` as described in Packaging & Build. Keep ESM‑first, `sideEffects: false`, and Node ≥ 18 engines.
+- Scaffolds: create empty modules so integrators can wire imports early:
+  - `src/ssr/ThemeScript.tsx`
+  - `src/ssr/getFontLinkHints.ts`
+  - `src/ssr/inheritSurfaceFontVars.ts`
+  - `styles.css` (root) with initial tokens skeleton
+- RSC split: confirm initial pure server subset (`Divider`, `TypographyLite` (no measurements), `Box`, `Stack`, `Grid`) and keep interactive widgets under `@archway/valet/react`.
+- DOM audit: grep for top‑level `document`/`window`/`useLayoutEffect` and gate all DOM access to client paths. Priorities: `src/css/createStyled.ts` and `src/helpers/fontLoader.ts`.
+
 1) Styled engine SSR fix
 - Move `document`/`style` creation into a client‑only initializer invoked from `useInsertionEffect` the first time a styled component mounts.
 - Keep a global registry of injected rules keyed by normalized CSS hash.
@@ -432,11 +445,11 @@ Ensure tree-shaking by avoiding side effects in entry modules.
 - Create `@archway/valet/primitives` export with hook‑free components relying purely on className/CSS vars.
 - Document usage in server components; keep interactive components under `@archway/valet/react`.
 
-9) RSC shells for interactive components
+8) RSC shells for interactive components
 - For each interactive component (Modal, Tooltip, Drawer, Tabs, etc.), add a server wrapper that renders deterministic markup and imports a leaf client subcomponent for behavior/portals.
 - Ensure props are serializable; keep the client island small; rely on CSS vars for visuals.
 
-8) Tests & CI
+9) Tests & CI
 - Add SSR render smoke test and hydration test to CI.
 - Add perf tests (Lighthouse CI) for FCP/CLS on throttled profiles.
 - Visual tests for portals inheriting Surface fonts.
