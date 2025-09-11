@@ -140,7 +140,9 @@ export const Panel: React.FC<PanelProps> = ({
           ? theme.colors.secondaryText
           : bg === theme.colors.tertiary
             ? theme.colors.tertiaryText
-            : theme.colors.text;
+            : bg === theme.colors.backgroundAlt
+              ? theme.colors.primaryText
+              : theme.colors.text;
   }
 
   const pad = resolveSpace(padProp, theme, compact, 1);

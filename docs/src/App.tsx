@@ -70,6 +70,7 @@ const QuickstartPage = page(() => import('./pages/concepts/Quickstart'));
 const MentalModelPage = page(() => import('./pages/concepts/MentalModel'));
 const StyledEnginePage = page(() => import('./pages/concepts/StyledEngine'));
 const ThemePage = page(() => import('./pages/concepts/Theme'));
+const ThemeColorsPage = page(() => import('./pages/concepts/ThemeColors'));
 const ComponentsPrimerPage = page(() => import('./pages/concepts/ComponentsPrimer'));
 const SurfaceExplainerPage = page(() => import('./pages/concepts/SurfaceExplainer'));
 const PropPatternsPage = page(() => import('./pages/concepts/PropPatterns'));
@@ -143,6 +144,10 @@ export function App() {
         <Route
           path='/theme'
           element={<ThemePage />}
+        />
+        <Route
+          path='/theme-colors'
+          element={<ThemeColorsPage />}
         />
         <Route
           path='/components-primer'

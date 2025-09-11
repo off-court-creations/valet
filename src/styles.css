@@ -4,7 +4,7 @@
  * ─────────────────────────────────────────────────────────── */
 :root {
   /* Colors (fallbacks; real values set by Surface) */
-  --valet-bg: #111;
+  --valet-bg: #242424;
   --valet-text-color: #f7f7f7;
 
   /* Spacing / radii / stroke (fallbacks; scaled by Surface density) */
@@ -26,4 +26,3 @@
   --valet-font-tracking: normal;
   --valet-font-leading: 1.4;
 }
-

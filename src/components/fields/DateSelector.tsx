@@ -329,7 +329,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
       {...rest}
       ref={wrapRef}
       $bg={theme.colors.backgroundAlt}
-      $text={theme.colors.text}
+      $text={theme.colors.primaryText}
       $compact={compact}
       className={cls}
       style={{ '--valet-date-radius': theme.radius(1), ...sx } as React.CSSProperties}

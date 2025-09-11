@@ -107,6 +107,7 @@ const treeData: TreeNode<Item>[] = [
     children: [
       { id: '/mental-model', data: { label: 'Mental Model', path: '/mental-model' } },
       { id: '/theme', data: { label: 'Theme Store', path: '/theme' } },
+      { id: '/theme-colors', data: { label: 'Theme Colors', path: '/theme-colors' } },
       { id: '/styled', data: { label: 'Styled Engine', path: '/styled' } },
       { id: '/spacing', data: { label: 'Spacing Contract', path: '/spacing' } },
       {

@@ -79,12 +79,13 @@ export default function Starfield({
   minRevealSpreadRatio = 0.6,
   hiddenSpawnMinRadiusFrac,
 }: StarfieldProps) {
-  const { mode } = useTheme();
+  const { mode, theme } = useTheme();
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const rafRef = useRef<number | null>(null);
   const stopRef = useRef(false);
   const [isReady, setIsReady] = useState<boolean>(() => !anchorRef);
   const [visible, setVisible] = useState<boolean>(false);
+  const visibleAtRef = useRef<number | null>(null);
   const readyAtRef = useRef<number | null>(null);
 
   // Choose default color by theme
@@ -92,6 +93,26 @@ export default function Starfield({
     if (color) return color;
     return mode === 'dark' ? 'rgba(255,255,255,0.85)' : 'rgba(0,0,0,0.7)';
   }, [mode, color]);
+
+  // Build a theme-aligned, colorful palette (exclude greys)
+  const palette = useMemo(() => {
+    const base = [
+      theme.colors['primary'], // Euro Blue
+      theme.colors['secondary'], // Cool Blue
+      theme.colors['error'], // Orange
+      theme.colors['tertiary'], // Ice Blue (light accent)
+    ]
+      .filter(Boolean)
+      .map((c) => String(c).trim().toLowerCase());
+    // De-dup
+    const uniq: string[] = [];
+    for (const c of base) if (!uniq.includes(c)) uniq.push(c);
+    // Weight colorful accents higher: primary, secondary, error
+    const weight = (c: string) => (c === String(theme.colors['tertiary']).toLowerCase() ? 1 : 2);
+    const pool: string[] = [];
+    for (const c of uniq) for (let i = 0; i < weight(c); i++) pool.push(c);
+    return pool.length ? pool : uniq;
+  }, [theme.colors]);
 
   // Auto-detect prefers-reduced-motion if prop not provided
   const reduce = useMemo(() => {
@@ -109,6 +130,7 @@ export default function Starfield({
     if (!ctx) return;
     const C = canvas as HTMLCanvasElement;
     const CTX = ctx as CanvasRenderingContext2D;
+    CTX.lineCap = 'round';
 
     let dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
     let width = 0;
@@ -125,7 +147,10 @@ export default function Starfield({
       vy: number; // normalized velocity vector y
       sp: number; // speed multiplier per star
       len: number; // streak factor per star
-      hue: number; // slight hue tilt (for chroma)
+      // color cycling between two palette colors
+      c0: number; // index into palette
+      c1: number; // index into palette (!= c0 when possible)
+      phase: number; // 0..1
     };
     const stars: Star[] = [];
 
@@ -194,6 +219,12 @@ export default function Starfield({
       const mag = Math.max(0.0001, Math.hypot(dx, dy));
       const vx = dx / mag;
       const vy = dy / mag;
+      // pick two palette colors; if not enough colors, we fallback at draw time
+      const pLen = palette.length;
+      const i0 = pLen ? Math.floor(Math.random() * pLen) : -1;
+      let i1 = pLen ? Math.floor(Math.random() * pLen) : -1;
+      if (pLen && i1 === i0) i1 = (i0 + 1) % pLen;
+
       return {
         x,
         y,
@@ -202,7 +233,9 @@ export default function Starfield({
         vy,
         sp: rnd(0.75, 1.4),
         len: rnd(0.5, 1.0),
-        hue: rnd(-8, 8),
+        c0: i0,
+        c1: i1,
+        phase: Math.random(),
       };
     }
 
@@ -221,11 +254,11 @@ export default function Starfield({
       const shouldHold = ((holdUntilAnchor ?? Boolean(anchorRef)) && !isReady) || !visible;
 
       if (!shouldHold) {
-        // Fade frame (motion blur) for smooth streaks
+        // Fade frame (motion blur) for smooth streaks; draw with normal compositing
         CTX.globalCompositeOperation = 'source-over';
         CTX.fillStyle = mode === 'dark' ? 'rgba(0,0,0,0.28)' : 'rgba(255,255,255,0.18)';
         CTX.fillRect(0, 0, width, height);
-        CTX.globalCompositeOperation = 'lighter';
+        // keep 'source-over' to avoid color shifts (no additive blending)
       }
 
       // Track coverage + spread during simulation
@@ -270,16 +303,69 @@ export default function Starfield({
         if (rr >= rThresh) beyond++;
 
         if (!shouldHold) {
-          // Color per star: subtle hue shift + alpha by depth
+          // Color per star: lerp between theme palette colors; alpha by depth
           const alpha = 0.25 + 0.6 * (1 - s.z);
           if (color) {
             CTX.strokeStyle = strokeStyle;
+          } else if (palette.length >= 1) {
+            const t = (now * 0.00015 + s.phase) % 1;
+
+            // Bias early frames to start with orange (theme.error) and transition toward theme blue
+            const errHex = String(theme.colors['error'] || '').toLowerCase();
+            const priHex = String(theme.colors['primary'] || '').toLowerCase();
+            const secHex = String(theme.colors['secondary'] || '').toLowerCase();
+            const terHex = String(theme.colors['tertiary'] || '').toLowerCase();
+            const errIdx = palette.indexOf(errHex);
+            const priIdx = palette.indexOf(priHex);
+            const secIdx = palette.indexOf(secHex);
+            const terIdx = palette.indexOf(terHex);
+            const bluePool = [priIdx, secIdx, terIdx].filter((i) => i >= 0);
+
+            const sinceVisible = visibleAtRef.current == null ? null : now - visibleAtRef.current;
+            // Keep orange visible through fade-in; minimum 2.2s
+            const biasMs = Math.max((typeof fadeMs === 'number' ? fadeMs : 0) + 1500, 2200);
+            const favorOrange = sinceVisible != null && sinceVisible < biasMs && errIdx >= 0;
+
+            let idx0: number;
+            let idx1: number;
+            if (favorOrange) {
+              // Orange -> Theme Blue (primary preferred) to avoid greenish blends
+              idx0 = errIdx;
+              idx1 =
+                priIdx >= 0 ? priIdx : bluePool.length ? bluePool[0]! : errIdx >= 0 ? errIdx : 0;
+            } else if (bluePool.length >= 1) {
+              // After the intro, cycle only within blue family to avoid green
+              idx0 = bluePool[Math.floor((s.phase * 997) % bluePool.length)]!;
+              // pick a different blue if available
+              if (bluePool.length > 1) {
+                const next =
+                  (bluePool.indexOf(idx0) + 1 + Math.floor((s.phase * 991) % bluePool.length)) %
+                  bluePool.length;
+                idx1 = bluePool[next]!;
+              } else {
+                idx1 = idx0;
+              }
+            } else {
+              // Fallback to star-assigned palette indices
+              idx0 = s.c0 >= 0 ? s.c0 : 0;
+              idx1 = palette.length > 1 && s.c1 >= 0 ? s.c1 : (idx0 + 1) % palette.length;
+            }
+
+            const aHex = palette[idx0]!;
+            const bHex = palette[idx1]!;
+            const aR = parseInt(aHex.slice(1, 3), 16);
+            const aG = parseInt(aHex.slice(3, 5), 16);
+            const aB = parseInt(aHex.slice(5, 7), 16);
+            const bR = parseInt(bHex.slice(1, 3), 16);
+            const bG = parseInt(bHex.slice(3, 5), 16);
+            const bB = parseInt(bHex.slice(5, 7), 16);
+            const r = Math.round(aR + (bR - aR) * t);
+            const g = Math.round(aG + (bG - aG) * t);
+            const b = Math.round(aB + (bB - aB) * t);
+            CTX.strokeStyle = `rgba(${r},${g},${b},${alpha})`;
           } else {
             const base = mode === 'dark' ? 255 : 0;
-            const r = base;
-            const g = base;
-            const b = base;
-            CTX.strokeStyle = `rgba(${r},${g},${b},${alpha})`;
+            CTX.strokeStyle = `rgba(${base},${base},${base},${alpha})`;
           }
           CTX.lineWidth = Math.max(0.6, (1 - s.z) * 2.2);
           CTX.beginPath();
@@ -313,7 +399,10 @@ export default function Starfield({
         const coverageOk = hasLeft && hasTop && hasRight && hasBottom;
         const spreadOk =
           total > 0 && beyond / total >= Math.min(1, Math.max(0, minRevealSpreadRatio));
-        if (coverageOk && spreadOk && elapsed >= startDelayMs) setVisible(true);
+        if (coverageOk && spreadOk && elapsed >= startDelayMs) {
+          visibleAtRef.current = now;
+          setVisible(true);
+        }
       }
     }
 
@@ -363,8 +452,10 @@ export default function Starfield({
     streak,
     strokeStyle,
     mode,
+    theme.colors,
     reduce,
     color,
+    palette,
     centerZero,
     centerFull,
     midOpacity,
@@ -375,6 +466,7 @@ export default function Starfield({
     visible,
     preSimBoost,
     startDelayMs,
+    fadeMs,
     revealRadiusFrac,
     minRevealSpreadRatio,
     hiddenSpawnMinRadiusFrac,

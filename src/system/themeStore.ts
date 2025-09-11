@@ -11,6 +11,8 @@ export type Density = 'comfortable' | 'compact' | 'tight' | 'zero';
 
 export interface Theme {
   colors: Record<string, string>;
+  /** Human-readable names for color tokens */
+  colorNames: Record<string, string>;
   /** Returns a CSS length for the given number of spacing units */
   spacing: (units: number) => string;
   /** Base unit used by the spacing helper */
@@ -103,7 +105,7 @@ interface ThemeStore {
 const spacingUnit = '0.5rem';
 
 /* ── theme object with the fixed spacing helper ────────────── */
-const common: Omit<Theme, 'colors'> = {
+const common: Omit<Theme, 'colors' | 'colorNames'> = {
   // Spacing is expressed in terms of a CSS custom property so density
   // can be adjusted per-Surface. The var defaults to spacingUnit.
   // Example: spacing(4) → `calc(var(--valet-space, 0.5rem) * 4)`
@@ -193,38 +195,102 @@ const common: Omit<Theme, 'colors'> = {
 };
 
 const lightColors = {
-  primary: '#8bb392',
-  primaryText: '#090909',
-  secondary: '#a7ccc4',
-  secondaryText: '#090909',
-  tertiary: '#d1e6dc',
-  tertiaryText: '#090909',
-  error: '#d64545',
+  // primary — Euro Blue (refined cobalt) as primary accent
+  primary: '#2C5CC5',
+  // primaryText — Porcelain Off-White (text on Euro Blue)
+  primaryText: '#F7F7F7',
+  // secondary — Signal Orange (promoted from error)
+  secondary: '#D16701',
+  // secondaryText — Graphite (text on Signal Orange)
+  secondaryText: '#1b1b1b',
+  // tertiary — Ice Blue (very light accent)
+  tertiary: '#E5F6F6',
+  // tertiaryText — Graphite (text on Ice Blue)
+  tertiaryText: '#1b1b1b',
+  // error — Signal Red (new error intent)
+  error: '#D32F2F',
+  // errorText — Porcelain Off-White (text on Signal Red)
   errorText: '#F7F7F7',
-  primaryButtonText: '#090909',
-  secondaryButtonText: '#090909',
-  tertiaryButtonText: '#090909',
-  background: '#eeeeee',
-  backgroundAlt: '#cccccc',
+  // Button text mapping mirrors the above text-on-accent logic
+  // primaryButtonText — Porcelain Off-White
+  primaryButtonText: '#F7F7F7',
+  // secondaryButtonText — Graphite
+  secondaryButtonText: '#1b1b1b',
+  // tertiaryButtonText — Graphite
+  tertiaryButtonText: '#1b1b1b',
+  // background — Ice Blue (base surface in light mode)
+  background: '#E5F6F6',
+  // backgroundAlt — Cool Grey (elevated/alt surface)
+  backgroundAlt: '#47484d',
+  // text — Ink Black (default foreground)
   text: '#090909',
 } as const;
 
+const lightColorNames: Record<keyof typeof lightColors, string> = {
+  primary: 'Euro Blue',
+  primaryText: 'Porcelain Off-White',
+  secondary: 'Signal Orange',
+  secondaryText: 'Graphite',
+  tertiary: 'Ice Blue',
+  tertiaryText: 'Graphite',
+  error: 'Signal Red',
+  errorText: 'Porcelain Off-White',
+  primaryButtonText: 'Porcelain Off-White',
+  secondaryButtonText: 'Graphite',
+  tertiaryButtonText: 'Graphite',
+  background: 'Ice Blue',
+  backgroundAlt: 'Cool Grey',
+  text: 'Ink Black',
+};
+
 const darkColors = {
-  primary: '#608066',
+  // primary — Euro Blue (refined cobalt)
+  primary: '#2C5CC5',
+  // primaryText — Porcelain Off-White (text on Euro Blue)
   primaryText: '#F7F7F7',
-  secondary: '#69807a',
-  secondaryText: '#F7F7F7',
-  tertiary: '#5d6662',
-  tertiaryText: '#F7F7F7',
-  error: '#ff6b6b',
-  errorText: '#1b1b1b',
+  // secondary — Signal Orange
+  secondary: '#D16701',
+  // secondaryText — Graphite (text on Signal Orange)
+  secondaryText: '#1b1b1b',
+  // tertiary — Ice Blue
+  tertiary: '#E5F6F6',
+  // tertiaryText — Graphite (text on Ice Blue)
+  tertiaryText: '#1b1b1b',
+  // error — Signal Red
+  error: '#D32F2F',
+  // errorText — Porcelain Off-White (text on Signal Red)
+  errorText: '#F7F7F7',
+  // Button text mapping for contained variants
+  // primaryButtonText — Porcelain Off-White
   primaryButtonText: '#F7F7F7',
-  secondaryButtonText: '#F7F7F7',
-  tertiaryButtonText: '#F7F7F7',
-  background: '#222222',
-  backgroundAlt: '#444444',
+  // secondaryButtonText — Graphite
+  secondaryButtonText: '#1b1b1b',
+  // tertiaryButtonText — Graphite
+  tertiaryButtonText: '#1b1b1b',
+  // background — Carbon (base surface in dark mode)
+  background: '#242424',
+  // backgroundAlt — Cool Grey (elevated/alt surface)
+  backgroundAlt: '#47484d',
+  // text — Porcelain Off-White (default foreground)
   text: '#F7F7F7',
 } as const;
+
+const darkColorNames: Record<keyof typeof darkColors, string> = {
+  primary: 'Euro Blue',
+  primaryText: 'Porcelain Off-White',
+  secondary: 'Signal Orange',
+  secondaryText: 'Graphite',
+  tertiary: 'Ice Blue',
+  tertiaryText: 'Graphite',
+  error: 'Signal Red',
+  errorText: 'Porcelain Off-White',
+  primaryButtonText: 'Porcelain Off-White',
+  secondaryButtonText: 'Graphite',
+  tertiaryButtonText: 'Graphite',
+  background: 'Carbon',
+  backgroundAlt: 'Cool Grey',
+  text: 'Porcelain Off-White',
+};
 
 /*───────────────────────────────────────────────────────────*/
 export const useTheme = create<ThemeStore>((set, get) => ({
@@ -232,6 +298,7 @@ export const useTheme = create<ThemeStore>((set, get) => ({
   theme: {
     ...common,
     colors: darkColors,
+    colorNames: { ...darkColorNames },
   },
   density: 'comfortable',
 
@@ -241,13 +308,38 @@ export const useTheme = create<ThemeStore>((set, get) => ({
       theme: {
         ...common,
         colors: mode === 'dark' ? darkColors : lightColors,
+        colorNames: mode === 'dark' ? { ...darkColorNames } : { ...lightColorNames },
         fonts: state.theme.fonts,
       },
     })),
 
   toggleMode: () => get().setMode(get().mode === 'dark' ? 'light' : 'dark'),
 
-  setTheme: (patch) => set((state) => ({ theme: { ...state.theme, ...patch } })),
+  setTheme: (patch) =>
+    set((state) => {
+      const nextColors = patch.colors
+        ? { ...state.theme.colors, ...patch.colors }
+        : state.theme.colors;
+      const providedNames = (patch as Partial<Theme>).colorNames || {};
+      const nextNamesBase = { ...state.theme.colorNames, ...providedNames };
+
+      // Generate names for any provided color tokens missing a name
+      const genName = (hex: string) => `Custom ${hex?.toUpperCase?.() ?? ''}`.trim();
+      if (patch.colors) {
+        for (const k of Object.keys(patch.colors)) {
+          if (!nextNamesBase[k])
+            nextNamesBase[k] = genName((patch.colors as Record<string, string>)[k]);
+        }
+      }
+
+      const nextTheme: Theme = {
+        ...state.theme,
+        ...patch,
+        colors: nextColors,
+        colorNames: nextNamesBase,
+      } as Theme;
+      return { theme: nextTheme };
+    }),
 
   setDensity: (density) => set(() => ({ density })),
 }));

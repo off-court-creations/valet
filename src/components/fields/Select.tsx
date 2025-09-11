@@ -202,7 +202,8 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLDivElement>) => {
     g = { h, pad: `calc(${size} * 0.26)`, font: `calc(${size} * 0.35)` };
   }
 
-  const textCol = theme.colors.text;
+  // Text on backgroundAlt should be off-white for contrast in all modes.
+  const textCol = theme.colors.primaryText;
   // Use backgroundAlt for control backgrounds; avoid non-existent `surface` tokens
   const bg = theme.colors.backgroundAlt;
   const bgElev = theme.colors.backgroundAlt;

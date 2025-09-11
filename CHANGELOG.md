@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+- Theme: use off‑white text (`primaryText`) on `backgroundAlt` surfaces for improved contrast (Panel, Modal, Select, DateSelector).
+- Theme: promote Signal Orange (`#D16701`) to `secondary`; introduce new error color Signal Red (`#D32F2F`) with off‑white `errorText`.
+- Docs: homepage dividers now use `secondary` instead of `error` for visual consistency.
+
 ## [0.31.0]
 
 - docs: Add hyperspace starfield (light‑speed) motion layer under hero blobs. GPU-friendly canvas with trails, DPR aware, and respects reduced motion.
