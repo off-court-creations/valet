@@ -17,6 +17,7 @@ import {
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 import NavDrawer from '../../../components/NavDrawer';
+import PageHero from '../../../components/PageHero';
 
 export default function CodeBlockDemoPage() {
   const [language, setLanguage] = useState<'typescript' | 'javascript' | 'css'>('typescript');
@@ -67,13 +68,7 @@ export default function CodeBlockDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography
-          variant='h2'
-          bold
-        >
-          CodeBlock
-        </Typography>
-        <Typography variant='subtitle'>Highlight code snippets with copy feedback</Typography>
+        <PageHero title='Code Block' />
         <Tabs>
           <Tabs.Tab label='Overview' />
           <Tabs.Panel>

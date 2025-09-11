@@ -1,6 +1,6 @@
 {
   "name": "@archway/valet",
-  "version": "0.30.6",
+  "version": "0.31.0",
   "description": "valet is a CSS-in-JS engine, a UI component kit, and an accessibility layer that treats all humans and their AI proxies as first-class users.",
   "keywords": [
     "react",
@@ -24,6 +24,7 @@
   },
   "files": [
     "dist",
+    "styles.css",
     "README.md",
     "LICENSE",
     "package.json"
@@ -34,7 +35,7 @@
   },
   "scripts": {
     "clean": "rimraf dist",
-    "build": "npm run clean && tsup src/index.ts --format esm,cjs --dts --tsconfig tsconfig.build.json",
+    "build": "npm run clean && tsup src/index.ts --format esm,cjs --dts --tsconfig tsconfig.build.json && cp -f src/styles.css styles.css",
     "dev": "tsup src/index.ts --format esm,cjs --watch --dts",
     "prepublishOnly": "npm run build",
     "dx": "npm install && npm --prefix ./docs install && npm run mcp:server:install",

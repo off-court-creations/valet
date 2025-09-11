@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.31.0]
+
 - docs: Add hyperspace starfield (light‑speed) motion layer under hero blobs. GPU-friendly canvas with trails, DPR aware, and respects reduced motion.
 - MCP: Add `adjust_theme` tool to safely update `useInitialTheme` in an App file. Supports marker-bound edits, merging theme and font overrides/extras, and always applies with a pre-write backup and diff.
 

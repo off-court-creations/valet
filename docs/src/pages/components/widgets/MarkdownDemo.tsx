@@ -17,6 +17,7 @@ import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
+import PageHero from '../../../components/PageHero';
 
 export default function MarkdownDemoPage() {
   const { theme, toggleMode } = useTheme();
@@ -57,13 +58,7 @@ export default function MarkdownDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography
-          variant='h2'
-          bold
-        >
-          Markdown
-        </Typography>
-        <Typography variant='subtitle'>Render Markdown text with valet primitives</Typography>
+        <PageHero title='Markdown' />
         <Tabs>
           <Tabs.Tab label='Usage' />
           <Tabs.Panel>

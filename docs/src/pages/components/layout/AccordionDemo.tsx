@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { Surface, Stack, Typography, Button, Accordion, useTheme } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
+import PageHero from '../../../components/PageHero';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Helpers                                                                    */
@@ -30,14 +31,7 @@ export default function AccordionDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        {/* Header --------------------------------------------------------- */}
-        <Typography
-          variant='h2'
-          bold
-        >
-          Accordion Showcase
-        </Typography>
-        <Typography>Smooth animations and unified chevron icons</Typography>
+        <PageHero title='Accordion' />
         <Button
           variant='outlined'
           size='sm'

@@ -19,6 +19,7 @@ import {
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import NavDrawer from '../../../components/NavDrawer';
+import PageHero from '../../../components/PageHero';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Example-wide constants                                                     */
@@ -148,14 +149,7 @@ export default function SliderDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        {/* Header */}
-        <Typography
-          variant='h2'
-          bold
-        >
-          Slider Showcase
-        </Typography>
-        <Typography variant='subtitle'>A smörgåsbord of every prop, pattern, and trick</Typography>
+        <PageHero title='Slider' />
 
         <Tabs>
           <Tabs.Tab label='Usage' />

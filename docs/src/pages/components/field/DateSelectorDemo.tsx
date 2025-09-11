@@ -18,6 +18,7 @@ import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
+import PageHero from '../../../components/PageHero';
 
 export default function DateSelectorDemoPage() {
   const { theme, toggleMode } = useTheme();
@@ -131,12 +132,7 @@ export default function DateSelectorDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography
-          variant='h2'
-          bold
-        >
-          DateSelector Showcase
-        </Typography>
+        <PageHero title='Date Selector' />
         <Tabs>
           <Tabs.Tab label='Usage' />
           <Tabs.Panel>

@@ -19,6 +19,7 @@ import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
+import PageHero from '../../../components/PageHero';
 
 interface Item {
   label: ReactNode;
@@ -162,13 +163,7 @@ export default function TreeDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography
-          variant='h2'
-          bold
-        >
-          Tree
-        </Typography>
-        <Typography variant='subtitle'>Nested list with keyboard navigation</Typography>
+        <PageHero title='Tree' />
 
         <Tabs>
           <Tabs.Tab label='Usage' />

@@ -15,6 +15,7 @@ import { preset } from '../../css/stylePresets';
 import type { Presettable } from '../../types';
 import { IconButton } from '../fields/IconButton';
 import { withAlpha } from '../../helpers/color';
+import { inheritSurfaceFontVars } from '../../system/inheritSurfaceFontVars';
 
 /* Allow strongly-typed CSS custom properties (e.g. --valet-*) */
 type CSSVarName = `--${string}`;
@@ -292,6 +293,14 @@ export const Drawer: React.FC<DrawerProps> = ({
     }
   }, [element, persistentEffective, anchor, size]);
 
+  // Ref to the portalled panel root; used to mirror Surface font vars
+  const panelRef = React.useRef<HTMLDivElement>(null);
+
+  // Mirror Surface font/typography vars into the portalled panel
+  useLayoutEffect(() => {
+    if (panelRef.current) inheritSurfaceFontVars(panelRef.current);
+  });
+
   if (!open && !persistentEffective) {
     if (adaptiveMode && portrait) {
       return (
@@ -323,6 +332,7 @@ export const Drawer: React.FC<DrawerProps> = ({
         />
       )}
       <Panel
+        ref={panelRef}
         $anchor={anchor}
         $fade={fade}
         $size={typeof size === 'number' ? `${size}px` : size}
@@ -342,11 +352,6 @@ export const Drawer: React.FC<DrawerProps> = ({
             ...(persistentEffective && (anchor === 'left' || anchor === 'right')
               ? { height: `calc(100% - ${offsetTop}px)` }
               : null),
-            // Mirror Surface font variables so portalled content retains typography
-            '--valet-font-heading': `'${theme.fonts.heading}', sans-serif`,
-            '--valet-font-body': `'${theme.fonts.body}', sans-serif`,
-            '--valet-font-mono': `'${theme.fonts.mono}', monospace`,
-            '--valet-font-button': `'${theme.fonts.button}', sans-serif`,
           } as CSSVarStyles
         }
       >

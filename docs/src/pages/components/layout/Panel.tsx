@@ -13,6 +13,7 @@ import {
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import NavDrawer from '../../../components/NavDrawer';
+import PageHero from '../../../components/PageHero';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Demo page                                                                  */
@@ -83,14 +84,7 @@ export default function PanelDemoPage() {
     <Surface /* Surface already defaults to theme background */>
       <NavDrawer />
       <Stack>
-        {/* Page header ----------------------------------------------------- */}
-        <Typography
-          variant='h2'
-          bold
-        >
-          Panel
-        </Typography>
-        <Typography variant='subtitle'>A basic, visible content container</Typography>
+        <PageHero title='Panel' />
 
         <Tabs>
           <Tabs.Tab label='Usage' />

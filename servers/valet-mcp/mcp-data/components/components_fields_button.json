@@ -105,6 +105,6 @@
     "src/components/fields/Button.tsx",
     "docs/src/pages/components/field/ButtonDemoPage.tsx"
   ],
-  "version": "0.30.6",
+  "version": "0.31.0",
   "schemaVersion": "1.4"
 }

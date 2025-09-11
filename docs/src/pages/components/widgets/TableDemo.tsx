@@ -17,6 +17,7 @@ import {
   useTheme,
 } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
+import PageHero from '../../../components/PageHero';
 import type { TableColumn } from '@archway/valet';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
@@ -56,7 +57,7 @@ const makePeople = (n: number): Person[] =>
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Demo component                                                              */
 export default function TableDemoPage() {
-  const { theme, toggleMode } = useTheme();
+  const { theme } = useTheme();
   const navigate = useNavigate();
 
   /* UI controls ----------------------------------------------------------- */
@@ -103,29 +104,7 @@ export default function TableDemoPage() {
   return (
     <Surface>
       <Stack>
-        {/* Header bar ------------------------------------------------------- */}
-        <Panel
-          variant='alt'
-          fullWidth
-        >
-          <Stack
-            direction='row'
-            sx={{ alignItems: 'center', flexWrap: 'wrap' }}
-          >
-            <Typography
-              variant='h2'
-              bold
-            >
-              Table Demo
-            </Typography>
-            <div style={{ flex: 1 }} />
-            <IconButton
-              aria-label='Toggle light/dark'
-              icon='mdi:weather-sunny'
-              onClick={toggleMode}
-            />
-          </Stack>
-        </Panel>
+        <PageHero title='Table' />
 
         {/* Controls --------------------------------------------------------- */}
         <Panel

@@ -4,6 +4,7 @@
 // ─────────────────────────────────────────────────────────────
 import { Surface, Stack, Typography, Image, Button, useTheme, Panel } from '@archway/valet';
 import NavDrawer from '../../../components/NavDrawer';
+import PageHero from '../../../components/PageHero';
 import { useNavigate } from 'react-router-dom';
 
 export default function ImageDemoPage() {
@@ -14,13 +15,7 @@ export default function ImageDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography
-          variant='h2'
-          bold
-        >
-          Image Showcase
-        </Typography>
-        <Typography variant='subtitle'>Responsive sizing, lazy loading and object-fit</Typography>
+        <PageHero title='Image' />
 
         <Typography variant='h3'>1. Basic usage</Typography>
         <Image

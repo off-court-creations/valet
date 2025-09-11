@@ -1,15 +1,14 @@
-# valet Typography 1.0 – Excellence & Performance Plan (1.0 SSR‑ready)
+# valet Typography 1.0 – Excellence & Performance Plan
 
-This document outlines an end‑to‑end plan to make valet’s typography world‑class for the 1.0 release: performance‑first, variable‑font‑native, stable, and delightful. It’s organized as goals → tokens → loader → components → performance → i18n → SSR → validation → docs/rollout.
+This document outlines an end‑to‑end plan to make valet’s typography world‑class for the 1.0 release: performance‑first, variable‑font‑native, stable, and delightful. It’s organized as goals → tokens → loader → components → performance → i18n → validation → docs/rollout.
 
 Update (adjusted after repo audit; all critical items ship in 1.0):
 
-- Add SSR pre‑requisite: make the styled engine safe for SSR (no `document` at module scope) and hydration‑stable class emission.
 - Remove any default font‑loading gate (FOIT) so content paints immediately with system fallbacks; add `blockUntilFonts?: boolean` as an opt‑in on `<Surface>` to keep current gating behavior when needed.
 - Introduce a robust loader with normalized request keys and in‑flight coalescing; support subsets, `text=`, and matrix/range axes for Google Fonts v2.
 - Extend tokens and Typography props with fluid sizing, tracking/leading, weight/aliases, and optical sizing (opsz).
 - Add a shared helper to mirror font CSS vars into portalled UI (Modal, Tooltip, Snackbar, SpeedDial, Drawer, AppBar).
-- Publish a core tokens stylesheet `@archway/valet/styles.css` (colors, spacing, radius, stroke, motion, initial font fallbacks) to minimize FOUC and improve SSR first paint.
+- Publish a core tokens stylesheet `@archway/valet/styles.css` (colors, spacing, radius, stroke, motion, initial font fallbacks) to minimize FOUC and improve first paint.
 
 ---
 
@@ -21,9 +20,6 @@ Update (adjusted after repo audit; all critical items ship in 1.0):
   - Default `display=swap`; allow `optional|fallback` via options or heuristics.
   - Max 1–2 font files render‑blocking; others progressively load.
   - No visible layout shift from webfont swap (CLS ≈ 0 from fonts).
-- SSR readiness
-  - No `document` usage at module load in core styling; class hashing is deterministic on both server and client to avoid hydration drift.
-  - Optional SSR hook for critical font preloads; client loader uses `display=swap` and never gates content unless explicitly opted in.
 - Design quality
   - Full weight range (100–900) and italics across variants.
   - Optional optical sizing (opsz) where fonts support it.
@@ -176,8 +172,7 @@ Acceptance: no measurable CLS from font swap; stable baseline across webfont sta
   - Use CSS vars for weight/tracking/leading to keep template strings stable and maximize style cache hits.
   - Auto‑map `optical='auto'` to `font-optical-sizing: auto`; set opsz axis explicitly when desired.
   - Prefer tokenized `line-height` over hardcoded values in components; audit existing usages (e.g., places using `font:` where `font-size:` is intended) and correct.
-  - Ensure RSC shells render deterministic markup and classes; client islands handle only behavior where needed.
-- Presets
+  - Presets
   - Add ready‑made presets (e.g., `headline-tight`, `subtitle-airy`, `code-block`) for consistent typography bundles.
  - Dev ergonomics
    - In dev builds, warn when deprecated `fontFamily` conflicts with `family/weight/italic`.
@@ -209,25 +204,12 @@ Acceptance: correct glyph coverage; minimal extra payload for non‑target scrip
 
 ---
 
-## SSR & Hydration Readiness (1.0)
+## Styling & First Paint
 
-- DOM guards
-  - Avoid `document`/`window` on the server; delay style injection to `useInsertionEffect`/`useLayoutEffect` only on the client.
-- Critical font path (optional)
-  - Provide an SSR helper to emit `<link rel="preload">` and preconnects for essential families; recommend keeping essentials small (e.g., body/heading 400/600).
-- Hydration stability
-  - Deterministic class names; ordered injection; portals apply font vars after hydration.
-  - No content visibility gating during hydration; use swap fallbacks and metrics for stability.
- - Styled engine SSR safety
-   - Ensure `createStyled` does not touch `document` at module load; create/inject styles only on the client. Server renders stable class names but performs no DOM injection.
- - Tokens stylesheet
+- Tokens stylesheet
   - Publish `@archway/valet/styles.css` and have components consume tokens via CSS variables to reduce injection churn and avoid FOUC.
- - ThemeScript
-  - Ship a small `<ThemeScript />` to set `data-theme` on `<html>` before hydration and document cookie‑driven theme propagation for Next/Remix.
-  - RSC Contract
-   - All components must be usable in RSC apps via either pure RSC (no hooks/effects) or an RSC shell + minimal client island. See SSR‑READINESS.md (RSC Strategy) for details.
-
-Acceptance: no SSR crashes; consistent typography between server and client renders.
+ - Content visibility
+  - No content visibility gating; use `display=swap` fallbacks and tuned metrics for stability and fast first paint.
 
 ---
 
@@ -244,10 +226,8 @@ Acceptance: no SSR crashes; consistent typography between server and client rend
   - Verify “no FOIT”: content readable before webfonts; measure time to enhanced weights.
 - Bundle budget
   - Ensure minimal runtime additions; no new heavy deps.
-- SSR checks
-  - Server render a page using Typography and ensure no crashes; hydration yields identical class names; no style reordering warnings.
- - Tokens CSS
-   - Importing `@archway/valet/styles.css` must result in correct first paint colors/spacing and font fallbacks without flash.
+- Tokens CSS
+  - Importing `@archway/valet/styles.css` must result in correct first paint colors/spacing and font fallbacks without flash.
 
 Acceptance: tests pass; perf metrics improved or maintained; bundle size in check.
 
@@ -263,7 +243,7 @@ Acceptance: tests pass; perf metrics improved or maintained; bundle size in chec
   - Backward compatible by default. Deprecate `fontFamily` in docs in favor of `family` + `weight/italic` but keep support.
   - Changelog notes and examples; warn on conflicting old/new props via dev‑time checks if feasible.
   - Note the removal of default font‑gating: explain swap behavior and opt‑in `blockUntilFonts`.
-  - SSR guide: publish a dedicated SSR document with `createStyled` behavior, tokens stylesheet usage, critical font preloads, `ThemeScript`, and portal var mirroring (see SSR‑READINESS.md).
+  - Include a short guide on first‑paint best practices with the tokens stylesheet and font‑loader options.
 
 Acceptance: clear guidance; demos showcase excellence and performance; migration is easy.
 
@@ -271,9 +251,8 @@ Acceptance: clear guidance; demos showcase excellence and performance; migration
 
 ## Implementation Outline (Incremental PRs for 1.0)
 
-0a) Styled engine SSR pre‑req: guard `createStyled` against server environments; deterministic class hashing; client‑only injection.
-0b) Publish `@archway/valet/styles.css` tokens and wire components to rely on tokens for first paint.
-0c) Remove default FOIT: ungate Surface content by default; add `blockUntilFonts?: boolean` opt‑in; keep backdrop logic but default off.
+0) Publish `@archway/valet/styles.css` tokens and wire components to rely on tokens for first paint.
+1) Remove default FOIT: ungate Surface content by default; add `blockUntilFonts?: boolean` opt‑in; keep backdrop logic but default off.
 1) Token model expansion (sizes/line‑height/tracking/weights/optical), no behavior change when tokens absent.
 2) Google URL builder + loader options; default to `display=swap`; add request‑key normalization and in‑flight coalescing.
 3) Typography API additions (`weight`, `tracking`, `leading`, `fluid`, `optical`) with conservative defaults and CSS vars.
@@ -281,7 +260,7 @@ Acceptance: clear guidance; demos showcase excellence and performance; migration
 5) Local variable font support + optional metrics overrides (`size-adjust`, ascent/descent/line-gap overrides).
 6) Essential/enhanced loading strategy; locale‑aware subsets; optional `font-size-adjust` token for fallback tuning.
 7) Tests, visual baselines, perf scripts; tune based on results; audit components for `font:` vs `font-size:` mistakes and fix.
-8) Docs + demos + migration notes, plus SSR guide and framework recipes (Next/Remix) with `ThemeScript`.
+8) Docs + demos + migration notes, plus framework recipes as needed.
 
 ---
 

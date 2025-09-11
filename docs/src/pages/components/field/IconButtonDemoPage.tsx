@@ -20,6 +20,7 @@ import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
+import PageHero from '../../../components/PageHero';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Style preset showcasing IconButton inside a card                            */
@@ -117,13 +118,7 @@ export default function IconButtonDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        {/* Page header ----------------------------------------------------- */}
-        <Typography
-          variant='h2'
-          bold
-        >
-          IconButton Showcase
-        </Typography>
+        <PageHero title='Icon Button' />
 
         <Tabs>
           <Tabs.Tab label='Usage' />

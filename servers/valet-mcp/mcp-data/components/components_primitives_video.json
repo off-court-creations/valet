@@ -125,6 +125,6 @@
     "src/components/primitives/Video.tsx",
     "docs/src/pages/components/primitives/VideoDemo.tsx"
   ],
-  "version": "0.30.6",
+  "version": "0.31.0",
   "schemaVersion": "1.4"
 }

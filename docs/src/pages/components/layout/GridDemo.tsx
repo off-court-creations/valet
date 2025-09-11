@@ -18,6 +18,7 @@ import {
 } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import NavDrawer from '../../../components/NavDrawer';
+import PageHero from '../../../components/PageHero';
 import type { ReactNode } from 'react';
 import { useMemo, useState } from 'react';
 
@@ -81,12 +82,7 @@ export default function GridDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography
-          variant='h2'
-          bold
-        >
-          Grid Showcase
-        </Typography>
+        <PageHero title='Grid' />
 
         <Tabs>
           <Tabs.Tab label='Usage' />

@@ -26,6 +26,11 @@ export interface SurfaceProps
   fullscreen?: boolean;
   /** Optional density override for spacing scale */
   density?: Density;
+  /**
+   * When true, block content visibility until fonts load (FOIT).
+   * Defaults to false for immediate first paint using fallbacks.
+   */
+  blockUntilFonts?: boolean;
   /** Inline styles (with CSS var support) */
   sx?: Sx;
 }
@@ -38,6 +43,7 @@ export const Surface: React.FC<SurfaceProps> = ({
   className,
   fullscreen = true,
   density,
+  blockUntilFonts = false,
   ...props
 }) => {
   /* Prevent nested surfaces ------------------------------------------- */
@@ -52,7 +58,7 @@ export const Surface: React.FC<SurfaceProps> = ({
   const ref = useRef<HTMLDivElement>(null);
   const { theme, density: globalDensity } = useTheme();
   const fontsReady = useFonts((s) => s.ready);
-  const [showBackdrop, setShowBackdrop] = useState(!fontsReady);
+  const [showBackdrop, setShowBackdrop] = useState(blockUntilFonts ? !fontsReady : false);
   const [fade, setFade] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
 
@@ -100,6 +106,11 @@ export const Surface: React.FC<SurfaceProps> = ({
 
   /* Font-loading backdrop handling ------------------------------------- */
   useEffect(() => {
+    if (!blockUntilFonts) {
+      setShowBackdrop(false);
+      setShowSpinner(false);
+      return;
+    }
     if (!fontsReady) {
       setShowBackdrop(true);
       setFade(false);
@@ -110,9 +121,13 @@ export const Surface: React.FC<SurfaceProps> = ({
     const t = setTimeout(() => setShowBackdrop(false), 200);
     setShowSpinner(false);
     return () => clearTimeout(t);
-  }, [fontsReady]);
+  }, [fontsReady, blockUntilFonts]);
 
   useEffect(() => {
+    if (!blockUntilFonts) {
+      setShowSpinner(false);
+      return;
+    }
     if (fontsReady) {
       setShowSpinner(false);
       return;
@@ -121,7 +136,7 @@ export const Surface: React.FC<SurfaceProps> = ({
       if (!useFonts.getState().ready) setShowSpinner(true);
     }, 1250);
     return () => clearTimeout(t);
-  }, [fontsReady]);
+  }, [fontsReady, blockUntilFonts]);
 
   /* Defaults + CSS custom properties ----------------------------------- */
   const defaults: React.CSSProperties = {
@@ -184,6 +199,7 @@ export const Surface: React.FC<SurfaceProps> = ({
       <div
         ref={ref}
         {...props}
+        data-valet-surface-root=''
         className={[presetClasses, className].filter(Boolean).join(' ')}
         style={containerStyle}
       >
@@ -196,7 +212,7 @@ export const Surface: React.FC<SurfaceProps> = ({
         {/* Inner wrapper gains padding but NO scrollbars */}
         <div
           style={{
-            visibility: fontsReady ? 'visible' : 'hidden',
+            visibility: blockUntilFonts ? (fontsReady ? 'visible' : 'hidden') : 'visible',
             padding: gap,
             maxWidth: '100%',
             maxHeight: '100%',

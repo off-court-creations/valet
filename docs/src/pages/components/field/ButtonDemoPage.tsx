@@ -18,6 +18,7 @@ import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
+import PageHero from '../../../components/PageHero';
 
 /*─────────────────────────────────────────────────────────────*/
 export default function ButtonDemoPage() {
@@ -85,13 +86,7 @@ export default function ButtonDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        {/* Header ------------------------------------------------------- */}
-        <Typography
-          variant='h2'
-          bold
-        >
-          Button Showcase
-        </Typography>
+        <PageHero title='Button' />
 
         <Tabs>
           <Tabs.Tab label='Usage' />

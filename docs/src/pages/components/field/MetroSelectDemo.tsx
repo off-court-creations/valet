@@ -17,6 +17,7 @@ import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
+import PageHero from '../../../components/PageHero';
 
 export default function MetroSelectDemoPage() {
   const { theme, toggleMode } = useTheme();
@@ -158,13 +159,7 @@ export default function MetroSelectDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography
-          variant='h2'
-          bold
-        >
-          MetroSelect
-        </Typography>
-        <Typography variant='subtitle'>Touch-friendly grid selection</Typography>
+        <PageHero title='Metro Select' />
 
         <Tabs>
           <Tabs.Tab label='Usage' />

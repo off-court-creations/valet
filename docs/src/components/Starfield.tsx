@@ -375,6 +375,9 @@ export default function Starfield({
     visible,
     preSimBoost,
     startDelayMs,
+    revealRadiusFrac,
+    minRevealSpreadRatio,
+    hiddenSpawnMinRadiusFrac,
   ]);
 
   return (

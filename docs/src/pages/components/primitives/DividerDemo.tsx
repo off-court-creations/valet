@@ -4,6 +4,7 @@
 // ─────────────────────────────────────────────────────────────
 import React, { useState } from 'react';
 import NavDrawer from '../../../components/NavDrawer';
+import PageHero from '../../../components/PageHero';
 import {
   Surface,
   Stack,
@@ -101,13 +102,7 @@ export default function DividerDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography
-          variant='h2'
-          bold
-        >
-          Divider
-        </Typography>
-        <Typography variant='subtitle'>Simple, theme-aware line separator</Typography>
+        <PageHero title='Divider' />
 
         <Tabs>
           <Tabs.Tab label='Usage' />

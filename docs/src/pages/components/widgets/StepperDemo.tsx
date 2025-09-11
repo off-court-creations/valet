@@ -15,6 +15,7 @@ import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
+import PageHero from '../../../components/PageHero';
 
 export default function StepperDemoPage() {
   const { theme, toggleMode } = useTheme();
@@ -62,13 +63,7 @@ export default function StepperDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography
-          variant='h2'
-          bold
-        >
-          Stepper Showcase
-        </Typography>
-        <Typography variant='subtitle'>Simple progress indicator</Typography>
+        <PageHero title='Stepper' />
 
         <Tabs>
           <Tabs.Tab label='Usage' />

@@ -22,6 +22,7 @@ import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 import NavDrawer from '../../../components/NavDrawer';
+import PageHero from '../../../components/PageHero';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Demo page                                                                  */
@@ -118,14 +119,10 @@ export default function BoxDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography
-          variant='h2'
-          bold
-        >
-          Box Showcase
-        </Typography>
-
-        <Typography variant='subtitle'>Baseline container for backgrounds and centring</Typography>
+        <PageHero
+          title='Box'
+          subtitle='Baseline container for backgrounds and centring'
+        />
 
         <Tabs>
           <Tabs.Tab label='Usage' />

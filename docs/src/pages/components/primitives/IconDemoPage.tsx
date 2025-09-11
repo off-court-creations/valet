@@ -19,6 +19,7 @@ import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
+import PageHero from '../../../components/PageHero';
 import mymoSVG from '../../../assets/mygymlogo.svg?raw';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
@@ -98,13 +99,7 @@ export default function IconDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        {/* Page header ----------------------------------------------------- */}
-        <Typography
-          variant='h2'
-          bold
-        >
-          Icon Showcase
-        </Typography>
+        <PageHero title='Icon' />
 
         <Tabs>
           <Tabs.Tab label='Usage' />

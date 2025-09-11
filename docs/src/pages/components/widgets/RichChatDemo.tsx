@@ -14,6 +14,7 @@ import {
   IconButton,
 } from '@archway/valet';
 import NavDrawer from '../../../components/NavDrawer';
+import PageHero from '../../../components/PageHero';
 import type { RichMessage } from '@archway/valet';
 import monkey from '../../../assets/monkey.jpg';
 import present from '../../../assets/present.jpg';
@@ -191,13 +192,7 @@ export default function RichChatDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography
-          variant='h2'
-          bold
-        >
-          RichChat Demo
-        </Typography>
-        <Typography variant='subtitle'>Local chat with embeddable components</Typography>
+        <PageHero title='Rich Chat' />
 
         <RichChat
           messages={messages}

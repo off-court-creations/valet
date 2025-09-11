@@ -23,6 +23,7 @@ import {
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import NavDrawer from '../../../components/NavDrawer';
+import PageHero from '../../../components/PageHero';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Style Presets                                                              */
@@ -141,14 +142,7 @@ export default function RadioGroupDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        {/* Page header ----------------------------------------------------- */}
-        <Typography
-          variant='h2'
-          bold
-        >
-          Radio Group Showcase
-        </Typography>
-        <Typography variant='subtitle'>Every prop, every trick, all in one place</Typography>
+        <PageHero title='Radio Group' />
 
         <Tabs>
           <Tabs.Tab label='Usage' />

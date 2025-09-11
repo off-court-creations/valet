@@ -6,6 +6,7 @@ import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
+import PageHero from '../../../components/PageHero';
 
 export default function RichChatPage() {
   const navigate = useNavigate();
@@ -86,13 +87,7 @@ export default function RichChatPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography
-          variant='h2'
-          bold
-        >
-          RichChat
-        </Typography>
-        <Typography variant='subtitle'>Embeddable chat with local UI components</Typography>
+        <PageHero title='Rich Chat' />
         <Tabs>
           <Tabs.Tab label='Usage' />
           <Tabs.Panel>

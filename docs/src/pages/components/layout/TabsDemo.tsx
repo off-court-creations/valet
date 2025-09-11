@@ -18,6 +18,7 @@ import {
 import type { TableColumn } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
+import PageHero from '../../../components/PageHero';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Simple lorem snippets so every panel differs                               */
@@ -142,15 +143,7 @@ export default function TabsDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography
-          variant='h2'
-          bold
-        >
-          Tabs Layout Showcase
-        </Typography>
-        <Typography variant='subtitle'>
-          Demonstrates top / bottom / left / right placements
-        </Typography>
+        <PageHero title='Tabs' />
 
         {/* 1. Horizontal - top (default) ---------------------------------- */}
         <Typography variant='h3'>1. Horizontal – top (default)</Typography>

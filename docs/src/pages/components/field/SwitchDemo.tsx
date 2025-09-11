@@ -21,6 +21,7 @@ import {
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import NavDrawer from '../../../components/NavDrawer';
+import PageHero from '../../../components/PageHero';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Local form store for demo                                                  */
@@ -122,14 +123,7 @@ export default function SwitchDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        {/* Page header ----------------------------------------------------- */}
-        <Typography
-          variant='h2'
-          bold
-        >
-          Switch Showcase
-        </Typography>
-        <Typography variant='subtitle'>Every prop, every trick, all in one place</Typography>
+        <PageHero title='Switch' />
 
         <Tabs>
           <Tabs.Tab label='Usage' />

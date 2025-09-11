@@ -21,6 +21,7 @@ import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
+import PageHero from '../../../components/PageHero';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Local form store for demo                                                  */
@@ -119,13 +120,7 @@ export default function CheckboxDemoPage() {
     <Surface /* Surface already defaults to theme background */>
       <NavDrawer />
       <Stack>
-        {/* Page header ----------------------------------------------------- */}
-        <Typography
-          variant='h2'
-          bold
-        >
-          Checkbox Showcase
-        </Typography>
+        <PageHero title='Checkbox' />
 
         <Tabs>
           <Tabs.Tab label='Usage' />

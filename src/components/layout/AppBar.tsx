@@ -9,6 +9,7 @@ import { useTheme } from '../../system/themeStore';
 import { useSurface } from '../../system/surfaceStore';
 import { shallow } from 'zustand/shallow';
 import { preset } from '../../css/stylePresets';
+import { inheritSurfaceFontVars } from '../../system/inheritSurfaceFontVars';
 import type { Presettable, Space, Sx } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
 
@@ -108,6 +109,9 @@ export const AppBar: React.FC<AppBarProps> = ({
     const node = ref.current;
     const surfEl = element;
     if (!node || !surfEl) return;
+
+    // Mirror Surface font/typography vars into the portalled bar element
+    inheritSurfaceFontVars(node);
 
     const surfaceEl = surfEl as HTMLElement;
     const prev = surfaceEl.style.marginTop;

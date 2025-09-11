@@ -3,6 +3,7 @@
 // add density + var-based spacing unit + radius/stroke helpers
 // ─────────────────────────────────────────────────────────────
 import { createWithEqualityFn as create } from 'zustand/traditional';
+import type { Variant, FluidSize, WeightAlias } from '../types/typography';
 
 export type Breakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type ThemeMode = 'light' | 'dark';
@@ -66,13 +67,26 @@ export interface Theme {
     };
   };
   breakpoints: Record<Breakpoint, number>;
-  typography: Record<string, Record<Breakpoint, string>>;
+  /** Fixed sizes per breakpoint for semantic text variants */
+  typography: Record<Variant, Record<Breakpoint, string>>;
+  /** Optional fluid sizes compiled to clamp(); falls back to breakpoint sizes */
+  typographyFluid?: Partial<Record<Variant, FluidSize>>;
+  /** Optional unitless line-height per variant */
+  lineHeight?: Partial<Record<Variant, number>>;
+  /** Optional letter-spacing per variant (px/em) */
+  letterSpacing?: Partial<Record<Variant, string | number>>;
+  /** Optional allowed weights per variant (either list or min/max range) */
+  weights?: Partial<Record<Variant, number[] | { min: number; max: number }>>;
+  /** Aliases for common weights */
+  weightAliases?: Partial<Record<WeightAlias, number>>;
   fonts: {
     heading: string;
     body: string;
     mono: string;
     button: string;
   };
+  /** Default optical sizing behavior for variable fonts */
+  fontOpticalSizing?: 'auto' | 'none';
 }
 
 interface ThemeStore {
@@ -163,12 +177,19 @@ const common: Omit<Theme, 'colors'> = {
       xl: '1rem',
     },
   },
+  weightAliases: {
+    regular: 400,
+    medium: 500,
+    semibold: 600,
+    bold: 700,
+  },
   fonts: {
     heading: 'Kumbh Sans',
     body: 'Inter',
     mono: 'JetBrains Mono',
     button: 'Kumbh Sans',
   },
+  fontOpticalSizing: 'auto',
 };
 
 const lightColors = {

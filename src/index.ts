@@ -77,3 +77,5 @@ export * from './system/fontStore';
 export * from './system/createInitialTheme';
 export * from './hooks/useGoogleFonts';
 export type { Font, CustomFont } from './helpers/fontLoader';
+export type { Variant as TypographyVariant, WeightAlias } from './types/typography';
+export { inheritSurfaceFontVars } from './system/inheritSurfaceFontVars';
