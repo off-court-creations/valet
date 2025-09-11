@@ -36,6 +36,12 @@
       "required": true
     },
     {
+      "name": "blockUntilFonts",
+      "type": "boolean",
+      "required": true,
+      "default": "false"
+    },
+    {
       "name": "sx",
       "type": "Sx",
       "required": true
@@ -66,6 +72,6 @@
   "sourceFiles": [
     "src/components/layout/Surface.tsx"
   ],
-  "version": "0.30.6",
+  "version": "0.31.0",
   "schemaVersion": "1.4"
 }

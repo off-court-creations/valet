@@ -116,6 +116,6 @@
     "src/components/fields/Iterator.tsx",
     "docs/src/pages/components/field/IteratorDemo.tsx"
   ],
-  "version": "0.30.6",
+  "version": "0.31.0",
   "schemaVersion": "1.4"
 }

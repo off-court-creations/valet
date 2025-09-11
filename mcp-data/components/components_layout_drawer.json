@@ -97,12 +97,7 @@
       "required": true
     }
   ],
-  "cssVars": [
-    "--valet-font-heading",
-    "--valet-font-body",
-    "--valet-font-mono",
-    "--valet-font-button"
-  ],
+  "cssVars": [],
   "cssPresets": [],
   "events": [
     {
@@ -135,6 +130,6 @@
     "src/components/layout/Drawer.tsx",
     "docs/src/pages/components/layout/DrawerDemo.tsx"
   ],
-  "version": "0.30.6",
+  "version": "0.31.0",
   "schemaVersion": "1.4"
 }
