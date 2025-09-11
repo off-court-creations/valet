@@ -195,7 +195,10 @@ export default function TypographyDemoPage() {
                 component defaults.
               </Typography>
               <Divider pad={1} />
-              <Grid columns={2} gap={1}>
+              <Grid
+                columns={2}
+                gap={1}
+              >
                 <Panel compact>
                   <Typography variant='subtitle'>Runtime tweak</Typography>
                   <Button
@@ -372,27 +375,74 @@ export default function TypographyDemoPage() {
                 The <code>family</code> prop selects a named, theme‑managed font stack. These are
                 configured via <code>useInitialTheme</code> so weights, axes, and subsets load once
                 and stay consistent across your app. Built‑in families:
-                <code> heading</code>, <code>body</code>, <code>mono</code>, and <code>button</code>.
+                <code> heading</code>, <code>body</code>, <code>mono</code>, and <code>button</code>
+                .
               </Typography>
               <Divider pad={1} />
-              <Grid columns={3} gap={1}>
+              <Grid
+                columns={3}
+                gap={1}
+              >
                 <Panel compact>
                   <Typography variant='subtitle'>All families at a glance</Typography>
-                  <Typography family='heading' fontSize='1.5rem'>heading — display/headlines</Typography>
-                  <Typography family='body' fontSize='1.125rem'>body — paragraphs/UI copy</Typography>
-                  <Typography family='mono' fontSize='1rem'>mono — code/nums/tables</Typography>
-                  <Typography family='button' fontSize='1.1rem'>button — labels/controls</Typography>
+                  <Typography
+                    family='heading'
+                    fontSize='1.5rem'
+                  >
+                    heading — display/headlines
+                  </Typography>
+                  <Typography
+                    family='body'
+                    fontSize='1.125rem'
+                  >
+                    body — paragraphs/UI copy
+                  </Typography>
+                  <Typography
+                    family='mono'
+                    fontSize='1rem'
+                  >
+                    mono — code/nums/tables
+                  </Typography>
+                  <Typography
+                    family='button'
+                    fontSize='1.1rem'
+                  >
+                    button — labels/controls
+                  </Typography>
                 </Panel>
                 <Panel compact>
                   <Typography variant='subtitle'>Recommended pairings</Typography>
-                  <Typography variant='h2' family='heading'>Heading set in heading family</Typography>
-                  <Typography variant='body' family='body'>Body copy set in body family</Typography>
-                  <Typography variant='body' family='mono'>Inline code — mono family</Typography>
+                  <Typography
+                    variant='h2'
+                    family='heading'
+                  >
+                    Heading set in heading family
+                  </Typography>
+                  <Typography
+                    variant='body'
+                    family='body'
+                  >
+                    Body copy set in body family
+                  </Typography>
+                  <Typography
+                    variant='body'
+                    family='mono'
+                  >
+                    Inline code — mono family
+                  </Typography>
                   <Button>
-                    <Typography variant='button' family='button'>Button label</Typography>
+                    <Typography
+                      variant='button'
+                      family='button'
+                    >
+                      Button label
+                    </Typography>
                   </Button>
                 </Panel>
-                <Panel compact background={theme.colors['tertiary']}>
+                <Panel
+                  compact
+                  background={theme.colors['tertiary']}
+                >
                   <Typography variant='h4'>Why use family?</Typography>
                   <Typography>• Single source of truth for fonts.</Typography>
                   <Typography>• Axes/weights preloaded for performance.</Typography>
@@ -400,22 +450,66 @@ export default function TypographyDemoPage() {
                 </Panel>
               </Grid>
               <Divider pad={1} />
-              <Grid columns={2} gap={1}>
+              <Grid
+                columns={2}
+                gap={1}
+              >
                 <Panel compact>
                   <Typography variant='subtitle'>Variants with families</Typography>
-                  <Typography variant='h3' family='heading' tracking='tight'>Tight headline</Typography>
-                  <Typography variant='subtitle' family='body' weight='medium'>Supportive subtitle</Typography>
-                  <Typography variant='body' family='body' leading={1.6}>
+                  <Typography
+                    variant='h3'
+                    family='heading'
+                    tracking='tight'
+                  >
+                    Tight headline
+                  </Typography>
+                  <Typography
+                    variant='subtitle'
+                    family='body'
+                    weight='medium'
+                  >
+                    Supportive subtitle
+                  </Typography>
+                  <Typography
+                    variant='body'
+                    family='body'
+                    leading={1.6}
+                  >
                     Body text uses the body family by default for readability across densities.
                   </Typography>
-                  <Typography variant='body' family='mono'>const x = 42;</Typography>
+                  <Typography
+                    variant='body'
+                    family='mono'
+                  >
+                    const x = 42;
+                  </Typography>
                 </Panel>
                 <Panel compact>
                   <Typography variant='subtitle'>Weights per family</Typography>
-                  <Typography family='heading' weight={600}>Heading 600</Typography>
-                  <Typography family='body' weight={400}>Body 400</Typography>
-                  <Typography family='mono' weight={500}>Mono 500</Typography>
-                  <Typography family='button' weight='semibold'>Button semibold</Typography>
+                  <Typography
+                    family='heading'
+                    weight={600}
+                  >
+                    Heading 600
+                  </Typography>
+                  <Typography
+                    family='body'
+                    weight={400}
+                  >
+                    Body 400
+                  </Typography>
+                  <Typography
+                    family='mono'
+                    weight={500}
+                  >
+                    Mono 500
+                  </Typography>
+                  <Typography
+                    family='button'
+                    weight='semibold'
+                  >
+                    Button semibold
+                  </Typography>
                 </Panel>
               </Grid>
             </Panel>
@@ -431,23 +525,56 @@ export default function TypographyDemoPage() {
                 <code> useGoogleFonts</code>) to avoid flashes and mismatches.
               </Typography>
               <Divider pad={1} />
-              <Grid columns={3} gap={1}>
+              <Grid
+                columns={3}
+                gap={1}
+              >
                 <Panel compact>
                   <Typography variant='subtitle'>Common overrides</Typography>
-                  <Typography fontFamily='Poppins' fontSize='1.25rem' weight={600}>Poppins 600</Typography>
-                  <Typography fontFamily='Georgia' fontSize='1.1rem' italic>Georgia italic</Typography>
-                  <Typography fontFamily='JetBrains Mono' fontSize='0.95rem'>JetBrains Mono</Typography>
+                  <Typography
+                    fontFamily='Poppins'
+                    fontSize='1.25rem'
+                    weight={600}
+                  >
+                    Poppins 600
+                  </Typography>
+                  <Typography
+                    fontFamily='Georgia'
+                    fontSize='1.1rem'
+                    italic
+                  >
+                    Georgia italic
+                  </Typography>
+                  <Typography
+                    fontFamily='JetBrains Mono'
+                    fontSize='0.95rem'
+                  >
+                    JetBrains Mono
+                  </Typography>
                 </Panel>
                 <Panel compact>
                   <Typography variant='subtitle'>System stacks</Typography>
-                  <Typography fontFamily='system-ui, -apple-system, Segoe UI, Roboto'>system-ui stack</Typography>
-                  <Typography fontFamily='ui-serif, Georgia, Cambria, Times New Roman, Times'>serif stack</Typography>
-                  <Typography fontFamily='ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas'>monospace stack</Typography>
+                  <Typography fontFamily='system-ui, -apple-system, Segoe UI, Roboto'>
+                    system-ui stack
+                  </Typography>
+                  <Typography fontFamily='ui-serif, Georgia, Cambria, Times New Roman, Times'>
+                    serif stack
+                  </Typography>
+                  <Typography fontFamily='ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas'>
+                    monospace stack
+                  </Typography>
                 </Panel>
-                <Panel compact background={theme.colors['backgroundAlt']}>
+                <Panel
+                  compact
+                  background={theme.colors['backgroundAlt']}
+                >
                   <Typography variant='h4'>Notes</Typography>
-                  <Typography>• Prefer <code>family</code> for cohesive theming.</Typography>
-                  <Typography>• Use <code>useGoogleFonts</code> to load overrides.</Typography>
+                  <Typography>
+                    • Prefer <code>family</code> for cohesive theming.
+                  </Typography>
+                  <Typography>
+                    • Use <code>useGoogleFonts</code> to load overrides.
+                  </Typography>
                   <Typography>• Overrides bypass theme weight/axis tuning.</Typography>
                 </Panel>
               </Grid>

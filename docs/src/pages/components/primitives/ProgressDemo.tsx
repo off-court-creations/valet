@@ -67,14 +67,14 @@ export default function ProgressDemoPage() {
   const data: Row[] = [
     {
       prop: <code>variant</code>,
-      type: <code>'linear' | 'circular'</code>,
-      default: <code>'linear'</code>,
+      type: <code>&apos;linear&apos; | &apos;circular&apos;</code>,
+      default: <code>&apos;linear&apos;</code>,
       description: 'Visual style of the progress indicator',
     },
     {
       prop: <code>mode</code>,
-      type: <code>'determinate' | 'indeterminate' | 'buffer'</code>,
-      default: <code>'determinate'</code>,
+      type: <code>&apos;determinate&apos; | &apos;indeterminate&apos; | &apos;buffer&apos;</code>,
+      default: <code>&apos;determinate&apos;</code>,
       description: 'Behavior; buffer applies to linear only',
     },
     {
@@ -91,8 +91,13 @@ export default function ProgressDemoPage() {
     },
     {
       prop: <code>size</code>,
-      type: <code>'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string</code>,
-      default: <code>'md'</code>,
+      type: (
+        <code>
+          &apos;xs&apos; | &apos;sm&apos; | &apos;md&apos; | &apos;lg&apos; | &apos;xl&apos; |
+          number | string
+        </code>
+      ),
+      default: <code>&apos;md&apos;</code>,
       description: 'Token size or custom CSS size',
     },
     {
@@ -126,17 +131,44 @@ export default function ProgressDemoPage() {
             {/* 1. Circular indeterminate ---------------------------------- */}
             <Typography variant='h3'>1. Circular – indeterminate</Typography>
             <Stack direction='row'>
-              <Progress variant='circular' mode='indeterminate' size='xs' />
-              <Progress variant='circular' mode='indeterminate' size='sm' />
-              <Progress variant='circular' mode='indeterminate' />
-              <Progress variant='circular' mode='indeterminate' size='lg' />
-              <Progress variant='circular' mode='indeterminate' size='xl' />
+              <Progress
+                variant='circular'
+                mode='indeterminate'
+                size='xs'
+              />
+              <Progress
+                variant='circular'
+                mode='indeterminate'
+                size='sm'
+              />
+              <Progress
+                variant='circular'
+                mode='indeterminate'
+              />
+              <Progress
+                variant='circular'
+                mode='indeterminate'
+                size='lg'
+              />
+              <Progress
+                variant='circular'
+                mode='indeterminate'
+                size='xl'
+              />
             </Stack>
 
             {/* 2. Circular determinate (controlled) ----------------------- */}
             <Typography variant='h3'>2. Circular – determinate (controlled)</Typography>
-            <Stack direction='row' sx={{ alignItems: 'center' }}>
-              <Progress variant='circular' mode='determinate' value={value} showLabel />
+            <Stack
+              direction='row'
+              sx={{ alignItems: 'center' }}
+            >
+              <Progress
+                variant='circular'
+                mode='determinate'
+                value={value}
+                showLabel
+              />
               <Progress
                 variant='circular'
                 mode='determinate'
@@ -144,7 +176,11 @@ export default function ProgressDemoPage() {
                 size='lg'
                 color={theme.colors['error']}
               />
-              <IconButton icon='mdi:home' onClick={reset} aria-label='reset' />
+              <IconButton
+                icon='mdi:home'
+                onClick={reset}
+                aria-label='reset'
+              />
             </Stack>
 
             {/* 3. Linear indeterminate ------------------------------------ */}
@@ -154,30 +190,54 @@ export default function ProgressDemoPage() {
             {/* 4. Linear determinate (controlled) ------------------------- */}
             <Typography variant='h3'>4. Linear – determinate (controlled)</Typography>
             <Progress value={value} />
-            <Progress value={value} size={50} />
+            <Progress
+              value={value}
+              size={50}
+            />
 
             {/* 5. Linear buffer ------------------------------------------- */}
             <Typography variant='h3'>5. Linear – buffer</Typography>
-            <Progress mode='buffer' value={value} buffer={buffer} />
+            <Progress
+              mode='buffer'
+              value={value}
+              buffer={buffer}
+            />
 
             {/* 6. Interactive controls ------------------------------------ */}
             <Typography variant='h3'>6. Play with value</Typography>
             <Stack>
               <Box sx={{ maxWidth: 480 }}>
-                <Slider value={value} onChange={setValue} />
+                <Slider
+                  value={value}
+                  onChange={setValue}
+                />
               </Box>
               <Stack direction='row'>
                 <Button onClick={() => setValue((v) => Math.max(0, v - 10))}>–10</Button>
                 <Button onClick={() => setValue((v) => Math.min(100, v + 10))}>+10</Button>
-                <Button variant='outlined' onClick={reset}>Reset</Button>
-                <Button variant='outlined' onClick={toggleMode}>Toggle light / dark</Button>
+                <Button
+                  variant='outlined'
+                  onClick={reset}
+                >
+                  Reset
+                </Button>
+                <Button
+                  variant='outlined'
+                  onClick={toggleMode}
+                >
+                  Toggle light / dark
+                </Button>
               </Stack>
             </Stack>
           </Tabs.Panel>
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Table data={data} columns={columns} constrainHeight={false} />
+            <Table
+              data={data}
+              columns={columns}
+              constrainHeight={false}
+            />
           </Tabs.Panel>
         </Tabs>
 

@@ -141,7 +141,7 @@ export const Panel: React.FC<PanelProps> = ({
           : bg === theme.colors.tertiary
             ? theme.colors.tertiaryText
             : bg === theme.colors.backgroundAlt
-              ? theme.colors.primaryText
+              ? theme.colors.text
               : theme.colors.text;
   }
 

@@ -125,7 +125,7 @@ function ButtonSwatch({
         </Button>
         <Typography
           variant='subtitle'
-          sx={{ opacity: 0.9 }}
+          sx={{ opacity: 0.9, color: theme.colors['text'] }}
         >
           {colorName} — BG: {bg.toUpperCase()} • Text: {text.toUpperCase()}
         </Typography>
@@ -189,10 +189,10 @@ export default function ThemeColors() {
             adaptive
           >
             <Swatch
-              title='PrimaryText on BackgroundAlt'
-              subtitle={`${names['primaryText'] ?? 'Text'} on ${names['backgroundAlt'] ?? 'BackgroundAlt'}`}
+              title='Text on BackgroundAlt'
+              subtitle={`${names['text'] ?? 'Text'} on ${names['backgroundAlt'] ?? 'BackgroundAlt'}`}
               hex={t['backgroundAlt']}
-              on={t['primaryText']}
+              on={t['text']}
             />
 
             {/* Matched text-on-accent pairs */}
@@ -234,19 +234,19 @@ export default function ThemeColors() {
               name='Primary'
               colorName={names['primary'] ?? 'Primary'}
               bg={t['primary']}
-              text={t['primaryText']}
+              text={t['primaryButtonText']}
             />
             <ButtonSwatch
               name='Secondary'
               colorName={names['secondary'] ?? 'Secondary'}
               bg={t['secondary']}
-              text={t['secondaryText']}
+              text={t['secondaryButtonText']}
             />
             <ButtonSwatch
               name='Tertiary'
               colorName={names['tertiary'] ?? 'Tertiary'}
               bg={t['tertiary']}
-              text={t['tertiaryText']}
+              text={t['tertiaryButtonText']}
             />
 
             {/* Error as an accent button too */}
@@ -287,12 +287,7 @@ export default function ThemeColors() {
               sx={{ borderRadius: theme.radius(1) }}
             >
               <Stack sx={{ gap: theme.spacing(0.75) }}>
-                <Typography
-                  bold
-                  sx={{ color: t['primaryText'] }}
-                >
-                  Controls on backgroundAlt
-                </Typography>
+                <Typography bold>Controls on backgroundAlt</Typography>
                 <Stack
                   direction='row'
                   sx={{ gap: theme.spacing(0.5), flexWrap: 'wrap' }}
@@ -300,21 +295,21 @@ export default function ThemeColors() {
                   <Button
                     variant='contained'
                     color={t['primary']}
-                    textColor={t['primaryText']}
+                    textColor={t['primaryButtonText']}
                   >
                     Primary
                   </Button>
                   <Button
                     variant='contained'
                     color={t['secondary']}
-                    textColor={t['secondaryText']}
+                    textColor={t['secondaryButtonText']}
                   >
                     Secondary
                   </Button>
                   <Button
                     variant='contained'
                     color={t['tertiary']}
-                    textColor={t['tertiaryText']}
+                    textColor={t['tertiaryButtonText']}
                   >
                     Tertiary
                   </Button>
@@ -396,7 +391,7 @@ export default function ThemeColors() {
                 >
                   <Progress
                     variant='circular'
-                    mode="indeterminate"
+                    mode='indeterminate'
                     sx={{ width: '10rem' }}
                   />
 
@@ -448,6 +443,7 @@ export default function ThemeColors() {
         <Panel
           fullWidth
           pad={1}
+          background={t['background']}
         >
           <Typography
             variant='h3'

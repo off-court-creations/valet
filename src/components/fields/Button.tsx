@@ -84,6 +84,10 @@ const Root = styled('button')<{
   position: relative;
   overflow: hidden;
 
+  /* Expose button colors via CSS vars so children (Typography) inherit */
+  --valet-bg: ${({ $bg }) => $bg};
+  --valet-text-color: ${({ $label }) => $label};
+
   height: ${({ $height }) => $height};
   min-width: ${({ $minW }) => $minW};
   padding: ${({ $padRule }) => $padRule};
@@ -119,6 +123,7 @@ const Root = styled('button')<{
           : `
             background: ${$bg};
             color: ${$hoverLabel};
+            --valet-text-color: ${$hoverLabel};
           `}
     }
   }
@@ -196,11 +201,30 @@ export const Button: React.FC<ButtonProps> = ({
   const isToken = (v: unknown): v is ButtonToken =>
     typeof v === 'string' && (v === 'primary' || v === 'secondary' || v === 'tertiary');
 
+  // Also allow direct theme color key names, e.g. 'primaryButtonText'.
+  const resolveThemeColor = (key: string | undefined): string | undefined => {
+    if (!key) return undefined;
+    const colors = theme.colors as Record<string, string>;
+    return colors[key] || undefined;
+  };
+
   const paletteToken: ButtonToken | null =
     color === undefined ? 'primary' : isToken(color) ? color : null;
 
-  const bg = paletteToken
-    ? theme.colors[paletteToken]
+  // If `color` is a hex matching a theme token, infer the palette token so
+  // the correct *ButtonText can be chosen by default.
+  const inferTokenFromBg = (): ButtonToken | null => {
+    const bgStr = (typeof color === 'string' ? (color as string) : '')?.toUpperCase?.() ?? '';
+    const eq = (hex: string) => (hex || '').toUpperCase() === bgStr;
+    if (eq(theme.colors.primary)) return 'primary';
+    if (eq(theme.colors.secondary)) return 'secondary';
+    if (eq(theme.colors.tertiary)) return 'tertiary';
+    return null;
+  };
+  const paletteFromHex = paletteToken || inferTokenFromBg();
+
+  const bg = paletteFromHex
+    ? theme.colors[paletteFromHex]
     : color
       ? isToken(color)
         ? theme.colors[color]
@@ -209,7 +233,13 @@ export const Button: React.FC<ButtonProps> = ({
 
   const outlineNeutral = mode === 'dark' ? '#eee' : '#111';
 
-  const resolveText = (v: ButtonToken | string) => (isToken(v) ? theme.colors[`${v}Text`] : v);
+  // Resolve text color: support palette tokens ('primary' → primaryButtonText),
+  // and direct theme color keys ('primaryButtonText').
+  const resolveText = (v: ButtonToken | string) => {
+    if (isToken(v)) return theme.colors[`${v}ButtonText`];
+    const fromTheme = resolveThemeColor(v);
+    return fromTheme ?? (v as string);
+  };
 
   let labelColor: string;
 
@@ -218,8 +248,8 @@ export const Button: React.FC<ButtonProps> = ({
   } else {
     labelColor = textColor
       ? resolveText(textColor)
-      : paletteToken
-        ? theme.colors[`${paletteToken}ButtonText`]
+      : paletteFromHex
+        ? theme.colors[`${paletteFromHex}ButtonText`]
         : theme.colors.text;
   }
 
@@ -227,8 +257,8 @@ export const Button: React.FC<ButtonProps> = ({
     variant === 'outlined'
       ? textColor
         ? resolveText(textColor)
-        : paletteToken
-          ? theme.colors[`${paletteToken}ButtonText`]
+        : paletteFromHex
+          ? theme.colors[`${paletteFromHex}ButtonText`]
           : '#fff'
       : labelColor;
 

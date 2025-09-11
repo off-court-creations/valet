@@ -237,7 +237,7 @@ const lightColors = {
   error: '#D32F2F',
   errorText: '#F7F7F7',
   primaryButtonText: '#F7F7F7',
-  secondaryButtonText: '#1b1b1b',
+  secondaryButtonText: '#F7F7F7',
   tertiaryButtonText: '#1b1b1b',
   background: '#f4f4f4',
   backgroundAlt: '#D6D6D6',
@@ -271,7 +271,7 @@ const darkColors = {
   error: '#D32F2F',
   errorText: '#F7F7F7',
   primaryButtonText: '#F7F7F7',
-  secondaryButtonText: '#1b1b1b',
+  secondaryButtonText: '#F7F7F7',
   tertiaryButtonText: '#1b1b1b',
   background: '#161616',
   backgroundAlt: '#363636',
@@ -341,22 +341,36 @@ export const useTheme = create<ThemeStore>((set, get) => ({
         incoming: Theme['typographyFamilies'] | undefined,
       ): Theme['typographyFamilies'] => {
         if (!incoming) return base;
-        const out: NonNullable<Theme['typographyFamilies']> = { ...(base || {}) };
-        for (const fam of Object.keys(incoming) as Array<keyof NonNullable<Theme['typographyFamilies']>>) {
-          const b = (base || ({} as any))[fam] || {};
-          const inc = (incoming as any)[fam] || {};
-          const mergeEntry = (curr: any, add: any) => {
+
+        type Families = NonNullable<Theme['typographyFamilies']>;
+        type FamilyKey = keyof Families;
+        type FamilyConfig = {
+          lineHeight?: number | Partial<Record<Variant, number>>;
+          letterSpacing?: string | number | Partial<Record<Variant, string | number>>;
+        };
+
+        const out: Families = { ...(base || {}) } as Families;
+        const baseFamilies = (base || {}) as Partial<Record<FamilyKey, FamilyConfig>>;
+        const incFamilies = (incoming || {}) as Partial<Record<FamilyKey, FamilyConfig>>;
+
+        for (const fam of Object.keys(incFamilies) as FamilyKey[]) {
+          const b = baseFamilies[fam] || ({} as FamilyConfig);
+          const inc = incFamilies[fam] || ({} as FamilyConfig);
+
+          const mergeEntry = <T>(curr: T | undefined, add: T | undefined): T | undefined => {
             if (add == null) return curr;
-            if (typeof add !== 'object' || Array.isArray(add)) return add; // primitive wins
-            if (typeof curr !== 'object' || Array.isArray(curr) || curr == null) return { ...add };
-            return { ...curr, ...add };
+            if (typeof add !== 'object' || Array.isArray(add)) return add;
+            if (typeof curr !== 'object' || Array.isArray(curr) || curr == null)
+              return { ...(add as object) } as T;
+            return { ...(curr as object), ...(add as object) } as T;
           };
-          out[fam] = {
+
+          (out as Record<FamilyKey, FamilyConfig>)[fam] = {
             lineHeight: mergeEntry(b.lineHeight, inc.lineHeight),
             letterSpacing: mergeEntry(b.letterSpacing, inc.letterSpacing),
-          } as any;
+          } as FamilyConfig;
         }
-        return out;
+        return out as Theme['typographyFamilies'];
       };
 
       const nextTypographyFamilies = mergeTypographyFamilies(

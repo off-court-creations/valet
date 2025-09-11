@@ -770,7 +770,11 @@ export default function MainPage() {
         </Grid>
       </Panel>
 
-      <Divider lineColor={theme.colors['primary']} thickness={2} pad={2}/>
+      <Divider
+        lineColor={theme.colors['primary']}
+        thickness={2}
+        pad={2}
+      />
 
       {/* Experience: Live demos + Theme playground */}
       <Box fullWidth>
@@ -935,7 +939,11 @@ export default function MainPage() {
         </Grid>
       </Box>
 
-      <Divider lineColor={theme.colors['primary']} thickness={2} pad={2}/>
+      <Divider
+        lineColor={theme.colors['primary']}
+        thickness={2}
+        pad={2}
+      />
 
       {/* Footer */}
       <Box fullWidth>

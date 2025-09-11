@@ -68,8 +68,13 @@ export const Divider: React.FC<DividerProps> = ({
 }) => {
   const { theme } = useTheme();
 
-  const color = lineColor ?? theme.colors.text;
-  const thick = typeof thickness === 'number' ? theme.stroke(thickness) : String(thickness);
+  // Default color follows surface text color via CSS var, with a theme fallback.
+  const color = lineColor ?? (`var(--valet-text-color, ${theme.colors.text})` as string);
+  // Prefer the divider stroke CSS var so surfaces can coordinate line thickness.
+  const thick =
+    typeof thickness === 'number'
+      ? (`var(--valet-divider-stroke, ${theme.stroke(thickness)})` as string)
+      : String(thickness);
   const len =
     length === undefined ? undefined : typeof length === 'number' ? `${length}px` : String(length);
 
