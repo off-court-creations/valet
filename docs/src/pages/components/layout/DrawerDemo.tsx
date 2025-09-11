@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Surface, Stack, Typography, Button, Drawer, Panel, useTheme } from '@archway/valet';
+import PageHero from '../../../components/PageHero';
 
 export default function DrawerDemoPage() {
   const { theme, toggleMode } = useTheme();
@@ -29,13 +30,7 @@ export default function DrawerDemoPage() {
         </Stack>
       </Drawer>
       <Stack sx={{ padding: theme.spacing(1), maxWidth: 980, margin: '0 auto' }}>
-        <Typography
-          variant='h2'
-          bold
-        >
-          Drawer Showcase
-        </Typography>
-        <Typography variant='subtitle'>Minimal slide-in navigation panel</Typography>
+        <PageHero title='Drawer' />
 
         {/* 1. Basic uncontrolled drawer */}
         <Typography variant='h3'>1. Overlay left drawer</Typography>

@@ -3,6 +3,7 @@
 // Demo for <Accordion> with constrainHeight enabled
 // ─────────────────────────────────────────────────────────────────────────────
 import { Surface, Stack, Typography, Accordion, Button, Panel } from '@archway/valet';
+import PageHero from '../../../components/PageHero';
 import { useNavigate } from 'react-router-dom';
 
 const LOREM =
@@ -14,13 +15,7 @@ export default function AccordionConstrainedDemo() {
   return (
     <Surface>
       <Stack>
-        <Typography
-          variant='h2'
-          bold
-        >
-          Constrained Accordion
-        </Typography>
-        <Typography>Uses Surface child registration for automatic height</Typography>
+        <PageHero title='Accordion (Constrained)' />
         <Panel fullWidth>
           <Accordion constrainHeight>
             {Array.from({ length: 8 }, (_, i) => (

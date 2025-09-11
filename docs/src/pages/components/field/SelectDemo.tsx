@@ -21,6 +21,7 @@ import {
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import NavDrawer from '../../../components/NavDrawer';
+import PageHero from '../../../components/PageHero';
 
 /*───────────────────────────────────────────────────────────*/
 /* Local form store                                          */
@@ -123,15 +124,7 @@ export default function SelectDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography
-          variant='h2'
-          bold
-        >
-          Select Playground
-        </Typography>
-        <Typography variant='subtitle'>
-          Uncontrolled • controlled • multiple • sizes • presets • FormControl
-        </Typography>
+        <PageHero title='Select' />
 
         <Tabs>
           <Tabs.Tab label='Usage' />

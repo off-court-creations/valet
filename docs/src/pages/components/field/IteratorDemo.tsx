@@ -19,6 +19,7 @@ import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
+import PageHero from '../../../components/PageHero';
 
 /*───────────────────────────────────────────────────────────*/
 interface FormVals extends Record<string, unknown> {
@@ -112,12 +113,7 @@ export default function IteratorDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography
-          variant='h2'
-          bold
-        >
-          Iterator Playground
-        </Typography>
+        <PageHero title='Iterator' />
         <Typography variant='subtitle'>
           Compact numeric stepper with plus/minus controls. Scroll while hovering to change the
           value without moving the page.

@@ -6,7 +6,6 @@ import { useState } from 'react';
 import {
   Surface,
   Stack,
-  Typography,
   Button,
   LLMChat,
   sendChat,
@@ -16,6 +15,7 @@ import {
 } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
+import PageHero from '../../../components/PageHero';
 import type { ChatMessage } from '@archway/valet';
 import monkey from '../../../assets/monkey.jpg';
 import present from '../../../assets/present.jpg';
@@ -88,13 +88,7 @@ export default function LLMChatDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography
-          variant='h2'
-          bold
-        >
-          Chat Showcase
-        </Typography>
-        <Typography variant='subtitle'>LLMChat component demo</Typography>
+        <PageHero title='LLM Chat' />
 
         <LLMChat
           messages={messages}

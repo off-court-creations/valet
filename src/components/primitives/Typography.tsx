@@ -10,15 +10,21 @@ import { useSurface } from '../../system/surfaceStore';
 import { shallow } from 'zustand/shallow';
 import { preset } from '../../css/stylePresets';
 import type { Presettable, Sx } from '../../types';
+import type { Variant as VariantType, WeightAlias } from '../../types/typography';
 
-export type Variant = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'body' | 'subtitle' | 'button';
+export type Variant = VariantType;
 
 export interface TypographyProps
   extends Omit<React.HTMLAttributes<HTMLElement>, 'style'>,
     Presettable {
   variant?: Variant;
-  bold?: boolean;
+  bold?: boolean; // deprecated in favor of `weight`
   italic?: boolean;
+  weight?: number | WeightAlias;
+  tracking?: number | 'tight' | 'normal' | 'loose';
+  leading?: number | 'tight' | 'normal' | 'loose';
+  optical?: 'auto' | number | 'none';
+  fluid?: boolean;
   centered?: boolean;
   noSelect?: boolean;
   fontSize?: string;
@@ -50,6 +56,11 @@ export const Typography: React.FC<TypographyProps> = ({
   variant = 'body',
   bold = false,
   italic = false,
+  weight,
+  tracking,
+  leading,
+  optical,
+  fluid,
   fontSize,
   scale,
   autoSize = false,
@@ -70,11 +81,64 @@ export const Typography: React.FC<TypographyProps> = ({
   const breakpoint = useSurface((s) => s.breakpoint, shallow);
 
   const defaultSize = theme.typography[variant].md;
+  const fluidToken = theme.typographyFluid?.[variant];
+  const fluidSize = (() => {
+    if (!fluidToken) return null;
+    const min = fluidToken.min;
+    const max = fluidToken.max;
+    const vwStart = fluidToken.vwFrom;
+    const vwEnd = fluidToken.vwTo;
+    // build clamp(min, calc(intercept + slope * vw), max)
+    // slope = (max - min) / (vwEnd - vwStart). Parse assuming rem units are ok to calc together.
+    const parseRem = (v: string) => {
+      const m = v.trim().match(/([0-9]*\.?[0-9]+)rem/);
+      return m ? parseFloat(m[1]) : NaN;
+    };
+    const minRem = parseRem(min);
+    const maxRem = parseRem(max);
+    if (!isFinite(minRem) || !isFinite(maxRem) || vwEnd === vwStart) return null;
+    const slope = ((maxRem - minRem) / (vwEnd - vwStart)) * 100; // per vw
+    const intercept = minRem - (slope / 100) * vwStart;
+    const middle = `calc(${intercept.toFixed(4)}rem + ${slope.toFixed(4)}vw)`;
+    return `clamp(${min}, ${middle}, ${max})`;
+  })();
+
   let size = autoSize ? theme.typography[variant][breakpoint] : defaultSize;
+  if (fluid && fluidToken && fluidSize) size = fluidSize;
   if (scale != null) size = `calc(${size} * ${scale})`;
   if (fontSize) size = fontSize;
 
   const presetClasses = p ? preset(p) : '';
+
+  // Resolve font-weight: alias → number; explicit numeric prevails
+  const aliasMap = theme.weightAliases ?? { regular: 400, medium: 500, semibold: 600, bold: 700 };
+  const resolvedWeight = (() => {
+    if (typeof weight === 'number') return Math.max(100, Math.min(900, Math.round(weight)));
+    if (weight) return aliasMap[weight as WeightAlias] ?? 400;
+    return bold ? 700 : 400;
+  })();
+
+  // Resolve letter-spacing (tracking)
+  const tokenTracking = theme.letterSpacing?.[variant];
+  const resolvedTracking = (() => {
+    if (typeof tracking === 'number') return `${tracking}px`;
+    if (tracking === 'tight') return '-0.01em';
+    if (tracking === 'loose') return '0.02em';
+    if (tracking === 'normal') return 'normal';
+    return typeof tokenTracking === 'number' ? `${tokenTracking}px` : (tokenTracking ?? 'normal');
+  })();
+
+  // Resolve line-height (leading)
+  const tokenLeading = theme.lineHeight?.[variant];
+  const resolvedLeading = (() => {
+    if (typeof leading === 'number') return leading;
+    if (leading === 'tight') return 1.2;
+    if (leading === 'loose') return 1.6;
+    if (leading === 'normal') return 1.4;
+    return tokenLeading ?? (variant === 'button' ? 1 : 1.4);
+  })();
+
+  const opticalSetting = (optical ?? theme.fontOpticalSizing ?? 'auto') as 'auto' | number | 'none';
 
   const Component = React.useMemo(
     () => styled(Tag)<{
@@ -83,18 +147,27 @@ export const Typography: React.FC<TypographyProps> = ({
       $fontFamily?: string;
       $family?: 'heading' | 'body' | 'mono' | 'button';
       $size: string;
-      $bold: boolean;
+      $bold: boolean; // retained for backwards compat in styles
       $italic: boolean;
       $center?: boolean;
       $noSelect: boolean;
       $ws: 'normal' | 'pre' | 'pre-wrap' | 'pre-line';
+      $weight: number;
+      $tracking: string;
+      $leading: number;
+      $optical: 'auto' | number | 'none';
     }>`
       margin: 0;
       color: ${({ $color }) => $color || 'var(--valet-text-color, inherit)'};
       font-size: ${({ $size }) => $size};
-      font-weight: ${({ $bold }) => ($bold ? 700 : 400)};
+      /* Prefer CSS var to maximize style cache hits */
+      --valet-font-weight: ${({ $weight, $bold }) => ($bold ? 700 : $weight)};
+      --valet-font-tracking: ${({ $tracking }) => $tracking};
+      --valet-font-leading: ${({ $leading }) => $leading};
+      font-weight: var(--valet-font-weight);
       font-style: ${({ $italic }) => ($italic ? 'italic' : 'normal')};
-      line-height: ${({ $variant }) => ($variant === 'button' ? 1 : 1.4)};
+      line-height: var(--valet-font-leading);
+      letter-spacing: var(--valet-font-tracking);
       font-family: ${({ $fontFamily, $family, $variant }) =>
         $fontFamily ||
         ($family
@@ -102,6 +175,14 @@ export const Typography: React.FC<TypographyProps> = ({
           : `var(--valet-font-${
               $variant === 'button' ? 'button' : $variant.startsWith('h') ? 'heading' : 'body'
             })`)};
+      ${({ $optical }) =>
+        $optical === 'auto'
+          ? 'font-optical-sizing: auto;'
+          : $optical === 'none'
+            ? 'font-optical-sizing: none;'
+            : typeof $optical === 'number'
+              ? `font-variation-settings: 'opsz' ${$optical};`
+              : ''};
       ${({ $center }) =>
         $center &&
         `
@@ -140,6 +221,10 @@ export const Typography: React.FC<TypographyProps> = ({
       $center={centered}
       $noSelect={noSelect}
       $ws={whitespace}
+      $weight={resolvedWeight}
+      $tracking={resolvedTracking}
+      $leading={resolvedLeading}
+      $optical={opticalSetting}
       className={[presetClasses, className].filter(Boolean).join(' ')}
       style={sx}
     >

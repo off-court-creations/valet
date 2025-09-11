@@ -20,6 +20,7 @@ import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
+import PageHero from '../../../components/PageHero';
 import { useState } from 'react';
 
 interface EmailForm {
@@ -101,7 +102,7 @@ export default function AvatarDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography variant='h2'>Avatar</Typography>
+        <PageHero title='Avatar' />
 
         <Tabs>
           <Tabs.Tab label='Usage' />

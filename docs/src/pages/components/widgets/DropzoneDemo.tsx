@@ -17,6 +17,7 @@ import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
+import PageHero from '../../../components/PageHero';
 
 export default function DropzoneDemoPage() {
   const { theme, toggleMode } = useTheme();
@@ -97,13 +98,7 @@ export default function DropzoneDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography
-          variant='h2'
-          bold
-        >
-          Dropzone
-        </Typography>
-        <Typography variant='subtitle'>Drag-and-drop uploads with optional previews</Typography>
+        <PageHero title='Dropzone' />
 
         <Tabs>
           <Tabs.Tab label='Usage' />

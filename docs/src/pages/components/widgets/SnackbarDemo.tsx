@@ -19,6 +19,7 @@ import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
+import PageHero from '../../../components/PageHero';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Helpers                                                                    */
@@ -104,13 +105,7 @@ export default function SnackbarDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        {/* Header --------------------------------------------------------- */}
-        <Typography
-          variant='h2'
-          bold
-        >
-          Snackbar Showcase
-        </Typography>
+        <PageHero title='Snackbar' />
 
         <Tabs>
           <Tabs.Tab label='Usage' />

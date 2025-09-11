@@ -7,7 +7,12 @@ import { useFonts } from '../system/fontStore';
 import { useTheme } from '../system/themeStore';
 import { injectFontLinks, waitForFonts, GoogleFontOptions, Font } from '../helpers/fontLoader';
 
-const fontToName = (f: Font) => (typeof f === 'string' ? f : f.name);
+const fontToName = (f: Font) => {
+  if (typeof f === 'string') return f;
+  if ('name' in f) return f.name;
+  if ('family' in f) return f.family;
+  return '';
+};
 
 export function useGoogleFonts(extras: Font[] = [], options?: GoogleFontOptions) {
   const start = useFonts((s) => s.start);

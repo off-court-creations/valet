@@ -10,6 +10,7 @@ import { createPortal } from 'react-dom';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
+import { inheritSurfaceFontVars } from '../../system/inheritSurfaceFontVars';
 import type { Presettable } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
@@ -204,6 +205,9 @@ export const Modal: React.FC<ModalProps> = ({
     };
 
     document.addEventListener('keydown', handleKeyDown, true);
+
+    // Ensure portalled dialog inherits Surface font/typography variables
+    if (dialogRef.current) inheritSurfaceFontVars(dialogRef.current);
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown, true);

@@ -36,6 +36,12 @@
       "required": true
     },
     {
+      "name": "blockUntilFonts",
+      "type": "boolean",
+      "required": true,
+      "default": "false"
+    },
+    {
       "name": "sx",
       "type": "Sx",
       "required": true

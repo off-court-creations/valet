@@ -18,6 +18,7 @@ import {
 } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
+import PageHero from '../../../components/PageHero';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Style presets                                                              */
@@ -55,16 +56,7 @@ export default function TooltipDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        {/* Page header ----------------------------------------------------- */}
-        <Typography
-          variant='h2'
-          bold
-        >
-          Tooltip Showcase
-        </Typography>
-        <Typography variant='subtitle'>
-          Hover, focus, or tap the elements below to explore every capability
-        </Typography>
+        <PageHero title='Tooltip' />
 
         {/* 1. Basic usage -------------------------------------------------- */}
         <Typography variant='h3'>1. Default Tooltip</Typography>

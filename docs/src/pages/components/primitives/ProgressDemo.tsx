@@ -19,6 +19,7 @@ import {
 } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
+import PageHero from '../../../components/PageHero';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Demo page                                                                  */
@@ -50,16 +51,7 @@ export default function ProgressDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        {/* Page header ----------------------------------------------------- */}
-        <Typography
-          variant='h2'
-          bold
-        >
-          Progress Playground
-        </Typography>
-        <Typography variant='subtitle'>
-          Every variant, mode, and size – plus interactive controls
-        </Typography>
+        <PageHero title='Progress' />
 
         {/* 1. Circular indeterminate -------------------------------------- */}
         <Typography variant='h3'>1. Circular – indeterminate</Typography>

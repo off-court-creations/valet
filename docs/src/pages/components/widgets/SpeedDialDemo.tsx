@@ -15,6 +15,7 @@ import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
+import PageHero from '../../../components/PageHero';
 
 export default function SpeedDialDemoPage() {
   const { theme, toggleMode } = useTheme();
@@ -83,13 +84,7 @@ export default function SpeedDialDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography
-          variant='h2'
-          bold
-        >
-          SpeedDial Showcase
-        </Typography>
-        <Typography variant='subtitle'>Floating action button</Typography>
+        <PageHero title='Speed Dial' />
 
         <Tabs>
           <Tabs.Tab label='Usage' />

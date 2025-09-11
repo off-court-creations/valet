@@ -12,8 +12,13 @@ import { injectFontLinks, waitForFonts, GoogleFontOptions, Font } from '../helpe
 type FontKeys = keyof Theme['fonts'];
 type ThemeFonts = Theme['fonts'];
 
-// Normalize a Font union to its name string
-const fontToName = (f: Font): string => (typeof f === 'string' ? f : f.name);
+// Normalize a Font union to its family/name string
+const fontToName = (f: Font): string => {
+  if (typeof f === 'string') return f;
+  if ('name' in f) return f.name;
+  if ('family' in f) return f.family;
+  return '';
+};
 
 export async function createInitialTheme(
   patch: Partial<

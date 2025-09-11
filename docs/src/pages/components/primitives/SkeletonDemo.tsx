@@ -21,6 +21,7 @@ import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
+import PageHero from '../../../components/PageHero';
 
 export default function SkeletonDemoPage() {
   const { theme } = useTheme();
@@ -72,7 +73,7 @@ export default function SkeletonDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography variant='h2'>Skeleton</Typography>
+        <PageHero title='Skeleton' />
 
         <Tabs>
           <Tabs.Tab label='Usage' />

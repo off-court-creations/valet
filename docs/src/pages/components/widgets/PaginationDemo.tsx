@@ -16,6 +16,7 @@ import {
 } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import NavDrawer from '../../../components/NavDrawer';
+import PageHero from '../../../components/PageHero';
 
 export default function PaginationDemoPage() {
   const [usagePage, setUsagePage] = useState(1);
@@ -94,15 +95,7 @@ export default function PaginationDemoPage() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography
-          variant='h2'
-          bold
-        >
-          Pagination
-        </Typography>
-        <Typography variant='subtitle'>
-          Controlled page selection with animated active underline
-        </Typography>
+        <PageHero title='Pagination' />
 
         <Tabs>
           <Tabs.Tab label='Usage' />

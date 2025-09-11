@@ -4,6 +4,7 @@
 // ─────────────────────────────────────────────────────────────
 import { Surface, Stack, Typography, Video, useTheme, Panel } from '@archway/valet';
 import NavDrawer from '../../../components/NavDrawer';
+import PageHero from '../../../components/PageHero';
 
 /*─────────────────────────────────────────────────────────────*/
 /* Demo page                                                   */
@@ -13,24 +14,8 @@ export default function VideoDemoPage() {
   return (
     <Surface>
       <NavDrawer />
-      <Stack
-        sx={{
-          padding: theme.spacing(1),
-          maxWidth: 1024,
-          margin: '0 auto',
-        }}
-      >
-        {/* Header --------------------------------------------------- */}
-        <Typography
-          variant='h2'
-          bold
-        >
-          Video Demo
-        </Typography>
-        <Typography variant='subtitle'>
-          Basic usage of the&nbsp;
-          <code>&lt;Video /&gt;</code>&nbsp;component
-        </Typography>
+      <Stack sx={{ padding: theme.spacing(1), maxWidth: 1024, margin: '0 auto' }}>
+        <PageHero title='Video' />
 
         {/* Video ---------------------------------------------------- */}
         <Video

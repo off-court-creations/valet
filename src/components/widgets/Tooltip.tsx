@@ -16,6 +16,7 @@ import { createPortal } from 'react-dom';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
+import { inheritSurfaceFontVars } from '../../system/inheritSurfaceFontVars';
 import type { Presettable } from '../../types';
 
 // Allow CSS custom properties on style objects
@@ -265,6 +266,8 @@ export const Tooltip: React.FC<TooltipProps> = ({
 
   useLayoutEffect(() => {
     if (!show) return;
+    // Mirror Surface font/typography vars into the portalled bubble
+    if (bubbleRef.current) inheritSurfaceFontVars(bubbleRef.current);
     const calc = () => {
       const wrapper = wrapperRef.current;
       const bubble = bubbleRef.current;
