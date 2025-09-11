@@ -133,7 +133,8 @@
   ],
   "cssVars": [
     "--valet-date-radius",
-    "--valet-date-cell-radius"
+    "--valet-date-cell-radius",
+    "--valet-text-color"
   ],
   "cssPresets": [],
   "events": [

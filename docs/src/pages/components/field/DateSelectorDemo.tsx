@@ -191,18 +191,6 @@ export default function DateSelectorDemoPage() {
                   onChange={setSelected}
                 />
               </Stack>
-              <Stack>
-                <Typography variant='subtitle'>Custom thresholds</Typography>
-                <div style={{ maxWidth: 320 }}>
-                  <DateSelector
-                    compactMode='auto'
-                    compactThresholdIn={300}
-                    compactThresholdOut={340}
-                    value={selected}
-                    onChange={setSelected}
-                  />
-                </div>
-              </Stack>
             </Stack>
 
             <Stack direction='row'>

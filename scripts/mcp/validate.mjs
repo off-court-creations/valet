@@ -186,11 +186,20 @@ function main() {
           }
         }
         // Validate seeAlso references if possible
+        // Accept references to either other glossary terms OR component names OR known MCP tool ids
+        const knownTools = new Set([
+          'get_component',
+          'search_components',
+          'get_glossary',
+          'define_term',
+          'list_components',
+        ]);
+        const allowedRefs = (ref) => termSet.has(ref) || compNames.has(ref) || knownTools.has(ref);
         for (const e of entries) {
           if (!Array.isArray(e.seeAlso)) continue;
           for (const ref of e.seeAlso) {
             if (typeof ref !== 'string') continue;
-            if (!termSet.has(ref)) {
+            if (!allowedRefs(ref)) {
               console.warn(`[warn] glossary ${e.term}: seeAlso '${ref}' not found`);
               warnings++;
             }
