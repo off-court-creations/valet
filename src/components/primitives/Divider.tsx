@@ -57,7 +57,7 @@ const Line = styled('div')<{
 export const Divider: React.FC<DividerProps> = ({
   orientation = 'horizontal',
   lineColor,
-  thickness = 1,
+  thickness = 2,
   length,
   pad: padProp,
   compact,
@@ -71,10 +71,14 @@ export const Divider: React.FC<DividerProps> = ({
   // Default color follows surface text color via CSS var, with a theme fallback.
   const color = lineColor ?? (`var(--valet-text-color, ${theme.colors.text})` as string);
   // Prefer the divider stroke CSS var so surfaces can coordinate line thickness.
-  const thick =
-    typeof thickness === 'number'
-      ? (`var(--valet-divider-stroke, ${theme.stroke(thickness)})` as string)
-      : String(thickness);
+  // If a number is provided, treat it as a multiplier of the base divider stroke.
+  const thick = (() => {
+    if (typeof thickness === 'number') {
+      const base = `var(--valet-divider-stroke, ${theme.stroke(1)})` as string;
+      return thickness === 1 ? base : (`calc(${base} * ${thickness})` as string);
+    }
+    return String(thickness);
+  })();
   const len =
     length === undefined ? undefined : typeof length === 'number' ? `${length}px` : String(length);
 

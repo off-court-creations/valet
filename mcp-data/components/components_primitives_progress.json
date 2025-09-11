@@ -26,43 +26,64 @@
   "props": [
     {
       "name": "variant",
-      "type": "ProgressVariant",
-      "required": true
+      "type": "'linear' | 'circular'",
+      "required": true,
+      "default": "'linear'",
+      "description": "Visual style of the progress indicator"
     },
     {
       "name": "mode",
-      "type": "ProgressMode",
-      "required": true
+      "type": "'determinate' | 'indeterminate' | 'buffer'",
+      "required": true,
+      "default": "'determinate'",
+      "description": "Behavior; buffer applies to linear only"
     },
     {
       "name": "value",
       "type": "number",
-      "required": true
+      "required": true,
+      "default": "0",
+      "description": "0–100 value for determinate/buffer foreground"
     },
     {
       "name": "buffer",
       "type": "number",
-      "required": true
+      "required": true,
+      "default": "0",
+      "description": "0–100 secondary value (linear-buffer only)"
     },
     {
       "name": "size",
-      "type": "ProgressSize | number | string",
-      "required": true
+      "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string",
+      "required": true,
+      "default": "'md'",
+      "description": "Token size or custom CSS size"
     },
     {
       "name": "showLabel",
       "type": "boolean",
-      "required": true
+      "required": true,
+      "default": "false",
+      "description": "Show numeric % inside circular center"
     },
     {
       "name": "color",
-      "type": "string | undefined",
-      "required": true
+      "type": "string",
+      "required": true,
+      "default": "theme.colors.primary",
+      "description": "Override bar/stroke color"
     },
     {
       "name": "sx",
       "type": "Sx",
       "required": true
+    },
+    {
+      "name": "preset",
+      "type": "string | string[]",
+      "required": false,
+      "default": "—",
+      "description": "Apply style presets (define via definePreset())"
     }
   ],
   "cssVars": [

@@ -34,15 +34,15 @@
       "name": "lineColor",
       "type": "string",
       "required": true,
-      "default": "theme.colors.text",
-      "description": "Explicit colour. By default, Divider uses the text colour that contrasts the page background."
+      "default": "var(--valet-text-color, theme.colors.text)",
+      "description": "Explicit colour. By default, Divider uses the surface text colour via CSS var (falls back to theme.colors.text)."
     },
     {
       "name": "thickness",
       "type": "number | string",
       "required": true,
-      "default": "1",
-      "description": "Line thickness. Numbers map via theme.stroke(n); strings pass through (e.g., \"2px\")."
+      "default": "2",
+      "description": "Line thickness. Numbers scale the base divider stroke (1 = base, 2 = double) via calc(var(--valet-divider-stroke) * n); strings pass through (e.g., \"2px\")."
     },
     {
       "name": "length",
@@ -78,7 +78,10 @@
       "description": "Apply style presets."
     }
   ],
-  "cssVars": [],
+  "cssVars": [
+    "--valet-text-color",
+    "--valet-divider-stroke"
+  ],
   "cssPresets": [],
   "events": [],
   "actions": [],

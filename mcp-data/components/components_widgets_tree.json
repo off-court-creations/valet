@@ -92,6 +92,13 @@
       "description": "Visual style of branches"
     },
     {
+      "name": "iconToggleOnly",
+      "type": "boolean",
+      "required": true,
+      "default": "false",
+      "description": "If true, only clicking the expand icon toggles; by default, clicking anywhere on a row with children toggles expand/collapse."
+    },
+    {
       "name": "sx",
       "type": "Sx",
       "required": true

@@ -89,6 +89,7 @@
   "cssVars": [
     "--valet-divider-stroke",
     "--valet-underline-width",
+    "--valet-bg",
     "--valet-table-underline"
   ],
   "cssPresets": [],

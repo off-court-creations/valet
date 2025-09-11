@@ -947,10 +947,7 @@ export default function MainPage() {
 
       {/* Footer */}
       <Box fullWidth>
-        <Stack
-          direction='row'
-          sx={{ alignItems: 'center', gap: theme.spacing(1), flexWrap: 'wrap' }}
-        >
+        <Stack direction='row'>
           <Typography variant='subtitle'>
             <code>{new Date().getFullYear()} Off Court Creations</code>
           </Typography>

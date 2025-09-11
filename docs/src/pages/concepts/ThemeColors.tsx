@@ -179,10 +179,7 @@ export default function ThemeColors() {
           >
             Palette Names
           </Typography>
-          <Divider
-            pad={0.5}
-            thickness={3}
-          />
+          <Divider thickness={2} />
           <Grid
             columns={3}
             gap={1}
@@ -272,10 +269,7 @@ export default function ThemeColors() {
           >
             Examples
           </Typography>
-          <Divider
-            pad={0.5}
-            thickness={3}
-          />
+          <Divider thickness={2} />
           <Grid
             columns={2}
             gap={1}

@@ -36,7 +36,7 @@ export default function DividerDemoPage() {
 
   // Playground state
   const [orientation, setOrientation] = useState<Orient>('horizontal');
-  const [thickness, setThickness] = useState<number>(1);
+  const [thickness, setThickness] = useState<number>(2);
   const [pad, setPad] = useState<number>(1);
   const [length, setLength] = useState<string>('');
   const [customColor, setCustomColor] = useState<string>('');
@@ -59,16 +59,16 @@ export default function DividerDemoPage() {
     {
       prop: <code>lineColor</code>,
       type: <code>string</code>,
-      default: <code>theme.colors.text</code>,
+      default: <code>var(--valet-text-color, theme.colors.text)</code>,
       description:
-        'Explicit colour. By default, Divider uses the text colour that contrasts the page background.',
+        'Explicit colour. By default, Divider uses the surface text colour via CSS var (falls back to theme.colors.text).',
     },
     {
       prop: <code>thickness</code>,
       type: <code>number | string</code>,
-      default: <code>1</code>,
+      default: <code>2</code>,
       description:
-        'Line thickness. Numbers map via theme.stroke(n); strings pass through (e.g., "2px").',
+        'Line thickness. Numbers scale the base divider stroke (1 = base, 2 = double) via calc(var(--valet-divider-stroke) * n); strings pass through (e.g., "2px").',
     },
     {
       prop: <code>length</code>,

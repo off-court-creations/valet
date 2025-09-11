@@ -73,6 +73,7 @@
     }
   ],
   "cssVars": [
+    "--valet-bg",
     "--valet-text-color"
   ],
   "cssPresets": [],
