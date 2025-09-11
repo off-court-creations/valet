@@ -119,23 +119,52 @@ export const Typography: React.FC<TypographyProps> = ({
   })();
 
   // Resolve letter-spacing (tracking)
+  const impliedFamily: 'heading' | 'body' | 'mono' | 'button' =
+    variant === 'button' ? 'button' : variant.startsWith('h') ? 'heading' : 'body';
+  const effectiveFamily = (family as 'heading' | 'body' | 'mono' | 'button') || impliedFamily;
+
   const tokenTracking = theme.letterSpacing?.[variant];
+  const familyTrackingRaw = theme.typographyFamilies?.[effectiveFamily]?.letterSpacing as
+    | string
+    | number
+    | Partial<Record<Variant, string | number>>
+    | undefined;
+  const familyTrackingForVariant = (() => {
+    if (familyTrackingRaw == null) return undefined;
+    if (typeof familyTrackingRaw === 'number') return `${familyTrackingRaw}px`;
+    if (typeof familyTrackingRaw === 'string') return familyTrackingRaw;
+    const v = familyTrackingRaw[variant];
+    if (v == null) return undefined;
+    return typeof v === 'number' ? `${v}px` : v;
+  })();
   const resolvedTracking = (() => {
     if (typeof tracking === 'number') return `${tracking}px`;
     if (tracking === 'tight') return '-0.01em';
     if (tracking === 'loose') return '0.02em';
     if (tracking === 'normal') return 'normal';
-    return typeof tokenTracking === 'number' ? `${tokenTracking}px` : (tokenTracking ?? 'normal');
+    const tokenValue =
+      typeof tokenTracking === 'number' ? `${tokenTracking}px` : (tokenTracking as string | undefined);
+    return tokenValue ?? familyTrackingForVariant ?? 'normal';
   })();
 
   // Resolve line-height (leading)
   const tokenLeading = theme.lineHeight?.[variant];
+  const familyLeadingRaw = theme.typographyFamilies?.[effectiveFamily]?.lineHeight as
+    | number
+    | Partial<Record<Variant, number>>
+    | undefined;
+  const familyLeadingForVariant = (() => {
+    if (familyLeadingRaw == null) return undefined;
+    if (typeof familyLeadingRaw === 'number') return familyLeadingRaw;
+    const v = familyLeadingRaw[variant];
+    return v == null ? undefined : v;
+  })();
   const resolvedLeading = (() => {
     if (typeof leading === 'number') return leading;
     if (leading === 'tight') return 1.2;
     if (leading === 'loose') return 1.6;
     if (leading === 'normal') return 1.4;
-    return tokenLeading ?? (variant === 'button' ? 1 : 1.4);
+    return tokenLeading ?? familyLeadingForVariant ?? (variant === 'button' ? 1 : 1.4);
   })();
 
   const opticalSetting = (optical ?? theme.fontOpticalSizing ?? 'auto') as 'auto' | number | 'none';

@@ -641,6 +641,7 @@ export default function MainPage() {
               zIndex: 1,
             }}
           >
+            {/* ATTENTION AGENTS DO NOT CHANGE THE HERO COPY */}
             <div
               ref={heroAnchorRef}
               style={{ display: 'inline-block' }}
@@ -657,15 +658,13 @@ export default function MainPage() {
               variant='h5'
               sx={{ textAlign: 'center', color: '#fff', opacity: 0.9 }}
             >
-              Welcome to valet — fast, accessible UI for humans and their AI helpers.
-              {/* Predictable primitives. Typed theme. Semantics for agents. Built for speed. */}
+              Beautiful by default. Limitless when customized.
             </Typography>
             <Typography
               variant='subtitle'
               sx={{ textAlign: 'center', color: '#fff', opacity: 0.9 }}
             >
-              Beautiful by default. Limitless when customized.
-              {/* Predictable primitives. Typed theme. Semantics for agents. Built for speed. */}
+              From AI to Zustand, <code>valet</code> is how it all connects.
             </Typography>
             <Stack
               direction='row'
@@ -712,7 +711,7 @@ export default function MainPage() {
         >
           {[
             {
-              icon: 'mdi:speedometer',
+              icon: 'mdi:rocket-launch',
               title: 'Performance First Principles',
               body: 'Micro-runtime components with predictable paint & motion. No CSS baggage.',
             },
@@ -722,9 +721,9 @@ export default function MainPage() {
               body: 'A semantic interface layer that labels and contextualizes components for your AI tools.',
             },
             {
-              icon: 'mdi:palette-swatch-variant',
+              icon: 'mdi:auto-awesome',
               title: 'Live Theming + Typed Tokens',
-              body: 'Design tokens for color, spacing, radius, stroke, breakpoints, fonts—typed and traceable.',
+              body: 'Tokens give you unified control over key design choices without the hassle.',
             },
             {
               icon: 'mdi:state-machine',
@@ -737,7 +736,7 @@ export default function MainPage() {
               body: 'An automatic map of what you can click and type, so agents know what they can do next.',
             },
             {
-              icon: 'mdi:human-capacity-decrease',
+              icon: 'mdi:vpn-key',
               title: 'Accessibility, by construction',
               body: 'Keyboard flows for components, focus styles, and ARIA baked in.',
             },
@@ -771,7 +770,7 @@ export default function MainPage() {
         </Grid>
       </Panel>
 
-      <Divider lineColor={theme.colors['secondary']} />
+      <Divider lineColor={theme.colors['primary']} thickness={2} pad={2}/>
 
       {/* Experience: Live demos + Theme playground */}
       <Box fullWidth>
@@ -936,7 +935,7 @@ export default function MainPage() {
         </Grid>
       </Box>
 
-      <Divider lineColor={theme.colors['secondary']} />
+      <Divider lineColor={theme.colors['primary']} thickness={2} pad={2}/>
 
       {/* Footer */}
       <Box fullWidth>

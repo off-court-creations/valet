@@ -81,6 +81,20 @@ export interface Theme {
   weights?: Partial<Record<Variant, number[] | { min: number; max: number }>>;
   /** Aliases for common weights */
   weightAliases?: Partial<Record<WeightAlias, number>>;
+  /**
+   * Optional per-family defaults for line-height and letter-spacing.
+   * Use either a base value (applies to all variants mapped to that family)
+   * or a per-variant map for fine control.
+   */
+  typographyFamilies?: Partial<
+    Record<
+      'heading' | 'body' | 'mono' | 'button',
+      {
+        lineHeight?: number | Partial<Record<Variant, number>>;
+        letterSpacing?: string | number | Partial<Record<Variant, string | number>>;
+      }
+    >
+  >;
   fonts: {
     heading: string;
     body: string;
@@ -185,6 +199,25 @@ const common: Omit<Theme, 'colors' | 'colorNames'> = {
     semibold: 600,
     bold: 700,
   },
+  // Conservative defaults; can be overridden via setTheme/useInitialTheme
+  typographyFamilies: {
+    heading: {
+      lineHeight: { h1: 1.15, h2: 1.15, h3: 1.15, h4: 1.2, h5: 1.2, h6: 1.2 },
+      letterSpacing: { h1: '-0.02em', h2: '-0.015em', h3: '-0.01em' },
+    },
+    body: {
+      lineHeight: { body: 1.5, subtitle: 1.35 },
+      letterSpacing: { body: '0em', subtitle: '0em' },
+    },
+    mono: {
+      lineHeight: { body: 1.45 },
+      letterSpacing: { body: '0em' },
+    },
+    button: {
+      lineHeight: { button: 1 },
+      letterSpacing: { button: '0.02em' },
+    },
+  },
   fonts: {
     heading: 'Kumbh Sans',
     body: 'Inter',
@@ -195,34 +228,19 @@ const common: Omit<Theme, 'colors' | 'colorNames'> = {
 };
 
 const lightColors = {
-  // primary — Euro Blue (refined cobalt) as primary accent
-  primary: '#2C5CC5',
-  // primaryText — Porcelain Off-White (text on Euro Blue)
+  primary: '#0E65C0',
   primaryText: '#F7F7F7',
-  // secondary — Signal Orange (promoted from error)
-  secondary: '#D16701',
-  // secondaryText — Graphite (text on Signal Orange)
-  secondaryText: '#1b1b1b',
-  // tertiary — Ice Blue (very light accent)
-  tertiary: '#E5F6F6',
-  // tertiaryText — Graphite (text on Ice Blue)
+  secondary: '#45706C',
+  secondaryText: '#F7F7F7',
+  tertiary: '#C0E6FF',
   tertiaryText: '#1b1b1b',
-  // error — Signal Red (new error intent)
   error: '#D32F2F',
-  // errorText — Porcelain Off-White (text on Signal Red)
   errorText: '#F7F7F7',
-  // Button text mapping mirrors the above text-on-accent logic
-  // primaryButtonText — Porcelain Off-White
   primaryButtonText: '#F7F7F7',
-  // secondaryButtonText — Graphite
   secondaryButtonText: '#1b1b1b',
-  // tertiaryButtonText — Graphite
   tertiaryButtonText: '#1b1b1b',
-  // background — Ice Blue (base surface in light mode)
-  background: '#E5F6F6',
-  // backgroundAlt — Cool Grey (elevated/alt surface)
-  backgroundAlt: '#47484d',
-  // text — Ink Black (default foreground)
+  background: '#f4f4f4',
+  backgroundAlt: '#D6D6D6',
   text: '#090909',
 } as const;
 
@@ -244,42 +262,27 @@ const lightColorNames: Record<keyof typeof lightColors, string> = {
 };
 
 const darkColors = {
-  // primary — Euro Blue (refined cobalt)
-  primary: '#2C5CC5',
-  // primaryText — Porcelain Off-White (text on Euro Blue)
+  primary: '#0E65C0',
   primaryText: '#F7F7F7',
-  // secondary — Signal Orange
-  secondary: '#D16701',
-  // secondaryText — Graphite (text on Signal Orange)
-  secondaryText: '#1b1b1b',
-  // tertiary — Ice Blue
-  tertiary: '#E5F6F6',
-  // tertiaryText — Graphite (text on Ice Blue)
+  secondary: '#45706C',
+  secondaryText: '#F7F7F7',
+  tertiary: '#C0E6FF',
   tertiaryText: '#1b1b1b',
-  // error — Signal Red
   error: '#D32F2F',
-  // errorText — Porcelain Off-White (text on Signal Red)
   errorText: '#F7F7F7',
-  // Button text mapping for contained variants
-  // primaryButtonText — Porcelain Off-White
   primaryButtonText: '#F7F7F7',
-  // secondaryButtonText — Graphite
   secondaryButtonText: '#1b1b1b',
-  // tertiaryButtonText — Graphite
   tertiaryButtonText: '#1b1b1b',
-  // background — Carbon (base surface in dark mode)
-  background: '#242424',
-  // backgroundAlt — Cool Grey (elevated/alt surface)
-  backgroundAlt: '#47484d',
-  // text — Porcelain Off-White (default foreground)
+  background: '#161616',
+  backgroundAlt: '#363636',
   text: '#F7F7F7',
 } as const;
 
 const darkColorNames: Record<keyof typeof darkColors, string> = {
   primary: 'Euro Blue',
   primaryText: 'Porcelain Off-White',
-  secondary: 'Signal Orange',
-  secondaryText: 'Graphite',
+  secondary: 'Deep Teal',
+  secondaryText: 'Porcelain Off-White',
   tertiary: 'Ice Blue',
   tertiaryText: 'Graphite',
   error: 'Signal Red',
@@ -332,11 +335,41 @@ export const useTheme = create<ThemeStore>((set, get) => ({
         }
       }
 
+      // Deep-merge for typographyFamilies
+      const mergeTypographyFamilies = (
+        base: Theme['typographyFamilies'] | undefined,
+        incoming: Theme['typographyFamilies'] | undefined,
+      ): Theme['typographyFamilies'] => {
+        if (!incoming) return base;
+        const out: NonNullable<Theme['typographyFamilies']> = { ...(base || {}) };
+        for (const fam of Object.keys(incoming) as Array<keyof NonNullable<Theme['typographyFamilies']>>) {
+          const b = (base || ({} as any))[fam] || {};
+          const inc = (incoming as any)[fam] || {};
+          const mergeEntry = (curr: any, add: any) => {
+            if (add == null) return curr;
+            if (typeof add !== 'object' || Array.isArray(add)) return add; // primitive wins
+            if (typeof curr !== 'object' || Array.isArray(curr) || curr == null) return { ...add };
+            return { ...curr, ...add };
+          };
+          out[fam] = {
+            lineHeight: mergeEntry(b.lineHeight, inc.lineHeight),
+            letterSpacing: mergeEntry(b.letterSpacing, inc.letterSpacing),
+          } as any;
+        }
+        return out;
+      };
+
+      const nextTypographyFamilies = mergeTypographyFamilies(
+        state.theme.typographyFamilies,
+        patch.typographyFamilies,
+      );
+
       const nextTheme: Theme = {
         ...state.theme,
         ...patch,
         colors: nextColors,
         colorNames: nextNamesBase,
+        typographyFamilies: nextTypographyFamilies,
       } as Theme;
       return { theme: nextTheme };
     }),

@@ -41,7 +41,6 @@ export default function PageHero({
         >
           <Typography
             variant='h1'
-            bold
             sx={{ textAlign: 'center' }}
           >
             {title}

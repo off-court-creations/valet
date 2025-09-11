@@ -137,7 +137,7 @@ function ButtonSwatch({
 // ContrastRow removed (contrast data not shown for now)
 
 export default function ThemeColors() {
-  const { theme, mode, setMode, toggleMode } = useTheme();
+  const { theme, mode, toggleMode } = useTheme();
   const t = theme.colors as Record<TokenKey, string>;
   const names = theme.colorNames as Record<string, string | undefined>;
 
@@ -313,6 +313,13 @@ export default function ThemeColors() {
                   </Button>
                   <Button
                     variant='contained'
+                    color={t['tertiary']}
+                    textColor={t['tertiaryText']}
+                  >
+                    Tertiary
+                  </Button>
+                  <Button
+                    variant='contained'
                     color={t['error']}
                     textColor={t['errorText']}
                   >
@@ -387,15 +394,17 @@ export default function ThemeColors() {
                   direction='row'
                   sx={{ gap: theme.spacing(1), alignItems: 'center', flexWrap: 'wrap' }}
                 >
+                  <Progress
+                    variant='circular'
+                    mode="indeterminate"
+                    sx={{ width: '10rem' }}
+                  />
+
                   <Slider
                     min={0}
                     max={100}
                     defaultValue={42}
                     sx={{ width: '16rem' }}
-                  />
-                  <Progress
-                    value={42}
-                    sx={{ width: '10rem' }}
                   />
                 </Stack>
               </Stack>

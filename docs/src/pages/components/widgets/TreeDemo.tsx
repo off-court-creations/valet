@@ -147,6 +147,13 @@ const data: Row[] = [
     description: 'Visual style of branches',
   },
   {
+    prop: <code>iconToggleOnly</code>,
+    type: <code>boolean</code>,
+    default: <code>false</code>,
+    description:
+      'If true, only clicking the expand icon toggles; by default, clicking anywhere on a row with children toggles expand/collapse.',
+  },
+  {
     prop: <code>preset</code>,
     type: <code>string | string[]</code>,
     default: <code>—</code>,
