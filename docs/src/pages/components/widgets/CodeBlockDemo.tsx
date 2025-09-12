@@ -11,13 +11,15 @@ import {
   Select,
   TextField,
   CodeBlock,
-  Panel,
   type TableColumn,
 } from '@archway/valet';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
+import BestPractices from '../../../components/BestPractices';
+import { getBestPractices } from '../../../utils/sidecar';
+import CodeBlockMeta from '../../../../../src/components/widgets/CodeBlock.meta.json';
 
 export default function CodeBlockDemoPage() {
   const [language, setLanguage] = useState<'typescript' | 'javascript' | 'css'>('typescript');
@@ -125,30 +127,7 @@ export default function CodeBlockDemoPage() {
             />
           </Tabs.Panel>
         </Tabs>
-        {/* Best Practices ------------------------------------------------- */}
-        <Panel fullWidth>
-          <Typography variant='h4'>Best Practices</Typography>
-          <Typography>
-            - Specify the language. Pass a valid Highlight.js key (e.g., &apos;typescript&apos;) so
-            tokens and keywords render correctly.
-          </Typography>
-          <Typography>
-            - Use a monospace font and preserve whitespace. Pair with <code>Typography</code>
-            <code> whitespace</code> controls when embedding code fragments elsewhere.
-          </Typography>
-          <Typography>
-            - Keep snippets focused. Avoid very large blocks; extract long examples into files and
-            link out to keep pages readable and fast.
-          </Typography>
-          <Typography>
-            - Accessible copy affordance. Provide a descriptive <code>ariaLabel</code> (e.g.,
-            &quot;Copy code&quot;) and a <code>title</code> tooltip for clarity.
-          </Typography>
-          <Typography>
-            - Security hygiene. Never render untrusted code as executable; CodeBlock is purely
-            presentational and should not eval content.
-          </Typography>
-        </Panel>
+        <BestPractices items={getBestPractices(CodeBlockMeta)} />
       </Stack>
     </Surface>
   );

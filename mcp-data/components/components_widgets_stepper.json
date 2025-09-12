@@ -3,26 +3,13 @@
   "category": "widgets",
   "slug": "components/widgets/stepper",
   "summary": "Stepper component",
+  "status": "experimental",
   "aliases": [
     "stepper",
     "steps",
-    "wizard"
+    "wizard",
+    "progress-steps"
   ],
-  "usage": {
-    "purpose": "Guide users through an ordered, multi‑step flow.",
-    "whenToUse": [
-      "Complex forms or configuration broken into logical steps",
-      "Tasks that benefit from progress indication and validation per step"
-    ],
-    "whenNotToUse": [
-      "Independent peer views (use Tabs)",
-      "Single‑screen tasks"
-    ],
-    "alternatives": [
-      "Tabs",
-      "Modal"
-    ]
-  },
   "props": [
     {
       "name": "steps",
@@ -71,14 +58,6 @@
     "Use tokens/presets to style. Customize radius/stroke via CSS vars and presets rather than per-instance inline styles to keep density and branding coherent.",
     "Keep step count reasonable. If there are many steps or non‑linear paths, a progress bar or checklist may be clearer."
   ],
-  "bestPracticeSlugs": [
-    "treat-stepper-as-presentation-it-reflects-progress-do-not-use-it-as-the",
-    "bind-to-canonical-state-derive-from-router-or-form-state-rather-than",
-    "keep-labels-short-and-stable-prefer-12-words-for-lengthy-flows-consider",
-    "mind-accessibility-announce-progress-with-text-like-near-the-stepper-so",
-    "use-tokenspresets-to-style-customize-radiusstroke-via-css-vars-and",
-    "keep-step-count-reasonable-if-there-are-many-steps-or-nonlinear-paths-a"
-  ],
   "examples": [],
   "docsUrl": "/components/widgets/StepperDemo",
   "sourceFiles": [
@@ -86,5 +65,5 @@
     "docs/src/pages/components/widgets/StepperDemo.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.4"
+  "schemaVersion": "1.5"
 }

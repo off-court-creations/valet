@@ -3,28 +3,12 @@
   "category": "layout",
   "slug": "components/layout/panel",
   "summary": "Panel component",
+  "status": "experimental",
   "aliases": [
     "panel",
     "card",
     "section"
   ],
-  "usage": {
-    "purpose": "Card‑like container to group related content with padding and optional elevation.",
-    "whenToUse": [
-      "Segment a page into readable sections",
-      "Show a list/grid of cards with consistent styling",
-      "Visually elevate important content without creating a new page"
-    ],
-    "whenNotToUse": [
-      "Whole‑page containers (use Surface)",
-      "Blocking interactions (use Modal)"
-    ],
-    "alternatives": [
-      "Box",
-      "Surface",
-      "Modal"
-    ]
-  },
   "props": [
     {
       "name": "variant",
@@ -107,5 +91,5 @@
     "docs/src/pages/components/layout/Panel.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.4"
+  "schemaVersion": "1.5"
 }

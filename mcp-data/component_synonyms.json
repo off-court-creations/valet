@@ -2,8 +2,14 @@
   "button": [
     "Button"
   ],
+  "cta": [
+    "Button"
+  ],
   "checkbox": [
     "Checkbox"
+  ],
+  "date": [
+    "DateSelector"
   ],
   "datepicker": [
     "DateSelector"
@@ -29,6 +35,9 @@
   "iterator": [
     "Iterator"
   ],
+  "metroselect": [
+    "MetroSelect"
+  ],
   "chip": [
     "MetroSelect"
   ],
@@ -38,22 +47,25 @@
   "segment": [
     "MetroSelect"
   ],
-  "radiogroup": [
-    "Radio"
+  "segmented-control": [
+    "MetroSelect"
   ],
   "radio": [
+    "Radio"
+  ],
+  "radiogroup": [
     "Radio"
   ],
   "radio-group": [
     "Radio"
   ],
+  "select": [
+    "Select"
+  ],
   "dropdown": [
     "Select"
   ],
   "combobox": [
-    "Select"
-  ],
-  "select": [
     "Select"
   ],
   "slider": [
@@ -62,11 +74,14 @@
   "range": [
     "Slider"
   ],
+  "switch": [
+    "Switch"
+  ],
   "toggle": [
     "Switch"
   ],
-  "switch": [
-    "Switch"
+  "textfield": [
+    "TextField"
   ],
   "textinput": [
     "TextField"
@@ -80,13 +95,16 @@
   "accordion": [
     "Accordion"
   ],
-  "navbar": [
-    "AppBar"
+  "expander": [
+    "Accordion"
   ],
   "appbar": [
     "AppBar"
   ],
-  "footer": [
+  "navbar": [
+    "AppBar"
+  ],
+  "header": [
     "AppBar"
   ],
   "box": [
@@ -137,6 +155,12 @@
   "stack": [
     "Stack"
   ],
+  "vstack": [
+    "Stack"
+  ],
+  "hstack": [
+    "Stack"
+  ],
   "surface": [
     "Surface"
   ],
@@ -150,6 +174,12 @@
     "Avatar"
   ],
   "badge": [
+    "Avatar"
+  ],
+  "userpic": [
+    "Avatar"
+  ],
+  "profilepic": [
     "Avatar"
   ],
   "divider": [
@@ -212,10 +242,10 @@
   "player": [
     "Video"
   ],
-  "code": [
+  "codeblock": [
     "CodeBlock"
   ],
-  "codeblock": [
+  "code": [
     "CodeBlock"
   ],
   "snippet": [
@@ -224,10 +254,10 @@
   "dropzone": [
     "Dropzone"
   ],
-  "upload": [
+  "uploader": [
     "Dropzone"
   ],
-  "uploader": [
+  "upload": [
     "Dropzone"
   ],
   "chat": [
@@ -237,10 +267,13 @@
   "assistant": [
     "LLMChat"
   ],
+  "loadingbackdrop": [
+    "LoadingBackdrop"
+  ],
   "backdrop": [
     "LoadingBackdrop"
   ],
-  "loading": [
+  "scrim": [
     "LoadingBackdrop"
   ],
   "markdown": [
@@ -263,6 +296,12 @@
   ],
   "parallax": [
     "ParallaxBackground"
+  ],
+  "parallaxbackground": [
+    "ParallaxBackground"
+  ],
+  "richchat": [
+    "RichChat"
   ],
   "conversation": [
     "RichChat"
@@ -291,6 +330,9 @@
   "fab": [
     "SpeedDial"
   ],
+  "fab-menu": [
+    "SpeedDial"
+  ],
   "stepper": [
     "Stepper"
   ],
@@ -298,6 +340,9 @@
     "Stepper"
   ],
   "wizard": [
+    "Stepper"
+  ],
+  "progress-steps": [
     "Stepper"
   ],
   "table": [
@@ -314,11 +359,5 @@
   ],
   "hint": [
     "Tooltip"
-  ],
-  "tree": [
-    "Tree"
-  ],
-  "treeview": [
-    "Tree"
   ]
 }

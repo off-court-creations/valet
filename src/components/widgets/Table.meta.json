@@ -1,0 +1,14 @@
+{
+  "name": "Table",
+  "status": "experimental",
+  "aliases": ["table", "datagrid", "data-grid"],
+  "docs": {
+    "bestPractices": [
+      "Keep tables readable: enable `striped` and/or `hoverable` for large datasets, but avoid heavy styling that competes with content.",
+      "Constrain height (`constrainHeight`) so the body scrolls inside the table instead of the page scrolling in two directions.",
+      "Provide an initial sort (`initialSort`), align numeric columns to the right, and format dates consistently.",
+      "Enable selection only when follow‑up actions operate on selected rows; choose `single` vs `multi` to match the action design.",
+      "Keep column count reasonable on narrow screens; prefer fewer, more meaningful columns over many cramped ones. Use succinct headers."
+    ]
+  }
+}

@@ -5,6 +5,10 @@
 // ─────────────────────────────────────────────────────────────
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
+import BestPractices from '../../../components/BestPractices';
+import { getBestPractices } from '../../../utils/sidecar';
+import TypographyMeta from '../../../../../src/components/primitives/Typography.meta.json';
+import type { Theme } from '@archway/valet';
 import {
   Surface,
   Stack,
@@ -208,7 +212,7 @@ export default function TypographyDemoPage() {
                           heading: { letterSpacing: { h1: '-0.025em' } },
                           body: { lineHeight: { body: 1.55 } },
                         },
-                      })
+                      } as Partial<Theme>)
                     }
                   >
                     Apply family defaults
@@ -1050,38 +1054,7 @@ inheritSurfaceFontVars(portalRoot);`}
           ← Back
         </Button>
 
-        {/* Best Practices -------------------------------------------------- */}
-        <Panel fullWidth>
-          <Typography variant='h4'>Best Practices</Typography>
-          <Typography>
-            - Match semantics to variants. Heading variants render semantic <code>h1–h6</code>
-            elements; keep heading levels hierarchical and avoid skipping from <code>h1</code> to
-            <code> h4</code>, etc. Prefer a single <code>h1</code> per page view.
-          </Typography>
-          <Typography>
-            - Use tokens, not pixels. Prefer <code>autoSize</code>, <code>scale</code>, and theme
-            typography tokens over hard‑coded <code>fontSize</code> so type adapts to density and
-            breakpoints.
-          </Typography>
-          <Typography>
-            - Choose families from the theme. Use <code>family</code> (heading/body/mono/button) or
-            define fonts via <code>useInitialTheme</code>; only use <code>fontFamily</code>{' '}
-            overrides for special cases.
-          </Typography>
-          <Typography>
-            - Maintain contrast. Set <code>color</code> via theme tokens or surrounding containers (
-            <code>Panel</code>) to ensure accessible contrast in light/dark modes.
-          </Typography>
-          <Typography>
-            - Don’t fake interactivity. Avoid attaching click handlers to Typography to mimic
-            buttons/links; wrap it in <code>Button</code> or <code>&lt;a&gt;</code> for correct
-            semantics and focus behaviour.
-          </Typography>
-          <Typography>
-            - Whitespace control. Use <code>whitespace</code> and <code>noSelect</code> for code,
-            labels, and UI text to keep wrapping and selection intentional.
-          </Typography>
-        </Panel>
+        <BestPractices items={getBestPractices(TypographyMeta)} />
       </Stack>
     </Surface>
   );

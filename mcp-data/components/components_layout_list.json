@@ -3,28 +3,12 @@
   "category": "layout",
   "slug": "components/layout/list",
   "summary": "List component",
+  "status": "experimental",
   "aliases": [
     "list",
     "ul",
     "ol"
   ],
-  "usage": {
-    "purpose": "Semantic list of items with consistent spacing and a11y.",
-    "whenToUse": [
-      "Menus, option lists, settings, simple feeds",
-      "Collections where each item is a small self‑contained row"
-    ],
-    "whenNotToUse": [
-      "Dense tabular data (use Table)",
-      "Two‑dimensional arrangements (use Grid)",
-      "Deep hierarchies (use Tree)"
-    ],
-    "alternatives": [
-      "Table",
-      "Grid",
-      "Tree"
-    ]
-  },
   "props": [
     {
       "name": "data",
@@ -138,20 +122,11 @@
     }
   ],
   "bestPractices": [
-    "Keep rows scannable. Use `getTitle` for the primary line and a concise `getSubtitle` for secondary details; avoid overloading rows with extra UI.",
-    "Choose selection deliberately. Enable `selectable` only when follow‑up actions operate on the active row. Keep selected state controlled if it syncs with app state.",
-    "Reorder with care. Turn `reorderable` on when order matters and persist via `onReorder` . Provide immediate visual feedback and avoid conflicting drag handles.",
-    "Respect touch/scroll ergonomics. The list locks touch scroll while reordering; avoid nesting it inside other scroll containers to prevent competing gestures.",
-    "Tokenize spacing. Use presets and theme spacing rather than per‑row inline styles so density and theming remain consistent across the app.",
-    "Large data sets. For very long lists, consider windowing/virtualization and defer heavy per‑row work until visible."
-  ],
-  "bestPracticeSlugs": [
-    "keep-rows-scannable-use-for-the-primary-line-and-a-concise-for-secondary",
-    "choose-selection-deliberately-enable-only-when-followup-actions-operate",
-    "reorder-with-care-turn-on-when-order-matters-and-persist-via-provide",
-    "respect-touchscroll-ergonomics-the-list-locks-touch-scroll-while",
-    "tokenize-spacing-use-presets-and-theme-spacing-rather-than-perrow-inline",
-    "large-data-sets-for-very-long-lists-consider-windowingvirtualization-and"
+    "Use for simple rows such as menus, settings, or short feeds; keep each row self‑contained.",
+    "Prefer succinct labels with optional secondary text; avoid deep nested interactivity inside rows.",
+    "Use selection or navigation patterns consistently (radio/checkbox icons vs chevrons).",
+    "Keep item height comfortable for touch; use tokenized spacing for density.",
+    "Defer dense tabular data to `Table` and two‑dimensional layouts to `Grid`."
   ],
   "examples": [],
   "docsUrl": "/components/layout/ListDemoPage",
@@ -160,5 +135,5 @@
     "docs/src/pages/components/layout/ListDemoPage.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.4"
+  "schemaVersion": "1.5"
 }

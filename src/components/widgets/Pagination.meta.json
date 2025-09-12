@@ -1,0 +1,15 @@
+{
+  "name": "Pagination",
+  "status": "experimental",
+  "aliases": ["pagination", "pager", "paginator"],
+  "docs": {
+    "bestPractices": [
+      "Keep visible pages small. For large `count`, set a reasonable `siblingCount` and rely on first/last controls.",
+      "Sync state when relevant. Mirror page in the router (query or path) so refresh/back behaves predictably.",
+      "Prefer server‑side slicing for large datasets; ensure Table or List reflects the current page cleanly.",
+      "Use accessible labels and titles for buttons (Prev/Next) and indicate current page to assistive tech.",
+      "Consider infinite scroll for content feeds where paging is less meaningful.",
+      "Align placement near the data it controls and avoid duplicating controls unless justified."
+    ]
+  }
+}

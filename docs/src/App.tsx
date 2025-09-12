@@ -78,6 +78,7 @@ const ComplicatedDashboardPage = page(() => import('./pages/examples/Complicated
 const SpacingContractPage = page(() => import('./pages/concepts/SpacingContract'));
 const MCPGuidePage = page(() => import('./pages/concepts/MCP'));
 const GlossaryPage = page(() => import('./pages/concepts/Glossary'));
+const ComponentStatusPage = page(() => import('./pages/concepts/ComponentStatus'));
 
 /*───────────────────────────────────────────────────────────*/
 export function App() {
@@ -131,6 +132,10 @@ export function App() {
         <Route
           path='/glossary'
           element={<GlossaryPage />}
+        />
+        <Route
+          path='/component-status'
+          element={<ComponentStatusPage />}
         />
 
         <Route

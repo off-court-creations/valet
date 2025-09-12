@@ -11,7 +11,6 @@ import {
   Tabs,
   Table,
   useTheme,
-  Panel,
   Iterator,
   Switch,
   Divider,
@@ -19,6 +18,9 @@ import {
 import type { TableColumn } from '@archway/valet';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
+import BestPractices from '../../../components/BestPractices';
+import { getBestPractices } from '../../../utils/sidecar';
+import GridMeta from '../../../../../src/components/layout/Grid.meta.json';
 import type { ReactNode } from 'react';
 import { useMemo, useState } from 'react';
 
@@ -234,42 +236,8 @@ export default function GridDemoPage() {
             />
           </Tabs.Panel>
         </Tabs>
-        {/* Best Practices ------------------------------------------------- */}
-        <Panel fullWidth>
-          <Typography variant='h4'>Best Practices</Typography>
-          <Typography>
-            - Use <code>Grid</code> for two‑axis alignment. Prefer <code>Stack</code> for linear
-            flows where only one axis matters.
-          </Typography>
-          <Typography>
-            - Keep tracks simple: equal‑width <code>columns</code> are fast and readable; let
-            children span using <code>{`sx={{ gridColumn: 'span N' }}`}</code>.
-          </Typography>
-          <Typography>
-            - Share spacing with the system. Use numeric <code>gap</code>/<code>pad</code> so
-            density matches other primitives.
-          </Typography>
-          <Typography>
-            - Use <code>adaptive</code> to collapse to a single column on portrait/narrow screens
-            instead of ad‑hoc media queries.
-          </Typography>
-          <Typography>
-            - Maintain logical DOM order for keyboard and screen readers; don’t rely on grid
-            placement to imply reading order.
-          </Typography>
-          <Typography>
-            - Cooperate with <code>&lt;Surface&gt;</code>. In adaptive portrait, let content stack
-            and the page scroll naturally; avoid creating nested scroll areas inside cells.
-          </Typography>
-          <Typography>
-            - Size items with tokens. Use <code>theme.spacing</code> and percent/flex spans rather
-            than fixed pixels so density and breakpoints scale predictably.
-          </Typography>
-          <Typography>
-            - Avoid complex selector cascades. Keep item styles shallow and prefer presets for
-            repeatable patterns to maintain performance and readability.
-          </Typography>
-        </Panel>
+
+        <BestPractices items={getBestPractices(GridMeta)} />
       </Stack>
     </Surface>
   );

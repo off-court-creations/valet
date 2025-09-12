@@ -1,20 +1,13 @@
 // src/pages/StepperDemo.tsx
 import { useState } from 'react';
-import {
-  Surface,
-  Stack,
-  Typography,
-  Button,
-  Stepper,
-  useTheme,
-  Tabs,
-  Table,
-  Panel,
-} from '@archway/valet';
+import { Surface, Stack, Typography, Button, Stepper, useTheme, Tabs, Table } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
+import BestPractices from '../../../components/BestPractices';
+import { getBestPractices } from '../../../utils/sidecar';
+import StepperMeta from '../../../../../src/components/widgets/Stepper.meta.json';
 import PageHero from '../../../components/PageHero';
 
 export default function StepperDemoPage() {
@@ -99,34 +92,7 @@ export default function StepperDemoPage() {
           </Tabs.Panel>
         </Tabs>
 
-        {/* Best Practices -------------------------------------------------- */}
-        <Panel fullWidth>
-          <Typography variant='h4'>Best Practices</Typography>
-          <Typography>
-            - Treat Stepper as presentation. It reflects progress; do not use it as the sole
-            navigation control. Provide explicit Next/Back controls and validate each step.
-          </Typography>
-          <Typography>
-            - Bind <code>active</code> to canonical state. Derive from router or form state rather
-            than local UI assumptions. Clamp to <code>0…steps.length-1</code> when updating.
-          </Typography>
-          <Typography>
-            - Keep labels short and stable. Prefer 1–2 words. For lengthy flows, consider numeric or
-            icon labels and place detailed titles above the content.
-          </Typography>
-          <Typography>
-            - Mind accessibility. Announce progress with text like
-            <code> Step X of Y</code> near the Stepper so screen readers have context.
-          </Typography>
-          <Typography>
-            - Use tokens/presets to style. Customize radius/stroke via CSS vars and presets rather
-            than per-instance inline styles to keep density and branding coherent.
-          </Typography>
-          <Typography>
-            - Keep step count reasonable. If there are many steps or non‑linear paths, a progress
-            bar or checklist may be clearer.
-          </Typography>
-        </Panel>
+        <BestPractices items={getBestPractices(StepperMeta)} />
 
         <Button
           size='lg'

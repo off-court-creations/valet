@@ -12,13 +12,15 @@ import {
   useTheme,
   Tabs,
   Table,
-  Panel,
 } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
+import BestPractices from '../../../components/BestPractices';
+import { getBestPractices } from '../../../utils/sidecar';
+import ButtonMeta from '../../../../../src/components/fields/Button.meta.json';
 
 /*─────────────────────────────────────────────────────────────*/
 export default function ButtonDemoPage() {
@@ -222,45 +224,7 @@ export default function ButtonDemoPage() {
           </Tabs.Panel>
         </Tabs>
 
-        {/* Best Practices ------------------------------------------------ */}
-        <Panel fullWidth>
-          <Typography variant='h4'>Best Practices</Typography>
-          <Typography>
-            - Establish a clear action hierarchy: use <code>contained</code> for the primary action
-            and <code>outlined</code> for secondary/tertiary actions. Keep emphasis consistent
-            within a view.
-          </Typography>
-          <Typography>
-            - Choose sizes by density: <code>sm</code>/<code>md</code> for typical forms,
-            <code> lg</code> for standout CTAs. Avoid mixing sizes within the same control group.
-          </Typography>
-          <Typography>
-            - Prefer theme tokens (<code>primary</code>, <code>secondary</code>,
-            <code> tertiary</code>) for automatic contrast. If you set a custom <code>color</code>,
-            also set <code>textColor</code> to keep contrast accessible.
-          </Typography>
-          <Typography>
-            - Use <code>fullWidth</code> in narrow or linear layouts (mobile, drawers) where the
-            button should span the container. Otherwise let content define width.
-          </Typography>
-          <Typography>
-            - Prefer succinct verb‑first labels. If the action is icon‑only, use
-            <code> IconButton</code> and provide an accessible label via <code>aria-label</code>.
-          </Typography>
-          <Typography>
-            - When combining icons and text, add a small gap (e.g.,
-            <code>{`sx={{ marginRight: theme.spacing(1) }}`}</code> on the icon) for readable
-            spacing.
-          </Typography>
-          <Typography>
-            - Reuse styling with <code>preset</code> (<code>definePreset()</code>) rather than
-            duplicating <code>sx</code> across instances.
-          </Typography>
-          <Typography>
-            - Avoid multiple primary actions per view and reserve destructive styles for destructive
-            operations.
-          </Typography>
-        </Panel>
+        <BestPractices items={getBestPractices(ButtonMeta)} />
 
         <Button
           size='lg'

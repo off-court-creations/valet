@@ -12,10 +12,12 @@ import {
   Iterator,
   Pagination,
   Switch,
-  Panel,
 } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import NavDrawer from '../../../components/NavDrawer';
+import BestPractices from '../../../components/BestPractices';
+import { getBestPractices } from '../../../utils/sidecar';
+import PaginationMeta from '../../../../../src/components/widgets/Pagination.meta.json';
 import PageHero from '../../../components/PageHero';
 
 export default function PaginationDemoPage() {
@@ -179,38 +181,7 @@ export default function PaginationDemoPage() {
           </Tabs.Panel>
         </Tabs>
 
-        {/* Best Practices -------------------------------------------------- */}
-        <Panel fullWidth>
-          <Typography variant='h4'>Best Practices</Typography>
-          <Typography>
-            - Keep visible pages small. For large <code>count</code>, set
-            <code> visibleWindow</code> to 5–7 so navigation remains scannable and the underline
-            motion stays legible.
-          </Typography>
-          <Typography>
-            - Keep the active page in view. Leave <code>autoFollowActive</code> on when the current
-            page can change outside of user clicks (e.g., programmatic navigation or router
-            updates).
-          </Typography>
-          <Typography>
-            - Disable bounds appropriately. At <code>page&nbsp;===&nbsp;1</code> or
-            <code> page&nbsp;===&nbsp;count</code>, disable previous/next buttons to reduce noise
-            and convey state.
-          </Typography>
-          <Typography>
-            - Sync with URL when relevant. For paged routes, mirror state in the router (query or
-            path) so refresh/share keeps position; keep Pagination controlled via <code>page</code>
-            and <code>onChange</code>.
-          </Typography>
-          <Typography>
-            - Use tokens for rhythm. Rely on theme motion tokens for underline animation and spacing
-            so density or brand changes do not require component edits.
-          </Typography>
-          <Typography>
-            - Prefer Pagination for finite sets. For unknown or unbounded results, use windowed
-            lists or infinite scroll with clear load affordances.
-          </Typography>
-        </Panel>
+        <BestPractices items={getBestPractices(PaginationMeta)} />
       </Stack>
     </Surface>
   );

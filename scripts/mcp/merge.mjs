@@ -6,7 +6,7 @@ import { extractFromDocs } from './extract-docs.mjs';
 import { extractGlossary } from './extract-glossary.mjs';
 import { loadComponentMeta } from './load-meta.mjs';
 
-const SCHEMA_VERSION = '1.4';
+const SCHEMA_VERSION = '1.5';
 
 // Aliases are now sourced from per-component meta sidecars.
 
@@ -128,12 +128,23 @@ function merge(tsMap, docsMap, version, metaMap) {
       return merged.length ? merged : undefined;
     })();
 
+    const status = (() => {
+      const raw = metaMap?.[name]?.status;
+      if (raw === 'experimental' || raw === 'stable' || raw === 'deprecated') return raw;
+      return undefined;
+    })();
+
+    const bestPractices = Array.isArray(metaMap?.[name]?.docs?.bestPractices) && metaMap[name].docs.bestPractices.length
+      ? metaMap[name].docs.bestPractices
+      : (docs.bestPractices || []);
+
     out[name] = {
       name,
       category: ts.category || 'unknown',
       slug: ts.slug || `components/${(ts.category || 'unknown')}/${name.toLowerCase()}`,
       summary,
       description,
+      status,
       aliases: aliases.length ? aliases : undefined,
       usage,
       props,
@@ -143,7 +154,7 @@ function merge(tsMap, docsMap, version, metaMap) {
       events: ts.events || [],
       actions: ts.actions || [],
       slots: ts.slots || [],
-      bestPractices: docs.bestPractices || [],
+      bestPractices,
       bestPracticeSlugs,
       examples: (docs.examples || []).map((ex) => ({ ...ex, runnable: ex.runnable ?? true, minimalProps })),
       docsUrl,
@@ -232,12 +243,9 @@ async function main() {
     }
   }
   const synPath = path.join(outDir, 'component_synonyms.json');
-  if (Object.keys(synonyms).length > 0) {
-    fs.writeFileSync(synPath, JSON.stringify(synonyms, null, 2));
-  } else {
-    // No per-component aliases defined yet → let server use its built-in defaults
-    try { fs.rmSync(synPath, { force: true }); } catch {}
-  }
+  // Always write the file, even if empty. The server has built-in defaults,
+  // but emitting an empty object avoids validator warnings and clarifies intent.
+  fs.writeFileSync(synPath, JSON.stringify(synonyms, null, 2));
 
   // Glossary
   try {

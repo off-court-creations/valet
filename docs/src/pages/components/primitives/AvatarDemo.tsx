@@ -14,13 +14,15 @@ import {
   useTheme,
   Tabs,
   Table,
-  Panel,
 } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
+import BestPractices from '../../../components/BestPractices';
+import { getBestPractices } from '../../../utils/sidecar';
+import AvatarMeta from '../../../../../src/components/primitives/Avatar.meta.json';
 import { useState } from 'react';
 
 interface EmailForm {
@@ -181,30 +183,7 @@ export default function AvatarDemoPage() {
           ← Back
         </Button>
 
-        {/* Best Practices -------------------------------------------------- */}
-        <Panel fullWidth>
-          <Typography variant='h4'>Best Practices</Typography>
-          <Typography>
-            - Provide meaningful <code>alt</code> text when avatars convey identity (e.g., &quot;Ada
-            Lovelace&quot;). Use <code>alt=&quot;&quot;</code> for purely decorative avatars.
-          </Typography>
-          <Typography>
-            - Prefer <code>src</code> for known assets; use <code>email</code> for Gravatar only
-            when appropriate for your privacy posture. Consider caching and strict HTTPS.
-          </Typography>
-          <Typography>
-            - Keep sizes consistent across lists. Use size tokens (<code>&apos;xs&apos;</code>..
-            <code>&apos;xl&apos;</code>) for coherent density and predictable alignment.
-          </Typography>
-          <Typography>
-            - Ensure visibility on busy backgrounds. Use <code>variant=&apos;outline&apos;</code> or
-            place avatars inside a container with sufficient contrast.
-          </Typography>
-          <Typography>
-            - Non‑interactive by default. Wrap avatars with a <code>Button</code> or link for
-            navigation; avoid attaching click handlers directly without clear affordance.
-          </Typography>
-        </Panel>
+        <BestPractices items={getBestPractices(AvatarMeta)} />
       </Stack>
     </Surface>
   );

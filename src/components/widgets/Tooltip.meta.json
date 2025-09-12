@@ -1,0 +1,14 @@
+{
+  "name": "Tooltip",
+  "status": "experimental",
+  "aliases": ["tooltip", "hint"],
+  "docs": {
+    "bestPractices": [
+      "Use tooltips for supplemental hints, not essential instructions. The UI should remain usable without hovering.",
+      "Ensure the trigger is focusable and labelled. For icon‑only controls, provide `aria-label` on the target.",
+      "Keep content concise; avoid interactive controls inside tooltips. Prefer short phrases over sentences.",
+      "Prefer `placement='top'` when space allows; adjust placement to avoid clipping and viewport edges.",
+      "Use sensible delays. Avoid long `enterDelay` / `leaveDelay` that make tooltips feel sluggish or sticky, especially on touch devices."
+    ]
+  }
+}

@@ -14,13 +14,15 @@ import {
   Table,
   Icon,
   useTheme,
-  Panel,
 } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
+import BestPractices from '../../../components/BestPractices';
+import { getBestPractices } from '../../../utils/sidecar';
+import SkeletonMeta from '../../../../../src/components/primitives/Skeleton.meta.json';
 import PageHero from '../../../components/PageHero';
 
 export default function SkeletonDemoPage() {
@@ -175,30 +177,7 @@ export default function SkeletonDemoPage() {
           ← Back
         </Button>
 
-        {/* Best Practices -------------------------------------------------- */}
-        <Panel fullWidth>
-          <Typography variant='h4'>Best Practices</Typography>
-          <Typography>
-            - Skeleton the right things. Use Skeleton when the shape/size of incoming content is
-            known; avoid for unknown lists where layout may jump.
-          </Typography>
-          <Typography>
-            - Match shapes. Let the component infer <code>variant</code> or override it to match the
-            target (text, circle, rect) for believable placeholders.
-          </Typography>
-          <Typography>
-            - Prefer quick hide. Hide skeletons as soon as content is ready; uncontrolled usage will
-            auto-hide on <code>onLoad</code>/<code>onError</code> for common elements.
-          </Typography>
-          <Typography>
-            - Keep motion subtle. The pulse is intentionally gentle; avoid stacking many animated
-            placeholders in view.
-          </Typography>
-          <Typography>
-            - Provide context. Use brief text nearby (e.g., &quot;Loading data…&quot;) when
-            appropriate; don’t rely on shimmer alone to communicate state.
-          </Typography>
-        </Panel>
+        <BestPractices items={getBestPractices(SkeletonMeta)} />
       </Stack>
     </Surface>
   );

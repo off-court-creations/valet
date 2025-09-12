@@ -1,0 +1,14 @@
+{
+  "name": "Dropzone",
+  "status": "experimental",
+  "aliases": ["dropzone", "uploader", "upload"],
+  "docs": {
+    "bestPractices": [
+      "Indicate accepted file types and size limits clearly before upload.",
+      "Provide both drag‑and‑drop and a clickable target for accessibility.",
+      "Validate optimistically on drop and show per‑file status/errors.",
+      "Avoid blocking the UI; use background uploads and concise feedback.",
+      "Sanitize file names and never execute untrusted content."
+    ]
+  }
+}

@@ -13,12 +13,14 @@ import {
   useTheme,
   Table,
   Box,
-  Panel,
 } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
+import BestPractices from '../../../components/BestPractices';
+import { getBestPractices } from '../../../utils/sidecar';
+import TabsMeta from '../../../../../src/components/layout/Tabs.meta.json';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Simple lorem snippets so every panel differs                               */
@@ -355,46 +357,7 @@ export default function TabsDemoPage() {
           </Tabs>
         </Box>
 
-        {/* Best Practices ------------------------------------------------- */}
-        <Panel fullWidth>
-          <Typography variant='h4'>Best Practices</Typography>
-          <Typography>
-            - Keep tab labels short and predictable. Prefer 1–2 words; avoid wrapping when possible.
-          </Typography>
-          <Typography>
-            - Choose placement by layout: <code>top</code> is the default; use vertical placement
-            for dense navigation sidebars.
-          </Typography>
-          <Typography>
-            - Reflect app state with controlled tabs (<code>active</code> +<code>onTabChange</code>)
-            when routes or external state should drive selection.
-          </Typography>
-          <Typography>
-            - Use <code>gap</code>/<code>pad</code> to match surrounding density; apply
-            <code>alignX</code> to align the strip with nearby content.
-          </Typography>
-          <Typography>
-            - For icon‑only tabs, supply <code>aria-label</code> and (optionally) a
-            <code>tooltip</code> for discoverability.
-          </Typography>
-          <Typography>
-            - Keep DOM order logical (Tab → Panel pairs) to preserve keyboard and screen‑reader
-            flow.
-          </Typography>
-          <Typography>
-            - Respect overflow ergonomics. When tabs exceed width, valet keeps a single row with
-            horizontal scroll and edge fades; avoid forcing multi‑row tabs, which harms
-            discoverability.
-          </Typography>
-          <Typography>
-            - Lean on motion tokens. The active underline should feel crisp; pair durations/easing
-            to <code>theme.motion</code> for consistent UX across components.
-          </Typography>
-          <Typography>
-            - Route integration. When tabs represent routes, control them from the router and keep
-            URLs canonical so reload/share preserves the active view.
-          </Typography>
-        </Panel>
+        <BestPractices items={getBestPractices(TabsMeta)} />
 
         {/* Back nav -------------------------------------------------------- */}
         <Button

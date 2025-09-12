@@ -1,5 +1,8 @@
 // src/pages/AppBarDemo.tsx
-import { Surface, Stack, Typography, Button, AppBar, Icon, Panel, useTheme } from '@archway/valet';
+import { Surface, Stack, Typography, Button, AppBar, Icon, useTheme } from '@archway/valet';
+import BestPractices from '../../../components/BestPractices';
+import { getBestPractices } from '../../../utils/sidecar';
+import AppBarMeta from '../../../../../src/components/layout/AppBar.meta.json';
 import PageHero from '../../../components/PageHero';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
@@ -49,34 +52,7 @@ export default function AppBarDemoPage() {
           </Button>
 
           {/* Best Practices ---------------------------------------------- */}
-          <Panel fullWidth>
-            <Typography variant='h4'>Best Practices</Typography>
-            <Typography>
-              - Use a single AppBar per route. It registers with the current{' '}
-              <code>{'<Surface>'}</code>
-              and automatically offsets content; avoid adding manual top padding/margins.
-            </Typography>
-            <Typography>
-              - Prefer tokens and presets. Set <code>color</code> to{' '}
-              <code>&apos;primary&apos;</code>,<code> &apos;secondary&apos;</code>, or{' '}
-              <code>&apos;tertiary&apos;</code> and adjust spacing via the
-              <code> pad</code> prop using <code>theme.spacing</code>. Use <code>preset</code> to
-              standardize variants.
-            </Typography>
-            <Typography>
-              - Keep slot content purposeful. Place brand/navigation in <code>left</code> and
-              primary actions in <code>right</code>. For icon-only controls, provide
-              <code> aria-label</code> for accessibility.
-            </Typography>
-            <Typography>
-              - Avoid fixed heights. Let padding and typography define height so the AppBar adapts
-              to density, fonts, and breakpoints without magic numbers.
-            </Typography>
-            <Typography>
-              - Mind stacking contexts. The AppBar is portalled to <code>document.body</code> with a
-              high z-index. Avoid creating local stacking contexts that unintentionally cover it.
-            </Typography>
-          </Panel>
+          <BestPractices items={getBestPractices(AppBarMeta)} />
           <Button onClick={() => navigate(-1)}>← Back</Button>
         </Stack>
       </Stack>

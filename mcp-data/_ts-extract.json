@@ -40,6 +40,7 @@
       }
     ],
     "cssVars": [
+      "--valet-bg",
       "--valet-text-color"
     ],
     "cssPresets": [],
@@ -202,7 +203,8 @@
     ],
     "cssVars": [
       "--valet-date-radius",
-      "--valet-date-cell-radius"
+      "--valet-date-cell-radius",
+      "--valet-text-color"
     ],
     "cssPresets": [],
     "events": [
@@ -1008,12 +1010,7 @@
         "required": true
       }
     ],
-    "cssVars": [
-      "--valet-font-heading",
-      "--valet-font-body",
-      "--valet-font-mono",
-      "--valet-font-button"
-    ],
+    "cssVars": [],
     "cssPresets": [],
     "events": [
       {
@@ -1392,6 +1389,12 @@
         "required": true
       },
       {
+        "name": "blockUntilFonts",
+        "type": "boolean",
+        "required": true,
+        "default": "false"
+      },
+      {
         "name": "sx",
         "type": "Sx",
         "required": true
@@ -1575,7 +1578,7 @@
         "name": "thickness",
         "type": "number | string",
         "required": true,
-        "default": "1"
+        "default": "2"
       },
       {
         "name": "length",
@@ -1588,7 +1591,10 @@
         "required": true
       }
     ],
-    "cssVars": [],
+    "cssVars": [
+      "--valet-text-color",
+      "--valet-divider-stroke"
+    ],
     "cssPresets": [],
     "events": [],
     "actions": [],
@@ -1831,6 +1837,41 @@
         "default": "false"
       },
       {
+        "name": "weight",
+        "type": "number | WeightAlias",
+        "required": true
+      },
+      {
+        "name": "tracking",
+        "type": "number | 'tight' | 'normal' | 'loose'",
+        "required": true,
+        "enumValues": [
+          "tight",
+          "normal",
+          "loose"
+        ]
+      },
+      {
+        "name": "leading",
+        "type": "number | 'tight' | 'normal' | 'loose'",
+        "required": true,
+        "enumValues": [
+          "tight",
+          "normal",
+          "loose"
+        ]
+      },
+      {
+        "name": "optical",
+        "type": "'auto' | number | 'none'",
+        "required": true
+      },
+      {
+        "name": "fluid",
+        "type": "boolean",
+        "required": true
+      },
+      {
         "name": "centered",
         "type": "boolean",
         "required": true
@@ -1897,7 +1938,11 @@
       }
     ],
     "cssVars": [
+      "--valet-bg",
       "--valet-text-color",
+      "--valet-font-weight",
+      "--valet-font-tracking",
+      "--valet-font-leading",
       "--valet-font-"
     ],
     "cssPresets": [],
@@ -2607,6 +2652,7 @@
     "cssVars": [
       "--valet-divider-stroke",
       "--valet-underline-width",
+      "--valet-bg",
       "--valet-table-underline"
     ],
     "cssPresets": [],
@@ -2786,6 +2832,11 @@
           "list",
           "files"
         ]
+      },
+      {
+        "name": "iconToggleOnly",
+        "type": "boolean",
+        "required": true
       },
       {
         "name": "sx",

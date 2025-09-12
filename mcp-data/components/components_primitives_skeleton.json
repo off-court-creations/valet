@@ -3,26 +3,12 @@
   "category": "primitives",
   "slug": "components/primitives/skeleton",
   "summary": "Skeleton component",
+  "status": "experimental",
   "aliases": [
     "skeleton",
     "placeholder",
     "shimmer"
   ],
-  "usage": {
-    "purpose": "Reserve layout with lightweight placeholders while content loads.",
-    "whenToUse": [
-      "Pages where the final layout is known and should not jump",
-      "Lists, cards, or form sections that hydrate after data fetch"
-    ],
-    "whenNotToUse": [
-      "Blocking UX where a spinner is clearer (use LoadingBackdrop or Progress)",
-      "Tiny, instantaneous loads that don’t warrant placeholders"
-    ],
-    "alternatives": [
-      "Progress",
-      "LoadingBackdrop"
-    ]
-  },
   "props": [
     {
       "name": "loading",
@@ -68,18 +54,11 @@
     }
   ],
   "bestPractices": [
-    "Skeleton the right things. Use Skeleton when the shape/size of incoming content is known; avoid for unknown lists where layout may jump.",
-    "Match shapes. Let the component infer `variant` or override it to match the target (text, circle, rect) for believable placeholders.",
-    "Prefer quick hide. Hide skeletons as soon as content is ready; uncontrolled usage will auto-hide on `onLoad` / `onError` for common elements.",
-    "Keep motion subtle. The pulse is intentionally gentle; avoid stacking many animated placeholders in view.",
-    "Provide context. Use brief text nearby (e.g., \"Loading data…\") when appropriate; don’t rely on shimmer alone to communicate state."
-  ],
-  "bestPracticeSlugs": [
-    "skeleton-the-right-things-use-skeleton-when-the-shapesize-of-incoming",
-    "match-shapes-let-the-component-infer-or-override-it-to-match-the-target",
-    "prefer-quick-hide-hide-skeletons-as-soon-as-content-is-ready",
-    "keep-motion-subtle-the-pulse-is-intentionally-gentle-avoid-stacking-many",
-    "provide-context-use-brief-text-nearby-eg-loading-data-when-appropriate"
+    "Reserve layout with placeholders that resemble final content to minimize shift.",
+    "Use for short, predictable loads; for longer blocking loads, consider `LoadingBackdrop`.",
+    "Avoid animating excessively; shimmer should be subtle and respect reduced motion.",
+    "Don’t combine with real content in confusing ways—fade out skeletons when data appears.",
+    "Match sizes closely to eventual content for a stable experience."
   ],
   "examples": [],
   "docsUrl": "/components/primitives/SkeletonDemo",
@@ -88,5 +67,5 @@
     "docs/src/pages/components/primitives/SkeletonDemo.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.4"
+  "schemaVersion": "1.5"
 }

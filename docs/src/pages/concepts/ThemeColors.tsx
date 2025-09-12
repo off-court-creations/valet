@@ -139,7 +139,22 @@ function ButtonSwatch({
 export default function ThemeColors() {
   const { theme, mode, toggleMode } = useTheme();
   const t = theme.colors as Record<TokenKey, string>;
-  const names = theme.colorNames as Record<string, string | undefined>;
+  const names: Record<string, string> = {
+    primary: 'Primary',
+    primaryText: 'PrimaryText',
+    secondary: 'Secondary',
+    secondaryText: 'SecondaryText',
+    tertiary: 'Tertiary',
+    tertiaryText: 'TertiaryText',
+    error: 'Error',
+    errorText: 'ErrorText',
+    primaryButtonText: 'Primary Button Text',
+    secondaryButtonText: 'Secondary Button Text',
+    tertiaryButtonText: 'Tertiary Button Text',
+    background: 'Background',
+    backgroundAlt: 'Background Alt',
+    text: 'Text',
+  };
 
   // token listing not needed for the current layout
 

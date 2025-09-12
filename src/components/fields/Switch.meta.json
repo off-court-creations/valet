@@ -1,0 +1,15 @@
+{
+  "name": "Switch",
+  "status": "experimental",
+  "aliases": ["switch", "toggle"],
+  "docs": {
+    "bestPractices": [
+      "Use Switch for immediate on/off settings that apply instantly; for form submissions, prefer `Checkbox`.",
+      "Label state, not action (e.g., 'Wi‑Fi' rather than 'Enable'). Set a stable `name` when part of a form.",
+      "Provide clear feedback on change (e.g., brief text confirmation, or reflect the new state in the UI).",
+      "Respect platform conventions for motion and colours; avoid ambiguous palettes for on/off states.",
+      "Ensure keyboard operability (Space toggles). Maintain accessible naming regardless of visual labels.",
+      "Prefer presets/tokens for size and colour; keep thumb/track large enough for comfortable touch targets."
+    ]
+  }
+}

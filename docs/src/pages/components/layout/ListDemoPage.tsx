@@ -18,6 +18,9 @@ import {
 } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import NavDrawer from '../../../components/NavDrawer';
+import BestPractices from '../../../components/BestPractices';
+import { getBestPractices } from '../../../utils/sidecar';
+import ListMeta from '../../../../../src/components/layout/List.meta.json';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Demo data                                                                  */
@@ -270,36 +273,7 @@ const data: Person[] = [
           </Tabs.Panel>
         </Tabs>
 
-        {/* Best Practices -------------------------------------------------- */}
-        <Panel fullWidth>
-          <Typography variant='h4'>Best Practices</Typography>
-          <Typography>
-            - Keep rows scannable. Use <code>getTitle</code> for the primary line and a concise
-            <code> getSubtitle</code> for secondary details; avoid overloading rows with extra UI.
-          </Typography>
-          <Typography>
-            - Choose selection deliberately. Enable <code>selectable</code> only when follow‑up
-            actions operate on the active row. Keep selected state controlled if it syncs with app
-            state.
-          </Typography>
-          <Typography>
-            - Reorder with care. Turn <code>reorderable</code> on when order matters and persist via{' '}
-            <code>onReorder</code>. Provide immediate visual feedback and avoid conflicting drag
-            handles.
-          </Typography>
-          <Typography>
-            - Respect touch/scroll ergonomics. The list locks touch scroll while reordering; avoid
-            nesting it inside other scroll containers to prevent competing gestures.
-          </Typography>
-          <Typography>
-            - Tokenize spacing. Use presets and theme spacing rather than per‑row inline styles so
-            density and theming remain consistent across the app.
-          </Typography>
-          <Typography>
-            - Large data sets. For very long lists, consider windowing/virtualization and defer
-            heavy per‑row work until visible.
-          </Typography>
-        </Panel>
+        <BestPractices items={getBestPractices(ListMeta)} />
       </Stack>
     </Surface>
   );

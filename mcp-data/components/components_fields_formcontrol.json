@@ -3,25 +3,12 @@
   "category": "fields",
   "slug": "components/fields/formcontrol",
   "summary": "FormControl component",
+  "status": "experimental",
   "aliases": [
     "form",
     "field",
     "control"
   ],
-  "usage": {
-    "purpose": "Provide labels, helper text, and validation messaging around input fields.",
-    "whenToUse": [
-      "Wrap TextField, Select, Checkbox, etc. for consistent a11y and spacing",
-      "Display error states and hints tied to a specific input"
-    ],
-    "whenNotToUse": [
-      "Non‑form content"
-    ],
-    "alternatives": [
-      "Panel",
-      "Stack"
-    ]
-  },
   "props": [
     {
       "name": "useStore",
@@ -55,5 +42,5 @@
     "src/components/fields/FormControl.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.4"
+  "schemaVersion": "1.5"
 }

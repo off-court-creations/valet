@@ -3,26 +3,11 @@
   "category": "fields",
   "slug": "components/fields/button",
   "summary": "Button component",
+  "status": "experimental",
   "aliases": [
-    "button"
+    "button",
+    "cta"
   ],
-  "usage": {
-    "purpose": "Trigger actions with clear, accessible affordances.",
-    "whenToUse": [
-      "Primary and secondary actions in forms and panels",
-      "Navigation that behaves like a button (otherwise use a link)",
-      "Include icons to reinforce meaning or save space"
-    ],
-    "whenNotToUse": [
-      "Icon‑only actions (use IconButton)",
-      "Inline text links for navigation (use anchor elements)"
-    ],
-    "alternatives": [
-      "IconButton",
-      "Tabs",
-      "AppBar"
-    ]
-  },
   "props": [
     {
       "name": "color",
@@ -90,16 +75,6 @@
     "Reuse styling with `preset` ( `definePreset()` ) rather than duplicating `sx` across instances.",
     "Avoid multiple primary actions per view and reserve destructive styles for destructive operations."
   ],
-  "bestPracticeSlugs": [
-    "establish-a-clear-action-hierarchy-use-for-the-primary-action-and-for",
-    "choose-sizes-by-density-for-typical-forms-for-standout-ctas-avoid-mixing",
-    "prefer-theme-tokens-for-automatic-contrast-if-you-set-a-custom-also-set",
-    "use-in-narrow-or-linear-layouts-mobile-drawers-where-the-button-should",
-    "prefer-succinct-verbfirst-labels-if-the-action-is-icononly-use-and",
-    "when-combining-icons-and-text-add-a-small-gap-eg-on-the-icon-for",
-    "reuse-styling-with-rather-than-duplicating-across-instances",
-    "avoid-multiple-primary-actions-per-view-and-reserve-destructive-styles"
-  ],
   "examples": [],
   "docsUrl": "/components/field/ButtonDemoPage",
   "sourceFiles": [
@@ -107,5 +82,5 @@
     "docs/src/pages/components/field/ButtonDemoPage.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.4"
+  "schemaVersion": "1.5"
 }

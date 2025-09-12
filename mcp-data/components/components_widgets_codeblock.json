@@ -3,26 +3,12 @@
   "category": "widgets",
   "slug": "components/widgets/codeblock",
   "summary": "CodeBlock component",
+  "status": "experimental",
   "aliases": [
-    "code",
     "codeblock",
+    "code",
     "snippet"
   ],
-  "usage": {
-    "purpose": "Display syntax‑highlighted code with correct theming and a11y.",
-    "whenToUse": [
-      "Documentation, demos, and developer surfaces",
-      "Static, read‑only examples of code or config"
-    ],
-    "whenNotToUse": [
-      "Editable code (use a code editor component)",
-      "Tiny inline fragments (use Typography with <code>)"
-    ],
-    "alternatives": [
-      "Markdown",
-      "Typography"
-    ]
-  },
   "props": [
     {
       "name": "code",
@@ -59,18 +45,11 @@
   "actions": [],
   "slots": [],
   "bestPractices": [
-    "Specify the language. Pass a valid Highlight.js key (e.g., 'typescript') so tokens and keywords render correctly.",
-    "Use a monospace font and preserve whitespace. Pair with `Typography` `whitespace` controls when embedding code fragments elsewhere.",
-    "Keep snippets focused. Avoid very large blocks; extract long examples into files and link out to keep pages readable and fast.",
-    "Accessible copy affordance. Provide a descriptive `ariaLabel` (e.g., \"Copy code\") and a `title` tooltip for clarity.",
-    "Security hygiene. Never render untrusted code as executable; CodeBlock is purely presentational and should not eval content."
-  ],
-  "bestPracticeSlugs": [
-    "specify-the-language-pass-a-valid-highlightjs-key-eg-typescript-so",
-    "use-a-monospace-font-and-preserve-whitespace-pair-with-controls-when",
-    "keep-snippets-focused-avoid-very-large-blocks-extract-long-examples-into",
-    "accessible-copy-affordance-provide-a-descriptive-eg-copy-code-and-a",
-    "security-hygiene-never-render-untrusted-code-as-executable-codeblock-is"
+    "Use monospace fonts and high‑contrast theme colours for readability.",
+    "Prefer short snippets inline; extract long examples into files and link out to keep pages readable and fast.",
+    "Indicate language for syntax highlighting and assistive tech.",
+    "Avoid excessive horizontal scrolling; wrap long lines where possible or offer a copy action.",
+    "Keep code immutable in this component; use an editor widget for editable code."
   ],
   "examples": [],
   "docsUrl": "/components/widgets/CodeBlockDemo",
@@ -79,5 +58,5 @@
     "docs/src/pages/components/widgets/CodeBlockDemo.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.4"
+  "schemaVersion": "1.5"
 }

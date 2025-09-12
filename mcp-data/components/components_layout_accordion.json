@@ -3,24 +3,11 @@
   "category": "layout",
   "slug": "components/layout/accordion",
   "summary": "Accordion component",
+  "status": "experimental",
   "aliases": [
-    "accordion"
+    "accordion",
+    "expander"
   ],
-  "usage": {
-    "purpose": "Progressive disclosure for long or optional content sections.",
-    "whenToUse": [
-      "Collapse ancillary details to keep pages scannable",
-      "FAQ or documentation sections with independent panels"
-    ],
-    "whenNotToUse": [
-      "Rapidly switching between multiple views (use Tabs)",
-      "Content that must be visible simultaneously"
-    ],
-    "alternatives": [
-      "Tabs",
-      "Panel"
-    ]
-  },
   "props": [
     {
       "name": "defaultOpen",
@@ -82,5 +69,5 @@
     "src/components/layout/Accordion.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.4"
+  "schemaVersion": "1.5"
 }

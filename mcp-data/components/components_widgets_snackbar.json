@@ -3,27 +3,13 @@
   "category": "widgets",
   "slug": "components/widgets/snackbar",
   "summary": "Snackbar component",
+  "status": "experimental",
   "aliases": [
     "snackbar",
     "toast",
     "notification",
     "alert"
   ],
-  "usage": {
-    "purpose": "Transient, non‑blocking notifications anchored to the viewport.",
-    "whenToUse": [
-      "Confirm background actions (saved, uploaded, copied)",
-      "Surface minor errors with retry that don’t require navigation"
-    ],
-    "whenNotToUse": [
-      "Critical or destructive decisions (use Modal)",
-      "Persistent messages that users need to reference later (use Panel/Alert pattern)"
-    ],
-    "alternatives": [
-      "Modal",
-      "Tooltip"
-    ]
-  },
   "props": [
     {
       "name": "open",
@@ -88,19 +74,12 @@
   ],
   "bestPractices": [
     "Keep messages short and specific. Snackbars confirm actions or provide brief status; avoid long instructions or multi‑step interactions.",
-    "Provide a single, clear action. If an action is present, use a short verb (e.g., 'Undo'). Avoid multiple competing actions.",
+    "Place them consistently, typically bottom center/right depending on platform.",
+    "Offer a single, clear action when needed; prefer undo when appropriate.",
     "Respect motion and timing. Use `autoHideDuration` for transient messages (3–6s typical); longer durations should be deliberate.",
-    "Don’t stack excessively. Keep concurrent snackbars minimal; if necessary, queue them and ensure important ones aren’t missed.",
-    "Keep focus behavior intact. Snackbars are non‑modal; they should not steal focus. If a button is provided, ensure it is reachable via keyboard.",
-    "Style via tokens/presets. Use theme colors for status (e.g., `primary` / `error` ) and consolidate variants with `preset` ."
-  ],
-  "bestPracticeSlugs": [
-    "keep-messages-short-and-specific-snackbars-confirm-actions-or-provide",
-    "provide-a-single-clear-action-if-an-action-is-present-use-a-short-verb",
-    "respect-motion-and-timing-use-for-transient-messages-36s-typical-longer",
-    "dont-stack-excessively-keep-concurrent-snackbars-minimal-if-necessary",
-    "keep-focus-behavior-intact-snackbars-are-nonmodal-they-should-not-steal",
-    "style-via-tokenspresets-use-theme-colors-for-status-eg-and-consolidate"
+    "Don’t stack excessively. Queue messages when necessary; ensure important ones aren’t missed.",
+    "Keep focus behavior intact. Snackbars shouldn’t steal focus; any action button must be keyboard reachable.",
+    "Style via tokens/presets. Use theme colors for status (e.g., `primary` / `error`) and consolidate variants with `preset`."
   ],
   "examples": [],
   "docsUrl": "/components/widgets/SnackbarDemo",
@@ -109,5 +88,5 @@
     "docs/src/pages/components/widgets/SnackbarDemo.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.4"
+  "schemaVersion": "1.5"
 }

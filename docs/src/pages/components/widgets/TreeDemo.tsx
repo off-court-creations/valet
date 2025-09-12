@@ -12,13 +12,15 @@ import {
   Table,
   useTheme,
   type TreeNode,
-  Panel,
 } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
+import BestPractices from '../../../components/BestPractices';
+import { getBestPractices } from '../../../utils/sidecar';
+import TreeMeta from '../../../../../src/components/widgets/Tree.meta.json';
 import PageHero from '../../../components/PageHero';
 
 interface Item {
@@ -223,35 +225,7 @@ export default function TreeDemoPage() {
           </Tabs.Panel>
         </Tabs>
 
-        {/* Best Practices -------------------------------------------------- */}
-        <Panel fullWidth>
-          <Typography variant='h4'>Best Practices</Typography>
-          <Typography>
-            - Use stable ids. Provide deterministic <code>id</code>s for nodes so expanded/selected
-            state can be controlled and persisted across renders.
-          </Typography>
-          <Typography>
-            - Keep labels compact. Tree rows should be glanceable; favor short labels and use
-            variants (<code>list</code> or <code>files</code>) to convey structure.
-          </Typography>
-          <Typography>
-            - Align behavior with expectations. Support Arrow keys, Enter/Space for selection, and
-            Left/Right to collapse/expand; let double‑click toggle when appropriate.
-          </Typography>
-          <Typography>
-            - Choose control model. Use <code>expanded</code>/<code> onExpandedChange</code> and
-            <code> selected</code>/<code> onNodeSelect</code> when external state or routing must
-            drive the tree; otherwise use defaults.
-          </Typography>
-          <Typography>
-            - Avoid over‑nesting. Deep hierarchies are hard to scan; flatten where possible and
-            consider search/filter affordances for large trees.
-          </Typography>
-          <Typography>
-            - Tokenized spacing. Use theme spacing for indentation so density and breakpoints scale
-            predictably.
-          </Typography>
-        </Panel>
+        <BestPractices items={getBestPractices(TreeMeta)} />
 
         <Button
           size='lg'

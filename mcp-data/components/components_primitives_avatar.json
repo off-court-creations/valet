@@ -3,24 +3,13 @@
   "category": "primitives",
   "slug": "components/primitives/avatar",
   "summary": "Avatar component",
+  "status": "experimental",
   "aliases": [
     "avatar",
-    "badge"
+    "badge",
+    "userpic",
+    "profilepic"
   ],
-  "usage": {
-    "purpose": "Visual identity for people, teams, or entities.",
-    "whenToUse": [
-      "Show user profile images or initials",
-      "Compact identity chips in lists, menus, and headers"
-    ],
-    "whenNotToUse": [
-      "Content imagery (use Image)"
-    ],
-    "alternatives": [
-      "Image",
-      "Icon"
-    ]
-  },
   "props": [
     {
       "name": "src",
@@ -83,18 +72,11 @@
   "actions": [],
   "slots": [],
   "bestPractices": [
-    "Provide meaningful `alt` text when avatars convey identity (e.g., \"Ada Lovelace\"). Use `alt=\"\"` for purely decorative avatars.",
-    "Prefer `src` for known assets; use `email` for Gravatar only when appropriate for your privacy posture. Consider caching and strict HTTPS.",
-    "Keep sizes consistent across lists. Use size tokens ( `'xs'` .. `'xl'` ) for coherent density and predictable alignment.",
-    "Ensure visibility on busy backgrounds. Use `variant='outline'` or place avatars inside a container with sufficient contrast.",
-    "Non‑interactive by default. Wrap avatars with a `Button` or link for navigation; avoid attaching click handlers directly without clear affordance."
-  ],
-  "bestPracticeSlugs": [
-    "provide-meaningful-text-when-avatars-convey-identity-eg-ada-lovelace-use",
-    "prefer-for-known-assets-use-for-gravatar-only-when-appropriate-for-your",
-    "keep-sizes-consistent-across-lists-use-size-tokens-for-coherent-density",
-    "ensure-visibility-on-busy-backgrounds-use-or-place-avatars-inside-a",
-    "noninteractive-by-default-wrap-avatars-with-a-or-link-for-navigation"
+    "Use initials fallback for missing images; ensure background/foreground meet contrast.",
+    "Keep size tokens consistent across lists, menus, and headers.",
+    "Provide alt text or aria-label describing the person or entity.",
+    "Avoid using Avatar for content images; use `Image` instead.",
+    "Group with labels or presence indicators when they add value; avoid redundant decoration."
   ],
   "examples": [],
   "docsUrl": "/components/primitives/AvatarDemo",
@@ -103,5 +85,5 @@
     "docs/src/pages/components/primitives/AvatarDemo.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.4"
+  "schemaVersion": "1.5"
 }

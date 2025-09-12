@@ -3,25 +3,11 @@
   "category": "primitives",
   "slug": "components/primitives/video",
   "summary": "Video component",
+  "status": "experimental",
   "aliases": [
     "video",
     "player"
   ],
-  "usage": {
-    "purpose": "Embed and control video playback with a11y‑first defaults.",
-    "whenToUse": [
-      "Marketing or educational clips within content",
-      "Short previews that benefit from poster images and preload control"
-    ],
-    "whenNotToUse": [
-      "Static imagery (use Image)",
-      "Heavy decorative backgrounds (consider ParallaxBackground or CSS background video carefully)"
-    ],
-    "alternatives": [
-      "Image",
-      "ParallaxBackground"
-    ]
-  },
   "props": [
     {
       "name": "sources",
@@ -104,27 +90,17 @@
   "actions": [],
   "slots": [],
   "bestPractices": [
-    "Provide multiple sources. Include `webm` and `mp4` encodings when possible to maximize browser support.",
-    "Use a `poster` and reserve space. Set a poster image and explicit `width` / `height` (or container) to avoid layout shift.",
-    "Captions matter. Supply `tracks` for subtitles/captions and allow users to toggle them; the component supports keyboard toggling (C) for the first track.",
-    "Autoplay etiquette. Browsers require `muted` for autoplay; keep controls on for accessibility and allow users to pause.",
-    "Object fit by context. Use `contain` to show entire frame (letterbox) or `cover` for edge-to-edge hero media.",
-    "Performance. Use CDN delivery and sensible `preload` policy; avoid heavy background loops that compete with page interactivity."
-  ],
-  "bestPracticeSlugs": [
-    "provide-multiple-sources-include-and-encodings-when-possible-to-maximize",
-    "use-a-and-reserve-space-set-a-poster-image-and-explicit-or-container-to",
-    "captions-matter-supply-for-subtitlescaptions-and-allow-users-to-toggle",
-    "autoplay-etiquette-browsers-require-for-autoplay-keep-controls-on-for",
-    "object-fit-by-context-use-to-show-entire-frame-letterbox-or-for-edge-to",
-    "performance-use-cdn-delivery-and-sensible-policy-avoid-heavy-background"
+    "Provide controls and captions; prefer muted autoplay only when appropriate.",
+    "Use poster images for better perceived performance.",
+    "Constrain size and avoid layout shift; select fit modes deliberately.",
+    "Avoid background video for critical content; ensure text contrast remains accessible.",
+    "Respect reduced motion preferences and keep transitions subtle.",
+    "Lazy‑load non‑critical media and prefetch only when beneficial."
   ],
   "examples": [],
-  "docsUrl": "/components/primitives/VideoDemo",
   "sourceFiles": [
-    "src/components/primitives/Video.tsx",
-    "docs/src/pages/components/primitives/VideoDemo.tsx"
+    "src/components/primitives/Video.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.4"
+  "schemaVersion": "1.5"
 }

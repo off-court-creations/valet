@@ -3,26 +3,11 @@
   "category": "widgets",
   "slug": "components/widgets/tooltip",
   "summary": "Tooltip component",
+  "status": "experimental",
   "aliases": [
     "tooltip",
     "hint"
   ],
-  "usage": {
-    "purpose": "Transient, non‑blocking help on hover/focus.",
-    "whenToUse": [
-      "Explain icon‑only controls or abbreviations",
-      "Provide short hints that don’t deserve persistent text"
-    ],
-    "whenNotToUse": [
-      "Critical information or actions (use Modal or Snackbar)",
-      "Content that should be discoverable on touch‑only devices without long‑press"
-    ],
-    "alternatives": [
-      "Snackbar",
-      "Modal",
-      "Typography"
-    ]
-  },
   "props": [
     {
       "name": "title",
@@ -126,19 +111,10 @@
     "Prefer `placement='top'` when space allows; adjust placement to avoid clipping and viewport edges.",
     "Use sensible delays. Avoid long `enterDelay` / `leaveDelay` that make tooltips feel sluggish or sticky, especially on touch devices."
   ],
-  "bestPracticeSlugs": [
-    "use-tooltips-for-supplemental-hints-not-essential-instructions-the-ui",
-    "ensure-the-trigger-is-focusable-and-labelled-for-icononly-controls",
-    "keep-content-concise-avoid-interactive-controls-inside-tooltips-prefer",
-    "prefer-when-space-allows-adjust-placement-to-avoid-clipping-and-viewport",
-    "use-sensible-delays-avoid-long-that-make-tooltips-feel-sluggish-or"
-  ],
   "examples": [],
-  "docsUrl": "/components/widgets/TooltipDemo",
   "sourceFiles": [
-    "src/components/widgets/Tooltip.tsx",
-    "docs/src/pages/components/widgets/TooltipDemo.tsx"
+    "src/components/widgets/Tooltip.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.4"
+  "schemaVersion": "1.5"
 }

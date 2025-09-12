@@ -1,0 +1,17 @@
+{
+  "name": "Grid",
+  "status": "experimental",
+  "aliases": ["grid"],
+  "docs": {
+    "bestPractices": [
+      "Use Grid for two‑dimensional layouts like dashboards and galleries; keep rows and columns responsive.",
+      "Constrain item overflow and prefer consistent gaps; avoid nested scroll regions unless intentional.",
+      "Treat tabular data with `Table`; reserve Grid for cards and visual groups.",
+      "Use tokens and presets for spacing and breakpoints; avoid hard‑coding pixel values.",
+      "Keep density readable: don’t cram too many items per row on narrow screens.",
+      "Use `Stack` for simple one‑dimensional layouts; Grid for when both axes matter.",
+      "Mind a11y ordering: visual reflow should not break logical reading order.",
+      "Test at common breakpoints to ensure content doesn’t clip or overlap."
+    ]
+  }
+}

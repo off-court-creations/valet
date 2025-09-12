@@ -11,13 +11,15 @@ import {
   Tabs,
   Table,
   useTheme,
-  Panel,
 } from '@archway/valet';
 import type { TableColumn } from '@archway/valet';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
+import BestPractices from '../../../components/BestPractices';
+import { getBestPractices } from '../../../utils/sidecar';
+import DropzoneMeta from '../../../../../src/components/widgets/Dropzone.meta.json';
 
 export default function DropzoneDemoPage() {
   const { theme, toggleMode } = useTheme();
@@ -153,30 +155,7 @@ export default function DropzoneDemoPage() {
           ← Back
         </Button>
 
-        {/* Best Practices -------------------------------------------------- */}
-        <Panel fullWidth>
-          <Typography variant='h4'>Best Practices</Typography>
-          <Typography>
-            - Be explicit about file types. Set <code>accept</code> to the precise MIME patterns you
-            support and validate on the server; do not rely solely on client hints.
-          </Typography>
-          <Typography>
-            - Communicate limits. If using <code>maxFiles</code> or size limits, reflect them in the
-            UI copy and error handling; provide clear feedback for rejected files.
-          </Typography>
-          <Typography>
-            - Keep previews purposeful. Thumbnails help with images; for other types, prefer a
-            simple file list with clear names and types.
-          </Typography>
-          <Typography>
-            - Accessibility first. Ensure the dropzone is focusable and operable via keyboard; users
-            should be able to choose files without drag‑and‑drop.
-          </Typography>
-          <Typography>
-            - Progressive uploads. For large files or slow networks, show progress and allow cancel;
-            avoid blocking the UI with synchronous work.
-          </Typography>
-        </Panel>
+        <BestPractices items={getBestPractices(DropzoneMeta)} />
       </Stack>
     </Surface>
   );

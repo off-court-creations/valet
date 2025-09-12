@@ -1,0 +1,15 @@
+{
+  "name": "Tree",
+  "status": "experimental",
+  "docs": {
+    "bestPractices": [
+      "Use stable ids. Provide deterministic `id`s for nodes so expanded/selected state can be controlled and persisted across renders.",
+      "Keep labels compact. Tree rows should be glanceable; favor short labels and use variants (`list` or `files`) to convey structure.",
+      "Align behavior with expectations. Support Arrow keys, Enter/Space for selection, and Left/Right to collapse/expand; let double‑click toggle when appropriate.",
+      "Choose control model. Use `expanded` / `onExpandedChange` and `selected` / `onNodeSelect` when external state or routing must drive the tree; otherwise use defaults.",
+      "Avoid over‑nesting. Deep hierarchies are hard to scan; flatten where possible and consider search/filter affordances for large trees.",
+      "Tokenized spacing. Use theme spacing for indentation so density and breakpoints scale predictably."
+    ]
+  }
+}
+

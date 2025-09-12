@@ -1,0 +1,12 @@
+{
+  "name": "Avatar",
+  "status": "experimental",
+  "aliases": ["avatar", "badge", "userpic", "profilepic"],
+  "docs": { "bestPractices": [
+    "Use initials fallback for missing images; ensure background/foreground meet contrast.",
+    "Keep size tokens consistent across lists, menus, and headers.",
+    "Provide alt text or aria-label describing the person or entity.",
+    "Avoid using Avatar for content images; use `Image` instead.",
+    "Group with labels or presence indicators when they add value; avoid redundant decoration."
+  ]}
+}
