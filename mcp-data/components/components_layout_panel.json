@@ -13,35 +13,35 @@
     {
       "name": "variant",
       "type": "",
-      "required": true,
+      "required": false,
       "default": "",
       "description": "Visual style: filled or outlined"
     },
     {
       "name": "fullWidth",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false",
       "description": "Stretch to 100% width"
     },
     {
       "name": "background",
       "type": "string",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Explicit background override"
     },
     {
       "name": "centerContent",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false",
       "description": "Center contents using flexbox"
     },
     {
       "name": "alignX",
       "type": "",
-      "required": true,
+      "required": false,
       "enumValues": [
         "left",
         "right",

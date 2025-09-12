@@ -22,7 +22,8 @@ import type { ReactNode } from 'react';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
 import BestPractices from '../../../components/BestPractices';
-import { getBestPractices } from '../../../utils/sidecar';
+import CuratedExamples from '../../../components/CuratedExamples';
+import { getBestPractices, getExamples } from '../../../utils/sidecar';
 import SelectMeta from '../../../../../src/components/fields/Select.meta.json';
 
 /*───────────────────────────────────────────────────────────*/
@@ -299,6 +300,7 @@ export default function SelectDemoPage() {
             />
           </Tabs.Panel>
         </Tabs>
+        <CuratedExamples examples={getExamples(SelectMeta)} />
         <BestPractices items={getBestPractices(SelectMeta)} />
       </Stack>
     </Surface>

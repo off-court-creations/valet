@@ -32,6 +32,13 @@ function slugFor(name, category) {
   return `components/${category}/${name.toLowerCase()}`;
 }
 
+/**
+ * Properly resolve a component's props whether they come from
+ * - interface <Name>Props { ... }
+ * - type <Name>Props = { ... } | (Alias) | (Union of object types)
+ * and derive required/optional from TypeScript semantics instead of
+ * string regex on text. Uses ts-morph type system where needed.
+ */
 export function extractFromTs(projectRoot) {
   const project = new Project({ tsConfigFilePath: path.join(projectRoot, 'tsconfig.json') });
   project.addSourceFilesAtPaths(path.join(projectRoot, 'src/components/**/*.tsx'));
@@ -71,18 +78,8 @@ export function extractFromTs(projectRoot) {
     const category = guessCategoryFromPath(filePath);
     const cssVars = collectCssVarsFromFile(sf);
 
-    // Find Props interface
-    const ifaceName = `${componentName}Props`;
-    let iface = sf.getInterface(ifaceName);
-    if (!iface) {
-      for (const osf of project.getSourceFiles()) {
-        const cand = osf.getInterface(ifaceName);
-        if (cand) {
-          iface = cand;
-          break;
-        }
-      }
-    }
+    // Resolve Props from interface or type alias
+    const propsName = `${componentName}Props`;
 
     /** @type {import('./schema').ValetProp[]} */
     const props = [];
@@ -96,8 +93,38 @@ export function extractFromTs(projectRoot) {
     /** @type {Array<{ name: string }>} */
     const slots = [];
 
+    // Helper: push a prop if not seen
+    function pushProp(name, typeText, required, extra = {}) {
+      if (!name) return;
+      if (propSet.has(name)) return;
+      propSet.add(name);
+      const cleanType = (typeText || 'any').replace(/\s+/g, ' ').trim();
+      const p = { name, type: cleanType, required, ...extra };
+      props.push(p);
+      // Heuristics from type string for events/slots
+      if (/^on[A-Z]/.test(name) && /=>/.test(cleanType)) {
+        const m = cleanType.match(/\(([^)]*)\)\s*=>/);
+        const firstParam = m ? m[1].split(',')[0]?.trim() : '';
+        const payload = firstParam && firstParam.includes(':') ? firstParam.split(':').slice(1).join(':').trim() : undefined;
+        events.push({ name, payloadType: payload });
+      }
+      if (/React\.(ReactNode|ReactElement)|JSX\.Element|ReactNode|ReactElement/.test(cleanType)) {
+        slots.push({ name });
+      }
+    }
+
+    // 1) Prefer interface
+    let iface = sf.getInterface(propsName);
+    if (!iface) {
+      // Search whole project just in case props are declared elsewhere
+      for (const osf of project.getSourceFiles()) {
+        const cand = osf.getInterface(propsName);
+        if (cand) { iface = cand; break; }
+      }
+    }
+
     if (iface) {
-      // Heritage clauses: extends <...>
+      // DOM passthrough from heritage
       for (const h of iface.getExtends()) {
         const t = h.getText();
         const m = t.match(/React\.ComponentProps<'([^']+)'>/);
@@ -109,43 +136,118 @@ export function extractFromTs(projectRoot) {
       }
       for (const m of iface.getMembers()) {
         if (m.getKind() !== SyntaxKind.PropertySignature) continue;
-        // name
         const nameNode = m.getNameNode();
         const name = nameNode.getText().replace(/\?$/, '');
-        if (propSet.has(name)) continue;
-        propSet.add(name);
-
-        // type
         const typeNode = m.getTypeNode();
-        const type = typeNode ? typeNode.getText() : 'any';
-
-        // required
-        const required = !/\?$/.test(m.getText());
-
+        const typeText = typeNode ? typeNode.getText() : 'any';
+        // Correct required detection: use hasQuestionToken()
+        const required = typeof m.hasQuestionToken === 'function' ? !m.hasQuestionToken() : !/\?$/.test(m.getText());
         // jsdoc deprecation
         let deprecated;
-        const jsdocs = m.getJsDocs();
+        const jsdocs = m.getJsDocs?.();
         if (jsdocs?.length) {
-          const text = jsdocs.map((d) => d.getComment() || '').join('\n');
+          const text = jsdocs.map((d) => d.getComment?.() || '').join('\n');
           if (/deprecated/i.test(text)) deprecated = true;
         }
+        pushProp(name, typeText, required, deprecated ? { deprecated } : {});
+      }
+    } else {
+      // 2) Try type alias resolution, including unions/intersections
+      let aliasDecl = sf.getTypeAlias(propsName);
+      if (!aliasDecl) {
+        for (const osf of project.getSourceFiles()) {
+          const cand = osf.getTypeAlias(propsName);
+          if (cand) { aliasDecl = cand; break; }
+        }
+      }
+      if (aliasDecl) {
+        const aliasType = aliasDecl.getType();
 
-        const cleanType = type.replace(/\s+/g, ' ');
-        props.push({ name, type: cleanType, required, deprecated });
+        // If alias extends React.ComponentProps<'el'> via intersection, sniff text
+        try {
+          const text = aliasDecl.getTypeNode()?.getText() || '';
+          const m = text.match(/React\.ComponentProps<'([^']+)'>/);
+          if (m) {
+            domPassthrough = { element: m[1], omitted: [] };
+            const omit = text.match(/Omit<[^,]+,\s*'([^']+)'>/);
+            if (omit) domPassthrough.omitted = [omit[1]];
+          }
+          // Heuristic: alias mentions intrinsic attribute types
+          const hasInput = /InputHTMLAttributes<|HTMLInputElement/.test(text) || /HTMLInputAttributes/i.test(text);
+          const hasTextarea = /TextareaHTMLAttributes<|HTMLTextAreaElement/.test(text);
+          if (!domPassthrough && (hasInput || hasTextarea)) {
+            domPassthrough = { element: hasInput && hasTextarea ? 'input|textarea' : hasInput ? 'input' : 'textarea', omitted: [] };
+          }
+        } catch {}
 
-        // Event heuristic: onXxx prop as function
-        if (/^on[A-Z]/.test(name) && /=>/.test(cleanType)) {
-          // Try to grab first parameter type if present
-          const m = cleanType.match(/\(([^)]*)\)\s*=>/);
-          const firstParam = m ? m[1].split(',')[0]?.trim() : '';
-          const payload = firstParam && firstParam.includes(':') ? firstParam.split(':').slice(1).join(':').trim() : undefined;
-          events.push({ name, payloadType: payload });
+        // Collect props across alias shapes
+        /** @type {Map<string, { types: Set<string>; requiredCount: number; total: number }>} */
+        const agg = new Map();
+
+        function addPropAgg(name, tText, isRequired) {
+          const key = name;
+          const rec = agg.get(key) || { types: new Set(), requiredCount: 0, total: 0 };
+          if (tText) rec.types.add(tText.replace(/\s+/g, ' ').trim());
+          rec.total += 1;
+          if (isRequired) rec.requiredCount += 1;
+          agg.set(key, rec);
         }
 
-        // Slot heuristic: ReactNode/ReactElement typed props
-        if (/React\.(ReactNode|ReactElement)|JSX\.Element|ReactNode|ReactElement/.test(cleanType)) {
-          slots.push({ name });
+        function collectFromObjectType(t) {
+          try {
+            const props = t.getProperties();
+            for (const sym of props) {
+              const decls = sym.getDeclarations();
+              // prefer PropertySignature
+              const ps = decls.find((d) => d.getKind && d.getKind() === SyntaxKind.PropertySignature) || decls[0];
+              const name = sym.getName();
+              const symType = sym.getTypeAtLocation(ps || aliasDecl);
+              const typeText = symType.getText(ps || aliasDecl);
+              let isRequired = true;
+              try {
+                const propDecl = decls.find((d) => d.getKind && d.getKind() === SyntaxKind.PropertySignature);
+                if (propDecl && typeof propDecl.hasQuestionToken === 'function') {
+                  isRequired = !propDecl.hasQuestionToken();
+                } else if (typeof sym.isOptional === 'function') {
+                  isRequired = !sym.isOptional();
+                }
+              } catch {}
+              addPropAgg(name, typeText, !!isRequired);
+            }
+          } catch {}
         }
+
+        // Handle unions: mark a prop required only if present and required in all variants
+        if (aliasType.isUnion()) {
+          const unionParts = aliasType.getUnionTypes();
+          for (const ut of unionParts) {
+            const obj = ut.getApparentType();
+            collectFromObjectType(obj);
+          }
+        } else if (aliasType.isIntersection()) {
+          const parts = aliasType.getIntersectionTypes();
+          for (const it of parts) collectFromObjectType(it.getApparentType());
+        } else {
+          collectFromObjectType(aliasType.getApparentType());
+        }
+
+        // Write aggregated props with conservative requiredness
+        for (const [name, info] of agg.entries()) {
+          const typeText = Array.from(info.types).join(' | ') || 'any';
+          const required = info.requiredCount > 0 && info.requiredCount === info.total;
+          pushProp(name, typeText, required);
+        }
+
+        // Fallback domPassthrough heuristic based on prop surface
+        try {
+          if (!domPassthrough) {
+            const names = Array.from(agg.keys());
+            const hasTextareaHints = names.includes('rows') || /textarea/i.test((agg.get('as')?.types ? Array.from(agg.get('as').types).join(' ') : ''));
+            const hasInputish = ['onChange','value','placeholder','type','maxLength','minLength'].some((k) => names.includes(k));
+            if (hasTextareaHints && hasInputish) domPassthrough = { element: 'input|textarea', omitted: [] };
+            else if (hasInputish) domPassthrough = { element: 'input', omitted: [] };
+          }
+        } catch {}
       }
     }
 

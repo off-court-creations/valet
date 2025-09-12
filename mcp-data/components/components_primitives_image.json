@@ -18,17 +18,17 @@
     {
       "name": "width",
       "type": "number | string",
-      "required": true
+      "required": false
     },
     {
       "name": "height",
       "type": "number | string",
-      "required": true
+      "required": false
     },
     {
       "name": "objectFit",
       "type": "'cover' | 'contain' | 'fill' | 'none' | 'scale-down'",
-      "required": true,
+      "required": false,
       "default": "'cover'",
       "enumValues": [
         "cover",
@@ -41,23 +41,23 @@
     {
       "name": "rounded",
       "type": "number | string",
-      "required": true
+      "required": false
     },
     {
       "name": "lazy",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false"
     },
     {
       "name": "placeholder",
       "type": "string",
-      "required": true
+      "required": false
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
+      "required": false
     }
   ],
   "cssVars": [],

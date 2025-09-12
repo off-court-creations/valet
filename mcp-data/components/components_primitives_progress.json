@@ -13,56 +13,56 @@
     {
       "name": "variant",
       "type": "'linear' | 'circular'",
-      "required": true,
+      "required": false,
       "default": "'linear'",
       "description": "Visual style of the progress indicator"
     },
     {
       "name": "mode",
       "type": "'determinate' | 'indeterminate' | 'buffer'",
-      "required": true,
+      "required": false,
       "default": "'determinate'",
       "description": "Behavior; buffer applies to linear only"
     },
     {
       "name": "value",
       "type": "number",
-      "required": true,
+      "required": false,
       "default": "0",
       "description": "0–100 value for determinate/buffer foreground"
     },
     {
       "name": "buffer",
       "type": "number",
-      "required": true,
+      "required": false,
       "default": "0",
       "description": "0–100 secondary value (linear-buffer only)"
     },
     {
       "name": "size",
       "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string",
-      "required": true,
+      "required": false,
       "default": "'md'",
       "description": "Token size or custom CSS size"
     },
     {
       "name": "showLabel",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false",
       "description": "Show numeric % inside circular center"
     },
     {
       "name": "color",
       "type": "string",
-      "required": true,
+      "required": false,
       "default": "theme.colors.primary",
       "description": "Override bar/stroke color"
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
+      "required": false
     },
     {
       "name": "preset",

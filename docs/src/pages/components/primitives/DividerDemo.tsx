@@ -5,6 +5,8 @@
 import React, { useState } from 'react';
 import NavDrawer from '../../../components/NavDrawer';
 import BestPractices from '../../../components/BestPractices';
+import CuratedExamples from '../../../components/CuratedExamples';
+import { getExamples } from '../../../utils/sidecar';
 import DividerMeta from '../../../../../src/components/primitives/Divider.meta.json';
 import PageHero from '../../../components/PageHero';
 import {
@@ -284,6 +286,7 @@ export default function DividerDemoPage() {
             />
           </Tabs.Panel>
         </Tabs>
+        <CuratedExamples examples={getExamples(DividerMeta as any)} />
         <BestPractices
           items={(DividerMeta as { docs?: { bestPractices?: string[] } }).docs?.bestPractices}
         />

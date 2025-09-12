@@ -16,7 +16,8 @@ import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
 import BestPractices from '../../../components/BestPractices';
-import { getBestPractices } from '../../../utils/sidecar';
+import CuratedExamples from '../../../components/CuratedExamples';
+import { getBestPractices, getExamples } from '../../../utils/sidecar';
 import SpeedDialMeta from '../../../../../src/components/widgets/SpeedDial.meta.json';
 
 export default function SpeedDialDemoPage() {
@@ -126,6 +127,7 @@ export default function SpeedDialDemoPage() {
           ← Back
         </Button>
 
+        <CuratedExamples examples={getExamples(SpeedDialMeta)} />
         <BestPractices items={getBestPractices(SpeedDialMeta)} />
       </Stack>
     </Surface>

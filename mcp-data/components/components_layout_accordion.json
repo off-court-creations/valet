@@ -12,34 +12,34 @@
     {
       "name": "defaultOpen",
       "type": "number | number[]",
-      "required": true
+      "required": false
     },
     {
       "name": "open",
       "type": "number | number[]",
-      "required": true
+      "required": false
     },
     {
       "name": "multiple",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false"
     },
     {
       "name": "onOpenChange",
       "type": "(open: number[]) => void",
-      "required": true
+      "required": false
     },
     {
       "name": "headingLevel",
       "type": "1 | 2 | 3 | 4 | 5 | 6",
-      "required": true,
+      "required": false,
       "default": "3"
     },
     {
       "name": "constrainHeight",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "true"
     },
     {

@@ -7,7 +7,8 @@ import type { TableColumn } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
 import BestPractices from '../../../components/BestPractices';
-import { getBestPractices } from '../../../utils/sidecar';
+import CuratedExamples from '../../../components/CuratedExamples';
+import { getBestPractices, getExamples } from '../../../utils/sidecar';
 import StackMeta from '../../../../../src/components/layout/Stack.meta.json';
 import type { ReactNode } from 'react';
 
@@ -119,6 +120,7 @@ export default function StackDemoPage() {
           Toggle light / dark
         </Button>
 
+        <CuratedExamples examples={getExamples(StackMeta)} />
         <BestPractices items={getBestPractices(StackMeta)} />
         <Button
           size='lg'

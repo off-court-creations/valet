@@ -13,7 +13,7 @@
     {
       "name": "direction",
       "type": "'row' | 'column'",
-      "required": true,
+      "required": false,
       "default": "'column'",
       "enumValues": [
         "row",
@@ -24,14 +24,14 @@
     {
       "name": "wrap",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false for column, true for row",
       "description": "Allow children to wrap"
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
+      "required": false
     },
     {
       "name": "gap",

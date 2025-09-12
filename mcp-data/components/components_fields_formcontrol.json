@@ -18,12 +18,12 @@
     {
       "name": "onSubmitValues",
       "type": "(values: T, event: React.FormEvent<HTMLFormElement>) => void",
-      "required": true
+      "required": false
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
+      "required": false
     }
   ],
   "cssVars": [],

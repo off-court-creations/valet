@@ -12,23 +12,23 @@
     {
       "name": "open",
       "type": "boolean",
-      "required": true
+      "required": false
     },
     {
       "name": "defaultOpen",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false"
     },
     {
       "name": "onClose",
       "type": "() => void",
-      "required": true
+      "required": false
     },
     {
       "name": "variant",
       "type": "'dialog' | 'alert'",
-      "required": true,
+      "required": false,
       "default": "'dialog'",
       "enumValues": [
         "dialog",
@@ -38,50 +38,50 @@
     {
       "name": "title",
       "type": "ReactNode",
-      "required": true
+      "required": false
     },
     {
       "name": "children",
       "type": "ReactNode",
-      "required": true
+      "required": false
     },
     {
       "name": "actions",
       "type": "ReactNode",
-      "required": true
+      "required": false
     },
     {
       "name": "pad",
       "type": "number | string",
-      "required": true
+      "required": false
     },
     {
       "name": "compact",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false"
     },
     {
       "name": "disableBackdropClick",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false"
     },
     {
       "name": "disableEscapeKeyDown",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false"
     },
     {
       "name": "maxWidth",
       "type": "number | string",
-      "required": true
+      "required": false
     },
     {
       "name": "fullWidth",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false"
     }
   ],

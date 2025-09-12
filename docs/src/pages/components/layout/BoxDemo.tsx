@@ -24,7 +24,8 @@ import { useState } from 'react';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
 import BestPractices from '../../../components/BestPractices';
-import { getBestPractices } from '../../../utils/sidecar';
+import CuratedExamples from '../../../components/CuratedExamples';
+import { getBestPractices, getExamples } from '../../../utils/sidecar';
 import BoxMeta from '../../../../../src/components/layout/Box.meta.json';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
@@ -431,6 +432,7 @@ export default function BoxDemoPage() {
           </Tabs.Panel>
         </Tabs>
 
+        <CuratedExamples examples={getExamples(BoxMeta)} />
         <BestPractices items={getBestPractices(BoxMeta)} />
       </Stack>
     </Surface>

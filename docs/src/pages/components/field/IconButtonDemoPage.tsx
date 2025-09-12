@@ -21,7 +21,8 @@ import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
 import BestPractices from '../../../components/BestPractices';
-import { getBestPractices } from '../../../utils/sidecar';
+import CuratedExamples from '../../../components/CuratedExamples';
+import { getBestPractices, getExamples } from '../../../utils/sidecar';
 import IconButtonMeta from '../../../../../src/components/fields/IconButton.meta.json';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
@@ -288,6 +289,7 @@ export default function IconButtonDemoPage() {
           ← Back
         </Button>
 
+        <CuratedExamples examples={getExamples(IconButtonMeta)} />
         <BestPractices items={getBestPractices(IconButtonMeta)} />
       </Stack>
     </Surface>

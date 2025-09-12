@@ -18,29 +18,29 @@
     {
       "name": "page",
       "type": "number",
-      "required": true,
+      "required": false,
       "default": "1"
     },
     {
       "name": "onChange",
       "type": "(page: number) => void",
-      "required": true
+      "required": false
     },
     {
       "name": "visibleWindow",
       "type": "number",
-      "required": true
+      "required": false
     },
     {
       "name": "autoFollowActive",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "true"
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
+      "required": false
     }
   ],
   "cssVars": [

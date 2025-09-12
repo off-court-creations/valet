@@ -19,7 +19,8 @@ import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
 import BestPractices from '../../../components/BestPractices';
-import { getBestPractices } from '../../../utils/sidecar';
+import CuratedExamples from '../../../components/CuratedExamples';
+import { getBestPractices, getExamples } from '../../../utils/sidecar';
 import SnackbarMeta from '../../../../../src/components/widgets/Snackbar.meta.json';
 import PageHero from '../../../components/PageHero';
 
@@ -203,6 +204,7 @@ export default function SnackbarDemoPage() {
           </Tabs.Panel>
         </Tabs>
 
+        <CuratedExamples examples={getExamples(SnackbarMeta)} />
         <BestPractices items={getBestPractices(SnackbarMeta)} />
 
         {/* Back nav -------------------------------------------------------- */}

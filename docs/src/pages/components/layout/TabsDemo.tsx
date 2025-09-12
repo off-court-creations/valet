@@ -19,7 +19,8 @@ import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
 import BestPractices from '../../../components/BestPractices';
-import { getBestPractices } from '../../../utils/sidecar';
+import CuratedExamples from '../../../components/CuratedExamples';
+import { getBestPractices, getExamples } from '../../../utils/sidecar';
 import TabsMeta from '../../../../../src/components/layout/Tabs.meta.json';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
@@ -357,6 +358,7 @@ export default function TabsDemoPage() {
           </Tabs>
         </Box>
 
+        <CuratedExamples examples={getExamples(TabsMeta)} />
         <BestPractices items={getBestPractices(TabsMeta)} />
 
         {/* Back nav -------------------------------------------------------- */}

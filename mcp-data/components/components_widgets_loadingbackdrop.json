@@ -13,12 +13,12 @@
     {
       "name": "fading",
       "type": "boolean",
-      "required": true
+      "required": false
     },
     {
       "name": "showSpinner",
       "type": "boolean",
-      "required": true
+      "required": false
     }
   ],
   "cssVars": [],

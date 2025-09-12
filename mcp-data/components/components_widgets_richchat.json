@@ -21,61 +21,61 @@
     {
       "name": "onFormSubmit",
       "type": "(value: string, index: number) => void",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Called when a form message submits"
     },
     {
       "name": "onSend",
       "type": "(m: RichMessage) => void",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Called when user sends a message"
     },
     {
       "name": "userAvatar",
       "type": "string",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "URL for user avatar image"
     },
     {
       "name": "systemAvatar",
       "type": "string",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "URL for assistant avatar image"
     },
     {
       "name": "placeholder",
       "type": "string",
-      "required": true,
+      "required": false,
       "default": "'Message…'",
       "description": "Input placeholder"
     },
     {
       "name": "disableInput",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false",
       "description": "Hide the compose bar"
     },
     {
       "name": "constrainHeight",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "true",
       "description": "Fit within surface height"
     },
     {
       "name": "fontFamily",
       "type": "string",
-      "required": true
+      "required": false
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
+      "required": false
     },
     {
       "name": "preset",

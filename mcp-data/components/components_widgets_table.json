@@ -23,22 +23,22 @@
     {
       "name": "striped",
       "type": "boolean",
-      "required": true
+      "required": false
     },
     {
       "name": "hoverable",
       "type": "boolean",
-      "required": true
+      "required": false
     },
     {
       "name": "dividers",
       "type": "boolean",
-      "required": true
+      "required": false
     },
     {
       "name": "selectable",
       "type": "'single' | 'multi' | undefined",
-      "required": true,
+      "required": false,
       "enumValues": [
         "single",
         "multi"
@@ -47,27 +47,27 @@
     {
       "name": "initialSort",
       "type": "{ index: number; desc?: boolean }",
-      "required": true
+      "required": false
     },
     {
       "name": "onSortChange",
       "type": "(index: number, desc: boolean) => void",
-      "required": true
+      "required": false
     },
     {
       "name": "onSelectionChange",
       "type": "(selected: T[]) => void",
-      "required": true
+      "required": false
     },
     {
       "name": "constrainHeight",
       "type": "boolean",
-      "required": true
+      "required": false
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
+      "required": false
     }
   ],
   "cssVars": [

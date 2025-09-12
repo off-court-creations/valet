@@ -11,14 +11,14 @@
     {
       "name": "checked",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Controlled checked state"
     },
     {
       "name": "defaultChecked",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false",
       "description": "Uncontrolled initial state"
     },
@@ -32,28 +32,28 @@
     {
       "name": "label",
       "type": "ReactNode",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Label text or element"
     },
     {
       "name": "size",
       "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string",
-      "required": true,
+      "required": false,
       "default": "'md'",
       "description": "Checkbox dimensions"
     },
     {
       "name": "onChange",
       "type": "(checked: boolean, e: ChangeEvent<HTMLInputElement>) => void",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Change callback"
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
+      "required": false
     },
     {
       "name": "disabled",

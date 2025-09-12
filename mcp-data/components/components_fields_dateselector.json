@@ -13,82 +13,82 @@
     {
       "name": "value",
       "type": "string",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Controlled ISO date value (YYYY-MM-DD)"
     },
     {
       "name": "defaultValue",
       "type": "string",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Initial uncontrolled value"
     },
     {
       "name": "onChange",
       "type": "(value: string) => void",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Fires when selection changes"
     },
     {
       "name": "name",
       "type": "string",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "FormControl field name"
     },
     {
       "name": "minDate",
       "type": "string",
-      "required": true,
+      "required": false,
       "default": "'120y ago'",
       "description": "Earliest selectable date"
     },
     {
       "name": "maxDate",
       "type": "string",
-      "required": true,
+      "required": false,
       "default": "'120y ahead'",
       "description": "Latest selectable date"
     },
     {
       "name": "range",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false",
       "description": "Enable dual start/end selection"
     },
     {
       "name": "endValue",
       "type": "string",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Controlled end date when range is true"
     },
     {
       "name": "defaultEndValue",
       "type": "string",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Uncontrolled end date default"
     },
     {
       "name": "onRangeChange",
       "type": "(start: string, end: string) => void",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Fires when range selection changes"
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
+      "required": false
     },
     {
       "name": "compactMode",
       "type": "'auto' | 'on' | 'off'",
-      "required": true,
+      "required": false,
       "default": "'auto'",
       "enumValues": [
         "auto",
@@ -100,14 +100,14 @@
     {
       "name": "compactThresholdIn",
       "type": "number",
-      "required": true,
+      "required": false,
       "default": "340",
       "description": "Width below which compact turns on (only when compactMode=auto)"
     },
     {
       "name": "compactThresholdOut",
       "type": "number",
-      "required": true,
+      "required": false,
       "default": "380",
       "description": "Width above which compact turns off (only when compactMode=auto)"
     },

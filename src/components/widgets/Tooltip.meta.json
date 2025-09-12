@@ -10,5 +10,25 @@
       "Prefer `placement='top'` when space allows; adjust placement to avoid clipping and viewport edges.",
       "Use sensible delays. Avoid long `enterDelay` / `leaveDelay` that make tooltips feel sluggish or sticky, especially on touch devices."
     ]
-  }
+  },
+  "examples": [
+    {
+      "id": "tooltip-basic",
+      "title": "Default tooltip",
+      "lang": "tsx",
+      "code": "<Tooltip title='Hello'><Button>Hover me</Button></Tooltip>"
+    },
+    {
+      "id": "tooltip-placement-right",
+      "title": "Right placement",
+      "lang": "tsx",
+      "code": "<Tooltip placement='right' title='On the right'><Button>Right</Button></Tooltip>"
+    },
+    {
+      "id": "tooltip-no-arrow",
+      "title": "Arrow off",
+      "lang": "tsx",
+      "code": "<Tooltip arrow={false} title='No arrow'><IconButton icon='mdi:home' /></Tooltip>"
+    }
+  ]
 }

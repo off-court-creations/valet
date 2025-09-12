@@ -12,35 +12,35 @@
     {
       "name": "background",
       "type": "string",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Background colour override. When set to a theme tone (primary/secondary/tertiary), text colour is derived automatically."
     },
     {
       "name": "textColor",
       "type": "string",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Explicit text colour"
     },
     {
       "name": "centerContent",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false",
       "description": "Center inner content using flexbox"
     },
     {
       "name": "fullWidth",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false",
       "description": "Stretch to 100% width of the parent container"
     },
     {
       "name": "alignX",
       "type": "'left' | 'right' | 'center'",
-      "required": true,
+      "required": false,
       "enumValues": [
         "left",
         "right",
@@ -52,13 +52,13 @@
     {
       "name": "centered",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "deprecated": true
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
+      "required": false
     },
     {
       "name": "pad",
@@ -109,43 +109,28 @@
   ],
   "examples": [
     {
-      "id": "box-example-1",
-      "code": "<Box>\n  <Typography>\n    (no props) — inherits parent background, uses theme text colour\n  </Typography>\n</Box>",
+      "id": "box-default",
+      "title": "Default Box",
+      "code": "<Box>\n  <Typography>Content</Typography>\n</Box>",
       "lang": "tsx",
-      "source": {
-        "file": "/home/xbenc/occ/valet/docs/src/pages/components/layout/BoxDemo.tsx"
-      },
       "runnable": true,
-      "minimalProps": {
-        "centered": false,
-        "sx": null
-      }
+      "minimalProps": {}
     },
     {
-      "id": "box-example-2",
-      "code": "<Box\n  background={theme.colors['tertiary']}\n  sx={{\n    border: `2px dashed ${theme.colors['text']}`,\n    padding: theme.spacing(1),\n    borderRadius: 12,\n  }}\n>\n  <Typography>\n    Dashed border, custom radius, padding via <code>sx</code>\n  </Typography>\n</Box>",
+      "id": "box-fullwidth",
+      "title": "Full width with outline",
+      "code": "<Box fullWidth sx={{ border: '1px dashed currentColor', padding: '0.5rem' }}>\n  <Typography>Stretch me</Typography>\n</Box>",
       "lang": "tsx",
-      "source": {
-        "file": "/home/xbenc/occ/valet/docs/src/pages/components/layout/BoxDemo.tsx"
-      },
       "runnable": true,
-      "minimalProps": {
-        "centered": false,
-        "sx": null
-      }
+      "minimalProps": {}
     },
     {
-      "id": "box-example-3",
-      "code": "<Box\n  id=\"hero\"\n  role=\"region\"\n  aria-label=\"Hero banner\"\n  onClick={() => console.log('clicked')}\n  sx={{ border: '1px solid currentColor' }}\n>\n  Content\n</Box>",
+      "id": "box-background",
+      "title": "Background + padding",
+      "code": "<Box background={theme.colors['tertiary']} sx={{ padding: theme.spacing(1) }}>\n  <Typography>Readable on themed background</Typography>\n</Box>",
       "lang": "tsx",
-      "source": {
-        "file": "/home/xbenc/occ/valet/docs/src/pages/components/layout/BoxDemo.tsx"
-      },
       "runnable": true,
-      "minimalProps": {
-        "centered": false,
-        "sx": null
-      }
+      "minimalProps": {}
     }
   ],
   "docsUrl": "/components/layout/BoxDemo",

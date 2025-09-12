@@ -18,7 +18,8 @@ import { useState } from 'react';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
 import BestPractices from '../../../components/BestPractices';
-import { getBestPractices } from '../../../utils/sidecar';
+import CuratedExamples from '../../../components/CuratedExamples';
+import { getBestPractices, getExamples } from '../../../utils/sidecar';
 import CodeBlockMeta from '../../../../../src/components/widgets/CodeBlock.meta.json';
 
 export default function CodeBlockDemoPage() {
@@ -127,6 +128,7 @@ export default function CodeBlockDemoPage() {
             />
           </Tabs.Panel>
         </Tabs>
+        <CuratedExamples examples={getExamples(CodeBlockMeta)} />
         <BestPractices items={getBestPractices(CodeBlockMeta)} />
       </Stack>
     </Surface>

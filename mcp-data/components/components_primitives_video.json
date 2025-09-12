@@ -17,56 +17,56 @@
     {
       "name": "poster",
       "type": "string",
-      "required": true
+      "required": false
     },
     {
       "name": "tracks",
       "type": "VideoTrack[]",
-      "required": true
+      "required": false
     },
     {
       "name": "controls",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "true"
     },
     {
       "name": "autoPlay",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "true"
     },
     {
       "name": "muted",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "true"
     },
     {
       "name": "loop",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false"
     },
     {
       "name": "width",
       "type": "string",
-      "required": true
+      "required": false
     },
     {
       "name": "height",
       "type": "string",
-      "required": true
+      "required": false
     },
     {
       "name": "lazy",
       "type": "boolean",
-      "required": true
+      "required": false
     },
     {
       "name": "objectFit",
       "type": "'contain' | 'cover'",
-      "required": true,
+      "required": false,
       "default": "'contain'",
       "enumValues": [
         "contain",
@@ -76,12 +76,12 @@
     {
       "name": "className",
       "type": "string",
-      "required": true
+      "required": false
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
+      "required": false
     }
   ],
   "cssVars": [],

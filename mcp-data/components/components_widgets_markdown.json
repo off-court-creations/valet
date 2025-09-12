@@ -20,14 +20,14 @@
     {
       "name": "codeBackground",
       "type": "string",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Override background for fenced code blocks"
     },
     {
       "name": "sx",
       "type": "import('../../types').Sx",
-      "required": true
+      "required": false
     }
   ],
   "cssVars": [],

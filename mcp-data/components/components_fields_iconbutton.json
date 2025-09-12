@@ -12,42 +12,42 @@
     {
       "name": "variant",
       "type": "'contained' | 'outlined'",
-      "required": true,
+      "required": false,
       "default": "'contained'",
       "description": "Button style"
     },
     {
       "name": "size",
       "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string",
-      "required": true,
+      "required": false,
       "default": "'md'",
       "description": "Overall button dimensions"
     },
     {
       "name": "icon",
       "type": "string",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Iconify name"
     },
     {
       "name": "svg",
       "type": "string | ReactElement",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Custom SVG content"
     },
     {
       "name": "iconColor",
       "type": "string",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Glyph colour override"
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
+      "required": false
     },
     {
       "name": "preset",

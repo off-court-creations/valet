@@ -14,42 +14,42 @@
     {
       "name": "src",
       "type": "string",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Image URL override"
     },
     {
       "name": "email",
       "type": "string",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Email used for Gravatar lookup"
     },
     {
       "name": "size",
       "type": "'xs' | 's' | 'm' | 'l' | 'xl'",
-      "required": true,
+      "required": false,
       "default": "'m'",
       "description": "Relative size token"
     },
     {
       "name": "variant",
       "type": "'plain' | 'outline'",
-      "required": true,
+      "required": false,
       "default": "'plain'",
       "description": "Visual style variant"
     },
     {
       "name": "gravatarDefault",
       "type": "string",
-      "required": true,
+      "required": false,
       "default": "'identicon'",
       "description": "Fallback style when no avatar exists"
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
+      "required": false
     },
     {
       "name": "alt",

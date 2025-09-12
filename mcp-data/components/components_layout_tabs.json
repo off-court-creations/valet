@@ -11,28 +11,28 @@
     {
       "name": "active",
       "type": "number",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Controlled index of the active tab."
     },
     {
       "name": "defaultActive",
       "type": "number",
-      "required": true,
+      "required": false,
       "default": "0",
       "description": "Uncontrolled initial active tab index."
     },
     {
       "name": "onTabChange",
       "type": "(i: number) => void",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Callback when the active tab changes."
     },
     {
       "name": "orientation",
       "type": "",
-      "required": true,
+      "required": false,
       "default": "",
       "enumValues": [
         "horizontal",
@@ -43,7 +43,7 @@
     {
       "name": "placement",
       "type": "",
-      "required": true,
+      "required": false,
       "enumValues": [
         "top",
         "bottom",
@@ -56,7 +56,7 @@
     {
       "name": "alignX",
       "type": "",
-      "required": true,
+      "required": false,
       "enumValues": [
         "left",
         "right",
@@ -69,7 +69,7 @@
     {
       "name": "sx",
       "type": "object",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Inline style overrides (CSS object; supports CSS vars)."
     },

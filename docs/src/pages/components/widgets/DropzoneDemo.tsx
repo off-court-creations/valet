@@ -18,7 +18,8 @@ import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
 import BestPractices from '../../../components/BestPractices';
-import { getBestPractices } from '../../../utils/sidecar';
+import CuratedExamples from '../../../components/CuratedExamples';
+import { getBestPractices, getExamples } from '../../../utils/sidecar';
 import DropzoneMeta from '../../../../../src/components/widgets/Dropzone.meta.json';
 
 export default function DropzoneDemoPage() {
@@ -155,6 +156,7 @@ export default function DropzoneDemoPage() {
           ← Back
         </Button>
 
+        <CuratedExamples examples={getExamples(DropzoneMeta)} />
         <BestPractices items={getBestPractices(DropzoneMeta)} />
       </Stack>
     </Surface>

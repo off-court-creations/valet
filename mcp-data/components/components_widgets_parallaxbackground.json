@@ -17,35 +17,35 @@
     {
       "name": "mediaType",
       "type": "MediaType",
-      "required": true
+      "required": false
     },
     {
       "name": "poster",
       "type": "string",
-      "required": true
+      "required": false
     },
     {
       "name": "loop",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "true"
     },
     {
       "name": "muted",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "true"
     },
     {
       "name": "autoPlay",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "true"
     },
     {
       "name": "preload",
       "type": "'none' | 'metadata' | 'auto'",
-      "required": true,
+      "required": false,
       "default": "'auto'",
       "enumValues": [
         "none",

@@ -18,7 +18,8 @@ import {
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
 import BestPractices from '../../../components/BestPractices';
-import { getBestPractices } from '../../../utils/sidecar';
+import CuratedExamples from '../../../components/CuratedExamples';
+import { getBestPractices, getExamples } from '../../../utils/sidecar';
 import TooltipMeta from '../../../../../src/components/widgets/Tooltip.meta.json';
 import PageHero from '../../../components/PageHero';
 
@@ -141,6 +142,7 @@ export default function TooltipDemoPage() {
           Toggle light / dark mode
         </Button>
 
+        <CuratedExamples examples={getExamples(TooltipMeta)} />
         <BestPractices items={getBestPractices(TooltipMeta)} />
 
         {/* Back nav --------------------------------------------------------- */}

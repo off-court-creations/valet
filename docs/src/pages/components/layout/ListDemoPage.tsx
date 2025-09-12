@@ -19,7 +19,8 @@ import {
 import type { TableColumn } from '@archway/valet';
 import NavDrawer from '../../../components/NavDrawer';
 import BestPractices from '../../../components/BestPractices';
-import { getBestPractices } from '../../../utils/sidecar';
+import CuratedExamples from '../../../components/CuratedExamples';
+import { getBestPractices, getExamples } from '../../../utils/sidecar';
 import ListMeta from '../../../../../src/components/layout/List.meta.json';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
@@ -273,6 +274,7 @@ const data: Person[] = [
           </Tabs.Panel>
         </Tabs>
 
+        <CuratedExamples examples={getExamples(ListMeta)} />
         <BestPractices items={getBestPractices(ListMeta)} />
       </Stack>
     </Surface>

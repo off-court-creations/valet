@@ -11,28 +11,28 @@
     {
       "name": "columns",
       "type": "number",
-      "required": true,
+      "required": false,
       "default": "2",
       "description": "Number of equal‑width tracks (repeat(n, 1fr))."
     },
     {
       "name": "adaptive",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false",
       "description": "Switch to a single column when the surface is in portrait."
     },
     {
       "name": "compact",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false",
       "description": "Zero out both pad and gap for a tight layout."
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
+      "required": false
     },
     {
       "name": "gap",

@@ -6,7 +6,8 @@ import { Surface, Stack, Typography, Image, Button, useTheme } from '@archway/va
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
 import BestPractices from '../../../components/BestPractices';
-import { getBestPractices } from '../../../utils/sidecar';
+import CuratedExamples from '../../../components/CuratedExamples';
+import { getBestPractices, getExamples } from '../../../utils/sidecar';
 import ImageMeta from '../../../../../src/components/primitives/Image.meta.json';
 import { useNavigate } from 'react-router-dom';
 
@@ -57,6 +58,7 @@ export default function ImageDemoPage() {
           ← Back
         </Button>
 
+        <CuratedExamples examples={getExamples(ImageMeta)} />
         <BestPractices items={getBestPractices(ImageMeta)} />
       </Stack>
     </Surface>

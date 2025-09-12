@@ -21,7 +21,8 @@ import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
 import BestPractices from '../../../components/BestPractices';
-import { getBestPractices } from '../../../utils/sidecar';
+import CuratedExamples from '../../../components/CuratedExamples';
+import { getBestPractices, getExamples } from '../../../utils/sidecar';
 import AvatarMeta from '../../../../../src/components/primitives/Avatar.meta.json';
 import { useState } from 'react';
 
@@ -183,6 +184,7 @@ export default function AvatarDemoPage() {
           ← Back
         </Button>
 
+        <CuratedExamples examples={getExamples(AvatarMeta)} />
         <BestPractices items={getBestPractices(AvatarMeta)} />
       </Stack>
     </Surface>

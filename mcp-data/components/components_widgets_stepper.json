@@ -21,14 +21,14 @@
     {
       "name": "active",
       "type": "number",
-      "required": true,
+      "required": false,
       "default": "0",
       "description": "Index of the active step"
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
+      "required": false
     },
     {
       "name": "preset",

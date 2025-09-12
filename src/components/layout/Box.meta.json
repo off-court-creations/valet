@@ -12,5 +12,25 @@
       "Reuse styles via `preset` (`definePreset()`) instead of duplicating `sx`.",
       "When Box represents a semantic region, add appropriate roles/labels (e.g., `role=\"region\"`, `aria-label`) via DOM passthrough."
     ]
-  }
+  },
+  "examples": [
+    {
+      "id": "box-default",
+      "title": "Default Box",
+      "lang": "tsx",
+      "code": "<Box>\n  <Typography>Content</Typography>\n</Box>"
+    },
+    {
+      "id": "box-fullwidth",
+      "title": "Full width with outline",
+      "lang": "tsx",
+      "code": "<Box fullWidth sx={{ border: '1px dashed currentColor', padding: '0.5rem' }}>\n  <Typography>Stretch me</Typography>\n</Box>"
+    },
+    {
+      "id": "box-background",
+      "title": "Background + padding",
+      "lang": "tsx",
+      "code": "<Box background={theme.colors['tertiary']} sx={{ padding: theme.spacing(1) }}>\n  <Typography>Readable on themed background</Typography>\n</Box>"
+    }
+  ]
 }

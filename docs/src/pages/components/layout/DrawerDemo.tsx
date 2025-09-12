@@ -4,7 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { Surface, Stack, Typography, Button, Drawer, useTheme } from '@archway/valet';
 import PageHero from '../../../components/PageHero';
 import BestPractices from '../../../components/BestPractices';
-import { getBestPractices } from '../../../utils/sidecar';
+import CuratedExamples from '../../../components/CuratedExamples';
+import { getBestPractices, getExamples } from '../../../utils/sidecar';
 import DrawerMeta from '../../../../../src/components/layout/Drawer.meta.json';
 
 export default function DrawerDemoPage() {
@@ -125,6 +126,7 @@ export default function DrawerDemoPage() {
           <Button onClick={() => navigate(-1)}>← Back</Button>
         </Stack>
 
+        <CuratedExamples examples={getExamples(DrawerMeta)} />
         <BestPractices items={getBestPractices(DrawerMeta)} />
       </Stack>
     </Surface>

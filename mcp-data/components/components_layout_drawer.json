@@ -14,71 +14,71 @@
     {
       "name": "open",
       "type": "boolean",
-      "required": true
+      "required": false
     },
     {
       "name": "defaultOpen",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false"
     },
     {
       "name": "anchor",
       "type": "DrawerAnchor",
-      "required": true,
+      "required": false,
       "default": "'left'"
     },
     {
       "name": "onClose",
       "type": "() => void",
-      "required": true
+      "required": false
     },
     {
       "name": "size",
       "type": "number | string",
-      "required": true,
+      "required": false,
       "default": "'16rem'"
     },
     {
       "name": "disableBackdropClick",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false"
     },
     {
       "name": "disableEscapeKeyDown",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false"
     },
     {
       "name": "persistent",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false"
     },
     {
       "name": "adaptive",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false"
     },
     {
       "name": "toggleIcon",
       "type": "string",
-      "required": true,
+      "required": false,
       "default": "'mdi:menu'"
     },
     {
       "name": "closeIcon",
       "type": "string",
-      "required": true,
+      "required": false,
       "default": "'mdi:close'"
     },
     {
       "name": "children",
       "type": "React.ReactNode",
-      "required": true
+      "required": false
     }
   ],
   "cssVars": [],

@@ -138,6 +138,9 @@ function merge(tsMap, docsMap, version, metaMap) {
       ? metaMap[name].docs.bestPractices
       : (docs.bestPractices || []);
 
+    // Examples: prefer curated ones from sidecar meta; optionally only curated
+    const rawExamples = Array.isArray(metaMap?.[name]?.examples) ? metaMap[name].examples : [];
+
     out[name] = {
       name,
       category: ts.category || 'unknown',
@@ -156,7 +159,15 @@ function merge(tsMap, docsMap, version, metaMap) {
       slots: ts.slots || [],
       bestPractices,
       bestPracticeSlugs,
-      examples: (docs.examples || []).map((ex) => ({ ...ex, runnable: ex.runnable ?? true, minimalProps })),
+      examples: rawExamples.map((ex, i) => ({
+        id: ex.id || `${name.toLowerCase()}-ex-${i + 1}`,
+        title: ex.title,
+        code: ex.code,
+        lang: ex.lang || 'tsx',
+        source: ex.source,
+        runnable: ex.runnable ?? true,
+        minimalProps,
+      })),
       docsUrl,
       sourceFiles: [...new Set([...(ts.sourceFiles || []), docs.sourceFile].filter(Boolean))],
       version,

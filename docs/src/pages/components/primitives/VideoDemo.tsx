@@ -4,7 +4,8 @@
 // ─────────────────────────────────────────────────────────────
 import { Surface, Stack, Video, useTheme } from '@archway/valet';
 import BestPractices from '../../../components/BestPractices';
-import { getBestPractices } from '../../../utils/sidecar';
+import CuratedExamples from '../../../components/CuratedExamples';
+import { getBestPractices, getExamples } from '../../../utils/sidecar';
 import VideoMeta from '../../../../../src/components/primitives/Video.meta.json';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
@@ -39,6 +40,7 @@ export default function VideoDemoPage() {
       </Stack>
       {/* Best Practices ---------------------------------------------------- */}
       <Stack sx={{ padding: theme.spacing(1), maxWidth: 1024, margin: '0 auto' }}>
+        <CuratedExamples examples={getExamples(VideoMeta)} />
         <BestPractices items={getBestPractices(VideoMeta)} />
       </Stack>
     </Surface>

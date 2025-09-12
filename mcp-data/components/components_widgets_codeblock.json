@@ -20,21 +20,21 @@
     {
       "name": "language",
       "type": "string",
-      "required": true,
+      "required": false,
       "default": "'typescript'",
       "description": "Highlight.js language key"
     },
     {
       "name": "ariaLabel",
       "type": "string",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Copy button aria-label"
     },
     {
       "name": "title",
       "type": "string",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Copy button tooltip"
     }

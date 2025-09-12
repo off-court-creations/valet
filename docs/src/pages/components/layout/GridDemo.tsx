@@ -19,7 +19,8 @@ import type { TableColumn } from '@archway/valet';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
 import BestPractices from '../../../components/BestPractices';
-import { getBestPractices } from '../../../utils/sidecar';
+import CuratedExamples from '../../../components/CuratedExamples';
+import { getBestPractices, getExamples } from '../../../utils/sidecar';
 import GridMeta from '../../../../../src/components/layout/Grid.meta.json';
 import type { ReactNode } from 'react';
 import { useMemo, useState } from 'react';
@@ -237,6 +238,7 @@ export default function GridDemoPage() {
           </Tabs.Panel>
         </Tabs>
 
+        <CuratedExamples examples={getExamples(GridMeta)} />
         <BestPractices items={getBestPractices(GridMeta)} />
       </Stack>
     </Surface>

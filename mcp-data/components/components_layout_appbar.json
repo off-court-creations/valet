@@ -13,32 +13,32 @@
     {
       "name": "color",
       "type": "AppBarToken | string",
-      "required": true
+      "required": false
     },
     {
       "name": "textColor",
       "type": "AppBarToken | string",
-      "required": true
+      "required": false
     },
     {
       "name": "left",
       "type": "React.ReactNode",
-      "required": true
+      "required": false
     },
     {
       "name": "right",
       "type": "React.ReactNode",
-      "required": true
+      "required": false
     },
     {
       "name": "pad",
       "type": "Space",
-      "required": true
+      "required": false
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
+      "required": false
     }
   ],
   "cssVars": [

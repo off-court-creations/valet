@@ -12,35 +12,35 @@
     {
       "name": "icon",
       "type": "string",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Iconify name"
     },
     {
       "name": "svg",
       "type": "string | ReactElement",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Custom SVG content"
     },
     {
       "name": "size",
       "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string",
-      "required": true,
+      "required": false,
       "default": "'md'",
       "description": "Icon dimensions"
     },
     {
       "name": "color",
       "type": "string",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Colour override"
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
+      "required": false
     },
     {
       "name": "preset",

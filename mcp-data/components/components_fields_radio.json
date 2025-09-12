@@ -20,24 +20,24 @@
     {
       "name": "label",
       "type": "string",
-      "required": true
+      "required": false
     },
     {
       "name": "size",
       "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string",
-      "required": true,
+      "required": false,
       "default": "'md'",
       "description": "Radio size token or custom CSS measurement"
     },
     {
       "name": "children",
       "type": "ReactNode",
-      "required": true
+      "required": false
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
+      "required": false
     },
     {
       "name": "defaultValue",

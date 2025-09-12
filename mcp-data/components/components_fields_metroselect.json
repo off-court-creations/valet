@@ -15,35 +15,35 @@
     {
       "name": "value",
       "type": "string | number | (string | number)[]",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Controlled value (array when multiple)"
     },
     {
       "name": "defaultValue",
       "type": "string | number | (string | number)[]",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Uncontrolled initial value (array when multiple)"
     },
     {
       "name": "gap",
       "type": "number | string",
-      "required": true,
+      "required": false,
       "default": "4",
       "description": "Spacing between tiles (theme units if number)"
     },
     {
       "name": "multiple",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false",
       "description": "Enable selecting more than one option"
     },
     {
       "name": "onChange",
       "type": "(val: Primitive | Primitive[]) => void",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Change handler (array when multiple)"
     },
@@ -57,7 +57,7 @@
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
+      "required": false
     },
     {
       "name": "preset",

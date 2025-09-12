@@ -12,42 +12,42 @@
     {
       "name": "color",
       "type": "'primary' | 'secondary' | 'tertiary' | string",
-      "required": true,
+      "required": false,
       "default": "'primary'",
       "description": "Background palette or custom colour"
     },
     {
       "name": "textColor",
       "type": "'primary' | 'secondary' | 'tertiary' | string",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Label colour override"
     },
     {
       "name": "variant",
       "type": "'contained' | 'outlined'",
-      "required": true,
+      "required": false,
       "default": "'contained'",
       "description": "Visual style"
     },
     {
       "name": "size",
       "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string",
-      "required": true,
+      "required": false,
       "default": "'md'",
       "description": "Overall button size or custom CSS length"
     },
     {
       "name": "fullWidth",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false",
       "description": "Stretch to fill parent width"
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
+      "required": false
     },
     {
       "name": "preset",

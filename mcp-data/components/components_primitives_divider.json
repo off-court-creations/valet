@@ -13,35 +13,35 @@
     {
       "name": "orientation",
       "type": "'horizontal' | 'vertical'",
-      "required": true,
+      "required": false,
       "default": "'horizontal'",
       "description": "Direction of the line separator."
     },
     {
       "name": "lineColor",
       "type": "string",
-      "required": true,
+      "required": false,
       "default": "var(--valet-text-color, theme.colors.text)",
       "description": "Explicit colour. By default, Divider uses the surface text colour via CSS var (falls back to theme.colors.text)."
     },
     {
       "name": "thickness",
       "type": "number | string",
-      "required": true,
+      "required": false,
       "default": "2",
       "description": "Line thickness. Numbers scale the base divider stroke (1 = base, 2 = double) via calc(var(--valet-divider-stroke) * n); strings pass through (e.g., \"2px\")."
     },
     {
       "name": "length",
       "type": "number | string",
-      "required": true,
+      "required": false,
       "default": "'100%'",
       "description": "Length along the main axis. Numbers → px; strings pass through (e.g., \"50%\", \"12rem\")."
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
+      "required": false
     },
     {
       "name": "pad",

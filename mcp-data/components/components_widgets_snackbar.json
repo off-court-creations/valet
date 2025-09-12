@@ -14,42 +14,42 @@
     {
       "name": "open",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false",
       "description": "Controlled visibility flag"
     },
     {
       "name": "onClose",
       "type": "",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Called when fully hidden"
     },
     {
       "name": "autoHideDuration",
       "type": "number | null",
-      "required": true,
+      "required": false,
       "default": "4000",
       "description": "Dismiss after N ms"
     },
     {
       "name": "message",
       "type": "React.ReactNode",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Convenience message"
     },
     {
       "name": "noStack",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false",
       "description": "Disable flex layout"
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
+      "required": false
     },
     {
       "name": "preset",

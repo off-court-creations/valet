@@ -11,63 +11,63 @@
     {
       "name": "value",
       "type": "number",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Controlled value"
     },
     {
       "name": "defaultValue",
       "type": "number",
-      "required": true,
+      "required": false,
       "default": "0",
       "description": "Uncontrolled initial value"
     },
     {
       "name": "onChange",
       "type": "(value: number) => void",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Change handler"
     },
     {
       "name": "name",
       "type": "string",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Form field name"
     },
     {
       "name": "min",
       "type": "number",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Minimum value"
     },
     {
       "name": "max",
       "type": "number",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Maximum value"
     },
     {
       "name": "step",
       "type": "number",
-      "required": true,
+      "required": false,
       "default": "1",
       "description": "Increment step"
     },
     {
       "name": "width",
       "type": "number | string",
-      "required": true,
+      "required": false,
       "default": "'3.5rem'",
       "description": "Field width"
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
+      "required": false
     },
     {
       "name": "disabled",

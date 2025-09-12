@@ -22,49 +22,49 @@
     {
       "name": "defaultExpanded",
       "type": "string[]",
-      "required": true,
+      "required": false,
       "default": "[]",
       "description": "Node ids expanded on mount"
     },
     {
       "name": "expanded",
       "type": "string[]",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Controlled expanded node ids"
     },
     {
       "name": "onExpandedChange",
       "type": "(ids: string[]) => void",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Handle expand/collapse changes"
     },
     {
       "name": "selected",
       "type": "string",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Controlled selected node id"
     },
     {
       "name": "defaultSelected",
       "type": "string",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Uncontrolled starting selection"
     },
     {
       "name": "onNodeSelect",
       "type": "(n: T) => void",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Called when a node is selected"
     },
     {
       "name": "variant",
       "type": "'chevron' | 'list' | 'files'",
-      "required": true,
+      "required": false,
       "enumValues": [
         "chevron",
         "list",
@@ -76,14 +76,14 @@
     {
       "name": "iconToggleOnly",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false",
       "description": "If true, only clicking the expand icon toggles; by default, clicking anywhere on a row with children toggles expand/collapse."
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
+      "required": false
     },
     {
       "name": "preset",

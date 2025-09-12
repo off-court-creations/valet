@@ -22,7 +22,8 @@ import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
 import BestPractices from '../../../components/BestPractices';
-import { getBestPractices } from '../../../utils/sidecar';
+import CuratedExamples from '../../../components/CuratedExamples';
+import { getBestPractices, getExamples } from '../../../utils/sidecar';
 import CheckboxMeta from '../../../../../src/components/fields/Checkbox.meta.json';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
@@ -278,6 +279,7 @@ export default function CheckboxDemoPage() {
         >
           ← Back
         </Button>
+        <CuratedExamples examples={getExamples(CheckboxMeta)} />
         <BestPractices items={getBestPractices(CheckboxMeta)} />
       </Stack>
     </Surface>

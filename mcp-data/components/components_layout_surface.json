@@ -12,24 +12,24 @@
     {
       "name": "fullscreen",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "true"
     },
     {
       "name": "density",
       "type": "Density",
-      "required": true
+      "required": false
     },
     {
       "name": "blockUntilFonts",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false"
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
+      "required": false
     }
   ],
   "cssVars": [

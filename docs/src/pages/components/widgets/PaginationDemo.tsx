@@ -16,7 +16,8 @@ import {
 import type { TableColumn } from '@archway/valet';
 import NavDrawer from '../../../components/NavDrawer';
 import BestPractices from '../../../components/BestPractices';
-import { getBestPractices } from '../../../utils/sidecar';
+import CuratedExamples from '../../../components/CuratedExamples';
+import { getBestPractices, getExamples } from '../../../utils/sidecar';
 import PaginationMeta from '../../../../../src/components/widgets/Pagination.meta.json';
 import PageHero from '../../../components/PageHero';
 
@@ -181,6 +182,7 @@ export default function PaginationDemoPage() {
           </Tabs.Panel>
         </Tabs>
 
+        <CuratedExamples examples={getExamples(PaginationMeta)} />
         <BestPractices items={getBestPractices(PaginationMeta)} />
       </Stack>
     </Surface>

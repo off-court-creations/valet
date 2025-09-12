@@ -12,115 +12,115 @@
     {
       "name": "value",
       "type": "number",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Controlled value"
     },
     {
       "name": "defaultValue",
       "type": "number",
-      "required": true,
+      "required": false,
       "default": "0",
       "description": "Uncontrolled start value"
     },
     {
       "name": "onChange",
       "type": "(value: number) => void",
-      "required": true
+      "required": false
     },
     {
       "name": "min",
       "type": "number",
-      "required": true,
+      "required": false,
       "default": "0",
       "description": "Minimum value"
     },
     {
       "name": "max",
       "type": "number",
-      "required": true,
+      "required": false,
       "default": "100",
       "description": "Maximum value"
     },
     {
       "name": "step",
       "type": "number",
-      "required": true,
+      "required": false,
       "default": "1",
       "description": "Step increment"
     },
     {
       "name": "presets",
       "type": "number[]",
-      "required": true,
+      "required": false,
       "default": "[]",
       "description": "Preset snap points"
     },
     {
       "name": "snap",
       "type": "'none' | 'step' | 'presets'",
-      "required": true,
+      "required": false,
       "default": "'none'",
       "description": "Snap behaviour"
     },
     {
       "name": "precision",
       "type": "number",
-      "required": true,
+      "required": false,
       "default": "0",
       "description": "Decimal places"
     },
     {
       "name": "showValue",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false",
       "description": "Display current value"
     },
     {
       "name": "showMinMax",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false",
       "description": "Display min and max labels"
     },
     {
       "name": "showTicks",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false",
       "description": "Show tick marks"
     },
     {
       "name": "ticks",
       "type": "number[]",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Custom tick positions"
     },
     {
       "name": "name",
       "type": "string",
-      "required": true
+      "required": false
     },
     {
       "name": "size",
       "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string",
-      "required": true,
+      "required": false,
       "default": "'md'",
       "description": "Slider size"
     },
     {
       "name": "disabled",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false",
       "description": "Disable interaction"
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
+      "required": false
     },
     {
       "name": "preset",

@@ -14,35 +14,35 @@
     {
       "name": "variant",
       "type": "'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'body' | 'subtitle' | 'button'",
-      "required": true,
+      "required": false,
       "default": "'body'",
       "description": "Typography style preset (semantic variant)"
     },
     {
       "name": "bold",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false",
       "description": "Deprecated in favor of weight (maps to 700)"
     },
     {
       "name": "italic",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false",
       "description": "Italic font style"
     },
     {
       "name": "weight",
       "type": "number | 'regular' | 'medium' | 'semibold' | 'bold'",
-      "required": true,
+      "required": false,
       "default": "400",
       "description": "Preferred way to set font weight; clamps 100..900"
     },
     {
       "name": "tracking",
       "type": "number | 'tight' | 'normal' | 'loose'",
-      "required": true,
+      "required": false,
       "enumValues": [
         "tight",
         "normal",
@@ -54,7 +54,7 @@
     {
       "name": "leading",
       "type": "number | 'tight' | 'normal' | 'loose'",
-      "required": true,
+      "required": false,
       "enumValues": [
         "tight",
         "normal",
@@ -66,63 +66,63 @@
     {
       "name": "optical",
       "type": "'auto' | number",
-      "required": true,
+      "required": false,
       "default": "'auto'",
       "description": "Optical sizing: CSS font-optical-sizing or opsz axis"
     },
     {
       "name": "fluid",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false",
       "description": "Use clamp() from theme.typographyFluid when available"
     },
     {
       "name": "centered",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false",
       "description": "Center-align and auto-margin element"
     },
     {
       "name": "noSelect",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false",
       "description": "Disable text selection (user-select: none)"
     },
     {
       "name": "fontSize",
       "type": "string",
-      "required": true,
+      "required": false,
       "default": "-",
       "description": "Explicit CSS font-size override"
     },
     {
       "name": "scale",
       "type": "number",
-      "required": true,
+      "required": false,
       "default": "-",
       "description": "Multiply the computed size (after fluid/autoSize)"
     },
     {
       "name": "autoSize",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false",
       "description": "Use breakpoint size for variant (xs–xl)"
     },
     {
       "name": "color",
       "type": "string",
-      "required": true,
+      "required": false,
       "default": "-",
       "description": "Text color; defaults to var(--valet-text-color)"
     },
     {
       "name": "family",
       "type": "'heading' | 'body' | 'mono' | 'button'",
-      "required": true,
+      "required": false,
       "enumValues": [
         "heading",
         "body",
@@ -135,14 +135,14 @@
     {
       "name": "fontFamily",
       "type": "string",
-      "required": true,
+      "required": false,
       "default": "-",
       "description": "Override font family (discouraged; prefer family)"
     },
     {
       "name": "whitespace",
       "type": "'normal' | 'pre' | 'pre-wrap' | 'pre-line'",
-      "required": true,
+      "required": false,
       "default": "'normal'",
       "enumValues": [
         "normal",
@@ -155,7 +155,7 @@
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
+      "required": false
     },
     {
       "name": "preset",
@@ -185,80 +185,7 @@
     "Truncate thoughtfully; prefer wrapping or responsive layout for important content.",
     "Use presets/tokens for consistency across pages and components."
   ],
-  "examples": [
-    {
-      "id": "typography-example-1",
-      "code": "useInitialTheme({\n  typographyFamilies: {\n    heading: {\n      lineHeight: { h1: 1.15, h2: 1.15, h3: 1.15, h4: 1.2, h5: 1.2, h6: 1.2 },\n      letterSpacing: { h1: '-0.02em', h2: '-0.015em', h3: '-0.01em' },\n    },\n    body: { lineHeight: { body: 1.5, subtitle: 1.35 }, letterSpacing: { body: '0em' } },\n    mono: { lineHeight: { body: 1.45 }, letterSpacing: { body: '0em' } },\n    button: { lineHeight: { button: 1 }, letterSpacing: { button: '0.02em' } },\n  },\n});",
-      "lang": "tsx",
-      "source": {
-        "file": "/home/xbenc/occ/valet/docs/src/pages/components/primitives/TypographyDemoPage.tsx"
-      },
-      "runnable": true,
-      "minimalProps": {
-        "sx": null
-      }
-    },
-    {
-      "id": "typography-example-2",
-      "code": "// Fluid tokens in theme\nsetTheme({\n  typographyFluid: {\n    h1: { min: '1.75rem', max: '3rem', vwFrom: 360, vwTo: 1280 },\n    body: { min: '0.95rem', max: '1.1rem', vwFrom: 360, vwTo: 1280 },\n  },\n});\n\n// In component\n<Typography variant=\"h1\" fluid>Fluid headline</Typography>\n<Typography variant=\"body\" tracking=\"tight\" leading={1.5} weight={450}>\n  Tuned paragraph\n</Typography>",
-      "lang": "tsx",
-      "source": {
-        "file": "/home/xbenc/occ/valet/docs/src/pages/components/primitives/TypographyDemoPage.tsx"
-      },
-      "runnable": true,
-      "minimalProps": {
-        "sx": null
-      }
-    },
-    {
-      "id": "typography-example-3",
-      "code": "import '@archway/valet/styles.css';",
-      "lang": "tsx",
-      "source": {
-        "file": "/home/xbenc/occ/valet/docs/src/pages/components/primitives/TypographyDemoPage.tsx"
-      },
-      "runnable": true,
-      "minimalProps": {
-        "sx": null
-      }
-    },
-    {
-      "id": "typography-example-4",
-      "code": "useInitialTheme(\n  {\n    fonts: {\n      heading: { family: 'Kumbh Sans', axes: { wght: { min: 300, max: 800 }, ital: true }, subsets: ['latin'] },\n      body: { family: 'Inter', axes: { wght: [300,400,500,600,700], opsz: [10, 28] }, subsets: ['latin'] },\n      mono: 'JetBrains Mono',\n      button: 'Kumbh Sans',\n    },\n  },\n  [\n    { family: 'Inter', text: 'The quick brown fox 0123456789' }, // extras for speed\n  ],\n  { display: 'swap' }\n);",
-      "lang": "tsx",
-      "source": {
-        "file": "/home/xbenc/occ/valet/docs/src/pages/components/primitives/TypographyDemoPage.tsx"
-      },
-      "runnable": true,
-      "minimalProps": {
-        "sx": null
-      }
-    },
-    {
-      "id": "typography-example-5",
-      "code": "useGoogleFonts([\n  'JetBrains Mono',\n  { family: 'Inter', axes: { wght: { min: 300, max: 800 } }, subsets: ['latin'] },\n]);",
-      "lang": "tsx",
-      "source": {
-        "file": "/home/xbenc/occ/valet/docs/src/pages/components/primitives/TypographyDemoPage.tsx"
-      },
-      "runnable": true,
-      "minimalProps": {
-        "sx": null
-      }
-    },
-    {
-      "id": "typography-example-6",
-      "code": "import { inheritSurfaceFontVars } from '@archway/valet';\n\nconst portalRoot = document.getElementById('portal')!;\ninheritSurfaceFontVars(portalRoot);",
-      "lang": "tsx",
-      "source": {
-        "file": "/home/xbenc/occ/valet/docs/src/pages/components/primitives/TypographyDemoPage.tsx"
-      },
-      "runnable": true,
-      "minimalProps": {
-        "sx": null
-      }
-    }
-  ],
+  "examples": [],
   "docsUrl": "/components/primitives/TypographyDemoPage",
   "sourceFiles": [
     "src/components/primitives/Typography.tsx",

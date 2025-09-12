@@ -13,28 +13,28 @@
     {
       "name": "loading",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "true",
       "description": "Show placeholder while true"
     },
     {
       "name": "variant",
       "type": "'text' | 'rect' | 'circle'",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Override inferred placeholder shape"
     },
     {
       "name": "icon",
       "type": "ReactNode",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Optional icon shown while loading"
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
+      "required": false
     },
     {
       "name": "preset",

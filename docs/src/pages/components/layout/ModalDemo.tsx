@@ -18,7 +18,8 @@ import {
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
 import BestPractices from '../../../components/BestPractices';
-import { getBestPractices } from '../../../utils/sidecar';
+import CuratedExamples from '../../../components/CuratedExamples';
+import { getBestPractices, getExamples } from '../../../utils/sidecar';
 import ModalMeta from '../../../../../src/components/layout/Modal.meta.json';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
@@ -175,6 +176,7 @@ export default function ModalDemoPage() {
           Toggle light / dark mode
         </Button>
 
+        <CuratedExamples examples={getExamples(ModalMeta)} />
         <BestPractices items={getBestPractices(ModalMeta)} />
 
         {/* Back nav -------------------------------------------------------- */}

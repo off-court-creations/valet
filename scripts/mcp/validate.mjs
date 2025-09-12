@@ -37,15 +37,38 @@ function validateComponent(c) {
     }
   }
   const seen = new Set();
+  let requiredCount = 0;
+  let anyCount = 0;
+  let hasDefaultAndRequired = false;
+  let hasHtmlishProps = false;
   for (const p of c.props || []) {
     if (!p || typeof p.name !== 'string') problems.push('prop missing name');
     if (seen.has(p.name)) problems.push(`duplicate prop: ${p.name}`);
     seen.add(p.name);
+    if (p.required) requiredCount++;
+    if (typeof p.type === 'string' && p.type.trim() === 'any') anyCount++;
+    if (p.required && p.default != null) hasDefaultAndRequired = true;
+    if (['onClick','id','className','style','role','aria-label'].includes(p.name)) hasHtmlishProps = true;
   }
   const allowedCats = new Set(['primitives', 'fields', 'layout', 'widgets']);
   if (c.category && !allowedCats.has(c.category)) {
     // Allow unknown but flag it
     problems.push(`unknown category: ${c.category}`);
+  }
+  // Heuristics/warnings
+  if ((c.props || []).length === 0 && c.category && c.category !== 'primitives') {
+    problems.push('warn: no props extracted (suspicious for non-primitive component)');
+  }
+  if ((c.props || []).length >= 4) {
+    const ratio = requiredCount / (c.props || []).length;
+    if (ratio > 0.7) problems.push(`warn: unusually high required prop ratio (${Math.round(ratio*100)}%)`);
+  }
+  if (hasDefaultAndRequired) problems.push('warn: some props are marked required but have defaults (likely optional at callsite)');
+  if ((c.props || []).length > 0 && anyCount >= Math.ceil((c.props || []).length / 2)) {
+    problems.push('warn: many props have type any');
+  }
+  if (!c.domPassthrough && hasHtmlishProps) {
+    problems.push('warn: html-like props present but domPassthrough is missing');
   }
   return problems;
 }
@@ -69,13 +92,23 @@ function main() {
     const doc = readJSON(file);
     const probs = validateComponent(doc);
     for (const p of probs) {
-      const level = p.startsWith('unknown category') ? 'warn' : 'error';
+      const isWarnPrefix = typeof p === 'string' && p.startsWith('warn:');
+      const level = p.startsWith('unknown category') || isWarnPrefix ? 'warn' : 'error';
       if (level === 'warn') warnings++; else errors++;
-      console[level === 'warn' ? 'warn' : 'error'](`[${level}] ${item.name}: ${p}`);
+      const msg = isWarnPrefix ? p.replace(/^warn:\s*/, '') : p;
+      console[level === 'warn' ? 'warn' : 'error'](`[${level}] ${item.name}: ${msg}`);
     }
     if (doc.schemaVersion && meta.schemaVersion && doc.schemaVersion !== meta.schemaVersion) {
       console.warn(`[warn] ${item.name}: schemaVersion ${doc.schemaVersion} != meta ${meta.schemaVersion}`);
       warnings++;
+    }
+    // Curated examples policy
+    if (doc.docsUrl) {
+      const hasExamples = Array.isArray(doc.examples) && doc.examples.length > 0;
+      if (!hasExamples) {
+        console.warn(`[warn] ${item.name}: docsUrl present but no examples`);
+        warnings++;
+      }
     }
   }
   // Component synonyms validation

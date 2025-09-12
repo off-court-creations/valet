@@ -19,7 +19,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
 import BestPractices from '../../../components/BestPractices';
-import { getBestPractices } from '../../../utils/sidecar';
+import CuratedExamples from '../../../components/CuratedExamples';
+import { getBestPractices, getExamples } from '../../../utils/sidecar';
 import TreeMeta from '../../../../../src/components/widgets/Tree.meta.json';
 import PageHero from '../../../components/PageHero';
 
@@ -225,6 +226,7 @@ export default function TreeDemoPage() {
           </Tabs.Panel>
         </Tabs>
 
+        <CuratedExamples examples={getExamples(TreeMeta)} />
         <BestPractices items={getBestPractices(TreeMeta)} />
 
         <Button

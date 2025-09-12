@@ -28,7 +28,7 @@
     {
       "name": "direction",
       "type": "'up' | 'down' | 'left' | 'right'",
-      "required": true,
+      "required": false,
       "default": "'up'",
       "enumValues": [
         "up",

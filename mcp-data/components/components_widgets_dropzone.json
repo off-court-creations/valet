@@ -13,63 +13,63 @@
     {
       "name": "accept",
       "type": "DropzoneOptions['accept']",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Allowed file types"
     },
     {
       "name": "showPreviews",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "true",
       "description": "Show preview thumbnails"
     },
     {
       "name": "showFileList",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false",
       "description": "Show icons and names"
     },
     {
       "name": "onFilesChange",
       "type": "(files: File[]) => void",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Called when accepted files change"
     },
     {
       "name": "maxFiles",
       "type": "number",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Maximum file count"
     },
     {
       "name": "multiple",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "true",
       "description": "Allow multiple file selection"
     },
     {
       "name": "onDrop",
       "type": "DropzoneOptions['onDrop']",
-      "required": true,
+      "required": false,
       "default": "—",
       "description": "Low-level drop callback"
     },
     {
       "name": "fullWidth",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false",
       "description": "Stretch to fill parent width"
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
+      "required": false
     },
     {
       "name": "preset",

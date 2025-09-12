@@ -19,7 +19,8 @@ import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
 import BestPractices from '../../../components/BestPractices';
-import { getBestPractices } from '../../../utils/sidecar';
+import CuratedExamples from '../../../components/CuratedExamples';
+import { getBestPractices, getExamples } from '../../../utils/sidecar';
 import IconMeta from '../../../../../src/components/primitives/Icon.meta.json';
 import PageHero from '../../../components/PageHero';
 import mymoSVG from '../../../assets/mygymlogo.svg?raw';
@@ -245,6 +246,7 @@ export default function IconDemoPage() {
           ← Back
         </Button>
 
+        <CuratedExamples examples={getExamples(IconMeta)} />
         <BestPractices items={getBestPractices(IconMeta)} />
       </Stack>
     </Surface>
