@@ -9,77 +9,23 @@ import {
   Grid,
   Box,
   Tabs,
-  Table,
   useTheme,
   Iterator,
   Switch,
   Divider,
 } from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
+import ReferenceSection from '../../../components/ReferenceSection';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
 import BestPractices from '../../../components/BestPractices';
 import CuratedExamples from '../../../components/CuratedExamples';
 import { getBestPractices, getExamples } from '../../../utils/sidecar';
 import GridMeta from '../../../../../src/components/layout/Grid.meta.json';
-import type { ReactNode } from 'react';
+import type {} from 'react';
 import { useMemo, useState } from 'react';
 
 export default function GridDemoPage() {
   const { theme } = useTheme();
-
-  interface Row {
-    prop: ReactNode;
-    type: ReactNode;
-    default: ReactNode;
-    description: ReactNode;
-  }
-
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const data: Row[] = [
-    {
-      prop: <code>columns</code>,
-      type: <code>number</code>,
-      default: <code>2</code>,
-      description: 'Number of equal‑width tracks (repeat(n, 1fr)).',
-    },
-    {
-      prop: <code>gap</code>,
-      type: <code>number | string</code>,
-      default: <code>1</code>,
-      description: 'Space between cells. Numbers map via theme.spacing(n); strings pass through.',
-    },
-    {
-      prop: <code>pad</code>,
-      type: <code>number | string</code>,
-      default: <code>1</code>,
-      description: 'Inner padding for the grid container. Same mapping as gap.',
-    },
-    {
-      prop: <code>compact</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Zero out both pad and gap for a tight layout.',
-    },
-    {
-      prop: <code>adaptive</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Switch to a single column when the surface is in portrait.',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Apply style presets via definePreset/preset registry.',
-    },
-  ];
 
   return (
     <Surface>
@@ -229,12 +175,7 @@ export default function GridDemoPage() {
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant='h3'>Prop reference</Typography>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
+            <ReferenceSection slug='components/layout/grid' />
           </Tabs.Panel>
         </Tabs>
 

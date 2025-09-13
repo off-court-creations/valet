@@ -13,10 +13,8 @@ import {
   useTheme,
   definePreset,
   Tabs,
-  Table,
 } from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
-import type { ReactNode } from 'react';
+import ReferenceSection from '../../../components/ReferenceSection';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
@@ -58,64 +56,6 @@ const HeartSvg = (
 export default function IconButtonDemoPage() {
   const { theme, toggleMode } = useTheme();
   const navigate = useNavigate();
-
-  interface Row {
-    prop: ReactNode;
-    type: ReactNode;
-    default: ReactNode;
-    description: ReactNode;
-  }
-
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const data: Row[] = [
-    {
-      prop: <code>variant</code>,
-      type: <code>&apos;contained&apos; | &apos;outlined&apos;</code>,
-      default: <code>&apos;contained&apos;</code>,
-      description: 'Button style',
-    },
-    {
-      prop: <code>size</code>,
-      type: (
-        <code>
-          &apos;xs&apos; | &apos;sm&apos; | &apos;md&apos; | &apos;lg&apos; | &apos;xl&apos; |
-          number | string
-        </code>
-      ),
-      default: <code>&apos;md&apos;</code>,
-      description: 'Overall button dimensions',
-    },
-    {
-      prop: <code>icon</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Iconify name',
-    },
-    {
-      prop: <code>svg</code>,
-      type: <code>string | ReactElement</code>,
-      default: <code>—</code>,
-      description: 'Custom SVG content',
-    },
-    {
-      prop: <code>iconColor</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Glyph colour override',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Apply style presets',
-    },
-  ];
 
   return (
     <Surface>
@@ -271,12 +211,7 @@ export default function IconButtonDemoPage() {
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant='h3'>Prop reference</Typography>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
+            <ReferenceSection slug='components/fields/iconbutton' />
           </Tabs.Panel>
         </Tabs>
 

@@ -2,7 +2,8 @@
 // src/pages/ImageDemo.tsx | valet-docs
 // Showcase of Image component
 // ─────────────────────────────────────────────────────────────
-import { Surface, Stack, Typography, Image, Button, useTheme } from '@archway/valet';
+import { Surface, Stack, Typography, Image, Button, useTheme, Tabs } from '@archway/valet';
+import ReferenceSection from '../../../components/ReferenceSection';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
 import BestPractices from '../../../components/BestPractices';
@@ -21,34 +22,44 @@ export default function ImageDemoPage() {
       <Stack>
         <PageHero title='Image' />
 
-        <Typography variant='h3'>1. Basic usage</Typography>
-        <Image
-          src='https://picsum.photos/400/300'
-          alt='Kitten'
-          width='100%'
-          height='auto'
-          rounded={8}
-        />
+        <Tabs>
+          <Tabs.Tab label='Usage' />
+          <Tabs.Panel>
+            <Typography variant='h3'>1. Basic usage</Typography>
+            <Image
+              src='https://picsum.photos/400/300'
+              alt='Kitten'
+              width='100%'
+              height='auto'
+              rounded={8}
+            />
 
-        <Typography variant='h3'>2. Lazy loaded</Typography>
-        <Image
-          src='https://picsum.photos/400/300'
-          alt='Lazy kitten'
-          width='100%'
-          height='300px'
-          lazy
-          placeholder='https://placehold.co/10x10'
-        />
+            <Typography variant='h3'>2. Lazy loaded</Typography>
+            <Image
+              src='https://picsum.photos/400/300'
+              alt='Lazy kitten'
+              width='100%'
+              height='300px'
+              lazy
+              placeholder='https://placehold.co/10x10'
+            />
 
-        <Typography variant='h3'>3. Contain fit</Typography>
-        <Image
-          src='https://picsum.photos/400/300'
-          alt='Contained kitten'
-          width='100%'
-          height='300px'
-          objectFit='contain'
-          sx={{ background: '#0003' }}
-        />
+            <Typography variant='h3'>3. Contain fit</Typography>
+            <Image
+              src='https://picsum.photos/400/300'
+              alt='Contained kitten'
+              width='100%'
+              height='300px'
+              objectFit='contain'
+              sx={{ background: '#0003' }}
+            />
+          </Tabs.Panel>
+
+          <Tabs.Tab label='Reference' />
+          <Tabs.Panel>
+            <ReferenceSection slug='components/primitives/image' />
+          </Tabs.Panel>
+        </Tabs>
 
         <Button
           size='lg'

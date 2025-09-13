@@ -11,12 +11,10 @@ import {
   Image,
   Button,
   Tabs,
-  Table,
   Icon,
   useTheme,
 } from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
-import type { ReactNode } from 'react';
+import ReferenceSection from '../../../components/ReferenceSection';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
@@ -29,47 +27,6 @@ export default function SkeletonDemoPage() {
   const { theme } = useTheme();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-
-  interface Row {
-    prop: ReactNode;
-    type: ReactNode;
-    default: ReactNode;
-    description: ReactNode;
-  }
-
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const data: Row[] = [
-    {
-      prop: <code>loading</code>,
-      type: <code>boolean</code>,
-      default: <code>true</code>,
-      description: 'Show placeholder while true',
-    },
-    {
-      prop: <code>variant</code>,
-      type: <code>&#39;text&#39; | &#39;rect&#39; | &#39;circle&#39;</code>,
-      default: <code>—</code>,
-      description: 'Override inferred placeholder shape',
-    },
-    {
-      prop: <code>icon</code>,
-      type: <code>ReactNode</code>,
-      default: <code>—</code>,
-      description: 'Optional icon shown while loading',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Apply style presets',
-    },
-  ];
 
   return (
     <Surface>
@@ -160,12 +117,7 @@ export default function SkeletonDemoPage() {
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant='h3'>Prop reference</Typography>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
+            <ReferenceSection slug='components/primitives/skeleton' />
           </Tabs.Panel>
         </Tabs>
 

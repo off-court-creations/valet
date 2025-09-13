@@ -10,13 +10,13 @@ import {
   Typography,
   List,
   Tabs,
-  Table,
   Switch,
   Button,
   useTheme,
   CodeBlock,
 } from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
+
+import ReferenceSection from '../../../components/ReferenceSection';
 import NavDrawer from '../../../components/NavDrawer';
 import BestPractices from '../../../components/BestPractices';
 import CuratedExamples from '../../../components/CuratedExamples';
@@ -53,20 +53,9 @@ export default function ListDemoPage() {
 
   const orderLabel = useMemo(() => items.map((i) => i.name).join(' → '), [items]);
 
-  // Reference table
-  interface Row {
-    prop: React.ReactNode;
-    type: React.ReactNode;
-    default: React.ReactNode;
-    description: React.ReactNode;
-  }
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-  const data: Row[] = [
+  // Reference handled by ReferenceSection
+  /*
+  const data: never[] = [
     {
       prop: <code>data</code>,
       type: <code>T[]</code>,
@@ -140,6 +129,7 @@ export default function ListDemoPage() {
       description: 'Apply style presets.',
     },
   ];
+  */
 
   const usage = `import { List } from '@archway/valet';
 
@@ -266,11 +256,7 @@ const data: Person[] = [
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
+            <ReferenceSection slug='components/layout/list' />
           </Tabs.Panel>
         </Tabs>
 

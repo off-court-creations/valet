@@ -2,7 +2,7 @@
 // src/components/primitives/Progress.tsx  | valet
 // strict-optional clean build
 // ─────────────────────────────────────────────────────────────
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useLayoutEffect, useRef, useState } from 'react';
 import { styled, keyframes } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
@@ -15,7 +15,7 @@ export type ProgressMode = 'determinate' | 'indeterminate' | 'buffer';
 export type ProgressSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 export interface ProgressProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children' | 'style'>,
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'>,
     Presettable {
   /** Linear (default) or Circular. */
   variant?: ProgressVariant;
@@ -33,6 +33,12 @@ export interface ProgressProps
   color?: string | undefined;
   /** Inline styles (with CSS var support) */
   sx?: Sx;
+  /** Optional child to center inside Circular progress (e.g., an IconButton). */
+  children?: React.ReactNode;
+  /** When circular and children are present, size ring to child automatically. */
+  fitChild?: boolean;
+  /** Extra clearance around child (px). Negative removes tiny gaps. */
+  childClearance?: number;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -125,6 +131,17 @@ const CenterLabel = styled('span')<{ $font: string }>`
   pointer-events: none;
 `;
 
+/* center content slot (interactive, overlays SVG) */
+const CenterSlot = styled('div')`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+`;
+
 // ─── Linear ───────────────────────────────────────────────
 const Track = styled('div')<{ $h: string }>`
   width: 100%;
@@ -167,6 +184,9 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
       preset: p,
       className,
       sx,
+      children,
+      fitChild,
+      childClearance,
       ...divProps
     },
     ref,
@@ -194,11 +214,32 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
     /* CIRCULAR                                                */
     /*─────────────────────────────────────────────────────────*/
     if (variant === 'circular') {
+      const centerRef = useRef<HTMLDivElement | null>(null);
+      const [autoBoxPx, setAutoBoxPx] = useState<number | null>(null);
+
+      const shouldFit = (fitChild ?? true) && !!children && (size === undefined || typeof size !== 'number' && !(tokens.circular as any)[size as ProgressSize]);
+
+      useLayoutEffect(() => {
+        if (!shouldFit) return;
+        const el = centerRef.current;
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        const childD = Math.max(rect.width, rect.height);
+        const clearance = childClearance ?? -0.5; // slight negative to avoid visible gap
+        const inner = childD + 2 * clearance;
+        const ring = inner * (4 / 3);
+        if (!Number.isNaN(ring) && ring > 0) setAutoBoxPx(ring);
+      }, [shouldFit, children, childClearance]);
+
       let box: string;
       let boxPx: number;
       let strokePx: number;
 
-      if (typeof size === 'number') {
+      if (shouldFit && autoBoxPx != null) {
+        boxPx = autoBoxPx;
+        box = `${boxPx}px`;
+        strokePx = boxPx / 8;
+      } else if (typeof size === 'number') {
         boxPx = size;
         box = `${boxPx}px`;
         strokePx = boxPx / 8;
@@ -263,8 +304,13 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
                 {...circleProps}
               />
             </svg>
-            {showLabel && mode !== 'indeterminate' && (
-              <CenterLabel $font={theme.typography.body.md}>{Math.round(value)}%</CenterLabel>
+            {children ? (
+              <CenterSlot ref={centerRef}>{children}</CenterSlot>
+            ) : (
+              showLabel &&
+              mode !== 'indeterminate' && (
+                <CenterLabel $font={theme.typography.body.md}>{Math.round(value)}%</CenterLabel>
+              )
             )}
           </CircleWrap>
         </Root>

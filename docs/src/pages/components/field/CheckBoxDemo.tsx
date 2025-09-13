@@ -14,10 +14,8 @@ import {
   createFormStore,
   useTheme,
   Tabs,
-  Table,
 } from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
-import type { ReactNode } from 'react';
+import ReferenceSection from '../../../components/ReferenceSection';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
@@ -41,76 +39,6 @@ export default function CheckboxDemoPage() {
 
   /* Controlled example state --------------------------------------------- */
   const [newsletter, setNewsletter] = useState(false);
-
-  interface Row {
-    prop: ReactNode;
-    type: ReactNode;
-    default: ReactNode;
-    description: ReactNode;
-  }
-
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const data: Row[] = [
-    {
-      prop: <code>name</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Unique field name',
-    },
-    {
-      prop: <code>label</code>,
-      type: <code>ReactNode</code>,
-      default: <code>—</code>,
-      description: 'Label text or element',
-    },
-    {
-      prop: <code>checked</code>,
-      type: <code>boolean</code>,
-      default: <code>—</code>,
-      description: 'Controlled checked state',
-    },
-    {
-      prop: <code>defaultChecked</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Uncontrolled initial state',
-    },
-    {
-      prop: <code>size</code>,
-      type: (
-        <code>
-          &apos;xs&apos; | &apos;sm&apos; | &apos;md&apos; | &apos;lg&apos; | &apos;xl&apos; |
-          number | string
-        </code>
-      ),
-      default: <code>&apos;md&apos;</code>,
-      description: 'Checkbox dimensions',
-    },
-    {
-      prop: <code>disabled</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Disable interaction',
-    },
-    {
-      prop: <code>onChange</code>,
-      type: <code>(checked: boolean, e: ChangeEvent&lt;HTMLInputElement&gt;) =&gt; void</code>,
-      default: <code>—</code>,
-      description: 'Change callback',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Apply style presets',
-    },
-  ];
 
   /* Form submit handler --------------------------------------------------- */
   const handleSubmit = (values: { terms: boolean; marketing: boolean }) => {
@@ -262,12 +190,7 @@ export default function CheckboxDemoPage() {
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant='h3'>Prop reference</Typography>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
+            <ReferenceSection slug='components/fields/checkbox' />
           </Tabs.Panel>
         </Tabs>
 

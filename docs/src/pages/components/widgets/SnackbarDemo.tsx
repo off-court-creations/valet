@@ -12,10 +12,8 @@ import {
   useSnackbar,
   useTheme,
   Tabs,
-  Table,
 } from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
-import type { ReactNode } from 'react';
+import ReferenceSection from '../../../components/ReferenceSection';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
 import BestPractices from '../../../components/BestPractices';
@@ -50,59 +48,6 @@ export default function SnackbarDemoPage() {
   const [autoOpen, setAutoOpen] = useState(false);
   const [ctrlOpen, setCtrlOpen] = useState(false);
   const [noStackOpen, setNoStackOpen] = useState(false);
-
-  interface Row {
-    prop: ReactNode;
-    type: ReactNode;
-    default: ReactNode;
-    description: ReactNode;
-  }
-
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const data: Row[] = [
-    {
-      prop: <code>open</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Controlled visibility flag',
-    },
-    {
-      prop: <code>onClose</code>,
-      type: <code>{'() => void'}</code>,
-      default: <code>—</code>,
-      description: 'Called when fully hidden',
-    },
-    {
-      prop: <code>autoHideDuration</code>,
-      type: <code>number | null</code>,
-      default: <code>4000</code>,
-      description: 'Dismiss after N ms',
-    },
-    {
-      prop: <code>message</code>,
-      type: <code>React.ReactNode</code>,
-      default: <code>—</code>,
-      description: 'Convenience message',
-    },
-    {
-      prop: <code>noStack</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Disable flex layout',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Apply style presets',
-    },
-  ];
 
   return (
     <Surface>
@@ -195,12 +140,7 @@ export default function SnackbarDemoPage() {
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant='h3'>Prop reference</Typography>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
+            <ReferenceSection slug='components/widgets/snackbar' />
           </Tabs.Panel>
         </Tabs>
 

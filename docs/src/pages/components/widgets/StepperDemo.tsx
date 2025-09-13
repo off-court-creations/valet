@@ -1,8 +1,7 @@
 // src/pages/StepperDemo.tsx
 import { useState } from 'react';
-import { Surface, Stack, Typography, Button, Stepper, useTheme, Tabs, Table } from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
-import type { ReactNode } from 'react';
+import { Surface, Stack, Button, Stepper, useTheme, Tabs } from '@archway/valet';
+import ReferenceSection from '../../../components/ReferenceSection';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
 import BestPractices from '../../../components/BestPractices';
@@ -17,41 +16,6 @@ export default function StepperDemoPage() {
   const [active, setActive] = useState(0);
 
   const steps = ['First', 'Second', 'Third'];
-
-  interface Row {
-    prop: ReactNode;
-    type: ReactNode;
-    default: ReactNode;
-    description: ReactNode;
-  }
-
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const data: Row[] = [
-    {
-      prop: <code>steps</code>,
-      type: <code>React.ReactNode[]</code>,
-      default: <code>—</code>,
-      description: 'Labels for each step',
-    },
-    {
-      prop: <code>active</code>,
-      type: <code>number</code>,
-      default: <code>0</code>,
-      description: 'Index of the active step',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Apply style presets',
-    },
-  ];
 
   return (
     <Surface>
@@ -84,12 +48,7 @@ export default function StepperDemoPage() {
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant='h3'>Prop reference</Typography>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
+            <ReferenceSection slug='components/widgets/stepper' />
           </Tabs.Panel>
         </Tabs>
 

@@ -4,20 +4,11 @@
 // column-dividers, and single / multi-row selection toggles, now strict-TS safe
 // ─────────────────────────────────────────────────────────────────────────────
 import { useMemo, useState } from 'react';
-import {
-  Surface,
-  Stack,
-  Panel,
-  TextField,
-  Checkbox,
-  IconButton,
-  Table,
-  Button,
-  useTheme,
-} from '@archway/valet';
+import { Surface, Stack, Panel, TextField, Checkbox, IconButton, Table, Button, useTheme, Tabs } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
 import PageHero from '../../../components/PageHero';
 import BestPractices from '../../../components/BestPractices';
+import ReferenceSection from '../../../components/ReferenceSection';
 // Sidecar best practices (JSON) – allowed via Vite fs.allow
 import TableMeta from '../../../../../src/components/widgets/Table.meta.json';
 import type { TableColumn } from '@archway/valet';
@@ -108,99 +99,109 @@ export default function TableDemoPage() {
       <Stack>
         <PageHero title='Table' />
 
-        {/* Controls --------------------------------------------------------- */}
-        <Panel
-          variant='alt'
-          fullWidth
-        >
-          <Stack
-            direction='row'
-            sx={{ flexWrap: 'wrap', alignItems: 'flex-end' }}
-          >
-            <TextField
-              as='input'
-              type='number'
-              name='rows'
-              label='Rows'
-              min={1}
-              max={500}
-              value={rows}
-              onChange={(e) =>
-                setRows(Math.max(1, Math.min(500, Number((e.target as HTMLInputElement).value))))
-              }
-              sx={{ width: 120 }}
-            />
+        <Tabs>
+          <Tabs.Tab label='Usage' />
+          <Tabs.Panel>
+            {/* Controls --------------------------------------------------------- */}
+            <Panel
+              variant='alt'
+              fullWidth
+            >
+              <Stack
+                direction='row'
+                sx={{ flexWrap: 'wrap', alignItems: 'flex-end' }}
+              >
+                <TextField
+                  as='input'
+                  type='number'
+                  name='rows'
+                  label='Rows'
+                  min={1}
+                  max={500}
+                  value={rows}
+                  onChange={(e) =>
+                    setRows(Math.max(1, Math.min(500, Number((e.target as HTMLInputElement).value))))
+                  }
+                  sx={{ width: 120 }}
+                />
 
-            <Checkbox
-              name='striped'
-              checked={striped}
-              onChange={setStriped}
-              label='Striped rows'
-            />
-            <Checkbox
-              name='hover'
-              checked={hoverable}
-              onChange={setHoverable}
-              label='Row hover'
-            />
-            <Checkbox
-              name='lines'
-              checked={dividers}
-              onChange={setDividers}
-              label='Column dividers'
-            />
+                <Checkbox
+                  name='striped'
+                  checked={striped}
+                  onChange={setStriped}
+                  label='Striped rows'
+                />
+                <Checkbox
+                  name='hover'
+                  checked={hoverable}
+                  onChange={setHoverable}
+                  label='Row hover'
+                />
+                <Checkbox
+                  name='lines'
+                  checked={dividers}
+                  onChange={setDividers}
+                  label='Column dividers'
+                />
 
-            <Checkbox
-              name='enableSel'
-              checked={selEnabled}
-              onChange={(c) => {
-                setSelEnabled(c);
-                if (!c) setMultiSelect(false); // reset multi when disabling
-              }}
-              label='Enable selection'
-            />
-            <Checkbox
-              name='multiSel'
-              checked={multiSelect}
-              disabled={!selEnabled}
-              onChange={setMultiSelect}
-              label='Multi-select'
-            />
+                <Checkbox
+                  name='enableSel'
+                  checked={selEnabled}
+                  onChange={(c) => {
+                    setSelEnabled(c);
+                    if (!c) setMultiSelect(false); // reset multi when disabling
+                  }}
+                  label='Enable selection'
+                />
+                <Checkbox
+                  name='multiSel'
+                  checked={multiSelect}
+                  disabled={!selEnabled}
+                  onChange={setMultiSelect}
+                  label='Multi-select'
+                />
 
-            <IconButton
-              aria-label='Refresh data'
-              icon='mdi:refresh'
-              onClick={handleRefresh}
-            />
-          </Stack>
-        </Panel>
+                <IconButton
+                  aria-label='Refresh data'
+                  icon='mdi:refresh'
+                  onClick={handleRefresh}
+                />
+              </Stack>
+            </Panel>
 
-        {/* Table ------------------------------------------------------------ */}
-        <Panel fullWidth>
-          <Table
-            data={data}
-            columns={columns}
-            striped={striped}
-            hoverable={hoverable}
-            dividers={dividers}
-            selectable={selectable}
-            initialSort={{ index: 0 }}
-            constrainHeight
-          />
-        </Panel>
+            {/* Table ------------------------------------------------------------ */}
+            <Panel fullWidth>
+              <Table
+                data={data}
+                columns={columns}
+                striped={striped}
+                hoverable={hoverable}
+                dividers={dividers}
+                selectable={selectable}
+                initialSort={{ index: 0 }}
+                constrainHeight
+              />
+            </Panel>
+
+            <Button
+              size='lg'
+              onClick={() => navigate(-1)}
+              sx={{ marginTop: theme.spacing(1) }}
+            >
+              ← Back
+            </Button>
+          </Tabs.Panel>
+
+          <Tabs.Tab label='Reference' />
+          <Tabs.Panel>
+            <ReferenceSection slug='components/widgets/table' />
+          </Tabs.Panel>
+        </Tabs>
 
         {/* Best Practices (from sidecar) --------------------------------- */}
         <BestPractices
           items={(TableMeta as { docs?: { bestPractices?: string[] } }).docs?.bestPractices}
         />
-
-        <Button
-          size='lg'
-          onClick={() => navigate(-1)}
-          sx={{ marginTop: theme.spacing(1) }}
-        >
-          ← Back
-        </Button>
       </Stack>
     </Surface>
   );

@@ -3,124 +3,15 @@
 // Showcase of MetroSelect component
 // ─────────────────────────────────────────────────────────────
 import { useState } from 'react';
-import {
-  Surface,
-  Stack,
-  Typography,
-  Button,
-  MetroSelect,
-  Tabs,
-  Table,
-  useTheme,
-} from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
-import type { ReactNode } from 'react';
+import { Surface, Stack, Typography, Button, MetroSelect, Tabs, useTheme } from '@archway/valet';
+import ReferenceSection from '../../../components/ReferenceSection';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
 
 export default function MetroSelectDemoPage() {
-  const { theme, toggleMode } = useTheme();
+  const { toggleMode } = useTheme();
   const navigate = useNavigate();
-
-  interface Row {
-    prop: ReactNode;
-    type: ReactNode;
-    default: ReactNode;
-    description: ReactNode;
-  }
-
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const data: Row[] = [
-    {
-      prop: <code>value</code>,
-      type: <code>string | number | (string | number)[]</code>,
-      default: <code>—</code>,
-      description: 'Controlled value (array when multiple)',
-    },
-    {
-      prop: <code>defaultValue</code>,
-      type: <code>string | number | (string | number)[]</code>,
-      default: <code>—</code>,
-      description: 'Uncontrolled initial value (array when multiple)',
-    },
-    {
-      prop: <code>gap</code>,
-      type: <code>number | string</code>,
-      default: <code>4</code>,
-      description: 'Spacing between tiles (theme units if number)',
-    },
-    {
-      prop: <code>multiple</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Enable selecting more than one option',
-    },
-    {
-      prop: <code>onChange</code>,
-      type: <code>(val: Primitive | Primitive[]) =&gt; void</code>,
-      default: <code>—</code>,
-      description: 'Change handler (array when multiple)',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Apply style presets',
-    },
-    {
-      prop: <code>children</code>,
-      type: <code>React.ReactNode</code>,
-      default: <code>—</code>,
-      description: 'MetroSelect.Option elements',
-    },
-  ];
-
-  const optionColumns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const optionData: Row[] = [
-    {
-      prop: <code>value</code>,
-      type: <code>string | number</code>,
-      default: <code>—</code>,
-      description: 'Value for selection',
-    },
-    {
-      prop: <code>icon</code>,
-      type: <code>string | ReactElement</code>,
-      default: <code>—</code>,
-      description: 'Icon element or Iconify name',
-    },
-    {
-      prop: <code>label</code>,
-      type: <code>React.ReactNode</code>,
-      default: <code>—</code>,
-      description: 'Text displayed below the icon',
-    },
-    {
-      prop: <code>disabled</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Disable selection',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Apply style presets',
-    },
-  ];
 
   // Sample option lists -------------------------------------------------
   const basic = [
@@ -231,23 +122,7 @@ export default function MetroSelectDemoPage() {
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant='h3'>MetroSelect props</Typography>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
-            <Typography
-              variant='h3'
-              sx={{ marginTop: theme.spacing(3) }}
-            >
-              Option props
-            </Typography>
-            <Table
-              data={optionData}
-              columns={optionColumns}
-              constrainHeight={false}
-            />
+            <ReferenceSection slug='components/fields/metroselect' />
           </Tabs.Panel>
         </Tabs>
       </Stack>

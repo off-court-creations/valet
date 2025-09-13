@@ -17,10 +17,8 @@ import {
   definePreset,
   useTheme,
   Tabs,
-  Table,
 } from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
-import type { ReactNode } from 'react';
+import ReferenceSection from '../../../components/ReferenceSection';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
 import BestPractices from '../../../components/BestPractices';
@@ -70,75 +68,7 @@ export default function RadioGroupDemoPage() {
     alert(JSON.stringify(values, null, 2));
   };
 
-  interface Row {
-    prop: ReactNode;
-    type: ReactNode;
-    default: ReactNode;
-    description: ReactNode;
-  }
-
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const data: Row[] = [
-    {
-      prop: <code>value</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Controlled value',
-    },
-    {
-      prop: <code>defaultValue</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Uncontrolled initial value',
-    },
-    {
-      prop: <code>name</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Field name for forms',
-    },
-    {
-      prop: <code>row</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Horizontal layout',
-    },
-    {
-      prop: <code>size</code>,
-      type: (
-        <code>
-          &apos;xs&apos; | &apos;sm&apos; | &apos;md&apos; | &apos;lg&apos; | &apos;xl&apos; |
-          number | string
-        </code>
-      ),
-      default: <code>&apos;md&apos;</code>,
-      description: 'Radio size token or custom CSS measurement',
-    },
-    {
-      prop: <code>spacing</code>,
-      type: <code>number | string</code>,
-      default: <code>—</code>,
-      description: 'Gap between options',
-    },
-    {
-      prop: <code>onChange</code>,
-      type: <code>(val: string) =&gt; void</code>,
-      default: <code>—</code>,
-      description: 'Change handler',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Apply style presets',
-    },
-  ];
+  // MCP-driven reference tables used; manual data removed
 
   return (
     <Surface>
@@ -442,12 +372,7 @@ export default function RadioGroupDemoPage() {
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant='h3'>Prop reference</Typography>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
+            <ReferenceSection slug='components/fields/radio' />
           </Tabs.Panel>
         </Tabs>
 

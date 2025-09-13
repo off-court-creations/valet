@@ -15,10 +15,8 @@ import {
   createFormStore,
   useTheme,
   Tabs,
-  Table,
 } from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
-import type { ReactNode } from 'react';
+import ReferenceSection from '../../../components/ReferenceSection';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
 import BestPractices from '../../../components/BestPractices';
@@ -61,65 +59,6 @@ export default function SwitchDemoPage() {
   const handleSubmit = (values: { darkMode: boolean; newsletter: boolean }) =>
     // eslint-disable-next-line no-alert -- demo only
     alert(JSON.stringify(values, null, 2));
-
-  interface Row {
-    prop: ReactNode;
-    type: ReactNode;
-    default: ReactNode;
-    description: ReactNode;
-  }
-
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const data: Row[] = [
-    {
-      prop: <code>checked</code>,
-      type: <code>boolean</code>,
-      default: <code>—</code>,
-      description: 'Controlled state',
-    },
-    {
-      prop: <code>defaultChecked</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Uncontrolled initial state',
-    },
-    {
-      prop: <code>onChange</code>,
-      type: <code>(checked: boolean) =&gt; void</code>,
-      default: <code>—</code>,
-      description: 'State change handler',
-    },
-    {
-      prop: <code>name</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Form field name',
-    },
-    {
-      prop: <code>size</code>,
-      type: <code>&apos;sm&apos; | &apos;md&apos; | &apos;lg&apos;</code>,
-      default: <code>&apos;md&apos;</code>,
-      description: 'Switch size',
-    },
-    {
-      prop: <code>disabled</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Disable interaction',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Apply style presets',
-    },
-  ];
 
   return (
     <Surface>
@@ -260,12 +199,7 @@ export default function SwitchDemoPage() {
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant='h3'>Prop reference</Typography>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
+            <ReferenceSection slug='components/fields/switch' />
           </Tabs.Panel>
         </Tabs>
 

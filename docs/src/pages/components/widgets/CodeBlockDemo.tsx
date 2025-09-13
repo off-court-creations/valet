@@ -2,18 +2,9 @@
 // docs/src/pages/CodeBlockDemo.tsx  | valet-docs
 // Showcase of CodeBlock widget
 // ─────────────────────────────────────────────────────────────
-import {
-  Surface,
-  Stack,
-  Typography,
-  Tabs,
-  Table,
-  Select,
-  TextField,
-  CodeBlock,
-  type TableColumn,
-} from '@archway/valet';
-import type { ReactNode } from 'react';
+import { Surface, Stack, Typography, Tabs, Select, TextField, CodeBlock } from '@archway/valet';
+import ReferenceSection from '../../../components/ReferenceSection';
+
 import { useState } from 'react';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
@@ -26,46 +17,7 @@ export default function CodeBlockDemoPage() {
   const [language, setLanguage] = useState<'typescript' | 'javascript' | 'css'>('typescript');
   const [code, setCode] = useState<string>("const hello = 'world';\nconsole.log(hello);");
 
-  interface Row {
-    prop: ReactNode;
-    type: ReactNode;
-    default: ReactNode;
-    description: ReactNode;
-  }
-
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const data: Row[] = [
-    {
-      prop: <code>code</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Source code to render',
-    },
-    {
-      prop: <code>language</code>,
-      type: <code>string</code>,
-      default: <code>&apos;typescript&apos;</code>,
-      description: 'Highlight.js language key',
-    },
-    {
-      prop: <code>ariaLabel</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Copy button aria-label',
-    },
-    {
-      prop: <code>title</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Copy button tooltip',
-    },
-  ];
+  // Reference handled by ReferenceSection
 
   return (
     <Surface>
@@ -121,11 +73,7 @@ export default function CodeBlockDemoPage() {
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
+            <ReferenceSection slug='components/widgets/codeblock' />
           </Tabs.Panel>
         </Tabs>
         <CuratedExamples examples={getExamples(CodeBlockMeta)} />

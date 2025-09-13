@@ -7,11 +7,9 @@ import {
   SpeedDial,
   Icon,
   Tabs,
-  Table,
   useTheme,
 } from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
-import type { ReactNode } from 'react';
+import ReferenceSection from '../../../components/ReferenceSection';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
@@ -42,47 +40,6 @@ export default function SpeedDialDemoPage() {
     },
   ];
 
-  interface Row {
-    prop: ReactNode;
-    type: ReactNode;
-    default: ReactNode;
-    description: ReactNode;
-  }
-
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const data: Row[] = [
-    {
-      prop: <code>icon</code>,
-      type: <code>React.ReactNode</code>,
-      default: <code>—</code>,
-      description: 'Main floating action button icon',
-    },
-    {
-      prop: <code>actions</code>,
-      type: <code>SpeedDialAction[]</code>,
-      default: <code>—</code>,
-      description: 'Array of action buttons',
-    },
-    {
-      prop: <code>direction</code>,
-      type: <code>&#39;up&#39; | &#39;down&#39; | &#39;left&#39; | &#39;right&#39;</code>,
-      default: <code>&#39;up&#39;</code>,
-      description: 'Expansion direction',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Apply style presets',
-    },
-  ];
-
   return (
     <Surface>
       <NavDrawer />
@@ -110,12 +67,7 @@ export default function SpeedDialDemoPage() {
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant='h3'>Prop reference</Typography>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
+            <ReferenceSection slug='components/widgets/speeddial' />
           </Tabs.Panel>
         </Tabs>
 

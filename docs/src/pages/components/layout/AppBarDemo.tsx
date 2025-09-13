@@ -1,5 +1,6 @@
 // src/pages/AppBarDemo.tsx
-import { Surface, Stack, Typography, Button, AppBar, Icon, useTheme } from '@archway/valet';
+import { Surface, Stack, Typography, Button, AppBar, Icon, useTheme, Tabs } from '@archway/valet';
+import ReferenceSection from '../../../components/ReferenceSection';
 import BestPractices from '../../../components/BestPractices';
 import { getBestPractices } from '../../../utils/sidecar';
 import AppBarMeta from '../../../../../src/components/layout/AppBar.meta.json';
@@ -50,6 +51,14 @@ export default function AppBarDemoPage() {
           >
             Toggle light / dark
           </Button>
+
+          {/* Reference --------------------------------------------------- */}
+          <Tabs>
+            <Tabs.Tab label='Reference' />
+            <Tabs.Panel>
+              <ReferenceSection slug='components/layout/appbar' />
+            </Tabs.Panel>
+          </Tabs>
 
           {/* Best Practices ---------------------------------------------- */}
           <BestPractices items={getBestPractices(AppBarMeta)} />

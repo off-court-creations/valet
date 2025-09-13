@@ -9,11 +9,11 @@ import {
   Button,
   Tree,
   Tabs,
-  Table,
   useTheme,
   type TreeNode,
 } from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
+
+import ReferenceSection from '../../../components/ReferenceSection';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -80,89 +80,7 @@ const FILES: TreeNode<Item>[] = [
   { id: 'package.json', data: { label: 'package.json' } },
 ];
 
-interface Row {
-  prop: ReactNode;
-  type: ReactNode;
-  default: ReactNode;
-  description: ReactNode;
-}
-
-const columns: TableColumn<Row>[] = [
-  { header: 'Prop', accessor: 'prop' },
-  { header: 'Type', accessor: 'type' },
-  { header: 'Default', accessor: 'default' },
-  { header: 'Description', accessor: 'description' },
-];
-
-const data: Row[] = [
-  {
-    prop: <code>nodes</code>,
-    type: <code>TreeNode&lt;T&gt;[]</code>,
-    default: <code>—</code>,
-    description: 'Array of tree nodes',
-  },
-  {
-    prop: <code>getLabel</code>,
-    type: <code>(n: T) =&gt; ReactNode</code>,
-    default: <code>—</code>,
-    description: 'Return label for a node',
-  },
-  {
-    prop: <code>defaultExpanded</code>,
-    type: <code>string[]</code>,
-    default: <code>[]</code>,
-    description: 'Node ids expanded on mount',
-  },
-  {
-    prop: <code>expanded</code>,
-    type: <code>string[]</code>,
-    default: <code>—</code>,
-    description: 'Controlled expanded node ids',
-  },
-  {
-    prop: <code>onExpandedChange</code>,
-    type: <code>(ids: string[]) =&gt; void</code>,
-    default: <code>—</code>,
-    description: 'Handle expand/collapse changes',
-  },
-  {
-    prop: <code>selected</code>,
-    type: <code>string</code>,
-    default: <code>—</code>,
-    description: 'Controlled selected node id',
-  },
-  {
-    prop: <code>defaultSelected</code>,
-    type: <code>string</code>,
-    default: <code>—</code>,
-    description: 'Uncontrolled starting selection',
-  },
-  {
-    prop: <code>onNodeSelect</code>,
-    type: <code>(n: T) =&gt; void</code>,
-    default: <code>—</code>,
-    description: 'Called when a node is selected',
-  },
-  {
-    prop: <code>variant</code>,
-    type: <code>&#39;chevron&#39; | &#39;list&#39; | &#39;files&#39;</code>,
-    default: <code>&#39;chevron&#39;</code>,
-    description: 'Visual style of branches',
-  },
-  {
-    prop: <code>iconToggleOnly</code>,
-    type: <code>boolean</code>,
-    default: <code>false</code>,
-    description:
-      'If true, only clicking the expand icon toggles; by default, clicking anywhere on a row with children toggles expand/collapse.',
-  },
-  {
-    prop: <code>preset</code>,
-    type: <code>string | string[]</code>,
-    default: <code>—</code>,
-    description: 'Apply style presets',
-  },
-];
+// Manual reference removed; handled by ReferenceSection
 
 export default function TreeDemoPage() {
   const { theme, toggleMode } = useTheme();
@@ -218,11 +136,7 @@ export default function TreeDemoPage() {
           </Tabs.Panel>
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
+            <ReferenceSection slug='components/widgets/tree' />
           </Tabs.Panel>
         </Tabs>
 

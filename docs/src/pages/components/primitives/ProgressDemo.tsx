@@ -16,9 +16,8 @@ import {
   Progress,
   useTheme,
   Tabs,
-  Table,
 } from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
+import ReferenceSection from '../../../components/ReferenceSection';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
 import BestPractices from '../../../components/BestPractices';
@@ -53,75 +52,7 @@ export default function ProgressDemoPage() {
     setBuffer(25);
   };
 
-  interface Row {
-    prop: React.ReactNode;
-    type: React.ReactNode;
-    default: React.ReactNode;
-    description: React.ReactNode;
-  }
-
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const data: Row[] = [
-    {
-      prop: <code>variant</code>,
-      type: <code>&apos;linear&apos; | &apos;circular&apos;</code>,
-      default: <code>&apos;linear&apos;</code>,
-      description: 'Visual style of the progress indicator',
-    },
-    {
-      prop: <code>mode</code>,
-      type: <code>&apos;determinate&apos; | &apos;indeterminate&apos; | &apos;buffer&apos;</code>,
-      default: <code>&apos;determinate&apos;</code>,
-      description: 'Behavior; buffer applies to linear only',
-    },
-    {
-      prop: <code>value</code>,
-      type: <code>number</code>,
-      default: <code>0</code>,
-      description: '0–100 value for determinate/buffer foreground',
-    },
-    {
-      prop: <code>buffer</code>,
-      type: <code>number</code>,
-      default: <code>0</code>,
-      description: '0–100 secondary value (linear-buffer only)',
-    },
-    {
-      prop: <code>size</code>,
-      type: (
-        <code>
-          &apos;xs&apos; | &apos;sm&apos; | &apos;md&apos; | &apos;lg&apos; | &apos;xl&apos; |
-          number | string
-        </code>
-      ),
-      default: <code>&apos;md&apos;</code>,
-      description: 'Token size or custom CSS size',
-    },
-    {
-      prop: <code>showLabel</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Show numeric % inside circular center',
-    },
-    {
-      prop: <code>color</code>,
-      type: <code>string</code>,
-      default: <code>theme.colors.primary</code>,
-      description: 'Override bar/stroke color',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Apply style presets (define via definePreset())',
-    },
-  ];
+  // MCP-driven reference tables used; manual data removed
 
   return (
     <Surface>
@@ -162,27 +93,32 @@ export default function ProgressDemoPage() {
 
             {/* 2. Circular determinate (controlled) ----------------------- */}
             <Typography variant='h3'>2. Circular – determinate (controlled)</Typography>
-            <Stack
-              direction='row'
-              sx={{ alignItems: 'center' }}
-            >
+            {/* Circular surrounding an IconButton using Progress children */}
+            <Stack direction='row' sx={{ alignItems: 'center', gap: theme.spacing(1) }}>
               <Progress
                 variant='circular'
                 mode='determinate'
                 value={value}
-                showLabel
-              />
+                color={theme.colors['secondary']}
+              >
+                <IconButton
+                  icon='mdi:home'
+                  onClick={reset}
+                  aria-label='reset'
+                  size={48}
+                />
+              </Progress>
+            </Stack>
+
+            {/* Additional circular determinate styles */}
+            <Stack direction='row' sx={{ alignItems: 'center', gap: theme.spacing(1) }}>
+              <Progress variant='circular' mode='determinate' value={value} showLabel />
               <Progress
                 variant='circular'
                 mode='determinate'
                 value={value}
                 size='lg'
                 color={theme.colors['error']}
-              />
-              <IconButton
-                icon='mdi:home'
-                onClick={reset}
-                aria-label='reset'
               />
             </Stack>
 
@@ -236,11 +172,7 @@ export default function ProgressDemoPage() {
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
+            <ReferenceSection slug='components/primitives/progress' />
           </Tabs.Panel>
         </Tabs>
 

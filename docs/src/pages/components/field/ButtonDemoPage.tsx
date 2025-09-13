@@ -2,24 +2,14 @@
 // src/pages/ButtonDemoPage.tsx | valet-docs
 // Comprehensive Button showcase (no redundancy, toggle last)
 // ─────────────────────────────────────────────────────────────
-import {
-  Surface,
-  Stack,
-  Box,
-  Typography,
-  Button,
-  Icon,
-  useTheme,
-  Tabs,
-  Table,
-} from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
-import type { ReactNode } from 'react';
+import { Surface, Stack, Box, Typography, Button, Icon, useTheme, Tabs } from '@archway/valet';
+type ComponentMeta = { slug?: string };
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
 import BestPractices from '../../../components/BestPractices';
 import CuratedExamples from '../../../components/CuratedExamples';
+import ReferenceSection from '../../../components/ReferenceSection';
 import { getBestPractices, getExamples } from '../../../utils/sidecar';
 import ButtonMeta from '../../../../../src/components/fields/Button.meta.json';
 
@@ -27,63 +17,6 @@ import ButtonMeta from '../../../../../src/components/fields/Button.meta.json';
 export default function ButtonDemoPage() {
   const { theme, toggleMode } = useTheme();
   const navigate = useNavigate();
-
-  interface Row {
-    prop: ReactNode;
-    type: ReactNode;
-    default: ReactNode;
-    description: ReactNode;
-  }
-
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const data: Row[] = [
-    {
-      prop: <code>color</code>,
-      type: <code>&#39;primary&#39; | &#39;secondary&#39; | &#39;tertiary&#39; | string</code>,
-      default: <code>&#39;primary&#39;</code>,
-      description: 'Background palette or custom colour',
-    },
-    {
-      prop: <code>textColor</code>,
-      type: <code>&#39;primary&#39; | &#39;secondary&#39; | &#39;tertiary&#39; | string</code>,
-      default: <code>—</code>,
-      description: 'Label colour override',
-    },
-    {
-      prop: <code>variant</code>,
-      type: <code>&#39;contained&#39; | &#39;outlined&#39;</code>,
-      default: <code>&#39;contained&#39;</code>,
-      description: 'Visual style',
-    },
-    {
-      prop: <code>size</code>,
-      type: (
-        <code>
-          &#39;xs&#39; | &#39;sm&#39; | &#39;md&#39; | &#39;lg&#39; | &#39;xl&#39; | number | string
-        </code>
-      ),
-      default: <code>&#39;md&#39;</code>,
-      description: 'Overall button size or custom CSS length',
-    },
-    {
-      prop: <code>fullWidth</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Stretch to fill parent width',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Apply style presets',
-    },
-  ];
 
   return (
     <Surface>
@@ -216,11 +149,8 @@ export default function ButtonDemoPage() {
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant='h3'>Prop reference</Typography>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
+            <ReferenceSection
+              slug={(ButtonMeta as ComponentMeta)?.slug || 'components/fields/button'}
             />
           </Tabs.Panel>
         </Tabs>

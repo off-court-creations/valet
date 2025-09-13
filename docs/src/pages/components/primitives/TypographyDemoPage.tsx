@@ -15,154 +15,20 @@ import {
   Typography,
   Panel,
   Button,
-  Table,
   useTheme,
   CodeBlock,
   Grid,
   Divider,
   Tabs,
 } from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
-import type { ReactNode } from 'react';
+import ReferenceSection from '../../../components/ReferenceSection';
 import PageHero from '../../../components/PageHero';
 
 export default function TypographyDemoPage() {
   const { theme, toggleMode, setTheme } = useTheme();
   const navigate = useNavigate();
 
-  interface Row {
-    prop: ReactNode;
-    type: ReactNode;
-    default: ReactNode;
-    description: ReactNode;
-  }
-
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const data: Row[] = [
-    {
-      prop: <code>variant</code>,
-      type: (
-        <code>
-          &#39;h1&#39; | &#39;h2&#39; | &#39;h3&#39; | &#39;h4&#39; | &#39;h5&#39; | &#39;h6&#39; |
-          &#39;body&#39; | &#39;subtitle&#39; | &#39;button&#39;
-        </code>
-      ),
-      default: <code>&#39;body&#39;</code>,
-      description: 'Typography style preset (semantic variant)',
-    },
-    {
-      prop: <code>weight</code>,
-      type: (
-        <code>
-          number | &#39;regular&#39; | &#39;medium&#39; | &#39;semibold&#39; | &#39;bold&#39;
-        </code>
-      ),
-      default: <code>400</code>,
-      description: 'Preferred way to set font weight; clamps 100..900',
-    },
-    {
-      prop: <code>bold</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Deprecated in favor of weight (maps to 700)',
-    },
-    {
-      prop: <code>italic</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Italic font style',
-    },
-    {
-      prop: <code>tracking</code>,
-      type: <code>number | &#39;tight&#39; | &#39;normal&#39; | &#39;loose&#39;</code>,
-      default: <code>&#39;normal&#39;</code>,
-      description: 'Letter-spacing; numbers treated as px',
-    },
-    {
-      prop: <code>leading</code>,
-      type: <code>number | &#39;tight&#39; | &#39;normal&#39; | &#39;loose&#39;</code>,
-      default: <code>1.4</code>,
-      description: 'Unitless line-height (1 for button)',
-    },
-    {
-      prop: <code>optical</code>,
-      type: <code>&#39;auto&#39; | number</code>,
-      default: <code>&#39;auto&#39;</code>,
-      description: 'Optical sizing: CSS font-optical-sizing or opsz axis',
-    },
-    {
-      prop: <code>fluid</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Use clamp() from theme.typographyFluid when available',
-    },
-    {
-      prop: <code>autoSize</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Use breakpoint size for variant (xs–xl)',
-    },
-    {
-      prop: <code>scale</code>,
-      type: <code>number</code>,
-      default: <code>-</code>,
-      description: 'Multiply the computed size (after fluid/autoSize)',
-    },
-    {
-      prop: <code>fontSize</code>,
-      type: <code>string</code>,
-      default: <code>-</code>,
-      description: 'Explicit CSS font-size override',
-    },
-    {
-      prop: <code>family</code>,
-      type: <code>&#39;heading&#39; | &#39;body&#39; | &#39;mono&#39; | &#39;button&#39;</code>,
-      default: <code>-</code>,
-      description: 'Select a theme font family',
-    },
-    {
-      prop: <code>fontFamily</code>,
-      type: <code>string</code>,
-      default: <code>-</code>,
-      description: 'Override font family (discouraged; prefer family)',
-    },
-    {
-      prop: <code>color</code>,
-      type: <code>string</code>,
-      default: <code>-</code>,
-      description: 'Text color; defaults to var(--valet-text-color)',
-    },
-    {
-      prop: <code>centered</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Center-align and auto-margin element',
-    },
-    {
-      prop: <code>noSelect</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Disable text selection (user-select: none)',
-    },
-    {
-      prop: <code>whitespace</code>,
-      type: <code>&#39;normal&#39; | &#39;pre&#39; | &#39;pre-wrap&#39; | &#39;pre-line&#39;</code>,
-      default: <code>&#39;normal&#39;</code>,
-      description: 'Controls line breaking and whitespace handling',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>-</code>,
-      description: 'Apply style presets (define via definePreset())',
-    },
-  ];
+  // MCP-driven reference tables used; manual data removed
 
   return (
     <Surface>
@@ -1034,14 +900,7 @@ inheritSurfaceFontVars(portalRoot);`}
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Panel sx={{ borderRadius: theme.radius(2) }}>
-              <Typography variant='h3'>Prop reference</Typography>
-              <Table
-                data={data}
-                columns={columns}
-                constrainHeight={false}
-              />
-            </Panel>
+            <ReferenceSection slug='components/primitives/typography' />
           </Tabs.Panel>
         </Tabs>
 

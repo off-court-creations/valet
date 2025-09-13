@@ -10,7 +10,6 @@ import {
   Button,
   useTheme,
   Tabs,
-  Table,
   Panel,
   Select,
   Iterator,
@@ -18,8 +17,7 @@ import {
   CodeBlock,
   Divider,
 } from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
-import type { ReactNode } from 'react';
+import ReferenceSection from '../../../components/ReferenceSection';
 import { useState } from 'react';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
@@ -46,78 +44,7 @@ export default function BoxDemoPage() {
           ? theme.colors['secondary']
           : theme.colors['tertiary'];
 
-  interface Row {
-    prop: ReactNode;
-    type: ReactNode;
-    default: ReactNode;
-    description: ReactNode;
-  }
-
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const data: Row[] = [
-    {
-      prop: <code>background</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description:
-        'Background colour override. When set to a theme tone (primary/secondary/tertiary), text colour is derived automatically.',
-    },
-    {
-      prop: <code>textColor</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Explicit text colour',
-    },
-    {
-      prop: <code>pad</code>,
-      type: <code>number | string</code>,
-      default: <code>1</code>,
-      description:
-        'Container padding. Numbers map via theme.spacing(n); strings pass through (e.g., "12px").',
-    },
-    {
-      prop: <code>centerContent</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Center inner content using flexbox',
-    },
-    {
-      prop: <code>fullWidth</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Stretch to 100% width of the parent container',
-    },
-    {
-      prop: <code>alignX</code>,
-      type: <code>&apos;left&apos; | &apos;right&apos; | &apos;center&apos;</code>,
-      default: <code>&apos;left&apos;</code>,
-      description: (
-        <>
-          When not <code>fullWidth</code>, horizontally places the box within its parent. Use{' '}
-          <code>alignX=&apos;right&apos;</code> for right‑bound, or{' '}
-          <code>alignX=&apos;center&apos;</code> to center it.
-        </>
-      ),
-    },
-    {
-      prop: <code>compact</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Zero out internal padding (overrides pad).',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Apply style presets',
-    },
-  ];
+  // Reference handled via ReferenceSection instead of manual tables
 
   return (
     <Surface>
@@ -424,11 +351,7 @@ export default function BoxDemoPage() {
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
+            <ReferenceSection slug='components/layout/box' />
           </Tabs.Panel>
         </Tabs>
 

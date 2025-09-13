@@ -2,18 +2,8 @@
 // src/pages/DropzoneDemo.tsx | valet-docs
 // Showcase of Dropzone widget
 // ─────────────────────────────────────────────────────────────
-import {
-  Surface,
-  Stack,
-  Typography,
-  Button,
-  Dropzone,
-  Tabs,
-  Table,
-  useTheme,
-} from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
-import type { ReactNode } from 'react';
+import { Surface, Stack, Typography, Button, Dropzone, Tabs, useTheme } from '@archway/valet';
+import ReferenceSection from '../../../components/ReferenceSection';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
@@ -25,77 +15,6 @@ import DropzoneMeta from '../../../../../src/components/widgets/Dropzone.meta.js
 export default function DropzoneDemoPage() {
   const { theme, toggleMode } = useTheme();
   const navigate = useNavigate();
-
-  interface Row {
-    prop: ReactNode;
-    type: ReactNode;
-    default: ReactNode;
-    description: ReactNode;
-  }
-
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const data: Row[] = [
-    {
-      prop: <code>accept</code>,
-      type: <code>DropzoneOptions[&apos;accept&apos;]</code>,
-      default: <code>—</code>,
-      description: 'Allowed file types',
-    },
-    {
-      prop: <code>showPreviews</code>,
-      type: <code>boolean</code>,
-      default: <code>true</code>,
-      description: 'Show preview thumbnails',
-    },
-    {
-      prop: <code>showFileList</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Show icons and names',
-    },
-    {
-      prop: <code>onFilesChange</code>,
-      type: <code>(files: File[]) =&gt; void</code>,
-      default: <code>—</code>,
-      description: 'Called when accepted files change',
-    },
-    {
-      prop: <code>maxFiles</code>,
-      type: <code>number</code>,
-      default: <code>—</code>,
-      description: 'Maximum file count',
-    },
-    {
-      prop: <code>multiple</code>,
-      type: <code>boolean</code>,
-      default: <code>true</code>,
-      description: 'Allow multiple file selection',
-    },
-    {
-      prop: <code>fullWidth</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Stretch to fill parent width',
-    },
-    {
-      prop: <code>onDrop</code>,
-      type: <code>DropzoneOptions[&apos;onDrop&apos;]</code>,
-      default: <code>—</code>,
-      description: 'Low-level drop callback',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Style preset(s)',
-    },
-  ];
 
   return (
     <Surface>
@@ -140,12 +59,7 @@ export default function DropzoneDemoPage() {
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant='h3'>Prop reference</Typography>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
+            <ReferenceSection slug='components/widgets/dropzone' />
           </Tabs.Panel>
         </Tabs>
 

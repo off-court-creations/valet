@@ -2,7 +2,7 @@
 // docs/src/pages/DividerDemo.tsx  | valet-docs
 // Divider component demo with Usage / Playground / Reference
 // ─────────────────────────────────────────────────────────────
-import React, { useState } from 'react';
+import { useState } from 'react';
 import NavDrawer from '../../../components/NavDrawer';
 import BestPractices from '../../../components/BestPractices';
 import CuratedExamples from '../../../components/CuratedExamples';
@@ -14,7 +14,6 @@ import {
   Stack,
   Typography,
   Tabs,
-  Table,
   Box,
   Panel,
   Select,
@@ -24,16 +23,11 @@ import {
   Divider,
   useTheme,
 } from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
+import ReferenceSection from '../../../components/ReferenceSection';
 
 type Orient = 'horizontal' | 'vertical';
 
-interface Row {
-  prop: React.ReactNode;
-  type: React.ReactNode;
-  default: React.ReactNode;
-  description: React.ReactNode;
-}
+// no local prop rows; MCP provides reference tables
 
 export default function DividerDemoPage() {
   const { theme } = useTheme();
@@ -45,62 +39,6 @@ export default function DividerDemoPage() {
   const [length, setLength] = useState<string>('');
   const [customColor, setCustomColor] = useState<string>('');
   const [compact, setCompact] = useState(false);
-
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const data: Row[] = [
-    {
-      prop: <code>orientation</code>,
-      type: <code>&apos;horizontal&apos; | &apos;vertical&apos;</code>,
-      default: <code>&apos;horizontal&apos;</code>,
-      description: 'Direction of the line separator.',
-    },
-    {
-      prop: <code>lineColor</code>,
-      type: <code>string</code>,
-      default: <code>var(--valet-text-color, theme.colors.text)</code>,
-      description:
-        'Explicit colour. By default, Divider uses the surface text colour via CSS var (falls back to theme.colors.text).',
-    },
-    {
-      prop: <code>thickness</code>,
-      type: <code>number | string</code>,
-      default: <code>2</code>,
-      description:
-        'Line thickness. Numbers scale the base divider stroke (1 = base, 2 = double) via calc(var(--valet-divider-stroke) * n); strings pass through (e.g., "2px").',
-    },
-    {
-      prop: <code>length</code>,
-      type: <code>number | string</code>,
-      default: <code>&apos;100%&apos;</code>,
-      description:
-        'Length along the main axis. Numbers → px; strings pass through (e.g., "50%", "12rem").',
-    },
-    {
-      prop: <code>pad</code>,
-      type: <code>number | string</code>,
-      default: <code>0</code>,
-      description:
-        'Outer spacing envelope. Numbers map via theme.spacing(n); strings pass through. Obeys compact.',
-    },
-    {
-      prop: <code>compact</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Zero out padding for compact density.',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Apply style presets.',
-    },
-  ];
 
   return (
     <Surface>
@@ -279,14 +217,16 @@ export default function DividerDemoPage() {
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
+            <ReferenceSection slug='components/primitives/divider' />
           </Tabs.Panel>
         </Tabs>
-        <CuratedExamples examples={getExamples(DividerMeta as any)} />
+        <CuratedExamples
+          examples={getExamples(
+            DividerMeta as {
+              examples?: Array<{ id?: string; title?: string; code: string; lang?: string }>;
+            },
+          )}
+        />
         <BestPractices
           items={(DividerMeta as { docs?: { bestPractices?: string[] } }).docs?.bestPractices}
         />

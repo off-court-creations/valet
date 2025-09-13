@@ -12,10 +12,8 @@ import {
   useTheme,
   Grid,
   Tabs,
-  Table,
 } from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
-import type { ReactNode } from 'react';
+import ReferenceSection from '../../../components/ReferenceSection';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
@@ -26,107 +24,6 @@ export default function DateSelectorDemoPage() {
   const [selected, setSelected] = useState('2025-01-01');
   const [limited, setLimited] = useState('2025-07-15');
   const [rangeDates, setRangeDates] = useState<[string, string]>(['2025-07-01', '2025-07-10']);
-
-  interface Row {
-    prop: ReactNode;
-    type: ReactNode;
-    default: ReactNode;
-    description: ReactNode;
-  }
-
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const data: Row[] = [
-    {
-      prop: <code>value</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Controlled ISO date value (YYYY-MM-DD)',
-    },
-    {
-      prop: <code>defaultValue</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Initial uncontrolled value',
-    },
-    {
-      prop: <code>onChange</code>,
-      type: <code>(value: string) =&gt; void</code>,
-      default: <code>—</code>,
-      description: 'Fires when selection changes',
-    },
-    {
-      prop: <code>name</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'FormControl field name',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Apply style presets',
-    },
-    {
-      prop: <code>minDate</code>,
-      type: <code>string</code>,
-      default: <code>&#39;120y ago&#39;</code>,
-      description: 'Earliest selectable date',
-    },
-    {
-      prop: <code>maxDate</code>,
-      type: <code>string</code>,
-      default: <code>&#39;120y ahead&#39;</code>,
-      description: 'Latest selectable date',
-    },
-    {
-      prop: <code>range</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Enable dual start/end selection',
-    },
-    {
-      prop: <code>endValue</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Controlled end date when range is true',
-    },
-    {
-      prop: <code>defaultEndValue</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Uncontrolled end date default',
-    },
-    {
-      prop: <code>onRangeChange</code>,
-      type: <code>(start: string, end: string) =&gt; void</code>,
-      default: <code>—</code>,
-      description: 'Fires when range selection changes',
-    },
-    {
-      prop: <code>compactMode</code>,
-      type: <code>&apos;auto&apos; | &apos;on&apos; | &apos;off&apos;</code>,
-      default: <code>&apos;auto&apos;</code>,
-      description: 'Control compact behavior: auto-detect, force on, or disable entirely',
-    },
-    {
-      prop: <code>compactThresholdIn</code>,
-      type: <code>number</code>,
-      default: <code>340</code>,
-      description: 'Width below which compact turns on (only when compactMode=auto)',
-    },
-    {
-      prop: <code>compactThresholdOut</code>,
-      type: <code>number</code>,
-      default: <code>380</code>,
-      description: 'Width above which compact turns off (only when compactMode=auto)',
-    },
-  ];
 
   return (
     <Surface>
@@ -205,12 +102,7 @@ export default function DateSelectorDemoPage() {
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant='h3'>Prop reference</Typography>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
+            <ReferenceSection slug='components/fields/dateselector' />
           </Tabs.Panel>
         </Tabs>
 
