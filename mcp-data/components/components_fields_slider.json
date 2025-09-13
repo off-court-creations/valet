@@ -12,16 +12,12 @@
     {
       "name": "value",
       "type": "number",
-      "required": false,
-      "default": "—",
-      "description": "Controlled value"
+      "required": false
     },
     {
       "name": "defaultValue",
       "type": "number",
-      "required": false,
-      "default": "0",
-      "description": "Uncontrolled start value"
+      "required": false
     },
     {
       "name": "onChange",
@@ -31,72 +27,52 @@
     {
       "name": "min",
       "type": "number",
-      "required": false,
-      "default": "0",
-      "description": "Minimum value"
+      "required": false
     },
     {
       "name": "max",
       "type": "number",
-      "required": false,
-      "default": "100",
-      "description": "Maximum value"
+      "required": false
     },
     {
       "name": "step",
       "type": "number",
-      "required": false,
-      "default": "1",
-      "description": "Step increment"
+      "required": false
     },
     {
       "name": "presets",
       "type": "number[]",
-      "required": false,
-      "default": "[]",
-      "description": "Preset snap points"
+      "required": false
     },
     {
       "name": "snap",
-      "type": "'none' | 'step' | 'presets'",
-      "required": false,
-      "default": "'none'",
-      "description": "Snap behaviour"
+      "type": "SnapMode",
+      "required": false
     },
     {
       "name": "precision",
       "type": "number",
-      "required": false,
-      "default": "0",
-      "description": "Decimal places"
+      "required": false
     },
     {
       "name": "showValue",
       "type": "boolean",
-      "required": false,
-      "default": "false",
-      "description": "Display current value"
+      "required": false
     },
     {
       "name": "showMinMax",
       "type": "boolean",
-      "required": false,
-      "default": "false",
-      "description": "Display min and max labels"
+      "required": false
     },
     {
       "name": "showTicks",
       "type": "boolean",
-      "required": false,
-      "default": "false",
-      "description": "Show tick marks"
+      "required": false
     },
     {
       "name": "ticks",
       "type": "number[]",
-      "required": false,
-      "default": "—",
-      "description": "Custom tick positions"
+      "required": false
     },
     {
       "name": "name",
@@ -105,29 +81,18 @@
     },
     {
       "name": "size",
-      "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string",
-      "required": false,
-      "default": "'md'",
-      "description": "Slider size"
+      "type": "SliderSize | number | string",
+      "required": false
     },
     {
       "name": "disabled",
       "type": "boolean",
-      "required": false,
-      "default": "false",
-      "description": "Disable interaction"
+      "required": false
     },
     {
       "name": "sx",
       "type": "Sx",
       "required": false
-    },
-    {
-      "name": "preset",
-      "type": "string | string[]",
-      "required": false,
-      "default": "—",
-      "description": "Apply style presets"
     }
   ],
   "cssVars": [
@@ -152,11 +117,9 @@
     "Use presets/tokens for colour and shape. Keep theme‑aligned styling rather than per‑instance CSS."
   ],
   "examples": [],
-  "docsUrl": "/components/field/SliderDemo",
   "sourceFiles": [
-    "src/components/fields/Slider.tsx",
-    "docs/src/pages/components/field/SliderDemo.tsx"
+    "src/components/fields/Slider.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.5"
+  "schemaVersion": "1.6"
 }

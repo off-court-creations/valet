@@ -14,28 +14,18 @@
     {
       "name": "steps",
       "type": "React.ReactNode[]",
-      "required": true,
-      "default": "—",
-      "description": "Labels for each step"
+      "required": true
     },
     {
       "name": "active",
       "type": "number",
       "required": false,
-      "default": "0",
-      "description": "Index of the active step"
+      "default": "0"
     },
     {
       "name": "sx",
       "type": "Sx",
       "required": false
-    },
-    {
-      "name": "preset",
-      "type": "string | string[]",
-      "required": false,
-      "default": "—",
-      "description": "Apply style presets"
     }
   ],
   "cssVars": [
@@ -59,11 +49,9 @@
     "Keep step count reasonable. If there are many steps or non‑linear paths, a progress bar or checklist may be clearer."
   ],
   "examples": [],
-  "docsUrl": "/components/widgets/StepperDemo",
   "sourceFiles": [
-    "src/components/widgets/Stepper.tsx",
-    "docs/src/pages/components/widgets/StepperDemo.tsx"
+    "src/components/widgets/Stepper.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.5"
+  "schemaVersion": "1.6"
 }

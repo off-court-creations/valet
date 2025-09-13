@@ -153,7 +153,6 @@ export default function AccordionDemoPage() {
           </Tabs.Panel>
         </Tabs>
       </Stack>
-      
     </Surface>
   );
 }

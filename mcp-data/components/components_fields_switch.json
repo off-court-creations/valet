@@ -12,56 +12,32 @@
     {
       "name": "checked",
       "type": "boolean",
-      "required": false,
-      "default": "—",
-      "description": "Controlled state"
+      "required": false
     },
     {
       "name": "defaultChecked",
       "type": "boolean",
-      "required": false,
-      "default": "false",
-      "description": "Uncontrolled initial state"
+      "required": false
     },
     {
       "name": "onChange",
       "type": "(checked: boolean) => void",
-      "required": false,
-      "default": "—",
-      "description": "State change handler"
+      "required": false
     },
     {
       "name": "name",
       "type": "string",
-      "required": false,
-      "default": "—",
-      "description": "Form field name"
+      "required": false
     },
     {
       "name": "size",
-      "type": "'sm' | 'md' | 'lg'",
-      "required": false,
-      "default": "'md'",
-      "description": "Switch size"
+      "type": "SwitchSize",
+      "required": false
     },
     {
       "name": "sx",
       "type": "Sx",
       "required": false
-    },
-    {
-      "name": "disabled",
-      "type": "boolean",
-      "required": false,
-      "default": "false",
-      "description": "Disable interaction"
-    },
-    {
-      "name": "preset",
-      "type": "string | string[]",
-      "required": false,
-      "default": "—",
-      "description": "Apply style presets"
     }
   ],
   "cssVars": [
@@ -87,11 +63,9 @@
     "Prefer presets/tokens for size and colour; keep thumb/track large enough for comfortable touch targets."
   ],
   "examples": [],
-  "docsUrl": "/components/field/SwitchDemo",
   "sourceFiles": [
-    "src/components/fields/Switch.tsx",
-    "docs/src/pages/components/field/SwitchDemo.tsx"
+    "src/components/fields/Switch.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.5"
+  "schemaVersion": "1.6"
 }

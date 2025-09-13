@@ -11,81 +11,61 @@
     {
       "name": "active",
       "type": "number",
-      "required": false,
-      "default": "—",
-      "description": "Controlled index of the active tab."
+      "required": false
     },
     {
       "name": "defaultActive",
       "type": "number",
       "required": false,
-      "default": "0",
-      "description": "Uncontrolled initial active tab index."
+      "default": "0"
     },
     {
       "name": "onTabChange",
       "type": "(i: number) => void",
-      "required": false,
-      "default": "—",
-      "description": "Callback when the active tab changes."
+      "required": false
     },
     {
       "name": "orientation",
-      "type": "",
+      "type": "'horizontal' | 'vertical'",
       "required": false,
-      "default": "",
+      "default": "'horizontal'",
       "enumValues": [
         "horizontal",
         "vertical"
-      ],
-      "description": "Layout direction for the tab strip and panel."
+      ]
     },
     {
       "name": "placement",
-      "type": "",
+      "type": "'top' | 'bottom' | 'left' | 'right'",
       "required": false,
       "enumValues": [
         "top",
         "bottom",
         "left",
         "right"
-      ],
-      "default": "",
-      "description": "Which side the tab strip sits on relative to the panel."
+      ]
     },
     {
       "name": "alignX",
-      "type": "",
+      "type": "'left' | 'right' | 'center' | 'centered'",
       "required": false,
       "enumValues": [
         "left",
         "right",
         "center",
         "centered"
-      ],
-      "default": "",
-      "description": "Horizontal alignment of the tab strip (horizontal orientation)."
+      ]
     },
     {
       "name": "sx",
-      "type": "object",
-      "required": false,
-      "default": "—",
-      "description": "Inline style overrides (CSS object; supports CSS vars)."
+      "type": "Sx",
+      "required": false
     },
     {
       "name": "compact",
-      "type": "boolean",
+      "type": "unknown",
       "required": false,
-      "default": "false",
-      "description": "Reduce internal spacing density."
-    },
-    {
-      "name": "preset",
-      "type": "string | string[]",
-      "required": false,
-      "default": "—",
-      "description": "Apply style presets to the container."
+      "default": "false"
     }
   ],
   "cssVars": [
@@ -114,11 +94,9 @@
     "Announce active tab for screen readers with `aria-selected` and `role=tablist`."
   ],
   "examples": [],
-  "docsUrl": "/components/layout/TabsDemo",
   "sourceFiles": [
-    "src/components/layout/Tabs.tsx",
-    "docs/src/pages/components/layout/TabsDemo.tsx"
+    "src/components/layout/Tabs.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.5"
+  "schemaVersion": "1.6"
 }

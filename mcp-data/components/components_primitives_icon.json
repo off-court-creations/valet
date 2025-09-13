@@ -12,42 +12,28 @@
     {
       "name": "icon",
       "type": "string",
-      "required": false,
-      "default": "—",
-      "description": "Iconify name"
+      "required": false
     },
     {
       "name": "svg",
-      "type": "string | ReactElement",
-      "required": false,
-      "default": "—",
-      "description": "Custom SVG content"
+      "type": "string | ReactElement<React.SVGProps<SVGSVGElement>>",
+      "required": false
     },
     {
       "name": "size",
-      "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string",
+      "type": "IconSize | number | string",
       "required": false,
-      "default": "'md'",
-      "description": "Icon dimensions"
+      "default": "'md'"
     },
     {
       "name": "color",
-      "type": "string",
-      "required": false,
-      "default": "—",
-      "description": "Colour override"
+      "type": "string | undefined",
+      "required": false
     },
     {
       "name": "sx",
       "type": "Sx",
       "required": false
-    },
-    {
-      "name": "preset",
-      "type": "string | string[]",
-      "required": false,
-      "default": "—",
-      "description": "Apply style presets"
     }
   ],
   "cssVars": [],
@@ -67,11 +53,9 @@
     "Don’t overload meaning—keep one concept per icon and avoid ambiguous metaphors."
   ],
   "examples": [],
-  "docsUrl": "/components/primitives/IconDemoPage",
   "sourceFiles": [
-    "src/components/primitives/Icon.tsx",
-    "docs/src/pages/components/primitives/IconDemoPage.tsx"
+    "src/components/primitives/Icon.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.5"
+  "schemaVersion": "1.6"
 }

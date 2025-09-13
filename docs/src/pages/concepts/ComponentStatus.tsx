@@ -16,7 +16,7 @@ export const meta: DocMeta = {
   title: 'Component Status',
   description: 'Current stability status for every valet component with a meta sidecar.',
   pageType: 'reference',
-  tldr: 'Single table of all components and whether they are experimental, stable, or deprecated.',
+  tldr: 'Single table of all components and their current stability status.',
 };
 
 export default function ComponentStatusPage() {
@@ -40,7 +40,7 @@ export default function ComponentStatusPage() {
           Component Status
         </Typography>
         <Typography>
-          This page reflects the status declared in each component&apos;s <code>*.meta.ts</code>{' '}
+          This page reflects the status declared in each component&apos;s <code>*.meta.json</code>{' '}
           sidecar. It is also embedded into the MCP data so external tools can reason about
           stability.
         </Typography>
@@ -55,9 +55,7 @@ export default function ComponentStatusPage() {
             constrainHeight
           />
         </Panel>
-        <Typography variant='subtitle'>
-          Note: Sidecar statuses are currently set to <code>experimental</code> across the library.
-        </Typography>
+        {null}
       </Stack>
     </Surface>
   );

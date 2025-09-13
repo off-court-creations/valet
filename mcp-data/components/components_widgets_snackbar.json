@@ -14,49 +14,34 @@
     {
       "name": "open",
       "type": "boolean",
-      "required": false,
-      "default": "false",
-      "description": "Controlled visibility flag"
+      "required": false
     },
     {
       "name": "onClose",
-      "type": "",
-      "required": false,
-      "default": "—",
-      "description": "Called when fully hidden"
+      "type": "() => void",
+      "required": false
     },
     {
       "name": "autoHideDuration",
       "type": "number | null",
       "required": false,
-      "default": "4000",
-      "description": "Dismiss after N ms"
+      "default": "4000"
     },
     {
       "name": "message",
       "type": "React.ReactNode",
-      "required": false,
-      "default": "—",
-      "description": "Convenience message"
+      "required": false
     },
     {
       "name": "noStack",
       "type": "boolean",
       "required": false,
-      "default": "false",
-      "description": "Disable flex layout"
+      "default": "false"
     },
     {
       "name": "sx",
       "type": "Sx",
       "required": false
-    },
-    {
-      "name": "preset",
-      "type": "string | string[]",
-      "required": false,
-      "default": "—",
-      "description": "Apply style presets"
     }
   ],
   "cssVars": [],
@@ -82,11 +67,9 @@
     "Style via tokens/presets. Use theme colors for status (e.g., `primary` / `error`) and consolidate variants with `preset`."
   ],
   "examples": [],
-  "docsUrl": "/components/widgets/SnackbarDemo",
   "sourceFiles": [
-    "src/components/widgets/Snackbar.tsx",
-    "docs/src/pages/components/widgets/SnackbarDemo.tsx"
+    "src/components/widgets/Snackbar.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.5"
+  "schemaVersion": "1.6"
 }

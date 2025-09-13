@@ -8,58 +8,42 @@
     {
       "name": "nodes",
       "type": "TreeNode<T>[]",
-      "required": true,
-      "default": "—",
-      "description": "Array of tree nodes"
+      "required": true
     },
     {
       "name": "getLabel",
-      "type": "(n: T) => ReactNode",
-      "required": true,
-      "default": "—",
-      "description": "Return label for a node"
+      "type": "(node: T) => React.ReactNode",
+      "required": true
     },
     {
       "name": "defaultExpanded",
       "type": "string[]",
-      "required": false,
-      "default": "[]",
-      "description": "Node ids expanded on mount"
+      "required": false
     },
     {
       "name": "expanded",
       "type": "string[]",
-      "required": false,
-      "default": "—",
-      "description": "Controlled expanded node ids"
+      "required": false
     },
     {
       "name": "onExpandedChange",
-      "type": "(ids: string[]) => void",
-      "required": false,
-      "default": "—",
-      "description": "Handle expand/collapse changes"
+      "type": "(expanded: string[]) => void",
+      "required": false
     },
     {
       "name": "selected",
       "type": "string",
-      "required": false,
-      "default": "—",
-      "description": "Controlled selected node id"
+      "required": false
     },
     {
       "name": "defaultSelected",
       "type": "string",
-      "required": false,
-      "default": "—",
-      "description": "Uncontrolled starting selection"
+      "required": false
     },
     {
       "name": "onNodeSelect",
-      "type": "(n: T) => void",
-      "required": false,
-      "default": "—",
-      "description": "Called when a node is selected"
+      "type": "(node: T) => void",
+      "required": false
     },
     {
       "name": "variant",
@@ -69,28 +53,17 @@
         "chevron",
         "list",
         "files"
-      ],
-      "default": "'chevron'",
-      "description": "Visual style of branches"
+      ]
     },
     {
       "name": "iconToggleOnly",
       "type": "boolean",
-      "required": false,
-      "default": "false",
-      "description": "If true, only clicking the expand icon toggles; by default, clicking anywhere on a row with children toggles expand/collapse."
+      "required": false
     },
     {
       "name": "sx",
       "type": "Sx",
       "required": false
-    },
-    {
-      "name": "preset",
-      "type": "string | string[]",
-      "required": false,
-      "default": "—",
-      "description": "Apply style presets"
     }
   ],
   "cssVars": [
@@ -127,11 +100,9 @@
     "Tokenized spacing. Use theme spacing for indentation so density and breakpoints scale predictably."
   ],
   "examples": [],
-  "docsUrl": "/components/widgets/TreeDemo",
   "sourceFiles": [
-    "src/components/widgets/Tree.tsx",
-    "docs/src/pages/components/widgets/TreeDemo.tsx"
+    "src/components/widgets/Tree.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.5"
+  "schemaVersion": "1.6"
 }

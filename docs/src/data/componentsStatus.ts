@@ -7,7 +7,7 @@ export type ComponentStatus = {
   name: string;
   category: string;
   slug: string;
-  status: 'experimental' | 'stable' | 'deprecated';
+  status: 'golden' | 'stable' | 'experimental' | 'unstable' | 'deprecated';
 };
 
 export const COMPONENTS_STATUS: ComponentStatus[] = [
@@ -68,16 +68,11 @@ export const COMPONENTS_STATUS: ComponentStatus[] = [
   { name: 'Box', category: 'layout', slug: 'components/layout/box', status: 'experimental' },
   { name: 'Drawer', category: 'layout', slug: 'components/layout/drawer', status: 'experimental' },
   { name: 'Grid', category: 'layout', slug: 'components/layout/grid', status: 'experimental' },
-  { name: 'List', category: 'layout', slug: 'components/layout/list', status: 'experimental' },
+  { name: 'List', category: 'layout', slug: 'components/layout/list', status: 'unstable' },
   { name: 'Modal', category: 'layout', slug: 'components/layout/modal', status: 'experimental' },
   { name: 'Panel', category: 'layout', slug: 'components/layout/panel', status: 'experimental' },
   { name: 'Stack', category: 'layout', slug: 'components/layout/stack', status: 'experimental' },
-  {
-    name: 'Surface',
-    category: 'layout',
-    slug: 'components/layout/surface',
-    status: 'experimental',
-  },
+  { name: 'Surface', category: 'layout', slug: 'components/layout/surface', status: 'golden' },
   { name: 'Tabs', category: 'layout', slug: 'components/layout/tabs', status: 'experimental' },
   {
     name: 'Avatar',
@@ -107,7 +102,7 @@ export const COMPONENTS_STATUS: ComponentStatus[] = [
     name: 'Progress',
     category: 'primitives',
     slug: 'components/primitives/progress',
-    status: 'experimental',
+    status: 'unstable',
   },
   {
     name: 'Skeleton',

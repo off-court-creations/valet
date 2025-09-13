@@ -12,57 +12,30 @@
   "props": [
     {
       "name": "orientation",
-      "type": "'horizontal' | 'vertical'",
+      "type": "DividerOrientation",
       "required": false,
-      "default": "'horizontal'",
-      "description": "Direction of the line separator."
+      "default": "'horizontal'"
     },
     {
       "name": "lineColor",
-      "type": "string",
-      "required": false,
-      "default": "var(--valet-text-color, theme.colors.text)",
-      "description": "Explicit colour. By default, Divider uses the surface text colour via CSS var (falls back to theme.colors.text)."
+      "type": "string | undefined",
+      "required": false
     },
     {
       "name": "thickness",
       "type": "number | string",
       "required": false,
-      "default": "2",
-      "description": "Line thickness. Numbers scale the base divider stroke (1 = base, 2 = double) via calc(var(--valet-divider-stroke) * n); strings pass through (e.g., \"2px\")."
+      "default": "2"
     },
     {
       "name": "length",
-      "type": "number | string",
-      "required": false,
-      "default": "'100%'",
-      "description": "Length along the main axis. Numbers → px; strings pass through (e.g., \"50%\", \"12rem\")."
+      "type": "number | string | undefined",
+      "required": false
     },
     {
       "name": "sx",
       "type": "Sx",
       "required": false
-    },
-    {
-      "name": "pad",
-      "type": "number | string",
-      "required": false,
-      "default": "0",
-      "description": "Outer spacing envelope. Numbers map via theme.spacing(n); strings pass through. Obeys compact."
-    },
-    {
-      "name": "compact",
-      "type": "boolean",
-      "required": false,
-      "default": "false",
-      "description": "Zero out padding for compact density."
-    },
-    {
-      "name": "preset",
-      "type": "string | string[]",
-      "required": false,
-      "default": "—",
-      "description": "Apply style presets."
     }
   ],
   "cssVars": [
@@ -81,11 +54,9 @@
     "Don’t communicate state with dividers; use colour/tokens in the relevant component instead."
   ],
   "examples": [],
-  "docsUrl": "/components/primitives/DividerDemo",
   "sourceFiles": [
-    "src/components/primitives/Divider.tsx",
-    "docs/src/pages/components/primitives/DividerDemo.tsx"
+    "src/components/primitives/Divider.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.5"
+  "schemaVersion": "1.6"
 }

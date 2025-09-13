@@ -4,7 +4,9 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
-_No unreleased changes yet._
+### Changed
+
+- MCP: extend component status enum to include `golden` (very stable, polished) and `unstable` (known problem; avoid depending on it). Bumped MCP `schemaVersion` to `1.6` and regenerated `mcp-data/`.
 
 ## [0.32.0]
 

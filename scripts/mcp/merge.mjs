@@ -6,7 +6,7 @@ import { extractFromDocs } from './extract-docs.mjs';
 import { extractGlossary } from './extract-glossary.mjs';
 import { loadComponentMeta } from './load-meta.mjs';
 
-const SCHEMA_VERSION = '1.5';
+const SCHEMA_VERSION = '1.6';
 
 // Aliases are now sourced from per-component meta sidecars.
 
@@ -130,7 +130,8 @@ function merge(tsMap, docsMap, version, metaMap) {
 
     const status = (() => {
       const raw = metaMap?.[name]?.status;
-      if (raw === 'experimental' || raw === 'stable' || raw === 'deprecated') return raw;
+      const allowed = new Set(['golden', 'stable', 'experimental', 'unstable', 'deprecated']);
+      if (allowed.has(raw)) return raw;
       return undefined;
     })();
 

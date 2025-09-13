@@ -11,43 +11,35 @@
   "props": [
     {
       "name": "background",
-      "type": "string",
-      "required": false,
-      "default": "—",
-      "description": "Background colour override. When set to a theme tone (primary/secondary/tertiary), text colour is derived automatically."
+      "type": "string | undefined",
+      "required": false
     },
     {
       "name": "textColor",
-      "type": "string",
-      "required": false,
-      "default": "—",
-      "description": "Explicit text colour"
+      "type": "string | undefined",
+      "required": false
     },
     {
       "name": "centerContent",
       "type": "boolean",
-      "required": false,
-      "default": "false",
-      "description": "Center inner content using flexbox"
+      "required": false
     },
     {
       "name": "fullWidth",
       "type": "boolean",
       "required": false,
-      "default": "false",
-      "description": "Stretch to 100% width of the parent container"
+      "default": "false"
     },
     {
       "name": "alignX",
-      "type": "'left' | 'right' | 'center'",
+      "type": "'left' | 'right' | 'center' | 'centered'",
       "required": false,
       "enumValues": [
         "left",
         "right",
         "center",
         "centered"
-      ],
-      "default": "'left'"
+      ]
     },
     {
       "name": "centered",
@@ -59,27 +51,6 @@
       "name": "sx",
       "type": "Sx",
       "required": false
-    },
-    {
-      "name": "pad",
-      "type": "number | string",
-      "required": false,
-      "default": "1",
-      "description": "Container padding. Numbers map via theme.spacing(n); strings pass through (e.g., \"12px\")."
-    },
-    {
-      "name": "compact",
-      "type": "boolean",
-      "required": false,
-      "default": "false",
-      "description": "Zero out internal padding (overrides pad)."
-    },
-    {
-      "name": "preset",
-      "type": "string | string[]",
-      "required": false,
-      "default": "—",
-      "description": "Apply style presets"
     }
   ],
   "domPassthrough": {
@@ -139,5 +110,5 @@
     "docs/src/pages/components/layout/BoxDemo.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.5"
+  "schemaVersion": "1.6"
 }

@@ -13,16 +13,12 @@
     {
       "name": "data",
       "type": "string",
-      "required": true,
-      "default": "—",
-      "description": "Markdown source text"
+      "required": true
     },
     {
       "name": "codeBackground",
       "type": "string",
-      "required": false,
-      "default": "—",
-      "description": "Override background for fenced code blocks"
+      "required": false
     },
     {
       "name": "sx",
@@ -37,11 +33,9 @@
   "slots": [],
   "bestPractices": [],
   "examples": [],
-  "docsUrl": "/components/widgets/MarkdownDemo",
   "sourceFiles": [
-    "src/components/widgets/Markdown.tsx",
-    "docs/src/pages/components/widgets/MarkdownDemo.tsx"
+    "src/components/widgets/Markdown.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.5"
+  "schemaVersion": "1.6"
 }

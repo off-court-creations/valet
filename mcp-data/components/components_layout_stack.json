@@ -18,41 +18,17 @@
       "enumValues": [
         "row",
         "column"
-      ],
-      "description": "Layout direction"
+      ]
     },
     {
       "name": "wrap",
       "type": "boolean",
-      "required": false,
-      "default": "false for column, true for row",
-      "description": "Allow children to wrap"
+      "required": false
     },
     {
       "name": "sx",
       "type": "Sx",
       "required": false
-    },
-    {
-      "name": "gap",
-      "type": "number | string",
-      "required": false,
-      "default": "1",
-      "description": "Gap between children"
-    },
-    {
-      "name": "compact",
-      "type": "boolean",
-      "required": false,
-      "default": "false",
-      "description": "Remove margin and padding"
-    },
-    {
-      "name": "preset",
-      "type": "string | string[]",
-      "required": false,
-      "default": "—",
-      "description": "Apply style presets"
     }
   ],
   "cssVars": [
@@ -70,11 +46,9 @@
     "Prefer `Grid` for complex two‑dimensional layouts and `Table` for data."
   ],
   "examples": [],
-  "docsUrl": "/components/layout/StackDemo",
   "sourceFiles": [
-    "src/components/layout/Stack.tsx",
-    "docs/src/pages/components/layout/StackDemo.tsx"
+    "src/components/layout/Stack.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.5"
+  "schemaVersion": "1.6"
 }

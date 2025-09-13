@@ -13,70 +13,51 @@
     {
       "name": "accept",
       "type": "DropzoneOptions['accept']",
-      "required": false,
-      "default": "—",
-      "description": "Allowed file types"
+      "required": false
     },
     {
       "name": "showPreviews",
       "type": "boolean",
       "required": false,
-      "default": "true",
-      "description": "Show preview thumbnails"
+      "default": "true"
     },
     {
       "name": "showFileList",
       "type": "boolean",
       "required": false,
-      "default": "false",
-      "description": "Show icons and names"
+      "default": "false"
     },
     {
       "name": "onFilesChange",
       "type": "(files: File[]) => void",
-      "required": false,
-      "default": "—",
-      "description": "Called when accepted files change"
+      "required": false
     },
     {
       "name": "maxFiles",
       "type": "number",
-      "required": false,
-      "default": "—",
-      "description": "Maximum file count"
+      "required": false
     },
     {
       "name": "multiple",
       "type": "boolean",
       "required": false,
-      "default": "true",
-      "description": "Allow multiple file selection"
+      "default": "true"
     },
     {
       "name": "onDrop",
       "type": "DropzoneOptions['onDrop']",
-      "required": false,
-      "default": "—",
-      "description": "Low-level drop callback"
+      "required": false
     },
     {
       "name": "fullWidth",
       "type": "boolean",
       "required": false,
-      "default": "false",
-      "description": "Stretch to fill parent width"
+      "default": "false"
     },
     {
       "name": "sx",
       "type": "Sx",
       "required": false
-    },
-    {
-      "name": "preset",
-      "type": "string | string[]",
-      "required": false,
-      "default": "—",
-      "description": "Style preset(s)"
     }
   ],
   "cssVars": [],
@@ -97,11 +78,9 @@
     "Sanitize file names and never execute untrusted content."
   ],
   "examples": [],
-  "docsUrl": "/components/widgets/DropzoneDemo",
   "sourceFiles": [
-    "src/components/widgets/Dropzone.tsx",
-    "docs/src/pages/components/widgets/DropzoneDemo.tsx"
+    "src/components/widgets/Dropzone.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.5"
+  "schemaVersion": "1.6"
 }

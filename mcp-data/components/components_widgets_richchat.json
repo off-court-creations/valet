@@ -14,58 +14,45 @@
     {
       "name": "messages",
       "type": "RichMessage[]",
-      "required": true,
-      "default": "—",
-      "description": "Conversation history with JSX content"
+      "required": true
     },
     {
       "name": "onFormSubmit",
       "type": "(value: string, index: number) => void",
-      "required": false,
-      "default": "—",
-      "description": "Called when a form message submits"
+      "required": false
     },
     {
       "name": "onSend",
-      "type": "(m: RichMessage) => void",
-      "required": false,
-      "default": "—",
-      "description": "Called when user sends a message"
+      "type": "(message: RichMessage) => void",
+      "required": false
     },
     {
       "name": "userAvatar",
       "type": "string",
-      "required": false,
-      "default": "—",
-      "description": "URL for user avatar image"
+      "required": false
     },
     {
       "name": "systemAvatar",
       "type": "string",
-      "required": false,
-      "default": "—",
-      "description": "URL for assistant avatar image"
+      "required": false
     },
     {
       "name": "placeholder",
       "type": "string",
       "required": false,
-      "default": "'Message…'",
-      "description": "Input placeholder"
+      "default": "'Message…'"
     },
     {
       "name": "disableInput",
       "type": "boolean",
       "required": false,
-      "default": "false",
-      "description": "Hide the compose bar"
+      "default": "false"
     },
     {
       "name": "constrainHeight",
       "type": "boolean",
       "required": false,
-      "default": "true",
-      "description": "Fit within surface height"
+      "default": "true"
     },
     {
       "name": "fontFamily",
@@ -76,13 +63,6 @@
       "name": "sx",
       "type": "Sx",
       "required": false
-    },
-    {
-      "name": "preset",
-      "type": "string | string[]",
-      "required": false,
-      "default": "—",
-      "description": "Apply style presets"
     }
   ],
   "cssVars": [],
@@ -101,11 +81,9 @@
   "slots": [],
   "bestPractices": [],
   "examples": [],
-  "docsUrl": "/components/widgets/RichChat",
   "sourceFiles": [
-    "src/components/widgets/RichChat.tsx",
-    "docs/src/pages/components/widgets/RichChat.tsx"
+    "src/components/widgets/RichChat.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.5"
+  "schemaVersion": "1.6"
 }

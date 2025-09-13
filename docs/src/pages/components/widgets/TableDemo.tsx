@@ -4,7 +4,18 @@
 // column-dividers, and single / multi-row selection toggles, now strict-TS safe
 // ─────────────────────────────────────────────────────────────────────────────
 import { useMemo, useState } from 'react';
-import { Surface, Stack, Panel, TextField, Checkbox, IconButton, Table, Button, useTheme, Tabs } from '@archway/valet';
+import {
+  Surface,
+  Stack,
+  Panel,
+  TextField,
+  Checkbox,
+  IconButton,
+  Table,
+  Button,
+  useTheme,
+  Tabs,
+} from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
 import PageHero from '../../../components/PageHero';
 import BestPractices from '../../../components/BestPractices';
@@ -120,7 +131,9 @@ export default function TableDemoPage() {
                   max={500}
                   value={rows}
                   onChange={(e) =>
-                    setRows(Math.max(1, Math.min(500, Number((e.target as HTMLInputElement).value))))
+                    setRows(
+                      Math.max(1, Math.min(500, Number((e.target as HTMLInputElement).value))),
+                    )
                   }
                   sx={{ width: 120 }}
                 />

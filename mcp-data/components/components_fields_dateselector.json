@@ -13,72 +13,53 @@
     {
       "name": "value",
       "type": "string",
-      "required": false,
-      "default": "—",
-      "description": "Controlled ISO date value (YYYY-MM-DD)"
+      "required": false
     },
     {
       "name": "defaultValue",
       "type": "string",
-      "required": false,
-      "default": "—",
-      "description": "Initial uncontrolled value"
+      "required": false
     },
     {
       "name": "onChange",
       "type": "(value: string) => void",
-      "required": false,
-      "default": "—",
-      "description": "Fires when selection changes"
+      "required": false
     },
     {
       "name": "name",
       "type": "string",
-      "required": false,
-      "default": "—",
-      "description": "FormControl field name"
+      "required": false
     },
     {
       "name": "minDate",
       "type": "string",
-      "required": false,
-      "default": "'120y ago'",
-      "description": "Earliest selectable date"
+      "required": false
     },
     {
       "name": "maxDate",
       "type": "string",
-      "required": false,
-      "default": "'120y ahead'",
-      "description": "Latest selectable date"
+      "required": false
     },
     {
       "name": "range",
       "type": "boolean",
       "required": false,
-      "default": "false",
-      "description": "Enable dual start/end selection"
+      "default": "false"
     },
     {
       "name": "endValue",
       "type": "string",
-      "required": false,
-      "default": "—",
-      "description": "Controlled end date when range is true"
+      "required": false
     },
     {
       "name": "defaultEndValue",
       "type": "string",
-      "required": false,
-      "default": "—",
-      "description": "Uncontrolled end date default"
+      "required": false
     },
     {
       "name": "onRangeChange",
       "type": "(start: string, end: string) => void",
-      "required": false,
-      "default": "—",
-      "description": "Fires when range selection changes"
+      "required": false
     },
     {
       "name": "sx",
@@ -94,29 +75,19 @@
         "auto",
         "on",
         "off"
-      ],
-      "description": "Control compact behavior: auto-detect, force on, or disable entirely"
+      ]
     },
     {
       "name": "compactThresholdIn",
       "type": "number",
       "required": false,
-      "default": "340",
-      "description": "Width below which compact turns on (only when compactMode=auto)"
+      "default": "340"
     },
     {
       "name": "compactThresholdOut",
       "type": "number",
       "required": false,
-      "default": "380",
-      "description": "Width above which compact turns off (only when compactMode=auto)"
-    },
-    {
-      "name": "preset",
-      "type": "string | string[]",
-      "required": false,
-      "default": "—",
-      "description": "Apply style presets"
+      "default": "380"
     }
   ],
   "cssVars": [
@@ -139,11 +110,9 @@
   "slots": [],
   "bestPractices": [],
   "examples": [],
-  "docsUrl": "/components/field/DateSelectorDemo",
   "sourceFiles": [
-    "src/components/fields/DateSelector.tsx",
-    "docs/src/pages/components/field/DateSelectorDemo.tsx"
+    "src/components/fields/DateSelector.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.5"
+  "schemaVersion": "1.6"
 }

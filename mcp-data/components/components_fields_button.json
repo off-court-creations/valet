@@ -11,50 +11,36 @@
   "props": [
     {
       "name": "color",
-      "type": "'primary' | 'secondary' | 'tertiary' | string",
-      "required": false,
-      "default": "'primary'",
-      "description": "Background palette or custom colour"
+      "type": "ButtonToken | string",
+      "required": false
     },
     {
       "name": "textColor",
-      "type": "'primary' | 'secondary' | 'tertiary' | string",
-      "required": false,
-      "default": "—",
-      "description": "Label colour override"
+      "type": "ButtonToken | string",
+      "required": false
     },
     {
       "name": "variant",
-      "type": "'contained' | 'outlined'",
+      "type": "ButtonVariant",
       "required": false,
-      "default": "'contained'",
-      "description": "Visual style"
+      "default": "'contained'"
     },
     {
       "name": "size",
-      "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string",
+      "type": "ButtonSize | number | string",
       "required": false,
-      "default": "'md'",
-      "description": "Overall button size or custom CSS length"
+      "default": "'md'"
     },
     {
       "name": "fullWidth",
       "type": "boolean",
       "required": false,
-      "default": "false",
-      "description": "Stretch to fill parent width"
+      "default": "false"
     },
     {
       "name": "sx",
       "type": "Sx",
       "required": false
-    },
-    {
-      "name": "preset",
-      "type": "string | string[]",
-      "required": false,
-      "default": "—",
-      "description": "Apply style presets"
     }
   ],
   "cssVars": [
@@ -76,11 +62,9 @@
     "Avoid multiple primary actions per view and reserve destructive styles for destructive operations."
   ],
   "examples": [],
-  "docsUrl": "/components/field/ButtonDemoPage",
   "sourceFiles": [
-    "src/components/fields/Button.tsx",
-    "docs/src/pages/components/field/ButtonDemoPage.tsx"
+    "src/components/fields/Button.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.5"
+  "schemaVersion": "1.6"
 }

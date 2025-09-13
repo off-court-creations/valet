@@ -217,7 +217,11 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
       const centerRef = useRef<HTMLDivElement | null>(null);
       const [autoBoxPx, setAutoBoxPx] = useState<number | null>(null);
 
-      const shouldFit = (fitChild ?? true) && !!children && (size === undefined || typeof size !== 'number' && !(tokens.circular as any)[size as ProgressSize]);
+      const shouldFit =
+        (fitChild ?? true) &&
+        !!children &&
+        (size === undefined ||
+          (typeof size !== 'number' && !(tokens.circular as any)[size as ProgressSize]));
 
       useLayoutEffect(() => {
         if (!shouldFit) return;

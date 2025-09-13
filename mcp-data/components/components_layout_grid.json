@@ -12,48 +12,24 @@
       "name": "columns",
       "type": "number",
       "required": false,
-      "default": "2",
-      "description": "Number of equal‑width tracks (repeat(n, 1fr))."
+      "default": "2"
     },
     {
       "name": "adaptive",
       "type": "boolean",
       "required": false,
-      "default": "false",
-      "description": "Switch to a single column when the surface is in portrait."
+      "default": "false"
     },
     {
       "name": "compact",
       "type": "boolean",
       "required": false,
-      "default": "false",
-      "description": "Zero out both pad and gap for a tight layout."
+      "default": "false"
     },
     {
       "name": "sx",
       "type": "Sx",
       "required": false
-    },
-    {
-      "name": "gap",
-      "type": "number | string",
-      "required": false,
-      "default": "1",
-      "description": "Space between cells. Numbers map via theme.spacing(n); strings pass through."
-    },
-    {
-      "name": "pad",
-      "type": "number | string",
-      "required": false,
-      "default": "1",
-      "description": "Inner padding for the grid container. Same mapping as gap."
-    },
-    {
-      "name": "preset",
-      "type": "string | string[]",
-      "required": false,
-      "default": "—",
-      "description": "Apply style presets via definePreset/preset registry."
     }
   ],
   "cssVars": [
@@ -78,11 +54,9 @@
     "Test at common breakpoints to ensure content doesn’t clip or overlap."
   ],
   "examples": [],
-  "docsUrl": "/components/layout/GridDemo",
   "sourceFiles": [
-    "src/components/layout/Grid.tsx",
-    "docs/src/pages/components/layout/GridDemo.tsx"
+    "src/components/layout/Grid.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.5"
+  "schemaVersion": "1.6"
 }

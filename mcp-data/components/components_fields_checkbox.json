@@ -11,63 +11,37 @@
     {
       "name": "checked",
       "type": "boolean",
-      "required": false,
-      "default": "—",
-      "description": "Controlled checked state"
+      "required": false
     },
     {
       "name": "defaultChecked",
       "type": "boolean",
-      "required": false,
-      "default": "false",
-      "description": "Uncontrolled initial state"
+      "required": false
     },
     {
       "name": "name",
       "type": "string",
-      "required": true,
-      "default": "—",
-      "description": "Unique field name"
+      "required": true
     },
     {
       "name": "label",
       "type": "ReactNode",
-      "required": false,
-      "default": "—",
-      "description": "Label text or element"
+      "required": false
     },
     {
       "name": "size",
-      "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string",
-      "required": false,
-      "default": "'md'",
-      "description": "Checkbox dimensions"
+      "type": "CheckboxSize | number | string",
+      "required": false
     },
     {
       "name": "onChange",
-      "type": "(checked: boolean, e: ChangeEvent<HTMLInputElement>) => void",
-      "required": false,
-      "default": "—",
-      "description": "Change callback"
+      "type": "(checked: boolean, event: ChangeEvent<HTMLInputElement>) => void",
+      "required": false
     },
     {
       "name": "sx",
       "type": "Sx",
       "required": false
-    },
-    {
-      "name": "disabled",
-      "type": "boolean",
-      "required": false,
-      "default": "false",
-      "description": "Disable interaction"
-    },
-    {
-      "name": "preset",
-      "type": "string | string[]",
-      "required": false,
-      "default": "—",
-      "description": "Apply style presets"
     }
   ],
   "cssVars": [
@@ -98,11 +72,9 @@
     "Tokens/presets. Style with theme tokens and `preset` rather than ad‑hoc CSS to keep density and branding consistent."
   ],
   "examples": [],
-  "docsUrl": "/components/field/CheckBoxDemo",
   "sourceFiles": [
-    "src/components/fields/Checkbox.tsx",
-    "docs/src/pages/components/field/CheckBoxDemo.tsx"
+    "src/components/fields/Checkbox.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.5"
+  "schemaVersion": "1.6"
 }

@@ -14,16 +14,12 @@
     {
       "name": "icon",
       "type": "React.ReactNode",
-      "required": true,
-      "default": "—",
-      "description": "Main floating action button icon"
+      "required": true
     },
     {
       "name": "actions",
       "type": "SpeedDialAction[]",
-      "required": true,
-      "default": "—",
-      "description": "Array of action buttons"
+      "required": true
     },
     {
       "name": "direction",
@@ -35,15 +31,7 @@
         "down",
         "left",
         "right"
-      ],
-      "description": "Expansion direction"
-    },
-    {
-      "name": "preset",
-      "type": "string | string[]",
-      "required": false,
-      "default": "—",
-      "description": "Apply style presets"
+      ]
     }
   ],
   "cssVars": [],
@@ -64,11 +52,9 @@
     "Motion tokens. Animations use theme motion tokens; keep custom presets aligned for a cohesive feel with the rest of the app."
   ],
   "examples": [],
-  "docsUrl": "/components/widgets/SpeedDialDemo",
   "sourceFiles": [
-    "src/components/widgets/SpeedDial.tsx",
-    "docs/src/pages/components/widgets/SpeedDialDemo.tsx"
+    "src/components/widgets/SpeedDial.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.5"
+  "schemaVersion": "1.6"
 }

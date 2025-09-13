@@ -12,58 +12,36 @@
   "props": [
     {
       "name": "variant",
-      "type": "",
+      "type": "PanelVariant",
       "required": false,
-      "default": "",
-      "description": "Visual style: filled or outlined"
+      "default": "'main'"
     },
     {
       "name": "fullWidth",
       "type": "boolean",
       "required": false,
-      "default": "false",
-      "description": "Stretch to 100% width"
+      "default": "false"
     },
     {
       "name": "background",
-      "type": "string",
-      "required": false,
-      "default": "—",
-      "description": "Explicit background override"
+      "type": "string | undefined",
+      "required": false
     },
     {
       "name": "centerContent",
       "type": "boolean",
-      "required": false,
-      "default": "false",
-      "description": "Center contents using flexbox"
+      "required": false
     },
     {
       "name": "alignX",
-      "type": "",
+      "type": "'left' | 'right' | 'center' | 'centered'",
       "required": false,
       "enumValues": [
         "left",
         "right",
         "center",
         "centered"
-      ],
-      "default": "",
-      "description": "Horizontal placement when not fullWidth"
-    },
-    {
-      "name": "compact",
-      "type": "boolean",
-      "required": false,
-      "default": "false",
-      "description": "Remove default margin and padding"
-    },
-    {
-      "name": "preset",
-      "type": "string | string[]",
-      "required": false,
-      "default": "—",
-      "description": "Apply style presets"
+      ]
     }
   ],
   "domPassthrough": {
@@ -85,11 +63,9 @@
   "slots": [],
   "bestPractices": [],
   "examples": [],
-  "docsUrl": "/components/layout/Panel",
   "sourceFiles": [
-    "src/components/layout/Panel.tsx",
-    "docs/src/pages/components/layout/Panel.tsx"
+    "src/components/layout/Panel.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.5"
+  "schemaVersion": "1.6"
 }

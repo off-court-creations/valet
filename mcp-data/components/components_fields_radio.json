@@ -13,9 +13,7 @@
     {
       "name": "value",
       "type": "string",
-      "required": true,
-      "default": "—",
-      "description": "Controlled value"
+      "required": true
     },
     {
       "name": "label",
@@ -24,10 +22,8 @@
     },
     {
       "name": "size",
-      "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string",
-      "required": false,
-      "default": "'md'",
-      "description": "Radio size token or custom CSS measurement"
+      "type": "RadioSize | number | string",
+      "required": false
     },
     {
       "name": "children",
@@ -38,48 +34,6 @@
       "name": "sx",
       "type": "Sx",
       "required": false
-    },
-    {
-      "name": "defaultValue",
-      "type": "string",
-      "required": false,
-      "default": "—",
-      "description": "Uncontrolled initial value"
-    },
-    {
-      "name": "name",
-      "type": "string",
-      "required": false,
-      "default": "—",
-      "description": "Field name for forms"
-    },
-    {
-      "name": "row",
-      "type": "boolean",
-      "required": false,
-      "default": "false",
-      "description": "Horizontal layout"
-    },
-    {
-      "name": "spacing",
-      "type": "number | string",
-      "required": false,
-      "default": "—",
-      "description": "Gap between options"
-    },
-    {
-      "name": "onChange",
-      "type": "(val: string) => void",
-      "required": false,
-      "default": "—",
-      "description": "Change handler"
-    },
-    {
-      "name": "preset",
-      "type": "string | string[]",
-      "required": false,
-      "default": "—",
-      "description": "Apply style presets"
     }
   ],
   "cssVars": [],
@@ -100,11 +54,9 @@
     "Use presets for visual variants. Capture chip/pill styles with `definePreset` and apply via `preset` so branding and states stay consistent."
   ],
   "examples": [],
-  "docsUrl": "/components/field/RadioGroupDemo",
   "sourceFiles": [
-    "src/components/fields/RadioGroup.tsx",
-    "docs/src/pages/components/field/RadioGroupDemo.tsx"
+    "src/components/fields/RadioGroup.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.5"
+  "schemaVersion": "1.6"
 }

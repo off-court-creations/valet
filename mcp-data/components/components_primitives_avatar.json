@@ -14,56 +14,35 @@
     {
       "name": "src",
       "type": "string",
-      "required": false,
-      "default": "—",
-      "description": "Image URL override"
+      "required": false
     },
     {
       "name": "email",
       "type": "string",
-      "required": false,
-      "default": "—",
-      "description": "Email used for Gravatar lookup"
+      "required": false
     },
     {
       "name": "size",
-      "type": "'xs' | 's' | 'm' | 'l' | 'xl'",
+      "type": "AvatarSize",
       "required": false,
-      "default": "'m'",
-      "description": "Relative size token"
+      "default": "'m'"
     },
     {
       "name": "variant",
-      "type": "'plain' | 'outline'",
+      "type": "AvatarVariant",
       "required": false,
-      "default": "'plain'",
-      "description": "Visual style variant"
+      "default": "'plain'"
     },
     {
       "name": "gravatarDefault",
       "type": "string",
       "required": false,
-      "default": "'identicon'",
-      "description": "Fallback style when no avatar exists"
+      "default": "'identicon'"
     },
     {
       "name": "sx",
       "type": "Sx",
       "required": false
-    },
-    {
-      "name": "alt",
-      "type": "string",
-      "required": false,
-      "default": "—",
-      "description": "Image alt text"
-    },
-    {
-      "name": "preset",
-      "type": "string | string[]",
-      "required": false,
-      "default": "—",
-      "description": "Apply style presets"
     }
   ],
   "cssVars": [],
@@ -79,11 +58,9 @@
     "Group with labels or presence indicators when they add value; avoid redundant decoration."
   ],
   "examples": [],
-  "docsUrl": "/components/primitives/AvatarDemo",
   "sourceFiles": [
-    "src/components/primitives/Avatar.tsx",
-    "docs/src/pages/components/primitives/AvatarDemo.tsx"
+    "src/components/primitives/Avatar.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.5"
+  "schemaVersion": "1.6"
 }

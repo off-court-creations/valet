@@ -94,7 +94,10 @@ export default function ProgressDemoPage() {
             {/* 2. Circular determinate (controlled) ----------------------- */}
             <Typography variant='h3'>2. Circular – determinate (controlled)</Typography>
             {/* Circular surrounding an IconButton using Progress children */}
-            <Stack direction='row' sx={{ alignItems: 'center', gap: theme.spacing(1) }}>
+            <Stack
+              direction='row'
+              sx={{ alignItems: 'center', gap: theme.spacing(1) }}
+            >
               <Progress
                 variant='circular'
                 mode='determinate'
@@ -111,8 +114,16 @@ export default function ProgressDemoPage() {
             </Stack>
 
             {/* Additional circular determinate styles */}
-            <Stack direction='row' sx={{ alignItems: 'center', gap: theme.spacing(1) }}>
-              <Progress variant='circular' mode='determinate' value={value} showLabel />
+            <Stack
+              direction='row'
+              sx={{ alignItems: 'center', gap: theme.spacing(1) }}
+            >
+              <Progress
+                variant='circular'
+                mode='determinate'
+                value={value}
+                showLabel
+              />
               <Progress
                 variant='circular'
                 mode='determinate'

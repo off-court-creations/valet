@@ -3,7 +3,16 @@
 // Simplified Tooltip demo with reference section
 // ─────────────────────────────────────────────────────────────
 import { useState } from 'react';
-import { Surface, Stack, Tooltip, Button, IconButton, Typography, useTheme, Tabs } from '@archway/valet';
+import {
+  Surface,
+  Stack,
+  Tooltip,
+  Button,
+  IconButton,
+  Typography,
+  useTheme,
+  Tabs,
+} from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
 import BestPractices from '../../../components/BestPractices';

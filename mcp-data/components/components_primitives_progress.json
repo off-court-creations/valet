@@ -3,7 +3,7 @@
   "category": "primitives",
   "slug": "components/primitives/progress",
   "summary": "Progress component",
-  "status": "experimental",
+  "status": "unstable",
   "aliases": [
     "progress",
     "spinner",
@@ -12,52 +12,38 @@
   "props": [
     {
       "name": "variant",
-      "type": "'linear' | 'circular'",
-      "required": false,
-      "default": "'linear'",
-      "description": "Visual style of the progress indicator"
+      "type": "ProgressVariant",
+      "required": false
     },
     {
       "name": "mode",
-      "type": "'determinate' | 'indeterminate' | 'buffer'",
-      "required": false,
-      "default": "'determinate'",
-      "description": "Behavior; buffer applies to linear only"
+      "type": "ProgressMode",
+      "required": false
     },
     {
       "name": "value",
       "type": "number",
-      "required": false,
-      "default": "0",
-      "description": "0–100 value for determinate/buffer foreground"
+      "required": false
     },
     {
       "name": "buffer",
       "type": "number",
-      "required": false,
-      "default": "0",
-      "description": "0–100 secondary value (linear-buffer only)"
+      "required": false
     },
     {
       "name": "size",
-      "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string",
-      "required": false,
-      "default": "'md'",
-      "description": "Token size or custom CSS size"
+      "type": "ProgressSize | number | string",
+      "required": false
     },
     {
       "name": "showLabel",
       "type": "boolean",
-      "required": false,
-      "default": "false",
-      "description": "Show numeric % inside circular center"
+      "required": false
     },
     {
       "name": "color",
-      "type": "string",
-      "required": false,
-      "default": "theme.colors.primary",
-      "description": "Override bar/stroke color"
+      "type": "string | undefined",
+      "required": false
     },
     {
       "name": "sx",
@@ -65,11 +51,19 @@
       "required": false
     },
     {
-      "name": "preset",
-      "type": "string | string[]",
-      "required": false,
-      "default": "—",
-      "description": "Apply style presets (define via definePreset())"
+      "name": "children",
+      "type": "React.ReactNode",
+      "required": false
+    },
+    {
+      "name": "fitChild",
+      "type": "boolean",
+      "required": false
+    },
+    {
+      "name": "childClearance",
+      "type": "number",
+      "required": false
     }
   ],
   "cssVars": [
@@ -78,7 +72,11 @@
   "cssPresets": [],
   "events": [],
   "actions": [],
-  "slots": [],
+  "slots": [
+    {
+      "name": "children"
+    }
+  ],
   "bestPractices": [
     "Use determinate bars when percent is known; spinners for unknown durations.",
     "Provide accessible labels (e.g., `aria-label` or nearby text) that explain what is loading.",
@@ -88,11 +86,9 @@
     "Keep motion subtle and aligned with the theme’s motion tokens."
   ],
   "examples": [],
-  "docsUrl": "/components/primitives/ProgressDemo",
   "sourceFiles": [
-    "src/components/primitives/Progress.tsx",
-    "docs/src/pages/components/primitives/ProgressDemo.tsx"
+    "src/components/primitives/Progress.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.5"
+  "schemaVersion": "1.6"
 }

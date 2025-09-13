@@ -13,30 +13,23 @@
     {
       "name": "code",
       "type": "string",
-      "required": true,
-      "default": "—",
-      "description": "Source code to render"
+      "required": true
     },
     {
       "name": "language",
       "type": "string",
       "required": false,
-      "default": "'typescript'",
-      "description": "Highlight.js language key"
+      "default": "'typescript'"
     },
     {
       "name": "ariaLabel",
       "type": "string",
-      "required": false,
-      "default": "—",
-      "description": "Copy button aria-label"
+      "required": false
     },
     {
       "name": "title",
       "type": "string",
-      "required": false,
-      "default": "—",
-      "description": "Copy button tooltip"
+      "required": false
     }
   ],
   "cssVars": [],
@@ -52,11 +45,9 @@
     "Keep code immutable in this component; use an editor widget for editable code."
   ],
   "examples": [],
-  "docsUrl": "/components/widgets/CodeBlockDemo",
   "sourceFiles": [
-    "src/components/widgets/CodeBlock.tsx",
-    "docs/src/pages/components/widgets/CodeBlockDemo.tsx"
+    "src/components/widgets/CodeBlock.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.5"
+  "schemaVersion": "1.6"
 }

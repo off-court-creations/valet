@@ -14,12 +14,16 @@ export type ValetIndexItem = {
   slug: string;
 };
 
+// Status semantics (for clients/agents):
+// 'golden' > 'stable' > 'experimental' > 'unstable' > 'deprecated'
+// golden: very stable + polished; stable: production‑ready; experimental: new/iterating;
+// unstable: known issues; deprecated: slated for removal.
 export type ValetComponentDoc = {
   name: string;
   category: string;
   slug: string;
   summary: string;
-  status?: 'experimental' | 'stable' | 'deprecated';
+  status?: 'golden' | 'stable' | 'experimental' | 'unstable' | 'deprecated';
   description?: string;
   usage?: {
     purpose?: string | string[];

@@ -254,7 +254,9 @@ export default function TabsDemoPage() {
                   />
                 ))}
                 {months.map((m, i) => (
-                  <Tabs.Panel key={`p-${m}-${i}`}>{m + ' → Lorem ipsum dolor sit amet.'}</Tabs.Panel>
+                  <Tabs.Panel key={`p-${m}-${i}`}>
+                    {m + ' → Lorem ipsum dolor sit amet.'}
+                  </Tabs.Panel>
                 ))}
               </Tabs>
             </Box>

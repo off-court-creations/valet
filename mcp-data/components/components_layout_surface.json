@@ -3,7 +3,7 @@
   "category": "layout",
   "slug": "components/layout/surface",
   "summary": "Surface component",
-  "status": "experimental",
+  "status": "golden",
   "aliases": [
     "surface",
     "hero"
@@ -65,5 +65,5 @@
     "src/components/layout/Surface.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.5"
+  "schemaVersion": "1.6"
 }

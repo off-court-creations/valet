@@ -11,50 +11,35 @@
   "props": [
     {
       "name": "variant",
-      "type": "'contained' | 'outlined'",
+      "type": "IconButtonVariant",
       "required": false,
-      "default": "'contained'",
-      "description": "Button style"
+      "default": "'contained'"
     },
     {
       "name": "size",
-      "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string",
+      "type": "IconButtonSize | number | string",
       "required": false,
-      "default": "'md'",
-      "description": "Overall button dimensions"
+      "default": "'md'"
     },
     {
       "name": "icon",
       "type": "string",
-      "required": false,
-      "default": "—",
-      "description": "Iconify name"
+      "required": false
     },
     {
       "name": "svg",
-      "type": "string | ReactElement",
-      "required": false,
-      "default": "—",
-      "description": "Custom SVG content"
+      "type": "string | ReactElement<SVGProps<SVGSVGElement>>",
+      "required": false
     },
     {
       "name": "iconColor",
-      "type": "string",
-      "required": false,
-      "default": "—",
-      "description": "Glyph colour override"
+      "type": "string | undefined",
+      "required": false
     },
     {
       "name": "sx",
       "type": "Sx",
       "required": false
-    },
-    {
-      "name": "preset",
-      "type": "string | string[]",
-      "required": false,
-      "default": "—",
-      "description": "Apply style presets"
     }
   ],
   "cssVars": [],
@@ -75,11 +60,9 @@
     "Keep ripple/motion subtle. Align custom presets with the theme’s motion tokens for a cohesive feel."
   ],
   "examples": [],
-  "docsUrl": "/components/field/IconButtonDemoPage",
   "sourceFiles": [
-    "src/components/fields/IconButton.tsx",
-    "docs/src/pages/components/field/IconButtonDemoPage.tsx"
+    "src/components/fields/IconButton.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.5"
+  "schemaVersion": "1.6"
 }

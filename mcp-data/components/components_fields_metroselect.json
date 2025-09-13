@@ -14,57 +14,40 @@
   "props": [
     {
       "name": "value",
-      "type": "string | number | (string | number)[]",
-      "required": false,
-      "default": "—",
-      "description": "Controlled value (array when multiple)"
+      "type": "Primitive | Primitive[]",
+      "required": false
     },
     {
       "name": "defaultValue",
-      "type": "string | number | (string | number)[]",
-      "required": false,
-      "default": "—",
-      "description": "Uncontrolled initial value (array when multiple)"
+      "type": "Primitive | Primitive[]",
+      "required": false
     },
     {
       "name": "gap",
       "type": "number | string",
       "required": false,
-      "default": "4",
-      "description": "Spacing between tiles (theme units if number)"
+      "default": "0"
     },
     {
       "name": "multiple",
       "type": "boolean",
       "required": false,
-      "default": "false",
-      "description": "Enable selecting more than one option"
+      "default": "false"
     },
     {
       "name": "onChange",
-      "type": "(val: Primitive | Primitive[]) => void",
-      "required": false,
-      "default": "—",
-      "description": "Change handler (array when multiple)"
+      "type": "(v: Primitive | Primitive[]) => void",
+      "required": false
     },
     {
       "name": "children",
       "type": "React.ReactNode",
-      "required": true,
-      "default": "—",
-      "description": "MetroSelect.Option elements"
+      "required": true
     },
     {
       "name": "sx",
       "type": "Sx",
       "required": false
-    },
-    {
-      "name": "preset",
-      "type": "string | string[]",
-      "required": false,
-      "default": "—",
-      "description": "Apply style presets"
     }
   ],
   "cssVars": [
@@ -85,11 +68,9 @@
   ],
   "bestPractices": [],
   "examples": [],
-  "docsUrl": "/components/field/MetroSelectDemo",
   "sourceFiles": [
-    "src/components/fields/MetroSelect.tsx",
-    "docs/src/pages/components/field/MetroSelectDemo.tsx"
+    "src/components/fields/MetroSelect.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.5"
+  "schemaVersion": "1.6"
 }

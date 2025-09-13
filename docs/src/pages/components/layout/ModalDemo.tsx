@@ -152,7 +152,9 @@ export default function ModalDemoPage() {
 
             {/* 4. Backdrop / ESC disable -------------------------------------- */}
             <Typography variant='h3'>4. Disable backdrop / ESC</Typography>
-            <Button onClick={() => setNoBackdropCloseOpen(true)}>Unclosable via backdrop / ESC</Button>
+            <Button onClick={() => setNoBackdropCloseOpen(true)}>
+              Unclosable via backdrop / ESC
+            </Button>
             <Modal
               open={noBackdropCloseOpen}
               onClose={() => setNoBackdropCloseOpen(false)}

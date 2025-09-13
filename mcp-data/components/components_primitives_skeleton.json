@@ -13,35 +13,22 @@
     {
       "name": "loading",
       "type": "boolean",
-      "required": false,
-      "default": "true",
-      "description": "Show placeholder while true"
+      "required": false
     },
     {
       "name": "variant",
-      "type": "'text' | 'rect' | 'circle'",
-      "required": false,
-      "default": "—",
-      "description": "Override inferred placeholder shape"
+      "type": "SkeletonVariant",
+      "required": false
     },
     {
       "name": "icon",
-      "type": "ReactNode",
-      "required": false,
-      "default": "—",
-      "description": "Optional icon shown while loading"
+      "type": "React.ReactNode",
+      "required": false
     },
     {
       "name": "sx",
       "type": "Sx",
       "required": false
-    },
-    {
-      "name": "preset",
-      "type": "string | string[]",
-      "required": false,
-      "default": "—",
-      "description": "Apply style presets"
     }
   ],
   "cssVars": [],
@@ -61,11 +48,9 @@
     "Match sizes closely to eventual content for a stable experience."
   ],
   "examples": [],
-  "docsUrl": "/components/primitives/SkeletonDemo",
   "sourceFiles": [
-    "src/components/primitives/Skeleton.tsx",
-    "docs/src/pages/components/primitives/SkeletonDemo.tsx"
+    "src/components/primitives/Skeleton.tsx"
   ],
   "version": "0.31.0",
-  "schemaVersion": "1.5"
+  "schemaVersion": "1.6"
 }
