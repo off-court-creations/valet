@@ -17,6 +17,7 @@ import {
   Tabs,
 } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
+import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
 import BestPractices from '../../../components/BestPractices';
 import ReferenceSection from '../../../components/ReferenceSection';
@@ -107,6 +108,7 @@ export default function TableDemoPage() {
   /* Render ---------------------------------------------------------------- */
   return (
     <Surface>
+      <NavDrawer />
       <Stack>
         <PageHero title='Table' />
 
