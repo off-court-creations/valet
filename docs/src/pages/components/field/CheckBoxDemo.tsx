@@ -14,14 +14,15 @@ import {
   createFormStore,
   useTheme,
   Tabs,
-  Table,
-  Panel,
 } from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
-import type { ReactNode } from 'react';
+import ReferenceSection from '../../../components/ReferenceSection';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
+import BestPractices from '../../../components/BestPractices';
+import CuratedExamples from '../../../components/CuratedExamples';
+import { getBestPractices, getExamples } from '../../../utils/sidecar';
+import CheckboxMeta from '../../../../../src/components/fields/Checkbox.meta.json';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Local form store for demo                                                  */
@@ -38,76 +39,6 @@ export default function CheckboxDemoPage() {
 
   /* Controlled example state --------------------------------------------- */
   const [newsletter, setNewsletter] = useState(false);
-
-  interface Row {
-    prop: ReactNode;
-    type: ReactNode;
-    default: ReactNode;
-    description: ReactNode;
-  }
-
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const data: Row[] = [
-    {
-      prop: <code>name</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Unique field name',
-    },
-    {
-      prop: <code>label</code>,
-      type: <code>ReactNode</code>,
-      default: <code>—</code>,
-      description: 'Label text or element',
-    },
-    {
-      prop: <code>checked</code>,
-      type: <code>boolean</code>,
-      default: <code>—</code>,
-      description: 'Controlled checked state',
-    },
-    {
-      prop: <code>defaultChecked</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Uncontrolled initial state',
-    },
-    {
-      prop: <code>size</code>,
-      type: (
-        <code>
-          &apos;xs&apos; | &apos;sm&apos; | &apos;md&apos; | &apos;lg&apos; | &apos;xl&apos; |
-          number | string
-        </code>
-      ),
-      default: <code>&apos;md&apos;</code>,
-      description: 'Checkbox dimensions',
-    },
-    {
-      prop: <code>disabled</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Disable interaction',
-    },
-    {
-      prop: <code>onChange</code>,
-      type: <code>(checked: boolean, e: ChangeEvent&lt;HTMLInputElement&gt;) =&gt; void</code>,
-      default: <code>—</code>,
-      description: 'Change callback',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Apply style presets',
-    },
-  ];
 
   /* Form submit handler --------------------------------------------------- */
   const handleSubmit = (values: { terms: boolean; marketing: boolean }) => {
@@ -259,12 +190,7 @@ export default function CheckboxDemoPage() {
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant='h3'>Prop reference</Typography>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
+            <ReferenceSection slug='components/fields/checkbox' />
           </Tabs.Panel>
         </Tabs>
 
@@ -276,40 +202,8 @@ export default function CheckboxDemoPage() {
         >
           ← Back
         </Button>
-
-        {/* Best Practices -------------------------------------------------- */}
-        <Panel fullWidth>
-          <Typography variant='h4'>Best Practices</Typography>
-          <Typography>
-            - Use Checkbox for independent booleans. For mutually exclusive choices, prefer
-            <code> RadioGroup</code>.
-          </Typography>
-          <Typography>
-            - Always provide a clear label. The entire label should be clickable. In forms, set a
-            stable <code>name</code> so values submit predictably.
-          </Typography>
-          <Typography>
-            - Choose control model deliberately. Use <code>checked</code>/<code> onChange</code>{' '}
-            when the value participates in app state; otherwise <code>defaultChecked</code> is fine
-            for local forms.
-          </Typography>
-          <Typography>
-            - Keep targets comfortable. Pick <code>size</code> tokens or numeric sizes that keep tap
-            areas ≥ 40–48px in dense UIs.
-          </Typography>
-          <Typography>
-            - Group with a visible question or caption when multiple checkboxes relate to one
-            concept; don’t rely on proximity alone.
-          </Typography>
-          <Typography>
-            - Disabled with context. If a checkbox is disabled, explain why nearby; avoid silently
-            disabling without guidance.
-          </Typography>
-          <Typography>
-            - Tokens/presets. Style with theme tokens and <code>preset</code> rather than ad‑hoc CSS
-            to keep density and branding consistent.
-          </Typography>
-        </Panel>
+        <CuratedExamples examples={getExamples(CheckboxMeta)} />
+        <BestPractices items={getBestPractices(CheckboxMeta)} />
       </Stack>
     </Surface>
   );

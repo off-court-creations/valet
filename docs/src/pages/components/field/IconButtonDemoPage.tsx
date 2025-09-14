@@ -13,14 +13,15 @@ import {
   useTheme,
   definePreset,
   Tabs,
-  Table,
-  Panel,
 } from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
-import type { ReactNode } from 'react';
+import ReferenceSection from '../../../components/ReferenceSection';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
+import BestPractices from '../../../components/BestPractices';
+import CuratedExamples from '../../../components/CuratedExamples';
+import { getBestPractices, getExamples } from '../../../utils/sidecar';
+import IconButtonMeta from '../../../../../src/components/fields/IconButton.meta.json';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Style preset showcasing IconButton inside a card                            */
@@ -55,64 +56,6 @@ const HeartSvg = (
 export default function IconButtonDemoPage() {
   const { theme, toggleMode } = useTheme();
   const navigate = useNavigate();
-
-  interface Row {
-    prop: ReactNode;
-    type: ReactNode;
-    default: ReactNode;
-    description: ReactNode;
-  }
-
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const data: Row[] = [
-    {
-      prop: <code>variant</code>,
-      type: <code>&apos;contained&apos; | &apos;outlined&apos;</code>,
-      default: <code>&apos;contained&apos;</code>,
-      description: 'Button style',
-    },
-    {
-      prop: <code>size</code>,
-      type: (
-        <code>
-          &apos;xs&apos; | &apos;sm&apos; | &apos;md&apos; | &apos;lg&apos; | &apos;xl&apos; |
-          number | string
-        </code>
-      ),
-      default: <code>&apos;md&apos;</code>,
-      description: 'Overall button dimensions',
-    },
-    {
-      prop: <code>icon</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Iconify name',
-    },
-    {
-      prop: <code>svg</code>,
-      type: <code>string | ReactElement</code>,
-      default: <code>—</code>,
-      description: 'Custom SVG content',
-    },
-    {
-      prop: <code>iconColor</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Glyph colour override',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Apply style presets',
-    },
-  ];
 
   return (
     <Surface>
@@ -268,12 +211,7 @@ export default function IconButtonDemoPage() {
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant='h3'>Prop reference</Typography>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
+            <ReferenceSection slug='components/fields/iconbutton' />
           </Tabs.Panel>
         </Tabs>
 
@@ -286,37 +224,8 @@ export default function IconButtonDemoPage() {
           ← Back
         </Button>
 
-        {/* Best Practices -------------------------------------------------- */}
-        <Panel fullWidth>
-          <Typography variant='h4'>Best Practices</Typography>
-          <Typography>
-            - Provide an accessible name. Icon‑only buttons must include <code>aria-label</code>
-            describing the action (e.g., &apos;Delete item&apos;, &apos;Play&apos;). Avoid vague
-            labels.
-          </Typography>
-          <Typography>
-            - Pick variants by emphasis. Use <code>contained</code> for primary/high‑affordance
-            actions and <code>outlined</code> for secondary/tertiary actions. Keep colour from theme
-            tokens and avoid unbounded custom colours.
-          </Typography>
-          <Typography>
-            - Size for touch. Use token sizes (<code>&apos;xs&apos;</code>…
-            <code>&apos;xl&apos;</code>) or numbers to maintain comfortable targets on mobile.
-          </Typography>
-          <Typography>
-            - Toggle semantics. When the button toggles state, add <code>aria-pressed</code> to
-            reflect the current state; tooltips are optional and should not replace labels.
-          </Typography>
-          <Typography>
-            - Choose <code>icon</code> vs <code>svg</code> deliberately. Prefer <code>icon</code>
-            for Iconify glyphs; use <code>svg</code> only for custom/brand artwork. Do not pass both
-            at once.
-          </Typography>
-          <Typography>
-            - Keep ripple/motion subtle. Align custom presets with the theme’s motion tokens for a
-            cohesive feel.
-          </Typography>
-        </Panel>
+        <CuratedExamples examples={getExamples(IconButtonMeta)} />
+        <BestPractices items={getBestPractices(IconButtonMeta)} />
       </Stack>
     </Surface>
   );

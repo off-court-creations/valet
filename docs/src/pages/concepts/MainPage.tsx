@@ -51,6 +51,7 @@ const Trippy = styled('div')<{ $dur: string; $ease: string; $opacity?: number }>
   opacity: ${({ $opacity = 0.35 }) => String($opacity)};
   animation: ${swirl} ${({ $dur }) => $dur} ${({ $ease }) => $ease} infinite;
   will-change: transform;
+  transform: translateZ(0);
   mix-blend-mode: overlay;
   @media (prefers-reduced-motion: reduce) {
     animation: none;
@@ -105,6 +106,9 @@ const Goo = styled('div')<{
   z-index: 0;
   pointer-events: none;
   --blob-blur: ${({ $blur = 40 }) => `${$blur}px`};
+  /* Hint GPU accel for the animated filter */
+  will-change: filter;
+  transform: translateZ(0);
   filter: blur(var(--blob-blur)) hue-rotate(0deg);
   opacity: ${({ $opacity = 0.45 }) => String($opacity)};
   mix-blend-mode: screen;
@@ -158,6 +162,7 @@ const Halo = styled('div')<{ $opacity?: number; $dur?: string }>`
   mix-blend-mode: screen;
   filter: saturate(1.08) brightness(1.05);
   will-change: transform;
+  transform: translateZ(0);
 `;
 
 // —
@@ -262,6 +267,7 @@ export default function MainPage() {
             density={140}
             speed={126}
             streak={0.85}
+            color='rgba(192,192,192,0.85)'
             opacity={0.4}
             centerZero={0.05}
             centerFull={0.55}

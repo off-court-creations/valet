@@ -6,7 +6,7 @@ import { extractFromDocs } from './extract-docs.mjs';
 import { extractGlossary } from './extract-glossary.mjs';
 import { loadComponentMeta } from './load-meta.mjs';
 
-const SCHEMA_VERSION = '1.4';
+const SCHEMA_VERSION = '1.6';
 
 // Aliases are now sourced from per-component meta sidecars.
 
@@ -128,12 +128,27 @@ function merge(tsMap, docsMap, version, metaMap) {
       return merged.length ? merged : undefined;
     })();
 
+    const status = (() => {
+      const raw = metaMap?.[name]?.status;
+      const allowed = new Set(['golden', 'stable', 'experimental', 'unstable', 'deprecated']);
+      if (allowed.has(raw)) return raw;
+      return undefined;
+    })();
+
+    const bestPractices = Array.isArray(metaMap?.[name]?.docs?.bestPractices) && metaMap[name].docs.bestPractices.length
+      ? metaMap[name].docs.bestPractices
+      : (docs.bestPractices || []);
+
+    // Examples: prefer curated ones from sidecar meta; optionally only curated
+    const rawExamples = Array.isArray(metaMap?.[name]?.examples) ? metaMap[name].examples : [];
+
     out[name] = {
       name,
       category: ts.category || 'unknown',
       slug: ts.slug || `components/${(ts.category || 'unknown')}/${name.toLowerCase()}`,
       summary,
       description,
+      status,
       aliases: aliases.length ? aliases : undefined,
       usage,
       props,
@@ -143,9 +158,17 @@ function merge(tsMap, docsMap, version, metaMap) {
       events: ts.events || [],
       actions: ts.actions || [],
       slots: ts.slots || [],
-      bestPractices: docs.bestPractices || [],
+      bestPractices,
       bestPracticeSlugs,
-      examples: (docs.examples || []).map((ex) => ({ ...ex, runnable: ex.runnable ?? true, minimalProps })),
+      examples: rawExamples.map((ex, i) => ({
+        id: ex.id || `${name.toLowerCase()}-ex-${i + 1}`,
+        title: ex.title,
+        code: ex.code,
+        lang: ex.lang || 'tsx',
+        source: ex.source,
+        runnable: ex.runnable ?? true,
+        minimalProps,
+      })),
       docsUrl,
       sourceFiles: [...new Set([...(ts.sourceFiles || []), docs.sourceFile].filter(Boolean))],
       version,
@@ -157,7 +180,14 @@ function merge(tsMap, docsMap, version, metaMap) {
 }
 
 function indexFromComponents(map) {
-  return Object.values(map).map((c) => ({ name: c.name, category: c.category, summary: c.summary, slug: c.slug }));
+  return Object.values(map).map((c) => ({
+    name: c.name,
+    category: c.category,
+    summary: c.summary,
+    slug: c.slug,
+    // include status in the index for fast filtering without opening per-component docs
+    status: c.status,
+  }));
 }
 
 async function main() {
@@ -232,12 +262,9 @@ async function main() {
     }
   }
   const synPath = path.join(outDir, 'component_synonyms.json');
-  if (Object.keys(synonyms).length > 0) {
-    fs.writeFileSync(synPath, JSON.stringify(synonyms, null, 2));
-  } else {
-    // No per-component aliases defined yet → let server use its built-in defaults
-    try { fs.rmSync(synPath, { force: true }); } catch {}
-  }
+  // Always write the file, even if empty. The server has built-in defaults,
+  // but emitting an empty object avoids validator warnings and clarifies intent.
+  fs.writeFileSync(synPath, JSON.stringify(synonyms, null, 2));
 
   // Glossary
   try {

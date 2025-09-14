@@ -15,13 +15,14 @@ import {
   createFormStore,
   useTheme,
   Tabs,
-  Table,
-  Panel,
 } from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
-import type { ReactNode } from 'react';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
+import BestPractices from '../../../components/BestPractices';
+import CuratedExamples from '../../../components/CuratedExamples';
+import ReferenceSection from '../../../components/ReferenceSection';
+import { getBestPractices, getExamples } from '../../../utils/sidecar';
+import SelectMeta from '../../../../../src/components/fields/Select.meta.json';
 
 /*───────────────────────────────────────────────────────────*/
 /* Local form store                                          */
@@ -44,81 +45,7 @@ export default function SelectDemoPage() {
   /* show submitted values --------------------------------------------- */
   const [submitted, setSubmitted] = useState<DemoForm | null>(null);
 
-  interface Row {
-    prop: ReactNode;
-    type: ReactNode;
-    default: ReactNode;
-    description: ReactNode;
-  }
-
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const data: Row[] = [
-    {
-      prop: <code>value</code>,
-      type: <code>string | number | (string | number)[]</code>,
-      default: <code>—</code>,
-      description: 'Controlled value',
-    },
-    {
-      prop: <code>initialValue</code>,
-      type: <code>string | number | (string | number)[]</code>,
-      default: <code>—</code>,
-      description: 'Uncontrolled initial value',
-    },
-    {
-      prop: <code>onChange</code>,
-      type: <code>(v: Primitive | Primitive[]) =&gt; void</code>,
-      default: <code>—</code>,
-      description: 'Change handler',
-    },
-    {
-      prop: <code>multiple</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Allow multiple values',
-    },
-    {
-      prop: <code>placeholder</code>,
-      type: <code>string</code>,
-      default: <code>&apos;Select…&apos;</code>,
-      description: 'Label when empty',
-    },
-    {
-      prop: <code>size</code>,
-      type: (
-        <code>
-          &apos;xs&apos; | &apos;sm&apos; | &apos;md&apos; | &apos;lg&apos; | &apos;xl&apos; |
-          number | string
-        </code>
-      ),
-      default: <code>&apos;md&apos;</code>,
-      description: 'Control height',
-    },
-    {
-      prop: <code>disabled</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Disable interaction',
-    },
-    {
-      prop: <code>name</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Form field name',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Apply style presets',
-    },
-  ];
+  type ComponentMeta = { slug?: string };
 
   return (
     <Surface>
@@ -289,58 +216,13 @@ export default function SelectDemoPage() {
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant='h3'>Prop reference</Typography>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
+            <ReferenceSection
+              slug={(SelectMeta as ComponentMeta)?.slug || 'components/fields/select'}
             />
           </Tabs.Panel>
         </Tabs>
-        {/* Best Practices ---------------------------------------------- */}
-        <Panel fullWidth>
-          <Typography variant='h4'>Best Practices</Typography>
-          <Typography>
-            - Choose controlled vs uncontrolled deliberately: use <code>value</code> +
-            <code> onChange</code> to integrate with app state; use <code>initialValue</code> for
-            lightweight forms.
-          </Typography>
-          <Typography>
-            - Keep option labels short, distinct, and ordered predictably (alphabetical or by
-            frequency). Avoid duplicating values with different labels.
-          </Typography>
-          <Typography>
-            - Use <code>multiple</code> only when necessary and present selections clearly. Consider{' '}
-            <code>size</code> and a minimum width (<code>{`sx={{ minWidth: 200 }}`}</code>) to avoid
-            layout jump.
-          </Typography>
-          <Typography>
-            - Prefer <code>RadioGroup</code> for a small, mutually exclusive set and
-            <code> Checkbox</code>es for a small multi‑select; reserve <code>Select</code> for
-            larger sets.
-          </Typography>
-          <Typography>
-            - Provide a helpful <code>placeholder</code> when no value is selected. Persist value
-            types (string/number) consistently across your app.
-          </Typography>
-          <Typography>
-            - When using <code>FormControl</code>, set a stable <code>name</code>, and avoid mixing
-            primitive types within the same field.
-          </Typography>
-          <Typography>
-            - Accessibility: ensure the field has a programmatic label (visible caption or
-            <code> aria-label</code>). Keyboard users should be able to focus and select without a
-            mouse.
-          </Typography>
-          <Typography>
-            - Performance: for large option sets, group options logically or load progressively
-            instead of rendering hundreds of nodes at once.
-          </Typography>
-          <Typography>
-            - Tokens/presets: size with <code>size</code> tokens or numbers and use a
-            <code> preset</code> for visual variants so controls adapt to density and branding.
-          </Typography>
-        </Panel>
+        <CuratedExamples examples={getExamples(SelectMeta)} />
+        <BestPractices items={getBestPractices(SelectMeta)} />
       </Stack>
     </Surface>
   );

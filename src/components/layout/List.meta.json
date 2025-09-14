@@ -1,0 +1,14 @@
+{
+  "name": "List",
+  "status": "unstable",
+  "aliases": ["list", "ul", "ol"],
+  "docs": {
+    "bestPractices": [
+      "Use for simple rows such as menus, settings, or short feeds; keep each row self‑contained.",
+      "Prefer succinct labels with optional secondary text; avoid deep nested interactivity inside rows.",
+      "Use selection or navigation patterns consistently (radio/checkbox icons vs chevrons).",
+      "Keep item height comfortable for touch; use tokenized spacing for density.",
+      "Defer dense tabular data to `Table` and two‑dimensional layouts to `Grid`."
+    ]
+  }
+}

@@ -14,6 +14,8 @@ import {
   useTheme,
 } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
+import ReferenceSection from '../../../components/ReferenceSection';
+import { Tabs } from '@archway/valet';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
 import type { ChatMessage } from '@archway/valet';
@@ -104,6 +106,14 @@ export default function LLMChatDemoPage() {
             onClose={() => setNoKey(false)}
           />
         )}
+
+        {/* Reference ----------------------------------------------------- */}
+        <Tabs>
+          <Tabs.Tab label='Reference' />
+          <Tabs.Panel>
+            <ReferenceSection slug='components/widgets/llmchat' />
+          </Tabs.Panel>
+        </Tabs>
 
         <Button
           variant='outlined'

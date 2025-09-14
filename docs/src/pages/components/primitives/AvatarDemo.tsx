@@ -13,14 +13,15 @@ import {
   createFormStore,
   useTheme,
   Tabs,
-  Table,
-  Panel,
 } from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
-import type { ReactNode } from 'react';
+import ReferenceSection from '../../../components/ReferenceSection';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
+import BestPractices from '../../../components/BestPractices';
+import CuratedExamples from '../../../components/CuratedExamples';
+import { getBestPractices, getExamples } from '../../../utils/sidecar';
+import AvatarMeta from '../../../../../src/components/primitives/Avatar.meta.json';
 import { useState } from 'react';
 
 interface EmailForm {
@@ -36,67 +37,6 @@ export default function AvatarDemoPage() {
   const { theme } = useTheme();
   const navigate = useNavigate();
   const [email, setEmail] = useState('support@gravatar.com');
-
-  interface Row {
-    prop: ReactNode;
-    type: ReactNode;
-    default: ReactNode;
-    description: ReactNode;
-  }
-
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const data: Row[] = [
-    {
-      prop: <code>src</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Image URL override',
-    },
-    {
-      prop: <code>email</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Email used for Gravatar lookup',
-    },
-    {
-      prop: <code>size</code>,
-      type: (
-        <code>&apos;xs&apos; | &apos;s&apos; | &apos;m&apos; | &apos;l&apos; | &apos;xl&apos;</code>
-      ),
-      default: <code>&apos;m&apos;</code>,
-      description: 'Relative size token',
-    },
-    {
-      prop: <code>variant</code>,
-      type: <code>&apos;plain&apos; | &apos;outline&apos;</code>,
-      default: <code>&apos;plain&apos;</code>,
-      description: 'Visual style variant',
-    },
-    {
-      prop: <code>gravatarDefault</code>,
-      type: <code>string</code>,
-      default: <code>&apos;identicon&apos;</code>,
-      description: 'Fallback style when no avatar exists',
-    },
-    {
-      prop: <code>alt</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Image alt text',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Apply style presets',
-    },
-  ];
 
   return (
     <Surface>
@@ -164,12 +104,7 @@ export default function AvatarDemoPage() {
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant='h3'>Prop reference</Typography>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
+            <ReferenceSection slug='components/primitives/avatar' />
           </Tabs.Panel>
         </Tabs>
 
@@ -181,30 +116,8 @@ export default function AvatarDemoPage() {
           ← Back
         </Button>
 
-        {/* Best Practices -------------------------------------------------- */}
-        <Panel fullWidth>
-          <Typography variant='h4'>Best Practices</Typography>
-          <Typography>
-            - Provide meaningful <code>alt</code> text when avatars convey identity (e.g., &quot;Ada
-            Lovelace&quot;). Use <code>alt=&quot;&quot;</code> for purely decorative avatars.
-          </Typography>
-          <Typography>
-            - Prefer <code>src</code> for known assets; use <code>email</code> for Gravatar only
-            when appropriate for your privacy posture. Consider caching and strict HTTPS.
-          </Typography>
-          <Typography>
-            - Keep sizes consistent across lists. Use size tokens (<code>&apos;xs&apos;</code>..
-            <code>&apos;xl&apos;</code>) for coherent density and predictable alignment.
-          </Typography>
-          <Typography>
-            - Ensure visibility on busy backgrounds. Use <code>variant=&apos;outline&apos;</code> or
-            place avatars inside a container with sufficient contrast.
-          </Typography>
-          <Typography>
-            - Non‑interactive by default. Wrap avatars with a <code>Button</code> or link for
-            navigation; avoid attaching click handlers directly without clear affordance.
-          </Typography>
-        </Panel>
+        <CuratedExamples examples={getExamples(AvatarMeta)} />
+        <BestPractices items={getBestPractices(AvatarMeta)} />
       </Stack>
     </Surface>
   );

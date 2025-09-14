@@ -12,13 +12,14 @@ import {
   useTheme,
   definePreset,
   Tabs,
-  Table,
-  Panel,
 } from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
-import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
+import BestPractices from '../../../components/BestPractices';
+import CuratedExamples from '../../../components/CuratedExamples';
+import ReferenceSection from '../../../components/ReferenceSection';
+import { getBestPractices, getExamples } from '../../../utils/sidecar';
+import IconMeta from '../../../../../src/components/primitives/Icon.meta.json';
 import PageHero from '../../../components/PageHero';
 import mymoSVG from '../../../assets/mygymlogo.svg?raw';
 
@@ -43,57 +44,6 @@ definePreset(
 export default function IconDemoPage() {
   const { theme, toggleMode } = useTheme();
   const navigate = useNavigate();
-
-  interface Row {
-    prop: ReactNode;
-    type: ReactNode;
-    default: ReactNode;
-    description: ReactNode;
-  }
-
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const data: Row[] = [
-    {
-      prop: <code>icon</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Iconify name',
-    },
-    {
-      prop: <code>svg</code>,
-      type: <code>string | ReactElement</code>,
-      default: <code>—</code>,
-      description: 'Custom SVG content',
-    },
-    {
-      prop: <code>size</code>,
-      type: (
-        <code>
-          &#39;xs&#39; | &#39;sm&#39; | &#39;md&#39; | &#39;lg&#39; | &#39;xl&#39; | number | string
-        </code>
-      ),
-      default: <code>&#39;md&#39;</code>,
-      description: 'Icon dimensions',
-    },
-    {
-      prop: <code>color</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Colour override',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Apply style presets',
-    },
-  ];
 
   return (
     <Surface>
@@ -225,12 +175,7 @@ export default function IconDemoPage() {
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant='h3'>Prop reference</Typography>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
+            <ReferenceSection slug='components/primitives/icon' />
           </Tabs.Panel>
         </Tabs>
 
@@ -243,32 +188,8 @@ export default function IconDemoPage() {
           ← Back
         </Button>
 
-        {/* Best Practices -------------------------------------------------- */}
-        <Panel fullWidth>
-          <Typography variant='h4'>Best Practices</Typography>
-          <Typography>
-            - Use semantic sizing. When icons appear inline with text, size in <code>em</code> so
-            they scale with the surrounding type (<code>size=&quot;1.25em&quot;</code> pairs well
-            with headings).
-          </Typography>
-          <Typography>
-            - Accessible naming. Decorative icons should be <code>aria-hidden</code>; icons that
-            convey meaning should have a label via the parent control (e.g., <code>aria-label</code>
-            on <code>IconButton</code>).
-          </Typography>
-          <Typography>
-            - Prefer theme colours. Let icons inherit current color or set tokens; avoid arbitrary
-            hex values that fight the theme.
-          </Typography>
-          <Typography>
-            - Choose <code>icon</code> vs <code>svg</code> wisely. Use <code>icon</code> for Iconify
-            glyphs; provide <code>svg</code> for custom/brand artwork only. Do not pass both.
-          </Typography>
-          <Typography>
-            - Motion restraint. Avoid animating icons excessively; keep motion consistent with theme
-            motion tokens and user expectations.
-          </Typography>
-        </Panel>
+        <CuratedExamples examples={getExamples(IconMeta)} />
+        <BestPractices items={getBestPractices(IconMeta)} />
       </Stack>
     </Surface>
   );

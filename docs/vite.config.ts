@@ -13,6 +13,11 @@ export default defineConfig({
     // put a new ngrok link here if your free plan changes yours
     allowedHosts: ['02ba80ef8c67.ngrok-free.app'],
 
+    // Allow importing sidecar JSON files from the monorepo root
+    fs: {
+      allow: ['..', '../..'],
+    },
+
     // If you're viewing the site via HTTPS on ngrok and HMR can't connect,
     // uncomment this block so the client uses WSS through the tunnel:
     // hmr: {

@@ -1,0 +1,14 @@
+{
+  "name": "CodeBlock",
+  "status": "experimental",
+  "aliases": ["codeblock", "code", "snippet"],
+  "docs": {
+    "bestPractices": [
+      "Use monospace fonts and high‑contrast theme colours for readability.",
+      "Prefer short snippets inline; extract long examples into files and link out to keep pages readable and fast.",
+      "Indicate language for syntax highlighting and assistive tech.",
+      "Avoid excessive horizontal scrolling; wrap long lines where possible or offer a copy action.",
+      "Keep code immutable in this component; use an editor widget for editable code."
+    ]
+  }
+}

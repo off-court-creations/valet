@@ -1,0 +1,13 @@
+{
+  "name": "Image",
+  "status": "experimental",
+  "aliases": ["image", "img", "picture"],
+  "docs": { "bestPractices": [
+    "Always set alt text; use empty alt for decorative images.",
+    "Constrain sizes and choose object‑fit (`cover`/`contain`) deliberately to avoid layout shift.",
+    "Use responsive sources or sizes where appropriate; avoid full‑resolution assets in small spaces.",
+    "Lazy‑load below‑the‑fold images; preload critical hero imagery.",
+    "Avoid background images for content; prefer `<Image>` so a11y tools can interpret it.",
+    "Respect rounded corners and borders via tokens/presets for brand consistency."
+  ]}
+}

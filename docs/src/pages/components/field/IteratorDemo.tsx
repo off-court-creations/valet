@@ -13,10 +13,8 @@ import {
   createFormStore,
   useTheme,
   Tabs,
-  Table,
 } from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
-import type { ReactNode } from 'react';
+import ReferenceSection from '../../../components/ReferenceSection';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
@@ -31,83 +29,6 @@ export default function IteratorDemoPage() {
   const { theme, toggleMode } = useTheme();
   const navigate = useNavigate();
   const [count, setCount] = useState(2);
-
-  interface Row {
-    prop: ReactNode;
-    type: ReactNode;
-    default: ReactNode;
-    description: ReactNode;
-  }
-
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const data: Row[] = [
-    {
-      prop: <code>value</code>,
-      type: <code>number</code>,
-      default: <code>—</code>,
-      description: 'Controlled value',
-    },
-    {
-      prop: <code>defaultValue</code>,
-      type: <code>number</code>,
-      default: <code>0</code>,
-      description: 'Uncontrolled initial value',
-    },
-    {
-      prop: <code>onChange</code>,
-      type: <code>(value: number) =&gt; void</code>,
-      default: <code>—</code>,
-      description: 'Change handler',
-    },
-    {
-      prop: <code>name</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Form field name',
-    },
-    {
-      prop: <code>min</code>,
-      type: <code>number</code>,
-      default: <code>—</code>,
-      description: 'Minimum value',
-    },
-    {
-      prop: <code>max</code>,
-      type: <code>number</code>,
-      default: <code>—</code>,
-      description: 'Maximum value',
-    },
-    {
-      prop: <code>step</code>,
-      type: <code>number</code>,
-      default: <code>1</code>,
-      description: 'Increment step',
-    },
-    {
-      prop: <code>width</code>,
-      type: <code>number | string</code>,
-      default: <code>&#39;3.5rem&#39;</code>,
-      description: 'Field width',
-    },
-    {
-      prop: <code>disabled</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Disable interaction',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Apply style presets',
-    },
-  ];
 
   return (
     <Surface>
@@ -182,12 +103,7 @@ export default function IteratorDemoPage() {
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant='h3'>Prop reference</Typography>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
+            <ReferenceSection slug='components/fields/iterator' />
           </Tabs.Panel>
         </Tabs>
 

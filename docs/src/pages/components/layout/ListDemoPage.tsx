@@ -10,14 +10,18 @@ import {
   Typography,
   List,
   Tabs,
-  Table,
   Switch,
   Button,
   useTheme,
   CodeBlock,
 } from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
+
+import ReferenceSection from '../../../components/ReferenceSection';
 import NavDrawer from '../../../components/NavDrawer';
+import BestPractices from '../../../components/BestPractices';
+import CuratedExamples from '../../../components/CuratedExamples';
+import { getBestPractices, getExamples } from '../../../utils/sidecar';
+import ListMeta from '../../../../../src/components/layout/List.meta.json';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Demo data                                                                  */
@@ -49,20 +53,9 @@ export default function ListDemoPage() {
 
   const orderLabel = useMemo(() => items.map((i) => i.name).join(' → '), [items]);
 
-  // Reference table
-  interface Row {
-    prop: React.ReactNode;
-    type: React.ReactNode;
-    default: React.ReactNode;
-    description: React.ReactNode;
-  }
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-  const data: Row[] = [
+  // Reference handled by ReferenceSection
+  /*
+  const data: never[] = [
     {
       prop: <code>data</code>,
       type: <code>T[]</code>,
@@ -136,6 +129,7 @@ export default function ListDemoPage() {
       description: 'Apply style presets.',
     },
   ];
+  */
 
   const usage = `import { List } from '@archway/valet';
 
@@ -262,44 +256,12 @@ const data: Person[] = [
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
+            <ReferenceSection slug='components/layout/list' />
           </Tabs.Panel>
         </Tabs>
 
-        {/* Best Practices -------------------------------------------------- */}
-        <Panel fullWidth>
-          <Typography variant='h4'>Best Practices</Typography>
-          <Typography>
-            - Keep rows scannable. Use <code>getTitle</code> for the primary line and a concise
-            <code> getSubtitle</code> for secondary details; avoid overloading rows with extra UI.
-          </Typography>
-          <Typography>
-            - Choose selection deliberately. Enable <code>selectable</code> only when follow‑up
-            actions operate on the active row. Keep selected state controlled if it syncs with app
-            state.
-          </Typography>
-          <Typography>
-            - Reorder with care. Turn <code>reorderable</code> on when order matters and persist via{' '}
-            <code>onReorder</code>. Provide immediate visual feedback and avoid conflicting drag
-            handles.
-          </Typography>
-          <Typography>
-            - Respect touch/scroll ergonomics. The list locks touch scroll while reordering; avoid
-            nesting it inside other scroll containers to prevent competing gestures.
-          </Typography>
-          <Typography>
-            - Tokenize spacing. Use presets and theme spacing rather than per‑row inline styles so
-            density and theming remain consistent across the app.
-          </Typography>
-          <Typography>
-            - Large data sets. For very long lists, consider windowing/virtualization and defer
-            heavy per‑row work until visible.
-          </Typography>
-        </Panel>
+        <CuratedExamples examples={getExamples(ListMeta)} />
+        <BestPractices items={getBestPractices(ListMeta)} />
       </Stack>
     </Surface>
   );

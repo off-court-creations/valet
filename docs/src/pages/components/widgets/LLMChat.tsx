@@ -1,9 +1,9 @@
 // ─────────────────────────────────────────────────────────────
 // src/pages/components/LLMChat.tsx | valet-docs
 // ─────────────────────────────────────────────────────────────
-import { Surface, Stack, Typography, Tabs, Table, Button, useTheme } from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
-import type { ReactNode } from 'react';
+import { Surface, Stack, Typography, Tabs, Button, useTheme } from '@archway/valet';
+import ReferenceSection from '../../../components/ReferenceSection';
+
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
@@ -12,94 +12,7 @@ export default function LLMChatPage() {
   const navigate = useNavigate();
   const { theme } = useTheme();
 
-  interface Row {
-    prop: ReactNode;
-    type: ReactNode;
-    default: ReactNode;
-    description: ReactNode;
-  }
-
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const data: Row[] = [
-    {
-      prop: <code>messages</code>,
-      type: <code>ChatMessage[]</code>,
-      default: <code>—</code>,
-      description: 'Conversation history',
-    },
-    {
-      prop: <code>onSend</code>,
-      type: <code>(m: ChatMessage) =&gt; void</code>,
-      default: <code>—</code>,
-      description: 'Called when user submits a message',
-    },
-    {
-      prop: <code>userAvatar</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'URL for user avatar image',
-    },
-    {
-      prop: <code>systemAvatar</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'URL for assistant avatar image',
-    },
-    {
-      prop: <code>placeholder</code>,
-      type: <code>string</code>,
-      default: <code>&#39;Message…&#39;</code>,
-      description: 'Input placeholder',
-    },
-    {
-      prop: <code>disableInput</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Hide the compose bar',
-    },
-    {
-      prop: <code>constrainHeight</code>,
-      type: <code>boolean</code>,
-      default: <code>true</code>,
-      description: 'Fit within surface height',
-    },
-    {
-      prop: <code>apiKey</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Override global API key',
-    },
-    {
-      prop: <code>provider</code>,
-      type: <code>AIProvider</code>,
-      default: <code>—</code>,
-      description: 'Model provider',
-    },
-    {
-      prop: <code>model</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Model name',
-    },
-    {
-      prop: <code>onModelChange</code>,
-      type: <code>(m: string) =&gt; void</code>,
-      default: <code>—</code>,
-      description: 'Handle model changes',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Apply style presets',
-    },
-  ];
+  // Reference handled by ReferenceSection
 
   return (
     <Surface>
@@ -136,11 +49,7 @@ export default function LLMChatPage() {
           </Tabs.Panel>
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
+            <ReferenceSection slug='components/widgets/llmchat' />
           </Tabs.Panel>
         </Tabs>
         <Button

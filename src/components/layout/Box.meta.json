@@ -1,0 +1,36 @@
+{
+  "name": "Box",
+  "status": "experimental",
+  "aliases": ["box", "container"],
+  "docs": {
+    "bestPractices": [
+      "Treat as the neutral building block: backgrounds, padding, and simple width/height constraints.",
+      "Prefer theme tokens to inherit correct contrast automatically; if you set `background`, ensure text remains accessible.",
+      "Reach for `Panel` when you need separation (borders/elevation); keep visually semantic elements distinct.",
+      "Use spacing tokens; prefer numeric values over hard‑coded CSS so density scales with the theme.",
+      "Align purposefully: use `alignX` and `fullWidth` for placement; avoid deprecated `centered`.",
+      "Reuse styles via `preset` (`definePreset()`) instead of duplicating `sx`.",
+      "When Box represents a semantic region, add appropriate roles/labels (e.g., `role=\"region\"`, `aria-label`) via DOM passthrough."
+    ]
+  },
+  "examples": [
+    {
+      "id": "box-default",
+      "title": "Default Box",
+      "lang": "tsx",
+      "code": "<Box>\n  <Typography>Content</Typography>\n</Box>"
+    },
+    {
+      "id": "box-fullwidth",
+      "title": "Full width with outline",
+      "lang": "tsx",
+      "code": "<Box fullWidth sx={{ border: '1px dashed currentColor', padding: '0.5rem' }}>\n  <Typography>Stretch me</Typography>\n</Box>"
+    },
+    {
+      "id": "box-background",
+      "title": "Background + padding",
+      "lang": "tsx",
+      "code": "<Box background={theme.colors['tertiary']} sx={{ padding: theme.spacing(1) }}>\n  <Typography>Readable on themed background</Typography>\n</Box>"
+    }
+  ]
+}

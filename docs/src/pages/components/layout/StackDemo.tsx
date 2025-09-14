@@ -2,72 +2,19 @@
 // src/pages/StackDemo.tsx | valet-docs
 // Showcase of Stack layout primitive
 // ─────────────────────────────────────────────────────────────
-import {
-  Surface,
-  Stack,
-  Typography,
-  Box,
-  Button,
-  Tabs,
-  Table,
-  Panel,
-  useTheme,
-} from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
+import { Surface, Stack, Typography, Box, Button, Tabs, useTheme } from '@archway/valet';
+import ReferenceSection from '../../../components/ReferenceSection';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
-import type { ReactNode } from 'react';
+import BestPractices from '../../../components/BestPractices';
+import CuratedExamples from '../../../components/CuratedExamples';
+import { getBestPractices, getExamples } from '../../../utils/sidecar';
+import StackMeta from '../../../../../src/components/layout/Stack.meta.json';
+import type {} from 'react';
 
 export default function StackDemoPage() {
   const { theme, toggleMode } = useTheme();
   const navigate = useNavigate();
-
-  interface Row {
-    prop: ReactNode;
-    type: ReactNode;
-    default: ReactNode;
-    description: ReactNode;
-  }
-
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const data: Row[] = [
-    {
-      prop: <code>direction</code>,
-      type: <code>&#39;row&#39; | &#39;column&#39;</code>,
-      default: <code>&#39;column&#39;</code>,
-      description: 'Layout direction',
-    },
-    {
-      prop: <code>gap</code>,
-      type: <code>number | string</code>,
-      default: <code>1</code>,
-      description: 'Gap between children',
-    },
-    {
-      prop: <code>wrap</code>,
-      type: <code>boolean</code>,
-      default: <code>false for column, true for row</code>,
-      description: 'Allow children to wrap',
-    },
-    {
-      prop: <code>compact</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Remove margin and padding',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Apply style presets',
-    },
-  ];
 
   return (
     <Surface>
@@ -109,12 +56,7 @@ export default function StackDemoPage() {
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant='h3'>Prop reference</Typography>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
+            <ReferenceSection slug='components/layout/stack' />
           </Tabs.Panel>
         </Tabs>
 
@@ -126,33 +68,8 @@ export default function StackDemoPage() {
           Toggle light / dark
         </Button>
 
-        {/* Best Practices ---------------------------------------------- */}
-        <Panel fullWidth>
-          <Typography variant='h4'>Best Practices</Typography>
-          <Typography>
-            - Use numeric <code>gap</code> with theme spacing. Prefer small integers (e.g.,
-            <code> 1</code>, <code>2</code>) so density changes propagate via
-            <code> theme.spacing</code>.
-          </Typography>
-          <Typography>
-            - Let rows wrap by default. <code>direction=&apos;row&apos;</code> enables wrapping
-            unless you set <code>wrap={false}</code>. This keeps content readable on narrow screens.
-          </Typography>
-          <Typography>
-            - Pad the container, not children. Use the <code>pad</code> prop for outer breathing
-            room and <code>gap</code> for inter-item rhythm; avoid ad‑hoc margins on each child.
-          </Typography>
-          <Typography>
-            - Control scroll intentionally. Stacks hide horizontal overflow; when nesting inside
-            constrained parents (e.g., <code>{'<Grid>'}</code>), tune
-            <code> --valet-stack-ov-y</code> and <code>--valet-stack-max-h</code> to prevent nested
-            scrollbars.
-          </Typography>
-          <Typography>
-            - Use <code>preset</code> for common layouts. Capture repeated alignment and spacing in
-            a preset to keep markup clean and consistent.
-          </Typography>
-        </Panel>
+        <CuratedExamples examples={getExamples(StackMeta)} />
+        <BestPractices items={getBestPractices(StackMeta)} />
         <Button
           size='lg'
           onClick={() => navigate(-1)}

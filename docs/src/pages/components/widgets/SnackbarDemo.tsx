@@ -12,13 +12,14 @@ import {
   useSnackbar,
   useTheme,
   Tabs,
-  Table,
-  Panel,
 } from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
-import type { ReactNode } from 'react';
+import ReferenceSection from '../../../components/ReferenceSection';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
+import BestPractices from '../../../components/BestPractices';
+import CuratedExamples from '../../../components/CuratedExamples';
+import { getBestPractices, getExamples } from '../../../utils/sidecar';
+import SnackbarMeta from '../../../../../src/components/widgets/Snackbar.meta.json';
 import PageHero from '../../../components/PageHero';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
@@ -47,59 +48,6 @@ export default function SnackbarDemoPage() {
   const [autoOpen, setAutoOpen] = useState(false);
   const [ctrlOpen, setCtrlOpen] = useState(false);
   const [noStackOpen, setNoStackOpen] = useState(false);
-
-  interface Row {
-    prop: ReactNode;
-    type: ReactNode;
-    default: ReactNode;
-    description: ReactNode;
-  }
-
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const data: Row[] = [
-    {
-      prop: <code>open</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Controlled visibility flag',
-    },
-    {
-      prop: <code>onClose</code>,
-      type: <code>{'() => void'}</code>,
-      default: <code>—</code>,
-      description: 'Called when fully hidden',
-    },
-    {
-      prop: <code>autoHideDuration</code>,
-      type: <code>number | null</code>,
-      default: <code>4000</code>,
-      description: 'Dismiss after N ms',
-    },
-    {
-      prop: <code>message</code>,
-      type: <code>React.ReactNode</code>,
-      default: <code>—</code>,
-      description: 'Convenience message',
-    },
-    {
-      prop: <code>noStack</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Disable flex layout',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Apply style presets',
-    },
-  ];
 
   return (
     <Surface>
@@ -192,44 +140,12 @@ export default function SnackbarDemoPage() {
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant='h3'>Prop reference</Typography>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
+            <ReferenceSection slug='components/widgets/snackbar' />
           </Tabs.Panel>
         </Tabs>
 
-        {/* Best Practices -------------------------------------------------- */}
-        <Panel fullWidth>
-          <Typography variant='h4'>Best Practices</Typography>
-          <Typography>
-            - Keep messages short and specific. Snackbars confirm actions or provide brief status;
-            avoid long instructions or multi‑step interactions.
-          </Typography>
-          <Typography>
-            - Provide a single, clear action. If an action is present, use a short verb (e.g.,
-            &apos;Undo&apos;). Avoid multiple competing actions.
-          </Typography>
-          <Typography>
-            - Respect motion and timing. Use <code>autoHideDuration</code> for transient messages
-            (3–6s typical); longer durations should be deliberate.
-          </Typography>
-          <Typography>
-            - Don’t stack excessively. Keep concurrent snackbars minimal; if necessary, queue them
-            and ensure important ones aren’t missed.
-          </Typography>
-          <Typography>
-            - Keep focus behavior intact. Snackbars are non‑modal; they should not steal focus. If a
-            button is provided, ensure it is reachable via keyboard.
-          </Typography>
-          <Typography>
-            - Style via tokens/presets. Use theme colors for status (e.g.,
-            <code> primary</code>/<code> error</code>) and consolidate variants with
-            <code> preset</code>.
-          </Typography>
-        </Panel>
+        <CuratedExamples examples={getExamples(SnackbarMeta)} />
+        <BestPractices items={getBestPractices(SnackbarMeta)} />
 
         {/* Back nav -------------------------------------------------------- */}
         <Button

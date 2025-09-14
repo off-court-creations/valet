@@ -2,85 +2,21 @@
 // src/pages/ButtonDemoPage.tsx | valet-docs
 // Comprehensive Button showcase (no redundancy, toggle last)
 // ─────────────────────────────────────────────────────────────
-import {
-  Surface,
-  Stack,
-  Box,
-  Typography,
-  Button,
-  Icon,
-  useTheme,
-  Tabs,
-  Table,
-  Panel,
-} from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
-import type { ReactNode } from 'react';
+import { Surface, Stack, Box, Typography, Button, Icon, useTheme, Tabs } from '@archway/valet';
+type ComponentMeta = { slug?: string };
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
+import BestPractices from '../../../components/BestPractices';
+import CuratedExamples from '../../../components/CuratedExamples';
+import ReferenceSection from '../../../components/ReferenceSection';
+import { getBestPractices, getExamples } from '../../../utils/sidecar';
+import ButtonMeta from '../../../../../src/components/fields/Button.meta.json';
 
 /*─────────────────────────────────────────────────────────────*/
 export default function ButtonDemoPage() {
   const { theme, toggleMode } = useTheme();
   const navigate = useNavigate();
-
-  interface Row {
-    prop: ReactNode;
-    type: ReactNode;
-    default: ReactNode;
-    description: ReactNode;
-  }
-
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const data: Row[] = [
-    {
-      prop: <code>color</code>,
-      type: <code>&#39;primary&#39; | &#39;secondary&#39; | &#39;tertiary&#39; | string</code>,
-      default: <code>&#39;primary&#39;</code>,
-      description: 'Background palette or custom colour',
-    },
-    {
-      prop: <code>textColor</code>,
-      type: <code>&#39;primary&#39; | &#39;secondary&#39; | &#39;tertiary&#39; | string</code>,
-      default: <code>—</code>,
-      description: 'Label colour override',
-    },
-    {
-      prop: <code>variant</code>,
-      type: <code>&#39;contained&#39; | &#39;outlined&#39;</code>,
-      default: <code>&#39;contained&#39;</code>,
-      description: 'Visual style',
-    },
-    {
-      prop: <code>size</code>,
-      type: (
-        <code>
-          &#39;xs&#39; | &#39;sm&#39; | &#39;md&#39; | &#39;lg&#39; | &#39;xl&#39; | number | string
-        </code>
-      ),
-      default: <code>&#39;md&#39;</code>,
-      description: 'Overall button size or custom CSS length',
-    },
-    {
-      prop: <code>fullWidth</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Stretch to fill parent width',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Apply style presets',
-    },
-  ];
 
   return (
     <Surface>
@@ -213,54 +149,14 @@ export default function ButtonDemoPage() {
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant='h3'>Prop reference</Typography>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
+            <ReferenceSection
+              slug={(ButtonMeta as ComponentMeta)?.slug || 'components/fields/button'}
             />
           </Tabs.Panel>
         </Tabs>
 
-        {/* Best Practices ------------------------------------------------ */}
-        <Panel fullWidth>
-          <Typography variant='h4'>Best Practices</Typography>
-          <Typography>
-            - Establish a clear action hierarchy: use <code>contained</code> for the primary action
-            and <code>outlined</code> for secondary/tertiary actions. Keep emphasis consistent
-            within a view.
-          </Typography>
-          <Typography>
-            - Choose sizes by density: <code>sm</code>/<code>md</code> for typical forms,
-            <code> lg</code> for standout CTAs. Avoid mixing sizes within the same control group.
-          </Typography>
-          <Typography>
-            - Prefer theme tokens (<code>primary</code>, <code>secondary</code>,
-            <code> tertiary</code>) for automatic contrast. If you set a custom <code>color</code>,
-            also set <code>textColor</code> to keep contrast accessible.
-          </Typography>
-          <Typography>
-            - Use <code>fullWidth</code> in narrow or linear layouts (mobile, drawers) where the
-            button should span the container. Otherwise let content define width.
-          </Typography>
-          <Typography>
-            - Prefer succinct verb‑first labels. If the action is icon‑only, use
-            <code> IconButton</code> and provide an accessible label via <code>aria-label</code>.
-          </Typography>
-          <Typography>
-            - When combining icons and text, add a small gap (e.g.,
-            <code>{`sx={{ marginRight: theme.spacing(1) }}`}</code> on the icon) for readable
-            spacing.
-          </Typography>
-          <Typography>
-            - Reuse styling with <code>preset</code> (<code>definePreset()</code>) rather than
-            duplicating <code>sx</code> across instances.
-          </Typography>
-          <Typography>
-            - Avoid multiple primary actions per view and reserve destructive styles for destructive
-            operations.
-          </Typography>
-        </Panel>
+        <CuratedExamples examples={getExamples(ButtonMeta)} />
+        <BestPractices items={getBestPractices(ButtonMeta)} />
 
         <Button
           size='lg'

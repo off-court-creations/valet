@@ -8,10 +8,9 @@ import {
   Typography,
   useTheme,
   Tabs,
-  Table,
 } from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
-import type { ReactNode } from 'react';
+
+import ReferenceSection from '../../../components/ReferenceSection';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
 
@@ -21,64 +20,7 @@ import PageHero from '../../../components/PageHero';
 export default function PanelDemoPage() {
   const { theme } = useTheme(); // live theme switch
 
-  interface Row {
-    prop: ReactNode;
-    type: ReactNode;
-    default: ReactNode;
-    description: ReactNode;
-  }
-
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const data: Row[] = [
-    {
-      prop: <code>background</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Explicit background override',
-    },
-    {
-      prop: <code>centerContent</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Center contents using flexbox',
-    },
-    {
-      prop: <code>alignX</code>,
-      type: <code>{`'left' | 'right' | 'center' | 'centered'`}</code>,
-      default: <code>{`'left'`}</code>,
-      description: 'Horizontal placement when not fullWidth',
-    },
-    {
-      prop: <code>compact</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Remove default margin and padding',
-    },
-    {
-      prop: <code>fullWidth</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Stretch to 100% width',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Apply style presets',
-    },
-    {
-      prop: <code>variant</code>,
-      type: <code>{`'main' | 'alt'`}</code>,
-      default: <code>{`'main'`}</code>,
-      description: 'Visual style: filled or outlined',
-    },
-  ];
+  // manual reference removed; using ReferenceSection
 
   return (
     <Surface /* Surface already defaults to theme background */>
@@ -210,11 +152,7 @@ export default function PanelDemoPage() {
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
+            <ReferenceSection slug='components/layout/panel' />
           </Tabs.Panel>
         </Tabs>
       </Stack>

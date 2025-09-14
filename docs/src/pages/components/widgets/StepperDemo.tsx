@@ -1,20 +1,13 @@
 // src/pages/StepperDemo.tsx
 import { useState } from 'react';
-import {
-  Surface,
-  Stack,
-  Typography,
-  Button,
-  Stepper,
-  useTheme,
-  Tabs,
-  Table,
-  Panel,
-} from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
-import type { ReactNode } from 'react';
+import { Surface, Stack, Button, Stepper, useTheme, Tabs } from '@archway/valet';
+import ReferenceSection from '../../../components/ReferenceSection';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
+import BestPractices from '../../../components/BestPractices';
+import CuratedExamples from '../../../components/CuratedExamples';
+import { getBestPractices, getExamples } from '../../../utils/sidecar';
+import StepperMeta from '../../../../../src/components/widgets/Stepper.meta.json';
 import PageHero from '../../../components/PageHero';
 
 export default function StepperDemoPage() {
@@ -23,41 +16,6 @@ export default function StepperDemoPage() {
   const [active, setActive] = useState(0);
 
   const steps = ['First', 'Second', 'Third'];
-
-  interface Row {
-    prop: ReactNode;
-    type: ReactNode;
-    default: ReactNode;
-    description: ReactNode;
-  }
-
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const data: Row[] = [
-    {
-      prop: <code>steps</code>,
-      type: <code>React.ReactNode[]</code>,
-      default: <code>—</code>,
-      description: 'Labels for each step',
-    },
-    {
-      prop: <code>active</code>,
-      type: <code>number</code>,
-      default: <code>0</code>,
-      description: 'Index of the active step',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Apply style presets',
-    },
-  ];
 
   return (
     <Surface>
@@ -90,43 +48,12 @@ export default function StepperDemoPage() {
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant='h3'>Prop reference</Typography>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
+            <ReferenceSection slug='components/widgets/stepper' />
           </Tabs.Panel>
         </Tabs>
 
-        {/* Best Practices -------------------------------------------------- */}
-        <Panel fullWidth>
-          <Typography variant='h4'>Best Practices</Typography>
-          <Typography>
-            - Treat Stepper as presentation. It reflects progress; do not use it as the sole
-            navigation control. Provide explicit Next/Back controls and validate each step.
-          </Typography>
-          <Typography>
-            - Bind <code>active</code> to canonical state. Derive from router or form state rather
-            than local UI assumptions. Clamp to <code>0…steps.length-1</code> when updating.
-          </Typography>
-          <Typography>
-            - Keep labels short and stable. Prefer 1–2 words. For lengthy flows, consider numeric or
-            icon labels and place detailed titles above the content.
-          </Typography>
-          <Typography>
-            - Mind accessibility. Announce progress with text like
-            <code> Step X of Y</code> near the Stepper so screen readers have context.
-          </Typography>
-          <Typography>
-            - Use tokens/presets to style. Customize radius/stroke via CSS vars and presets rather
-            than per-instance inline styles to keep density and branding coherent.
-          </Typography>
-          <Typography>
-            - Keep step count reasonable. If there are many steps or non‑linear paths, a progress
-            bar or checklist may be clearer.
-          </Typography>
-        </Panel>
+        <CuratedExamples examples={getExamples(StepperMeta)} />
+        <BestPractices items={getBestPractices(StepperMeta)} />
 
         <Button
           size='lg'

@@ -17,13 +17,13 @@ import {
   definePreset,
   useTheme,
   Tabs,
-  Table,
-  Panel,
 } from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
-import type { ReactNode } from 'react';
+import ReferenceSection from '../../../components/ReferenceSection';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
+import BestPractices from '../../../components/BestPractices';
+import { getBestPractices } from '../../../utils/sidecar';
+import RadioMeta from '../../../../../src/components/fields/Radio.meta.json';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Style Presets                                                              */
@@ -68,75 +68,7 @@ export default function RadioGroupDemoPage() {
     alert(JSON.stringify(values, null, 2));
   };
 
-  interface Row {
-    prop: ReactNode;
-    type: ReactNode;
-    default: ReactNode;
-    description: ReactNode;
-  }
-
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const data: Row[] = [
-    {
-      prop: <code>value</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Controlled value',
-    },
-    {
-      prop: <code>defaultValue</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Uncontrolled initial value',
-    },
-    {
-      prop: <code>name</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Field name for forms',
-    },
-    {
-      prop: <code>row</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Horizontal layout',
-    },
-    {
-      prop: <code>size</code>,
-      type: (
-        <code>
-          &apos;xs&apos; | &apos;sm&apos; | &apos;md&apos; | &apos;lg&apos; | &apos;xl&apos; |
-          number | string
-        </code>
-      ),
-      default: <code>&apos;md&apos;</code>,
-      description: 'Radio size token or custom CSS measurement',
-    },
-    {
-      prop: <code>spacing</code>,
-      type: <code>number | string</code>,
-      default: <code>—</code>,
-      description: 'Gap between options',
-    },
-    {
-      prop: <code>onChange</code>,
-      type: <code>(val: string) =&gt; void</code>,
-      default: <code>—</code>,
-      description: 'Change handler',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Apply style presets',
-    },
-  ];
+  // MCP-driven reference tables used; manual data removed
 
   return (
     <Surface>
@@ -440,47 +372,11 @@ export default function RadioGroupDemoPage() {
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant='h3'>Prop reference</Typography>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
+            <ReferenceSection slug='components/fields/radio' />
           </Tabs.Panel>
         </Tabs>
 
-        {/* Best Practices -------------------------------------------------- */}
-        <Panel fullWidth>
-          <Typography variant='h4'>Best Practices</Typography>
-          <Typography>
-            - Label the group clearly. Provide a visible prompt (e.g., a preceding
-            <code> Typography</code>) and ensure <code>name</code> is set so the group behaves as a
-            single form field.
-          </Typography>
-          <Typography>
-            - Choose controlled vs uncontrolled deliberately. Use <code>value</code>/
-            <code> onChange</code>
-            when the selection drives app state; otherwise, <code>defaultValue</code> is sufficient.
-          </Typography>
-          <Typography>
-            - Align to available space. Use <code>row</code> for short option lists in wide layouts;
-            prefer a column for long labels or narrow screens.
-          </Typography>
-          <Typography>
-            - Keep targets comfortable. Use token sizes (<code>&apos;sm&apos;</code>..
-            <code>&apos;xl&apos;</code>) or numeric values to maintain touch targets ≥ 40–48px
-            depending on density.
-          </Typography>
-          <Typography>
-            - Avoid nesting interactive content inside labels. Keep each option’s label succinct and
-            non-interactive so keyboard and screen reader navigation remain predictable.
-          </Typography>
-          <Typography>
-            - Use presets for visual variants. Capture chip/pill styles with{' '}
-            <code>definePreset</code>
-            and apply via <code>preset</code> so branding and states stay consistent.
-          </Typography>
-        </Panel>
+        <BestPractices items={getBestPractices(RadioMeta)} />
       </Stack>
     </Surface>
   );

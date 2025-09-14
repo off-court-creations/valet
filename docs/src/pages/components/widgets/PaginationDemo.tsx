@@ -3,19 +3,14 @@
 // Production docs layout for Pagination: Usage / Playground / Reference
 // ─────────────────────────────────────────────────────────────
 import { useState } from 'react';
-import {
-  Surface,
-  Stack,
-  Typography,
-  Tabs,
-  Table,
-  Iterator,
-  Pagination,
-  Switch,
-  Panel,
-} from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
+import { Surface, Stack, Typography, Tabs, Iterator, Pagination, Switch } from '@archway/valet';
+
+import ReferenceSection from '../../../components/ReferenceSection';
 import NavDrawer from '../../../components/NavDrawer';
+import BestPractices from '../../../components/BestPractices';
+import CuratedExamples from '../../../components/CuratedExamples';
+import { getBestPractices, getExamples } from '../../../utils/sidecar';
+import PaginationMeta from '../../../../../src/components/widgets/Pagination.meta.json';
 import PageHero from '../../../components/PageHero';
 
 export default function PaginationDemoPage() {
@@ -25,71 +20,7 @@ export default function PaginationDemoPage() {
   const [visibleWindow, setVisibleWindow] = useState<number>(0);
   const [autoFollowActive, setAutoFollowActive] = useState<boolean>(true);
 
-  type Row = {
-    prop: React.ReactNode;
-    type: React.ReactNode;
-    default: React.ReactNode;
-    description: React.ReactNode;
-  };
-
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const rows: Row[] = [
-    {
-      prop: <code>count</code>,
-      type: <code>number</code>,
-      default: <code>—</code>,
-      description: <>Total number of pages (≥ 1).</>,
-    },
-    {
-      prop: <code>visibleWindow</code>,
-      type: <code>number</code>,
-      default: <code>—</code>,
-      description: (
-        <>
-          Limit how many page buttons render at once; enables window scrolling controls when less
-          than <code>count</code>.
-        </>
-      ),
-    },
-    {
-      prop: <code>autoFollowActive</code>,
-      type: <code>boolean</code>,
-      default: <code>true</code>,
-      description: (
-        <>
-          Keep the active page visible by auto-shifting the window when <code>page</code> changes.
-        </>
-      ),
-    },
-    {
-      prop: <code>page</code>,
-      type: <code>number</code>,
-      default: <code>1</code>,
-      description: <>Currently selected page (1-based). Controlled component.</>,
-    },
-    {
-      prop: <code>onChange</code>,
-      type: <code>(page: number) =&gt; void</code>,
-      default: <code>—</code>,
-      description: <>Called with the next page when a page button is clicked.</>,
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: (
-        <>
-          Apply style presets registered via <code>definePreset()</code>.
-        </>
-      ),
-    },
-  ];
+  /* reference handled by ReferenceSection */
 
   return (
     <Surface>
@@ -171,46 +102,12 @@ export default function PaginationDemoPage() {
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Table
-              data={rows}
-              columns={columns}
-              constrainHeight={false}
-            />
+            <ReferenceSection slug='components/widgets/pagination' />
           </Tabs.Panel>
         </Tabs>
 
-        {/* Best Practices -------------------------------------------------- */}
-        <Panel fullWidth>
-          <Typography variant='h4'>Best Practices</Typography>
-          <Typography>
-            - Keep visible pages small. For large <code>count</code>, set
-            <code> visibleWindow</code> to 5–7 so navigation remains scannable and the underline
-            motion stays legible.
-          </Typography>
-          <Typography>
-            - Keep the active page in view. Leave <code>autoFollowActive</code> on when the current
-            page can change outside of user clicks (e.g., programmatic navigation or router
-            updates).
-          </Typography>
-          <Typography>
-            - Disable bounds appropriately. At <code>page&nbsp;===&nbsp;1</code> or
-            <code> page&nbsp;===&nbsp;count</code>, disable previous/next buttons to reduce noise
-            and convey state.
-          </Typography>
-          <Typography>
-            - Sync with URL when relevant. For paged routes, mirror state in the router (query or
-            path) so refresh/share keeps position; keep Pagination controlled via <code>page</code>
-            and <code>onChange</code>.
-          </Typography>
-          <Typography>
-            - Use tokens for rhythm. Rely on theme motion tokens for underline animation and spacing
-            so density or brand changes do not require component edits.
-          </Typography>
-          <Typography>
-            - Prefer Pagination for finite sets. For unknown or unbounded results, use windowed
-            lists or infinite scroll with clear load affordances.
-          </Typography>
-        </Panel>
+        <CuratedExamples examples={getExamples(PaginationMeta)} />
+        <BestPractices items={getBestPractices(PaginationMeta)} />
       </Stack>
     </Surface>
   );

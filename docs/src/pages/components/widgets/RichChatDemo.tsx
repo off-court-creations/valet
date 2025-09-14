@@ -14,6 +14,8 @@ import {
   IconButton,
 } from '@archway/valet';
 import NavDrawer from '../../../components/NavDrawer';
+import ReferenceSection from '../../../components/ReferenceSection';
+import { Tabs } from '@archway/valet';
 import PageHero from '../../../components/PageHero';
 import type { RichMessage } from '@archway/valet';
 import monkey from '../../../assets/monkey.jpg';
@@ -202,6 +204,14 @@ export default function RichChatDemoPage() {
           userAvatar={present}
           systemAvatar={monkey}
         />
+
+        {/* Reference ----------------------------------------------------- */}
+        <Tabs>
+          <Tabs.Tab label='Reference' />
+          <Tabs.Panel>
+            <ReferenceSection slug='components/widgets/richchat' />
+          </Tabs.Panel>
+        </Tabs>
       </Stack>
     </Surface>
   );

@@ -1,8 +1,13 @@
 // src/pages/DrawerDemo.tsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Surface, Stack, Typography, Button, Drawer, Panel, useTheme } from '@archway/valet';
+import { Surface, Stack, Typography, Button, Drawer, useTheme, Tabs } from '@archway/valet';
+import ReferenceSection from '../../../components/ReferenceSection';
 import PageHero from '../../../components/PageHero';
+import BestPractices from '../../../components/BestPractices';
+import CuratedExamples from '../../../components/CuratedExamples';
+import { getBestPractices, getExamples } from '../../../utils/sidecar';
+import DrawerMeta from '../../../../../src/components/layout/Drawer.meta.json';
 
 export default function DrawerDemoPage() {
   const { theme, toggleMode } = useTheme();
@@ -31,122 +36,108 @@ export default function DrawerDemoPage() {
       </Drawer>
       <Stack sx={{ padding: theme.spacing(1), maxWidth: 980, margin: '0 auto' }}>
         <PageHero title='Drawer' />
-
-        {/* 1. Basic uncontrolled drawer */}
-        <Typography variant='h3'>1. Overlay left drawer</Typography>
-        <Button onClick={() => setOverlayOpen(true)}>Open left drawer</Button>
-        <Drawer
-          open={overlayOpen}
-          onClose={() => setOverlayOpen(false)}
-        >
-          <Stack sx={{ padding: theme.spacing(1) }}>
-            <Typography
-              variant='h4'
-              bold
+        <Tabs>
+          <Tabs.Tab label='Usage' />
+          <Tabs.Panel>
+            {/* 1. Basic uncontrolled drawer */}
+            <Typography variant='h3'>1. Overlay left drawer</Typography>
+            <Button onClick={() => setOverlayOpen(true)}>Open left drawer</Button>
+            <Drawer
+              open={overlayOpen}
+              onClose={() => setOverlayOpen(false)}
             >
-              Left Drawer
-            </Typography>
-            <Typography>Click outside or press ESC to close.</Typography>
-          </Stack>
-        </Drawer>
+              <Stack sx={{ padding: theme.spacing(1) }}>
+                <Typography
+                  variant='h4'
+                  bold
+                >
+                  Left Drawer
+                </Typography>
+                <Typography>Click outside or press ESC to close.</Typography>
+              </Stack>
+            </Drawer>
 
-        {/* 2. Controlled right drawer */}
-        <Typography variant='h3'>2. Controlled right drawer</Typography>
-        <Stack direction='row'>
-          <Button onClick={() => setRightOpen(true)}>Open</Button>
-          <Button onClick={() => setRightOpen(false)}>Close</Button>
-        </Stack>
-        <Drawer
-          anchor='right'
-          open={rightOpen}
-          onClose={() => setRightOpen(false)}
-        >
-          <Stack sx={{ padding: theme.spacing(1) }}>
-            <Typography
-              variant='h4'
-              bold
+            {/* 2. Controlled right drawer */}
+            <Typography variant='h3'>2. Controlled right drawer</Typography>
+            <Stack direction='row'>
+              <Button onClick={() => setRightOpen(true)}>Open</Button>
+              <Button onClick={() => setRightOpen(false)}>Close</Button>
+            </Stack>
+            <Drawer
+              anchor='right'
+              open={rightOpen}
+              onClose={() => setRightOpen(false)}
             >
-              Controlled Drawer
-            </Typography>
-            <Typography>State managed by external buttons.</Typography>
-          </Stack>
-        </Drawer>
+              <Stack sx={{ padding: theme.spacing(1) }}>
+                <Typography
+                  variant='h4'
+                  bold
+                >
+                  Controlled Drawer
+                </Typography>
+                <Typography>State managed by external buttons.</Typography>
+              </Stack>
+            </Drawer>
 
-        {/* 3. Non-dismissable bottom drawer */}
-        <Typography variant='h3'>3. Disable backdrop & ESC</Typography>
-        <Button onClick={() => setStubbornOpen(true)}>Open stubborn drawer</Button>
-        <Drawer
-          anchor='bottom'
-          open={stubbornOpen}
-          onClose={() => setStubbornOpen(false)}
-          disableBackdropClick
-          disableEscapeKeyDown
-        >
-          <Stack sx={{ padding: theme.spacing(1) }}>
-            <Typography
-              variant='h4'
-              bold
+            {/* 3. Non-dismissable bottom drawer */}
+            <Typography variant='h3'>3. Disable backdrop & ESC</Typography>
+            <Button onClick={() => setStubbornOpen(true)}>Open stubborn drawer</Button>
+            <Drawer
+              anchor='bottom'
+              open={stubbornOpen}
+              onClose={() => setStubbornOpen(false)}
+              disableBackdropClick
+              disableEscapeKeyDown
             >
-              Can&apos;t close via backdrop or ESC
-            </Typography>
-            <Button onClick={() => setStubbornOpen(false)}>Close</Button>
-          </Stack>
-        </Drawer>
+              <Stack sx={{ padding: theme.spacing(1) }}>
+                <Typography
+                  variant='h4'
+                  bold
+                >
+                  Can&apos;t close via backdrop or ESC
+                </Typography>
+                <Button onClick={() => setStubbornOpen(false)}>Close</Button>
+              </Stack>
+            </Drawer>
 
-        {/* 4. Adaptive drawer */}
-        <Typography variant='h3'>4. Adaptive drawer</Typography>
-        <Drawer
-          adaptive
-          anchor='right'
-          size='16rem'
-        >
-          <Stack sx={{ padding: theme.spacing(1) }}>
-            <Typography
-              variant='h4'
-              bold
+            {/* 4. Adaptive drawer */}
+            <Typography variant='h3'>4. Adaptive drawer</Typography>
+            <Drawer
+              adaptive
+              anchor='right'
+              size='16rem'
             >
-              Adaptive Drawer
-            </Typography>
-            <Typography>Persistent in landscape, icon in portrait.</Typography>
-          </Stack>
-        </Drawer>
+              <Stack sx={{ padding: theme.spacing(1) }}>
+                <Typography
+                  variant='h4'
+                  bold
+                >
+                  Adaptive Drawer
+                </Typography>
+                <Typography>Persistent in landscape, icon in portrait.</Typography>
+              </Stack>
+            </Drawer>
 
-        {/* Theme toggle + back nav */}
-        <Stack direction='row'>
-          <Button
-            variant='outlined'
-            onClick={toggleMode}
-          >
-            Toggle light / dark
-          </Button>
-          <Button onClick={() => navigate(-1)}>← Back</Button>
-        </Stack>
+            {/* Theme toggle + back nav */}
+            <Stack direction='row'>
+              <Button
+                variant='outlined'
+                onClick={toggleMode}
+              >
+                Toggle light / dark
+              </Button>
+              <Button onClick={() => navigate(-1)}>← Back</Button>
+            </Stack>
+          </Tabs.Panel>
 
-        {/* Best Practices ---------------------------------------------- */}
-        <Panel fullWidth>
-          <Typography variant='h4'>Best Practices</Typography>
-          <Typography>
-            - Choose the right mode. Use <code>persistent</code> for primary navigation; use overlay
-            drawers for transient tasks. Prefer <code>adaptive</code> so navigation docks in
-            landscape and becomes a toggle in portrait.
-          </Typography>
-          <Typography>
-            - Respect close affordances. Provide <code>onClose</code> for controlled drawers and
-            keep backdrop/ESC enabled unless there is a strong reason to disable them.
-          </Typography>
-          <Typography>
-            - Size with tokens. Set <code>size</code> in <code>rem</code> or via spacing so density
-            changes keep proportions; avoid content-driven widths that cause reflow thrash.
-          </Typography>
-          <Typography>
-            - Don’t manually offset for the AppBar. The drawer reads the current surface offset and
-            adjusts itself (and persistent margins) automatically.
-          </Typography>
-          <Typography>
-            - Keep content focused and scrollable. Put navigation and short lists inside; for long
-            collections consider windowing/virtualization and offload heavy work from the drawer.
-          </Typography>
-        </Panel>
+          <Tabs.Tab label='Reference' />
+          <Tabs.Panel>
+            <ReferenceSection slug='components/layout/drawer' />
+          </Tabs.Panel>
+        </Tabs>
+
+        <CuratedExamples examples={getExamples(DrawerMeta)} />
+        <BestPractices items={getBestPractices(DrawerMeta)} />
       </Stack>
     </Surface>
   );

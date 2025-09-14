@@ -15,13 +15,13 @@ import {
   createFormStore,
   useTheme,
   Tabs,
-  Table,
-  Panel,
 } from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
-import type { ReactNode } from 'react';
+import ReferenceSection from '../../../components/ReferenceSection';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
+import BestPractices from '../../../components/BestPractices';
+import { getBestPractices } from '../../../utils/sidecar';
+import SwitchMeta from '../../../../../src/components/fields/Switch.meta.json';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Local form store for demo                                                  */
@@ -59,65 +59,6 @@ export default function SwitchDemoPage() {
   const handleSubmit = (values: { darkMode: boolean; newsletter: boolean }) =>
     // eslint-disable-next-line no-alert -- demo only
     alert(JSON.stringify(values, null, 2));
-
-  interface Row {
-    prop: ReactNode;
-    type: ReactNode;
-    default: ReactNode;
-    description: ReactNode;
-  }
-
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const data: Row[] = [
-    {
-      prop: <code>checked</code>,
-      type: <code>boolean</code>,
-      default: <code>—</code>,
-      description: 'Controlled state',
-    },
-    {
-      prop: <code>defaultChecked</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Uncontrolled initial state',
-    },
-    {
-      prop: <code>onChange</code>,
-      type: <code>(checked: boolean) =&gt; void</code>,
-      default: <code>—</code>,
-      description: 'State change handler',
-    },
-    {
-      prop: <code>name</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Form field name',
-    },
-    {
-      prop: <code>size</code>,
-      type: <code>&apos;sm&apos; | &apos;md&apos; | &apos;lg&apos;</code>,
-      default: <code>&apos;md&apos;</code>,
-      description: 'Switch size',
-    },
-    {
-      prop: <code>disabled</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Disable interaction',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Apply style presets',
-    },
-  ];
 
   return (
     <Surface>
@@ -258,46 +199,11 @@ export default function SwitchDemoPage() {
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant='h3'>Prop reference</Typography>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
+            <ReferenceSection slug='components/fields/switch' />
           </Tabs.Panel>
         </Tabs>
 
-        {/* Best Practices -------------------------------------------------- */}
-        <Panel fullWidth>
-          <Typography variant='h4'>Best Practices</Typography>
-          <Typography>
-            - Use Switch for immediate effects. Switch communicates an on/off state that applies
-            instantly; for form submissions that save later, prefer <code>Checkbox</code>.
-          </Typography>
-          <Typography>
-            - Always pair with a clear label. The label should describe the effect, not the control
-            (e.g., &apos;Wi‑Fi&apos; rather than &apos;Enable&apos;). Set a stable <code>name</code>{' '}
-            when used with
-            <code> FormControl</code>.
-          </Typography>
-          <Typography>
-            - Choose the control model deliberately. Use <code>checked</code>/<code> onChange</code>
-            when the state drives app logic; otherwise <code>defaultChecked</code> is fine.
-          </Typography>
-          <Typography>
-            - Maintain comfortable targets. Pick size tokens (<code>&apos;sm&apos;</code>/
-            <code>&apos;md&apos;</code>/<code>&apos;lg&apos;</code>) that keep tap areas ~40–48px in
-            dense UIs.
-          </Typography>
-          <Typography>
-            - Accessible semantics. Switch exposes <code>role=&quot;switch&quot;</code> and
-            <code> aria-checked</code>; do not rely on colour alone to convey state.
-          </Typography>
-          <Typography>
-            - Motion and theme. Let default motion and colours come from the theme; keep overrides
-            in presets to stay consistent with the rest of the UI.
-          </Typography>
-        </Panel>
+        <BestPractices items={getBestPractices(SwitchMeta)} />
       </Stack>
     </Surface>
   );

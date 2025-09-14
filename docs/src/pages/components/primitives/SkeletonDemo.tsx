@@ -11,63 +11,22 @@ import {
   Image,
   Button,
   Tabs,
-  Table,
   Icon,
   useTheme,
-  Panel,
 } from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
-import type { ReactNode } from 'react';
+import ReferenceSection from '../../../components/ReferenceSection';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
+import BestPractices from '../../../components/BestPractices';
+import { getBestPractices } from '../../../utils/sidecar';
+import SkeletonMeta from '../../../../../src/components/primitives/Skeleton.meta.json';
 import PageHero from '../../../components/PageHero';
 
 export default function SkeletonDemoPage() {
   const { theme } = useTheme();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-
-  interface Row {
-    prop: ReactNode;
-    type: ReactNode;
-    default: ReactNode;
-    description: ReactNode;
-  }
-
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const data: Row[] = [
-    {
-      prop: <code>loading</code>,
-      type: <code>boolean</code>,
-      default: <code>true</code>,
-      description: 'Show placeholder while true',
-    },
-    {
-      prop: <code>variant</code>,
-      type: <code>&#39;text&#39; | &#39;rect&#39; | &#39;circle&#39;</code>,
-      default: <code>—</code>,
-      description: 'Override inferred placeholder shape',
-    },
-    {
-      prop: <code>icon</code>,
-      type: <code>ReactNode</code>,
-      default: <code>—</code>,
-      description: 'Optional icon shown while loading',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Apply style presets',
-    },
-  ];
 
   return (
     <Surface>
@@ -158,12 +117,7 @@ export default function SkeletonDemoPage() {
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant='h3'>Prop reference</Typography>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
+            <ReferenceSection slug='components/primitives/skeleton' />
           </Tabs.Panel>
         </Tabs>
 
@@ -175,30 +129,7 @@ export default function SkeletonDemoPage() {
           ← Back
         </Button>
 
-        {/* Best Practices -------------------------------------------------- */}
-        <Panel fullWidth>
-          <Typography variant='h4'>Best Practices</Typography>
-          <Typography>
-            - Skeleton the right things. Use Skeleton when the shape/size of incoming content is
-            known; avoid for unknown lists where layout may jump.
-          </Typography>
-          <Typography>
-            - Match shapes. Let the component infer <code>variant</code> or override it to match the
-            target (text, circle, rect) for believable placeholders.
-          </Typography>
-          <Typography>
-            - Prefer quick hide. Hide skeletons as soon as content is ready; uncontrolled usage will
-            auto-hide on <code>onLoad</code>/<code>onError</code> for common elements.
-          </Typography>
-          <Typography>
-            - Keep motion subtle. The pulse is intentionally gentle; avoid stacking many animated
-            placeholders in view.
-          </Typography>
-          <Typography>
-            - Provide context. Use brief text nearby (e.g., &quot;Loading data…&quot;) when
-            appropriate; don’t rely on shimmer alone to communicate state.
-          </Typography>
-        </Panel>
+        <BestPractices items={getBestPractices(SkeletonMeta)} />
       </Stack>
     </Surface>
   );

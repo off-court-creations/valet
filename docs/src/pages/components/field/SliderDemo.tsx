@@ -5,21 +5,13 @@
 // – Removed: preset-styling showcase (simplifies demo focus)
 // ─────────────────────────────────────────────────────────────────────────────
 import { useState } from 'react';
-import {
-  Surface,
-  Stack,
-  Typography,
-  Button,
-  Slider,
-  useTheme,
-  Tabs,
-  Table,
-  Panel,
-} from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
-import type { ReactNode } from 'react';
+import { Surface, Stack, Typography, Button, Slider, useTheme, Tabs } from '@archway/valet';
+import ReferenceSection from '../../../components/ReferenceSection';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
+import BestPractices from '../../../components/BestPractices';
+import { getBestPractices } from '../../../utils/sidecar';
+import SliderMeta from '../../../../../src/components/fields/Slider.meta.json';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Example-wide constants                                                     */
@@ -33,117 +25,6 @@ export default function SliderDemoPage() {
 
   /* Controlled slider state ------------------------------------------------ */
   const [ctlValue, setCtlValue] = useState(30);
-
-  interface Row {
-    prop: ReactNode;
-    type: ReactNode;
-    default: ReactNode;
-    description: ReactNode;
-  }
-
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const data: Row[] = [
-    {
-      prop: <code>value</code>,
-      type: <code>number</code>,
-      default: <code>—</code>,
-      description: 'Controlled value',
-    },
-    {
-      prop: <code>defaultValue</code>,
-      type: <code>number</code>,
-      default: <code>0</code>,
-      description: 'Uncontrolled start value',
-    },
-    {
-      prop: <code>min</code>,
-      type: <code>number</code>,
-      default: <code>0</code>,
-      description: 'Minimum value',
-    },
-    {
-      prop: <code>max</code>,
-      type: <code>number</code>,
-      default: <code>100</code>,
-      description: 'Maximum value',
-    },
-    {
-      prop: <code>step</code>,
-      type: <code>number</code>,
-      default: <code>1</code>,
-      description: 'Step increment',
-    },
-    {
-      prop: <code>presets</code>,
-      type: <code>number[]</code>,
-      default: <code>[]</code>,
-      description: 'Preset snap points',
-    },
-    {
-      prop: <code>snap</code>,
-      type: <code>&#39;none&#39; | &#39;step&#39; | &#39;presets&#39;</code>,
-      default: <code>&#39;none&#39;</code>,
-      description: 'Snap behaviour',
-    },
-    {
-      prop: <code>precision</code>,
-      type: <code>number</code>,
-      default: <code>0</code>,
-      description: 'Decimal places',
-    },
-    {
-      prop: <code>showValue</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Display current value',
-    },
-    {
-      prop: <code>showMinMax</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Display min and max labels',
-    },
-    {
-      prop: <code>showTicks</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Show tick marks',
-    },
-    {
-      prop: <code>ticks</code>,
-      type: <code>number[]</code>,
-      default: <code>—</code>,
-      description: 'Custom tick positions',
-    },
-    {
-      prop: <code>size</code>,
-      type: (
-        <code>
-          &#39;xs&#39; | &#39;sm&#39; | &#39;md&#39; | &#39;lg&#39; | &#39;xl&#39; | number | string
-        </code>
-      ),
-      default: <code>&#39;md&#39;</code>,
-      description: 'Slider size',
-    },
-    {
-      prop: <code>disabled</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Disable interaction',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Apply style presets',
-    },
-  ];
 
   return (
     <Surface>
@@ -272,49 +153,11 @@ export default function SliderDemoPage() {
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Typography variant='h3'>Prop reference</Typography>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
+            <ReferenceSection slug='components/fields/slider' />
           </Tabs.Panel>
         </Tabs>
 
-        {/* Best Practices -------------------------------------------------- */}
-        <Panel fullWidth>
-          <Typography variant='h4'>Best Practices</Typography>
-          <Typography>
-            - Use Slider for continuous ranges. For a handful of discrete options, prefer
-            <code> RadioGroup</code> (single‑select) or <code>Select</code>.
-          </Typography>
-          <Typography>
-            - Declare real bounds. Set <code>min</code>/<code>max</code> to meaningful limits and
-            show context with <code>showMinMax</code> and/or <code>showValue</code>.
-          </Typography>
-          <Typography>
-            - Snap intentionally. Use <code>step</code> or supply <code>presets</code> with
-            <code> snap=&apos;presets&apos;</code> to make targeting easy; adjust{' '}
-            <code>precision</code> to avoid jittery decimals.
-          </Typography>
-          <Typography>
-            - Keyboard precision. Arrow keys adjust by one step; ensure <code>step</code> is small
-            enough, and consider pairing with an <code>Iterator</code> or numeric input for exact
-            entry.
-          </Typography>
-          <Typography>
-            - Ticks with purpose. Only enable <code>showTicks</code> when markers aid comprehension;
-            avoid dense, unreadable tick forests.
-          </Typography>
-          <Typography>
-            - Size for touch. Use <code>size</code> tokens or numbers to keep comfortable thumb and
-            track sizes; avoid tiny controls on mobile.
-          </Typography>
-          <Typography>
-            - Controlled effects. When controlled, debounce or batch expensive side‑effects in
-            <code> onChange</code> to keep sliding smooth.
-          </Typography>
-        </Panel>
+        <BestPractices items={getBestPractices(SliderMeta)} />
       </Stack>
     </Surface>
   );

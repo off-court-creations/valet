@@ -6,7 +6,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 // Ensure initial paint uses valet’s CSS variable fallbacks
-import '@archway/valet/styles.css';
+import '../../styles.css';
 
 /* Load all global presets *before* the app renders ---------- */
 import './presets/globalPresets';

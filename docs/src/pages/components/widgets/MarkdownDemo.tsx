@@ -7,14 +7,12 @@ import {
   Stack,
   Typography,
   Tabs,
-  Table,
   Panel,
   Button,
   Markdown as MarkdownRenderer,
   useTheme,
 } from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
-import type { ReactNode } from 'react';
+import ReferenceSection from '../../../components/ReferenceSection';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
 import PageHero from '../../../components/PageHero';
@@ -24,35 +22,6 @@ export default function MarkdownDemoPage() {
   const navigate = useNavigate();
 
   const sample = `# Markdown Demo\n\nThis text **renders** *Markdown* using valet components.\n\n## Table Example\n| Fruit | Colour |\n| ----- | ------ |\n| Apple | Red    |\n| Pear  | Green  |\n\n\`\`\`ts\nconst x = 42;\nconsole.log(x);\n\`\`\``;
-
-  interface Row {
-    prop: ReactNode;
-    type: ReactNode;
-    default: ReactNode;
-    description: ReactNode;
-  }
-
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const data: Row[] = [
-    {
-      prop: <code>data</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Markdown source text',
-    },
-    {
-      prop: <code>codeBackground</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Override background for fenced code blocks',
-    },
-  ];
 
   return (
     <Surface>
@@ -86,11 +55,7 @@ export default function MarkdownDemoPage() {
           </Tabs.Panel>
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
+            <ReferenceSection slug='components/widgets/markdown' />
           </Tabs.Panel>
         </Tabs>
         <Button

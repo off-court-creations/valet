@@ -15,13 +15,15 @@ import {
   Slider,
   Progress,
   useTheme,
-  Panel,
   Tabs,
-  Table,
 } from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
+import ReferenceSection from '../../../components/ReferenceSection';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../../components/NavDrawer';
+import BestPractices from '../../../components/BestPractices';
+import CuratedExamples from '../../../components/CuratedExamples';
+import { getBestPractices, getExamples } from '../../../utils/sidecar';
+import ProgressMeta from '../../../../../src/components/primitives/Progress.meta.json';
 import PageHero from '../../../components/PageHero';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
@@ -50,75 +52,7 @@ export default function ProgressDemoPage() {
     setBuffer(25);
   };
 
-  interface Row {
-    prop: React.ReactNode;
-    type: React.ReactNode;
-    default: React.ReactNode;
-    description: React.ReactNode;
-  }
-
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
-
-  const data: Row[] = [
-    {
-      prop: <code>variant</code>,
-      type: <code>&apos;linear&apos; | &apos;circular&apos;</code>,
-      default: <code>&apos;linear&apos;</code>,
-      description: 'Visual style of the progress indicator',
-    },
-    {
-      prop: <code>mode</code>,
-      type: <code>&apos;determinate&apos; | &apos;indeterminate&apos; | &apos;buffer&apos;</code>,
-      default: <code>&apos;determinate&apos;</code>,
-      description: 'Behavior; buffer applies to linear only',
-    },
-    {
-      prop: <code>value</code>,
-      type: <code>number</code>,
-      default: <code>0</code>,
-      description: '0–100 value for determinate/buffer foreground',
-    },
-    {
-      prop: <code>buffer</code>,
-      type: <code>number</code>,
-      default: <code>0</code>,
-      description: '0–100 secondary value (linear-buffer only)',
-    },
-    {
-      prop: <code>size</code>,
-      type: (
-        <code>
-          &apos;xs&apos; | &apos;sm&apos; | &apos;md&apos; | &apos;lg&apos; | &apos;xl&apos; |
-          number | string
-        </code>
-      ),
-      default: <code>&apos;md&apos;</code>,
-      description: 'Token size or custom CSS size',
-    },
-    {
-      prop: <code>showLabel</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Show numeric % inside circular center',
-    },
-    {
-      prop: <code>color</code>,
-      type: <code>string</code>,
-      default: <code>theme.colors.primary</code>,
-      description: 'Override bar/stroke color',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Apply style presets (define via definePreset())',
-    },
-  ];
+  // MCP-driven reference tables used; manual data removed
 
   return (
     <Surface>
@@ -159,9 +93,33 @@ export default function ProgressDemoPage() {
 
             {/* 2. Circular determinate (controlled) ----------------------- */}
             <Typography variant='h3'>2. Circular – determinate (controlled)</Typography>
+            {/* Circular surrounding an IconButton using Progress children */}
             <Stack
               direction='row'
-              sx={{ alignItems: 'center' }}
+              sx={{ alignItems: 'center', gap: theme.spacing(1) }}
+            >
+              {/* Overlay IconButton centered above circular progress without using children prop */}
+              <Box sx={{ position: 'relative', display: 'inline-flex' }}>
+                <Progress
+                  variant='circular'
+                  mode='determinate'
+                  value={value}
+                  color={theme.colors['secondary']}
+                />
+                <IconButton
+                  icon='mdi:home'
+                  onClick={reset}
+                  aria-label='reset'
+                  size={48}
+                  sx={{ position: 'absolute', inset: 0, margin: 'auto' }}
+                />
+              </Box>
+            </Stack>
+
+            {/* Additional circular determinate styles */}
+            <Stack
+              direction='row'
+              sx={{ alignItems: 'center', gap: theme.spacing(1) }}
             >
               <Progress
                 variant='circular'
@@ -175,11 +133,6 @@ export default function ProgressDemoPage() {
                 value={value}
                 size='lg'
                 color={theme.colors['error']}
-              />
-              <IconButton
-                icon='mdi:home'
-                onClick={reset}
-                aria-label='reset'
               />
             </Stack>
 
@@ -233,11 +186,7 @@ export default function ProgressDemoPage() {
 
           <Tabs.Tab label='Reference' />
           <Tabs.Panel>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
+            <ReferenceSection slug='components/primitives/progress' />
           </Tabs.Panel>
         </Tabs>
 
@@ -250,37 +199,8 @@ export default function ProgressDemoPage() {
           ← Back
         </Button>
 
-        {/* Best Practices -------------------------------------------------- */}
-        <Panel fullWidth>
-          <Typography variant='h4'>Best Practices</Typography>
-          <Typography>
-            - Choose the right mode. Use <code>determinate</code> when you know progress,{' '}
-            <code>indeterminate</code> for unknown durations, and <code>buffer</code> when
-            prefetching or streaming.
-          </Typography>
-          <Typography>
-            - Provide context. Pair progress with nearby text (e.g., &quot;Uploading…&quot; or
-            &quot;Step 2 of 3&quot;). For circular, consider <code>showLabel</code> when exact
-            values add clarity.
-          </Typography>
-          <Typography>
-            - Don’t spin forever. If indeterminate lasts more than a few seconds, provide a fallback
-            (cancel, retry) or switch to determinate as soon as you can estimate progress.
-          </Typography>
-          <Typography>
-            - Respect accessibility. The component sets <code>role=&quot;progressbar&quot;</code>{' '}
-            and ARIA values; you can associate additional text via <code>aria-label</code> or
-            <code> aria-describedby</code> on the wrapper.
-          </Typography>
-          <Typography>
-            - Colour & size with tokens. Use theme colours to convey status (e.g.,
-            <code> error</code> for failures) and size via tokens/numbers to fit the context.
-          </Typography>
-          <Typography>
-            - Don’t block the page. Keep progress close to the affected region and allow unrelated
-            interactions when possible.
-          </Typography>
-        </Panel>
+        <CuratedExamples examples={getExamples(ProgressMeta)} />
+        <BestPractices items={getBestPractices(ProgressMeta)} />
       </Stack>
     </Surface>
   );

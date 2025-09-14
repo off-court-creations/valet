@@ -1,0 +1,18 @@
+{
+  "name": "Select",
+  "status": "experimental",
+  "aliases": ["select", "dropdown", "combobox"],
+  "docs": {
+    "bestPractices": [
+      "Choose controlled vs uncontrolled deliberately: use `value` + `onChange` to integrate with app state; use `initialValue` for lightweight forms.",
+      "Keep option labels short, distinct, and ordered predictably (alphabetical or by frequency). Avoid duplicating values with different labels.",
+      "Use clear placeholders. Show a short prompt when no value is selected (e.g., ‘Choose one’). Don’t use real values as placeholders.",
+      "Keyboard & typeahead. Ensure focus and Arrow keys navigate options; enable first‑letter search for long lists.",
+      "Avoid deep nesting. If options have complex structure or long descriptions, consider a dedicated picker UI instead of Select.",
+      "Multiple selections. Prefer `MetroSelect` with visible chips when the number of selections should be immediately clear.",
+      "Performance. For very long lists, consider server‑side filtering or virtualized menus; keep menu height bounded.",
+      "Presets/tokens. Style via theme tokens and `preset` to maintain consistent control density and colours.",
+      "A11y. Ensure the trigger is labelled (via `label` or surrounding `FormControl`) and that the selected value is announced clearly."
+    ]
+  }
+}

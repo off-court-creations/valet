@@ -12,10 +12,16 @@ export type ValetPropSemanticKind =
   | 'length'
   | 'duration';
 
+// Status semantics (for LLM/agent clarity):
+// - 'golden': very stable, polished, exemplary implementation; recommended default
+// - 'stable': production‑ready and maintained; API compatibility expected
+// - 'experimental': relatively young but usable; API and behavior may evolve
+// - 'unstable': known problems or gaps; avoid depending on without caution
+// - 'deprecated': slated for removal or superseded; prefer alternatives
 export type ValetComponentMeta = {
   name: string;
   aliases?: string[];
-  status?: 'experimental' | 'stable' | 'deprecated';
+  status?: 'golden' | 'stable' | 'experimental' | 'unstable' | 'deprecated';
   since?: string;
   category?: string;
   tags?: string[];

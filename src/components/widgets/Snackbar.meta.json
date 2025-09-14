@@ -1,0 +1,16 @@
+{
+  "name": "Snackbar",
+  "status": "experimental",
+  "aliases": ["snackbar", "toast", "notification", "alert"],
+  "docs": {
+    "bestPractices": [
+      "Keep messages short and specific. Snackbars confirm actions or provide brief status; avoid long instructions or multi‑step interactions.",
+      "Place them consistently, typically bottom center/right depending on platform.",
+      "Offer a single, clear action when needed; prefer undo when appropriate.",
+      "Respect motion and timing. Use `autoHideDuration` for transient messages (3–6s typical); longer durations should be deliberate.",
+      "Don’t stack excessively. Queue messages when necessary; ensure important ones aren’t missed.",
+      "Keep focus behavior intact. Snackbars shouldn’t steal focus; any action button must be keyboard reachable.",
+      "Style via tokens/presets. Use theme colors for status (e.g., `primary` / `error`) and consolidate variants with `preset`."
+    ]
+  }
+}
