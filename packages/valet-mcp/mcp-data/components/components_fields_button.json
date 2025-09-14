@@ -3,76 +3,48 @@
   "category": "fields",
   "slug": "components/fields/button",
   "summary": "Button component",
+  "status": "experimental",
   "aliases": [
-    "button"
+    "button",
+    "cta"
   ],
-  "usage": {
-    "purpose": "Trigger actions with clear, accessible affordances.",
-    "whenToUse": [
-      "Primary and secondary actions in forms and panels",
-      "Navigation that behaves like a button (otherwise use a link)",
-      "Include icons to reinforce meaning or save space"
-    ],
-    "whenNotToUse": [
-      "Icon‑only actions (use IconButton)",
-      "Inline text links for navigation (use anchor elements)"
-    ],
-    "alternatives": [
-      "IconButton",
-      "Tabs",
-      "AppBar"
-    ]
-  },
   "props": [
     {
       "name": "color",
-      "type": "'primary' | 'secondary' | 'tertiary' | string",
-      "required": true,
-      "default": "'primary'",
-      "description": "Background palette or custom colour"
+      "type": "ButtonToken | string",
+      "required": false
     },
     {
       "name": "textColor",
-      "type": "'primary' | 'secondary' | 'tertiary' | string",
-      "required": true,
-      "default": "—",
-      "description": "Label colour override"
+      "type": "ButtonToken | string",
+      "required": false
     },
     {
       "name": "variant",
-      "type": "'contained' | 'outlined'",
-      "required": true,
-      "default": "'contained'",
-      "description": "Visual style"
+      "type": "ButtonVariant",
+      "required": false,
+      "default": "'contained'"
     },
     {
       "name": "size",
-      "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string",
-      "required": true,
-      "default": "'md'",
-      "description": "Overall button size or custom CSS length"
+      "type": "ButtonSize | number | string",
+      "required": false,
+      "default": "'md'"
     },
     {
       "name": "fullWidth",
       "type": "boolean",
-      "required": true,
-      "default": "false",
-      "description": "Stretch to fill parent width"
+      "required": false,
+      "default": "false"
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
-    },
-    {
-      "name": "preset",
-      "type": "string | string[]",
-      "required": false,
-      "default": "—",
-      "description": "Apply style presets"
+      "required": false
     }
   ],
   "cssVars": [
+    "--valet-bg",
     "--valet-text-color"
   ],
   "cssPresets": [],
@@ -89,22 +61,10 @@
     "Reuse styling with `preset` ( `definePreset()` ) rather than duplicating `sx` across instances.",
     "Avoid multiple primary actions per view and reserve destructive styles for destructive operations."
   ],
-  "bestPracticeSlugs": [
-    "establish-a-clear-action-hierarchy-use-for-the-primary-action-and-for",
-    "choose-sizes-by-density-for-typical-forms-for-standout-ctas-avoid-mixing",
-    "prefer-theme-tokens-for-automatic-contrast-if-you-set-a-custom-also-set",
-    "use-in-narrow-or-linear-layouts-mobile-drawers-where-the-button-should",
-    "prefer-succinct-verbfirst-labels-if-the-action-is-icononly-use-and",
-    "when-combining-icons-and-text-add-a-small-gap-eg-on-the-icon-for",
-    "reuse-styling-with-rather-than-duplicating-across-instances",
-    "avoid-multiple-primary-actions-per-view-and-reserve-destructive-styles"
-  ],
   "examples": [],
-  "docsUrl": "/components/field/ButtonDemoPage",
   "sourceFiles": [
-    "src/components/fields/Button.tsx",
-    "docs/src/pages/components/field/ButtonDemoPage.tsx"
+    "src/components/fields/Button.tsx"
   ],
-  "version": "0.31.0",
-  "schemaVersion": "1.4"
+  "version": "0.31.1",
+  "schemaVersion": "1.6"
 }

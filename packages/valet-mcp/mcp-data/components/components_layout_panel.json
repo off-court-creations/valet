@@ -3,83 +3,45 @@
   "category": "layout",
   "slug": "components/layout/panel",
   "summary": "Panel component",
+  "status": "experimental",
   "aliases": [
     "panel",
     "card",
     "section"
   ],
-  "usage": {
-    "purpose": "Card‑like container to group related content with padding and optional elevation.",
-    "whenToUse": [
-      "Segment a page into readable sections",
-      "Show a list/grid of cards with consistent styling",
-      "Visually elevate important content without creating a new page"
-    ],
-    "whenNotToUse": [
-      "Whole‑page containers (use Surface)",
-      "Blocking interactions (use Modal)"
-    ],
-    "alternatives": [
-      "Box",
-      "Surface",
-      "Modal"
-    ]
-  },
   "props": [
     {
       "name": "variant",
-      "type": "",
-      "required": true,
-      "default": "",
-      "description": "Visual style: filled or outlined"
+      "type": "PanelVariant",
+      "required": false,
+      "default": "'main'"
     },
     {
       "name": "fullWidth",
       "type": "boolean",
-      "required": true,
-      "default": "false",
-      "description": "Stretch to 100% width"
+      "required": false,
+      "default": "false"
     },
     {
       "name": "background",
-      "type": "string",
-      "required": true,
-      "default": "—",
-      "description": "Explicit background override"
+      "type": "string | undefined",
+      "required": false
     },
     {
       "name": "centerContent",
       "type": "boolean",
-      "required": true,
-      "default": "false",
-      "description": "Center contents using flexbox"
+      "required": false
     },
     {
       "name": "alignX",
-      "type": "",
-      "required": true,
+      "type": "'left' | 'right' | 'center' | 'centered'",
+      "required": false,
       "enumValues": [
         "left",
         "right",
         "center",
         "centered"
-      ],
-      "default": "",
-      "description": "Horizontal placement when not fullWidth"
-    },
-    {
-      "name": "compact",
-      "type": "boolean",
-      "required": false,
-      "default": "false",
-      "description": "Remove default margin and padding"
-    },
-    {
-      "name": "preset",
-      "type": "string | string[]",
-      "required": false,
-      "default": "—",
-      "description": "Apply style presets"
+      ]
     }
   ],
   "domPassthrough": {
@@ -101,11 +63,9 @@
   "slots": [],
   "bestPractices": [],
   "examples": [],
-  "docsUrl": "/components/layout/Panel",
   "sourceFiles": [
-    "src/components/layout/Panel.tsx",
-    "docs/src/pages/components/layout/Panel.tsx"
+    "src/components/layout/Panel.tsx"
   ],
-  "version": "0.31.0",
-  "schemaVersion": "1.4"
+  "version": "0.31.1",
+  "schemaVersion": "1.6"
 }

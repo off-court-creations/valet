@@ -3,182 +3,135 @@
   "category": "primitives",
   "slug": "components/primitives/typography",
   "summary": "Typography component",
+  "status": "experimental",
   "aliases": [
     "typography",
     "text",
     "heading",
     "title"
   ],
-  "usage": {
-    "purpose": "Accessible text primitives for headings, paragraphs, and labels.",
-    "whenToUse": [
-      "Render headings, body text, captions, and helper text",
-      "Communicate hierarchy and emphasis via variants and weights"
-    ],
-    "whenNotToUse": [
-      "Interactive controls or links (use Button, IconButton, or anchor elements)"
-    ],
-    "alternatives": [
-      "Button",
-      "Panel"
-    ]
-  },
   "props": [
     {
       "name": "variant",
-      "type": "'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'body' | 'subtitle' | 'button'",
-      "required": true,
-      "default": "'body'",
-      "description": "Typography style preset (semantic variant)"
+      "type": "Variant",
+      "required": false,
+      "default": "'body'"
     },
     {
       "name": "bold",
       "type": "boolean",
-      "required": true,
-      "default": "false",
-      "description": "Deprecated in favor of weight (maps to 700)"
+      "required": false,
+      "default": "false"
     },
     {
       "name": "italic",
       "type": "boolean",
-      "required": true,
-      "default": "false",
-      "description": "Italic font style"
+      "required": false,
+      "default": "false"
     },
     {
       "name": "weight",
-      "type": "number | 'regular' | 'medium' | 'semibold' | 'bold'",
-      "required": true,
-      "default": "400",
-      "description": "Preferred way to set font weight; clamps 100..900"
+      "type": "number | WeightAlias",
+      "required": false
     },
     {
       "name": "tracking",
       "type": "number | 'tight' | 'normal' | 'loose'",
-      "required": true,
+      "required": false,
       "enumValues": [
         "tight",
         "normal",
         "loose"
-      ],
-      "default": "'normal'",
-      "description": "Letter-spacing; numbers treated as px"
+      ]
     },
     {
       "name": "leading",
       "type": "number | 'tight' | 'normal' | 'loose'",
-      "required": true,
+      "required": false,
       "enumValues": [
         "tight",
         "normal",
         "loose"
-      ],
-      "default": "1.4",
-      "description": "Unitless line-height (1 for button)"
+      ]
     },
     {
       "name": "optical",
-      "type": "'auto' | number",
-      "required": true,
-      "default": "'auto'",
-      "description": "Optical sizing: CSS font-optical-sizing or opsz axis"
+      "type": "'auto' | number | 'none'",
+      "required": false
     },
     {
       "name": "fluid",
       "type": "boolean",
-      "required": true,
-      "default": "false",
-      "description": "Use clamp() from theme.typographyFluid when available"
+      "required": false
     },
     {
       "name": "centered",
       "type": "boolean",
-      "required": true,
-      "default": "false",
-      "description": "Center-align and auto-margin element"
+      "required": false
     },
     {
       "name": "noSelect",
       "type": "boolean",
-      "required": true,
-      "default": "false",
-      "description": "Disable text selection (user-select: none)"
+      "required": false,
+      "default": "false"
     },
     {
       "name": "fontSize",
       "type": "string",
-      "required": true,
-      "default": "-",
-      "description": "Explicit CSS font-size override"
+      "required": false
     },
     {
       "name": "scale",
       "type": "number",
-      "required": true,
-      "default": "-",
-      "description": "Multiply the computed size (after fluid/autoSize)"
+      "required": false
     },
     {
       "name": "autoSize",
       "type": "boolean",
-      "required": true,
-      "default": "false",
-      "description": "Use breakpoint size for variant (xs–xl)"
+      "required": false,
+      "default": "false"
     },
     {
       "name": "color",
       "type": "string",
-      "required": true,
-      "default": "-",
-      "description": "Text color; defaults to var(--valet-text-color)"
+      "required": false
     },
     {
       "name": "family",
       "type": "'heading' | 'body' | 'mono' | 'button'",
-      "required": true,
+      "required": false,
       "enumValues": [
         "heading",
         "body",
         "mono",
         "button"
-      ],
-      "default": "-",
-      "description": "Select a theme font family"
+      ]
     },
     {
       "name": "fontFamily",
       "type": "string",
-      "required": true,
-      "default": "-",
-      "description": "Override font family (discouraged; prefer family)"
+      "required": false
     },
     {
       "name": "whitespace",
       "type": "'normal' | 'pre' | 'pre-wrap' | 'pre-line'",
-      "required": true,
+      "required": false,
       "default": "'normal'",
       "enumValues": [
         "normal",
         "pre",
         "pre-wrap",
         "pre-line"
-      ],
-      "description": "Controls line breaking and whitespace handling"
+      ]
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
-    },
-    {
-      "name": "preset",
-      "type": "string | string[]",
-      "required": false,
-      "default": "-",
-      "description": "Apply style presets (define via definePreset())"
+      "required": false
     }
   ],
   "cssVars": [
+    "--valet-bg",
     "--valet-text-color",
     "--valet-font-weight",
     "--valet-font-tracking",
@@ -190,88 +143,19 @@
   "actions": [],
   "slots": [],
   "bestPractices": [
-    "Match semantics to variants. Heading variants render semantic `h1–h6` elements; keep heading levels hierarchical and avoid skipping from `h1` to `h4` , etc. Prefer a single `h1` per page view.",
-    "Use tokens, not pixels. Prefer `autoSize` , `scale` , and theme typography tokens over hard‑coded `fontSize` so type adapts to density and breakpoints.",
-    "Choose families from the theme. Use `family` (heading/body/mono/button) or define fonts via `useInitialTheme` ; only use `fontFamily` overrides for special cases.",
-    "Maintain contrast. Set `color` via theme tokens or surrounding containers ( `Panel` ) to ensure accessible contrast in light/dark modes.",
-    "Don’t fake interactivity. Avoid attaching click handlers to Typography to mimic buttons/links; wrap it in `Button` or `<a>` for correct semantics and focus behaviour.",
-    "Whitespace control. Use `whitespace` and `noSelect` for code, labels, and UI text to keep wrapping and selection intentional."
+    "Use semantic variants for headings and body; avoid styling raw text manually.",
+    "Keep line length readable and use theme scale for sizes and weights.",
+    "Don’t rely on bold/colour alone to convey meaning; use structure and labels.",
+    "Respect language/locale when formatting numbers, dates, and direction.",
+    "Truncate thoughtfully; prefer wrapping or responsive layout for important content.",
+    "Use presets/tokens for consistency across pages and components."
   ],
-  "bestPracticeSlugs": [
-    "match-semantics-to-variants-heading-variants-render-semantic-elements",
-    "use-tokens-not-pixels-prefer-and-theme-typography-tokens-over-hardcoded",
-    "choose-families-from-the-theme-use-headingbodymonobutton-or-define-fonts",
-    "maintain-contrast-set-via-theme-tokens-or-surrounding-containers-to",
-    "dont-fake-interactivity-avoid-attaching-click-handlers-to-typography-to",
-    "whitespace-control-use-and-for-code-labels-and-ui-text-to-keep-wrapping"
-  ],
-  "examples": [
-    {
-      "id": "typography-example-1",
-      "code": "// Fluid tokens in theme\nsetTheme({\n  typographyFluid: {\n    h1: { min: '1.75rem', max: '3rem', vwFrom: 360, vwTo: 1280 },\n    body: { min: '0.95rem', max: '1.1rem', vwFrom: 360, vwTo: 1280 },\n  },\n});\n\n// In component\n<Typography variant=\"h1\" fluid>Fluid headline</Typography>\n<Typography variant=\"body\" tracking=\"tight\" leading={1.5} weight={450}>\n  Tuned paragraph\n</Typography>",
-      "lang": "tsx",
-      "source": {
-        "file": "/Users/xbenc/occ/valet/docs/src/pages/components/primitives/TypographyDemoPage.tsx"
-      },
-      "runnable": true,
-      "minimalProps": {
-        "sx": null
-      }
-    },
-    {
-      "id": "typography-example-2",
-      "code": "import '@archway/valet/styles.css';",
-      "lang": "tsx",
-      "source": {
-        "file": "/Users/xbenc/occ/valet/docs/src/pages/components/primitives/TypographyDemoPage.tsx"
-      },
-      "runnable": true,
-      "minimalProps": {
-        "sx": null
-      }
-    },
-    {
-      "id": "typography-example-3",
-      "code": "useInitialTheme(\n  {\n    fonts: {\n      heading: { family: 'Kumbh Sans', axes: { wght: { min: 300, max: 800 }, ital: true }, subsets: ['latin'] },\n      body: { family: 'Inter', axes: { wght: [300,400,500,600,700], opsz: [10, 28] }, subsets: ['latin'] },\n      mono: 'JetBrains Mono',\n      button: 'Kumbh Sans',\n    },\n  },\n  [\n    { family: 'Inter', text: 'The quick brown fox 0123456789' }, // extras for speed\n  ],\n  { display: 'swap' }\n);",
-      "lang": "tsx",
-      "source": {
-        "file": "/Users/xbenc/occ/valet/docs/src/pages/components/primitives/TypographyDemoPage.tsx"
-      },
-      "runnable": true,
-      "minimalProps": {
-        "sx": null
-      }
-    },
-    {
-      "id": "typography-example-4",
-      "code": "useGoogleFonts([\n  'JetBrains Mono',\n  { family: 'Inter', axes: { wght: { min: 300, max: 800 } }, subsets: ['latin'] },\n]);",
-      "lang": "tsx",
-      "source": {
-        "file": "/Users/xbenc/occ/valet/docs/src/pages/components/primitives/TypographyDemoPage.tsx"
-      },
-      "runnable": true,
-      "minimalProps": {
-        "sx": null
-      }
-    },
-    {
-      "id": "typography-example-5",
-      "code": "import { inheritSurfaceFontVars } from '@archway/valet';\n\nconst portalRoot = document.getElementById('portal')!;\ninheritSurfaceFontVars(portalRoot);",
-      "lang": "tsx",
-      "source": {
-        "file": "/Users/xbenc/occ/valet/docs/src/pages/components/primitives/TypographyDemoPage.tsx"
-      },
-      "runnable": true,
-      "minimalProps": {
-        "sx": null
-      }
-    }
-  ],
+  "examples": [],
   "docsUrl": "/components/primitives/TypographyDemoPage",
   "sourceFiles": [
     "src/components/primitives/Typography.tsx",
     "docs/src/pages/components/primitives/TypographyDemoPage.tsx"
   ],
-  "version": "0.31.0",
-  "schemaVersion": "1.4"
+  "version": "0.31.1",
+  "schemaVersion": "1.6"
 }

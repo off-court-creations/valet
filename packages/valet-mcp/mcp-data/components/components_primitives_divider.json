@@ -3,106 +3,60 @@
   "category": "primitives",
   "slug": "components/primitives/divider",
   "summary": "Divider component",
+  "status": "experimental",
   "aliases": [
     "divider",
     "rule",
     "hr"
   ],
-  "usage": {
-    "purpose": "Visual separation between groups of content.",
-    "whenToUse": [
-      "Break up lists, settings, or stacked sections",
-      "Create a subtle boundary without extra spacing wrappers"
-    ],
-    "whenNotToUse": [
-      "As a substitute for vertical rhythm (prefer gap/padding on layout components)"
-    ],
-    "alternatives": [
-      "Box",
-      "Panel"
-    ]
-  },
   "props": [
     {
       "name": "orientation",
-      "type": "'horizontal' | 'vertical'",
-      "required": true,
-      "default": "'horizontal'",
-      "description": "Direction of the line separator."
+      "type": "DividerOrientation",
+      "required": false,
+      "default": "'horizontal'"
     },
     {
       "name": "lineColor",
-      "type": "string",
-      "required": true,
-      "default": "theme.colors.text",
-      "description": "Explicit colour. By default, Divider uses the text colour that contrasts the page background."
+      "type": "string | undefined",
+      "required": false
     },
     {
       "name": "thickness",
       "type": "number | string",
-      "required": true,
-      "default": "1",
-      "description": "Line thickness. Numbers map via theme.stroke(n); strings pass through (e.g., \"2px\")."
+      "required": false,
+      "default": "2"
     },
     {
       "name": "length",
-      "type": "number | string",
-      "required": true,
-      "default": "'100%'",
-      "description": "Length along the main axis. Numbers → px; strings pass through (e.g., \"50%\", \"12rem\")."
+      "type": "number | string | undefined",
+      "required": false
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
-    },
-    {
-      "name": "pad",
-      "type": "number | string",
-      "required": false,
-      "default": "0",
-      "description": "Outer spacing envelope. Numbers map via theme.spacing(n); strings pass through. Obeys compact."
-    },
-    {
-      "name": "compact",
-      "type": "boolean",
-      "required": false,
-      "default": "false",
-      "description": "Zero out padding for compact density."
-    },
-    {
-      "name": "preset",
-      "type": "string | string[]",
-      "required": false,
-      "default": "—",
-      "description": "Apply style presets."
+      "required": false
     }
   ],
-  "cssVars": [],
+  "cssVars": [
+    "--valet-text-color",
+    "--valet-divider-stroke"
+  ],
   "cssPresets": [],
   "events": [],
   "actions": [],
   "slots": [],
   "bestPractices": [
-    "Use sparingly. Dividers communicate separation; prefer intrinsic spacing (Stack pad/gap) for rhythm and only add lines where hierarchy needs emphasis.",
-    "Share spacing tokens. Set `pad` and `thickness` via numeric tokens so density matches other components; avoid hard‑coded pixels.",
-    "Orientation follows layout. Use vertical dividers within horizontal stacks and vice versa; keep `length` proportional to nearby content.",
-    "Keep contrast subtle. Default line color derives from text; override sparingly to avoid heavy or distracting separators.",
-    "Don’t imply semantics. Dividers are visual; use headings and landmarks for document structure, not lines."
-  ],
-  "bestPracticeSlugs": [
-    "use-sparingly-dividers-communicate-separation-prefer-intrinsic-spacing",
-    "share-spacing-tokens-set-and-via-numeric-tokens-so-density-matches-other",
-    "orientation-follows-layout-use-vertical-dividers-within-horizontal",
-    "keep-contrast-subtle-default-line-color-derives-from-text-override",
-    "dont-imply-semantics-dividers-are-visual-use-headings-and-landmarks-for"
+    "Use to separate related groups; avoid overuse that creates visual noise.",
+    "Prefer semantic spacing first; add dividers only when separation isn’t clear.",
+    "Match thickness and colour to theme density; avoid heavy borders in content‑dense areas.",
+    "Respect alignment—span appropriate containers and avoid awkward trims.",
+    "Don’t communicate state with dividers; use colour/tokens in the relevant component instead."
   ],
   "examples": [],
-  "docsUrl": "/components/primitives/DividerDemo",
   "sourceFiles": [
-    "src/components/primitives/Divider.tsx",
-    "docs/src/pages/components/primitives/DividerDemo.tsx"
+    "src/components/primitives/Divider.tsx"
   ],
-  "version": "0.31.0",
-  "schemaVersion": "1.4"
+  "version": "0.31.1",
+  "schemaVersion": "1.6"
 }

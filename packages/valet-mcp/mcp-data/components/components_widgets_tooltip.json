@@ -3,26 +3,11 @@
   "category": "widgets",
   "slug": "components/widgets/tooltip",
   "summary": "Tooltip component",
+  "status": "experimental",
   "aliases": [
     "tooltip",
     "hint"
   ],
-  "usage": {
-    "purpose": "Transient, non‑blocking help on hover/focus.",
-    "whenToUse": [
-      "Explain icon‑only controls or abbreviations",
-      "Provide short hints that don’t deserve persistent text"
-    ],
-    "whenNotToUse": [
-      "Critical information or actions (use Modal or Snackbar)",
-      "Content that should be discoverable on touch‑only devices without long‑press"
-    ],
-    "alternatives": [
-      "Snackbar",
-      "Modal",
-      "Typography"
-    ]
-  },
   "props": [
     {
       "name": "title",
@@ -32,65 +17,65 @@
     {
       "name": "placement",
       "type": "Placement",
-      "required": true,
+      "required": false,
       "default": "'top'"
     },
     {
       "name": "arrow",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "true"
     },
     {
       "name": "enterDelay",
       "type": "number",
-      "required": true,
+      "required": false,
       "default": "100"
     },
     {
       "name": "leaveDelay",
       "type": "number",
-      "required": true,
+      "required": false,
       "default": "100"
     },
     {
       "name": "open",
       "type": "boolean",
-      "required": true
+      "required": false
     },
     {
       "name": "defaultOpen",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false"
     },
     {
       "name": "disableHoverListener",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false"
     },
     {
       "name": "disableFocusListener",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false"
     },
     {
       "name": "disableTouchListener",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false"
     },
     {
       "name": "onOpen",
       "type": "() => void",
-      "required": true
+      "required": false
     },
     {
       "name": "onClose",
       "type": "() => void",
-      "required": true
+      "required": false
     },
     {
       "name": "children",
@@ -126,19 +111,44 @@
     "Prefer `placement='top'` when space allows; adjust placement to avoid clipping and viewport edges.",
     "Use sensible delays. Avoid long `enterDelay` / `leaveDelay` that make tooltips feel sluggish or sticky, especially on touch devices."
   ],
-  "bestPracticeSlugs": [
-    "use-tooltips-for-supplemental-hints-not-essential-instructions-the-ui",
-    "ensure-the-trigger-is-focusable-and-labelled-for-icononly-controls",
-    "keep-content-concise-avoid-interactive-controls-inside-tooltips-prefer",
-    "prefer-when-space-allows-adjust-placement-to-avoid-clipping-and-viewport",
-    "use-sensible-delays-avoid-long-that-make-tooltips-feel-sluggish-or"
+  "examples": [
+    {
+      "id": "tooltip-basic",
+      "title": "Default tooltip",
+      "code": "<Tooltip title='Hello'><Button>Hover me</Button></Tooltip>",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {
+        "title": null,
+        "children": null
+      }
+    },
+    {
+      "id": "tooltip-placement-right",
+      "title": "Right placement",
+      "code": "<Tooltip placement='right' title='On the right'><Button>Right</Button></Tooltip>",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {
+        "title": null,
+        "children": null
+      }
+    },
+    {
+      "id": "tooltip-no-arrow",
+      "title": "Arrow off",
+      "code": "<Tooltip arrow={false} title='No arrow'><IconButton icon='mdi:home' /></Tooltip>",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {
+        "title": null,
+        "children": null
+      }
+    }
   ],
-  "examples": [],
-  "docsUrl": "/components/widgets/TooltipDemo",
   "sourceFiles": [
-    "src/components/widgets/Tooltip.tsx",
-    "docs/src/pages/components/widgets/TooltipDemo.tsx"
+    "src/components/widgets/Tooltip.tsx"
   ],
-  "version": "0.31.0",
-  "schemaVersion": "1.4"
+  "version": "0.31.1",
+  "schemaVersion": "1.6"
 }

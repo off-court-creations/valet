@@ -3,36 +3,22 @@
   "category": "widgets",
   "slug": "components/widgets/loadingbackdrop",
   "summary": "LoadingBackdrop component",
+  "status": "experimental",
   "aliases": [
+    "loadingbackdrop",
     "backdrop",
-    "loading"
+    "scrim"
   ],
-  "usage": {
-    "purpose": "Dim background content and show a blocker while async work completes.",
-    "whenToUse": [
-      "Block interactions during critical loads or transitions",
-      "Ensure a11y focus management while disabling the underlying UI"
-    ],
-    "whenNotToUse": [
-      "Inline/section‑level loading (use Progress)",
-      "Skeletonable content where layout should remain visible (use Skeleton)"
-    ],
-    "alternatives": [
-      "Progress",
-      "Skeleton",
-      "Modal"
-    ]
-  },
   "props": [
     {
       "name": "fading",
       "type": "boolean",
-      "required": true
+      "required": false
     },
     {
       "name": "showSpinner",
       "type": "boolean",
-      "required": true
+      "required": false
     }
   ],
   "cssVars": [],
@@ -45,6 +31,6 @@
   "sourceFiles": [
     "src/components/widgets/LoadingBackdrop.tsx"
   ],
-  "version": "0.31.0",
-  "schemaVersion": "1.4"
+  "version": "0.31.1",
+  "schemaVersion": "1.6"
 }

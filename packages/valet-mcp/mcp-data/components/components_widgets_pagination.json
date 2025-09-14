@@ -3,26 +3,12 @@
   "category": "widgets",
   "slug": "components/widgets/pagination",
   "summary": "Pagination component",
+  "status": "experimental",
   "aliases": [
     "pagination",
     "pager",
     "paginator"
   ],
-  "usage": {
-    "purpose": "Navigate large result sets by page number or next/prev controls.",
-    "whenToUse": [
-      "Tables or lists with many items where pages are preferable to infinite scroll",
-      "Search results or archives where page position matters"
-    ],
-    "whenNotToUse": [
-      "Continuous feeds where infinite scroll is a better fit",
-      "Small collections that fit on a single page"
-    ],
-    "alternatives": [
-      "Table (built‑in paging)",
-      "Iterator"
-    ]
-  },
   "props": [
     {
       "name": "count",
@@ -32,29 +18,29 @@
     {
       "name": "page",
       "type": "number",
-      "required": true,
+      "required": false,
       "default": "1"
     },
     {
       "name": "onChange",
       "type": "(page: number) => void",
-      "required": true
+      "required": false
     },
     {
       "name": "visibleWindow",
       "type": "number",
-      "required": true
+      "required": false
     },
     {
       "name": "autoFollowActive",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "true"
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
+      "required": false
     }
   ],
   "cssVars": [
@@ -70,27 +56,17 @@
   "actions": [],
   "slots": [],
   "bestPractices": [
-    "Keep visible pages small. For large `count` , set `visibleWindow` to 5–7 so navigation remains scannable and the underline motion stays legible.",
-    "Keep the active page in view. Leave `autoFollowActive` on when the current page can change outside of user clicks (e.g., programmatic navigation or router updates).",
-    "Disable bounds appropriately. At `page === 1` or `page === count` , disable previous/next buttons to reduce noise and convey state.",
-    "Sync with URL when relevant. For paged routes, mirror state in the router (query or path) so refresh/share keeps position; keep Pagination controlled via `page` and `onChange` .",
-    "Use tokens for rhythm. Rely on theme motion tokens for underline animation and spacing so density or brand changes do not require component edits.",
-    "Prefer Pagination for finite sets. For unknown or unbounded results, use windowed lists or infinite scroll with clear load affordances."
-  ],
-  "bestPracticeSlugs": [
-    "keep-visible-pages-small-for-large-set-to-57-so-navigation-remains",
-    "keep-the-active-page-in-view-leave-on-when-the-current-page-can-change",
-    "disable-bounds-appropriately-at-or-disable-previousnext-buttons-to",
-    "sync-with-url-when-relevant-for-paged-routes-mirror-state-in-the-router",
-    "use-tokens-for-rhythm-rely-on-theme-motion-tokens-for-underline",
-    "prefer-pagination-for-finite-sets-for-unknown-or-unbounded-results-use"
+    "Keep visible pages small. For large `count`, set a reasonable `siblingCount` and rely on first/last controls.",
+    "Sync state when relevant. Mirror page in the router (query or path) so refresh/back behaves predictably.",
+    "Prefer server‑side slicing for large datasets; ensure Table or List reflects the current page cleanly.",
+    "Use accessible labels and titles for buttons (Prev/Next) and indicate current page to assistive tech.",
+    "Consider infinite scroll for content feeds where paging is less meaningful.",
+    "Align placement near the data it controls and avoid duplicating controls unless justified."
   ],
   "examples": [],
-  "docsUrl": "/components/widgets/PaginationDemo",
   "sourceFiles": [
-    "src/components/widgets/Pagination.tsx",
-    "docs/src/pages/components/widgets/PaginationDemo.tsx"
+    "src/components/widgets/Pagination.tsx"
   ],
-  "version": "0.31.0",
-  "schemaVersion": "1.4"
+  "version": "0.31.1",
+  "schemaVersion": "1.6"
 }

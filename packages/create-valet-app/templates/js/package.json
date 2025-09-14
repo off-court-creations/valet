@@ -18,7 +18,7 @@
     "format:fix:agent": "sh -c 'prettier --ignore-path .gitignore \"src/**/*.{js,jsx,json,md,css}\" --write; code=$?; if [ $code -eq 0 ]; then echo FORMAT_STATUS:ok; else echo FORMAT_STATUS:fail:$code; fi; exit $code'"
   },
   "dependencies": {
-    "@archway/valet": "^0.31.0",
+    "@archway/valet": "^0.31.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.0",

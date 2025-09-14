@@ -3,25 +3,11 @@
   "category": "widgets",
   "slug": "components/widgets/parallaxbackground",
   "summary": "ParallaxBackground component",
+  "status": "experimental",
   "aliases": [
-    "parallax"
+    "parallax",
+    "parallaxbackground"
   ],
-  "usage": {
-    "purpose": "Layered background motion for hero sections and visual depth.",
-    "whenToUse": [
-      "Branding or storytelling sections that benefit from subtle motion",
-      "Non‑critical background visuals that should not affect layout"
-    ],
-    "whenNotToUse": [
-      "Content that must remain readable regardless of motion",
-      "Performance‑sensitive contexts on low‑end devices"
-    ],
-    "alternatives": [
-      "Image",
-      "Video",
-      "Surface + CSS backgrounds"
-    ]
-  },
   "props": [
     {
       "name": "src",
@@ -31,35 +17,35 @@
     {
       "name": "mediaType",
       "type": "MediaType",
-      "required": true
+      "required": false
     },
     {
       "name": "poster",
       "type": "string",
-      "required": true
+      "required": false
     },
     {
       "name": "loop",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "true"
     },
     {
       "name": "muted",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "true"
     },
     {
       "name": "autoPlay",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "true"
     },
     {
       "name": "preload",
       "type": "'none' | 'metadata' | 'auto'",
-      "required": true,
+      "required": false,
       "default": "'auto'",
       "enumValues": [
         "none",
@@ -90,6 +76,6 @@
   "sourceFiles": [
     "src/components/widgets/Parallax.tsx"
   ],
-  "version": "0.31.0",
-  "schemaVersion": "1.4"
+  "version": "0.31.1",
+  "schemaVersion": "1.6"
 }

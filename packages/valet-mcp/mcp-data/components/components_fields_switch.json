@@ -3,79 +3,41 @@
   "category": "fields",
   "slug": "components/fields/switch",
   "summary": "Switch component",
+  "status": "experimental",
   "aliases": [
-    "toggle",
-    "switch"
+    "switch",
+    "toggle"
   ],
-  "usage": {
-    "purpose": "Immediate on/off toggle for a single setting.",
-    "whenToUse": [
-      "Binary state that applies instantly (Wi‑Fi on/off)",
-      "Settings panels and real‑time preferences"
-    ],
-    "whenNotToUse": [
-      "Form submissions where value is saved on submit (use Checkbox)",
-      "Multiple exclusive options (use Radio)"
-    ],
-    "alternatives": [
-      "Checkbox",
-      "Radio"
-    ]
-  },
   "props": [
     {
       "name": "checked",
       "type": "boolean",
-      "required": true,
-      "default": "—",
-      "description": "Controlled state"
+      "required": false
     },
     {
       "name": "defaultChecked",
       "type": "boolean",
-      "required": true,
-      "default": "false",
-      "description": "Uncontrolled initial state"
+      "required": false
     },
     {
       "name": "onChange",
       "type": "(checked: boolean) => void",
-      "required": true,
-      "default": "—",
-      "description": "State change handler"
+      "required": false
     },
     {
       "name": "name",
       "type": "string",
-      "required": true,
-      "default": "—",
-      "description": "Form field name"
+      "required": false
     },
     {
       "name": "size",
-      "type": "'sm' | 'md' | 'lg'",
-      "required": true,
-      "default": "'md'",
-      "description": "Switch size"
+      "type": "SwitchSize",
+      "required": false
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
-    },
-    {
-      "name": "disabled",
-      "type": "boolean",
-      "required": false,
-      "default": "false",
-      "description": "Disable interaction"
-    },
-    {
-      "name": "preset",
-      "type": "string | string[]",
-      "required": false,
-      "default": "—",
-      "description": "Apply style presets"
+      "required": false
     }
   ],
   "cssVars": [
@@ -93,27 +55,17 @@
   "actions": [],
   "slots": [],
   "bestPractices": [
-    "Use Switch for immediate effects. Switch communicates an on/off state that applies instantly; for form submissions that save later, prefer `Checkbox` .",
-    "Always pair with a clear label. The label should describe the effect, not the control (e.g., 'Wi‑Fi' rather than 'Enable'). Set a stable `name` when used with `FormControl` .",
-    "Choose the control model deliberately. Use `checked` / `onChange` when the state drives app logic; otherwise `defaultChecked` is fine.",
-    "Maintain comfortable targets. Pick size tokens ( `'sm'` / `'md'` / `'lg'` ) that keep tap areas ~40–48px in dense UIs.",
-    "Accessible semantics. Switch exposes `role=\"switch\"` and `aria-checked` ; do not rely on colour alone to convey state.",
-    "Motion and theme. Let default motion and colours come from the theme; keep overrides in presets to stay consistent with the rest of the UI."
-  ],
-  "bestPracticeSlugs": [
-    "use-switch-for-immediate-effects-switch-communicates-an-onoff-state-that",
-    "always-pair-with-a-clear-label-the-label-should-describe-the-effect-not",
-    "choose-the-control-model-deliberately-use-when-the-state-drives-app",
-    "maintain-comfortable-targets-pick-size-tokens-that-keep-tap-areas-4048px",
-    "accessible-semantics-switch-exposes-and-do-not-rely-on-colour-alone-to",
-    "motion-and-theme-let-default-motion-and-colours-come-from-the-theme-keep"
+    "Use Switch for immediate on/off settings that apply instantly; for form submissions, prefer `Checkbox`.",
+    "Label state, not action (e.g., 'Wi‑Fi' rather than 'Enable'). Set a stable `name` when part of a form.",
+    "Provide clear feedback on change (e.g., brief text confirmation, or reflect the new state in the UI).",
+    "Respect platform conventions for motion and colours; avoid ambiguous palettes for on/off states.",
+    "Ensure keyboard operability (Space toggles). Maintain accessible naming regardless of visual labels.",
+    "Prefer presets/tokens for size and colour; keep thumb/track large enough for comfortable touch targets."
   ],
   "examples": [],
-  "docsUrl": "/components/field/SwitchDemo",
   "sourceFiles": [
-    "src/components/fields/Switch.tsx",
-    "docs/src/pages/components/field/SwitchDemo.tsx"
+    "src/components/fields/Switch.tsx"
   ],
-  "version": "0.31.0",
-  "schemaVersion": "1.4"
+  "version": "0.31.1",
+  "schemaVersion": "1.6"
 }

@@ -3,270 +3,315 @@
     "name": "Button",
     "category": "fields",
     "summary": "Button component",
-    "slug": "components/fields/button"
+    "slug": "components/fields/button",
+    "status": "experimental"
   },
   {
     "name": "Checkbox",
     "category": "fields",
     "summary": "Checkbox component",
-    "slug": "components/fields/checkbox"
+    "slug": "components/fields/checkbox",
+    "status": "experimental"
   },
   {
     "name": "DateSelector",
     "category": "fields",
     "summary": "DateSelector component",
-    "slug": "components/fields/dateselector"
+    "slug": "components/fields/dateselector",
+    "status": "experimental"
   },
   {
     "name": "FormControl",
     "category": "fields",
     "summary": "FormControl component",
-    "slug": "components/fields/formcontrol"
+    "slug": "components/fields/formcontrol",
+    "status": "experimental"
   },
   {
     "name": "IconButton",
     "category": "fields",
     "summary": "IconButton component",
-    "slug": "components/fields/iconbutton"
+    "slug": "components/fields/iconbutton",
+    "status": "experimental"
   },
   {
     "name": "Iterator",
     "category": "fields",
     "summary": "Iterator component",
-    "slug": "components/fields/iterator"
+    "slug": "components/fields/iterator",
+    "status": "experimental"
   },
   {
     "name": "MetroSelect",
     "category": "fields",
     "summary": "MetroSelect component",
-    "slug": "components/fields/metroselect"
+    "slug": "components/fields/metroselect",
+    "status": "experimental"
   },
   {
     "name": "Radio",
     "category": "fields",
     "summary": "Radio component",
-    "slug": "components/fields/radio"
+    "slug": "components/fields/radio",
+    "status": "experimental"
   },
   {
     "name": "Select",
     "category": "fields",
     "summary": "Select component",
-    "slug": "components/fields/select"
+    "slug": "components/fields/select",
+    "status": "experimental"
   },
   {
     "name": "Slider",
     "category": "fields",
     "summary": "Slider component",
-    "slug": "components/fields/slider"
+    "slug": "components/fields/slider",
+    "status": "experimental"
   },
   {
     "name": "Switch",
     "category": "fields",
     "summary": "Switch component",
-    "slug": "components/fields/switch"
+    "slug": "components/fields/switch",
+    "status": "experimental"
   },
   {
     "name": "TextField",
     "category": "fields",
     "summary": "TextField component",
-    "slug": "components/fields/textfield"
+    "slug": "components/fields/textfield",
+    "status": "experimental"
   },
   {
     "name": "Accordion",
     "category": "layout",
     "summary": "Accordion component",
-    "slug": "components/layout/accordion"
+    "slug": "components/layout/accordion",
+    "status": "experimental"
   },
   {
     "name": "AppBar",
     "category": "layout",
     "summary": "AppBar component",
-    "slug": "components/layout/appbar"
+    "slug": "components/layout/appbar",
+    "status": "experimental"
   },
   {
     "name": "Box",
     "category": "layout",
     "summary": "Box component",
-    "slug": "components/layout/box"
+    "slug": "components/layout/box",
+    "status": "experimental"
   },
   {
     "name": "Drawer",
     "category": "layout",
     "summary": "Drawer component",
-    "slug": "components/layout/drawer"
+    "slug": "components/layout/drawer",
+    "status": "experimental"
   },
   {
     "name": "Grid",
     "category": "layout",
     "summary": "Grid component",
-    "slug": "components/layout/grid"
+    "slug": "components/layout/grid",
+    "status": "experimental"
   },
   {
     "name": "List",
     "category": "layout",
     "summary": "List component",
-    "slug": "components/layout/list"
+    "slug": "components/layout/list",
+    "status": "unstable"
   },
   {
     "name": "Modal",
     "category": "layout",
     "summary": "Modal component",
-    "slug": "components/layout/modal"
+    "slug": "components/layout/modal",
+    "status": "experimental"
   },
   {
     "name": "Panel",
     "category": "layout",
     "summary": "Panel component",
-    "slug": "components/layout/panel"
+    "slug": "components/layout/panel",
+    "status": "experimental"
   },
   {
     "name": "Stack",
     "category": "layout",
     "summary": "Stack component",
-    "slug": "components/layout/stack"
+    "slug": "components/layout/stack",
+    "status": "experimental"
   },
   {
     "name": "Surface",
     "category": "layout",
     "summary": "Surface component",
-    "slug": "components/layout/surface"
+    "slug": "components/layout/surface",
+    "status": "golden"
   },
   {
     "name": "Tabs",
     "category": "layout",
     "summary": "Tabs component",
-    "slug": "components/layout/tabs"
+    "slug": "components/layout/tabs",
+    "status": "experimental"
   },
   {
     "name": "Avatar",
     "category": "primitives",
     "summary": "Avatar component",
-    "slug": "components/primitives/avatar"
+    "slug": "components/primitives/avatar",
+    "status": "experimental"
   },
   {
     "name": "Divider",
     "category": "primitives",
     "summary": "Divider component",
-    "slug": "components/primitives/divider"
+    "slug": "components/primitives/divider",
+    "status": "experimental"
   },
   {
     "name": "Icon",
     "category": "primitives",
     "summary": "Icon component",
-    "slug": "components/primitives/icon"
+    "slug": "components/primitives/icon",
+    "status": "experimental"
   },
   {
     "name": "Image",
     "category": "primitives",
     "summary": "Image component",
-    "slug": "components/primitives/image"
+    "slug": "components/primitives/image",
+    "status": "experimental"
   },
   {
     "name": "Progress",
     "category": "primitives",
     "summary": "Progress component",
-    "slug": "components/primitives/progress"
+    "slug": "components/primitives/progress",
+    "status": "unstable"
   },
   {
     "name": "Skeleton",
     "category": "primitives",
     "summary": "Skeleton component",
-    "slug": "components/primitives/skeleton"
+    "slug": "components/primitives/skeleton",
+    "status": "experimental"
   },
   {
     "name": "Typography",
     "category": "primitives",
     "summary": "Typography component",
-    "slug": "components/primitives/typography"
+    "slug": "components/primitives/typography",
+    "status": "experimental"
   },
   {
     "name": "Video",
     "category": "primitives",
     "summary": "Video component",
-    "slug": "components/primitives/video"
+    "slug": "components/primitives/video",
+    "status": "experimental"
   },
   {
     "name": "CodeBlock",
     "category": "widgets",
     "summary": "CodeBlock component",
-    "slug": "components/widgets/codeblock"
+    "slug": "components/widgets/codeblock",
+    "status": "experimental"
   },
   {
     "name": "Dropzone",
     "category": "widgets",
     "summary": "Dropzone component",
-    "slug": "components/widgets/dropzone"
+    "slug": "components/widgets/dropzone",
+    "status": "experimental"
   },
   {
     "name": "LLMChat",
     "category": "widgets",
     "summary": "LLMChat component",
-    "slug": "components/widgets/llmchat"
+    "slug": "components/widgets/llmchat",
+    "status": "experimental"
   },
   {
     "name": "LoadingBackdrop",
     "category": "widgets",
     "summary": "LoadingBackdrop component",
-    "slug": "components/widgets/loadingbackdrop"
+    "slug": "components/widgets/loadingbackdrop",
+    "status": "experimental"
   },
   {
     "name": "Markdown",
     "category": "widgets",
     "summary": "Markdown component",
-    "slug": "components/widgets/markdown"
+    "slug": "components/widgets/markdown",
+    "status": "experimental"
   },
   {
     "name": "Pagination",
     "category": "widgets",
     "summary": "Pagination component",
-    "slug": "components/widgets/pagination"
+    "slug": "components/widgets/pagination",
+    "status": "experimental"
   },
   {
     "name": "ParallaxBackground",
     "category": "widgets",
     "summary": "ParallaxBackground component",
-    "slug": "components/widgets/parallaxbackground"
+    "slug": "components/widgets/parallaxbackground",
+    "status": "experimental"
   },
   {
     "name": "RichChat",
     "category": "widgets",
     "summary": "RichChat component",
-    "slug": "components/widgets/richchat"
+    "slug": "components/widgets/richchat",
+    "status": "experimental"
   },
   {
     "name": "Snackbar",
     "category": "widgets",
     "summary": "Snackbar component",
-    "slug": "components/widgets/snackbar"
+    "slug": "components/widgets/snackbar",
+    "status": "experimental"
   },
   {
     "name": "SpeedDial",
     "category": "widgets",
     "summary": "SpeedDial component",
-    "slug": "components/widgets/speeddial"
+    "slug": "components/widgets/speeddial",
+    "status": "experimental"
   },
   {
     "name": "Stepper",
     "category": "widgets",
     "summary": "Stepper component",
-    "slug": "components/widgets/stepper"
+    "slug": "components/widgets/stepper",
+    "status": "experimental"
   },
   {
     "name": "Table",
     "category": "widgets",
     "summary": "Table component",
-    "slug": "components/widgets/table"
+    "slug": "components/widgets/table",
+    "status": "experimental"
   },
   {
     "name": "Tooltip",
     "category": "widgets",
     "summary": "Tooltip component",
-    "slug": "components/widgets/tooltip"
+    "slug": "components/widgets/tooltip",
+    "status": "experimental"
   },
   {
     "name": "Tree",
     "category": "widgets",
     "summary": "Tree component",
-    "slug": "components/widgets/tree"
+    "slug": "components/widgets/tree",
+    "status": "experimental"
   }
 ]

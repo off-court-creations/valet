@@ -3,81 +3,51 @@
   "category": "fields",
   "slug": "components/fields/metroselect",
   "summary": "MetroSelect component",
+  "status": "experimental",
   "aliases": [
+    "metroselect",
     "chip",
     "segmented",
-    "segment"
+    "segment",
+    "segmented-control"
   ],
-  "usage": {
-    "purpose": "Segmented/chip‑based selector for compact, scannable choices (single or multiple).",
-    "whenToUse": [
-      "Tag pickers, filters, and quick toggles where visibility matters",
-      "Small to medium sets where chips communicate state effectively"
-    ],
-    "whenNotToUse": [
-      "Long option lists (use Select)",
-      "Exactly one choice when radio clarity is preferred (use Radio)"
-    ],
-    "alternatives": [
-      "Select",
-      "Radio",
-      "Checkbox"
-    ]
-  },
   "props": [
     {
       "name": "value",
-      "type": "string | number | (string | number)[]",
-      "required": true,
-      "default": "—",
-      "description": "Controlled value (array when multiple)"
+      "type": "Primitive | Primitive[]",
+      "required": false
     },
     {
       "name": "defaultValue",
-      "type": "string | number | (string | number)[]",
-      "required": true,
-      "default": "—",
-      "description": "Uncontrolled initial value (array when multiple)"
+      "type": "Primitive | Primitive[]",
+      "required": false
     },
     {
       "name": "gap",
       "type": "number | string",
-      "required": true,
-      "default": "4",
-      "description": "Spacing between tiles (theme units if number)"
+      "required": false,
+      "default": "0"
     },
     {
       "name": "multiple",
       "type": "boolean",
-      "required": true,
-      "default": "false",
-      "description": "Enable selecting more than one option"
+      "required": false,
+      "default": "false"
     },
     {
       "name": "onChange",
-      "type": "(val: Primitive | Primitive[]) => void",
-      "required": true,
-      "default": "—",
-      "description": "Change handler (array when multiple)"
+      "type": "(v: Primitive | Primitive[]) => void",
+      "required": false
     },
     {
       "name": "children",
       "type": "React.ReactNode",
-      "required": true,
-      "default": "—",
-      "description": "MetroSelect.Option elements"
+      "required": true
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
-    },
-    {
-      "name": "preset",
-      "type": "string | string[]",
-      "required": false,
-      "default": "—",
-      "description": "Apply style presets"
+      "required": false
     }
   ],
   "cssVars": [
@@ -98,11 +68,9 @@
   ],
   "bestPractices": [],
   "examples": [],
-  "docsUrl": "/components/field/MetroSelectDemo",
   "sourceFiles": [
-    "src/components/fields/MetroSelect.tsx",
-    "docs/src/pages/components/field/MetroSelectDemo.tsx"
+    "src/components/fields/MetroSelect.tsx"
   ],
-  "version": "0.31.0",
-  "schemaVersion": "1.4"
+  "version": "0.31.1",
+  "schemaVersion": "1.6"
 }

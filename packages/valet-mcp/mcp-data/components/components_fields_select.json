@@ -3,82 +3,52 @@
   "category": "fields",
   "slug": "components/fields/select",
   "summary": "Select component",
+  "status": "experimental",
   "aliases": [
+    "select",
     "dropdown",
-    "combobox",
-    "select"
+    "combobox"
   ],
-  "usage": {
-    "purpose": "Choose one option from many with a compact popup.",
-    "whenToUse": [
-      "Medium to large option sets that don’t fit as Radio",
-      "Forms where space is limited and search/typeahead may help"
-    ],
-    "whenNotToUse": [
-      "Multiple selections with visible chips (use MetroSelect)",
-      "Very small sets where all options should be visible (use Radio)"
-    ],
-    "alternatives": [
-      "Radio",
-      "MetroSelect"
-    ]
-  },
   "props": [
     {
       "name": "value",
-      "type": "string | number | (string | number)[]",
-      "required": true,
-      "default": "—",
-      "description": "Controlled value"
+      "type": "Primitive | Primitive[]",
+      "required": false
     },
     {
       "name": "initialValue",
-      "type": "string | number | (string | number)[]",
-      "required": true,
-      "default": "—",
-      "description": "Uncontrolled initial value"
+      "type": "Primitive | Primitive[]",
+      "required": false
     },
     {
       "name": "onChange",
       "type": "(v: Primitive | Primitive[]) => void",
-      "required": true,
-      "default": "—",
-      "description": "Change handler"
+      "required": false
     },
     {
       "name": "multiple",
       "type": "boolean",
-      "required": true,
-      "default": "false",
-      "description": "Allow multiple values"
+      "required": false
     },
     {
       "name": "placeholder",
       "type": "string",
-      "required": true,
-      "default": "'Select…'",
-      "description": "Label when empty"
+      "required": false
     },
     {
       "name": "size",
-      "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string",
-      "required": true,
-      "default": "'md'",
-      "description": "Control height"
+      "type": "SelectSize | number | string",
+      "required": false
     },
     {
       "name": "disabled",
       "type": "boolean",
-      "required": true,
-      "default": "false",
-      "description": "Disable interaction"
+      "required": false
     },
     {
       "name": "name",
       "type": "string",
-      "required": true,
-      "default": "—",
-      "description": "Form field name"
+      "required": false
     },
     {
       "name": "children",
@@ -88,14 +58,7 @@
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
-    },
-    {
-      "name": "preset",
-      "type": "string | string[]",
-      "required": false,
-      "default": "—",
-      "description": "Apply style presets"
+      "required": false
     }
   ],
   "cssVars": [
@@ -119,31 +82,18 @@
   "bestPractices": [
     "Choose controlled vs uncontrolled deliberately: use `value` + `onChange` to integrate with app state; use `initialValue` for lightweight forms.",
     "Keep option labels short, distinct, and ordered predictably (alphabetical or by frequency). Avoid duplicating values with different labels.",
-    "Use `multiple` only when necessary and present selections clearly. Consider `size` and a minimum width ( `` ) to avoid layout jump.",
-    "Prefer `RadioGroup` for a small, mutually exclusive set and `Checkbox` es for a small multi‑select; reserve `Select` for larger sets.",
-    "Provide a helpful `placeholder` when no value is selected. Persist value types (string/number) consistently across your app.",
-    "When using `FormControl` , set a stable `name` , and avoid mixing primitive types within the same field.",
-    "Accessibility: ensure the field has a programmatic label (visible caption or `aria-label` ). Keyboard users should be able to focus and select without a mouse.",
-    "Performance: for large option sets, group options logically or load progressively instead of rendering hundreds of nodes at once.",
-    "Tokens/presets: size with `size` tokens or numbers and use a `preset` for visual variants so controls adapt to density and branding."
-  ],
-  "bestPracticeSlugs": [
-    "choose-controlled-vs-uncontrolled-deliberately-use-to-integrate-with-app",
-    "keep-option-labels-short-distinct-and-ordered-predictably-alphabetical",
-    "use-only-when-necessary-and-present-selections-clearly-consider-and-a",
-    "prefer-for-a-small-mutually-exclusive-set-and-es-for-a-small-multiselect",
-    "provide-a-helpful-when-no-value-is-selected-persist-value-types",
-    "when-using-set-a-stable-and-avoid-mixing-primitive-types-within-the-same",
-    "accessibility-ensure-the-field-has-a-programmatic-label-visible-caption",
-    "performance-for-large-option-sets-group-options-logically-or-load",
-    "tokenspresets-size-with-tokens-or-numbers-and-use-a-for-visual-variants"
+    "Use clear placeholders. Show a short prompt when no value is selected (e.g., ‘Choose one’). Don’t use real values as placeholders.",
+    "Keyboard & typeahead. Ensure focus and Arrow keys navigate options; enable first‑letter search for long lists.",
+    "Avoid deep nesting. If options have complex structure or long descriptions, consider a dedicated picker UI instead of Select.",
+    "Multiple selections. Prefer `MetroSelect` with visible chips when the number of selections should be immediately clear.",
+    "Performance. For very long lists, consider server‑side filtering or virtualized menus; keep menu height bounded.",
+    "Presets/tokens. Style via theme tokens and `preset` to maintain consistent control density and colours.",
+    "A11y. Ensure the trigger is labelled (via `label` or surrounding `FormControl`) and that the selected value is announced clearly."
   ],
   "examples": [],
-  "docsUrl": "/components/field/SelectDemo",
   "sourceFiles": [
-    "src/components/fields/Select.tsx",
-    "docs/src/pages/components/field/SelectDemo.tsx"
+    "src/components/fields/Select.tsx"
   ],
-  "version": "0.31.0",
-  "schemaVersion": "1.4"
+  "version": "0.31.1",
+  "schemaVersion": "1.6"
 }

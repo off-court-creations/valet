@@ -3,60 +3,35 @@
   "category": "widgets",
   "slug": "components/widgets/speeddial",
   "summary": "SpeedDial component",
+  "status": "experimental",
   "aliases": [
     "speeddial",
     "speed-dial",
-    "fab"
+    "fab",
+    "fab-menu"
   ],
-  "usage": {
-    "purpose": "Floating action button that expands into quick actions.",
-    "whenToUse": [
-      "Mobile contexts where a primary action has related secondary actions",
-      "Space‑constrained UIs that benefit from a single entry point to multiple actions"
-    ],
-    "whenNotToUse": [
-      "Desktop toolbars or menus where actions can be labeled",
-      "Contexts with more than ~5 actions (use menus/toolbars)"
-    ],
-    "alternatives": [
-      "AppBar",
-      "Button"
-    ]
-  },
   "props": [
     {
       "name": "icon",
       "type": "React.ReactNode",
-      "required": true,
-      "default": "—",
-      "description": "Main floating action button icon"
+      "required": true
     },
     {
       "name": "actions",
       "type": "SpeedDialAction[]",
-      "required": true,
-      "default": "—",
-      "description": "Array of action buttons"
+      "required": true
     },
     {
       "name": "direction",
       "type": "'up' | 'down' | 'left' | 'right'",
-      "required": true,
+      "required": false,
       "default": "'up'",
       "enumValues": [
         "up",
         "down",
         "left",
         "right"
-      ],
-      "description": "Expansion direction"
-    },
-    {
-      "name": "preset",
-      "type": "string | string[]",
-      "required": false,
-      "default": "—",
-      "description": "Apply style presets"
+      ]
     }
   ],
   "cssVars": [],
@@ -76,20 +51,10 @@
     "Pick direction by context. Choose `up` / `left` when anchored to bottom/right edges to prevent overflow. Keep action order predictable.",
     "Motion tokens. Animations use theme motion tokens; keep custom presets aligned for a cohesive feel with the rest of the app."
   ],
-  "bestPracticeSlugs": [
-    "use-sparingly-speeddial-is-for-a-small-cluster-of-highvalue-actions",
-    "place-with-intent-default-bottomright-works-well-adjust-offsets-with",
-    "label-actions-clearly-provide-short-specific-labels-the-component",
-    "close-on-action-after-invoking-an-action-collapse-the-dial-so-the-ui",
-    "pick-direction-by-context-choose-when-anchored-to-bottomright-edges-to",
-    "motion-tokens-animations-use-theme-motion-tokens-keep-custom-presets"
-  ],
   "examples": [],
-  "docsUrl": "/components/widgets/SpeedDialDemo",
   "sourceFiles": [
-    "src/components/widgets/SpeedDial.tsx",
-    "docs/src/pages/components/widgets/SpeedDialDemo.tsx"
+    "src/components/widgets/SpeedDial.tsx"
   ],
-  "version": "0.31.0",
-  "schemaVersion": "1.4"
+  "version": "0.31.1",
+  "schemaVersion": "1.6"
 }

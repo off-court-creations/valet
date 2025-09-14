@@ -3,99 +3,66 @@
   "category": "widgets",
   "slug": "components/widgets/richchat",
   "summary": "RichChat component",
+  "status": "experimental",
   "aliases": [
+    "richchat",
     "chat",
     "conversation",
     "thread"
   ],
-  "usage": {
-    "purpose": "Conversation UI for AI assistants with rich, tool‑augmented messages.",
-    "whenToUse": [
-      "Show structured outputs (tables, code, files) inline with messages",
-      "Capture tool calls, citations, or step‑wise reasoning artifacts"
-    ],
-    "whenNotToUse": [
-      "Basic chat without rich rendering (use LLMChat)"
-    ],
-    "alternatives": [
-      "LLMChat",
-      "Markdown",
-      "Table"
-    ]
-  },
   "props": [
     {
       "name": "messages",
       "type": "RichMessage[]",
-      "required": true,
-      "default": "—",
-      "description": "Conversation history with JSX content"
+      "required": true
     },
     {
       "name": "onFormSubmit",
       "type": "(value: string, index: number) => void",
-      "required": true,
-      "default": "—",
-      "description": "Called when a form message submits"
+      "required": false
     },
     {
       "name": "onSend",
-      "type": "(m: RichMessage) => void",
-      "required": true,
-      "default": "—",
-      "description": "Called when user sends a message"
+      "type": "(message: RichMessage) => void",
+      "required": false
     },
     {
       "name": "userAvatar",
       "type": "string",
-      "required": true,
-      "default": "—",
-      "description": "URL for user avatar image"
+      "required": false
     },
     {
       "name": "systemAvatar",
       "type": "string",
-      "required": true,
-      "default": "—",
-      "description": "URL for assistant avatar image"
+      "required": false
     },
     {
       "name": "placeholder",
       "type": "string",
-      "required": true,
-      "default": "'Message…'",
-      "description": "Input placeholder"
+      "required": false,
+      "default": "'Message…'"
     },
     {
       "name": "disableInput",
       "type": "boolean",
-      "required": true,
-      "default": "false",
-      "description": "Hide the compose bar"
+      "required": false,
+      "default": "false"
     },
     {
       "name": "constrainHeight",
       "type": "boolean",
-      "required": true,
-      "default": "true",
-      "description": "Fit within surface height"
+      "required": false,
+      "default": "true"
     },
     {
       "name": "fontFamily",
       "type": "string",
-      "required": true
+      "required": false
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
-    },
-    {
-      "name": "preset",
-      "type": "string | string[]",
-      "required": false,
-      "default": "—",
-      "description": "Apply style presets"
+      "required": false
     }
   ],
   "cssVars": [],
@@ -114,11 +81,9 @@
   "slots": [],
   "bestPractices": [],
   "examples": [],
-  "docsUrl": "/components/widgets/RichChat",
   "sourceFiles": [
-    "src/components/widgets/RichChat.tsx",
-    "docs/src/pages/components/widgets/RichChat.tsx"
+    "src/components/widgets/RichChat.tsx"
   ],
-  "version": "0.31.0",
-  "schemaVersion": "1.4"
+  "version": "0.31.1",
+  "schemaVersion": "1.6"
 }

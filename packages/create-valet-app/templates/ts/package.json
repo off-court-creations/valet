@@ -20,7 +20,7 @@
     "typecheck:agent": "sh -c 'tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.node.json; code=$?; if [ $code -eq 0 ]; then echo \"TYPECHECK_STATUS:ok\"; else echo \"TYPECHECK_STATUS:fail:$code\"; fi; exit $code'"
   },
   "dependencies": {
-    "@archway/valet": "^0.31.0",
+    "@archway/valet": "^0.31.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.0",

@@ -3,137 +3,97 @@
   "category": "fields",
   "slug": "components/fields/dateselector",
   "summary": "DateSelector component",
+  "status": "experimental",
   "aliases": [
+    "date",
     "datepicker",
     "daterange"
   ],
-  "usage": {
-    "purpose": "Pick a date or a date range with correct locale and a11y.",
-    "whenToUse": [
-      "Scheduling, filtering by date, or selecting ranges for reports",
-      "Contexts that benefit from calendar visualization"
-    ],
-    "whenNotToUse": [
-      "Free‑form inputs where specific formats are required (prefer TextField with masking)",
-      "Time‑only or datetime inputs (use a dedicated time or datetime picker when available)"
-    ],
-    "alternatives": [
-      "TextField"
-    ]
-  },
   "props": [
     {
       "name": "value",
       "type": "string",
-      "required": true,
-      "default": "—",
-      "description": "Controlled ISO date value (YYYY-MM-DD)"
+      "required": false
     },
     {
       "name": "defaultValue",
       "type": "string",
-      "required": true,
-      "default": "—",
-      "description": "Initial uncontrolled value"
+      "required": false
     },
     {
       "name": "onChange",
       "type": "(value: string) => void",
-      "required": true,
-      "default": "—",
-      "description": "Fires when selection changes"
+      "required": false
     },
     {
       "name": "name",
       "type": "string",
-      "required": true,
-      "default": "—",
-      "description": "FormControl field name"
+      "required": false
     },
     {
       "name": "minDate",
       "type": "string",
-      "required": true,
-      "default": "'120y ago'",
-      "description": "Earliest selectable date"
+      "required": false
     },
     {
       "name": "maxDate",
       "type": "string",
-      "required": true,
-      "default": "'120y ahead'",
-      "description": "Latest selectable date"
+      "required": false
     },
     {
       "name": "range",
       "type": "boolean",
-      "required": true,
-      "default": "false",
-      "description": "Enable dual start/end selection"
+      "required": false,
+      "default": "false"
     },
     {
       "name": "endValue",
       "type": "string",
-      "required": true,
-      "default": "—",
-      "description": "Controlled end date when range is true"
+      "required": false
     },
     {
       "name": "defaultEndValue",
       "type": "string",
-      "required": true,
-      "default": "—",
-      "description": "Uncontrolled end date default"
+      "required": false
     },
     {
       "name": "onRangeChange",
       "type": "(start: string, end: string) => void",
-      "required": true,
-      "default": "—",
-      "description": "Fires when range selection changes"
+      "required": false
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
+      "required": false
     },
     {
       "name": "compactMode",
       "type": "'auto' | 'on' | 'off'",
-      "required": true,
+      "required": false,
       "default": "'auto'",
       "enumValues": [
         "auto",
         "on",
         "off"
-      ],
-      "description": "Control compact behavior: auto-detect, force on, or disable entirely"
+      ]
     },
     {
       "name": "compactThresholdIn",
       "type": "number",
-      "required": true,
-      "default": "340",
-      "description": "Width below which compact turns on (only when compactMode=auto)"
+      "required": false,
+      "default": "340"
     },
     {
       "name": "compactThresholdOut",
       "type": "number",
-      "required": true,
-      "default": "380",
-      "description": "Width above which compact turns off (only when compactMode=auto)"
-    },
-    {
-      "name": "preset",
-      "type": "string | string[]",
       "required": false,
-      "default": "—",
-      "description": "Apply style presets"
+      "default": "380"
     }
   ],
   "cssVars": [
     "--valet-date-radius",
-    "--valet-date-cell-radius"
+    "--valet-date-cell-radius",
+    "--valet-text-color"
   ],
   "cssPresets": [],
   "events": [
@@ -150,11 +110,9 @@
   "slots": [],
   "bestPractices": [],
   "examples": [],
-  "docsUrl": "/components/field/DateSelectorDemo",
   "sourceFiles": [
-    "src/components/fields/DateSelector.tsx",
-    "docs/src/pages/components/field/DateSelectorDemo.tsx"
+    "src/components/fields/DateSelector.tsx"
   ],
-  "version": "0.31.0",
-  "schemaVersion": "1.4"
+  "version": "0.31.1",
+  "schemaVersion": "1.6"
 }

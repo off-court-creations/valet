@@ -3,64 +3,37 @@
   "category": "primitives",
   "slug": "components/primitives/icon",
   "summary": "Icon component",
+  "status": "experimental",
   "aliases": [
     "icon",
     "glyph"
   ],
-  "usage": {
-    "purpose": "Crisp, scalable glyphs for actions, status, and decoration.",
-    "whenToUse": [
-      "Augment buttons and labels with recognizable symbols",
-      "Communicate status at a glance"
-    ],
-    "whenNotToUse": [
-      "Long labels or content (use Typography)"
-    ],
-    "alternatives": [
-      "Typography",
-      "Avatar"
-    ]
-  },
   "props": [
     {
       "name": "icon",
       "type": "string",
-      "required": true,
-      "default": "—",
-      "description": "Iconify name"
+      "required": false
     },
     {
       "name": "svg",
-      "type": "string | ReactElement",
-      "required": true,
-      "default": "—",
-      "description": "Custom SVG content"
+      "type": "string | ReactElement<React.SVGProps<SVGSVGElement>>",
+      "required": false
     },
     {
       "name": "size",
-      "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string",
-      "required": true,
-      "default": "'md'",
-      "description": "Icon dimensions"
+      "type": "IconSize | number | string",
+      "required": false,
+      "default": "'md'"
     },
     {
       "name": "color",
-      "type": "string",
-      "required": true,
-      "default": "—",
-      "description": "Colour override"
+      "type": "string | undefined",
+      "required": false
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
-    },
-    {
-      "name": "preset",
-      "type": "string | string[]",
-      "required": false,
-      "default": "—",
-      "description": "Apply style presets"
+      "required": false
     }
   ],
   "cssVars": [],
@@ -73,25 +46,16 @@
     }
   ],
   "bestPractices": [
-    "Use semantic sizing. When icons appear inline with text, size in `em` so they scale with the surrounding type ( `size=\"1.25em\"` pairs well with headings).",
-    "Accessible naming. Decorative icons should be `aria-hidden` ; icons that convey meaning should have a label via the parent control (e.g., `aria-label` on `IconButton` ).",
-    "Prefer theme colours. Let icons inherit current color or set tokens; avoid arbitrary hex values that fight the theme.",
-    "Choose `icon` vs `svg` wisely. Use `icon` for Iconify glyphs; provide `svg` for custom/brand artwork only. Do not pass both.",
-    "Motion restraint. Avoid animating icons excessively; keep motion consistent with theme motion tokens and user expectations."
-  ],
-  "bestPracticeSlugs": [
-    "use-semantic-sizing-when-icons-appear-inline-with-text-size-in-so-they",
-    "accessible-naming-decorative-icons-should-be-icons-that-convey-meaning",
-    "prefer-theme-colours-let-icons-inherit-current-color-or-set-tokens-avoid",
-    "choose-vs-wisely-use-for-iconify-glyphs-provide-for-custombrand-artwork",
-    "motion-restraint-avoid-animating-icons-excessively-keep-motion"
+    "Prefer well‑known glyphs and keep sizes consistent with surrounding text or controls.",
+    "Provide accessible labels when icons are actionable or convey status.",
+    "Avoid using colour alone to convey meaning; pair with text or status tokens.",
+    "Use tokens/presets for colour and size; avoid ad‑hoc CSS to preserve consistency.",
+    "Don’t overload meaning—keep one concept per icon and avoid ambiguous metaphors."
   ],
   "examples": [],
-  "docsUrl": "/components/primitives/IconDemoPage",
   "sourceFiles": [
-    "src/components/primitives/Icon.tsx",
-    "docs/src/pages/components/primitives/IconDemoPage.tsx"
+    "src/components/primitives/Icon.tsx"
   ],
-  "version": "0.31.0",
-  "schemaVersion": "1.4"
+  "version": "0.31.1",
+  "schemaVersion": "1.6"
 }

@@ -3,56 +3,43 @@
   "category": "layout",
   "slug": "components/layout/accordion",
   "summary": "Accordion component",
+  "status": "experimental",
   "aliases": [
-    "accordion"
+    "accordion",
+    "expander"
   ],
-  "usage": {
-    "purpose": "Progressive disclosure for long or optional content sections.",
-    "whenToUse": [
-      "Collapse ancillary details to keep pages scannable",
-      "FAQ or documentation sections with independent panels"
-    ],
-    "whenNotToUse": [
-      "Rapidly switching between multiple views (use Tabs)",
-      "Content that must be visible simultaneously"
-    ],
-    "alternatives": [
-      "Tabs",
-      "Panel"
-    ]
-  },
   "props": [
     {
       "name": "defaultOpen",
       "type": "number | number[]",
-      "required": true
+      "required": false
     },
     {
       "name": "open",
       "type": "number | number[]",
-      "required": true
+      "required": false
     },
     {
       "name": "multiple",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false"
     },
     {
       "name": "onOpenChange",
       "type": "(open: number[]) => void",
-      "required": true
+      "required": false
     },
     {
       "name": "headingLevel",
       "type": "1 | 2 | 3 | 4 | 5 | 6",
-      "required": true,
+      "required": false,
       "default": "3"
     },
     {
       "name": "constrainHeight",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "true"
     },
     {
@@ -81,6 +68,6 @@
   "sourceFiles": [
     "src/components/layout/Accordion.tsx"
   ],
-  "version": "0.31.0",
-  "schemaVersion": "1.4"
+  "version": "0.31.1",
+  "schemaVersion": "1.6"
 }

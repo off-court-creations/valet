@@ -3,93 +3,61 @@
   "category": "widgets",
   "slug": "components/widgets/dropzone",
   "summary": "Dropzone component",
+  "status": "experimental",
   "aliases": [
     "dropzone",
-    "upload",
-    "uploader"
+    "uploader",
+    "upload"
   ],
-  "usage": {
-    "purpose": "Drag‑and‑drop file selection with previews and validation.",
-    "whenToUse": [
-      "Upload flows where drag‑and‑drop improves efficiency",
-      "Accepting multiple files with type/size validation"
-    ],
-    "whenNotToUse": [
-      "Simple single‑file inputs where a native picker suffices",
-      "Uploads that require custom resumable logic (wrap with your uploader)"
-    ],
-    "alternatives": [
-      "TextField (type=file)"
-    ]
-  },
   "props": [
     {
       "name": "accept",
       "type": "DropzoneOptions['accept']",
-      "required": true,
-      "default": "—",
-      "description": "Allowed file types"
+      "required": false
     },
     {
       "name": "showPreviews",
       "type": "boolean",
-      "required": true,
-      "default": "true",
-      "description": "Show preview thumbnails"
+      "required": false,
+      "default": "true"
     },
     {
       "name": "showFileList",
       "type": "boolean",
-      "required": true,
-      "default": "false",
-      "description": "Show icons and names"
+      "required": false,
+      "default": "false"
     },
     {
       "name": "onFilesChange",
       "type": "(files: File[]) => void",
-      "required": true,
-      "default": "—",
-      "description": "Called when accepted files change"
+      "required": false
     },
     {
       "name": "maxFiles",
       "type": "number",
-      "required": true,
-      "default": "—",
-      "description": "Maximum file count"
+      "required": false
     },
     {
       "name": "multiple",
       "type": "boolean",
-      "required": true,
-      "default": "true",
-      "description": "Allow multiple file selection"
+      "required": false,
+      "default": "true"
     },
     {
       "name": "onDrop",
       "type": "DropzoneOptions['onDrop']",
-      "required": true,
-      "default": "—",
-      "description": "Low-level drop callback"
+      "required": false
     },
     {
       "name": "fullWidth",
       "type": "boolean",
-      "required": true,
-      "default": "false",
-      "description": "Stretch to fill parent width"
+      "required": false,
+      "default": "false"
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
-    },
-    {
-      "name": "preset",
-      "type": "string | string[]",
-      "required": false,
-      "default": "—",
-      "description": "Style preset(s)"
+      "required": false
     }
   ],
   "cssVars": [],
@@ -103,25 +71,16 @@
   "actions": [],
   "slots": [],
   "bestPractices": [
-    "Be explicit about file types. Set `accept` to the precise MIME patterns you support and validate on the server; do not rely solely on client hints.",
-    "Communicate limits. If using `maxFiles` or size limits, reflect them in the UI copy and error handling; provide clear feedback for rejected files.",
-    "Keep previews purposeful. Thumbnails help with images; for other types, prefer a simple file list with clear names and types.",
-    "Accessibility first. Ensure the dropzone is focusable and operable via keyboard; users should be able to choose files without drag‑and‑drop.",
-    "Progressive uploads. For large files or slow networks, show progress and allow cancel; avoid blocking the UI with synchronous work."
-  ],
-  "bestPracticeSlugs": [
-    "be-explicit-about-file-types-set-to-the-precise-mime-patterns-you",
-    "communicate-limits-if-using-or-size-limits-reflect-them-in-the-ui-copy",
-    "keep-previews-purposeful-thumbnails-help-with-images-for-other-types",
-    "accessibility-first-ensure-the-dropzone-is-focusable-and-operable-via",
-    "progressive-uploads-for-large-files-or-slow-networks-show-progress-and"
+    "Indicate accepted file types and size limits clearly before upload.",
+    "Provide both drag‑and‑drop and a clickable target for accessibility.",
+    "Validate optimistically on drop and show per‑file status/errors.",
+    "Avoid blocking the UI; use background uploads and concise feedback.",
+    "Sanitize file names and never execute untrusted content."
   ],
   "examples": [],
-  "docsUrl": "/components/widgets/DropzoneDemo",
   "sourceFiles": [
-    "src/components/widgets/Dropzone.tsx",
-    "docs/src/pages/components/widgets/DropzoneDemo.tsx"
+    "src/components/widgets/Dropzone.tsx"
   ],
-  "version": "0.31.0",
-  "schemaVersion": "1.4"
+  "version": "0.31.1",
+  "schemaVersion": "1.6"
 }

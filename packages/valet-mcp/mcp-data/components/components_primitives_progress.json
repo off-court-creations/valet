@@ -3,66 +3,67 @@
   "category": "primitives",
   "slug": "components/primitives/progress",
   "summary": "Progress component",
+  "status": "unstable",
   "aliases": [
     "progress",
     "spinner",
     "loader"
   ],
-  "usage": {
-    "purpose": "Communicate ongoing operations with determinate or indeterminate progress.",
-    "whenToUse": [
-      "Inline loading indicators within a component or form",
-      "Show percent complete when known; spinner when unknown"
-    ],
-    "whenNotToUse": [
-      "Blocking the entire page (use LoadingBackdrop)",
-      "Skeletonable content where layout should remain stable (use Skeleton)"
-    ],
-    "alternatives": [
-      "LoadingBackdrop",
-      "Skeleton"
-    ]
-  },
   "props": [
     {
       "name": "variant",
       "type": "ProgressVariant",
-      "required": true
+      "required": false
     },
     {
       "name": "mode",
       "type": "ProgressMode",
-      "required": true
+      "required": false
     },
     {
       "name": "value",
       "type": "number",
-      "required": true
+      "required": false
     },
     {
       "name": "buffer",
       "type": "number",
-      "required": true
+      "required": false
     },
     {
       "name": "size",
       "type": "ProgressSize | number | string",
-      "required": true
+      "required": false
     },
     {
       "name": "showLabel",
       "type": "boolean",
-      "required": true
+      "required": false
     },
     {
       "name": "color",
       "type": "string | undefined",
-      "required": true
+      "required": false
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
+      "required": false
+    },
+    {
+      "name": "children",
+      "type": "React.ReactNode",
+      "required": false
+    },
+    {
+      "name": "fitChild",
+      "type": "boolean",
+      "required": false
+    },
+    {
+      "name": "childClearance",
+      "type": "number",
+      "required": false
     }
   ],
   "cssVars": [
@@ -71,29 +72,23 @@
   "cssPresets": [],
   "events": [],
   "actions": [],
-  "slots": [],
-  "bestPractices": [
-    "Choose the right mode. Use `determinate` when you know progress, `indeterminate` for unknown durations, and `buffer` when prefetching or streaming.",
-    "Provide context. Pair progress with nearby text (e.g., \"Uploading…\" or \"Step 2 of 3\"). For circular, consider `showLabel` when exact values add clarity.",
-    "Don’t spin forever. If indeterminate lasts more than a few seconds, provide a fallback (cancel, retry) or switch to determinate as soon as you can estimate progress.",
-    "Respect accessibility. The component sets `role=\"progressbar\"` and ARIA values; you can associate additional text via `aria-label` or `aria-describedby` on the wrapper.",
-    "Colour & size with tokens. Use theme colours to convey status (e.g., `error` for failures) and size via tokens/numbers to fit the context.",
-    "Don’t block the page. Keep progress close to the affected region and allow unrelated interactions when possible."
+  "slots": [
+    {
+      "name": "children"
+    }
   ],
-  "bestPracticeSlugs": [
-    "choose-the-right-mode-use-when-you-know-progress-for-unknown-durations",
-    "provide-context-pair-progress-with-nearby-text-eg-uploading-or-step-2-of",
-    "dont-spin-forever-if-indeterminate-lasts-more-than-a-few-seconds-provide",
-    "respect-accessibility-the-component-sets-and-aria-values-you-can",
-    "colour-size-with-tokens-use-theme-colours-to-convey-status-eg-for",
-    "dont-block-the-page-keep-progress-close-to-the-affected-region-and-allow"
+  "bestPractices": [
+    "Use determinate bars when percent is known; spinners for unknown durations.",
+    "Provide accessible labels (e.g., `aria-label` or nearby text) that explain what is loading.",
+    "Avoid blocking the entire page—prefer inline or section‑level indicators when possible.",
+    "Use theme colours to convey status (e.g., `error` for failures) and tokens for size.",
+    "Don’t rely solely on colour; pair with text or icons for critical states.",
+    "Keep motion subtle and aligned with the theme’s motion tokens."
   ],
   "examples": [],
-  "docsUrl": "/components/primitives/ProgressDemo",
   "sourceFiles": [
-    "src/components/primitives/Progress.tsx",
-    "docs/src/pages/components/primitives/ProgressDemo.tsx"
+    "src/components/primitives/Progress.tsx"
   ],
-  "version": "0.31.0",
-  "schemaVersion": "1.4"
+  "version": "0.31.1",
+  "schemaVersion": "1.6"
 }

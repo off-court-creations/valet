@@ -3,49 +3,32 @@
   "category": "layout",
   "slug": "components/layout/modal",
   "summary": "Modal component",
+  "status": "experimental",
   "aliases": [
     "modal",
     "dialog"
   ],
-  "usage": {
-    "purpose": "Blocking overlay for focused tasks and decisions.",
-    "whenToUse": [
-      "Confirmations and destructive actions",
-      "Short, focused forms that must complete before returning to context",
-      "Content that benefits from dimming the background"
-    ],
-    "whenNotToUse": [
-      "Non‑critical feedback (use Snackbar)",
-      "Persistent side tools or navigation (use Drawer)",
-      "Large, document‑like content that should have its own route"
-    ],
-    "alternatives": [
-      "Drawer",
-      "Snackbar",
-      "Panel"
-    ]
-  },
   "props": [
     {
       "name": "open",
       "type": "boolean",
-      "required": true
+      "required": false
     },
     {
       "name": "defaultOpen",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false"
     },
     {
       "name": "onClose",
       "type": "() => void",
-      "required": true
+      "required": false
     },
     {
       "name": "variant",
       "type": "'dialog' | 'alert'",
-      "required": true,
+      "required": false,
       "default": "'dialog'",
       "enumValues": [
         "dialog",
@@ -55,50 +38,50 @@
     {
       "name": "title",
       "type": "ReactNode",
-      "required": true
+      "required": false
     },
     {
       "name": "children",
       "type": "ReactNode",
-      "required": true
+      "required": false
     },
     {
       "name": "actions",
       "type": "ReactNode",
-      "required": true
+      "required": false
     },
     {
       "name": "pad",
       "type": "number | string",
-      "required": true
+      "required": false
     },
     {
       "name": "compact",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false"
     },
     {
       "name": "disableBackdropClick",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false"
     },
     {
       "name": "disableEscapeKeyDown",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false"
     },
     {
       "name": "maxWidth",
       "type": "number | string",
-      "required": true
+      "required": false
     },
     {
       "name": "fullWidth",
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": "false"
     }
   ],
@@ -124,27 +107,17 @@
     }
   ],
   "bestPractices": [
-    "Choose the right type: use `variant='dialog'` for neutral flows and `variant='alert'` for destructive or high‑attention confirmations.",
-    "Provide a clear `title` and unambiguous action labels (avoid vague “OK”/“Cancel”). Make the primary action visually dominant.",
-    "Keep escape hatches accessible. Only combine `disableBackdropClick` and `disableEscapeKeyDown` when the flow truly requires it.",
-    "Treat `open` as the single source of truth and wire `onClose` for all dismissal paths (buttons, ESC, backdrop). Return focus to the trigger on close.",
-    "Size with intent: prefer `maxWidth` for readability; reserve `fullWidth` for mobile or immersive flows. Let long content scroll inside.",
-    "Don’t nest modals. Transition content or sequence steps in a single modal instead of opening another."
-  ],
-  "bestPracticeSlugs": [
-    "choose-the-right-type-use-for-neutral-flows-and-for-destructive-or",
-    "provide-a-clear-and-unambiguous-action-labels-avoid-vague-okcancel-make",
-    "keep-escape-hatches-accessible-only-combine-and-when-the-flow-truly",
-    "treat-as-the-single-source-of-truth-and-wire-for-all-dismissal-paths",
-    "size-with-intent-prefer-for-readability-reserve-for-mobile-or-immersive",
-    "dont-nest-modals-transition-content-or-sequence-steps-in-a-single-modal"
+    "Use for critical decisions or blocking flows; avoid overusing for simple notifications (use `Snackbar`).",
+    "Manage focus correctly: trap within the dialog and restore focus to the trigger on close.",
+    "Provide clear primary/secondary actions; keep destructive actions explicit and separated.",
+    "Adjust size to content: avoid scrollable modals within scrollable pages when possible.",
+    "Prefer `Panel` for non‑modal grouping and background content separation.",
+    "Respect reduced motion and keep transitions subtle and consistent with theme tokens."
   ],
   "examples": [],
-  "docsUrl": "/components/layout/ModalDemo",
   "sourceFiles": [
-    "src/components/layout/Modal.tsx",
-    "docs/src/pages/components/layout/ModalDemo.tsx"
+    "src/components/layout/Modal.tsx"
   ],
-  "version": "0.31.0",
-  "schemaVersion": "1.4"
+  "version": "0.31.1",
+  "schemaVersion": "1.6"
 }

@@ -3,100 +3,55 @@
   "category": "fields",
   "slug": "components/fields/iterator",
   "summary": "Iterator component",
+  "status": "experimental",
   "aliases": [
     "iterator"
   ],
-  "usage": {
-    "purpose": "Render repeated structures over collections with consistent spacing and keys.",
-    "whenToUse": [
-      "Map datasets to repeated UI elements with built‑in ergonomics",
-      "Keep list/grid rendering logic co‑located and declarative"
-    ],
-    "whenNotToUse": [
-      "Virtualized large lists (use a dedicated virtual list)",
-      "Data that requires tabular affordances (use Table)"
-    ],
-    "alternatives": [
-      "List",
-      "Grid",
-      "Table"
-    ]
-  },
   "props": [
     {
       "name": "value",
       "type": "number",
-      "required": true,
-      "default": "—",
-      "description": "Controlled value"
+      "required": false
     },
     {
       "name": "defaultValue",
       "type": "number",
-      "required": true,
-      "default": "0",
-      "description": "Uncontrolled initial value"
+      "required": false
     },
     {
       "name": "onChange",
       "type": "(value: number) => void",
-      "required": true,
-      "default": "—",
-      "description": "Change handler"
+      "required": false
     },
     {
       "name": "name",
       "type": "string",
-      "required": true,
-      "default": "—",
-      "description": "Form field name"
+      "required": false
     },
     {
       "name": "min",
       "type": "number",
-      "required": true,
-      "default": "—",
-      "description": "Minimum value"
+      "required": false
     },
     {
       "name": "max",
       "type": "number",
-      "required": true,
-      "default": "—",
-      "description": "Maximum value"
+      "required": false
     },
     {
       "name": "step",
       "type": "number",
-      "required": true,
-      "default": "1",
-      "description": "Increment step"
+      "required": false
     },
     {
       "name": "width",
       "type": "number | string",
-      "required": true,
-      "default": "'3.5rem'",
-      "description": "Field width"
+      "required": false
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
-    },
-    {
-      "name": "disabled",
-      "type": "boolean",
-      "required": false,
-      "default": "false",
-      "description": "Disable interaction"
-    },
-    {
-      "name": "preset",
-      "type": "string | string[]",
-      "required": false,
-      "default": "—",
-      "description": "Apply style presets"
+      "required": false
     }
   ],
   "cssVars": [],
@@ -111,11 +66,9 @@
   "slots": [],
   "bestPractices": [],
   "examples": [],
-  "docsUrl": "/components/field/IteratorDemo",
   "sourceFiles": [
-    "src/components/fields/Iterator.tsx",
-    "docs/src/pages/components/field/IteratorDemo.tsx"
+    "src/components/fields/Iterator.tsx"
   ],
-  "version": "0.31.0",
-  "schemaVersion": "1.4"
+  "version": "0.31.1",
+  "schemaVersion": "1.6"
 }

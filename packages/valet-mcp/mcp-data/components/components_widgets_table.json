@@ -3,28 +3,12 @@
   "category": "widgets",
   "slug": "components/widgets/table",
   "summary": "Table component",
+  "status": "experimental",
   "aliases": [
     "table",
     "datagrid",
     "data-grid"
   ],
-  "usage": {
-    "purpose": "Present datasets in rows and columns with sorting, selection, and scrolling that respects available height.",
-    "whenToUse": [
-      "Comparing values across records",
-      "User tasks require scanning columns, selecting rows, or bulk actions",
-      "Bounded height where content should scroll inside the component"
-    ],
-    "whenNotToUse": [
-      "Document‑like content or rich prose (use Typography/Panel)",
-      "Hierarchical data that expands per row (use Tree)"
-    ],
-    "alternatives": [
-      "List",
-      "Grid",
-      "Tree"
-    ]
-  },
   "props": [
     {
       "name": "data",
@@ -39,22 +23,22 @@
     {
       "name": "striped",
       "type": "boolean",
-      "required": true
+      "required": false
     },
     {
       "name": "hoverable",
       "type": "boolean",
-      "required": true
+      "required": false
     },
     {
       "name": "dividers",
       "type": "boolean",
-      "required": true
+      "required": false
     },
     {
       "name": "selectable",
       "type": "'single' | 'multi' | undefined",
-      "required": true,
+      "required": false,
       "enumValues": [
         "single",
         "multi"
@@ -63,32 +47,33 @@
     {
       "name": "initialSort",
       "type": "{ index: number; desc?: boolean }",
-      "required": true
+      "required": false
     },
     {
       "name": "onSortChange",
       "type": "(index: number, desc: boolean) => void",
-      "required": true
+      "required": false
     },
     {
       "name": "onSelectionChange",
       "type": "(selected: T[]) => void",
-      "required": true
+      "required": false
     },
     {
       "name": "constrainHeight",
       "type": "boolean",
-      "required": true
+      "required": false
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": true
+      "required": false
     }
   ],
   "cssVars": [
     "--valet-divider-stroke",
     "--valet-underline-width",
+    "--valet-bg",
     "--valet-table-underline"
   ],
   "cssPresets": [],
@@ -106,24 +91,15 @@
   "slots": [],
   "bestPractices": [
     "Keep tables readable: enable `striped` and/or `hoverable` for large datasets, but avoid heavy styling that competes with content.",
-    "Constrain height ( `constrainHeight` ) so the body scrolls inside the table instead of the page scrolling in two directions.",
-    "Provide an initial sort ( `initialSort` ), align numeric columns to the right, and format dates consistently.",
+    "Constrain height (`constrainHeight`) so the body scrolls inside the table instead of the page scrolling in two directions.",
+    "Provide an initial sort (`initialSort`), align numeric columns to the right, and format dates consistently.",
     "Enable selection only when follow‑up actions operate on selected rows; choose `single` vs `multi` to match the action design.",
     "Keep column count reasonable on narrow screens; prefer fewer, more meaningful columns over many cramped ones. Use succinct headers."
   ],
-  "bestPracticeSlugs": [
-    "keep-tables-readable-enable-andor-for-large-datasets-but-avoid-heavy",
-    "constrain-height-so-the-body-scrolls-inside-the-table-instead-of-the",
-    "provide-an-initial-sort-align-numeric-columns-to-the-right-and-format",
-    "enable-selection-only-when-followup-actions-operate-on-selected-rows",
-    "keep-column-count-reasonable-on-narrow-screens-prefer-fewer-more"
-  ],
   "examples": [],
-  "docsUrl": "/components/widgets/TableDemo",
   "sourceFiles": [
-    "src/components/widgets/Table.tsx",
-    "docs/src/pages/components/widgets/TableDemo.tsx"
+    "src/components/widgets/Table.tsx"
   ],
-  "version": "0.31.0",
-  "schemaVersion": "1.4"
+  "version": "0.31.1",
+  "schemaVersion": "1.6"
 }
