@@ -1,0 +1,46 @@
+{
+  "name": "valet-app",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "clean": "rimraf dist \"*.tsbuildinfo\"",
+    "dev": "vite --host",
+    "build": "npm run -s clean && tsc -b && vite build",
+    "build:agent": "sh -c 'npm run -s clean && tsc -b && vite build; code=$?; if [ $code -eq 0 ]; then echo BUILD_STATUS:ok; else echo BUILD_STATUS:fail:$code; fi; exit $code'",
+    "lint": "eslint --ignore-path .gitignore --ignore-pattern \"src/**/*.d.ts\" \"src/**/*.{ts,tsx}\" && echo \"No ESLint issues found.\"",
+    "lint:fix": "eslint --ignore-path .gitignore --ignore-pattern \"src/**/*.d.ts\" \"src/**/*.{ts,tsx}\" --fix && echo \"No ESLint issues found.\"",
+    "lint:agent": "sh -c 'eslint --ignore-path .gitignore --ignore-pattern \"src/**/*.d.ts\" \"src/**/*.{ts,tsx}\"; code=$?; if [ $code -eq 0 ]; then echo LINT_STATUS:ok; else echo LINT_STATUS:fail:$code; fi; exit $code'",
+    "lint:fix:agent": "sh -c 'eslint --ignore-path .gitignore --ignore-pattern \"src/**/*.d.ts\" \"src/**/*.{ts,tsx}\" --fix; code=$?; if [ $code -eq 0 ]; then echo LINT_STATUS:ok; else echo LINT_STATUS:fail:$code; fi; exit $code'",
+    "format": "prettier --ignore-path .gitignore \"src/**/*.{ts,tsx,json,md,css}\" --check",
+    "format:agent": "sh -c 'prettier --ignore-path .gitignore \"src/**/*.{ts,tsx,json,md,css}\" --check; code=$?; if [ $code -eq 0 ]; then echo FORMAT_STATUS:ok; else echo FORMAT_STATUS:fail:$code; fi; exit $code'",
+    "format:fix": "prettier --ignore-path .gitignore \"src/**/*.{ts,tsx,json,md,css}\" --write",
+    "format:fix:agent": "sh -c 'prettier --ignore-path .gitignore \"src/**/*.{ts,tsx,json,md,css}\" --write; code=$?; if [ $code -eq 0 ]; then echo FORMAT_STATUS:ok; else echo FORMAT_STATUS:fail:$code; fi; exit $code'",
+    "typecheck": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.node.json",
+    "typecheck:agent": "sh -c 'tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.node.json; code=$?; if [ $code -eq 0 ]; then echo \"TYPECHECK_STATUS:ok\"; else echo \"TYPECHECK_STATUS:fail:$code\"; fi; exit $code'"
+  },
+  "dependencies": {
+    "@archway/valet": "^0.31.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.6.0",
+    "zustand": "^4.5.7"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.39.0",
+    "@typescript-eslint/parser": "^8.39.0",
+    "@vitejs/plugin-react": "^4.4.1",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "prettier": "^3.2.5",
+    "rimraf": "^5.0.5",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5",
+    "@types/node": "^22.7.5"
+  }
+}

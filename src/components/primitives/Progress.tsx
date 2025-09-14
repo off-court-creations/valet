@@ -195,6 +195,31 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
     const tokens = geom();
     const primary = (color ?? theme.colors.primary) as string;
 
+    // Hooks used by circular variant (declared unconditionally to preserve order)
+    const centerRef = useRef<HTMLDivElement | null>(null);
+    const [autoBoxPx, setAutoBoxPx] = useState<number | null>(null);
+    const shouldFit =
+      variant === 'circular' &&
+      (fitChild ?? true) &&
+      !!children &&
+      (size === undefined ||
+        (typeof size !== 'number' &&
+          typeof size === 'string' &&
+          Object.prototype.hasOwnProperty.call(tokens.circular, size)));
+
+    useLayoutEffect(() => {
+      if (variant !== 'circular') return;
+      if (!shouldFit) return;
+      const el = centerRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const childD = Math.max(rect.width, rect.height);
+      const clearance = childClearance ?? -0.5; // slight negative to avoid visible gap
+      const inner = childD + 2 * clearance;
+      const ring = inner * (4 / 3);
+      if (!Number.isNaN(ring) && ring > 0) setAutoBoxPx(ring);
+    }, [variant, shouldFit, children, childClearance]);
+
     /* preset → classes merge */
     const presetCls = p ? preset(p) : '';
     const mergedCls = [presetCls, className].filter(Boolean).join(' ') || undefined;
@@ -214,27 +239,6 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
     /* CIRCULAR                                                */
     /*─────────────────────────────────────────────────────────*/
     if (variant === 'circular') {
-      const centerRef = useRef<HTMLDivElement | null>(null);
-      const [autoBoxPx, setAutoBoxPx] = useState<number | null>(null);
-
-      const shouldFit =
-        (fitChild ?? true) &&
-        !!children &&
-        (size === undefined ||
-          (typeof size !== 'number' && !(tokens.circular as any)[size as ProgressSize]));
-
-      useLayoutEffect(() => {
-        if (!shouldFit) return;
-        const el = centerRef.current;
-        if (!el) return;
-        const rect = el.getBoundingClientRect();
-        const childD = Math.max(rect.width, rect.height);
-        const clearance = childClearance ?? -0.5; // slight negative to avoid visible gap
-        const inner = childD + 2 * clearance;
-        const ring = inner * (4 / 3);
-        if (!Number.isNaN(ring) && ring > 0) setAutoBoxPx(ring);
-      }, [shouldFit, children, childClearance]);
-
       let box: string;
       let boxPx: number;
       let strokePx: number;
@@ -247,7 +251,10 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
         boxPx = size;
         box = `${boxPx}px`;
         strokePx = boxPx / 8;
-      } else if (tokens.circular[size as ProgressSize]) {
+      } else if (
+        typeof size !== 'number' &&
+        (Object.prototype.hasOwnProperty.call(tokens.circular, size as string) as boolean)
+      ) {
         const tok = tokens.circular[size as ProgressSize];
         box = tok.box;
         boxPx = toPx(tok.box);

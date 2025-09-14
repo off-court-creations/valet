@@ -180,7 +180,14 @@ function merge(tsMap, docsMap, version, metaMap) {
 }
 
 function indexFromComponents(map) {
-  return Object.values(map).map((c) => ({ name: c.name, category: c.category, summary: c.summary, slug: c.slug }));
+  return Object.values(map).map((c) => ({
+    name: c.name,
+    category: c.category,
+    summary: c.summary,
+    slug: c.slug,
+    // include status in the index for fast filtering without opening per-component docs
+    status: c.status,
+  }));
 }
 
 async function main() {

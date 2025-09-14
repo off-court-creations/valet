@@ -89,8 +89,8 @@ args = []`}
         <Typography>
           Once registered, your agent gains tools like <code>valet__list_components</code>,
           <code> valet__search_components</code>, <code>valet__get_component</code>,
-          <code> valet__get_examples</code>, <code>valet__get_docs_info</code>,
-          <code> valet__get_glossary</code>, <code>valet__define_term</code>, and
+          <code> valet__get_examples</code>,<code> valet__get_glossary</code>,{' '}
+          <code>valet__define_term</code>, and
           <code> valet__get_primer</code>. Ask it to list primitives, inspect props for
           <code> Table</code>, fetch examples for <code>Tooltip</code>, retrieve docs URL and best
           practices for <code>Panel</code>, or define terms from the glossary. Start sessions with{' '}
@@ -106,7 +106,7 @@ args = []`}
         <Panel fullWidth>
           <Stack gap={1}>
             <Typography>
-              <b>list_components</b> → <code>[{`{ name, category, summary, slug }`}]</code>
+              <b>valet__list_components</b> → <code>[{`{ name, category, summary, slug }`}]</code>
             </Typography>
             <CodeBlock
               code={`[
@@ -116,7 +116,8 @@ args = []`}
               language='json'
             />
             <Typography>
-              <b>search_components</b> <code>{`{ query, limit? }`}</code> → ranked list
+              <b>valet__search_components</b> <code>{`{ query, category?, status?, limit? }`}</code>{' '}
+              → ranked list with filters
             </Typography>
             <CodeBlock
               code={`[
@@ -126,7 +127,7 @@ args = []`}
               language='json'
             />
             <Typography>
-              <b>get_component</b> <code>{`{ name? | slug? }`}</code> → full document (props,
+              <b>valet__get_component</b> <code>{`{ name? | slug? }`}</code> → full document (props,
               cssVars, examples, sourceFiles, version)
             </Typography>
             <CodeBlock
@@ -146,7 +147,7 @@ args = []`}
               language='json'
             />
             <Typography>
-              <b>get_examples</b> <code>{`{ name? | slug? }`}</code> → code samples
+              <b>valet__get_examples</b> <code>{`{ name? | slug? }`}</code> → code samples
             </Typography>
             <CodeBlock
               code={`[
@@ -168,15 +169,7 @@ args = []`}
         <Panel fullWidth>
           <Stack gap={1}>
             <Typography>
-              <b>get_docs_info</b> <code>{`{ name? | slug? }`}</code> → docs URL and best practices
-            </Typography>
-            <CodeBlock
-              code={`{\n  "name": "Panel",\n  "slug": "components/layout/panel",\n  "docsUrl": "/components/panel",\n  "bestPracticeSlugs": ["layout-consistency", "a11y-headings"],\n  "bestPractices": [\n    "Use clear headings for sections.",\n    "Prefer consistent padding across breakpoints."\n  ]\n}`}
-              ariaLabel='Copy get_docs_info example'
-              language='json'
-            />
-            <Typography>
-              <b>get_glossary</b> → full glossary dataset
+              <b>valet__get_glossary</b> → full glossary dataset
             </Typography>
             <CodeBlock
               code={`{\n  "entries": [\n    { "term": "Surface", "definition": "Route-level container owning screen state.", "aliases": ["root surface"] }\n  ]\n}`}
@@ -184,7 +177,8 @@ args = []`}
               language='json'
             />
             <Typography>
-              <b>define_term</b> <code>{`{ word, limit? }`}</code> → exact match or suggestions
+              <b>valet__define_term</b> <code>{`{ word, limit? }`}</code> → exact match or
+              suggestions
             </Typography>
             <CodeBlock
               code={`{\n  "found": false,\n  "suggestions": [\n    { "term": "Surface", "definition": "Route-level container owning screen state." }\n  ]\n}`}
@@ -192,11 +186,19 @@ args = []`}
               language='json'
             />
             <Typography>
-              <b>get_primer</b> → opinionated Markdown primer for agents
+              <b>valet__get_primer</b> → opinionated Markdown primer for agents
             </Typography>
             <CodeBlock
               code={`"# valet Primer – Read Me First\n..."`}
               ariaLabel='Copy get_primer example'
+            />
+            <Typography>
+              <b>valet__get_info</b> → concise server + data metadata
+            </Typography>
+            <CodeBlock
+              code={`{\n  "ok": true,\n  "mcpVersion": "0.31.0",\n  "valetVersion": "0.31.0",\n  "schemaVersion": "1.6",\n  "buildHash": "<sha1>",\n  "dataSource": "nearest-cwd",\n  "dataDir": "/path/to/mcp-data",\n  "components": 28,\n  "glossaryEntries": 12,\n  "hasPrimer": true,\n  "versionParity": true\n}`}
+              language='json'
+              ariaLabel='Copy valet__get_info example'
             />
           </Stack>
         </Panel>
@@ -243,8 +245,8 @@ VALET_ROOT=/path/to/valet VALET_MCP_DATA_DIR=mcp-data valet-mcp`}
         <Panel fullWidth>
           <Typography>
             • Prefer searching with intent: “table zebra multi‑select” vs. “table”.
-            <br />• Always confirm prop shapes via <code>get_component</code> before wiring complex
-            generics.
+            <br />• Always confirm prop shapes via <code>valet__get_component</code> before wiring
+            complex generics.
             <br />• Bind theme tokens via <code>cssVars</code> instead of hard‑coding colors.
             <br />• Keep tables constrained to the component’s height; only opt out when the page
             controls scrolling.

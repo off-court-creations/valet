@@ -11,6 +11,11 @@ function validateComponent(c) {
   if (!c.slug || typeof c.slug !== 'string') problems.push('missing slug');
   if (!Array.isArray(c.props)) problems.push('props not array');
   if (c.aliases && !Array.isArray(c.aliases)) problems.push('aliases must be an array');
+  // status validation (optional but constrained)
+  if (c.status) {
+    const allowedStatus = new Set(['golden', 'stable', 'experimental', 'unstable', 'deprecated']);
+    if (!allowedStatus.has(c.status)) problems.push(`invalid status: ${c.status}`);
+  }
   // usage validation (optional, non-fatal)
   if (c.usage && typeof c.usage !== 'object') problems.push('usage must be an object');
   if (c.usage && typeof c.usage === 'object') {
@@ -90,6 +95,45 @@ function main() {
       continue;
     }
     const doc = readJSON(file);
+    // Cross-validate index vs document
+    try {
+      if (item.name !== doc.name) {
+        console.error(`[error] index/doc name mismatch: index='${item.name}' doc='${doc.name}'`);
+        errors++;
+      }
+      if (item.slug !== doc.slug) {
+        console.error(`[error] index/doc slug mismatch: index='${item.slug}' doc='${doc.slug}'`);
+        errors++;
+      }
+      if (item.category !== doc.category) {
+        console.error(`[error] index/doc category mismatch: index='${item.category}' doc='${doc.category}'`);
+        errors++;
+      }
+      const allowedStatus = new Set(['golden', 'stable', 'experimental', 'unstable', 'deprecated']);
+      if (doc.status && !allowedStatus.has(doc.status)) {
+        console.error(`[error] doc status invalid: ${doc.status}`);
+        errors++;
+      }
+      if (item.status && !allowedStatus.has(item.status)) {
+        console.error(`[error] index status invalid: ${item.status}`);
+        errors++;
+      }
+      if (doc.status && !item.status) {
+        console.error(`[error] index missing status for ${item.name}`);
+        errors++;
+      }
+      if (item.status && !doc.status) {
+        console.warn(`[warn] index has status but doc missing for ${item.name}`);
+        warnings++;
+      }
+      if (item.status && doc.status && item.status !== doc.status) {
+        console.error(`[error] index/doc status mismatch for ${item.name}: index='${item.status}' doc='${doc.status}'`);
+        errors++;
+      }
+    } catch (e) {
+      console.warn('[warn] index/doc cross-validate failed:', e?.message || String(e));
+      warnings++;
+    }
     const probs = validateComponent(doc);
     for (const p of probs) {
       const isWarnPrefix = typeof p === 'string' && p.startsWith('warn:');

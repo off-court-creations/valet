@@ -98,19 +98,22 @@ export default function ProgressDemoPage() {
               direction='row'
               sx={{ alignItems: 'center', gap: theme.spacing(1) }}
             >
-              <Progress
-                variant='circular'
-                mode='determinate'
-                value={value}
-                color={theme.colors['secondary']}
-              >
+              {/* Overlay IconButton centered above circular progress without using children prop */}
+              <Box sx={{ position: 'relative', display: 'inline-flex' }}>
+                <Progress
+                  variant='circular'
+                  mode='determinate'
+                  value={value}
+                  color={theme.colors['secondary']}
+                />
                 <IconButton
                   icon='mdi:home'
                   onClick={reset}
                   aria-label='reset'
                   size={48}
+                  sx={{ position: 'absolute', inset: 0, margin: 'auto' }}
                 />
-              </Progress>
+              </Box>
             </Stack>
 
             {/* Additional circular determinate styles */}
