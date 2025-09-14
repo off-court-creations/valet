@@ -31,6 +31,12 @@
       "required": false
     }
   ],
+  "domPassthrough": {
+    "element": "span",
+    "omitted": [
+      "style"
+    ]
+  },
   "cssVars": [],
   "cssPresets": [],
   "events": [],

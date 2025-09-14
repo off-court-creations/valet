@@ -50,6 +50,15 @@
       "required": false
     }
   ],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": [
+      "onChange",
+      "value",
+      "defaultValue",
+      "style"
+    ]
+  },
   "cssVars": [
     "--valet-text-color"
   ],

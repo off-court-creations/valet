@@ -43,6 +43,12 @@
       "required": false
     }
   ],
+  "domPassthrough": {
+    "element": "button",
+    "omitted": [
+      "style"
+    ]
+  },
   "cssVars": [
     "--valet-bg",
     "--valet-text-color"

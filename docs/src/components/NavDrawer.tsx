@@ -60,6 +60,7 @@ const widgets: [string, string][] = [
   ['Stepper', '/stepper-demo'],
   ['Table', '/table-demo'],
   ['Tooltip', '/tooltip-demo'],
+  ['Chip', '/chip-demo'],
   ['Dropzone', '/dropzone-demo'],
   ['Tree', '/tree-demo'],
   ['Markdown', '/markdown-demo'],
@@ -92,7 +93,6 @@ const treeData: TreeNode<Item>[] = [
     data: { label: 'Getting Started' },
     children: [
       { id: '/quickstart', data: { label: 'Quickstart', path: '/quickstart' } },
-      { id: '/overview', data: { label: 'Overview', path: '/overview' } },
       { id: '/mcp', data: { label: 'MCP & Introspection', path: '/mcp' } },
       { id: '/glossary', data: { label: 'Glossary', path: '/glossary' } },
       { id: '/component-status', data: { label: 'Component Status', path: '/component-status' } },

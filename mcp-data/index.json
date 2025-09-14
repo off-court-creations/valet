@@ -217,6 +217,13 @@
     "status": "experimental"
   },
   {
+    "name": "Chip",
+    "category": "widgets",
+    "summary": "Chip component",
+    "slug": "components/widgets/chip",
+    "status": "experimental"
+  },
+  {
     "name": "CodeBlock",
     "category": "widgets",
     "summary": "CodeBlock component",

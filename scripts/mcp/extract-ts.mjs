@@ -2,6 +2,126 @@ import { Project, SyntaxKind } from 'ts-morph';
 import fs from 'fs';
 import path from 'path';
 
+// Map React HTML attribute/type names to intrinsic tag names
+function mapAttrPrefixToTag(prefix) {
+  const p = String(prefix).toLowerCase();
+  const table = {
+    anchor: 'a',
+    a: 'a',
+    area: 'area',
+    audio: 'audio',
+    button: 'button',
+    canvas: 'canvas',
+    details: 'details',
+    dialog: 'dialog',
+    div: 'div',
+    embed: 'embed',
+    fieldset: 'fieldset',
+    form: 'form',
+    h1: 'h1', h2: 'h2', h3: 'h3', h4: 'h4', h5: 'h5', h6: 'h6',
+    iframe: 'iframe',
+    img: 'img', image: 'img',
+    input: 'input',
+    label: 'label',
+    li: 'li',
+    map: 'map',
+    menu: 'menu',
+    meter: 'meter',
+    object: 'object',
+    ol: 'ol',
+    option: 'option',
+    optgroup: 'optgroup',
+    output: 'output',
+    p: 'p', paragraph: 'p',
+    progress: 'progress',
+    script: 'script',
+    select: 'select',
+    slot: 'slot',
+    source: 'source',
+    span: 'span',
+    style: 'style',
+    table: 'table',
+    td: 'td', th: 'th', tr: 'tr', thead: 'thead', tbody: 'tbody', tfoot: 'tfoot',
+    textarea: 'textarea',
+    time: 'time',
+    track: 'track',
+    ul: 'ul',
+    video: 'video',
+  };
+  if (table[p]) return table[p];
+  return undefined;
+}
+
+function mapHtmlElementToTag(name) {
+  const n = String(name);
+  if (/^TextArea$/i.test(n) || /^Textarea$/i.test(n)) return 'textarea';
+  if (/^UList$/i.test(n)) return 'ul';
+  if (/^OList$/i.test(n)) return 'ol';
+  if (/^LI$/i.test(n)) return 'li';
+  if (/^Anchor$/i.test(n)) return 'a';
+  if (/^Image$/i.test(n)) return 'img';
+  return n.toLowerCase();
+}
+
+function extractOmittedKeys(text) {
+  try {
+    const s = String(text);
+    const out = new Set();
+    let idx = 0;
+    while (true) {
+      const start = s.indexOf('Omit<', idx);
+      if (start === -1) break;
+      let i = start + 'Omit<'.length;
+      let depth = 1; // we've consumed the first '<'
+      let lastComma = -1;
+      for (; i < s.length; i++) {
+        const ch = s[i];
+        if (ch === '<') depth++;
+        else if (ch === '>') {
+          depth--;
+          if (depth === 0) break; // end of this Omit<...>
+        } else if (ch === ',' && depth === 1) {
+          lastComma = i;
+        }
+      }
+      if (i < s.length && lastComma !== -1) {
+        const inner = s.slice(lastComma + 1, i);
+        const litRE = /'([^']+)'|"([^"]+)"/g;
+        let m;
+        while ((m = litRE.exec(inner))) out.add(m[1] || m[2]);
+      }
+      idx = i + 1;
+    }
+    return Array.from(out);
+  } catch {
+    return [];
+  }
+}
+
+function inferDomPassthroughFromTypeText(text) {
+  try {
+    const t = String(text);
+    // React.ComponentProps<'div'>
+    const mComp = t.match(/React\.ComponentProps<'([^']+)'>/);
+    if (mComp) return { element: mComp[1], omitted: extractOmittedKeys(t) };
+    // React.<X>HTMLAttributes<...>
+    const mAttr = t.match(/React\.([A-Za-z]+)HTMLAttributes\s*<\s*([^>]+)\s*>/);
+    if (mAttr) {
+      const prefix = mAttr[1];
+      const gen = mAttr[2];
+      const mGen = gen.match(/HTML([A-Za-z]+)Element/);
+      const fromGen = mGen ? mapHtmlElementToTag(mGen[1]) : undefined;
+      const fromPrefix = mapAttrPrefixToTag(prefix);
+      const el = fromGen || fromPrefix;
+      if (el) return { element: el, omitted: extractOmittedKeys(t) };
+    }
+    // Any HTML([A-Za-z]+)Element mention
+    const mHtmlEl = t.match(/HTML([A-Za-z]+)Element/);
+    if (mHtmlEl) return { element: mapHtmlElementToTag(mHtmlEl[1]), omitted: extractOmittedKeys(t) };
+  } catch {}
+  return null;
+}
+
 function flattenTypeAliasText(t) {
   try {
     const text = t.getText();
@@ -127,12 +247,8 @@ export function extractFromTs(projectRoot) {
       // DOM passthrough from heritage
       for (const h of iface.getExtends()) {
         const t = h.getText();
-        const m = t.match(/React\.ComponentProps<'([^']+)'>/);
-        if (m) {
-          domPassthrough = { element: m[1], omitted: [] };
-          const omit = t.match(/Omit<[^,]+,\s*'([^']+)'>/);
-          if (omit) domPassthrough.omitted = [omit[1]];
-        }
+        const inferred = inferDomPassthroughFromTypeText(t);
+        if (inferred && !domPassthrough) domPassthrough = inferred;
       }
       for (const m of iface.getMembers()) {
         if (m.getKind() !== SyntaxKind.PropertySignature) continue;
@@ -166,17 +282,13 @@ export function extractFromTs(projectRoot) {
         // If alias extends React.ComponentProps<'el'> via intersection, sniff text
         try {
           const text = aliasDecl.getTypeNode()?.getText() || '';
-          const m = text.match(/React\.ComponentProps<'([^']+)'>/);
-          if (m) {
-            domPassthrough = { element: m[1], omitted: [] };
-            const omit = text.match(/Omit<[^,]+,\s*'([^']+)'>/);
-            if (omit) domPassthrough.omitted = [omit[1]];
-          }
+          const inferred = inferDomPassthroughFromTypeText(text);
+          if (inferred && !domPassthrough) domPassthrough = inferred;
           // Heuristic: alias mentions intrinsic attribute types
           const hasInput = /InputHTMLAttributes<|HTMLInputElement/.test(text) || /HTMLInputAttributes/i.test(text);
           const hasTextarea = /TextareaHTMLAttributes<|HTMLTextAreaElement/.test(text);
           if (!domPassthrough && (hasInput || hasTextarea)) {
-            domPassthrough = { element: hasInput && hasTextarea ? 'input|textarea' : hasInput ? 'input' : 'textarea', omitted: [] };
+            domPassthrough = { element: hasInput && hasTextarea ? 'input|textarea' : hasInput ? 'input' : 'textarea', omitted: extractOmittedKeys(text) };
           }
         } catch {}
 

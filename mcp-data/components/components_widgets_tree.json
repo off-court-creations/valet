@@ -66,6 +66,13 @@
       "required": false
     }
   ],
+  "domPassthrough": {
+    "element": "ul",
+    "omitted": [
+      "children",
+      "style"
+    ]
+  },
   "cssVars": [
     "--valet-focus-width",
     "--valet-focus-offset",

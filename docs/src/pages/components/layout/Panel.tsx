@@ -60,12 +60,12 @@ export default function PanelDemoPage() {
       <Typography variant='h3'>Nested Panels</Typography>
       <Panel
         background={theme.colors['primary']}
-        sx={{ padding: theme.spacing(1) }}
+        pad={1}
       >
         <Panel
           variant='alt'
           fullWidth
-          sx={{ padding: theme.spacing(1) }}
+          pad={1}
         >
           <Typography>
             Parent sets <code style={{ color: 'var(--valet-text-color)' }}>--valet-text-color</code>{' '}
@@ -201,9 +201,6 @@ export default function PanelDemoPage() {
         centerContent={centerContent}
         fullWidth={fullWidth}
         alignX={alignX}
-        sx={{
-          background: bgValue,
-        }}
       >
         <Typography>Preview content — try toggling the controls above.</Typography>
       </Panel>

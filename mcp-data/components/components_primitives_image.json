@@ -60,6 +60,14 @@
       "required": false
     }
   ],
+  "domPassthrough": {
+    "element": "img",
+    "omitted": [
+      "width",
+      "height",
+      "style"
+    ]
+  },
   "cssVars": [],
   "cssPresets": [],
   "events": [],

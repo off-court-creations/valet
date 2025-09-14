@@ -61,6 +61,15 @@
       "required": false
     }
   ],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": [
+      "onChange",
+      "defaultValue",
+      "children",
+      "style"
+    ]
+  },
   "cssVars": [
     "--valet-border",
     "--valet-bg",

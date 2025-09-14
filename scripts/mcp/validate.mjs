@@ -11,10 +11,14 @@ function validateComponent(c) {
   if (!c.slug || typeof c.slug !== 'string') problems.push('missing slug');
   if (!Array.isArray(c.props)) problems.push('props not array');
   if (c.aliases && !Array.isArray(c.aliases)) problems.push('aliases must be an array');
-  // status validation (optional but constrained)
-  if (c.status) {
+  // status validation (REQUIRED and constrained)
+  {
     const allowedStatus = new Set(['golden', 'stable', 'experimental', 'unstable', 'deprecated']);
-    if (!allowedStatus.has(c.status)) problems.push(`invalid status: ${c.status}`);
+    if (!c.status) {
+      problems.push('missing status');
+    } else if (!allowedStatus.has(c.status)) {
+      problems.push(`invalid status: ${c.status}`);
+    }
   }
   // usage validation (optional, non-fatal)
   if (c.usage && typeof c.usage !== 'object') problems.push('usage must be an object');
@@ -118,13 +122,17 @@ function main() {
         console.error(`[error] index status invalid: ${item.status}`);
         errors++;
       }
+      if (!doc.status && !item.status) {
+        console.error(`[error] ${item.name}: missing status (doc and index)`);
+        errors++;
+      }
       if (doc.status && !item.status) {
         console.error(`[error] index missing status for ${item.name}`);
         errors++;
       }
       if (item.status && !doc.status) {
-        console.warn(`[warn] index has status but doc missing for ${item.name}`);
-        warnings++;
+        console.error(`[error] doc missing status for ${item.name}`);
+        errors++;
       }
       if (item.status && doc.status && item.status !== doc.status) {
         console.error(`[error] index/doc status mismatch for ${item.name}: index='${item.status}' doc='${doc.status}'`);

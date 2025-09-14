@@ -150,7 +150,56 @@
     "Truncate thoughtfully; prefer wrapping or responsive layout for important content.",
     "Use presets/tokens for consistency across pages and components."
   ],
-  "examples": [],
+  "examples": [
+    {
+      "id": "typography-variants-overview",
+      "title": "Variants overview",
+      "code": "<Panel sx={{ padding: theme.spacing(1) }}>\n  <Typography variant='h1'>H1</Typography>\n  <Typography variant='h2'>H2</Typography>\n  <Typography variant='subtitle'>Subtitle</Typography>\n  <Typography>Body text</Typography>\n  <Typography variant='button'>Button label</Typography>\n</Panel>",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    },
+    {
+      "id": "typography-styling-props",
+      "title": "Styling props",
+      "code": "<Stack>\n  <Typography bold>Bold body</Typography>\n  <Typography italic>Italic body</Typography>\n  <Typography bold italic>Bold italic</Typography>\n  <Typography centered>Centered line</Typography>\n</Stack>",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    },
+    {
+      "id": "typography-responsive-scale",
+      "title": "Responsive + scale",
+      "code": "<Stack>\n  <Typography autoSize>AutoSize body resizes by breakpoint</Typography>\n  <Typography variant='h2' autoSize scale={1.1}>Responsive H2 scaled up</Typography>\n</Stack>",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    },
+    {
+      "id": "typography-tracking-leading",
+      "title": "Tracking and leading",
+      "code": "<Stack>\n  <Typography tracking='tight'>Tight tracking</Typography>\n  <Typography tracking='loose'>Loose tracking</Typography>\n  <Typography leading={1.6}>Custom leading</Typography>\n</Stack>",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    },
+    {
+      "id": "typography-families",
+      "title": "Families: heading, body, mono, button",
+      "code": "<Panel sx={{ padding: theme.spacing(1) }}>\n  <Typography family='heading' variant='h3'>Heading family</Typography>\n  <Typography family='body'>Body family</Typography>\n  <Typography family='mono' whitespace='pre'>mono 12345\\ncode line</Typography>\n  <Typography family='button' variant='button'>Button text</Typography>\n</Panel>",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    },
+    {
+      "id": "typography-weights",
+      "title": "Weights at a glance",
+      "code": "<Stack>\n  <Typography weight={300}>300</Typography>\n  <Typography weight={400}>400</Typography>\n  <Typography weight={500}>500</Typography>\n  <Typography weight={600}>600</Typography>\n  <Typography weight={700}>700</Typography>\n</Stack>",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    }
+  ],
   "docsUrl": "/components/primitives/TypographyDemoPage",
   "sourceFiles": [
     "src/components/primitives/Typography.tsx",

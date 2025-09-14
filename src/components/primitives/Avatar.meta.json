@@ -8,5 +8,37 @@
     "Provide alt text or aria-label describing the person or entity.",
     "Avoid using Avatar for content images; use `Image` instead.",
     "Group with labels or presence indicators when they add value; avoid redundant decoration."
-  ]}
+  ]},
+  "examples": [
+    {
+      "id": "avatar-email-basic",
+      "title": "Email (Gravatar)",
+      "lang": "tsx",
+      "code": "<Avatar email='support@gravatar.com' />"
+    },
+    {
+      "id": "avatar-custom-src",
+      "title": "Custom src + alt",
+      "lang": "tsx",
+      "code": "<Avatar src='https://avatars.githubusercontent.com/u/9919?s=200&v=4' alt='GitHub' size='l' />"
+    },
+    {
+      "id": "avatar-sizes-row",
+      "title": "Sizes",
+      "lang": "tsx",
+      "code": "<Stack direction='row' gap={1}>\n  {(['xl','l','m','s','xs'] as const).map(s => (\n    <Avatar key={s} email='support@gravatar.com' size={s} />\n  ))}\n</Stack>"
+    },
+    {
+      "id": "avatar-outline",
+      "title": "Outline variant",
+      "lang": "tsx",
+      "code": "<Avatar email='support@gravatar.com' size='l' variant='outline' />"
+    },
+    {
+      "id": "avatar-gravatar-default",
+      "title": "Gravatar default style",
+      "lang": "tsx",
+      "code": "<Stack direction='row' gap={1}><Avatar email='no-such@example.com' gravatarDefault='retro' /><Avatar email='no-such@example.com' gravatarDefault='monsterid' /></Stack>"
+    }
+  ]
 }

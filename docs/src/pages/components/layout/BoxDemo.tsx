@@ -310,10 +310,7 @@ export default function BoxDemoPage() {
         centerContent={centerContent}
         fullWidth={fullWidth}
         alignX={alignX}
-        sx={{
-          background: bgValue,
-          border: `1px dashed ${theme.colors['text']}`,
-        }}
+        sx={{ border: `1px dashed ${theme.colors['text']}` }}
       >
         <Typography>Preview content — try toggling the controls above.</Typography>
       </Box>

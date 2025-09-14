@@ -44,6 +44,17 @@
       "required": false
     }
   ],
+  "domPassthrough": {
+    "element": "input",
+    "omitted": [
+      "type",
+      "size",
+      "onChange",
+      "value",
+      "defaultValue",
+      "style"
+    ]
+  },
   "cssVars": [
     "--valet-checkbox-radius",
     "--valet-checkbox-stroke",

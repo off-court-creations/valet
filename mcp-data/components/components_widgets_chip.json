@@ -1,0 +1,163 @@
+{
+  "name": "Chip",
+  "category": "widgets",
+  "slug": "components/widgets/chip",
+  "summary": "Chip component",
+  "status": "experimental",
+  "aliases": [
+    "chip",
+    "tag",
+    "pill",
+    "token"
+  ],
+  "props": [
+    {
+      "name": "label",
+      "type": "React.ReactNode",
+      "required": true
+    },
+    {
+      "name": "size",
+      "type": "ChipSize",
+      "required": false,
+      "default": "'m'"
+    },
+    {
+      "name": "variant",
+      "type": "ChipVariant",
+      "required": false,
+      "default": "'filled'"
+    },
+    {
+      "name": "color",
+      "type": "ChipColor",
+      "required": false,
+      "default": "'default'"
+    },
+    {
+      "name": "icon",
+      "type": "string",
+      "required": false
+    },
+    {
+      "name": "avatar",
+      "type": "React.ReactNode",
+      "required": false
+    },
+    {
+      "name": "onClick",
+      "type": "(e: React.MouseEvent<HTMLDivElement>) => void",
+      "required": false
+    },
+    {
+      "name": "onDelete",
+      "type": "(e: React.MouseEvent<HTMLButtonElement>) => void",
+      "required": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "required": false
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": false
+    }
+  ],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": [
+      "style",
+      "children"
+    ]
+  },
+  "cssVars": [
+    "--valet-focus-ring"
+  ],
+  "cssPresets": [],
+  "events": [
+    {
+      "name": "onClick",
+      "payloadType": "React.MouseEvent<HTMLDivElement>"
+    },
+    {
+      "name": "onDelete",
+      "payloadType": "React.MouseEvent<HTMLButtonElement>"
+    }
+  ],
+  "actions": [],
+  "slots": [
+    {
+      "name": "label"
+    },
+    {
+      "name": "avatar"
+    }
+  ],
+  "bestPractices": [
+    "Use Chip for compact descriptors (tags, filters, assignments) with optional actions.",
+    "Prefer built-in props (variant, size, color, center behaviors) over ad-hoc styling.",
+    "Keep labels short; truncate is automatic. Use Tooltip if critical text may truncate.",
+    "Ensure interactive chips are keyboard accessible (Enter/Space); avoid non-semantic divs.",
+    "Use onDelete only when removal is the primary action; otherwise provide an explicit menu.",
+    "Be consistent with color meaning; tie Chip colors to theme tokens and legend."
+  ],
+  "examples": [
+    {
+      "id": "chip-basic",
+      "title": "Basic",
+      "code": "<Chip label=\"Active\" />",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {
+        "label": null
+      }
+    },
+    {
+      "id": "chip-variants",
+      "title": "Variants & Colors",
+      "code": "<Stack direction='row' gap={0.5}>\n  <Chip label=\"Primary\" color=\"primary\" />\n  <Chip label=\"Secondary\" color=\"secondary\" />\n  <Chip label=\"Tertiary\" color=\"tertiary\" />\n  <Chip label=\"Outlined\" variant=\"outlined\" />\n</Stack>",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {
+        "label": null
+      }
+    },
+    {
+      "id": "chip-icons",
+      "title": "With icon & delete",
+      "code": "<Stack direction='row' gap={0.5}>\n  <Chip label=\"Assignee\" icon=\"mdi:account\" />\n  <Chip label=\"Filter\" icon=\"mdi:filter-variant\" onDelete={() => {}} />\n</Stack>",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {
+        "label": null
+      }
+    },
+    {
+      "id": "chip-sizes",
+      "title": "Sizes",
+      "code": "<Stack direction='row' gap={0.5}>\n  <Chip label=\"Small\" size=\"s\" />\n  <Chip label=\"Medium\" size=\"m\" />\n  <Chip label=\"Large\" size=\"l\" />\n</Stack>",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {
+        "label": null
+      }
+    },
+    {
+      "id": "chip-clickable",
+      "title": "Clickable",
+      "code": "<Chip label=\"Clickable\" color=\"primary\" onClick={() => console.log('clicked')} />",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {
+        "label": null
+      }
+    }
+  ],
+  "sourceFiles": [
+    "src/components/widgets/Chip.tsx"
+  ],
+  "version": "0.31.1",
+  "schemaVersion": "1.6"
+}
