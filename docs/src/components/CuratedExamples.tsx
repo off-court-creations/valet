@@ -2,7 +2,8 @@
 // docs/src/components/CuratedExamples.tsx  | valet-docs
 // Render curated examples from component sidecar meta
 // ─────────────────────────────────────────────────────────────
-import { Panel, Stack, Typography, CodeBlock } from '@archway/valet';
+import { Panel, Stack, Typography } from '@archway/valet';
+import LiveCodePreview from './LiveCodePreview';
 
 export type CuratedExample = {
   id: string;
@@ -23,13 +24,12 @@ export default function CuratedExamples({ title = 'Examples', examples }: Curate
       <Typography variant='h4'>{title}</Typography>
       <Stack sx={{ gap: '0.5rem' }}>
         {examples.map((ex) => (
-          <Stack key={ex.id}>
-            {ex.title && <Typography variant='subtitle'>{ex.title}</Typography>}
-            <CodeBlock
-              code={ex.code}
-              language={ex.lang || 'tsx'}
-            />
-          </Stack>
+          <LiveCodePreview
+            key={ex.id}
+            title={ex.title}
+            code={ex.code}
+            language={ex.lang || 'tsx'}
+          />
         ))}
       </Stack>
     </Panel>
