@@ -1,27 +1,28 @@
 version: 1
-frontend:
-  phases:
-    preBuild:
-      commands:
-        # Install mise (runtime manager) and activate it for this shell
-        - curl -fsSL https://mise.jdx.dev/install.sh | sh
-        - export PATH="$HOME/.local/bin:$PATH"
-        - eval "$(~/.local/bin/mise activate bash)"
-        - ~/.local/bin/mise --version
-        # Install tool versions from .mise.toml (Node, etc.)
-        - ~/.local/bin/mise install
-        - node -v
-        - cd docs
-        - npm ci
-    build:
-      commands:
-        - cd docs
-        - npm run build
-  artifacts:
-    baseDirectory: docs/dist
-    files:
-      - '**/*'
-  cache:
-    paths:
-      - docs/node_modules/**/*
+applications:
+  - appRoot: docs
+    frontend:
+      phases:
+        preBuild:
+          commands:
+            # Install mise (runtime manager) and activate it for this shell
+            - curl -fsSL https://mise.jdx.dev/install.sh | sh
+            - export PATH="$HOME/.local/bin:$PATH"
+            - eval "$(~/.local/bin/mise activate bash)"
+            - ~/.local/bin/mise --version
+            # Install tool versions from .mise.toml (Node, etc.)
+            - ~/.local/bin/mise install
+            - node -v
+            - cd docs
+            - npm ci
+        build:
+          commands:
+            - npm run build
+      artifacts:
+        baseDirectory: dist
+        files:
+          - '**/*'
+      cache:
+        paths:
+          - node_modules/**/*
       
