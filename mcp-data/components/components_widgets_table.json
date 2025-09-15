@@ -70,6 +70,13 @@
       "required": false
     }
   ],
+  "domPassthrough": {
+    "element": "table",
+    "omitted": [
+      "children",
+      "style"
+    ]
+  },
   "cssVars": [
     "--valet-divider-stroke",
     "--valet-underline-width",

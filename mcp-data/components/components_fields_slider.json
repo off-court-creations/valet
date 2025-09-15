@@ -95,6 +95,13 @@
       "required": false
     }
   ],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": [
+      "onChange",
+      "style"
+    ]
+  },
   "cssVars": [
     "--valet-bg",
     "--valet-text-color"

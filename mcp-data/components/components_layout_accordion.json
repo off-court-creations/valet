@@ -49,6 +49,12 @@
       "default": "false"
     }
   ],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": [
+      "onChange"
+    ]
+  },
   "cssVars": [
     "--valet-divider-stroke",
     "--valet-focus-width",

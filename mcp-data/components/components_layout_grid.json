@@ -32,6 +32,12 @@
       "required": false
     }
   ],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": [
+      "style"
+    ]
+  },
   "cssVars": [
     "--valet-panel-ov-y",
     "--valet-panel-max-h",
@@ -53,7 +59,40 @@
     "Mind a11y ordering: visual reflow should not break logical reading order.",
     "Test at common breakpoints to ensure content doesn’t clip or overlap."
   ],
-  "examples": [],
+  "examples": [
+    {
+      "id": "grid-2col",
+      "title": "Two columns",
+      "code": "<Grid columns={2} gap={1}>\n  <Box fullWidth centerContent preset='glassHolder'><Typography>A</Typography></Box>\n  <Box fullWidth centerContent preset='glassHolder'><Typography>B</Typography></Box>\n</Grid>",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    },
+    {
+      "id": "grid-4col",
+      "title": "Four columns",
+      "code": "<Grid columns={4} gap={1}>\n  {Array.from({ length: 8 }, (_, i) => i + 1).map(n => (\n    <Box key={n} fullWidth centerContent preset='fancyHolder'><Typography>{n}</Typography></Box>\n  ))}\n</Grid>",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    },
+    {
+      "id": "grid-adaptive",
+      "title": "Adaptive (portrait collapses)",
+      "code": "<Grid columns={4} gap={1} adaptive>\n  {Array.from({ length: 8 }, (_, i) => i + 1).map(n => (\n    <Box key={n} fullWidth centerContent preset='gradientHolder'><Typography>{n}</Typography></Box>\n  ))}\n</Grid>",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    },
+    {
+      "id": "grid-nested",
+      "title": "Nested grids",
+      "code": "<Grid columns={2} gap={1}>\n  <Grid columns={2} gap={1}>\n    <Box fullWidth centerContent><Typography>A1</Typography></Box>\n    <Box fullWidth centerContent><Typography>A2</Typography></Box>\n    <Box fullWidth centerContent><Typography>A3</Typography></Box>\n    <Box fullWidth centerContent><Typography>A4</Typography></Box>\n  </Grid>\n  <Grid columns={3} gap={0.5}>\n    {['B1','B2','B3','B4','B5','B6'].map(n => (\n      <Box key={n} fullWidth centerContent><Typography>{n}</Typography></Box>\n    ))}\n  </Grid>\n</Grid>",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    }
+  ],
   "sourceFiles": [
     "src/components/layout/Grid.tsx"
   ],

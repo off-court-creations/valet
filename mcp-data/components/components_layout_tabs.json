@@ -68,6 +68,13 @@
       "default": "false"
     }
   ],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": [
+      "onChange",
+      "style"
+    ]
+  },
   "cssVars": [
     "--valet-focus-width",
     "--valet-focus-offset",

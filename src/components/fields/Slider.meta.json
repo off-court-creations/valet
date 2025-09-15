@@ -1,6 +1,6 @@
 {
   "name": "Slider",
-  "status": "experimental",
+  "status": "unstable",
   "aliases": ["slider", "range"],
   "docs": {
     "bestPractices": [

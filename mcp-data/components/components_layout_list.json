@@ -71,6 +71,13 @@
       "required": false
     }
   ],
+  "domPassthrough": {
+    "element": "ul",
+    "omitted": [
+      "children",
+      "style"
+    ]
+  },
   "cssVars": [],
   "cssPresets": [],
   "events": [

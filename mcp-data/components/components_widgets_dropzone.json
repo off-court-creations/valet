@@ -60,6 +60,13 @@
       "required": false
     }
   ],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": [
+      "onDrop",
+      "style"
+    ]
+  },
   "cssVars": [],
   "cssPresets": [],
   "events": [

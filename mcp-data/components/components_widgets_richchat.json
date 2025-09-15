@@ -65,6 +65,13 @@
       "required": false
     }
   ],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": [
+      "onSubmit",
+      "style"
+    ]
+  },
   "cssVars": [],
   "cssPresets": [],
   "events": [

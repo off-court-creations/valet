@@ -1,16 +1,19 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// src/pages/SliderDemo.tsx | valet-docs
-// Comprehensive live demo showcasing every Slider feature & edge-case
-// – Updated: section #5 now snaps to its custom tick marks
-// – Removed: preset-styling showcase (simplifies demo focus)
+// docs/src/pages/components/field/SliderDemo.tsx  | valet-docs
+// Migrated to ComponentMetaPage – comprehensive Slider usage + playground
 // ─────────────────────────────────────────────────────────────────────────────
 import { useState } from 'react';
-import { Surface, Stack, Typography, Button, Slider, useTheme, Tabs } from '@archway/valet';
-import ReferenceSection from '../../../components/ReferenceSection';
-import NavDrawer from '../../../components/NavDrawer';
-import PageHero from '../../../components/PageHero';
-import BestPractices from '../../../components/BestPractices';
-import { getBestPractices } from '../../../utils/sidecar';
+import {
+  Stack,
+  Typography,
+  Button,
+  Slider,
+  Iterator,
+  Switch,
+  Select,
+  useTheme,
+} from '@archway/valet';
+import ComponentMetaPage from '../../../components/ComponentMetaPage';
 import SliderMeta from '../../../../../src/components/fields/Slider.meta.json';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
@@ -26,139 +29,258 @@ export default function SliderDemoPage() {
   /* Controlled slider state ------------------------------------------------ */
   const [ctlValue, setCtlValue] = useState(30);
 
-  return (
-    <Surface>
-      <NavDrawer />
+  const usageContent = (
+    <Stack>
+      {/* 1. Default uncontrolled */}
+      <Typography variant='h3'>1. Uncontrolled (defaults)</Typography>
+      <Slider defaultValue={50} />
+
+      {/* 2. Controlled */}
+      <Typography variant='h3'>2. Controlled</Typography>
       <Stack>
-        <PageHero title='Slider' />
-
-        <Tabs>
-          <Tabs.Tab label='Usage' />
-          <Tabs.Panel>
-            <Stack>
-              {/* 1. Default uncontrolled ----------------------------------------- */}
-              <Typography variant='h3'>1. Uncontrolled (defaults)</Typography>
-              <Slider defaultValue={50} />
-
-              {/* 2. Controlled ---------------------------------------------------- */}
-              <Typography variant='h3'>2. Controlled</Typography>
-              <Stack>
-                <Slider
-                  value={ctlValue}
-                  onChange={setCtlValue}
-                  showValue
-                  showMinMax
-                />
-                <Typography>
-                  Current value:&nbsp;
-                  <code>{ctlValue}</code>
-                </Typography>
-              </Stack>
-
-              {/* 3. Step snapping w/ ticks --------------------------------------- */}
-              <Typography variant='h3'>3. Snap = &quot;step&quot; + ticks</Typography>
-              <Slider
-                defaultValue={40}
-                min={0}
-                max={100}
-                step={10}
-                snap='step'
-                showValue
-                showMinMax
-                showTicks
-              />
-
-              {/* 4. Preset snapping ---------------------------------------------- */}
-              <Typography variant='h3'>4. Snap = &quot;presets&quot;</Typography>
-              <Slider
-                defaultValue={75}
-                min={0}
-                max={100}
-                presets={PRESET_MARKS}
-                snap='presets'
-                showValue
-                showMinMax
-                showTicks
-              />
-
-              {/* 5. Custom ticks *with* snapping ---------------------------------- */}
-              <Typography variant='h3'>5. Custom ticks (snap = &quot;presets&quot;)</Typography>
-              <Slider
-                defaultValue={15}
-                min={0}
-                max={60}
-                ticks={CUSTOM_TICKS}
-                presets={CUSTOM_TICKS}
-                snap='presets' // ← ensures handle snaps to tick marks
-                showTicks
-              />
-
-              {/* 6. Sizes ------------------------------------------------------- */}
-              <Typography variant='h3'>6. Sizes</Typography>
-              <Stack>
-                <Slider
-                  defaultValue={20}
-                  size='xs'
-                  showMinMax
-                />
-                <Slider
-                  defaultValue={20}
-                  size='sm'
-                  showMinMax
-                />
-                <Slider
-                  defaultValue={20}
-                  size='md'
-                  showMinMax
-                />
-                <Slider
-                  defaultValue={20}
-                  size='lg'
-                  showMinMax
-                />
-                <Slider
-                  defaultValue={20}
-                  size='xl'
-                  showMinMax
-                />
-              </Stack>
-
-              {/* 7. Custom sizes --------------------------------------------- */}
-              <Typography variant='h3'>7. Custom sizes</Typography>
-              <Stack>
-                <Slider
-                  defaultValue={40}
-                  size='2rem'
-                  showMinMax
-                />
-                <Slider
-                  defaultValue={40}
-                  size='24px'
-                  showMinMax
-                />
-              </Stack>
-
-              {/* 8. Disabled state -------------------------------------------- */}
-              <Typography variant='h3'>8. Disabled</Typography>
-
-              {/* Theme coupling */}
-              <Button
-                variant='outlined'
-                onClick={toggleMode}
-              >
-                Toggle light / dark
-              </Button>
-            </Stack>
-          </Tabs.Panel>
-
-          <Tabs.Tab label='Reference' />
-          <Tabs.Panel>
-            <ReferenceSection slug='components/fields/slider' />
-          </Tabs.Panel>
-        </Tabs>
-
-        <BestPractices items={getBestPractices(SliderMeta)} />
+        <Slider
+          value={ctlValue}
+          onChange={setCtlValue}
+          showValue
+          showMinMax
+        />
+        <Typography>
+          Current value:&nbsp;<code>{ctlValue}</code>
+        </Typography>
       </Stack>
-    </Surface>
+
+      {/* 3. Snap = step + ticks */}
+      <Typography variant='h3'>
+        3. Snap = <code>step</code> + ticks
+      </Typography>
+      <Slider
+        defaultValue={40}
+        min={0}
+        max={100}
+        step={10}
+        snap='step'
+        showValue
+        showMinMax
+        showTicks
+      />
+
+      {/* 4. Snap = presets */}
+      <Typography variant='h3'>
+        4. Snap = <code>presets</code>
+      </Typography>
+      <Slider
+        defaultValue={75}
+        min={0}
+        max={100}
+        presets={PRESET_MARKS}
+        snap='presets'
+        showValue
+        showMinMax
+        showTicks
+      />
+
+      {/* 5. Custom ticks with snapping */}
+      <Typography variant='h3'>
+        5. Custom ticks (snap = <code>presets</code>)
+      </Typography>
+      <Slider
+        defaultValue={15}
+        min={0}
+        max={60}
+        ticks={CUSTOM_TICKS}
+        presets={CUSTOM_TICKS}
+        snap='presets'
+        showTicks
+      />
+
+      {/* 6. Sizes */}
+      <Typography variant='h3'>6. Sizes</Typography>
+      <Stack>
+        <Slider
+          defaultValue={20}
+          size='xs'
+          showMinMax
+        />
+        <Slider
+          defaultValue={20}
+          size='sm'
+          showMinMax
+        />
+        <Slider
+          defaultValue={20}
+          size='md'
+          showMinMax
+        />
+        <Slider
+          defaultValue={20}
+          size='lg'
+          showMinMax
+        />
+        <Slider
+          defaultValue={20}
+          size='xl'
+          showMinMax
+        />
+      </Stack>
+
+      {/* 7. Custom sizes */}
+      <Typography variant='h3'>7. Custom sizes</Typography>
+      <Stack>
+        <Slider
+          defaultValue={40}
+          size='2rem'
+          showMinMax
+        />
+        <Slider
+          defaultValue={40}
+          size='24px'
+          showMinMax
+        />
+      </Stack>
+
+      {/* 8. Theme coupling */}
+      <Typography variant='h3'>8. Theme coupling</Typography>
+      <Button
+        variant='outlined'
+        onClick={toggleMode}
+      >
+        Toggle light / dark
+      </Button>
+    </Stack>
+  );
+
+  const [min, setMin] = useState(0);
+  const [max, setMax] = useState(100);
+  const [step, setStep] = useState(5);
+  const [snap, setSnap] = useState<'none' | 'step' | 'presets'>('step');
+  const [showTicks, setShowTicks] = useState(true);
+  const [showValue, setShowValue] = useState(true);
+  const [showMinMax, setShowMinMax] = useState(true);
+  const [pv, setPv] = useState(50);
+
+  const playgroundContent = (
+    <Stack gap={1}>
+      <Stack
+        direction='row'
+        wrap={false}
+        gap={1}
+      >
+        <Stack gap={0.25}>
+          <Typography variant='subtitle'>min</Typography>
+          <Iterator
+            width={140}
+            min={-100}
+            max={max - 1}
+            step={1}
+            value={min}
+            onChange={(n) => setMin(n)}
+            aria-label='min'
+          />
+        </Stack>
+        <Stack gap={0.25}>
+          <Typography variant='subtitle'>max</Typography>
+          <Iterator
+            width={140}
+            min={min + 1}
+            max={500}
+            step={1}
+            value={max}
+            onChange={(n) => setMax(n)}
+            aria-label='max'
+          />
+        </Stack>
+        <Stack gap={0.25}>
+          <Typography variant='subtitle'>step</Typography>
+          <Iterator
+            width={140}
+            min={1}
+            max={Math.max(1, Math.floor((max - min) / 2))}
+            step={1}
+            value={step}
+            onChange={(n) => setStep(n)}
+            aria-label='step'
+          />
+        </Stack>
+        <Stack gap={0.25}>
+          <Typography variant='subtitle'>snap</Typography>
+          <Select
+            placeholder='snap'
+            value={snap}
+            onChange={(v) => setSnap((v as 'step' | 'presets') || 'none')}
+            sx={{ width: 160 }}
+          >
+            <Select.Option value='step'>step</Select.Option>
+            <Select.Option value='presets'>presets</Select.Option>
+            <Select.Option value='none'>none</Select.Option>
+          </Select>
+        </Stack>
+      </Stack>
+
+      <Stack
+        direction='row'
+        wrap={false}
+        gap={2}
+        sx={{ alignItems: 'center' }}
+      >
+        <Stack
+          direction='row'
+          gap={0.5}
+          sx={{ alignItems: 'center' }}
+        >
+          <Typography variant='subtitle'>showTicks</Typography>
+          <Switch
+            checked={showTicks}
+            onChange={setShowTicks}
+          />
+        </Stack>
+        <Stack
+          direction='row'
+          gap={0.5}
+          sx={{ alignItems: 'center' }}
+        >
+          <Typography variant='subtitle'>showValue</Typography>
+          <Switch
+            checked={showValue}
+            onChange={setShowValue}
+          />
+        </Stack>
+        <Stack
+          direction='row'
+          gap={0.5}
+          sx={{ alignItems: 'center' }}
+        >
+          <Typography variant='subtitle'>showMinMax</Typography>
+          <Switch
+            checked={showMinMax}
+            onChange={setShowMinMax}
+          />
+        </Stack>
+      </Stack>
+
+      <Slider
+        value={pv}
+        onChange={setPv}
+        min={min}
+        max={max}
+        step={step}
+        {...(snap === 'step' ? { snap: 'step' as const } : {})}
+        {...(snap === 'presets' ? { snap: 'presets' as const, presets: PRESET_MARKS } : {})}
+        {...(showTicks ? { showTicks: true } : {})}
+        {...(showValue ? { showValue: true } : {})}
+        {...(showMinMax ? { showMinMax: true } : {})}
+      />
+      <Typography>value: {pv}</Typography>
+    </Stack>
+  );
+
+  return (
+    <ComponentMetaPage
+      title='Slider'
+      subtitle='Uncontrolled/controlled, snapping, ticks, sizes, and presets'
+      slug='components/fields/slider'
+      meta={SliderMeta}
+      usage={usageContent}
+      playground={playgroundContent}
+    />
   );
 }

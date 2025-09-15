@@ -39,7 +39,8 @@
     "MetroSelect"
   ],
   "chip": [
-    "MetroSelect"
+    "MetroSelect",
+    "Chip"
   ],
   "segmented": [
     "MetroSelect"
@@ -241,6 +242,15 @@
   ],
   "player": [
     "Video"
+  ],
+  "tag": [
+    "Chip"
+  ],
+  "pill": [
+    "Chip"
+  ],
+  "token": [
+    "Chip"
   ],
   "codeblock": [
     "CodeBlock"

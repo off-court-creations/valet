@@ -1,0 +1,48 @@
+{
+  "name": "Chip",
+  "status": "experimental",
+  "aliases": ["chip", "tag", "pill", "token"],
+  "docs": {
+    "bestPractices": [
+      "Use Chip for compact descriptors (tags, filters, assignments) with optional actions.",
+      "Prefer built-in props (variant, size, color, center behaviors) over ad-hoc styling.",
+      "Keep labels short; truncate is automatic. Use Tooltip if critical text may truncate.",
+      "Ensure interactive chips are keyboard accessible (Enter/Space); avoid non-semantic divs.",
+      "Use onDelete only when removal is the primary action; otherwise provide an explicit menu.",
+      "Be consistent with color meaning; tie Chip colors to theme tokens and legend." 
+    ]
+  },
+  "examples": [
+    {
+      "id": "chip-basic",
+      "title": "Basic",
+      "lang": "tsx",
+      "code": "<Chip label=\"Active\" />"
+    },
+    {
+      "id": "chip-variants",
+      "title": "Variants & Colors",
+      "lang": "tsx",
+      "code": "<Stack direction='row' gap={0.5}>\n  <Chip label=\"Primary\" color=\"primary\" />\n  <Chip label=\"Secondary\" color=\"secondary\" />\n  <Chip label=\"Tertiary\" color=\"tertiary\" />\n  <Chip label=\"Outlined\" variant=\"outlined\" />\n</Stack>"
+    },
+    {
+      "id": "chip-icons",
+      "title": "With icon & delete",
+      "lang": "tsx",
+      "code": "<Stack direction='row' gap={0.5}>\n  <Chip label=\"Assignee\" icon=\"mdi:account\" />\n  <Chip label=\"Filter\" icon=\"mdi:filter-variant\" onDelete={() => {}} />\n</Stack>"
+    },
+    {
+      "id": "chip-sizes",
+      "title": "Sizes",
+      "lang": "tsx",
+      "code": "<Stack direction='row' gap={0.5}>\n  <Chip label=\"Small\" size=\"s\" />\n  <Chip label=\"Medium\" size=\"m\" />\n  <Chip label=\"Large\" size=\"l\" />\n</Stack>"
+    },
+    {
+      "id": "chip-clickable",
+      "title": "Clickable",
+      "lang": "tsx",
+      "code": "<Chip label=\"Clickable\" color=\"primary\" onClick={() => console.log('clicked')} />"
+    }
+  ]
+}
+

@@ -1,46 +1,40 @@
 // ─────────────────────────────────────────────────────────────
-// src/pages/components/RichChat.tsx | valet-docs
-// Minimal RichChat docs page with MCP reference
+// docs/src/pages/components/widgets/RichChat.tsx  | valet-docs
+// Migrated to ComponentMetaPage – usage + reference with link to demo
 // ─────────────────────────────────────────────────────────────
-import { Surface, Stack, Typography, Button, useTheme, Tabs } from '@archway/valet';
+import { Stack, Typography, Button, useTheme } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
-import NavDrawer from '../../../components/NavDrawer';
-import PageHero from '../../../components/PageHero';
-import ReferenceSection from '../../../components/ReferenceSection';
+import ComponentMetaPage from '../../../components/ComponentMetaPage';
+import RichChatMeta from '../../../../../src/components/widgets/RichChat.meta.json';
 
 export default function RichChatPage() {
   const navigate = useNavigate();
   const { theme } = useTheme();
 
+  const usage = (
+    <Stack>
+      <Typography>
+        RichChat supports JSX content in messages (including embedded forms). Use
+        <code> onFormSubmit </code> to handle form replies and <code> onSend </code> for normal
+        messages.
+      </Typography>
+      <Button
+        size='lg'
+        onClick={() => navigate('/rich-chat-demo')}
+        sx={{ marginTop: theme.spacing(1) }}
+      >
+        View Interactive Demo →
+      </Button>
+    </Stack>
+  );
+
   return (
-    <Surface>
-      <NavDrawer />
-      <Stack>
-        <PageHero title='Rich Chat' />
-
-        <Tabs>
-          <Tabs.Tab label='Usage' />
-          <Tabs.Panel>
-            <Typography>
-              RichChat supports JSX content in messages (including embedded forms). Use
-              <code>onFormSubmit</code> to handle form replies and <code>onSend</code> for normal
-              messages.
-            </Typography>
-            <Button
-              size='lg'
-              onClick={() => navigate('/rich-chat-demo')}
-              sx={{ marginTop: theme.spacing(1) }}
-            >
-              View Example →
-            </Button>
-          </Tabs.Panel>
-
-          <Tabs.Tab label='Reference' />
-          <Tabs.Panel>
-            <ReferenceSection slug='components/widgets/richchat' />
-          </Tabs.Panel>
-        </Tabs>
-      </Stack>
-    </Surface>
+    <ComponentMetaPage
+      title='Rich Chat'
+      subtitle='Threaded assistant UI with rich JSX messages and forms'
+      slug='components/widgets/richchat'
+      meta={RichChatMeta}
+      usage={usage}
+    />
   );
 }

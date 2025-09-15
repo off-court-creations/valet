@@ -38,6 +38,13 @@
       "required": false
     }
   ],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": [
+      "color",
+      "style"
+    ]
+  },
   "cssVars": [
     "--valet-text-color",
     "--valet-divider-stroke"

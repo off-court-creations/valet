@@ -11,5 +11,17 @@
       "Consider infinite scroll for content feeds where paging is less meaningful.",
       "Align placement near the data it controls and avoid duplicating controls unless justified."
     ]
-  }
+  },
+  "examples": [
+    {
+      "id": "pagination-controlled",
+      "title": "Controlled pagination",
+      "code": "() => {\n  const [page, setPage] = React.useState(1);\n  return (<Stack>\n    <Pagination count={12} page={page} onChange={setPage} />\n    <Typography>Current page: {page}</Typography>\n  </Stack>);\n}"
+    },
+    {
+      "id": "pagination-window",
+      "title": "Visible window + autoFollow",
+      "code": "() => {\n  const [page, setPage] = React.useState(5);\n  const [follow, setFollow] = React.useState(true);\n  return (<Stack>\n    <Pagination count={50} visibleWindow={7} autoFollowActive={follow} page={page} onChange={setPage} />\n    <Stack direction='row' sx={{ alignItems: 'center' }}>\n      <Typography variant='subtitle'>autoFollowActive</Typography>\n      <Switch checked={follow} onChange={setFollow} aria-label='toggle autoFollowActive' />\n    </Stack>\n  </Stack>);\n}"
+    }
+  ]
 }

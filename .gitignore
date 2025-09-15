@@ -1,4 +1,41 @@
+# Core dependencies and build output
 node_modules
 dist
 styleguide
 bin
+.vscode
+
+# Logs and caches
+logs
+*.log
+npm-debug.log*
+build/Release
+.npm
+.eslintcache
+.stylelintcache
+*.tsbuildinfo
+*.tgz
+.vscode-test
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Temporary directories
+.temp
+.cache
+
+# VitePress artifacts
+**/.vitepress/dist
+**/.vitepress/cache
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# OS-specific junk
+.DS_Store
+
+# create-valet-app package artifacts
+packages/create-valet-app/docs
+packages/create-valet-app/EXAMPLE
+packages/create-valet-app/VALET

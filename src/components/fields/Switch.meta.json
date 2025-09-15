@@ -11,5 +11,17 @@
       "Ensure keyboard operability (Space toggles). Maintain accessible naming regardless of visual labels.",
       "Prefer presets/tokens for size and colour; keep thumb/track large enough for comfortable touch targets."
     ]
-  }
+  },
+  "examples": [
+    {
+      "id": "switch-controlled",
+      "title": "Controlled switch",
+      "code": "() => {\n  const [on, setOn] = React.useState(false);\n  return (<Stack>\n    <Switch name='wifi' checked={on} onChange={setOn} />\n    <Typography>Wi‑Fi is {on ? 'on' : 'off'}</Typography>\n  </Stack>);\n}"
+    },
+    {
+      "id": "switch-form",
+      "title": "FormControl binding",
+      "code": "() => {\n  const usePrefs = Valet.createFormStore({ darkMode: true });\n  return (<FormControl useStore={usePrefs} onSubmitValues={() => void 0}>\n    <Switch name='darkMode' />\n  </FormControl>);\n}"
+    }
+  ]
 }

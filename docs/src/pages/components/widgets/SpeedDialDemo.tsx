@@ -1,26 +1,13 @@
-// src/pages/SpeedDialDemo.tsx
-import {
-  Surface,
-  Stack,
-  Typography,
-  Button,
-  SpeedDial,
-  Icon,
-  Tabs,
-  useTheme,
-} from '@archway/valet';
-import ReferenceSection from '../../../components/ReferenceSection';
-import { useNavigate } from 'react-router-dom';
-import NavDrawer from '../../../components/NavDrawer';
-import PageHero from '../../../components/PageHero';
-import BestPractices from '../../../components/BestPractices';
-import CuratedExamples from '../../../components/CuratedExamples';
-import { getBestPractices, getExamples } from '../../../utils/sidecar';
+// docs/src/pages/components/widgets/SpeedDialDemo.tsx  | valet-docs
+// Migrated to ComponentMetaPage – usage and direction playground
+import { Stack, Typography, Button, SpeedDial, Icon, Select, useTheme } from '@archway/valet';
+import { useState } from 'react';
+import ComponentMetaPage from '../../../components/ComponentMetaPage';
 import SpeedDialMeta from '../../../../../src/components/widgets/SpeedDial.meta.json';
 
 export default function SpeedDialDemoPage() {
-  const { theme, toggleMode } = useTheme();
-  const navigate = useNavigate();
+  const { toggleMode } = useTheme();
+  const [direction, setDirection] = useState<'up' | 'down' | 'left' | 'right'>('up');
 
   const actions = [
     {
@@ -40,48 +27,55 @@ export default function SpeedDialDemoPage() {
     },
   ];
 
-  return (
-    <Surface>
-      <NavDrawer />
-      <Stack>
-        <PageHero title='Speed Dial' />
+  const usage = (
+    <Stack>
+      <Typography variant='h3'>Example</Typography>
+      <Typography variant='body'>Click the FAB to reveal actions.</Typography>
+      <SpeedDial
+        icon={<Icon icon='mdi:plus' />}
+        actions={actions}
+      />
+      <Button
+        variant='outlined'
+        onClick={toggleMode}
+      >
+        Toggle light / dark
+      </Button>
+    </Stack>
+  );
 
-        <Tabs>
-          <Tabs.Tab label='Usage' />
-          <Tabs.Panel>
-            <Stack>
-              <Typography variant='h3'>Example</Typography>
-              <Typography variant='body'>Click the fab to reveal actions.</Typography>
-              <SpeedDial
-                icon={<Icon icon='mdi:plus' />}
-                actions={actions}
-              />
-              <Button
-                variant='outlined'
-                onClick={toggleMode}
-              >
-                Toggle light / dark
-              </Button>
-            </Stack>
-          </Tabs.Panel>
-
-          <Tabs.Tab label='Reference' />
-          <Tabs.Panel>
-            <ReferenceSection slug='components/widgets/speeddial' />
-          </Tabs.Panel>
-        </Tabs>
-
-        <Button
-          size='lg'
-          onClick={() => navigate(-1)}
-          sx={{ marginTop: theme.spacing(1) }}
+  const playground = (
+    <Stack gap={1}>
+      <Stack gap={0.25}>
+        <Typography variant='subtitle'>direction</Typography>
+        <Select
+          placeholder='direction'
+          value={direction}
+          onChange={(v) => setDirection(v as 'up' | 'down' | 'left' | 'right')}
+          sx={{ width: 160 }}
         >
-          ← Back
-        </Button>
-
-        <CuratedExamples examples={getExamples(SpeedDialMeta)} />
-        <BestPractices items={getBestPractices(SpeedDialMeta)} />
+          <Select.Option value='up'>up</Select.Option>
+          <Select.Option value='down'>down</Select.Option>
+          <Select.Option value='left'>left</Select.Option>
+          <Select.Option value='right'>right</Select.Option>
+        </Select>
       </Stack>
-    </Surface>
+      <SpeedDial
+        icon={<Icon icon='mdi:plus' />}
+        actions={actions}
+        direction={direction}
+      />
+    </Stack>
+  );
+
+  return (
+    <ComponentMetaPage
+      title='Speed Dial'
+      subtitle='Expandable FAB for quick actions'
+      slug='components/widgets/speeddial'
+      meta={SpeedDialMeta}
+      usage={usage}
+      playground={playground}
+    />
   );
 }
