@@ -86,8 +86,36 @@
   ],
   "actions": [],
   "slots": [],
-  "bestPractices": [],
-  "examples": [],
+  "bestPractices": [
+    "Keep messages concise and chunked; prefer multiple short assistant turns over monolithic walls of text.",
+    "Embed small forms inline when it reduces friction (e.g., date picker, numeric choice); submit via `onFormSubmit`.",
+    "Use avatars consistently for roles. Set `userAvatar` / `systemAvatar` to reinforce identity.",
+    "Respect scroll context. With `constrainHeight` the thread scrolls locally; otherwise ensure the page layout accommodates tall threads.",
+    "Provide optimistic UI for outgoing messages. Animate entries to maintain a conversational rhythm.",
+    "Sanitize or gate untrusted JSX. RichChat renders JSX content; ensure sources are trusted."
+  ],
+  "examples": [
+    {
+      "id": "richchat-minimal",
+      "title": "Minimal thread",
+      "code": "(() => {\n  const msgs = [\n    { role: 'assistant', content: 'How can I help you today?' }\n  ];\n  return <RichChat messages={msgs} />;\n})()",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {
+        "messages": []
+      }
+    },
+    {
+      "id": "richchat-form",
+      "title": "Inline form question",
+      "code": "(() => {\n  const DateForm = ({ onSubmit }) => (\n    <Stack direction='row' gap={1}>\n      <DateSelector onChange={(v)=>void 0} value='' />\n      <IconButton icon='carbon:checkmark' aria-label='Confirm' onClick={()=>onSubmit('2025-01-01')} />\n    </Stack>\n  );\n  const [messages, setMessages] = React.useState([\n    { role: 'assistant', content: 'Pick a date', form: ({ onSubmit }) => <DateForm onSubmit={onSubmit} /> }\n  ]);\n  return <RichChat messages={messages} onFormSubmit={(val)=>console.log(val)} />;\n})()",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {
+        "messages": []
+      }
+    }
+  ],
   "sourceFiles": [
     "src/components/widgets/RichChat.tsx"
   ],

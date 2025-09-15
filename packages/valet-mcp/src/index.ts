@@ -11,6 +11,7 @@ import { PRIMER_TEXT } from './primer.js';
 import { DATA_DIR, DATA_INFO, getComponentBySlug, getGlossary, getIndex, getMeta } from './tools/shared.js';
 import { registerListComponents } from './tools/listComponents.js';
 import { registerListCategories } from './tools/listCategories.js';
+import { registerListSynonyms } from './tools/listSynonyms.js';
 import { registerGetComponent } from './tools/getComponent.js';
 import { registerSearchComponents } from './tools/searchComponents.js';
 import { registerGetExamples } from './tools/getExamples.js';
@@ -18,8 +19,10 @@ import { registerGetGlossary } from './tools/getGlossary.js';
 import { registerDefineTerm } from './tools/defineTerm.js';
 import { registerGetPrimer } from './tools/getPrimer.js';
 import { registerGetInfo } from './tools/getInfo.js';
+import { registerCheckVersionParity } from './tools/checkVersionParity.js';
 import { registerSearchProps } from './tools/searchProps.js';
 import { registerSearchCssVars } from './tools/searchCssVars.js';
+import { registerSearchBestPractices } from './tools/searchBestPractices.js';
 const requireFromHere = createRequire(import.meta.url);
 const pkg = requireFromHere('../package.json') as { version?: string; name?: string };
 const MCP_VERSION = pkg.version ?? '0.0.0';
@@ -34,15 +37,18 @@ async function createServer() {
   // tools
   registerListComponents(server);
   registerListCategories(server);
+  registerListSynonyms(server);
   registerGetComponent(server);
   registerSearchComponents(server);
   registerSearchProps(server);
   registerSearchCssVars(server);
+  registerSearchBestPractices(server);
   registerGetExamples(server);
   registerGetGlossary(server);
   registerDefineTerm(server);
   registerGetPrimer(server);
   registerGetInfo(server);
+  registerCheckVersionParity(server);
 
   // adjust_theme tool removed
 

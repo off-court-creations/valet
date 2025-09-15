@@ -88,13 +88,14 @@ args = []`}
         />
         <Typography>
           Once registered, your agent gains tools like <code>valet__list_components</code>,
-          <code> valet__search_components</code>, <code>valet__get_component</code>,
+          <code> valet__search_components</code>, <code>valet__search_best_practices</code>,{' '}
+          <code>valet__list_synonyms</code>, <code>valet__get_component</code>,
           <code> valet__get_examples</code>,<code> valet__get_glossary</code>,{' '}
           <code>valet__define_term</code>, and
           <code> valet__get_primer</code>. Ask it to list primitives, inspect props for
-          <code> Table</code>, fetch examples for <code>Tooltip</code>, retrieve docs URL and best
-          practices for <code>Panel</code>, or define terms from the glossary. Start sessions with{' '}
-          <code>valet__get_primer</code> to align on valet’s expectations.
+          <code> Table</code>, fetch examples for <code>Tooltip</code>, pull best-practice guidance
+          for overlays, enumerate synonyms before searching, or define terms from the glossary.
+          Start sessions with <code>valet__get_primer</code> to align on valet’s expectations.
         </Typography>
 
         <Typography
@@ -156,6 +157,26 @@ args = []`}
               ariaLabel='Copy get_examples example'
               language='json'
             />
+            <Typography>
+              <b>valet__search_best_practices</b>{' '}
+              <code>{`{ query, category?, status?, limit? }`}</code> → curated guidance snippets
+            </Typography>
+            <CodeBlock
+              code={`[
+  {
+    "name": "Modal",
+    "slug": "components/widgets/modal",
+    "category": "widgets",
+    "status": "stable",
+    "bestPractice": "Focus the first actionable element when the modal opens.",
+    "matchScore": 12,
+    "matchType": "text|token",
+    "index": 0
+  }
+]`}
+              ariaLabel='Copy search_best_practices example'
+              language='json'
+            />
           </Stack>
         </Panel>
 
@@ -199,6 +220,15 @@ args = []`}
               code={`{\n  "ok": true,\n  "mcpVersion": "0.31.0",\n  "valetVersion": "0.31.0",\n  "schemaVersion": "1.6",\n  "buildHash": "<sha1>",\n  "dataSource": "nearest-cwd",\n  "dataDir": "/path/to/mcp-data",\n  "components": 28,\n  "glossaryEntries": 12,\n  "hasPrimer": true,\n  "versionParity": true\n}`}
               language='json'
               ariaLabel='Copy valet__get_info example'
+            />
+            <Typography>
+              <b>valet__list_synonyms</b> → expose alias → component mappings powering slug
+              resolution
+            </Typography>
+            <CodeBlock
+              code={`{\n  "source": "merged",\n  "pairs": [\n    { "alias": "dropdown", "targets": ["Select"] },\n    { "alias": "toast", "targets": ["Snackbar"] }\n  ]\n}`}
+              language='json'
+              ariaLabel='Copy valet__list_synonyms example'
             />
           </Stack>
         </Panel>
