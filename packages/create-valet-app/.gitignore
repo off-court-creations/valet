@@ -1,9 +1,0 @@
-node_modules
-dist
-docs
-styleguide
-.env
-*.tsbuildinfo
-EXAMPLE
-VALET
-.DS_Store
