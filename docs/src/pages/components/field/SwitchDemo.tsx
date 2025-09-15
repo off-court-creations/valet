@@ -1,12 +1,9 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// src/pages/SwitchDemo.tsx | valet-docs
-// Comprehensive live demo for <Switch /> – showcases uncontrolled,
-// controlled, form-bound, sizes, disabled, and live theme coupling.
+// docs/src/pages/components/field/SwitchDemo.tsx  | valet-docs
+// Migrated to ComponentMetaPage – uncontrolled, controlled, sizes, disabled, forms, theme toggle
 // ─────────────────────────────────────────────────────────────────────────────
-import { useState } from 'react';
-import type { JSX } from 'react';
+import { useState, type JSX } from 'react';
 import {
-  Surface,
   Stack,
   Typography,
   Button,
@@ -14,13 +11,8 @@ import {
   FormControl,
   createFormStore,
   useTheme,
-  Tabs,
 } from '@archway/valet';
-import ReferenceSection from '../../../components/ReferenceSection';
-import NavDrawer from '../../../components/NavDrawer';
-import PageHero from '../../../components/PageHero';
-import BestPractices from '../../../components/BestPractices';
-import { getBestPractices } from '../../../utils/sidecar';
+import ComponentMetaPage from '../../../components/ComponentMetaPage';
 import SwitchMeta from '../../../../../src/components/fields/Switch.meta.json';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
@@ -60,151 +52,140 @@ export default function SwitchDemoPage() {
     // eslint-disable-next-line no-alert -- demo only
     alert(JSON.stringify(values, null, 2));
 
-  return (
-    <Surface>
-      <NavDrawer />
+  const usageContent = (
+    <>
+      {/* 1. Uncontrolled */}
+      <Typography variant='h3'>1. Uncontrolled</Typography>
       <Stack>
-        <PageHero title='Switch' />
-
-        <Tabs>
-          <Tabs.Tab label='Usage' />
-          <Tabs.Panel>
-            {/* 1. Uncontrolled -------------------------------------------------- */}
-            <Typography variant='h3'>1. Uncontrolled</Typography>
-            <Stack>
-              <Row
-                label='Default unchecked'
-                control={<Switch name='uc1' />}
-              />
-              <Row
-                label='Default checked (defaultChecked)'
-                control={
-                  <Switch
-                    name='uc2'
-                    defaultChecked
-                  />
-                }
-              />
-            </Stack>
-
-            {/* 2. Controlled ---------------------------------------------------- */}
-            <Typography variant='h3'>2. Controlled</Typography>
-            <Row
-              label={`Wi-Fi – ${wifi ? 'on' : 'off'}`}
-              control={
-                <Switch
-                  name='wifi'
-                  checked={wifi}
-                  onChange={setWifi}
-                />
-              }
+        <Row
+          label='Default unchecked'
+          control={<Switch name='uc1' />}
+        />
+        <Row
+          label='Default checked (defaultChecked)'
+          control={
+            <Switch
+              name='uc2'
+              defaultChecked
             />
-
-            {/* 3. Sizes --------------------------------------------------------- */}
-            <Typography variant='h3'>3. Sizes</Typography>
-            <Stack>
-              <Row
-                label="size='sm'"
-                control={
-                  <Switch
-                    name='sm'
-                    size='sm'
-                    defaultChecked
-                  />
-                }
-              />
-              <Row
-                label="size='md'"
-                control={
-                  <Switch
-                    name='md'
-                    size='md'
-                    defaultChecked
-                  />
-                }
-              />
-              <Row
-                label="size='lg'"
-                control={
-                  <Switch
-                    name='lg'
-                    size='lg'
-                    defaultChecked
-                  />
-                }
-              />
-            </Stack>
-
-            {/* 4. Disabled ------------------------------------------------------ */}
-            <Typography variant='h3'>4. Disabled</Typography>
-            <Stack>
-              <Row
-                label='disabled & checked'
-                control={
-                  <Switch
-                    name='d1'
-                    defaultChecked
-                    disabled
-                  />
-                }
-              />
-              <Row
-                label='disabled & unchecked'
-                control={
-                  <Switch
-                    name='d2'
-                    disabled
-                  />
-                }
-              />
-            </Stack>
-
-            {/* 5. FormControl integration -------------------------------------- */}
-            <Typography variant='h3'>5. FormControl Binding</Typography>
-            <FormControl
-              useStore={usePrefsForm}
-              onSubmitValues={handleSubmit}
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: theme.spacing(1),
-              }}
-            >
-              <Row
-                label='Dark mode'
-                control={<Switch name='darkMode' />}
-              />
-              <Row
-                label='Join newsletter'
-                control={<Switch name='newsletter' />}
-              />
-              <Button
-                type='submit'
-                variant='contained'
-                size='lg'
-              >
-                Save preferences
-              </Button>
-            </FormControl>
-
-            {/* 6. Live theme validation ---------------------------------------- */}
-            <Typography variant='h3'>6. Theme coupling</Typography>
-            <Button
-              variant='outlined'
-              onClick={toggleMode}
-            >
-              Toggle light / dark mode
-            </Button>
-          </Tabs.Panel>
-
-          <Tabs.Tab label='Reference' />
-          <Tabs.Panel>
-            <ReferenceSection slug='components/fields/switch' />
-          </Tabs.Panel>
-        </Tabs>
-
-        <BestPractices items={getBestPractices(SwitchMeta)} />
+          }
+        />
       </Stack>
-    </Surface>
+
+      {/* 2. Controlled */}
+      <Typography variant='h3'>2. Controlled</Typography>
+      <Row
+        label={`Wi-Fi – ${wifi ? 'on' : 'off'}`}
+        control={
+          <Switch
+            name='wifi'
+            checked={wifi}
+            onChange={setWifi}
+          />
+        }
+      />
+
+      {/* 3. Sizes */}
+      <Typography variant='h3'>3. Sizes</Typography>
+      <Stack>
+        <Row
+          label="size='sm'"
+          control={
+            <Switch
+              name='sm'
+              size='sm'
+              defaultChecked
+            />
+          }
+        />
+        <Row
+          label="size='md'"
+          control={
+            <Switch
+              name='md'
+              size='md'
+              defaultChecked
+            />
+          }
+        />
+        <Row
+          label="size='lg'"
+          control={
+            <Switch
+              name='lg'
+              size='lg'
+              defaultChecked
+            />
+          }
+        />
+      </Stack>
+
+      {/* 4. Disabled */}
+      <Typography variant='h3'>4. Disabled</Typography>
+      <Stack>
+        <Row
+          label='disabled & checked'
+          control={
+            <Switch
+              name='d1'
+              defaultChecked
+              disabled
+            />
+          }
+        />
+        <Row
+          label='disabled & unchecked'
+          control={
+            <Switch
+              name='d2'
+              disabled
+            />
+          }
+        />
+      </Stack>
+
+      {/* 5. FormControl binding */}
+      <Typography variant='h3'>5. FormControl Binding</Typography>
+      <FormControl
+        useStore={usePrefsForm}
+        onSubmitValues={handleSubmit}
+        sx={{ display: 'flex', flexDirection: 'column', gap: theme.spacing(1) }}
+      >
+        <Row
+          label='Dark mode'
+          control={<Switch name='darkMode' />}
+        />
+        <Row
+          label='Join newsletter'
+          control={<Switch name='newsletter' />}
+        />
+        <Button
+          type='submit'
+          variant='contained'
+          size='lg'
+        >
+          Save preferences
+        </Button>
+      </FormControl>
+
+      {/* 6. Theme coupling */}
+      <Typography variant='h3'>6. Theme coupling</Typography>
+      <Button
+        variant='outlined'
+        onClick={toggleMode}
+      >
+        Toggle light / dark mode
+      </Button>
+    </>
+  );
+
+  return (
+    <ComponentMetaPage
+      title='Switch'
+      subtitle='Immediate on/off toggles; controlled, sizes, and forms'
+      slug='components/fields/switch'
+      meta={SwitchMeta}
+      usage={usageContent}
+    />
   );
 }

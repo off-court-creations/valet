@@ -1,9 +1,9 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// src/pages/IconDemoPage.tsx
-// A comprehensive live demo of every Icon capability in ZeroUI
-// ─────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// docs/src/pages/components/primitives/IconDemoPage.tsx  | valet-docs
+// Showcase of Icon component using the reusable ComponentMetaPage (5 tabs)
+// ─────────────────────────────────────────────────────────────
+import { useState } from 'react';
 import {
-  Surface,
   Stack,
   Box,
   Typography,
@@ -11,20 +11,16 @@ import {
   Icon,
   useTheme,
   definePreset,
-  Tabs,
+  Select,
+  Panel,
+  TextField,
 } from '@archway/valet';
-import { useNavigate } from 'react-router-dom';
-import NavDrawer from '../../../components/NavDrawer';
-import BestPractices from '../../../components/BestPractices';
-import CuratedExamples from '../../../components/CuratedExamples';
-import ReferenceSection from '../../../components/ReferenceSection';
-import { getBestPractices, getExamples } from '../../../utils/sidecar';
+import ComponentMetaPage from '../../../components/ComponentMetaPage';
 import IconMeta from '../../../../../src/components/primitives/Icon.meta.json';
-import PageHero from '../../../components/PageHero';
 import mymoSVG from '../../../assets/mygymlogo.svg?raw';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
-/* Style presets – demonstrate Icon inside themed containers                   */
+/* Style preset – demonstrate Icon inside a themed container                    */
 definePreset(
   'iconCard',
   (t) => `
@@ -39,158 +35,191 @@ definePreset(
   `,
 );
 
-/*─────────────────────────────────────────────────────────────────────────────*/
-/* Demo page                                                                   */
 export default function IconDemoPage() {
   const { theme, toggleMode } = useTheme();
-  const navigate = useNavigate();
+
+  // Playground state
+  const [pgIcon, setPgIcon] = useState('mdi:home');
+  const [pgSize, setPgSize] = useState<'xs' | 'sm' | 'md' | 'lg' | 'xl'>('md');
+  const [pgColor, setPgColor] = useState<string>('');
+
+  const usageContent = (
+    <Stack>
+      <Typography variant='subtitle'>
+        Built-in Iconify names, custom SVGs, presets, and theme coupling
+      </Typography>
+
+      <Typography variant='h3'>1. Inline with text</Typography>
+      <Typography>
+        Icons inherit text colour automatically&nbsp;
+        <Icon
+          icon='mdi:rocket-launch-outline'
+          size='1.25em'
+        />
+        &nbsp;anywhere in your prose.
+      </Typography>
+
+      <Typography variant='h3'>2. Size prop</Typography>
+      <Stack direction='row'>
+        <Icon
+          icon='mdi:home'
+          size='xs'
+          aria-label='home-xs'
+        />
+        <Icon
+          icon='mdi:home'
+          size='sm'
+          aria-label='home-sm'
+        />
+        <Icon
+          icon='mdi:home'
+          size='md'
+          aria-label='home-md'
+        />
+        <Icon
+          icon='mdi:home'
+          size='lg'
+          aria-label='home-lg'
+        />
+        <Icon
+          icon='mdi:home'
+          size='xl'
+          aria-label='home-xl'
+        />
+      </Stack>
+
+      <Typography variant='h3'>3. Colour override</Typography>
+      <Stack direction='row'>
+        <Icon
+          icon='carbon:warning-filled'
+          color={theme.colors['primary']}
+          size={32}
+        />
+        <Icon
+          icon='carbon:warning-filled'
+          color='#ff6b6b'
+          size={32}
+        />
+        <Icon
+          icon='carbon:warning-filled'
+          color='gold'
+          size={32}
+        />
+      </Stack>
+
+      <Typography variant='h3'>4. Custom SVG element</Typography>
+      <Icon
+        svg={mymoSVG}
+        size={40}
+        aria-label='custom-svg'
+      />
+
+      <Typography variant='h3'>5. Presets</Typography>
+      <Box preset='iconCard'>
+        <Icon
+          icon='mdi:credit-card-outline'
+          size={48}
+        />
+        <Typography
+          variant='h4'
+          bold
+        >
+          iconCard preset
+        </Typography>
+      </Box>
+
+      <Typography variant='h3'>6. Icon in other components</Typography>
+      <Stack direction='row'>
+        <Button>
+          <Icon
+            icon='mdi:thumb-up'
+            size={18}
+            sx={{ marginRight: 8 }}
+          />
+          Like
+        </Button>
+        <Button variant='outlined'>
+          <Icon
+            icon='mdi:share-variant'
+            size={18}
+            sx={{ marginRight: 8 }}
+          />
+          Share
+        </Button>
+      </Stack>
+
+      <Typography variant='h3'>7. Theme coupling</Typography>
+      <Button
+        variant='outlined'
+        onClick={toggleMode}
+      >
+        Toggle light / dark mode
+      </Button>
+    </Stack>
+  );
+
+  const playgroundContent = (
+    <Stack gap={1}>
+      <Panel fullWidth>
+        <Typography variant='subtitle'>Playground</Typography>
+        <Stack
+          direction='row'
+          gap={1}
+          sx={{ alignItems: 'center' }}
+        >
+          <TextField
+            name='icon'
+            label='icon'
+            placeholder='mdi:home'
+            value={pgIcon}
+            onChange={(e) => setPgIcon((e.target as HTMLInputElement).value)}
+            sx={{ width: 260 }}
+          />
+          <Select
+            placeholder='size'
+            value={pgSize}
+            onChange={(v) => setPgSize(v as typeof pgSize)}
+            sx={{ width: 160 }}
+          >
+            <Select.Option value='xs'>xs</Select.Option>
+            <Select.Option value='sm'>sm</Select.Option>
+            <Select.Option value='md'>md</Select.Option>
+            <Select.Option value='lg'>lg</Select.Option>
+            <Select.Option value='xl'>xl</Select.Option>
+          </Select>
+          <TextField
+            name='color'
+            label='color'
+            placeholder='currentColor or CSS color'
+            value={pgColor}
+            onChange={(e) => setPgColor((e.target as HTMLInputElement).value)}
+            sx={{ width: 260 }}
+          />
+        </Stack>
+      </Panel>
+      <Stack
+        gap={0.5}
+        sx={{ alignItems: 'center' }}
+      >
+        <Icon
+          icon={pgIcon}
+          size={pgSize}
+          color={pgColor || undefined}
+          aria-label='preview-icon'
+        />
+        <Typography variant='subtitle'>Preview</Typography>
+      </Stack>
+    </Stack>
+  );
 
   return (
-    <Surface>
-      <NavDrawer />
-      <Stack>
-        <PageHero title='Icon' />
-
-        <Tabs>
-          <Tabs.Tab label='Usage' />
-          <Tabs.Panel>
-            <Typography variant='subtitle'>
-              Built-in Iconify names, custom SVGs, presets, and theme coupling
-            </Typography>
-
-            {/* 1. Inline usage -------------------------------------------------- */}
-            <Typography variant='h3'>1. Inline with text</Typography>
-            <Typography>
-              Icons inherit text colour automatically&nbsp;
-              <Icon
-                icon='mdi:rocket-launch-outline'
-                size='1.25em'
-              />
-              &nbsp;anywhere in your prose.
-            </Typography>
-
-            {/* 2. Sizing -------------------------------------------------------- */}
-            <Typography variant='h3'>2. Size prop</Typography>
-            <Stack direction='row'>
-              <Icon
-                icon='mdi:home'
-                size='xs'
-                aria-label='home-xs'
-              />
-              <Icon
-                icon='mdi:home'
-                size='sm'
-                aria-label='home-sm'
-              />
-              <Icon
-                icon='mdi:home'
-                size='md'
-                aria-label='home-md'
-              />
-              <Icon
-                icon='mdi:home'
-                size='lg'
-                aria-label='home-lg'
-              />
-              <Icon
-                icon='mdi:home'
-                size='xl'
-                aria-label='home-xl'
-              />
-            </Stack>
-
-            {/* 3. Color override ---------------------------------------------- */}
-            <Typography variant='h3'>3. Colour override</Typography>
-            <Stack direction='row'>
-              <Icon
-                icon='carbon:warning-filled'
-                color={theme.colors['primary']}
-                size={32}
-              />
-              <Icon
-                icon='carbon:warning-filled'
-                color='#ff6b6b'
-                size={32}
-              />
-              <Icon
-                icon='carbon:warning-filled'
-                color='gold'
-                size={32}
-              />
-            </Stack>
-
-            {/* 4. Custom SVG (React element) ----------------------------------- */}
-            <Typography variant='h3'>4. Custom SVG element</Typography>
-            <Icon
-              svg={mymoSVG}
-              size={40}
-              aria-label='heart'
-            />
-
-            {/* 6. Icon presets -------------------------------------------------- */}
-            <Typography variant='h3'>5. Presets</Typography>
-            <Box preset='iconCard'>
-              <Icon
-                icon='mdi:credit-card-outline'
-                size={48}
-              />
-              <Typography
-                variant='h4'
-                bold
-              >
-                iconCard preset
-              </Typography>
-            </Box>
-
-            {/* 7. Icon inside Button ------------------------------------------- */}
-            <Typography variant='h3'>6. Icon in other components</Typography>
-            <Stack direction='row'>
-              <Button>
-                <Icon
-                  icon='mdi:thumb-up'
-                  size={18}
-                  sx={{ marginRight: 8 }}
-                />
-                Like
-              </Button>
-              <Button variant='outlined'>
-                <Icon
-                  icon='mdi:share-variant'
-                  size={18}
-                  sx={{ marginRight: 8 }}
-                />
-                Share
-              </Button>
-            </Stack>
-
-            {/* 8. Live theme validation ---------------------------------------- */}
-            <Typography variant='h3'>7. Theme coupling</Typography>
-            <Button
-              variant='outlined'
-              onClick={toggleMode}
-            >
-              Toggle light / dark mode
-            </Button>
-          </Tabs.Panel>
-
-          <Tabs.Tab label='Reference' />
-          <Tabs.Panel>
-            <ReferenceSection slug='components/primitives/icon' />
-          </Tabs.Panel>
-        </Tabs>
-
-        {/* Back nav -------------------------------------------------------- */}
-        <Button
-          size='lg'
-          onClick={() => navigate(-1)}
-          sx={{ marginTop: theme.spacing(1) }}
-        >
-          ← Back
-        </Button>
-
-        <CuratedExamples examples={getExamples(IconMeta)} />
-        <BestPractices items={getBestPractices(IconMeta)} />
-      </Stack>
-    </Surface>
+    <ComponentMetaPage
+      title='Icon'
+      subtitle='Built-in Iconify names, custom SVGs, presets, and theme coupling.'
+      slug='components/primitives/icon'
+      meta={IconMeta}
+      usage={usageContent}
+      playground={playgroundContent}
+    />
   );
 }

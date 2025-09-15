@@ -1,68 +1,41 @@
-// src/pages/StepperDemo.tsx
+// docs/src/pages/components/widgets/StepperDemo.tsx  | valet-docs
+// Migrated to ComponentMetaPage – usage with navigation controls
 import { useState } from 'react';
-import { Surface, Stack, Button, Stepper, useTheme, Tabs } from '@archway/valet';
-import ReferenceSection from '../../../components/ReferenceSection';
-import { useNavigate } from 'react-router-dom';
-import NavDrawer from '../../../components/NavDrawer';
-import BestPractices from '../../../components/BestPractices';
-import CuratedExamples from '../../../components/CuratedExamples';
-import { getBestPractices, getExamples } from '../../../utils/sidecar';
+import { Stack, Button, Stepper, useTheme } from '@archway/valet';
+import ComponentMetaPage from '../../../components/ComponentMetaPage';
 import StepperMeta from '../../../../../src/components/widgets/Stepper.meta.json';
-import PageHero from '../../../components/PageHero';
 
 export default function StepperDemoPage() {
-  const { theme, toggleMode } = useTheme();
-  const navigate = useNavigate();
+  const { toggleMode } = useTheme();
   const [active, setActive] = useState(0);
-
   const steps = ['First', 'Second', 'Third'];
 
-  return (
-    <Surface>
-      <NavDrawer />
-      <Stack>
-        <PageHero title='Stepper' />
-
-        <Tabs>
-          <Tabs.Tab label='Usage' />
-          <Tabs.Panel>
-            <Stack>
-              <Stepper
-                steps={steps}
-                active={active}
-              />
-              <Stack direction='row'>
-                <Button onClick={() => setActive((a) => Math.max(0, a - 1))}>Back</Button>
-                <Button onClick={() => setActive((a) => Math.min(steps.length - 1, a + 1))}>
-                  Next
-                </Button>
-              </Stack>
-              <Button
-                variant='outlined'
-                onClick={toggleMode}
-              >
-                Toggle light / dark
-              </Button>
-            </Stack>
-          </Tabs.Panel>
-
-          <Tabs.Tab label='Reference' />
-          <Tabs.Panel>
-            <ReferenceSection slug='components/widgets/stepper' />
-          </Tabs.Panel>
-        </Tabs>
-
-        <CuratedExamples examples={getExamples(StepperMeta)} />
-        <BestPractices items={getBestPractices(StepperMeta)} />
-
-        <Button
-          size='lg'
-          onClick={() => navigate(-1)}
-          sx={{ marginTop: theme.spacing(1) }}
-        >
-          ← Back
-        </Button>
+  const usage = (
+    <Stack>
+      <Stepper
+        steps={steps}
+        active={active}
+      />
+      <Stack direction='row'>
+        <Button onClick={() => setActive((a) => Math.max(0, a - 1))}>Back</Button>
+        <Button onClick={() => setActive((a) => Math.min(steps.length - 1, a + 1))}>Next</Button>
       </Stack>
-    </Surface>
+      <Button
+        variant='outlined'
+        onClick={toggleMode}
+      >
+        Toggle light / dark
+      </Button>
+    </Stack>
+  );
+
+  return (
+    <ComponentMetaPage
+      title='Stepper'
+      subtitle='Linear progress navigation with steps'
+      slug='components/widgets/stepper'
+      meta={StepperMeta}
+      usage={usage}
+    />
   );
 }

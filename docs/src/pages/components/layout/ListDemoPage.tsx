@@ -1,30 +1,14 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// src/pages/ListDemoPage.tsx | valet-docs
-// List usage, playground, and reference (like Box docs)
-// ─────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// docs/src/pages/components/layout/ListDemoPage.tsx  | valet-docs
+// Migrated to ComponentMetaPage – usage + playground
+// ─────────────────────────────────────────────────────────────
 import { useMemo, useState } from 'react';
-import {
-  Surface,
-  Stack,
-  Panel,
-  Typography,
-  List,
-  Tabs,
-  Switch,
-  Button,
-  useTheme,
-  CodeBlock,
-} from '@archway/valet';
-
-import ReferenceSection from '../../../components/ReferenceSection';
-import NavDrawer from '../../../components/NavDrawer';
-import BestPractices from '../../../components/BestPractices';
-import CuratedExamples from '../../../components/CuratedExamples';
-import { getBestPractices, getExamples } from '../../../utils/sidecar';
+import { Stack, Panel, Typography, List, Switch, Button, useTheme } from '@archway/valet';
+import ComponentMetaPage from '../../../components/ComponentMetaPage';
 import ListMeta from '../../../../../src/components/layout/List.meta.json';
 
-/*─────────────────────────────────────────────────────────────────────────────*/
-/* Demo data                                                                  */
+/*───────────────────────────────────────────────────────────*/
+/* Demo data                                                */
 interface Character {
   name: string;
   role: string;
@@ -38,8 +22,6 @@ const INITIAL: Character[] = [
   { name: 'Rinzler', role: 'Elite enforcer' },
 ];
 
-/*─────────────────────────────────────────────────────────────────────────────*/
-/* Demo page                                                                  */
 export default function ListDemoPage() {
   const { toggleMode } = useTheme();
 
@@ -52,217 +34,112 @@ export default function ListDemoPage() {
   const [selected, setSelected] = useState<Character | null>(null);
 
   const orderLabel = useMemo(() => items.map((i) => i.name).join(' → '), [items]);
+  const orderHint = `Order: ${orderLabel}`;
 
-  // Reference handled by ReferenceSection
-  /*
-  const data: never[] = [
-    {
-      prop: <code>data</code>,
-      type: <code>T[]</code>,
-      default: <code>—</code>,
-      description: 'Items to render.',
-    },
-    {
-      prop: <code>getTitle</code>,
-      type: <code>(item: T) =&gt; ReactNode</code>,
-      default: <code>—</code>,
-      description: 'Primary content for each row.',
-    },
-    {
-      prop: <code>getSubtitle</code>,
-      type: <code>(item: T) =&gt; ReactNode</code>,
-      default: <code>—</code>,
-      description: 'Optional secondary line for each row.',
-    },
-    {
-      prop: <code>striped</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Apply zebra striping.',
-    },
-    {
-      prop: <code>hoverable</code>,
-      type: <code>boolean</code>,
-      default: <code>!striped</code>,
-      description: 'Hover tint. Enabled by default for non‑striped lists.',
-    },
-    {
-      prop: <code>reorderable</code>,
-      type: <code>boolean</code>,
-      default: <code>true</code>,
-      description: 'Enable drag‑and‑drop reordering. When false, drag is disabled.',
-    },
-    {
-      prop: <code>selectable</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Enable single selection. Click or drag to select the active item.',
-    },
-    {
-      prop: <code>selected</code>,
-      type: <code>T | null</code>,
-      default: <code>—</code>,
-      description: 'Controlled selected item (by reference).',
-    },
-    {
-      prop: <code>defaultSelected</code>,
-      type: <code>T | null</code>,
-      default: <code>null</code>,
-      description: 'Uncontrolled initial selected item.',
-    },
-    {
-      prop: <code>onSelectionChange</code>,
-      type: <code>(item: T, index: number) =&gt; void</code>,
-      default: <code>—</code>,
-      description: 'Fires on selection change (click or drag‑select).',
-    },
-    {
-      prop: <code>onReorder</code>,
-      type: <code>(items: T[]) =&gt; void</code>,
-      default: <code>—</code>,
-      description: 'Fires after a drag operation ends with the new order.',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Apply style presets.',
-    },
-  ];
-  */
+  /* Usage --------------------------------------------------------------- */
+  const usageContent = (
+    <Panel fullWidth>
+      <List<Character>
+        data={items}
+        getTitle={(i) => i.name}
+        getSubtitle={(i) => i.role}
+        striped
+        hoverable
+      />
+    </Panel>
+  );
 
-  const usage = `import { List } from '@archway/valet';
+  /* Playground ---------------------------------------------------------- */
+  const playgroundContent = (
+    <Stack>
+      <Panel
+        variant='alt'
+        fullWidth
+      >
+        <Stack
+          direction='row'
+          sx={{ flexWrap: 'wrap', alignItems: 'center', gap: 12 }}
+        >
+          <Stack
+            direction='row'
+            sx={{ alignItems: 'center', gap: 6 }}
+          >
+            <Switch
+              name='striped'
+              checked={striped}
+              onChange={setStriped}
+            />
+            <Typography>Striped</Typography>
+          </Stack>
+          <Stack
+            direction='row'
+            sx={{ alignItems: 'center', gap: 6 }}
+          >
+            <Switch
+              name='hoverable'
+              checked={hoverable}
+              onChange={setHoverable}
+            />
+            <Typography>Hoverable</Typography>
+          </Stack>
+          <Stack
+            direction='row'
+            sx={{ alignItems: 'center', gap: 6 }}
+          >
+            <Switch
+              name='selectable'
+              checked={selectable}
+              onChange={setSelectable}
+            />
+            <Typography>Selectable</Typography>
+          </Stack>
+          <Stack
+            direction='row'
+            sx={{ alignItems: 'center', gap: 6 }}
+          >
+            <Switch
+              name='reorderable'
+              checked={reorderable}
+              onChange={setReorderable}
+            />
+            <Typography>Reorderable</Typography>
+          </Stack>
+          <Button
+            variant='outlined'
+            onClick={toggleMode}
+          >
+            Toggle light / dark
+          </Button>
+        </Stack>
+      </Panel>
 
-type Person = { name: string; role?: string };
-const data: Person[] = [
-  { name: 'Sam Flynn', role: 'User of the Grid' },
-  { name: 'Quorra', role: 'ISO' },
-];
-
-// Selectable, reorderable list
-<List<Person>
-  data={data}
-  selectable
-  reorderable
-  getTitle={(p) => p.name}
-  getSubtitle={(p) => p.role}
-  onSelectionChange={(item, idx) => console.log('selected', item, idx)}
-  onReorder={(items) => console.log('order', items)}
-/>`;
+      <Panel fullWidth>
+        <List<Character>
+          data={items}
+          getTitle={(i) => i.name}
+          getSubtitle={(i) => i.role}
+          striped={striped}
+          hoverable={hoverable}
+          selectable={selectable}
+          reorderable={reorderable}
+          selected={selected}
+          onSelectionChange={(it) => setSelected(it)}
+          onReorder={(it) => setItems(it)}
+        />
+      </Panel>
+      <Typography variant='subtitle'>{orderHint}</Typography>
+      <Typography variant='subtitle'>Selected: {selected?.name || '—'}</Typography>
+    </Stack>
+  );
 
   return (
-    <Surface>
-      <NavDrawer />
-      <Stack>
-        <Typography
-          variant='h2'
-          bold
-        >
-          List Showcase
-        </Typography>
-        <Typography variant='subtitle'>
-          Selectable list with optional drag‑and‑drop reordering
-        </Typography>
-
-        <Tabs>
-          <Tabs.Tab label='Usage' />
-          <Tabs.Panel>
-            <Stack>
-              <Typography variant='h3'>1. Example</Typography>
-              <List<Character>
-                data={INITIAL}
-                striped
-                hoverable
-                selectable
-                getTitle={(c) => c.name}
-                getSubtitle={(c) => c.role}
-              />
-
-              <Typography variant='h3'>2. Code</Typography>
-              <CodeBlock code={usage} />
-            </Stack>
-          </Tabs.Panel>
-
-          <Tabs.Tab label='Playground' />
-          <Tabs.Panel>
-            <Stack gap={1}>
-              <Stack
-                direction='row'
-                wrap={false}
-                gap={1}
-                sx={{ alignItems: 'center' }}
-              >
-                <Typography variant='subtitle'>striped</Typography>
-                <Switch
-                  checked={striped}
-                  onChange={setStriped}
-                  aria-label='Toggle striped'
-                />
-
-                <Typography variant='subtitle'>hoverable</Typography>
-                <Switch
-                  checked={hoverable}
-                  onChange={setHoverable}
-                  aria-label='Toggle hoverable'
-                />
-
-                <Typography variant='subtitle'>selectable</Typography>
-                <Switch
-                  checked={selectable}
-                  onChange={setSelectable}
-                  aria-label='Toggle selectable'
-                />
-
-                <Typography variant='subtitle'>reorderable</Typography>
-                <Switch
-                  checked={reorderable}
-                  onChange={setReorderable}
-                  aria-label='Toggle reorderable'
-                />
-              </Stack>
-
-              <Panel variant='alt'>
-                <List<Character>
-                  data={items}
-                  striped={striped}
-                  hoverable={hoverable}
-                  selectable={selectable}
-                  reorderable={reorderable}
-                  getTitle={(c) => c.name}
-                  getSubtitle={(c) => c.role}
-                  onSelectionChange={(item) => setSelected(item)}
-                  onReorder={setItems}
-                />
-              </Panel>
-
-              {reorderable && (
-                <Typography variant='body'>
-                  Current order:&nbsp;<code>{orderLabel}</code>
-                </Typography>
-              )}
-              {selectable && (
-                <Typography variant='body'>
-                  Selected:&nbsp;<code>{selected ? selected.name : 'None'}</code>
-                </Typography>
-              )}
-              <Button
-                variant='outlined'
-                onClick={toggleMode}
-              >
-                Toggle light / dark mode
-              </Button>
-            </Stack>
-          </Tabs.Panel>
-
-          <Tabs.Tab label='Reference' />
-          <Tabs.Panel>
-            <ReferenceSection slug='components/layout/list' />
-          </Tabs.Panel>
-        </Tabs>
-
-        <CuratedExamples examples={getExamples(ListMeta)} />
-        <BestPractices items={getBestPractices(ListMeta)} />
-      </Stack>
-    </Surface>
+    <ComponentMetaPage
+      title='List'
+      subtitle='Simple, flexible rows with selection and reorder.'
+      slug='components/layout/list'
+      meta={ListMeta}
+      usage={usageContent}
+      playground={playgroundContent}
+    />
   );
 }

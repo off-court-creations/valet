@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/PageHero.tsx  | valet-docs
+// docs/src/components/PageHero.tsx  | valet-docs
 // Reusable page hero header for docs pages
 // ─────────────────────────────────────────────────────────────
 import { Panel, Stack, Typography, Divider, useTheme } from '@archway/valet';

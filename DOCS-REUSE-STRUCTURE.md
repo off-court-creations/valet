@@ -8,7 +8,7 @@ This document captures the current reusable documentation architecture in the va
 - Live TSX examples render in the browser via `@babel/standalone`, with automatic scope detection for imported valet components.
 - Reference tables (Props, CSS Vars, Events) are driven from `mcp-data/` and hidden when no data exists.
 - Sidecar JSON files (co‑located with components) provide curated best practices and runnable examples that feed docs and MCP.
-- Box and Panel pages are migrated to the new template; many other pages already consume shared building blocks.
+- Many pages are already migrated to the new template (e.g., Box, Panel, Grid, Surface, Tabs, Stack, Icon, Image, Divider, Avatar, Typography, Video). For the up‑to‑date list, see `docs/COMPONENTS_DOCS_TEMPLATE_CHECKLIST.md`.
 
 ## Key Building Blocks (files and roles)
 
@@ -42,8 +42,24 @@ This document captures the current reusable documentation architecture in the va
   - `docs/src/components/PageHero.tsx`: consistent page hero with gradient background, radius, optional subtitle + divider.
 
 - Pages migrated to the template (examples)
-  - `docs/src/pages/components/layout/BoxDemo.tsx`: uses `ComponentMetaPage`, `slug='components/layout/box'`, and `Box.meta.json`.
-  - `docs/src/pages/components/layout/Panel.tsx`: uses `ComponentMetaPage`, `slug='components/layout/panel'`, and `Panel.meta.json`.
+  - `docs/src/pages/components/layout/BoxDemo.tsx`
+  - `docs/src/pages/components/layout/Panel.tsx`
+  - `docs/src/pages/components/layout/GridDemo.tsx`
+  - `docs/src/pages/components/layout/Surface.tsx`
+  - `docs/src/pages/components/layout/TabsDemo.tsx`
+  - `docs/src/pages/components/layout/StackDemo.tsx`
+  - `docs/src/pages/components/primitives/IconDemoPage.tsx`
+  - `docs/src/pages/components/primitives/ImageDemo.tsx`
+  - `docs/src/pages/components/primitives/DividerDemo.tsx`
+  - `docs/src/pages/components/primitives/AvatarDemo.tsx`
+  - `docs/src/pages/components/primitives/TypographyDemoPage.tsx`
+  - `docs/src/pages/components/primitives/VideoDemo.tsx`
+  - `docs/src/pages/components/primitives/SkeletonDemo.tsx`
+  - `docs/src/pages/components/field/IteratorDemo.tsx`
+  - `docs/src/pages/components/field/IconButtonDemoPage.tsx`
+  - `docs/src/pages/components/field/DateSelectorDemo.tsx`
+  - `docs/src/pages/components/widgets/ChipDemo.tsx`
+  - Full status: `docs/COMPONENTS_DOCS_TEMPLATE_CHECKLIST.md`
 
 - Broad adoption of shared reference/curation (not full template yet)
   - Many pages already use `ReferenceSection` with correct MCP slugs (e.g., `components/widgets/table`, `components/primitives/icon`, `components/fields/checkbox`, etc.).
@@ -67,7 +83,7 @@ This document captures the current reusable documentation architecture in the va
 ## Gaps / Inconsistencies
 
 - Migration coverage
-  - Only Box and Panel use the new `ComponentMetaPage` template end‑to‑end. Other pages mix reusable pieces but keep bespoke layouts.
+  - Many top‑traffic pages use the new `ComponentMetaPage` template end‑to‑end. Remaining legacy pages are tracked in `docs/COMPONENTS_DOCS_TEMPLATE_CHECKLIST.md`.
 - Sidecar coverage
   - Not all components have sidecar JSONs with curated `docs.bestPractices` and runnable `examples`. Where sidecars are thin or missing, Examples/Best Practices tabs render nothing.
 - Header path comments
@@ -81,7 +97,7 @@ This document captures the current reusable documentation architecture in the va
 ## Recommended Next Steps
 
 1. Complete migration to `ComponentMetaPage`
-   - Convert remaining component pages to the 5‑tab template to eliminate bespoke tab layouts and reduce duplication.
+   - Convert remaining component pages to the 5‑tab template to eliminate bespoke tab layouts and reduce duplication. Track progress in `docs/COMPONENTS_DOCS_TEMPLATE_CHECKLIST.md`.
 
 2. Ensure sidecar parity across components
    - Add or enrich `<Name>.meta.json` files for all components with:
@@ -125,4 +141,3 @@ This document captures the current reusable documentation architecture in the va
 - Better AI/agent support through consistent sidecar + MCP data that feed both docs and tools.
 
 _Last updated: generated from repo state on current branch._
-

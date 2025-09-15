@@ -1,17 +1,14 @@
 // ─────────────────────────────────────────────────────────────
-// src/pages/MetroSelectDemo.tsx | valet-docs
-// Showcase of MetroSelect component
+// docs/src/pages/components/field/MetroSelectDemo.tsx  | valet-docs
+// Migrated to ComponentMetaPage – segmented control with icons, single/multiple
 // ─────────────────────────────────────────────────────────────
 import { useState } from 'react';
-import { Surface, Stack, Typography, Button, MetroSelect, Tabs, useTheme } from '@archway/valet';
-import ReferenceSection from '../../../components/ReferenceSection';
-import { useNavigate } from 'react-router-dom';
-import NavDrawer from '../../../components/NavDrawer';
-import PageHero from '../../../components/PageHero';
+import { Stack, Typography, Button, MetroSelect, Select, useTheme } from '@archway/valet';
+import ComponentMetaPage from '../../../components/ComponentMetaPage';
+import MetroSelectMeta from '../../../../../src/components/fields/MetroSelect.meta.json';
 
 export default function MetroSelectDemoPage() {
   const { toggleMode } = useTheme();
-  const navigate = useNavigate();
 
   // Sample option lists -------------------------------------------------
   const basic = [
@@ -46,86 +43,106 @@ export default function MetroSelectDemoPage() {
     { icon: 'mdi:power', value: 'power', label: 'Power' },
   ];
 
+  const usage = (
+    <Stack>
+      <Typography variant='h3'>1. Uncontrolled</Typography>
+      <MetroSelect
+        defaultValue='home'
+        gap={4}
+      >
+        {basic.map((o) => (
+          <MetroSelect.Option
+            key={o.value}
+            {...o}
+          />
+        ))}
+      </MetroSelect>
+
+      <Typography variant='h3'>2. Controlled value</Typography>
+      <MetroSelect
+        value={transport}
+        onChange={(v) => setTransport(v as string)}
+        gap={4}
+      >
+        {controlled.map((o) => (
+          <MetroSelect.Option
+            key={o.value}
+            {...o}
+          />
+        ))}
+      </MetroSelect>
+      <Typography>
+        Current: <b>{transport}</b>
+      </Typography>
+
+      <Typography variant='h3'>3. Many options</Typography>
+      <MetroSelect gap={4}>
+        {many.map((o) => (
+          <MetroSelect.Option
+            key={o.value}
+            {...o}
+          />
+        ))}
+      </MetroSelect>
+
+      <Typography variant='h3'>4. Multi-select</Typography>
+      <Typography variant='subtitle'>Start with two non-adjacent items selected</Typography>
+      <MetroSelect
+        multiple
+        defaultValue={['home', 'travel']}
+        gap={4}
+      >
+        {basic.map((o) => (
+          <MetroSelect.Option
+            key={o.value}
+            {...o}
+          />
+        ))}
+      </MetroSelect>
+
+      <Button
+        variant='outlined'
+        onClick={toggleMode}
+      >
+        Toggle light / dark
+      </Button>
+    </Stack>
+  );
+
+  const [gap, setGap] = useState<number | string>(4);
+  const playground = (
+    <Stack gap={1}>
+      <Typography variant='subtitle'>gap</Typography>
+      <Select
+        placeholder='gap'
+        value={gap}
+        onChange={(v) => setGap(v as number | string)}
+        sx={{ width: 200 }}
+      >
+        <Select.Option value={2}>2</Select.Option>
+        <Select.Option value={4}>4</Select.Option>
+        <Select.Option value={8}>8</Select.Option>
+        <Select.Option value={'1rem'}>1rem</Select.Option>
+      </Select>
+      <MetroSelect gap={gap}>
+        {basic.map((o) => (
+          <MetroSelect.Option
+            key={o.value}
+            {...o}
+          />
+        ))}
+      </MetroSelect>
+    </Stack>
+  );
+
   return (
-    <Surface>
-      <NavDrawer />
-      <Stack>
-        <PageHero title='Metro Select' />
-
-        <Tabs>
-          <Tabs.Tab label='Usage' />
-          <Tabs.Panel>
-            <Typography variant='h3'>1. Uncontrolled</Typography>
-            <MetroSelect
-              defaultValue='home'
-              gap={4}
-            >
-              {basic.map((o) => (
-                <MetroSelect.Option
-                  key={o.value}
-                  {...o}
-                />
-              ))}
-            </MetroSelect>
-
-            <Typography variant='h3'>2. Controlled value</Typography>
-            <MetroSelect
-              value={transport}
-              onChange={(v) => setTransport(v as string)}
-              gap={4}
-            >
-              {controlled.map((o) => (
-                <MetroSelect.Option
-                  key={o.value}
-                  {...o}
-                />
-              ))}
-            </MetroSelect>
-            <Typography>
-              Current: <b>{transport}</b>
-            </Typography>
-
-            <Typography variant='h3'>3. Many options</Typography>
-            <MetroSelect gap={4}>
-              {many.map((o) => (
-                <MetroSelect.Option
-                  key={o.value}
-                  {...o}
-                />
-              ))}
-            </MetroSelect>
-
-            <Typography variant='h3'>4. Multi-select</Typography>
-            <Typography variant='subtitle'>Start with two non-adjacent items selected</Typography>
-            <MetroSelect
-              multiple
-              defaultValue={['home', 'travel']}
-              gap={4}
-            >
-              {basic.map((o) => (
-                <MetroSelect.Option
-                  key={o.value}
-                  {...o}
-                />
-              ))}
-            </MetroSelect>
-            <Stack direction='row'>
-              <Button
-                variant='outlined'
-                onClick={toggleMode}
-              >
-                Toggle light / dark
-              </Button>
-              <Button onClick={() => navigate(-1)}>← Back</Button>
-            </Stack>
-          </Tabs.Panel>
-
-          <Tabs.Tab label='Reference' />
-          <Tabs.Panel>
-            <ReferenceSection slug='components/fields/metroselect' />
-          </Tabs.Panel>
-        </Tabs>
-      </Stack>
-    </Surface>
+    <ComponentMetaPage
+      title='Metro Select'
+      subtitle='Segmented options with icons; single or multiple'
+      slug='components/fields/metroselect'
+      meta={MetroSelectMeta}
+      usage={usage}
+      playground={playground}
+    />
   );
 }

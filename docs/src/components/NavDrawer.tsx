@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/NavDrawer.tsx  | valet-docs
+// docs/src/components/NavDrawer.tsx  | valet-docs
 // Reusable navigation drawer for docs
 // ─────────────────────────────────────────────────────────────
 import { useState } from 'react';
