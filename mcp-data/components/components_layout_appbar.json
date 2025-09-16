@@ -63,7 +63,24 @@
     "Balance icon vs text: label primary actions, reserve icon‑only for well‑known actions.",
     "Coordinate with Drawer and Surface offsets so content doesn’t sit underneath."
   ],
-  "examples": [],
+  "examples": [
+    {
+      "id": "appbar-basic",
+      "title": "Basic AppBar",
+      "code": "<AppBar left={<><Icon icon='mdi:car' /><Typography>Title</Typography></>} right={<Button variant='outlined'>Action</Button>} />",
+      "lang": "tsx",
+      "runnable": false,
+      "minimalProps": {}
+    },
+    {
+      "id": "appbar-colored",
+      "title": "Colored AppBar",
+      "code": "() => {\n  const { theme } = Valet.useTheme();\n  return <AppBar color={theme.colors.primary} textColor={theme.colors.primaryText} left={<Typography>Primary</Typography>} />;\n}",
+      "lang": "tsx",
+      "runnable": false,
+      "minimalProps": {}
+    }
+  ],
   "sourceFiles": [
     "src/components/layout/AppBar.tsx"
   ],

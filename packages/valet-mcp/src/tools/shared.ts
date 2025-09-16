@@ -56,30 +56,36 @@ export type ValetComponentDoc = {
   schemaVersion?: string;
 };
 
+export function normalizeStatusFilter(input?: string | string[]): Set<string> {
+  if (!input) return new Set<string>();
+  const arr = Array.isArray(input) ? input : String(input).split(/[|,\s]+/);
+  const normalized = arr.map((s) => s.trim().toLowerCase()).filter(Boolean);
+  return new Set(normalized);
+}
+
 export type GlossaryEntry = { term: string; definition: string; aliases?: string[]; seeAlso?: string[]; category?: string };
 
-type DataSource = 'env-root+dir' | 'env-dir' | 'nearest-cwd' | 'bundled' | 'package' | 'fallback-cwd';
+type DataSource = 'env-dir' | 'bundled';
 
-function getDataInfo(): { dir: string; source: DataSource } {
-  const explicitRoot = process.env.VALET_ROOT && path.isAbsolute(process.env.VALET_ROOT)
-    ? process.env.VALET_ROOT
-    : undefined;
-  const explicit = process.env.VALET_MCP_DATA_DIR
-    ? (explicitRoot ? path.resolve(explicitRoot, process.env.VALET_MCP_DATA_DIR) : path.resolve(process.cwd(), process.env.VALET_MCP_DATA_DIR))
-    : undefined;
-  if (explicit && fs.existsSync(explicit)) return { dir: explicit, source: explicitRoot ? 'env-root+dir' : 'env-dir' };
+function resolveExplicitDir(): { dir: string; source: DataSource } | null {
+  const provided = process.env.VALET_MCP_DATA_DIR;
+  if (!provided) return null;
 
-  // Walk up to find a folder named mcp-data
-  let dir = process.cwd();
-  for (let i = 0; i < 6; i++) {
-    const candidate = path.join(dir, 'mcp-data');
-    if (fs.existsSync(candidate)) return { dir: candidate, source: 'nearest-cwd' };
-    const parent = path.dirname(dir);
-    if (parent === dir) break;
-    dir = parent;
+  const resolved = path.resolve(provided);
+  if (!path.isAbsolute(provided)) {
+    throw new Error('VALET_MCP_DATA_DIR must be an absolute path to the mcp-data directory.');
   }
+  if (!fs.existsSync(resolved)) {
+    throw new Error(`VALET_MCP_DATA_DIR points to a non-existent directory: ${resolved}`);
+  }
+  const stats = fs.statSync(resolved);
+  if (!stats.isDirectory()) {
+    throw new Error(`VALET_MCP_DATA_DIR must reference a directory. Received: ${resolved}`);
+  }
+  return { dir: resolved, source: 'env-dir' };
+}
 
-  // Check package-local data (bundled with this package)
+function resolveBundledDir(): { dir: string; source: DataSource } | null {
   try {
     const fileDir = path.dirname(fileURLToPath(import.meta.url)); // ..../dist
     const pkgRoot = path.resolve(fileDir, '..');
@@ -93,20 +99,30 @@ function getDataInfo(): { dir: string; source: DataSource } {
   } catch {
     // ignore
   }
+  return null;
+}
 
-  // Try resolving an optional data package
+function resolvePackageData(): { dir: string; source: DataSource } | null {
   try {
     const req = createRequire(import.meta.url);
     const dataEntry = req.resolve('@archway/valet-mcp-data/mcp-data/index.json');
     const pkgDataDir = path.dirname(dataEntry);
     const maybeDir = path.resolve(pkgDataDir, '..');
-    if (fs.existsSync(maybeDir)) return { dir: maybeDir, source: 'package' };
+    if (fs.existsSync(maybeDir)) return { dir: maybeDir, source: 'bundled' };
   } catch {
     // ignore if not installed
   }
+  return null;
+}
 
-  // Fallback to cwd/mcp-data
-  return { dir: path.resolve(process.cwd(), 'mcp-data'), source: 'fallback-cwd' };
+function getDataInfo(): { dir: string; source: DataSource } {
+  const explicit = resolveExplicitDir();
+  if (explicit) return explicit;
+
+  const bundled = resolveBundledDir() ?? resolvePackageData();
+  if (bundled) return bundled;
+
+  throw new Error('Unable to locate bundled valet MCP data.');
 }
 
 export const DATA_INFO = getDataInfo();
@@ -165,7 +181,7 @@ export function resolveSlug(input: { name?: string; slug?: string }): string | n
     const byName = index.find((i) => i.name.toLowerCase() === q);
     if (byName) return byName.slug;
     // Try synonyms
-    const synonyms = loadSynonyms();
+    const { map: synonyms } = loadSynonyms();
     const targets = synonyms[q];
     if (Array.isArray(targets) && targets.length) {
       // Prefer an exact name match from targets
@@ -184,54 +200,96 @@ export function resolveSlug(input: { name?: string; slug?: string }): string | n
   return null;
 }
 
-type SynonymsMap = Record<string, string[]>;
+export type SynonymsMap = Record<string, string[]>;
+export type SynonymSource = 'file' | 'fallback' | 'merged';
+export type SynonymInfo = { map: SynonymsMap; source: SynonymSource };
 
-function loadSynonyms(): SynonymsMap {
+const FALLBACK_SYNONYMS: SynonymsMap = {
+  textinput: ['TextField'],
+  input: ['TextField'],
+  textbox: ['TextField'],
+  modal: ['Modal'],
+  dialog: ['Modal'],
+  navbar: ['AppBar'],
+  appbar: ['AppBar'],
+  footer: ['AppBar'],
+  dropdown: ['Select'],
+  combobox: ['Select'],
+  select: ['Select'],
+  daterange: ['DateSelector'],
+  datepicker: ['DateSelector'],
+  toast: ['Snackbar'],
+  notification: ['Snackbar'],
+  tooltip: ['Tooltip'],
+  chip: ['MetroSelect'],
+  segmented: ['MetroSelect'],
+  tabs: ['Tabs'],
+  grid: ['Grid'],
+  table: ['Table'],
+  image: ['Image'],
+  icon: ['Icon'],
+  button: ['Button'],
+  box: ['Box'],
+  stack: ['Stack'],
+  surface: ['Surface'],
+  accordion: ['Accordion'],
+  list: ['List'],
+  typography: ['Typography'],
+  hero: ['Surface'],
+  card: ['Panel'],
+  form: ['FormControl'],
+};
+
+let synonymCache: SynonymInfo | null = null;
+
+function normalizeSynonymEntries(source: SynonymsMap | undefined | null): SynonymsMap {
+  if (!source) return {};
+  const normalized: SynonymsMap = {};
+  for (const [alias, rawTargets] of Object.entries(source)) {
+    const key = alias.trim().toLowerCase();
+    if (!key) continue;
+    const targets = Array.from(new Set((rawTargets ?? []).map((t) => t.trim()).filter((t) => t.length > 0)));
+    if (targets.length) normalized[key] = targets;
+  }
+  return normalized;
+}
+
+export function clearSynonymCache(): void {
+  synonymCache = null;
+}
+
+export function loadSynonyms(): SynonymInfo {
+  if (synonymCache) return synonymCache;
+  const fallback = normalizeSynonymEntries(FALLBACK_SYNONYMS);
+  let map: SynonymsMap = { ...fallback };
+  let source: SynonymSource = 'fallback';
+  let fileUsed = false;
+
   try {
     const p = path.join(DATA_DIR, 'component_synonyms.json');
-    if (fs.existsSync(p)) return readJSON<SynonymsMap>(p);
-  } catch {}
-  return {
-    textinput: ['TextField'],
-    input: ['TextField'],
-    textbox: ['TextField'],
-    modal: ['Modal'],
-    dialog: ['Modal'],
-    navbar: ['AppBar'],
-    appbar: ['AppBar'],
-    footer: ['AppBar'],
-    dropdown: ['Select'],
-    combobox: ['Select'],
-    select: ['Select'],
-    daterange: ['DateSelector'],
-    datepicker: ['DateSelector'],
-    toast: ['Snackbar'],
-    notification: ['Snackbar'],
-    tooltip: ['Tooltip'],
-    chip: ['MetroSelect'],
-    segmented: ['MetroSelect'],
-    tabs: ['Tabs'],
-    grid: ['Grid'],
-    table: ['Table'],
-    image: ['Image'],
-    icon: ['Icon'],
-    button: ['Button'],
-    box: ['Box'],
-    stack: ['Stack'],
-    surface: ['Surface'],
-    accordion: ['Accordion'],
-    list: ['List'],
-    typography: ['Typography'],
-    hero: ['Surface'],
-    card: ['Panel'],
-    form: ['FormControl'],
-  };
+    if (fs.existsSync(p)) {
+      const fileData = normalizeSynonymEntries(readJSON<SynonymsMap>(p));
+      if (Object.keys(fileData).length > 0) {
+        fileUsed = true;
+        map = { ...map, ...fileData };
+      }
+    }
+  } catch {
+    // ignore parsing/IO issues and fall back to defaults
+  }
+
+  if (fileUsed && Object.keys(fallback).length > 0) source = 'merged';
+  else if (fileUsed) source = 'file';
+  else source = 'fallback';
+
+  synonymCache = { map, source };
+  return synonymCache;
 }
 
 export function simpleSearch(query: string, items: ValetIndexItem[], opts?: { category?: string }): Array<{ item: ValetIndexItem; score: number }> {
   const q = query.trim().toLowerCase();
   if (!q) return [];
-  const synonyms = loadSynonyms();
+  const { map: synonyms } = loadSynonyms();
   const byCategory = opts?.category ? items.filter((i) => i.category === opts.category) : items;
   const tokens = Array.from(new Set(q.split(/[^a-z0-9]+/g).filter((t) => t.length >= 2)));
 

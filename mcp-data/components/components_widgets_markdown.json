@@ -37,8 +37,35 @@
   "events": [],
   "actions": [],
   "slots": [],
-  "bestPractices": [],
-  "examples": [],
+  "bestPractices": [
+    "Keep input trusted or sanitized. Do not feed untrusted Markdown unless you sanitize it first.",
+    "Prefer concise content. Split very long documents into sections with clear headings.",
+    "Use fenced code blocks with a language hint for syntax highlighting.",
+    "Avoid relying on raw HTML inside Markdown; prefer pure Markdown for predictability.",
+    "Choose `codeBackground` to ensure code blocks maintain sufficient contrast across themes."
+  ],
+  "examples": [
+    {
+      "id": "markdown-basic",
+      "title": "Headings, emphasis, and code",
+      "code": "<Markdown data={`# Title\\n\\nThis is **bold** and this is *italic*.\\n\\n\\`inline code\\` and a block:\\n\\n\\u0060\\u0060\\u0060ts\\nconst n: number = 42\\nconsole.log(n)\\n\\u0060\\u0060\\u0060`} />",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {
+        "data": ""
+      }
+    },
+    {
+      "id": "markdown-table",
+      "title": "Table example",
+      "code": "<Markdown data={`| Fruit | Colour |\\n| ----- | ------ |\\n| Apple | Red    |\\n| Pear  | Green  |`} />",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {
+        "data": ""
+      }
+    }
+  ],
   "sourceFiles": [
     "src/components/widgets/Markdown.tsx"
   ],

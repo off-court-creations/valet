@@ -13,6 +13,7 @@ export type ComponentSidecar = {
     title?: string;
     code: string;
     lang?: string;
+    runnable?: boolean;
   }>;
 };
 
@@ -27,6 +28,7 @@ export type NormalizedExample = {
   title?: string;
   code: string;
   lang?: string;
+  runnable?: boolean;
 };
 
 export function getExamples(meta: ComponentSidecar | undefined | null): NormalizedExample[] {
@@ -43,6 +45,7 @@ export function getExamples(meta: ComponentSidecar | undefined | null): Normaliz
         lang: e.lang || 'tsx',
       };
       if (e.title && e.title.trim()) out.title = e.title;
+      if (typeof e.runnable === 'boolean') out.runnable = e.runnable;
       return out;
     });
 }

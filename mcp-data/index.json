@@ -67,7 +67,7 @@
     "category": "fields",
     "summary": "Slider component",
     "slug": "components/fields/slider",
-    "status": "experimental"
+    "status": "unstable"
   },
   {
     "name": "Switch",

@@ -4,7 +4,7 @@
 // ─────────────────────────────────────────────────────────────
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import { getComponentBySlug, getIndex, simpleSearch } from './shared.js';
+import { getComponentBySlug, getIndex, normalizeStatusFilter, simpleSearch } from './shared.js';
 
 const ParamsShape = {
   query: z.string().min(1).describe('Search string across names and summaries'),
@@ -31,11 +31,7 @@ export function registerSearchComponents(server: McpServer): void {
     const index = getIndex();
     const scoredAll = simpleSearch(query, index, { category });
     // Normalize status filter
-    const statusSet = (() => {
-      if (!status) return new Set<string>();
-      const arr = Array.isArray(status) ? status : String(status).split(/[|,\s]+/);
-      return new Set(arr.map((s) => s.trim().toLowerCase()).filter(Boolean));
-    })();
+    const statusSet = normalizeStatusFilter(status);
     const wantStatus = statusSet.size > 0;
     const filtered = wantStatus
       ? scoredAll.filter((s) => {

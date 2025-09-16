@@ -22,6 +22,12 @@ type Color =
 export default function ChipDemoPage() {
   const usageContent = (
     <Stack>
+      <Panel fullWidth>
+        <Typography>
+          Chips are static descriptors — never use them as buttons, toggles, or radio inputs. Pair
+          them with an adjacent action if you need interaction.
+        </Typography>
+      </Panel>
       <Typography variant='h3'>Basic</Typography>
       <Stack
         direction='row'
@@ -52,11 +58,6 @@ export default function ChipDemoPage() {
           icon='mdi:filter-variant'
           onDelete={() => {}}
         />
-        <Chip
-          label='Clickable'
-          color='secondary'
-          onClick={() => {}}
-        />
       </Stack>
 
       <Typography variant='h3'>Sizes</Typography>
@@ -83,7 +84,6 @@ export default function ChipDemoPage() {
   const [size, setSize] = useState<Size>('m');
   const [variant, setVariant] = useState<Variant>('filled');
   const [color, setColor] = useState<Color>('default');
-  const [clickable, setClickable] = useState(false);
   const [deletable, setDeletable] = useState(false);
 
   const playgroundContent = (
@@ -142,12 +142,6 @@ export default function ChipDemoPage() {
             ))}
           </Select>
 
-          <Typography>clickable</Typography>
-          <Switch
-            checked={clickable}
-            onChange={setClickable}
-            aria-label='clickable'
-          />
           <Typography>deletable</Typography>
           <Switch
             checked={deletable}
@@ -166,7 +160,6 @@ export default function ChipDemoPage() {
           size={size}
           variant={variant}
           color={color}
-          {...(clickable ? { onClick: () => {} } : {})}
           {...(deletable ? { onDelete: () => {} } : {})}
         />
       </Stack>
@@ -176,7 +169,7 @@ export default function ChipDemoPage() {
   return (
     <ComponentMetaPage
       title='Chip'
-      subtitle='Compact label with optional icon and actions.'
+      subtitle='Static label token with optional icon and removal affordance.'
       slug='components/widgets/chip'
       meta={ChipMeta}
       usage={usageContent}
