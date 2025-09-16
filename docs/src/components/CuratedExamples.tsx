@@ -10,6 +10,7 @@ export type CuratedExample = {
   title?: string;
   code: string;
   lang?: string;
+  runnable?: boolean;
 };
 
 export type CuratedExamplesProps = {
@@ -29,6 +30,7 @@ export default function CuratedExamples({ title = 'Examples', examples }: Curate
             title={ex.title}
             code={ex.code}
             language={ex.lang || 'tsx'}
+            {...(typeof ex.runnable === 'boolean' ? { runnable: ex.runnable } : {})}
           />
         ))}
       </Stack>

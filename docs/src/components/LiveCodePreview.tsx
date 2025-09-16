@@ -11,6 +11,7 @@ export type LiveCodePreviewProps = {
   title?: string | undefined;
   code: string;
   language?: string;
+  runnable?: boolean;
 };
 
 function detectComponentNames(src: string): string[] {
@@ -33,21 +34,35 @@ function detectComponentNames(src: string): string[] {
   return Array.from(names);
 }
 
-export default function LiveCodePreview({ title, code, language = 'tsx' }: LiveCodePreviewProps) {
+export default function LiveCodePreview({
+  title,
+  code,
+  language = 'tsx',
+  runnable = true,
+}: LiveCodePreviewProps) {
   const { theme } = useTheme();
   const [error, setError] = React.useState<string | null>(null);
-  const detected = React.useMemo(() => detectComponentNames(code), [code]);
+  React.useEffect(() => {
+    if (!runnable && error) setError(null);
+  }, [error, runnable]);
+
+  const detected = React.useMemo(
+    () => (runnable ? detectComponentNames(code) : []),
+    [code, runnable],
+  );
 
   const scope = React.useMemo(() => {
+    if (!runnable) return {};
     const out: Record<string, unknown> = {};
     const v = Valet as unknown as Record<string, unknown>;
     for (const name of detected) {
       if (Object.prototype.hasOwnProperty.call(v, name)) out[name] = v[name];
     }
     return out;
-  }, [detected]);
+  }, [detected, runnable]);
 
   const rendered = React.useMemo(() => {
+    if (!runnable) return null;
     setError(null);
     try {
       const decl = detected.length ? `const { ${detected.join(', ')} } = scope;` : '';
@@ -69,35 +84,44 @@ export default function LiveCodePreview({ title, code, language = 'tsx' }: LiveC
       setError((e as Error)?.message || 'Failed to render example');
       return null;
     }
-  }, [code, detected, scope, theme]);
+  }, [code, detected, runnable, scope, theme]);
 
   return (
     <Stack gap={0.5}>
       {title && <Typography variant='subtitle'>{title}</Typography>}
-      <Stack
-        direction='row'
-        wrap
-        gap={1}
-      >
-        <div style={{ flex: '1 1 320px', minWidth: 0 }}>
-          {error ? (
-            <Typography
-              variant='subtitle'
-              sx={{ color: theme.colors['errorText'] }}
-            >
-              Preview error: {error}
-            </Typography>
-          ) : (
-            rendered
-          )}
-        </div>
-        <Box sx={{ flex: '1 1 320px', minWidth: 0 }}>
+      {runnable ? (
+        <Stack
+          direction='row'
+          wrap
+          gap={1}
+        >
+          <div style={{ flex: '1 1 320px', minWidth: 0 }}>
+            {error ? (
+              <Typography
+                variant='subtitle'
+                sx={{ color: theme.colors['errorText'] }}
+              >
+                Preview error: {error}
+              </Typography>
+            ) : (
+              rendered
+            )}
+          </div>
+          <Box sx={{ flex: '1 1 320px', minWidth: 0 }}>
+            <CodeBlock
+              code={code}
+              language={language}
+            />
+          </Box>
+        </Stack>
+      ) : (
+        <Box sx={{ minWidth: 0 }}>
           <CodeBlock
             code={code}
             language={language}
           />
         </Box>
-      </Stack>
+      )}
     </Stack>
   );
 }

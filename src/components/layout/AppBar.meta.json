@@ -15,12 +15,14 @@
     {
       "id": "appbar-basic",
       "title": "Basic AppBar",
-      "code": "<AppBar left={<><Icon icon='mdi:car' /><Typography>Title</Typography></>} right={<Button variant='outlined'>Action</Button>} />"
+      "code": "<AppBar left={<><Icon icon='mdi:car' /><Typography>Title</Typography></>} right={<Button variant='outlined'>Action</Button>} />",
+      "runnable": false
     },
     {
       "id": "appbar-colored",
       "title": "Colored AppBar",
-      "code": "() => {\n  const { theme } = Valet.useTheme();\n  return <AppBar color={theme.colors.primary} textColor={theme.colors.primaryText} left={<Typography>Primary</Typography>} />;\n}"
+      "code": "() => {\n  const { theme } = Valet.useTheme();\n  return <AppBar color={theme.colors.primary} textColor={theme.colors.primaryText} left={<Typography>Primary</Typography>} />;\n}",
+      "runnable": false
     }
   ]
 }
