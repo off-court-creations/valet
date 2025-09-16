@@ -10,8 +10,6 @@ made with love by **Archway**
 
 </div>
 
----
-
 ## Welcome
 
 `valet` is a Typescript CSS-in-JS engine, UI kit, and agentic layer that treats all humans and their AI proxies as first class users. Beautiful by default. Limitless when customized.
