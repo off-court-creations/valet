@@ -1,41 +1,41 @@
+<div align="center">
+
 # valet
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![GitHub](https://img.shields.io/badge/GitHub-valet-181717?logo=github&logoColor=white)](https://github.com/off-court-creations/valet) [![npm](https://img.shields.io/badge/npm-%40archway%2Fvalet-CB3837?logo=npm&logoColor=white)](https://www.npmjs.com/package/@archway/valet) [![npm version](https://img.shields.io/npm/v/@archway/valet.svg?color=CB3837&logo=npm&logoColor=white)](https://www.npmjs.com/package/@archway/valet) [![npm version (valet-mcp)](https://img.shields.io/npm/v/@archway/valet-mcp.svg?color=CB3837&logo=npm&logoColor=white&label=valet-mcp)](https://www.npmjs.com/package/@archway/valet-mcp) [![🚀](https://img.shields.io/badge/🚀-Live%20Demo!-111)](https://main.db2j7e5kim3gg.amplifyapp.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![GitHub](https://img.shields.io/badge/GitHub-valet-181717?logo=github&logoColor=white)](https://github.com/off-court-creations/valet) [![Star](https://img.shields.io/github/stars/off-court-creations/valet?style=social)](https://github.com/off-court-creations/valet/stargazers) [![Docs](https://img.shields.io/badge/Docs-Live-0A84FF?logo=readthedocs&logoColor=white)](https://main.db2j7e5kim3gg.amplifyapp.com/)
 
+[![npm version](https://img.shields.io/npm/v/@archway/valet.svg?color=CB3837&logo=npm&logoColor=white)](https://www.npmjs.com/package/@archway/valet) [![npm version (valet-mcp)](https://img.shields.io/npm/v/@archway/valet-mcp.svg?color=CB3837&logo=npm&logoColor=white&label=valet-mcp)](https://www.npmjs.com/package/@archway/valet-mcp) [![npm version (create-valet-app)](https://img.shields.io/npm/v/@archway/create-valet-app.svg?color=CB3837&logo=npm&logoColor=white&label=create-valet-app)](https://www.npmjs.com/package/@archway/create-valet-app)
 
-`valet` is a Typescript CSS-in-JS engine, a UI kit, and an accessibility / agentic layer that treats all humans and their AI proxies as first class users. It currently operates entirely within the React ecosystem, working with React's hooks and component model.
+made with love by **Archway**
 
----
+</div>
 
-This library is currently pre-1.0 and the API may change without notice.
+## Welcome
 
-When version `1.0.x` arrives you can depend on a stable interface.
+`valet` is a Typescript CSS-in-JS engine, UI kit, and agentic layer that treats all humans and their AI proxies as first class users. Beautiful by default. Limitless when customized.
+
+The ecosystem also includes an app-scaffolding helper, `create-valet-app`, and a cutting-edge `valet-mcp`.
+
+> [!CAUTION]
+> Pre‑1.0: APIs may change without notice.
 
 ---
 
 ## Docs
 
-You can try every component in the [valet Docs](https://github.com/off-court-creations/valet/tree/main/docs). ([Live Demo!](https://main.db2j7e5kim3gg.amplifyapp.com/)) Try with:
+You can try every component in the ([Live Demo!](https://main.db2j7e5kim3gg.amplifyapp.com/)) 
+
+Try locally with:
 
 ```shell
 cd docs
 npm install
-npm run dev
-```
-
-or for a live local DX:
-
-```shell
-npm link
-cd docs
-npm install
-npm link @archway/valet
 npm run dev
 ```
 
 ### MCP
 
-We offer an expirimental [MCP](https://www.npmjs.com/package/@archway/valet-mcp). Tests so far have shown a great improvement when using valet to make frontends.
+We offer an [MCP](https://www.npmjs.com/package/@archway/valet-mcp). Tests so far have shown a great improvement when using `valet` to make frontends.
 
 Install with:
 
@@ -53,24 +53,23 @@ command = "valet-mcp"
 args = []
 ```
 
-> This works in the home level config and the project level config
-
 #### Example `AGENTS.md` inclusion for the MCP
 
 ```md
 ## valet-mcp
 
-You have access to the valet-mcp MCP! 
-Use this when you are making front ends or dealing with UI.
-You can use it to search, find reference, and get examples.
-Whenever you use or add a valet component, use the MCP to ensure that you got the prop usage correct!
+When available, use the `@archway/valet-mcp` server. IMPORTANT!
+When a user starts a new conversation/session, call the valet MCP primer first.
+Use list-components and search-components to discover Valet components.
+Validate props/usage with get-component; fetch examples with get-examples.
+Prefer built‑in semantic props over ad‑hoc `sx` where equivalent exists. IMPORTANT!
 ```
 
 ## Contributing
 
 We welcome issues and pull requests. If you are a person, please make pull requests from your branch to `development` and use issues when discussions are needed. Please read `AGENTS.md` if you are an AI, agent, NLP, bot, or scraper. Humans may find the document insightful as well. Use the standard GitHub workflow at [valet issues](https://github.com/off-court-creations/valet/issues).
 
-valet targets the React ecosystem. Improvements and examples should assume a
+`valet` targets the React ecosystem. Improvements and examples should assume a
 React 19.x setup.
 
 ## NPM Scripts
@@ -99,18 +98,9 @@ React 19.x setup.
 | `npm run mcp:server:link` | Links the MCP server globally as `valet-mcp`. Use if your environment discovers global bins.
 | `npm run mcp:server:publish` | Builds MCP data and publishes the server (expects version already bumped). Use for releases where you’ve handled versioning manually.
 | `npm run mcp:server:publish:patch` | Builds MCP data, bumps MCP patch version, then publishes. Use for data‑only refreshes within the same valet minor version.
-
-Note: To publish a data‑only MCP version, run:
-
-```shell
-npm run mcp:build
-
-# Check version during publish
-
-# cd packages/valet-mcp
-# npm run bundle:data
-# npm run selfcheck
-# cd ../..
-
-npm run mcp:server:publish:patch
-```
+| `npm run mcp:server:publish:minor` | Builds MCP data, bumps MCP minor version, then publishes. Use for minor feature releases.
+| `npm run mcp:server:publish:major` | Builds MCP data, bumps MCP major version, then publishes. Use for breaking changes.
+| `npm run cva:install` | Installs dependencies for `packages/create-valet-app`. Use when working on the CLI locally.
+| `npm run cva:validate` | Runs validation checks for Create Valet App. Use before publishing changes to the CLI.
+| `npm run cva:dev` | Opens the Create Valet App CLI help (dev entry). Use to inspect flags quickly during development.
+| `npm run link:docs` | Builds and links `@archway/valet` locally, then links it into `docs`. Use for rapid docs iteration with local components.
