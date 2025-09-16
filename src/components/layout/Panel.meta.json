@@ -1,0 +1,48 @@
+{
+  "name": "Panel",
+  "status": "experimental",
+  "aliases": ["panel", "card", "section"],
+  "docs": {
+    "bestPractices": [
+      "Use Panel to group related content and provide visual separation.",
+      "Choose variant='alt' when you want a transparent surface with an outline.",
+      "Prefer theme tokens for backgrounds; if you set a custom background ensure text maintains contrast.",
+      "Use presets to standardize repeating styles; avoid duplicating sx across pages.",
+      "Reserve fullWidth for sections that should span the container; otherwise, anchor with alignX.",
+      "Center content with centerContent for compact UI elements, not long-form text blocks.",
+      "Nest Panels judiciously to create hierarchy; keep padding consistent using spacing tokens."
+    ]
+  },
+  "examples": [
+    {
+      "id": "panel-default",
+      "title": "Default Panel",
+      "lang": "tsx",
+      "code": "<Panel><Typography>Default surface (backgroundAlt)</Typography></Panel>"
+    },
+    {
+      "id": "panel-alt-on-alt",
+      "title": "Alt on backgroundAlt surface",
+      "lang": "tsx",
+      "code": "<Box background={theme.colors['backgroundAlt']} sx={{ padding: theme.spacing(1) }}><Panel variant=\"alt\" sx={{ padding: theme.spacing(1) }}><Typography>Outline contrasts backgroundAlt</Typography></Panel></Box>"
+    },
+    {
+      "id": "panel-alt",
+      "title": "Alt variant (outline)",
+      "lang": "tsx",
+      "code": "<Panel variant=\"alt\"><Typography>Transparent with outline</Typography></Panel>"
+    },
+    {
+      "id": "panel-background",
+      "title": "Background + padding",
+      "lang": "tsx",
+      "code": "<Panel background={theme.colors['secondary']} sx={{ padding: theme.spacing(1) }}><Typography>Readable on themed background</Typography></Panel>"
+    },
+    {
+      "id": "panel-centered",
+      "title": "Centered content",
+      "lang": "tsx",
+      "code": "<Panel centerContent fullWidth><Typography>Centered</Typography></Panel>"
+    }
+  ]
+}

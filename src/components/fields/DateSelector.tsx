@@ -98,13 +98,17 @@ const Cell = styled('button')<{
   $hoverEnd: string;
   $hoverRange: string;
   $hoverDefault: string;
+  $selText: string;
+  $endText: string;
+  $rangeText: string;
   $compact?: boolean;
 }>`
   padding: 0.25rem 0;
   border: none;
   background: ${({ $start, $end, $inRange, $primary, $secondary, $rangeBg }) =>
     $start ? $primary : $end ? $secondary : $inRange ? $rangeBg : 'transparent'};
-  color: inherit;
+  color: ${({ $start, $end, $inRange, $selText, $endText, $rangeText }) =>
+    $start ? $selText : $end ? $endText : $inRange ? $rangeText : 'inherit'};
   border-radius: var(--valet-date-cell-radius, 4px);
   cursor: pointer;
   font: inherit;
@@ -329,7 +333,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
       {...rest}
       ref={wrapRef}
       $bg={theme.colors.backgroundAlt}
-      $text={theme.colors.text}
+      $text={`var(--valet-text-color, ${theme.colors.text})` as string}
       $compact={compact}
       className={cls}
       style={{ '--valet-date-radius': theme.radius(1), ...sx } as React.CSSProperties}
@@ -466,6 +470,9 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
               $hoverEnd={hoverEnd}
               $hoverRange={hoverRange}
               $hoverDefault={hoverDefault}
+              $selText={theme.colors.primaryText}
+              $endText={theme.colors.secondaryText}
+              $rangeText={theme.colors.primaryText}
               $compact={compact}
               style={{ '--valet-date-cell-radius': theme.radius(1) } as React.CSSProperties}
               onClick={() => !disabled && (range ? commitRange(day) : commit(day))}

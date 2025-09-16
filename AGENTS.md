@@ -50,7 +50,7 @@ What you get:
 
 - Tools: `valet__list_components`, `valet__search_components`, `valet__get_component`, `valet__get_examples`.
 - Data: generated into `mcp-data/` from TypeScript source and docs.
-- Server: optional MCP server at `servers/valet-mcp` for external LLM tools.
+- Server: optional MCP server at `packages/valet-mcp` for external LLM tools.
 
 Typical flows:
 

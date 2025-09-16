@@ -70,6 +70,7 @@ const Root = styled('table')<{
   $gutter: string;
   $padV: string;
   $padH: string;
+  $textColor: string;
 }>`
   /* leave a subtle gutter so right border never clips */
   width: calc(100% - ${({ $gutter }) => $gutter} * 2);
@@ -81,6 +82,9 @@ const Root = styled('table')<{
   border: var(--valet-divider-stroke, ${({ $strokeW }) => $strokeW}) solid
     ${({ $border }) => $border};
   table-layout: fixed; /* prevents cells pushing past width */
+
+  /* Ensure text color adapts to the surrounding surface */
+  color: ${({ $textColor }) => $textColor};
 
   th,
   td {
@@ -180,6 +184,7 @@ export function Table<T extends object>({
     shallow,
   );
   const wrapRef = useRef<HTMLDivElement>(null);
+  const tableRef = useRef<HTMLTableElement>(null);
   const uniqueId = useId();
 
   const pad = theme.spacing(1);
@@ -298,6 +303,28 @@ export function Table<T extends object>({
   /* colours */
   const stripeColor = stripe(theme.colors.background, theme.colors.text);
   const hoverBg = toHex(mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.25));
+  const [textColor, setTextColor] = useState<string>(theme.colors.text);
+
+  // Auto-resolve legible text colour from the surface background.
+  useLayoutEffect(() => {
+    const node = tableRef.current;
+    if (!node) return;
+    try {
+      const cs = getComputedStyle(node);
+      const raw = cs.getPropertyValue('--valet-bg')?.trim();
+      const bg = raw?.toUpperCase?.() ?? '';
+      const eq = (hex: string) => (hex || '').toUpperCase() === bg;
+      let next = theme.colors.text;
+      if (eq(theme.colors.primary)) next = theme.colors.primaryText;
+      else if (eq(theme.colors.secondary)) next = theme.colors.secondaryText;
+      else if (eq(theme.colors.tertiary)) next = theme.colors.tertiaryText;
+      else if (eq(theme.colors.backgroundAlt)) next = theme.colors.text;
+      else next = theme.colors.text;
+      setTextColor(next);
+    } catch {
+      setTextColor(theme.colors.text);
+    }
+  }, [theme.colors]);
 
   /* callbacks */
   const toggleSort = (idx: number) => {
@@ -376,6 +403,7 @@ export function Table<T extends object>({
     >
       <Root
         {...rest}
+        ref={tableRef}
         $striped={striped}
         $hover={hoverable}
         $lines={dividers}
@@ -386,6 +414,7 @@ export function Table<T extends object>({
         $gutter={pad}
         $padV={theme.spacing(2)}
         $padH={theme.spacing(3)}
+        $textColor={textColor}
         className={cls}
         style={
           {

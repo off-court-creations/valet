@@ -1,277 +1,174 @@
 // ─────────────────────────────────────────────────────────────
 // docs/src/pages/components/layout/GridDemo.tsx  | valet-docs
-// Improved docs: best practices, playground, reference fix
+// Grid docs using ComponentMetaPage (Usage, Best Practices, Playground, Examples, Reference)
 // ─────────────────────────────────────────────────────────────
 import {
-  Surface,
   Stack,
   Typography,
   Grid,
   Box,
-  Tabs,
-  Table,
   useTheme,
-  Panel,
   Iterator,
   Switch,
   Divider,
+  Panel,
 } from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
-import NavDrawer from '../../../components/NavDrawer';
-import PageHero from '../../../components/PageHero';
-import type { ReactNode } from 'react';
 import { useMemo, useState } from 'react';
+import ComponentMetaPage from '../../../components/ComponentMetaPage';
+import GridMeta from '../../../../../src/components/layout/Grid.meta.json';
 
 export default function GridDemoPage() {
   const { theme } = useTheme();
 
-  interface Row {
-    prop: ReactNode;
-    type: ReactNode;
-    default: ReactNode;
-    description: ReactNode;
-  }
+  const usageContent = (
+    <Stack>
+      <Typography variant='h3'>Two columns</Typography>
+      <Grid
+        columns={2}
+        gap={1}
+      >
+        <Box
+          fullWidth
+          sx={{
+            background: theme.colors['primary'] as string,
+            color: theme.colors['primaryText'] as string,
+            padding: theme.spacing(1),
+          }}
+          centerContent
+        >
+          <Typography>A</Typography>
+        </Box>
+        <Box
+          fullWidth
+          sx={{
+            background: theme.colors['secondary'] as string,
+            color: theme.colors['secondaryText'] as string,
+            padding: theme.spacing(1),
+          }}
+          centerContent
+        >
+          <Typography>B</Typography>
+        </Box>
+      </Grid>
 
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
+      <Divider />
 
-  const data: Row[] = [
-    {
-      prop: <code>columns</code>,
-      type: <code>number</code>,
-      default: <code>2</code>,
-      description: 'Number of equal‑width tracks (repeat(n, 1fr)).',
-    },
-    {
-      prop: <code>gap</code>,
-      type: <code>number | string</code>,
-      default: <code>1</code>,
-      description: 'Space between cells. Numbers map via theme.spacing(n); strings pass through.',
-    },
-    {
-      prop: <code>pad</code>,
-      type: <code>number | string</code>,
-      default: <code>1</code>,
-      description: 'Inner padding for the grid container. Same mapping as gap.',
-    },
-    {
-      prop: <code>compact</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Zero out both pad and gap for a tight layout.',
-    },
-    {
-      prop: <code>adaptive</code>,
-      type: <code>boolean</code>,
-      default: <code>false</code>,
-      description: 'Switch to a single column when the surface is in portrait.',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Apply style presets via definePreset/preset registry.',
-    },
-  ];
+      <Typography variant='h3'>Four columns</Typography>
+      <Grid
+        columns={4}
+        gap={1}
+      >
+        {Array.from({ length: 8 }, (_, i) => String(i + 1)).map((n) => (
+          <Box
+            fullWidth
+            key={n}
+            sx={{
+              background: theme.colors['primary'] as string,
+              color: theme.colors['primaryText'] as string,
+              padding: theme.spacing(1),
+            }}
+            centerContent
+          >
+            <Typography>{n}</Typography>
+          </Box>
+        ))}
+      </Grid>
+
+      <Divider />
+
+      <Typography variant='h3'>Adaptive grid</Typography>
+      <Typography variant='subtitle'>Switches to one column in portrait orientation.</Typography>
+      <Grid
+        columns={4}
+        gap={1}
+        adaptive
+      >
+        {Array.from({ length: 8 }, (_, i) => String(i + 1)).map((n) => (
+          <Box
+            fullWidth
+            key={n}
+            sx={{
+              background: theme.colors['secondary'] as string,
+              color: theme.colors['secondaryText'] as string,
+              padding: theme.spacing(1),
+            }}
+            centerContent
+          >
+            <Typography>{n}</Typography>
+          </Box>
+        ))}
+      </Grid>
+
+      <Divider />
+
+      <Typography variant='h3'>Nested grids</Typography>
+      <Grid
+        columns={2}
+        gap={1}
+      >
+        <Grid
+          columns={2}
+          gap={1}
+        >
+          <Box
+            fullWidth
+            sx={{ padding: theme.spacing(1) }}
+            centerContent
+          >
+            <Typography>A1</Typography>
+          </Box>
+          <Box
+            fullWidth
+            sx={{ padding: theme.spacing(1) }}
+            centerContent
+          >
+            <Typography>A2</Typography>
+          </Box>
+          <Box
+            fullWidth
+            sx={{ padding: theme.spacing(1) }}
+            centerContent
+          >
+            <Typography>A3</Typography>
+          </Box>
+          <Box
+            fullWidth
+            sx={{ padding: theme.spacing(1) }}
+            centerContent
+          >
+            <Typography>A4</Typography>
+          </Box>
+        </Grid>
+        <Grid
+          columns={3}
+          gap={0.5}
+        >
+          {['B1', 'B2', 'B3', 'B4', 'B5', 'B6'].map((n) => (
+            <Box
+              fullWidth
+              key={n}
+              sx={{ padding: theme.spacing(1) }}
+              centerContent
+            >
+              <Typography>{n}</Typography>
+            </Box>
+          ))}
+        </Grid>
+      </Grid>
+    </Stack>
+  );
+
+  const playgroundContent = <GridPlayground />;
 
   return (
-    <Surface>
-      <NavDrawer />
-      <Stack>
-        <PageHero title='Grid' />
-
-        <Tabs>
-          <Tabs.Tab label='Usage' />
-          <Tabs.Panel>
-            <Stack>
-              <Typography variant='h3'>Two columns</Typography>
-              <Grid
-                columns={2}
-                gap={1}
-              >
-                <Box
-                  fullWidth
-                  sx={{
-                    background: theme.colors['primary'] as string,
-                    color: theme.colors['primaryText'] as string,
-                    padding: theme.spacing(1),
-                  }}
-                >
-                  A
-                </Box>
-                <Box
-                  fullWidth
-                  sx={{
-                    background: theme.colors['secondary'] as string,
-                    color: theme.colors['secondaryText'] as string,
-                    padding: theme.spacing(1),
-                  }}
-                >
-                  B
-                </Box>
-              </Grid>
-
-              <Divider />
-
-              <Typography variant='h3'>Four columns</Typography>
-              <Grid
-                columns={4}
-                gap={1}
-              >
-                {Array.from({ length: 8 }, (_, i) => String(i + 1)).map((n) => (
-                  <Box
-                    fullWidth
-                    key={n}
-                    sx={{
-                      background: theme.colors['primary'] as string,
-                      color: theme.colors['primaryText'] as string,
-                      padding: theme.spacing(1),
-                      textAlign: 'center',
-                    }}
-                  >
-                    {n}
-                  </Box>
-                ))}
-              </Grid>
-
-              <Divider />
-
-              <Typography variant='h3'>Adaptive grid</Typography>
-              <Typography variant='subtitle'>
-                Switches to one column in portrait orientation.
-              </Typography>
-              <Grid
-                columns={4}
-                gap={1}
-                adaptive
-              >
-                {Array.from({ length: 8 }, (_, i) => String(i + 1)).map((n) => (
-                  <Box
-                    fullWidth
-                    key={n}
-                    sx={{
-                      background: theme.colors['secondary'] as string,
-                      color: theme.colors['secondaryText'] as string,
-                      padding: theme.spacing(1),
-                      textAlign: 'center',
-                    }}
-                  >
-                    {n}
-                  </Box>
-                ))}
-              </Grid>
-
-              <Divider />
-
-              <Typography variant='h3'>Nested grids</Typography>
-              <Grid
-                columns={2}
-                gap={1}
-              >
-                <Grid
-                  columns={2}
-                  gap={1}
-                >
-                  <Box
-                    fullWidth
-                    sx={{ padding: theme.spacing(1), textAlign: 'center' }}
-                  >
-                    A1
-                  </Box>
-                  <Box
-                    fullWidth
-                    sx={{ padding: theme.spacing(1), textAlign: 'center' }}
-                  >
-                    A2
-                  </Box>
-                  <Box
-                    fullWidth
-                    sx={{ padding: theme.spacing(1), textAlign: 'center' }}
-                  >
-                    A3
-                  </Box>
-                  <Box
-                    fullWidth
-                    sx={{ padding: theme.spacing(1), textAlign: 'center' }}
-                  >
-                    A4
-                  </Box>
-                </Grid>
-                <Grid
-                  columns={3}
-                  gap={0.5}
-                >
-                  {['B1', 'B2', 'B3', 'B4', 'B5', 'B6'].map((n) => (
-                    <Box
-                      fullWidth
-                      key={n}
-                      sx={{ padding: theme.spacing(1), textAlign: 'center' }}
-                    >
-                      {n}
-                    </Box>
-                  ))}
-                </Grid>
-              </Grid>
-            </Stack>
-          </Tabs.Panel>
-
-          <Tabs.Tab label='Playground' />
-          <Tabs.Panel>
-            <GridPlayground />
-          </Tabs.Panel>
-
-          <Tabs.Tab label='Reference' />
-          <Tabs.Panel>
-            <Typography variant='h3'>Prop reference</Typography>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
-          </Tabs.Panel>
-        </Tabs>
-        {/* Best Practices ------------------------------------------------- */}
-        <Panel fullWidth>
-          <Typography variant='h4'>Best Practices</Typography>
-          <Typography>
-            - Use <code>Grid</code> for two‑axis alignment. Prefer <code>Stack</code> for linear
-            flows where only one axis matters.
-          </Typography>
-          <Typography>
-            - Keep tracks simple: equal‑width <code>columns</code> are fast and readable; let
-            children span using <code>{`sx={{ gridColumn: 'span N' }}`}</code>.
-          </Typography>
-          <Typography>
-            - Share spacing with the system. Use numeric <code>gap</code>/<code>pad</code> so
-            density matches other primitives.
-          </Typography>
-          <Typography>
-            - Use <code>adaptive</code> to collapse to a single column on portrait/narrow screens
-            instead of ad‑hoc media queries.
-          </Typography>
-          <Typography>
-            - Maintain logical DOM order for keyboard and screen readers; don’t rely on grid
-            placement to imply reading order.
-          </Typography>
-          <Typography>
-            - Cooperate with <code>&lt;Surface&gt;</code>. In adaptive portrait, let content stack
-            and the page scroll naturally; avoid creating nested scroll areas inside cells.
-          </Typography>
-          <Typography>
-            - Size items with tokens. Use <code>theme.spacing</code> and percent/flex spans rather
-            than fixed pixels so density and breakpoints scale predictably.
-          </Typography>
-          <Typography>
-            - Avoid complex selector cascades. Keep item styles shallow and prefer presets for
-            repeatable patterns to maintain performance and readability.
-          </Typography>
-        </Panel>
-      </Stack>
-    </Surface>
+    <ComponentMetaPage
+      title='Grid'
+      subtitle='Flexible two‑dimensional layout for dashboards, galleries, and cards.'
+      slug='components/layout/grid'
+      meta={GridMeta}
+      usage={usageContent}
+      playground={playgroundContent}
+    />
   );
 }
 
@@ -342,27 +239,29 @@ function GridPlayground() {
           />
         </Stack>
       </Stack>
-      <Grid
-        columns={columns}
-        gap={gap}
-        pad={pad}
-        adaptive={adaptive}
-      >
-        {items.map((n) => (
-          <Box
-            fullWidth
-            key={n}
-            sx={{
-              background: theme.colors['tertiary'] as string,
-              color: theme.colors['tertiaryText'] as string,
-              padding: theme.spacing(1),
-              textAlign: 'center',
-            }}
-          >
-            {n}
-          </Box>
-        ))}
-      </Grid>
+      <Panel fullWidth>
+        <Grid
+          columns={columns}
+          gap={gap}
+          pad={pad}
+          adaptive={adaptive}
+        >
+          {items.map((n) => (
+            <Box
+              fullWidth
+              key={n}
+              sx={{
+                background: theme.colors['tertiary'] as string,
+                color: theme.colors['tertiaryText'] as string,
+                padding: theme.spacing(1),
+              }}
+              centerContent
+            >
+              <Typography>{n}</Typography>
+            </Box>
+          ))}
+        </Grid>
+      </Panel>
     </Stack>
   );
 }

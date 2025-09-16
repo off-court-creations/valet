@@ -1,0 +1,28 @@
+{
+  "name": "AppBar",
+  "status": "experimental",
+  "aliases": ["appbar", "navbar", "header"],
+  "docs": {
+    "bestPractices": [
+      "Use for global navigation and primary actions; keep content concise to avoid overcrowding.",
+      "Keep the bar sticky only when it benefits navigation; avoid stacking multiple sticky bars.",
+      "Ensure contrast and focus styles for interactive items meet accessibility.",
+      "Balance icon vs text: label primary actions, reserve icon‑only for well‑known actions.",
+      "Coordinate with Drawer and Surface offsets so content doesn’t sit underneath."
+    ]
+  },
+  "examples": [
+    {
+      "id": "appbar-basic",
+      "title": "Basic AppBar",
+      "code": "<AppBar left={<><Icon icon='mdi:car' /><Typography>Title</Typography></>} right={<Button variant='outlined'>Action</Button>} />",
+      "runnable": false
+    },
+    {
+      "id": "appbar-colored",
+      "title": "Colored AppBar",
+      "code": "() => {\n  const { theme } = Valet.useTheme();\n  return <AppBar color={theme.colors.primary} textColor={theme.colors.primaryText} left={<Typography>Primary</Typography>} />;\n}",
+      "runnable": false
+    }
+  ]
+}

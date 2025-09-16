@@ -11,6 +11,15 @@ function validateComponent(c) {
   if (!c.slug || typeof c.slug !== 'string') problems.push('missing slug');
   if (!Array.isArray(c.props)) problems.push('props not array');
   if (c.aliases && !Array.isArray(c.aliases)) problems.push('aliases must be an array');
+  // status validation (REQUIRED and constrained)
+  {
+    const allowedStatus = new Set(['golden', 'stable', 'experimental', 'unstable', 'deprecated']);
+    if (!c.status) {
+      problems.push('missing status');
+    } else if (!allowedStatus.has(c.status)) {
+      problems.push(`invalid status: ${c.status}`);
+    }
+  }
   // usage validation (optional, non-fatal)
   if (c.usage && typeof c.usage !== 'object') problems.push('usage must be an object');
   if (c.usage && typeof c.usage === 'object') {
@@ -37,15 +46,38 @@ function validateComponent(c) {
     }
   }
   const seen = new Set();
+  let requiredCount = 0;
+  let anyCount = 0;
+  let hasDefaultAndRequired = false;
+  let hasHtmlishProps = false;
   for (const p of c.props || []) {
     if (!p || typeof p.name !== 'string') problems.push('prop missing name');
     if (seen.has(p.name)) problems.push(`duplicate prop: ${p.name}`);
     seen.add(p.name);
+    if (p.required) requiredCount++;
+    if (typeof p.type === 'string' && p.type.trim() === 'any') anyCount++;
+    if (p.required && p.default != null) hasDefaultAndRequired = true;
+    if (['onClick','id','className','style','role','aria-label'].includes(p.name)) hasHtmlishProps = true;
   }
   const allowedCats = new Set(['primitives', 'fields', 'layout', 'widgets']);
   if (c.category && !allowedCats.has(c.category)) {
     // Allow unknown but flag it
     problems.push(`unknown category: ${c.category}`);
+  }
+  // Heuristics/warnings
+  if ((c.props || []).length === 0 && c.category && c.category !== 'primitives') {
+    problems.push('warn: no props extracted (suspicious for non-primitive component)');
+  }
+  if ((c.props || []).length >= 4) {
+    const ratio = requiredCount / (c.props || []).length;
+    if (ratio > 0.7) problems.push(`warn: unusually high required prop ratio (${Math.round(ratio*100)}%)`);
+  }
+  if (hasDefaultAndRequired) problems.push('warn: some props are marked required but have defaults (likely optional at callsite)');
+  if ((c.props || []).length > 0 && anyCount >= Math.ceil((c.props || []).length / 2)) {
+    problems.push('warn: many props have type any');
+  }
+  if (!c.domPassthrough && hasHtmlishProps) {
+    problems.push('warn: html-like props present but domPassthrough is missing');
   }
   return problems;
 }
@@ -67,15 +99,68 @@ function main() {
       continue;
     }
     const doc = readJSON(file);
+    // Cross-validate index vs document
+    try {
+      if (item.name !== doc.name) {
+        console.error(`[error] index/doc name mismatch: index='${item.name}' doc='${doc.name}'`);
+        errors++;
+      }
+      if (item.slug !== doc.slug) {
+        console.error(`[error] index/doc slug mismatch: index='${item.slug}' doc='${doc.slug}'`);
+        errors++;
+      }
+      if (item.category !== doc.category) {
+        console.error(`[error] index/doc category mismatch: index='${item.category}' doc='${doc.category}'`);
+        errors++;
+      }
+      const allowedStatus = new Set(['golden', 'stable', 'experimental', 'unstable', 'deprecated']);
+      if (doc.status && !allowedStatus.has(doc.status)) {
+        console.error(`[error] doc status invalid: ${doc.status}`);
+        errors++;
+      }
+      if (item.status && !allowedStatus.has(item.status)) {
+        console.error(`[error] index status invalid: ${item.status}`);
+        errors++;
+      }
+      if (!doc.status && !item.status) {
+        console.error(`[error] ${item.name}: missing status (doc and index)`);
+        errors++;
+      }
+      if (doc.status && !item.status) {
+        console.error(`[error] index missing status for ${item.name}`);
+        errors++;
+      }
+      if (item.status && !doc.status) {
+        console.error(`[error] doc missing status for ${item.name}`);
+        errors++;
+      }
+      if (item.status && doc.status && item.status !== doc.status) {
+        console.error(`[error] index/doc status mismatch for ${item.name}: index='${item.status}' doc='${doc.status}'`);
+        errors++;
+      }
+    } catch (e) {
+      console.warn('[warn] index/doc cross-validate failed:', e?.message || String(e));
+      warnings++;
+    }
     const probs = validateComponent(doc);
     for (const p of probs) {
-      const level = p.startsWith('unknown category') ? 'warn' : 'error';
+      const isWarnPrefix = typeof p === 'string' && p.startsWith('warn:');
+      const level = p.startsWith('unknown category') || isWarnPrefix ? 'warn' : 'error';
       if (level === 'warn') warnings++; else errors++;
-      console[level === 'warn' ? 'warn' : 'error'](`[${level}] ${item.name}: ${p}`);
+      const msg = isWarnPrefix ? p.replace(/^warn:\s*/, '') : p;
+      console[level === 'warn' ? 'warn' : 'error'](`[${level}] ${item.name}: ${msg}`);
     }
     if (doc.schemaVersion && meta.schemaVersion && doc.schemaVersion !== meta.schemaVersion) {
       console.warn(`[warn] ${item.name}: schemaVersion ${doc.schemaVersion} != meta ${meta.schemaVersion}`);
       warnings++;
+    }
+    // Curated examples policy
+    if (doc.docsUrl) {
+      const hasExamples = Array.isArray(doc.examples) && doc.examples.length > 0;
+      if (!hasExamples) {
+        console.warn(`[warn] ${item.name}: docsUrl present but no examples`);
+        warnings++;
+      }
     }
   }
   // Component synonyms validation
@@ -186,11 +271,20 @@ function main() {
           }
         }
         // Validate seeAlso references if possible
+        // Accept references to either other glossary terms OR component names OR known MCP tool ids
+        const knownTools = new Set([
+          'get_component',
+          'search_components',
+          'get_glossary',
+          'define_term',
+          'list_components',
+        ]);
+        const allowedRefs = (ref) => termSet.has(ref) || compNames.has(ref) || knownTools.has(ref);
         for (const e of entries) {
           if (!Array.isArray(e.seeAlso)) continue;
           for (const ref of e.seeAlso) {
             if (typeof ref !== 'string') continue;
-            if (!termSet.has(ref)) {
+            if (!allowedRefs(ref)) {
               console.warn(`[warn] glossary ${e.term}: seeAlso '${ref}' not found`);
               warnings++;
             }

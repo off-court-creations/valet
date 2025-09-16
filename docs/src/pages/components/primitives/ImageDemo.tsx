@@ -1,91 +1,174 @@
 // ─────────────────────────────────────────────────────────────
-// src/pages/ImageDemo.tsx | valet-docs
-// Showcase of Image component
+// docs/src/pages/components/primitives/ImageDemo.tsx  | valet-docs
+// Showcase of Image component using the reusable ComponentMetaPage (5 tabs)
 // ─────────────────────────────────────────────────────────────
-import { Surface, Stack, Typography, Image, Button, useTheme, Panel } from '@archway/valet';
-import NavDrawer from '../../../components/NavDrawer';
-import PageHero from '../../../components/PageHero';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import {
+  Stack,
+  Typography,
+  Image,
+  useTheme,
+  Panel,
+  Select,
+  Iterator,
+  Switch,
+  TextField,
+} from '@archway/valet';
+import ComponentMetaPage from '../../../components/ComponentMetaPage';
+import ImageMeta from '../../../../../src/components/primitives/Image.meta.json';
 
 export default function ImageDemoPage() {
   const { theme } = useTheme();
-  const navigate = useNavigate();
+
+  // Playground controls
+  const [pgSrc, setPgSrc] = useState('https://picsum.photos/600/400');
+  const [pgWidth, setPgWidth] = useState<string>('100%');
+  const [pgHeight, setPgHeight] = useState<string>('300px');
+  const [pgFit, setPgFit] = useState<'cover' | 'contain' | 'fill' | 'none' | 'scale-down'>('cover');
+  const [pgRounded, setPgRounded] = useState<number>(8);
+  const [pgLazy, setPgLazy] = useState<boolean>(false);
+  const [pgPlaceholder, setPgPlaceholder] = useState<string>('https://placehold.co/10x10');
+
+  const usageContent = (
+    <Stack>
+      <Typography variant='h3'>1. Basic usage</Typography>
+      <Image
+        src='https://picsum.photos/400/300'
+        alt='Kitten'
+        width='100%'
+        height='auto'
+        rounded={8}
+      />
+
+      <Typography variant='h3'>2. Lazy loaded</Typography>
+      <Image
+        src='https://picsum.photos/400/300'
+        alt='Lazy kitten'
+        width='100%'
+        height='300px'
+        lazy
+        placeholder='https://placehold.co/10x10'
+      />
+
+      <Typography variant='h3'>3. Contain fit</Typography>
+      <Image
+        src='https://picsum.photos/400/300'
+        alt='Contained kitten'
+        width='100%'
+        height='300px'
+        objectFit='contain'
+        sx={{ background: '#0003' }}
+      />
+    </Stack>
+  );
+
+  const playgroundContent = (
+    <Stack gap={1}>
+      <Panel fullWidth>
+        <Typography variant='subtitle'>Playground</Typography>
+        <Stack
+          direction='row'
+          gap={1}
+          sx={{ alignItems: 'center' }}
+        >
+          <TextField
+            name='src'
+            label='src'
+            placeholder='https://…'
+            value={pgSrc}
+            onChange={(e) => setPgSrc((e.target as HTMLInputElement).value)}
+            sx={{ width: 320 }}
+          />
+          <Select
+            placeholder='objectFit'
+            value={pgFit}
+            onChange={(v) => setPgFit(v as typeof pgFit)}
+            sx={{ width: 180 }}
+          >
+            <Select.Option value='cover'>cover</Select.Option>
+            <Select.Option value='contain'>contain</Select.Option>
+            <Select.Option value='fill'>fill</Select.Option>
+            <Select.Option value='none'>none</Select.Option>
+            <Select.Option value='scale-down'>scale-down</Select.Option>
+          </Select>
+          <TextField
+            name='width'
+            label='width'
+            placeholder='e.g., 100% or 320px'
+            value={pgWidth}
+            onChange={(e) => setPgWidth((e.target as HTMLInputElement).value)}
+            sx={{ width: 180 }}
+          />
+          <TextField
+            name='height'
+            label='height'
+            placeholder='e.g., auto or 240px'
+            value={pgHeight}
+            onChange={(e) => setPgHeight((e.target as HTMLInputElement).value)}
+            sx={{ width: 180 }}
+          />
+          <Stack
+            direction='row'
+            gap={1}
+            sx={{ alignItems: 'center' }}
+          >
+            <Typography variant='subtitle'>rounded</Typography>
+            <Iterator
+              width={160}
+              min={0}
+              max={24}
+              step={2}
+              value={pgRounded}
+              onChange={setPgRounded}
+              aria-label='Rounded radius'
+            />
+          </Stack>
+          <Stack
+            direction='row'
+            gap={1}
+            sx={{ alignItems: 'center' }}
+          >
+            <Typography variant='subtitle'>lazy</Typography>
+            <Switch
+              checked={pgLazy}
+              onChange={setPgLazy}
+              aria-label='lazy'
+            />
+          </Stack>
+          <TextField
+            name='placeholder'
+            label='placeholder'
+            placeholder='https://…'
+            value={pgPlaceholder}
+            onChange={(e) => setPgPlaceholder((e.target as HTMLInputElement).value)}
+            sx={{ width: 240 }}
+          />
+        </Stack>
+      </Panel>
+      <Panel fullWidth>
+        <Image
+          src={pgSrc}
+          width={pgWidth}
+          height={pgHeight}
+          objectFit={pgFit}
+          rounded={pgRounded}
+          lazy={pgLazy}
+          placeholder={pgPlaceholder}
+          alt='Playground preview'
+          sx={{ background: theme.colors['text'] + '11' }}
+        />
+      </Panel>
+    </Stack>
+  );
 
   return (
-    <Surface>
-      <NavDrawer />
-      <Stack>
-        <PageHero title='Image' />
-
-        <Typography variant='h3'>1. Basic usage</Typography>
-        <Image
-          src='https://picsum.photos/400/300'
-          alt='Kitten'
-          width='100%'
-          height='auto'
-          rounded={8}
-        />
-
-        <Typography variant='h3'>2. Lazy loaded</Typography>
-        <Image
-          src='https://picsum.photos/400/300'
-          alt='Lazy kitten'
-          width='100%'
-          height='300px'
-          lazy
-          placeholder='https://placehold.co/10x10'
-        />
-
-        <Typography variant='h3'>3. Contain fit</Typography>
-        <Image
-          src='https://picsum.photos/400/300'
-          alt='Contained kitten'
-          width='100%'
-          height='300px'
-          objectFit='contain'
-          sx={{ background: '#0003' }}
-        />
-
-        <Button
-          size='lg'
-          onClick={() => navigate(-1)}
-          sx={{ marginTop: theme.spacing(1) }}
-        >
-          ← Back
-        </Button>
-
-        {/* Best Practices -------------------------------------------------- */}
-        <Panel fullWidth>
-          <Typography variant='h4'>Best Practices</Typography>
-          <Typography>
-            - Write meaningful <code>alt</code> text. Describe the content/purpose; use
-            <code> alt=&quot;&quot;</code> for purely decorative images to avoid noise for screen
-            readers.
-          </Typography>
-          <Typography>
-            - Reserve layout space. Provide <code>width</code> and <code>height</code> (or a styled
-            container) to prevent cumulative layout shift when images load.
-          </Typography>
-          <Typography>
-            - Lazy‑load offscreen media. Enable <code>lazy</code> with a tiny{' '}
-            <code>placeholder</code>
-            for non‑critical images; avoid lazy‑loading above‑the‑fold hero images.
-          </Typography>
-          <Typography>
-            - Choose the right <code>objectFit</code>. Use <code>cover</code> for fills and
-            <code> contain</code> for letterboxed media; provide a background colour for pleasant
-            letterboxing.
-          </Typography>
-          <Typography>
-            - Prevent drag ghosts. The component disables dragging by default; only enable dragging
-            when there is a genuine use‑case.
-          </Typography>
-          <Typography>
-            - Optimize assets. Serve appropriately sized and compressed images; avoid shipping
-            multi‑MB originals for small containers.
-          </Typography>
-        </Panel>
-      </Stack>
-    </Surface>
+    <ComponentMetaPage
+      title='Image'
+      subtitle='Responsive, lazy-loading image with object-fit and rounded corners.'
+      slug='components/primitives/image'
+      meta={ImageMeta}
+      usage={usageContent}
+      playground={playgroundContent}
+    />
   );
 }

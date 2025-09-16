@@ -1,0 +1,14 @@
+{
+  "name": "Drawer",
+  "status": "experimental",
+  "aliases": ["drawer", "sidenav", "side-nav", "sidebar"],
+  "docs": {
+    "bestPractices": [
+      "Use for secondary navigation or tools; avoid blocking critical flows (use `Modal` for decisions).",
+      "Coordinate with AppBar and Surface so the drawer doesn’t overlap or hide important content.",
+      "Use persistent vs temporary modes appropriately; auto‑collapse on narrow screens.",
+      "Keep content scannable and avoid deep nesting; provide headings for sections.",
+      "Prefer tokens for backdrop colour and motion; keep transitions aligned with theme."
+    ]
+  }
+}

@@ -26,7 +26,7 @@ definePreset(
 definePreset(
   'glassHolder',
   (t) => `
-    background      : ${t.colors['background']}CC;
+    background      : ${t.colors['backgroundAlt']}CC;
     backdrop-filter : blur(6px) saturate(180%);
     border          : 1px solid ${t.colors['text']}22;
     padding         : ${t.spacing(1)};

@@ -1,0 +1,16 @@
+{
+  "name": "Checkbox",
+  "status": "experimental",
+  "aliases": ["checkbox"],
+  "docs": {
+    "bestPractices": [
+      "Use Checkbox for independent booleans. For mutually exclusive choices, prefer `RadioGroup` .",
+      "Always provide a clear label. The entire label should be clickable. In forms, set a stable `name` so values submit predictably.",
+      "Choose control model deliberately. Use `checked` / `onChange` when the value participates in app state; otherwise `defaultChecked` is fine for local forms.",
+      "Keep targets comfortable. Pick `size` tokens or numeric sizes that keep tap areas ≥ 40–48px in dense UIs.",
+      "Group with a visible question or caption when multiple checkboxes relate to one concept; don’t rely on proximity alone.",
+      "Disabled with context. If a checkbox is disabled, explain why nearby; avoid silently disabling without guidance.",
+      "Tokens/presets. Style with theme tokens and `preset` rather than ad‑hoc CSS to keep density and branding consistent."
+    ]
+  }
+}

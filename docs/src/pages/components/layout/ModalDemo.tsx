@@ -1,23 +1,11 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// src/pages/ModalDemoPage.tsx | valet-docs
-// Interactive playground demonstrating every capability of the Modal component
-// (dialog vs alert, controlled / uncontrolled, backdrop & ESC toggles, maxW,
-// fullWidth, preset styling, theme coupling).
+// docs/src/pages/components/layout/ModalDemo.tsx | valet-docs
+// Modal docs via the reusable ComponentMetaPage (Usage explainer + Reference + Best Practices)
 // ─────────────────────────────────────────────────────────────────────────────
 import { useState } from 'react';
-import {
-  Surface,
-  Stack,
-  Button,
-  Typography,
-  Icon,
-  useTheme,
-  definePreset,
-  Modal,
-  Panel,
-} from '@archway/valet';
-import { useNavigate } from 'react-router-dom';
-import NavDrawer from '../../../components/NavDrawer';
+import { Stack, Button, Typography, Icon, useTheme, definePreset, Modal } from '@archway/valet';
+import ModalMeta from '../../../../../src/components/layout/Modal.meta.json';
+import ComponentMetaPage from '../../../components/ComponentMetaPage';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Presets                                                                    */
@@ -33,8 +21,7 @@ definePreset(
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Demo page                                                                  */
 export default function ModalDemoPage() {
-  const navigate = useNavigate();
-  const { theme, toggleMode } = useTheme();
+  const { toggleMode } = useTheme();
 
   // state for the various demos
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -42,176 +29,144 @@ export default function ModalDemoPage() {
   const [controlledOpen, setControlledOpen] = useState(false);
   const [noBackdropCloseOpen, setNoBackdropCloseOpen] = useState(false);
 
-  return (
-    <Surface>
-      <NavDrawer />
-      <Stack>
-        <Typography
-          variant='h2'
-          bold
-        >
-          Modal Showcase
+  const usage = (
+    <Stack>
+      <Typography
+        variant='h2'
+        bold
+      >
+        Modal Showcase
+      </Typography>
+      <Typography variant='subtitle'>
+        Explore dialog vs alert semantics, controlled state, size props, and more.
+      </Typography>
+
+      {/* 1. Simple dialog ------------------------------------------------ */}
+      <Typography variant='h3'>1. Dialog modal</Typography>
+      <Button
+        variant='contained'
+        onClick={() => setDialogOpen(true)}
+      >
+        Open dialog
+      </Button>
+      <Modal
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        title='Example dialog'
+        actions={
+          <>
+            <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
+            <Button
+              variant='contained'
+              onClick={() => setDialogOpen(false)}
+            >
+              Confirm
+            </Button>
+          </>
+        }
+      >
+        <Typography>
+          This is a standard <code>role=&quot;dialog&quot;</code> modal.
         </Typography>
-        <Typography variant='subtitle'>
-          Explore dialog vs alert semantics, controlled state, size props, and more.
+      </Modal>
+
+      {/* 2. Alert modal -------------------------------------------------- */}
+      <Typography variant='h3'>2. Alert modal</Typography>
+      <Button
+        color='error'
+        variant='contained'
+        onClick={() => setAlertOpen(true)}
+      >
+        Delete item…
+      </Button>
+      <Modal
+        variant='alert'
+        open={alertOpen}
+        onClose={() => setAlertOpen(false)}
+        title={
+          <>
+            <Icon sx={{ marginRight: 8 }} /> Confirm delete
+          </>
+        }
+        preset='alertDanger'
+        actions={
+          <>
+            <Button
+              variant='outlined'
+              onClick={() => setAlertOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant='contained'
+              color='error'
+              onClick={() => setAlertOpen(false)}
+            >
+              Delete
+            </Button>
+          </>
+        }
+      >
+        <Typography>
+          This action is <strong>permanent</strong>. Are you sure you want to continue?
         </Typography>
+      </Modal>
 
-        {/* 1. Simple dialog ------------------------------------------------ */}
-        <Typography variant='h3'>1. Dialog modal</Typography>
-        <Button
-          variant='contained'
-          onClick={() => setDialogOpen(true)}
-        >
-          Open dialog
-        </Button>
-        <Modal
-          open={dialogOpen}
-          onClose={() => setDialogOpen(false)}
-          title='Example dialog'
-          actions={
-            <>
-              <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
-              <Button
-                variant='contained'
-                onClick={() => setDialogOpen(false)}
-              >
-                Confirm
-              </Button>
-            </>
-          }
-        >
-          <Typography>
-            This is a standard <code>role=&quot;dialog&quot;</code> modal.
-          </Typography>
-        </Modal>
-
-        {/* 2. Alert modal -------------------------------------------------- */}
-        <Typography variant='h3'>2. Alert modal</Typography>
-        <Button
-          color='error'
-          variant='contained'
-          onClick={() => setAlertOpen(true)}
-        >
-          Delete item…
-        </Button>
-        <Modal
-          variant='alert'
-          open={alertOpen}
-          onClose={() => setAlertOpen(false)}
-          title={
-            <>
-              <Icon sx={{ marginRight: 8 }} /> Confirm delete
-            </>
-          }
-          preset='alertDanger'
-          actions={
-            <>
-              <Button
-                variant='outlined'
-                onClick={() => setAlertOpen(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant='contained'
-                color='error'
-                onClick={() => setAlertOpen(false)}
-              >
-                Delete
-              </Button>
-            </>
-          }
-        >
-          <Typography>
-            This action is <strong>permanent</strong>. Are you sure you want to continue?
-          </Typography>
-        </Modal>
-
-        {/* 3. Controlled modal -------------------------------------------- */}
-        <Typography variant='h3'>3. Controlled modal</Typography>
-        <Stack direction='row'>
-          <Button onClick={() => setControlledOpen(true)}>Open</Button>
-          <Button onClick={() => setControlledOpen(false)}>Close</Button>
-        </Stack>
-        <Modal
-          open={controlledOpen}
-          onClose={() => setControlledOpen(false)}
-          title='Externally controlled'
-          actions={<Button onClick={() => setControlledOpen(false)}>Okay</Button>}
-        >
-          <Typography>Visibility is managed by external buttons.</Typography>
-        </Modal>
-
-        {/* 4. Backdrop / ESC disable -------------------------------------- */}
-        <Typography variant='h3'>4. Disable backdrop / ESC</Typography>
-        <Button onClick={() => setNoBackdropCloseOpen(true)}>Unclosable via backdrop / ESC</Button>
-        <Modal
-          open={noBackdropCloseOpen}
-          onClose={() => setNoBackdropCloseOpen(false)}
-          disableBackdropClick
-          disableEscapeKeyDown
-          title='Try clicking backdrop or pressing ESC'
-          actions={<Button onClick={() => setNoBackdropCloseOpen(false)}>Close</Button>}
-        >
-          <Typography>Both backdrop click and ESC key are disabled for this modal.</Typography>
-        </Modal>
-
-        {/* 5. Size props --------------------------------------------------- */}
-        <Typography variant='h3'>5. maxWidth & fullWidth</Typography>
-        <Stack direction='row'>
-          <Button onClick={() => setDialogOpen(true)}>maxWidth (default)</Button>
-          <Button onClick={() => setControlledOpen(true)}>fullWidth</Button>
-        </Stack>
-        {/* reuse existing modals for brevity */}
-
-        {/* 6. Theme coupling ---------------------------------------------- */}
-        <Typography variant='h3'>6. Theme coupling</Typography>
-        <Button
-          variant='outlined'
-          onClick={toggleMode}
-        >
-          Toggle light / dark mode
-        </Button>
-
-        {/* Best Practices -------------------------------------------------- */}
-        <Panel fullWidth>
-          <Typography variant='h4'>Best Practices</Typography>
-          <Typography>
-            - Choose the right type: use <code>variant=&apos;dialog&apos;</code> for neutral flows
-            and
-            <code> variant=&apos;alert&apos;</code> for destructive or high‑attention confirmations.
-          </Typography>
-          <Typography>
-            - Provide a clear <code>title</code> and unambiguous action labels (avoid vague
-            “OK”/“Cancel”). Make the primary action visually dominant.
-          </Typography>
-          <Typography>
-            - Keep escape hatches accessible. Only combine <code>disableBackdropClick</code> and
-            <code>disableEscapeKeyDown</code> when the flow truly requires it.
-          </Typography>
-          <Typography>
-            - Treat <code>open</code> as the single source of truth and wire <code>onClose</code>
-            for all dismissal paths (buttons, ESC, backdrop). Return focus to the trigger on close.
-          </Typography>
-          <Typography>
-            - Size with intent: prefer <code>maxWidth</code> for readability; reserve
-            <code> fullWidth</code> for mobile or immersive flows. Let long content scroll inside.
-          </Typography>
-          <Typography>
-            - Don’t nest modals. Transition content or sequence steps in a single modal instead of
-            opening another.
-          </Typography>
-        </Panel>
-
-        {/* Back nav -------------------------------------------------------- */}
-        <Button
-          size='lg'
-          onClick={() => navigate(-1)}
-          sx={{ marginTop: theme.spacing(1) }}
-        >
-          ← Back
-        </Button>
+      {/* 3. Controlled modal -------------------------------------------- */}
+      <Typography variant='h3'>3. Controlled modal</Typography>
+      <Stack direction='row'>
+        <Button onClick={() => setControlledOpen(true)}>Open</Button>
+        <Button onClick={() => setControlledOpen(false)}>Close</Button>
       </Stack>
-    </Surface>
+      <Modal
+        open={controlledOpen}
+        onClose={() => setControlledOpen(false)}
+        title='Externally controlled'
+        actions={<Button onClick={() => setControlledOpen(false)}>Okay</Button>}
+      >
+        <Typography>Visibility is managed by external buttons.</Typography>
+      </Modal>
+
+      {/* 4. Backdrop / ESC disable -------------------------------------- */}
+      <Typography variant='h3'>4. Disable backdrop / ESC</Typography>
+      <Button onClick={() => setNoBackdropCloseOpen(true)}>Unclosable via backdrop / ESC</Button>
+      <Modal
+        open={noBackdropCloseOpen}
+        onClose={() => setNoBackdropCloseOpen(false)}
+        disableBackdropClick
+        disableEscapeKeyDown
+        title='Try clicking backdrop or pressing ESC'
+        actions={<Button onClick={() => setNoBackdropCloseOpen(false)}>Close</Button>}
+      >
+        <Typography>Both backdrop click and ESC key are disabled for this modal.</Typography>
+      </Modal>
+
+      {/* 5. Size props --------------------------------------------------- */}
+      <Typography variant='h3'>5. maxWidth & fullWidth</Typography>
+      <Stack direction='row'>
+        <Button onClick={() => setDialogOpen(true)}>maxWidth (default)</Button>
+        <Button onClick={() => setControlledOpen(true)}>fullWidth</Button>
+      </Stack>
+      {/* reuse existing modals for brevity */}
+
+      {/* 6. Theme coupling ---------------------------------------------- */}
+      <Typography variant='h3'>6. Theme coupling</Typography>
+      <Button
+        variant='outlined'
+        onClick={toggleMode}
+      >
+        Toggle light / dark mode
+      </Button>
+    </Stack>
+  );
+
+  return (
+    <ComponentMetaPage
+      title='Modal'
+      subtitle='Accessible overlay for dialogs and alerts with consistent sizing and actions.'
+      slug='components/layout/modal'
+      meta={ModalMeta}
+      usage={usage}
+    />
   );
 }

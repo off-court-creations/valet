@@ -1,178 +1,237 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// src/pages/TooltipDemoPage.tsx | valet-docs
-// Live showcase of the Tooltip component: placements, arrow toggle, controlled
-// visibility, enter/leave delays, presets, and theme coupling.
-// ─────────────────────────────────────────────────────────────────────────────
-import type React from 'react';
-import { useMemo, useState } from 'react';
+// ─────────────────────────────────────────────────────────────
+// docs/src/pages/components/widgets/TooltipDemo.tsx  | valet-docs
+// Tooltip docs using ComponentMetaPage (Usage, Playground, Examples, Reference)
+// ─────────────────────────────────────────────────────────────
+import { useState } from 'react';
 import {
-  Surface,
   Stack,
   Tooltip,
   Button,
   IconButton,
   Typography,
-  useTheme,
-  definePreset,
   Panel,
+  Select,
+  Switch,
+  Iterator,
+  TextField,
 } from '@archway/valet';
-import { useNavigate } from 'react-router-dom';
-import NavDrawer from '../../../components/NavDrawer';
-import PageHero from '../../../components/PageHero';
+import ComponentMetaPage from '../../../components/ComponentMetaPage';
+import CuratedExamples from '../../../components/CuratedExamples';
+import BestPractices from '../../../components/BestPractices';
+import { getBestPractices, getExamples } from '../../../utils/sidecar';
+import TooltipMeta from '../../../../../src/components/widgets/Tooltip.meta.json';
 
-/*─────────────────────────────────────────────────────────────────────────────*/
-/* Style presets                                                              */
-// Bright red tooltip for destructive actions
-definePreset(
-  'dangerTooltip',
-  () => `
-  background-color : #ff0000;
-  color      : #ffffff;
-`,
-);
+type Placement = 'top' | 'bottom' | 'left' | 'right';
 
-/*─────────────────────────────────────────────────────────────────────────────*/
-/* Demo page                                                                  */
 export default function TooltipDemoPage() {
-  const { theme, toggleMode } = useTheme();
-  const navigate = useNavigate();
+  // Usage examples
+  const [ctrlOpen, setCtrlOpen] = useState(false);
 
-  const [controlledOpen, setControlledOpen] = useState(false);
+  const usageContent = (
+    <Stack>
+      <Typography variant='h3'>1. Default</Typography>
+      <Tooltip title='Hello, valet!'>
+        <Button variant='contained'>Hover me</Button>
+      </Tooltip>
 
-  // Use the Tooltip component's own prop type to avoid `any`
-  type TooltipPlacement = NonNullable<React.ComponentProps<typeof Tooltip>['placement']>;
+      <Typography variant='h3'>2. Controlled visibility</Typography>
+      <Stack direction='row'>
+        <Tooltip
+          open={ctrlOpen}
+          onOpen={() => setCtrlOpen(true)}
+          onClose={() => setCtrlOpen(false)}
+          title='Controlled'
+        >
+          <Button variant='outlined'>Target</Button>
+        </Tooltip>
+        <Button onClick={() => setCtrlOpen((v) => !v)}>{ctrlOpen ? 'Hide' : 'Show'} tooltip</Button>
+      </Stack>
 
-  const placements = useMemo<ReadonlyArray<{ key: TooltipPlacement; label: string }>>(
-    () => [
-      { key: 'top' as TooltipPlacement, label: 'Top' },
-      { key: 'right' as TooltipPlacement, label: 'Right' },
-      { key: 'bottom' as TooltipPlacement, label: 'Bottom' },
-      { key: 'left' as TooltipPlacement, label: 'Left' },
-    ],
-    [],
+      <Typography variant='h3'>3. Arrow toggle</Typography>
+      <Stack direction='row'>
+        <Tooltip title='Default arrow (true)'>
+          <IconButton icon='mdi:home' />
+        </Tooltip>
+        <Tooltip
+          arrow={false}
+          title='arrow={false}'
+        >
+          <IconButton icon='mdi:home' />
+        </Tooltip>
+      </Stack>
+    </Stack>
+  );
+
+  // Playground
+  const [pgTitle, setPgTitle] = useState<string>('Tooltip text');
+  const [pgPlacement, setPgPlacement] = useState<Placement>('top');
+  const [pgArrow, setPgArrow] = useState<boolean>(true);
+  const [pgControlled, setPgControlled] = useState<boolean>(false);
+  const [pgOpen, setPgOpen] = useState<boolean>(false);
+  const [pgEnterDelay, setPgEnterDelay] = useState<number>(100);
+  const [pgLeaveDelay, setPgLeaveDelay] = useState<number>(100);
+  const [pgDisableHover, setPgDisableHover] = useState<boolean>(false);
+  const [pgDisableFocus, setPgDisableFocus] = useState<boolean>(false);
+  const [pgDisableTouch, setPgDisableTouch] = useState<boolean>(false);
+
+  const playgroundContent = (
+    <Stack gap={1}>
+      <Panel fullWidth>
+        <Stack
+          direction='row'
+          gap={1}
+          sx={{ alignItems: 'center', flexWrap: 'wrap' }}
+        >
+          <TextField
+            name='title'
+            label='title'
+            value={pgTitle}
+            onChange={(e) => setPgTitle((e.target as HTMLInputElement).value)}
+            sx={{ width: 260 }}
+          />
+          <Select
+            placeholder='placement'
+            value={pgPlacement}
+            onChange={(v) => setPgPlacement(v as Placement)}
+            sx={{ width: 180 }}
+          >
+            <Select.Option value='top'>top</Select.Option>
+            <Select.Option value='bottom'>bottom</Select.Option>
+            <Select.Option value='left'>left</Select.Option>
+            <Select.Option value='right'>right</Select.Option>
+          </Select>
+          <Stack
+            direction='row'
+            gap={1}
+            sx={{ alignItems: 'center' }}
+          >
+            <Typography variant='subtitle'>arrow</Typography>
+            <Switch
+              checked={pgArrow}
+              onChange={setPgArrow}
+              aria-label='arrow'
+            />
+          </Stack>
+          <Stack
+            direction='row'
+            gap={1}
+            sx={{ alignItems: 'center' }}
+          >
+            <Typography variant='subtitle'>controlled</Typography>
+            <Switch
+              checked={pgControlled}
+              onChange={setPgControlled}
+              aria-label='controlled'
+            />
+          </Stack>
+          <Stack
+            direction='row'
+            gap={1}
+            sx={{ alignItems: 'center' }}
+          >
+            <Typography variant='subtitle'>open</Typography>
+            <Switch
+              checked={pgOpen}
+              onChange={setPgOpen}
+              aria-label='open'
+            />
+          </Stack>
+          <Stack
+            direction='row'
+            gap={1}
+            sx={{ alignItems: 'center' }}
+          >
+            <Typography variant='subtitle'>enterDelay</Typography>
+            <Iterator
+              width={140}
+              min={0}
+              max={1000}
+              step={50}
+              value={pgEnterDelay}
+              onChange={(n) => setPgEnterDelay(Math.round(n))}
+            />
+          </Stack>
+          <Stack
+            direction='row'
+            gap={1}
+            sx={{ alignItems: 'center' }}
+          >
+            <Typography variant='subtitle'>leaveDelay</Typography>
+            <Iterator
+              width={140}
+              min={0}
+              max={1000}
+              step={50}
+              value={pgLeaveDelay}
+              onChange={(n) => setPgLeaveDelay(Math.round(n))}
+            />
+          </Stack>
+          <Stack
+            direction='row'
+            gap={1}
+            sx={{ alignItems: 'center' }}
+          >
+            <Typography variant='subtitle'>disableHover</Typography>
+            <Switch
+              checked={pgDisableHover}
+              onChange={setPgDisableHover}
+              aria-label='disableHover'
+            />
+          </Stack>
+          <Stack
+            direction='row'
+            gap={1}
+            sx={{ alignItems: 'center' }}
+          >
+            <Typography variant='subtitle'>disableFocus</Typography>
+            <Switch
+              checked={pgDisableFocus}
+              onChange={setPgDisableFocus}
+              aria-label='disableFocus'
+            />
+          </Stack>
+          <Stack
+            direction='row'
+            gap={1}
+            sx={{ alignItems: 'center' }}
+          >
+            <Typography variant='subtitle'>disableTouch</Typography>
+            <Switch
+              checked={pgDisableTouch}
+              onChange={setPgDisableTouch}
+              aria-label='disableTouch'
+            />
+          </Stack>
+        </Stack>
+      </Panel>
+      <Panel fullWidth>
+        <Tooltip
+          title={pgTitle}
+          placement={pgPlacement}
+          arrow={pgArrow}
+          enterDelay={pgEnterDelay}
+          leaveDelay={pgLeaveDelay}
+          disableHoverListener={pgDisableHover}
+          disableFocusListener={pgDisableFocus}
+          disableTouchListener={pgDisableTouch}
+          {...(pgControlled ? { open: pgOpen } : {})}
+        >
+          <Button>Playground target</Button>
+        </Tooltip>
+      </Panel>
+      <CuratedExamples examples={getExamples(TooltipMeta)} />
+      <BestPractices items={getBestPractices(TooltipMeta)} />
+    </Stack>
   );
 
   return (
-    <Surface>
-      <NavDrawer />
-      <Stack>
-        <PageHero title='Tooltip' />
-
-        {/* 1. Basic usage -------------------------------------------------- */}
-        <Typography variant='h3'>1. Default Tooltip</Typography>
-        <Tooltip title='Hello, ZeroUI!'>
-          <Button variant='contained'>Hover me</Button>
-        </Tooltip>
-
-        {/* 2. Placements ---------------------------------------------------- */}
-        <Typography variant='h3'>2. Placements</Typography>
-        <Stack
-          direction='row'
-          wrap
-        >
-          {placements.map(({ key, label }) => (
-            <Tooltip
-              key={key}
-              placement={key}
-              title={`placement="${key}"`}
-            >
-              <Button>{label}</Button>
-            </Tooltip>
-          ))}
-        </Stack>
-
-        {/* 3. Arrow toggle -------------------------------------------------- */}
-        <Typography variant='h3'>3. Arrow toggle</Typography>
-        <Stack direction='row'>
-          <Tooltip title='Default arrow (true)'>
-            <IconButton icon='mdi:home' />
-          </Tooltip>
-          <Tooltip
-            arrow={false}
-            title='arrow={false}'
-          >
-            <IconButton icon='mdi:home' />
-          </Tooltip>
-        </Stack>
-
-        {/* 4. Controlled visibility ---------------------------------------- */}
-        <Typography variant='h3'>4. Controlled visibility</Typography>
-        <Stack direction='row'>
-          <Tooltip
-            open={controlledOpen}
-            onClose={() => setControlledOpen(false)}
-            onOpen={() => setControlledOpen(true)}
-            title='I am controlled!'
-          >
-            <Button variant='outlined'>Target</Button>
-          </Tooltip>
-          <Button onClick={() => setControlledOpen((v) => !v)}>
-            {controlledOpen ? 'Hide' : 'Show'} tooltip
-          </Button>
-        </Stack>
-
-        {/* 5. Custom enter / leave delays ---------------------------------- */}
-        <Typography variant='h3'>5. Custom enter / leave delays</Typography>
-        <Tooltip
-          title='500 ms open / 1 s close'
-          enterDelay={500}
-          leaveDelay={1000}
-        >
-          <Button>Slow tooltip</Button>
-        </Tooltip>
-
-        {/* 6. Preset styling ----------------------------------------------- */}
-        <Typography variant='h3'>6. Preset styling</Typography>
-        <Tooltip
-          title='Looks dangerous'
-          preset='dangerTooltip'
-        >
-          <Button variant='contained'>Danger button</Button>
-        </Tooltip>
-
-        {/* 7. Theme coupling ----------------------------------------------- */}
-        <Typography variant='h3'>7. Theme coupling</Typography>
-        <Button
-          variant='outlined'
-          onClick={toggleMode}
-        >
-          Toggle light / dark mode
-        </Button>
-
-        {/* Best Practices ------------------------------------------------- */}
-        <Panel fullWidth>
-          <Typography variant='h4'>Best Practices</Typography>
-          <Typography>
-            - Use tooltips for supplemental hints, not essential instructions. The UI should remain
-            usable without hovering.
-          </Typography>
-          <Typography>
-            - Ensure the trigger is focusable and labelled. For icon‑only controls, provide
-            <code>aria-label</code> on the target.
-          </Typography>
-          <Typography>
-            - Keep content concise; avoid interactive controls inside tooltips. Prefer short phrases
-            over sentences.
-          </Typography>
-          <Typography>
-            - Prefer <code>placement=&apos;top&apos;</code> when space allows; adjust placement to
-            avoid clipping and viewport edges.
-          </Typography>
-          <Typography>
-            - Use sensible delays. Avoid long <code>enterDelay</code> / <code>leaveDelay</code> that
-            make tooltips feel sluggish or sticky, especially on touch devices.
-          </Typography>
-        </Panel>
-
-        {/* Back nav --------------------------------------------------------- */}
-        <Button
-          size='lg'
-          onClick={() => navigate(-1)}
-          sx={{ marginTop: theme.spacing(1) }}
-        >
-          ← Back
-        </Button>
-      </Stack>
-    </Surface>
+    <ComponentMetaPage
+      title='Tooltip'
+      subtitle='Accessible, portal-based tooltip with hover, focus, and touch interactions.'
+      slug='components/widgets/tooltip'
+      meta={TooltipMeta}
+      usage={usageContent}
+      playground={playgroundContent}
+    />
   );
 }

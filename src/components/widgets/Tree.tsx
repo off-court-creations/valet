@@ -32,6 +32,11 @@ export interface TreeProps<T>
   defaultSelected?: string;
   onNodeSelect?: (node: T) => void;
   variant?: 'chevron' | 'list' | 'files';
+  /**
+   * If true, expanding/collapsing is only triggered by clicking the icon.
+   * Defaults to false: clicking anywhere on the row toggles when the node has children.
+   */
+  iconToggleOnly?: boolean;
   /** Inline styles (with CSS var support) */
   sx?: Sx;
 }
@@ -61,6 +66,8 @@ const ItemRow = styled('div')<{
   padding-left: ${({ $level, $indent }) => `calc(${$indent} * ${$level})`};
   cursor: pointer;
   user-select: none;
+  -webkit-user-drag: none;
+  user-drag: none;
   ${({ $hoverBg }) => `@media(hover:hover){&:hover{background:${$hoverBg};}}`}
   ${({ $selected, $selectedBg }) => ($selected ? `background:${$selectedBg};` : '')}
   &:focus-visible {
@@ -75,6 +82,9 @@ const ExpandIcon = styled('span')<{ $open: boolean }>`
   height: 1em;
   transform: rotate(${({ $open }) => ($open ? 90 : 0)}deg);
   transition: transform 150ms ease;
+  user-select: none;
+  -webkit-user-drag: none;
+  user-drag: none;
 `;
 
 const Branch = styled('ul')<{ $line: string; $root?: boolean; $indent: string }>`
@@ -125,6 +135,8 @@ const ListRow = styled('div')<{
   padding: ${({ $padV, $padH }) => `${$padV} ${$padH}`};
   cursor: pointer;
   user-select: none;
+  -webkit-user-drag: none;
+  user-drag: none;
   ${({ $hoverBg }) => `@media(hover:hover){&:hover{background:${$hoverBg};}}`}
   ${({ $selected, $selectedBg }) => ($selected ? `background:${$selectedBg};` : '')}
   &:focus-visible {
@@ -145,6 +157,9 @@ const BoxIcon = styled('span')<{
   background: ${({ $open, $fill }) => ($open ? $fill : 'transparent')};
   margin-right: 0.25rem;
   box-sizing: border-box;
+  user-select: none;
+  -webkit-user-drag: none;
+  user-drag: none;
 `;
 
 /*───────────────────────────────────────────────────────────*/
@@ -158,12 +173,13 @@ export function Tree<T>({
   defaultSelected,
   onNodeSelect,
   variant = 'chevron',
+  iconToggleOnly = false,
   preset: p,
   className,
   sx,
   ...rest
 }: TreeProps<T>) {
-  const { theme } = useTheme();
+  const { theme, mode } = useTheme();
   const controlledExpand = expandedProp !== undefined;
   const [selfExpanded, setSelfExpanded] = useState(() => new Set(defaultExpanded));
 
@@ -178,8 +194,11 @@ export function Tree<T>({
   const [selfSelected, setSelfSelected] = useState<string | null>(defaultSelected ?? null);
   const selected = controlled ? selectedProp! : selfSelected;
 
-  // Swap hover and active intensity per design feedback
-  const hoverBg = toHex(mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.4));
+  // Hover: subtly distort primary (mix with background, then nudge toward contrast color)
+  const hoverBase = mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.22);
+  const hoverDistorted = mix(hoverBase, toRgb(mode === 'dark' ? '#ffffff' : '#000000'), 0.22);
+  const hoverBg = toHex(hoverDistorted);
+  // Selected: primary-tinted
   const selectedBg = toHex(mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.2));
 
   const flat = useMemo(() => {
@@ -300,15 +319,17 @@ export function Tree<T>({
               focusItem(node.id);
               if (!controlled) setSelfSelected(node.id);
               onNodeSelect?.(node.data);
+              if (node.children && !iconToggleOnly) toggle(node.id);
             }}
             onDoubleClick={() => node.children && toggle(node.id)}
           >
             {variant === 'list' && node.children && (
               <BoxIcon
+                draggable={false}
                 aria-hidden
                 $open={expanded.has(node.id)}
                 $line={line}
-                $fill={theme.colors.secondary}
+                $fill={theme.colors.tertiary}
                 onClick={(e: React.MouseEvent) => {
                   e.stopPropagation();
                   toggle(node.id);
@@ -317,6 +338,7 @@ export function Tree<T>({
             )}
             {variant === 'files' && (
               <Icon
+                draggable={false}
                 icon={
                   node.children
                     ? expanded.has(node.id)
@@ -340,6 +362,7 @@ export function Tree<T>({
             <Typography
               variant='body'
               family='mono'
+              noSelect
               sx={{ display: 'inline' }}
             >
               {getLabel(node.data)}
@@ -393,11 +416,13 @@ export function Tree<T>({
                   focusItem(node.id);
                   if (!controlled) setSelfSelected(node.id);
                   onNodeSelect?.(node.data);
+                  if (node.children && !iconToggleOnly) toggle(node.id);
                 }}
                 onDoubleClick={() => node.children && toggle(node.id)}
               >
                 {node.children && (
                   <ExpandIcon
+                    draggable={false}
                     aria-hidden
                     $open={expanded.has(node.id)}
                     onClick={(e: React.MouseEvent) => {
@@ -411,6 +436,7 @@ export function Tree<T>({
                 <Typography
                   variant='body'
                   family='mono'
+                  noSelect
                   sx={{ display: 'inline' }}
                 >
                   {getLabel(node.data)}

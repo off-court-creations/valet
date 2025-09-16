@@ -1,0 +1,15 @@
+{
+  "name": "Slider",
+  "status": "unstable",
+  "aliases": ["slider", "range"],
+  "docs": {
+    "bestPractices": [
+      "Use Slider for ranges where relative position matters; prefer `TextField` for precise numeric entry.",
+      "Snap deliberately. Provide step increments that match the domain; avoid overly fine steps that make keyboard or touch fiddly.",
+      "Label min/max or current value. Show ticks or helper text for context; keep labels short and avoid clutter.",
+      "Keyboard support. Ensure Left/Right (or Up/Down) adjust values by one step, and Page/Home/End jump predictably.",
+      "Size for touch. Pick token sizes or numeric height to keep the thumb easy to grab on mobile.",
+      "Use presets/tokens for colour and shape. Keep theme‑aligned styling rather than per‑instance CSS."
+    ]
+  }
+}

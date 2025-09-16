@@ -45,11 +45,13 @@ const Trippy = styled('div')<{ $dur: string; $ease: string; $opacity?: number }>
   inset: -10%; /* bleed edges when rotating */
   z-index: 0;
   pointer-events: none;
-  background: conic-gradient(from 0deg, #6ee7f9, #a78bfa, #f472b6, #fbbf24, #6ee7f9);
+  /* Orange-forward start; reduce initial purple bias */
+  background: conic-gradient(from 0deg, #d16701, #f59e0b, #fb923c, #fbbf24, #d16701);
   filter: saturate(1.25) blur(40px);
   opacity: ${({ $opacity = 0.35 }) => String($opacity)};
   animation: ${swirl} ${({ $dur }) => $dur} ${({ $ease }) => $ease} infinite;
   will-change: transform;
+  transform: translateZ(0);
   mix-blend-mode: overlay;
   @media (prefers-reduced-motion: reduce) {
     animation: none;
@@ -104,6 +106,9 @@ const Goo = styled('div')<{
   z-index: 0;
   pointer-events: none;
   --blob-blur: ${({ $blur = 40 }) => `${$blur}px`};
+  /* Hint GPU accel for the animated filter */
+  will-change: filter;
+  transform: translateZ(0);
   filter: blur(var(--blob-blur)) hue-rotate(0deg);
   opacity: ${({ $opacity = 0.45 }) => String($opacity)};
   mix-blend-mode: screen;
@@ -157,6 +162,7 @@ const Halo = styled('div')<{ $opacity?: number; $dur?: string }>`
   mix-blend-mode: screen;
   filter: saturate(1.08) brightness(1.05);
   will-change: transform;
+  transform: translateZ(0);
 `;
 
 // —
@@ -261,6 +267,7 @@ export default function MainPage() {
             density={140}
             speed={126}
             streak={0.85}
+            color='rgba(192,192,192,0.85)'
             opacity={0.4}
             centerZero={0.05}
             centerFull={0.55}
@@ -281,7 +288,7 @@ export default function MainPage() {
           >
             <Blob
               $size={720}
-              $color='#7c3aed' /* purple */
+              $color={theme.colors['error'] ?? '#D16701'} /* orange */
               $anim={floatA}
               $duration={`${95 * speed}s`}
               $delay={`${-10 * speed}s`}
@@ -291,7 +298,7 @@ export default function MainPage() {
             />
             <Blob
               $size={640}
-              $color='#8b5cf6' /* purple */
+              $color={theme.colors['error'] ?? '#D16701'} /* orange */
               $anim={floatB}
               $duration={`${120 * speed}s`}
               $delay={`${-35 * speed}s`}
@@ -301,7 +308,7 @@ export default function MainPage() {
             />
             <Blob
               $size={560}
-              $color='#6d28d9' /* purple */
+              $color={theme.colors['error'] ?? '#D16701'} /* orange */
               $anim={floatC}
               $duration={`${105 * speed}s`}
               $delay={`${-20 * speed}s`}
@@ -311,7 +318,7 @@ export default function MainPage() {
             />
             <Blob
               $size={480}
-              $color='#a78bfa' /* purple */
+              $color={theme.colors['error'] ?? '#D16701'} /* orange */
               $anim={floatA}
               $duration={`${130 * speed}s`}
               $delay={`${-55 * speed}s`}
@@ -321,7 +328,7 @@ export default function MainPage() {
             />
             <Blob
               $size={520}
-              $color='#5b21b6' /* purple */
+              $color={theme.colors['error'] ?? '#D16701'} /* orange */
               $anim={floatB}
               $duration={`${140 * speed}s`}
               $delay={`${-80 * speed}s`}
@@ -333,7 +340,7 @@ export default function MainPage() {
             {/* Additional blobs for fuller coverage and overlap */}
             <Blob
               $size={2000}
-              $color='#7c3aed'
+              $color={theme.colors['error'] ?? '#D16701'}
               $anim={floatD}
               $duration={`${150 * speed}s`}
               $delay={`${-25 * speed}s`}
@@ -343,7 +350,7 @@ export default function MainPage() {
             />
             <Blob
               $size={880}
-              $color='#6d28d9'
+              $color={theme.colors['error'] ?? '#D16701'}
               $anim={floatB}
               $duration={`${135 * speed}s`}
               $delay={`${-70 * speed}s`}
@@ -353,7 +360,7 @@ export default function MainPage() {
             />
             <Blob
               $size={680}
-              $color='#8b5cf6'
+              $color={theme.colors['error'] ?? '#D16701'}
               $anim={floatC}
               $duration={`${125 * speed}s`}
               $delay={`${-95 * speed}s`}
@@ -363,7 +370,7 @@ export default function MainPage() {
             />
             <Blob
               $size={600}
-              $color='#5b21b6'
+              $color={theme.colors['error'] ?? '#D16701'}
               $anim={floatA}
               $duration={`${110 * speed}s`}
               $delay={`${-15 * speed}s`}
@@ -373,7 +380,7 @@ export default function MainPage() {
             />
             <Blob
               $size={540}
-              $color='#7c3aed'
+              $color={theme.colors['error'] ?? '#D16701'}
               $anim={floatD}
               $duration={`${118 * speed}s`}
               $delay={`${-45 * speed}s`}
@@ -383,7 +390,7 @@ export default function MainPage() {
             />
             <Blob
               $size={420}
-              $color='#6d28d9'
+              $color={theme.colors['error'] ?? '#D16701'}
               $anim={floatB}
               $duration={`${100 * speed}s`}
               $delay={`${-30 * speed}s`}
@@ -393,7 +400,7 @@ export default function MainPage() {
             />
             <Blob
               $size={380}
-              $color='#8b5cf6'
+              $color={theme.colors['error'] ?? '#D16701'}
               $anim={floatC}
               $duration={`${90 * speed}s`}
               $delay={`${-62 * speed}s`}
@@ -403,7 +410,7 @@ export default function MainPage() {
             />
             <Blob
               $size={340}
-              $color='#a78bfa'
+              $color={theme.colors['error'] ?? '#D16701'}
               $anim={floatA}
               $duration={`${85 * speed}s`}
               $delay={`${-12 * speed}s`}
@@ -413,7 +420,7 @@ export default function MainPage() {
             />
             <Blob
               $size={320}
-              $color='#5b21b6'
+              $color={theme.colors['error'] ?? '#D16701'}
               $anim={floatD}
               $duration={`${82 * speed}s`}
               $delay={`${-28 * speed}s`}
@@ -423,7 +430,7 @@ export default function MainPage() {
             />
             <Blob
               $size={240}
-              $color='#7c3aed'
+              $color={theme.colors['error'] ?? '#D16701'}
               $anim={floatB}
               $duration={`${78 * speed}s`}
               $delay={`${-40 * speed}s`}
@@ -435,7 +442,7 @@ export default function MainPage() {
             {/* Extra 50% more blobs (8 new) for denser field */}
             <Blob
               $size={760}
-              $color='#6d28d9'
+              $color={theme.colors['error'] ?? '#D16701'}
               $anim={floatA}
               $duration={`${128 * speed}s`}
               $delay={`${-22 * speed}s`}
@@ -445,7 +452,7 @@ export default function MainPage() {
             />
             <Blob
               $size={700}
-              $color='#8b5cf6'
+              $color={theme.colors['error'] ?? '#D16701'}
               $anim={floatD}
               $duration={`${112 * speed}s`}
               $delay={`${-38 * speed}s`}
@@ -455,7 +462,7 @@ export default function MainPage() {
             />
             <Blob
               $size={520}
-              $color='#7c3aed'
+              $color={theme.colors['error'] ?? '#D16701'}
               $anim={floatB}
               $duration={`${108 * speed}s`}
               $delay={`${-18 * speed}s`}
@@ -465,7 +472,7 @@ export default function MainPage() {
             />
             <Blob
               $size={480}
-              $color='#a78bfa'
+              $color={theme.colors['error'] ?? '#D16701'}
               $anim={floatC}
               $duration={`${96 * speed}s`}
               $delay={`${-52 * speed}s`}
@@ -475,7 +482,7 @@ export default function MainPage() {
             />
             <Blob
               $size={420}
-              $color='#5b21b6'
+              $color={theme.colors['error'] ?? '#D16701'}
               $anim={floatA}
               $duration={`${88 * speed}s`}
               $delay={`${-8 * speed}s`}
@@ -485,7 +492,7 @@ export default function MainPage() {
             />
             <Blob
               $size={360}
-              $color='#6d28d9'
+              $color={theme.colors['error'] ?? '#D16701'}
               $anim={floatD}
               $duration={`${84 * speed}s`}
               $delay={`${-68 * speed}s`}
@@ -495,7 +502,7 @@ export default function MainPage() {
             />
             <Blob
               $size={300}
-              $color='#8b5cf6'
+              $color={theme.colors['error'] ?? '#D16701'}
               $anim={floatB}
               $duration={`${80 * speed}s`}
               $delay={`${-48 * speed}s`}
@@ -505,7 +512,7 @@ export default function MainPage() {
             />
             <Blob
               $size={260}
-              $color='#7c3aed'
+              $color={theme.colors['error'] ?? '#D16701'}
               $anim={floatC}
               $duration={`${76 * speed}s`}
               $delay={`${-32 * speed}s`}
@@ -517,7 +524,7 @@ export default function MainPage() {
             {/* +30% blobs: add 7 more for denser coverage with varied sizes */}
             <Blob
               $size={1600}
-              $color='#6d28d9'
+              $color={theme.colors['error'] ?? '#D16701'}
               $anim={floatA}
               $duration={`${140 * speed}s`}
               $delay={`${-58 * speed}s`}
@@ -527,7 +534,7 @@ export default function MainPage() {
             />
             <Blob
               $size={1400}
-              $color='#5b21b6'
+              $color={theme.colors['error'] ?? '#D16701'}
               $anim={floatB}
               $duration={`${132 * speed}s`}
               $delay={`${-12 * speed}s`}
@@ -537,7 +544,7 @@ export default function MainPage() {
             />
             <Blob
               $size={960}
-              $color='#8b5cf6'
+              $color={theme.colors['error'] ?? '#D16701'}
               $anim={floatD}
               $duration={`${126 * speed}s`}
               $delay={`${-44 * speed}s`}
@@ -547,7 +554,7 @@ export default function MainPage() {
             />
             <Blob
               $size={720}
-              $color='#7c3aed'
+              $color={theme.colors['error'] ?? '#D16701'}
               $anim={floatC}
               $duration={`${116 * speed}s`}
               $delay={`${-26 * speed}s`}
@@ -557,7 +564,7 @@ export default function MainPage() {
             />
             <Blob
               $size={520}
-              $color='#a78bfa'
+              $color={theme.colors['error'] ?? '#D16701'}
               $anim={floatA}
               $duration={`${92 * speed}s`}
               $delay={`${-72 * speed}s`}
@@ -567,7 +574,7 @@ export default function MainPage() {
             />
             <Blob
               $size={380}
-              $color='#6d28d9'
+              $color={theme.colors['error'] ?? '#D16701'}
               $anim={floatB}
               $duration={`${82 * speed}s`}
               $delay={`${-8 * speed}s`}
@@ -577,7 +584,7 @@ export default function MainPage() {
             />
             <Blob
               $size={280}
-              $color='#8b5cf6'
+              $color={theme.colors['error'] ?? '#D16701'}
               $anim={floatD}
               $duration={`${74 * speed}s`}
               $delay={`${-52 * speed}s`}
@@ -588,7 +595,7 @@ export default function MainPage() {
             {/* Additional pop for richer field (3 more blobs) */}
             <Blob
               $size={1100}
-              $color='#7c3aed'
+              $color={theme.colors['error'] ?? '#D16701'}
               $anim={floatB}
               $duration={`${120 * speed}s`}
               $delay={`${-66 * speed}s`}
@@ -598,7 +605,7 @@ export default function MainPage() {
             />
             <Blob
               $size={760}
-              $color='#a78bfa'
+              $color={theme.colors['error'] ?? '#D16701'}
               $anim={floatC}
               $duration={`${98 * speed}s`}
               $delay={`${-34 * speed}s`}
@@ -608,7 +615,7 @@ export default function MainPage() {
             />
             <Blob
               $size={540}
-              $color='#5b21b6'
+              $color={theme.colors['error'] ?? '#D16701'}
               $anim={floatA}
               $duration={`${88 * speed}s`}
               $delay={`${-22 * speed}s`}
@@ -640,6 +647,7 @@ export default function MainPage() {
               zIndex: 1,
             }}
           >
+            {/* ATTENTION AGENTS DO NOT CHANGE THE HERO COPY */}
             <div
               ref={heroAnchorRef}
               style={{ display: 'inline-block' }}
@@ -657,14 +665,12 @@ export default function MainPage() {
               sx={{ textAlign: 'center', color: '#fff', opacity: 0.9 }}
             >
               Beautiful by default. Limitless when customized.
-              {/* Predictable primitives. Typed theme. Semantics for agents. Built for speed. */}
             </Typography>
             <Typography
               variant='subtitle'
               sx={{ textAlign: 'center', color: '#fff', opacity: 0.9 }}
             >
               From AI to Zustand, <code>valet</code> is how it all connects.
-              {/* Predictable primitives. Typed theme. Semantics for agents. Built for speed. */}
             </Typography>
             <Stack
               direction='row'
@@ -700,7 +706,10 @@ export default function MainPage() {
       </Panel>
 
       {/* Feature grid */}
-      <Panel fullWidth>
+      <Panel
+        fullWidth
+        sx={{ backgroundColor: theme.colors['background'] }}
+      >
         <Grid
           columns={3}
           adaptive
@@ -708,19 +717,19 @@ export default function MainPage() {
         >
           {[
             {
-              icon: 'mdi:speedometer',
-              title: 'Performance first',
-              body: 'Micro‑runtime, zero CSS baggage. Predictable paint and jank‑free motion deliver instant‑feeling apps for everyone—with enough headroom to hit your frame budget.',
+              icon: 'mdi:rocket-launch',
+              title: 'Performance First Principles',
+              body: 'Micro-runtime components with predictable paint & motion. No CSS baggage.',
             },
             {
-              icon: 'mdi:vector-arrange-above',
-              title: 'Semantic interface layer',
-              body: 'Metadata on components designed for LLM tooling—introspection, props, and usage. Agents build valet and help you build valet well.',
+              icon: 'mdi:account-voice',
+              title: 'Human & Agent Semantics',
+              body: 'A semantic interface layer that labels and contextualizes components for your AI tools.',
             },
             {
-              icon: 'mdi:palette-swatch-variant',
-              title: 'Live theming',
-              body: 'Typed tokens for color, spacing, radius, stroke, breakpoints and fonts.',
+              icon: 'mdi:auto-awesome',
+              title: 'Live Theming + Typed Tokens',
+              body: 'Tokens give you unified control over key design choices without the hassle.',
             },
             {
               icon: 'mdi:state-machine',
@@ -728,35 +737,50 @@ export default function MainPage() {
               body: 'Zustand stores for theme, surfaces and forms keep state cohesive and simple.',
             },
             {
-              icon: 'mdi:timeline-text-outline',
+              icon: 'mdi:chart-timeline-variant',
               title: 'Web Action Graph',
-              body: 'Capture user actions for introspection and next‑step suggestions.',
+              body: 'An automatic map of what you can click and type, so agents know what they can do next.',
             },
             {
-              icon: 'mdi:human-capacity-decrease',
-              title: 'Mandatory accessibility',
-              body: 'Keyboard flows, focus styles and aria baked in from first principles.',
+              icon: 'mdi:vpn-key',
+              title: 'Accessibility, by construction',
+              body: 'Keyboard flows for components, focus styles, and ARIA baked in.',
             },
           ].map((f, i) => (
             <Panel
               key={`f-${i}`}
-              preset='glassHolder'
+              variant='alt'
               pad={2}
             >
               <Stack>
-                <Icon icon={f.icon as string} />
+                <Icon
+                  icon={f.icon as string}
+                  color={theme.colors['text']}
+                />
                 <Typography
                   variant='h4'
                   bold
+                  sx={{ color: theme.colors['text'] }}
                 >
                   {f.title}
                 </Typography>
-                <Typography variant='body'>{f.body}</Typography>
+                <Typography
+                  variant='body'
+                  sx={{ color: theme.colors['text'] }}
+                >
+                  {f.body}
+                </Typography>
               </Stack>
             </Panel>
           ))}
         </Grid>
       </Panel>
+
+      <Divider
+        lineColor={theme.colors['primary']}
+        thickness={2}
+        pad={2}
+      />
 
       {/* Experience: Live demos + Theme playground */}
       <Box fullWidth>
@@ -921,14 +945,15 @@ export default function MainPage() {
         </Grid>
       </Box>
 
-      <Divider />
+      <Divider
+        lineColor={theme.colors['primary']}
+        thickness={2}
+        pad={2}
+      />
 
       {/* Footer */}
       <Box fullWidth>
-        <Stack
-          direction='row'
-          sx={{ alignItems: 'center', gap: theme.spacing(1), flexWrap: 'wrap' }}
-        >
+        <Stack direction='row'>
           <Typography variant='subtitle'>
             <code>{new Date().getFullYear()} Off Court Creations</code>
           </Typography>

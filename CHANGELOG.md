@@ -4,6 +4,41 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Added
+
+- MCP: added `valet__search_best_practices` and `valet__list_synonyms` tools for agents to surface guidance and inspect alias mappings directly.
+
+### Changed
+
+- MCP: extend component status enum to include `golden` (very stable, polished) and `unstable` (known problem; avoid depending on it). Bumped MCP `schemaVersion` to `1.6` and regenerated `mcp-data/`.
+
+## [0.32.0]
+
+### Added
+
+- MCP: component-level `status` field in schema and merged output; server types updated to include status badges.
+- MCP: aliases support and generated synonyms file. Merge now emits `mcp-data/component_synonyms.json` from sidecar `aliases[]` to power search and MCP tooling.
+- Docs: new Component Status page (`/component-status`) listing all components with category, slug, and status (sortable Valet Table).
+- Docs: reusable `BestPractices` component that renders sidecar-driven guidance across demo pages.
+
+### Changed
+
+- MCP: migrated all sidecar metadata to JSON (`*.meta.json`) and made sidecars the source of truth for `docs.bestPractices`. Merge prefers sidecar best practices over in-code defaults. Bumped MCP schema version to `1.5`.
+- Docs: converted demo pages to consume sidecar best practices and removed legacy inline “Best Practices” panels to de-duplicate guidance. Surface explainer now pulls practices directly from `Surface.meta.json`.
+- Theme: use off‑white text (`primaryText`) on `backgroundAlt` surfaces for improved contrast (Panel, Modal, Select, DateSelector).
+- Theme: promote Signal Orange (`#D16701`) to `secondary`; introduce new error color Signal Red (`#D32F2F`) with off‑white `errorText`.
+- Docs: homepage dividers now use `secondary` instead of `error` for visual consistency.
+
+### Fixed
+
+- Docs build: corrected JSON import paths and Vite CSS import for `@archway/valet` styles to avoid resolution errors.
+- Types: cleaned up theme typing in Typography demos to avoid implicit `any`s and ensure stable token usage.
+- MCP validation: resolved `mcp:schema:check` warning by always generating `component_synonyms.json` (even when empty).
+
+### Migration notes
+
+- If you have custom sidecars, convert them to `*.meta.json` and add `status` and `aliases` as needed. Move any “Best Practices” content from docs into sidecars under `docs.bestPractices`.
+
 ## [0.31.0]
 
 - docs: Add hyperspace starfield (light‑speed) motion layer under hero blobs. GPU-friendly canvas with trails, DPR aware, and respects reduced motion.

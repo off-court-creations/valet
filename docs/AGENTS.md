@@ -194,3 +194,34 @@ These shape how components express semantics, styles, and state. Reuse them.
 
 If in doubt, optimize for clarity and predictable outcomes. Agents should consistently leave the codebase simpler than they found it.
 
+---
+
+## 12) Prefer Built‑In Props Over `sx`
+
+Valet components intentionally expose semantic props that encode behavior, theming, and accessibility. Prefer these first‑class props instead of reaching for ad‑hoc styles in `sx` when they express the same intent.
+
+Why this matters
+- Semantics: props communicate purpose (e.g., centring content) rather than an incidental style.
+- Theming + a11y: built‑ins cooperate with theme tokens, modes, and contrast rules.
+- Consistency: components stay predictable across pages; fewer edge cases.
+- Introspection: MCP data and docs reflect prop‑level behavior; agents rely on this.
+
+Heuristics
+- Choose API semantics first; use `sx` only for details that aren’t covered by the component API.
+- If you catch yourself hand‑coding a common pattern, look for a prop or a preset.
+- Prefer tokens (`theme.colors`, spacing units, presets) over raw CSS values.
+
+Concrete examples
+- Centring content inside a container
+  - Do: `<Box centerContent>…</Box>`
+  - Don’t: `<Box sx={{ textAlign: 'center' }}>…</Box>`
+- Horizontal placement and width
+  - Do: `<Box fullWidth alignX='center'>…</Box>`
+  - Don’t: `<Box sx={{ width: '100%', margin: '0 auto' }}>…</Box>`
+- Variant/visual affordances
+  - Do: `<Panel variant='alt'>…</Panel>` (or `preset='glassHolder'`)
+  - Don’t: `<Panel sx={{ background: 'transparent', outline: '1px solid …' }}>…</Panel>`
+
+Principle in one line
+- You shouldn’t use `sx` when a valet prop does the same thing better. Prefer the built‑in props.
+

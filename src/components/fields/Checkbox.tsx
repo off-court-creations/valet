@@ -78,7 +78,7 @@ interface BoxProps {
   $size: string;
   $checked: boolean;
   $primary: string;
-  $text: string;
+  $outline: string;
   $disabled: boolean;
   $disabledColor: string;
 }
@@ -94,7 +94,7 @@ const Box = styled('span')<BoxProps>`
 
   /* Outline always visible, greyed when disabled */
   border: var(--valet-checkbox-stroke, 2px) solid
-    ${({ $disabled, $disabledColor, $text }) => ($disabled ? $disabledColor : $text)};
+    ${({ $disabled, $disabledColor, $outline }) => ($disabled ? $disabledColor : $outline)};
 
   /* Fill when checked, swap to disabled colour if disabled */
   background: ${({ $checked, $disabled, $primary, $disabledColor }) =>
@@ -172,6 +172,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
     const disabledColor = toHex(
       mix(toRgb(theme.colors.text), toRgb(mode === 'dark' ? '#000' : '#fff'), 0.4),
     );
+    const offBlack = toHex(mix(toRgb(theme.colors.background), toRgb('#000'), 0.85));
 
     /* Optional FormControl binding -------------------------------------- */
     const form = useOptionalForm<Record<string, unknown>>();
@@ -233,8 +234,8 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
         <Box
           $size={SZ.box}
           $checked={currentChecked}
-          $primary={theme.colors.secondary}
-          $text={theme.colors.text}
+          $primary={theme.colors.tertiary}
+          $outline={offBlack}
           $disabled={disabled}
           $disabledColor={disabledColor}
           style={

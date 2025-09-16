@@ -1,0 +1,32 @@
+{
+  "name": "MetroSelect",
+  "status": "experimental",
+  "aliases": ["metroselect", "chip", "segmented", "segment", "segmented-control"],
+  "docs": {
+    "bestPractices": [
+      "Use for compact choice sets where visual labels and icons help recognition.",
+      "Choose `multiple` when users should select more than one; otherwise keep single‑select.",
+      "Keep options short and distinct; avoid long labels that wrap unpredictably.",
+      "Expose clear values via `value` so form binding and analytics stay consistent.",
+      "Control spacing with `gap` using theme spacing tokens or numbers to match density.",
+      "Keyboard: ensure arrow keys move focus predictably and Space toggles selection."
+    ]
+  },
+  "examples": [
+    {
+      "id": "metroselect-basic",
+      "title": "Uncontrolled",
+      "code": "<MetroSelect defaultValue='home' gap={4}>\n  <MetroSelect.Option icon='mdi:home' value='home' label='Home' />\n  <MetroSelect.Option icon='mdi:briefcase' value='work' label='Work' disabled />\n  <MetroSelect.Option icon='mdi:airplane' value='travel' label='Travel' />\n</MetroSelect>"
+    },
+    {
+      "id": "metroselect-controlled",
+      "title": "Controlled value",
+      "code": "() => {\n  const [v, setV] = React.useState('car');\n  return (<Stack>\n    <MetroSelect value={v} onChange={(x) => setV(x as string)} gap={4}>\n      <MetroSelect.Option icon='mdi:car' value='car' label='Car' />\n      <MetroSelect.Option icon='mdi:bike' value='bike' label='Bike' />\n      <MetroSelect.Option icon='mdi:train' value='train' label='Train' />\n    </MetroSelect>\n    <Typography>Current: <b>{v}</b></Typography>\n  </Stack>);\n}"
+    },
+    {
+      "id": "metroselect-multiple",
+      "title": "Multiple selection",
+      "code": "<MetroSelect multiple defaultValue={['home','travel']} gap={4}>\n  <MetroSelect.Option icon='mdi:home' value='home' label='Home' />\n  <MetroSelect.Option icon='mdi:airplane' value='travel' label='Travel' />\n  <MetroSelect.Option icon='mdi:briefcase' value='work' label='Work' disabled />\n</MetroSelect>"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "name": "Accordion",
+  "status": "experimental",
+  "aliases": ["accordion", "expander"],
+  "docs": {
+    "bestPractices": [
+      "Use for short, scannable sections. Keep headers concise and content lightweight.",
+      "Choose single vs multiple expansion by context; avoid opening many sections by default.",
+      "Control model deliberately: use `open` + `onOpenChange` for app‑driven state, or `defaultOpen` for uncontrolled.",
+      "Respect heading levels. Set `headingLevel` so the outline remains semantic within the page.",
+      "Constrain height in dense pages so the thread scrolls locally rather than the document.",
+      "Ensure keyboard support: Space/Enter toggles, Arrow keys move focus, and focus styles are visible."
+    ]
+  },
+  "examples": [
+    {
+      "id": "accordion-uncontrolled",
+      "title": "Uncontrolled (single)",
+      "code": "<Accordion>\n  <Accordion.Item header='Item 1'>Content</Accordion.Item>\n  <Accordion.Item header='Item 2'>Content</Accordion.Item>\n</Accordion>"
+    },
+    {
+      "id": "accordion-controlled-multi",
+      "title": "Controlled multiple",
+      "code": "() => {\n  const [open, setOpen] = React.useState([0,2]);\n  return (\n    <Accordion multiple open={open} onOpenChange={setOpen}>\n      <Accordion.Item header='Alpha'>A</Accordion.Item>\n      <Accordion.Item header='Bravo'>B</Accordion.Item>\n      <Accordion.Item header='Charlie'>C</Accordion.Item>\n    </Accordion>\n  );\n}"
+    }
+  ]
+}

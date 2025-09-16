@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/NavDrawer.tsx  | valet-docs
+// docs/src/components/NavDrawer.tsx  | valet-docs
 // Reusable navigation drawer for docs
 // ─────────────────────────────────────────────────────────────
 import { useState } from 'react';
@@ -60,6 +60,7 @@ const widgets: [string, string][] = [
   ['Stepper', '/stepper-demo'],
   ['Table', '/table-demo'],
   ['Tooltip', '/tooltip-demo'],
+  ['Chip', '/chip-demo'],
   ['Dropzone', '/dropzone-demo'],
   ['Tree', '/tree-demo'],
   ['Markdown', '/markdown-demo'],
@@ -92,9 +93,9 @@ const treeData: TreeNode<Item>[] = [
     data: { label: 'Getting Started' },
     children: [
       { id: '/quickstart', data: { label: 'Quickstart', path: '/quickstart' } },
-      { id: '/overview', data: { label: 'Overview', path: '/overview' } },
       { id: '/mcp', data: { label: 'MCP & Introspection', path: '/mcp' } },
       { id: '/glossary', data: { label: 'Glossary', path: '/glossary' } },
+      { id: '/component-status', data: { label: 'Component Status', path: '/component-status' } },
       {
         id: '/prop-patterns',
         data: { label: 'Prop Patterns', path: '/prop-patterns' },
@@ -107,6 +108,7 @@ const treeData: TreeNode<Item>[] = [
     children: [
       { id: '/mental-model', data: { label: 'Mental Model', path: '/mental-model' } },
       { id: '/theme', data: { label: 'Theme Store', path: '/theme' } },
+      { id: '/theme-colors', data: { label: 'Theme Colors', path: '/theme-colors' } },
       { id: '/styled', data: { label: 'Styled Engine', path: '/styled' } },
       { id: '/spacing', data: { label: 'Spacing Contract', path: '/spacing' } },
       {

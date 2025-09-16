@@ -1,0 +1,15 @@
+{
+  "name": "Modal",
+  "status": "experimental",
+  "aliases": ["modal", "dialog"],
+  "docs": {
+    "bestPractices": [
+      "Use for critical decisions or blocking flows; avoid overusing for simple notifications (use `Snackbar`).",
+      "Manage focus correctly: trap within the dialog and restore focus to the trigger on close.",
+      "Provide clear primary/secondary actions; keep destructive actions explicit and separated.",
+      "Adjust size to content: avoid scrollable modals within scrollable pages when possible.",
+      "Prefer `Panel` for non‑modal grouping and background content separation.",
+      "Respect reduced motion and keep transitions subtle and consistent with theme tokens."
+    ]
+  }
+}

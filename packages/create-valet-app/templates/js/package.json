@@ -1,0 +1,38 @@
+{
+  "name": "valet-app",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "clean": "rimraf dist",
+    "dev": "vite --host",
+    "build": "npm run -s clean && vite build",
+    "build:agent": "sh -c 'npm run -s clean && vite build; code=$?; if [ $code -eq 0 ]; then echo BUILD_STATUS:ok; else echo BUILD_STATUS:fail:$code; fi; exit $code'",
+    "lint": "eslint --ignore-path .gitignore \"src/**/*.{js,jsx}\" && echo \"No ESLint issues found.\"",
+    "lint:fix": "eslint --ignore-path .gitignore \"src/**/*.{js,jsx}\" --fix && echo \"No ESLint issues found.\"",
+    "lint:agent": "sh -c 'eslint --ignore-path .gitignore \"src/**/*.{js,jsx}\"; code=$?; if [ $code -eq 0 ]; then echo LINT_STATUS:ok; else echo LINT_STATUS:fail:$code; fi; exit $code'",
+    "lint:fix:agent": "sh -c 'eslint --ignore-path .gitignore \"src/**/*.{js,jsx}\" --fix; code=$?; if [ $code -eq 0 ]; then echo LINT_STATUS:ok; else echo LINT_STATUS:fail:$code; fi; exit $code'",
+    "format": "prettier --ignore-path .gitignore \"src/**/*.{js,jsx,json,md,css}\" --check",
+    "format:agent": "sh -c 'prettier --ignore-path .gitignore \"src/**/*.{js,jsx,json,md,css}\" --check; code=$?; if [ $code -eq 0 ]; then echo FORMAT_STATUS:ok; else echo FORMAT_STATUS:fail:$code; fi; exit $code'",
+    "format:fix": "prettier --ignore-path .gitignore \"src/**/*.{js,jsx,json,md,css}\" --write",
+    "format:fix:agent": "sh -c 'prettier --ignore-path .gitignore \"src/**/*.{js,jsx,json,md,css}\" --write; code=$?; if [ $code -eq 0 ]; then echo FORMAT_STATUS:ok; else echo FORMAT_STATUS:fail:$code; fi; exit $code'"
+  },
+  "dependencies": {
+    "@archway/valet": "^0.31.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.6.0",
+    "zustand": "^4.5.7"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.4.1",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "prettier": "^3.2.5",
+    "rimraf": "^5.0.5",
+    "vite": "^6.3.5"
+  }
+}

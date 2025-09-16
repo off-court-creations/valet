@@ -1,0 +1,26 @@
+{
+  "name": "List",
+  "status": "unstable",
+  "aliases": ["list", "ul", "ol"],
+  "docs": {
+    "bestPractices": [
+      "Use for simple rows such as menus, settings, or short feeds; keep each row self‑contained.",
+      "Prefer succinct labels with optional secondary text; avoid deep nested interactivity inside rows.",
+      "Use selection or navigation patterns consistently (radio/checkbox icons vs chevrons).",
+      "Keep item height comfortable for touch; use tokenized spacing for density.",
+      "Defer dense tabular data to `Table` and two‑dimensional layouts to `Grid`."
+    ]
+  },
+  "examples": [
+    {
+      "id": "list-basic",
+      "title": "Basic list",
+      "code": "<List data={[{name:'Ada',role:'Programmer'},{name:'Alan',role:'Mathematician'}]} getTitle={(i)=>i.name} getSubtitle={(i)=>i.role} striped hoverable />"
+    },
+    {
+      "id": "list-select-reorder",
+      "title": "Selectable & reorderable",
+      "code": "() => {\n  const [items, setItems] = React.useState([{name:'Ada',role:'Programmer'},{name:'Alan',role:'Mathematician'}]);\n  const [sel, setSel] = React.useState(null);\n  return (<Stack>\n    <List data={items} getTitle={(i)=>i.name} getSubtitle={(i)=>i.role} selectable reorderable selected={sel} onSelectionChange={setSel} onReorder={setItems} />\n    <Typography variant='subtitle'>Selected: {sel?.name || '—'}</Typography>\n  </Stack>);\n}"
+    }
+  ]
+}

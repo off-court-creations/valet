@@ -22,7 +22,12 @@ export interface VideoTrack {
 }
 
 /** Props for the {@link Video} component. */
-export interface VideoProps extends Presettable {
+export interface VideoProps
+  extends Omit<
+      React.ComponentProps<'div'>,
+      'style' | 'children' | 'onError' | 'onPlay' | 'onPause'
+    >,
+    Presettable {
   /** One or more video sources (MP4/WebM). */
   sources: VideoSource[];
   /** Poster image URL displayed before playback. */
@@ -53,8 +58,6 @@ export interface VideoProps extends Presettable {
   onLoop?(): void;
   /** Error callback. */
   onError?(e: ErrorEvent): void;
-  /** Class name passthrough. */
-  className?: string;
   /** Inline styles (with CSS var support) */
   sx?: Sx;
 }
@@ -99,6 +102,7 @@ export const Video: React.FC<VideoProps> = ({
   className,
   sx,
   preset: p,
+  ...rest
 }) => {
   const ref = useRef<HTMLVideoElement>(null);
   const [ready, setReady] = useState(!lazy);
@@ -147,6 +151,7 @@ export const Video: React.FC<VideoProps> = ({
 
   return (
     <VideoWrapper
+      {...rest}
       $w={width}
       $h={height}
       $fit={objectFit}

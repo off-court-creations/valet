@@ -1,8 +1,9 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/primitives/Typography.tsx | valet
 // patch: force text wrapping; add noSelect prop – 2025‑07‑17
+// patch: auto text color on surfaces (respects backgroundAlt) – 2025‑09‑11
 // ─────────────────────────────────────────────────────────────
-import React from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import type { JSX } from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
@@ -79,6 +80,9 @@ export const Typography: React.FC<TypographyProps> = ({
   const Tag = mapping[variant];
   const { theme } = useTheme();
   const breakpoint = useSurface((s) => s.breakpoint, shallow);
+  const elRef = useRef<HTMLElement | null>(null);
+  const [autoColor, setAutoColor] = useState<string | undefined>(undefined);
+  const [hasTextVar, setHasTextVar] = useState(false);
 
   const defaultSize = theme.typography[variant].md;
   const fluidToken = theme.typographyFluid?.[variant];
@@ -119,26 +123,96 @@ export const Typography: React.FC<TypographyProps> = ({
   })();
 
   // Resolve letter-spacing (tracking)
+  const impliedFamily: 'heading' | 'body' | 'mono' | 'button' =
+    variant === 'button' ? 'button' : variant.startsWith('h') ? 'heading' : 'body';
+  const effectiveFamily = (family as 'heading' | 'body' | 'mono' | 'button') || impliedFamily;
+
   const tokenTracking = theme.letterSpacing?.[variant];
+  const familyTrackingRaw = theme.typographyFamilies?.[effectiveFamily]?.letterSpacing as
+    | string
+    | number
+    | Partial<Record<Variant, string | number>>
+    | undefined;
+  const familyTrackingForVariant = (() => {
+    if (familyTrackingRaw == null) return undefined;
+    if (typeof familyTrackingRaw === 'number') return `${familyTrackingRaw}px`;
+    if (typeof familyTrackingRaw === 'string') return familyTrackingRaw;
+    const v = familyTrackingRaw[variant];
+    if (v == null) return undefined;
+    return typeof v === 'number' ? `${v}px` : v;
+  })();
   const resolvedTracking = (() => {
     if (typeof tracking === 'number') return `${tracking}px`;
     if (tracking === 'tight') return '-0.01em';
     if (tracking === 'loose') return '0.02em';
     if (tracking === 'normal') return 'normal';
-    return typeof tokenTracking === 'number' ? `${tokenTracking}px` : (tokenTracking ?? 'normal');
+    const tokenValue =
+      typeof tokenTracking === 'number'
+        ? `${tokenTracking}px`
+        : (tokenTracking as string | undefined);
+    return tokenValue ?? familyTrackingForVariant ?? 'normal';
   })();
 
   // Resolve line-height (leading)
   const tokenLeading = theme.lineHeight?.[variant];
+  const familyLeadingRaw = theme.typographyFamilies?.[effectiveFamily]?.lineHeight as
+    | number
+    | Partial<Record<Variant, number>>
+    | undefined;
+  const familyLeadingForVariant = (() => {
+    if (familyLeadingRaw == null) return undefined;
+    if (typeof familyLeadingRaw === 'number') return familyLeadingRaw;
+    const v = familyLeadingRaw[variant];
+    return v == null ? undefined : v;
+  })();
   const resolvedLeading = (() => {
     if (typeof leading === 'number') return leading;
     if (leading === 'tight') return 1.2;
     if (leading === 'loose') return 1.6;
     if (leading === 'normal') return 1.4;
-    return tokenLeading ?? (variant === 'button' ? 1 : 1.4);
+    return tokenLeading ?? familyLeadingForVariant ?? (variant === 'button' ? 1 : 1.4);
   })();
 
   const opticalSetting = (optical ?? theme.fontOpticalSizing ?? 'auto') as 'auto' | number | 'none';
+
+  // Compute automatic text color based on the nearest surface background.
+  // If no explicit color prop is provided, read --valet-bg from computed styles
+  // and choose a legible token. Special case: on backgroundAlt, prefer theme.text.
+  useLayoutEffect(() => {
+    const node = elRef.current;
+    if (!node) return;
+    try {
+      const cs = getComputedStyle(node);
+      const hasVar = !!cs.getPropertyValue('--valet-text-color')?.trim();
+      setHasTextVar(hasVar);
+    } catch {
+      setHasTextVar(false);
+    }
+  }, []);
+
+  useLayoutEffect(() => {
+    if (color || hasTextVar) {
+      setAutoColor(undefined);
+      return;
+    }
+    const node = elRef.current;
+    if (!node) return;
+    try {
+      const cs = getComputedStyle(node);
+      const raw = cs.getPropertyValue('--valet-bg')?.trim();
+      const bg = raw?.toUpperCase?.() ?? '';
+      const eq = (hex: string) => (hex || '').toUpperCase() === bg;
+      let next: string = theme.colors.text;
+      if (eq(theme.colors.primary)) next = theme.colors.primaryText;
+      else if (eq(theme.colors.secondary)) next = theme.colors.secondaryText;
+      else if (eq(theme.colors.tertiary)) next = theme.colors.tertiaryText;
+      else if (eq(theme.colors.backgroundAlt)) next = theme.colors.text;
+      else next = theme.colors.text;
+      setAutoColor(next);
+    } catch {
+      setAutoColor(theme.colors.text);
+    }
+  }, [color, hasTextVar, theme.colors]);
 
   const Component = React.useMemo(
     () => styled(Tag)<{
@@ -208,10 +282,19 @@ export const Typography: React.FC<TypographyProps> = ({
     [Tag],
   );
 
+  // Allow passing theme color token names (e.g., 'primary', 'primaryText', 'primaryButtonText').
+  const colorFromTokens = (() => {
+    if (!color || typeof color !== 'string') return undefined;
+    const key = color as keyof typeof theme.colors;
+    const val = (theme.colors as Record<string, string>)[key];
+    return typeof val === 'string' ? val : undefined;
+  })();
+
   return (
     <Component
       {...props}
-      $color={color}
+      ref={elRef as React.Ref<HTMLElement>}
+      $color={colorFromTokens ?? color ?? autoColor}
       $fontFamily={fontFamily}
       $family={family}
       $variant={variant}

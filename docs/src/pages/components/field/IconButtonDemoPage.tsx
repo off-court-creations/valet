@@ -1,9 +1,8 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// src/pages/IconButtonDemoPage.tsx
-// A comprehensive live demo of ZeroUI <IconButton />
-// ─────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// docs/src/pages/components/field/IconButtonDemoPage.tsx  | valet-docs
+// Ported to meta-driven docs template (Usage/Reference via MCP)
+// ─────────────────────────────────────────────────────────────
 import {
-  Surface,
   Stack,
   Box,
   Typography,
@@ -12,15 +11,9 @@ import {
   Icon,
   useTheme,
   definePreset,
-  Tabs,
-  Table,
-  Panel,
 } from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
-import type { ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
-import NavDrawer from '../../../components/NavDrawer';
-import PageHero from '../../../components/PageHero';
+import ComponentMetaPage from '../../../components/ComponentMetaPage';
+import IconButtonMeta from '../../../../../src/components/fields/IconButton.meta.json';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Style preset showcasing IconButton inside a card                            */
@@ -54,270 +47,160 @@ const HeartSvg = (
 /*─────────────────────────────────────────────────────────────────────────────*/
 export default function IconButtonDemoPage() {
   const { theme, toggleMode } = useTheme();
-  const navigate = useNavigate();
 
-  interface Row {
-    prop: ReactNode;
-    type: ReactNode;
-    default: ReactNode;
-    description: ReactNode;
-  }
+  const usageContent = (
+    <Stack>
+      <Typography variant='subtitle'>
+        Circular icon-only buttons with contained &amp; outlined styles
+      </Typography>
 
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
+      {/* 1. Contained sizes */}
+      <Typography variant='h3'>1. Contained sizes</Typography>
+      <Stack direction='row'>
+        <IconButton
+          icon='mdi:play'
+          size='xs'
+          aria-label='Play xs'
+        />
+        <IconButton
+          icon='mdi:play'
+          size='sm'
+          aria-label='Play small'
+        />
+        <IconButton
+          icon='mdi:play'
+          size='md'
+          aria-label='Play medium'
+        />
+        <IconButton
+          icon='mdi:play'
+          size='lg'
+          aria-label='Play large'
+        />
+        <IconButton
+          icon='mdi:play'
+          size='xl'
+          aria-label='Play extra'
+        />
+      </Stack>
 
-  const data: Row[] = [
-    {
-      prop: <code>variant</code>,
-      type: <code>&apos;contained&apos; | &apos;outlined&apos;</code>,
-      default: <code>&apos;contained&apos;</code>,
-      description: 'Button style',
-    },
-    {
-      prop: <code>size</code>,
-      type: (
-        <code>
-          &apos;xs&apos; | &apos;sm&apos; | &apos;md&apos; | &apos;lg&apos; | &apos;xl&apos; |
-          number | string
-        </code>
-      ),
-      default: <code>&apos;md&apos;</code>,
-      description: 'Overall button dimensions',
-    },
-    {
-      prop: <code>icon</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Iconify name',
-    },
-    {
-      prop: <code>svg</code>,
-      type: <code>string | ReactElement</code>,
-      default: <code>—</code>,
-      description: 'Custom SVG content',
-    },
-    {
-      prop: <code>iconColor</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Glyph colour override',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Apply style presets',
-    },
-  ];
+      {/* 2. Outlined sizes */}
+      <Typography variant='h3'>2. Outlined sizes</Typography>
+      <Stack direction='row'>
+        <IconButton
+          variant='outlined'
+          icon='mdi:pause'
+          size='xs'
+          aria-label='Pause xs'
+        />
+        <IconButton
+          variant='outlined'
+          icon='mdi:pause'
+          size='sm'
+          aria-label='Pause small'
+        />
+        <IconButton
+          variant='outlined'
+          icon='mdi:pause'
+          size='md'
+          aria-label='Pause medium'
+        />
+        <IconButton
+          variant='outlined'
+          icon='mdi:pause'
+          size='lg'
+          aria-label='Pause large'
+        />
+        <IconButton
+          variant='outlined'
+          icon='mdi:pause'
+          size='xl'
+          aria-label='Pause extra'
+        />
+      </Stack>
+
+      {/* 3. Colour override */}
+      <Typography variant='h3'>3. Icon colour override</Typography>
+      <Stack direction='row'>
+        <IconButton
+          icon='mdi:heart'
+          iconColor='#ff5e5e'
+          aria-label='Favorite'
+        />
+        <IconButton
+          variant='outlined'
+          icon='mdi:pencil'
+          iconColor={theme.colors['secondary']}
+          aria-label='Edit'
+        />
+      </Stack>
+
+      {/* 4. Custom SVG */}
+      <Typography variant='h3'>4. Custom SVG graphics</Typography>
+      <Stack direction='row'>
+        <IconButton
+          svg={HeartSvg}
+          aria-label='Heart'
+        />
+      </Stack>
+
+      {/* 5. Custom sizes */}
+      <Typography variant='h3'>5. Custom sizes</Typography>
+      <Stack direction='row'>
+        <IconButton
+          icon='mdi:play'
+          size='3em'
+          aria-label='Play 3em'
+        />
+        <IconButton
+          icon='mdi:star'
+          size={56}
+          aria-label='Star 56px'
+        />
+      </Stack>
+
+      {/* 6. Disabled & active states */}
+      <Typography variant='h3'>6. Disabled state</Typography>
+      <IconButton
+        icon='mdi:delete'
+        size='md'
+        disabled
+        aria-label='Delete disabled'
+      />
+
+      {/* 7. Preset usage */}
+      <Typography variant='h3'>7. Preset integration</Typography>
+      <Box preset='actionCard'>
+        <IconButton
+          icon='mdi:credit-card'
+          size='md'
+          aria-label='Pay now'
+        />
+        <Typography>Pay now</Typography>
+      </Box>
+
+      {/* 8. Theme coupling */}
+      <Typography variant='h3'>8. Theme demonstration</Typography>
+      <Button
+        variant='outlined'
+        onClick={toggleMode}
+      >
+        Toggle light / dark mode&nbsp;
+        <Icon
+          icon='mdi:theme-light-dark'
+          size='1.2em'
+        />
+      </Button>
+    </Stack>
+  );
 
   return (
-    <Surface>
-      <NavDrawer />
-      <Stack>
-        <PageHero title='Icon Button' />
-
-        <Tabs>
-          <Tabs.Tab label='Usage' />
-          <Tabs.Panel>
-            <Typography variant='subtitle'>
-              Circular icon-only buttons with contained &amp; outlined styles
-            </Typography>
-
-            {/* 1. Contained sizes --------------------------------------------- */}
-            <Typography variant='h3'>1. Contained sizes</Typography>
-            <Stack direction='row'>
-              <IconButton
-                icon='mdi:play'
-                size='xs'
-                aria-label='Play xs'
-              />
-              <IconButton
-                icon='mdi:play'
-                size='sm'
-                aria-label='Play small'
-              />
-              <IconButton
-                icon='mdi:play'
-                size='md'
-                aria-label='Play medium'
-              />
-              <IconButton
-                icon='mdi:play'
-                size='lg'
-                aria-label='Play large'
-              />
-              <IconButton
-                icon='mdi:play'
-                size='xl'
-                aria-label='Play extra'
-              />
-            </Stack>
-
-            {/* 2. Outlined sizes ---------------------------------------------- */}
-            <Typography variant='h3'>2. Outlined sizes</Typography>
-            <Stack direction='row'>
-              <IconButton
-                variant='outlined'
-                icon='mdi:pause'
-                size='xs'
-                aria-label='Pause xs'
-              />
-              <IconButton
-                variant='outlined'
-                icon='mdi:pause'
-                size='sm'
-                aria-label='Pause small'
-              />
-              <IconButton
-                variant='outlined'
-                icon='mdi:pause'
-                size='md'
-                aria-label='Pause medium'
-              />
-              <IconButton
-                variant='outlined'
-                icon='mdi:pause'
-                size='lg'
-                aria-label='Pause large'
-              />
-              <IconButton
-                variant='outlined'
-                icon='mdi:pause'
-                size='xl'
-                aria-label='Pause extra'
-              />
-            </Stack>
-
-            {/* 3. Colour override --------------------------------------------- */}
-            <Typography variant='h3'>3. Icon colour override</Typography>
-            <Stack direction='row'>
-              <IconButton
-                icon='mdi:heart'
-                iconColor='#ff5e5e'
-                aria-label='Favorite'
-              />
-              <IconButton
-                variant='outlined'
-                icon='mdi:pencil'
-                iconColor={theme.colors['secondary']}
-                aria-label='Edit'
-              />
-            </Stack>
-
-            {/* 4. Custom SVG --------------------------------------------------- */}
-            <Typography variant='h3'>4. Custom SVG graphics</Typography>
-            <Stack direction='row'>
-              <IconButton
-                svg={HeartSvg}
-                aria-label='Heart'
-              />
-            </Stack>
-
-            {/* 5. Custom sizes ------------------------------------------------- */}
-            <Typography variant='h3'>5. Custom sizes</Typography>
-            <Stack direction='row'>
-              <IconButton
-                icon='mdi:play'
-                size='3em'
-                aria-label='Play 3em'
-              />
-              <IconButton
-                icon='mdi:star'
-                size={56}
-                aria-label='Star 56px'
-              />
-            </Stack>
-
-            {/* 6. Disabled & active states ------------------------------------ */}
-            <Typography variant='h3'>6. Disabled state</Typography>
-            <IconButton
-              icon='mdi:delete'
-              size='md'
-              disabled
-              aria-label='Delete disabled'
-            />
-
-            {/* 7. Preset usage ------------------------------------------------- */}
-            <Typography variant='h3'>7. Preset integration</Typography>
-            <Box preset='actionCard'>
-              <IconButton
-                icon='mdi:credit-card'
-                size='md'
-                aria-label='Pay now'
-              />
-              <Typography>Pay now</Typography>
-            </Box>
-
-            {/* 8. Theme coupling ---------------------------------------------- */}
-            <Typography variant='h3'>8. Theme demonstration</Typography>
-            <Button
-              variant='outlined'
-              onClick={toggleMode}
-            >
-              Toggle light / dark mode&nbsp;
-              <Icon
-                icon='mdi:theme-light-dark'
-                size='1.2em'
-              />
-            </Button>
-          </Tabs.Panel>
-
-          <Tabs.Tab label='Reference' />
-          <Tabs.Panel>
-            <Typography variant='h3'>Prop reference</Typography>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
-          </Tabs.Panel>
-        </Tabs>
-
-        {/* Back nav -------------------------------------------------------- */}
-        <Button
-          size='lg'
-          onClick={() => navigate(-1)}
-          sx={{ marginTop: theme.spacing(1) }}
-        >
-          ← Back
-        </Button>
-
-        {/* Best Practices -------------------------------------------------- */}
-        <Panel fullWidth>
-          <Typography variant='h4'>Best Practices</Typography>
-          <Typography>
-            - Provide an accessible name. Icon‑only buttons must include <code>aria-label</code>
-            describing the action (e.g., &apos;Delete item&apos;, &apos;Play&apos;). Avoid vague
-            labels.
-          </Typography>
-          <Typography>
-            - Pick variants by emphasis. Use <code>contained</code> for primary/high‑affordance
-            actions and <code>outlined</code> for secondary/tertiary actions. Keep colour from theme
-            tokens and avoid unbounded custom colours.
-          </Typography>
-          <Typography>
-            - Size for touch. Use token sizes (<code>&apos;xs&apos;</code>…
-            <code>&apos;xl&apos;</code>) or numbers to maintain comfortable targets on mobile.
-          </Typography>
-          <Typography>
-            - Toggle semantics. When the button toggles state, add <code>aria-pressed</code> to
-            reflect the current state; tooltips are optional and should not replace labels.
-          </Typography>
-          <Typography>
-            - Choose <code>icon</code> vs <code>svg</code> deliberately. Prefer <code>icon</code>
-            for Iconify glyphs; use <code>svg</code> only for custom/brand artwork. Do not pass both
-            at once.
-          </Typography>
-          <Typography>
-            - Keep ripple/motion subtle. Align custom presets with the theme’s motion tokens for a
-            cohesive feel.
-          </Typography>
-        </Panel>
-      </Stack>
-    </Surface>
+    <ComponentMetaPage
+      title='Icon Button'
+      subtitle='Circular icon-only button with contained and outlined variants'
+      slug='components/fields/iconbutton'
+      meta={IconButtonMeta}
+      usage={usageContent}
+    />
   );
 }

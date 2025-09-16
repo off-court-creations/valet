@@ -1,7 +1,7 @@
 {
   "name": "valet-docs",
   "private": true,
-  "version": "0.31.0",
+  "version": "0.31.1",
   "type": "module",
   "scripts": {
     "dev": "vite --host",
@@ -10,7 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@archway/valet": "0.31.0",
+    "@archway/valet": "^0.32.0",
+    "@babel/standalone": "^7.26.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-dropzone": "^14.2.3",

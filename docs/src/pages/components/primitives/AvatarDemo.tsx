@@ -1,9 +1,9 @@
 // ─────────────────────────────────────────────────────────────
-// src/pages/AvatarDemo.tsx | valet-docs
-// Showcase of Avatar component
+// docs/src/pages/components/primitives/AvatarDemo.tsx  | valet-docs
+// Showcase of Avatar component using the reusable ComponentMetaPage (5 tabs)
 // ─────────────────────────────────────────────────────────────
+import { useState } from 'react';
 import {
-  Surface,
   Stack,
   Typography,
   Avatar,
@@ -11,17 +11,11 @@ import {
   TextField,
   FormControl,
   createFormStore,
-  useTheme,
-  Tabs,
-  Table,
+  Select,
   Panel,
 } from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
-import type { ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
-import NavDrawer from '../../../components/NavDrawer';
-import PageHero from '../../../components/PageHero';
-import { useState } from 'react';
+import ComponentMetaPage from '../../../components/ComponentMetaPage';
+import AvatarMeta from '../../../../../src/components/primitives/Avatar.meta.json';
 
 interface EmailForm {
   email: string;
@@ -33,179 +27,124 @@ const useEmailForm = createFormStore<EmailForm>({
 });
 
 export default function AvatarDemoPage() {
-  const { theme } = useTheme();
-  const navigate = useNavigate();
   const [email, setEmail] = useState('support@gravatar.com');
+  const [pgSize, setPgSize] = useState<'xs' | 's' | 'm' | 'l' | 'xl'>('m');
+  const [pgVariant, setPgVariant] = useState<'plain' | 'outline'>('plain');
 
-  interface Row {
-    prop: ReactNode;
-    type: ReactNode;
-    default: ReactNode;
-    description: ReactNode;
-  }
+  const usageContent = (
+    <Stack>
+      <Typography variant='subtitle'>Gravatar wrapper with custom photo support</Typography>
 
-  const columns: TableColumn<Row>[] = [
-    { header: 'Prop', accessor: 'prop' },
-    { header: 'Type', accessor: 'type' },
-    { header: 'Default', accessor: 'default' },
-    { header: 'Description', accessor: 'description' },
-  ];
+      <Typography variant='h3'>1. Try your Gravatar</Typography>
+      <FormControl
+        useStore={useEmailForm}
+        onSubmitValues={(vals) => setEmail(vals.email as string)}
+      >
+        <Stack direction='row'>
+          <Avatar email={email} />
+          <TextField
+            name='email'
+            type='email'
+            placeholder='you@example.com'
+          />
+          <Button type='submit'>Show</Button>
+        </Stack>
+      </FormControl>
 
-  const data: Row[] = [
-    {
-      prop: <code>src</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Image URL override',
-    },
-    {
-      prop: <code>email</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Email used for Gravatar lookup',
-    },
-    {
-      prop: <code>size</code>,
-      type: (
-        <code>&apos;xs&apos; | &apos;s&apos; | &apos;m&apos; | &apos;l&apos; | &apos;xl&apos;</code>
-      ),
-      default: <code>&apos;m&apos;</code>,
-      description: 'Relative size token',
-    },
-    {
-      prop: <code>variant</code>,
-      type: <code>&apos;plain&apos; | &apos;outline&apos;</code>,
-      default: <code>&apos;plain&apos;</code>,
-      description: 'Visual style variant',
-    },
-    {
-      prop: <code>gravatarDefault</code>,
-      type: <code>string</code>,
-      default: <code>&apos;identicon&apos;</code>,
-      description: 'Fallback style when no avatar exists',
-    },
-    {
-      prop: <code>alt</code>,
-      type: <code>string</code>,
-      default: <code>—</code>,
-      description: 'Image alt text',
-    },
-    {
-      prop: <code>preset</code>,
-      type: <code>string | string[]</code>,
-      default: <code>—</code>,
-      description: 'Apply style presets',
-    },
-  ];
+      <Typography variant='h3'>2. Default example</Typography>
+      <Avatar
+        email='support@gravatar.com'
+        size='l'
+      />
+
+      <Typography variant='h3'>3. Custom src</Typography>
+      <Avatar
+        src='https://avatars.githubusercontent.com/u/9919?s=200&v=4'
+        size='l'
+        alt='GitHub'
+      />
+
+      <Typography variant='h3'>4. Sizes</Typography>
+      <Stack direction='row'>
+        {(['xl', 'l', 'm', 's', 'xs'] as const).map((s) => (
+          <Stack
+            key={s}
+            gap={0.5}
+            sx={{ alignItems: 'center' }}
+          >
+            <Avatar
+              email='support@gravatar.com'
+              size={s}
+            />
+            <Typography variant='body'>{s}</Typography>
+          </Stack>
+        ))}
+      </Stack>
+
+      <Typography variant='h3'>5. Outline</Typography>
+      <Avatar
+        email='support@gravatar.com'
+        size='l'
+        variant='outline'
+      />
+    </Stack>
+  );
+
+  const playgroundContent = (
+    <Stack gap={1}>
+      <Panel fullWidth>
+        <Typography variant='subtitle'>Playground</Typography>
+        <Stack
+          direction='row'
+          gap={1}
+          sx={{ alignItems: 'center' }}
+        >
+          <Select
+            placeholder='size'
+            value={pgSize}
+            onChange={(v) => setPgSize(v as typeof pgSize)}
+            sx={{ width: 140 }}
+          >
+            <Select.Option value='xs'>xs</Select.Option>
+            <Select.Option value='s'>s</Select.Option>
+            <Select.Option value='m'>m</Select.Option>
+            <Select.Option value='l'>l</Select.Option>
+            <Select.Option value='xl'>xl</Select.Option>
+          </Select>
+          <Select
+            placeholder='variant'
+            value={pgVariant}
+            onChange={(v) => setPgVariant(v as typeof pgVariant)}
+            sx={{ width: 160 }}
+          >
+            <Select.Option value='plain'>plain</Select.Option>
+            <Select.Option value='outline'>outline</Select.Option>
+          </Select>
+          <Typography variant='body'>Email: {email}</Typography>
+        </Stack>
+      </Panel>
+      <Stack
+        gap={0.5}
+        sx={{ alignItems: 'center' }}
+      >
+        <Avatar
+          email={email}
+          size={pgSize}
+          variant={pgVariant}
+        />
+        <Typography variant='subtitle'>Preview</Typography>
+      </Stack>
+    </Stack>
+  );
 
   return (
-    <Surface>
-      <NavDrawer />
-      <Stack>
-        <PageHero title='Avatar' />
-
-        <Tabs>
-          <Tabs.Tab label='Usage' />
-          <Tabs.Panel>
-            <Typography variant='subtitle'>Gravatar wrapper with custom photo support</Typography>
-
-            <Typography variant='h3'>1. Try your Gravatar</Typography>
-            <FormControl
-              useStore={useEmailForm}
-              onSubmitValues={(vals) => setEmail(vals.email as string)}
-            >
-              <Stack direction='row'>
-                <Avatar email={email} />
-                <TextField
-                  name='email'
-                  type='email'
-                  placeholder='you@example.com'
-                />
-                <Button type='submit'>Show</Button>
-              </Stack>
-            </FormControl>
-            <Typography variant='h3'>2. Default example</Typography>
-            <Avatar
-              email='support@gravatar.com'
-              size='l'
-            />
-            <Typography variant='h3'>3. Custom src</Typography>
-            <Avatar
-              src='https://avatars.githubusercontent.com/u/9919?s=200&v=4'
-              size='l'
-              alt='GitHub'
-            />
-
-            {/* 4. Sizes --------------------------------------------------------- */}
-            <Typography variant='h3'>4. Sizes</Typography>
-            <Stack direction='row'>
-              {(['xl', 'l', 'm', 's', 'xs'] as const).map((s) => (
-                <Stack
-                  key={s}
-                  gap={0.5}
-                  sx={{ alignItems: 'center' }}
-                >
-                  <Avatar
-                    email='support@gravatar.com'
-                    size={s}
-                  />
-                  <Typography variant='body'>{s}</Typography>
-                </Stack>
-              ))}
-            </Stack>
-
-            <Typography variant='h3'>5. Outline</Typography>
-            <Avatar
-              email='support@gravatar.com'
-              size='l'
-              variant='outline'
-            />
-          </Tabs.Panel>
-
-          <Tabs.Tab label='Reference' />
-          <Tabs.Panel>
-            <Typography variant='h3'>Prop reference</Typography>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
-          </Tabs.Panel>
-        </Tabs>
-
-        <Button
-          size='lg'
-          onClick={() => navigate(-1)}
-          sx={{ marginTop: theme.spacing(1) }}
-        >
-          ← Back
-        </Button>
-
-        {/* Best Practices -------------------------------------------------- */}
-        <Panel fullWidth>
-          <Typography variant='h4'>Best Practices</Typography>
-          <Typography>
-            - Provide meaningful <code>alt</code> text when avatars convey identity (e.g., &quot;Ada
-            Lovelace&quot;). Use <code>alt=&quot;&quot;</code> for purely decorative avatars.
-          </Typography>
-          <Typography>
-            - Prefer <code>src</code> for known assets; use <code>email</code> for Gravatar only
-            when appropriate for your privacy posture. Consider caching and strict HTTPS.
-          </Typography>
-          <Typography>
-            - Keep sizes consistent across lists. Use size tokens (<code>&apos;xs&apos;</code>..
-            <code>&apos;xl&apos;</code>) for coherent density and predictable alignment.
-          </Typography>
-          <Typography>
-            - Ensure visibility on busy backgrounds. Use <code>variant=&apos;outline&apos;</code> or
-            place avatars inside a container with sufficient contrast.
-          </Typography>
-          <Typography>
-            - Non‑interactive by default. Wrap avatars with a <code>Button</code> or link for
-            navigation; avoid attaching click handlers directly without clear affordance.
-          </Typography>
-        </Panel>
-      </Stack>
-    </Surface>
+    <ComponentMetaPage
+      title='Avatar'
+      subtitle='Compact identity image via Gravatar or custom src.'
+      slug='components/primitives/avatar'
+      meta={AvatarMeta}
+      usage={usageContent}
+      playground={playgroundContent}
+    />
   );
 }

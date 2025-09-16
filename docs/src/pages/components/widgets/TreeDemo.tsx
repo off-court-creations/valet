@@ -1,25 +1,12 @@
 // ─────────────────────────────────────────────────────────────
-// docs/src/pages/TreeDemo.tsx | valet-docs
-// Showcase of Tree component
+// docs/src/pages/components/widgets/TreeDemo.tsx  | valet-docs
+// Migrated to ComponentMetaPage – variants (chevron, list, files) + playground
 // ─────────────────────────────────────────────────────────────
-import {
-  Surface,
-  Stack,
-  Typography,
-  Button,
-  Tree,
-  Tabs,
-  Table,
-  useTheme,
-  type TreeNode,
-  Panel,
-} from '@archway/valet';
-import type { TableColumn } from '@archway/valet';
+import { Stack, Typography, Button, Tree, Select, useTheme, type TreeNode } from '@archway/valet';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import NavDrawer from '../../../components/NavDrawer';
-import PageHero from '../../../components/PageHero';
+import ComponentMetaPage from '../../../components/ComponentMetaPage';
+import TreeMeta from '../../../../../src/components/widgets/Tree.meta.json';
 
 interface Item {
   label: ReactNode;
@@ -77,183 +64,86 @@ const FILES: TreeNode<Item>[] = [
   { id: 'package.json', data: { label: 'package.json' } },
 ];
 
-interface Row {
-  prop: ReactNode;
-  type: ReactNode;
-  default: ReactNode;
-  description: ReactNode;
-}
-
-const columns: TableColumn<Row>[] = [
-  { header: 'Prop', accessor: 'prop' },
-  { header: 'Type', accessor: 'type' },
-  { header: 'Default', accessor: 'default' },
-  { header: 'Description', accessor: 'description' },
-];
-
-const data: Row[] = [
-  {
-    prop: <code>nodes</code>,
-    type: <code>TreeNode&lt;T&gt;[]</code>,
-    default: <code>—</code>,
-    description: 'Array of tree nodes',
-  },
-  {
-    prop: <code>getLabel</code>,
-    type: <code>(n: T) =&gt; ReactNode</code>,
-    default: <code>—</code>,
-    description: 'Return label for a node',
-  },
-  {
-    prop: <code>defaultExpanded</code>,
-    type: <code>string[]</code>,
-    default: <code>[]</code>,
-    description: 'Node ids expanded on mount',
-  },
-  {
-    prop: <code>expanded</code>,
-    type: <code>string[]</code>,
-    default: <code>—</code>,
-    description: 'Controlled expanded node ids',
-  },
-  {
-    prop: <code>onExpandedChange</code>,
-    type: <code>(ids: string[]) =&gt; void</code>,
-    default: <code>—</code>,
-    description: 'Handle expand/collapse changes',
-  },
-  {
-    prop: <code>selected</code>,
-    type: <code>string</code>,
-    default: <code>—</code>,
-    description: 'Controlled selected node id',
-  },
-  {
-    prop: <code>defaultSelected</code>,
-    type: <code>string</code>,
-    default: <code>—</code>,
-    description: 'Uncontrolled starting selection',
-  },
-  {
-    prop: <code>onNodeSelect</code>,
-    type: <code>(n: T) =&gt; void</code>,
-    default: <code>—</code>,
-    description: 'Called when a node is selected',
-  },
-  {
-    prop: <code>variant</code>,
-    type: <code>&#39;chevron&#39; | &#39;list&#39; | &#39;files&#39;</code>,
-    default: <code>&#39;chevron&#39;</code>,
-    description: 'Visual style of branches',
-  },
-  {
-    prop: <code>preset</code>,
-    type: <code>string | string[]</code>,
-    default: <code>—</code>,
-    description: 'Apply style presets',
-  },
-];
-
 export default function TreeDemoPage() {
-  const { theme, toggleMode } = useTheme();
-  const navigate = useNavigate();
+  const { toggleMode } = useTheme();
   const [selected, setSelected] = useState('');
 
+  const usage = (
+    <Stack>
+      <Typography variant='h3'>
+        Variant <code>chevron</code>
+      </Typography>
+      <Tree<Item>
+        nodes={DATA}
+        getLabel={(n) => n.label}
+        defaultExpanded={['fruit', 'dairy']}
+        onNodeSelect={(n) => setSelected(String(n.label))}
+        variant='chevron'
+      />
+      <Typography variant='body'>
+        Selected: <code>{selected}</code>
+      </Typography>
+
+      <Typography variant='h3'>
+        Variant <code>list</code>
+      </Typography>
+      <Tree<Item>
+        nodes={DATA}
+        getLabel={(n) => n.label}
+        defaultExpanded={['fruit', 'dairy']}
+        variant='list'
+      />
+
+      <Typography variant='h3'>
+        Variant <code>files</code>
+      </Typography>
+      <Tree<Item>
+        nodes={FILES}
+        getLabel={(n) => n.label}
+        defaultExpanded={['src', 'components']}
+        variant='files'
+      />
+
+      <Button
+        variant='outlined'
+        onClick={toggleMode}
+      >
+        Toggle light / dark
+      </Button>
+    </Stack>
+  );
+
+  const [variant, setVariant] = useState<'chevron' | 'list' | 'files'>('chevron');
+  const playground = (
+    <Stack gap={1}>
+      <Typography variant='subtitle'>variant</Typography>
+      <Select
+        placeholder='variant'
+        value={variant}
+        onChange={(v) => setVariant(v as 'chevron' | 'list' | 'files')}
+        sx={{ width: 200 }}
+      >
+        <Select.Option value='chevron'>chevron</Select.Option>
+        <Select.Option value='list'>list</Select.Option>
+        <Select.Option value='files'>files</Select.Option>
+      </Select>
+      <Tree<Item>
+        nodes={variant === 'files' ? FILES : DATA}
+        getLabel={(n) => n.label}
+        defaultExpanded={variant === 'files' ? ['src', 'components'] : ['fruit', 'dairy']}
+        variant={variant}
+      />
+    </Stack>
+  );
+
   return (
-    <Surface>
-      <NavDrawer />
-      <Stack>
-        <PageHero title='Tree' />
-
-        <Tabs>
-          <Tabs.Tab label='Usage' />
-          <Tabs.Panel>
-            <Stack>
-              <Typography variant='h3'>Variant &quot;chevron&quot;</Typography>
-              <Tree<Item>
-                nodes={DATA}
-                getLabel={(n) => n.label}
-                defaultExpanded={['fruit', 'dairy']}
-                onNodeSelect={(n) => setSelected(String(n.label))}
-                variant='chevron'
-              />
-              <Typography variant='body'>
-                Selected: <code>{selected}</code>
-              </Typography>
-
-              <Typography variant='h3'>Variant &quot;list&quot;</Typography>
-              <Tree<Item>
-                nodes={DATA}
-                getLabel={(n) => n.label}
-                defaultExpanded={['fruit', 'dairy']}
-                variant='list'
-              />
-
-              <Typography variant='h3'>Variant &quot;files&quot;</Typography>
-              <Tree<Item>
-                nodes={FILES}
-                getLabel={(n) => n.label}
-                defaultExpanded={['src', 'components']}
-                variant='files'
-              />
-
-              <Button
-                variant='outlined'
-                onClick={toggleMode}
-                sx={{ marginTop: theme.spacing(1) }}
-              >
-                Toggle light / dark mode
-              </Button>
-            </Stack>
-          </Tabs.Panel>
-          <Tabs.Tab label='Reference' />
-          <Tabs.Panel>
-            <Table
-              data={data}
-              columns={columns}
-              constrainHeight={false}
-            />
-          </Tabs.Panel>
-        </Tabs>
-
-        {/* Best Practices -------------------------------------------------- */}
-        <Panel fullWidth>
-          <Typography variant='h4'>Best Practices</Typography>
-          <Typography>
-            - Use stable ids. Provide deterministic <code>id</code>s for nodes so expanded/selected
-            state can be controlled and persisted across renders.
-          </Typography>
-          <Typography>
-            - Keep labels compact. Tree rows should be glanceable; favor short labels and use
-            variants (<code>list</code> or <code>files</code>) to convey structure.
-          </Typography>
-          <Typography>
-            - Align behavior with expectations. Support Arrow keys, Enter/Space for selection, and
-            Left/Right to collapse/expand; let double‑click toggle when appropriate.
-          </Typography>
-          <Typography>
-            - Choose control model. Use <code>expanded</code>/<code> onExpandedChange</code> and
-            <code> selected</code>/<code> onNodeSelect</code> when external state or routing must
-            drive the tree; otherwise use defaults.
-          </Typography>
-          <Typography>
-            - Avoid over‑nesting. Deep hierarchies are hard to scan; flatten where possible and
-            consider search/filter affordances for large trees.
-          </Typography>
-          <Typography>
-            - Tokenized spacing. Use theme spacing for indentation so density and breakpoints scale
-            predictably.
-          </Typography>
-        </Panel>
-
-        <Button
-          size='lg'
-          onClick={() => navigate(-1)}
-          sx={{ marginTop: theme.spacing(1) }}
-        >
-          ← Back
-        </Button>
-      </Stack>
-    </Surface>
+    <ComponentMetaPage
+      title='Tree'
+      subtitle='Hierarchical lists with accessible keyboard navigation'
+      slug='components/widgets/tree'
+      meta={TreeMeta}
+      usage={usage}
+      playground={playground}
+    />
   );
 }

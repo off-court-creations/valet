@@ -1,146 +1,203 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// src/pages/AccordionDemoPage.tsx | valet-docs
-// Comprehensive live demo for <Accordion/> – showcases single & multi-expand,
-// controlled vs. uncontrolled, disabled items, heading levels, presets,
-// and live theme coupling.
-// ─────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// docs/src/pages/components/layout/AccordionDemo.tsx  | valet-docs
+// Migrated to ComponentMetaPage – uncontrolled/controlled, single/multi, disabled
+// ─────────────────────────────────────────────────────────────
 import { useState } from 'react';
-import { Surface, Stack, Typography, Button, Accordion, useTheme } from '@archway/valet';
-import { useNavigate } from 'react-router-dom';
-import NavDrawer from '../../../components/NavDrawer';
-import PageHero from '../../../components/PageHero';
+import {
+  Stack,
+  Typography,
+  Button,
+  Accordion,
+  useTheme,
+  Select,
+  Switch,
+  Panel,
+} from '@archway/valet';
+import ComponentMetaPage from '../../../components/ComponentMetaPage';
+import AccordionMeta from '../../../../../src/components/layout/Accordion.meta.json';
 
-/*─────────────────────────────────────────────────────────────────────────────*/
-/* Helpers                                                                    */
 const LOREM =
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse porta, nunc at egestas mattis, mauris risus iaculis mi, at cursus metus justo quis quam.';
 
-/*─────────────────────────────────────────────────────────────────────────────*/
-/* Demo page                                                                  */
 export default function AccordionDemoPage() {
   const { theme, toggleMode } = useTheme();
-  const navigate = useNavigate();
-
-  /* Controlled single-expand state -------------------------------------- */
   const [openSingle, setOpenSingle] = useState<number[]>([0]);
-
-  /* Controlled multi-expand state --------------------------------------- */
   const [openMulti, setOpenMulti] = useState<number[]>([0, 2]);
 
-  return (
-    <Surface>
-      <NavDrawer />
-      <Stack>
-        <PageHero title='Accordion' />
-        <Button
-          variant='outlined'
-          size='sm'
-          onClick={() => navigate('/accordion-constrained')}
-        >
-          Constrained height demo
-        </Button>
+  const usage = (
+    <Stack>
+      <Typography variant='h3'>1. Uncontrolled (single)</Typography>
+      <Accordion>
+        <Accordion.Item header='Item 1'>
+          <Typography>{LOREM}</Typography>
+        </Accordion.Item>
+        <Accordion.Item header='Item 2'>
+          <Typography>{LOREM}</Typography>
+        </Accordion.Item>
+        <Accordion.Item header='Item 3'>
+          <Typography>{LOREM}</Typography>
+        </Accordion.Item>
+      </Accordion>
 
-        {/* 1. Uncontrolled disclosure list (single item) ------------------ */}
-        <Typography variant='h3'>1. Uncontrolled (single-expand)</Typography>
-        <Accordion>
-          <Accordion.Item header='Item 1'>
-            <Typography>{LOREM}</Typography>
-          </Accordion.Item>
-          <Accordion.Item header='Item 2'>
-            <Typography>{LOREM}</Typography>
-          </Accordion.Item>
-          <Accordion.Item header='Item 3'>
-            <Typography>{LOREM}</Typography>
-          </Accordion.Item>
-        </Accordion>
+      <Typography variant='h3'>2. Controlled (single)</Typography>
+      <Button
+        size='sm'
+        variant='outlined'
+        onClick={() => setOpenSingle((prev) => (prev[0] === 1 ? [] : [1]))}
+        sx={{ alignSelf: 'flex-start' }}
+      >
+        Toggle second programmatically
+      </Button>
+      <Accordion
+        open={openSingle}
+        onOpenChange={setOpenSingle}
+      >
+        <Accordion.Item header='First'>
+          <Typography>{LOREM}</Typography>
+        </Accordion.Item>
+        <Accordion.Item header='Second'>
+          <Typography>{LOREM}</Typography>
+        </Accordion.Item>
+        <Accordion.Item header='Third'>
+          <Typography>{LOREM}</Typography>
+        </Accordion.Item>
+      </Accordion>
 
-        {/* 2. Controlled single-expand ------------------------------------ */}
-        <Typography variant='h3'>2. Controlled (single-expand)</Typography>
-        <Button
-          size='sm'
-          variant='outlined'
-          onClick={() => setOpenSingle((prev) => (prev[0] === 1 ? [] : [1]))}
-          sx={{ alignSelf: 'flex-start' }}
-        >
-          Toggle second item programmatically
-        </Button>
-        <Accordion
-          open={openSingle}
-          onOpenChange={setOpenSingle}
-        >
-          <Accordion.Item header='First'>
-            <Typography>{LOREM}</Typography>
-          </Accordion.Item>
-          <Accordion.Item header='Second'>
-            <Typography>{LOREM}</Typography>
-          </Accordion.Item>
-          <Accordion.Item header='Third'>
-            <Typography>{LOREM}</Typography>
-          </Accordion.Item>
-        </Accordion>
+      <Typography variant='h3'>3. Controlled (multiple)</Typography>
+      <Accordion
+        multiple
+        open={openMulti}
+        onOpenChange={setOpenMulti}
+      >
+        <Accordion.Item header='Alpha'>
+          <Typography>{LOREM}</Typography>
+        </Accordion.Item>
+        <Accordion.Item header='Bravo'>
+          <Typography>{LOREM}</Typography>
+        </Accordion.Item>
+        <Accordion.Item header='Charlie'>
+          <Typography>{LOREM}</Typography>
+        </Accordion.Item>
+      </Accordion>
 
-        {/* 3. Controlled multi-expand ------------------------------------- */}
-        <Typography variant='h3'>3. Controlled (multi-expand)</Typography>
-        <Accordion
-          multiple
-          open={openMulti}
-          onOpenChange={setOpenMulti}
+      <Typography variant='h3'>4. Disabled</Typography>
+      <Accordion>
+        <Accordion.Item header='Enabled'>
+          <Typography>{LOREM}</Typography>
+        </Accordion.Item>
+        <Accordion.Item
+          header='Disabled'
+          disabled
         >
-          <Accordion.Item header='Alpha'>
-            <Typography>{LOREM}</Typography>
-          </Accordion.Item>
-          <Accordion.Item header='Bravo'>
-            <Typography>{LOREM}</Typography>
-          </Accordion.Item>
-          <Accordion.Item header='Charlie'>
-            <Typography>{LOREM}</Typography>
-          </Accordion.Item>
-        </Accordion>
+          <Typography>{LOREM}</Typography>
+        </Accordion.Item>
+        <Accordion.Item header='Another enabled'>
+          <Typography>{LOREM}</Typography>
+        </Accordion.Item>
+      </Accordion>
 
-        {/* 4. Disabled items & preset styling ----------------------------- */}
-        <Typography variant='h3'>4. Disabled & preset</Typography>
-        <Accordion>
-          <Accordion.Item header='Enabled'>
-            <Typography>{LOREM}</Typography>
-          </Accordion.Item>
-          <Accordion.Item
-            header='Disabled'
-            disabled
+      <Typography variant='h3'>5. Custom heading level (h4)</Typography>
+      <Accordion headingLevel={4}>
+        <Accordion.Item header='Header rendered as h4'>
+          <Typography>{LOREM}</Typography>
+        </Accordion.Item>
+      </Accordion>
+
+      <Button
+        variant='outlined'
+        onClick={toggleMode}
+        sx={{ alignSelf: 'flex-start' }}
+      >
+        Toggle light / dark
+      </Button>
+    </Stack>
+  );
+
+  const [multiple, setMultiple] = useState(false);
+  const [heading, setHeading] = useState<1 | 2 | 3 | 4 | 5 | 6>(3);
+  const [constrain, setConstrain] = useState(true);
+  const playground = (
+    <Stack gap={1}>
+      <Panel
+        variant='alt'
+        fullWidth
+      >
+        <Stack
+          direction='row'
+          sx={{ alignItems: 'center', gap: theme.spacing(1), flexWrap: 'wrap' }}
+        >
+          <Stack
+            direction='row'
+            sx={{ alignItems: 'center', gap: 6 }}
           >
-            {/* Will never open */}
-            <Typography>{LOREM}</Typography>
-          </Accordion.Item>
-          <Accordion.Item header='Another enabled'>
-            <Typography>{LOREM}</Typography>
-          </Accordion.Item>
-        </Accordion>
+            <Switch
+              name='multiple'
+              checked={multiple}
+              onChange={setMultiple}
+            />
+            <Typography>multiple</Typography>
+          </Stack>
+          <Stack
+            direction='row'
+            sx={{ alignItems: 'center', gap: 6 }}
+          >
+            <Switch
+              name='constrainHeight'
+              checked={constrain}
+              onChange={setConstrain}
+            />
+            <Typography>constrainHeight</Typography>
+          </Stack>
+          <Stack
+            direction='row'
+            sx={{ alignItems: 'center', gap: 6 }}
+          >
+            <Typography variant='subtitle'>headingLevel</Typography>
+            <Select
+              value={String(heading)}
+              onChange={(v) => setHeading(Number(v) as 1 | 2 | 3 | 4 | 5 | 6)}
+              sx={{ width: 160 }}
+            >
+              {[1, 2, 3, 4, 5, 6].map((n) => (
+                <Select.Option
+                  key={n}
+                  value={String(n)}
+                >
+                  h{n}
+                </Select.Option>
+              ))}
+            </Select>
+          </Stack>
+        </Stack>
+      </Panel>
 
-        {/* 5. Custom heading level ---------------------------------------- */}
-        <Typography variant='h3'>5. Custom heading level (h4)</Typography>
-        <Accordion headingLevel={4}>
-          <Accordion.Item header='Header rendered as h4'>
-            <Typography>{LOREM}</Typography>
-          </Accordion.Item>
-        </Accordion>
-
-        {/* 6. Live theme coupling ----------------------------------------- */}
-        <Typography variant='h3'>6. Theme coupling</Typography>
-        <Button
-          variant='outlined'
-          onClick={toggleMode}
+      <Panel fullWidth>
+        <Accordion
+          {...(multiple ? { multiple: true } : {})}
+          {...(constrain ? { constrainHeight: true } : {})}
+          headingLevel={heading}
         >
-          Toggle light / dark mode
-        </Button>
+          {Array.from({ length: 6 }, (_, i) => (
+            <Accordion.Item
+              key={i}
+              header={`Item ${i + 1}`}
+            >
+              <Typography>{LOREM}</Typography>
+            </Accordion.Item>
+          ))}
+        </Accordion>
+      </Panel>
+    </Stack>
+  );
 
-        {/* Back nav -------------------------------------------------------- */}
-        <Button
-          size='lg'
-          onClick={() => navigate('/')}
-          sx={{ marginTop: theme.spacing(1) }}
-        >
-          ← Back
-        </Button>
-      </Stack>
-    </Surface>
+  return (
+    <ComponentMetaPage
+      title='Accordion'
+      subtitle='Uncontrolled/controlled, single/multiple, heading levels, constrained height'
+      slug='components/layout/accordion'
+      meta={AccordionMeta}
+      usage={usage}
+      playground={playground}
+    />
   );
 }

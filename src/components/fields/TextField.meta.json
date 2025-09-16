@@ -1,0 +1,29 @@
+{
+  "name": "TextField",
+  "status": "experimental",
+  "aliases": ["textfield", "textinput", "input", "textbox"],
+  "docs": {
+    "bestPractices": [
+      "Always provide a clear `label`. Avoid placeholder‑only fields; labels remain visible and accessible.",
+      "Choose the correct `type` (e.g., `email`, `password`, `number`) and set `autoComplete` to improve UX and a11y.",
+      "Pick a control model deliberately: use `value` + `onChange` for app‑state control; use `defaultValue` for simple local inputs.",
+      "In forms, set a stable `name` so values submit predictably and validation maps cleanly.",
+      "Use `as='textarea'` with `rows` for multi‑line input; keep width comfortable and avoid forcing long single‑line fields.",
+      "Convey issues via `error` + `helperText`. Keep helper text succinct; reserve errors for actionable feedback.",
+      "Use `fullWidth` in narrow or linear layouts; otherwise size with `sx` or parent layout for consistency.",
+      "Prefer theme tokens and `preset` over ad‑hoc CSS to keep density and colours consistent."
+    ]
+  },
+  "examples": [
+    {
+      "id": "textfield-basic-auth",
+      "title": "Email + Password",
+      "code": "<Stack gap={1}>\n  <TextField name='email' type='email' label='Email' placeholder='you@example.com' autoComplete='email' />\n  <TextField name='password' type='password' label='Password' autoComplete='new-password' />\n</Stack>"
+    },
+    {
+      "id": "textfield-textarea",
+      "title": "Multiline with helper",
+      "code": "<Stack gap={1}>\n  <TextField name='bio' as='textarea' rows={4} label='Bio' placeholder='Tell us about yourself' helperText='Use 2–3 sentences.' />\n</Stack>"
+    }
+  ]
+}

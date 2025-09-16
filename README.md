@@ -80,7 +80,9 @@ React 19.x setup.
 | `npm run clean` | Removes the `dist/` folder for a fresh build. Use when cached outputs might interfere or before a clean publish.
 | `npm run build` | Builds the library with tsup (ESM, CJS, and TypeScript dts). Use before publishing or linking the package into another app.
 | `npm run dev` | Builds in watch mode for rapid local iteration. Use while developing components and testing via linked docs.
-| `npm run dx` | Installs root deps, installs docs deps, then installs MCP server deps. Use on fresh checkouts to prep the full dev environment quickly.
+| `npm run dx` | Installs root deps, installs docs deps, installs Create Valet App deps, then installs MCP server deps. Use on fresh checkouts to prep the full dev environment quickly.
+| `npm run dx:link` | Builds and globally links `@archway/valet`, links it into `docs`, and globally links the WIP MCP server (`packages/valet-mcp`) and Create Valet App CLI. Use to enable full local linked DX in one step.
+| `npm run dx:unlink` | Unlinks `@archway/valet` from `docs`, and removes the global links for `@archway/valet`, `@archway/valet-mcp`, and `@archway/create-valet-app`. Use to clean up your environment.
 | `npm run lint` | Runs ESLint over `src` and `docs`. Use to check code quality in CI or before commits.
 | `npm run lint:fix` | Runs ESLint with auto‑fix. Use after refactors to apply standard rules automatically.
 | `npm run format` | Runs Prettier in check mode. Use in CI or to verify formatting consistency.
@@ -91,7 +93,7 @@ React 19.x setup.
 | `npm run mcp:watch` | Rebuilds `mcp-data/` on file changes. Use during active development for instant MCP data refresh.
 | `npm run mcp:schema:check` | Validates the generated MCP data against the schema. Use to sanity‑check before publishing or integrating.
 | `npm run mcp:server:install` | Installs MCP server dependencies. Use on first setup or after dependency changes.
-| `npm run mcp:server:build` | Builds the MCP server (`servers/valet-mcp`). Use after server code changes or before publishing the server.
+| `npm run mcp:server:build` | Builds the MCP server (`packages/valet-mcp`). Use after server code changes or before publishing the server.
 | `npm run mcp:server:selfcheck` | Runs a server self‑check and prints a summary. Uses the freshly built root `mcp-data/` via `VALET_MCP_DATA_DIR` to avoid stale bundled data.
 | `npm run mcp:server:start` | Starts the MCP server locally. Use to serve `mcp-data/` to tools during development.
 | `npm run mcp:server:link` | Links the MCP server globally as `valet-mcp`. Use if your environment discovers global bins.
@@ -105,7 +107,7 @@ npm run mcp:build
 
 # Check version during publish
 
-# cd servers/valet-mcp
+# cd packages/valet-mcp
 # npm run bundle:data
 # npm run selfcheck
 # cd ../..

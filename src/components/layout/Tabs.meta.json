@@ -1,0 +1,18 @@
+{
+  "name": "Tabs",
+  "status": "experimental",
+  "aliases": ["tabs"],
+  "docs": {
+    "bestPractices": [
+      "Use Tabs to switch peer views that don’t require navigation changes; use routes for deep navigation.",
+      "Keep labels short and stable; avoid wrapping to multiple rows—enable horizontal scroll when needed.",
+      "Provide sensible initial selection and preserve it across renders/routing.",
+      "Respect overflow: allow swipe/drag to scroll when the strip exceeds width; show edge fades to hint at more content.",
+      "Ensure keyboard navigation: Arrow keys move focus, Enter/Space activates.",
+      "Prefer tokenized spacing and motion for a cohesive feel.",
+      "Avoid mixing tabs and inline navigation within the same strip.",
+      "Use appropriate variants and placement to reflect app hierarchy.",
+      "Announce active tab for screen readers with `aria-selected` and `role=tablist`."
+    ]
+  }
+}

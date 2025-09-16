@@ -10,6 +10,7 @@ import React from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset, presetHas } from '../../css/stylePresets';
+import { mix, toHex, toRgb } from '../../helpers/color';
 import type { Presettable, SpacingProps, Sx } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
 
@@ -140,7 +141,9 @@ export const Panel: React.FC<PanelProps> = ({
           ? theme.colors.secondaryText
           : bg === theme.colors.tertiary
             ? theme.colors.tertiaryText
-            : theme.colors.text;
+            : bg === theme.colors.backgroundAlt
+              ? theme.colors.text
+              : theme.colors.text;
   }
 
   const pad = resolveSpace(padProp, theme, compact, 1);
@@ -152,6 +155,11 @@ export const Panel: React.FC<PanelProps> = ({
     return raw === 'centered' ? 'center' : (raw as 'left' | 'right' | 'center');
   })();
 
+  // Outline colour for variant="alt":
+  //  - Light mode: darken backgroundAlt by mixing with black
+  //  - Dark mode:  lighten backgroundAlt by mixing with white
+  const outline = toHex(mix(toRgb(theme.colors.backgroundAlt), toRgb(theme.colors.text), 0.5));
+
   return (
     <Base
       {...rest}
@@ -159,7 +167,7 @@ export const Panel: React.FC<PanelProps> = ({
       $full={fullWidth}
       $center={centerContent}
       $alignX={normalizedAlign}
-      $outline={theme.colors.backgroundAlt}
+      $outline={outline}
       $strokeW={theme.stroke(1)}
       $bg={bg}
       $text={textColour}

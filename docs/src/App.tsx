@@ -61,22 +61,24 @@ const MetroSelectDemoPage = page(() => import('./pages/components/field/MetroSel
 const VideoDemoPage = page(() => import('./pages/components/primitives/VideoDemo'));
 const SnackbarDemoPage = page(() => import('./pages/components/widgets/SnackbarDemo'));
 const TreeDemoPage = page(() => import('./pages/components/widgets/TreeDemo'));
+const ChipDemoPage = page(() => import('./pages/components/widgets/ChipDemo'));
 const DropzoneDemoPage = page(() => import('./pages/components/widgets/DropzoneDemo'));
 const DateSelectorDemoPage = page(() => import('./pages/components/field/DateSelectorDemo'));
 const CodeBlockDemoPage = page(() => import('./pages/components/widgets/CodeBlockDemo'));
 const MarkdownDemoPage = page(() => import('./pages/components/widgets/MarkdownDemo'));
-const OverviewPage = page(() => import('./pages/concepts/Overview'));
 const QuickstartPage = page(() => import('./pages/concepts/Quickstart'));
 const MentalModelPage = page(() => import('./pages/concepts/MentalModel'));
 const StyledEnginePage = page(() => import('./pages/concepts/StyledEngine'));
 const ThemePage = page(() => import('./pages/concepts/Theme'));
+const ThemeColorsPage = page(() => import('./pages/concepts/ThemeColors'));
 const ComponentsPrimerPage = page(() => import('./pages/concepts/ComponentsPrimer'));
-const SurfaceExplainerPage = page(() => import('./pages/concepts/SurfaceExplainer'));
+const SurfaceExplainerPage = page(() => import('./pages/components/layout/Surface'));
 const PropPatternsPage = page(() => import('./pages/concepts/PropPatterns'));
 const ComplicatedDashboardPage = page(() => import('./pages/examples/ComplicatedDashboard'));
 const SpacingContractPage = page(() => import('./pages/concepts/SpacingContract'));
 const MCPGuidePage = page(() => import('./pages/concepts/MCP'));
 const GlossaryPage = page(() => import('./pages/concepts/Glossary'));
+const ComponentStatusPage = page(() => import('./pages/concepts/ComponentStatus'));
 
 /*───────────────────────────────────────────────────────────*/
 export function App() {
@@ -116,10 +118,6 @@ export function App() {
           element={<MainPage />}
         />
         <Route
-          path='/overview'
-          element={<OverviewPage />}
-        />
-        <Route
           path='/quickstart'
           element={<QuickstartPage />}
         />
@@ -130,6 +128,10 @@ export function App() {
         <Route
           path='/glossary'
           element={<GlossaryPage />}
+        />
+        <Route
+          path='/component-status'
+          element={<ComponentStatusPage />}
         />
 
         <Route
@@ -143,6 +145,10 @@ export function App() {
         <Route
           path='/theme'
           element={<ThemePage />}
+        />
+        <Route
+          path='/theme-colors'
+          element={<ThemeColorsPage />}
         />
         <Route
           path='/components-primer'
@@ -219,6 +225,10 @@ export function App() {
         <Route
           path='/tooltip-demo'
           element={<TooltipDemoPage />}
+        />
+        <Route
+          path='/chip-demo'
+          element={<ChipDemoPage />}
         />
         <Route
           path='/modal-demo'

@@ -11,6 +11,8 @@ export type Density = 'comfortable' | 'compact' | 'tight' | 'zero';
 
 export interface Theme {
   colors: Record<string, string>;
+  /** Human-readable names for color tokens */
+  colorNames: Record<string, string>;
   /** Returns a CSS length for the given number of spacing units */
   spacing: (units: number) => string;
   /** Base unit used by the spacing helper */
@@ -79,6 +81,20 @@ export interface Theme {
   weights?: Partial<Record<Variant, number[] | { min: number; max: number }>>;
   /** Aliases for common weights */
   weightAliases?: Partial<Record<WeightAlias, number>>;
+  /**
+   * Optional per-family defaults for line-height and letter-spacing.
+   * Use either a base value (applies to all variants mapped to that family)
+   * or a per-variant map for fine control.
+   */
+  typographyFamilies?: Partial<
+    Record<
+      'heading' | 'body' | 'mono' | 'button',
+      {
+        lineHeight?: number | Partial<Record<Variant, number>>;
+        letterSpacing?: string | number | Partial<Record<Variant, string | number>>;
+      }
+    >
+  >;
   fonts: {
     heading: string;
     body: string;
@@ -103,7 +119,7 @@ interface ThemeStore {
 const spacingUnit = '0.5rem';
 
 /* ── theme object with the fixed spacing helper ────────────── */
-const common: Omit<Theme, 'colors'> = {
+const common: Omit<Theme, 'colors' | 'colorNames'> = {
   // Spacing is expressed in terms of a CSS custom property so density
   // can be adjusted per-Surface. The var defaults to spacingUnit.
   // Example: spacing(4) → `calc(var(--valet-space, 0.5rem) * 4)`
@@ -183,6 +199,25 @@ const common: Omit<Theme, 'colors'> = {
     semibold: 600,
     bold: 700,
   },
+  // Conservative defaults; can be overridden via setTheme/useInitialTheme
+  typographyFamilies: {
+    heading: {
+      lineHeight: { h1: 1.15, h2: 1.15, h3: 1.15, h4: 1.2, h5: 1.2, h6: 1.2 },
+      letterSpacing: { h1: '-0.02em', h2: '-0.015em', h3: '-0.01em' },
+    },
+    body: {
+      lineHeight: { body: 1.5, subtitle: 1.35 },
+      letterSpacing: { body: '0em', subtitle: '0em' },
+    },
+    mono: {
+      lineHeight: { body: 1.45 },
+      letterSpacing: { body: '0em' },
+    },
+    button: {
+      lineHeight: { button: 1 },
+      letterSpacing: { button: '0.02em' },
+    },
+  },
   fonts: {
     heading: 'Kumbh Sans',
     body: 'Inter',
@@ -193,38 +228,72 @@ const common: Omit<Theme, 'colors'> = {
 };
 
 const lightColors = {
-  primary: '#8bb392',
-  primaryText: '#090909',
-  secondary: '#a7ccc4',
-  secondaryText: '#090909',
-  tertiary: '#d1e6dc',
-  tertiaryText: '#090909',
-  error: '#d64545',
+  primary: '#0E65C0',
+  primaryText: '#F7F7F7',
+  secondary: '#45706C',
+  secondaryText: '#F7F7F7',
+  tertiary: '#C0E6FF',
+  tertiaryText: '#1b1b1b',
+  error: '#D32F2F',
   errorText: '#F7F7F7',
-  primaryButtonText: '#090909',
-  secondaryButtonText: '#090909',
-  tertiaryButtonText: '#090909',
-  background: '#eeeeee',
-  backgroundAlt: '#cccccc',
+  primaryButtonText: '#F7F7F7',
+  secondaryButtonText: '#F7F7F7',
+  tertiaryButtonText: '#1b1b1b',
+  background: '#f4f4f4',
+  backgroundAlt: '#D6D6D6',
   text: '#090909',
 } as const;
 
+const lightColorNames: Record<keyof typeof lightColors, string> = {
+  primary: 'Euro Blue',
+  primaryText: 'Porcelain Off-White',
+  secondary: 'Deep Teal',
+  secondaryText: 'Porcelain Off-White',
+  tertiary: 'Ice Blue',
+  tertiaryText: 'Graphite',
+  error: 'Signal Red',
+  errorText: 'Porcelain Off-White',
+  primaryButtonText: 'Porcelain Off-White',
+  secondaryButtonText: 'Porcelain Off-White',
+  tertiaryButtonText: 'Graphite',
+  background: 'Porcelain Off-White',
+  backgroundAlt: 'Cool Grey',
+  text: 'Ink Black',
+};
+
 const darkColors = {
-  primary: '#608066',
+  primary: '#0E65C0',
   primaryText: '#F7F7F7',
-  secondary: '#69807a',
+  secondary: '#45706C',
   secondaryText: '#F7F7F7',
-  tertiary: '#5d6662',
-  tertiaryText: '#F7F7F7',
-  error: '#ff6b6b',
-  errorText: '#1b1b1b',
+  tertiary: '#C0E6FF',
+  tertiaryText: '#1b1b1b',
+  error: '#D32F2F',
+  errorText: '#F7F7F7',
   primaryButtonText: '#F7F7F7',
   secondaryButtonText: '#F7F7F7',
-  tertiaryButtonText: '#F7F7F7',
-  background: '#222222',
-  backgroundAlt: '#444444',
+  tertiaryButtonText: '#1b1b1b',
+  background: '#161616',
+  backgroundAlt: '#363636',
   text: '#F7F7F7',
 } as const;
+
+const darkColorNames: Record<keyof typeof darkColors, string> = {
+  primary: 'Euro Blue',
+  primaryText: 'Porcelain Off-White',
+  secondary: 'Deep Teal',
+  secondaryText: 'Porcelain Off-White',
+  tertiary: 'Ice Blue',
+  tertiaryText: 'Graphite',
+  error: 'Signal Red',
+  errorText: 'Porcelain Off-White',
+  primaryButtonText: 'Porcelain Off-White',
+  secondaryButtonText: 'Graphite',
+  tertiaryButtonText: 'Graphite',
+  background: 'Carbon',
+  backgroundAlt: 'Cool Grey',
+  text: 'Porcelain Off-White',
+};
 
 /*───────────────────────────────────────────────────────────*/
 export const useTheme = create<ThemeStore>((set, get) => ({
@@ -232,6 +301,7 @@ export const useTheme = create<ThemeStore>((set, get) => ({
   theme: {
     ...common,
     colors: darkColors,
+    colorNames: { ...darkColorNames },
   },
   density: 'comfortable',
 
@@ -241,13 +311,82 @@ export const useTheme = create<ThemeStore>((set, get) => ({
       theme: {
         ...common,
         colors: mode === 'dark' ? darkColors : lightColors,
+        colorNames: mode === 'dark' ? { ...darkColorNames } : { ...lightColorNames },
         fonts: state.theme.fonts,
       },
     })),
 
   toggleMode: () => get().setMode(get().mode === 'dark' ? 'light' : 'dark'),
 
-  setTheme: (patch) => set((state) => ({ theme: { ...state.theme, ...patch } })),
+  setTheme: (patch) =>
+    set((state) => {
+      const nextColors = patch.colors
+        ? { ...state.theme.colors, ...patch.colors }
+        : state.theme.colors;
+      const providedNames = (patch as Partial<Theme>).colorNames || {};
+      const nextNamesBase = { ...state.theme.colorNames, ...providedNames };
+
+      // Generate names for any provided color tokens missing a name
+      const genName = (hex: string) => `Custom ${hex?.toUpperCase?.() ?? ''}`.trim();
+      if (patch.colors) {
+        for (const k of Object.keys(patch.colors)) {
+          if (!nextNamesBase[k])
+            nextNamesBase[k] = genName((patch.colors as Record<string, string>)[k]);
+        }
+      }
+
+      // Deep-merge for typographyFamilies
+      const mergeTypographyFamilies = (
+        base: Theme['typographyFamilies'] | undefined,
+        incoming: Theme['typographyFamilies'] | undefined,
+      ): Theme['typographyFamilies'] => {
+        if (!incoming) return base;
+
+        type Families = NonNullable<Theme['typographyFamilies']>;
+        type FamilyKey = keyof Families;
+        type FamilyConfig = {
+          lineHeight?: number | Partial<Record<Variant, number>>;
+          letterSpacing?: string | number | Partial<Record<Variant, string | number>>;
+        };
+
+        const out: Families = { ...(base || {}) } as Families;
+        const baseFamilies = (base || {}) as Partial<Record<FamilyKey, FamilyConfig>>;
+        const incFamilies = (incoming || {}) as Partial<Record<FamilyKey, FamilyConfig>>;
+
+        for (const fam of Object.keys(incFamilies) as FamilyKey[]) {
+          const b = baseFamilies[fam] || ({} as FamilyConfig);
+          const inc = incFamilies[fam] || ({} as FamilyConfig);
+
+          const mergeEntry = <T>(curr: T | undefined, add: T | undefined): T | undefined => {
+            if (add == null) return curr;
+            if (typeof add !== 'object' || Array.isArray(add)) return add;
+            if (typeof curr !== 'object' || Array.isArray(curr) || curr == null)
+              return { ...(add as object) } as T;
+            return { ...(curr as object), ...(add as object) } as T;
+          };
+
+          (out as Record<FamilyKey, FamilyConfig>)[fam] = {
+            lineHeight: mergeEntry(b.lineHeight, inc.lineHeight),
+            letterSpacing: mergeEntry(b.letterSpacing, inc.letterSpacing),
+          } as FamilyConfig;
+        }
+        return out as Theme['typographyFamilies'];
+      };
+
+      const nextTypographyFamilies = mergeTypographyFamilies(
+        state.theme.typographyFamilies,
+        patch.typographyFamilies,
+      );
+
+      const nextTheme: Theme = {
+        ...state.theme,
+        ...patch,
+        colors: nextColors,
+        colorNames: nextNamesBase,
+        typographyFamilies: nextTypographyFamilies,
+      } as Theme;
+      return { theme: nextTheme };
+    }),
 
   setDensity: (density) => set(() => ({ density })),
 }));
