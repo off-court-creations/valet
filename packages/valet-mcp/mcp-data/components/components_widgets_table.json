@@ -70,6 +70,13 @@
       "required": false
     }
   ],
+  "domPassthrough": {
+    "element": "table",
+    "omitted": [
+      "children",
+      "style"
+    ]
+  },
   "cssVars": [
     "--valet-divider-stroke",
     "--valet-underline-width",
@@ -96,10 +103,33 @@
     "Enable selection only when follow‑up actions operate on selected rows; choose `single` vs `multi` to match the action design.",
     "Keep column count reasonable on narrow screens; prefer fewer, more meaningful columns over many cramped ones. Use succinct headers."
   ],
-  "examples": [],
+  "examples": [
+    {
+      "id": "table-basic",
+      "title": "Basic striped table",
+      "code": "(() => {\n  const columns = [\n    { header: 'ID', accessor: 'id', align: 'right' },\n    { header: 'Name', accessor: 'name' },\n    { header: 'City', accessor: 'city' },\n  ];\n  const data = [\n    { id: 1, name: 'Ada Lovelace', city: 'London' },\n    { id: 2, name: 'Alan Turing', city: 'Manchester' },\n    { id: 3, name: 'Grace Hopper', city: 'New York' },\n  ];\n  return (<Panel fullWidth><Table data={data} columns={columns} striped hoverable constrainHeight /></Panel>);\n})()",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {
+        "data": [],
+        "columns": []
+      }
+    },
+    {
+      "id": "table-selectable",
+      "title": "Single‑select with initial sort",
+      "code": "(() => {\n  const columns = [\n    { header: 'ID', accessor: 'id', align: 'right', sortable: true },\n    { header: 'Name', accessor: 'name', sortable: true },\n    { header: 'Age', accessor: 'age', align: 'right', sortable: true },\n  ];\n  const data = [\n    { id: 1, name: 'Katherine Johnson', age: 41 },\n    { id: 2, name: 'Tim Berners‑Lee', age: 35 },\n    { id: 3, name: 'Linus Torvalds', age: 29 },\n  ];\n  const Demo = () => {\n    const [selected, setSelected] = React.useState([]);\n    return (<Stack>\n      <Panel fullWidth>\n        <Table data={data} columns={columns} selectable='single' initialSort={{ index: 0 }} onSelectionChange={setSelected} />\n      </Panel>\n      <Typography variant='subtitle'>Selected: {selected.map((r) => r.id).join(', ') || '—'}</Typography>\n    </Stack>);\n  };\n  return <Demo />;\n})()",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {
+        "data": [],
+        "columns": []
+      }
+    }
+  ],
   "sourceFiles": [
     "src/components/widgets/Table.tsx"
   ],
-  "version": "0.31.1",
+  "version": "0.32.0",
   "schemaVersion": "1.6"
 }

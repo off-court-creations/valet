@@ -32,6 +32,12 @@
       "required": false
     }
   ],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": [
+      "style"
+    ]
+  },
   "cssVars": [
     "--valet-space",
     "--valet-bg",
@@ -64,6 +70,6 @@
   "sourceFiles": [
     "src/components/layout/Surface.tsx"
   ],
-  "version": "0.31.1",
+  "version": "0.32.0",
   "schemaVersion": "1.6"
 }

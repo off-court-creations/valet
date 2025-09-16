@@ -85,6 +85,6 @@
   "sourceFiles": [
     "src/components/primitives/Image.tsx"
   ],
-  "version": "0.31.1",
+  "version": "0.32.0",
   "schemaVersion": "1.6"
 }

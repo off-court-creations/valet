@@ -26,6 +26,13 @@
       "required": false
     }
   ],
+  "domPassthrough": {
+    "element": "form",
+    "omitted": [
+      "onSubmit",
+      "style"
+    ]
+  },
   "cssVars": [],
   "cssPresets": [],
   "events": [
@@ -41,6 +48,6 @@
   "sourceFiles": [
     "src/components/fields/FormControl.tsx"
   ],
-  "version": "0.31.1",
+  "version": "0.32.0",
   "schemaVersion": "1.6"
 }

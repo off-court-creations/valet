@@ -45,6 +45,12 @@
       "required": false
     }
   ],
+  "domPassthrough": {
+    "element": "img",
+    "omitted": [
+      "style"
+    ]
+  },
   "cssVars": [],
   "cssPresets": [],
   "events": [],
@@ -57,10 +63,51 @@
     "Avoid using Avatar for content images; use `Image` instead.",
     "Group with labels or presence indicators when they add value; avoid redundant decoration."
   ],
-  "examples": [],
+  "examples": [
+    {
+      "id": "avatar-email-basic",
+      "title": "Email (Gravatar)",
+      "code": "<Avatar email='support@gravatar.com' />",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    },
+    {
+      "id": "avatar-custom-src",
+      "title": "Custom src + alt",
+      "code": "<Avatar src='https://avatars.githubusercontent.com/u/9919?s=200&v=4' alt='GitHub' size='l' />",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    },
+    {
+      "id": "avatar-sizes-row",
+      "title": "Sizes",
+      "code": "<Stack direction='row' gap={1}>\n  {(['xl','l','m','s','xs'] as const).map(s => (\n    <Avatar key={s} email='support@gravatar.com' size={s} />\n  ))}\n</Stack>",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    },
+    {
+      "id": "avatar-outline",
+      "title": "Outline variant",
+      "code": "<Avatar email='support@gravatar.com' size='l' variant='outline' />",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    },
+    {
+      "id": "avatar-gravatar-default",
+      "title": "Gravatar default style",
+      "code": "<Stack direction='row' gap={1}><Avatar email='no-such@example.com' gravatarDefault='retro' /><Avatar email='no-such@example.com' gravatarDefault='monsterid' /></Stack>",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    }
+  ],
   "sourceFiles": [
     "src/components/primitives/Avatar.tsx"
   ],
-  "version": "0.31.1",
+  "version": "0.32.0",
   "schemaVersion": "1.6"
 }

@@ -60,6 +60,14 @@
       "required": false
     }
   ],
+  "domPassthrough": {
+    "element": "img",
+    "omitted": [
+      "width",
+      "height",
+      "style"
+    ]
+  },
   "cssVars": [],
   "cssPresets": [],
   "events": [],
@@ -77,6 +85,6 @@
   "sourceFiles": [
     "src/components/primitives/Image.tsx"
   ],
-  "version": "0.31.1",
+  "version": "0.32.0",
   "schemaVersion": "1.6"
 }

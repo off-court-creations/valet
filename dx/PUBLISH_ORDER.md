@@ -16,8 +16,10 @@
 - **create-valet-app** → update template deps, validate, publish from the root.
   ```sh
   npm run cva:install
-  npm run cva:validate
-  npm --prefix packages/create-valet-app publish --access public
+  cd packages/create-valet-app
+  npm version patch|minor|major
+  # npm run cva:validate
+  npm publish --access public
   ```
 - **docs** → bump to the new valet release, ensure regenerated MCP data is staged, build.
   ```sh

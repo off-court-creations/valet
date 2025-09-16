@@ -109,6 +109,6 @@
     "src/components/layout/Box.tsx",
     "docs/src/pages/components/layout/BoxDemo.tsx"
   ],
-  "version": "0.31.1",
+  "version": "0.32.0",
   "schemaVersion": "1.6"
 }

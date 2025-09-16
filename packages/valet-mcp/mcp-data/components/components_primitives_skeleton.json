@@ -31,6 +31,12 @@
       "required": false
     }
   ],
+  "domPassthrough": {
+    "element": "span",
+    "omitted": [
+      "style"
+    ]
+  },
   "cssVars": [],
   "cssPresets": [],
   "events": [],
@@ -51,6 +57,6 @@
   "sourceFiles": [
     "src/components/primitives/Skeleton.tsx"
   ],
-  "version": "0.31.1",
+  "version": "0.32.0",
   "schemaVersion": "1.6"
 }

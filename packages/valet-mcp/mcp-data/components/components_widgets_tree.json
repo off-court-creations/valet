@@ -66,6 +66,13 @@
       "required": false
     }
   ],
+  "domPassthrough": {
+    "element": "ul",
+    "omitted": [
+      "children",
+      "style"
+    ]
+  },
   "cssVars": [
     "--valet-focus-width",
     "--valet-focus-offset",
@@ -99,10 +106,33 @@
     "Avoid over‑nesting. Deep hierarchies are hard to scan; flatten where possible and consider search/filter affordances for large trees.",
     "Tokenized spacing. Use theme spacing for indentation so density and breakpoints scale predictably."
   ],
-  "examples": [],
+  "examples": [
+    {
+      "id": "tree-chevrons",
+      "title": "Chevron variant",
+      "code": "(() => {\n  const data = [\n    { id: 'fruit', data: { label: 'Fruit' }, children: [\n      { id: 'apple', data: { label: 'Apple' } },\n      { id: 'banana', data: { label: 'Banana' } }\n    ]}\n  ];\n  return (<Tree nodes={data} getLabel={(n) => n.label} defaultExpanded={['fruit']} variant='chevron' />);\n})()",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {
+        "nodes": [],
+        "getLabel": "() => {}"
+      }
+    },
+    {
+      "id": "tree-files",
+      "title": "Files variant",
+      "code": "(() => {\n  const files = [\n    { id: 'src', data: { label: 'src' }, children: [\n      { id: 'index.ts', data: { label: 'index.ts' } }\n    ]}\n  ];\n  return (<Tree nodes={files} getLabel={(n) => n.label} defaultExpanded={['src']} variant='files' />);\n})()",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {
+        "nodes": [],
+        "getLabel": "() => {}"
+      }
+    }
+  ],
   "sourceFiles": [
     "src/components/widgets/Tree.tsx"
   ],
-  "version": "0.31.1",
+  "version": "0.32.0",
   "schemaVersion": "1.6"
 }

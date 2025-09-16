@@ -90,6 +90,13 @@
       "default": "380"
     }
   ],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": [
+      "onChange",
+      "style"
+    ]
+  },
   "cssVars": [
     "--valet-date-radius",
     "--valet-date-cell-radius",
@@ -108,11 +115,18 @@
   ],
   "actions": [],
   "slots": [],
-  "bestPractices": [],
+  "bestPractices": [
+    "Use ISO 'YYYY-MM-DD' strings for values; avoid locale-dependent parsing.",
+    "Control the value in app state to persist selection across navigation.",
+    "Constrain input with minDate/maxDate to prevent out-of-range selection.",
+    "For ranges, keep [start, end] ordered and handle partial selection gracefully.",
+    "Avoid timezone pitfalls: treat values as local dates to prevent off-by-one errors.",
+    "Prefer compactMode on small viewports; use default/adaptive on larger layouts."
+  ],
   "examples": [],
   "sourceFiles": [
     "src/components/fields/DateSelector.tsx"
   ],
-  "version": "0.31.1",
+  "version": "0.32.0",
   "schemaVersion": "1.6"
 }

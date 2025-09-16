@@ -61,6 +61,15 @@
       "required": false
     }
   ],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": [
+      "onChange",
+      "defaultValue",
+      "children",
+      "style"
+    ]
+  },
   "cssVars": [
     "--valet-border",
     "--valet-bg",
@@ -94,6 +103,6 @@
   "sourceFiles": [
     "src/components/fields/Select.tsx"
   ],
-  "version": "0.31.1",
+  "version": "0.32.0",
   "schemaVersion": "1.6"
 }

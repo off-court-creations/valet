@@ -3,7 +3,7 @@
   "category": "fields",
   "slug": "components/fields/slider",
   "summary": "Slider component",
-  "status": "experimental",
+  "status": "unstable",
   "aliases": [
     "slider",
     "range"
@@ -95,6 +95,13 @@
       "required": false
     }
   ],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": [
+      "onChange",
+      "style"
+    ]
+  },
   "cssVars": [
     "--valet-bg",
     "--valet-text-color"
@@ -120,6 +127,6 @@
   "sourceFiles": [
     "src/components/fields/Slider.tsx"
   ],
-  "version": "0.31.1",
+  "version": "0.32.0",
   "schemaVersion": "1.6"
 }

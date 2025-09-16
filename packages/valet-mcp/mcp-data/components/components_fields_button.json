@@ -43,6 +43,12 @@
       "required": false
     }
   ],
+  "domPassthrough": {
+    "element": "button",
+    "omitted": [
+      "style"
+    ]
+  },
   "cssVars": [
     "--valet-bg",
     "--valet-text-color"
@@ -65,6 +71,6 @@
   "sourceFiles": [
     "src/components/fields/Button.tsx"
   ],
-  "version": "0.31.1",
+  "version": "0.32.0",
   "schemaVersion": "1.6"
 }

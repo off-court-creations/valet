@@ -66,6 +66,12 @@
       "required": false
     }
   ],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": [
+      "style"
+    ]
+  },
   "cssVars": [
     "--valet-text-color"
   ],
@@ -89,6 +95,6 @@
   "sourceFiles": [
     "src/components/primitives/Progress.tsx"
   ],
-  "version": "0.31.1",
+  "version": "0.32.0",
   "schemaVersion": "1.6"
 }

@@ -28,6 +28,12 @@
       "required": false
     }
   ],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": [
+      "style"
+    ]
+  },
   "cssVars": [
     "--valet-stepper-stroke",
     "--valet-stepper-radius"
@@ -52,6 +58,6 @@
   "sourceFiles": [
     "src/components/widgets/Stepper.tsx"
   ],
-  "version": "0.31.1",
+  "version": "0.32.0",
   "schemaVersion": "1.6"
 }

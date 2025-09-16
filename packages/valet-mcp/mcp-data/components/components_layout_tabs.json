@@ -68,6 +68,13 @@
       "default": "false"
     }
   ],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": [
+      "onChange",
+      "style"
+    ]
+  },
   "cssVars": [
     "--valet-focus-width",
     "--valet-focus-offset",
@@ -97,6 +104,6 @@
   "sourceFiles": [
     "src/components/layout/Tabs.tsx"
   ],
-  "version": "0.31.1",
+  "version": "0.32.0",
   "schemaVersion": "1.6"
 }

@@ -74,16 +74,21 @@
       ]
     },
     {
-      "name": "className",
-      "type": "string",
-      "required": false
-    },
-    {
       "name": "sx",
       "type": "Sx",
       "required": false
     }
   ],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": [
+      "style",
+      "children",
+      "onError",
+      "onPlay",
+      "onPause"
+    ]
+  },
   "cssVars": [],
   "cssPresets": [],
   "events": [],
@@ -101,6 +106,6 @@
   "sourceFiles": [
     "src/components/primitives/Video.tsx"
   ],
-  "version": "0.31.1",
+  "version": "0.32.0",
   "schemaVersion": "1.6"
 }

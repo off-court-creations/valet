@@ -60,6 +60,13 @@
       "required": false
     }
   ],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": [
+      "onDrop",
+      "style"
+    ]
+  },
   "cssVars": [],
   "cssPresets": [],
   "events": [
@@ -81,6 +88,6 @@
   "sourceFiles": [
     "src/components/widgets/Dropzone.tsx"
   ],
-  "version": "0.31.1",
+  "version": "0.32.0",
   "schemaVersion": "1.6"
 }

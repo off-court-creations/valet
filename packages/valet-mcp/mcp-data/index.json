@@ -67,7 +67,7 @@
     "category": "fields",
     "summary": "Slider component",
     "slug": "components/fields/slider",
-    "status": "experimental"
+    "status": "unstable"
   },
   {
     "name": "Switch",
@@ -214,6 +214,13 @@
     "category": "primitives",
     "summary": "Video component",
     "slug": "components/primitives/video",
+    "status": "experimental"
+  },
+  {
+    "name": "Chip",
+    "category": "widgets",
+    "summary": "Chip component",
+    "slug": "components/widgets/chip",
     "status": "experimental"
   },
   {
