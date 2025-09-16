@@ -45,11 +45,6 @@
       "required": false
     },
     {
-      "name": "onClick",
-      "type": "(e: React.MouseEvent<HTMLDivElement>) => void",
-      "required": false
-    },
-    {
       "name": "onDelete",
       "type": "(e: React.MouseEvent<HTMLButtonElement>) => void",
       "required": false
@@ -69,7 +64,10 @@
     "element": "div",
     "omitted": [
       "style",
-      "children"
+      "children",
+      "onClick",
+      "role",
+      "tabIndex"
     ]
   },
   "cssVars": [
@@ -77,10 +75,6 @@
   ],
   "cssPresets": [],
   "events": [
-    {
-      "name": "onClick",
-      "payloadType": "React.MouseEvent<HTMLDivElement>"
-    },
     {
       "name": "onDelete",
       "payloadType": "React.MouseEvent<HTMLButtonElement>"
@@ -96,12 +90,12 @@
     }
   ],
   "bestPractices": [
-    "Use Chip for compact descriptors (tags, filters, assignments) with optional actions.",
-    "Prefer built-in props (variant, size, color, center behaviors) over ad-hoc styling.",
-    "Keep labels short; truncate is automatic. Use Tooltip if critical text may truncate.",
-    "Ensure interactive chips are keyboard accessible (Enter/Space); avoid non-semantic divs.",
-    "Use onDelete only when removal is the primary action; otherwise provide an explicit menu.",
-    "Be consistent with color meaning; tie Chip colors to theme tokens and legend."
+    "Use Chip for compact descriptors such as tags, owners, or status pills — they are static text tokens, not buttons.",
+    "Never rely on Chip for selection, toggles, or navigation. Pair it with an adjacent Button or Menu action if interaction is required.",
+    "Keep labels short; truncate is automatic. Use Tooltip if critical text may be hidden.",
+    "Use the built-in variant/size/color props or presets instead of custom inline styles for consistency.",
+    "Only expose removal via the dedicated `onDelete` affordance so keyboard and pointer users can target a clear control.",
+    "Tie Chip colours to theme tokens so meaning remains clear across light and dark modes."
   ],
   "examples": [
     {
@@ -145,9 +139,9 @@
       }
     },
     {
-      "id": "chip-clickable",
-      "title": "Clickable",
-      "code": "<Chip label=\"Clickable\" color=\"primary\" onClick={() => console.log('clicked')} />",
+      "id": "chip-with-legend",
+      "title": "With legend context",
+      "code": "<Stack gap={0.5}>\n  <Typography variant=\"subtitle\">Status</Typography>\n  <Stack direction='row' gap={0.5}>\n    <Chip label=\"New\" color=\"primary\" />\n    <Chip label=\"In review\" color=\"secondary\" />\n    <Chip label=\"Blocked\" color=\"error\" />\n  </Stack>\n</Stack>",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {

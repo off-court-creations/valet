@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/widgets/Chip.tsx  | valet
-// Compact label with optional icon/avatar and actions (click/delete)
+// Compact label with optional icon/avatar and removal action
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
 import { styled } from '../../css/createStyled';
@@ -25,14 +25,16 @@ export type ChipColor =
 
 export interface ChipProps
   extends Presettable,
-    Omit<React.HTMLAttributes<HTMLDivElement>, 'style' | 'children'> {
+    Omit<
+      React.HTMLAttributes<HTMLDivElement>,
+      'style' | 'children' | 'onClick' | 'role' | 'tabIndex'
+    > {
   label: React.ReactNode;
   size?: ChipSize;
   variant?: ChipVariant;
   color?: ChipColor;
   icon?: string; // iconify name for leading icon
   avatar?: React.ReactNode; // custom leading element
-  onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
   onDelete?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   disabled?: boolean;
   sx?: Sx;
@@ -157,7 +159,6 @@ export const Chip: React.FC<ChipProps> = ({
   color = 'default',
   icon,
   avatar,
-  onClick,
   onDelete,
   disabled,
   className,
@@ -170,30 +171,29 @@ export const Chip: React.FC<ChipProps> = ({
   const { bg, fg, bd } = resolveColors(theme, color);
   const presetCls = p ? preset(p) : '';
   const sizeScaleMap: Record<ChipSize, number> = { s: 0.9, m: 1, l: 1.1 };
+  // Chips are static descriptors; strip any attempted interactivity props so the DOM stays inert.
+  const domProps = { ...rest } as Record<string, unknown>;
 
-  const isInteractive = !!onClick && !disabled;
-  const role = isInteractive ? 'button' : rest.role;
-  const tabIndex = isInteractive ? 0 : rest.tabIndex;
-
-  const handleKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (e) => {
-    if (!isInteractive) return;
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      if (onClick) {
-        // Synthesize a click-like event without violating typing
-        const synthetic = {
-          ...e,
-          currentTarget: e.currentTarget,
-          target: e.target as EventTarget & HTMLDivElement,
-        } as unknown as React.MouseEvent<HTMLDivElement>;
-        onClick(synthetic);
-      }
+  if (process.env.NODE_ENV !== 'production') {
+    if ('onClick' in domProps) {
+      console.warn(
+        'Chip: `onClick` is unsupported. Chips are static descriptors — use a Button or Menu action instead.',
+      );
     }
-  };
+    if ('role' in domProps || 'tabIndex' in domProps) {
+      console.warn(
+        'Chip: interactive roles/tabIndex are ignored. Chips are never focusable inputs.',
+      );
+    }
+  }
+
+  delete (domProps as { onClick?: unknown }).onClick;
+  delete (domProps as { role?: unknown }).role;
+  delete (domProps as { tabIndex?: unknown }).tabIndex;
 
   return (
     <Root
-      {...rest}
+      {...(domProps as React.HTMLAttributes<HTMLDivElement>)}
       $bg={bg}
       $fg={fg}
       $bd={bd}
@@ -202,12 +202,8 @@ export const Chip: React.FC<ChipProps> = ({
       $padX={s.padX}
       $gap={s.gap}
       $disabled={disabled}
-      onKeyDown={handleKeyDown}
-      role={role}
-      tabIndex={tabIndex as number | undefined}
       style={sx}
       className={[presetCls, className].filter(Boolean).join(' ')}
-      onClick={disabled ? undefined : onClick}
       aria-disabled={disabled || undefined}
     >
       {avatar ||
