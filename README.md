@@ -2,11 +2,13 @@
 
 # valet
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![GitHub](https://img.shields.io/badge/GitHub-valet-181717?logo=github&logoColor=white)](https://github.com/off-court-creations/valet) [![Star](https://img.shields.io/github/stars/off-court-creations/valet?style=social)](https://github.com/off-court-creations/valet/stargazers) [![Docs](https://img.shields.io/badge/Docs-Live-0A84FF?logo=readthedocs&logoColor=white)](https://main.db2j7e5kim3gg.amplifyapp.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-181817.svg?logo=open-source-initiative&logoColor=white)](https://opensource.org/licenses/MIT) [![GitHub](https://img.shields.io/badge/GitHub-valet-181717?logo=github&logoColor=white)](https://github.com/off-court-creations/valet) [![Star](https://img.shields.io/github/stars/off-court-creations/valet?style=social)](https://github.com/off-court-creations/valet/stargazers) [![Docs](https://img.shields.io/badge/Docs-Live-181817?logo=readthedocs&logoColor=white)](https://main.db2j7e5kim3gg.amplifyapp.com/)
 
-[![npm version](https://img.shields.io/npm/v/@archway/valet.svg?color=CB3837&logo=npm&logoColor=white)](https://www.npmjs.com/package/@archway/valet) [![npm version (valet-mcp)](https://img.shields.io/npm/v/@archway/valet-mcp.svg?color=CB3837&logo=npm&logoColor=white&label=valet-mcp)](https://www.npmjs.com/package/@archway/valet-mcp) [![npm version (create-valet-app)](https://img.shields.io/npm/v/@archway/create-valet-app.svg?color=CB3837&logo=npm&logoColor=white&label=create-valet-app)](https://www.npmjs.com/package/@archway/create-valet-app)
+[![npm version](https://img.shields.io/npm/v/@archway/valet.svg?color=CB3837&label=%40archway%2Fvalet&logo=npm&logoColor=white)](https://www.npmjs.com/package/@archway/valet)
 
-made with love by **Archway**
+[![npm version (valet-mcp)](https://img.shields.io/npm/v/@archway/valet-mcp.svg?color=CB3837&label=%40archway%2Fvalet%2Dmcp&logo=npm&logoColor=white)](https://www.npmjs.com/package/@archway/valet-mcp)
+
+[![npm version (create-valet-app)](https://img.shields.io/npm/v/@archway/create-valet-app.svg?color=CB3837&label=%40archway%2Fcreate%2Dvalet%2Dapp&logo=npm&logoColor=white)](https://www.npmjs.com/package/@archway/create-valet-app)
 
 </div>
 
@@ -18,8 +20,6 @@ The ecosystem also includes an app-scaffolding helper, `create-valet-app`, and a
 
 > [!CAUTION]
 > Pre‑1.0: APIs may change without notice.
-
----
 
 ## Docs
 
@@ -104,3 +104,5 @@ React 19.x setup.
 | `npm run cva:validate` | Runs validation checks for Create Valet App. Use before publishing changes to the CLI.
 | `npm run cva:dev` | Opens the Create Valet App CLI help (dev entry). Use to inspect flags quickly during development.
 | `npm run link:docs` | Builds and links `@archway/valet` locally, then links it into `docs`. Use for rapid docs iteration with local components.
+
+> made with love by Archway

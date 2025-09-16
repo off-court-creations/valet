@@ -1,9 +1,9 @@
 # @archway/create-valet-app
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-181817.svg?logo=book&logoColor=white)](https://opensource.org/licenses/MIT)
 [![GitHub](https://img.shields.io/badge/GitHub-create--valet--app-181717?logo=github&logoColor=white)](https://github.com/off-court-creations/create-valet-app)
 [![npm](https://img.shields.io/badge/npm-%40archway%2Fcreate--valet--app-CB3837?logo=npm&logoColor=white)](https://www.npmjs.com/package/@archway/create-valet-app)
-[![npm version](https://img.shields.io/npm/v/@archway/create-valet-app.svg?color=CB3837&logo=npm&logoColor=white)](https://www.npmjs.com/package/@archway/create-valet-app)
+[![npm version](https://img.shields.io/npm/v/@archway/create-valet-app.svg?color=181817&label=npm)](https://www.npmjs.com/package/@archway/create-valet-app)
 
 Scaffold a modern React app powered by Vite, React Router, Zustand, and @archway/valet (UI + CSS‑in‑JS), with TypeScript by default.
 
