@@ -1,1 +1,1 @@
-{ "name": "Iterator", "status": "experimental", "aliases": ["iterator"], "docs": { "bestPractices": [] } }
+{ "name": "Iterator", "status": "unstable", "aliases": ["iterator"], "docs": { "bestPractices": [] } }

@@ -1,6 +1,6 @@
 {
   "name": "Drawer",
-  "status": "experimental",
+  "status": "stable",
   "aliases": ["drawer", "sidenav", "side-nav", "sidebar"],
   "docs": {
     "bestPractices": [

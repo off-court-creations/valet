@@ -1,6 +1,6 @@
 {
   "name": "Icon",
-  "status": "experimental",
+  "status": "stable",
   "aliases": ["icon", "glyph"],
   "docs": { "bestPractices": [
     "Prefer well‑known glyphs and keep sizes consistent with surrounding text or controls.",

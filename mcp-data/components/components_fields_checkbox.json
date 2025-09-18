@@ -3,7 +3,7 @@
   "category": "fields",
   "slug": "components/fields/checkbox",
   "summary": "Checkbox component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "checkbox"
   ],

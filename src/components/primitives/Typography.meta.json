@@ -1,6 +1,6 @@
 {
   "name": "Typography",
-  "status": "experimental",
+  "status": "stable",
   "aliases": ["typography", "text", "heading", "title"],
   "docs": { "bestPractices": [
     "Use semantic variants for headings and body; avoid styling raw text manually.",

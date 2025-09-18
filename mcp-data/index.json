@@ -4,42 +4,42 @@
     "category": "fields",
     "summary": "Button component",
     "slug": "components/fields/button",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Checkbox",
     "category": "fields",
     "summary": "Checkbox component",
     "slug": "components/fields/checkbox",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "DateSelector",
     "category": "fields",
     "summary": "DateSelector component",
     "slug": "components/fields/dateselector",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "FormControl",
     "category": "fields",
     "summary": "FormControl component",
     "slug": "components/fields/formcontrol",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "IconButton",
     "category": "fields",
     "summary": "IconButton component",
     "slug": "components/fields/iconbutton",
-    "status": "experimental"
+    "status": "golden"
   },
   {
     "name": "Iterator",
     "category": "fields",
     "summary": "Iterator component",
     "slug": "components/fields/iterator",
-    "status": "experimental"
+    "status": "unstable"
   },
   {
     "name": "MetroSelect",
@@ -53,28 +53,28 @@
     "category": "fields",
     "summary": "Radio component",
     "slug": "components/fields/radio",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Select",
     "category": "fields",
     "summary": "Select component",
     "slug": "components/fields/select",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Slider",
     "category": "fields",
     "summary": "Slider component",
     "slug": "components/fields/slider",
-    "status": "unstable"
+    "status": "stable"
   },
   {
     "name": "Switch",
     "category": "fields",
     "summary": "Switch component",
     "slug": "components/fields/switch",
-    "status": "experimental"
+    "status": "golden"
   },
   {
     "name": "TextField",
@@ -95,28 +95,28 @@
     "category": "layout",
     "summary": "AppBar component",
     "slug": "components/layout/appbar",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Box",
     "category": "layout",
     "summary": "Box component",
     "slug": "components/layout/box",
-    "status": "experimental"
+    "status": "golden"
   },
   {
     "name": "Drawer",
     "category": "layout",
     "summary": "Drawer component",
     "slug": "components/layout/drawer",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Grid",
     "category": "layout",
     "summary": "Grid component",
     "slug": "components/layout/grid",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "List",
@@ -130,21 +130,21 @@
     "category": "layout",
     "summary": "Modal component",
     "slug": "components/layout/modal",
-    "status": "experimental"
+    "status": "unstable"
   },
   {
     "name": "Panel",
     "category": "layout",
     "summary": "Panel component",
     "slug": "components/layout/panel",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Stack",
     "category": "layout",
     "summary": "Stack component",
     "slug": "components/layout/stack",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Surface",
@@ -158,35 +158,35 @@
     "category": "layout",
     "summary": "Tabs component",
     "slug": "components/layout/tabs",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Avatar",
     "category": "primitives",
     "summary": "Avatar component",
     "slug": "components/primitives/avatar",
-    "status": "experimental"
+    "status": "golden"
   },
   {
     "name": "Divider",
     "category": "primitives",
     "summary": "Divider component",
     "slug": "components/primitives/divider",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Icon",
     "category": "primitives",
     "summary": "Icon component",
     "slug": "components/primitives/icon",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Image",
     "category": "primitives",
     "summary": "Image component",
     "slug": "components/primitives/image",
-    "status": "experimental"
+    "status": "unstable"
   },
   {
     "name": "Progress",
@@ -200,35 +200,35 @@
     "category": "primitives",
     "summary": "Skeleton component",
     "slug": "components/primitives/skeleton",
-    "status": "experimental"
+    "status": "unstable"
   },
   {
     "name": "Typography",
     "category": "primitives",
     "summary": "Typography component",
     "slug": "components/primitives/typography",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Video",
     "category": "primitives",
     "summary": "Video component",
     "slug": "components/primitives/video",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Chip",
     "category": "widgets",
     "summary": "Chip component",
     "slug": "components/widgets/chip",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "CodeBlock",
     "category": "widgets",
     "summary": "CodeBlock component",
     "slug": "components/widgets/codeblock",
-    "status": "experimental"
+    "status": "unstable"
   },
   {
     "name": "Dropzone",
@@ -256,14 +256,14 @@
     "category": "widgets",
     "summary": "Markdown component",
     "slug": "components/widgets/markdown",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Pagination",
     "category": "widgets",
     "summary": "Pagination component",
     "slug": "components/widgets/pagination",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "ParallaxBackground",
@@ -305,14 +305,14 @@
     "category": "widgets",
     "summary": "Table component",
     "slug": "components/widgets/table",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Tooltip",
     "category": "widgets",
     "summary": "Tooltip component",
     "slug": "components/widgets/tooltip",
-    "status": "experimental"
+    "status": "golden"
   },
   {
     "name": "Tree",

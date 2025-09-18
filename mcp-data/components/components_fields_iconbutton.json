@@ -3,7 +3,7 @@
   "category": "fields",
   "slug": "components/fields/iconbutton",
   "summary": "IconButton component",
-  "status": "experimental",
+  "status": "golden",
   "aliases": [
     "iconbutton",
     "icon-button"

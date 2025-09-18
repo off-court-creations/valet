@@ -1,6 +1,6 @@
 {
   "name": "Checkbox",
-  "status": "experimental",
+  "status": "stable",
   "aliases": ["checkbox"],
   "docs": {
     "bestPractices": [

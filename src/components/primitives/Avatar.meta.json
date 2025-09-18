@@ -1,6 +1,6 @@
 {
   "name": "Avatar",
-  "status": "experimental",
+  "status": "golden",
   "aliases": ["avatar", "badge", "userpic", "profilepic"],
   "docs": { "bestPractices": [
     "Use initials fallback for missing images; ensure background/foreground meet contrast.",

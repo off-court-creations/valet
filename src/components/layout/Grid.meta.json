@@ -1,6 +1,6 @@
 {
   "name": "Grid",
-  "status": "experimental",
+  "status": "stable",
   "aliases": ["grid"],
   "docs": {
     "bestPractices": [

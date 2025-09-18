@@ -1,6 +1,6 @@
 {
   "name": "Chip",
-  "status": "experimental",
+  "status": "stable",
   "aliases": ["chip", "tag", "pill", "token"],
   "docs": {
     "bestPractices": [

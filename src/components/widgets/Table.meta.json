@@ -1,6 +1,6 @@
 {
   "name": "Table",
-  "status": "experimental",
+  "status": "stable",
   "aliases": ["table", "datagrid", "data-grid"],
   "docs": {
     "bestPractices": [

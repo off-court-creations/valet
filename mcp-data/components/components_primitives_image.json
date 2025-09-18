@@ -3,7 +3,7 @@
   "category": "primitives",
   "slug": "components/primitives/image",
   "summary": "Image component",
-  "status": "experimental",
+  "status": "unstable",
   "aliases": [
     "image",
     "img",
