@@ -67,8 +67,6 @@ const widgets: [string, string][] = [
 ];
 
 const examples: [string, string][] = [
-  ['Form', '/form'],
-  ['Presets', '/presets'],
   ['LLMChat', '/chat-demo'],
   ['RichChat', '/rich-chat-demo'],
   ['Complicated Dashboard', '/dashboard-demo'],
@@ -107,14 +105,9 @@ const treeData: TreeNode<Item>[] = [
     data: { label: 'Concepts' },
     children: [
       { id: '/mental-model', data: { label: 'Mental Model', path: '/mental-model' } },
-      { id: '/theme', data: { label: 'Theme Store', path: '/theme' } },
-      { id: '/theme-colors', data: { label: 'Theme Colors', path: '/theme-colors' } },
+      { id: '/theme-engine', data: { label: 'Theme Engine', path: '/theme-engine' } },
       { id: '/styled', data: { label: 'Styled Engine', path: '/styled' } },
       { id: '/spacing', data: { label: 'Spacing Contract', path: '/spacing' } },
-      {
-        id: '/components-primer',
-        data: { label: 'Components Primer', path: '/components-primer' },
-      },
     ],
   },
   {
@@ -157,7 +150,7 @@ const treeData: TreeNode<Item>[] = [
   },
   {
     id: 'examples',
-    data: { label: 'Examples' },
+    data: { label: 'Showcases' },
     children: examples.map(([label, path]) => ({
       id: path,
       data: { label, path },

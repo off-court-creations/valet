@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
-// src/pages/concepts/ThemeColors.tsx  | valet-docs
-// Exhaustive theme colour showcase with contrast helpers and examples
+// src/pages/concepts/ThemeEngine.tsx  | valet-docs
+// Theme engine tour: palette, tokens, and runtime store best practices
 // ─────────────────────────────────────────────────────────────
 import {
   Surface,
@@ -19,9 +19,21 @@ import {
   Iterator,
   DateSelector,
   useTheme,
+  CodeBlock,
 } from '@archway/valet';
 import NavDrawer from '../../components/NavDrawer';
 import PageHero from '../../components/PageHero';
+import type { DocMeta } from '../../types';
+
+export const meta: DocMeta = {
+  id: 'theme-engine',
+  title: 'Theme Engine',
+  description:
+    'Explore valet’s palette tokens and learn how the theme store, presets, and runtime mode switching fit together.',
+  pageType: 'concept',
+  prerequisites: ['quickstart'],
+  tldr: 'Initialize the theme once with useInitialTheme, read/update tokens via useTheme, and lean on presets plus named colors for light/dark parity.',
+};
 
 type TokenKey =
   | 'primary'
@@ -136,7 +148,7 @@ function ButtonSwatch({
 
 // ContrastRow removed (contrast data not shown for now)
 
-export default function ThemeColors() {
+export default function ThemeEnginePage() {
   const { theme, mode, toggleMode } = useTheme();
   const t = theme.colors as Record<TokenKey, string>;
   const names: Record<string, string> = {
@@ -156,6 +168,26 @@ export default function ThemeColors() {
     text: 'Text',
   };
 
+  const themeStoreSnippet = `import { useTheme } from '@archway/valet';
+
+function Example() {
+  const { theme, setMode } = useTheme();
+  return (
+    <button onClick={() => setMode(theme.mode === 'light' ? 'dark' : 'light')}>
+      Toggle {theme.mode}
+    </button>
+  );
+}`;
+
+  const bestPractices = [
+    'Initialize once. Call useInitialTheme in your root App to set tokens and preload fonts; avoid re-running it per route.',
+    'Use tokens everywhere. Prefer theme.spacing/radius/stroke/motion over hard-coded values so density and branding updates propagate.',
+    'Toggle mode through the store. Reach for useTheme().toggleMode() or setMode instead of branching palettes in components.',
+    'Load only the fonts you ship. Pass overrides to useInitialTheme and use the extras array for secondary faces; the loader dedupes requests.',
+    'Keep colours semantic. Map brand colours into primary/secondary/tertiary/error tokens to maintain contrast across light/dark themes.',
+    'Patch via setTheme. Update the store rather than sprinkling inline overrides so docs, MCP data, and components stay in sync.',
+  ];
+
   // token listing not needed for the current layout
 
   return (
@@ -163,8 +195,8 @@ export default function ThemeColors() {
       <NavDrawer />
       <Stack sx={{ gap: theme.spacing(1) }}>
         <PageHero
-          title='Theme Colors'
-          subtitle='Named palette, contrast, and real usage examples across surfaces'
+          title='Theme Engine'
+          subtitle='Palette tokens, runtime mode toggling, and the theme store best practices in one place.'
         />
 
         {/* Mode controls */}
@@ -514,6 +546,63 @@ export default function ThemeColors() {
               </Typography>
             </Panel>
           </Grid>
+        </Panel>
+
+        <Panel
+          fullWidth
+          pad={1}
+        >
+          <Typography
+            variant='h3'
+            bold
+          >
+            Theme store fundamentals
+          </Typography>
+          <Divider
+            thickness={2}
+            pad={0.5}
+          />
+          <Typography>
+            The theme store is a Zustand slice that carries tokens—colours, spacing, radii, motion,
+            fonts—and the current mode. Call <code>useInitialTheme</code> once near the root to set
+            defaults and preload fonts, then read or update tokens anywhere via{' '}
+            <code>useTheme</code>.
+          </Typography>
+          <CodeBlock
+            code={themeStoreSnippet}
+            ariaLabel='Toggle theme mode example'
+          />
+          <Typography>
+            Helpers like <code>theme.spacing(n)</code> return unit-aware values so layout rhythm
+            stays consistent across density changes. Radius and stroke helpers piggyback on the same
+            base.
+          </Typography>
+        </Panel>
+
+        <Panel
+          fullWidth
+          pad={1}
+        >
+          <Typography
+            variant='h3'
+            bold
+          >
+            Best practices
+          </Typography>
+          <Divider
+            thickness={2}
+            pad={0.5}
+          />
+          <Stack sx={{ gap: theme.spacing(0.5) }}>
+            {bestPractices.map((tip) => (
+              <Typography
+                key={tip}
+                variant='body'
+              >
+                • {tip}
+              </Typography>
+            ))}
+          </Stack>
         </Panel>
       </Stack>
     </Surface>

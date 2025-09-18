@@ -2,7 +2,7 @@
 // src/pages/Quickstart.tsx  | valet-docs
 // 10‑minute quickstart: install, bootstrap, first screen
 // ─────────────────────────────────────────────────────────────
-import { Surface, Stack, Typography, Panel, Button, Icon, CodeBlock } from '@archway/valet';
+import { Surface, Stack, Typography, Panel, Button, CodeBlock } from '@archway/valet';
 import NavDrawer from '../../components/NavDrawer';
 import { useNavigate } from 'react-router-dom';
 import type { DocMeta } from '../../types';
@@ -10,14 +10,90 @@ import type { DocMeta } from '../../types';
 export const meta: DocMeta = {
   id: 'quickstart',
   title: 'Quickstart',
-  description: 'Install valet, bootstrap a Vite + React + TS app, and render your first screen.',
+  description:
+    'Scaffold a valet app with create-valet-app and learn how the generated project is organised.',
   pageType: 'guide',
   prerequisites: ['installation'],
-  tldr: 'Install @archway/valet, register presets, initialize theme with useInitialTheme, and wrap routes in <Surface>.',
+  tldr: 'Use create-valet-app, explore the generated folders, and understand how routes, presets, and state wire together.',
 };
 
 export default function QuickstartPage() {
   const navigate = useNavigate();
+  const scaffoldCommand = `npm create @archway/valet-app@latest my-valet-app`;
+  const fileTree = `my-valet-app/
+├── src/
+│   ├── App.tsx
+│   ├── main.tsx
+│   ├── pages/
+│   │   ├── start/Quickstart.tsx
+│   │   └── second/SecondPage.tsx
+│   ├── presets/globalPresets.ts
+│   └── store/appStore.ts
+├── public/
+├── package.json
+├── tsconfig.*.json
+└── vite.config.ts`;
+  const appShellSnippet = `// src/App.tsx (TypeScript template)
+import React, { Suspense, lazy } from 'react';
+import { Routes, Route } from 'react-router-dom';
+import { useInitialTheme, Surface, Stack, Typography } from '@archway/valet';
+
+const page = <T extends { default: React.ComponentType }>(loader: () => Promise<T>) =>
+  lazy(() => loader().then((m) => ({ default: m.default })));
+
+const QuickstartPage = page(() => import('@/pages/start/Quickstart'));
+const SecondPage = page(() => import('@/pages/second/SecondPage'));
+
+export function App() {
+  useInitialTheme(
+    {
+      fonts: {
+        heading: 'Kumbh Sans',
+        body: 'Inter',
+        mono: 'JetBrains Mono',
+        button: 'Kumbh Sans',
+      },
+    },
+    ['Kumbh Sans', 'JetBrains Mono', 'Inter'],
+  );
+
+  const fallback = (
+    <Surface>
+      <Stack sx={{ padding: '2rem', alignItems: 'center' }}>
+        <Typography variant='subtitle'>Loading…</Typography>
+      </Stack>
+    </Surface>
+  );
+
+  return (
+    <Suspense fallback={fallback}>
+      <Routes>
+        <Route path='/' element={<QuickstartPage />} />
+        <Route path='/secondpage' element={<SecondPage />} />
+      </Routes>
+    </Suspense>
+  );
+}`;
+  const presetsSnippet = `// src/presets/globalPresets.ts
+import { definePreset } from '@archway/valet';
+
+definePreset('fancyHolder', (t) => \`
+  background   : \${t.colors['primary']};
+  color        : \${t.colors['primaryText']};
+  border-radius: 20px;
+  box-shadow   : 0 6px 16px \${t.colors['text']}22;
+  padding      : \${t.spacing(1)};
+\`);
+// Additional presets (glassHolder, frostedGlass, gradientHolder, codePanel)
+// keep reusable styles close to your theme tokens.
+`;
+  const scriptsList = `npm run dev
+npm run build
+npm run lint
+npm run lint:fix
+npm run format
+npm run typecheck`; // only typecheck exists in TS/hybrid; still mention
+
   return (
     <Surface>
       <NavDrawer />
@@ -28,136 +104,134 @@ export default function QuickstartPage() {
         >
           Quickstart
         </Typography>
-        <Typography>Target: React 18+/19, TypeScript strict, Vite.</Typography>
-
-        <Typography
-          variant='h3'
-          bold
-        >
-          1) Create app
-        </Typography>
-        <CodeBlock
-          code={`npm create vite@latest my-app -- --template react-ts`}
-          ariaLabel='Copy create-app command'
-        />
-        <Typography>Then install valet in your app folder:</Typography>
-        <CodeBlock
-          code={`cd my-app && npm install @archway/valet`}
-          ariaLabel='Copy install command'
-        />
-
-        <Typography
-          variant='h3'
-          bold
-        >
-          2) Mount router and import presets
-        </Typography>
         <Typography>
-          Mount <code>BrowserRouter</code> and import presets before rendering.
+          The fastest way to start is <code>@archway/create-valet-app</code> (CVA). It scaffolds a
+          Vite + React 19 project, wires valet, and gives you ready-to-edit pages, presets, and a
+          Zustand store.
         </Typography>
-        <CodeBlock
-          code={`// src/main.tsx
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
-import './presets/globalPresets';   // import your preset registry
-import { App } from './App';
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </React.StrictMode>,
-);
-`}
-          ariaLabel='Copy main.tsx snippet'
-        />
+        <Panel fullWidth>
+          <Stack gap={1.5}>
+            <Typography variant='h3'>Scaffold the project</Typography>
+            <Typography>
+              Run the CLI with Node 18+ (flags go after <code>--</code> when using{' '}
+              <code>npm create</code>). Answer “Yes” to review options or “No” to accept defaults.
+            </Typography>
+            <CodeBlock
+              code={scaffoldCommand}
+              ariaLabel='Copy create-valet-app command'
+            />
+            <Typography>
+              Useful flags: <code>--template js|ts|hybrid</code>, <code>--no-router</code>,{' '}
+              <code>--no-zustand</code>, <code>--minimal</code>, <code>--three</code>,{' '}
+              <code>--pm npm|pnpm|yarn|bun</code>, and <code>--no-mcp</code> to skip MCP docs.
+            </Typography>
+          </Stack>
+        </Panel>
 
-        <Typography
-          variant='h3'
-          bold
-        >
-          3) Initialize theme + fonts once
-        </Typography>
-        <Typography>
-          Call <code>useInitialTheme</code> at the top level (e.g., in <code>App</code>) and provide
-          your fonts.
-        </Typography>
-        <CodeBlock
-          code={`// src/App.tsx
-  import { useInitialTheme } from '@archway/valet';
-  import brandonUrl from './assets/fonts/BrandonGrotesque.otf';
-  
-  export function App() {
-    useInitialTheme(
-      {
-        fonts: {
-          heading: { name: 'Brandon', src: brandonUrl },
-          body: 'Cabin',
-          mono: 'Ubuntu Mono',
-          button: 'Ubuntu',
-        },
-      },
-      [{ name: 'Brandon', src: brandonUrl }, 'Ubuntu', 'Ubuntu Mono', 'Cabin'],
-    );
-    // ...
-  }
-  `}
-          ariaLabel='Copy App.tsx snippet'
-        />
+        <Panel fullWidth>
+          <Stack gap={1.5}>
+            <Typography variant='h3'>Understand the layout</Typography>
+            <Typography>
+              CVA organises the app so UI, presets, and state each have a clear home. Start by
+              exploring the generated folders:
+            </Typography>
+            <CodeBlock
+              code={fileTree}
+              ariaLabel='Generated project file tree'
+            />
+            <Typography>
+              <strong>src/App.tsx</strong> owns routes, theme bootstrapping, and lazy loading.{' '}
+              <strong>src/pages</strong> holds route components (namespaced directories keep related
+              assets close). <strong>src/presets</strong> centralises style tokens powered by
+              <code>definePreset</code>. <strong>src/store</strong> contains the optional Zustand
+              example—delete it if you scaffolded with <code>--no-zustand</code>.
+            </Typography>
+          </Stack>
+        </Panel>
 
-        <Typography
-          variant='h3'
-          bold
-        >
-          4) First screen with Surface
-        </Typography>
-        <Typography>
-          Wrap each route in <code>&lt;Surface&gt;</code>. Use <code>Stack</code> and{' '}
-          <code>Panel</code> for fast layout.
-        </Typography>
-        <CodeBlock
-          code={`import { Routes, Route } from 'react-router-dom';
-  import { Surface, Stack, Typography, Button } from '@archway/valet';
-  
-  function Home() {
-    return (
-      <Surface>
-        <Stack gap={2} sx={{ padding: '1.5rem' }}>
-          <Typography variant="h2">Hello, valet</Typography>
-          <Button variant="primary">Click me</Button>
-        </Stack>
-      </Surface>
-    );
-  }
-  
-  export function App() {
-    return (
-      <Routes>
-        <Route path="/" element={<Home />} />
-      </Routes>
-    );
-  }
-  `}
-          ariaLabel='Copy first screen snippet'
-        />
+        <Panel fullWidth>
+          <Stack gap={1.5}>
+            <Typography variant='h3'>App shell + routing</Typography>
+            <Typography>
+              The generated <code>App.tsx</code> wires <code>useInitialTheme</code>, sets up a
+              Suspense fallback, and lazy-loads each page. React Router is included by default but
+              can be turned off with <code>--no-router</code>.
+            </Typography>
+            <CodeBlock
+              code={appShellSnippet}
+              ariaLabel='Generated App shell snippet'
+            />
+            <Typography>
+              Routes live in <code>src/App.tsx</code>; add more pages under <code>src/pages</code>{' '}
+              and point <code>page(() =&gt; import(...))</code> to them. Keep every route wrapped in
+              <code>&lt;Surface&gt;</code> so layout metrics and theme tokens stay consistent.
+            </Typography>
+          </Stack>
+        </Panel>
 
-        <Typography
-          variant='h3'
-          bold
-        >
-          5) Next steps
-        </Typography>
+        <Panel fullWidth>
+          <Stack gap={1.5}>
+            <Typography variant='h3'>Presets and reusable styling</Typography>
+            <Typography>
+              Global presets load before the React tree renders. They are regular functions that
+              receive the live valet theme, so tweaking tokens propagates everywhere.
+            </Typography>
+            <CodeBlock
+              code={presetsSnippet}
+              ariaLabel='Preset definition example'
+            />
+            <Typography>
+              Reference presets via the <code>preset</code> prop on any valet component. Organise
+              additional registries (e.g., per-domain presets) alongside this file or split them as
+              your app grows.
+            </Typography>
+          </Stack>
+        </Panel>
+
+        <Panel fullWidth>
+          <Stack gap={1.5}>
+            <Typography variant='h3'>State and data flow</Typography>
+            <Typography>
+              The default template ships with a tiny Zustand store in{' '}
+              <code>src/store/appStore.ts</code>
+              to demonstrate how to colocate state helpers. If you prefer another state tool,
+              replace this folder—nothing in the template depends on it.
+            </Typography>
+            <Typography>
+              Forms and actions should live inside valet components whenever possible so the Surface
+              can capture telemetry via the Web Action Graph.
+            </Typography>
+          </Stack>
+        </Panel>
+
+        <Panel fullWidth>
+          <Stack gap={1.5}>
+            <Typography variant='h3'>Scripts and next moves</Typography>
+            <Typography>
+              Generated apps include agent-friendly scripts. TypeScript and Hybrid templates also
+              add
+              <code>typecheck</code> variants.
+            </Typography>
+            <CodeBlock
+              code={scriptsList}
+              ariaLabel='Core npm scripts'
+            />
+            <Typography>
+              Use <code>npm run dev</code> for HMR, <code>npm run build</code> for production
+              bundles, and the <code>*:agent</code> scripts when automating checks with LLM tooling.
+            </Typography>
+          </Stack>
+        </Panel>
+
         <Panel
           variant='alt'
           fullWidth
         >
-          <Stack gap={2}>
+          <Stack gap={1.5}>
             <Typography>
-              Add <code>Typography</code>, <code>Box</code>, and a simple form via{' '}
-              <code>FormControl</code> + <code>TextField</code>. Read and update tokens using{' '}
-              <code>useTheme</code>. Avoid nesting <code>Surface</code>.
+              Ready to go deeper? Dive into component patterns, the styling engine, or theme
+              internals from here.
             </Typography>
             <Stack
               direction='row'
@@ -165,31 +239,28 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               wrap
               sx={{ alignItems: 'center' }}
             >
-              {/* Hello Valet removed */}
               <Button
                 variant='outlined'
-                onClick={() => navigate('/components-primer')}
+                onClick={() => navigate('/component-status')}
               >
-                <Icon icon='mdi:book-open-variant' />
-                &nbsp;Components primer
+                Component status
               </Button>
               <Button
                 variant='outlined'
                 onClick={() => navigate('/styled')}
               >
-                <Icon icon='mdi:xml' />
-                &nbsp;Styled engine
+                Styled engine
               </Button>
               <Button
                 variant='outlined'
-                onClick={() => navigate('/theme')}
+                onClick={() => navigate('/theme-engine')}
               >
-                <Icon icon='mdi:palette-outline' />
-                &nbsp;Theme store
+                Theme engine
               </Button>
             </Stack>
           </Stack>
         </Panel>
+
         <Button onClick={() => navigate(-1)}>← Back</Button>
       </Stack>
     </Surface>
