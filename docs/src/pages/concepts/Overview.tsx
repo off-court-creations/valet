@@ -189,17 +189,17 @@ export function App() {
             {/* Hello Valet and Mental Model removed */}
             <Button
               variant='outlined'
-              onClick={() => navigate('/components-primer')}
+              onClick={() => navigate('/component-status')}
             >
-              <Icon icon='mdi:book-open-variant' />
-              &nbsp;Components primer
+              <Icon icon='mdi:view-grid-outline' />
+              &nbsp;Component status
             </Button>
             <Button
               variant='outlined'
-              onClick={() => navigate('/theme')}
+              onClick={() => navigate('/theme-engine')}
             >
               <Icon icon='mdi:palette-outline' />
-              &nbsp;Theme store
+              &nbsp;Theme engine
             </Button>
             <Button
               variant='outlined'

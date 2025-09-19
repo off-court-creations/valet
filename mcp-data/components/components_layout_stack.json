@@ -3,7 +3,7 @@
   "category": "layout",
   "slug": "components/layout/stack",
   "summary": "Stack component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "stack",
     "vstack",

@@ -3,7 +3,7 @@
   "category": "widgets",
   "slug": "components/widgets/chip",
   "summary": "Chip component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "chip",
     "tag",

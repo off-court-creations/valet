@@ -11,40 +11,52 @@ export function registerGetInfo(server: McpServer): void {
   const pkg = requireFromHere('../../package.json') as { version?: string; name?: string };
   const mcpVersion = pkg.version ?? '0.0.0';
 
-  server.tool('valet__get_info', async () => {
-    try {
-      const index = getIndex();
-      const meta = getMeta();
-      const glossary = getGlossary();
-      const components = index.length;
-      const glossaryEntries = (glossary?.entries?.length ?? 0);
-      const valetVersion = meta?.valetVersion;
-      const schemaVersion = meta?.schemaVersion;
-      const buildHash = meta?.buildHash;
-      const dataSource = (DATA_INFO as any).source;
-      const dataDir = DATA_DIR;
-      const mcpMinor = String(mcpVersion).split('.').slice(0, 2).join('.');
-      const valetMinor = valetVersion ? String(valetVersion).split('.').slice(0, 2).join('.') : undefined;
-      const versionParity = typeof valetMinor === 'string' ? (mcpMinor === valetMinor) : undefined;
+  server.registerTool(
+    'valet__get_info',
+    {
+      title: 'Get Server Info',
+      description: 'Summarise the MCP server version, bundled data snapshot, and basic parity indicators.',
+      annotations: {
+        readOnlyHint: true,
+        idempotentHint: true,
+        openWorldHint: false,
+      },
+    },
+    async () => {
+      try {
+        const index = getIndex();
+        const meta = getMeta();
+        const glossary = getGlossary();
+        const components = index.length;
+        const glossaryEntries = glossary?.entries?.length ?? 0;
+        const valetVersion = meta?.valetVersion;
+        const schemaVersion = meta?.schemaVersion;
+        const buildHash = meta?.buildHash;
+        const dataSource = (DATA_INFO as any).source;
+        const dataDir = DATA_DIR;
+        const mcpMinor = String(mcpVersion).split('.').slice(0, 2).join('.');
+        const valetMinor = valetVersion ? String(valetVersion).split('.').slice(0, 2).join('.') : undefined;
+        const versionParity = typeof valetMinor === 'string' ? mcpMinor === valetMinor : undefined;
 
-      const payload = {
-        ok: true,
-        server: '@archway/valet-mcp',
-        mcpVersion,
-        valetVersion,
-        schemaVersion,
-        buildHash,
-        dataSource,
-        dataDir,
-        components,
-        glossaryEntries,
-        hasPrimer: true,
-        versionParity,
-      };
-      return { content: [{ type: 'text', text: JSON.stringify(payload) }] };
-    } catch (err) {
-      const error = (err as Error)?.message || String(err);
-      return { content: [{ type: 'text', text: JSON.stringify({ ok: false, error }) }] };
+        const payload = {
+          ok: true,
+          server: '@archway/valet-mcp',
+          mcpVersion,
+          valetVersion,
+          schemaVersion,
+          buildHash,
+          dataSource,
+          dataDir,
+          components,
+          glossaryEntries,
+          hasPrimer: true,
+          versionParity,
+        };
+        return { content: [{ type: 'text', text: JSON.stringify(payload) }] };
+      } catch (err) {
+        const error = (err as Error)?.message || String(err);
+        return { content: [{ type: 'text', text: JSON.stringify({ ok: false, error }) }] };
+      }
     }
-  });
+  );
 }

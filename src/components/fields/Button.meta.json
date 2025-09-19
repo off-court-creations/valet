@@ -1,6 +1,6 @@
 {
   "name": "Button",
-  "status": "experimental",
+  "status": "stable",
   "aliases": ["button", "cta"],
   "docs": {
     "bestPractices": [

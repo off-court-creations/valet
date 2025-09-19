@@ -6,10 +6,21 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { getGlossary } from './shared.js';
 
 export function registerGetGlossary(server: McpServer): void {
-  // Namespaced tool id only
-  server.tool('valet__get_glossary', async () => {
-    const g = getGlossary();
-    if (!g) return { content: [{ type: 'text', text: JSON.stringify({ entries: [] }) }] };
-    return { content: [{ type: 'text', text: JSON.stringify(g) }] };
-  });
+  server.registerTool(
+    'valet__get_glossary',
+    {
+      title: 'Get Glossary',
+      description: 'Return the entire valet glossary, including definitions, aliases, and cross references.',
+      annotations: {
+        readOnlyHint: true,
+        idempotentHint: true,
+        openWorldHint: false,
+      },
+    },
+    async () => {
+      const g = getGlossary();
+      if (!g) return { content: [{ type: 'text', text: JSON.stringify({ entries: [] }) }] };
+      return { content: [{ type: 'text', text: JSON.stringify(g) }] };
+    }
+  );
 }

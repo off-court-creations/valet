@@ -3,7 +3,7 @@
   "category": "primitives",
   "slug": "components/primitives/skeleton",
   "summary": "Skeleton component",
-  "status": "experimental",
+  "status": "unstable",
   "aliases": [
     "skeleton",
     "placeholder",

@@ -1,6 +1,6 @@
 {
   "name": "Skeleton",
-  "status": "experimental",
+  "status": "unstable",
   "aliases": ["skeleton", "placeholder", "shimmer"],
   "docs": { "bestPractices": [
     "Reserve layout with placeholders that resemble final content to minimize shift.",

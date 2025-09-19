@@ -69,9 +69,7 @@ const MarkdownDemoPage = page(() => import('./pages/components/widgets/MarkdownD
 const QuickstartPage = page(() => import('./pages/concepts/Quickstart'));
 const MentalModelPage = page(() => import('./pages/concepts/MentalModel'));
 const StyledEnginePage = page(() => import('./pages/concepts/StyledEngine'));
-const ThemePage = page(() => import('./pages/concepts/Theme'));
-const ThemeColorsPage = page(() => import('./pages/concepts/ThemeColors'));
-const ComponentsPrimerPage = page(() => import('./pages/concepts/ComponentsPrimer'));
+const ThemeEnginePage = page(() => import('./pages/concepts/ThemeEngine'));
 const SurfaceExplainerPage = page(() => import('./pages/components/layout/Surface'));
 const PropPatternsPage = page(() => import('./pages/concepts/PropPatterns'));
 const ComplicatedDashboardPage = page(() => import('./pages/examples/ComplicatedDashboard'));
@@ -143,16 +141,8 @@ export function App() {
           element={<StyledEnginePage />}
         />
         <Route
-          path='/theme'
-          element={<ThemePage />}
-        />
-        <Route
-          path='/theme-colors'
-          element={<ThemeColorsPage />}
-        />
-        <Route
-          path='/components-primer'
-          element={<ComponentsPrimerPage />}
+          path='/theme-engine'
+          element={<ThemeEnginePage />}
         />
         <Route
           path='/surface'

@@ -3,7 +3,7 @@
   "category": "fields",
   "slug": "components/fields/button",
   "summary": "Button component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "button",
     "cta"

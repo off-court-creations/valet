@@ -687,7 +687,7 @@ export default function MainPage() {
               <Button
                 size='lg'
                 variant='outlined'
-                onClick={go('/components-primer')}
+                onClick={go('/component-status')}
               >
                 <Icon icon='mdi:view-grid-outline' />
                 &nbsp;Explore components

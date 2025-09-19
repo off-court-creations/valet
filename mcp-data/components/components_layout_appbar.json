@@ -3,7 +3,7 @@
   "category": "layout",
   "slug": "components/layout/appbar",
   "summary": "AppBar component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "appbar",
     "navbar",

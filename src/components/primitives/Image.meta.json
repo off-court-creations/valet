@@ -1,6 +1,6 @@
 {
   "name": "Image",
-  "status": "experimental",
+  "status": "unstable",
   "aliases": ["image", "img", "picture"],
   "docs": { "bestPractices": [
     "Always set alt text; use empty alt for decorative images.",

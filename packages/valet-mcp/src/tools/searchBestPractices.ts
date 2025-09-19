@@ -13,16 +13,25 @@ import {
   type ValetComponentDoc,
 } from './shared.js';
 
-const ParamsShape = {
-  query: z.string().min(1).describe('Primary search text'),
-  limit: z.number().int().positive().max(100).optional(),
-  category: z.string().optional().describe('Optional category filter'),
-  status: z.union([z.string(), z.array(z.string())]).optional().describe('Optional status filter'),
+const ParamsSchema = {
+  query: z.string().min(1, 'Provide text to search.').describe('Primary search text.'),
+  limit: z
+    .number()
+    .int()
+    .positive()
+    .max(100)
+    .default(20)
+    .describe('Maximum results to return (default 20).'),
+  category: z.string().optional().describe('Optional category filter.'),
+  status: z
+    .union([z.string(), z.array(z.string())])
+    .optional()
+    .describe('Optional status filter.'),
 } as const;
 
 type SearchArgs = {
   query: string;
-  limit?: number;
+  limit: number;
   category?: string;
   status?: string | string[];
 };
@@ -49,12 +58,23 @@ function createDocCache() {
 }
 
 export function registerSearchBestPractices(server: McpServer): void {
-  server.tool('valet__search_best_practices', ParamsShape, async (args) => {
-    const { query, limit = 20, category, status } = args as SearchArgs;
-    const trimmed = query.trim();
-    if (!trimmed) {
-      return { content: [{ type: 'text', text: '[]' }] };
-    }
+  server.registerTool(
+    'valet__search_best_practices',
+    {
+      title: 'Search Best Practices',
+      description: 'Search best-practice entries across components and surface the most relevant advice.',
+      inputSchema: ParamsSchema,
+      annotations: {
+        readOnlyHint: true,
+        idempotentHint: true,
+        openWorldHint: false,
+      },
+    },
+    async ({ query, limit, category, status }: SearchArgs) => {
+      const trimmed = query.trim();
+      if (!trimmed) {
+        return { content: [{ type: 'text', text: '[]' }] };
+      }
 
     const normalizedQuery = trimmed.toLowerCase();
     const tokens = Array.from(new Set((normalizedQuery.match(/[a-z0-9]+/g) ?? []).filter((t) => t.length >= 2)));
@@ -175,5 +195,6 @@ export function registerSearchBestPractices(server: McpServer): void {
     results.sort((a, b) => b.matchScore - a.matchScore || a.name.localeCompare(b.name) || a.index - b.index);
     const capped = results.slice(0, Math.max(0, Math.min(limit, 100)));
     return { content: [{ type: 'text', text: JSON.stringify(capped) }] };
-  });
+    }
+  );
 }

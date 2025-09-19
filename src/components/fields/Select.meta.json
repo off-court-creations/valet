@@ -1,6 +1,6 @@
 {
   "name": "Select",
-  "status": "experimental",
+  "status": "stable",
   "aliases": ["select", "dropdown", "combobox"],
   "docs": {
     "bestPractices": [

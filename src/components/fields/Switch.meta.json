@@ -1,6 +1,6 @@
 {
   "name": "Switch",
-  "status": "experimental",
+  "status": "golden",
   "aliases": ["switch", "toggle"],
   "docs": {
     "bestPractices": [

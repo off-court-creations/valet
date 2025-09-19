@@ -1,6 +1,6 @@
 {
   "name": "Tabs",
-  "status": "experimental",
+  "status": "stable",
   "aliases": ["tabs"],
   "docs": {
     "bestPractices": [
