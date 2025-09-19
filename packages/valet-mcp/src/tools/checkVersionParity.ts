@@ -126,92 +126,94 @@ export function registerCheckVersionParity(server: McpServer): void {
         const valetVersion = appValet.version;
         const valetMinor = extractMinor(valetVersion);
         const mcpMinor = extractMinor(mcpVersion) ?? '0.0';
-      const dataSource = (DATA_INFO as any).source ?? 'unknown';
-      const dataDir = DATA_DIR;
-      let dataValetVersion: string | undefined;
-      let dataValetMinor: string | undefined;
-      try {
-        const meta = getMeta();
-        dataValetVersion = meta?.valetVersion;
-        dataValetMinor = extractMinor(dataValetVersion);
-      } catch {
-        // Swallow data read errors; we still report whatever we can.
-      }
+        const dataSource = (DATA_INFO as any).source ?? 'unknown';
+        const dataDir = DATA_DIR;
+        let dataValetVersion: string | undefined;
+        let dataValetMinor: string | undefined;
+        try {
+          const meta = getMeta();
+          dataValetVersion = meta?.valetVersion;
+          dataValetMinor = extractMinor(dataValetVersion);
+        } catch {
+          // Swallow data read errors; we still report whatever we can.
+        }
 
-      if (!valetVersion || !valetMinor) {
+        if (!valetVersion || !valetMinor) {
+          const payload: ParityResult = {
+            ok: false,
+            status: 'missing-data',
+            mcpVersion,
+            valetVersion,
+            mcpMinor,
+            valetMinor,
+            valetSource: appValet.source,
+            valetRange: appValet.range,
+            appPackagePath: appValet.appPackagePath,
+            dataValetVersion,
+            dataValetMinor,
+            dataSource,
+            dataDir,
+            message:
+              'Cannot resolve @archway/valet version from the nearest package.json; install or declare the dependency before running MCP parity.',
+          };
+          return { content: [{ type: 'text', text: JSON.stringify(payload) }] };
+        }
+
+        const mismatches: string[] = [];
+        if (mcpMinor !== valetMinor) mismatches.push('MCP package vs application dependency');
+        if (dataValetMinor && dataValetMinor !== mcpMinor) mismatches.push('MCP package vs bundled mcp-data');
+        if (dataValetMinor && dataValetMinor !== valetMinor) mismatches.push('Application dependency vs bundled mcp-data');
+
+        const ok = mismatches.length === 0;
+        const payload: ParityResult = ok
+          ? {
+              ok: true,
+              status: 'ok',
+              mcpVersion,
+              valetVersion,
+              mcpMinor,
+              valetMinor,
+              valetSource: appValet.source,
+              valetRange: appValet.range,
+              appPackagePath: appValet.appPackagePath,
+              dataValetVersion,
+              dataValetMinor,
+              dataSource,
+              dataDir,
+              message: `All minors aligned at ${mcpMinor}.`,
+            }
+          : {
+              ok: false,
+              status: 'mismatch',
+              mcpVersion,
+              valetVersion,
+              mcpMinor,
+              valetMinor,
+              valetSource: appValet.source,
+              valetRange: appValet.range,
+              appPackagePath: appValet.appPackagePath,
+              dataValetVersion,
+              dataValetMinor,
+              dataSource,
+              dataDir,
+              message: `Version mismatch detected: ${mismatches.join('; ')}. Rebuild mcp-data with the correct valet release and republish MCP.`,
+            };
+
+        return { content: [{ type: 'text', text: JSON.stringify(payload) }] };
+      } catch (err) {
+        const error = (err as Error)?.message ?? String(err);
         const payload: ParityResult = {
           ok: false,
           status: 'missing-data',
           mcpVersion,
-          valetVersion,
-          mcpMinor,
-          valetMinor,
-          valetSource: appValet.source,
-          valetRange: appValet.range,
-          appPackagePath: appValet.appPackagePath,
-          dataValetVersion,
-          dataValetMinor,
-          dataSource,
-          dataDir,
-          message: 'Cannot resolve @archway/valet version from the nearest package.json; install or declare the dependency before running MCP parity.',
+          mcpMinor: extractMinor(mcpVersion) ?? '0.0',
+          valetSource: 'missing',
+          dataSource: (DATA_INFO as any).source ?? 'unknown',
+          dataDir: DATA_DIR,
+          message: error,
         };
         return { content: [{ type: 'text', text: JSON.stringify(payload) }] };
       }
-
-      const mismatches: string[] = [];
-      if (mcpMinor !== valetMinor) mismatches.push('MCP package vs application dependency');
-      if (dataValetMinor && dataValetMinor !== mcpMinor) mismatches.push('MCP package vs bundled mcp-data');
-      if (dataValetMinor && dataValetMinor !== valetMinor) mismatches.push('Application dependency vs bundled mcp-data');
-
-      const ok = mismatches.length === 0;
-      const payload: ParityResult = ok
-        ? {
-            ok: true,
-            status: 'ok',
-            mcpVersion,
-            valetVersion,
-            mcpMinor,
-            valetMinor,
-            valetSource: appValet.source,
-            valetRange: appValet.range,
-            appPackagePath: appValet.appPackagePath,
-            dataValetVersion,
-            dataValetMinor,
-            dataSource,
-            dataDir,
-            message: `All minors aligned at ${mcpMinor}.`,
-          }
-        : {
-            ok: false,
-            status: 'mismatch',
-            mcpVersion,
-            valetVersion,
-            mcpMinor,
-            valetMinor,
-            valetSource: appValet.source,
-            valetRange: appValet.range,
-            appPackagePath: appValet.appPackagePath,
-            dataValetVersion,
-            dataValetMinor,
-            dataSource,
-            dataDir,
-            message: `Version mismatch detected: ${mismatches.join('; ')}. Rebuild mcp-data with the correct valet release and republish MCP.`,
-          };
-
-      return { content: [{ type: 'text', text: JSON.stringify(payload) }] };
-    } catch (err) {
-      const error = (err as Error)?.message ?? String(err);
-      const payload: ParityResult = {
-        ok: false,
-        status: 'missing-data',
-        mcpVersion,
-        mcpMinor: extractMinor(mcpVersion) ?? '0.0',
-        valetSource: 'missing',
-        dataSource: (DATA_INFO as any).source ?? 'unknown',
-        dataDir: DATA_DIR,
-        message: error,
-      };
-      return { content: [{ type: 'text', text: JSON.stringify(payload) }] };
     }
   );
 }
