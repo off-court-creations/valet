@@ -109,12 +109,23 @@ export function registerCheckVersionParity(server: McpServer): void {
   const pkg = requireFromHere('../../package.json') as { version?: string };
   const mcpVersion = pkg.version ?? '0.0.0';
 
-  server.tool('valet__check_version_parity', async () => {
-    try {
-      const appValet = resolveAppValetVersion();
-      const valetVersion = appValet.version;
-      const valetMinor = extractMinor(valetVersion);
-      const mcpMinor = extractMinor(mcpVersion) ?? '0.0';
+  server.registerTool(
+    'valet__check_version_parity',
+    {
+      title: 'Check Version Parity',
+      description: 'Compare the MCP package minor version with the application’s @archway/valet dependency and bundled mcp-data snapshot.',
+      annotations: {
+        readOnlyHint: true,
+        idempotentHint: true,
+        openWorldHint: false,
+      },
+    },
+    async () => {
+      try {
+        const appValet = resolveAppValetVersion();
+        const valetVersion = appValet.version;
+        const valetMinor = extractMinor(valetVersion);
+        const mcpMinor = extractMinor(mcpVersion) ?? '0.0';
       const dataSource = (DATA_INFO as any).source ?? 'unknown';
       const dataDir = DATA_DIR;
       let dataValetVersion: string | undefined;
@@ -202,5 +213,5 @@ export function registerCheckVersionParity(server: McpServer): void {
       };
       return { content: [{ type: 'text', text: JSON.stringify(payload) }] };
     }
-  });
+  );
 }
