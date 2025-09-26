@@ -15,8 +15,6 @@ import {
   Tabs,
   CodeBlock,
   AppBar,
-  styled,
-  keyframes,
   useTheme,
   Table,
   DateSelector,
@@ -31,149 +29,12 @@ import type { TableColumn } from '@archway/valet';
 // no table types needed in this page
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../components/NavDrawer';
-import Starfield from '../../components/Starfield';
-
-// Animated gradient overlay (GPU-friendly transform rotation)
-const swirl = keyframes`
-  0%   { transform: rotate(0deg); }
-  50%  { transform: rotate(180deg); }
-  100% { transform: rotate(360deg); }
-`;
-
-const Trippy = styled('div')<{ $dur: string; $ease: string; $opacity?: number }>`
-  position: absolute;
-  inset: -10%; /* bleed edges when rotating */
-  z-index: 0;
-  pointer-events: none;
-  /* Orange-forward start; reduce initial purple bias */
-  background: conic-gradient(from 0deg, #d16701, #f59e0b, #fb923c, #fbbf24, #d16701);
-  filter: saturate(1.25) blur(40px);
-  opacity: ${({ $opacity = 0.35 }) => String($opacity)};
-  animation: ${swirl} ${({ $dur }) => $dur} ${({ $ease }) => $ease} infinite;
-  will-change: transform;
-  transform: translateZ(0);
-  mix-blend-mode: overlay;
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-  }
-`;
-
-// Extra layers for a richer "lava lamp" effect
-const floatA = keyframes`
-  0%   { transform: translate3d(-30%, -10%, 0) scale(1) rotate(0deg); }
-  25%  { transform: translate3d(10%, -25%, 0)  scale(1.15) rotate(40deg); }
-  50%  { transform: translate3d(28%,  10%, 0)  scale(1.05) rotate(95deg); }
-  75%  { transform: translate3d(-10%, 25%, 0)  scale(1.18) rotate(140deg); }
-  100% { transform: translate3d(-30%, -10%, 0) scale(1) rotate(360deg); }
-`;
-
-const floatB = keyframes`
-  0%   { transform: translate3d(25%, -5%, 0) scale(0.9) rotate(0deg); }
-  20%  { transform: translate3d(10%, 20%, 0)  scale(1.05) rotate(60deg); }
-  50%  { transform: translate3d(-20%, 15%, 0) scale(1.2) rotate(180deg); }
-  80%  { transform: translate3d(-5%, -20%, 0) scale(1.05) rotate(300deg); }
-  100% { transform: translate3d(25%, -5%, 0)  scale(0.9) rotate(360deg); }
-`;
-
-const floatC = keyframes`
-  0%   { transform: translate3d(-10%, 15%, 0) scale(1.1) rotate(0deg); }
-  33%  { transform: translate3d(20%,  5%, 0) scale(0.95) rotate(120deg); }
-  66%  { transform: translate3d( 5%, -25%, 0) scale(1.25) rotate(240deg); }
-  100% { transform: translate3d(-10%, 15%, 0) scale(1.1) rotate(360deg); }
-`;
-
-// Additional path variety for denser field
-const floatD = keyframes`
-  0%   { transform: translate3d( 15%, -20%, 0) scale(1.05) rotate(0deg); }
-  25%  { transform: translate3d(-25%,  10%, 0) scale(1.18) rotate(70deg); }
-  50%  { transform: translate3d( 20%,  20%, 0) scale(0.95) rotate(190deg); }
-  75%  { transform: translate3d(-10%, -15%, 0) scale(1.12) rotate(280deg); }
-  100% { transform: translate3d( 15%, -20%, 0) scale(1.05) rotate(360deg); }
-`;
-
-const hueShift = keyframes`
-  0%   { filter: blur(var(--blob-blur)) hue-rotate(0deg); }
-  100% { filter: blur(var(--blob-blur)) hue-rotate(360deg); }
-`;
-
-const Goo = styled('div')<{
-  $blur?: number;
-  $opacity?: number;
-  $hueDur?: string;
-}>`
-  position: absolute;
-  inset: -8%;
-  z-index: 0;
-  pointer-events: none;
-  --blob-blur: ${({ $blur = 40 }) => `${$blur}px`};
-  /* Hint GPU accel for the animated filter */
-  will-change: filter;
-  transform: translateZ(0);
-  filter: blur(var(--blob-blur)) hue-rotate(0deg);
-  opacity: ${({ $opacity = 0.45 }) => String($opacity)};
-  mix-blend-mode: screen;
-  animation: ${hueShift} ${({ $hueDur = '160s' }) => $hueDur} linear infinite;
-`;
-
-const Blob = styled('div')<{
-  $size: number;
-  $color: string;
-  $anim: string;
-  $duration: string;
-  $delay?: string;
-  $cx?: number; // center X in % of container
-  $cy?: number; // center Y in % of container
-  $hue?: number; // base hue offset in degrees
-}>`
-  position: absolute;
-  top: ${({ $cy = 50 }) => `${$cy}%`};
-  left: ${({ $cx = 50 }) => `${$cx}%`};
-  width: ${({ $size }) => `${$size}px`};
-  height: ${({ $size }) => `${$size}px`};
-  margin: ${({ $size }) => `-${$size / 2}px 0 0 -${$size / 2}px`};
-  border-radius: 50%;
-  background: radial-gradient(
-    closest-side at 50% 50%,
-    ${({ $color }) => $color} 0%,
-    transparent 70%
-  );
-  filter: ${({ $hue = 0 }) => `hue-rotate(${$hue}deg)`};
-  will-change: transform;
-  animation: ${({ $anim }) => $anim} ${({ $duration }) => $duration}
-    ${({ $delay = '0s' }) => $delay} cubic-bezier(0.22, 0.8, 0.2, 1) infinite;
-`;
-
-const Halo = styled('div')<{ $opacity?: number; $dur?: string }>`
-  position: absolute;
-  inset: -12%;
-  z-index: 0;
-  pointer-events: none;
-  background: conic-gradient(
-    from 0deg,
-    #ffffff00 0 18%,
-    #ffffff3b 32%,
-    #ffffff00 58%,
-    #ffffff3b 78%,
-    #ffffff00 100%
-  );
-  mask-image: radial-gradient(closest-side, transparent 58%, black 67%, black 76%, transparent 85%);
-  opacity: ${({ $opacity = 0.3 }) => String($opacity)};
-  animation: ${swirl} ${({ $dur = '160s' }) => $dur} linear infinite;
-  mix-blend-mode: screen;
-  filter: saturate(1.08) brightness(1.05);
-  will-change: transform;
-  transform: translateZ(0);
-`;
-
-// —
+import SpinningPyramidGL from '../../components/SpinningPyramidGL';
 
 export default function MainPage() {
   const navigate = useNavigate();
   const { theme, mode, toggleMode, setDensity, density } = useTheme();
   const heroAnchorRef = useRef<HTMLDivElement | null>(null);
-
-  // Speed multiplier for hero animations (lower = faster)
-  const speed = 0.25; // snappier blobs (~4x base durations)
 
   // ── Hero CTA targets
   const go = (p: string) => () => navigate(p);
@@ -262,381 +123,9 @@ export default function MainPage() {
         sx={{ borderRadius: theme.radius(2), overflow: 'hidden' }}
       >
         <div style={{ position: 'relative', minHeight: '60vh' }}>
-          {/* Hyperspace starfield (beneath blobs) */}
-          <Starfield
-            density={140}
-            speed={126}
-            streak={0.85}
-            color='rgba(192,192,192,0.85)'
-            opacity={0.4}
-            centerZero={0.05}
-            centerFull={0.55}
-            midOpacity={0.55}
-            outerOpacity={0.35}
-            anchorRef={heroAnchorRef}
-            startDelayMs={50}
-            fadeMs={8000}
-            preSimBoost={32}
-            minRevealSpreadRatio={1.2}
-            revealRadiusFrac={0.42}
-            hiddenSpawnMinRadiusFrac={0.45}
-          />
-          {/* Gooey lava blobs */}
-          <Goo
-            aria-hidden
-            $hueDur={`${160 * speed}s`}
-          >
-            <Blob
-              $size={720}
-              $color={theme.colors['error'] ?? '#D16701'} /* orange */
-              $anim={floatA}
-              $duration={`${95 * speed}s`}
-              $delay={`${-10 * speed}s`}
-              $cx={28}
-              $cy={38}
-              $hue={-12}
-            />
-            <Blob
-              $size={640}
-              $color={theme.colors['error'] ?? '#D16701'} /* orange */
-              $anim={floatB}
-              $duration={`${120 * speed}s`}
-              $delay={`${-35 * speed}s`}
-              $cx={72}
-              $cy={30}
-              $hue={8}
-            />
-            <Blob
-              $size={560}
-              $color={theme.colors['error'] ?? '#D16701'} /* orange */
-              $anim={floatC}
-              $duration={`${105 * speed}s`}
-              $delay={`${-20 * speed}s`}
-              $cx={58}
-              $cy={72}
-              $hue={18}
-            />
-            <Blob
-              $size={480}
-              $color={theme.colors['error'] ?? '#D16701'} /* orange */
-              $anim={floatA}
-              $duration={`${130 * speed}s`}
-              $delay={`${-55 * speed}s`}
-              $cx={34}
-              $cy={65}
-              $hue={-24}
-            />
-            <Blob
-              $size={520}
-              $color={theme.colors['error'] ?? '#D16701'} /* orange */
-              $anim={floatB}
-              $duration={`${140 * speed}s`}
-              $delay={`${-80 * speed}s`}
-              $cx={78}
-              $cy={60}
-              $hue={30}
-            />
+          {/* Spinning WebGL2 pyramid background (replaces starfield) */}
+          <SpinningPyramidGL />
 
-            {/* Additional blobs for fuller coverage and overlap */}
-            <Blob
-              $size={2000}
-              $color={theme.colors['error'] ?? '#D16701'}
-              $anim={floatD}
-              $duration={`${150 * speed}s`}
-              $delay={`${-25 * speed}s`}
-              $cx={15}
-              $cy={22}
-              $hue={-16}
-            />
-            <Blob
-              $size={880}
-              $color={theme.colors['error'] ?? '#D16701'}
-              $anim={floatB}
-              $duration={`${135 * speed}s`}
-              $delay={`${-70 * speed}s`}
-              $cx={85}
-              $cy={78}
-              $hue={20}
-            />
-            <Blob
-              $size={680}
-              $color={theme.colors['error'] ?? '#D16701'}
-              $anim={floatC}
-              $duration={`${125 * speed}s`}
-              $delay={`${-95 * speed}s`}
-              $cx={12}
-              $cy={68}
-              $hue={-6}
-            />
-            <Blob
-              $size={600}
-              $color={theme.colors['error'] ?? '#D16701'}
-              $anim={floatA}
-              $duration={`${110 * speed}s`}
-              $delay={`${-15 * speed}s`}
-              $cx={88}
-              $cy={24}
-              $hue={12}
-            />
-            <Blob
-              $size={540}
-              $color={theme.colors['error'] ?? '#D16701'}
-              $anim={floatD}
-              $duration={`${118 * speed}s`}
-              $delay={`${-45 * speed}s`}
-              $cx={50}
-              $cy={86}
-              $hue={-10}
-            />
-            <Blob
-              $size={420}
-              $color={theme.colors['error'] ?? '#D16701'}
-              $anim={floatB}
-              $duration={`${100 * speed}s`}
-              $delay={`${-30 * speed}s`}
-              $cx={10}
-              $cy={42}
-              $hue={26}
-            />
-            <Blob
-              $size={380}
-              $color={theme.colors['error'] ?? '#D16701'}
-              $anim={floatC}
-              $duration={`${90 * speed}s`}
-              $delay={`${-62 * speed}s`}
-              $cx={90}
-              $cy={46}
-              $hue={-22}
-            />
-            <Blob
-              $size={340}
-              $color={theme.colors['error'] ?? '#D16701'}
-              $anim={floatA}
-              $duration={`${85 * speed}s`}
-              $delay={`${-12 * speed}s`}
-              $cx={42}
-              $cy={12}
-              $hue={14}
-            />
-            <Blob
-              $size={320}
-              $color={theme.colors['error'] ?? '#D16701'}
-              $anim={floatD}
-              $duration={`${82 * speed}s`}
-              $delay={`${-28 * speed}s`}
-              $cx={63}
-              $cy={18}
-              $hue={-8}
-            />
-            <Blob
-              $size={240}
-              $color={theme.colors['error'] ?? '#D16701'}
-              $anim={floatB}
-              $duration={`${78 * speed}s`}
-              $delay={`${-40 * speed}s`}
-              $cx={38}
-              $cy={82}
-              $hue={6}
-            />
-
-            {/* Extra 50% more blobs (8 new) for denser field */}
-            <Blob
-              $size={760}
-              $color={theme.colors['error'] ?? '#D16701'}
-              $anim={floatA}
-              $duration={`${128 * speed}s`}
-              $delay={`${-22 * speed}s`}
-              $cx={6}
-              $cy={30}
-              $hue={-18}
-            />
-            <Blob
-              $size={700}
-              $color={theme.colors['error'] ?? '#D16701'}
-              $anim={floatD}
-              $duration={`${112 * speed}s`}
-              $delay={`${-38 * speed}s`}
-              $cx={94}
-              $cy={70}
-              $hue={22}
-            />
-            <Blob
-              $size={520}
-              $color={theme.colors['error'] ?? '#D16701'}
-              $anim={floatB}
-              $duration={`${108 * speed}s`}
-              $delay={`${-18 * speed}s`}
-              $cx={25}
-              $cy={88}
-              $hue={-14}
-            />
-            <Blob
-              $size={480}
-              $color={theme.colors['error'] ?? '#D16701'}
-              $anim={floatC}
-              $duration={`${96 * speed}s`}
-              $delay={`${-52 * speed}s`}
-              $cx={74}
-              $cy={12}
-              $hue={16}
-            />
-            <Blob
-              $size={420}
-              $color={theme.colors['error'] ?? '#D16701'}
-              $anim={floatA}
-              $duration={`${88 * speed}s`}
-              $delay={`${-8 * speed}s`}
-              $cx={55}
-              $cy={6}
-              $hue={-20}
-            />
-            <Blob
-              $size={360}
-              $color={theme.colors['error'] ?? '#D16701'}
-              $anim={floatD}
-              $duration={`${84 * speed}s`}
-              $delay={`${-68 * speed}s`}
-              $cx={5}
-              $cy={90}
-              $hue={24}
-            />
-            <Blob
-              $size={300}
-              $color={theme.colors['error'] ?? '#D16701'}
-              $anim={floatB}
-              $duration={`${80 * speed}s`}
-              $delay={`${-48 * speed}s`}
-              $cx={96}
-              $cy={40}
-              $hue={-26}
-            />
-            <Blob
-              $size={260}
-              $color={theme.colors['error'] ?? '#D16701'}
-              $anim={floatC}
-              $duration={`${76 * speed}s`}
-              $delay={`${-32 * speed}s`}
-              $cx={48}
-              $cy={50}
-              $hue={28}
-            />
-
-            {/* +30% blobs: add 7 more for denser coverage with varied sizes */}
-            <Blob
-              $size={1600}
-              $color={theme.colors['error'] ?? '#D16701'}
-              $anim={floatA}
-              $duration={`${140 * speed}s`}
-              $delay={`${-58 * speed}s`}
-              $cx={50}
-              $cy={8}
-              $hue={18}
-            />
-            <Blob
-              $size={1400}
-              $color={theme.colors['error'] ?? '#D16701'}
-              $anim={floatB}
-              $duration={`${132 * speed}s`}
-              $delay={`${-12 * speed}s`}
-              $cx={6}
-              $cy={84}
-              $hue={-20}
-            />
-            <Blob
-              $size={960}
-              $color={theme.colors['error'] ?? '#D16701'}
-              $anim={floatD}
-              $duration={`${126 * speed}s`}
-              $delay={`${-44 * speed}s`}
-              $cx={94}
-              $cy={56}
-              $hue={22}
-            />
-            <Blob
-              $size={720}
-              $color={theme.colors['error'] ?? '#D16701'}
-              $anim={floatC}
-              $duration={`${116 * speed}s`}
-              $delay={`${-26 * speed}s`}
-              $cx={30}
-              $cy={6}
-              $hue={-10}
-            />
-            <Blob
-              $size={520}
-              $color={theme.colors['error'] ?? '#D16701'}
-              $anim={floatA}
-              $duration={`${92 * speed}s`}
-              $delay={`${-72 * speed}s`}
-              $cx={70}
-              $cy={90}
-              $hue={12}
-            />
-            <Blob
-              $size={380}
-              $color={theme.colors['error'] ?? '#D16701'}
-              $anim={floatB}
-              $duration={`${82 * speed}s`}
-              $delay={`${-8 * speed}s`}
-              $cx={20}
-              $cy={50}
-              $hue={-14}
-            />
-            <Blob
-              $size={280}
-              $color={theme.colors['error'] ?? '#D16701'}
-              $anim={floatD}
-              $duration={`${74 * speed}s`}
-              $delay={`${-52 * speed}s`}
-              $cx={80}
-              $cy={34}
-              $hue={28}
-            />
-            {/* Additional pop for richer field (3 more blobs) */}
-            <Blob
-              $size={1100}
-              $color={theme.colors['error'] ?? '#D16701'}
-              $anim={floatB}
-              $duration={`${120 * speed}s`}
-              $delay={`${-66 * speed}s`}
-              $cx={12}
-              $cy={28}
-              $hue={10}
-            />
-            <Blob
-              $size={760}
-              $color={theme.colors['error'] ?? '#D16701'}
-              $anim={floatC}
-              $duration={`${98 * speed}s`}
-              $delay={`${-34 * speed}s`}
-              $cx={76}
-              $cy={12}
-              $hue={-18}
-            />
-            <Blob
-              $size={540}
-              $color={theme.colors['error'] ?? '#D16701'}
-              $anim={floatA}
-              $duration={`${88 * speed}s`}
-              $delay={`${-22 * speed}s`}
-              $cx={54}
-              $cy={88}
-              $hue={22}
-            />
-          </Goo>
-          {/* Subtle rotating halo */}
-          <Halo
-            aria-hidden
-            $opacity={0.31}
-            $dur={`${180 * speed}s`}
-          />
-          {/* Background color swirl (very faint) */}
-          <Trippy
-            aria-hidden
-            $dur={`${200 * speed}s`}
-            $ease='linear'
-            $opacity={0.12}
-          />
           <Stack
             sx={{
               alignItems: 'center',
@@ -647,60 +136,69 @@ export default function MainPage() {
               zIndex: 1,
             }}
           >
-            {/* ATTENTION AGENTS DO NOT CHANGE THE HERO COPY */}
-            <div
-              ref={heroAnchorRef}
-              style={{ display: 'inline-block' }}
+            <Panel
+              preset='heroGlass'
+              pad={2}
+              alignX='center'
+              sx={{ maxWidth: 'min(960px, 92vw)' }}
             >
-              <Typography
-                variant='h1'
-                bold
-                sx={{ textAlign: 'center', color: '#fff' }}
-              >
-                One library. Everything UI.
-              </Typography>
-            </div>
-            <Typography
-              variant='h5'
-              sx={{ textAlign: 'center', color: '#fff', opacity: 0.9 }}
-            >
-              Beautiful by default. Limitless when customized.
-            </Typography>
-            <Typography
-              variant='subtitle'
-              sx={{ textAlign: 'center', color: '#fff', opacity: 0.9 }}
-            >
-              From AI to Zustand, <code>valet</code> is how it all connects.
-            </Typography>
-            <Stack
-              direction='row'
-              sx={{ gap: theme.spacing(1), flexWrap: 'wrap', justifyContent: 'center' }}
-            >
-              <Button
-                size='lg'
-                variant='outlined'
-                onClick={go('/quickstart')}
-              >
-                <Icon icon='mdi:flash-outline' />
-                &nbsp;Start in 30s
-              </Button>
-              <Button
-                size='lg'
-                variant='outlined'
-                onClick={go('/component-status')}
-              >
-                <Icon icon='mdi:view-grid-outline' />
-                &nbsp;Explore components
-              </Button>
-              <Button
-                size='lg'
-                variant='outlined'
-                onClick={go('/mcp')}
-              >
-                <Icon icon='mdi:database-search' />
-                &nbsp;valet MCP
-              </Button>
-            </Stack>
+              {/* ATTENTION AGENTS DO NOT CHANGE THE HERO COPY */}
+              <Stack sx={{ alignItems: 'center', gap: theme.spacing(1) }}>
+                <div
+                  ref={heroAnchorRef}
+                  style={{ display: 'inline-block' }}
+                >
+                  <Typography
+                    variant='h1'
+                    bold
+                    sx={{ textAlign: 'center', color: '#fff' }}
+                  >
+                    One library. Everything UI.
+                  </Typography>
+                </div>
+                <Typography
+                  variant='h5'
+                  sx={{ textAlign: 'center', color: '#fff', opacity: 0.95 }}
+                >
+                  Beautiful by default. Limitless when customized.
+                </Typography>
+                <Typography
+                  variant='subtitle'
+                  sx={{ textAlign: 'center', color: '#fff', opacity: 0.9 }}
+                >
+                  From AI to Zustand, <code>valet</code> is how it all connects.
+                </Typography>
+                <Stack
+                  direction='row'
+                  sx={{ gap: theme.spacing(1), flexWrap: 'wrap', justifyContent: 'center' }}
+                >
+                  <Button
+                    size='lg'
+                    variant='outlined'
+                    onClick={go('/quickstart')}
+                  >
+                    <Icon icon='mdi:flash-outline' />
+                    &nbsp;Start in 30s
+                  </Button>
+                  <Button
+                    size='lg'
+                    variant='outlined'
+                    onClick={go('/component-status')}
+                  >
+                    <Icon icon='mdi:view-grid-outline' />
+                    &nbsp;Explore components
+                  </Button>
+                  <Button
+                    size='lg'
+                    variant='outlined'
+                    onClick={go('/mcp')}
+                  >
+                    <Icon icon='mdi:database-search' />
+                    &nbsp;valet MCP
+                  </Button>
+                </Stack>
+              </Stack>
+            </Panel>
           </Stack>
         </div>
       </Panel>
