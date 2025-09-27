@@ -29,7 +29,7 @@ import type { TableColumn } from '@archway/valet';
 // no table types needed in this page
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../../components/NavDrawer';
-import SpinningPyramidGL from '../../components/SpinningPyramidGL';
+import LavaLampBackgroundGL from '../../components/LavaLampBackgroundGL';
 
 export default function MainPage() {
   const navigate = useNavigate();
@@ -123,8 +123,8 @@ export default function MainPage() {
         sx={{ borderRadius: theme.radius(2), overflow: 'hidden' }}
       >
         <div style={{ position: 'relative', minHeight: '60vh' }}>
-          {/* Spinning WebGL2 pyramid background (replaces starfield) */}
-          <SpinningPyramidGL />
+          {/* WebGL2 lava-lamp metaballs background */}
+          <LavaLampBackgroundGL />
 
           <Stack
             sx={{

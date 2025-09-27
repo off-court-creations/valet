@@ -1,7 +1,7 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/SpinningPyramidGL.tsx  | valet-docs
+// src/components/LavaLampBackgroundGL.tsx  | valet-docs
 // Hero background – WebGL2 full‑screen lava lamp metaballs
-// Animated blob physics (merge/split), high‑quality shading
+// Renamed from SpinningPyramidGL → MetaballsHeroGL → LavaLampBackgroundGL for clarity
 // ─────────────────────────────────────────────────────────────
 import React, { useEffect, useRef } from 'react';
 
@@ -10,7 +10,7 @@ type Props = {
   className?: string;
 };
 
-export default function SpinningPyramidGL({ style, className }: Props) {
+export default function LavaLampBackgroundGL({ style, className }: Props) {
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -91,16 +91,19 @@ float fbm(vec2 p){\n\
 // Color ramp for molten wax\n\
 vec3 lavaRamp(float t){\n\
   // t in [0,1] – deep purple -> crimson -> orange -> yellow\n\
-  vec3 c1 = vec3(0.10, 0.02, 0.15);\n\
-  vec3 c2 = vec3(0.30, 0.00, 0.25);\n\
-  vec3 c3 = vec3(0.80, 0.15, 0.05);\n\
-  vec3 c4 = vec3(1.00, 0.80, 0.20);\n\
-  float k1 = smoothstep(0.05, 0.35, t);\n\
-  float k2 = smoothstep(0.30, 0.70, t);\n\
-  float k3 = smoothstep(0.60, 1.00, t);\n\
+  vec3 c1 = vec3(0.05, 0.01, 0.08);\n\
+  vec3 c2 = vec3(0.18, 0.00, 0.18);\n\
+  vec3 c3 = vec3(0.78, 0.16, 0.05);\n\
+  vec3 c4 = vec3(1.05, 0.74, 0.18);\n\
+  vec3 c5 = vec3(1.12, 0.52, 0.08);\n\
+  float k1 = smoothstep(0.04, 0.32, t);\n\
+  float k2 = smoothstep(0.28, 0.66, t);\n\
+  float k3 = smoothstep(0.58, 0.94, t);\n\
+  float k4 = smoothstep(0.74, 0.98, t);\n\
   vec3 c = mix(c1, c2, k1);\n\
   c = mix(c, c3, k2);\n\
   c = mix(c, c4, k3);\n\
+  c = mix(c, c5, k4 * 0.65);\n\
   return c;\n\
 }\n\
 // Compute metaball field using saturated Gaussian union (no center peaks)\n\
@@ -171,6 +174,12 @@ void main(){\n\
   float plateau = 0.62; // flatter cores
   float tPlateau = mix(t, min(t, plateau), centerMask);
   vec3 base = lavaRamp(tPlateau);
+  float hotMask = smoothstep(0.72, 0.95, tPlateau);
+  float hotNoise = clamp(fbm(flowUV * 1.4 + vec2(uTime * 0.05, -uTime * 0.03)), 0.0, 1.0);
+  vec3 hotA = vec3(1.10, 0.46, 0.10);
+  vec3 hotB = vec3(1.02, 0.82, 0.32);
+  vec3 hotBlend = mix(hotA, hotB, hotNoise);
+  base = mix(base, hotBlend, hotMask * 0.38);
   // Suppress interior flow strongly inside cores
   base += (0.22 * (1.0 - 0.85 * centerMask)) * (flow - 0.5) * vec3(0.9, 0.35, 0.1);
   // Thin translucent veil inside cores to soften residual contrast
@@ -285,7 +294,7 @@ void main(){\n\
     const seedPositions: { x: number; y: number }[] = Array.from({ length: MAX }, (_, i) => {
       // Radius in [0..1], push outward for more spread
       const rUnit = Math.sqrt((i + 0.5) / MAX);
-      const r = 0.92 * rUnit; // wider initial separation, still within bounds
+      const r = 1.2 * rUnit; // wider initial separation, still within bounds
       const a = i * golden;
       return { x: r * Math.cos(a), y: r * Math.sin(a) };
     });
