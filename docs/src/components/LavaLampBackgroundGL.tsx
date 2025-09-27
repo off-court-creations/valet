@@ -103,10 +103,10 @@ vec3 lavaRamp(float t){\n\
   vec3 c3 = vec3(0.78, 0.16, 0.05);\n\
   vec3 c4 = vec3(1.05, 0.74, 0.18);\n\
   vec3 c5 = vec3(1.12, 0.52, 0.08);\n\
-  float k1 = smoothstep(0.04, 0.32, t);\n\
-  float k2 = smoothstep(0.28, 0.66, t);\n\
-  float k3 = smoothstep(0.58, 0.94, t);\n\
-  float k4 = smoothstep(0.74, 0.98, t);\n\
+  float k1 = smoothstep(0.04, 0.30, t);\n\
+  float k2 = smoothstep(0.24, 0.60, t);\n\
+  float k3 = smoothstep(0.50, 0.86, t);\n\
+  float k4 = smoothstep(0.62, 0.92, t);\n\
   vec3 c = mix(c1, c2, k1);\n\
   c = mix(c, c3, k2);\n\
   c = mix(c, c4, k3);\n\
@@ -181,7 +181,7 @@ void main(){\n\
   float plateau = 0.62; // flatter cores
   float tPlateau = mix(t, min(t, plateau), centerMask);
   vec3 base = lavaRamp(tPlateau);
-  float hotMask = smoothstep(0.72, 0.95, tPlateau);
+  float hotMask = smoothstep(0.61, 0.85, tPlateau);
   float hotNoise = clamp(fbm(flowUV * 1.4 + vec2(uTime * 0.05, -uTime * 0.03)), 0.0, 1.0);
   vec3 hotA = vec3(1.10, 0.46, 0.10);
   vec3 hotB = vec3(1.02, 0.82, 0.32);
@@ -298,17 +298,6 @@ void main(){\n\
     const sqBound = 0.95; // shared square bounds in shader uv space
     const blobs: Blob[] = [];
 
-    // Precompute near-uniform seed positions (Vogel/Fibonacci disc)
-    // Ensures blobs start far apart and evenly distributed
-    const golden = Math.PI * (3 - Math.sqrt(5)); // ~2.399963
-    const seedPositions: { x: number; y: number }[] = Array.from({ length: MAX }, (_, i) => {
-      // Radius in [0..1], push outward for more spread
-      const rUnit = Math.sqrt((i + 0.5) / MAX);
-      const r = sqBound * (1.2 * rUnit); // gently bias outward while staying inside bounds
-      const a = i * golden;
-      return { x: r * Math.cos(a), y: r * Math.sin(a) };
-    });
-
     // Seeded PRNG for stable sessions
     let seed = 2100;
     const rand = () => {
@@ -316,7 +305,7 @@ void main(){\n\
       return (seed & 0xfffffff) / 0xfffffff;
     };
 
-    const flowField = (px: number, py: number, time: number, id: number, centerRamp = 0) => {
+    const flowField = (px: number, py: number, time: number, id: number) => {
       const dist = Math.hypot(px, py);
       const invDist = dist > 1e-5 ? 1 / dist : 0;
       const rNorm = dist > 0 ? clamp01(dist / sqBound) : 0;
@@ -326,9 +315,8 @@ void main(){\n\
       if (invDist > 0) {
         const dirX = px * invDist;
         const dirY = py * invDist;
-        const centerPush = 1 - smoothstep(0.18, 0.46, rNorm);
         const edgePull = smoothstep(0.68, 0.98, rNorm);
-        const radialOut = 0.028 * centerPush * (1.0 / 3.0) * clamp01(centerRamp);
+        const radialOut = 0.0;
         const radialIn = 0.04 * edgePull;
         const radialX = radialOut - radialIn * 2.0; // stronger inward force from left/right edges
         const radialY = radialOut - radialIn;
@@ -376,7 +364,7 @@ void main(){\n\
       const x = near ? near.x + (rand() - 0.5) * 0.02 : (rand() - 0.5) * 1.6;
       const y = near ? near.y + (rand() - 0.5) * 0.02 : (rand() - 0.5) * 1.6;
       const s = 0.03 + rand() * 0.03; // slower base speed
-      const flow0 = flowField(x, y, 0, id, 0);
+      const flow0 = flowField(x, y, 0, id);
       const jitterX = (rand() - 0.5) * s * 0.08;
       const jitterY = (rand() - 0.5) * s * 0.08;
       const vx = flow0.x * 0.6 + jitterX;
@@ -398,10 +386,34 @@ void main(){\n\
       } as Blob;
     };
 
-    // Seed blobs at well-spaced positions for a clean start
+    // Seed blobs with spacing-aware random scatter
+    const minInitialSpacing = 0.58;
+    const minSpacingFloor = 0.28;
+    const maxPlacementAttempts = 48;
     for (let i = 0; i < MAX; i++) {
-      const p = seedPositions[i]!;
-      blobs.push(spawnBlob(i, { x: p.x, y: p.y }));
+      let placed: Blob | null = null;
+      for (let attempt = 0; attempt < maxPlacementAttempts; attempt++) {
+        const candidate = spawnBlob(i);
+        const requiredSpacing = Math.max(minSpacingFloor, minInitialSpacing - attempt * 0.02);
+        let tooClose = false;
+        for (let k = 0; k < blobs.length; k++) {
+          const existing = blobs[k]!;
+          if (!existing.active) continue;
+          const dist = Math.hypot(candidate.x - existing.x, candidate.y - existing.y);
+          if (dist < requiredSpacing) {
+            tooClose = true;
+            break;
+          }
+        }
+        if (!tooClose) {
+          placed = candidate;
+          break;
+        }
+      }
+      if (!placed) {
+        placed = spawnBlob(i);
+      }
+      blobs.push(placed);
     }
 
     const centersArr = new Float32Array(64 * 2);
@@ -451,6 +463,7 @@ void main(){\n\
         target = pairs[Math.max(1, pairs.length - 2)]!;
       }
 
+      const pulseBase = 1.25 + rand() * 1.75;
       const { i: attractA, j: attractB } = target;
 
       for (let idx = 0; idx < activeIndices.length; idx++) {
@@ -466,9 +479,13 @@ void main(){\n\
           const dx = A.x - B.x;
           const dy = A.y - B.y;
           const dist = Math.hypot(dx, dy) + 1e-4;
-          const weight = 0.018 / (0.18 + dist * dist);
-          pushX += dx * weight;
-          pushY += dy * weight;
+          const baseWeight = (pulseBase * 0.034) / (0.14 + dist * dist);
+          const swirl = Math.sin(time * 0.45 + i * 1.2 - j * 0.7 + dx * 0.8 + dy * 0.6);
+          const modX = 1.0 + 0.5 * swirl;
+          const modY = 1.0 - 0.5 * swirl;
+          const pairScale = 0.85 + rand() * 0.3;
+          pushX += dx * baseWeight * modX * pairScale;
+          pushY += dy * baseWeight * modY * pairScale;
         }
         const jitterX = (rand() - 0.5) * 0.0025;
         const jitterY = (rand() - 0.5) * 0.0025;
@@ -527,7 +544,7 @@ void main(){\n\
         // Track time spent near the core to ease outward pressure in gradually
         const distCenter = Math.hypot(b.x, b.y);
         const centerNorm = distCenter > 0 ? clamp01(distCenter / sqBound) : 0;
-        const centerProximity = 1 - smoothstep(0.26, 0.52, centerNorm);
+        const centerProximity = 1 - smoothstep(0.18, 0.42, centerNorm);
         if (centerProximity > 0) {
           const accumulation = 0.35 + centerProximity * 1.35;
           b.centerAccumRate = accumulation;
@@ -542,9 +559,20 @@ void main(){\n\
         // Position-aware flow: inward edges, outward center, offset swirl + eddies
         const wanderX = Math.sin(t * (0.6 + (b.id % 5) * 0.17) + b.id * 2.1) * 0.0035;
         const wanderY = Math.cos(t * (0.5 + (b.id % 7) * 0.13) + b.id * 1.3) * 0.0035;
-        const flow = flowField(b.x, b.y, t, b.id, centerRamp);
+        const flow = flowField(b.x, b.y, t, b.id);
         b.vx += (wanderX + flow.x) * dt;
         b.vy += (wanderY + flow.y) * dt;
+
+        // Gentle pull toward bias point (50% x, 33% y) in square space
+        const targetX = 0.0;
+        const targetY = -0.34;
+        const dxBias = targetX - b.x;
+        const dyBias = targetY - b.y;
+        const distBias = Math.hypot(dxBias, dyBias) + 1e-4;
+        const baseBias = 0.0045 * clamp01(1.0 - distBias * 0.55);
+        const biasStrength = baseBias * (0.6 + 0.4 * centerRamp);
+        b.vx += (dxBias / distBias) * biasStrength * dt;
+        b.vy += (dyBias / distBias) * biasStrength * dt;
 
         // Damping
         b.vx *= Math.pow(0.965, dt * 60);
@@ -622,7 +650,7 @@ void main(){\n\
         const nx = dx / dist;
         const ny = dy / dist;
         const overlap = rsum - dist;
-        const push = overlap * 0.5;
+        const push = overlap * 0.08;
         A.x -= nx * push;
         A.y -= ny * push;
         B.x += nx * push;
@@ -638,7 +666,10 @@ void main(){\n\
 
         if (collisionCounts[i] === 1 && collisionCounts[j] === 1) {
           const contact = clamp01(overlap / Math.max(1e-4, rsum));
-          const gravity = 0.01 * contact;
+          let gravity = 0.018 * contact;
+          if (contact > 0.34) {
+            gravity *= 5.0;
+          }
           A.vx += nx * gravity;
           A.vy += ny * gravity;
           B.vx -= nx * gravity;
