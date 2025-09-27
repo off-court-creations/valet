@@ -28,6 +28,13 @@ export default function LavaLampBackgroundGL({ style, className }: Props) {
       return; // WebGL2 unavailable → no background
     }
 
+    const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
+    const smoothstep = (edge0: number, edge1: number, x: number) => {
+      if (edge0 === edge1) return x < edge0 ? 0 : 1;
+      const t = clamp01((x - edge0) / (edge1 - edge0));
+      return t * t * (3 - 2 * t);
+    };
+
     // Small typed helpers
     const compile = (type: number, src: string) => {
       const s = gl.createShader(type)!;
@@ -286,6 +293,7 @@ void main(){\n\
     };
 
     const MAX = 5;
+    const sqBound = 0.95; // shared square bounds in shader uv space
     const blobs: Blob[] = [];
 
     // Precompute near-uniform seed positions (Vogel/Fibonacci disc)
@@ -294,7 +302,7 @@ void main(){\n\
     const seedPositions: { x: number; y: number }[] = Array.from({ length: MAX }, (_, i) => {
       // Radius in [0..1], push outward for more spread
       const rUnit = Math.sqrt((i + 0.5) / MAX);
-      const r = 1.2 * rUnit; // wider initial separation, still within bounds
+      const r = sqBound * (1.2 * rUnit); // gently bias outward while staying inside bounds
       const a = i * golden;
       return { x: r * Math.cos(a), y: r * Math.sin(a) };
     });
@@ -306,14 +314,64 @@ void main(){\n\
       return (seed & 0xfffffff) / 0xfffffff;
     };
 
+    const flowField = (px: number, py: number, time: number, id: number) => {
+      const dist = Math.hypot(px, py);
+      const invDist = dist > 1e-5 ? 1 / dist : 0;
+      const rNorm = dist > 0 ? clamp01(dist / sqBound) : 0;
+      let vx = 0;
+      let vy = 0;
+
+      if (invDist > 0) {
+        const dirX = px * invDist;
+        const dirY = py * invDist;
+        const centerPush = 1 - smoothstep(0.18, 0.46, rNorm);
+        const edgePull = smoothstep(0.68, 0.98, rNorm);
+        const radialOut = 0.028 * centerPush;
+        const radialIn = 0.04 * edgePull;
+        const radialX = radialOut - radialIn * 2.0; // stronger inward force from left/right edges
+        const radialY = radialOut - radialIn;
+        vx += dirX * radialX;
+        vy += dirY * radialY;
+      }
+
+      const drainX = 0.14 * Math.sin(time * 0.12) + 0.06;
+      const drainY = -0.18 + 0.08 * Math.cos(time * 0.1 + id * 0.35);
+      const dx = px - drainX;
+      const dy = py - drainY;
+      const drainDist = Math.hypot(dx, dy);
+      if (drainDist > 1e-5) {
+        const invDrain = 1 / drainDist;
+        const tangentX = -dy * invDrain;
+        const tangentY = dx * invDrain;
+        const swirlEnvelope = 0.02 + 0.03 * smoothstep(0.1, 0.9, rNorm);
+        const swirlPulse = 0.65 + 0.35 * Math.sin(time * 0.45 + id * 1.7);
+        vx += tangentX * swirlEnvelope * swirlPulse;
+        vy += tangentY * swirlEnvelope * swirlPulse;
+      }
+
+      const eddySeed = Math.sin((px + py) * 1.8 + time * 0.55 + id * 0.45);
+      const eddyX = Math.sin((py + time * 0.32) * 3.1 + id * 0.9 + eddySeed * 0.6);
+      const eddyY = Math.cos((px - time * 0.27) * 2.6 + id * 1.3 - eddySeed * 0.4);
+      vx += eddyX * 0.0065;
+      vy += eddyY * 0.0065;
+
+      vx += 0.0015;
+      vy += 0.001;
+
+      return { x: vx, y: vy };
+    };
+
     // Initialize a blob with optional target position, drifting via convection
     const spawnBlob = (id: number, near?: { x: number; y: number; r?: number }) => {
       const baseR = 0.3 + rand() * 0.08; // smaller average radius
       const x = near ? near.x + (rand() - 0.5) * 0.02 : (rand() - 0.5) * 1.6;
       const y = near ? near.y + (rand() - 0.5) * 0.02 : (rand() - 0.5) * 1.6;
       const s = 0.03 + rand() * 0.03; // slower base speed
-      const vx = (rand() - 0.5) * s * 0.12;
-      const vy = (0.01 + rand() * 0.015) * s; // gentler upward bias
+      const flow0 = flowField(x, y, 0, id);
+      const jitterX = (rand() - 0.5) * s * 0.08;
+      const jitterY = (rand() - 0.5) * s * 0.08;
+      const vx = flow0.x * 0.6 + jitterX;
+      const vy = flow0.y * 0.6 + jitterY;
       const r0 = near?.r ?? baseR;
       return { x, y, vx, vy, r: r0, active: true, heat: rand(), id, baseR: r0, age: 0 } as Blob;
     };
@@ -344,7 +402,6 @@ void main(){\n\
     resize();
 
     // Physics update
-    const sqBound = 0.95; // square bounds in shader uv space
     const tickPhysics = (dt: number, t: number) => {
       // Heat cycles cause slow breathing in radius
       for (let i = 0; i < MAX; i++) {
@@ -359,13 +416,12 @@ void main(){\n\
         if (b.age < 5 && targetR < b.r) targetR = b.r;
         b.r += (targetR - b.r) * Math.min(1, dt * 0.5);
 
-        // Meander + large-scale convection to fill whole background
-        const fx = Math.sin(t * (0.6 + (b.id % 5) * 0.17) + b.id * 2.1) * 0.006;
-        const fy = Math.cos(t * (0.5 + (b.id % 7) * 0.13) + b.id * 1.3) * 0.003;
-        const swirlX = Math.sin(b.y * 2.1 + t * 0.3) * 0.006;
-        const swirlY = Math.cos(b.x * 1.7 - t * 0.22) * 0.004;
-        b.vx += (fx + swirlX) * dt;
-        b.vy += (fy + swirlY + 0.03) * dt; // gentler buoyancy
+        // Position-aware flow: inward edges, outward center, offset swirl + eddies
+        const wanderX = Math.sin(t * (0.6 + (b.id % 5) * 0.17) + b.id * 2.1) * 0.0035;
+        const wanderY = Math.cos(t * (0.5 + (b.id % 7) * 0.13) + b.id * 1.3) * 0.0035;
+        const flow = flowField(b.x, b.y, t, b.id);
+        b.vx += (wanderX + flow.x) * dt;
+        b.vy += (wanderY + flow.y) * dt;
 
         // Damping
         b.vx *= Math.pow(0.965, dt * 60);
