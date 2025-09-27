@@ -326,12 +326,19 @@ void main(){\n\
         const dirY = py * invDist;
         const centerPush = 1 - smoothstep(0.18, 0.46, rNorm);
         const edgePull = smoothstep(0.68, 0.98, rNorm);
-        const radialOut = 0.028 * centerPush;
+        const radialOut = 0.028 * centerPush * (1.0 / 3.0);
         const radialIn = 0.04 * edgePull;
         const radialX = radialOut - radialIn * 2.0; // stronger inward force from left/right edges
         const radialY = radialOut - radialIn;
         vx += dirX * radialX;
         vy += dirY * radialY;
+      }
+
+      const edgeCompression = smoothstep(0.55, 0.95, Math.abs(px) / sqBound);
+      if (edgeCompression > 0) {
+        const signX = px >= 0 ? 1 : -1;
+        const verticalEase = 0.6 + 0.4 * (1 - clamp01(Math.abs(py) / sqBound));
+        vx -= signX * edgeCompression * verticalEase * 0.045;
       }
 
       const drainX = 0.14 * Math.sin(time * 0.12) + 0.06;
