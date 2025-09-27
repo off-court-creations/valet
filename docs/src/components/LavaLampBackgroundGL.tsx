@@ -290,6 +290,8 @@ void main(){\n\
       id: number; // seed id
       baseR: number; // preferred resting radius
       age: number; // seconds since spawn
+      centerTime: number; // seconds continuously spent near center
+      centerAccumRate: number; // last accumulation strength for ramp tracking
     };
 
     const MAX = 5;
@@ -308,13 +310,13 @@ void main(){\n\
     });
 
     // Seeded PRNG for stable sessions
-    let seed = 1337;
+    let seed = 2100;
     const rand = () => {
       seed = (seed * 1664525 + 1013904223) >>> 0;
       return (seed & 0xfffffff) / 0xfffffff;
     };
 
-    const flowField = (px: number, py: number, time: number, id: number) => {
+    const flowField = (px: number, py: number, time: number, id: number, centerRamp = 0) => {
       const dist = Math.hypot(px, py);
       const invDist = dist > 1e-5 ? 1 / dist : 0;
       const rNorm = dist > 0 ? clamp01(dist / sqBound) : 0;
@@ -326,7 +328,7 @@ void main(){\n\
         const dirY = py * invDist;
         const centerPush = 1 - smoothstep(0.18, 0.46, rNorm);
         const edgePull = smoothstep(0.68, 0.98, rNorm);
-        const radialOut = 0.028 * centerPush * (1.0 / 3.0);
+        const radialOut = 0.028 * centerPush * (1.0 / 3.0) * clamp01(centerRamp);
         const radialIn = 0.04 * edgePull;
         const radialX = radialOut - radialIn * 2.0; // stronger inward force from left/right edges
         const radialY = radialOut - radialIn;
@@ -374,13 +376,26 @@ void main(){\n\
       const x = near ? near.x + (rand() - 0.5) * 0.02 : (rand() - 0.5) * 1.6;
       const y = near ? near.y + (rand() - 0.5) * 0.02 : (rand() - 0.5) * 1.6;
       const s = 0.03 + rand() * 0.03; // slower base speed
-      const flow0 = flowField(x, y, 0, id);
+      const flow0 = flowField(x, y, 0, id, 0);
       const jitterX = (rand() - 0.5) * s * 0.08;
       const jitterY = (rand() - 0.5) * s * 0.08;
       const vx = flow0.x * 0.6 + jitterX;
       const vy = flow0.y * 0.6 + jitterY;
       const r0 = near?.r ?? baseR;
-      return { x, y, vx, vy, r: r0, active: true, heat: rand(), id, baseR: r0, age: 0 } as Blob;
+      return {
+        x,
+        y,
+        vx,
+        vy,
+        r: r0,
+        active: true,
+        heat: rand(),
+        id,
+        baseR: r0,
+        age: 0,
+        centerTime: 0,
+        centerAccumRate: 0,
+      } as Blob;
     };
 
     // Seed blobs at well-spaced positions for a clean start
@@ -391,6 +406,89 @@ void main(){\n\
 
     const centersArr = new Float32Array(64 * 2);
     const radiiArr = new Float32Array(64);
+
+    const pulseState = {
+      nextTime: 20 + rand() * 40,
+    };
+
+    const schedulePulse = (now: number) => {
+      pulseState.nextTime = now + 30 + rand() * 30;
+    };
+
+    const applyPulseForce = (time: number) => {
+      const activeIndices: number[] = [];
+      for (let i = 0; i < MAX; i++) {
+        if (blobs[i]!.active) activeIndices.push(i);
+      }
+      if (activeIndices.length < 2) {
+        schedulePulse(time);
+        return;
+      }
+
+      type Pair = { i: number; j: number; dist: number };
+      const pairs: Pair[] = [];
+      for (let a = 0; a < activeIndices.length; a++) {
+        for (let b = a + 1; b < activeIndices.length; b++) {
+          const ia = activeIndices[a]!;
+          const ib = activeIndices[b]!;
+          const A = blobs[ia]!;
+          const B = blobs[ib]!;
+          const dx = B.x - A.x;
+          const dy = B.y - A.y;
+          const dist = Math.hypot(dx, dy);
+          pairs.push({ i: ia, j: ib, dist });
+        }
+      }
+      if (pairs.length === 0) {
+        schedulePulse(time);
+        return;
+      }
+
+      pairs.sort((a, b) => a.dist - b.dist);
+      let target = pairs[pairs.length - 1]!;
+      const closest = pairs[0]!;
+      if (target.i === closest.i && target.j === closest.j && pairs.length > 1) {
+        target = pairs[Math.max(1, pairs.length - 2)]!;
+      }
+
+      const { i: attractA, j: attractB } = target;
+
+      for (let idx = 0; idx < activeIndices.length; idx++) {
+        const i = activeIndices[idx]!;
+        if (i === attractA || i === attractB) continue;
+        const A = blobs[i]!;
+        let pushX = 0;
+        let pushY = 0;
+        for (let jdx = 0; jdx < activeIndices.length; jdx++) {
+          if (idx === jdx) continue;
+          const j = activeIndices[jdx]!;
+          const B = blobs[j]!;
+          const dx = A.x - B.x;
+          const dy = A.y - B.y;
+          const dist = Math.hypot(dx, dy) + 1e-4;
+          const weight = 0.018 / (0.18 + dist * dist);
+          pushX += dx * weight;
+          pushY += dy * weight;
+        }
+        const jitterX = (rand() - 0.5) * 0.0025;
+        const jitterY = (rand() - 0.5) * 0.0025;
+        A.vx += pushX + jitterX;
+        A.vy += pushY + jitterY;
+      }
+
+      const A = blobs[attractA]!;
+      const B = blobs[attractB]!;
+      const dx = B.x - A.x;
+      const dy = B.y - A.y;
+      const dist = Math.hypot(dx, dy) + 1e-4;
+      const pull = 0.035 / (0.22 + dist);
+      A.vx += dx * pull;
+      A.vy += dy * pull;
+      B.vx -= dx * pull;
+      B.vy -= dy * pull;
+
+      schedulePulse(time);
+    };
 
     // Resize handling
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -410,6 +508,9 @@ void main(){\n\
 
     // Physics update
     const tickPhysics = (dt: number, t: number) => {
+      if (t >= pulseState.nextTime) {
+        applyPulseForce(t);
+      }
       // Heat cycles cause slow breathing in radius
       for (let i = 0; i < MAX; i++) {
         const b = blobs[i]!;
@@ -423,10 +524,25 @@ void main(){\n\
         if (b.age < 5 && targetR < b.r) targetR = b.r;
         b.r += (targetR - b.r) * Math.min(1, dt * 0.5);
 
+        // Track time spent near the core to ease outward pressure in gradually
+        const distCenter = Math.hypot(b.x, b.y);
+        const centerNorm = distCenter > 0 ? clamp01(distCenter / sqBound) : 0;
+        const centerProximity = 1 - smoothstep(0.26, 0.52, centerNorm);
+        if (centerProximity > 0) {
+          const accumulation = 0.35 + centerProximity * 1.35;
+          b.centerAccumRate = accumulation;
+          b.centerTime = Math.min(9.0, b.centerTime + accumulation * dt);
+        } else {
+          const decayRate = Math.max(0.9, b.centerAccumRate * 3.0);
+          b.centerTime = Math.max(0, b.centerTime - decayRate * dt);
+          b.centerAccumRate = Math.max(0, b.centerAccumRate - decayRate * dt * 0.4);
+        }
+        const centerRamp = clamp01(b.centerTime / 6.75);
+
         // Position-aware flow: inward edges, outward center, offset swirl + eddies
         const wanderX = Math.sin(t * (0.6 + (b.id % 5) * 0.17) + b.id * 2.1) * 0.0035;
         const wanderY = Math.cos(t * (0.5 + (b.id % 7) * 0.13) + b.id * 1.3) * 0.0035;
-        const flow = flowField(b.x, b.y, t, b.id);
+        const flow = flowField(b.x, b.y, t, b.id, centerRamp);
         b.vx += (wanderX + flow.x) * dt;
         b.vy += (wanderY + flow.y) * dt;
 
@@ -470,6 +586,16 @@ void main(){\n\
       }
 
       // Pairwise collisions and gentle merges
+      const collisionCounts = new Array(MAX).fill(0);
+      const collisions: Array<{
+        i: number;
+        j: number;
+        dx: number;
+        dy: number;
+        dist: number;
+        rsum: number;
+      }> = [];
+
       for (let i = 0; i < MAX; i++) {
         const A = blobs[i]!;
         if (!A.active) continue;
@@ -478,45 +604,60 @@ void main(){\n\
           if (!B.active) continue;
           const dx = B.x - A.x;
           const dy = B.y - A.y;
-          const dist2 = dx * dx + dy * dy;
           const rsum = A.r + B.r;
+          const dist2 = dx * dx + dy * dy;
           if (dist2 < rsum * rsum) {
             const dist = Math.max(1e-4, Math.sqrt(dist2));
-            const nx = dx / dist;
-            const ny = dy / dist;
-            const overlap = rsum - dist;
-            const push = overlap * 0.5;
-            A.x -= nx * push;
-            A.y -= ny * push;
-            B.x += nx * push;
-            B.y += ny * push;
-            // Exchange some velocity along normal (inelastic)
-            const va = A.vx * nx + A.vy * ny;
-            const vb = B.vx * nx + B.vy * ny;
-            const p = (vb - va) * 0.15; // further reduce spin impart on collision
-            A.vx += nx * p;
-            A.vy += ny * p;
-            B.vx -= nx * p;
-            B.vy -= ny * p;
-
-            // Probabilistic merge: if strong overlap and similar size, fold B into A
-            if (overlap > 0.5 * Math.min(A.r, B.r) && (i + j + (Math.floor(t) % 7)) % 5 === 0) {
-              const massA = A.r * A.r;
-              const massB = B.r * B.r;
-              const mass = massA + massB;
-              const newR = Math.sqrt(mass);
-              A.r = Math.min(newR, 0.28);
-              A.baseR = A.r; // update resting radius after merge
-              // momentum‑like average
-              A.vx = (A.vx * massA + B.vx * massB) / Math.max(1e-4, mass);
-              A.vy = (A.vy * massA + B.vy * massB) / Math.max(1e-4, mass);
-              // deactivate B then respawn far away later
-              B.active = false;
-              // schedule respawn after short delay by shrinking radius
-              B.r = 0.0;
-              // later in recycle pass
-            }
+            collisionCounts[i]++;
+            collisionCounts[j]++;
+            collisions.push({ i, j, dx, dy, dist, rsum });
           }
+        }
+      }
+
+      for (const { i, j, dx, dy, dist, rsum } of collisions) {
+        const A = blobs[i]!;
+        const B = blobs[j]!;
+        if (!A.active || !B.active) continue;
+        const nx = dx / dist;
+        const ny = dy / dist;
+        const overlap = rsum - dist;
+        const push = overlap * 0.5;
+        A.x -= nx * push;
+        A.y -= ny * push;
+        B.x += nx * push;
+        B.y += ny * push;
+
+        const va = A.vx * nx + A.vy * ny;
+        const vb = B.vx * nx + B.vy * ny;
+        const p = (vb - va) * 0.15;
+        A.vx += nx * p;
+        A.vy += ny * p;
+        B.vx -= nx * p;
+        B.vy -= ny * p;
+
+        if (collisionCounts[i] === 1 && collisionCounts[j] === 1) {
+          const contact = clamp01(overlap / Math.max(1e-4, rsum));
+          const gravity = 0.01 * contact;
+          A.vx += nx * gravity;
+          A.vy += ny * gravity;
+          B.vx -= nx * gravity;
+          B.vy -= ny * gravity;
+        }
+
+        if (overlap > 0.5 * Math.min(A.r, B.r) && (i + j + (Math.floor(t) % 7)) % 5 === 0) {
+          const massA = A.r * A.r;
+          const massB = B.r * B.r;
+          const mass = massA + massB;
+          const newR = Math.sqrt(mass);
+          A.r = Math.min(newR, 0.28);
+          A.baseR = A.r;
+          A.vx = (A.vx * massA + B.vx * massB) / Math.max(1e-4, mass);
+          A.vy = (A.vy * massA + B.vy * massB) / Math.max(1e-4, mass);
+          B.active = false;
+          B.r = 0.0;
+          B.centerTime = 0;
+          B.centerAccumRate = 0;
         }
       }
 
@@ -553,6 +694,8 @@ void main(){\n\
             id: slot,
             baseR: childR,
             age: 0,
+            centerTime: 0,
+            centerAccumRate: 0,
           };
         }
       }
