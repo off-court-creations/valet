@@ -8,6 +8,9 @@ All notable changes to this project will be documented in this file. The format 
 
 - MCP: added `valet__search_best_practices` and `valet__list_synonyms` tools for agents to surface guidance and inspect alias mappings directly.
 - Primitives: add `WebGLCanvas` — a reusable WebGL2 canvas host that handles context creation, DPR-aware resizing, and RAF. Docs lava-lamp hero now uses this component. Status: stable.
+- Grid/Panel: introduce per-row height normalization.
+  - Grid: new `normalizeRowHeights` prop (default `true`) stretches items so each row matches its tallest Panel when in 2+ columns (adaptive not collapsed).
+  - Panel: new `normalizeRowHeight` prop (default `true`) to opt out on a per-panel basis.
 
 ### Changed
 
@@ -15,6 +18,7 @@ All notable changes to this project will be documented in this file. The format 
 - Docs: extracted LavaLampBackgroundGL shaders to standalone GLSL files under `docs/src/shaders/lava-lamp` and import via `?raw` for readability and better editor support.
 - Docs: increase lava‑lamp pulse crowd repulsion ~100× (stronger scene reconfiguration). Parameters in `docs/src/shaders/lava-lamp/lavaLampParams.ts`.
 - Docs: MetroSelect playground now controls selection mode (single/multiple) and tile size; removed non-functional `gap` control.
+ - Grid: now normalizes row heights by default for multi-column layouts; behavior is disabled automatically when adaptive collapses to a single column.
 
 ### Fixed
 

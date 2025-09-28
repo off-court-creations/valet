@@ -21,12 +21,24 @@ export interface GridProps
   adaptive?: boolean;
   /** Compact zeros both pad and gap */
   compact?: boolean;
+  /**
+   * Normalize child heights per row by stretching items to match
+   * the tallest in that row. Effective only when 2+ columns are active
+   * (i.e., adaptive is off, or on but not collapsed to 1 column).
+   * Defaults to true; set false to opt out.
+   */
+  normalizeRowHeights?: boolean;
   /** Inline styles (with CSS var support) */
   sx?: Sx;
 }
 
 /*───────────────────────────────────────────────────────────*/
-const Root = styled('div')<{ $cols: number; $gap: string; $pad: string }>`
+const Root = styled('div')<{
+  $cols: number;
+  $gap: string;
+  $pad: string;
+  $normalize: boolean;
+}>`
   display: grid;
   /* Prevent content from dictating track min-size; allow wrapping */
   grid-template-columns: repeat(${({ $cols }) => $cols}, minmax(0, 1fr));
@@ -35,6 +47,19 @@ const Root = styled('div')<{ $cols: number; $gap: string; $pad: string }>`
   box-sizing: border-box;
   width: 100%;
   max-width: 100%;
+
+  /* Make intent explicit (browser default is stretch) */
+  align-items: stretch;
+
+  /* When normalizing row heights and in multi-column mode, ask
+     Panels to stretch themselves via CSS var. Panels respect
+     --valet-panel-align-self if provided. */
+  ${({ $cols, $normalize }) =>
+    $normalize && $cols > 1
+      ? `
+    & > * { --valet-panel-align-self: stretch; }
+  `
+      : ''}
 
   /* When collapsed to a single column (adaptive portrait),
      relax child overflow/height so content stacks naturally and
@@ -60,6 +85,7 @@ export const Grid: React.FC<GridProps> = ({
   pad: padProp,
   compact = false,
   adaptive = false,
+  normalizeRowHeights = true,
   preset: p,
   sx,
   className,
@@ -84,6 +110,7 @@ export const Grid: React.FC<GridProps> = ({
       $cols={effectiveCols}
       $gap={g}
       $pad={pad}
+      $normalize={Boolean(normalizeRowHeights)}
       style={sx}
       className={[presetClass, className].filter(Boolean).join(' ')}
     >
