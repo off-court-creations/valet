@@ -30,7 +30,7 @@ export const LavaLampParams = {
   // CPU‑side simulation and orchestration (LavaLampProgram.ts)
   program: {
     // Population and world bounds (square space mapping used in shader)
-    maxBlobs: 5,
+    maxBlobs: 15,
     squareBound: 0.95,
     // Deterministic session seed (change to vary default motion patterns)
     seed: 2100,
@@ -41,7 +41,7 @@ export const LavaLampParams = {
       minSpacingFloor: 0.28,
       maxPlacementAttempts: 48,
       // Spawn properties
-      baseRadius: { min: 0.3, jitter: 0.08 },
+      baseRadius: { min: 0.04, jitter: 0.12 },
       areaExtent: 1.6, // initial x/y extent in square space
       baseSpeed: { min: 0.03, jitter: 0.03 },
       jitterScale: 0.08,

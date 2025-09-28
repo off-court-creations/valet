@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file. The format 
 
 - MCP: extend component status enum to include `golden` (very stable, polished) and `unstable` (known problem; avoid depending on it). Bumped MCP `schemaVersion` to `1.6` and regenerated `mcp-data/`.
 - Docs: extracted LavaLampBackgroundGL shaders to standalone GLSL files under `docs/src/shaders/lava-lamp` and import via `?raw` for readability and better editor support.
+- Docs: increase lava‑lamp pulse crowd repulsion ~100× (stronger scene reconfiguration). Parameters in `docs/src/shaders/lava-lamp/lavaLampParams.ts`.
 
 ## [0.32.0]
 
