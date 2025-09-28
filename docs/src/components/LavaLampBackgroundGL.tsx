@@ -23,7 +23,9 @@ export default function LavaLampBackgroundGL({ style, className }: Props) {
       dprMax={LavaLampParams.runtime.dprMax}
       timeScale={LavaLampParams.runtime.timeScale}
       clearColor={[0, 0, 0, 0]}
-      create={(gl, canvas) => createLavaLampProgram(gl, canvas)}
+      create={(gl: WebGL2RenderingContext, canvas: HTMLCanvasElement) =>
+        createLavaLampProgram(gl, canvas)
+      }
     />
   );
 }

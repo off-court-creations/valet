@@ -36,7 +36,9 @@ export default function WebGLCanvasDemoPage() {
         <div style={{ position: 'relative', height: 220 }}>
           <WebGLCanvas
             // Use the exact parameters from the hero background
-            create={(gl, canvas) => createLavaLampProgram(gl, canvas)}
+            create={(gl: WebGL2RenderingContext, canvas: HTMLCanvasElement) =>
+              createLavaLampProgram(gl, canvas)
+            }
             asBackground
             dprMax={LavaLampParams.runtime.dprMax}
             timeScale={LavaLampParams.runtime.timeScale}
