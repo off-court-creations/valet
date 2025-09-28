@@ -73,6 +73,7 @@ const ThemeEnginePage = page(() => import('./pages/concepts/ThemeEngine'));
 const SurfaceExplainerPage = page(() => import('./pages/components/layout/Surface'));
 const PropPatternsPage = page(() => import('./pages/concepts/PropPatterns'));
 const ComplicatedDashboardPage = page(() => import('./pages/examples/ComplicatedDashboard'));
+const ComponentQCLabPage = page(() => import('./pages/examples/ComponentQCLab'));
 const SpacingContractPage = page(() => import('./pages/concepts/SpacingContract'));
 const MCPGuidePage = page(() => import('./pages/concepts/MCP'));
 const GlossaryPage = page(() => import('./pages/concepts/Glossary'));
@@ -355,6 +356,10 @@ export function App() {
         <Route
           path='/dashboard-demo'
           element={<ComplicatedDashboardPage />}
+        />
+        <Route
+          path='/qc-playground'
+          element={<ComponentQCLabPage />}
         />
       </Routes>
     </Suspense>
