@@ -231,6 +231,26 @@ export function createLavaLampProgram(
     return { x: vx, y: vy };
   };
 
+  // Approximate saturated Gaussian field at a point (CPU-side proxy for shader field)
+  // Matches fragment shader's union kernel roughly: sigma ~ r^2 * 1.6; v = 1 - exp(-sumK)
+  // (Removed global-field helper; using pair-only field for connectivity)
+
+  // Pair-only saturated field at the midpoint between two blobs
+  const saturatedPairMidField = (A: Blob, B: Blob): number => {
+    const mx = (A.x + B.x) * 0.5;
+    const my = (A.y + B.y) * 0.5;
+    const dxA = mx - A.x;
+    const dyA = my - A.y;
+    const dxB = mx - B.x;
+    const dyB = my - B.y;
+    const sigmaA = A.r * A.r * 1.6 + 1e-6;
+    const sigmaB = B.r * B.r * 1.6 + 1e-6;
+    const kA = Math.exp(-(dxA * dxA + dyA * dyA) / sigmaA);
+    const kB = Math.exp(-(dxB * dxB + dyB * dyB) / sigmaB);
+    const sumK = kA + kB;
+    return 1 - Math.exp(-sumK);
+  };
+
   // Spawn a blob near an optional location with small initial jitter.
   const spawnBlob = (id: number, near?: { x: number; y: number; r?: number }) => {
     const is = LavaLampParams.program.initialScatter;
@@ -296,12 +316,27 @@ export function createLavaLampProgram(
   const radiiArr = new Float32Array(64);
 
   // Long-range pulse scheduler ----------------------------------------------
-  // Periodically encourage large-scale reconfiguration to keep the scene
-  // exploring (prevents steady-state).
-  const pulseState = {
+  // Periodically declump clusters and pair nearby solos with a short burst.
+  type PulseBurst = {
+    start: number;
+    end: number; // main burst end
+    tailEnd: number; // taper end
+    tailGain: number; // taper strength scale
+    fx: Float32Array; // per-blob force (x) applied as dv += fx[i] * env * dt
+    fy: Float32Array; // per-blob force (y)
+  };
+  const pulseState: {
+    nextTime: number;
+    burst: PulseBurst | null;
+    lastStart: number;
+    lastEnd: number;
+  } = {
     nextTime:
       LavaLampParams.program.pulses.initialDelay.base +
       rand() * LavaLampParams.program.pulses.initialDelay.jitter,
+    burst: null,
+    lastStart: -1,
+    lastEnd: -1,
   };
 
   const schedulePulse = (now: number) => {
@@ -311,19 +346,25 @@ export function createLavaLampProgram(
       rand() * LavaLampParams.program.pulses.interval.jitter;
   };
 
-  // Apply pulse: attract the farthest pair, gently perturb others.
-  const applyPulseForce = (time: number) => {
+  // Compute a burst: find clumps (size ≥ 3) to repel and solo pairs to attract.
+  const startPulseBurst = (time: number) => {
     const activeIndices: number[] = [];
-    for (let i = 0; i < MAX; i++) {
-      if (blobs[i]!.active) activeIndices.push(i);
-    }
-    if (activeIndices.length < 2) {
+    for (let i = 0; i < MAX; i++) if (blobs[i]!.active) activeIndices.push(i);
+    if (activeIndices.length === 0) {
       schedulePulse(time);
       return;
     }
 
-    type Pair = { i: number; j: number; dist: number };
-    const pairs: Pair[] = [];
+    const fx = new Float32Array(MAX);
+    const fy = new Float32Array(MAX);
+
+    // Build adjacency by touching threshold
+    const touchFactor = LavaLampParams.program.pulses.clump.touchFactor;
+    const minClump = Math.max(3, LavaLampParams.program.pulses.clump.minSize);
+    const adj: number[][] = [];
+    const indexToActiveIdx = new Map<number, number>();
+    for (let k = 0; k < activeIndices.length; k++) indexToActiveIdx.set(activeIndices[k]!, k);
+    for (let k = 0; k < activeIndices.length; k++) adj[k] = [];
     for (let a = 0; a < activeIndices.length; a++) {
       for (let b = a + 1; b < activeIndices.length; b++) {
         const ia = activeIndices[a]!;
@@ -333,67 +374,223 @@ export function createLavaLampProgram(
         const dx = B.x - A.x;
         const dy = B.y - A.y;
         const dist = Math.hypot(dx, dy);
-        pairs.push({ i: ia, j: ib, dist });
+        const rsum = A.r + B.r;
+        const touch = dist < rsum * touchFactor;
+        let connected = touch;
+        if (!connected) {
+          const cnf = LavaLampParams.program.pulses.clump.connectNearFactor ?? 1.1;
+          const cna = LavaLampParams.program.pulses.clump.connectNearAdd ?? 0.02;
+          const nearish = dist < rsum * cnf + cna;
+          if (nearish) connected = true;
+        }
+        if (!connected) {
+          const maxf = LavaLampParams.program.pulses.clump.connectMaxFactor ?? 1.45;
+          const maxa = LavaLampParams.program.pulses.clump.connectMaxAdd ?? 0.05;
+          if (dist < rsum * maxf + maxa) {
+            const vPair = saturatedPairMidField(A, B);
+            const iso = LavaLampParams.shader.iso;
+            const isoFactor = LavaLampParams.program.pulses.clump.isoFactor ?? 0.8;
+            if (vPair >= iso * isoFactor) connected = true;
+          }
+        }
+        if (connected) {
+          adj[a]!.push(b);
+          adj[b]!.push(a);
+        }
       }
     }
-    if (pairs.length === 0) {
-      schedulePulse(time);
-      return;
-    }
 
-    pairs.sort((a, b) => a.dist - b.dist);
-    let target = pairs[pairs.length - 1]!;
-    const closest = pairs[0]!;
-    if (target.i === closest.i && target.j === closest.j && pairs.length > 1) {
-      target = pairs[Math.max(1, pairs.length - 2)]!;
-    }
-
-    const pulseBase =
-      LavaLampParams.program.pulses.pairAttract.base +
-      rand() * LavaLampParams.program.pulses.pairAttract.jitter;
-    const { i: attractA, j: attractB } = target;
-
-    for (let idx = 0; idx < activeIndices.length; idx++) {
-      const i = activeIndices[idx]!;
-      if (i === attractA || i === attractB) continue;
-      const A = blobs[i]!;
-      let pushX = 0;
-      let pushY = 0;
-      for (let jdx = 0; jdx < activeIndices.length; jdx++) {
-        if (idx === jdx) continue;
-        const j = activeIndices[jdx]!;
-        const B = blobs[j]!;
-        const dx = A.x - B.x;
-        const dy = A.y - B.y;
-        const dist = Math.hypot(dx, dy) + 1e-4;
-        const cw = LavaLampParams.program.pulses.crowdRepel;
-        const baseWeight =
-          (pulseBase * cw.weightNumerator) / (cw.weightDenominatorBias + dist * dist);
-        const swirl = Math.sin(time * cw.swirlFreq + i * 1.2 - j * 0.7 + dx * 0.8 + dy * 0.6);
-        const modX = 1.0 + 0.5 * swirl;
-        const modY = 1.0 - 0.5 * swirl;
-        const pairScale = cw.pairScaleMin + rand() * cw.pairScaleJitter;
-        pushX += dx * baseWeight * modX * pairScale;
-        pushY += dy * baseWeight * modY * pairScale;
+    // Connected components
+    const compId = new Array(activeIndices.length).fill(-1);
+    const components: number[][] = [];
+    let cid = 0;
+    for (let k = 0; k < activeIndices.length; k++) {
+      if (compId[k] !== -1) continue;
+      const queue = [k];
+      compId[k] = cid;
+      const comp: number[] = [];
+      while (queue.length) {
+        const q = queue.pop()!;
+        comp.push(q);
+        const neighbors = adj[q]!;
+        for (let n = 0; n < neighbors.length; n++) {
+          const nb = neighbors[n]!;
+          if (compId[nb] === -1) {
+            compId[nb] = cid;
+            queue.push(nb);
+          }
+        }
       }
-      const jitterX = (rand() - 0.5) * 0.0025;
-      const jitterY = (rand() - 0.5) * 0.0025;
-      A.vx += pushX + jitterX;
-      A.vy += pushY + jitterY;
+      components.push(comp);
+      cid++;
     }
 
-    const A = blobs[attractA]!;
-    const B = blobs[attractB]!;
-    const dx = B.x - A.x;
-    const dy = B.y - A.y;
-    const dist = Math.hypot(dx, dy) + 1e-4;
-    const pa = LavaLampParams.program.pulses.pairAttract;
-    const pull = pa.pullNumerator / (pa.pullDenominatorBias + dist);
-    A.vx += dx * pull;
-    A.vy += dy * pull;
-    B.vx -= dx * pull;
-    B.vy -= dy * pull;
+    // Identify clumps (size ≥ 3) and solos (size = 1)
+    const clumps: number[][] = [];
+    const solos: number[] = [];
+    for (const comp of components) {
+      if (comp.length >= minClump) clumps.push(comp);
+      else if (comp.length === 1) solos.push(comp[0]!);
+    }
+    // Debug: pulse start
+    // eslint-disable-next-line no-console
+    console.log('[lava] pulse start', {
+      t: Number(time.toFixed(2)),
+      clumps: clumps.length,
+      solos: solos.length,
+    });
 
+    // For clumps: repel outward from clump centroid
+    const baseRepel = LavaLampParams.program.pulses.clump.repelStrength;
+    const sizeGain = LavaLampParams.program.pulses.clump.sizeGain;
+    const clumpCentroids: Array<{ x: number; y: number } | null> = new Array(
+      components.length,
+    ).fill(null);
+    for (const comp of clumps) {
+      // Weighted centroid by radius (stabilizes when sizes differ)
+      let sumX = 0,
+        sumY = 0,
+        sumW = 0;
+      for (const k of comp) {
+        const i = activeIndices[k]!;
+        const b = blobs[i]!;
+        const w = Math.max(1e-4, b.r);
+        sumX += b.x * w;
+        sumY += b.y * w;
+        sumW += w;
+      }
+      const cx = sumX / Math.max(1e-4, sumW);
+      const cy = sumY / Math.max(1e-4, sumW);
+      clumpCentroids[compId[comp[0]!]] = { x: cx, y: cy };
+      const gain = baseRepel * (1 + sizeGain * Math.max(0, comp.length - minClump));
+      for (const k of comp) {
+        const i = activeIndices[k]!;
+        const b = blobs[i]!;
+        let dx = b.x - cx;
+        let dy = b.y - cy;
+        let d = Math.hypot(dx, dy);
+        if (d < 1e-4) {
+          // nearly centered → random small direction
+          const a = rand() * Math.PI * 2;
+          dx = Math.cos(a);
+          dy = Math.sin(a);
+          d = 1;
+        }
+        const nx = dx / d;
+        const ny = dy / d;
+        fx[i] = (fx[i] ?? 0) + nx * gain;
+        fy[i] = (fy[i] ?? 0) + ny * gain;
+      }
+    }
+
+    // Additional pairwise repulsion within each clump to avoid spin-only response
+    const pairRepel = LavaLampParams.program.pulses.clump.pairRepelStrength;
+    for (const comp of clumps) {
+      for (let ai = 0; ai < comp.length; ai++) {
+        for (let bi = ai + 1; bi < comp.length; bi++) {
+          const ia = activeIndices[comp[ai]!]!;
+          const ib = activeIndices[comp[bi]!]!;
+          const A = blobs[ia]!;
+          const B = blobs[ib]!;
+          let dx = B.x - A.x;
+          let dy = B.y - A.y;
+          let dist = Math.hypot(dx, dy);
+          if (dist < 1e-4) {
+            dist = 1;
+            const a = rand() * Math.PI * 2;
+            dx = Math.cos(a);
+            dy = Math.sin(a);
+          }
+          const rsum = Math.max(1e-4, A.r + B.r);
+          const overlap = Math.max(0, rsum - dist);
+          if (overlap <= 0) continue;
+          const nx = dx / dist;
+          const ny = dy / dist;
+          const w = pairRepel * (overlap / rsum);
+          fx[ia] = (fx[ia] ?? 0) - nx * w;
+          fy[ia] = (fy[ia] ?? 0) - ny * w;
+          fx[ib] = (fx[ib] ?? 0) + nx * w;
+          fy[ib] = (fy[ib] ?? 0) + ny * w;
+        }
+      }
+    }
+
+    // For solos: greedy pair nearest solos within window and pull together
+    const pairFactor = LavaLampParams.program.pulses.solo.pairFactor;
+    const pairAdd = LavaLampParams.program.pulses.solo.pairAdd;
+    const pullStrength = LavaLampParams.program.pulses.solo.pullStrength;
+    const avoidR = LavaLampParams.program.pulses.solo.avoidClumpRadius;
+
+    type SoloPair = { a: number; b: number; dist: number };
+    const candidates: SoloPair[] = [];
+    for (let ai = 0; ai < solos.length; ai++) {
+      for (let bi = ai + 1; bi < solos.length; bi++) {
+        const ia = activeIndices[solos[ai]!]!;
+        const ib = activeIndices[solos[bi]!]!;
+        const A = blobs[ia]!;
+        const B = blobs[ib]!;
+        const dx = B.x - A.x;
+        const dy = B.y - A.y;
+        const dist = Math.hypot(dx, dy);
+        const near = dist < (A.r + B.r) * pairFactor + pairAdd;
+        if (!near) continue;
+        candidates.push({ a: ia, b: ib, dist });
+      }
+    }
+    candidates.sort((p, q) => p.dist - q.dist);
+    const used = new Set<number>();
+
+    // Precompute clump centroids (for avoid radius checks)
+    const clumpCenters: Array<{ x: number; y: number }> = [];
+    for (const comp of clumps) {
+      const head = comp[0]!;
+      const id = compId[head]!;
+      const c = clumpCentroids[id];
+      if (c) clumpCenters.push(c);
+    }
+
+    for (const { a, b, dist } of candidates) {
+      if (used.has(a) || used.has(b)) continue;
+      // Avoid pulling a solo into a nearby clump if very close to one
+      let nearClump = false;
+      for (const c of clumpCenters) {
+        if (Math.hypot(blobs[a]!.x - c.x, blobs[a]!.y - c.y) < avoidR) {
+          nearClump = true;
+          break;
+        }
+        if (Math.hypot(blobs[b]!.x - c.x, blobs[b]!.y - c.y) < avoidR) {
+          nearClump = true;
+          break;
+        }
+      }
+      if (nearClump) continue;
+      const A = blobs[a]!;
+      const B = blobs[b]!;
+      const dx = B.x - A.x;
+      const dy = B.y - A.y;
+      const d = Math.max(1e-4, dist);
+      const nx = dx / d;
+      const ny = dy / d;
+      fx[a] = (fx[a] ?? 0) + nx * pullStrength;
+      fy[a] = (fy[a] ?? 0) + ny * pullStrength;
+      fx[b] = (fx[b] ?? 0) - nx * pullStrength;
+      fy[b] = (fy[b] ?? 0) - ny * pullStrength;
+      used.add(a);
+      used.add(b);
+    }
+
+    const duration = Math.max(0.01, LavaLampParams.program.pulses.burst.duration);
+    const tailDuration = Math.max(0, LavaLampParams.program.pulses.burst.tailDuration ?? 0);
+    const tailGain = Math.max(0, LavaLampParams.program.pulses.burst.tailGain ?? 0);
+    pulseState.burst = {
+      start: time,
+      end: time + duration,
+      tailEnd: time + duration + tailDuration,
+      tailGain,
+      fx,
+      fy,
+    };
+    pulseState.lastStart = time;
     schedulePulse(time);
   };
 
@@ -406,7 +603,64 @@ export function createLavaLampProgram(
     update: (dt: number, t: number) => {
       // Timed pulse to avoid stagnation
       if (t >= pulseState.nextTime) {
-        applyPulseForce(t);
+        startPulseBurst(t);
+      }
+      // Safety: if pulse appears stuck (scheduler far ahead), re‑schedule
+      const maxGap =
+        LavaLampParams.program.pulses.interval.base +
+        LavaLampParams.program.pulses.interval.jitter +
+        (LavaLampParams.program.pulses.burst.duration || 0) +
+        (LavaLampParams.program.pulses.burst.tailDuration || 0) +
+        5;
+      if (
+        pulseState.lastStart >= 0 &&
+        t - pulseState.lastStart > maxGap * 2 &&
+        t < pulseState.nextTime &&
+        !pulseState.burst
+      ) {
+        // eslint-disable-next-line no-console
+        console.warn('[lava] pulse scheduler: reschedule safety', {
+          t: Number(t.toFixed(2)),
+          next: Number(pulseState.nextTime.toFixed(2)),
+        });
+        schedulePulse(t);
+      }
+      // Apply active pulse burst forces with a soft envelope over 0.2s
+      if (pulseState.burst) {
+        const { start, end, tailEnd, tailGain, fx, fy } = pulseState.burst;
+        if (t < end) {
+          const p = Math.max(0, Math.min(1, (t - start) / Math.max(1e-4, end - start)));
+          // Smooth main envelope with explicit ease-in and lower amplitude
+          const easePow = Math.max(1, LavaLampParams.program.pulses.burst.easeInPow ?? 1.0);
+          const mainGain = Math.max(0, LavaLampParams.program.pulses.burst.mainGain ?? 1.0);
+          const s = mainGain * Math.sin(Math.PI * p) * Math.pow(p, easePow);
+          for (let i = 0; i < MAX; i++) {
+            const b = blobs[i]!;
+            if (!b.active) continue;
+            if (fx[i] !== 0 || fy[i] !== 0) {
+              b.vx += fx[i]! * s * dt;
+              b.vy += fy[i]! * s * dt;
+            }
+          }
+        } else if (t < tailEnd) {
+          // Taper forces after main burst with a smooth ease-out
+          const pt = Math.max(0, Math.min(1, (t - end) / Math.max(1e-4, tailEnd - end)));
+          const s = tailGain * (1 - pt) * (1 - pt); // quadratic ease-out
+          if (s > 0) {
+            for (let i = 0; i < MAX; i++) {
+              const b = blobs[i]!;
+              if (!b.active) continue;
+              if (fx[i] !== 0 || fy[i] !== 0) {
+                b.vx += fx[i]! * s * dt;
+                b.vy += fy[i]! * s * dt;
+              }
+            }
+          }
+        } else {
+          // eslint-disable-next-line no-console
+          console.log('[lava] pulse end', { t: Number(t.toFixed(2)) });
+          pulseState.burst = null;
+        }
       }
 
       // Heat/breathing and motion -------------------------------------------
@@ -465,7 +719,12 @@ export function createLavaLampProgram(
         b.vy *= Math.pow(LavaLampParams.program.damping.main, dt * 60);
         b.vx *= Math.pow(LavaLampParams.program.damping.extraX, dt * 60);
 
-        const maxSpeed = LavaLampParams.program.maxSpeed;
+        const br = pulseState.burst;
+        const isBurst = !!br && t < (br.tailEnd ?? br.end);
+
+        const maxSpeed =
+          LavaLampParams.program.maxSpeed *
+          (isBurst ? (LavaLampParams.program.pulses.burst.speedMultiplier ?? 1) : 1);
         const sp = Math.hypot(b.vx, b.vy);
         if (sp > maxSpeed) {
           const k = maxSpeed / sp;
@@ -475,6 +734,8 @@ export function createLavaLampProgram(
 
         b.x += b.vx * dt;
         b.y += b.vy * dt;
+
+        // (offscreen force logic removed at user request)
 
         const k = LavaLampParams.program.boundaryElasticity;
         if (b.x < -sqBound) {
@@ -535,7 +796,10 @@ export function createLavaLampProgram(
         const nx = dx / dist;
         const ny = dy / dist;
         const overlap = rsum - dist;
-        const push = overlap * LavaLampParams.program.collisions.shove;
+        const shoveScale = pulseState.burst
+          ? (LavaLampParams.program.pulses.burst.shoveScale ?? 1)
+          : 1;
+        const push = overlap * LavaLampParams.program.collisions.shove * shoveScale;
         A.x -= nx * push;
         A.y -= ny * push;
         B.x += nx * push;
@@ -552,6 +816,9 @@ export function createLavaLampProgram(
         if (collisionCounts[i] === 1 && collisionCounts[j] === 1) {
           const contact = clamp01(overlap / Math.max(1e-4, rsum));
           let gravity = LavaLampParams.program.collisions.gravity.base * contact;
+          if (pulseState.burst) {
+            gravity *= LavaLampParams.program.pulses.burst.gravityScale ?? 1;
+          }
           if (contact > LavaLampParams.program.collisions.gravity.boostThreshold) {
             gravity *= LavaLampParams.program.collisions.gravity.boost;
           }
@@ -561,9 +828,11 @@ export function createLavaLampProgram(
           B.vy -= ny * gravity;
         }
 
+        const allowMergeDuringBurst = LavaLampParams.program.pulses.burst.allowMerge ?? true;
         if (
           overlap > LavaLampParams.program.merging.overlapRatio * Math.min(A.r, B.r) &&
-          (i + j + (Math.floor(t) % 7)) % 5 === 0
+          (i + j + (Math.floor(t) % 7)) % 5 === 0 &&
+          (!pulseState.burst || allowMergeDuringBurst)
         ) {
           const massA = A.r * A.r;
           const massB = B.r * B.r;
@@ -577,6 +846,134 @@ export function createLavaLampProgram(
           B.r = 0.0;
           B.centerTime = 0;
           B.centerAccumRate = 0;
+        }
+      }
+
+      // During pulse burst, enforce separation constraints within detected clumps
+      if (pulseState.burst) {
+        // Rebuild adjacency and components (mirrors startPulseBurst)
+        const activeIdx: number[] = [];
+        for (let i = 0; i < MAX; i++) if (blobs[i]!.active) activeIdx.push(i);
+        const touchFactor = LavaLampParams.program.pulses.clump.touchFactor;
+        const minClump = Math.max(3, LavaLampParams.program.pulses.clump.minSize);
+        const adj: number[][] = [];
+        for (let k = 0; k < activeIdx.length; k++) adj[k] = [];
+        for (let a = 0; a < activeIdx.length; a++) {
+          for (let b = a + 1; b < activeIdx.length; b++) {
+            const ia = activeIdx[a]!;
+            const ib = activeIdx[b]!;
+            const A = blobs[ia]!;
+            const B = blobs[ib]!;
+            const dx = B.x - A.x;
+            const dy = B.y - A.y;
+            const dist = Math.hypot(dx, dy);
+            const rsum = A.r + B.r;
+            const touch = dist < rsum * touchFactor;
+            let connected = touch;
+            if (!connected) {
+              const cnf = LavaLampParams.program.pulses.clump.connectNearFactor ?? 1.1;
+              const cna = LavaLampParams.program.pulses.clump.connectNearAdd ?? 0.02;
+              const nearish = dist < rsum * cnf + cna;
+              if (nearish) connected = true;
+            }
+            if (!connected) {
+              const maxf = LavaLampParams.program.pulses.clump.connectMaxFactor ?? 1.45;
+              const maxa = LavaLampParams.program.pulses.clump.connectMaxAdd ?? 0.05;
+              if (dist < rsum * maxf + maxa) {
+                const vPair = saturatedPairMidField(A, B);
+                const iso = LavaLampParams.shader.iso;
+                const isoFactor = LavaLampParams.program.pulses.clump.isoFactor ?? 0.8;
+                if (vPair >= iso * isoFactor) connected = true;
+              }
+            }
+            if (connected) {
+              adj[a]!.push(b);
+              adj[b]!.push(a);
+            }
+          }
+        }
+        const compId = new Array(activeIdx.length).fill(-1);
+        const comps: number[][] = [];
+        let cc = 0;
+        for (let k = 0; k < activeIdx.length; k++) {
+          if (compId[k] !== -1) continue;
+          const q: number[] = [k];
+          compId[k] = cc;
+          const comp: number[] = [];
+          while (q.length) {
+            const u = q.pop()!;
+            comp.push(u);
+            for (const v of adj[u]!) {
+              if (compId[v] === -1) {
+                compId[v] = cc;
+                q.push(v);
+              }
+            }
+          }
+          comps.push(comp);
+          cc++;
+        }
+        const sepFactor = LavaLampParams.program.pulses.clump.sepFactor;
+        const iters = Math.max(1, LavaLampParams.program.pulses.clump.solverIters | 0);
+        const brs = pulseState.burst!;
+        // Smooth ramp to avoid visible jumps at pulse start
+        const prog = Math.max(
+          0,
+          Math.min(
+            1,
+            (t - (brs?.start ?? t)) / Math.max(1e-4, (brs?.end ?? t + 1) - (brs?.start ?? t)),
+          ),
+        );
+        const ramp = prog * prog; // ease-in
+        const alpha = 0.25; // modest per-frame strength
+        const maxStep = 0.006; // cap per-pair correction per iteration
+        // Run a few iterations of position-based separation on large components
+        for (const comp of comps) {
+          if (comp.length < minClump) continue;
+          for (let it = 0; it < iters; it++) {
+            for (let ai = 0; ai < comp.length; ai++) {
+              for (let bi = ai + 1; bi < comp.length; bi++) {
+                const ia = activeIdx[comp[ai]!]!;
+                const ib = activeIdx[comp[bi]!]!;
+                const A = blobs[ia]!;
+                const B = blobs[ib]!;
+                let dx = B.x - A.x;
+                let dy = B.y - A.y;
+                let dist = Math.hypot(dx, dy);
+                const desired = (A.r + B.r) * sepFactor;
+                if (dist < 1e-5) {
+                  dist = 1e-5;
+                  const ang = rand() * Math.PI * 2;
+                  dx = Math.cos(ang) * dist;
+                  dy = Math.sin(ang) * dist;
+                }
+                if (dist < desired && ramp > 0) {
+                  const nx = dx / dist;
+                  const ny = dy / dist;
+                  let delta = 0.5 * (desired - dist) * alpha * ramp;
+                  if (delta > maxStep) delta = maxStep;
+                  A.x -= nx * delta;
+                  A.y -= ny * delta;
+                  B.x += nx * delta;
+                  B.y += ny * delta;
+                  // Gentle normal velocity correction, also ramped
+                  const vrel = (A.vx - B.vx) * nx + (A.vy - B.vy) * ny;
+                  if (vrel < 0) {
+                    const imp = -vrel * 0.25 * ramp;
+                    A.vx += nx * imp;
+                    A.vy += ny * imp;
+                    B.vx -= nx * imp;
+                    B.vy -= ny * imp;
+                  }
+                  // Bound clamp
+                  A.x = Math.max(-sqBound, Math.min(sqBound, A.x));
+                  A.y = Math.max(-sqBound, Math.min(sqBound, A.y));
+                  B.x = Math.max(-sqBound, Math.min(sqBound, B.x));
+                  B.y = Math.max(-sqBound, Math.min(sqBound, B.y));
+                }
+              }
+            }
+          }
         }
       }
 

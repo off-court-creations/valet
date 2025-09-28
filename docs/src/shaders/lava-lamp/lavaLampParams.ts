@@ -30,10 +30,10 @@ export const LavaLampParams = {
   // CPU‑side simulation and orchestration (LavaLampProgram.ts)
   program: {
     // Population and world bounds (square space mapping used in shader)
-    maxBlobs: 15,
-    squareBound: 0.95,
+    maxBlobs: 13,
+    squareBound: 1,
     // Deterministic session seed (change to vary default motion patterns)
-    seed: 2100,
+    seed: 1238,
 
     // Initial placement tries to keep blobs apart to reduce early jitter.
     initialScatter: {
@@ -41,7 +41,7 @@ export const LavaLampParams = {
       minSpacingFloor: 0.28,
       maxPlacementAttempts: 48,
       // Spawn properties
-      baseRadius: { min: 0.04, jitter: 0.12 },
+      baseRadius: { min: 0.04, jitter: 0.18 },
       areaExtent: 1.6, // initial x/y extent in square space
       baseSpeed: { min: 0.03, jitter: 0.03 },
       jitterScale: 0.08,
@@ -76,18 +76,45 @@ export const LavaLampParams = {
       },
     },
 
-    // Long‑range pulse that periodically reshapes overall configuration.
+    // Long‑range pulse that periodically declumps and pairs solos.
     pulses: {
-      initialDelay: { base: 20, jitter: 40 },
-      interval: { base: 30, jitter: 30 },
-      pairAttract: { base: 1.25, jitter: 1.75, pullNumerator: 0.035, pullDenominatorBias: 0.22 },
-      crowdRepel: {
-        weightNumerator: 0.034,
-        weightDenominatorBias: 0.14,
-        swirlFreq: 0.45,
-        pairScaleMin: 0.85,
-        pairScaleJitter: 0.3,
-        jitter: 0.0025,
+      // For testing: immediate start, then every 15s with no jitter
+      initialDelay: { base: 0, jitter: 0 },
+      interval: { base: 15, jitter: 0 },
+      // Longer burst so separation completes (per‑frame force, smooth envelope)
+      burst: {
+        duration: 3, // 2x longer main pulse
+        tailDuration: 1.0, // keep falloff timing
+        tailGain: 0.15, // keep taper strength
+        mainGain: 0.18, // half as much force during pulse
+        easeInPow: 2.0, // stronger ease-in (slower ramp-up)
+        speedMultiplier: 5, // keep slightly reduced cap
+        shoveScale: 1.2, // significantly reduced collision shove during burst
+        gravityScale: 0.0, // disable collision gravity during burst
+        allowMerge: false, // prevent merges during burst so we separate instead
+      },
+      // Clump busting (components of size ≥ 3)
+      clump: {
+        minSize: 3,
+        touchFactor: 1.02, // consider touching if dist < (ri + rj) * touchFactor
+        repelStrength: 2.0, // significantly reduced centroid repulsion
+        sizeGain: 0.08, // gentler scaling with clump size
+        pairRepelStrength: 3.0, // significantly reduced pairwise repulsion
+        sepFactor: 1.12, // enforce this separation during burst: dist >= (ri+rj)*sepFactor
+        solverIters: 5, // per-frame PBD iterations during burst
+        // Broader connectivity detection so "caterpillar" chains count as clumps
+        connectNearFactor: 1.1, // tighter near-connect
+        connectNearAdd: 0.02,
+        connectMaxFactor: 1.45, // cap bridge consideration distance
+        connectMaxAdd: 0.05,
+        isoFactor: 0.8, // consider connected if pair field at midpoint >= iso*isoFactor
+      },
+      // Solo pairing (greedy nearest matching)
+      solo: {
+        pairFactor: 1.25, // near if dist < (ri + rj) * pairFactor + pairAdd
+        pairAdd: 0.04,
+        pullStrength: 1.5, // reduced pull during main pulse
+        avoidClumpRadius: 0.35, // skip if too close to a clump centroid
       },
     },
 
@@ -104,6 +131,8 @@ export const LavaLampParams = {
     damping: { main: 0.965, extraX: 0.95 }, // per‑frame exponent base (raised to dt*60)
     maxSpeed: 0.03,
     boundaryElasticity: 0.92, // 1 = perfectly elastic, <1 loses energy
+
+    // Offscreen force logic removed per request
 
     // Center residency accumulation (reduces spins by blending outward pressure)
     centerResidency: {
