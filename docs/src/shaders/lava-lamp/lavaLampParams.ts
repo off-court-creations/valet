@@ -228,6 +228,8 @@ export const LavaLampParams = {
     // Edge bloom and vignette
     glow: { width: 0.25, gain: 0.7, color: [0.8, 0.2, 0.1] as const },
     vignette: { k: 1.3 },
+    // Field evaluation cutoff controlling far-blob culling accuracy
+    cutThreshold: 11.512925464970229, // ≈ -ln(1e-5)
   },
 } as const;
 

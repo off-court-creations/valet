@@ -78,6 +78,11 @@ export function createLavaLampProgram(
   const uCount = gl.getUniformLocation(prog, 'uCount');
   const uCenters = gl.getUniformLocation(prog, 'uCenters');
   const uRadii = gl.getUniformLocation(prog, 'uRadii');
+  const uRotRow0 = gl.getUniformLocation(prog, 'uRotRow0');
+  const uRotRow1 = gl.getUniformLocation(prog, 'uRotRow1');
+  const uInvSigma = gl.getUniformLocation(prog, 'uInvSigma');
+  const uMinFalloff = gl.getUniformLocation(prog, 'uMinFalloff');
+  const uCutThreshold = gl.getUniformLocation(prog, 'uCutThreshold');
   // Appearance uniforms (fragment shader tuning)
   const uBgColor = gl.getUniformLocation(prog, 'uBgColor');
   const uIso = gl.getUniformLocation(prog, 'uIso');
@@ -314,6 +319,90 @@ export function createLavaLampProgram(
 
   const centersArr = new Float32Array(64 * 2);
   const radiiArr = new Float32Array(64);
+  const rotRow0Arr = new Float32Array(64 * 2);
+  const rotRow1Arr = new Float32Array(64 * 2);
+  const invSigmaArr = new Float32Array(64);
+  const minFalloffArr = new Float32Array(64);
+
+  let currentTime = 0;
+
+  const f32 = Math.fround;
+  const fractf = (v: number) => f32(v - Math.floor(v));
+  const sinf = (v: number) => f32(Math.sin(v));
+  const cosf = (v: number) => f32(Math.cos(v));
+  const ANGLE_SPACE_SCALE = f32(3.173);
+  const STRETCH_SPACE_SCALE = f32(4.7);
+  const ANGLE_TIME_SCALE = f32(0.15);
+  const STRETCH_TIME_SCALE = f32(0.12);
+  const TAU = f32(6.2831853);
+  const STRETCH_MIN = f32(0.6);
+  const STRETCH_MAX = f32(1.4);
+  const SIGMA_SCALE = f32(1.6);
+  const SIGMA_EPS = f32(1e-6);
+
+  const hash21f = (x: number, y: number): number => {
+    let px = fractf(f32(x * 0.1031));
+    let py = fractf(f32(y * 0.1031));
+    let pz = fractf(f32(x * 0.1031));
+    const dot = f32(px * f32(py + 33.33) + py * f32(pz + 33.33) + pz * f32(px + 33.33));
+    px = f32(px + dot);
+    py = f32(py + dot);
+    pz = f32(pz + dot);
+    return fractf(f32((px + py) * pz));
+  };
+
+  const noise2d = (x: number, y: number): number => {
+    const fx = f32(x);
+    const fy = f32(y);
+    const ix = Math.floor(fx);
+    const iy = Math.floor(fy);
+    const fracX = fractf(f32(fx - ix));
+    const fracY = fractf(f32(fy - iy));
+    const a = hash21f(f32(ix), f32(iy));
+    const b = hash21f(f32(ix + 1), f32(iy));
+    const c = hash21f(f32(ix), f32(iy + 1));
+    const d = hash21f(f32(ix + 1), f32(iy + 1));
+    const uX = f32(fracX * fracX * f32(3 - f32(2 * fracX)));
+    const uY = f32(fracY * fracY * f32(3 - f32(2 * fracY)));
+    const lerpAB = f32(a + (b - a) * uX);
+    const lerpCD = f32(c + (d - c) * uX);
+    return f32(lerpAB + (lerpCD - lerpAB) * uY);
+  };
+
+  const updateBlobFieldParams = (
+    index: number,
+    cx: number,
+    cy: number,
+    radius: number,
+    time: number,
+  ) => {
+    const fx = f32(cx);
+    const fy = f32(cy);
+    const timeAngle = f32(time * ANGLE_TIME_SCALE);
+    const timeStretch = f32(time * STRETCH_TIME_SCALE);
+    const angleNoise = noise2d(
+      f32(fx * ANGLE_SPACE_SCALE + timeAngle),
+      f32(fy * ANGLE_SPACE_SCALE + timeAngle),
+    );
+    const stretchNoise = noise2d(
+      f32(fx * STRETCH_SPACE_SCALE + timeStretch),
+      f32(fy * STRETCH_SPACE_SCALE + timeStretch),
+    );
+    const angle = f32(angleNoise * TAU);
+    const stretch = f32(STRETCH_MIN + (STRETCH_MAX - STRETCH_MIN) * stretchNoise);
+    const cs = cosf(angle);
+    const sn = sinf(angle);
+    rotRow0Arr[index * 2 + 0] = cs;
+    rotRow0Arr[index * 2 + 1] = f32(-sn);
+    rotRow1Arr[index * 2 + 0] = f32(stretch * sn);
+    rotRow1Arr[index * 2 + 1] = f32(stretch * cs);
+    const r = f32(radius);
+    const sigma = f32(r * r * SIGMA_SCALE + SIGMA_EPS);
+    const invSigma = sigma > 0 ? f32(1 / sigma) : 0;
+    invSigmaArr[index] = invSigma;
+    const minScale = stretch < 1 ? stretch : 1;
+    minFalloffArr[index] = f32(invSigma * minScale * minScale);
+  };
 
   // Long-range pulse scheduler ----------------------------------------------
   // Periodically declump clusters and pair nearby solos with a short burst.
@@ -601,6 +690,7 @@ export function createLavaLampProgram(
       // viewport managed by wrapper; no-op here for now
     },
     update: (dt: number, t: number) => {
+      currentTime = t;
       // Timed pulse to avoid stagnation
       if (t >= pulseState.nextTime) {
         startPulseBurst(t);
@@ -1052,18 +1142,25 @@ export function createLavaLampProgram(
       // gl.uniform1f(uTime, performance.now() * 0.001);
 
       // Pack active blob data (square space coordinates already)
+      const time = currentTime;
       let count = 0;
       for (let i = 0; i < MAX && count < 64; i++) {
         const b = blobs[i]!;
         if (!b.active) continue;
-        centersArr[count * 2 + 0] = b.x;
-        centersArr[count * 2 + 1] = b.y;
-        radiiArr[count] = b.r;
+        centersArr[count * 2 + 0] = f32(b.x);
+        centersArr[count * 2 + 1] = f32(b.y);
+        radiiArr[count] = f32(b.r);
+        updateBlobFieldParams(count, b.x, b.y, b.r, time);
         count++;
       }
       gl.uniform1i(uCount, count);
       gl.uniform2fv(uCenters, centersArr);
-      gl.uniform1fv(uRadii, radiiArr);
+      if (uRadii) gl.uniform1fv(uRadii, radiiArr);
+      if (uRotRow0) gl.uniform2fv(uRotRow0, rotRow0Arr);
+      if (uRotRow1) gl.uniform2fv(uRotRow1, rotRow1Arr);
+      if (uInvSigma) gl.uniform1fv(uInvSigma, invSigmaArr);
+      if (uMinFalloff) gl.uniform1fv(uMinFalloff, minFalloffArr);
+      if (uCutThreshold) gl.uniform1f(uCutThreshold, LavaLampParams.shader.cutThreshold);
 
       gl.drawArrays(gl.TRIANGLES, 0, 3);
       gl.bindVertexArray(null);
@@ -1083,6 +1180,7 @@ export function createLavaLampProgram(
   // We expose a small shim to set `uTime` just-in-time in the wrapper for
   // deterministic timelines without exposing program internals.
   const setTime = (t: number) => {
+    currentTime = t;
     gl.useProgram(prog);
     gl.uniform1f(uTime, t);
     gl.useProgram(null);

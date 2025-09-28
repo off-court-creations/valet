@@ -42,6 +42,11 @@ uniform int uCount;
 // We upload at most 64 blobs; inactive slots are ignored in the loop.
 uniform vec2 uCenters[64];
 uniform float uRadii[64];
+uniform vec2 uRotRow0[64];
+uniform vec2 uRotRow1[64];
+uniform float uInvSigma[64];
+uniform float uMinFalloff[64];
+uniform float uCutThreshold;
 
 // Solid background color
 uniform vec3 uBgColor;
@@ -159,24 +164,54 @@ float field(vec2 p, out float edge){
   for(int i=0;i<64;i++){
     if(i>=uCount) break;
     vec2 c = uCenters[i];
-    float r = uRadii[i];
-    // Per-blob anisotropy (break radial symmetry)
     vec2 d = p - c;
-    float ang = noise(c * 3.173 + vec2(uTime * 0.15)) * 6.2831853;
-    float cs = cos(ang), sn = sin(ang);
-    mat2 R = mat2(cs, -sn, sn, cs);
-    vec2 a = R * d;
-    float stretch = mix(0.6, 1.4, noise(c * 4.7 + vec2(uTime * 0.12)));
-    a *= vec2(1.0, stretch);
+    float dist2Base = dot(d, d);
+    if (dist2Base * uMinFalloff[i] > uCutThreshold) continue;
+    // Per-blob anisotropy supplied via rotation+stretch rows
+    vec2 row0 = uRotRow0[i];
+    vec2 row1 = uRotRow1[i];
+    vec2 a = vec2(dot(row0, d), dot(row1, d));
     float dist2 = dot(a,a);
-    float sigma = r*r*1.6 + 1e-6;
-    float k = exp(-dist2 / sigma);
+    float k = exp(-dist2 * uInvSigma[i]);
     sumK += k;
+    if (sumK > 8.0) break;
   }
   // Saturated union: flat cores, smooth merges, bounded to [0,1)
   float v = 1.0 - exp(-sumK);
   edge = sumK;
   return v;
+}
+
+vec4 fieldOffsetSamples(vec2 p, float step){
+  vec4 sums = vec4(0.0);
+  for(int i=0;i<64;i++){
+    if(i>=uCount) break;
+    vec2 c = uCenters[i];
+    vec2 d = p - c;
+    float dist2Base = dot(d, d);
+    if (dist2Base * uMinFalloff[i] > uCutThreshold) continue;
+    vec2 row0 = uRotRow0[i];
+    vec2 row1 = uRotRow1[i];
+    vec2 base = vec2(dot(row0, d), dot(row1, d));
+    vec2 deltaX = vec2(row0.x, row1.x) * step;
+    vec2 deltaY = vec2(row0.y, row1.y) * step;
+    float invSigma = uInvSigma[i];
+    vec2 axp = base + deltaX;
+    vec2 axm = base - deltaX;
+    vec2 ayp = base + deltaY;
+    vec2 aym = base - deltaY;
+    sums.x += exp(-dot(axp, axp) * invSigma);
+    sums.y += exp(-dot(axm, axm) * invSigma);
+    sums.z += exp(-dot(ayp, ayp) * invSigma);
+    sums.w += exp(-dot(aym, aym) * invSigma);
+    if (sums.x > 8.0 && sums.y > 8.0 && sums.z > 8.0 && sums.w > 8.0) break;
+  }
+  return vec4(
+    1.0 - exp(-sums.x),
+    1.0 - exp(-sums.y),
+    1.0 - exp(-sums.z),
+    1.0 - exp(-sums.w)
+  );
 }
 
 // ACES tone map (filmic)
@@ -252,11 +287,8 @@ void main(){
   float px2 = uLocalSmoothPx / min(res.x, res.y);
   float cStrong = smoothstep(uCStrongStart, uCStrongEnd, centerMask);
   if (cStrong > 0.0) {
-    float eA; float fA = field(uvw + vec2( px2,  0.0), eA);
-    float eB; float fB = field(uvw + vec2(-px2,  0.0), eB);
-    float eC; float fC = field(uvw + vec2( 0.0,  px2), eC);
-    float eD; float fD = field(uvw + vec2( 0.0, -px2), eD);
-    float fAvg = (f + fA + fB + fC + fD) / 5.0;
+    vec4 fNeighbors = fieldOffsetSamples(uvw, px2);
+    float fAvg = (f + fNeighbors.x + fNeighbors.y + fNeighbors.z + fNeighbors.w) / 5.0;
     float tAvg = smoothstep(uIso - uBand, 0.98, fAvg);
     vec3 baseAvg = lavaRamp(min(tAvg, uPlateau));
     base = mix(base, baseAvg, uLocalSmoothBlend * cStrong);
