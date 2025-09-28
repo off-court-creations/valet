@@ -124,7 +124,15 @@ export default function MetroSelectDemoPage() {
   // When switching modes, coerce selection shape sensibly
   const setModeSafe = (m: 'single' | 'multiple') => {
     setMode(m);
-    setSel((cur) => (m === 'multiple' ? (Array.isArray(cur) ? cur : [cur]) : Array.isArray(cur) ? cur[0] ?? 'home' : cur));
+    setSel((cur) =>
+      m === 'multiple'
+        ? Array.isArray(cur)
+          ? cur
+          : [cur]
+        : Array.isArray(cur)
+          ? (cur[0] ?? 'home')
+          : cur,
+    );
   };
 
   const playground = (

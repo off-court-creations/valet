@@ -18,10 +18,10 @@ applications:
             - ~/.local/bin/mise exec -- node -v
 
             # Build local @archway/valet and link it globally so docs use the fresh code
-            - cd .. && ~/.local/bin/mise exec -- npm ci
-            - cd .. && ~/.local/bin/mise exec -- npm run build
-            - cd .. && ~/.local/bin/mise exec -- npm link
-            - cd docs
+            # Use subshells so working directory remains at appRoot (docs) between commands
+            - (cd .. && ~/.local/bin/mise exec -- npm ci)
+            - (cd .. && ~/.local/bin/mise exec -- npm run build)
+            - (cd .. && ~/.local/bin/mise exec -- npm link)
 
             # Install docs deps, then link local @archway/valet into docs
             - ~/.local/bin/mise exec -- npm ci
