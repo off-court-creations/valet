@@ -164,6 +164,7 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
       <Track
         {...btnProps}
         ref={ref}
+        type='button'
         role='switch'
         id={switchId}
         aria-checked={checked}

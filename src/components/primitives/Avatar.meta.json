@@ -39,6 +39,18 @@
       "title": "Gravatar default style",
       "lang": "tsx",
       "code": "<Stack direction='row' gap={1}><Avatar email='no-such@example.com' gravatarDefault='retro' /><Avatar email='no-such@example.com' gravatarDefault='monsterid' /></Stack>"
+    },
+    {
+      "id": "avatar-fallback-initials",
+      "title": "Offline fallback — initials",
+      "lang": "tsx",
+      "code": "<Avatar name='Ada Lovelace' preferFallback size='l' alt='Ada Lovelace' />"
+    },
+    {
+      "id": "avatar-fallback-placeholder",
+      "title": "Offline fallback — placeholder",
+      "lang": "tsx",
+      "code": "<Avatar preferFallback fallback='placeholder' size='l' aria-label='User avatar' />"
     }
   ]
 }

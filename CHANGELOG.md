@@ -28,6 +28,8 @@ All notable changes to this project will be documented in this file. The format 
   - ARIA `aria-level`, `aria-setsize`, `aria-posinset` on items
   - Docs NavDrawer now passes `aria-label` and is keyboard operable
 - Docs: LiveCodePreview now executes function component examples (e.g. `() => <...>`), fixing MetroSelect “Controlled value” example rendering in the playground/examples.
+- Avatar: Gravatar fallback when neither `src` nor `email` is provided now resolves to a stable default image instead of a broken URL; default `loading="lazy"` for better performance.
+- Switch: set `type="button"` to avoid unintended form submissions when used inside a `<form>`.
 
 ## [0.32.0]
 
