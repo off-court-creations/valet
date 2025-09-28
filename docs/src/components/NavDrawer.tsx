@@ -58,7 +58,6 @@ const widgets: [string, string][] = [
   ['Pagination', '/pagination-demo'],
   ['Snackbar', '/snackbar-demo'],
   ['Speed Dial', '/speeddial-demo'],
-  ['Stepper', '/stepper-demo'],
   ['Table', '/table-demo'],
   ['Tooltip', '/tooltip-demo'],
   ['Chip', '/chip-demo'],

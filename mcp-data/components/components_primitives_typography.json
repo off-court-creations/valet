@@ -3,7 +3,7 @@
   "category": "primitives",
   "slug": "components/primitives/typography",
   "summary": "Typography component",
-  "status": "stable",
+  "status": "experimental",
   "aliases": [
     "typography",
     "text",

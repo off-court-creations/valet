@@ -3,7 +3,7 @@
   "category": "fields",
   "slug": "components/fields/select",
   "summary": "Select component",
-  "status": "stable",
+  "status": "experimental",
   "aliases": [
     "select",
     "dropdown",

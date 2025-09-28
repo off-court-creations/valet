@@ -39,6 +39,12 @@
         "required": false
       }
     ],
+    "domPassthrough": {
+      "element": "button",
+      "omitted": [
+        "style"
+      ]
+    },
     "cssVars": [
       "--valet-bg",
       "--valet-text-color"
@@ -93,6 +99,17 @@
         "required": false
       }
     ],
+    "domPassthrough": {
+      "element": "input",
+      "omitted": [
+        "type",
+        "size",
+        "onChange",
+        "value",
+        "defaultValue",
+        "style"
+      ]
+    },
     "cssVars": [
       "--valet-checkbox-radius",
       "--valet-checkbox-stroke",
@@ -201,6 +218,13 @@
         "default": "380"
       }
     ],
+    "domPassthrough": {
+      "element": "div",
+      "omitted": [
+        "onChange",
+        "style"
+      ]
+    },
     "cssVars": [
       "--valet-date-radius",
       "--valet-date-cell-radius",
@@ -245,6 +269,13 @@
         "required": false
       }
     ],
+    "domPassthrough": {
+      "element": "form",
+      "omitted": [
+        "onSubmit",
+        "style"
+      ]
+    },
     "cssVars": [],
     "cssPresets": [],
     "events": [
@@ -298,6 +329,12 @@
         "required": false
       }
     ],
+    "domPassthrough": {
+      "element": "button",
+      "omitted": [
+        "style"
+      ]
+    },
     "cssVars": [],
     "cssPresets": [],
     "events": [],
@@ -363,6 +400,13 @@
         "required": false
       }
     ],
+    "domPassthrough": {
+      "element": "input",
+      "omitted": [
+        "onChange",
+        "style"
+      ]
+    },
     "cssVars": [],
     "cssPresets": [],
     "events": [
@@ -421,6 +465,15 @@
         "required": false
       }
     ],
+    "domPassthrough": {
+      "element": "div",
+      "omitted": [
+        "onChange",
+        "value",
+        "defaultValue",
+        "style"
+      ]
+    },
     "cssVars": [
       "--valet-text-color"
     ],
@@ -473,6 +526,15 @@
         "required": false
       }
     ],
+    "domPassthrough": {
+      "element": "input",
+      "omitted": [
+        "type",
+        "size",
+        "onChange",
+        "style"
+      ]
+    },
     "cssVars": [],
     "cssPresets": [],
     "events": [],
@@ -543,6 +605,15 @@
         "required": false
       }
     ],
+    "domPassthrough": {
+      "element": "div",
+      "omitted": [
+        "onChange",
+        "defaultValue",
+        "children",
+        "style"
+      ]
+    },
     "cssVars": [
       "--valet-border",
       "--valet-bg",
@@ -657,6 +728,13 @@
         "required": false
       }
     ],
+    "domPassthrough": {
+      "element": "div",
+      "omitted": [
+        "onChange",
+        "style"
+      ]
+    },
     "cssVars": [
       "--valet-bg",
       "--valet-text-color"
@@ -711,6 +789,13 @@
         "required": false
       }
     ],
+    "domPassthrough": {
+      "element": "button",
+      "omitted": [
+        "onChange",
+        "style"
+      ]
+    },
     "cssVars": [
       "--valet-switch-outline",
       "--valet-switch-offset",
@@ -2399,6 +2484,12 @@
         "default": "false"
       }
     ],
+    "domPassthrough": {
+      "element": "div",
+      "omitted": [
+        "onChange"
+      ]
+    },
     "cssVars": [
       "--valet-divider-stroke",
       "--valet-focus-width",
@@ -2661,12 +2752,25 @@
         "default": "false"
       },
       {
+        "name": "normalizeRowHeights",
+        "type": "boolean",
+        "required": false,
+        "default": "true"
+      },
+      {
         "name": "sx",
         "type": "Sx",
         "required": false
       }
     ],
+    "domPassthrough": {
+      "element": "div",
+      "omitted": [
+        "style"
+      ]
+    },
     "cssVars": [
+      "--valet-panel-align-self",
       "--valet-panel-ov-y",
       "--valet-panel-max-h",
       "--valet-stack-ov-y",
@@ -2748,6 +2852,13 @@
         "required": false
       }
     ],
+    "domPassthrough": {
+      "element": "ul",
+      "omitted": [
+        "children",
+        "style"
+      ]
+    },
     "cssVars": [],
     "cssPresets": [],
     "events": [
@@ -2918,6 +3029,12 @@
           "center",
           "centered"
         ]
+      },
+      {
+        "name": "normalizeRowHeight",
+        "type": "boolean",
+        "required": false,
+        "default": "true"
       }
     ],
     "domPassthrough": {
@@ -2927,6 +3044,7 @@
       ]
     },
     "cssVars": [
+      "--valet-panel-align-self",
       "--valet-panel-max-h",
       "--valet-panel-ov-y",
       "--valet-bg",
@@ -2968,6 +3086,12 @@
         "required": false
       }
     ],
+    "domPassthrough": {
+      "element": "div",
+      "omitted": [
+        "style"
+      ]
+    },
     "cssVars": [
       "--valet-stack-max-h",
       "--valet-stack-ov-y"
@@ -3009,6 +3133,12 @@
         "required": false
       }
     ],
+    "domPassthrough": {
+      "element": "div",
+      "omitted": [
+        "style"
+      ]
+    },
     "cssVars": [
       "--valet-space",
       "--valet-bg",
@@ -3099,6 +3229,13 @@
         "default": "false"
       }
     ],
+    "domPassthrough": {
+      "element": "div",
+      "omitted": [
+        "onChange",
+        "style"
+      ]
+    },
     "cssVars": [
       "--valet-focus-width",
       "--valet-focus-offset",
@@ -3157,6 +3294,12 @@
         "required": false
       }
     ],
+    "domPassthrough": {
+      "element": "img",
+      "omitted": [
+        "style"
+      ]
+    },
     "cssVars": [],
     "cssPresets": [],
     "events": [],
@@ -3200,6 +3343,13 @@
         "required": false
       }
     ],
+    "domPassthrough": {
+      "element": "div",
+      "omitted": [
+        "color",
+        "style"
+      ]
+    },
     "cssVars": [
       "--valet-text-color",
       "--valet-divider-stroke"
@@ -3245,6 +3395,12 @@
         "required": false
       }
     ],
+    "domPassthrough": {
+      "element": "span",
+      "omitted": [
+        "style"
+      ]
+    },
     "cssVars": [],
     "cssPresets": [],
     "events": [],
@@ -3314,6 +3470,14 @@
         "required": false
       }
     ],
+    "domPassthrough": {
+      "element": "img",
+      "omitted": [
+        "width",
+        "height",
+        "style"
+      ]
+    },
     "cssVars": [],
     "cssPresets": [],
     "events": [],
@@ -3385,6 +3549,12 @@
         "required": false
       }
     ],
+    "domPassthrough": {
+      "element": "div",
+      "omitted": [
+        "style"
+      ]
+    },
     "cssVars": [
       "--valet-text-color"
     ],
@@ -3427,6 +3597,12 @@
         "required": false
       }
     ],
+    "domPassthrough": {
+      "element": "span",
+      "omitted": [
+        "style"
+      ]
+    },
     "cssVars": [],
     "cssPresets": [],
     "events": [],
@@ -3652,8 +3828,149 @@
         ]
       },
       {
-        "name": "className",
+        "name": "sx",
+        "type": "Sx",
+        "required": false
+      }
+    ],
+    "domPassthrough": {
+      "element": "div",
+      "omitted": [
+        "style",
+        "children",
+        "onError",
+        "onPlay",
+        "onPause"
+      ]
+    },
+    "cssVars": [],
+    "cssPresets": [],
+    "events": [],
+    "actions": [],
+    "slots": [],
+    "sourceFiles": [
+      "src/components/primitives/Video.tsx"
+    ]
+  },
+  "WebGLCanvas": {
+    "name": "WebGLCanvas",
+    "category": "primitives",
+    "slug": "components/primitives/webglcanvas",
+    "summary": "WebGLCanvas component",
+    "props": [
+      {
+        "name": "create",
+        "type": "(gl: WebGL2RenderingContext, canvas: HTMLCanvasElement) => WebGLProgramLike | null",
+        "required": true
+      },
+      {
+        "name": "contextAttributes",
+        "type": "WebGLContextAttributes",
+        "required": false
+      },
+      {
+        "name": "dprMax",
+        "type": "number",
+        "required": false,
+        "default": "2"
+      },
+      {
+        "name": "timeScale",
+        "type": "number",
+        "required": false,
+        "default": "1"
+      },
+      {
+        "name": "clearColor",
+        "type": "readonly [number, number, number, number]",
+        "required": false,
+        "default": "[0, 0, 0, 0]"
+      },
+      {
+        "name": "asBackground",
+        "type": "boolean",
+        "required": false,
+        "default": "false"
+      },
+      {
+        "name": "sx",
+        "type": "Sx",
+        "required": false
+      },
+      {
+        "name": "canvasClassName",
         "type": "string",
+        "required": false
+      },
+      {
+        "name": "canvasStyle",
+        "type": "React.CSSProperties",
+        "required": false
+      }
+    ],
+    "domPassthrough": {
+      "element": "div",
+      "omitted": [
+        "style",
+        "children"
+      ]
+    },
+    "cssVars": [],
+    "cssPresets": [],
+    "events": [],
+    "actions": [],
+    "slots": [],
+    "sourceFiles": [
+      "src/components/primitives/WebGLCanvas.tsx"
+    ]
+  },
+  "Chip": {
+    "name": "Chip",
+    "category": "widgets",
+    "slug": "components/widgets/chip",
+    "summary": "Chip component",
+    "props": [
+      {
+        "name": "label",
+        "type": "React.ReactNode",
+        "required": true
+      },
+      {
+        "name": "size",
+        "type": "ChipSize",
+        "required": false,
+        "default": "'m'"
+      },
+      {
+        "name": "variant",
+        "type": "ChipVariant",
+        "required": false,
+        "default": "'filled'"
+      },
+      {
+        "name": "color",
+        "type": "ChipColor",
+        "required": false,
+        "default": "'default'"
+      },
+      {
+        "name": "icon",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "avatar",
+        "type": "React.ReactNode",
+        "required": false
+      },
+      {
+        "name": "onDelete",
+        "type": "(e: React.MouseEvent<HTMLButtonElement>) => void",
+        "required": false
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
         "required": false
       },
       {
@@ -3662,13 +3979,37 @@
         "required": false
       }
     ],
-    "cssVars": [],
+    "domPassthrough": {
+      "element": "div",
+      "omitted": [
+        "style",
+        "children",
+        "onClick",
+        "role",
+        "tabIndex"
+      ]
+    },
+    "cssVars": [
+      "--valet-focus-ring"
+    ],
     "cssPresets": [],
-    "events": [],
+    "events": [
+      {
+        "name": "onDelete",
+        "payloadType": "React.MouseEvent<HTMLButtonElement>"
+      }
+    ],
     "actions": [],
-    "slots": [],
+    "slots": [
+      {
+        "name": "label"
+      },
+      {
+        "name": "avatar"
+      }
+    ],
     "sourceFiles": [
-      "src/components/primitives/Video.tsx"
+      "src/components/widgets/Chip.tsx"
     ]
   },
   "CodeBlock": {
@@ -3764,6 +4105,13 @@
         "required": false
       }
     ],
+    "domPassthrough": {
+      "element": "div",
+      "omitted": [
+        "onDrop",
+        "style"
+      ]
+    },
     "cssVars": [],
     "cssPresets": [],
     "events": [
@@ -3860,6 +4208,12 @@
         "required": false
       }
     ],
+    "domPassthrough": {
+      "element": "div",
+      "omitted": [
+        "style"
+      ]
+    },
     "cssVars": [],
     "cssPresets": [],
     "events": [],
@@ -4056,6 +4410,13 @@
         "required": false
       }
     ],
+    "domPassthrough": {
+      "element": "div",
+      "omitted": [
+        "onSubmit",
+        "style"
+      ]
+    },
     "cssVars": [],
     "cssPresets": [],
     "events": [
@@ -4113,6 +4474,12 @@
         "required": false
       }
     ],
+    "domPassthrough": {
+      "element": "div",
+      "omitted": [
+        "style"
+      ]
+    },
     "cssVars": [],
     "cssPresets": [],
     "events": [
@@ -4159,6 +4526,10 @@
         ]
       }
     ],
+    "domPassthrough": {
+      "element": "div",
+      "omitted": []
+    },
     "cssVars": [],
     "cssPresets": [],
     "events": [],
@@ -4170,45 +4541,6 @@
     ],
     "sourceFiles": [
       "src/components/widgets/SpeedDial.tsx"
-    ]
-  },
-  "Stepper": {
-    "name": "Stepper",
-    "category": "widgets",
-    "slug": "components/widgets/stepper",
-    "summary": "Stepper component",
-    "props": [
-      {
-        "name": "steps",
-        "type": "React.ReactNode[]",
-        "required": true
-      },
-      {
-        "name": "active",
-        "type": "number",
-        "required": false,
-        "default": "0"
-      },
-      {
-        "name": "sx",
-        "type": "Sx",
-        "required": false
-      }
-    ],
-    "cssVars": [
-      "--valet-stepper-stroke",
-      "--valet-stepper-radius"
-    ],
-    "cssPresets": [],
-    "events": [],
-    "actions": [],
-    "slots": [
-      {
-        "name": "steps"
-      }
-    ],
-    "sourceFiles": [
-      "src/components/widgets/Stepper.tsx"
     ]
   },
   "Table": {
@@ -4277,6 +4609,13 @@
         "required": false
       }
     ],
+    "domPassthrough": {
+      "element": "table",
+      "omitted": [
+        "children",
+        "style"
+      ]
+    },
     "cssVars": [
       "--valet-divider-stroke",
       "--valet-underline-width",
@@ -4472,6 +4811,13 @@
         "required": false
       }
     ],
+    "domPassthrough": {
+      "element": "ul",
+      "omitted": [
+        "children",
+        "style"
+      ]
+    },
     "cssVars": [
       "--valet-focus-width",
       "--valet-focus-offset",

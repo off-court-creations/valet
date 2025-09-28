@@ -3,7 +3,7 @@
   "category": "layout",
   "slug": "components/layout/drawer",
   "summary": "Drawer component",
-  "status": "stable",
+  "status": "experimental",
   "aliases": [
     "drawer",
     "sidenav",

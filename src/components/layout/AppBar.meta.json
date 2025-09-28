@@ -1,6 +1,6 @@
 {
   "name": "AppBar",
-  "status": "stable",
+  "status": "experimental",
   "aliases": ["appbar", "navbar", "header"],
   "docs": {
     "bestPractices": [

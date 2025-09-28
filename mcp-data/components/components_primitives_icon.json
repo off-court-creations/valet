@@ -3,7 +3,7 @@
   "category": "primitives",
   "slug": "components/primitives/icon",
   "summary": "Icon component",
-  "status": "stable",
+  "status": "experimental",
   "aliases": [
     "icon",
     "glyph"

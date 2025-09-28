@@ -1,6 +1,6 @@
 {
   "name": "Panel",
-  "status": "stable",
+  "status": "experimental",
   "aliases": ["panel", "card", "section"],
   "docs": {
     "bestPractices": [

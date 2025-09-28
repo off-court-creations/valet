@@ -243,6 +243,18 @@
   "player": [
     "Video"
   ],
+  "webgl": [
+    "WebGLCanvas"
+  ],
+  "webgl2": [
+    "WebGLCanvas"
+  ],
+  "glcanvas": [
+    "WebGLCanvas"
+  ],
+  "webglcanvas": [
+    "WebGLCanvas"
+  ],
   "tag": [
     "Chip"
   ],
@@ -342,18 +354,6 @@
   ],
   "fab-menu": [
     "SpeedDial"
-  ],
-  "stepper": [
-    "Stepper"
-  ],
-  "steps": [
-    "Stepper"
-  ],
-  "wizard": [
-    "Stepper"
-  ],
-  "progress-steps": [
-    "Stepper"
   ],
   "table": [
     "Table"

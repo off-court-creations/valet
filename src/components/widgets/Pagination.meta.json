@@ -1,6 +1,6 @@
 {
   "name": "Pagination",
-  "status": "stable",
+  "status": "experimental",
   "aliases": ["pagination", "pager", "paginator"],
   "docs": {
     "bestPractices": [

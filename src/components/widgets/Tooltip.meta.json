@@ -1,6 +1,6 @@
 {
   "name": "Tooltip",
-  "status": "golden",
+  "status": "experimental",
   "aliases": ["tooltip", "hint"],
   "docs": {
     "bestPractices": [

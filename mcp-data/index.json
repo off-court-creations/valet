@@ -4,28 +4,28 @@
     "category": "fields",
     "summary": "Button component",
     "slug": "components/fields/button",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Checkbox",
     "category": "fields",
     "summary": "Checkbox component",
     "slug": "components/fields/checkbox",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "DateSelector",
     "category": "fields",
     "summary": "DateSelector component",
     "slug": "components/fields/dateselector",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "FormControl",
     "category": "fields",
     "summary": "FormControl component",
     "slug": "components/fields/formcontrol",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "IconButton",
@@ -53,21 +53,21 @@
     "category": "fields",
     "summary": "Radio component",
     "slug": "components/fields/radio",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Select",
     "category": "fields",
     "summary": "Select component",
     "slug": "components/fields/select",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Slider",
     "category": "fields",
     "summary": "Slider component",
     "slug": "components/fields/slider",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Switch",
@@ -95,7 +95,7 @@
     "category": "layout",
     "summary": "AppBar component",
     "slug": "components/layout/appbar",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Box",
@@ -109,14 +109,14 @@
     "category": "layout",
     "summary": "Drawer component",
     "slug": "components/layout/drawer",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Grid",
     "category": "layout",
     "summary": "Grid component",
     "slug": "components/layout/grid",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "List",
@@ -130,21 +130,21 @@
     "category": "layout",
     "summary": "Modal component",
     "slug": "components/layout/modal",
-    "status": "unstable"
+    "status": "experimental"
   },
   {
     "name": "Panel",
     "category": "layout",
     "summary": "Panel component",
     "slug": "components/layout/panel",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Stack",
     "category": "layout",
     "summary": "Stack component",
     "slug": "components/layout/stack",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Surface",
@@ -158,7 +158,7 @@
     "category": "layout",
     "summary": "Tabs component",
     "slug": "components/layout/tabs",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Avatar",
@@ -172,14 +172,14 @@
     "category": "primitives",
     "summary": "Divider component",
     "slug": "components/primitives/divider",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Icon",
     "category": "primitives",
     "summary": "Icon component",
     "slug": "components/primitives/icon",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Image",
@@ -207,28 +207,28 @@
     "category": "primitives",
     "summary": "Typography component",
     "slug": "components/primitives/typography",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Video",
     "category": "primitives",
     "summary": "Video component",
     "slug": "components/primitives/video",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "WebGLCanvas",
     "category": "primitives",
     "summary": "WebGLCanvas component",
     "slug": "components/primitives/webglcanvas",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Chip",
     "category": "widgets",
     "summary": "Chip component",
     "slug": "components/widgets/chip",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "CodeBlock",
@@ -263,14 +263,14 @@
     "category": "widgets",
     "summary": "Markdown component",
     "slug": "components/widgets/markdown",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Pagination",
     "category": "widgets",
     "summary": "Pagination component",
     "slug": "components/widgets/pagination",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "ParallaxBackground",
@@ -301,25 +301,18 @@
     "status": "experimental"
   },
   {
-    "name": "Stepper",
-    "category": "widgets",
-    "summary": "Stepper component",
-    "slug": "components/widgets/stepper",
-    "status": "experimental"
-  },
-  {
     "name": "Table",
     "category": "widgets",
     "summary": "Table component",
     "slug": "components/widgets/table",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Tooltip",
     "category": "widgets",
     "summary": "Tooltip component",
     "slug": "components/widgets/tooltip",
-    "status": "golden"
+    "status": "experimental"
   },
   {
     "name": "Tree",

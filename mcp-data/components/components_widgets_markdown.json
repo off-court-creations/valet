@@ -3,7 +3,7 @@
   "category": "widgets",
   "slug": "components/widgets/markdown",
   "summary": "Markdown component",
-  "status": "stable",
+  "status": "experimental",
   "aliases": [
     "markdown",
     "md",

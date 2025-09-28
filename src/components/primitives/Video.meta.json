@@ -1,6 +1,6 @@
 {
   "name": "Video",
-  "status": "stable",
+  "status": "experimental",
   "aliases": ["video", "player"],
   "docs": { "bestPractices": [
     "Provide controls and captions; prefer muted autoplay only when appropriate.",

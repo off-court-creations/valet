@@ -1,1 +1,1 @@
-{ "name": "FormControl", "status": "stable", "aliases": ["form", "field", "control"], "docs": { "bestPractices": [] } }
+{ "name": "FormControl", "status": "experimental", "aliases": ["form", "field", "control"], "docs": { "bestPractices": [] } }

@@ -1,6 +1,6 @@
 {
   "name": "Radio",
-  "status": "stable",
+  "status": "experimental",
   "aliases": ["radio", "radiogroup", "radio-group"],
   "docs": {
     "bestPractices": [

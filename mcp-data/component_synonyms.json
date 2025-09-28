@@ -355,18 +355,6 @@
   "fab-menu": [
     "SpeedDial"
   ],
-  "stepper": [
-    "Stepper"
-  ],
-  "steps": [
-    "Stepper"
-  ],
-  "wizard": [
-    "Stepper"
-  ],
-  "progress-steps": [
-    "Stepper"
-  ],
   "table": [
     "Table"
   ],

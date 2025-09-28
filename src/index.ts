@@ -56,7 +56,6 @@ export * from './components/widgets/Pagination';
 export * from './components/widgets/Parallax';
 export * from './components/widgets/Snackbar';
 export * from './components/widgets/SpeedDial';
-export * from './components/widgets/Stepper';
 export * from './components/widgets/Table';
 export * from './components/widgets/Dropzone';
 export * from './components/layout/Tabs';

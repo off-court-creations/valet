@@ -3,7 +3,7 @@
   "category": "fields",
   "slug": "components/fields/dateselector",
   "summary": "DateSelector component",
-  "status": "stable",
+  "status": "experimental",
   "aliases": [
     "date",
     "datepicker",

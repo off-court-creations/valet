@@ -3,7 +3,7 @@
   "category": "fields",
   "slug": "components/fields/radio",
   "summary": "Radio component",
-  "status": "stable",
+  "status": "experimental",
   "aliases": [
     "radio",
     "radiogroup",

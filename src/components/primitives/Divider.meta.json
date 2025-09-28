@@ -1,6 +1,6 @@
 {
   "name": "Divider",
-  "status": "stable",
+  "status": "experimental",
   "aliases": ["divider", "rule", "hr"],
   "docs": { "bestPractices": [
     "Use to separate related groups; avoid overuse that creates visual noise.",

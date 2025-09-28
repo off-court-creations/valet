@@ -55,7 +55,6 @@ const GridDemoPage = page(() => import('./pages/components/layout/GridDemo'));
 const StackDemoPage = page(() => import('./pages/components/layout/StackDemo'));
 const PaginationDemoPage = page(() => import('./pages/components/widgets/PaginationDemo'));
 const SpeedDialDemoPage = page(() => import('./pages/components/widgets/SpeedDialDemo'));
-const StepperDemoPage = page(() => import('./pages/components/widgets/StepperDemo'));
 const RadioGroupDemoPage = page(() => import('./pages/components/field/RadioGroupDemo'));
 const MetroSelectDemoPage = page(() => import('./pages/components/field/MetroSelectDemo'));
 const VideoDemoPage = page(() => import('./pages/components/primitives/VideoDemo'));
@@ -288,10 +287,6 @@ export function App() {
         <Route
           path='/speeddial-demo'
           element={<SpeedDialDemoPage />}
-        />
-        <Route
-          path='/stepper-demo'
-          element={<StepperDemoPage />}
         />
         <Route
           path='/metroselect-demo'
