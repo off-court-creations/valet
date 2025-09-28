@@ -31,17 +31,17 @@ export const LavaLampParams = {
   program: {
     // Population and world bounds (square space mapping used in shader)
     maxBlobs: 13,
-    squareBound: 1,
+    squareBound: 0.99,
     // Deterministic session seed (change to vary default motion patterns)
-    seed: 1238,
+    seed: 123,
 
     // Initial placement tries to keep blobs apart to reduce early jitter.
     initialScatter: {
-      minInitialSpacing: 0.58,
+      minInitialSpacing: 0.4,
       minSpacingFloor: 0.28,
       maxPlacementAttempts: 48,
       // Spawn properties
-      baseRadius: { min: 0.04, jitter: 0.18 },
+      baseRadius: { min: 0.1, jitter: 0.2 },
       areaExtent: 1.6, // initial x/y extent in square space
       baseSpeed: { min: 0.03, jitter: 0.03 },
       jitterScale: 0.08,
@@ -79,14 +79,14 @@ export const LavaLampParams = {
     // Long‑range pulse that periodically declumps and pairs solos.
     pulses: {
       // For testing: immediate start, then every 15s with no jitter
-      initialDelay: { base: 0, jitter: 0 },
+      initialDelay: { base: 10, jitter: 0 },
       interval: { base: 15, jitter: 0 },
       // Longer burst so separation completes (per‑frame force, smooth envelope)
       burst: {
         duration: 3, // 2x longer main pulse
         tailDuration: 1.0, // keep falloff timing
         tailGain: 0.15, // keep taper strength
-        mainGain: 0.18, // half as much force during pulse
+        mainGain: 0.2, // half as much force during pulse
         easeInPow: 2.0, // stronger ease-in (slower ramp-up)
         speedMultiplier: 5, // keep slightly reduced cap
         shoveScale: 1.2, // significantly reduced collision shove during burst

@@ -81,7 +81,6 @@ export function createLavaLampProgram(
   const uRotRow0 = gl.getUniformLocation(prog, 'uRotRow0');
   const uRotRow1 = gl.getUniformLocation(prog, 'uRotRow1');
   const uInvSigma = gl.getUniformLocation(prog, 'uInvSigma');
-  const uMinFalloff = gl.getUniformLocation(prog, 'uMinFalloff');
   const uCutThreshold = gl.getUniformLocation(prog, 'uCutThreshold');
   // Appearance uniforms (fragment shader tuning)
   const uBgColor = gl.getUniformLocation(prog, 'uBgColor');
@@ -322,7 +321,6 @@ export function createLavaLampProgram(
   const rotRow0Arr = new Float32Array(64 * 2);
   const rotRow1Arr = new Float32Array(64 * 2);
   const invSigmaArr = new Float32Array(64);
-  const minFalloffArr = new Float32Array(64);
 
   let currentTime = 0;
 
@@ -400,8 +398,6 @@ export function createLavaLampProgram(
     const sigma = f32(r * r * SIGMA_SCALE + SIGMA_EPS);
     const invSigma = sigma > 0 ? f32(1 / sigma) : 0;
     invSigmaArr[index] = invSigma;
-    const minScale = stretch < 1 ? stretch : 1;
-    minFalloffArr[index] = f32(invSigma * minScale * minScale);
   };
 
   // Long-range pulse scheduler ----------------------------------------------
@@ -1159,7 +1155,6 @@ export function createLavaLampProgram(
       if (uRotRow0) gl.uniform2fv(uRotRow0, rotRow0Arr);
       if (uRotRow1) gl.uniform2fv(uRotRow1, rotRow1Arr);
       if (uInvSigma) gl.uniform1fv(uInvSigma, invSigmaArr);
-      if (uMinFalloff) gl.uniform1fv(uMinFalloff, minFalloffArr);
       if (uCutThreshold) gl.uniform1f(uCutThreshold, LavaLampParams.shader.cutThreshold);
 
       gl.drawArrays(gl.TRIANGLES, 0, 3);

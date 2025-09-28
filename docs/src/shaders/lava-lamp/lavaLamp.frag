@@ -45,7 +45,6 @@ uniform float uRadii[64];
 uniform vec2 uRotRow0[64];
 uniform vec2 uRotRow1[64];
 uniform float uInvSigma[64];
-uniform float uMinFalloff[64];
 uniform float uCutThreshold;
 
 // Solid background color
@@ -89,9 +88,12 @@ uniform float uVignetteK;
 // -----------------------------------------------------------------------------
 // Noise utilities
 // - `hash11` / `hash21`: low‑cost, decorrelated hash functions.
-// - `noise`: value noise (bilinear blend of grid‑hashed values).
+// - `noise`: value noise (bilinear blend of grid-hashed values).
+// - `noiseGrad`: value noise with analytic gradient, used by fbmGrad to avoid
+//   additional octave sampling when only local derivatives are needed.
 // - `fbm`: fractal Brownian motion (sum of octaves of value noise), used for
 //   subtle warping of flow and color to avoid symmetry and banding.
+// - `fbmGrad`: fbm with gradient (w.r.t input UV) returned alongside the value.
 // -----------------------------------------------------------------------------
 float hash11(float p){
   p = fract(p * 0.1031);
@@ -117,6 +119,24 @@ float noise(vec2 p){
   return mix(mix(a,b,u.x), mix(c,d,u.x), u.y);
 }
 
+void noiseGrad(vec2 p, out float value, out vec2 grad){
+  vec2 i = floor(p);
+  vec2 f = fract(p);
+  float a = hash21(i + vec2(0,0));
+  float b = hash21(i + vec2(1,0));
+  float c = hash21(i + vec2(0,1));
+  float d = hash21(i + vec2(1,1));
+  vec2 u = f*f*(3.0-2.0*f);
+  vec2 du = 6.0*f*(1.0 - f);
+  float nx0 = mix(a, b, u.x);
+  float nx1 = mix(c, d, u.x);
+  float dnx0 = (b - a) * du.x;
+  float dnx1 = (d - c) * du.x;
+  value = mix(nx0, nx1, u.y);
+  grad.x = dnx0 + (dnx1 - dnx0) * u.y;
+  grad.y = (nx1 - nx0) * du.y;
+}
+
 float fbm(vec2 p){
   float s = 0.0;
   float a = 0.5;
@@ -129,11 +149,31 @@ float fbm(vec2 p){
   return s;
 }
 
+void fbmGrad(vec2 p, out float value, out vec2 grad){
+  float s = 0.0;
+  vec2 g = vec2(0.0);
+  float a = 0.5;
+  mat2 m = mat2(1.6, -1.2, 1.2, 1.6);
+  vec2 q = p;
+  mat2 J = mat2(1.0, 0.0, 0.0, 1.0);
+  for(int i=0;i<5;i++){
+    float nVal; vec2 nGrad;
+    noiseGrad(q, nVal, nGrad);
+    s += a * nVal;
+    g += a * (transpose(J) * nGrad);
+    q = m * q;
+    J = m * J;
+    a *= 0.5;
+  }
+  value = s;
+  grad = g;
+}
+
 // -----------------------------------------------------------------------------
 // Color ramp for molten wax
 // - Input t ∈ [0,1] maps the field to warm hues.
 // - Thresholds (k1..k4) are tuned to keep the palette rich without clipping.
-//   These are intentionally non‑linear to emphasize pleasing bands.
+//   These are intentionally non-linear to emphasize pleasing bands.
 // -----------------------------------------------------------------------------
 vec3 lavaRamp(float t){
   // t in [0,1] – deep purple -> crimson -> orange -> yellow
@@ -165,13 +205,11 @@ float field(vec2 p, out float edge){
     if(i>=uCount) break;
     vec2 c = uCenters[i];
     vec2 d = p - c;
-    float dist2Base = dot(d, d);
-    if (dist2Base * uMinFalloff[i] > uCutThreshold) continue;
-    // Per-blob anisotropy supplied via rotation+stretch rows
     vec2 row0 = uRotRow0[i];
     vec2 row1 = uRotRow1[i];
     vec2 a = vec2(dot(row0, d), dot(row1, d));
     float dist2 = dot(a,a);
+    if (dist2 * uInvSigma[i] > uCutThreshold) continue;
     float k = exp(-dist2 * uInvSigma[i]);
     sumK += k;
     if (sumK > 8.0) break;
@@ -188,11 +226,11 @@ vec4 fieldOffsetSamples(vec2 p, float step){
     if(i>=uCount) break;
     vec2 c = uCenters[i];
     vec2 d = p - c;
-    float dist2Base = dot(d, d);
-    if (dist2Base * uMinFalloff[i] > uCutThreshold) continue;
     vec2 row0 = uRotRow0[i];
     vec2 row1 = uRotRow1[i];
     vec2 base = vec2(dot(row0, d), dot(row1, d));
+    float d2 = dot(base, base);
+    if (d2 * uInvSigma[i] > uCutThreshold) continue;
     vec2 deltaX = vec2(row0.x, row1.x) * step;
     vec2 deltaY = vec2(row0.y, row1.y) * step;
     float invSigma = uInvSigma[i];
@@ -239,6 +277,8 @@ void main(){
   // Interior flow using FBM warp — small, slow advection for organic motion.
   vec2 flowUV = uvw * 0.8 + vec2(0.0, uTime * 0.006);
   float flow = fbm(flowUV + vec2(f*0.2));
+  float flowBase; vec2 flowGrad;
+  fbmGrad(flowUV, flowBase, flowGrad);
 
   float band = smoothstep(uIso - uBand, uIso + uBand, f); // soft edge
 
@@ -304,11 +344,7 @@ void main(){
   float centerG = length(vec2(fx, fy));
   float centerStrong = 1.0 - smoothstep(uCenterStrongStart, uCenterStrongEnd, centerG);
   float epsS = 1.5 / min(res.x, res.y);
-  float n1 = fbm(flowUV + vec2(epsS, 0.0));
-  float n2 = fbm(flowUV - vec2(epsS, 0.0));
-  float n3 = fbm(flowUV + vec2(0.0, epsS));
-  float n4 = fbm(flowUV - vec2(0.0, epsS));
-  vec2 gradN = vec2(n1 - n2, n3 - n4);
+  vec2 gradN = 2.0 * epsS * flowGrad;
   vec3 Ncore = normalize(vec3(-gradN.x, -gradN.y, 0.25));
   float diffCore = clamp(0.55 + 0.25 * dot(Ncore, L), 0.50, 0.80);
   float tCore = min(t, 0.82);
