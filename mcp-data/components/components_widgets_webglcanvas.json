@@ -1,0 +1,87 @@
+{
+  "name": "WebGLCanvas",
+  "category": "widgets",
+  "slug": "components/widgets/webglcanvas",
+  "summary": "WebGLCanvas component",
+  "status": "stable",
+  "aliases": [
+    "webgl",
+    "webgl2",
+    "glcanvas",
+    "webglcanvas"
+  ],
+  "props": [
+    {
+      "name": "create",
+      "type": "(gl: WebGL2RenderingContext, canvas: HTMLCanvasElement) => WebGLProgramLike | null",
+      "required": true
+    },
+    {
+      "name": "contextAttributes",
+      "type": "WebGLContextAttributes",
+      "required": false
+    },
+    {
+      "name": "dprMax",
+      "type": "number",
+      "required": false,
+      "default": "2"
+    },
+    {
+      "name": "timeScale",
+      "type": "number",
+      "required": false,
+      "default": "1"
+    },
+    {
+      "name": "clearColor",
+      "type": "readonly [number, number, number, number]",
+      "required": false,
+      "default": "[0, 0, 0, 0]"
+    },
+    {
+      "name": "asBackground",
+      "type": "boolean",
+      "required": false,
+      "default": "false"
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": false
+    },
+    {
+      "name": "canvasClassName",
+      "type": "string",
+      "required": false
+    },
+    {
+      "name": "canvasStyle",
+      "type": "React.CSSProperties",
+      "required": false
+    }
+  ],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": [
+      "style",
+      "children"
+    ]
+  },
+  "cssVars": [],
+  "cssPresets": [],
+  "events": [],
+  "actions": [],
+  "slots": [],
+  "bestPractices": [
+    "Prefer low DPR on animated backgrounds to reduce fill-rate.",
+    "Avoid heavy per-frame allocations in program.update().",
+    "Dispose GL resources on unmount to prevent leaks."
+  ],
+  "examples": [],
+  "sourceFiles": [
+    "src/components/widgets/WebGLCanvas.tsx"
+  ],
+  "version": "0.32.0",
+  "schemaVersion": "1.6"
+}

@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file. The format 
 ### Added
 
 - MCP: added `valet__search_best_practices` and `valet__list_synonyms` tools for agents to surface guidance and inspect alias mappings directly.
+- Widgets: add `WebGLCanvas` — a reusable WebGL2 canvas host that handles context creation, DPR-aware resizing, and RAF. Docs lava-lamp hero now uses this component. Status: stable.
 
 ### Changed
 

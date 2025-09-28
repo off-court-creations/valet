@@ -64,6 +64,7 @@ export * from './components/widgets/Tree';
 export * from './components/widgets/Markdown';
 export * from './components/widgets/CodeBlock';
 export * from './components/widgets/Chip';
+export * from './components/widgets/WebGLCanvas';
 export { default as KeyModal } from './components/KeyModal';
 
 // ─── AI Helpers ─────────────────────────────────────────────

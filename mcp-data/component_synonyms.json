@@ -369,5 +369,17 @@
   ],
   "hint": [
     "Tooltip"
+  ],
+  "webgl": [
+    "WebGLCanvas"
+  ],
+  "webgl2": [
+    "WebGLCanvas"
+  ],
+  "glcanvas": [
+    "WebGLCanvas"
+  ],
+  "webglcanvas": [
+    "WebGLCanvas"
   ]
 }

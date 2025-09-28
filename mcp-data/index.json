@@ -320,5 +320,12 @@
     "summary": "Tree component",
     "slug": "components/widgets/tree",
     "status": "experimental"
+  },
+  {
+    "name": "WebGLCanvas",
+    "category": "widgets",
+    "summary": "WebGLCanvas component",
+    "slug": "components/widgets/webglcanvas",
+    "status": "stable"
   }
 ]

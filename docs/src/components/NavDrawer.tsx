@@ -52,6 +52,7 @@ const fields: [string, string][] = [
 
 const widgets: [string, string][] = [
   ['CodeBlock', '/codeblock-demo'],
+  ['WebGLCanvas', '/webglcanvas-demo'],
   ['LLMChat', '/llmchat'],
   ['RichChat', '/richchat'],
   ['Pagination', '/pagination-demo'],

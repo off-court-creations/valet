@@ -1,0 +1,1 @@
+{ "name": "WebGLCanvas", "status": "stable", "aliases": ["webgl", "webgl2", "glcanvas", "webglcanvas"], "docs": { "bestPractices": ["Prefer low DPR on animated backgrounds to reduce fill-rate.", "Avoid heavy per-frame allocations in program.update().", "Dispose GL resources on unmount to prevent leaks."] } }
