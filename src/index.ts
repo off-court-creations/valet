@@ -10,6 +10,7 @@ export * from './components/primitives/Video';
 export * from './components/primitives/Image';
 export * from './components/primitives/Skeleton';
 export * from './components/primitives/Divider';
+export * from './components/primitives/WebGLCanvas';
 
 // ─── Layout Primitives ──────────────────────────────────────
 export * from './components/layout/Grid';
@@ -64,7 +65,6 @@ export * from './components/widgets/Tree';
 export * from './components/widgets/Markdown';
 export * from './components/widgets/CodeBlock';
 export * from './components/widgets/Chip';
-export * from './components/widgets/WebGLCanvas';
 export { default as KeyModal } from './components/KeyModal';
 
 // ─── AI Helpers ─────────────────────────────────────────────

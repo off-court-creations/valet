@@ -7,13 +7,21 @@ All notable changes to this project will be documented in this file. The format 
 ### Added
 
 - MCP: added `valet__search_best_practices` and `valet__list_synonyms` tools for agents to surface guidance and inspect alias mappings directly.
-- Widgets: add `WebGLCanvas` — a reusable WebGL2 canvas host that handles context creation, DPR-aware resizing, and RAF. Docs lava-lamp hero now uses this component. Status: stable.
+- Primitives: add `WebGLCanvas` — a reusable WebGL2 canvas host that handles context creation, DPR-aware resizing, and RAF. Docs lava-lamp hero now uses this component. Status: stable.
 
 ### Changed
 
 - MCP: extend component status enum to include `golden` (very stable, polished) and `unstable` (known problem; avoid depending on it). Bumped MCP `schemaVersion` to `1.6` and regenerated `mcp-data/`.
 - Docs: extracted LavaLampBackgroundGL shaders to standalone GLSL files under `docs/src/shaders/lava-lamp` and import via `?raw` for readability and better editor support.
 - Docs: increase lava‑lamp pulse crowd repulsion ~100× (stronger scene reconfiguration). Parameters in `docs/src/shaders/lava-lamp/lavaLampParams.ts`.
+
+### Fixed
+
+- Accessibility: Enhance `Tree` with robust keyboard navigation
+  - Roving tabindex and initial focus on selected/first item
+  - Arrow Up/Down, Left/Right, Home/End, and `*` siblings expand
+  - ARIA `aria-level`, `aria-setsize`, `aria-posinset` on items
+  - Docs NavDrawer now passes `aria-label` and is keyboard operable
 
 ## [0.32.0]
 

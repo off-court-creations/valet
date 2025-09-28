@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/widgets/WebGLCanvas.tsx  | valet
+// src/components/primitives/WebGLCanvas.tsx  | valet
 // WebGL2 canvas wrapper: DPI-aware, resizes to parent, RAF loop
 // ─────────────────────────────────────────────────────────────
 import React, { useEffect, useRef } from 'react';

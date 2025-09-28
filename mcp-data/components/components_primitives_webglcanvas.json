@@ -1,7 +1,7 @@
 {
   "name": "WebGLCanvas",
-  "category": "widgets",
-  "slug": "components/widgets/webglcanvas",
+  "category": "primitives",
+  "slug": "components/primitives/webglcanvas",
   "summary": "WebGLCanvas component",
   "status": "stable",
   "aliases": [
@@ -80,7 +80,7 @@
   ],
   "examples": [],
   "sourceFiles": [
-    "src/components/widgets/WebGLCanvas.tsx"
+    "src/components/primitives/WebGLCanvas.tsx"
   ],
   "version": "0.32.0",
   "schemaVersion": "1.6"

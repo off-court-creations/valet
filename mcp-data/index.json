@@ -217,6 +217,13 @@
     "status": "stable"
   },
   {
+    "name": "WebGLCanvas",
+    "category": "primitives",
+    "summary": "WebGLCanvas component",
+    "slug": "components/primitives/webglcanvas",
+    "status": "stable"
+  },
+  {
     "name": "Chip",
     "category": "widgets",
     "summary": "Chip component",
@@ -320,12 +327,5 @@
     "summary": "Tree component",
     "slug": "components/widgets/tree",
     "status": "experimental"
-  },
-  {
-    "name": "WebGLCanvas",
-    "category": "widgets",
-    "summary": "WebGLCanvas component",
-    "slug": "components/widgets/webglcanvas",
-    "status": "stable"
   }
 ]

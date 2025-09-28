@@ -63,7 +63,7 @@ const SnackbarDemoPage = page(() => import('./pages/components/widgets/SnackbarD
 const TreeDemoPage = page(() => import('./pages/components/widgets/TreeDemo'));
 const ChipDemoPage = page(() => import('./pages/components/widgets/ChipDemo'));
 const DropzoneDemoPage = page(() => import('./pages/components/widgets/DropzoneDemo'));
-const WebGLCanvasDemoPage = page(() => import('./pages/components/widgets/WebGLCanvasDemo'));
+const WebGLCanvasDemoPage = page(() => import('./pages/components/primitives/WebGLCanvasDemo'));
 const DateSelectorDemoPage = page(() => import('./pages/components/field/DateSelectorDemo'));
 const CodeBlockDemoPage = page(() => import('./pages/components/widgets/CodeBlockDemo'));
 const MarkdownDemoPage = page(() => import('./pages/components/widgets/MarkdownDemo'));

@@ -20,6 +20,7 @@ const primitives: [string, string][] = [
   ['Skeleton', '/skeleton-demo'],
   ['Typography', '/typography'],
   ['Video', '/video-demo'],
+  ['WebGLCanvas', '/webglcanvas-demo'],
 ];
 
 const layoutComponents: [string, string][] = [
@@ -52,7 +53,6 @@ const fields: [string, string][] = [
 
 const widgets: [string, string][] = [
   ['CodeBlock', '/codeblock-demo'],
-  ['WebGLCanvas', '/webglcanvas-demo'],
   ['LLMChat', '/llmchat'],
   ['RichChat', '/richchat'],
   ['Pagination', '/pagination-demo'],
@@ -194,6 +194,7 @@ export default function NavDrawer() {
         expanded={expanded}
         onExpandedChange={handleExpandedChange}
         onNodeSelect={(n) => n.path && navigate(n.path)}
+        aria-label='Documentation Navigation'
         sx={{ padding: theme.spacing(1) }}
       />
     </Drawer>

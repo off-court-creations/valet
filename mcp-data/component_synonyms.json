@@ -243,6 +243,18 @@
   "player": [
     "Video"
   ],
+  "webgl": [
+    "WebGLCanvas"
+  ],
+  "webgl2": [
+    "WebGLCanvas"
+  ],
+  "glcanvas": [
+    "WebGLCanvas"
+  ],
+  "webglcanvas": [
+    "WebGLCanvas"
+  ],
   "tag": [
     "Chip"
   ],
@@ -369,17 +381,5 @@
   ],
   "hint": [
     "Tooltip"
-  ],
-  "webgl": [
-    "WebGLCanvas"
-  ],
-  "webgl2": [
-    "WebGLCanvas"
-  ],
-  "glcanvas": [
-    "WebGLCanvas"
-  ],
-  "webglcanvas": [
-    "WebGLCanvas"
   ]
 }
