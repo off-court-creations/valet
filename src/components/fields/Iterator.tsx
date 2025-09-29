@@ -18,10 +18,28 @@ export interface IteratorProps
   value?: number;
   defaultValue?: number;
   onChange?: (value: number) => void;
+  /** Fires when a value is committed (buttons, wheel, keyboard, or blur). */
+  onCommit?: (value: number) => void;
   name?: string;
   min?: number;
   max?: number;
   step?: number;
+  /**
+   * When true, committing also happens while typing for any parsable number.
+   * Defaults to false to avoid interrupting intermediate states like "1." or "-".
+   */
+  commitOnChange?: boolean;
+  /**
+   * If true, coerces committed values to align to `step` from the origin (min if provided, else 0).
+   */
+  roundToStep?: boolean;
+  /**
+   * Control mouse wheel behavior: off | focus | hover (default: focus)
+   *  - off: disable wheel-based stepping
+   *  - focus: only step when the field has focus
+   *  - hover: step while hovered (prevents page scroll while over the input)
+   */
+  wheelBehavior?: 'off' | 'focus' | 'hover';
   width?: number | string;
   /** Inline styles (with CSS var support) */
   sx?: Sx;
@@ -54,6 +72,11 @@ const Field = styled('input')<{ theme: Theme; $w: string }>`
     outline: ${({ theme }) => theme.stroke(2)} solid ${({ theme }) => theme.colors.primary};
     outline-offset: ${({ theme }) => theme.stroke(1)};
   }
+  &[disabled] {
+    color: ${({ theme }) => theme.colors.text + '66'};
+    border-color: ${({ theme }) => theme.colors.text + '22'};
+    cursor: not-allowed;
+  }
 `;
 
 /*───────────────────────────────────────────────────────────*/
@@ -63,12 +86,17 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
       value: valueProp,
       defaultValue,
       onChange,
+      onCommit,
       name,
       min,
       max,
       step = 1,
+      commitOnChange = false,
+      roundToStep = false,
+      wheelBehavior = 'focus',
       width = '3.5rem',
       disabled = false,
+      readOnly = false,
       preset: p,
       className,
       sx,
@@ -100,23 +128,44 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
       setText(String(current));
     }, [current]);
 
+    const alignToStep = useCallback(
+      (val: number) => {
+        if (!roundToStep || !step || step <= 0) return val;
+        const origin = min ?? 0;
+        const delta = val - origin;
+        const snapped = Math.round(delta / step) * step + origin;
+        return snapped;
+      },
+      [min, roundToStep, step],
+    );
+
+    const clamp = useCallback(
+      (val: number) => {
+        let v = val;
+        if (min !== undefined && v < min) v = min;
+        if (max !== undefined && v > max) v = max;
+        return v;
+      },
+      [min, max],
+    );
+
     const commit = useCallback(
       (next: number) => {
-        if (min !== undefined && next < min) next = min;
-        if (max !== undefined && next > max) next = max;
-        if (!controlled) setInternal(next);
-        if (form && name) form.setField(name as keyof Record<string, number | undefined>, next);
-        onChange?.(next);
-        setText(String(next));
+        const v = alignToStep(clamp(next));
+        if (!controlled) setInternal(v);
+        if (form && name) form.setField(name as keyof Record<string, number | undefined>, v);
+        onChange?.(v);
+        onCommit?.(v);
+        setText(String(v));
       },
-      [controlled, form, max, min, name, onChange],
+      [alignToStep, clamp, controlled, form, name, onChange, onCommit],
     );
 
     const handleInput: React.ChangeEventHandler<HTMLInputElement> = (e) => {
       const val = e.target.value;
       setText(val);
       const num = parseFloat(val);
-      if (!Number.isNaN(num)) commit(num);
+      if (commitOnChange && !Number.isNaN(num)) commit(num);
     };
 
     const handleBlur: React.FocusEventHandler<HTMLInputElement> = () => {
@@ -134,12 +183,14 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
 
     const handleWheel = useCallback(
       (e: WheelEvent) => {
-        if (disabled) return;
+        if (disabled || readOnly) return;
+        if (wheelBehavior === 'off') return;
+        if (wheelBehavior === 'focus' && localRef.current !== document.activeElement) return;
         e.preventDefault();
         e.stopPropagation();
         stepBy(e.deltaY < 0 ? 1 : -1);
       },
-      [disabled, stepBy],
+      [disabled, readOnly, stepBy, wheelBehavior],
     );
 
     useEffect(() => {
@@ -153,6 +204,37 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
 
     const w = typeof width === 'number' ? `${width}px` : width;
 
+    const handleKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
+      if (disabled || readOnly) return;
+      const key = e.key;
+      const big = Math.max(step * 10, step);
+      if (key === 'ArrowUp') {
+        e.preventDefault();
+        stepBy(1);
+      } else if (key === 'ArrowDown') {
+        e.preventDefault();
+        stepBy(-1);
+      } else if (key === 'PageUp') {
+        e.preventDefault();
+        commit(current + big);
+      } else if (key === 'PageDown') {
+        e.preventDefault();
+        commit(current - big);
+      } else if (key === 'Home' && min !== undefined) {
+        e.preventDefault();
+        commit(min);
+      } else if (key === 'End' && max !== undefined) {
+        e.preventDefault();
+        commit(max);
+      } else if (key === 'Enter') {
+        const num = parseFloat(text);
+        if (!Number.isNaN(num)) commit(num);
+        else setText(String(current));
+      } else if (key === 'Escape') {
+        setText(String(current));
+      }
+    };
+
     return (
       <Wrapper
         theme={theme}
@@ -162,9 +244,9 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
         <IconButton
           size='xs'
           variant='outlined'
-          icon='mdi:minus'
+          icon='mdi:minus-thick'
           onClick={() => stepBy(-1)}
-          disabled={disabled}
+          disabled={disabled || readOnly}
           aria-label='decrement'
         />
         <Field
@@ -174,17 +256,23 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
           inputMode='numeric'
           theme={theme}
           $w={w}
+          name={name}
+          min={min}
+          max={max}
+          step={step}
           value={text}
           onChange={handleInput}
           onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
           disabled={disabled}
+          readOnly={readOnly}
         />
         <IconButton
           size='xs'
           variant='outlined'
-          icon='mdi:plus'
+          icon='mdi:plus-thick'
           onClick={() => stepBy(1)}
-          disabled={disabled}
+          disabled={disabled || readOnly}
           aria-label='increment'
         />
       </Wrapper>

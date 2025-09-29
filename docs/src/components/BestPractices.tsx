@@ -14,7 +14,7 @@ export default function BestPractices({ title = 'Best Practices', items }: BestP
   return (
     <Panel fullWidth>
       <Typography variant='h4'>{title}</Typography>
-      <Stack sx={{ gap: '0.25rem' }}>
+      <Stack gap={2}>
         {items.map((bp, i) => (
           <Typography key={i}>{bp}</Typography>
         ))}

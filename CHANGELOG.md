@@ -11,6 +11,12 @@ All notable changes to this project will be documented in this file. The format 
 - Grid/Panel: introduce per-row height normalization.
   - Grid: new `normalizeRowHeights` prop (default `true`) stretches items so each row matches its tallest Panel when in 2+ columns (adaptive not collapsed).
   - Panel: new `normalizeRowHeight` prop (default `true`) to opt out on a per-panel basis.
+ - Iterator: new props and docs
+   - `onCommit(value)` event for blur/controls/wheel/keyboard commits
+   - `commitOnChange` opt-in to live commits while typing
+   - `roundToStep` to snap committed values to `step` from `min` (or `0`)
+   - `wheelBehavior`: `'off' | 'focus' | 'hover'` (default `'focus'`)
+   - Best Practices and curated Examples added to sidecar; docs page renders them
 
 ### Changed
 
@@ -19,6 +25,12 @@ All notable changes to this project will be documented in this file. The format 
 - Docs: increase lava‑lamp pulse crowd repulsion ~100× (stronger scene reconfiguration). Parameters in `docs/src/shaders/lava-lamp/lavaLampParams.ts`.
 - Docs: MetroSelect playground now controls selection mode (single/multiple) and tile size; removed non-functional `gap` control.
  - Grid: now normalizes row heights by default for multi-column layouts; behavior is disabled automatically when adaptive collapses to a single column.
+ - Iterator: UX and a11y improvements
+   - Forward native `min`/`max`/`step` to the input for correct browser semantics
+   - Wheel steps only when focused by default; `'hover'` mode is opt-in
+   - Keyboard: ArrowUp/Down step; PageUp/Down big-step; Home/End to bounds; Enter commits; Escape reverts
+   - Plus/minus icons use bold glyphs for readability (`mdi:plus-thick`/`mdi:minus-thick`)
+   - Docs usage spacing refined to use `gap`/`pad` props (no `sx`)
 
 ### Fixed
 
@@ -30,6 +42,7 @@ All notable changes to this project will be documented in this file. The format 
 - Docs: LiveCodePreview now executes function component examples (e.g. `() => <...>`), fixing MetroSelect “Controlled value” example rendering in the playground/examples.
 - Avatar: Gravatar fallback when neither `src` nor `email` is provided now resolves to a stable default image instead of a broken URL; default `loading="lazy"` for better performance.
 - Switch: set `type="button"` to avoid unintended form submissions when used inside a `<form>`.
+ - Iterator: Disabled field now dims text/border to match disabled icon buttons; `readOnly` respected across wheel/buttons/keyboard; typing no longer forces premature commit unless `commitOnChange` is enabled.
 
 ## [0.32.0]
 

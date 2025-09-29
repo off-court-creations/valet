@@ -22,14 +22,15 @@ interface FormVals extends Record<string, unknown> {
 const useFormStore = createFormStore<FormVals>({ amount: 1 });
 
 export default function IteratorDemoPage() {
-  const { theme, toggleMode } = useTheme();
+  const { toggleMode } = useTheme();
   const [count, setCount] = useState(2);
 
   const usageContent = (
     <Stack>
       <Typography>
-        The field will increment when scrolling up and decrement when scrolling down. Page scrolling
-        is suppressed while hovering, including on Firefox.
+        By default, the field steps with the mouse wheel only when focused. Set
+        <code> wheelBehavior=&#39;hover&#39; </code>
+        to step while hovering (page scrolling is suppressed while hovered, including on Firefox).
       </Typography>
 
       <Typography variant='h3'>1. Uncontrolled</Typography>
@@ -38,7 +39,8 @@ export default function IteratorDemoPage() {
       <Typography variant='h3'>2. Controlled</Typography>
       <Stack
         direction='row'
-        sx={{ alignItems: 'center', gap: theme.spacing(1) }}
+        gap={1}
+        pad={0}
       >
         <Iterator
           value={count}
@@ -55,27 +57,34 @@ export default function IteratorDemoPage() {
         defaultValue={4}
       />
 
-      <Typography variant='h3'>4. Disabled</Typography>
+      <Typography variant='h3'>4. Wheel behavior</Typography>
+      <Iterator
+        defaultValue={2}
+        wheelBehavior='hover'
+      />
+
+      <Typography variant='h3'>5. Disabled</Typography>
       <Iterator
         defaultValue={5}
         disabled
       />
 
-      <Typography variant='h3'>5. FormControl</Typography>
+      <Typography variant='h3'>6. FormControl</Typography>
       <FormControl
         useStore={useFormStore}
         onSubmitValues={(vals) => alert(JSON.stringify(vals))}
       >
         <Stack
           direction='row'
-          compact
+          gap={1}
+          pad={0}
         >
           <Iterator name='amount' />
           <Button type='submit'>Submit</Button>
         </Stack>
       </FormControl>
 
-      <Typography variant='h3'>6. Theme toggle</Typography>
+      <Typography variant='h3'>7. Theme toggle</Typography>
       <Button
         variant='outlined'
         onClick={toggleMode}

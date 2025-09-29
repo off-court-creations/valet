@@ -39,7 +39,7 @@
     "category": "fields",
     "summary": "Iterator component",
     "slug": "components/fields/iterator",
-    "status": "unstable"
+    "status": "experimental"
   },
   {
     "name": "MetroSelect",

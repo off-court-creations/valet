@@ -23,7 +23,7 @@ export default function CuratedExamples({ title = 'Examples', examples }: Curate
   return (
     <Panel fullWidth>
       <Typography variant='h4'>{title}</Typography>
-      <Stack sx={{ gap: '0.5rem' }}>
+      <Stack gap={0.5}>
         {examples.map((ex) => (
           <LiveCodePreview
             key={ex.id}
