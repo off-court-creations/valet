@@ -67,7 +67,10 @@ function HeroSlot() {
   return (
     <Panel variant='alt'>
       <Stack>
-        <Typography variant='h4' bold>
+        <Typography
+          variant='h4'
+          bold
+        >
           Component Under Test
         </Typography>
         <Box
@@ -78,12 +81,13 @@ function HeroSlot() {
             textAlign: 'center',
           }}
         >
-          <Typography variant='subtitle' sx={{ opacity: 0.8 }}>
+          <Typography
+            variant='subtitle'
+            sx={{ opacity: 0.8 }}
+          >
             Hero Slot
           </Typography>
-          <Typography>
-            Replace this with the component under test.
-          </Typography>
+          <Typography>Replace this with the component under test.</Typography>
         </Box>
       </Stack>
     </Panel>
@@ -95,7 +99,10 @@ export default function ComponentQCLab() {
     <Surface>
       <NavDrawer />
       <Stack>
-        <Typography variant='h2' bold>
+        <Typography
+          variant='h2'
+          bold
+        >
           Component QC Playground
         </Typography>
         <Typography variant='subtitle'>
@@ -103,12 +110,18 @@ export default function ComponentQCLab() {
         </Typography>
 
         {/* Top row: Hero slot spans full width */}
-        <Grid columns={1} adaptive>
+        <Grid
+          columns={1}
+          adaptive
+        >
           <HeroSlot />
         </Grid>
 
         {/* Surrounding layout – intentionally varied to exercise spacing + density */}
-        <Grid columns={3} adaptive>
+        <Grid
+          columns={3}
+          adaptive
+        >
           <Panel>
             <Tabs>
               <Tabs.Tab>Gallery</Tabs.Tab>
@@ -137,19 +150,32 @@ export default function ComponentQCLab() {
           </Panel>
 
           <Panel variant='alt'>
-            <Typography variant='h5' bold>
+            <Typography
+              variant='h5'
+              bold
+            >
               KPIs
             </Typography>
-            <Stack direction='row' wrap>
+            <Stack
+              direction='row'
+              wrap
+            >
               {[
                 ['Revenue', '$84,223'],
                 ['Users', '12,450'],
                 ['Tickets', '142'],
                 ['Latency', '112ms'],
               ].map(([label, value], i) => (
-                <Box key={i} background='var(--valet-bg)' sx={{ minWidth: '12rem', flex: '1 1 auto' }}>
+                <Box
+                  key={i}
+                  background='var(--valet-bg)'
+                  sx={{ minWidth: '12rem', flex: '1 1 auto' }}
+                >
                   <Typography variant='subtitle'>{label}</Typography>
-                  <Typography variant='h4' bold>
+                  <Typography
+                    variant='h4'
+                    bold
+                  >
                     {value}
                   </Typography>
                 </Box>
@@ -158,14 +184,20 @@ export default function ComponentQCLab() {
           </Panel>
 
           <Panel>
-            <Typography variant='h4' bold>
+            <Typography
+              variant='h4'
+              bold
+            >
               Release Notes
             </Typography>
             <Markdown data={md} />
           </Panel>
 
           <Panel>
-            <Typography variant='h4' bold>
+            <Typography
+              variant='h4'
+              bold
+            >
               Team Tasks
             </Typography>
             <List
@@ -179,7 +211,10 @@ export default function ComponentQCLab() {
           </Panel>
 
           <Panel>
-            <Typography variant='h4' bold>
+            <Typography
+              variant='h4'
+              bold
+            >
               Recent Orders
             </Typography>
             <Table<Order>
@@ -194,7 +229,10 @@ export default function ComponentQCLab() {
           </Panel>
 
           <Panel variant='alt'>
-            <Typography variant='h5' bold>
+            <Typography
+              variant='h5'
+              bold
+            >
               Info
             </Typography>
             <Typography>

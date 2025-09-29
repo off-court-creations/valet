@@ -4,26 +4,19 @@
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
 import { marked } from 'marked';
-import { markedHighlight } from 'marked-highlight';
 import hljs from 'highlight.js';
 import type { TokensList, Token, Tokens } from 'marked';
 import Stack from '../layout/Stack';
 import Panel from '../layout/Panel';
 import Typography, { type Variant } from '../primitives/Typography';
 import Image from '../primitives/Image';
+import Divider from '../primitives/Divider';
 import Table, { type TableColumn } from './Table';
 import { useTheme } from '../../system/themeStore';
 import { HLJS_LIGHT, HLJS_DARK } from '../../css/hljsThemes';
 
-marked.use(
-  markedHighlight({
-    langPrefix: 'hljs language-',
-    highlight(code, lang) {
-      const language = hljs.getLanguage(lang) ? lang : 'plaintext';
-      return hljs.highlight(code, { language }).value;
-    },
-  }),
-);
+// Enable GFM features (tables, strikethrough, task lists, etc.)
+marked.setOptions({ gfm: true });
 
 export interface MarkdownProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'> {
   /** Raw markdown text */
@@ -37,6 +30,49 @@ export interface MarkdownProps extends Omit<React.HTMLAttributes<HTMLDivElement>
 const LIGHT_BG = '#f6f8fa';
 const DARK_BG = '#0d1117';
 
+/*───────────────────────────────────────────────────────────*/
+/* URL sanitation                                             */
+const isSafeHref = (href?: string | null): string | null => {
+  if (!href) return null;
+  const trimmed = href.trim();
+  if (!trimmed) return null;
+  // allow anchors and relative URLs
+  if (
+    trimmed.startsWith('#') ||
+    trimmed.startsWith('/') ||
+    trimmed.startsWith('./') ||
+    trimmed.startsWith('../')
+  ) {
+    return trimmed;
+  }
+  const schemeMatch = trimmed.match(/^[a-zA-Z][a-zA-Z0-9+.-]*:/);
+  if (!schemeMatch) return trimmed; // relative without explicit scheme
+  const scheme = schemeMatch[0].slice(0, -1).toLowerCase();
+  const allowed = new Set(['http', 'https', 'mailto', 'tel', 'ftp']);
+  return allowed.has(scheme) ? trimmed : null;
+};
+
+const isSafeImageSrc = (src?: string | null): string | null => {
+  if (!src) return null;
+  const trimmed = src.trim();
+  if (!trimmed) return null;
+  if (
+    trimmed.startsWith('#') ||
+    trimmed.startsWith('/') ||
+    trimmed.startsWith('./') ||
+    trimmed.startsWith('../')
+  ) {
+    return trimmed;
+  }
+  const lower = trimmed.toLowerCase();
+  if (lower.startsWith('data:image/')) return trimmed;
+  const schemeMatch = trimmed.match(/^[a-zA-Z][a-zA-Z0-9+.-]*:/);
+  if (!schemeMatch) return trimmed;
+  const scheme = schemeMatch[0].slice(0, -1).toLowerCase();
+  const allowed = new Set(['http', 'https']);
+  return allowed.has(scheme) ? trimmed : null;
+};
+
 const renderInline = (tokens?: Token[]): React.ReactNode => {
   if (!tokens) return null;
   return tokens.map((t: Token, i: number) => {
@@ -45,31 +81,41 @@ const renderInline = (tokens?: Token[]): React.ReactNode => {
         return <strong key={i}>{renderInline((t as Tokens.Strong).tokens)}</strong>;
       case 'em':
         return <em key={i}>{renderInline((t as Tokens.Em).tokens)}</em>;
+      case 'del':
+        return <del key={i}>{renderInline((t as Tokens.Del).tokens)}</del>;
       case 'codespan':
         return <code key={i}>{(t as Tokens.Codespan).text}</code>;
       case 'link': {
         const link = t as Tokens.Link;
-        return (
+        const safe = isSafeHref(link.href);
+        return safe ? (
           <a
             key={i}
-            href={link.href}
+            href={safe}
             title={link.title ?? undefined}
           >
             {renderInline(link.tokens)}
           </a>
+        ) : (
+          <span key={i}>{renderInline(link.tokens)}</span>
         );
       }
       case 'image': {
         const img = t as Tokens.Image;
-        return (
+        const safe = isSafeImageSrc(img.href);
+        return safe ? (
           <Image
             key={i}
-            src={img.href}
+            src={safe}
             alt={img.text}
             sx={{ maxWidth: '100%' }}
           />
+        ) : (
+          <span key={i}>{img.text}</span>
         );
       }
+      case 'br':
+        return <br key={i} />;
       case 'text':
         return (t as Tokens.Text).text;
       default:
@@ -108,15 +154,36 @@ const renderTokens = (tokens: TokensList, codeBg: string): React.ReactNode =>
       }
       case 'list': {
         const list = t as Tokens.List;
+        const isOrdered = !!list.ordered;
+        const ListTag = isOrdered ? 'ol' : 'ul';
+        const start = isOrdered && typeof list.start === 'number' ? list.start : undefined;
         return (
-          <ul
+          <ListTag
             key={i}
+            {...(isOrdered && start ? { start } : {})}
             style={{ paddingLeft: '1.25rem' }}
           >
             {list.items.map((item: Tokens.ListItem, j: number) => (
-              <li key={j}>{renderInline(item.tokens)}</li>
+              <li key={j}>
+                {item.task ? (
+                  <>
+                    <input
+                      type='checkbox'
+                      checked={!!item.checked}
+                      readOnly
+                      disabled
+                      aria-readonly='true'
+                      aria-checked={!!item.checked}
+                      style={{ marginRight: '0.5rem' }}
+                    />
+                    {renderInline(item.tokens)}
+                  </>
+                ) : (
+                  renderInline(item.tokens)
+                )}
+              </li>
             ))}
-          </ul>
+          </ListTag>
         );
       }
       case 'code': {
@@ -140,18 +207,38 @@ const renderTokens = (tokens: TokensList, codeBg: string): React.ReactNode =>
           </Panel>
         );
       }
+      case 'blockquote': {
+        const bq = t as Tokens.Blockquote;
+        return (
+          <Panel
+            key={i}
+            variant='alt'
+            sx={{
+              borderLeft: '4px solid var(--valet-divider, rgba(0,0,0,0.12))',
+              padding: '0.5rem 0.75rem',
+              margin: '0.5rem 0',
+            }}
+          >
+            {renderTokens(bq.tokens as unknown as TokensList, codeBg)}
+          </Panel>
+        );
+      }
+      case 'hr':
+        return <Divider key={i} />;
       case 'table': {
         const table = t as Tokens.Table;
-        const columns: TableColumn<Record<string, string>>[] = table.header.map(
+        const columns: TableColumn<Record<string, React.ReactNode>>[] = table.header.map(
           (h: Tokens.TableCell, idx: number) => ({
             header: renderInline(h.tokens),
-            accessor: idx.toString() as keyof Record<string, string>,
+            accessor: idx.toString() as keyof Record<string, React.ReactNode>,
+            align: (table.align?.[idx] as 'left' | 'center' | 'right' | null) ?? undefined,
           }),
         );
         const data = table.rows.map((row: Tokens.TableCell[]) => {
-          const obj: Record<string, string> = {};
+          const obj: Record<string, React.ReactNode> = {};
           row.forEach((cell: Tokens.TableCell, idx: number) => {
-            obj[idx] = cell.text;
+            // Preserve inline formatting within cells
+            obj[idx] = renderInline(cell.tokens) ?? cell.text;
           });
           return obj;
         });
