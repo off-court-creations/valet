@@ -3,7 +3,7 @@
   "category": "layout",
   "slug": "components/layout/panel",
   "summary": "Panel component",
-  "status": "stable",
+  "status": "experimental",
   "aliases": [
     "panel",
     "card",

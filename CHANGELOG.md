@@ -30,7 +30,7 @@ All notable changes to this project will be documented in this file. The format 
    - Wheel steps only when focused by default; `'hover'` mode is opt-in
    - Keyboard: ArrowUp/Down step; PageUp/Down big-step; Home/End to bounds; Enter commits; Escape reverts
    - Plus/minus icons use bold glyphs for readability (`mdi:plus-thick`/`mdi:minus-thick`)
-  - Docs usage spacing refined to use `gap`/`pad` props (no `sx`)
+ - Docs usage spacing refined to use `gap`/`pad` props (no `sx`)
  - List: `focusMode` prop to control row focus behavior
    - `auto` (default): non-selectable rows are not tabbable; selectable lists use roving focus
    - `row`: every row is tabbable (opt-in; not recommended for long lists)
@@ -47,7 +47,12 @@ All notable changes to this project will be documented in this file. The format 
   - Back-compat `Progress` wrapper remains (maps legacy `variant`/`mode`/`showLabel`)
   - Fewer props; more control via CSS vars and sensible defaults
   - Improved visuals: ring track + rounded caps; subtle indeterminate motion
-  - Tight ARIA: role, value range, and indeterminate implied by omitted `value`
+ - Tight ARIA: role, value range, and indeterminate implied by omitted `value`
+
+ 
+### Removed
+
+- Skeleton: remove component from library, docs, and MCP data.
 
 ### Fixed
 

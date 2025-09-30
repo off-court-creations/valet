@@ -8,7 +8,6 @@ export * from './components/layout/Modal';
 export * from './components/primitives/Progress';
 export * from './components/primitives/Video';
 export * from './components/primitives/Image';
-export * from './components/primitives/Skeleton';
 export * from './components/primitives/Divider';
 export * from './components/primitives/WebGLCanvas';
 

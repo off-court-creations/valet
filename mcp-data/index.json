@@ -196,13 +196,6 @@
     "status": "stable"
   },
   {
-    "name": "Skeleton",
-    "category": "primitives",
-    "summary": "Skeleton component",
-    "slug": "components/primitives/skeleton",
-    "status": "unstable"
-  },
-  {
     "name": "Typography",
     "category": "primitives",
     "summary": "Typography component",

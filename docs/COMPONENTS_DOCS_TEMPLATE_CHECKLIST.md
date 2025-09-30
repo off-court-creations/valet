@@ -34,7 +34,6 @@ Legend: [x] uses new system, [ ] legacy
 - [x] components/primitives/IconDemoPage.tsx
 - [x] components/primitives/ImageDemo.tsx
  - [x] components/primitives/ProgressDemo.tsx
- - [x] components/primitives/SkeletonDemo.tsx
 - [x] components/primitives/VideoDemo.tsx
 
 ## Fields

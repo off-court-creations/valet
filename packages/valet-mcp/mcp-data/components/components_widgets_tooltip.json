@@ -3,7 +3,7 @@
   "category": "widgets",
   "slug": "components/widgets/tooltip",
   "summary": "Tooltip component",
-  "status": "golden",
+  "status": "experimental",
   "aliases": [
     "tooltip",
     "hint"

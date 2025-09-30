@@ -3,7 +3,7 @@
   "category": "layout",
   "slug": "components/layout/accordion",
   "summary": "Accordion component",
-  "status": "experimental",
+  "status": "unstable",
   "aliases": [
     "accordion",
     "expander"

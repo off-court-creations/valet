@@ -3,7 +3,7 @@
   "category": "primitives",
   "slug": "components/primitives/divider",
   "summary": "Divider component",
-  "status": "stable",
+  "status": "experimental",
   "aliases": [
     "divider",
     "rule",

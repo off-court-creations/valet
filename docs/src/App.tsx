@@ -45,7 +45,6 @@ const AccordionConstrainedDemoPage = page(
 const TabsDemoPage = page(() => import('./pages/components/layout/TabsDemo'));
 const SliderDemoPage = page(() => import('./pages/components/field/SliderDemo'));
 const ProgressDemoPage = page(() => import('./pages/components/primitives/ProgressDemo'));
-const SkeletonDemoPage = page(() => import('./pages/components/primitives/SkeletonDemo'));
 const SelectDemoPage = page(() => import('./pages/components/field/SelectDemo'));
 const TablePlaygroundPage = page(() => import('./pages/components/widgets/TableDemo'));
 const ListDemoPage = page(() => import('./pages/components/layout/ListDemoPage'));
@@ -248,10 +247,6 @@ export function App() {
         <Route
           path='/progress-demo'
           element={<ProgressDemoPage />}
-        />
-        <Route
-          path='/skeleton-demo'
-          element={<SkeletonDemoPage />}
         />
         <Route
           path='/select-demo'

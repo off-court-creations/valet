@@ -370,6 +370,11 @@
         "required": false
       },
       {
+        "name": "onCommit",
+        "type": "(value: number) => void",
+        "required": false
+      },
+      {
         "name": "name",
         "type": "string",
         "required": false
@@ -388,6 +393,26 @@
         "name": "step",
         "type": "number",
         "required": false
+      },
+      {
+        "name": "commitOnChange",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "roundToStep",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "wheelBehavior",
+        "type": "'off' | 'focus' | 'hover'",
+        "required": false,
+        "enumValues": [
+          "off",
+          "focus",
+          "hover"
+        ]
       },
       {
         "name": "width",
@@ -412,6 +437,10 @@
     "events": [
       {
         "name": "onChange",
+        "payloadType": "number"
+      },
+      {
+        "name": "onCommit",
         "payloadType": "number"
       }
     ],
@@ -2817,19 +2846,29 @@
         "required": false
       },
       {
-        "name": "onReorder",
-        "type": "(items: T[]) => void",
+        "name": "reorderable",
+        "type": "boolean",
         "required": false
       },
       {
-        "name": "reorderable",
-        "type": "boolean",
+        "name": "onReorder",
+        "type": "(items: T[]) => void",
         "required": false
       },
       {
         "name": "selectable",
         "type": "boolean",
         "required": false
+      },
+      {
+        "name": "focusMode",
+        "type": "'auto' | 'row' | 'none'",
+        "required": false,
+        "enumValues": [
+          "auto",
+          "row",
+          "none"
+        ]
       },
       {
         "name": "selected",
@@ -2847,6 +2886,16 @@
         "required": false
       },
       {
+        "name": "getKey",
+        "type": "(item: T, index: number) => React.Key",
+        "required": false
+      },
+      {
+        "name": "emptyPlaceholder",
+        "type": "React.ReactNode",
+        "required": false
+      },
+      {
         "name": "sx",
         "type": "Sx",
         "required": false
@@ -2859,7 +2908,10 @@
         "style"
       ]
     },
-    "cssVars": [],
+    "cssVars": [
+      "--valet-bg",
+      "--valet-text-color"
+    ],
     "cssPresets": [],
     "events": [
       {
@@ -2878,6 +2930,9 @@
       },
       {
         "name": "getSubtitle"
+      },
+      {
+        "name": "emptyPlaceholder"
       }
     ],
     "sourceFiles": [
@@ -2967,6 +3022,10 @@
       }
     ],
     "cssVars": [
+      "--valet-modal-duration",
+      "--valet-modal-easing",
+      "--valet-modal-z-backdrop",
+      "--valet-modal-z",
       "--valet-modal-radius"
     ],
     "cssPresets": [],
@@ -3271,6 +3330,11 @@
         "required": false
       },
       {
+        "name": "name",
+        "type": "string",
+        "required": false
+      },
+      {
         "name": "size",
         "type": "AvatarSize",
         "required": false,
@@ -3289,9 +3353,31 @@
         "default": "'identicon'"
       },
       {
+        "name": "preferFallback",
+        "type": "boolean",
+        "required": false,
+        "default": "false"
+      },
+      {
+        "name": "fallback",
+        "type": "'initials' | 'placeholder'",
+        "required": false,
+        "default": "'initials'",
+        "enumValues": [
+          "initials",
+          "placeholder"
+        ]
+      },
+      {
         "name": "sx",
         "type": "Sx",
         "required": false
+      },
+      {
+        "name": "loading",
+        "type": "unknown",
+        "required": false,
+        "default": "'lazy'"
       }
     ],
     "domPassthrough": {
@@ -3300,7 +3386,9 @@
         "style"
       ]
     },
-    "cssVars": [],
+    "cssVars": [
+      "--valet-font-heading"
+    ],
     "cssPresets": [],
     "events": [],
     "actions": [],
@@ -3439,7 +3527,6 @@
         "name": "objectFit",
         "type": "'cover' | 'contain' | 'fill' | 'none' | 'scale-down'",
         "required": false,
-        "default": "'cover'",
         "enumValues": [
           "cover",
           "contain",
@@ -3449,19 +3536,18 @@
         ]
       },
       {
-        "name": "rounded",
-        "type": "number | string",
-        "required": false
-      },
-      {
         "name": "lazy",
         "type": "boolean",
-        "required": false,
-        "default": "false"
+        "required": false
       },
       {
         "name": "placeholder",
         "type": "string",
+        "required": false
+      },
+      {
+        "name": "aspectRatio",
+        "type": "number | string",
         "required": false
       },
       {
@@ -3515,22 +3601,23 @@
       },
       {
         "name": "size",
-        "type": "ProgressSize | number | string",
+        "type": "number | string",
+        "required": false
+      },
+      {
+        "name": "thickness",
+        "type": "number | string",
         "required": false
       },
       {
         "name": "showLabel",
         "type": "boolean",
-        "required": false
+        "required": false,
+        "deprecated": true
       },
       {
         "name": "color",
-        "type": "string | undefined",
-        "required": false
-      },
-      {
-        "name": "sx",
-        "type": "Sx",
+        "type": "string",
         "required": false
       },
       {
@@ -3539,13 +3626,8 @@
         "required": false
       },
       {
-        "name": "fitChild",
-        "type": "boolean",
-        "required": false
-      },
-      {
-        "name": "childClearance",
-        "type": "number",
+        "name": "sx",
+        "type": "Sx",
         "required": false
       }
     ],
@@ -3556,6 +3638,7 @@
       ]
     },
     "cssVars": [
+      "--valet-progress-radius",
       "--valet-text-color"
     ],
     "cssPresets": [],
@@ -3568,52 +3651,6 @@
     ],
     "sourceFiles": [
       "src/components/primitives/Progress.tsx"
-    ]
-  },
-  "Skeleton": {
-    "name": "Skeleton",
-    "category": "primitives",
-    "slug": "components/primitives/skeleton",
-    "summary": "Skeleton component",
-    "props": [
-      {
-        "name": "loading",
-        "type": "boolean",
-        "required": false
-      },
-      {
-        "name": "variant",
-        "type": "SkeletonVariant",
-        "required": false
-      },
-      {
-        "name": "icon",
-        "type": "React.ReactNode",
-        "required": false
-      },
-      {
-        "name": "sx",
-        "type": "Sx",
-        "required": false
-      }
-    ],
-    "domPassthrough": {
-      "element": "span",
-      "omitted": [
-        "style"
-      ]
-    },
-    "cssVars": [],
-    "cssPresets": [],
-    "events": [],
-    "actions": [],
-    "slots": [
-      {
-        "name": "icon"
-      }
-    ],
-    "sourceFiles": [
-      "src/components/primitives/Skeleton.tsx"
     ]
   },
   "Typography": {
@@ -4214,7 +4251,9 @@
         "style"
       ]
     },
-    "cssVars": [],
+    "cssVars": [
+      "--valet-divider"
+    ],
     "cssPresets": [],
     "events": [],
     "actions": [],

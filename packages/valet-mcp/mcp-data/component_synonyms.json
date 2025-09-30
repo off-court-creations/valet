@@ -216,15 +216,6 @@
   "loader": [
     "Progress"
   ],
-  "skeleton": [
-    "Skeleton"
-  ],
-  "placeholder": [
-    "Skeleton"
-  ],
-  "shimmer": [
-    "Skeleton"
-  ],
   "typography": [
     "Typography"
   ],

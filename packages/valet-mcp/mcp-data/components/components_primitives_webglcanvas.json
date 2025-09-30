@@ -3,7 +3,7 @@
   "category": "primitives",
   "slug": "components/primitives/webglcanvas",
   "summary": "WebGLCanvas component",
-  "status": "stable",
+  "status": "experimental",
   "aliases": [
     "webgl",
     "webgl2",

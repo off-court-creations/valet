@@ -3,7 +3,7 @@
   "category": "widgets",
   "slug": "components/widgets/markdown",
   "summary": "Markdown component",
-  "status": "stable",
+  "status": "experimental",
   "aliases": [
     "markdown",
     "md",
@@ -32,7 +32,9 @@
       "style"
     ]
   },
-  "cssVars": [],
+  "cssVars": [
+    "--valet-divider"
+  ],
   "cssPresets": [],
   "events": [],
   "actions": [],
@@ -42,7 +44,15 @@
     "Prefer concise content. Split very long documents into sections with clear headings.",
     "Use fenced code blocks with a language hint for syntax highlighting.",
     "Avoid relying on raw HTML inside Markdown; prefer pure Markdown for predictability.",
-    "Choose `codeBackground` to ensure code blocks maintain sufficient contrast across themes."
+    "Choose `codeBackground` to ensure code blocks maintain sufficient contrast across themes.",
+    "Use descriptive link text. For internal navigation in SPAs, prefer router links or intercept anchors to avoid full page reloads.",
+    "Maintain a proper heading hierarchy (h1 → h2 → h3). Keep one top-level title per page and use lower levels within Markdown.",
+    "Always include meaningful alt text on images; keep images responsive and reasonably sized.",
+    "Keep tables concise, include a header row, and use column alignment markers (:-, :-:, -:) for clarity.",
+    "Treat GFM task list checkboxes as status indicators; don’t expect them to be interactive in rendered Markdown.",
+    "For advanced code UX (copy/download, long snippets), use the dedicated CodeBlock widget instead of plain fenced blocks.",
+    "If enabling raw HTML rendering in the future, run content through a robust sanitizer before passing to Markdown.",
+    "Avoid huge images and extremely long single documents. Split content and load lazily when possible for performance."
   ],
   "examples": [
     {
@@ -59,6 +69,56 @@
       "id": "markdown-table",
       "title": "Table example",
       "code": "<Markdown data={`| Fruit | Colour |\\n| ----- | ------ |\\n| Apple | Red    |\\n| Pear  | Green  |`} />",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {
+        "data": ""
+      }
+    },
+    {
+      "id": "markdown-lists-tasks",
+      "title": "Ordered lists and task lists",
+      "code": "<Markdown data={`### Lists & Tasks\\n\\n- Item one\\n- Item two with **bold** and a [link](https://example.com)\\n\\n1. First\\n2. Second\\n3. Third\\n\\n- [ ] Unchecked task\\n- [x] Completed task\\n- [ ] Partially **formatted** task with \\`code\\``} />",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {
+        "data": ""
+      }
+    },
+    {
+      "id": "markdown-quote-hr",
+      "title": "Blockquote and horizontal rule",
+      "code": "<Markdown data={`> Blockquote with nested **emphasis** and a link to [docs](https://react.dev).\\n>\\n> - Point A\\n> - Point B\\n\\n---\\n\\nSoft break below:  \\nSecond line (two spaces above)`} />",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {
+        "data": ""
+      }
+    },
+    {
+      "id": "markdown-table-aligned",
+      "title": "Table with alignment and inline formatting",
+      "code": "<Markdown data={`| Feature | Support | Notes |\\n|:--------|:-------:|------:|\\n| Bold    |  yes    | **strong** |\\n| Code    |  yes    | \\`inline\\` & blocks |\\n| Links   |  yes    | [safe](https://example.com) |`} />",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {
+        "data": ""
+      }
+    },
+    {
+      "id": "markdown-links-images",
+      "title": "Links, mailto, and sanitized unsafe link; image",
+      "code": "<Markdown data={`Safe: [archway](https://archway.design)\\n\\nMail: [email](mailto:test@example.com)\\n\\nUnsafe (sanitized): [do not click](javascript:alert(1))\\n\\n![Placeholder](https://placehold.co/160x80/png)`} />",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {
+        "data": ""
+      }
+    },
+    {
+      "id": "markdown-code-fallback",
+      "title": "Code highlighting and unknown language fallback",
+      "code": "<Markdown data={`\\u0060\\u0060\\u0060ts\\nconst greet = (name: string) => 'Hello, ' + name;\\n\\u0060\\u0060\\u0060\\n\\n\\u0060\\u0060\\u0060brainfuck\\n>+[,.]  // unknown language; falls back to plaintext\\n\\u0060\\u0060\\u0060`} />",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {

@@ -3,7 +3,7 @@
   "category": "layout",
   "slug": "components/layout/box",
   "summary": "Box component",
-  "status": "golden",
+  "status": "stable",
   "aliases": [
     "box",
     "container"

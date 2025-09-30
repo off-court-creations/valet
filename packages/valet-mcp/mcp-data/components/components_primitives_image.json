@@ -3,7 +3,7 @@
   "category": "primitives",
   "slug": "components/primitives/image",
   "summary": "Image component",
-  "status": "unstable",
+  "status": "experimental",
   "aliases": [
     "image",
     "img",
@@ -29,7 +29,6 @@
       "name": "objectFit",
       "type": "'cover' | 'contain' | 'fill' | 'none' | 'scale-down'",
       "required": false,
-      "default": "'cover'",
       "enumValues": [
         "cover",
         "contain",
@@ -39,19 +38,18 @@
       ]
     },
     {
-      "name": "rounded",
-      "type": "number | string",
-      "required": false
-    },
-    {
       "name": "lazy",
       "type": "boolean",
-      "required": false,
-      "default": "false"
+      "required": false
     },
     {
       "name": "placeholder",
       "type": "string",
+      "required": false
+    },
+    {
+      "name": "aspectRatio",
+      "type": "number | string",
       "required": false
     },
     {
@@ -79,7 +77,7 @@
     "Use responsive sources or sizes where appropriate; avoid full‑resolution assets in small spaces.",
     "Lazy‑load below‑the‑fold images; preload critical hero imagery.",
     "Avoid background images for content; prefer `<Image>` so a11y tools can interpret it.",
-    "Respect rounded corners and borders via tokens/presets for brand consistency."
+    "Apply rounded corners via a wrapper (Panel/Box) with `overflow: hidden`; do not rely on per‑component props."
   ],
   "examples": [],
   "sourceFiles": [
