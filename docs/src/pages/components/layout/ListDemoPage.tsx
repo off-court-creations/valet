@@ -3,7 +3,7 @@
 // Migrated to ComponentMetaPage – usage + playground
 // ─────────────────────────────────────────────────────────────
 import { useMemo, useState } from 'react';
-import { Stack, Panel, Typography, List, Switch, Button, useTheme } from '@archway/valet';
+import { Stack, Panel, Typography, List, Switch, Button, useTheme, Select } from '@archway/valet';
 import ComponentMetaPage from '../../../components/ComponentMetaPage';
 import ListMeta from '../../../../../src/components/layout/List.meta.json';
 
@@ -32,6 +32,7 @@ export default function ListDemoPage() {
   const [selectable, setSelectable] = useState(true);
   const [reorderable, setReorderable] = useState(true);
   const [selected, setSelected] = useState<Character | null>(null);
+  const [focusMode, setFocusMode] = useState<'auto' | 'row' | 'none'>('auto');
 
   const orderLabel = useMemo(() => items.map((i) => i.name).join(' → '), [items]);
   const orderHint = `Order: ${orderLabel}`;
@@ -111,6 +112,22 @@ export default function ListDemoPage() {
             Toggle light / dark
           </Button>
         </Stack>
+        <Stack
+          direction='row'
+          sx={{ alignItems: 'center', gap: 6 }}
+        >
+          <Typography>Focus mode</Typography>
+          <Select
+            name='focusMode'
+            value={focusMode}
+            onChange={(v) => setFocusMode(v as 'auto' | 'row' | 'none')}
+            sx={{ minWidth: '8rem' }}
+          >
+            <Select.Option value='auto'>auto</Select.Option>
+            <Select.Option value='row'>row</Select.Option>
+            <Select.Option value='none'>none</Select.Option>
+          </Select>
+        </Stack>
       </Panel>
 
       <Panel fullWidth>
@@ -121,6 +138,7 @@ export default function ListDemoPage() {
           striped={striped}
           hoverable={hoverable}
           selectable={selectable}
+          focusMode={focusMode}
           reorderable={reorderable}
           selected={selected}
           onSelectionChange={(it) => setSelected(it)}

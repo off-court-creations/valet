@@ -30,7 +30,11 @@ All notable changes to this project will be documented in this file. The format 
    - Wheel steps only when focused by default; `'hover'` mode is opt-in
    - Keyboard: ArrowUp/Down step; PageUp/Down big-step; Home/End to bounds; Enter commits; Escape reverts
    - Plus/minus icons use bold glyphs for readability (`mdi:plus-thick`/`mdi:minus-thick`)
-   - Docs usage spacing refined to use `gap`/`pad` props (no `sx`)
+  - Docs usage spacing refined to use `gap`/`pad` props (no `sx`)
+ - List: `focusMode` prop to control row focus behavior
+   - `auto` (default): non-selectable rows are not tabbable; selectable lists use roving focus
+   - `row`: every row is tabbable (opt-in; not recommended for long lists)
+   - `none`: rows are not in the tab order; programmatic focus only
 
  - Image: simplify and promote to `stable`
    - Remove custom IntersectionObserver lazy logic; rely on native `loading="lazy"`
@@ -55,7 +59,16 @@ All notable changes to this project will be documented in this file. The format 
  - Iterator: Disabled field now dims text/border to match disabled icon buttons; `readOnly` respected across wheel/buttons/keyboard; typing no longer forces premature commit unless `commitOnChange` is enabled.
  - Image: respect `draggable` when true; no longer prevents dragstart unconditionally
  - Accordion: flip chevron orientation so collapsed shows down and expanded shows up.
-  - Accordion: divider borders now fade using theme motion tokens on hover; selected (open) item keeps dividers visible when hovered.
+ - Accordion: divider borders now fade using theme motion tokens on hover; selected (open) item keeps dividers visible when hovered.
+
+- List: ground‑up rewrite for simplicity and function
+  - Unified pointer-based reordering (mouse/touch/pen), plus Alt+Arrow keyboard reorder
+  - Cleaner selection with roving tabIndex and Arrow/Enter/Space navigation
+  - Optional `getKey(item, index)` for stable keys; `emptyPlaceholder` for empty states
+  - Simpler styling (striped/hover/selected) with fewer side-effects; retains presets and `sx`
+ - Accessibility: List no longer forces non-selectable rows into the tab order
+   - Non-selectable lists keep `tabIndex` unset; selectable lists retain roving focus
+   - Adds explicit override via `focusMode` for advanced use cases
 
 ## [0.32.0]
 

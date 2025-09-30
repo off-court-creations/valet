@@ -1,6 +1,6 @@
 {
   "name": "Accordion",
-  "status": "experimental",
+  "status": "unstable",
   "aliases": ["accordion", "expander"],
   "docs": {
     "bestPractices": [

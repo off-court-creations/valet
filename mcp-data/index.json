@@ -88,7 +88,7 @@
     "category": "layout",
     "summary": "Accordion component",
     "slug": "components/layout/accordion",
-    "status": "experimental"
+    "status": "unstable"
   },
   {
     "name": "AppBar",
@@ -123,7 +123,7 @@
     "category": "layout",
     "summary": "List component",
     "slug": "components/layout/list",
-    "status": "unstable"
+    "status": "experimental"
   },
   {
     "name": "Modal",
