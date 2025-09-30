@@ -2,7 +2,7 @@
 // src/components/widgets/CodeBlock.tsx  | valet
 // Reusable code block with Markdown highlighting, copy button, and snackbar feedback
 // ─────────────────────────────────────────────────────────────
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import IconButton from '../fields/IconButton';
 import { Markdown } from './Markdown';
 import Snackbar from './Snackbar';
@@ -27,6 +27,43 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
   const displayCode = isMultiline ? code.replace(/\n+$/, '') : code;
   const markdown = `\`\`\`${language}\n${displayCode}\n\`\`\``;
 
+  // Width awareness: detect horizontal overflow inside the rendered <pre>
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [stackControls, setStackControls] = useState(false);
+
+  useEffect(() => {
+    const checkOverflow = () => {
+      const root = containerRef.current;
+      if (!root) return;
+      const pre = root.querySelector('pre');
+      if (!pre) return;
+      const el = pre as HTMLElement;
+      // Compare scrollable width vs visible width
+      const overflow = el.scrollWidth - el.clientWidth > 1;
+      setStackControls(overflow);
+    };
+
+    // Initial check after paint
+    const id = window.requestAnimationFrame(checkOverflow);
+
+    // React to size/content changes
+    const ro = new ResizeObserver(checkOverflow);
+    const mo = new MutationObserver(checkOverflow);
+    const pre = containerRef.current?.querySelector('pre');
+    if (pre) {
+      ro.observe(pre);
+      mo.observe(pre, { childList: true, subtree: true, characterData: true });
+    }
+    const onResize = () => checkOverflow();
+    window.addEventListener('resize', onResize);
+    return () => {
+      window.cancelAnimationFrame(id);
+      window.removeEventListener('resize', onResize);
+      ro.disconnect();
+      mo.disconnect();
+    };
+  }, [code, language, mode]);
+
   const handleCopy = () => {
     navigator.clipboard.writeText(code).then(
       () => setCopied(true),
@@ -36,17 +73,21 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
 
   return (
     <div
+      ref={containerRef}
       style={{
         display: 'flex',
+        flexDirection: stackControls ? ('column' as const) : ('row' as const),
         alignItems: 'flex-start',
-        width: 'fit-content',
+        width: '100%',
       }}
     >
-      <Markdown
-        data={markdown}
-        codeBackground={mode === 'dark' ? '#0d1117' : '#f6f8fa'}
-        sx={{ margin: 0, flex: 1 }}
-      />
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <Markdown
+          data={markdown}
+          codeBackground={mode === 'dark' ? '#0d1117' : '#f6f8fa'}
+          sx={{ margin: 0, width: '100%' }}
+        />
+      </div>
       <IconButton
         variant='outlined'
         size='sm'
@@ -55,8 +96,8 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
         title={title ?? 'Copy'}
         onClick={handleCopy}
         sx={{
-          marginLeft: theme.spacing(0.5),
-          marginTop: theme.spacing(2),
+          marginLeft: stackControls ? 0 : theme.spacing(0.5),
+          marginTop: stackControls ? theme.spacing(0.5) : theme.spacing(2),
         }}
       />
       {copied && (

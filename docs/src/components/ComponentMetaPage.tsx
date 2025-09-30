@@ -67,10 +67,10 @@ export default function ComponentMetaPage({
       | 'info' = 'default';
     let variant: 'filled' | 'outlined' = 'filled';
     let label = s.charAt(0).toUpperCase() + s.slice(1);
-    if (s === 'golden') {
+    if (s === 'production') {
       color = 'tertiary';
       variant = 'filled';
-      label = 'Golden';
+      label = 'Production';
     } else if (s === 'stable') {
       color = 'primary';
       variant = 'filled';

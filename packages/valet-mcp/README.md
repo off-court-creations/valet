@@ -55,7 +55,7 @@ Notes:
 - valet__list_categories: `string[]`
 - valet__search_components: fuzzy search by `query`, with optional `category`, `status`, and `limit`
   - `category`: one of `primitives|fields|layout|widgets`
-  - `status`: `'golden'|'stable'|'experimental'|'unstable'|'deprecated'` (string or string[])
+  - `status`: `'production'|'stable'|'experimental'|'unstable'|'deprecated'` (string or string[])
 - valet__search_props: search by prop names (optionally filter by `category`)
 - valet__search_css_vars: search by CSS variable names (optionally filter by `category`)
 - valet__get_component: full doc (props, cssVars, examples, sourceFiles, version)

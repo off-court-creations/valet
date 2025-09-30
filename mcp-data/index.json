@@ -228,7 +228,7 @@
     "category": "widgets",
     "summary": "CodeBlock component",
     "slug": "components/widgets/codeblock",
-    "status": "unstable"
+    "status": "experimental"
   },
   {
     "name": "Dropzone",

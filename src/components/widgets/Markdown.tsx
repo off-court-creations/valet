@@ -196,9 +196,24 @@ const renderTokens = (tokens: TokensList, codeBg: string): React.ReactNode =>
             key={i}
             preset='codePanel'
             background={codeBg}
-            sx={{ margin: '0.5rem 0' }}
+            fullWidth
+            sx={{
+              margin: '0.5rem 0',
+              /* Ensure the code block fits container width and scrolls internally */
+              maxWidth: '100%',
+            }}
           >
-            <pre style={{ margin: 0, background: 'transparent' }}>
+            <pre
+              style={{
+                margin: 0,
+                background: 'transparent',
+                overflowX: 'auto',
+                width: '100%',
+                maxWidth: '100%',
+                /* keep whitespace to enable horizontal scroll */
+                whiteSpace: 'pre',
+              }}
+            >
               <code
                 className={`hljs language-${validLang}`}
                 dangerouslySetInnerHTML={{ __html: html }}

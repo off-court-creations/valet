@@ -1,6 +1,6 @@
 {
   "name": "CodeBlock",
-  "status": "unstable",
+  "status": "experimental",
   "aliases": ["codeblock", "code", "snippet"],
   "docs": {
     "bestPractices": [

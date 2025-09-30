@@ -13,8 +13,8 @@ import {
   type TableColumn,
 } from '@archway/valet';
 import { Chart as ChartJS, ArcElement, Legend } from 'chart.js';
-import type { Chart, ChartOptions, LegendItem } from 'chart.js';
-import { Pie } from 'react-chartjs-2';
+import type { ChartOptions, Plugin, ScriptableContext } from 'chart.js';
+import { Doughnut } from 'react-chartjs-2';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import NavDrawer from '../../components/NavDrawer';
 import type { DocMeta } from '../../types';
@@ -24,67 +24,73 @@ import {
   type ComponentStatus,
 } from '../../data/componentsStatus';
 
-const STATUS_BUCKETS = ['golden', 'stable', 'experimental', 'unstable', 'deprecated'] as const;
+const STATUS_BUCKETS = ['production', 'stable', 'experimental', 'unstable', 'deprecated'] as const;
 
 type StatusKey = (typeof STATUS_BUCKETS)[number];
 
 const STATUS_LABELS: Record<StatusKey, string> = {
-  golden: 'Golden',
+  production: 'Production',
   stable: 'Stable',
   experimental: 'Experimental',
   unstable: 'Unstable',
   deprecated: 'Deprecated',
 };
 
-ChartJS.register(ArcElement, Legend, ChartDataLabels);
+// Cool doughnut center label + soft shadow
+const DoughnutFxPlugin: Plugin<'doughnut'> = {
+  id: 'doughnutFx',
+  beforeDatasetDraw(chart, args) {
+    if (args.index !== 0) return;
+    const { ctx } = chart;
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.25)';
+    ctx.shadowBlur = 14;
+    ctx.shadowOffsetY = 8;
+  },
+  afterDatasetDraw(chart, args) {
+    if (args.index !== 0) return;
+    chart.ctx.restore();
+  },
+};
 
-function legendLabelsWithCounts(chart: Chart): LegendItem[] {
-  const generator = ChartJS.defaults.plugins.legend.labels.generateLabels;
-  const baseLabels = (typeof generator === 'function' ? generator(chart) : []) as LegendItem[];
+const CenterTextPlugin: Plugin<'doughnut'> = {
+  id: 'centerText',
+  afterDraw(chart, _args, opts) {
+    const meta = chart.getDatasetMeta(0);
+    const first = (meta?.data?.[0] ?? null) as unknown as { x: number; y: number } | null;
+    if (!first) return;
+    const ctx = chart.ctx as CanvasRenderingContext2D;
+    const {
+      value = 0,
+      label = '',
+      color = '#0f172a',
+    } = (opts as unknown as { value?: number; label?: string; color?: string }) ?? {};
+    ctx.save();
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = color;
+    ctx.font = '600 12px ui-sans-serif, system-ui, -apple-system';
+    ctx.fillText(label, first.x, first.y - 8);
+    ctx.fillStyle = color;
+    ctx.font = '800 22px ui-sans-serif, system-ui, -apple-system';
+    ctx.fillText(String(value), first.x, first.y + 12);
+    ctx.restore();
+  },
+};
 
-  return baseLabels
-    .filter((labelItem) => typeof labelItem.index === 'number')
-    .map((labelItem) => {
-      const datasetIndex = typeof labelItem.datasetIndex === 'number' ? labelItem.datasetIndex : 0;
-      const dataIndex = labelItem.index ?? 0;
-      const dataset = chart.data.datasets?.[datasetIndex];
-      const rawValue = dataset?.data?.[dataIndex];
-      const numericValue =
-        typeof rawValue === 'number'
-          ? rawValue
-          : Number.parseFloat(typeof rawValue === 'string' ? rawValue : '0');
+ChartJS.register(ArcElement, Legend, ChartDataLabels, DoughnutFxPlugin, CenterTextPlugin);
 
-      const safeValue = Number.isFinite(numericValue) ? Math.round(numericValue) : 0;
-
-      return {
-        ...labelItem,
-        text: `${labelItem.text} (${safeValue})`,
-      };
-    });
-}
+// Chart legend is disabled; we draw our own swatch legend.
 
 function pickReadableTextColor(hex: string): string {
   const normalized = hex.startsWith('#') ? hex.slice(1) : hex;
   if (normalized.length !== 6) return 'rgba(15, 23, 42, 0.88)';
-
   const r = Number.parseInt(normalized.slice(0, 2), 16) / 255;
   const g = Number.parseInt(normalized.slice(2, 4), 16) / 255;
   const b = Number.parseInt(normalized.slice(4, 6), 16) / 255;
-
-  const toLinear = (value: number) =>
-    value <= 0.03928 ? value / 12.92 : Math.pow((value + 0.055) / 1.055, 2.4);
-
+  const toLinear = (v: number) => (v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4));
   const luminance = 0.2126 * toLinear(r) + 0.7152 * toLinear(g) + 0.0722 * toLinear(b);
-
   return luminance > 0.55 ? 'rgba(15, 23, 42, 0.88)' : '#ffffff';
-}
-
-function resolveSliceColor(datasetColor: unknown, dataIndex: number): string {
-  if (Array.isArray(datasetColor)) {
-    const value = datasetColor[dataIndex];
-    return typeof value === 'string' ? value : '#334155';
-  }
-  return typeof datasetColor === 'string' ? datasetColor : '#334155';
 }
 
 function adjustHexColor(hex: string, amount: number): string {
@@ -105,30 +111,25 @@ function adjustHexColor(hex: string, amount: number): string {
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
 
-function resolveStatusColor(colors: Record<string, string>, status: StatusKey): string {
-  const directKey = `status.${status}`;
-  if (colors[directKey]) return colors[directKey];
+function hexToRgba(hex: string, alpha = 1): string {
+  const normalized = hex.startsWith('#') ? hex.slice(1) : hex;
+  if (normalized.length !== 6) return hex;
+  const r = Number.parseInt(normalized.slice(0, 2), 16);
+  const g = Number.parseInt(normalized.slice(2, 4), 16);
+  const b = Number.parseInt(normalized.slice(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
 
-  const primary = colors['primary'] ?? '#0E65C0';
-  const secondary = colors['secondary'] ?? '#45706C';
-  const tertiary = colors['tertiary'] ?? '#C0E6FF';
-  const error = colors['error'] ?? '#D32F2F';
-  const backgroundAlt = colors['backgroundAlt'] ?? '#363636';
-
-  switch (status) {
-    case 'golden':
-      return adjustHexColor(primary, 0.35);
-    case 'stable':
-      return secondary;
-    case 'experimental':
-      return adjustHexColor(tertiary, -0.15);
-    case 'unstable':
-      return adjustHexColor(error, 0.05);
-    case 'deprecated':
-      return adjustHexColor(backgroundAlt, -0.2);
-    default:
-      return '#334155';
-  }
+function resolveStatusColor(_colors: Record<string, string>, status: StatusKey): string {
+  // Fixed palette for status buckets
+  const map: Record<StatusKey, string> = {
+    production: '#2563EB', // blue — clearly distinct from yellow
+    stable: '#22C55E', // green
+    experimental: '#EAB308', // yellow
+    unstable: '#EF4444', // red
+    deprecated: '#000000', // black
+  };
+  return map[status];
 }
 
 export const meta: DocMeta = {
@@ -169,37 +170,81 @@ export default function ComponentStatusPage() {
     }, base);
   }, [data]);
 
+  const total = useMemo(
+    () => STATUS_BUCKETS.reduce((acc, s) => acc + (countsByStatus[s] ?? 0), 0),
+    [countsByStatus],
+  );
+
   const chartData = useMemo(() => {
+    // Gradient background per slice using scriptable backgroundColor
+    const backgroundColor = (ctx: ScriptableContext<'doughnut'>) => {
+      const idx: number = ctx.dataIndex ?? 0;
+      const key = (STATUS_BUCKETS[idx] ?? 'stable') as StatusKey;
+      const base = statusColors[key] ?? '#64748b';
+      const chart = ctx.chart;
+      const area = chart?.chartArea;
+      const c: CanvasRenderingContext2D | undefined = chart?.ctx;
+      if (!area || !c) return base;
+      const x = (area.left + area.right) / 2;
+      const y = (area.top + area.bottom) / 2;
+      const r = Math.min(area.right - area.left, area.bottom - area.top) / 2;
+      const grad = c.createRadialGradient(x, y, Math.max(6, r * 0.05), x, y, r);
+      grad.addColorStop(0, adjustHexColor(base, 0.35));
+      grad.addColorStop(0.7, base);
+      grad.addColorStop(1, adjustHexColor(base, -0.12));
+      return grad;
+    };
+
     return {
       labels: STATUS_BUCKETS.map((status) => STATUS_LABELS[status]),
       datasets: [
         {
           label: 'Component count',
           data: STATUS_BUCKETS.map((status) => countsByStatus[status]),
-          backgroundColor: STATUS_BUCKETS.map((status) => statusColors[status]),
-          borderWidth: 0,
+          backgroundColor,
+          borderColor: STATUS_BUCKETS.map((status) => adjustHexColor(statusColors[status], 0.2)),
+          borderWidth: 2,
+          offset: 2,
+          hoverOffset: 0,
+          circumference: 360,
+          rotation: -90,
         },
       ],
     };
   }, [countsByStatus, statusColors]);
 
-  const chartOptions = useMemo<ChartOptions<'pie'>>(
+  const chartOptions = useMemo<ChartOptions<'doughnut'>>(
     () => ({
       responsive: true,
       maintainAspectRatio: false,
-      events: ['click'],
+      // No hover/selection interactions
+      events: [],
+      layout: { padding: 12 },
+      cutout: '62%',
+      animation: {
+        animateRotate: true,
+        animateScale: true,
+        duration: 1200,
+        easing: 'easeOutElastic',
+      },
+      elements: {
+        arc: {
+          borderJoinStyle: 'round',
+          borderRadius: 10,
+        },
+      },
       plugins: {
         legend: {
-          position: 'bottom',
-          labels: {
-            usePointStyle: true,
-            padding: 16,
-            generateLabels: (chart) => legendLabelsWithCounts(chart),
-          },
+          display: false,
         },
         tooltip: {
           enabled: false,
         },
+        centerText: {
+          value: total,
+          label: 'Components',
+          color: theme.colors['text'],
+        } as unknown as object,
         datalabels: {
           display: (context) => {
             const rawValue = context.dataset.data?.[context.dataIndex];
@@ -209,28 +254,37 @@ export default function ComponentStatusPage() {
                 : Number.parseFloat(typeof rawValue === 'string' ? rawValue : '0');
             return Number.isFinite(value) && value > 0;
           },
-          formatter: (value, context) => {
+          formatter: (value) => {
             const numeric = typeof value === 'number' ? value : Number(value);
             const safeValue = Number.isFinite(numeric) ? Math.round(numeric) : 0;
-            const status = STATUS_BUCKETS[context.dataIndex] ?? 'stable';
-            const label = STATUS_LABELS[status] ?? 'Status';
-            return `${label}\n${safeValue}`;
+            return `${safeValue}`;
           },
           color: (context) => {
-            const datasetColor = context.dataset.backgroundColor;
-            const sliceColor = resolveSliceColor(datasetColor, context.dataIndex);
-            return pickReadableTextColor(sliceColor);
+            const key = (STATUS_BUCKETS[context.dataIndex ?? 0] ?? 'stable') as StatusKey;
+            const base = statusColors[key] ?? '#0f172a';
+            return pickReadableTextColor(base);
           },
-          font: {
-            weight: 700,
-            size: 14,
+          font: (context) => {
+            const meta = context.chart.getDatasetMeta(context.datasetIndex ?? 0);
+            const arc = meta?.data?.[context.dataIndex ?? 0] as unknown as {
+              outerRadius?: number;
+              innerRadius?: number;
+            };
+            const outer = (arc?.outerRadius as number) ?? 0;
+            const inner = (arc?.innerRadius as number) ?? 0;
+            const thickness = Math.max(outer - inner, 1);
+            // Increase label size while staying within ring thickness
+            const size = Math.max(13, Math.min(20, Math.floor(thickness * 0.6)));
+            return { weight: 'bold', size };
           },
+          anchor: 'center',
+          align: 'center',
+          offset: 0,
           clamp: true,
-          textAlign: 'center',
         },
       },
     }),
-    [],
+    [statusColors, total, theme],
   );
 
   const columns: TableColumn<ComponentStatus>[] = [
@@ -250,21 +304,46 @@ export default function ComponentStatusPage() {
         >
           Component Status
         </Typography>
-        <Typography>
-          This page reflects the status declared in each component&apos;s <code>*.meta.json</code>{' '}
-          sidecar. It is also embedded into the MCP data so external tools can reason about
-          stability.
-        </Typography>
-        <Panel fullWidth>
+        <Panel
+          fullWidth
+          preset='glassHolder'
+        >
           <Stack
             gap={2}
             sx={{ alignItems: 'center' }}
           >
-            <Typography variant='h3'>Status Distribution</Typography>
-            <div
-              style={{ width: '100%', maxWidth: 420, aspectRatio: '1 / 1', position: 'relative' }}
+            {/* Custom legend with color swatches */}
+            <Stack
+              direction='row'
+              gap={1}
+              sx={{ flexWrap: 'wrap', justifyContent: 'center', width: '100%' }}
             >
-              <Pie
+              {STATUS_BUCKETS.map((key) => (
+                <Stack
+                  key={key}
+                  direction='row'
+                  gap={0.5}
+                  sx={{ alignItems: 'center' }}
+                >
+                  <span
+                    aria-hidden
+                    style={{
+                      width: 12,
+                      height: 12,
+                      borderRadius: 3,
+                      background: statusColors[key],
+                      boxShadow: `0 0 0 1px ${hexToRgba(statusColors[key], 0.35)}`,
+                      display: 'inline-block',
+                    }}
+                  />
+                  <Typography variant='subtitle'>{STATUS_LABELS[key]}</Typography>
+                </Stack>
+              ))}
+            </Stack>
+            <div
+              style={{ width: '100%', maxWidth: 520, aspectRatio: '1 / 1', position: 'relative' }}
+            >
+              <Doughnut
                 data={chartData}
                 options={chartOptions}
                 aria-label='Component status distribution as pie chart'

@@ -12,19 +12,19 @@ export type ValetIndexItem = {
   category: string;
   summary: string;
   slug: string;
-  status?: 'golden' | 'stable' | 'experimental' | 'unstable' | 'deprecated';
+  status?: 'production' | 'stable' | 'experimental' | 'unstable' | 'deprecated';
 };
 
 // Status semantics (for clients/agents):
-// 'golden' > 'stable' > 'experimental' > 'unstable' > 'deprecated'
-// golden: very stable + polished; stable: production‑ready; experimental: new/iterating;
+// 'production' > 'stable' > 'experimental' > 'unstable' > 'deprecated'
+// production: very stable + polished; stable: production‑ready; experimental: new/iterating;
 // unstable: known issues; deprecated: slated for removal.
 export type ValetComponentDoc = {
   name: string;
   category: string;
   slug: string;
   summary: string;
-  status?: 'golden' | 'stable' | 'experimental' | 'unstable' | 'deprecated';
+  status?: 'production' | 'stable' | 'experimental' | 'unstable' | 'deprecated';
   description?: string;
   usage?: {
     purpose?: string | string[];

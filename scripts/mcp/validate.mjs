@@ -13,7 +13,7 @@ function validateComponent(c) {
   if (c.aliases && !Array.isArray(c.aliases)) problems.push('aliases must be an array');
   // status validation (REQUIRED and constrained)
   {
-    const allowedStatus = new Set(['golden', 'stable', 'experimental', 'unstable', 'deprecated']);
+    const allowedStatus = new Set(['production', 'stable', 'experimental', 'unstable', 'deprecated']);
     if (!c.status) {
       problems.push('missing status');
     } else if (!allowedStatus.has(c.status)) {
@@ -113,7 +113,7 @@ function main() {
         console.error(`[error] index/doc category mismatch: index='${item.category}' doc='${doc.category}'`);
         errors++;
       }
-      const allowedStatus = new Set(['golden', 'stable', 'experimental', 'unstable', 'deprecated']);
+      const allowedStatus = new Set(['production', 'stable', 'experimental', 'unstable', 'deprecated']);
       if (doc.status && !allowedStatus.has(doc.status)) {
         console.error(`[error] doc status invalid: ${doc.status}`);
         errors++;

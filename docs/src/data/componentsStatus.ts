@@ -9,10 +9,10 @@ export type ComponentStatus = {
   name: string;
   category: string;
   slug: string;
-  status: 'golden' | 'stable' | 'experimental' | 'unstable' | 'deprecated';
+  status: 'production' | 'stable' | 'experimental' | 'unstable' | 'deprecated';
 };
 
-const STATUS_VALUES = ['golden', 'stable', 'experimental', 'unstable', 'deprecated'] as const;
+const STATUS_VALUES = ['production', 'stable', 'experimental', 'unstable', 'deprecated'] as const;
 
 type StatusValue = (typeof STATUS_VALUES)[number];
 
