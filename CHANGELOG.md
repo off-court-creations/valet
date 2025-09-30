@@ -45,11 +45,17 @@ All notable changes to this project will be documented in this file. The format 
   - Arrow Up/Down, Left/Right, Home/End, and `*` siblings expand
   - ARIA `aria-level`, `aria-setsize`, `aria-posinset` on items
   - Docs NavDrawer now passes `aria-label` and is keyboard operable
+ - Accessibility: Accordion keyboard support now consistent across browsers (incl. Safari)
+   - Roving tabIndex on headers; Arrow Up/Down/Left/Right moves focus; Home/End jump
+   - Space/Enter toggle reliably without page scroll in Safari
+   - Disabled state dims with opacity and slight grayscale (Iterator-style), and is skipped by keyboard navigation
 - Docs: LiveCodePreview now executes function component examples (e.g. `() => <...>`), fixing MetroSelect “Controlled value” example rendering in the playground/examples.
 - Avatar: Gravatar fallback when neither `src` nor `email` is provided now resolves to a stable default image instead of a broken URL; default `loading="lazy"` for better performance.
 - Switch: set `type="button"` to avoid unintended form submissions when used inside a `<form>`.
  - Iterator: Disabled field now dims text/border to match disabled icon buttons; `readOnly` respected across wheel/buttons/keyboard; typing no longer forces premature commit unless `commitOnChange` is enabled.
  - Image: respect `draggable` when true; no longer prevents dragstart unconditionally
+ - Accordion: flip chevron orientation so collapsed shows down and expanded shows up.
+  - Accordion: divider borders now fade using theme motion tokens on hover; selected (open) item keeps dividers visible when hovered.
 
 ## [0.32.0]
 

@@ -11,7 +11,7 @@ export default defineConfig({
     host: true, // or '0.0.0.0' to listen on all interfaces
 
     // put a new ngrok link here if your free plan changes yours
-    allowedHosts: ['02ba80ef8c67.ngrok-free.app'],
+    allowedHosts: ['4a44bfaa9522.ngrok-free.app'],
 
     // Allow importing sidecar JSON files from the monorepo root
     fs: {
