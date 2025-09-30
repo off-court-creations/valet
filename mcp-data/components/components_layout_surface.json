@@ -3,7 +3,7 @@
   "category": "layout",
   "slug": "components/layout/surface",
   "summary": "Surface component",
-  "status": "golden",
+  "status": "stable",
   "aliases": [
     "surface",
     "hero"

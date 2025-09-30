@@ -114,7 +114,11 @@ export default function ModalDemoPage() {
 
       {/* 3. Controlled modal -------------------------------------------- */}
       <Typography variant='h3'>3. Controlled modal</Typography>
-      <Stack direction='row'>
+      <Stack
+        direction='row'
+        gap={2}
+        pad={0}
+      >
         <Button onClick={() => setControlledOpen(true)}>Open</Button>
         <Button onClick={() => setControlledOpen(false)}>Close</Button>
       </Stack>
@@ -143,7 +147,11 @@ export default function ModalDemoPage() {
 
       {/* 5. Size props --------------------------------------------------- */}
       <Typography variant='h3'>5. maxWidth & fullWidth</Typography>
-      <Stack direction='row'>
+      <Stack
+        direction='row'
+        gap={2}
+        pad={0}
+      >
         <Button onClick={() => setDialogOpen(true)}>maxWidth (default)</Button>
         <Button onClick={() => setControlledOpen(true)}>fullWidth</Button>
       </Stack>

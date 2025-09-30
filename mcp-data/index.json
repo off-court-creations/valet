@@ -32,7 +32,7 @@
     "category": "fields",
     "summary": "IconButton component",
     "slug": "components/fields/iconbutton",
-    "status": "golden"
+    "status": "stable"
   },
   {
     "name": "Iterator",
@@ -74,7 +74,7 @@
     "category": "fields",
     "summary": "Switch component",
     "slug": "components/fields/switch",
-    "status": "golden"
+    "status": "stable"
   },
   {
     "name": "TextField",
@@ -102,7 +102,7 @@
     "category": "layout",
     "summary": "Box component",
     "slug": "components/layout/box",
-    "status": "golden"
+    "status": "stable"
   },
   {
     "name": "Drawer",
@@ -151,7 +151,7 @@
     "category": "layout",
     "summary": "Surface component",
     "slug": "components/layout/surface",
-    "status": "golden"
+    "status": "stable"
   },
   {
     "name": "Tabs",
@@ -165,7 +165,7 @@
     "category": "primitives",
     "summary": "Avatar component",
     "slug": "components/primitives/avatar",
-    "status": "golden"
+    "status": "stable"
   },
   {
     "name": "Divider",
@@ -186,7 +186,7 @@
     "category": "primitives",
     "summary": "Image component",
     "slug": "components/primitives/image",
-    "status": "unstable"
+    "status": "experimental"
   },
   {
     "name": "Progress",

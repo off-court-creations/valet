@@ -1,4 +1,4 @@
-{ "name": "Surface", "status": "golden", "aliases": ["surface", "hero"], "docs": { "bestPractices": [
+{ "name": "Surface", "status": "stable", "aliases": ["surface", "hero"], "docs": { "bestPractices": [
   "Use exactly one surface per route. Mount it at the highest level and never nest surfaces so children can subscribe to a single store via useSurface.",
   "Prefer surface CSS variables over window APIs. Read --valet-screen-width and --valet-screen-height in styles (or query useSurface) instead of window.innerWidth to keep layout deterministic and testable.",
   "Build on createStyled. Components made with styled register automatically and expose --valet-el-width and --valet-el-height, which the surface updates via ResizeObserver for responsive sizing without layout thrash.",

@@ -1,8 +1,8 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/primitives/Image.tsx  | valet
-// responsive, lazy-loading <Image /> component
+// Simple, native-lazy <Image /> with sane defaults
 // ─────────────────────────────────────────────────────────────
-import React, { useRef, useState, useEffect } from 'react';
+import React from 'react';
 import { styled } from '../../css/createStyled';
 import { preset } from '../../css/stylePresets';
 import type { Presettable, Sx } from '../../types';
@@ -18,12 +18,12 @@ export interface ImageProps
   height?: number | string;
   /** Object-fit value */
   objectFit?: 'cover' | 'contain' | 'fill' | 'none' | 'scale-down';
-  /** Border radius */
-  rounded?: number | string;
-  /** Lazy load image when visible */
+  /** Use native browser lazy-loading */
   lazy?: boolean;
-  /** Placeholder src until loaded */
+  /** Optional lightweight placeholder shown behind while loading */
   placeholder?: string;
+  /** CSS aspect-ratio value (number ⇒ n/1) */
+  aspectRatio?: number | string;
   /** Inline styles (with CSS var support) */
   sx?: Sx;
 }
@@ -32,74 +32,72 @@ const Img = styled('img')<{
   $w?: string;
   $h?: string;
   $fit: string;
-  $radius?: string;
+  $ratio?: string;
 }>`
   display: block;
   width: ${({ $w }) => $w || 'auto'};
   height: ${({ $h }) => $h || 'auto'};
+  max-width: 100%;
   object-fit: ${({ $fit }) => $fit};
-  border-radius: ${({ $radius }) => $radius || 0};
+  aspect-ratio: ${({ $ratio }) => $ratio || 'auto'};
   user-select: none;
   -webkit-user-drag: none;
 `;
 
-export const Image: React.FC<ImageProps> = ({
-  src,
-  width,
-  height,
-  objectFit = 'cover',
-  rounded,
-  lazy = false,
-  placeholder,
-  preset: p,
-  className,
-  sx,
-  draggable,
-  onDragStart,
-  loading: loadingAttr,
-  ...rest
-}) => {
-  const [ready, setReady] = useState(!lazy);
-  const ref = useRef<HTMLImageElement>(null);
+// Note: No wrapper here. Rounding/clipping should be applied by callers
+// via a parent wrapper with `overflow: hidden` if required.
 
-  useEffect(() => {
-    if (!lazy || ready || !('IntersectionObserver' in window)) return;
-    const img = ref.current;
-    if (!img) return;
-    const io = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting) setReady(true);
-      },
-      { threshold: 0.1 },
+export const Image = React.forwardRef<HTMLImageElement, ImageProps>(
+  (
+    {
+      src,
+      width,
+      height,
+      objectFit = 'cover',
+      lazy = false,
+      // placeholder: kept for backward-compat; intentionally unused (no background rendering)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      placeholder,
+      aspectRatio,
+      preset: p,
+      className,
+      sx,
+      draggable,
+      onDragStart,
+      loading: loadingAttr,
+      decoding: decodingAttr,
+      ...rest
+    },
+    ref,
+  ) => {
+    const presetCls = p ? preset(p) : '';
+    const w = typeof width === 'number' ? `${width}px` : width;
+    const h = typeof height === 'number' ? `${height}px` : height;
+    const ratio = typeof aspectRatio === 'number' ? `${aspectRatio} / 1` : aspectRatio;
+
+    return (
+      <Img
+        {...rest}
+        ref={ref}
+        src={src}
+        $w={w}
+        $h={h}
+        $fit={objectFit}
+        $ratio={ratio}
+        loading={lazy ? 'lazy' : loadingAttr}
+        decoding={decodingAttr ?? 'async'}
+        className={[presetCls, className].filter(Boolean).join(' ')}
+        style={sx}
+        draggable={draggable ?? false}
+        onDragStart={(e) => {
+          if (!(draggable ?? false)) e.preventDefault();
+          onDragStart?.(e);
+        }}
+      />
     );
-    io.observe(img);
-    return () => io.disconnect();
-  }, [lazy, ready]);
+  },
+);
 
-  const presetCls = p ? preset(p) : '';
-  const w = typeof width === 'number' ? `${width}px` : width;
-  const h = typeof height === 'number' ? `${height}px` : height;
-  const r = typeof rounded === 'number' ? `${rounded}px` : rounded;
-
-  return (
-    <Img
-      {...rest}
-      ref={ref}
-      src={ready ? src : placeholder}
-      $w={w}
-      $h={h}
-      $fit={objectFit}
-      $radius={r}
-      loading={lazy ? 'lazy' : loadingAttr}
-      className={[presetCls, className].filter(Boolean).join(' ')}
-      style={sx}
-      draggable={draggable ?? false}
-      onDragStart={(e) => {
-        e.preventDefault();
-        onDragStart?.(e);
-      }}
-    />
-  );
-};
+Image.displayName = 'Image';
 
 export default Image;

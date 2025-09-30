@@ -58,13 +58,17 @@ export default function SkeletonDemoPage() {
         <Stack compact>
           <Typography variant='subtitle'>Image</Typography>
           <Skeleton loading={loading}>
-            <Image
-              src='https://picsum.photos/400/300'
-              alt='Loading kitten'
-              width={160}
-              height={80}
-              rounded={4}
-            />
+            <Panel
+              sx={{ width: 160, height: 80, borderRadius: theme.radius(1), overflow: 'hidden' }}
+            >
+              <Image
+                src='https://picsum.photos/400/300'
+                alt='Loading kitten'
+                width='100%'
+                height='100%'
+                objectFit='cover'
+              />
+            </Panel>
           </Skeleton>
         </Stack>
 

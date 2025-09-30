@@ -10,7 +10,6 @@ import {
   useTheme,
   Panel,
   Select,
-  Iterator,
   Switch,
   TextField,
 } from '@archway/valet';
@@ -25,29 +24,31 @@ export default function ImageDemoPage() {
   const [pgWidth, setPgWidth] = useState<string>('100%');
   const [pgHeight, setPgHeight] = useState<string>('300px');
   const [pgFit, setPgFit] = useState<'cover' | 'contain' | 'fill' | 'none' | 'scale-down'>('cover');
-  const [pgRounded, setPgRounded] = useState<number>(8);
   const [pgLazy, setPgLazy] = useState<boolean>(false);
-  const [pgPlaceholder, setPgPlaceholder] = useState<string>('https://placehold.co/10x10');
+  const [pgAspect, setPgAspect] = useState<string>('auto');
 
   const usageContent = (
     <Stack>
       <Typography variant='h3'>1. Basic usage</Typography>
-      <Image
-        src='https://picsum.photos/400/300'
-        alt='Kitten'
-        width='100%'
-        height='auto'
-        rounded={8}
-      />
+      <Panel
+        fullWidth
+        sx={{ borderRadius: theme.radius(2), overflow: 'hidden' }}
+      >
+        <Image
+          src='https://picsum.photos/400/300'
+          alt='Kitten'
+          width='100%'
+          height='auto'
+        />
+      </Panel>
 
-      <Typography variant='h3'>2. Lazy loaded</Typography>
+      <Typography variant='h3'>2. Lazy loaded (native)</Typography>
       <Image
         src='https://picsum.photos/400/300'
         alt='Lazy kitten'
         width='100%'
         height='300px'
         lazy
-        placeholder='https://placehold.co/10x10'
       />
 
       <Typography variant='h3'>3. Contain fit</Typography>
@@ -57,7 +58,15 @@ export default function ImageDemoPage() {
         width='100%'
         height='300px'
         objectFit='contain'
-        sx={{ background: '#0003' }}
+      />
+
+      <Typography variant='h3'>4. Aspect ratio</Typography>
+      <Image
+        src='https://picsum.photos/800/600'
+        alt='Aspect ratio demo'
+        width='100%'
+        aspectRatio='16 / 9'
+        objectFit='cover'
       />
     </Stack>
   );
@@ -107,22 +116,7 @@ export default function ImageDemoPage() {
             onChange={(e) => setPgHeight((e.target as HTMLInputElement).value)}
             sx={{ width: 180 }}
           />
-          <Stack
-            direction='row'
-            gap={1}
-            sx={{ alignItems: 'center' }}
-          >
-            <Typography variant='subtitle'>rounded</Typography>
-            <Iterator
-              width={160}
-              min={0}
-              max={24}
-              step={2}
-              value={pgRounded}
-              onChange={setPgRounded}
-              aria-label='Rounded radius'
-            />
-          </Stack>
+
           <Stack
             direction='row'
             gap={1}
@@ -136,12 +130,12 @@ export default function ImageDemoPage() {
             />
           </Stack>
           <TextField
-            name='placeholder'
-            label='placeholder'
-            placeholder='https://…'
-            value={pgPlaceholder}
-            onChange={(e) => setPgPlaceholder((e.target as HTMLInputElement).value)}
-            sx={{ width: 240 }}
+            name='aspectRatio'
+            label='aspectRatio'
+            placeholder='e.g., 16 / 9 or auto'
+            value={pgAspect}
+            onChange={(e) => setPgAspect((e.target as HTMLInputElement).value)}
+            sx={{ width: 180 }}
           />
         </Stack>
       </Panel>
@@ -151,11 +145,9 @@ export default function ImageDemoPage() {
           width={pgWidth}
           height={pgHeight}
           objectFit={pgFit}
-          rounded={pgRounded}
           lazy={pgLazy}
-          placeholder={pgPlaceholder}
+          aspectRatio={pgAspect}
           alt='Playground preview'
-          sx={{ background: theme.colors['text'] + '11' }}
         />
       </Panel>
     </Stack>
@@ -164,7 +156,7 @@ export default function ImageDemoPage() {
   return (
     <ComponentMetaPage
       title='Image'
-      subtitle='Responsive, lazy-loading image with object-fit and rounded corners.'
+      subtitle='Responsive image with native lazy-loading, object-fit, and optional aspect-ratio. Apply rounded corners via sx or a wrapper.'
       slug='components/primitives/image'
       meta={ImageMeta}
       usage={usageContent}

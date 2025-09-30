@@ -3,7 +3,7 @@
   "category": "primitives",
   "slug": "components/primitives/avatar",
   "summary": "Avatar component",
-  "status": "golden",
+  "status": "stable",
   "aliases": [
     "avatar",
     "badge",

@@ -32,6 +32,12 @@ All notable changes to this project will be documented in this file. The format 
    - Plus/minus icons use bold glyphs for readability (`mdi:plus-thick`/`mdi:minus-thick`)
    - Docs usage spacing refined to use `gap`/`pad` props (no `sx`)
 
+ - Image: simplify and promote to `stable`
+   - Remove custom IntersectionObserver lazy logic; rely on native `loading="lazy"`
+   - Add `aspectRatio` prop and `max-width: 100%` default for better responsiveness
+   - Remove `rounded` prop; apply rounding via wrapper with `overflow: hidden` (more robust across object-fit modes)
+   - Forward refs; default `decoding="async"`; keep `sx` and preset support
+
 ### Fixed
 
 - Accessibility: Enhance `Tree` with robust keyboard navigation
@@ -43,6 +49,7 @@ All notable changes to this project will be documented in this file. The format 
 - Avatar: Gravatar fallback when neither `src` nor `email` is provided now resolves to a stable default image instead of a broken URL; default `loading="lazy"` for better performance.
 - Switch: set `type="button"` to avoid unintended form submissions when used inside a `<form>`.
  - Iterator: Disabled field now dims text/border to match disabled icon buttons; `readOnly` respected across wheel/buttons/keyboard; typing no longer forces premature commit unless `commitOnChange` is enabled.
+ - Image: respect `draggable` when true; no longer prevents dragstart unconditionally
 
 ## [0.32.0]
 
