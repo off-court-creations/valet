@@ -42,6 +42,13 @@ All notable changes to this project will be documented in this file. The format 
    - Remove `rounded` prop; apply rounding via wrapper with `overflow: hidden` (more robust across object-fit modes)
    - Forward refs; default `decoding="async"`; keep `sx` and preset support
 
+ - Progress: complete redesign with simpler API and better a11y/compat
+  - New primitives `ProgressBar` and `ProgressRing` replace mode/variant juggling
+  - Back-compat `Progress` wrapper remains (maps legacy `variant`/`mode`/`showLabel`)
+  - Fewer props; more control via CSS vars and sensible defaults
+  - Improved visuals: ring track + rounded caps; subtle indeterminate motion
+  - Tight ARIA: role, value range, and indeterminate implied by omitted `value`
+
 ### Fixed
 
 - Accessibility: Enhance `Tree` with robust keyboard navigation

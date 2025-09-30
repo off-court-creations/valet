@@ -193,7 +193,7 @@
     "category": "primitives",
     "summary": "Progress component",
     "slug": "components/primitives/progress",
-    "status": "unstable"
+    "status": "stable"
   },
   {
     "name": "Skeleton",
