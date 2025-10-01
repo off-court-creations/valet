@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/pages/concepts/ComponentStatus.tsx  | valet-docs
+// src/pages/getting-started/ComponentStatus.tsx  | valet-docs
 // Status matrix of all components with sidecars, rendered via <Table/>
 // ─────────────────────────────────────────────────────────────
 import { useMemo } from 'react';

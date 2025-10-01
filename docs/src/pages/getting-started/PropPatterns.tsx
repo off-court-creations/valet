@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/pages/PropPatterns.tsx  | valet-docs
+// src/pages/getting-started/PropPatterns.tsx  | valet-docs
 // Getting started usage page
 // ─────────────────────────────────────────────────────────────
 import { Surface, Stack, Typography, Button, Table } from '@archway/valet';

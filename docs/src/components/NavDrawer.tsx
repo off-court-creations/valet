@@ -98,16 +98,7 @@ const treeData: TreeNode<Item>[] = [
         id: '/prop-patterns',
         data: { label: 'Prop Patterns', path: '/prop-patterns' },
       },
-    ],
-  },
-  {
-    id: 'concepts',
-    data: { label: 'Concepts' },
-    children: [
-      { id: '/mental-model', data: { label: 'Mental Model', path: '/mental-model' } },
       { id: '/theme-engine', data: { label: 'Theme Engine', path: '/theme-engine' } },
-      { id: '/styled', data: { label: 'Styled Engine', path: '/styled' } },
-      { id: '/spacing', data: { label: 'Spacing Contract', path: '/spacing' } },
     ],
   },
   {

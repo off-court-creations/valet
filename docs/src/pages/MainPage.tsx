@@ -28,8 +28,8 @@ import {
 import type { TableColumn } from '@archway/valet';
 // no table types needed in this page
 import { useNavigate } from 'react-router-dom';
-import NavDrawer from '../../components/NavDrawer';
-import LavaLampBackgroundGL from '../../components/LavaLampBackgroundGL';
+import NavDrawer from '../components/NavDrawer';
+import LavaLampBackgroundGL from '../components/LavaLampBackgroundGL';
 
 export default function MainPage() {
   const navigate = useNavigate();
@@ -151,20 +151,20 @@ export default function MainPage() {
                   <Typography
                     variant='h1'
                     bold
-                    sx={{ textAlign: 'center', color: '#fff' }}
+                    sx={{ textAlign: 'center' }}
                   >
                     One library. Everything UI.
                   </Typography>
                 </div>
                 <Typography
                   variant='h5'
-                  sx={{ textAlign: 'center', color: '#fff', opacity: 0.95 }}
+                  sx={{ textAlign: 'center' }}
                 >
                   Beautiful by default. Limitless when customized.
                 </Typography>
                 <Typography
                   variant='subtitle'
-                  sx={{ textAlign: 'center', color: '#fff', opacity: 0.9 }}
+                  sx={{ textAlign: 'center' }}
                 >
                   From AI to Zustand, <code>valet</code> is how it all connects.
                 </Typography>

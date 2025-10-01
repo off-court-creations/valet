@@ -22,7 +22,7 @@ export const LavaLampParams = {
   // Frame timing and device constraints used by the WebGL canvas wrapper.
   runtime: {
     // Scales world time to slow overall motion without changing character.
-    timeScale: 0.6,
+    timeScale: 1,
     // Clamp device pixel ratio to avoid excessive fill‑rate on hi‑DPI screens.
     dprMax: 2,
   },
@@ -79,7 +79,7 @@ export const LavaLampParams = {
     // Long‑range pulse that periodically declumps and pairs solos.
     pulses: {
       // For testing: immediate start, then every 15s with no jitter
-      initialDelay: { base: 10, jitter: 0 },
+      initialDelay: { base: 5, jitter: 0 },
       interval: { base: 15, jitter: 0 },
       // Longer burst so separation completes (per‑frame force, smooth envelope)
       burst: {

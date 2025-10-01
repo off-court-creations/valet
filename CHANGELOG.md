@@ -57,6 +57,13 @@ All notable changes to this project will be documented in this file. The format 
   - Filters DOM attributes from alias/union shapes to avoid noisy Reference tables
   - Honors `Omit<...>` for DOM inheritance while still including same‑name userland props (e.g., `name`).
 
+- Docs: Glossary page significantly improved for readability and navigation
+  - Search across terms, aliases, definitions; live result count (ARIA‑announced)
+  - Category filter and grouping (A–Z or by category) with section headings
+  - Per‑entry deep links with copy‑link button; clickable “See also” anchors
+  - Clear spacing, dividers, and sticky controls bar; optional JSON copy action
+  - Preserves `GLOSSARY` structure for MCP extraction; recommend regenerating `mcp-data/`
+
  
 ### Removed
 

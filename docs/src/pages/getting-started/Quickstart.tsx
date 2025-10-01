@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/pages/Quickstart.tsx  | valet-docs
+// src/pages/getting-started/Quickstart.tsx  | valet-docs
 // 10‑minute quickstart: install, bootstrap, first screen
 // ─────────────────────────────────────────────────────────────
 import { Surface, Stack, Typography, Panel, Button, CodeBlock } from '@archway/valet';
@@ -245,12 +245,7 @@ npm run typecheck`; // only typecheck exists in TS/hybrid; still mention
               >
                 Component status
               </Button>
-              <Button
-                variant='outlined'
-                onClick={() => navigate('/styled')}
-              >
-                Styled engine
-              </Button>
+
               <Button
                 variant='outlined'
                 onClick={() => navigate('/theme-engine')}
