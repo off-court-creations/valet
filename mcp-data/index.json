@@ -116,7 +116,7 @@
     "category": "layout",
     "summary": "Grid component",
     "slug": "components/layout/grid",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "List",

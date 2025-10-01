@@ -20,7 +20,7 @@ import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { useOptionalForm } from './FormControl';
-import type { Presettable, Sx } from '../../types';
+import type { FieldBaseProps } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 /* Size map                                                  */
@@ -155,7 +155,7 @@ function assignRef<T>(ref: React.Ref<T> | null | undefined, value: T | null) {
 /* Public props                                              */
 export interface SliderProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'style'>,
-    Presettable {
+    FieldBaseProps {
   /** Controlled value. */
   value?: number;
   /** Default for uncontrolled usage. */
@@ -163,7 +163,9 @@ export interface SliderProps
   /** Fires on every change (pointer + keyboard). */
   onChange?: (value: number) => void;
 
+  /** Minimum allowed value. */
   min?: number;
+  /** Maximum allowed value. */
   max?: number;
 
   /** Fixed increment when `snap="step"`; defaults to 1. */
@@ -186,13 +188,8 @@ export interface SliderProps
   /** Custom tick set (overrides derived ticks). */
   ticks?: number[];
 
-  /** Optional FormControl binding. */
-  name?: string;
-
   size?: SliderSize | number | string;
   disabled?: boolean;
-  /** Inline styles (with CSS var support) */
-  sx?: Sx;
 }
 
 /*───────────────────────────────────────────────────────────*/

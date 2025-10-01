@@ -3,14 +3,14 @@
 // Theme-aware, accessible Checkbox – consistent outline, no blue flash,
 // greyed-out disabled styling (Accordion-style).
 // ─────────────────────────────────────────────────────────────────────────────
-import React, { forwardRef, useCallback, useId, useState, ChangeEvent, ReactNode } from 'react';
+import React, { forwardRef, useCallback, useId, useState, ChangeEvent } from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { useOptionalForm } from './FormControl';
 import { toRgb, mix, toHex } from '../../helpers/color';
 import type { Theme } from '../../system/themeStore';
-import type { Presettable, Sx } from '../../types';
+import type { FieldBaseProps } from '../../types';
 
 /*───────────────────────────────────────────────────────────────────────────*/
 /* Public prop contracts                                                    */
@@ -19,17 +19,16 @@ export type CheckboxSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export interface CheckboxProps
   extends Omit<
       React.InputHTMLAttributes<HTMLInputElement>,
-      'type' | 'size' | 'onChange' | 'value' | 'defaultValue' | 'style'
+      'type' | 'size' | 'onChange' | 'value' | 'defaultValue' | 'style' | 'name'
     >,
-    Presettable {
+    FieldBaseProps {
+  /** Field name is required for Checkbox to bind and identify the value. */
+  name: string;
   checked?: boolean;
   defaultChecked?: boolean;
-  name: string;
-  label?: ReactNode;
+  /** Visual size; token or CSS length. */
   size?: CheckboxSize | number | string;
   onChange?: (checked: boolean, event: ChangeEvent<HTMLInputElement>) => void;
-  /** Inline styles (with CSS var support) */
-  sx?: Sx;
 }
 
 /*───────────────────────────────────────────────────────────────────────────*/

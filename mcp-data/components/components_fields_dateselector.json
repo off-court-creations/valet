@@ -13,63 +13,75 @@
     {
       "name": "value",
       "type": "string",
-      "required": false
+      "required": false,
+      "description": "Controlled ISO date value (YYYY-MM-DD)."
     },
     {
       "name": "defaultValue",
       "type": "string",
-      "required": false
+      "required": false,
+      "description": "Default value for uncontrolled usage."
     },
     {
       "name": "onChange",
       "type": "(value: string) => void",
-      "required": false
+      "required": false,
+      "description": "Fires with ISO value when selection changes."
     },
     {
       "name": "name",
       "type": "string",
-      "required": false
+      "required": false,
+      "description": "FormControl field name."
     },
     {
       "name": "minDate",
       "type": "string",
-      "required": false
+      "required": false,
+      "description": "Earliest selectable ISO date (YYYY-MM-DD)."
     },
     {
       "name": "maxDate",
       "type": "string",
-      "required": false
+      "required": false,
+      "description": "Latest selectable ISO date (YYYY-MM-DD)."
     },
     {
       "name": "range",
       "type": "boolean",
       "required": false,
+      "description": "Enable dual start/end selection mode.",
       "default": "false"
     },
     {
       "name": "endValue",
       "type": "string",
-      "required": false
+      "required": false,
+      "description": "Controlled end date when `range` is true."
     },
     {
       "name": "defaultEndValue",
       "type": "string",
-      "required": false
+      "required": false,
+      "description": "Default end date for uncontrolled range mode."
     },
     {
       "name": "onRangeChange",
       "type": "(start: string, end: string) => void",
-      "required": false
+      "required": false,
+      "description": "Fires with start and end ISO values when range changes."
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": false
+      "required": false,
+      "description": "Inline styles (with CSS var support)"
     },
     {
       "name": "compactMode",
       "type": "'auto' | 'on' | 'off'",
       "required": false,
+      "description": "Control how compact mode engages.\n- 'auto' (default): measure container and switch at thresholds.\n- 'on': force compact layout always.\n- 'off': disable compact behavior entirely.",
       "default": "'auto'",
       "enumValues": [
         "auto",
@@ -81,13 +93,21 @@
       "name": "compactThresholdIn",
       "type": "number",
       "required": false,
+      "description": "Width below which compact turns on (when compactMode='auto'). Default: 340",
       "default": "340"
     },
     {
       "name": "compactThresholdOut",
       "type": "number",
       "required": false,
+      "description": "Width above which compact turns off (when compactMode='auto'). Default: 380",
       "default": "380"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
   "domPassthrough": {

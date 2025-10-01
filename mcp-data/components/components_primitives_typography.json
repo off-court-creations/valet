@@ -100,6 +100,7 @@
       "name": "family",
       "type": "'heading' | 'body' | 'mono' | 'button'",
       "required": false,
+      "description": "Choose a theme font family",
       "enumValues": [
         "heading",
         "body",
@@ -116,6 +117,7 @@
       "name": "whitespace",
       "type": "'normal' | 'pre' | 'pre-wrap' | 'pre-line'",
       "required": false,
+      "description": "Control whitespace handling for multi-line/code text",
       "default": "'normal'",
       "enumValues": [
         "normal",
@@ -127,7 +129,14 @@
     {
       "name": "sx",
       "type": "Sx",
-      "required": false
+      "required": false,
+      "description": "Inline styles (with CSS var support)"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
   "cssVars": [

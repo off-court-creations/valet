@@ -13,51 +13,66 @@
     {
       "name": "accept",
       "type": "DropzoneOptions['accept']",
-      "required": false
+      "required": false,
+      "description": "Allowable file types (same as react-dropzone `accept`)"
     },
     {
       "name": "showPreviews",
       "type": "boolean",
       "required": false,
+      "description": "Display previews for accepted files",
       "default": "true"
     },
     {
       "name": "showFileList",
       "type": "boolean",
       "required": false,
+      "description": "Show file icons and names rather than thumbnails",
       "default": "false"
     },
     {
       "name": "onFilesChange",
       "type": "(files: File[]) => void",
-      "required": false
+      "required": false,
+      "description": "Called whenever the file list changes"
     },
     {
       "name": "maxFiles",
       "type": "number",
-      "required": false
+      "required": false,
+      "description": "Maximum file count"
     },
     {
       "name": "multiple",
       "type": "boolean",
       "required": false,
+      "description": "Allow multiple file selection",
       "default": "true"
     },
     {
       "name": "onDrop",
       "type": "DropzoneOptions['onDrop']",
-      "required": false
+      "required": false,
+      "description": "Callback for when files are dropped"
     },
     {
       "name": "fullWidth",
       "type": "boolean",
       "required": false,
+      "description": "Stretch to fill parent width",
       "default": "false"
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": false
+      "required": false,
+      "description": "Inline styles (with CSS var support)"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
   "domPassthrough": {

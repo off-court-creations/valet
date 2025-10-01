@@ -15,7 +15,7 @@ import { Typography } from '../primitives/Typography';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { toHex, toRgb, mix } from '../../helpers/color';
-import type { Presettable, Sx } from '../../types';
+import type { FieldBaseProps, Presettable, Sx } from '../../types';
 import { styled } from '../../css/createStyled';
 
 export type Primitive = string | number;
@@ -38,7 +38,7 @@ export interface MetroSelectProps
       React.HTMLAttributes<HTMLDivElement>,
       'onChange' | 'value' | 'defaultValue' | 'style'
     >,
-    Presettable {
+    FieldBaseProps {
   value?: Primitive | Primitive[];
   defaultValue?: Primitive | Primitive[];
   gap?: number | string;

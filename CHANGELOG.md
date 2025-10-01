@@ -17,6 +17,8 @@ All notable changes to this project will be documented in this file. The format 
    - `roundToStep` to snap committed values to `step` from `min` (or `0`)
    - `wheelBehavior`: `'off' | 'focus' | 'hover'` (default `'focus'`)
    - Best Practices and curated Examples added to sidecar; docs page renders them
+ - Fields: introduce `FieldBaseProps` with JSDoc for shared field props (`name`, `label`, `helperText`, `error`, `fullWidth`, `sx`, `preset`) to seed consistent reference descriptions across all fields.
+ - MCP: extractor now reads per‑prop JSDoc comments from shared types and component interfaces to populate the Reference table descriptions by default.
 
 ### Changed
 
@@ -24,7 +26,7 @@ All notable changes to this project will be documented in this file. The format 
 - Docs: extracted LavaLampBackgroundGL shaders to standalone GLSL files under `docs/src/shaders/lava-lamp` and import via `?raw` for readability and better editor support.
 - Docs: increase lava‑lamp pulse crowd repulsion ~100× (stronger scene reconfiguration). Parameters in `docs/src/shaders/lava-lamp/lavaLampParams.ts`.
 - Docs: MetroSelect playground now controls selection mode (single/multiple) and tile size; removed non-functional `gap` control.
- - Grid: now normalizes row heights by default for multi-column layouts; behavior is disabled automatically when adaptive collapses to a single column.
+- Grid: now normalizes row heights by default for multi-column layouts; behavior is disabled automatically when adaptive collapses to a single column.
  - Iterator: UX and a11y improvements
    - Forward native `min`/`max`/`step` to the input for correct browser semantics
    - Wheel steps only when focused by default; `'hover'` mode is opt-in
@@ -46,8 +48,14 @@ All notable changes to this project will be documented in this file. The format 
   - New primitives `ProgressBar` and `ProgressRing` replace mode/variant juggling
   - Back-compat `Progress` wrapper remains (maps legacy `variant`/`mode`/`showLabel`)
   - Fewer props; more control via CSS vars and sensible defaults
-  - Improved visuals: ring track + rounded caps; subtle indeterminate motion
+ - Improved visuals: ring track + rounded caps; subtle indeterminate motion
  - Tight ARIA: role, value range, and indeterminate implied by omitted `value`
+
+- Fields: migrate Checkbox, TextField, Select, RadioGroup/Radio, Switch, Slider, Iterator, and MetroSelect to extend `FieldBaseProps`. No runtime behavior changes; types and docs only.
+- MCP: safer extractor for inherited props
+  - Includes inherited userland props (from `src/`) and their JSDoc in component docs
+  - Filters DOM attributes from alias/union shapes to avoid noisy Reference tables
+  - Honors `Omit<...>` for DOM inheritance while still including same‑name userland props (e.g., `name`).
 
  
 ### Removed

@@ -14,51 +14,66 @@
     {
       "name": "create",
       "type": "(gl: WebGL2RenderingContext, canvas: HTMLCanvasElement) => WebGLProgramLike | null",
-      "required": true
+      "required": true,
+      "description": "Create a program bound to the provided WebGL2 context and canvas."
     },
     {
       "name": "contextAttributes",
       "type": "WebGLContextAttributes",
-      "required": false
+      "required": false,
+      "description": "WebGL context attributes."
     },
     {
       "name": "dprMax",
       "type": "number",
       "required": false,
+      "description": "Clamp devicePixelRatio to avoid excessive fill-rate on hi-DPI screens.",
       "default": "2"
     },
     {
       "name": "timeScale",
       "type": "number",
       "required": false,
+      "description": "Global time scaling applied to dt and absolute time t.",
       "default": "1"
     },
     {
       "name": "clearColor",
       "type": "readonly [number, number, number, number]",
       "required": false,
+      "description": "Optional clear color, defaults to transparent. Only sets clearColor, not clearing each frame.",
       "default": "[0, 0, 0, 0]"
     },
     {
       "name": "asBackground",
       "type": "boolean",
       "required": false,
+      "description": "If true, wrapper is absolutely positioned and fills its parent.",
       "default": "false"
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": false
+      "required": false,
+      "description": "Inline styles for the wrapper (supports CSS variables via Sx)."
     },
     {
       "name": "canvasClassName",
       "type": "string",
-      "required": false
+      "required": false,
+      "description": "Optional className for the inner canvas element."
     },
     {
       "name": "canvasStyle",
       "type": "React.CSSProperties",
-      "required": false
+      "required": false,
+      "description": "Optional canvas style override."
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
   "domPassthrough": {

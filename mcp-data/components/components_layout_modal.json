@@ -12,23 +12,27 @@
     {
       "name": "open",
       "type": "boolean",
-      "required": false
+      "required": false,
+      "description": "Controlled visiblity"
     },
     {
       "name": "defaultOpen",
       "type": "boolean",
       "required": false,
+      "description": "Default for uncontrolled",
       "default": "false"
     },
     {
       "name": "onClose",
       "type": "() => void",
-      "required": false
+      "required": false,
+      "description": "Callback fired when the user requests to close (backdrop / ESC)"
     },
     {
       "name": "variant",
       "type": "'dialog' | 'alert'",
       "required": false,
+      "description": "Dialog semantics (default) or alertdialog semantics",
       "default": "'dialog'",
       "enumValues": [
         "dialog",
@@ -38,51 +42,66 @@
     {
       "name": "title",
       "type": "ReactNode",
-      "required": false
+      "required": false,
+      "description": "Dialog title – used for aria-labelledby when provided"
     },
     {
       "name": "children",
       "type": "ReactNode",
-      "required": false
+      "required": false,
+      "description": "Main body content"
     },
     {
       "name": "actions",
       "type": "ReactNode",
-      "required": false
+      "required": false,
+      "description": "Action buttons"
     },
     {
       "name": "pad",
       "type": "number | string",
-      "required": false
+      "required": false,
+      "description": "Container padding override"
     },
     {
       "name": "compact",
       "type": "boolean",
       "required": false,
+      "description": "Compact removes container + internal paddings",
       "default": "false"
     },
     {
       "name": "disableBackdropClick",
       "type": "boolean",
       "required": false,
+      "description": "Disable closing via backdrop click",
       "default": "false"
     },
     {
       "name": "disableEscapeKeyDown",
       "type": "boolean",
       "required": false,
+      "description": "Disable closing via ESC key",
       "default": "false"
     },
     {
       "name": "maxWidth",
       "type": "number | string",
-      "required": false
+      "required": false,
+      "description": "Max width when not fullWidth"
     },
     {
       "name": "fullWidth",
       "type": "boolean",
       "required": false,
+      "description": "Stretch to full viewport width minus gutter",
       "default": "false"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
   "cssVars": [

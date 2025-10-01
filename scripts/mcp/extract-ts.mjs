@@ -213,7 +213,7 @@ export function extractFromTs(projectRoot) {
     /** @type {Array<{ name: string }>} */
     const slots = [];
 
-    // Helper: push a prop if not seen
+    // Helper: push a prop if not seen; allow attaching description/deprecated/default via `extra`
     function pushProp(name, typeText, required, extra = {}) {
       if (!name) return;
       if (propSet.has(name)) return;
@@ -244,12 +244,18 @@ export function extractFromTs(projectRoot) {
     }
 
     if (iface) {
-      // DOM passthrough from heritage
+      // DOM passthrough from heritage and compute omitted keys (e.g., Omit<..., 'style'>)
+      const omittedFromExtends = new Set();
       for (const h of iface.getExtends()) {
         const t = h.getText();
         const inferred = inferDomPassthroughFromTypeText(t);
         if (inferred && !domPassthrough) domPassthrough = inferred;
+        try {
+          for (const k of extractOmittedKeys(t)) omittedFromExtends.add(k);
+        } catch {}
       }
+
+      // 1) Collect explicitly declared members on the interface
       for (const m of iface.getMembers()) {
         if (m.getKind() !== SyntaxKind.PropertySignature) continue;
         const nameNode = m.getNameNode();
@@ -258,14 +264,97 @@ export function extractFromTs(projectRoot) {
         const typeText = typeNode ? typeNode.getText() : 'any';
         // Correct required detection: use hasQuestionToken()
         const required = typeof m.hasQuestionToken === 'function' ? !m.hasQuestionToken() : !/\?$/.test(m.getText());
-        // jsdoc deprecation
+        // jsdoc description/deprecated/default
         let deprecated;
-        const jsdocs = m.getJsDocs?.();
-        if (jsdocs?.length) {
-          const text = jsdocs.map((d) => d.getComment?.() || '').join('\n');
-          if (/deprecated/i.test(text)) deprecated = true;
+        let description;
+        let defaultTag;
+        try {
+          const jsdocs = m.getJsDocs?.();
+          if (jsdocs?.length) {
+            description = jsdocs.map((d) => d.getComment?.() || '').join('\n').trim() || undefined;
+            for (const d of jsdocs) {
+              for (const tag of d.getTags?.() || []) {
+                const tagName = (tag.getTagName?.() || '').toLowerCase();
+                const tagTxt = (tag.getComment?.() || '').trim();
+                if (tagName === 'deprecated') deprecated = true;
+                if (tagName === 'default' && tagTxt) defaultTag = tagTxt;
+              }
+            }
+          }
+        } catch {}
+        const extra = { ...(deprecated ? { deprecated } : {}), ...(description ? { description } : {}), ...(defaultTag ? { default: defaultTag } : {}) };
+        pushProp(name, typeText, required, extra);
+      }
+
+      // 2) Safely merge inherited userland props from the resolved interface type
+      //    (e.g., Pick<SpacingProps, 'gap' | 'pad'>, Presettable.preset), while
+      //    filtering out DOM attributes coming from React HTML types.
+      try {
+        const ifaceType = iface.getType();
+        const symbols = ifaceType.getProperties();
+        for (const sym of symbols) {
+          const name = sym.getName();
+          // Skip props already collected
+          if (propSet.has(name)) continue;
+
+          // Only include userland declarations (inside project src/), to avoid
+          // flooding with DOM attributes from @types/react
+          const decls = sym.getDeclarations?.() || [];
+          const isUserland = decls.some((d) => {
+            try {
+              const fp = d.getSourceFile().getFilePath();
+              return fp.includes(`${path.sep}src${path.sep}`);
+            } catch {
+              return false;
+            }
+          });
+          if (!isUserland) continue;
+          // If this prop is omitted from DOM inheritance via Omit<...>, that's fine;
+          // we still include userland definitions with the same name (e.g., base `name`).
+
+          // Determine type text and requiredness using ts-morph APIs
+          let required = true;
+          try {
+            if (typeof sym.isOptional === 'function' && sym.isOptional()) required = false;
+            else {
+              const propDecl = decls.find((d) => d.getKind && d.getKind() === SyntaxKind.PropertySignature);
+              if (propDecl && typeof propDecl.hasQuestionToken === 'function') {
+                required = !propDecl.hasQuestionToken();
+              }
+            }
+          } catch {}
+
+          let typeText = 'any';
+          try {
+            const t = sym.getTypeAtLocation(iface);
+            typeText = t.getText(iface);
+          } catch {}
+
+          // Attempt to pull JSDoc from the declaration site for description/default/deprecated
+          let description;
+          let deprecated;
+          let defaultTag;
+          try {
+            const propDecl = decls.find((d) => d.getKind && d.getKind() === SyntaxKind.PropertySignature);
+            const jsdocs = propDecl?.getJsDocs?.() || [];
+            if (jsdocs.length) {
+              description = jsdocs.map((d) => d.getComment?.() || '').join('\n').trim() || undefined;
+              for (const d of jsdocs) {
+                for (const tag of d.getTags?.() || []) {
+                  const tagName = (tag.getTagName?.() || '').toLowerCase();
+                  const tagTxt = (tag.getComment?.() || '').trim();
+                  if (tagName === 'deprecated') deprecated = true;
+                  if (tagName === 'default' && tagTxt) defaultTag = tagTxt;
+                }
+              }
+            }
+          } catch {}
+
+          const extra = { ...(description ? { description } : {}), ...(deprecated ? { deprecated } : {}), ...(defaultTag ? { default: defaultTag } : {}) };
+          pushProp(name, typeText, required, extra);
         }
-        pushProp(name, typeText, required, deprecated ? { deprecated } : {});
+      } catch {
+        // best-effort; ignore if resolution fails
       }
     } else {
       // 2) Try type alias resolution, including unions/intersections
@@ -310,6 +399,16 @@ export function extractFromTs(projectRoot) {
             const props = t.getProperties();
             for (const sym of props) {
               const decls = sym.getDeclarations();
+              // Filter to userland-only: at least one declaration under project src/
+              const isUserland = (decls || []).some((d) => {
+                try {
+                  const fp = d.getSourceFile().getFilePath();
+                  return fp.includes(`${path.sep}src${path.sep}`);
+                } catch {
+                  return false;
+                }
+              });
+              if (!isUserland) continue;
               // prefer PropertySignature
               const ps = decls.find((d) => d.getKind && d.getKind() === SyntaxKind.PropertySignature) || decls[0];
               const name = sym.getName();
@@ -325,6 +424,20 @@ export function extractFromTs(projectRoot) {
                 }
               } catch {}
               addPropAgg(name, typeText, !!isRequired);
+
+              // Attach JSDoc to a temp cache on agg record via a side map key
+              try {
+                const jsdocs = ps?.getJsDocs?.() || [];
+                if (jsdocs.length) {
+                  const desc = jsdocs.map((d) => d.getComment?.() || '').join('\n').trim();
+                  if (desc) {
+                    const rec = agg.get(name) || { types: new Set(), requiredCount: 0, total: 0 };
+                    // @ts-ignore
+                    rec.description = rec.description || desc;
+                    agg.set(name, rec);
+                  }
+                }
+              } catch {}
             }
           } catch {}
         }
@@ -347,7 +460,9 @@ export function extractFromTs(projectRoot) {
         for (const [name, info] of agg.entries()) {
           const typeText = Array.from(info.types).join(' | ') || 'any';
           const required = info.requiredCount > 0 && info.requiredCount === info.total;
-          pushProp(name, typeText, required);
+          // @ts-ignore - description may be attached above
+          const extra = info.description ? { description: info.description } : {};
+          pushProp(name, typeText, required, extra);
         }
 
         // Fallback domPassthrough heuristic based on prop surface

@@ -47,7 +47,44 @@
     {
       "name": "sx",
       "type": "Sx",
-      "required": false
+      "required": false,
+      "description": "Inline styles (with CSS var support)"
+    },
+    {
+      "name": "name",
+      "type": "string | undefined",
+      "required": false,
+      "description": "Field identifier used for FormControl binding and forwarded to the underlying control\nwhen applicable. Components can require `name` locally if they depend on it."
+    },
+    {
+      "name": "label",
+      "type": "React.ReactNode",
+      "required": false,
+      "description": "Visual label rendered by the component or its wrapper. Accepts string or node."
+    },
+    {
+      "name": "helperText",
+      "type": "React.ReactNode",
+      "required": false,
+      "description": "Supplemental hint or validation content typically rendered under the control."
+    },
+    {
+      "name": "error",
+      "type": "boolean | undefined",
+      "required": false,
+      "description": "Marks the field invalid; components may adjust visuals and helper text color."
+    },
+    {
+      "name": "fullWidth",
+      "type": "boolean | undefined",
+      "required": false,
+      "description": "Stretches the field wrapper to occupy the full available width."
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
   "domPassthrough": {
@@ -73,6 +110,12 @@
   "slots": [
     {
       "name": "children"
+    },
+    {
+      "name": "label"
+    },
+    {
+      "name": "helperText"
     }
   ],
   "bestPractices": [

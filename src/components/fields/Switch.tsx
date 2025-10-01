@@ -8,7 +8,7 @@ import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { useOptionalForm } from './FormControl';
-import type { Presettable, Sx } from '../../types';
+import type { FieldBaseProps } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 /* Size map helper                                           */
@@ -88,20 +88,16 @@ const Thumb = styled('span')<{
 /*───────────────────────────────────────────────────────────*/
 /* Public props                                              */
 export interface SwitchProps
-  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onChange' | 'style'>,
-    Presettable {
+  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onChange' | 'style' | 'name'>,
+    FieldBaseProps {
   /** Controlled checked state. */
   checked?: boolean;
   /** Default state for uncontrolled usage. */
   defaultChecked?: boolean;
   /** Callback for state changes (fires for both modes). */
   onChange?: (checked: boolean) => void;
-  /** Optional form field name (required to bind into FormControl). */
-  name?: string;
   /** Visual size; defaults to `md`. */
   size?: SwitchSize;
-  /** Inline styles (with CSS var support) */
-  sx?: Sx;
 }
 
 /*───────────────────────────────────────────────────────────*/

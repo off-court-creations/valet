@@ -25,17 +25,20 @@
     {
       "name": "background",
       "type": "string | undefined",
-      "required": false
+      "required": false,
+      "description": "Explicit background override"
     },
     {
       "name": "centerContent",
       "type": "boolean",
-      "required": false
+      "required": false,
+      "description": "Centre contents & propagate intent via CSS var"
     },
     {
       "name": "alignX",
       "type": "'left' | 'right' | 'center' | 'centered'",
       "required": false,
+      "description": "Horizontal placement of the panel when not fullWidth",
       "enumValues": [
         "left",
         "right",
@@ -47,7 +50,31 @@
       "name": "normalizeRowHeight",
       "type": "boolean",
       "required": false,
+      "description": "Opt out of row height normalization (when a parent Grid enables it).\nDefaults to true (normalize). Set to false to keep intrinsic heights.",
       "default": "true"
+    },
+    {
+      "name": "sx",
+      "type": "Sx | undefined",
+      "required": false
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
+    },
+    {
+      "name": "pad",
+      "type": "import(\"/Users/xbenc/occ/valet/src/types\").Space | undefined",
+      "required": false,
+      "description": "Container padding as units or CSS length."
+    },
+    {
+      "name": "compact",
+      "type": "boolean | undefined",
+      "required": false,
+      "description": "Compact mode zeros gap and pad where supported."
     }
   ],
   "domPassthrough": {

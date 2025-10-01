@@ -13,53 +13,68 @@
     {
       "name": "variant",
       "type": "ProgressVariant",
-      "required": false
+      "required": false,
+      "description": "Prefer ProgressBar/ProgressRing. kept for back‑compat."
     },
     {
       "name": "mode",
       "type": "ProgressMode",
-      "required": false
+      "required": false,
+      "description": "Prefer `value` unset to indicate indeterminate."
     },
     {
       "name": "value",
       "type": "number",
-      "required": false
+      "required": false,
+      "description": "0–100"
     },
     {
       "name": "buffer",
       "type": "number",
-      "required": false
+      "required": false,
+      "description": "0–100 buffer for linear"
     },
     {
       "name": "size",
       "type": "number | string",
-      "required": false
+      "required": false,
+      "description": "Ring diameter (or legacy token)."
     },
     {
       "name": "thickness",
       "type": "number | string",
-      "required": false
+      "required": false,
+      "description": "Bar height or ring thickness."
     },
     {
       "name": "showLabel",
       "type": "boolean",
       "required": false,
-      "deprecated": true
+      "description": "Deprecated: use `label` on ProgressRing or provide children."
     },
     {
       "name": "color",
       "type": "string",
-      "required": false
+      "required": false,
+      "description": "Override primary color."
     },
     {
       "name": "children",
       "type": "React.ReactNode",
-      "required": false
+      "required": false,
+      "description": "Center content for ring."
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": false
+      "required": false,
+      "description": "Inline styles (supports CSS vars)."
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
   "domPassthrough": {

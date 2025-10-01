@@ -8,7 +8,7 @@ import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { useOptionalForm } from './FormControl';
-import type { Presettable, Sx } from '../../types';
+import type { FieldBaseProps } from '../../types';
 import type { Theme } from '../../system/themeStore';
 
 type Primitive = string | number;
@@ -22,7 +22,7 @@ export interface SelectProps
       React.HTMLAttributes<HTMLDivElement>,
       'onChange' | 'defaultValue' | 'children' | 'style'
     >,
-    Presettable {
+    FieldBaseProps {
   /** Controlled value (single) or array (multiple). */
   value?: Primitive | Primitive[];
   /** Uncontrolled initial value. */
@@ -36,12 +36,8 @@ export interface SelectProps
   /** Size token or custom measurement */
   size?: SelectSize | number | string;
   disabled?: boolean;
-  /** Field name for FormControl binding. */
-  name?: string;
   /** Option nodes (see Select.Option). */
   children: React.ReactNode;
-  /** Inline styles (with CSS var support) */
-  sx?: Sx;
 }
 
 export interface OptionProps extends React.LiHTMLAttributes<HTMLLIElement> {

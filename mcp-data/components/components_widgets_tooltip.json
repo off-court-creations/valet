@@ -81,6 +81,12 @@
       "name": "children",
       "type": "ReactElement",
       "required": true
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
   "cssVars": [

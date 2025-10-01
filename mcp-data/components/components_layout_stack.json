@@ -23,12 +23,38 @@
     {
       "name": "wrap",
       "type": "boolean",
-      "required": false
+      "required": false,
+      "description": "If `true`, children wrap when they run out of space. Defaults to\n`true` for `row`, `false` for `column`."
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": false
+      "required": false,
+      "description": "Inline styles (with CSS var support)"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
+    },
+    {
+      "name": "gap",
+      "type": "import(\"/Users/xbenc/occ/valet/src/types\").Space | undefined",
+      "required": false,
+      "description": "Inter-child spacing as units or CSS length."
+    },
+    {
+      "name": "pad",
+      "type": "import(\"/Users/xbenc/occ/valet/src/types\").Space | undefined",
+      "required": false,
+      "description": "Container padding as units or CSS length."
+    },
+    {
+      "name": "compact",
+      "type": "boolean | undefined",
+      "required": false,
+      "description": "Compact mode zeros gap and pad where supported."
     }
   ],
   "domPassthrough": {

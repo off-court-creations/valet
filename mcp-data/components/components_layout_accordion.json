@@ -43,9 +43,22 @@
       "default": "true"
     },
     {
-      "name": "compact",
-      "type": "unknown",
+      "name": "preset",
+      "type": "string | string[] | undefined",
       "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
+    },
+    {
+      "name": "pad",
+      "type": "import(\"/Users/xbenc/occ/valet/src/types\").Space | undefined",
+      "required": false,
+      "description": "Container padding as units or CSS length."
+    },
+    {
+      "name": "compact",
+      "type": "boolean | undefined",
+      "required": false,
+      "description": "Compact mode zeros gap and pad where supported.",
       "default": "false"
     }
   ],

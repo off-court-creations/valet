@@ -3,7 +3,7 @@
   "category": "layout",
   "slug": "components/layout/grid",
   "summary": "Grid component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "grid"
   ],
@@ -18,24 +18,46 @@
       "name": "adaptive",
       "type": "boolean",
       "required": false,
+      "description": "Auto switch to 1 column in portrait",
       "default": "false"
     },
     {
       "name": "compact",
       "type": "boolean",
       "required": false,
+      "description": "Compact zeros both pad and gap",
       "default": "false"
     },
     {
       "name": "normalizeRowHeights",
       "type": "boolean",
       "required": false,
+      "description": "Normalize child heights per row by stretching items to match\nthe tallest in that row. Effective only when 2+ columns are active\n(i.e., adaptive is off, or on but not collapsed to 1 column).\nDefaults to true; set false to opt out.",
       "default": "true"
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": false
+      "required": false,
+      "description": "Inline styles (with CSS var support)"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
+    },
+    {
+      "name": "pad",
+      "type": "Space | undefined",
+      "required": false,
+      "description": "Container padding as units or CSS length."
+    },
+    {
+      "name": "gap",
+      "type": "Space | undefined",
+      "required": false,
+      "description": "Inter-child spacing as units or CSS length."
     }
   ],
   "domPassthrough": {

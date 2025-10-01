@@ -13,17 +13,20 @@
     {
       "name": "data",
       "type": "string",
-      "required": true
+      "required": true,
+      "description": "Raw markdown text"
     },
     {
       "name": "codeBackground",
       "type": "string",
-      "required": false
+      "required": false,
+      "description": "Optional override for code block background"
     },
     {
       "name": "sx",
       "type": "import('../../types').Sx",
-      "required": false
+      "required": false,
+      "description": "Inline styles (with CSS var support)"
     }
   ],
   "domPassthrough": {

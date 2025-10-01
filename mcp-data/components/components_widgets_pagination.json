@@ -13,34 +13,46 @@
     {
       "name": "count",
       "type": "number",
-      "required": true
+      "required": true,
+      "description": "Total number of pages (≥ 1)."
     },
     {
       "name": "page",
       "type": "number",
       "required": false,
+      "description": "Currently-selected page (1-based).",
       "default": "1"
     },
     {
       "name": "onChange",
       "type": "(page: number) => void",
-      "required": false
+      "required": false,
+      "description": "Called with **new page** when user clicks."
     },
     {
       "name": "visibleWindow",
       "type": "number",
-      "required": false
+      "required": false,
+      "description": "Limit how many page buttons are visible at once. When set and less than `count`,\npagination renders a sliding window of page numbers plus window scroll controls.\nDoes not affect the currently selected page."
     },
     {
       "name": "autoFollowActive",
       "type": "boolean",
       "required": false,
+      "description": "If true, forces the active page to remain visible by auto-shifting the window\nwhenever `page` changes outside the current window. Defaults to true.",
       "default": "true"
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": false
+      "required": false,
+      "description": "Inline styles (with CSS var support)"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
   "cssVars": [

@@ -13,22 +13,26 @@
     {
       "name": "src",
       "type": "string",
-      "required": true
+      "required": true,
+      "description": "Image source URL"
     },
     {
       "name": "width",
       "type": "number | string",
-      "required": false
+      "required": false,
+      "description": "CSS width value (number ⇒ px)"
     },
     {
       "name": "height",
       "type": "number | string",
-      "required": false
+      "required": false,
+      "description": "CSS height value (number ⇒ px)"
     },
     {
       "name": "objectFit",
       "type": "'cover' | 'contain' | 'fill' | 'none' | 'scale-down'",
       "required": false,
+      "description": "Object-fit value",
       "enumValues": [
         "cover",
         "contain",
@@ -40,22 +44,32 @@
     {
       "name": "lazy",
       "type": "boolean",
-      "required": false
+      "required": false,
+      "description": "Use native browser lazy-loading"
     },
     {
       "name": "placeholder",
       "type": "string",
-      "required": false
+      "required": false,
+      "description": "Optional lightweight placeholder shown behind while loading"
     },
     {
       "name": "aspectRatio",
       "type": "number | string",
-      "required": false
+      "required": false,
+      "description": "CSS aspect-ratio value (number ⇒ n/1)"
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": false
+      "required": false,
+      "description": "Inline styles (with CSS var support)"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
   "domPassthrough": {

@@ -14,34 +14,46 @@
     {
       "name": "open",
       "type": "boolean",
-      "required": false
+      "required": false,
+      "description": "Controlled open state – omit for uncontrolled"
     },
     {
       "name": "onClose",
       "type": "() => void",
-      "required": false
+      "required": false,
+      "description": "Called when the snackbar has fully hidden"
     },
     {
       "name": "autoHideDuration",
       "type": "number | null",
       "required": false,
+      "description": "Auto-hide after N ms – `null` disables (default = 4000 ms)",
       "default": "4000"
     },
     {
       "name": "message",
       "type": "React.ReactNode",
-      "required": false
+      "required": false,
+      "description": "Convenience message when no children supplied"
     },
     {
       "name": "noStack",
       "type": "boolean",
       "required": false,
+      "description": "Disable the internal flex stack (children render 1:1)",
       "default": "false"
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": false
+      "required": false,
+      "description": "Inline styles (with CSS var support)"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
   "domPassthrough": {

@@ -13,32 +13,38 @@
     {
       "name": "value",
       "type": "Primitive | Primitive[]",
-      "required": false
+      "required": false,
+      "description": "Controlled value (single) or array (multiple)."
     },
     {
       "name": "initialValue",
       "type": "Primitive | Primitive[]",
-      "required": false
+      "required": false,
+      "description": "Uncontrolled initial value."
     },
     {
       "name": "onChange",
       "type": "(v: Primitive | Primitive[]) => void",
-      "required": false
+      "required": false,
+      "description": "Callback fired whenever selection changes."
     },
     {
       "name": "multiple",
       "type": "boolean",
-      "required": false
+      "required": false,
+      "description": "Multiple-selection mode."
     },
     {
       "name": "placeholder",
       "type": "string",
-      "required": false
+      "required": false,
+      "description": "Placeholder when nothing selected."
     },
     {
       "name": "size",
       "type": "SelectSize | number | string",
-      "required": false
+      "required": false,
+      "description": "Size token or custom measurement"
     },
     {
       "name": "disabled",
@@ -46,19 +52,52 @@
       "required": false
     },
     {
-      "name": "name",
-      "type": "string",
-      "required": false
-    },
-    {
       "name": "children",
       "type": "React.ReactNode",
-      "required": true
+      "required": true,
+      "description": "Option nodes (see Select.Option)."
+    },
+    {
+      "name": "name",
+      "type": "string | undefined",
+      "required": false,
+      "description": "Field identifier used for FormControl binding and forwarded to the underlying control\nwhen applicable. Components can require `name` locally if they depend on it."
+    },
+    {
+      "name": "label",
+      "type": "React.ReactNode",
+      "required": false,
+      "description": "Visual label rendered by the component or its wrapper. Accepts string or node."
+    },
+    {
+      "name": "helperText",
+      "type": "React.ReactNode",
+      "required": false,
+      "description": "Supplemental hint or validation content typically rendered under the control."
+    },
+    {
+      "name": "error",
+      "type": "boolean | undefined",
+      "required": false,
+      "description": "Marks the field invalid; components may adjust visuals and helper text color."
+    },
+    {
+      "name": "fullWidth",
+      "type": "boolean | undefined",
+      "required": false,
+      "description": "Stretches the field wrapper to occupy the full available width."
     },
     {
       "name": "sx",
-      "type": "Sx",
-      "required": false
+      "type": "import(\"/Users/xbenc/occ/valet/src/types\").Sx | undefined",
+      "required": false,
+      "description": "Inline styles (with CSS var support)."
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
   "domPassthrough": {
@@ -86,6 +125,12 @@
   "slots": [
     {
       "name": "children"
+    },
+    {
+      "name": "label"
+    },
+    {
+      "name": "helperText"
     }
   ],
   "bestPractices": [

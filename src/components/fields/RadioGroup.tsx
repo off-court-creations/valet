@@ -21,7 +21,7 @@ import { preset } from '../../css/stylePresets';
 import { useTheme } from '../../system/themeStore';
 import { toRgb, mix, toHex } from '../../helpers/color';
 import type { Theme } from '../../system/themeStore';
-import type { Presettable, Sx } from '../../types';
+import type { FieldBaseProps, Presettable, Sx } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 /* Context                                                   */
@@ -100,18 +100,15 @@ const HiddenInput = styled('input')`
 /* Public prop contracts                                     */
 export interface RadioGroupProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'style'>,
-    Presettable {
+    FieldBaseProps {
   value?: string;
   defaultValue?: string;
-  name?: string;
   row?: boolean;
   size?: RadioSize | number | string;
   /** Gap between options */
   spacing?: number | string;
   onChange?: (val: string) => void;
   children: ReactNode;
-  /** Inline styles (with CSS var support) */
-  sx?: Sx;
 }
 
 export interface RadioProps

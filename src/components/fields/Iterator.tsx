@@ -8,19 +8,18 @@ import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { IconButton } from './IconButton';
 import { useOptionalForm } from './FormControl';
-import type { Presettable, Sx } from '../../types';
+import type { FieldBaseProps } from '../../types';
 import type { Theme } from '../../system/themeStore';
 
 /*───────────────────────────────────────────────────────────*/
 export interface IteratorProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'style'>,
-    Presettable {
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'style' | 'name'>,
+    FieldBaseProps {
   value?: number;
   defaultValue?: number;
   onChange?: (value: number) => void;
   /** Fires when a value is committed (buttons, wheel, keyboard, or blur). */
   onCommit?: (value: number) => void;
-  name?: string;
   min?: number;
   max?: number;
   step?: number;
@@ -40,9 +39,8 @@ export interface IteratorProps
    *  - hover: step while hovered (prevents page scroll while over the input)
    */
   wheelBehavior?: 'off' | 'focus' | 'hover';
+  /** Control width of the numeric field (token or CSS length). */
   width?: number | string;
-  /** Inline styles (with CSS var support) */
-  sx?: Sx;
 }
 
 /*───────────────────────────────────────────────────────────*/

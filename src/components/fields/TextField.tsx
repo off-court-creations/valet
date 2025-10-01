@@ -14,30 +14,29 @@ import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { useOptionalForm } from './FormControl';
 import type { Theme } from '../../system/themeStore';
-import type { Presettable, Sx } from '../../types';
+import type { FieldBaseProps } from '../../types';
 
 /*───────────────────────────────────────────────────────────────────────────*/
 /* Prop contracts                                                            */
 
-type InputProps = InputHTMLAttributes<HTMLInputElement>;
-type TextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement>;
-
-interface FieldCommon extends Presettable {
-  name: string;
-  label?: string;
-  helperText?: string;
-  error?: boolean;
-  /** Stretch the wrapper to fill available width */
-  fullWidth?: boolean;
-  /** Override input font */
-  fontFamily?: string;
-  /** Inline styles (with CSS var support) */
-  sx?: Sx;
-}
+type InputProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'name' | 'style'>;
+type TextareaProps = Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'name' | 'style'>;
 
 export type TextFieldProps =
-  | (FieldCommon & InputProps & { as?: 'input'; rows?: never })
-  | (FieldCommon & TextareaProps & { as: 'textarea' });
+  | ((FieldBaseProps & {
+      /** Override input font */
+      fontFamily?: string;
+      /** Field name is required for TextField to bind and identify the value. */
+      name: string;
+    }) &
+      InputProps & { as?: 'input'; rows?: never })
+  | ((FieldBaseProps & {
+      /** Override input font */
+      fontFamily?: string;
+      /** Field name is required for TextField to bind and identify the value. */
+      name: string;
+    }) &
+      TextareaProps & { as: 'textarea' });
 
 /*───────────────────────────────────────────────────────────────────────────*/
 /* Shared styled helpers                                                     */
