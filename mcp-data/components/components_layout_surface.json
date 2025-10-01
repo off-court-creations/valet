@@ -58,6 +58,7 @@
     "--valet-font-button",
     "--valet-radius",
     "--valet-stroke",
+    "--valet-divider",
     "--valet-focus-width",
     "--valet-focus-offset",
     "--valet-divider-stroke",

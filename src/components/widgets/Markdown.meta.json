@@ -1,6 +1,6 @@
 {
   "name": "Markdown",
-  "status": "experimental",
+  "status": "stable",
   "aliases": ["markdown", "md", "richtext"],
   "docs": {
     "bestPractices": [

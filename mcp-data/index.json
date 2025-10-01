@@ -144,7 +144,7 @@
     "category": "layout",
     "summary": "Stack component",
     "slug": "components/layout/stack",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Surface",
@@ -172,14 +172,14 @@
     "category": "primitives",
     "summary": "Divider component",
     "slug": "components/primitives/divider",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Icon",
     "category": "primitives",
     "summary": "Icon component",
     "slug": "components/primitives/icon",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Image",
@@ -200,35 +200,35 @@
     "category": "primitives",
     "summary": "Typography component",
     "slug": "components/primitives/typography",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Video",
     "category": "primitives",
     "summary": "Video component",
     "slug": "components/primitives/video",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "WebGLCanvas",
     "category": "primitives",
     "summary": "WebGLCanvas component",
     "slug": "components/primitives/webglcanvas",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Chip",
     "category": "widgets",
     "summary": "Chip component",
     "slug": "components/widgets/chip",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "CodeBlock",
     "category": "widgets",
     "summary": "CodeBlock component",
     "slug": "components/widgets/codeblock",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Dropzone",
@@ -249,14 +249,14 @@
     "category": "widgets",
     "summary": "LoadingBackdrop component",
     "slug": "components/widgets/loadingbackdrop",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Markdown",
     "category": "widgets",
     "summary": "Markdown component",
     "slug": "components/widgets/markdown",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Pagination",
@@ -284,14 +284,14 @@
     "category": "widgets",
     "summary": "Snackbar component",
     "slug": "components/widgets/snackbar",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "SpeedDial",
     "category": "widgets",
     "summary": "SpeedDial component",
     "slug": "components/widgets/speeddial",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Table",
@@ -305,13 +305,13 @@
     "category": "widgets",
     "summary": "Tooltip component",
     "slug": "components/widgets/tooltip",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Tree",
     "category": "widgets",
     "summary": "Tree component",
     "slug": "components/widgets/tree",
-    "status": "experimental"
+    "status": "stable"
   }
 ]

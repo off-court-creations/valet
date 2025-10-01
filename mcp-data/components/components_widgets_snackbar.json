@@ -3,7 +3,7 @@
   "category": "widgets",
   "slug": "components/widgets/snackbar",
   "summary": "Snackbar component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "snackbar",
     "toast",

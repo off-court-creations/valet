@@ -191,6 +191,7 @@ export const Surface: React.FC<SurfaceProps> = ({
     '--valet-space': spaceVar,
     '--valet-radius': theme.radiusUnit,
     '--valet-stroke': theme.strokeUnit,
+    '--valet-divider': theme.colors.divider,
     '--valet-focus-width': theme.stroke(2),
     '--valet-focus-offset': theme.stroke(2),
     '--valet-divider-stroke': theme.stroke(1),

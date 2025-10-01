@@ -3,7 +3,7 @@
   "category": "widgets",
   "slug": "components/widgets/loadingbackdrop",
   "summary": "LoadingBackdrop component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "loadingbackdrop",
     "backdrop",

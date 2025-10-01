@@ -3,7 +3,7 @@
   "category": "widgets",
   "slug": "components/widgets/speeddial",
   "summary": "SpeedDial component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "speeddial",
     "speed-dial",

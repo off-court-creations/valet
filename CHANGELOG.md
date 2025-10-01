@@ -64,6 +64,10 @@ All notable changes to this project will be documented in this file. The format 
   - Clear spacing, dividers, and sticky controls bar; optional JSON copy action
   - Preserves `GLOSSARY` structure for MCP extraction; recommend regenerating `mcp-data/`
 
+### Fixed
+
+- Chip: outlined variant border was invisible due to missing `divider` token in theme. Added `colors.divider` for light/dark themes and use it for default outlined borders.
+
  
 ### Removed
 
@@ -88,6 +92,10 @@ All notable changes to this project will be documented in this file. The format 
  - Accordion: flip chevron orientation so collapsed shows down and expanded shows up.
  - Accordion: divider borders now fade using theme motion tokens on hover; selected (open) item keeps dividers visible when hovered.
 
+- Tooltip/IconButton: prevent iOS long‑press selection handles (“selection gates”) from appearing in Tooltip demos. Added `-webkit-user-select: none`, `-webkit-touch-callout: none`, and tap‑highlight/`touch-action` guards to IconButton and disabled selection on the Tooltip bubble.
+
+- Icon: prevent selection and long‑press callout on iOS/Android by disabling selection and touch callout on the wrapper and SVG; also remove tap highlight and mark the wrapper `draggable={false}`.
+
 - List: ground‑up rewrite for simplicity and function
   - Unified pointer-based reordering (mouse/touch/pen), plus Alt+Arrow keyboard reorder
   - Cleaner selection with roving tabIndex and Arrow/Enter/Space navigation
@@ -95,7 +103,9 @@ All notable changes to this project will be documented in this file. The format 
   - Simpler styling (striped/hover/selected) with fewer side-effects; retains presets and `sx`
  - Accessibility: List no longer forces non-selectable rows into the tab order
    - Non-selectable lists keep `tabIndex` unset; selectable lists retain roving focus
-   - Adds explicit override via `focusMode` for advanced use cases
+  - Adds explicit override via `focusMode` for advanced use cases
+
+- SpeedDial: prevent iOS long‑press text selection and callout on the main FAB and action buttons by disabling selection (`user-select: none`), iOS touch callout, and using `touch-action: manipulation`; also suppress the long‑press context menu.
 
 ## [0.32.0]
 

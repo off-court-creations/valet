@@ -3,7 +3,7 @@
   "category": "widgets",
   "slug": "components/widgets/codeblock",
   "summary": "CodeBlock component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "codeblock",
     "code",

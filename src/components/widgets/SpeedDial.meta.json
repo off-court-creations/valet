@@ -1,6 +1,6 @@
 {
   "name": "SpeedDial",
-  "status": "experimental",
+  "status": "stable",
   "aliases": ["speeddial", "speed-dial", "fab", "fab-menu"],
   "docs": {
     "bestPractices": [

@@ -1,6 +1,6 @@
 {
   "name": "Snackbar",
-  "status": "experimental",
+  "status": "stable",
   "aliases": ["snackbar", "toast", "notification", "alert"],
   "docs": {
     "bestPractices": [

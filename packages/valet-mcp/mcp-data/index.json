@@ -312,6 +312,6 @@
     "category": "widgets",
     "summary": "Tree component",
     "slug": "components/widgets/tree",
-    "status": "experimental"
+    "status": "stable"
   }
 ]

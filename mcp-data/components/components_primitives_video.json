@@ -3,7 +3,7 @@
   "category": "primitives",
   "slug": "components/primitives/video",
   "summary": "Video component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "video",
     "player"

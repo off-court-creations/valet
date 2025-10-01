@@ -3,7 +3,7 @@
   "category": "primitives",
   "slug": "components/primitives/divider",
   "summary": "Divider component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "divider",
     "rule",
@@ -69,7 +69,7 @@
     ]
   },
   "cssVars": [
-    "--valet-text-color",
+    "--valet-divider",
     "--valet-divider-stroke"
   ],
   "cssPresets": [],

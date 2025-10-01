@@ -54,6 +54,10 @@ const MainButton = styled('button')<{
   cursor: pointer;
   /* Mobile tidy-ups */
   -webkit-tap-highlight-color: transparent; /* ⬅︎ kills blue flash */
+  -webkit-touch-callout: none; /* ⬅︎ prevent iOS callout on long-press */
+  -webkit-user-select: none; /* ⬅︎ prevent iOS text selection */
+  user-select: none; /* ⬅︎ prevent text selection in modern browsers */
+  touch-action: manipulation; /* ⬅︎ hint to remove 300ms delay + suppress long-press */
   outline: none;
 
   transition:
@@ -92,6 +96,10 @@ const ActionFab = styled('button')<{
   color: ${({ $color }) => $color};
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none; /* prevent iOS callout on long-press */
+  -webkit-user-select: none; /* prevent iOS text selection */
+  user-select: none;
+  touch-action: manipulation;
   outline: none;
 
   opacity: ${({ $open }) => ($open ? 1 : 0)};
@@ -163,6 +171,7 @@ export const SpeedDial: React.FC<SpeedDialProps> = ({
           <ActionFab
             key={idx}
             onClick={a.onClick}
+            onContextMenu={(e) => e.preventDefault()}
             $bg={bg}
             $color={text}
             $dir={direction}
@@ -185,6 +194,7 @@ export const SpeedDial: React.FC<SpeedDialProps> = ({
       {/* — main FAB — */}
       <MainButton
         onClick={() => setOpen((o) => !o)}
+        onContextMenu={(e) => e.preventDefault()}
         $bg={bg}
         $color={text}
         $open={open}

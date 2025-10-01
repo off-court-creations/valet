@@ -241,6 +241,7 @@ const lightColors = {
   tertiaryButtonText: '#1b1b1b',
   background: '#f4f4f4',
   backgroundAlt: '#D6D6D6',
+  divider: '#BDBDBD',
   text: '#090909',
 } as const;
 
@@ -258,6 +259,7 @@ const lightColorNames: Record<keyof typeof lightColors, string> = {
   tertiaryButtonText: 'Graphite',
   background: 'Porcelain Off-White',
   backgroundAlt: 'Cool Grey',
+  divider: 'Keyline Grey',
   text: 'Ink Black',
 };
 
@@ -275,6 +277,7 @@ const darkColors = {
   tertiaryButtonText: '#1b1b1b',
   background: '#161616',
   backgroundAlt: '#363636',
+  divider: '#5A5A5A',
   text: '#F7F7F7',
 } as const;
 
@@ -292,6 +295,7 @@ const darkColorNames: Record<keyof typeof darkColors, string> = {
   tertiaryButtonText: 'Graphite',
   background: 'Carbon',
   backgroundAlt: 'Cool Grey',
+  divider: 'Keyline Grey',
   text: 'Porcelain Off-White',
 };
 
