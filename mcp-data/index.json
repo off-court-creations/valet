@@ -4,7 +4,7 @@
     "category": "fields",
     "summary": "Button component",
     "slug": "components/fields/button",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Checkbox",
@@ -95,7 +95,7 @@
     "category": "layout",
     "summary": "AppBar component",
     "slug": "components/layout/appbar",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Box",
@@ -109,7 +109,7 @@
     "category": "layout",
     "summary": "Drawer component",
     "slug": "components/layout/drawer",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Grid",
@@ -137,7 +137,7 @@
     "category": "layout",
     "summary": "Panel component",
     "slug": "components/layout/panel",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Stack",
@@ -158,7 +158,7 @@
     "category": "layout",
     "summary": "Tabs component",
     "slug": "components/layout/tabs",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Avatar",

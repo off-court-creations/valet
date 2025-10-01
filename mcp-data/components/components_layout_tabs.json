@@ -3,7 +3,7 @@
   "category": "layout",
   "slug": "components/layout/tabs",
   "summary": "Tabs component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "tabs"
   ],
