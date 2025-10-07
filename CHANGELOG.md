@@ -46,6 +46,13 @@ All notable changes to this project will be documented in this file. The format 
    - Remove `rounded` prop; apply rounding via wrapper with `overflow: hidden` (more robust across object-fit modes)
    - Forward refs; default `decoding="async"`; keep `sx` and preset support
 
+ - Image: finalize simple API and defaults
+   - Replace `objectFit` with `fit`; add `objectPosition` for focus/cropping control
+   - Remove `lazy` boolean and `placeholder`; use native `loading` (default `'lazy'`)
+   - Require `alt` text (empty string allowed for decorative)
+   - Keep `aspectRatio`, `width`/`height` (number ⇒ px), `decoding='async'`, and `draggable={false}` by default
+   - Passthrough responsive imaging attributes (`srcSet`, `sizes`) and `fetchPriority`
+
  - Progress: complete redesign with simpler API and better a11y/compat
   - New primitives `ProgressBar` and `ProgressRing` replace mode/variant juggling
   - Back-compat `Progress` wrapper remains (maps legacy `variant`/`mode`/`showLabel`)

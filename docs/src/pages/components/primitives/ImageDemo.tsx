@@ -3,16 +3,7 @@
 // Showcase of Image component using the reusable ComponentMetaPage (5 tabs)
 // ─────────────────────────────────────────────────────────────
 import { useState } from 'react';
-import {
-  Stack,
-  Typography,
-  Image,
-  useTheme,
-  Panel,
-  Select,
-  Switch,
-  TextField,
-} from '@archway/valet';
+import { Stack, Typography, Image, useTheme, Panel, Select, TextField } from '@archway/valet';
 import ComponentMetaPage from '../../../components/ComponentMetaPage';
 import ImageMeta from '../../../../../src/components/primitives/Image.meta.json';
 
@@ -24,7 +15,8 @@ export default function ImageDemoPage() {
   const [pgWidth, setPgWidth] = useState<string>('100%');
   const [pgHeight, setPgHeight] = useState<string>('300px');
   const [pgFit, setPgFit] = useState<'cover' | 'contain' | 'fill' | 'none' | 'scale-down'>('cover');
-  const [pgLazy, setPgLazy] = useState<boolean>(false);
+  const [pgLoading, setPgLoading] = useState<'lazy' | 'eager'>('lazy');
+  const [pgObjectPos, setPgObjectPos] = useState<string>('center');
   const [pgAspect, setPgAspect] = useState<string>('auto');
 
   const usageContent = (
@@ -42,13 +34,13 @@ export default function ImageDemoPage() {
         />
       </Panel>
 
-      <Typography variant='h3'>2. Lazy loaded (native)</Typography>
+      <Typography variant='h3'>2. Eager loaded (hero)</Typography>
       <Image
         src='https://picsum.photos/400/300'
-        alt='Lazy kitten'
+        alt='Eager kitten'
         width='100%'
         height='300px'
-        lazy
+        loading='eager'
       />
 
       <Typography variant='h3'>3. Contain fit</Typography>
@@ -57,16 +49,17 @@ export default function ImageDemoPage() {
         alt='Contained kitten'
         width='100%'
         height='300px'
-        objectFit='contain'
+        fit='contain'
       />
 
-      <Typography variant='h3'>4. Aspect ratio</Typography>
+      <Typography variant='h3'>4. Aspect ratio + top focus</Typography>
       <Image
         src='https://picsum.photos/800/600'
         alt='Aspect ratio demo'
         width='100%'
         aspectRatio='16 / 9'
-        objectFit='cover'
+        fit='cover'
+        objectPosition='top'
       />
     </Stack>
   );
@@ -89,7 +82,7 @@ export default function ImageDemoPage() {
             sx={{ width: 320 }}
           />
           <Select
-            placeholder='objectFit'
+            placeholder='fit'
             value={pgFit}
             onChange={(v) => setPgFit(v as typeof pgFit)}
             sx={{ width: 180 }}
@@ -99,6 +92,15 @@ export default function ImageDemoPage() {
             <Select.Option value='fill'>fill</Select.Option>
             <Select.Option value='none'>none</Select.Option>
             <Select.Option value='scale-down'>scale-down</Select.Option>
+          </Select>
+          <Select
+            placeholder='loading'
+            value={pgLoading}
+            onChange={(v) => setPgLoading(v as typeof pgLoading)}
+            sx={{ width: 160 }}
+          >
+            <Select.Option value='lazy'>lazy</Select.Option>
+            <Select.Option value='eager'>eager</Select.Option>
           </Select>
           <TextField
             name='width'
@@ -116,19 +118,14 @@ export default function ImageDemoPage() {
             onChange={(e) => setPgHeight((e.target as HTMLInputElement).value)}
             sx={{ width: 180 }}
           />
-
-          <Stack
-            direction='row'
-            gap={1}
-            sx={{ alignItems: 'center' }}
-          >
-            <Typography variant='subtitle'>lazy</Typography>
-            <Switch
-              checked={pgLazy}
-              onChange={setPgLazy}
-              aria-label='lazy'
-            />
-          </Stack>
+          <TextField
+            name='objectPosition'
+            label='objectPosition'
+            placeholder='e.g., center or 50% 25%'
+            value={pgObjectPos}
+            onChange={(e) => setPgObjectPos((e.target as HTMLInputElement).value)}
+            sx={{ width: 200 }}
+          />
           <TextField
             name='aspectRatio'
             label='aspectRatio'
@@ -144,8 +141,9 @@ export default function ImageDemoPage() {
           src={pgSrc}
           width={pgWidth}
           height={pgHeight}
-          objectFit={pgFit}
-          lazy={pgLazy}
+          fit={pgFit}
+          loading={pgLoading}
+          objectPosition={pgObjectPos}
           aspectRatio={pgAspect}
           alt='Playground preview'
         />
@@ -156,7 +154,7 @@ export default function ImageDemoPage() {
   return (
     <ComponentMetaPage
       title='Image'
-      subtitle='Responsive image with native lazy-loading, object-fit, and optional aspect-ratio. Apply rounded corners via sx or a wrapper.'
+      subtitle='Responsive image with native lazy-loading, fit/object-position, and optional aspect-ratio. Apply rounded corners via sx or a wrapper.'
       slug='components/primitives/image'
       meta={ImageMeta}
       usage={usageContent}

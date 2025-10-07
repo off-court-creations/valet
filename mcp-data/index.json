@@ -186,7 +186,7 @@
     "category": "primitives",
     "summary": "Image component",
     "slug": "components/primitives/image",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Progress",

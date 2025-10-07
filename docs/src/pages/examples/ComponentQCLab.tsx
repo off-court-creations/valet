@@ -134,7 +134,6 @@ export default function ComponentQCLab() {
                       src={`https://picsum.photos/seed/qc-${n}/300/200`}
                       alt={`qc-${n}`}
                       sx={{ width: '100%', height: 'auto', display: 'block' }}
-                      lazy
                     />
                   ))}
                 </Grid>

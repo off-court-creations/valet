@@ -65,7 +65,7 @@
     },
     {
       "name": "sx",
-      "type": "import(\"/Users/xbenc/occ/valet/src/types\").Sx | undefined",
+      "type": "import(\"/home/xbenc/occ/valet/src/types\").Sx | undefined",
       "required": false,
       "description": "Inline styles (with CSS var support)."
     },

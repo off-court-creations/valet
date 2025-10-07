@@ -132,7 +132,6 @@ export default function ComplicatedDashboard() {
                       src={`https://picsum.photos/seed/${n}/300/200`}
                       alt={`random-${n}`}
                       sx={{ width: '100%', height: 'auto', display: 'block' }}
-                      lazy
                     />
                   ))}
                 </Grid>
