@@ -361,6 +361,8 @@ export default function ComponentStatusPage() {
             dividers
             initialSort={{ index: 1 }}
             constrainHeight
+            minConstrainedRows={10}
+            maxExpandedRows={30}
           />
         </Panel>
         {null}

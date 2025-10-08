@@ -19,6 +19,11 @@ All notable changes to this project will be documented in this file. The format 
    - Best Practices and curated Examples added to sidecar; docs page renders them
  - Fields: introduce `FieldBaseProps` with JSDoc for shared field props (`name`, `label`, `helperText`, `error`, `fullWidth`, `sx`, `preset`) to seed consistent reference descriptions across all fields.
  - MCP: extractor now reads per‑prop JSDoc comments from shared types and component interfaces to populate the Reference table descriptions by default.
+- Table: smart height constraints for better UX on small viewports
+  - New `minConstrainedRows` (default `4`): when `constrainHeight` would show fewer than this many rows, the table temporarily disables internal scrolling to avoid a tiny scroller.
+  - New `maxExpandedRows` (default `30`): when `minConstrainedRows` disables constraining and the dataset exceeds this size, Table paginates (using `<Pagination/>`) with `maxExpandedRows` rows per page instead of using a scrollbar.
+  - New `paginate` (default `false`): force pagination always using `maxExpandedRows`; otherwise pagination engages automatically only when `minConstrainedRows` kicks in.
+  - Controlled pagination support via `page`, `onPageChange`, and `paginationWindow` (forwarded to Pagination’s `visibleWindow`).
 
 ### Changed
 

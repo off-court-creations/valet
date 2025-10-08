@@ -5,7 +5,7 @@
   "docs": {
     "bestPractices": [
       "Keep tables readable: enable `striped` and/or `hoverable` for large datasets, but avoid heavy styling that competes with content.",
-      "Constrain height (`constrainHeight`) so the body scrolls inside the table instead of the page scrolling in two directions.",
+      "Prefer smart height over tiny scrollbars: enable `constrainHeight` and set `minConstrainedRows` (default 4). If the viewport would show fewer rows, the table expands; when the dataset exceeds `maxExpandedRows` (default 30), it paginates instead of showing a tiny scroller.",
       "Provide an initial sort (`initialSort`), align numeric columns to the right, and format dates consistently.",
       "Enable selection only when follow‑up actions operate on selected rows; choose `single` vs `multi` to match the action design.",
       "Keep column count reasonable on narrow screens; prefer fewer, more meaningful columns over many cramped ones. Use succinct headers."
@@ -21,6 +21,17 @@
       "id": "table-selectable",
       "title": "Single‑select with initial sort",
       "code": "(() => {\n  const columns = [\n    { header: 'ID', accessor: 'id', align: 'right', sortable: true },\n    { header: 'Name', accessor: 'name', sortable: true },\n    { header: 'Age', accessor: 'age', align: 'right', sortable: true },\n  ];\n  const data = [\n    { id: 1, name: 'Katherine Johnson', age: 41 },\n    { id: 2, name: 'Tim Berners‑Lee', age: 35 },\n    { id: 3, name: 'Linus Torvalds', age: 29 },\n  ];\n  const Demo = () => {\n    const [selected, setSelected] = React.useState([]);\n    return (<Stack>\n      <Panel fullWidth>\n        <Table data={data} columns={columns} selectable='single' initialSort={{ index: 0 }} onSelectionChange={setSelected} />\n      </Panel>\n      <Typography variant='subtitle'>Selected: {selected.map((r) => r.id).join(', ') || '—'}</Typography>\n    </Stack>);\n  };\n  return <Demo />;\n})()"
+    }
+    ,
+    {
+      "id": "table-auto-pagination",
+      "title": "Auto pagination via minConstrainedRows",
+      "code": "(() => {\n  type Row = { id: number; name: string; city: string };\n  const columns = [\n    { header: 'ID', accessor: 'id', align: 'right' },\n    { header: 'Name', accessor: 'name' },\n    { header: 'City', accessor: 'city' },\n  ];\n  const data = Array.from({ length: 60 }, (_, i) => ({ id: i + 1, name: 'User ' + (i + 1), city: 'City ' + (i % 8) }));\n  return (\n    <Panel fullWidth>\n      <Table\n        data={data}\n        columns={columns}\n        striped\n        hoverable\n        constrainHeight\n        minConstrainedRows={4}\n        maxExpandedRows={20}\n      />\n    </Panel>\n  );\n})()"
+    },
+    {
+      "id": "table-force-pagination",
+      "title": "Force pagination with page size",
+      "code": "(() => {\n  type Row = { id: number; name: string; city: string };\n  const columns = [\n    { header: 'ID', accessor: 'id', align: 'right' },\n    { header: 'Name', accessor: 'name' },\n    { header: 'City', accessor: 'city' },\n  ];\n  const data = Array.from({ length: 48 }, (_, i) => ({ id: i + 1, name: 'Row ' + (i + 1), city: 'Metro ' + (i % 5) }));\n  const Demo = () => {\n    const [page, setPage] = React.useState(1);\n    return (\n      <Panel fullWidth>\n        <Table\n          data={data}\n          columns={columns}\n          striped\n          paginate\n          maxExpandedRows={12}\n          page={page}\n          onPageChange={setPage}\n          paginationWindow={7}\n        />\n      </Panel>\n    );\n  };\n  return <Demo />;\n})()"
     }
   ]
 }
