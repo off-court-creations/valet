@@ -71,7 +71,7 @@ export default function LiveCodePreview({
         filename: 'LiveExample.tsx',
         presets: [['react', { runtime: 'classic', development: false }], 'typescript'],
       }).code as string;
-      // eslint-disable-next-line no-new-func
+
       const fn = new Function(
         'React',
         'scope',

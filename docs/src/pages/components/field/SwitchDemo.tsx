@@ -49,7 +49,6 @@ export default function SwitchDemoPage() {
 
   /* Form submit handler --------------------------------------------------- */
   const handleSubmit = (values: { darkMode: boolean; newsletter: boolean }) =>
-    // eslint-disable-next-line no-alert -- demo only
     alert(JSON.stringify(values, null, 2));
 
   const usageContent = (

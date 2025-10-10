@@ -486,7 +486,7 @@ export const Pagination: React.FC<PaginationProps> = ({
         scaleEase: theme.motion.easing.linear,
         origin: 'left',
       });
-      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+
       void wrapRef.current?.offsetWidth;
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
@@ -539,7 +539,7 @@ export const Pagination: React.FC<PaginationProps> = ({
 
         // Animate far edge (left) using transform scale from the right origin for smoother motion
         const targetScale = stretchedW > 0 ? target.w / stretchedW : 1;
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+
         void wrapRef.current?.offsetWidth;
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
@@ -570,7 +570,7 @@ export const Pagination: React.FC<PaginationProps> = ({
 
         // Animate far edge (right) using transform scale from the left origin for smoother motion
         const targetScale = stretchedW > 0 ? target.w / stretchedW : 1;
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+
         void wrapRef.current?.offsetWidth;
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {

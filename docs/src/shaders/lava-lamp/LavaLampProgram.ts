@@ -518,7 +518,7 @@ export function createLavaLampProgram(
       else if (comp.length === 1) solos.push(comp[0]!);
     }
     // Debug: pulse start
-    // eslint-disable-next-line no-console
+
     console.log('[lava] pulse start', {
       t: Number(time.toFixed(2)),
       clumps: clumps.length,
@@ -704,7 +704,6 @@ export function createLavaLampProgram(
         t < pulseState.nextTime &&
         !pulseState.burst
       ) {
-        // eslint-disable-next-line no-console
         console.warn('[lava] pulse scheduler: reschedule safety', {
           t: Number(t.toFixed(2)),
           next: Number(pulseState.nextTime.toFixed(2)),
@@ -743,7 +742,6 @@ export function createLavaLampProgram(
             }
           }
         } else {
-          // eslint-disable-next-line no-console
           console.log('[lava] pulse end', { t: Number(t.toFixed(2)) });
           pulseState.burst = null;
         }

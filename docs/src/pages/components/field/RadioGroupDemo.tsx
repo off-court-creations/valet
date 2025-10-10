@@ -51,7 +51,6 @@ export default function RadioGroupDemoPage() {
   const [shipping, setShipping] = useState<'standard' | 'express'>('standard');
 
   const handleSubmit = (values: { color: string; pet: string }) => {
-    // eslint-disable-next-line no-alert
     alert(JSON.stringify(values, null, 2));
   };
 

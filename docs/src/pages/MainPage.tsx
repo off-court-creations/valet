@@ -30,11 +30,15 @@ import type { TableColumn } from '@archway/valet';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from '../components/NavDrawer';
 import LavaLampBackgroundGL from '../components/LavaLampBackgroundGL';
+// Pull the current valet version directly from the root package.json
+// This keeps the displayed version authoritative and avoids hardcoding.
+import rootPkg from '../../../package.json';
 
 export default function MainPage() {
   const navigate = useNavigate();
   const { theme, mode, toggleMode, setDensity, density } = useTheme();
   const heroAnchorRef = useRef<HTMLDivElement | null>(null);
+  const valetVersion = (rootPkg as { version?: string }).version ?? '';
 
   // ── Hero CTA targets
   const go = (p: string) => () => navigate(p);
@@ -457,7 +461,7 @@ export default function MainPage() {
           </Typography>
           <div style={{ flex: 1 }} />
           <Typography variant='subtitle'>
-            <code>valet</code>
+            <code>valet{valetVersion ? ` v${valetVersion}` : ''}</code>
           </Typography>
         </Stack>
       </Box>

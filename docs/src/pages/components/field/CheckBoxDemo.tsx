@@ -31,7 +31,6 @@ export default function CheckboxDemoPage() {
 
   /* Form submit handler --------------------------------------------------- */
   const handleSubmit = (values: { terms: boolean; marketing: boolean }) => {
-    /* eslint-disable-next-line no-alert */
     // demo purposes only
     alert(JSON.stringify(values, null, 2));
   };
