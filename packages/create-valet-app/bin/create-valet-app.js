@@ -1156,12 +1156,12 @@ async function generateAgentsDoc({ targetDir, include, template, router, zustand
       : 'This is a hybrid template: TypeScript by default, JavaScript files allowed.';
 
   const AGENT_COMMANDS = [
-    '- Lint: `npm run -s lint:agent`',
-    '- Fix lint: `npm run -s lint:fix:agent`',
-    !isJS ? '- Typecheck: `npm run -s typecheck:agent`' : null,
-    '- Format check: `npm run -s format:agent`',
-    '- Format write: `npm run -s format:fix:agent`',
-    '- Build: `npm run -s build:agent`',
+    '- Lint: `npm run -s lint`',
+    '- Fix lint: `npm run -s lint:fix`',
+    !isJS ? '- Typecheck: `npm run -s typecheck`' : null,
+    '- Format check: `npm run -s format`',
+    '- Format write: `npm run -s format:fix`',
+    '- Build: `npm run -s build`',
   ].filter(Boolean).join('\n');
 
   const FEATURES_LIST = [

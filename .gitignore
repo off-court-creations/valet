@@ -3,6 +3,7 @@ node_modules
 dist
 styleguide
 .vscode
+docs/dist
 
 # Logs and caches
 logs
