@@ -14,9 +14,29 @@ export default function PaginationDemoPage() {
   const [visibleWindow, setVisibleWindow] = useState<number>(0);
   const [autoFollowActive, setAutoFollowActive] = useState<boolean>(true);
 
+  // Ten distinct lorem ipsum segments for usage demo content
+  const lorem: string[] = [
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent vitae sapien at tortor malesuada convallis. Integer viverra, nibh in convallis luctus, eros nisl aliquet leo, quis bibendum neque risus vitae nisl.',
+    'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.',
+    'At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident.',
+    'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+    'Quisque non urna sit amet libero pharetra bibendum. Vivamus ut arcu in magna tempor laoreet. Nam faucibus, lectus in tempor condimentum, augue lorem ultricies risus, vitae dictum mi tortor vel augue.',
+    'Curabitur pharetra, justo a tempus porta, nisi sem sollicitudin risus, in dignissim arcu dolor id lectus. Suspendisse potenti. Cras porttitor, risus id tempor placerat, nunc lorem posuere nunc, a cursus nulla magna et mi.',
+    'Integer tincidunt suscipit erat, non convallis dolor facilisis ac. Sed ac arcu nibh. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.',
+    'Mauris congue, risus nec varius vehicula, purus massa auctor lacus, a malesuada risus magna sit amet sapien. Cras vitae massa quis est interdum efficitur. Donec vitae dictum mi.',
+    'Fusce in efficitur risus. Aliquam auctor leo vitae velit tempor, sed efficitur urna malesuada. Vestibulum eget rhoncus massa. Aliquam ac est id ante tincidunt tincidunt a vel tellus.',
+    'Proin ut nisl in augue auctor feugiat. In sed finibus arcu. Pellentesque id dolor ac dui sodales convallis. Phasellus id massa eu justo feugiat tincidunt at id libero.'
+  ];
+
   const usageContent = (
     <Stack>
       <Typography variant='h3'>Controlled Pagination</Typography>
+      <Stack gap={0.75}>
+        <Typography variant='subtitle'>Content for page {usagePage}</Typography>
+        <Typography>
+          {lorem[usagePage - 1]}
+        </Typography>
+      </Stack>
       <Pagination
         count={10}
         visibleWindow={5}
