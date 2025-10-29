@@ -760,6 +760,49 @@ export const Pagination: React.FC<PaginationProps> = ({
     onChange?.(Math.min(count, page + 1));
   }, [onChange, page, count, hasWindow, winEnd, edgeSlideRight]);
 
+  // Jump to first/last page (used by Home/End keys)
+  const handleFirst = React.useCallback(() => {
+    if (page <= 1) return;
+    // Snap underline on programmatic jumps to avoid odd cross-window animation
+    suppressNextUnderlineAnim.current = true;
+    onChange?.(1);
+  }, [onChange, page]);
+
+  const handleLast = React.useCallback(() => {
+    if (page >= count) return;
+    suppressNextUnderlineAnim.current = true;
+    onChange?.(count);
+  }, [onChange, page, count]);
+
+  // Keyboard support: Left/Right/Home/End
+  const handleKeyDown = React.useCallback(
+    (e: React.KeyboardEvent<HTMLElement>) => {
+      // Allow user handlers to intercept via preventDefault on the event passed in
+      if (e.defaultPrevented) return;
+      switch (e.key) {
+        case 'ArrowLeft':
+          e.preventDefault();
+          handlePrev();
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          handleNext();
+          break;
+        case 'Home':
+          e.preventDefault();
+          handleFirst();
+          break;
+        case 'End':
+          e.preventDefault();
+          handleLast();
+          break;
+        default:
+          break;
+      }
+    },
+    [handlePrev, handleNext, handleFirst, handleLast],
+  );
+
   const scrollLeft = React.useCallback(() => {
     if (isAnimating || isSliding) return;
     setUnderlineFadeInstant(true);
@@ -941,9 +984,12 @@ export const Pagination: React.FC<PaginationProps> = ({
     return fn;
   }, []);
 
+  // Merge user-provided onKeyDown with internal handler
+  const { onKeyDown: onKeyDownProp, ...restProps } = rest;
+
   return (
     <Root
-      {...rest}
+      {...restProps}
       aria-label='pagination'
       $text={theme.colors.text}
       $gap={theme.spacing(1)}
@@ -953,6 +999,10 @@ export const Pagination: React.FC<PaginationProps> = ({
       $durOpacity={theme.motion.duration.base}
       $ease={theme.motion.easing.standard}
       className={mergedClass}
+      onKeyDown={(e) => {
+        onKeyDownProp?.(e as unknown as React.KeyboardEvent<HTMLElement>);
+        if (!e.defaultPrevented) handleKeyDown(e as unknown as React.KeyboardEvent<HTMLElement>);
+      }}
       style={
         {
           '--valet-underline-width': theme.stroke(4),
@@ -963,6 +1013,7 @@ export const Pagination: React.FC<PaginationProps> = ({
       {/* Outside: window scroll left (moves whole window) */}
       {hasWindow && (
         <button
+          type='button'
           aria-label='Scroll pages left'
           onClick={scrollLeft}
           disabled={winStart <= 1 || isAnimating}
@@ -973,9 +1024,11 @@ export const Pagination: React.FC<PaginationProps> = ({
 
       {/* Inside: single-step previous page (icon) */}
       <button
+        type='button'
         aria-label='Previous page'
         onClick={handlePrev}
         disabled={page === 1 || isAnimating || isSliding}
+        title='Previous page'
       >
         ‹
       </button>
@@ -1092,7 +1145,9 @@ export const Pagination: React.FC<PaginationProps> = ({
                     $durColor={theme.motion.duration.medium}
                     $durOpacity={theme.motion.duration.base}
                     $ease={theme.motion.easing.standard}
+                    aria-label={`Page ${n}${n === page ? ', current page' : ''}`}
                     aria-current={n === page ? 'page' : undefined}
+                    title={`Go to page ${n}`}
                   >
                     <Typography
                       variant='button'
@@ -1135,9 +1190,11 @@ export const Pagination: React.FC<PaginationProps> = ({
 
       {/* Inside: single-step next page (icon) */}
       <button
+        type='button'
         aria-label='Next page'
         onClick={handleNext}
         disabled={page === count || isAnimating || isSliding}
+        title='Next page'
       >
         ›
       </button>
@@ -1145,6 +1202,7 @@ export const Pagination: React.FC<PaginationProps> = ({
       {/* Outside: window scroll right (moves whole window) */}
       {hasWindow && (
         <button
+          type='button'
           aria-label='Scroll pages right'
           onClick={scrollRight}
           disabled={winEnd >= count || isAnimating || isSliding}

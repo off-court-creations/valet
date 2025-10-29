@@ -263,7 +263,7 @@
     "category": "widgets",
     "summary": "Pagination component",
     "slug": "components/widgets/pagination",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "ParallaxBackground",

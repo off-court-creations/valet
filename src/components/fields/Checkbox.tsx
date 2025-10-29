@@ -50,6 +50,7 @@ const createSizeMap = (t: Theme) =>
 /*───────────────────────────────────────────────────────────────────────────*/
 /* Styled primitives                                                        */
 const Wrapper = styled('label')<{
+  theme: Theme;
   $disabled: boolean;
   $disabledColor: string;
 }>`
@@ -63,6 +64,12 @@ const Wrapper = styled('label')<{
   /* Prevent blue flash on mobile */
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+
+  /* Visible focus ring on the visual box when input is focused */
+  input[type='checkbox']:focus-visible + [data-indicator] {
+    outline: ${({ theme }) => theme.stroke(2)} solid ${({ theme }) => theme.colors.primary};
+    outline-offset: ${({ theme }) => theme.stroke(1)};
+  }
 `;
 
 const HiddenInput = styled('input')`
@@ -149,6 +156,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
       label,
       size = 'md',
       disabled = false,
+      error,
       onChange,
       preset: presetKey,
       className,
@@ -221,6 +229,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
     /*─────────────────────────────────────────────────────────────────────*/
     return (
       <Wrapper
+        theme={theme}
         htmlFor={id}
         style={{ '--checkbox-gap': SZ.gap, ...sx } as React.CSSProperties}
         className={mergedCls}
@@ -236,6 +245,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           disabled={disabled}
           checked={currentChecked}
           onChange={handleChange}
+          aria-invalid={error || undefined}
         />
         <Box
           $size={SZ.box}
@@ -244,6 +254,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           $outline={offBlack}
           $disabled={disabled}
           $disabledColor={disabledColor}
+          data-indicator
           style={
             {
               '--valet-checkbox-radius': theme.radius(1),
