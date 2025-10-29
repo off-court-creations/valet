@@ -46,7 +46,7 @@
     "category": "fields",
     "summary": "MetroSelect component",
     "slug": "components/fields/metroselect",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Radio",

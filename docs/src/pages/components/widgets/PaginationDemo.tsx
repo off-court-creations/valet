@@ -25,7 +25,7 @@ export default function PaginationDemoPage() {
     'Integer tincidunt suscipit erat, non convallis dolor facilisis ac. Sed ac arcu nibh. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.',
     'Mauris congue, risus nec varius vehicula, purus massa auctor lacus, a malesuada risus magna sit amet sapien. Cras vitae massa quis est interdum efficitur. Donec vitae dictum mi.',
     'Fusce in efficitur risus. Aliquam auctor leo vitae velit tempor, sed efficitur urna malesuada. Vestibulum eget rhoncus massa. Aliquam ac est id ante tincidunt tincidunt a vel tellus.',
-    'Proin ut nisl in augue auctor feugiat. In sed finibus arcu. Pellentesque id dolor ac dui sodales convallis. Phasellus id massa eu justo feugiat tincidunt at id libero.'
+    'Proin ut nisl in augue auctor feugiat. In sed finibus arcu. Pellentesque id dolor ac dui sodales convallis. Phasellus id massa eu justo feugiat tincidunt at id libero.',
   ];
 
   const usageContent = (
@@ -33,9 +33,7 @@ export default function PaginationDemoPage() {
       <Typography variant='h3'>Controlled Pagination</Typography>
       <Stack gap={0.75}>
         <Typography variant='subtitle'>Content for page {usagePage}</Typography>
-        <Typography>
-          {lorem[usagePage - 1]}
-        </Typography>
+        <Typography>{lorem[usagePage - 1]}</Typography>
       </Stack>
       <Pagination
         count={10}

@@ -114,12 +114,7 @@ export default function MetroSelectDemoPage() {
   const [size, setSize] = useState<'sm' | 'md' | 'lg'>('md');
   const [sel, setSel] = useState<string | string[]>('home');
 
-  const tileSx =
-    size === 'sm'
-      ? { width: '5rem', height: '5rem' }
-      : size === 'lg'
-        ? { width: '8rem', height: '8rem' }
-        : { width: '6rem', height: '6rem' };
+  // Parent-level size now controls tile geometry uniformly
 
   // When switching modes, coerce selection shape sensibly
   const setModeSafe = (m: 'single' | 'multiple') => {
@@ -164,12 +159,12 @@ export default function MetroSelectDemoPage() {
         value={sel}
         onChange={(v) => setSel(v as string | string[])}
         multiple={mode === 'multiple'}
+        size={size}
       >
         {basic.map((o) => (
           <MetroSelect.Option
             key={o.value}
             {...o}
-            sx={tileSx}
           />
         ))}
       </MetroSelect>

@@ -4,10 +4,19 @@
 // patch: add valet-esque hover tint on options – 2025‑08‑12
 // patch: support multiple selection via `multiple` prop – 2025‑08‑12
 // patch: sync --valet-text-color with Option color – 2025‑08‑19
+// patch: keyboard + ARIA listbox, FormControl binding, size tokens – 2025‑10‑29
 // ─────────────────────────────────────────────────────────────
 /* eslint-disable react/prop-types */
 
-import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useId,
+  useMemo,
+  useState,
+} from 'react';
 import Stack from '../layout/Stack';
 import Panel from '../layout/Panel';
 import { Icon } from '../primitives/Icon';
@@ -17,6 +26,7 @@ import { preset } from '../../css/stylePresets';
 import { toHex, toRgb, mix } from '../../helpers/color';
 import type { FieldBaseProps, Presettable, Sx } from '../../types';
 import { styled } from '../../css/createStyled';
+import { useOptionalForm } from './FormControl';
 
 export type Primitive = string | number;
 
@@ -24,6 +34,7 @@ interface MetroCtx {
   value: Primitive | Primitive[] | null;
   setValue: (v: Primitive) => void;
   multiple: boolean;
+  disabled: boolean;
 }
 
 const MetroCtx = createContext<MetroCtx | null>(null);
@@ -43,6 +54,10 @@ export interface MetroSelectProps
   defaultValue?: Primitive | Primitive[];
   gap?: number | string;
   multiple?: boolean;
+  /** Visual size of the tiles; token or explicit CSS size. */
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string;
+  /** Disable the entire control. */
+  disabled?: boolean;
   onChange?: (v: Primitive | Primitive[]) => void;
   children: React.ReactNode;
   /** Inline styles (with CSS var support) */
@@ -65,6 +80,7 @@ const HoverWrap = styled('div')<{
   $hoverSelBg: string;
   $disabled: boolean;
   $selected: boolean;
+  $kbdActive?: boolean;
 }>`
   position: relative;
   display: inline-block;
@@ -87,6 +103,12 @@ const HoverWrap = styled('div')<{
         $disabled ? '' : `background: ${$selected ? $hoverSelBg : $hoverBg};`}
     }
   }
+
+  /* Keyboard navigation should mirror hover tint on the active tile */
+  ${({ $kbdActive, $disabled, $selected, $hoverBg, $hoverSelBg }) =>
+    $kbdActive && !$disabled
+      ? `.valet-hover-bg { background: ${$selected ? $hoverSelBg : $hoverBg}; }`
+      : ''}
 `;
 
 export const Option: React.FC<MetroOptionProps> = ({
@@ -100,7 +122,7 @@ export const Option: React.FC<MetroOptionProps> = ({
   ...rest
 }) => {
   const { theme, mode } = useTheme();
-  const { value: sel, setValue } = useMetro();
+  const { value: sel, setValue, disabled: allDisabled } = useMetro();
 
   const selected = Array.isArray(sel)
     ? sel.findIndex((x) => String(x) === String(value)) !== -1
@@ -140,12 +162,18 @@ export const Option: React.FC<MetroOptionProps> = ({
     zIndex: 1, // keep content above hover layer
   };
 
+  // Whether this option is the keyboard-active one (for hover tint mirroring)
+  const kbdActive = Boolean(
+    (rest as unknown as { ['data-active']?: boolean | string })['data-active'],
+  );
+
   return (
     <HoverWrap
       $hoverBg={hoverBg}
       $hoverSelBg={hoverSelBg}
-      $disabled={!!disabled}
+      $disabled={!!disabled || allDisabled}
       $selected={selected && !disabled}
+      $kbdActive={kbdActive}
       className={[presetCls, className].filter(Boolean).join(' ')}
     >
       {/**
@@ -156,13 +184,13 @@ export const Option: React.FC<MetroOptionProps> = ({
         {...rest}
         variant='alt'
         compact
-        onClick={() => !disabled && setValue(value)}
+        onClick={() => !disabled && !allDisabled && setValue(value)}
         sx={{
-          width: '6rem',
-          height: '6rem',
+          width: 'var(--valet-metro-tile-w, 6rem)',
+          height: 'var(--valet-metro-tile-h, 6rem)',
           overflow: 'hidden',
           position: 'relative', // anchor hover layer
-          cursor: disabled ? 'not-allowed' : 'pointer',
+          cursor: disabled || allDisabled ? 'not-allowed' : 'pointer',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -174,8 +202,15 @@ export const Option: React.FC<MetroOptionProps> = ({
           ['--valet-text-color' as const]:
             (disabled ? disabledColor : selected ? theme.colors.primaryText : undefined) ??
             'currentColor',
-          opacity: disabled ? 0.45 : 1,
+          opacity: disabled || allDisabled ? 0.45 : 1,
           transition: 'background 120ms ease, border-color 120ms ease, color 120ms ease',
+          // Visible keyboard focus ring on the active tile (set by parent via data-active)
+          outline: ((rest as unknown as { ['data-active']?: boolean | string })['data-active']
+            ? `${theme.stroke(2)} solid ${theme.colors.primary}`
+            : undefined) as unknown as string,
+          outlineOffset: ((rest as unknown as { ['data-active']?: boolean | string })['data-active']
+            ? theme.stroke(2)
+            : undefined) as unknown as string,
           ...sx,
         }}
       >
@@ -184,15 +219,16 @@ export const Option: React.FC<MetroOptionProps> = ({
           {typeof icon === 'string' ? (
             <Icon
               icon={icon}
-              size='lg'
+              size={'var(--valet-metro-icon-size, 1.75rem)'}
             />
           ) : (
-            <Icon size='lg'>{icon}</Icon>
+            <Icon size={'var(--valet-metro-icon-size, 1.75rem)'}>{icon}</Icon>
           )}
           <Typography
             variant='h6'
             centered
             noSelect
+            fontSize={'var(--valet-metro-font-size, 0.875rem)'}
           >
             {label}
           </Typography>
@@ -213,53 +249,267 @@ export const MetroSelect: MetroSelectComponent = ({
   gap = 0,
   onChange,
   multiple = false,
+  size = 'md',
+  disabled = false,
+  name,
+  label,
+  helperText,
   preset: p,
   className,
   sx,
   children,
   ...rest
 }) => {
-  const controlled = valueProp !== undefined;
+  const form = useOptionalForm<Record<string, unknown>>();
+  const formVal =
+    form && name ? (form.values[name] as Primitive | Primitive[] | undefined) : undefined;
+  const controlled = formVal !== undefined || valueProp !== undefined;
   const [self, setSelf] = useState<Primitive | Primitive[] | null>(defaultValue ?? null);
 
-  const val = controlled ? (valueProp as Primitive | Primitive[] | null) : self;
+  const val = controlled
+    ? ((formVal !== undefined ? formVal : (valueProp as Primitive | Primitive[] | null)) ?? null)
+    : self;
 
   const setValue = useCallback(
     (v: Primitive) => {
+      if (disabled) return;
       if (multiple) {
         const current = Array.isArray(val) ? val : [];
         const idx = current.findIndex((x) => String(x) === String(v));
         const next = idx === -1 ? [...current, v] : current.filter((_, i) => i !== idx);
         if (!controlled) setSelf(next);
+        if (form && name) form.setField(name as keyof Record<string, unknown>, next as unknown);
         onChange?.(next);
       } else {
         if (!controlled) setSelf(v);
+        if (form && name) form.setField(name as keyof Record<string, unknown>, v as unknown);
         onChange?.(v);
       }
     },
-    [controlled, multiple, onChange, val],
+    [controlled, disabled, form, multiple, name, onChange, val],
   );
 
   const presetCls = p ? preset(p) : '';
 
   const ctx = useMemo<MetroCtx>(
-    () => ({ value: val ?? null, setValue, multiple }),
-    [val, setValue, multiple],
+    () => ({ value: val ?? null, setValue, multiple, disabled }),
+    [val, setValue, multiple, disabled],
   );
+
+  // ----- Geometry: tokens → CSS variables ---------------------------------
+  const sizeMap = useMemo(
+    () => () => ({
+      xs: { tile: '4rem', icon: '1.25rem', font: '0.75rem' },
+      sm: { tile: '5rem', icon: '1.5rem', font: '0.8rem' },
+      md: { tile: '6rem', icon: '1.75rem', font: '0.875rem' },
+      lg: { tile: '7rem', icon: '2rem', font: '1rem' },
+      xl: { tile: '8rem', icon: '2.25rem', font: '1.125rem' },
+    }),
+    [],
+  );
+
+  const { theme } = useTheme();
+  const tokens = sizeMap();
+
+  let tileW: string;
+  let tileH: string;
+  let iconSz: string;
+  let fontSz: string;
+
+  if (typeof size === 'number') {
+    const s = `${size}px`;
+    tileW = s;
+    tileH = s;
+    iconSz = `calc(${s} * 0.45)`;
+    fontSz = '0.875rem';
+  } else if (tokens[size as keyof typeof tokens]) {
+    const g = tokens[size as keyof typeof tokens] as { tile: string; icon: string; font: string };
+    tileW = g.tile;
+    tileH = g.tile;
+    iconSz = g.icon;
+    fontSz = g.font;
+  } else {
+    const s = size as string;
+    tileW = s;
+    tileH = s;
+    iconSz = `calc(${s} * 0.45)`;
+    fontSz = '0.875rem';
+  }
+
+  // ----- Flatten options to compute a11y and keyboard nav ------------------
+  const rawOpts = useMemo(
+    () =>
+      React.Children.toArray(children).filter(
+        (n) =>
+          React.isValidElement<MetroOptionProps>(n) &&
+          // identify MetroSelect.Option elements (by displayName)
+          ((n as React.ReactElement).type as { displayName?: string })?.displayName ===
+            'MetroSelect.Option',
+      ) as React.ReactElement<MetroOptionProps>[],
+    [children],
+  );
+
+  // Active index for roving focus
+  const [active, setActive] = useState(0);
+  // Only show the visual active outline after keyboard use
+  const [showActive, setShowActive] = useState(false);
+
+  // Ensure active starts on a selected option or first enabled
+  useEffect(() => {
+    const findFirstEnabled = () => rawOpts.findIndex((o) => !o.props.disabled);
+    let initial = 0;
+    if (Array.isArray(val)) {
+      const arr = val as Primitive[];
+      const idx = rawOpts.findIndex(
+        (o) => !o.props.disabled && arr.some((x) => String(x) === String(o.props.value)),
+      );
+      initial = idx >= 0 ? idx : findFirstEnabled();
+    } else if (val != null) {
+      const idx = rawOpts.findIndex(
+        (o) => !o.props.disabled && String(o.props.value) === String(val as Primitive),
+      );
+      initial = idx >= 0 ? idx : findFirstEnabled();
+    } else {
+      initial = findFirstEnabled();
+    }
+    if (initial < 0) initial = 0;
+    setActive(initial);
+  }, [rawOpts, val]);
+
+  // Keyboard navigation helpers
+  const move = useCallback(
+    (dir: 1 | -1) => {
+      if (!rawOpts.length) return;
+      setActive((i) => {
+        let n = i;
+        for (let c = 0; c < rawOpts.length; c++) {
+          n = (n + dir + rawOpts.length) % rawOpts.length;
+          if (!rawOpts[n].props.disabled) break;
+        }
+        return n;
+      });
+    },
+    [rawOpts],
+  );
+
+  const isSel = useCallback(
+    (v: Primitive) =>
+      multiple
+        ? (Array.isArray(val) ? (val as Primitive[]) : []).some((x) => String(x) === String(v))
+        : val != null && String(val as Primitive) === String(v),
+    [multiple, val],
+  );
+
+  // a11y ids
+  const listId = useId();
+  const optIds = useMemo(() => rawOpts.map((_, i) => `${listId}-opt-${i}`), [rawOpts, listId]);
+
+  // Visible label / helper text wiring
+  const labelId = label ? `${listId}-label` : undefined;
+  const helpId = helperText ? `${listId}-help` : undefined;
 
   return (
     <MetroCtx.Provider value={ctx}>
+      {/* Optional visible label above */}
+      {label && (
+        <div
+          id={labelId}
+          style={{
+            fontSize: '0.875rem',
+            color: theme.colors.text,
+            marginBottom: theme.spacing(0.5),
+          }}
+        >
+          {label}
+        </div>
+      )}
       <Stack
         direction='row'
         wrap
         compact
         gap={gap}
+        role='listbox'
+        aria-multiselectable={multiple || undefined}
+        aria-disabled={disabled || undefined}
+        aria-activedescendant={optIds[active]}
+        aria-labelledby={labelId}
+        aria-describedby={helpId}
+        tabIndex={disabled ? -1 : 0}
+        onKeyDown={(e) => {
+          if (disabled) return;
+          const { key } = e as React.KeyboardEvent<HTMLDivElement>;
+          // Mark that the user is navigating via keyboard so the outline can appear
+          if (
+            key === 'ArrowRight' ||
+            key === 'ArrowDown' ||
+            key === 'ArrowLeft' ||
+            key === 'ArrowUp' ||
+            key === 'Home' ||
+            key === 'End'
+          )
+            setShowActive(true);
+          if (key === 'ArrowRight' || key === 'ArrowDown') {
+            e.preventDefault();
+            move(1);
+          } else if (key === 'ArrowLeft' || key === 'ArrowUp') {
+            e.preventDefault();
+            move(-1);
+          } else if (key === 'Home') {
+            e.preventDefault();
+            const first = rawOpts.findIndex((o) => !o.props.disabled);
+            if (first >= 0) setActive(first);
+          } else if (key === 'End') {
+            e.preventDefault();
+            for (let i = rawOpts.length - 1; i >= 0; i--) {
+              if (!rawOpts[i].props.disabled) {
+                setActive(i);
+                break;
+              }
+            }
+          } else if (key === 'Enter' || key === ' ') {
+            e.preventDefault();
+            setShowActive(true);
+            const opt = rawOpts[active];
+            if (!opt || opt.props.disabled) return;
+            setValue(opt.props.value);
+          }
+        }}
+        onBlur={() => setShowActive(false)}
         {...rest}
-        sx={sx}
+        sx={{
+          // Provide geometry via CSS vars for children
+          ['--valet-metro-tile-w' as const]: tileW,
+          ['--valet-metro-tile-h' as const]: tileH,
+          ['--valet-metro-icon-size' as const]: iconSz,
+          ['--valet-metro-font-size' as const]: fontSz,
+          ...sx,
+        }}
         className={[presetCls, className].filter(Boolean).join(' ')}
       >
-        {children}
+        {rawOpts.map((el, i) =>
+          React.cloneElement(el, {
+            id: optIds[i],
+            role: 'option',
+            'aria-selected': isSel(el.props.value),
+            'aria-disabled': el.props.disabled || disabled || undefined,
+            'data-active': showActive && i === active || undefined,
+            onMouseEnter: () => setActive(i),
+          } as Partial<MetroOptionProps> & { id: string }),
+        )}
       </Stack>
+      {helperText && (
+        <div
+          id={helpId}
+          style={{
+            fontSize: '0.75rem',
+            color: theme.colors.text + 'AA',
+            marginTop: theme.spacing(0.5),
+          }}
+          aria-live='polite'
+        >
+          {helperText}
+        </div>
+      )}
     </MetroCtx.Provider>
   );
 };

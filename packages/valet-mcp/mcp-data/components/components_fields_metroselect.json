@@ -3,7 +3,7 @@
   "category": "fields",
   "slug": "components/fields/metroselect",
   "summary": "MetroSelect component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "metroselect",
     "chip",
@@ -35,6 +35,20 @@
       "default": "false"
     },
     {
+      "name": "size",
+      "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string",
+      "required": false,
+      "default": "'md'",
+      "description": "Controls uniform tile geometry via tokens or explicit CSS size."
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "required": false,
+      "default": "false",
+      "description": "Disables interactions and focus for the entire control."
+    },
+    {
       "name": "onChange",
       "type": "(v: Primitive | Primitive[]) => void",
       "required": false
@@ -60,7 +74,11 @@
     ]
   },
   "cssVars": [
-    "--valet-text-color"
+    "--valet-text-color",
+    "--valet-metro-tile-w",
+    "--valet-metro-tile-h",
+    "--valet-metro-icon-size",
+    "--valet-metro-font-size"
   ],
   "cssPresets": [],
   "events": [

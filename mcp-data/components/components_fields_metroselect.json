@@ -3,7 +3,7 @@
   "category": "fields",
   "slug": "components/fields/metroselect",
   "summary": "MetroSelect component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "metroselect",
     "chip",
@@ -32,6 +32,27 @@
       "name": "multiple",
       "type": "boolean",
       "required": false,
+      "default": "false"
+    },
+    {
+      "name": "size",
+      "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string",
+      "required": false,
+      "description": "Visual size of the tiles; token or explicit CSS size.",
+      "default": "'md'",
+      "enumValues": [
+        "xs",
+        "sm",
+        "md",
+        "lg",
+        "xl"
+      ]
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "required": false,
+      "description": "Disable the entire control.",
       "default": "false"
     },
     {
@@ -97,7 +118,11 @@
     ]
   },
   "cssVars": [
-    "--valet-text-color"
+    "--valet-text-color",
+    "--valet-metro-tile-w",
+    "--valet-metro-tile-h",
+    "--valet-metro-icon-size",
+    "--valet-metro-font-size"
   ],
   "cssPresets": [],
   "events": [
