@@ -29,7 +29,7 @@ export type TextFieldProps =
       /** Field name is required for TextField to bind and identify the value. */
       name: string;
     }) &
-      InputProps & { as?: 'input'; rows?: never })
+      InputProps & { as?: 'input' })
   | ((FieldBaseProps & {
       /** Override input font */
       fontFamily?: string;
@@ -102,7 +102,6 @@ export const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
       fontFamily,
       preset: presetName,
       className,
-      rows,
       sx: sxProp,
       ...rawRest
     } = props;
@@ -110,7 +109,7 @@ export const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
     // Keys we manage/control
     const { onChange: externalOnChange, value: externalValue, defaultValue, ...rest } = rawRest;
 
-    const id = useId();
+    const generatedId = useId();
     const { theme } = useTheme();
 
     /** Optional FormControl wiring */
@@ -118,6 +117,17 @@ export const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
 
     const presetClasses = presetName ? preset(presetName) : '';
     const wrapperStyle = fullWidth ? { flex: 1, width: '100%', ...sxProp } : sxProp;
+
+    // Respect a provided id; otherwise use a stable generated one
+    const providedId = (rawRest as Record<string, unknown>)?.id as string | undefined;
+    const inputId = providedId ?? generatedId;
+
+    // Helper linkage: create an id for helper text when present
+    const helperId = helperText ? `${inputId}-help` : undefined;
+    const describedByFromProps = (rawRest as Record<string, unknown>)['aria-describedby'] as
+      | string
+      | undefined;
+    const ariaDescribedBy = [describedByFromProps, helperId].filter(Boolean).join(' ') || undefined;
 
     return (
       <Wrapper
@@ -128,7 +138,7 @@ export const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
         {label && (
           <Label
             theme={theme}
-            htmlFor={id}
+            htmlFor={inputId}
           >
             {label}
           </Label>
@@ -152,16 +162,21 @@ export const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
 
               return (
                 <FieldTextarea
-                  id={id}
+                  id={inputId}
                   name={name}
                   ref={ref as React.Ref<HTMLTextAreaElement>}
                   theme={theme}
                   $error={error}
-                  rows={rows}
                   {...(rest as Omit<TextareaProps, 'onChange' | 'value' | 'defaultValue'>)}
-                  value={value}
-                  defaultValue={defaultValue as TextareaProps['defaultValue']}
+                  {...(value !== undefined
+                    ? { value }
+                    : defaultValue !== undefined
+                      ? { defaultValue: defaultValue as TextareaProps['defaultValue'] }
+                      : {})}
                   onChange={handleChange}
+                  aria-invalid={error || undefined}
+                  aria-describedby={ariaDescribedBy}
+                  aria-errormessage={error && helperId ? helperId : undefined}
                   style={fontFamily ? { fontFamily } : undefined}
                 />
               );
@@ -183,15 +198,21 @@ export const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
 
               return (
                 <FieldInput
-                  id={id}
+                  id={inputId}
                   name={name}
                   ref={ref as React.Ref<HTMLInputElement>}
                   theme={theme}
                   $error={error}
                   {...(rest as Omit<InputProps, 'onChange' | 'value' | 'defaultValue'>)}
-                  value={value}
-                  defaultValue={defaultValue as InputProps['defaultValue']}
+                  {...(value !== undefined
+                    ? { value }
+                    : defaultValue !== undefined
+                      ? { defaultValue: defaultValue as InputProps['defaultValue'] }
+                      : {})}
                   onChange={handleChange}
+                  aria-invalid={error || undefined}
+                  aria-describedby={ariaDescribedBy}
+                  aria-errormessage={error && helperId ? helperId : undefined}
                   style={fontFamily ? { fontFamily } : undefined}
                 />
               );
@@ -199,8 +220,10 @@ export const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
 
         {helperText && (
           <Helper
+            id={helperId}
             theme={theme}
             $error={error}
+            aria-live='polite'
           >
             {helperText}
           </Helper>

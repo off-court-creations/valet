@@ -3,7 +3,7 @@
   "category": "fields",
   "slug": "components/fields/textfield",
   "summary": "TextField component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "textfield",
     "textinput",
@@ -62,11 +62,6 @@
     {
       "name": "as",
       "type": "\"input\" | undefined | \"textarea\"",
-      "required": false
-    },
-    {
-      "name": "rows",
-      "type": "undefined",
       "required": false
     }
   ],

@@ -81,7 +81,7 @@
     "category": "fields",
     "summary": "TextField component",
     "slug": "components/fields/textfield",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Accordion",

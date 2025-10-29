@@ -1,6 +1,6 @@
 {
   "name": "TextField",
-  "status": "experimental",
+  "status": "stable",
   "aliases": ["textfield", "textinput", "input", "textbox"],
   "docs": {
     "bestPractices": [

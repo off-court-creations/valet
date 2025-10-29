@@ -13,6 +13,9 @@ export interface LoadingBackdropProps {
 
 export const LoadingBackdrop: React.FC<LoadingBackdropProps> = ({ fading, showSpinner }) => {
   const { theme } = useTheme();
+  const fadeMs = theme.motion.duration.base;
+  const fadeEase = theme.motion.easing.standard;
+
   return (
     <div
       style={{
@@ -21,22 +24,25 @@ export const LoadingBackdrop: React.FC<LoadingBackdropProps> = ({ fading, showSp
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: theme.colors.background,
+        background: `color-mix(in srgb, ${theme.colors.background} 92%, black)`,
         color: theme.colors.text,
-        zIndex: 9999,
-        transition: 'opacity 200ms ease',
+        zIndex: 'var(--valet-z-overlay, 9999)',
+        transition: `opacity ${fadeMs} ${fadeEase}`,
         opacity: fading ? 0 : 1,
+        pointerEvents: fading ? 'none' : 'auto',
       }}
+      aria-hidden={!!fading}
     >
       <div
         style={{
-          transition: 'opacity 200ms ease',
+          transition: `opacity ${fadeMs} ${fadeEase}`,
           opacity: showSpinner ? 1 : 0,
         }}
       >
         <Progress
           variant='circular'
           mode='indeterminate'
+          aria-label='Loading'
         />
       </div>
     </div>

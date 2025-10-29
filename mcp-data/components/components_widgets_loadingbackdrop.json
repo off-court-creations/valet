@@ -21,7 +21,9 @@
       "required": false
     }
   ],
-  "cssVars": [],
+  "cssVars": [
+    "--valet-z-overlay"
+  ],
   "cssPresets": [],
   "events": [],
   "actions": [],
