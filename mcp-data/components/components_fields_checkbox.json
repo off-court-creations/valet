@@ -11,8 +11,14 @@
     {
       "name": "name",
       "type": "string",
-      "required": true,
-      "description": "Field name is required for Checkbox to bind and identify the value."
+      "required": false,
+      "description": "Field name used for FormControl binding and form submission. When `bindForm` is false,\n`name` may be omitted and no form binding/submission occurs."
+    },
+    {
+      "name": "bindForm",
+      "type": "boolean",
+      "required": false,
+      "description": "Disable FormControl binding and omit name from submission."
     },
     {
       "name": "checked",

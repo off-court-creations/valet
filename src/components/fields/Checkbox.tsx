@@ -22,8 +22,13 @@ export interface CheckboxProps
       'type' | 'size' | 'onChange' | 'value' | 'defaultValue' | 'style' | 'name'
     >,
     FieldBaseProps {
-  /** Field name is required for Checkbox to bind and identify the value. */
-  name: string;
+  /**
+   * Field name used for FormControl binding and form submission. When `bindForm` is false,
+   * `name` may be omitted and no form binding/submission occurs.
+   */
+  name?: string;
+  /** Disable FormControl binding and omit name from submission. */
+  bindForm?: boolean;
   checked?: boolean;
   defaultChecked?: boolean;
   /** Visual size; token or CSS length. */
@@ -138,6 +143,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
   (
     {
       name,
+      bindForm = true,
       checked: checkedProp,
       defaultChecked,
       label,
@@ -178,11 +184,11 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
 
     /* Controlled vs uncontrolled logic ---------------------------------- */
     const controlled = checkedProp !== undefined;
-    const formBound = Boolean(form);
+    const formBound = Boolean(form) && bindForm && Boolean(name);
     const initialState = controlled
       ? checkedProp!
       : formBound
-        ? Boolean(form!.values[name])
+        ? Boolean(form!.values[name as keyof Record<string, unknown>])
         : Boolean(defaultChecked);
 
     const [internal, setInternal] = useState(initialState);
@@ -190,7 +196,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
     const currentChecked = controlled
       ? checkedProp!
       : formBound
-        ? Boolean(form!.values[name])
+        ? Boolean(form!.values[name as keyof Record<string, unknown>])
         : internal;
 
     /* Event handler – updates state, FormStore, and user callback -------- */
@@ -198,7 +204,8 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
       (e: ChangeEvent<HTMLInputElement>) => {
         const next = e.target.checked;
         if (!controlled && !formBound) setInternal(next);
-        if (form && name) form.setField(name as keyof Record<string, unknown>, next as unknown);
+        if (form && formBound && name)
+          form.setField(name as keyof Record<string, unknown>, next as unknown);
         onChange?.(next, e);
       },
       [controlled, formBound, form, name, onChange],
@@ -224,7 +231,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           {...inputRest}
           id={id}
           ref={ref}
-          name={name}
+          {...(bindForm && name ? { name } : {})}
           type='checkbox'
           disabled={disabled}
           checked={currentChecked}

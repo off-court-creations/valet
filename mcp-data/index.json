@@ -53,14 +53,14 @@
     "category": "fields",
     "summary": "Radio component",
     "slug": "components/fields/radio",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Select",
     "category": "fields",
     "summary": "Select component",
     "slug": "components/fields/select",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Slider",
