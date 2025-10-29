@@ -130,7 +130,7 @@
     "category": "layout",
     "summary": "Modal component",
     "slug": "components/layout/modal",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Panel",

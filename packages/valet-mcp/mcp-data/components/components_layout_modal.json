@@ -3,7 +3,7 @@
   "category": "layout",
   "slug": "components/layout/modal",
   "summary": "Modal component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "modal",
     "dialog"

@@ -492,7 +492,7 @@ export const MetroSelect: MetroSelectComponent = ({
             role: 'option',
             'aria-selected': isSel(el.props.value),
             'aria-disabled': el.props.disabled || disabled || undefined,
-            'data-active': showActive && i === active || undefined,
+            'data-active': (showActive && i === active) || undefined,
             onMouseEnter: () => setActive(i),
           } as Partial<MetroOptionProps> & { id: string }),
         )}

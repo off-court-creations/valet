@@ -38,6 +38,11 @@ All notable changes to this project will be documented in this file. The format 
 - Docs: increase lava‑lamp pulse crowd repulsion ~100× (stronger scene reconfiguration). Parameters in `docs/src/shaders/lava-lamp/lavaLampParams.ts`.
 - Docs: MetroSelect playground now controls selection mode (single/multiple) and tile size; removed non-functional `gap` control.
 - Grid: now normalizes row heights by default for multi-column layouts; behavior is disabled automatically when adaptive collapses to a single column.
+ - Modal: graduate to stable and refine API/UX
+   - Add DOM passthrough and `sx` support; merge `className` with presets
+   - Constrain dialog height to viewport via `--valet-modal-viewport-margin` and scroll content inside
+   - Dev-time a11y guard warns when no accessible name (`title`, `aria-label`, or `aria-labelledby`)
+   - Docs: simplify page; remove alert/controlled/size sections and add a11y + long-content demos
  - Iterator: UX and a11y improvements
    - Forward native `min`/`max`/`step` to the input for correct browser semantics
    - Wheel steps only when focused by default; `'hover'` mode is opt-in

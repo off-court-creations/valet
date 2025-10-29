@@ -3,7 +3,7 @@
   "category": "layout",
   "slug": "components/layout/modal",
   "summary": "Modal component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "modal",
     "dialog"
@@ -98,17 +98,31 @@
       "default": "false"
     },
     {
+      "name": "sx",
+      "type": "Sx",
+      "required": false,
+      "description": "Inline styles (with CSS var support)."
+    },
+    {
       "name": "preset",
       "type": "string | string[] | undefined",
       "required": false,
       "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": [
+      "style",
+      "title"
+    ]
+  },
   "cssVars": [
     "--valet-modal-duration",
     "--valet-modal-easing",
     "--valet-modal-z-backdrop",
     "--valet-modal-z",
+    "--valet-modal-viewport-margin",
     "--valet-modal-radius"
   ],
   "cssPresets": [],

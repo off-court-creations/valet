@@ -1,6 +1,7 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/layout/Modal.tsx  | valet
 // spacing refactor: container pad; rem→spacing; compact – 2025‑08‑12
+// patched: DOM passthrough + sx; viewport-constrained height; a11y guard – 2025‑10‑29
 // Accessible, theme-aware Modal component that supports both “dialog” and
 // “alert” semantics. Fully controlled/uncontrolled, focus-trapping, backdrop &
 // ESC/Click dismissal, no external deps.
@@ -11,7 +12,7 @@ import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { inheritSurfaceFontVars } from '../../system/inheritSurfaceFontVars';
-import type { Presettable } from '../../types';
+import type { Presettable, Sx } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 /* Styled primitives                                         */
@@ -37,7 +38,6 @@ const Box = styled('div')<{
   $maxW?: string | number;
   $full: boolean;
   $pad: string;
-  $gutter: string;
 }>`
   position: fixed;
   top: 50%;
@@ -50,7 +50,9 @@ const Box = styled('div')<{
   z-index: var(--valet-modal-z, 9999);
 
   max-width: ${({ $maxW, $full }) => ($full ? 'none' : $maxW || '32rem')};
-  width: ${({ $full, $gutter }) => ($full ? `calc(100% - ${$gutter})` : 'auto')};
+  /* Use CSS var so callers can adjust viewport margin */
+  width: ${({ $full }) =>
+    $full ? 'calc(100% - var(--valet-modal-viewport-margin, 2rem))' : 'auto'};
   padding: ${({ $pad }) => $pad};
 
   background: ${({ $bg }) => $bg};
@@ -60,6 +62,12 @@ const Box = styled('div')<{
 
   display: flex;
   flex-direction: column;
+  /* Constrain height to viewport; allow internal section to scroll */
+  max-height: calc(100dvh - var(--valet-modal-viewport-margin, 2rem));
+  overflow: hidden;
+  /* Ensure flex children can shrink for overflow */
+  min-width: 0;
+  min-height: 0;
 
   @media (prefers-reduced-motion: reduce) {
     transition: none;
@@ -197,7 +205,9 @@ function releaseBackgroundLock() {
 /*───────────────────────────────────────────────────────────*/
 /* Public API                                                */
 
-export interface ModalProps extends Presettable {
+export interface ModalProps
+  extends Omit<React.ComponentProps<'div'>, 'style' | 'title'>,
+    Presettable {
   /** Controlled visiblity */
   open?: boolean;
   /** Default for uncontrolled */
@@ -224,6 +234,8 @@ export interface ModalProps extends Presettable {
   maxWidth?: number | string;
   /** Stretch to full viewport width minus gutter */
   fullWidth?: boolean;
+  /** Inline styles (with CSS var support). */
+  sx?: Sx;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -244,6 +256,9 @@ export const Modal: React.FC<ModalProps> = ({
   maxWidth,
   fullWidth = false,
   preset: presetKey,
+  className,
+  sx,
+  ...rest
 }) => {
   const { theme } = useTheme();
   const presetClasses = presetKey ? preset(presetKey) : '';
@@ -320,6 +335,26 @@ export const Modal: React.FC<ModalProps> = ({
     // Ensure portalled dialog inherits Surface font/typography variables
     if (dialogRef.current) inheritSurfaceFontVars(dialogRef.current);
 
+    // Dev-time a11y guard: dialog/alertdialog should have an accessible name
+    if (process.env.NODE_ENV !== 'production') {
+      try {
+        const ariaLabel = (rest as unknown as Record<string, unknown>)?.['aria-label'] as
+          | string
+          | undefined;
+        const ariaLabelledBy = (rest as unknown as Record<string, unknown>)?.['aria-labelledby'] as
+          | string
+          | undefined;
+        const hasName = Boolean(title || ariaLabel || ariaLabelledBy);
+        if (!hasName) {
+          console.warn(
+            'valet Modal: accessible name missing. Provide `title`, `aria-label`, or `aria-labelledby`.',
+          );
+        }
+      } catch {
+        /* no-op */
+      }
+    }
+
     return () => {
       document.removeEventListener('keydown', handleKeyDown, true);
       // Release background lock/inert
@@ -327,7 +362,7 @@ export const Modal: React.FC<ModalProps> = ({
       setFade(true);
       (previouslyFocused.current as HTMLElement | null)?.focus?.();
     };
-  }, [open, disableEscapeKeyDown, requestClose]);
+  }, [open, disableEscapeKeyDown, requestClose, title, rest]);
 
   /* ----- backdrop click ------------------------------------------------- */
   const handleBackdropClick = (e: React.MouseEvent) => {
@@ -347,6 +382,7 @@ export const Modal: React.FC<ModalProps> = ({
         onClick={handleBackdropClick}
       />
       <Box
+        {...rest}
         ref={dialogRef}
         role={variant === 'alert' ? 'alertdialog' : 'dialog'}
         aria-modal='true'
@@ -357,7 +393,6 @@ export const Modal: React.FC<ModalProps> = ({
         $fade={fade}
         $maxW={maxWidth}
         $full={fullWidth}
-        $gutter={theme.spacing(4)}
         $pad={
           compact
             ? '0'
@@ -365,13 +400,15 @@ export const Modal: React.FC<ModalProps> = ({
               ? theme.spacing(padProp)
               : (padProp ?? theme.spacing(1))
         }
-        className={presetClasses}
+        className={[presetClasses, className].filter(Boolean).join(' ')}
         style={
           {
             '--valet-modal-radius': theme.radius(1),
             '--valet-modal-duration': theme.motion.duration.base,
             '--valet-modal-easing': theme.motion.easing.standard,
-          } as React.CSSProperties
+            '--valet-modal-viewport-margin': theme.spacing(4),
+            ...(sx as Sx),
+          } as Sx
         }
       >
         {title && (
