@@ -280,6 +280,10 @@ export default function RadioGroupDemoPage() {
 
       {/* 7. FormControl binding */}
       <Typography variant='h3'>7. FormControl Binding</Typography>
+      <Typography variant='subtitle'>
+        Note: FormControl prevents native submission. Handle submit in onSubmitValues; consider new
+        FormData(event.currentTarget) for files or non‑valet inputs.
+      </Typography>
       <FormControl
         useStore={useSurveyForm}
         onSubmitValues={(vals) => handleSubmit(vals)}

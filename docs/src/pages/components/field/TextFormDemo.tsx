@@ -138,6 +138,10 @@ export default function TextFieldDemoPage() {
 
       {/* 5. FormControl integration */}
       <Typography variant='h3'>5. FormControl demo</Typography>
+      <Typography variant='subtitle'>
+        Note: FormControl prevents native form submission. Handle submit in onSubmitValues, and use
+        new FormData(event.currentTarget) if you need files or non‑valet inputs.
+      </Typography>
       <Panel
         variant='alt'
         sx={{ padding: theme.spacing(1) }}

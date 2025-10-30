@@ -134,6 +134,10 @@ export default function CheckboxDemoPage() {
 
       {/* 6. FormControl integration */}
       <Typography variant='h3'>6. FormControl Binding</Typography>
+      <Typography variant='subtitle'>
+        Note: FormControl prevents native submission. Use onSubmitValues for SPA submits; merge
+        FormData(event.currentTarget) if you need files or non‑valet inputs.
+      </Typography>
       <FormControl
         useStore={useSignupForm}
         onSubmitValues={handleSubmit}

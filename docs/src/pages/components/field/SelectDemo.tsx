@@ -141,6 +141,10 @@ export default function SelectDemoPage() {
 
       {/* FormControl integration */}
       <Typography variant='h3'>7. FormControl integration</Typography>
+      <Typography variant='subtitle'>
+        Note: FormControl prevents native submission. Handle submit in onSubmitValues; use new
+        FormData(event.currentTarget) for files or non‑valet inputs when needed.
+      </Typography>
       <FormControl
         useStore={useDemoForm}
         onSubmitValues={(vals) => setSubmitted(vals)}

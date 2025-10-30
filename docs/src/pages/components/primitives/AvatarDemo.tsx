@@ -36,6 +36,10 @@ export default function AvatarDemoPage() {
       <Typography variant='subtitle'>Gravatar wrapper with custom photo support</Typography>
 
       <Typography variant='h3'>1. Try your Gravatar</Typography>
+      <Typography variant='subtitle'>
+        Note: FormControl prevents native submission. Use onSubmitValues; merge new
+        FormData(event.currentTarget) for files or non‑valet inputs.
+      </Typography>
       <FormControl
         useStore={useEmailForm}
         onSubmitValues={(vals) => setEmail(vals.email as string)}

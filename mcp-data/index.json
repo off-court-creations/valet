@@ -25,7 +25,7 @@
     "category": "fields",
     "summary": "FormControl component",
     "slug": "components/fields/formcontrol",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "IconButton",

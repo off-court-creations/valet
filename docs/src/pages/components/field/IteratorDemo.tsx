@@ -70,6 +70,10 @@ export default function IteratorDemoPage() {
       />
 
       <Typography variant='h3'>6. FormControl</Typography>
+      <Typography variant='subtitle'>
+        Note: FormControl prevents native submission. Use onSubmitValues; merge new
+        FormData(event.currentTarget) if you need files or non‑valet inputs.
+      </Typography>
       <FormControl
         useStore={useFormStore}
         onSubmitValues={(vals) => alert(JSON.stringify(vals))}

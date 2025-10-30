@@ -145,6 +145,10 @@ export default function SwitchDemoPage() {
 
       {/* 5. FormControl binding */}
       <Typography variant='h3'>5. FormControl Binding</Typography>
+      <Typography variant='subtitle'>
+        Note: FormControl prevents native submission. Use onSubmitValues; optionally read new
+        FormData(event.currentTarget) for files or non‑valet inputs.
+      </Typography>
       <FormControl
         useStore={usePrefsForm}
         onSubmitValues={handleSubmit}

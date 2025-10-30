@@ -143,7 +143,7 @@ These shape how components express semantics, styles, and state. Reuse them.
   - Surface: wrap routes in `<Surface>`; do not nest.
   - Structure: use `<Stack>` and `<Panel>` for spacing and density.
 - Inputs and forms
-  - Create form stores with `createFormStore`; wire labels/errors via `FormControl`.
+  - Create form stores with `createFormStore`. Use `FormControl` to provide the typed store context and handle submit via `onSubmitValues`. Individual field components render labels/errors and manage disabled state.
 - Tables and lists
   - Use built‑in height constraints; prefer internal scroll to page scroll.
 - AI widgets
@@ -224,4 +224,3 @@ Concrete examples
 
 Principle in one line
 - You shouldn’t use `sx` when a valet prop does the same thing better. Prefer the built‑in props.
-
