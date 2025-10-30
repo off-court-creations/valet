@@ -3,7 +3,7 @@
   "category": "fields",
   "slug": "components/fields/slider",
   "summary": "Slider component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "slider",
     "range"
