@@ -1,6 +1,6 @@
 {
   "name": "Iterator",
-  "status": "experimental",
+  "status": "stable",
   "aliases": ["iterator"],
   "docs": {
     "bestPractices": [

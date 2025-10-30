@@ -3,7 +3,7 @@
   "category": "fields",
   "slug": "components/fields/iterator",
   "summary": "Iterator component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "iterator"
   ],
