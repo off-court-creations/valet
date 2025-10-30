@@ -3,7 +3,7 @@
   "category": "widgets",
   "slug": "components/widgets/dropzone",
   "summary": "Dropzone component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "dropzone",
     "uploader",
@@ -15,6 +15,24 @@
       "type": "DropzoneOptions['accept']",
       "required": false,
       "description": "Allowable file types (same as react-dropzone `accept`)"
+    },
+    {
+      "name": "previewMinHeight",
+      "type": "number | string",
+      "required": false,
+      "description": "Minimum height for each preview tile while loading (px or CSS length)."
+    },
+    {
+      "name": "minSize",
+      "type": "DropzoneOptions['minSize']",
+      "required": false,
+      "description": "Minimum file size in bytes (react-dropzone `minSize`)"
+    },
+    {
+      "name": "maxSize",
+      "type": "DropzoneOptions['maxSize']",
+      "required": false,
+      "description": "Maximum file size in bytes (react-dropzone `maxSize`)"
     },
     {
       "name": "showPreviews",
@@ -56,6 +74,12 @@
       "description": "Callback for when files are dropped"
     },
     {
+      "name": "onDropRejected",
+      "type": "DropzoneOptions['onDropRejected']",
+      "required": false,
+      "description": "Callback for when files are rejected (type/size/count)"
+    },
+    {
       "name": "fullWidth",
       "type": "boolean",
       "required": false,
@@ -94,12 +118,46 @@
   "slots": [],
   "bestPractices": [
     "Indicate accepted file types and size limits clearly before upload.",
-    "Provide both drag‑and‑drop and a clickable target for accessibility.",
-    "Validate optimistically on drop and show per‑file status/errors.",
+    "Provide both drag‑and‑drop and a clickable target for accessibility. Ensure the zone is keyboard operable.",
+    "Validate optimistically on drop and show per‑file status/errors with polite announcements.",
     "Avoid blocking the UI; use background uploads and concise feedback.",
-    "Sanitize file names and never execute untrusted content."
+    "Revoke object URLs for previews when files are removed or on unmount to avoid leaks.",
+    "Sanitize file names and never execute or render untrusted content."
   ],
-  "examples": [],
+  "examples": [
+    {
+      "id": "dropzone-basic",
+      "title": "Basic dropzone (keyboard operable)",
+      "code": "() => (<Dropzone accept={{ 'image/*': [] }} maxFiles={4} />)",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    },
+    {
+      "id": "dropzone-reject",
+      "title": "Type and size limits with rejection messages",
+      "code": "() => (<Dropzone accept={{ 'image/*': [] }} maxSize={1024 * 1024} />)",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    },
+    {
+      "id": "dropzone-preview-height",
+      "title": "Taller preview area (200px)",
+      "code": "() => (<Dropzone accept={{ 'image/*': [] }} previewMinHeight={200} />)",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    },
+    {
+      "id": "dropzone-clear-all",
+      "title": "Clear all files (re-mount pattern)",
+      "code": "() => {\n  const [key, setKey] = React.useState(0);\n  const [count, setCount] = React.useState(0);\n  return (\n    <Stack>\n      <Dropzone key={key} onFilesChange={(fs) => setCount(fs.length)} />\n      <Stack direction='row' gap={1}>\n        <Typography variant='subtitle'>Files: {count}</Typography>\n        <Button variant='outlined' onClick={() => { setKey((k) => k + 1); setCount(0); }}>Clear files</Button>\n      </Stack>\n    </Stack>\n  );\n}",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    }
+  ],
   "sourceFiles": [
     "src/components/widgets/Dropzone.tsx"
   ],

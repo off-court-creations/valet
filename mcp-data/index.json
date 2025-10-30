@@ -235,7 +235,7 @@
     "category": "widgets",
     "summary": "Dropzone component",
     "slug": "components/widgets/dropzone",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "LLMChat",
