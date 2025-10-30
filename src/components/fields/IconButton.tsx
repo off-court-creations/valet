@@ -88,6 +88,17 @@ const Skin = styled('button')<{
         `}
   }
 
+  /* Keyboard focus should mirror hover visuals for discoverability */
+  &:focus-visible:not(:disabled) {
+    ${({ $variant, $primary, $primaryText }) =>
+      $variant === 'contained'
+        ? 'filter: brightness(1.25);'
+        : `
+          background: ${$primary};
+          color: ${$primaryText};
+        `}
+  }
+
   &:active:not(:disabled) {
     transform: scale(0.94);
   }

@@ -66,9 +66,9 @@ const Field = styled('input')<{ theme: Theme; $w: string }>`
     -webkit-appearance: none;
     margin: 0;
   }
-  &:focus {
-    outline: ${({ theme }) => theme.stroke(2)} solid ${({ theme }) => theme.colors.primary};
-    outline-offset: ${({ theme }) => theme.stroke(1)};
+  &:focus-visible {
+    outline: var(--valet-focus-width, 2px) solid ${({ theme }) => theme.colors.primary};
+    outline-offset: var(--valet-focus-offset, 2px);
   }
   &[disabled] {
     color: ${({ theme }) => theme.colors.text + '66'};
@@ -233,6 +233,9 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
       }
     };
 
+    const decDisabled = disabled || readOnly || (min !== undefined && current <= min);
+    const incDisabled = disabled || readOnly || (max !== undefined && current >= max);
+
     return (
       <Wrapper
         theme={theme}
@@ -244,7 +247,7 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
           variant='outlined'
           icon='mdi:minus-thick'
           onClick={() => stepBy(-1)}
-          disabled={disabled || readOnly}
+          disabled={decDisabled}
           aria-label='decrement'
         />
         <Field
@@ -270,7 +273,7 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
           variant='outlined'
           icon='mdi:plus-thick'
           onClick={() => stepBy(1)}
-          disabled={disabled || readOnly}
+          disabled={incDisabled}
           aria-label='increment'
         />
       </Wrapper>

@@ -56,9 +56,9 @@ const sharedFieldCSS = ({ theme, $error }: StyledFieldProps) => `
   color: ${theme.colors.text};
   font-size: 0.875rem;
   width: 100%;
-  &:focus {
-    outline: ${theme.stroke(2)} solid ${theme.colors.primary};
-    outline-offset: ${theme.stroke(1)};
+  &:focus-visible {
+    outline: var(--valet-focus-width, 2px) solid ${theme.colors.primary};
+    outline-offset: var(--valet-focus-offset, 2px);
   }
 `;
 

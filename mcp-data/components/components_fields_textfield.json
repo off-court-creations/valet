@@ -65,7 +65,10 @@
       "required": false
     }
   ],
-  "cssVars": [],
+  "cssVars": [
+    "--valet-focus-width",
+    "--valet-focus-offset"
+  ],
   "cssPresets": [],
   "events": [],
   "actions": [],

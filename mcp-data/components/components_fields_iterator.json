@@ -124,7 +124,10 @@
       "name"
     ]
   },
-  "cssVars": [],
+  "cssVars": [
+    "--valet-focus-width",
+    "--valet-focus-offset"
+  ],
   "cssPresets": [],
   "events": [
     {
