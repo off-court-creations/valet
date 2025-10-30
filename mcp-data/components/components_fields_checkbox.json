@@ -3,7 +3,7 @@
   "category": "fields",
   "slug": "components/fields/checkbox",
   "summary": "Checkbox component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "checkbox"
   ],
@@ -40,6 +40,12 @@
       "name": "onChange",
       "type": "(checked: boolean, event: ChangeEvent<HTMLInputElement>) => void",
       "required": false
+    },
+    {
+      "name": "indeterminate",
+      "type": "boolean",
+      "required": false,
+      "description": "Mixed (indeterminate) visual state for parent selections."
     },
     {
       "name": "label",

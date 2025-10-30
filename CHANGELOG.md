@@ -27,12 +27,15 @@ All notable changes to this project will be documented in this file. The format 
 
 ### Changed
 
-- Docs: upgrade Vite to 6.3.6 (from 6.3.5).
+- Security: require Vite >= 6.4.1 across docs and templates.
+ - Fields/Checkbox: add `indeterminate` prop with ARIA mixed state; accept `id` to pair with external labels/descriptions.
+ - Fields/Checkbox: improve contrast — unchecked outline uses `theme.colors.divider`; checked fill uses `theme.colors.primary` with white indicator.
+ - Fields/Checkbox: mark status to `stable`.
 - CSS hashing: replace runtime siphash with dependency‑free BigInt FNV‑1a (64‑bit).
   - Hash output remains base36 but now includes a `-<len>` suffix (input length in base36) to further reduce practical collision risk.
   - Removes the `siphash` runtime dependency; reduces bundle size and CPU.
   - Generated class/keyframe names change; this is internal and does not affect public APIs.
-- CVA: bump create‑valet‑app templates to Vite 6.3.6 by default.
+- CVA: bump create‑valet‑app templates to Vite >=6.4.1 by default.
 - MCP: extend component status enum to include `production` (very stable, polished; formerly `golden`) and `unstable` (known problem; avoid depending on it). Bumped MCP `schemaVersion` to `1.6` and regenerated `mcp-data/`.
 - Docs: extracted LavaLampBackgroundGL shaders to standalone GLSL files under `docs/src/shaders/lava-lamp` and import via `?raw` for readability and better editor support.
 - Docs: increase lava‑lamp pulse crowd repulsion ~100× (stronger scene reconfiguration). Parameters in `docs/src/shaders/lava-lamp/lavaLampParams.ts`.

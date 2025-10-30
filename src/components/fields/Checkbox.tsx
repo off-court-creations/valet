@@ -3,7 +3,15 @@
 // Theme-aware, accessible Checkbox – consistent outline, no blue flash,
 // greyed-out disabled styling (Accordion-style).
 // ─────────────────────────────────────────────────────────────────────────────
-import React, { forwardRef, useCallback, useId, useState, ChangeEvent } from 'react';
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  ChangeEvent,
+} from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
@@ -34,6 +42,8 @@ export interface CheckboxProps
   /** Visual size; token or CSS length. */
   size?: CheckboxSize | number | string;
   onChange?: (checked: boolean, event: ChangeEvent<HTMLInputElement>) => void;
+  /** Mixed (indeterminate) visual state for parent selections. */
+  indeterminate?: boolean;
 }
 
 /*───────────────────────────────────────────────────────────────────────────*/
@@ -88,6 +98,7 @@ interface BoxProps {
   [key: string]: unknown;
   $size: string;
   $checked: boolean;
+  $indeterminate: boolean;
   $primary: string;
   $outline: string;
   $disabled: boolean;
@@ -107,9 +118,9 @@ const Box = styled('span')<BoxProps>`
   border: var(--valet-checkbox-stroke, 2px) solid
     ${({ $disabled, $disabledColor, $outline }) => ($disabled ? $disabledColor : $outline)};
 
-  /* Fill when checked, swap to disabled colour if disabled */
-  background: ${({ $checked, $disabled, $primary, $disabledColor }) =>
-    $checked ? ($disabled ? $disabledColor : $primary) : 'transparent'};
+  /* Fill when checked or indeterminate, swap to disabled colour if disabled */
+  background: ${({ $checked, $indeterminate, $disabled, $primary, $disabledColor }) =>
+    $checked || $indeterminate ? ($disabled ? $disabledColor : $primary) : 'transparent'};
 
   transition:
     background 120ms ease,
@@ -132,9 +143,13 @@ const Box = styled('span')<BoxProps>`
     width: ${({ $size }) => `calc(${$size} - var(--valet-checkbox-inset, 4px))`};
     height: ${({ $size }) => `calc(${$size} - var(--valet-checkbox-inset, 4px))`};
     margin: auto;
-    opacity: ${({ $checked }) => ($checked ? 1 : 0)};
-    transform: ${({ $checked }) => ($checked ? 'scale(1)' : 'scale(0.85)')};
-    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' " + "xmlns='http://www.w3.org/2000/svg' " + "fill='none' stroke='%23fff' stroke-width='3' " + "stroke-linecap='round' stroke-linejoin='round'%3E" + "%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E")
+    opacity: ${({ $checked, $indeterminate }) => ($checked || $indeterminate ? 1 : 0)};
+    transform: ${({ $checked, $indeterminate }) =>
+      $checked || $indeterminate ? 'scale(1)' : 'scale(0.85)'};
+    background: ${({ $indeterminate }) =>
+        $indeterminate
+          ? "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round'%3E%3Cline x1='6' y1='12' x2='18' y2='12' /%3E%3C/svg%3E\")"
+          : "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E\")"}
       center/contain no-repeat;
     transition:
       opacity 120ms ease,
@@ -153,6 +168,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
       bindForm = true,
       checked: checkedProp,
       defaultChecked,
+      indeterminate = false,
       label,
       size = 'md',
       disabled = false,
@@ -162,6 +178,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
       className,
       sx,
       children,
+      id: idProp,
       ...inputRest
     },
     ref,
@@ -185,7 +202,6 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
     const disabledColor = toHex(
       mix(toRgb(theme.colors.text), toRgb(mode === 'dark' ? '#000' : '#fff'), 0.4),
     );
-    const offBlack = toHex(mix(toRgb(theme.colors.background), toRgb('#000'), 0.85));
 
     /* Optional FormControl binding -------------------------------------- */
     const form = useOptionalForm<Record<string, unknown>>();
@@ -219,8 +235,20 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
       [controlled, formBound, form, name, onChange],
     );
 
+    /* Manage native indeterminate property ------------------------------- */
+    const innerRef = useRef<HTMLInputElement | null>(null);
+    const setRefs = (node: HTMLInputElement | null) => {
+      innerRef.current = node;
+      if (typeof ref === 'function') ref(node);
+      else if (ref) (ref as React.MutableRefObject<HTMLInputElement | null>).current = node;
+    };
+    useEffect(() => {
+      if (innerRef.current) innerRef.current.indeterminate = !!indeterminate;
+    }, [indeterminate]);
+
     /* Unique id for accessibility --------------------------------------- */
-    const id = useId();
+    const reactId = useId();
+    const id = idProp ?? reactId;
 
     /* preset → className merge ------------------------------------------ */
     const presetCls = presetKey ? preset(presetKey) : '';
@@ -239,19 +267,21 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
         <HiddenInput
           {...inputRest}
           id={id}
-          ref={ref}
+          ref={setRefs}
           {...(bindForm && name ? { name } : {})}
           type='checkbox'
           disabled={disabled}
           checked={currentChecked}
           onChange={handleChange}
           aria-invalid={error || undefined}
+          aria-checked={indeterminate ? 'mixed' : currentChecked}
         />
         <Box
           $size={SZ.box}
           $checked={currentChecked}
-          $primary={theme.colors.tertiary}
-          $outline={offBlack}
+          $indeterminate={!!indeterminate}
+          $primary={theme.colors.primary}
+          $outline={theme.colors.divider}
           $disabled={disabled}
           $disabledColor={disabledColor}
           data-indicator

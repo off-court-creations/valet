@@ -11,7 +11,7 @@
     "category": "fields",
     "summary": "Checkbox component",
     "slug": "components/fields/checkbox",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "DateSelector",
