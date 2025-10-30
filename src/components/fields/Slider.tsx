@@ -226,23 +226,18 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
 
     let geom: SizeTokens;
 
-    if (typeof size === 'number') {
-      const h = `${size}px`;
-      geom = {
-        trackH: h,
-        thumb: `calc(${h} * 2 + 6px)`,
-        tickH: `calc(${h} + 2px)`,
-        font: `calc(${h} + 6px)`,
-      };
-    } else if (map[size as SliderSize]) {
+    if (map[size as SliderSize]) {
       geom = map[size as SliderSize];
     } else {
-      const h = size as string;
+      // Accept numeric (px) or any CSS length; scale thumb from track height but keep
+      // label font modest to avoid layout jumps.
+      const h = typeof size === 'number' ? `${size}px` : (size as string);
       geom = {
         trackH: h,
         thumb: `calc(${h} * 2 + 6px)`,
         tickH: `calc(${h} + 2px)`,
-        font: `calc(${h} + 6px)`,
+        // Keep label font around base size even for large tracks
+        font: '0.875rem',
       };
     }
 
@@ -346,14 +341,37 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
 
     /* keyboard handling ------------------------------------- */
     const keyStep = snap === 'step' ? step : (max - min) / 100;
+    const pageStep = Math.max(step, Math.round((max - min) / 10));
     const onKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
       if (disabled) return;
+      const k = e.key;
+      if (k === 'Home') {
+        e.preventDefault();
+        commitValue(min);
+        return;
+      }
+      if (k === 'End') {
+        e.preventDefault();
+        commitValue(max);
+        return;
+      }
+      if (k === 'PageUp') {
+        e.preventDefault();
+        commitValue(current + pageStep);
+        return;
+      }
+      if (k === 'PageDown') {
+        e.preventDefault();
+        commitValue(current - pageStep);
+        return;
+      }
       let delta = 0;
-      if (e.key === 'ArrowRight' || e.key === 'ArrowUp') delta = keyStep;
-      if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') delta = -keyStep;
-      if (!delta) return;
-      e.preventDefault();
-      commitValue(current + delta);
+      if (k === 'ArrowRight' || k === 'ArrowUp') delta = keyStep;
+      if (k === 'ArrowLeft' || k === 'ArrowDown') delta = -keyStep;
+      if (delta) {
+        e.preventDefault();
+        commitValue(current + delta);
+      }
     };
 
     /* preset → class merge ---------------------------------- */
@@ -375,12 +393,15 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
     const id = useId();
     const format = (v: number) => (precision ? v.toFixed(precision) : v);
 
+    const padTop = showValue ? theme.spacing(1) : theme.spacing(0.25);
+    const padBottom = showMinMax ? theme.spacing(1) : theme.spacing(0.25);
+
     return (
       <Wrapper
         {...rest}
         ref={setWrapperRef}
         className={mergedCls}
-        style={sx}
+        style={{ paddingTop: padTop, paddingBottom: padBottom, ...sx }}
       >
         {/* track + fill */}
         <Track
@@ -402,6 +423,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
           aria-valuemin={min}
           aria-valuemax={max}
           aria-valuenow={current}
+          aria-valuetext={String(format(current))}
           aria-disabled={disabled || undefined}
           tabIndex={disabled ? -1 : 0}
           disabled={disabled}
