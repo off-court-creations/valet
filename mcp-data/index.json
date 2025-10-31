@@ -88,7 +88,7 @@
     "category": "layout",
     "summary": "Accordion component",
     "slug": "components/layout/accordion",
-    "status": "unstable"
+    "status": "experimental"
   },
   {
     "name": "AppBar",

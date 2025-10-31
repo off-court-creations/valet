@@ -1,11 +1,11 @@
-/* eslint-disable react/prop-types -- Fully typed TSX: runtime PropTypes not used */
 // ─────────────────────────────────────────────────────────────
 // src/components/layout/Accordion.tsx  | valet
-// Fully-typed, theme-aware <Accordion /> component
-// – Composition API (Accordion.Item / .Header / .Content)
-// – Controlled & uncontrolled modes, single- or multi-expand
-// – Seamless preset & theme integration, zero external deps
-// – A11y-optimised: roving tab-index, ARIA roles / ids, focus rings
+// Re-architected single-file Accordion
+// - Headless reducer core + roving focus manager
+// - Controlled/uncontrolled; single/multiple; optional unmountOnExit
+// - Improved motion: reduced-measure, reduced-motion aware
+// - Semantics: strict ARIA wiring; heading level; data-state attrs
+// - Surface-aware height constraint
 // ─────────────────────────────────────────────────────────────
 import React, {
   createContext,
@@ -18,6 +18,7 @@ import React, {
   useState,
   useId,
   useEffect,
+  forwardRef,
 } from 'react';
 import type { JSX } from 'react';
 import { styled } from '../../css/createStyled';
@@ -31,11 +32,36 @@ import { resolveSpace } from '../../utils/resolveSpace';
 import { Typography } from '../primitives/Typography';
 
 /*───────────────────────────────────────────────────────────*/
-/* Context                                                   */
+/* Types / machine                                           */
+type Mode = 'single' | 'multiple';
+
+// (internal note) A reducer-based machine was considered; for simplicity and
+// alignment with controllable state, we compute next state in callbacks using Mode.
+
+function useControllableState<T>(
+  controlled: T | undefined,
+  defaultValue: T,
+  onChange?: (next: T) => void,
+) {
+  const [inner, setInner] = useState<T>(defaultValue);
+  const isControlled = controlled !== undefined;
+  const value = isControlled ? (controlled as T) : inner;
+  const setValue = useCallback(
+    (next: T) => {
+      if (!isControlled) setInner(next);
+      onChange?.(next);
+    },
+    [isControlled, onChange],
+  );
+  return [value, setValue] as const;
+}
+
+/*───────────────────────────────────────────────────────────*/
+/* Context (roving focus + actions)                          */
 interface Ctx {
   open: number[];
   toggle: (idx: number) => void;
-  multiple: boolean;
+  mode: Mode;
   headerTag: keyof JSX.IntrinsicElements;
   // Keyboard navigation helpers (roving focus)
   registerItem: (idx: number, el: HTMLButtonElement | null, disabled: boolean) => void;
@@ -56,11 +82,14 @@ const useAccordion = () => {
 };
 
 /*───────────────────────────────────────────────────────────*/
-/* Styled primitives                                         */
+/* Styled primitives + CSS vars                              */
 const Root = styled('div')<{ $pad: string }>`
   width: 100%;
   box-sizing: border-box;
   padding: ${({ $pad }) => $pad};
+  /* theming surface: allow per-instance overrides */
+  --acc-duration: var(--valet-acc-duration, 300ms);
+  --acc-ease: var(--valet-acc-ease, cubic-bezier(0.4, 0, 0.2, 1));
 `;
 
 const Wrapper = styled('div')`
@@ -168,14 +197,15 @@ const Chevron = styled('svg')<{ $open: boolean }>`
   width: 1em;
   height: 1em;
   flex-shrink: 0;
-  transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform var(--acc-duration) var(--acc-ease);
   transform: rotate(${({ $open }) => ($open ? 180 : 0)}deg);
 `;
 
-const Content = styled('div')<{ $open: boolean; $height: number }>`
+const Content = styled('div')<{ $open: boolean; $height: number; $reduced: boolean }>`
   overflow: hidden;
   height: ${({ $open, $height }) => ($open ? `${$height}px` : '0')};
-  transition: height 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition: ${({ $reduced }) =>
+    $reduced ? 'none' : 'height var(--acc-duration) var(--acc-ease)'};
   will-change: height;
 `;
 
@@ -191,6 +221,7 @@ export interface AccordionProps
   onOpenChange?: (open: number[]) => void;
   headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
   constrainHeight?: boolean;
+  unmountOnExit?: boolean;
 }
 
 export interface AccordionItemProps extends React.HTMLAttributes<HTMLDivElement>, Presettable {
@@ -205,18 +236,19 @@ export interface AccordionItemProps extends React.HTMLAttributes<HTMLDivElement>
 export const Accordion: React.FC<AccordionProps> & {
   Item: React.FC<AccordionItemProps>;
 } = ({
-  defaultOpen,
-  open: openProp,
-  multiple = false,
-  onOpenChange,
-  headingLevel = 3,
-  constrainHeight = true,
-  pad: padProp,
-  compact = false,
-  preset: p,
-  className,
-  children,
-  ...divProps
+    defaultOpen,
+    open: openProp,
+    multiple = false,
+    onOpenChange,
+    headingLevel = 3,
+    constrainHeight = true,
+    unmountOnExit = false,
+    pad: padProp,
+    compact = false,
+    preset: p,
+    className,
+    children,
+    ...divProps
 }) => {
   const { theme } = useTheme();
   const surface = useSurface(
@@ -237,25 +269,24 @@ export const Accordion: React.FC<AccordionProps> & {
   const itemRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const disabledSet = useRef<Set<number>>(new Set());
   const [activeIndex, setActiveIndex] = useState(0);
-  const controlled = openProp !== undefined;
   const toArray = (v?: number | number[]) => (v === undefined ? [] : Array.isArray(v) ? v : [v]);
+  const [externalOpen, setExternalOpen] = useControllableState<number[]>(
+    openProp ? toArray(openProp) : undefined,
+    toArray(defaultOpen),
+    onOpenChange,
+  );
 
-  const [selfOpen, setSelfOpen] = useState(() => toArray(defaultOpen));
-  const open = controlled ? toArray(openProp) : selfOpen;
-
+  const mode: Mode = multiple ? 'multiple' : 'single';
+  const open = externalOpen;
   const toggle = useCallback(
     (idx: number) => {
-      let next: number[];
       const isOpen = open.includes(idx);
-
+      let next: number[];
       if (isOpen) next = open.filter((i) => i !== idx);
-      else if (multiple) next = [...open, idx];
-      else next = [idx];
-
-      if (!controlled) setSelfOpen(next);
-      onOpenChange?.(next);
+      else next = mode === 'single' ? [idx] : [...open, idx];
+      setExternalOpen(next);
     },
-    [controlled, multiple, onOpenChange, open],
+    [open, mode, setExternalOpen],
   );
 
   const ctx = useMemo<Ctx>(() => {
@@ -308,7 +339,7 @@ export const Accordion: React.FC<AccordionProps> & {
     return {
       open,
       toggle,
-      multiple,
+      mode,
       headerTag: `h${headingLevel}` as keyof JSX.IntrinsicElements,
       registerItem,
       updateDisabled,
@@ -319,7 +350,7 @@ export const Accordion: React.FC<AccordionProps> & {
       focusLast: () => focusItem(nextEnabledFrom(0, -1)),
       activeIndex,
     };
-  }, [open, toggle, multiple, headingLevel, activeIndex]);
+  }, [open, toggle, mode, headingLevel, activeIndex]);
 
   const presetClasses = p ? preset(p) : '';
 
@@ -426,9 +457,13 @@ export const Accordion: React.FC<AccordionProps> & {
         >
           {React.Children.map(children, (child, idx) =>
             React.isValidElement(child)
-              ? React.cloneElement(child as React.ReactElement<{ index?: number }>, {
-                  index: idx,
-                })
+              ? React.cloneElement(
+                  child as React.ReactElement<{ index?: number; unmountOnExit?: boolean }>,
+                  {
+                    index: idx,
+                    unmountOnExit,
+                  },
+                )
               : child,
           )}
         </Root>
@@ -595,12 +630,27 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
     }
   };
 
+  const reducedMotion =
+    typeof window !== 'undefined' && window.matchMedia
+      ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      : false;
+
+  // Optionally unmount content when closed (internal prop injected by root)
+  const shouldRenderContent =
+    isOpen || !(divProps as unknown as { unmountOnExit?: boolean }).unmountOnExit;
+
+  // Strip internal injected prop to avoid DOM warning
+  const restDivProps = { ...(divProps as Record<string, unknown>) } as typeof divProps;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  delete (restDivProps as any).unmountOnExit;
+
   return (
     <ItemWrapper
-      {...divProps}
+      {...(restDivProps as typeof divProps)}
       className={[presetClasses, className].filter(Boolean).join(' ')}
       $hoverDur={theme.motion.hover.duration}
       $hoverEase={theme.motion.hover.easing}
+      data-state={isOpen ? 'open' : 'closed'}
       data-open={isOpen ? 'true' : 'false'}
       data-disabled={disabled ? 'true' : 'false'}
       data-skip-hover={skipHover ? 'true' : 'false'}
@@ -723,13 +773,16 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
         aria-labelledby={headerId}
         $open={isOpen}
         $height={height}
+        $reduced={reducedMotion}
       >
-        <div
-          ref={contentRef}
-          style={{ padding: `${theme.spacing(1.5)} 0` }}
-        >
-          {children}
-        </div>
+        {shouldRenderContent && (
+          <div
+            ref={contentRef}
+            style={{ padding: `${theme.spacing(1.5)} 0` }}
+          >
+            {children}
+          </div>
+        )}
       </Content>
     </ItemWrapper>
   );

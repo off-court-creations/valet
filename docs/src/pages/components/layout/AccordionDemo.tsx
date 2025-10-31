@@ -136,6 +136,16 @@ export default function AccordionDemoPage() {
         </Accordion.Item>
       </Accordion>
 
+      <Typography variant='h3'>7. Unmount on exit</Typography>
+      <Accordion unmountOnExit>
+        <Accordion.Item header='Lazy mount A'>
+          <Typography>{LOREM}</Typography>
+        </Accordion.Item>
+        <Accordion.Item header='Lazy mount B'>
+          <Typography>{LOREM}</Typography>
+        </Accordion.Item>
+      </Accordion>
+
       <Button
         variant='outlined'
         onClick={toggleMode}

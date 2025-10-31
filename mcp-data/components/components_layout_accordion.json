@@ -3,7 +3,7 @@
   "category": "layout",
   "slug": "components/layout/accordion",
   "summary": "Accordion component",
-  "status": "unstable",
+  "status": "experimental",
   "aliases": [
     "accordion",
     "expander"
@@ -43,6 +43,12 @@
       "default": "true"
     },
     {
+      "name": "unmountOnExit",
+      "type": "boolean",
+      "required": false,
+      "default": "false"
+    },
+    {
       "name": "preset",
       "type": "string | string[] | undefined",
       "required": false,
@@ -69,6 +75,8 @@
     ]
   },
   "cssVars": [
+    "--valet-acc-duration",
+    "--valet-acc-ease",
     "--valet-divider-stroke",
     "--valet-focus-width",
     "--valet-focus-offset"
@@ -88,6 +96,7 @@
     "Control model deliberately: use `open` + `onOpenChange` for app‑driven state, or `defaultOpen` for uncontrolled.",
     "Respect heading levels. Set `headingLevel` so the outline remains semantic within the page.",
     "Constrain height in dense pages so the thread scrolls locally rather than the document.",
+    "Prefer keeping content mounted unless heavy: use `unmountOnExit` to remove expensive trees when closed.",
     "Ensure keyboard support: Space/Enter toggles, Arrow keys move focus, and focus styles are visible."
   ],
   "examples": [
@@ -95,6 +104,14 @@
       "id": "accordion-uncontrolled",
       "title": "Uncontrolled (single)",
       "code": "<Accordion>\n  <Accordion.Item header='Item 1'>Content</Accordion.Item>\n  <Accordion.Item header='Item 2'>Content</Accordion.Item>\n</Accordion>",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    },
+    {
+      "id": "accordion-unmount-on-exit",
+      "title": "Unmount on exit",
+      "code": "<Accordion unmountOnExit>\n  <Accordion.Item header='Lazy'>Content mounts only when open</Accordion.Item>\n  <Accordion.Item header='Also lazy'>Content mounts only when open</Accordion.Item>\n</Accordion>",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {}
