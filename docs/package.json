@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@archway/valet": "^0.32.0",
+    "@archway/valet": "^0.33.0",
     "@babel/standalone": "^7.26.0",
     "chart.js": "^4.5.0",
     "chartjs-plugin-datalabels": "^2.2.0",
