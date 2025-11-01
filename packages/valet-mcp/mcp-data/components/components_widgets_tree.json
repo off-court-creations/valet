@@ -3,7 +3,7 @@
   "category": "widgets",
   "slug": "components/widgets/tree",
   "summary": "Tree component",
-  "status": "experimental",
+  "status": "stable",
   "props": [
     {
       "name": "nodes",

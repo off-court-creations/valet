@@ -14,28 +14,51 @@
       "name": "orientation",
       "type": "DividerOrientation",
       "required": false,
+      "description": "Orientation of the divider line.",
       "default": "'horizontal'"
     },
     {
       "name": "lineColor",
       "type": "string | undefined",
-      "required": false
+      "required": false,
+      "description": "Explicit color; defaults to theme text colour against background."
     },
     {
       "name": "thickness",
       "type": "number | string",
       "required": false,
+      "description": "Thickness of the line; number uses theme.stroke(n), string passes through.",
       "default": "2"
     },
     {
       "name": "length",
       "type": "number | string | undefined",
-      "required": false
+      "required": false,
+      "description": "Length along the main axis; number ⇒ px, string passes through."
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": false
+      "required": false,
+      "description": "Inline styles (with CSS var support)"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
+    },
+    {
+      "name": "pad",
+      "type": "Space | undefined",
+      "required": false,
+      "description": "Container padding as units or CSS length."
+    },
+    {
+      "name": "compact",
+      "type": "boolean | undefined",
+      "required": false,
+      "description": "Compact mode zeros gap and pad where supported."
     }
   ],
   "domPassthrough": {
@@ -46,7 +69,7 @@
     ]
   },
   "cssVars": [
-    "--valet-text-color",
+    "--valet-divider",
     "--valet-divider-stroke"
   ],
   "cssPresets": [],
@@ -64,6 +87,6 @@
   "sourceFiles": [
     "src/components/primitives/Divider.tsx"
   ],
-  "version": "0.32.0",
+  "version": "0.33.0",
   "schemaVersion": "1.6"
 }

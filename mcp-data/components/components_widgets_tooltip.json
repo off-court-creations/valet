@@ -3,7 +3,7 @@
   "category": "widgets",
   "slug": "components/widgets/tooltip",
   "summary": "Tooltip component",
-  "status": "golden",
+  "status": "stable",
   "aliases": [
     "tooltip",
     "hint"
@@ -81,6 +81,12 @@
       "name": "children",
       "type": "ReactElement",
       "required": true
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
   "cssVars": [
@@ -149,6 +155,6 @@
   "sourceFiles": [
     "src/components/widgets/Tooltip.tsx"
   ],
-  "version": "0.32.0",
+  "version": "0.33.0",
   "schemaVersion": "1.6"
 }

@@ -49,7 +49,6 @@ export default function SwitchDemoPage() {
 
   /* Form submit handler --------------------------------------------------- */
   const handleSubmit = (values: { darkMode: boolean; newsletter: boolean }) =>
-    // eslint-disable-next-line no-alert -- demo only
     alert(JSON.stringify(values, null, 2));
 
   const usageContent = (
@@ -146,6 +145,10 @@ export default function SwitchDemoPage() {
 
       {/* 5. FormControl binding */}
       <Typography variant='h3'>5. FormControl Binding</Typography>
+      <Typography variant='subtitle'>
+        Note: FormControl prevents native submission. Use onSubmitValues; optionally read new
+        FormData(event.currentTarget) for files or non‑valet inputs.
+      </Typography>
       <FormControl
         useStore={usePrefsForm}
         onSubmitValues={handleSubmit}

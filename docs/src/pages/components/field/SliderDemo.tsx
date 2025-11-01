@@ -42,7 +42,6 @@ export default function SliderDemoPage() {
           value={ctlValue}
           onChange={setCtlValue}
           showValue
-          showMinMax
         />
         <Typography>
           Current value:&nbsp;<code>{ctlValue}</code>
@@ -60,7 +59,6 @@ export default function SliderDemoPage() {
         step={10}
         snap='step'
         showValue
-        showMinMax
         showTicks
       />
 
@@ -75,7 +73,6 @@ export default function SliderDemoPage() {
         presets={PRESET_MARKS}
         snap='presets'
         showValue
-        showMinMax
         showTicks
       />
 
@@ -95,46 +92,42 @@ export default function SliderDemoPage() {
 
       {/* 6. Sizes */}
       <Typography variant='h3'>6. Sizes</Typography>
-      <Stack>
+      <Stack sx={{ '--valet-stack-ov-y': 'visible' }}>
         <Slider
           defaultValue={20}
           size='xs'
-          showMinMax
         />
         <Slider
           defaultValue={20}
           size='sm'
-          showMinMax
         />
         <Slider
           defaultValue={20}
           size='md'
-          showMinMax
         />
         <Slider
           defaultValue={20}
           size='lg'
-          showMinMax
         />
         <Slider
           defaultValue={20}
           size='xl'
-          showMinMax
         />
       </Stack>
 
       {/* 7. Custom sizes */}
       <Typography variant='h3'>7. Custom sizes</Typography>
-      <Stack>
+      <Stack
+        gap={0.75}
+        sx={{ '--valet-stack-ov-y': 'visible' }}
+      >
         <Slider
           defaultValue={40}
           size='2rem'
-          showMinMax
         />
         <Slider
           defaultValue={40}
           size='24px'
-          showMinMax
         />
       </Stack>
 

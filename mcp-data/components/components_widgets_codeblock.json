@@ -3,7 +3,7 @@
   "category": "widgets",
   "slug": "components/widgets/codeblock",
   "summary": "CodeBlock component",
-  "status": "unstable",
+  "status": "stable",
   "aliases": [
     "codeblock",
     "code",
@@ -48,6 +48,6 @@
   "sourceFiles": [
     "src/components/widgets/CodeBlock.tsx"
   ],
-  "version": "0.32.0",
+  "version": "0.33.0",
   "schemaVersion": "1.6"
 }

@@ -3,17 +3,7 @@
 // Showcase of Image component using the reusable ComponentMetaPage (5 tabs)
 // ─────────────────────────────────────────────────────────────
 import { useState } from 'react';
-import {
-  Stack,
-  Typography,
-  Image,
-  useTheme,
-  Panel,
-  Select,
-  Iterator,
-  Switch,
-  TextField,
-} from '@archway/valet';
+import { Stack, Typography, Image, useTheme, Panel, Select, TextField } from '@archway/valet';
 import ComponentMetaPage from '../../../components/ComponentMetaPage';
 import ImageMeta from '../../../../../src/components/primitives/Image.meta.json';
 
@@ -25,29 +15,32 @@ export default function ImageDemoPage() {
   const [pgWidth, setPgWidth] = useState<string>('100%');
   const [pgHeight, setPgHeight] = useState<string>('300px');
   const [pgFit, setPgFit] = useState<'cover' | 'contain' | 'fill' | 'none' | 'scale-down'>('cover');
-  const [pgRounded, setPgRounded] = useState<number>(8);
-  const [pgLazy, setPgLazy] = useState<boolean>(false);
-  const [pgPlaceholder, setPgPlaceholder] = useState<string>('https://placehold.co/10x10');
+  const [pgLoading, setPgLoading] = useState<'lazy' | 'eager'>('lazy');
+  const [pgObjectPos, setPgObjectPos] = useState<string>('center');
+  const [pgAspect, setPgAspect] = useState<string>('auto');
 
   const usageContent = (
     <Stack>
       <Typography variant='h3'>1. Basic usage</Typography>
-      <Image
-        src='https://picsum.photos/400/300'
-        alt='Kitten'
-        width='100%'
-        height='auto'
-        rounded={8}
-      />
+      <Panel
+        fullWidth
+        sx={{ borderRadius: theme.radius(2), overflow: 'hidden' }}
+      >
+        <Image
+          src='https://picsum.photos/400/300'
+          alt='Kitten'
+          width='100%'
+          height='auto'
+        />
+      </Panel>
 
-      <Typography variant='h3'>2. Lazy loaded</Typography>
+      <Typography variant='h3'>2. Eager loaded (hero)</Typography>
       <Image
         src='https://picsum.photos/400/300'
-        alt='Lazy kitten'
+        alt='Eager kitten'
         width='100%'
         height='300px'
-        lazy
-        placeholder='https://placehold.co/10x10'
+        loading='eager'
       />
 
       <Typography variant='h3'>3. Contain fit</Typography>
@@ -56,8 +49,17 @@ export default function ImageDemoPage() {
         alt='Contained kitten'
         width='100%'
         height='300px'
-        objectFit='contain'
-        sx={{ background: '#0003' }}
+        fit='contain'
+      />
+
+      <Typography variant='h3'>4. Aspect ratio + top focus</Typography>
+      <Image
+        src='https://picsum.photos/800/600'
+        alt='Aspect ratio demo'
+        width='100%'
+        aspectRatio='16 / 9'
+        fit='cover'
+        objectPosition='top'
       />
     </Stack>
   );
@@ -80,7 +82,7 @@ export default function ImageDemoPage() {
             sx={{ width: 320 }}
           />
           <Select
-            placeholder='objectFit'
+            placeholder='fit'
             value={pgFit}
             onChange={(v) => setPgFit(v as typeof pgFit)}
             sx={{ width: 180 }}
@@ -90,6 +92,15 @@ export default function ImageDemoPage() {
             <Select.Option value='fill'>fill</Select.Option>
             <Select.Option value='none'>none</Select.Option>
             <Select.Option value='scale-down'>scale-down</Select.Option>
+          </Select>
+          <Select
+            placeholder='loading'
+            value={pgLoading}
+            onChange={(v) => setPgLoading(v as typeof pgLoading)}
+            sx={{ width: 160 }}
+          >
+            <Select.Option value='lazy'>lazy</Select.Option>
+            <Select.Option value='eager'>eager</Select.Option>
           </Select>
           <TextField
             name='width'
@@ -107,41 +118,21 @@ export default function ImageDemoPage() {
             onChange={(e) => setPgHeight((e.target as HTMLInputElement).value)}
             sx={{ width: 180 }}
           />
-          <Stack
-            direction='row'
-            gap={1}
-            sx={{ alignItems: 'center' }}
-          >
-            <Typography variant='subtitle'>rounded</Typography>
-            <Iterator
-              width={160}
-              min={0}
-              max={24}
-              step={2}
-              value={pgRounded}
-              onChange={setPgRounded}
-              aria-label='Rounded radius'
-            />
-          </Stack>
-          <Stack
-            direction='row'
-            gap={1}
-            sx={{ alignItems: 'center' }}
-          >
-            <Typography variant='subtitle'>lazy</Typography>
-            <Switch
-              checked={pgLazy}
-              onChange={setPgLazy}
-              aria-label='lazy'
-            />
-          </Stack>
           <TextField
-            name='placeholder'
-            label='placeholder'
-            placeholder='https://…'
-            value={pgPlaceholder}
-            onChange={(e) => setPgPlaceholder((e.target as HTMLInputElement).value)}
-            sx={{ width: 240 }}
+            name='objectPosition'
+            label='objectPosition'
+            placeholder='e.g., center or 50% 25%'
+            value={pgObjectPos}
+            onChange={(e) => setPgObjectPos((e.target as HTMLInputElement).value)}
+            sx={{ width: 200 }}
+          />
+          <TextField
+            name='aspectRatio'
+            label='aspectRatio'
+            placeholder='e.g., 16 / 9 or auto'
+            value={pgAspect}
+            onChange={(e) => setPgAspect((e.target as HTMLInputElement).value)}
+            sx={{ width: 180 }}
           />
         </Stack>
       </Panel>
@@ -150,12 +141,11 @@ export default function ImageDemoPage() {
           src={pgSrc}
           width={pgWidth}
           height={pgHeight}
-          objectFit={pgFit}
-          rounded={pgRounded}
-          lazy={pgLazy}
-          placeholder={pgPlaceholder}
+          fit={pgFit}
+          loading={pgLoading}
+          objectPosition={pgObjectPos}
+          aspectRatio={pgAspect}
           alt='Playground preview'
-          sx={{ background: theme.colors['text'] + '11' }}
         />
       </Panel>
     </Stack>
@@ -164,7 +154,7 @@ export default function ImageDemoPage() {
   return (
     <ComponentMetaPage
       title='Image'
-      subtitle='Responsive, lazy-loading image with object-fit and rounded corners.'
+      subtitle='Responsive image with native lazy-loading, fit/object-position, and optional aspect-ratio. Apply rounded corners via sx or a wrapper.'
       slug='components/primitives/image'
       meta={ImageMeta}
       usage={usageContent}

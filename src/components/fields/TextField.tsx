@@ -14,30 +14,29 @@ import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { useOptionalForm } from './FormControl';
 import type { Theme } from '../../system/themeStore';
-import type { Presettable, Sx } from '../../types';
+import type { FieldBaseProps } from '../../types';
 
 /*───────────────────────────────────────────────────────────────────────────*/
 /* Prop contracts                                                            */
 
-type InputProps = InputHTMLAttributes<HTMLInputElement>;
-type TextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement>;
-
-interface FieldCommon extends Presettable {
-  name: string;
-  label?: string;
-  helperText?: string;
-  error?: boolean;
-  /** Stretch the wrapper to fill available width */
-  fullWidth?: boolean;
-  /** Override input font */
-  fontFamily?: string;
-  /** Inline styles (with CSS var support) */
-  sx?: Sx;
-}
+type InputProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'name' | 'style'>;
+type TextareaProps = Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'name' | 'style'>;
 
 export type TextFieldProps =
-  | (FieldCommon & InputProps & { as?: 'input'; rows?: never })
-  | (FieldCommon & TextareaProps & { as: 'textarea' });
+  | ((FieldBaseProps & {
+      /** Override input font */
+      fontFamily?: string;
+      /** Field name is required for TextField to bind and identify the value. */
+      name: string;
+    }) &
+      InputProps & { as?: 'input' })
+  | ((FieldBaseProps & {
+      /** Override input font */
+      fontFamily?: string;
+      /** Field name is required for TextField to bind and identify the value. */
+      name: string;
+    }) &
+      TextareaProps & { as: 'textarea' });
 
 /*───────────────────────────────────────────────────────────────────────────*/
 /* Shared styled helpers                                                     */
@@ -57,9 +56,9 @@ const sharedFieldCSS = ({ theme, $error }: StyledFieldProps) => `
   color: ${theme.colors.text};
   font-size: 0.875rem;
   width: 100%;
-  &:focus {
-    outline: ${theme.stroke(2)} solid ${theme.colors.primary};
-    outline-offset: ${theme.stroke(1)};
+  &:focus-visible {
+    outline: var(--valet-focus-width, 2px) solid ${theme.colors.primary};
+    outline-offset: var(--valet-focus-offset, 2px);
   }
 `;
 
@@ -103,7 +102,6 @@ export const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
       fontFamily,
       preset: presetName,
       className,
-      rows,
       sx: sxProp,
       ...rawRest
     } = props;
@@ -111,7 +109,7 @@ export const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
     // Keys we manage/control
     const { onChange: externalOnChange, value: externalValue, defaultValue, ...rest } = rawRest;
 
-    const id = useId();
+    const generatedId = useId();
     const { theme } = useTheme();
 
     /** Optional FormControl wiring */
@@ -119,6 +117,17 @@ export const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
 
     const presetClasses = presetName ? preset(presetName) : '';
     const wrapperStyle = fullWidth ? { flex: 1, width: '100%', ...sxProp } : sxProp;
+
+    // Respect a provided id; otherwise use a stable generated one
+    const providedId = (rawRest as Record<string, unknown>)?.id as string | undefined;
+    const inputId = providedId ?? generatedId;
+
+    // Helper linkage: create an id for helper text when present
+    const helperId = helperText ? `${inputId}-help` : undefined;
+    const describedByFromProps = (rawRest as Record<string, unknown>)['aria-describedby'] as
+      | string
+      | undefined;
+    const ariaDescribedBy = [describedByFromProps, helperId].filter(Boolean).join(' ') || undefined;
 
     return (
       <Wrapper
@@ -129,7 +138,7 @@ export const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
         {label && (
           <Label
             theme={theme}
-            htmlFor={id}
+            htmlFor={inputId}
           >
             {label}
           </Label>
@@ -153,16 +162,21 @@ export const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
 
               return (
                 <FieldTextarea
-                  id={id}
+                  id={inputId}
                   name={name}
                   ref={ref as React.Ref<HTMLTextAreaElement>}
                   theme={theme}
                   $error={error}
-                  rows={rows}
                   {...(rest as Omit<TextareaProps, 'onChange' | 'value' | 'defaultValue'>)}
-                  value={value}
-                  defaultValue={defaultValue as TextareaProps['defaultValue']}
+                  {...(value !== undefined
+                    ? { value }
+                    : defaultValue !== undefined
+                      ? { defaultValue: defaultValue as TextareaProps['defaultValue'] }
+                      : {})}
                   onChange={handleChange}
+                  aria-invalid={error || undefined}
+                  aria-describedby={ariaDescribedBy}
+                  aria-errormessage={error && helperId ? helperId : undefined}
                   style={fontFamily ? { fontFamily } : undefined}
                 />
               );
@@ -184,15 +198,21 @@ export const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
 
               return (
                 <FieldInput
-                  id={id}
+                  id={inputId}
                   name={name}
                   ref={ref as React.Ref<HTMLInputElement>}
                   theme={theme}
                   $error={error}
                   {...(rest as Omit<InputProps, 'onChange' | 'value' | 'defaultValue'>)}
-                  value={value}
-                  defaultValue={defaultValue as InputProps['defaultValue']}
+                  {...(value !== undefined
+                    ? { value }
+                    : defaultValue !== undefined
+                      ? { defaultValue: defaultValue as InputProps['defaultValue'] }
+                      : {})}
                   onChange={handleChange}
+                  aria-invalid={error || undefined}
+                  aria-describedby={ariaDescribedBy}
+                  aria-errormessage={error && helperId ? helperId : undefined}
                   style={fontFamily ? { fontFamily } : undefined}
                 />
               );
@@ -200,8 +220,10 @@ export const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
 
         {helperText && (
           <Helper
+            id={helperId}
             theme={theme}
             $error={error}
+            aria-live='polite'
           >
             {helperText}
           </Helper>

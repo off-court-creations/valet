@@ -109,22 +109,58 @@ export default function MetroSelectDemoPage() {
     </Stack>
   );
 
-  const [gap, setGap] = useState<number | string>(4);
+  // Playground controls: mode (single/multiple), tile size, and controlled value
+  const [mode, setMode] = useState<'single' | 'multiple'>('single');
+  const [size, setSize] = useState<'sm' | 'md' | 'lg'>('md');
+  const [sel, setSel] = useState<string | string[]>('home');
+
+  // Parent-level size now controls tile geometry uniformly
+
+  // When switching modes, coerce selection shape sensibly
+  const setModeSafe = (m: 'single' | 'multiple') => {
+    setMode(m);
+    setSel((cur) =>
+      m === 'multiple'
+        ? Array.isArray(cur)
+          ? cur
+          : [cur]
+        : Array.isArray(cur)
+          ? (cur[0] ?? 'home')
+          : cur,
+    );
+  };
+
   const playground = (
     <Stack gap={1}>
-      <Typography variant='subtitle'>gap</Typography>
+      <Typography variant='subtitle'>mode</Typography>
       <Select
-        placeholder='gap'
-        value={gap}
-        onChange={(v) => setGap(v as number | string)}
+        placeholder='mode'
+        value={mode}
+        onChange={(v) => setModeSafe(v as 'single' | 'multiple')}
         sx={{ width: 200 }}
       >
-        <Select.Option value={2}>2</Select.Option>
-        <Select.Option value={4}>4</Select.Option>
-        <Select.Option value={8}>8</Select.Option>
-        <Select.Option value={'1rem'}>1rem</Select.Option>
+        <Select.Option value='single'>single</Select.Option>
+        <Select.Option value='multiple'>multiple</Select.Option>
       </Select>
-      <MetroSelect gap={gap}>
+
+      <Typography variant='subtitle'>tile size</Typography>
+      <Select
+        placeholder='size'
+        value={size}
+        onChange={(v) => setSize(v as 'sm' | 'md' | 'lg')}
+        sx={{ width: 200 }}
+      >
+        <Select.Option value='sm'>small</Select.Option>
+        <Select.Option value='md'>medium</Select.Option>
+        <Select.Option value='lg'>large</Select.Option>
+      </Select>
+
+      <MetroSelect
+        value={sel}
+        onChange={(v) => setSel(v as string | string[])}
+        multiple={mode === 'multiple'}
+        size={size}
+      >
         {basic.map((o) => (
           <MetroSelect.Option
             key={o.value}
@@ -132,6 +168,9 @@ export default function MetroSelectDemoPage() {
           />
         ))}
       </MetroSelect>
+      <Typography>
+        Selected: <b>{Array.isArray(sel) ? sel.join(', ') : sel}</b>
+      </Typography>
     </Stack>
   );
 

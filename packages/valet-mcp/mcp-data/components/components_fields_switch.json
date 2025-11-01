@@ -3,7 +3,7 @@
   "category": "fields",
   "slug": "components/fields/switch",
   "summary": "Switch component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "switch",
     "toggle"

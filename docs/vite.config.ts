@@ -1,29 +1,46 @@
 // valet/docs/vite.config.ts
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 
-export default defineConfig({
-  // Allow building docs under a subpath (e.g., /valet/) by setting DOCS_BASE
-  // This pairs with BrowserRouter basename={import.meta.env.BASE_URL}
-  base: process.env.DOCS_BASE || '/',
-  plugins: [react()],
-  server: {
-    host: true, // or '0.0.0.0' to listen on all interfaces
+export default defineConfig(({ mode }) => {
+  // Load .env variables for the current mode (development by default)
+  const env = loadEnv(mode, process.cwd(), '');
 
-    // put a new ngrok link here if your free plan changes yours
-    allowedHosts: ['02ba80ef8c67.ngrok-free.app'],
+  // Prefer VITE_TUNNEL_HOST for consistency with Vite env exposure
+  // Fallback to NGROK_HOST if provided
+  const tunnelHost = env.VITE_TUNNEL_HOST || env.NGROK_HOST || '';
 
-    // Allow importing sidecar JSON files from the monorepo root
-    fs: {
-      allow: ['..', '../..'],
+  // Optional secure HMR through a tunnel
+  // Set VITE_TUNNEL_HMR_SECURE=true to enable WSS HMR via the tunnel host
+  const secureHmr = (env.VITE_TUNNEL_HMR_SECURE || '').toLowerCase() === 'true';
+
+  return {
+    // Allow building docs under a subpath (e.g., /valet/) by setting DOCS_BASE
+    // This pairs with BrowserRouter basename={import.meta.env.BASE_URL}
+    base: process.env.DOCS_BASE || '/',
+    plugins: [react()],
+    server: {
+      host: true, // or '0.0.0.0' to listen on all interfaces
+
+      // Allow requests from your tunnel domain; falls back to Vite default if unset
+      ...(tunnelHost ? { allowedHosts: [tunnelHost] } : {}),
+
+      // Allow importing sidecar JSON files from the monorepo root
+      fs: {
+        allow: ['..', '../..'],
+      },
+
+      // If viewing the site via HTTPS on a tunnel and HMR can't connect,
+      // enable secure HMR by setting VITE_TUNNEL_HMR_SECURE=true in .env
+      ...(secureHmr && tunnelHost
+        ? {
+            hmr: {
+              host: tunnelHost,
+              protocol: 'wss',
+              clientPort: 443,
+            },
+          }
+        : {}),
     },
-
-    // If you're viewing the site via HTTPS on ngrok and HMR can't connect,
-    // uncomment this block so the client uses WSS through the tunnel:
-    // hmr: {
-    //   host: '2a9971f3ac6b.ngrok-free.app',
-    //   protocol: 'wss',
-    //   clientPort: 443,
-    // },
-  },
+  };
 });

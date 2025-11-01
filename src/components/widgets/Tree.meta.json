@@ -1,6 +1,6 @@
 {
   "name": "Tree",
-  "status": "experimental",
+  "status": "stable",
   "docs": {
     "bestPractices": [
       "Use stable ids. Provide deterministic `id`s for nodes so expanded/selected state can be controlled and persisted across renders.",

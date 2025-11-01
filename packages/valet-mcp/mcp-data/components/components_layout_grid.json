@@ -27,6 +27,12 @@
       "default": "false"
     },
     {
+      "name": "normalizeRowHeights",
+      "type": "boolean",
+      "required": false,
+      "default": "true"
+    },
+    {
       "name": "sx",
       "type": "Sx",
       "required": false
@@ -39,6 +45,7 @@
     ]
   },
   "cssVars": [
+    "--valet-panel-align-self",
     "--valet-panel-ov-y",
     "--valet-panel-max-h",
     "--valet-stack-ov-y",

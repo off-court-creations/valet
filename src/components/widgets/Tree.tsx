@@ -2,7 +2,12 @@
 // src/components/widgets/Tree.tsx | valet
 // Basic accessible tree view component
 // ─────────────────────────────────────────────────────────────
-import React, { useMemo, useState, useRef, KeyboardEvent } from 'react';
+// ─────────────────────────────────────────────────────────────
+// src/components/widgets/Tree.tsx | valet
+// Basic accessible tree view component
+// Patched: robust keyboard control + ARIA metadata
+// ─────────────────────────────────────────────────────────────
+import React, { useMemo, useState, useRef, KeyboardEvent, useEffect } from 'react';
 import Icon from '../primitives/Icon';
 import Typography from '../primitives/Typography';
 import { styled } from '../../css/createStyled';
@@ -189,7 +194,20 @@ export function Tree<T>({
     [controlledExpand, expandedProp, selfExpanded],
   );
 
-  const [focused, setFocused] = useState<string | null>(null);
+  // Establish an initial roving tab stop so users can Tab into the tree.
+  const [focused, setFocused] = useState<string | null>(() => {
+    const initExpanded = new Set(expandedProp ?? defaultExpanded);
+    const visible: string[] = [];
+    const walkIds = (items: TreeNode<T>[]) => {
+      for (const it of items) {
+        visible.push(it.id);
+        if (it.children && initExpanded.has(it.id)) walkIds(it.children);
+      }
+    };
+    walkIds(nodes);
+    const candidate = selectedProp && visible.includes(selectedProp) ? selectedProp : visible[0];
+    return candidate ?? null;
+  });
   const controlled = selectedProp !== undefined;
   const [selfSelected, setSelfSelected] = useState<string | null>(defaultSelected ?? null);
   const selected = controlled ? selectedProp! : selfSelected;
@@ -201,16 +219,31 @@ export function Tree<T>({
   // Selected: primary-tinted
   const selectedBg = toHex(mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.2));
 
-  const flat = useMemo(() => {
-    const res: { node: TreeNode<T>; level: number }[] = [];
-    const walk = (items: TreeNode<T>[], level: number) => {
-      for (const it of items) {
-        res.push({ node: it, level });
-        if (it.children && expanded.has(it.id)) walk(it.children, level + 1);
+  type FlatNode = {
+    node: TreeNode<T>;
+    level: number; // 0-based for internal; aria-level will be level+1
+    parentId: string | null;
+    posinset: number; // 1-based
+    setsize: number;
+  };
+
+  const { flat, idToNode, idToParent } = useMemo(() => {
+    const res: FlatNode[] = [];
+    const idToNode = new Map<string, TreeNode<T>>();
+    const idToParent = new Map<string, string | null>();
+
+    const walk = (items: TreeNode<T>[], level: number, parentId: string | null) => {
+      const setsize = items.length;
+      for (let i = 0; i < items.length; i++) {
+        const it = items[i];
+        idToNode.set(it.id, it);
+        idToParent.set(it.id, parentId);
+        res.push({ node: it, level, parentId, posinset: i + 1, setsize });
+        if (it.children && expanded.has(it.id)) walk(it.children, level + 1, it.id);
       }
     };
-    walk(nodes, 0);
-    return res;
+    walk(nodes, 0, null);
+    return { flat: res, idToNode, idToParent };
   }, [nodes, expanded]);
 
   const refs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -220,6 +253,15 @@ export function Tree<T>({
     refs.current[id]?.focus();
   };
 
+  const setExpandedSet = (next: Set<string>) => {
+    if (controlledExpand) onExpandedChange?.([...next]);
+    else
+      setSelfExpanded(() => {
+        onExpandedChange?.([...next]);
+        return next;
+      });
+  };
+
   const toggle = (id: string) => {
     const apply = (prev: Set<string>) => {
       const next = new Set(prev);
@@ -227,23 +269,27 @@ export function Tree<T>({
       else next.add(id);
       return next;
     };
-    if (controlledExpand) {
-      const next = apply(expanded);
-      onExpandedChange?.([...next]);
-    } else {
-      setSelfExpanded((prev) => {
-        const next = apply(prev);
-        onExpandedChange?.([...next]);
-        return next;
-      });
-    }
+    const next = apply(expanded);
+    setExpandedSet(next);
   };
 
   const line = theme.colors.backgroundAlt;
 
   const visibleIds = flat.map((f) => f.node.id);
+  const visibleSet = useMemo(() => new Set(visibleIds), [visibleIds]);
+  const firstVisible = visibleIds[0] ?? null;
+
+  // Ensure that when the focused id changes, we programmatically focus the element
+  useEffect(() => {
+    if (focused) refs.current[focused]?.focus();
+  }, [focused]);
 
   const keyNav = (e: KeyboardEvent<HTMLUListElement>) => {
+    // Lazy-initialize focus to selected or first visible node
+    if (!focused) {
+      const initial = selected ?? firstVisible ?? undefined;
+      if (initial) setFocused(initial);
+    }
     if (!focused) return;
     const idx = visibleIds.indexOf(focused);
     if (idx === -1) return;
@@ -278,6 +324,27 @@ export function Tree<T>({
           }
         }
         break;
+      case 'Home':
+        e.preventDefault();
+        if (visibleIds.length) focusItem(visibleIds[0]);
+        break;
+      case 'End':
+        e.preventDefault();
+        if (visibleIds.length) focusItem(visibleIds[visibleIds.length - 1]);
+        break;
+      case '*':
+        // Expand all siblings of the current node
+        e.preventDefault();
+        {
+          const parentId = idToParent.get(current.node.id) ?? null;
+          const siblings = parentId ? (idToNode.get(parentId)?.children ?? []) : nodes;
+          const next = new Set(expanded);
+          siblings?.forEach((sib) => {
+            if (sib.children && sib.children.length) next.add(sib.id);
+          });
+          setExpandedSet(next);
+        }
+        break;
       case 'Enter':
       case ' ': // Space
         e.preventDefault();
@@ -286,6 +353,26 @@ export function Tree<T>({
         break;
     }
   };
+
+  // If focused node becomes hidden (e.g., parent collapsed), move focus to the
+  // nearest visible ancestor; if none, to the first visible node.
+  const visibleKey = useMemo(() => visibleIds.join('\u0000'), [visibleIds]);
+
+  useEffect(() => {
+    if (!focused) return;
+    if (visibleSet.has(focused)) return;
+    // Find closest visible ancestor
+    let p: string | null | undefined = focused;
+    while (p) {
+      p = idToParent.get(p);
+      if (!p) break;
+      if (visibleSet.has(p)) {
+        setFocused(p);
+        return;
+      }
+    }
+    if (firstVisible) setFocused(firstVisible);
+  }, [visibleKey, focused, idToParent, visibleSet, firstVisible]);
 
   const renderBranch = (items: TreeNode<T>[], level: number): React.ReactNode => (
     <Branch
@@ -307,6 +394,9 @@ export function Tree<T>({
               refs.current[node.id] = el;
             }}
             role='treeitem'
+            aria-level={level + 1}
+            aria-setsize={items.length}
+            aria-posinset={items.findIndex((n) => n.id === node.id) + 1}
             aria-expanded={node.children ? expanded.has(node.id) : undefined}
             aria-selected={selected === node.id}
             tabIndex={focused === node.id ? 0 : -1}
@@ -378,7 +468,6 @@ export function Tree<T>({
     <Root
       {...rest}
       role='tree'
-      tabIndex={0}
       onKeyDown={keyNav}
       $border={theme.colors.backgroundAlt}
       className={[p ? preset(p) : '', className].filter(Boolean).join(' ')}
@@ -392,7 +481,7 @@ export function Tree<T>({
       }
     >
       {variant === 'chevron'
-        ? flat.map(({ node, level }) => (
+        ? flat.map(({ node, level, posinset, setsize }) => (
             <li
               key={node.id}
               role='none'
@@ -402,6 +491,9 @@ export function Tree<T>({
                   refs.current[node.id] = el;
                 }}
                 role='treeitem'
+                aria-level={level + 1}
+                aria-setsize={setsize}
+                aria-posinset={posinset}
                 aria-expanded={node.children ? expanded.has(node.id) : undefined}
                 aria-selected={selected === node.id}
                 tabIndex={focused === node.id ? 0 : -1}

@@ -7,10 +7,131 @@ All notable changes to this project will be documented in this file. The format 
 ### Added
 
 - MCP: added `valet__search_best_practices` and `valet__list_synonyms` tools for agents to surface guidance and inspect alias mappings directly.
+- Primitives: add `WebGLCanvas` — a reusable WebGL2 canvas host that handles context creation, DPR-aware resizing, and RAF. Docs lava-lamp hero now uses this component. Status: stable.
+- Grid/Panel: introduce per-row height normalization.
+  - Grid: new `normalizeRowHeights` prop (default `true`) stretches items so each row matches its tallest Panel when in 2+ columns (adaptive not collapsed).
+  - Panel: new `normalizeRowHeight` prop (default `true`) to opt out on a per-panel basis.
+ - Iterator: new props and docs
+   - `onCommit(value)` event for blur/controls/wheel/keyboard commits
+   - `commitOnChange` opt-in to live commits while typing
+   - `roundToStep` to snap committed values to `step` from `min` (or `0`)
+   - `wheelBehavior`: `'off' | 'focus' | 'hover'` (default `'focus'`)
+   - Best Practices and curated Examples added to sidecar; docs page renders them
+ - Fields: introduce `FieldBaseProps` with JSDoc for shared field props (`name`, `label`, `helperText`, `error`, `fullWidth`, `sx`, `preset`) to seed consistent reference descriptions across all fields.
+ - MCP: extractor now reads per‑prop JSDoc comments from shared types and component interfaces to populate the Reference table descriptions by default.
+- Table: smart height constraints for better UX on small viewports
+  - New `minConstrainedRows` (default `4`): when `constrainHeight` would show fewer than this many rows, the table temporarily disables internal scrolling to avoid a tiny scroller.
+  - New `maxExpandedRows` (default `30`): when `minConstrainedRows` disables constraining and the dataset exceeds this size, Table paginates (using `<Pagination/>`) with `maxExpandedRows` rows per page instead of using a scrollbar.
+  - New `paginate` (default `false`): force pagination always using `maxExpandedRows`; otherwise pagination engages automatically only when `minConstrainedRows` kicks in.
+  - Controlled pagination support via `page`, `onPageChange`, and `paginationWindow` (forwarded to Pagination’s `visibleWindow`).
 
 ### Changed
 
-- MCP: extend component status enum to include `golden` (very stable, polished) and `unstable` (known problem; avoid depending on it). Bumped MCP `schemaVersion` to `1.6` and regenerated `mcp-data/`.
+- Security: require Vite >= 6.4.1 across docs and templates.
+ - Fields/Checkbox: add `indeterminate` prop with ARIA mixed state; accept `id` to pair with external labels/descriptions.
+ - Fields/Checkbox: improve contrast — unchecked outline uses `theme.colors.divider`; checked fill uses `theme.colors.primary` with white indicator.
+ - Fields/Checkbox: mark status to `stable`.
+- CSS hashing: replace runtime siphash with dependency‑free BigInt FNV‑1a (64‑bit).
+  - Hash output remains base36 but now includes a `-<len>` suffix (input length in base36) to further reduce practical collision risk.
+  - Removes the `siphash` runtime dependency; reduces bundle size and CPU.
+  - Generated class/keyframe names change; this is internal and does not affect public APIs.
+- CVA: bump create‑valet‑app templates to Vite >=6.4.1 by default.
+- MCP: extend component status enum to include `production` (very stable, polished; formerly `golden`) and `unstable` (known problem; avoid depending on it). Bumped MCP `schemaVersion` to `1.6` and regenerated `mcp-data/`.
+- Docs: extracted LavaLampBackgroundGL shaders to standalone GLSL files under `docs/src/shaders/lava-lamp` and import via `?raw` for readability and better editor support.
+- Docs: increase lava‑lamp pulse crowd repulsion ~100× (stronger scene reconfiguration). Parameters in `docs/src/shaders/lava-lamp/lavaLampParams.ts`.
+- Docs: MetroSelect playground now controls selection mode (single/multiple) and tile size; removed non-functional `gap` control.
+- Grid: now normalizes row heights by default for multi-column layouts; behavior is disabled automatically when adaptive collapses to a single column.
+ - Modal: graduate to stable and refine API/UX
+   - Add DOM passthrough and `sx` support; merge `className` with presets
+   - Constrain dialog height to viewport via `--valet-modal-viewport-margin` and scroll content inside
+   - Dev-time a11y guard warns when no accessible name (`title`, `aria-label`, or `aria-labelledby`)
+   - Docs: simplify page; remove alert/controlled/size sections and add a11y + long-content demos
+ - Iterator: UX and a11y improvements
+   - Forward native `min`/`max`/`step` to the input for correct browser semantics
+   - Wheel steps only when focused by default; `'hover'` mode is opt-in
+   - Keyboard: ArrowUp/Down step; PageUp/Down big-step; Home/End to bounds; Enter commits; Escape reverts
+   - Plus/minus icons use bold glyphs for readability (`mdi:plus-thick`/`mdi:minus-thick`)
+ - Docs usage spacing refined to use `gap`/`pad` props (no `sx`)
+ - List: `focusMode` prop to control row focus behavior
+   - `auto` (default): non-selectable rows are not tabbable; selectable lists use roving focus
+   - `row`: every row is tabbable (opt-in; not recommended for long lists)
+   - `none`: rows are not in the tab order; programmatic focus only
+
+ - Image: simplify and promote to `stable`
+   - Remove custom IntersectionObserver lazy logic; rely on native `loading="lazy"`
+   - Add `aspectRatio` prop and `max-width: 100%` default for better responsiveness
+   - Remove `rounded` prop; apply rounding via wrapper with `overflow: hidden` (more robust across object-fit modes)
+   - Forward refs; default `decoding="async"`; keep `sx` and preset support
+
+ - Image: finalize simple API and defaults
+   - Replace `objectFit` with `fit`; add `objectPosition` for focus/cropping control
+   - Remove `lazy` boolean and `placeholder`; use native `loading` (default `'lazy'`)
+   - Require `alt` text (empty string allowed for decorative)
+   - Keep `aspectRatio`, `width`/`height` (number ⇒ px), `decoding='async'`, and `draggable={false}` by default
+   - Passthrough responsive imaging attributes (`srcSet`, `sizes`) and `fetchPriority`
+
+ - Progress: complete redesign with simpler API and better a11y/compat
+  - New primitives `ProgressBar` and `ProgressRing` replace mode/variant juggling
+  - Back-compat `Progress` wrapper remains (maps legacy `variant`/`mode`/`showLabel`)
+  - Fewer props; more control via CSS vars and sensible defaults
+ - Improved visuals: ring track + rounded caps; subtle indeterminate motion
+ - Tight ARIA: role, value range, and indeterminate implied by omitted `value`
+
+- Fields: migrate Checkbox, TextField, Select, RadioGroup/Radio, Switch, Slider, Iterator, and MetroSelect to extend `FieldBaseProps`. No runtime behavior changes; types and docs only.
+- MCP: safer extractor for inherited props
+  - Includes inherited userland props (from `src/`) and their JSDoc in component docs
+  - Filters DOM attributes from alias/union shapes to avoid noisy Reference tables
+  - Honors `Omit<...>` for DOM inheritance while still including same‑name userland props (e.g., `name`).
+
+- Docs: Glossary page significantly improved for readability and navigation
+  - Search across terms, aliases, definitions; live result count (ARIA‑announced)
+  - Category filter and grouping (A–Z or by category) with section headings
+  - Per‑entry deep links with copy‑link button; clickable “See also” anchors
+  - Clear spacing, dividers, and sticky controls bar; optional JSON copy action
+  - Preserves `GLOSSARY` structure for MCP extraction; recommend regenerating `mcp-data/`
+
+### Fixed
+
+- Chip: outlined variant border was invisible due to missing `divider` token in theme. Added `colors.divider` for light/dark themes and use it for default outlined borders.
+
+ 
+### Removed
+
+- Skeleton: remove component from library, docs, and MCP data.
+
+### Fixed
+
+- Accessibility: Enhance `Tree` with robust keyboard navigation
+  - Roving tabindex and initial focus on selected/first item
+  - Arrow Up/Down, Left/Right, Home/End, and `*` siblings expand
+  - ARIA `aria-level`, `aria-setsize`, `aria-posinset` on items
+  - Docs NavDrawer now passes `aria-label` and is keyboard operable
+ - Accessibility: Accordion keyboard support now consistent across browsers (incl. Safari)
+   - Roving tabIndex on headers; Arrow Up/Down/Left/Right moves focus; Home/End jump
+   - Space/Enter toggle reliably without page scroll in Safari
+   - Disabled state dims with opacity and slight grayscale (Iterator-style), and is skipped by keyboard navigation
+- Docs: LiveCodePreview now executes function component examples (e.g. `() => <...>`), fixing MetroSelect “Controlled value” example rendering in the playground/examples.
+- Avatar: Gravatar fallback when neither `src` nor `email` is provided now resolves to a stable default image instead of a broken URL; default `loading="lazy"` for better performance.
+- Switch: set `type="button"` to avoid unintended form submissions when used inside a `<form>`.
+ - Iterator: Disabled field now dims text/border to match disabled icon buttons; `readOnly` respected across wheel/buttons/keyboard; typing no longer forces premature commit unless `commitOnChange` is enabled.
+ - Image: respect `draggable` when true; no longer prevents dragstart unconditionally
+ - Accordion: flip chevron orientation so collapsed shows down and expanded shows up.
+ - Accordion: divider borders now fade using theme motion tokens on hover; selected (open) item keeps dividers visible when hovered.
+
+- Tooltip/IconButton: prevent iOS long‑press selection handles (“selection gates”) from appearing in Tooltip demos. Added `-webkit-user-select: none`, `-webkit-touch-callout: none`, and tap‑highlight/`touch-action` guards to IconButton and disabled selection on the Tooltip bubble.
+
+- Icon: prevent selection and long‑press callout on iOS/Android by disabling selection and touch callout on the wrapper and SVG; also remove tap highlight and mark the wrapper `draggable={false}`.
+
+- List: ground‑up rewrite for simplicity and function
+  - Unified pointer-based reordering (mouse/touch/pen), plus Alt+Arrow keyboard reorder
+  - Cleaner selection with roving tabIndex and Arrow/Enter/Space navigation
+  - Optional `getKey(item, index)` for stable keys; `emptyPlaceholder` for empty states
+  - Simpler styling (striped/hover/selected) with fewer side-effects; retains presets and `sx`
+ - Accessibility: List no longer forces non-selectable rows into the tab order
+   - Non-selectable lists keep `tabIndex` unset; selectable lists retain roving focus
+  - Adds explicit override via `focusMode` for advanced use cases
+
+- SpeedDial: prevent iOS long‑press text selection and callout on the main FAB and action buttons by disabling selection (`user-select: none`), iOS touch callout, and using `touch-action: manipulation`; also suppress the long‑press context menu.
 
 ## [0.32.0]
 

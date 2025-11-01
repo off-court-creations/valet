@@ -17,9 +17,9 @@ const primitives: [string, string][] = [
   ['Image', '/image-demo'],
   ['Divider', '/divider-demo'],
   ['Progress', '/progress-demo'],
-  ['Skeleton', '/skeleton-demo'],
   ['Typography', '/typography'],
   ['Video', '/video-demo'],
+  ['WebGLCanvas', '/webglcanvas-demo'],
 ];
 
 const layoutComponents: [string, string][] = [
@@ -57,7 +57,6 @@ const widgets: [string, string][] = [
   ['Pagination', '/pagination-demo'],
   ['Snackbar', '/snackbar-demo'],
   ['Speed Dial', '/speeddial-demo'],
-  ['Stepper', '/stepper-demo'],
   ['Table', '/table-demo'],
   ['Tooltip', '/tooltip-demo'],
   ['Chip', '/chip-demo'],
@@ -70,6 +69,7 @@ const examples: [string, string][] = [
   ['LLMChat', '/chat-demo'],
   ['RichChat', '/rich-chat-demo'],
   ['Complicated Dashboard', '/dashboard-demo'],
+  ['Component QC Playground', '/qc-playground'],
 ];
 
 const DEFAULT_EXPANDED = [
@@ -98,16 +98,7 @@ const treeData: TreeNode<Item>[] = [
         id: '/prop-patterns',
         data: { label: 'Prop Patterns', path: '/prop-patterns' },
       },
-    ],
-  },
-  {
-    id: 'concepts',
-    data: { label: 'Concepts' },
-    children: [
-      { id: '/mental-model', data: { label: 'Mental Model', path: '/mental-model' } },
       { id: '/theme-engine', data: { label: 'Theme Engine', path: '/theme-engine' } },
-      { id: '/styled', data: { label: 'Styled Engine', path: '/styled' } },
-      { id: '/spacing', data: { label: 'Spacing Contract', path: '/spacing' } },
     ],
   },
   {
@@ -193,6 +184,7 @@ export default function NavDrawer() {
         expanded={expanded}
         onExpandedChange={handleExpandedChange}
         onNodeSelect={(n) => n.path && navigate(n.path)}
+        aria-label='Documentation Navigation'
         sx={{ padding: theme.spacing(1) }}
       />
     </Drawer>

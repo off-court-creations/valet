@@ -3,12 +3,22 @@
 // Fully-typed, FormControl-aware <Select/> (single + multiple).
 // © 2025 Off-Court Creations – MIT licence
 // ─────────────────────────────────────────────────────────────
-import React, { forwardRef, useCallback, useId, useMemo, useRef, useState } from 'react';
+import React, {
+  forwardRef,
+  useCallback,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  useLayoutEffect,
+  useEffect,
+} from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { useOptionalForm } from './FormControl';
-import type { Presettable, Sx } from '../../types';
+import { Checkbox } from './Checkbox';
+import type { FieldBaseProps } from '../../types';
 import type { Theme } from '../../system/themeStore';
 
 type Primitive = string | number;
@@ -22,7 +32,7 @@ export interface SelectProps
       React.HTMLAttributes<HTMLDivElement>,
       'onChange' | 'defaultValue' | 'children' | 'style'
     >,
-    Presettable {
+    FieldBaseProps {
   /** Controlled value (single) or array (multiple). */
   value?: Primitive | Primitive[];
   /** Uncontrolled initial value. */
@@ -36,12 +46,8 @@ export interface SelectProps
   /** Size token or custom measurement */
   size?: SelectSize | number | string;
   disabled?: boolean;
-  /** Field name for FormControl binding. */
-  name?: string;
   /** Option nodes (see Select.Option). */
   children: React.ReactNode;
-  /** Inline styles (with CSS var support) */
-  sx?: Sx;
 }
 
 export interface OptionProps extends React.LiHTMLAttributes<HTMLLIElement> {
@@ -317,6 +323,37 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLDivElement>) => {
 
   /* aria linking ------------------------------------------ */
   const listId = useId();
+  const optIds = useMemo(() => opts.map((_, i) => `${listId}-opt-${i}`), [opts, listId]);
+
+  // Ensure focused option is visible as user navigates
+  useEffect(() => {
+    if (!open) return;
+    const el = document.getElementById(optIds[active]);
+    if (!el || !menuRef.current) return;
+    const parent = menuRef.current;
+    const pr = parent.getBoundingClientRect();
+    const er = el.getBoundingClientRect();
+    if (er.top < pr.top || er.bottom > pr.bottom) el.scrollIntoView({ block: 'nearest' });
+  }, [active, open, optIds]);
+
+  // Focus the listbox when opened and set active to the current selection (or first enabled)
+  useLayoutEffect(() => {
+    if (!open) return;
+    // Determine initial active index
+    let initial = 0;
+    if (multiple) {
+      const arr = array(cur ?? []) as Primitive[];
+      const idx = opts.findIndex((o) => arr.some((v) => eq(v, o.props.value)) && !o.props.disabled);
+      initial = idx >= 0 ? idx : opts.findIndex((o) => !o.props.disabled);
+    } else {
+      const idx = opts.findIndex((o) => eq(o.props.value, cur as Primitive) && !o.props.disabled);
+      initial = idx >= 0 ? idx : opts.findIndex((o) => !o.props.disabled);
+    }
+    if (initial < 0) initial = 0;
+    setActive(initial);
+    // Focus the listbox
+    menuRef.current?.focus();
+  }, [open, opts, multiple, cur]);
 
   /* preset classes merge ----------------------------------- */
   const presetCls = presetKey ? preset(presetKey) : '';
@@ -391,11 +428,65 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLDivElement>) => {
             role='listbox'
             id={listId}
             aria-multiselectable={multiple || undefined}
+            aria-activedescendant={optIds[active]}
+            tabIndex={0}
+            onKeyDown={(e: React.KeyboardEvent<HTMLUListElement>) => {
+              const { key } = e;
+              if (key === 'Escape') {
+                setOpen(false);
+                trigRef.current?.focus();
+                return;
+              }
+              if (key === 'Tab') {
+                // Close and allow default tab navigation
+                setOpen(false);
+                return;
+              }
+              if (key === 'ArrowDown') {
+                e.preventDefault();
+                move(1);
+                return;
+              }
+              if (key === 'ArrowUp') {
+                e.preventDefault();
+                move(-1);
+                return;
+              }
+              if (key === 'Home') {
+                e.preventDefault();
+                const first = opts.findIndex((o) => !o.props.disabled);
+                if (first >= 0) setActive(first);
+                return;
+              }
+              if (key === 'End') {
+                e.preventDefault();
+                for (let i = opts.length - 1; i >= 0; i--) {
+                  if (!opts[i].props.disabled) {
+                    setActive(i);
+                    break;
+                  }
+                }
+                return;
+              }
+              if (key === 'Enter' || key === ' ') {
+                e.preventDefault();
+                const o = opts[active];
+                if (!o || o.props.disabled) return;
+                const val = o.props.value;
+                toggle(val);
+                if (!multiple) {
+                  // Close for single-select and return focus to trigger
+                  setOpen(false);
+                  trigRef.current?.focus();
+                }
+              }
+            }}
           >
             {opts.map((o, i) => {
               const sel = isSel(o.props.value);
               return (
                 <Item
+                  id={optIds[i]}
                   key={o.props.value}
                   role='option'
                   aria-selected={sel}
@@ -409,11 +500,16 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLDivElement>) => {
                   onClick={() => !o.props.disabled && toggle(o.props.value)}
                 >
                   {multiple && (
-                    <input
-                      type='checkbox'
-                      readOnly
+                    <Checkbox
+                      // Visual-only indicator; prevent form binding and submission
+                      bindForm={false}
+                      // Controlled mirror of selection state
                       checked={sel}
-                      style={{ marginRight: theme.spacing(0.75) }}
+                      // Small footprint and spacing to match prior layout
+                      size='sm'
+                      sx={{ marginRight: theme.spacing(0.75) }}
+                      aria-hidden
+                      tabIndex={-1}
                     />
                   )}
                   {o.props.children}

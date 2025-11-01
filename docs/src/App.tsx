@@ -14,7 +14,7 @@ const page = <T extends { default: React.ComponentType }>(p: () => Promise<T>) =
 
 /*───────────────────────────────────────────────────────────*/
 /* Lazy-loaded pages                                         */
-const MainPage = page(() => import('./pages/concepts/MainPage'));
+const MainPage = page(() => import('./pages/MainPage'));
 const TypographyDemoPage = page(() => import('./pages/components/primitives/TypographyDemoPage'));
 const PresetDemoPage = page(() => import('./pages/examples/PresetDemoPage'));
 const FormDemoPage = page(() => import('./pages/examples/FormDemoPage'));
@@ -45,7 +45,6 @@ const AccordionConstrainedDemoPage = page(
 const TabsDemoPage = page(() => import('./pages/components/layout/TabsDemo'));
 const SliderDemoPage = page(() => import('./pages/components/field/SliderDemo'));
 const ProgressDemoPage = page(() => import('./pages/components/primitives/ProgressDemo'));
-const SkeletonDemoPage = page(() => import('./pages/components/primitives/SkeletonDemo'));
 const SelectDemoPage = page(() => import('./pages/components/field/SelectDemo'));
 const TablePlaygroundPage = page(() => import('./pages/components/widgets/TableDemo'));
 const ListDemoPage = page(() => import('./pages/components/layout/ListDemoPage'));
@@ -55,7 +54,6 @@ const GridDemoPage = page(() => import('./pages/components/layout/GridDemo'));
 const StackDemoPage = page(() => import('./pages/components/layout/StackDemo'));
 const PaginationDemoPage = page(() => import('./pages/components/widgets/PaginationDemo'));
 const SpeedDialDemoPage = page(() => import('./pages/components/widgets/SpeedDialDemo'));
-const StepperDemoPage = page(() => import('./pages/components/widgets/StepperDemo'));
 const RadioGroupDemoPage = page(() => import('./pages/components/field/RadioGroupDemo'));
 const MetroSelectDemoPage = page(() => import('./pages/components/field/MetroSelectDemo'));
 const VideoDemoPage = page(() => import('./pages/components/primitives/VideoDemo'));
@@ -63,20 +61,19 @@ const SnackbarDemoPage = page(() => import('./pages/components/widgets/SnackbarD
 const TreeDemoPage = page(() => import('./pages/components/widgets/TreeDemo'));
 const ChipDemoPage = page(() => import('./pages/components/widgets/ChipDemo'));
 const DropzoneDemoPage = page(() => import('./pages/components/widgets/DropzoneDemo'));
+const WebGLCanvasDemoPage = page(() => import('./pages/components/primitives/WebGLCanvasDemo'));
 const DateSelectorDemoPage = page(() => import('./pages/components/field/DateSelectorDemo'));
 const CodeBlockDemoPage = page(() => import('./pages/components/widgets/CodeBlockDemo'));
 const MarkdownDemoPage = page(() => import('./pages/components/widgets/MarkdownDemo'));
-const QuickstartPage = page(() => import('./pages/concepts/Quickstart'));
-const MentalModelPage = page(() => import('./pages/concepts/MentalModel'));
-const StyledEnginePage = page(() => import('./pages/concepts/StyledEngine'));
-const ThemeEnginePage = page(() => import('./pages/concepts/ThemeEngine'));
+const QuickstartPage = page(() => import('./pages/getting-started/Quickstart'));
+const ThemeEnginePage = page(() => import('./pages/getting-started/ThemeEngine'));
 const SurfaceExplainerPage = page(() => import('./pages/components/layout/Surface'));
-const PropPatternsPage = page(() => import('./pages/concepts/PropPatterns'));
+const PropPatternsPage = page(() => import('./pages/getting-started/PropPatterns'));
 const ComplicatedDashboardPage = page(() => import('./pages/examples/ComplicatedDashboard'));
-const SpacingContractPage = page(() => import('./pages/concepts/SpacingContract'));
-const MCPGuidePage = page(() => import('./pages/concepts/MCP'));
-const GlossaryPage = page(() => import('./pages/concepts/Glossary'));
-const ComponentStatusPage = page(() => import('./pages/concepts/ComponentStatus'));
+const ComponentQCLabPage = page(() => import('./pages/examples/ComponentQCLab'));
+const MCPGuidePage = page(() => import('./pages/getting-started/MCP'));
+const GlossaryPage = page(() => import('./pages/getting-started/Glossary'));
+const ComponentStatusPage = page(() => import('./pages/getting-started/ComponentStatus'));
 
 /*───────────────────────────────────────────────────────────*/
 export function App() {
@@ -133,24 +130,12 @@ export function App() {
         />
 
         <Route
-          path='/mental-model'
-          element={<MentalModelPage />}
-        />
-        <Route
-          path='/styled'
-          element={<StyledEnginePage />}
-        />
-        <Route
           path='/theme-engine'
           element={<ThemeEnginePage />}
         />
         <Route
           path='/surface'
           element={<SurfaceExplainerPage />}
-        />
-        <Route
-          path='/spacing'
-          element={<SpacingContractPage />}
         />
         <Route
           path='/typography'
@@ -249,10 +234,6 @@ export function App() {
           element={<ProgressDemoPage />}
         />
         <Route
-          path='/skeleton-demo'
-          element={<SkeletonDemoPage />}
-        />
-        <Route
           path='/select-demo'
           element={<SelectDemoPage />}
         />
@@ -287,10 +268,6 @@ export function App() {
         <Route
           path='/speeddial-demo'
           element={<SpeedDialDemoPage />}
-        />
-        <Route
-          path='/stepper-demo'
-          element={<StepperDemoPage />}
         />
         <Route
           path='/metroselect-demo'
@@ -349,12 +326,20 @@ export function App() {
           element={<MarkdownDemoPage />}
         />
         <Route
+          path='/webglcanvas-demo'
+          element={<WebGLCanvasDemoPage />}
+        />
+        <Route
           path='/prop-patterns'
           element={<PropPatternsPage />}
         />
         <Route
           path='/dashboard-demo'
           element={<ComplicatedDashboardPage />}
+        />
+        <Route
+          path='/qc-playground'
+          element={<ComponentQCLabPage />}
         />
       </Routes>
     </Suspense>

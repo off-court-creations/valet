@@ -1,6 +1,6 @@
 {
   "name": "Progress",
-  "status": "unstable",
+  "status": "stable",
   "aliases": ["progress", "spinner", "loader"],
   "docs": { "bestPractices": [
     "Use determinate bars when percent is known; spinners for unknown durations.",

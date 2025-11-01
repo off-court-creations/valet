@@ -1,14 +1,43 @@
 {
   "name": "Dropzone",
-  "status": "experimental",
+  "status": "stable",
   "aliases": ["dropzone", "uploader", "upload"],
+  "a11y": {
+    "roles": ["button"],
+    "aria": ["aria-labelledby", "aria-describedby", "aria-live"],
+    "keyboard": ["Tab focuses the zone", "Enter/Space opens the file picker"],
+    "notes": "Announces drag state and rejection errors via polite live region; visible instructions are referenced by aria-labelledby."
+  },
   "docs": {
     "bestPractices": [
       "Indicate accepted file types and size limits clearly before upload.",
-      "Provide both drag‑and‑drop and a clickable target for accessibility.",
-      "Validate optimistically on drop and show per‑file status/errors.",
+      "Provide both drag‑and‑drop and a clickable target for accessibility. Ensure the zone is keyboard operable.",
+      "Validate optimistically on drop and show per‑file status/errors with polite announcements.",
       "Avoid blocking the UI; use background uploads and concise feedback.",
-      "Sanitize file names and never execute untrusted content."
+      "Revoke object URLs for previews when files are removed or on unmount to avoid leaks.",
+      "Sanitize file names and never execute or render untrusted content."
     ]
-  }
+  },
+  "examples": [
+    {
+      "id": "dropzone-basic",
+      "title": "Basic dropzone (keyboard operable)",
+      "code": "() => (<Dropzone accept={{ 'image/*': [] }} maxFiles={4} />)"
+    },
+    {
+      "id": "dropzone-reject",
+      "title": "Type and size limits with rejection messages",
+      "code": "() => (<Dropzone accept={{ 'image/*': [] }} maxSize={1024 * 1024} />)"
+    },
+    {
+      "id": "dropzone-preview-height",
+      "title": "Taller preview area (200px)",
+      "code": "() => (<Dropzone accept={{ 'image/*': [] }} previewMinHeight={200} />)"
+    },
+    {
+      "id": "dropzone-clear-all",
+      "title": "Clear all files (re-mount pattern)",
+      "code": "() => {\n  const [key, setKey] = React.useState(0);\n  const [count, setCount] = React.useState(0);\n  return (\n    <Stack>\n      <Dropzone key={key} onFilesChange={(fs) => setCount(fs.length)} />\n      <Stack direction='row' gap={1}>\n        <Typography variant='subtitle'>Files: {count}</Typography>\n        <Button variant='outlined' onClick={() => { setKey((k) => k + 1); setCount(0); }}>Clear files</Button>\n      </Stack>\n    </Stack>\n  );\n}"
+    }
+  ]
 }

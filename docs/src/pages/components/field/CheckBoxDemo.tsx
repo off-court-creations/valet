@@ -28,10 +28,11 @@ export default function CheckboxDemoPage() {
   const { theme, toggleMode } = useTheme(); // live theme switch
   /* Controlled example state --------------------------------------------- */
   const [newsletter, setNewsletter] = useState(false);
+  const [a, setA] = useState(false);
+  const [b, setB] = useState(true);
 
   /* Form submit handler --------------------------------------------------- */
   const handleSubmit = (values: { terms: boolean; marketing: boolean }) => {
-    /* eslint-disable-next-line no-alert */
     // demo purposes only
     alert(JSON.stringify(values, null, 2));
   };
@@ -133,6 +134,10 @@ export default function CheckboxDemoPage() {
 
       {/* 6. FormControl integration */}
       <Typography variant='h3'>6. FormControl Binding</Typography>
+      <Typography variant='subtitle'>
+        Note: FormControl prevents native submission. Use onSubmitValues for SPA submits; merge
+        FormData(event.currentTarget) if you need files or non‑valet inputs.
+      </Typography>
       <FormControl
         useStore={useSignupForm}
         onSubmitValues={handleSubmit}
@@ -160,8 +165,42 @@ export default function CheckboxDemoPage() {
         </Button>
       </FormControl>
 
-      {/* 7. Theme coupling */}
-      <Typography variant='h3'>7. Theme coupling</Typography>
+      {/* 7. Indeterminate (Select all) */}
+      <Typography variant='h3'>7. Indeterminate (Select all)</Typography>
+      {(() => {
+        const all = a && b;
+        const none = !a && !b;
+        const mixed = !all && !none;
+        return (
+          <Stack>
+            <Checkbox
+              name='selectAll'
+              checked={all}
+              indeterminate={mixed}
+              onChange={(next) => {
+                setA(next);
+                setB(next);
+              }}
+              label='Select all'
+            />
+            <Checkbox
+              name='optA'
+              checked={a}
+              onChange={(next) => setA(next)}
+              label='Option A'
+            />
+            <Checkbox
+              name='optB'
+              checked={b}
+              onChange={(next) => setB(next)}
+              label='Option B'
+            />
+          </Stack>
+        );
+      })()}
+
+      {/* 8. Theme coupling */}
+      <Typography variant='h3'>8. Theme coupling</Typography>
       <Button
         variant='outlined'
         onClick={toggleMode}

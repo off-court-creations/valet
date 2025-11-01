@@ -71,9 +71,25 @@ const Skin = styled('button')<{
     filter 0.2s ease,
     transform 0.1s ease;
 
+  /* Prevent iOS text selection / callout on long-press */
   user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 
   &:hover:not(:disabled) {
+    ${({ $variant, $primary, $primaryText }) =>
+      $variant === 'contained'
+        ? 'filter: brightness(1.25);'
+        : `
+          background: ${$primary};
+          color: ${$primaryText};
+        `}
+  }
+
+  /* Keyboard focus should mirror hover visuals for discoverability */
+  &:focus-visible:not(:disabled) {
     ${({ $variant, $primary, $primaryText }) =>
       $variant === 'contained'
         ? 'filter: brightness(1.25);'

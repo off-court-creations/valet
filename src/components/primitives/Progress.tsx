@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/primitives/Progress.tsx  | valet
-// strict-optional clean build
+// Redesign: simpler API, better aesthetics, stronger a11y
 // ─────────────────────────────────────────────────────────────
 import React, { forwardRef, useLayoutEffect, useRef, useState } from 'react';
 import { styled, keyframes } from '../../css/createStyled';
@@ -9,93 +9,21 @@ import { preset } from '../../css/stylePresets';
 import type { Presettable, Sx } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
-/* Public API                                                */
-export type ProgressVariant = 'linear' | 'circular';
-export type ProgressMode = 'determinate' | 'indeterminate' | 'buffer';
-export type ProgressSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-
-export interface ProgressProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'>,
-    Presettable {
-  /** Linear (default) or Circular. */
-  variant?: ProgressVariant;
-  /** determinate (default), indeterminate, or (linear-only) buffer. */
-  mode?: ProgressMode;
-  /** 0 - 100 value for determinate / buffer foreground. */
-  value?: number;
-  /** 0 - 100 secondary/buffer value (linear-buffer only). */
-  buffer?: number;
-  /** xs – xl token or custom CSS size */
-  size?: ProgressSize | number | string;
-  /** Show numeric % inside Circular center. */
-  showLabel?: boolean;
-  /** Color override (defaults to theme.primary). */
-  color?: string | undefined;
-  /** Inline styles (with CSS var support) */
-  sx?: Sx;
-  /** Optional child to center inside Circular progress (e.g., an IconButton). */
-  children?: React.ReactNode;
-  /** When circular and children are present, size ring to child automatically. */
-  fitChild?: boolean;
-  /** Extra clearance around child (px). Negative removes tiny gaps. */
-  childClearance?: number;
-}
-
-/*───────────────────────────────────────────────────────────*/
-/* Size tokens, strongly typed                               */
-interface CircularToken {
-  box: string;
-  stroke: string;
-}
-interface LinearToken {
-  h: string;
-}
-
-type Tokens = {
-  circular: Record<ProgressSize, CircularToken>;
-  linear: Record<ProgressSize, LinearToken>;
-};
-
-const geom = (): Tokens => ({
-  circular: {
-    xs: { box: '0.75rem', stroke: '0.09375rem' },
-    sm: { box: '1.5rem', stroke: '0.1875rem' },
-    md: { box: '2.25rem', stroke: '0.25rem' },
-    lg: { box: '3rem', stroke: '0.375rem' },
-    xl: { box: '3.75rem', stroke: '0.46875rem' },
-  },
-  linear: {
-    xs: { h: '0.125rem' },
-    sm: { h: '0.25rem' },
-    md: { h: '0.375rem' },
-    lg: { h: '0.5rem' },
-    xl: { h: '0.625rem' },
-  },
-});
-
-const toPx = (val: string): number =>
-  val.endsWith('rem')
-    ? parseFloat(val) * 16
-    : val.endsWith('px')
-      ? parseFloat(val)
-      : parseFloat(val);
-
-/*───────────────────────────────────────────────────────────*/
-/* Indeterminate keyframes                                   */
+/* Keyframes                                                 */
 const rotate360 = keyframes`
   100% { transform: rotate(360deg); }
 `;
-const dash = keyframes`
-  0%   { stroke-dasharray: 1, 150; stroke-dashoffset: 0;   }
+const dashSpin = keyframes`
+  0%   { stroke-dasharray: 1, 150; stroke-dashoffset: 0; }
   50%  { stroke-dasharray: 90,150; stroke-dashoffset: -35; }
-  100% { stroke-dasharray: 90,150; stroke-dashoffset: -124;}
+  100% { stroke-dasharray: 90,150; stroke-dashoffset: -124; }
 `;
-const indetBar1 = keyframes`
+const indetBarA = keyframes`
   0%   { left: -35%; right: 100%; }
   60%  { left: 100%; right: -90%; }
   100% { left: 100%; right: -90%; }
 `;
-const indetBar2 = keyframes`
+const indetBarB = keyframes`
   0%   { left: -200%; right: 100%; }
   60%  { left: 107%;  right: -8%;  }
   100% { left: 107%;  right: -8%;  }
@@ -109,49 +37,15 @@ const Root = styled('div')`
   vertical-align: middle;
 `;
 
-// ─── Circular ─────────────────────────────────────────────
-const CircleWrap = styled('div')<{ $d: string }>`
-  width: ${({ $d }) => $d};
-  height: ${({ $d }) => $d};
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-/* label inside circle */
-const CenterLabel = styled('span')<{ $font: string }>`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font: ${({ $font }) => $font};
-  color: var(--valet-text-color, currentColor);
-  user-select: none;
-  pointer-events: none;
-`;
-
-/* center content slot (interactive, overlays SVG) */
-const CenterSlot = styled('div')`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-// ─── Linear ───────────────────────────────────────────────
-const Track = styled('div')<{ $h: string }>`
+// Linear parts
+const Track = styled('div')<{ $h: string; $track: string }>`
   width: 100%;
   height: ${({ $h }) => $h};
-  background: #0003;
-  border-radius: 9999px;
+  background: ${({ $track }) => $track};
+  border-radius: var(--valet-progress-radius, 9999px);
   overflow: hidden;
   position: relative;
 `;
-
 const Bar = styled('div')<{
   $color: string;
   $indet?: boolean;
@@ -161,215 +55,134 @@ const Bar = styled('div')<{
   top: 0;
   bottom: 0;
   background: ${({ $color }) => $color};
-  transition: width 0.2s linear;
+  transition: width 160ms linear;
+  border-radius: inherit;
   ${({ $indet, $index }) =>
     $indet &&
     ($index === 1
-      ? `animation: ${indetBar1} 2.1s infinite ease-out;`
-      : `animation: ${indetBar2} 2.1s infinite ease-in;`)}
+      ? `animation: ${indetBarA} 2.1s infinite ease-out;`
+      : `animation: ${indetBarB} 2.1s infinite ease-in;`)}
+`;
+
+// Circular parts
+const RingWrap = styled('div')<{ $d: string }>`
+  width: ${({ $d }) => $d};
+  height: ${({ $d }) => $d};
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+`;
+const Center = styled('div')`
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+`;
+const ContentSizer = styled('div')`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+`;
+const CenterLabel = styled('span')<{ $font: string }>`
+  font: ${({ $font }) => $font};
+  color: var(--valet-text-color, currentColor);
 `;
 
 /*───────────────────────────────────────────────────────────*/
-/* Component                                                 */
-export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
-  (
-    {
-      variant = 'linear',
-      mode = 'determinate',
-      value = 0,
-      buffer = 0,
-      size = 'md',
-      showLabel = false,
-      color,
-      preset: p,
-      className,
-      sx,
-      children,
-      fitChild,
-      childClearance,
-      ...divProps
-    },
-    ref,
-  ) => {
+/* Helpers                                                   */
+const clamp = (n: number, min = 0, max = 100) => Math.min(max, Math.max(min, n));
+const toCssSize = (v: number | string | undefined, fallback: string) =>
+  v == null ? fallback : typeof v === 'number' ? `${v}px` : v;
+
+/*───────────────────────────────────────────────────────────*/
+/* Public API                                                */
+export interface ProgressBarProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'>,
+    Presettable {
+  /** 0–100. Omit for indeterminate. */
+  value?: number;
+  /** Secondary/buffer value for streaming. */
+  buffer?: number;
+  /** Height of the bar (px, rem, etc.). */
+  height?: number | string | undefined;
+  /** Override primary color. */
+  color?: string | undefined;
+  /** Inline styles (supports CSS vars). */
+  sx?: Sx;
+}
+
+export interface ProgressRingProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'>,
+    Presettable {
+  /** 0–100. Omit for indeterminate. */
+  value?: number;
+  /** Diameter (px, rem, etc.). */
+  size?: number | string | undefined;
+  /** Stroke thickness (px, rem, etc.). */
+  thickness?: number | string | undefined;
+  /** Override primary color. */
+  color?: string | undefined;
+  /** Center content; if omitted, optionally show a percent label via `label`. */
+  children?: React.ReactNode;
+  /** Label inside the ring center. true shows 0–100%; function formats it; or pass a node. */
+  label?: boolean | ((v: number) => React.ReactNode) | React.ReactNode;
+  /** Auto-size ring to fit around child content (default true when children present and size not set). */
+  fitChild?: boolean;
+  /** Extra clearance around child when auto-sizing (px). */
+  childClearance?: number;
+  /** Inline styles (supports CSS vars). */
+  sx?: Sx;
+}
+
+/*───────────────────────────────────────────────────────────*/
+/* Components                                                */
+export const ProgressBar = forwardRef<HTMLDivElement, ProgressBarProps>(
+  ({ value, buffer, height, color, className, preset: p, sx, ...rest }, ref) => {
     const { theme } = useTheme();
-    const tokens = geom();
     const primary = (color ?? theme.colors.primary) as string;
+    const track = `color-mix(in srgb, ${primary} 20%, transparent)`;
+    const h = toCssSize(height, '0.375rem');
 
-    // Hooks used by circular variant (declared unconditionally to preserve order)
-    const centerRef = useRef<HTMLDivElement | null>(null);
-    const [autoBoxPx, setAutoBoxPx] = useState<number | null>(null);
-    const shouldFit =
-      variant === 'circular' &&
-      (fitChild ?? true) &&
-      !!children &&
-      (size === undefined ||
-        (typeof size !== 'number' &&
-          typeof size === 'string' &&
-          Object.prototype.hasOwnProperty.call(tokens.circular, size)));
-
-    useLayoutEffect(() => {
-      if (variant !== 'circular') return;
-      if (!shouldFit) return;
-      const el = centerRef.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const childD = Math.max(rect.width, rect.height);
-      const clearance = childClearance ?? -0.5; // slight negative to avoid visible gap
-      const inner = childD + 2 * clearance;
-      const ring = inner * (4 / 3);
-      if (!Number.isNaN(ring) && ring > 0) setAutoBoxPx(ring);
-    }, [variant, shouldFit, children, childClearance]);
-
-    /* preset → classes merge */
-    const presetCls = p ? preset(p) : '';
-    const mergedCls = [presetCls, className].filter(Boolean).join(' ') || undefined;
-
-    /* accessibility roles / ARIA values */
     const ariaProps =
-      mode === 'indeterminate'
+      value == null
         ? { role: 'progressbar', 'aria-valuemin': 0, 'aria-valuemax': 100 }
         : {
             role: 'progressbar',
             'aria-valuemin': 0,
             'aria-valuemax': 100,
-            'aria-valuenow': Math.round(value),
+            'aria-valuenow': Math.round(clamp(value)),
           };
 
-    /*─────────────────────────────────────────────────────────*/
-    /* CIRCULAR                                                */
-    /*─────────────────────────────────────────────────────────*/
-    if (variant === 'circular') {
-      let box: string;
-      let boxPx: number;
-      let strokePx: number;
+    const presetCls = p ? preset(p) : '';
+    const mergedCls = [presetCls, className].filter(Boolean).join(' ') || undefined;
 
-      if (shouldFit && autoBoxPx != null) {
-        boxPx = autoBoxPx;
-        box = `${boxPx}px`;
-        strokePx = boxPx / 8;
-      } else if (typeof size === 'number') {
-        boxPx = size;
-        box = `${boxPx}px`;
-        strokePx = boxPx / 8;
-      } else if (
-        typeof size !== 'number' &&
-        (Object.prototype.hasOwnProperty.call(tokens.circular, size as string) as boolean)
-      ) {
-        const tok = tokens.circular[size as ProgressSize];
-        box = tok.box;
-        boxPx = toPx(tok.box);
-        strokePx = toPx(tok.stroke);
-      } else {
-        box = size as string;
-        boxPx = toPx(box);
-        strokePx = boxPx / 8;
-      }
-
-      const radius = (boxPx - strokePx) / 2;
-      const circ = 2 * Math.PI * radius;
-      const offset = ((100 - value) / 100) * circ;
-
-      const svgProps =
-        mode === 'indeterminate'
-          ? { style: { animation: `${rotate360} 1.5s linear infinite` } }
-          : {};
-
-      const circleProps =
-        mode === 'indeterminate'
-          ? {
-              style: {
-                strokeDasharray: '80,200',
-                strokeDashoffset: 0,
-                animation: `${dash} 1.5s ease-in-out infinite`,
-              },
-            }
-          : {
-              strokeDasharray: circ,
-              strokeDashoffset: offset,
-              transition: 'stroke-dashoffset 0.2s linear',
-            };
-
-      return (
-        <Root
-          {...divProps}
-          {...ariaProps}
-          ref={ref}
-          className={mergedCls}
-          style={sx}
-        >
-          <CircleWrap $d={box}>
-            <svg
-              width={box}
-              height={box}
-              viewBox={`0 0 ${boxPx} ${boxPx}`}
-              {...svgProps}
-            >
-              <circle
-                cx={boxPx / 2}
-                cy={boxPx / 2}
-                r={radius}
-                fill='none'
-                stroke={primary}
-                strokeWidth={strokePx}
-                strokeLinecap='round'
-                {...circleProps}
-              />
-            </svg>
-            {children ? (
-              <CenterSlot ref={centerRef}>{children}</CenterSlot>
-            ) : (
-              showLabel &&
-              mode !== 'indeterminate' && (
-                <CenterLabel $font={theme.typography.body.md}>{Math.round(value)}%</CenterLabel>
-              )
-            )}
-          </CircleWrap>
-        </Root>
-      );
-    }
-
-    /*─────────────────────────────────────────────────────────*/
-    /* LINEAR                                                  */
-    /*─────────────────────────────────────────────────────────*/
-    let h: string;
-
-    if (typeof size === 'number') {
-      h = `${size / 6}px`;
-    } else if (tokens.linear[size as ProgressSize]) {
-      h = tokens.linear[size as ProgressSize].h;
-    } else {
-      h = `calc(${size} / 6)`;
-    }
-    const barStyle: React.CSSProperties = {
-      width: `${value}%`,
-      right: 'auto',
-      left: 0,
-    };
-    const bufferStyle: React.CSSProperties = {
-      width: `${buffer}%`,
-      right: 'auto',
-      left: 0,
-      background: primary + '55',
-    };
+    const barStyle: React.CSSProperties =
+      value == null ? {} : { width: `${clamp(value)}%`, left: 0 };
+    const bufferStyle: React.CSSProperties =
+      buffer == null ? {} : { width: `${clamp(buffer)}%`, left: 0 };
 
     return (
       <Root
-        {...divProps}
+        {...rest}
         {...ariaProps}
         ref={ref}
         className={mergedCls}
         style={sx}
       >
-        <Track $h={h}>
-          {/* BUFFER BAR */}
-          {mode === 'buffer' && (
+        <Track
+          $h={h}
+          $track={track}
+        >
+          {buffer != null && (
             <Bar
               $color={primary + '55'}
               style={bufferStyle}
             />
           )}
-          {/* MAIN BAR */}
-          {mode === 'indeterminate' ? (
+          {value == null ? (
             <>
               <Bar
                 $color={primary}
@@ -390,6 +203,246 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
           )}
         </Track>
       </Root>
+    );
+  },
+);
+ProgressBar.displayName = 'ProgressBar';
+
+export const ProgressRing = forwardRef<HTMLDivElement, ProgressRingProps>(
+  (
+    {
+      value,
+      size,
+      thickness,
+      color,
+      className,
+      preset: p,
+      sx,
+      children,
+      label,
+      fitChild = true,
+      childClearance,
+      ...rest
+    },
+    ref,
+  ) => {
+    const { theme } = useTheme();
+    const primary = (color ?? theme.colors.primary) as string;
+
+    const dDefault = toCssSize(size, '2.25rem');
+    // Convert dimension and thickness to px to compute circumference.
+    // Assume 1rem = 16px for deterministic sizing.
+    const toPx = (val: string): number =>
+      val.endsWith('rem')
+        ? parseFloat(val) * 16
+        : val.endsWith('px')
+          ? parseFloat(val)
+          : parseFloat(val);
+
+    const [autoDPx, setAutoDPx] = useState<number | null>(null);
+    const contentRef = useRef<HTMLDivElement | null>(null);
+
+    // Auto-size to child content when present and no explicit size
+    useLayoutEffect(() => {
+      if (!children) return;
+      if (!fitChild) return;
+      if (size != null) return; // respect explicit size
+      const el = contentRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const childD = Math.max(rect.width, rect.height);
+      const clearance = childClearance ?? 2; // px
+      if (Number.isNaN(childD) || childD <= 0) return;
+      if (thickness != null) {
+        const sPxLocal = toPx(typeof thickness === 'number' ? `${thickness}px` : thickness);
+        const dPxLocal = Math.ceil(childD + 2 * clearance + sPxLocal);
+        setAutoDPx((prev) => (prev === dPxLocal ? prev : dPxLocal));
+      } else {
+        const inner = childD + 2 * clearance;
+        const dPxLocal = Math.ceil((inner * 8) / 7); // since s = d/8
+        setAutoDPx((prev) => (prev === dPxLocal ? prev : dPxLocal));
+      }
+    }, [children, fitChild, size, thickness, childClearance]);
+
+    const dPx = autoDPx ?? toPx(typeof size === 'number' ? `${size}px` : dDefault);
+    const stroke = toCssSize(thickness, `${Math.max(2, Math.round(dPx / 8))}px`);
+    const sPx = toPx(stroke);
+    const radius = Math.max(0, (dPx - sPx) / 2);
+    const circ = 2 * Math.PI * radius;
+
+    const isIndeterminate = value == null;
+    const pct = clamp(value ?? 0);
+    const offset = ((100 - pct) / 100) * circ;
+
+    const track = `color-mix(in srgb, ${primary} 20%, transparent)`;
+
+    const ariaProps = isIndeterminate
+      ? { role: 'progressbar', 'aria-valuemin': 0, 'aria-valuemax': 100 }
+      : {
+          role: 'progressbar',
+          'aria-valuemin': 0,
+          'aria-valuemax': 100,
+          'aria-valuenow': Math.round(pct),
+        };
+
+    const presetCls = p ? preset(p) : '';
+    const mergedCls = [presetCls, className].filter(Boolean).join(' ') || undefined;
+
+    let centerNode: React.ReactNode = null;
+    if (children == null && label) {
+      if (typeof label === 'function') centerNode = label(pct);
+      else if (label === true)
+        centerNode = <CenterLabel $font={theme.typography.body.md}>{pct}%</CenterLabel>;
+      else centerNode = label;
+    }
+
+    return (
+      <Root
+        {...rest}
+        {...ariaProps}
+        ref={ref}
+        className={mergedCls}
+        style={sx}
+      >
+        <RingWrap $d={autoDPx ? `${autoDPx}px` : dDefault}>
+          <svg
+            width={autoDPx ? `${autoDPx}px` : dDefault}
+            height={autoDPx ? `${autoDPx}px` : dDefault}
+            viewBox={`0 0 ${dPx} ${dPx}`}
+            style={isIndeterminate ? { animation: `${rotate360} 1.4s linear infinite` } : undefined}
+          >
+            {/* Track */}
+            <circle
+              cx={dPx / 2}
+              cy={dPx / 2}
+              r={radius}
+              fill='none'
+              stroke={track}
+              strokeWidth={sPx}
+            />
+            {/* Progress */}
+            <circle
+              cx={dPx / 2}
+              cy={dPx / 2}
+              r={radius}
+              fill='none'
+              stroke={primary}
+              strokeWidth={sPx}
+              strokeLinecap='round'
+              {...(isIndeterminate
+                ? {
+                    style: {
+                      strokeDasharray: '80,200',
+                      strokeDashoffset: 0,
+                      animation: `${dashSpin} 1.4s ease-in-out infinite`,
+                    },
+                  }
+                : {
+                    strokeDasharray: circ,
+                    strokeDashoffset: offset,
+                    style: { transition: 'stroke-dashoffset 160ms linear' },
+                  })}
+            />
+          </svg>
+          {children ? (
+            <Center>
+              <ContentSizer ref={contentRef}>{children}</ContentSizer>
+            </Center>
+          ) : centerNode ? (
+            <Center>
+              <ContentSizer>{centerNode}</ContentSizer>
+            </Center>
+          ) : null}
+        </RingWrap>
+      </Root>
+    );
+  },
+);
+ProgressRing.displayName = 'ProgressRing';
+
+/*───────────────────────────────────────────────────────────*/
+/* Back-compat wrapper                                       */
+export type ProgressVariant = 'linear' | 'circular';
+export type ProgressMode = 'determinate' | 'indeterminate' | 'buffer';
+
+export interface ProgressProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'>,
+    Presettable {
+  /** Prefer ProgressBar/ProgressRing. kept for back‑compat. */
+  variant?: ProgressVariant; // linear | circular
+  /** Prefer `value` unset to indicate indeterminate. */
+  mode?: ProgressMode; // determinate | indeterminate | buffer (linear only)
+  /** 0–100 */
+  value?: number;
+  /** 0–100 buffer for linear */
+  buffer?: number;
+  /** Ring diameter (or legacy token). */
+  size?: number | string;
+  /** Bar height or ring thickness. */
+  thickness?: number | string;
+  /** Deprecated: use `label` on ProgressRing or provide children. */
+  showLabel?: boolean;
+  /** Override primary color. */
+  color?: string;
+  /** Center content for ring. */
+  children?: React.ReactNode;
+  /** Inline styles (supports CSS vars). */
+  sx?: Sx;
+}
+
+export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
+  (
+    {
+      variant = 'linear',
+      mode = 'determinate',
+      value,
+      buffer,
+      size,
+      thickness,
+      showLabel,
+      color,
+      preset: p,
+      className,
+      sx,
+      children,
+      ...rest
+    },
+    ref,
+  ) => {
+    // Map legacy props to the new primitives
+    const isRing = variant === 'circular';
+    const isIndeterminate = mode === 'indeterminate' || value == null;
+    if (isRing) {
+      return (
+        <ProgressRing
+          ref={ref}
+          value={isIndeterminate ? undefined : value}
+          size={size}
+          thickness={thickness}
+          color={color}
+          preset={p}
+          className={className}
+          sx={sx}
+          {...rest}
+          label={showLabel}
+        >
+          {children}
+        </ProgressRing>
+      );
+    }
+    // linear
+    return (
+      <ProgressBar
+        ref={ref}
+        value={isIndeterminate ? undefined : value}
+        buffer={mode === 'buffer' ? buffer : undefined}
+        height={thickness}
+        color={color}
+        preset={p}
+        className={className}
+        sx={sx}
+        {...rest}
+      />
     );
   },
 );

@@ -3,7 +3,7 @@
   "category": "primitives",
   "slug": "components/primitives/avatar",
   "summary": "Avatar component",
-  "status": "golden",
+  "status": "stable",
   "aliases": [
     "avatar",
     "badge",
@@ -14,35 +14,77 @@
     {
       "name": "src",
       "type": "string",
-      "required": false
+      "required": false,
+      "description": "Image URL override."
     },
     {
       "name": "email",
       "type": "string",
-      "required": false
+      "required": false,
+      "description": "Email used for Gravatar lookup when src missing."
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "required": false,
+      "description": "Display name used to derive initials for offline fallback."
     },
     {
       "name": "size",
       "type": "AvatarSize",
       "required": false,
+      "description": "Size token controlling relative dimensions.",
       "default": "'m'"
     },
     {
       "name": "variant",
       "type": "AvatarVariant",
       "required": false,
+      "description": "Visual style variant.",
       "default": "'plain'"
     },
     {
       "name": "gravatarDefault",
       "type": "string",
       "required": false,
+      "description": "Fallback style when no avatar exists.",
       "default": "'identicon'"
+    },
+    {
+      "name": "preferFallback",
+      "type": "boolean",
+      "required": false,
+      "description": "When true and no `src` is provided, prefer offline fallback instead of Gravatar.",
+      "default": "false"
+    },
+    {
+      "name": "fallback",
+      "type": "'initials' | 'placeholder'",
+      "required": false,
+      "description": "Offline fallback strategy when showing a non-network avatar.",
+      "default": "'initials'",
+      "enumValues": [
+        "initials",
+        "placeholder"
+      ]
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": false
+      "required": false,
+      "description": "Inline styles (with CSS var support)"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
+    },
+    {
+      "name": "loading",
+      "type": "unknown",
+      "required": false,
+      "default": "'lazy'"
     }
   ],
   "domPassthrough": {
@@ -51,7 +93,9 @@
       "style"
     ]
   },
-  "cssVars": [],
+  "cssVars": [
+    "--valet-font-heading"
+  ],
   "cssPresets": [],
   "events": [],
   "actions": [],
@@ -103,11 +147,27 @@
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {}
+    },
+    {
+      "id": "avatar-fallback-initials",
+      "title": "Offline fallback — initials",
+      "code": "<Avatar name='Ada Lovelace' preferFallback size='l' alt='Ada Lovelace' />",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    },
+    {
+      "id": "avatar-fallback-placeholder",
+      "title": "Offline fallback — placeholder",
+      "code": "<Avatar preferFallback fallback='placeholder' size='l' aria-label='User avatar' />",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
     }
   ],
   "sourceFiles": [
     "src/components/primitives/Avatar.tsx"
   ],
-  "version": "0.32.0",
+  "version": "0.33.0",
   "schemaVersion": "1.6"
 }

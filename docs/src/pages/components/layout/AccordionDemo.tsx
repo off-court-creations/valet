@@ -25,7 +25,8 @@ export default function AccordionDemoPage() {
   const [openMulti, setOpenMulti] = useState<number[]>([0, 2]);
 
   const usage = (
-    <Stack>
+    // Increase vertical rhythm to avoid tight stacking between sections
+    <Stack gap={2}>
       <Typography variant='h3'>1. Uncontrolled (single)</Typography>
       <Accordion>
         <Accordion.Item header='Item 1'>
@@ -39,7 +40,39 @@ export default function AccordionDemoPage() {
         </Accordion.Item>
       </Accordion>
 
-      <Typography variant='h3'>2. Controlled (single)</Typography>
+      <Typography variant='h3'>2. Content-heavy items</Typography>
+      <Accordion>
+        <Accordion.Item header='Lots of content – A'>
+          <Stack gap={1}>
+            <Typography>{LOREM}</Typography>
+            <Typography>{LOREM}</Typography>
+            <Typography>{LOREM}</Typography>
+            <Typography>{LOREM}</Typography>
+            <Typography>{LOREM}</Typography>
+            <Typography>{LOREM}</Typography>
+            <Typography>{LOREM}</Typography>
+            <Typography>{LOREM}</Typography>
+            <Typography>{LOREM}</Typography>
+            <Typography>{LOREM}</Typography>
+          </Stack>
+        </Accordion.Item>
+        <Accordion.Item header='Lots of content – B'>
+          <Stack gap={1}>
+            <Typography>{LOREM}</Typography>
+            <Typography>{LOREM}</Typography>
+            <Typography>{LOREM}</Typography>
+            <Typography>{LOREM}</Typography>
+            <Typography>{LOREM}</Typography>
+            <Typography>{LOREM}</Typography>
+            <Typography>{LOREM}</Typography>
+            <Typography>{LOREM}</Typography>
+            <Typography>{LOREM}</Typography>
+            <Typography>{LOREM}</Typography>
+          </Stack>
+        </Accordion.Item>
+      </Accordion>
+
+      <Typography variant='h3'>3. Controlled (single)</Typography>
       <Button
         size='sm'
         variant='outlined'
@@ -63,7 +96,7 @@ export default function AccordionDemoPage() {
         </Accordion.Item>
       </Accordion>
 
-      <Typography variant='h3'>3. Controlled (multiple)</Typography>
+      <Typography variant='h3'>4. Controlled (multiple)</Typography>
       <Accordion
         multiple
         open={openMulti}
@@ -80,7 +113,7 @@ export default function AccordionDemoPage() {
         </Accordion.Item>
       </Accordion>
 
-      <Typography variant='h3'>4. Disabled</Typography>
+      <Typography variant='h3'>5. Disabled</Typography>
       <Accordion>
         <Accordion.Item header='Enabled'>
           <Typography>{LOREM}</Typography>
@@ -96,9 +129,19 @@ export default function AccordionDemoPage() {
         </Accordion.Item>
       </Accordion>
 
-      <Typography variant='h3'>5. Custom heading level (h4)</Typography>
+      <Typography variant='h3'>6. Custom heading level (h4)</Typography>
       <Accordion headingLevel={4}>
         <Accordion.Item header='Header rendered as h4'>
+          <Typography>{LOREM}</Typography>
+        </Accordion.Item>
+      </Accordion>
+
+      <Typography variant='h3'>7. Unmount on exit</Typography>
+      <Accordion unmountOnExit>
+        <Accordion.Item header='Lazy mount A'>
+          <Typography>{LOREM}</Typography>
+        </Accordion.Item>
+        <Accordion.Item header='Lazy mount B'>
           <Typography>{LOREM}</Typography>
         </Accordion.Item>
       </Accordion>

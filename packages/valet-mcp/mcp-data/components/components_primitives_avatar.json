@@ -3,7 +3,7 @@
   "category": "primitives",
   "slug": "components/primitives/avatar",
   "summary": "Avatar component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "avatar",
     "badge",
@@ -18,6 +18,11 @@
     },
     {
       "name": "email",
+      "type": "string",
+      "required": false
+    },
+    {
+      "name": "name",
       "type": "string",
       "required": false
     },
@@ -40,9 +45,31 @@
       "default": "'identicon'"
     },
     {
+      "name": "preferFallback",
+      "type": "boolean",
+      "required": false,
+      "default": "false"
+    },
+    {
+      "name": "fallback",
+      "type": "'initials' | 'placeholder'",
+      "required": false,
+      "default": "'initials'",
+      "enumValues": [
+        "initials",
+        "placeholder"
+      ]
+    },
+    {
       "name": "sx",
       "type": "Sx",
       "required": false
+    },
+    {
+      "name": "loading",
+      "type": "unknown",
+      "required": false,
+      "default": "'lazy'"
     }
   ],
   "domPassthrough": {
@@ -51,7 +78,9 @@
       "style"
     ]
   },
-  "cssVars": [],
+  "cssVars": [
+    "--valet-font-heading"
+  ],
   "cssPresets": [],
   "events": [],
   "actions": [],
@@ -100,6 +129,22 @@
       "id": "avatar-gravatar-default",
       "title": "Gravatar default style",
       "code": "<Stack direction='row' gap={1}><Avatar email='no-such@example.com' gravatarDefault='retro' /><Avatar email='no-such@example.com' gravatarDefault='monsterid' /></Stack>",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    },
+    {
+      "id": "avatar-fallback-initials",
+      "title": "Offline fallback — initials",
+      "code": "<Avatar name='Ada Lovelace' preferFallback size='l' alt='Ada Lovelace' />",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    },
+    {
+      "id": "avatar-fallback-placeholder",
+      "title": "Offline fallback — placeholder",
+      "code": "<Avatar preferFallback fallback='placeholder' size='l' aria-label='User avatar' />",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {}

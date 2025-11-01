@@ -25,11 +25,20 @@ export default function DropzoneDemoPage() {
 
   const usageContent = (
     <Stack>
+      <Typography variant='subtitle'>
+        Keyboard: Tab to focus, Enter/Space opens the file picker. Errors are announced politely.
+      </Typography>
       <Typography variant='h3'>1. Default</Typography>
       <Dropzone />
 
       <Typography variant='h3'>2. Image only</Typography>
       <Dropzone accept={{ 'image/*': [] }} />
+
+      <Typography variant='h3'>2b. Taller preview area</Typography>
+      <Dropzone
+        accept={{ 'image/*': [] }}
+        previewMinHeight={200}
+      />
 
       <Typography variant='h3'>3. Limit to two files</Typography>
       <Dropzone maxFiles={2} />
@@ -46,7 +55,13 @@ export default function DropzoneDemoPage() {
       <Typography variant='h3'>6. Full width</Typography>
       <Dropzone fullWidth />
 
-      <Typography variant='h3'>7. Theme toggle</Typography>
+      <Typography variant='h3'>7. Size limit (1MB images)</Typography>
+      <Dropzone
+        accept={{ 'image/*': [] }}
+        maxSize={1024 * 1024}
+      />
+
+      <Typography variant='h3'>8. Theme toggle</Typography>
       <Button
         variant='outlined'
         onClick={toggleMode}
@@ -64,6 +79,7 @@ export default function DropzoneDemoPage() {
   const [pgShowFileList, setPgShowFileList] = useState(false);
   const [pgFullWidth, setPgFullWidth] = useState(false);
   const [pgCount, setPgCount] = useState(0);
+  const [pgKey, setPgKey] = useState(0);
 
   const acceptMap =
     pgAccept === 'images'
@@ -163,10 +179,20 @@ export default function DropzoneDemoPage() {
               aria-label='fullWidth'
             />
           </Stack>
+          <Button
+            variant='outlined'
+            onClick={() => {
+              setPgKey((k) => k + 1);
+              setPgCount(0);
+            }}
+          >
+            Clear files
+          </Button>
         </Stack>
       </Panel>
       <Panel fullWidth>
         <Dropzone
+          key={pgKey}
           accept={acceptMap}
           multiple={pgMultiple}
           maxFiles={pgMaxFiles}

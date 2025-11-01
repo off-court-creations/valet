@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// src/pages/concepts/ThemeEngine.tsx  | valet-docs
+// src/pages/getting-started/ThemeEngine.tsx  | valet-docs
 // Theme engine tour: palette, tokens, and runtime store best practices
 // ─────────────────────────────────────────────────────────────
 import {

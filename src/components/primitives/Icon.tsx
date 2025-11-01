@@ -36,11 +36,21 @@ const Wrapper = styled('span')<{ $size: string }>`
   line-height: 0;
   width: ${({ $size }) => $size};
   height: ${({ $size }) => $size};
+  /* Prevent text selection and touch callouts on mobile */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
 
   & > svg {
     width: 100%;
     height: 100%;
     flex-shrink: 0;
+    /* Ensure the SVG itself is also non-selectable/non-draggable */
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-user-drag: none;
   }
 `;
 
@@ -116,6 +126,7 @@ export const Icon: React.FC<PropsWithChildren<IconProps>> = ({
       $size={finalSize}
       className={[presetClasses, className].filter(Boolean).join(' ')}
       style={{ ...colourStyle, ...sx }}
+      draggable={false}
       {...spanRest}
     >
       {content}

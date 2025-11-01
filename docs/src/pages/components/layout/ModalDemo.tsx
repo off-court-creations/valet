@@ -3,20 +3,12 @@
 // Modal docs via the reusable ComponentMetaPage (Usage explainer + Reference + Best Practices)
 // ─────────────────────────────────────────────────────────────────────────────
 import { useState } from 'react';
-import { Stack, Button, Typography, Icon, useTheme, definePreset, Modal } from '@archway/valet';
+import { Stack, Button, Typography, useTheme, Modal } from '@archway/valet';
 import ModalMeta from '../../../../../src/components/layout/Modal.meta.json';
 import ComponentMetaPage from '../../../components/ComponentMetaPage';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
-/* Presets                                                                    */
-// A bold red alert preset
-definePreset(
-  'alertDanger',
-  (t) => `
-  background : ${t.colors['error']};
-  color      : #fff;
-`,
-);
+/* Presets – none (alert demo removed)                                        */
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Demo page                                                                  */
@@ -25,9 +17,10 @@ export default function ModalDemoPage() {
 
   // state for the various demos
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [alertOpen, setAlertOpen] = useState(false);
-  const [controlledOpen, setControlledOpen] = useState(false);
+  // removed alert + controlled demos per request
   const [noBackdropCloseOpen, setNoBackdropCloseOpen] = useState(false);
+  const [labelOnlyOpen, setLabelOnlyOpen] = useState(false);
+  const [viewportMarginOpen, setViewportMarginOpen] = useState(false);
 
   const usage = (
     <Stack>
@@ -70,65 +63,8 @@ export default function ModalDemoPage() {
         </Typography>
       </Modal>
 
-      {/* 2. Alert modal -------------------------------------------------- */}
-      <Typography variant='h3'>2. Alert modal</Typography>
-      <Button
-        color='error'
-        variant='contained'
-        onClick={() => setAlertOpen(true)}
-      >
-        Delete item…
-      </Button>
-      <Modal
-        variant='alert'
-        open={alertOpen}
-        onClose={() => setAlertOpen(false)}
-        title={
-          <>
-            <Icon sx={{ marginRight: 8 }} /> Confirm delete
-          </>
-        }
-        preset='alertDanger'
-        actions={
-          <>
-            <Button
-              variant='outlined'
-              onClick={() => setAlertOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant='contained'
-              color='error'
-              onClick={() => setAlertOpen(false)}
-            >
-              Delete
-            </Button>
-          </>
-        }
-      >
-        <Typography>
-          This action is <strong>permanent</strong>. Are you sure you want to continue?
-        </Typography>
-      </Modal>
-
-      {/* 3. Controlled modal -------------------------------------------- */}
-      <Typography variant='h3'>3. Controlled modal</Typography>
-      <Stack direction='row'>
-        <Button onClick={() => setControlledOpen(true)}>Open</Button>
-        <Button onClick={() => setControlledOpen(false)}>Close</Button>
-      </Stack>
-      <Modal
-        open={controlledOpen}
-        onClose={() => setControlledOpen(false)}
-        title='Externally controlled'
-        actions={<Button onClick={() => setControlledOpen(false)}>Okay</Button>}
-      >
-        <Typography>Visibility is managed by external buttons.</Typography>
-      </Modal>
-
-      {/* 4. Backdrop / ESC disable -------------------------------------- */}
-      <Typography variant='h3'>4. Disable backdrop / ESC</Typography>
+      {/* 2. Backdrop / ESC disable -------------------------------------- */}
+      <Typography variant='h3'>2. Disable backdrop / ESC</Typography>
       <Button onClick={() => setNoBackdropCloseOpen(true)}>Unclosable via backdrop / ESC</Button>
       <Modal
         open={noBackdropCloseOpen}
@@ -141,22 +77,49 @@ export default function ModalDemoPage() {
         <Typography>Both backdrop click and ESC key are disabled for this modal.</Typography>
       </Modal>
 
-      {/* 5. Size props --------------------------------------------------- */}
-      <Typography variant='h3'>5. maxWidth & fullWidth</Typography>
-      <Stack direction='row'>
-        <Button onClick={() => setDialogOpen(true)}>maxWidth (default)</Button>
-        <Button onClick={() => setControlledOpen(true)}>fullWidth</Button>
-      </Stack>
-      {/* reuse existing modals for brevity */}
-
-      {/* 6. Theme coupling ---------------------------------------------- */}
-      <Typography variant='h3'>6. Theme coupling</Typography>
+      {/* 3. Theme coupling ---------------------------------------------- */}
+      <Typography variant='h3'>3. Theme coupling</Typography>
       <Button
         variant='outlined'
         onClick={toggleMode}
       >
         Toggle light / dark mode
       </Button>
+
+      {/* 4. A11y without title ----------------------------------------- */}
+      <Typography variant='h3'>4. Accessibility without title</Typography>
+      <Button onClick={() => setLabelOnlyOpen(true)}>Open labelled modal</Button>
+      <Modal
+        open={labelOnlyOpen}
+        onClose={() => setLabelOnlyOpen(false)}
+        aria-label='Preferences'
+        actions={<Button onClick={() => setLabelOnlyOpen(false)}>Close</Button>}
+      >
+        <Typography>
+          This modal has no visual title. It uses <code>aria-label</code> for screen readers.
+        </Typography>
+      </Modal>
+
+      {/* 5. Viewport margin + scrolling -------------------------------- */}
+      <Typography variant='h3'>5. Viewport margin + scrolling</Typography>
+      <Button onClick={() => setViewportMarginOpen(true)}>Open long content modal</Button>
+      <Modal
+        open={viewportMarginOpen}
+        onClose={() => setViewportMarginOpen(false)}
+        title='Long content'
+        sx={{ '--valet-modal-viewport-margin': '1.5rem' }}
+        fullWidth
+        actions={<Button onClick={() => setViewportMarginOpen(false)}>Close</Button>}
+      >
+        <Stack
+          pad={0}
+          gap={1}
+        >
+          {Array.from({ length: 40 }).map((_, i) => (
+            <Typography key={i}>Scrollable line {i + 1}</Typography>
+          ))}
+        </Stack>
+      </Modal>
     </Stack>
   );
 

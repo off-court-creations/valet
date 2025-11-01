@@ -28,6 +28,11 @@ export interface PanelProps
   centerContent?: boolean;
   /** Horizontal placement of the panel when not fullWidth */
   alignX?: 'left' | 'right' | 'center' | 'centered';
+  /**
+   * Opt out of row height normalization (when a parent Grid enables it).
+   * Defaults to true (normalize). Set to false to keep intrinsic heights.
+   */
+  normalizeRowHeight?: boolean;
 }
 
 /** Inline styles (with CSS var support) */
@@ -45,13 +50,15 @@ const Base = styled('div')<{
   $bg?: string;
   $text?: string;
   $pad: string;
+  $noNormalize?: boolean;
 }>`
   box-sizing: border-box;
   vertical-align: top;
 
   display: ${({ $center, $full }) => ($center ? 'flex' : $full ? 'block' : 'inline-block')};
   width: ${({ $full }) => ($full ? '100%' : 'auto')};
-  align-self: ${({ $full }) => ($full ? 'stretch' : 'flex-start')};
+  /* Panels cooperate with Grid via CSS var to equalize row heights */
+  align-self: var(--valet-panel-align-self, ${({ $full }) => ($full ? 'stretch' : 'flex-start')});
   /* Anchor when not full width */
   margin-left: ${({ $full, $alignX }) =>
     $full ? '0' : $alignX === 'right' ? 'auto' : $alignX === 'center' ? 'auto' : '0'};
@@ -76,6 +83,9 @@ const Base = styled('div')<{
   }
 
   padding: ${({ $pad }) => $pad};
+
+  /* Allow per-Panel opt-out by overriding the CSS var locally */
+  ${({ $noNormalize }) => ($noNormalize ? `--valet-panel-align-self: flex-start;` : '')}
 
   ${({ $center }) =>
     $center &&
@@ -111,6 +121,7 @@ export const Panel: React.FC<PanelProps> = ({
   fullWidth = false,
   centerContent,
   alignX,
+  normalizeRowHeight = true,
   preset: p,
   className,
   sx,
@@ -172,6 +183,7 @@ export const Panel: React.FC<PanelProps> = ({
       $bg={bg}
       $text={textColour}
       $pad={pad}
+      $noNormalize={!normalizeRowHeight}
       style={sx}
       className={[presetClasses, className].filter(Boolean).join(' ')}
     >

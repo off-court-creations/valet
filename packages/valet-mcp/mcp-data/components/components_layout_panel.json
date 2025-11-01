@@ -42,6 +42,12 @@
         "center",
         "centered"
       ]
+    },
+    {
+      "name": "normalizeRowHeight",
+      "type": "boolean",
+      "required": false,
+      "default": "true"
     }
   ],
   "domPassthrough": {
@@ -51,6 +57,7 @@
     ]
   },
   "cssVars": [
+    "--valet-panel-align-self",
     "--valet-panel-max-h",
     "--valet-panel-ov-y",
     "--valet-bg",

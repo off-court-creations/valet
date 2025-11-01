@@ -1,12 +1,13 @@
-/* eslint-disable react/prop-types -- Fully typed TSX: runtime PropTypes not used */
 // ─────────────────────────────────────────────────────────────
 // src/components/layout/Accordion.tsx  | valet
-// Fully-typed, theme-aware <Accordion /> component
-// – Composition API (Accordion.Item / .Header / .Content)
-// – Controlled & uncontrolled modes, single- or multi-expand
-// – Seamless preset & theme integration, zero external deps
-// – A11y-optimised: roving tab-index, ARIA roles / ids, focus rings
+// Re-architected single-file Accordion
+// - Headless reducer core + roving focus manager
+// - Controlled/uncontrolled; single/multiple; optional unmountOnExit
+// - Improved motion: reduced-measure, reduced-motion aware
+// - Semantics: strict ARIA wiring; heading level; data-state attrs
+// - Surface-aware height constraint
 // ─────────────────────────────────────────────────────────────
+/* eslint-disable react/prop-types */
 import React, {
   createContext,
   ReactNode,
@@ -31,12 +32,46 @@ import { resolveSpace } from '../../utils/resolveSpace';
 import { Typography } from '../primitives/Typography';
 
 /*───────────────────────────────────────────────────────────*/
-/* Context                                                   */
+/* Types / machine                                           */
+type Mode = 'single' | 'multiple';
+
+// (internal note) A reducer-based machine was considered; for simplicity and
+// alignment with controllable state, we compute next state in callbacks using Mode.
+
+function useControllableState<T>(
+  controlled: T | undefined,
+  defaultValue: T,
+  onChange?: (next: T) => void,
+) {
+  const [inner, setInner] = useState<T>(defaultValue);
+  const isControlled = controlled !== undefined;
+  const value = isControlled ? (controlled as T) : inner;
+  const setValue = useCallback(
+    (next: T) => {
+      if (!isControlled) setInner(next);
+      onChange?.(next);
+    },
+    [isControlled, onChange],
+  );
+  return [value, setValue] as const;
+}
+
+/*───────────────────────────────────────────────────────────*/
+/* Context (roving focus + actions)                          */
 interface Ctx {
   open: number[];
   toggle: (idx: number) => void;
-  multiple: boolean;
+  mode: Mode;
   headerTag: keyof JSX.IntrinsicElements;
+  // Keyboard navigation helpers (roving focus)
+  registerItem: (idx: number, el: HTMLButtonElement | null, disabled: boolean) => void;
+  updateDisabled: (idx: number, disabled: boolean) => void;
+  focusItem: (idx: number) => void;
+  focusNext: (from: number) => void;
+  focusPrev: (from: number) => void;
+  focusFirst: () => void;
+  focusLast: () => void;
+  activeIndex: number;
 }
 
 const AccordionCtx = createContext<Ctx | null>(null);
@@ -47,11 +82,14 @@ const useAccordion = () => {
 };
 
 /*───────────────────────────────────────────────────────────*/
-/* Styled primitives                                         */
+/* Styled primitives + CSS vars                              */
 const Root = styled('div')<{ $pad: string }>`
   width: 100%;
   box-sizing: border-box;
   padding: ${({ $pad }) => $pad};
+  /* theming surface: allow per-instance overrides */
+  --acc-duration: var(--valet-acc-duration, 300ms);
+  --acc-ease: var(--valet-acc-ease, cubic-bezier(0.4, 0, 0.2, 1));
 `;
 
 const Wrapper = styled('div')`
@@ -61,8 +99,44 @@ const Wrapper = styled('div')`
   min-height: 0;
 `;
 
-const ItemWrapper = styled('div')`
+const ItemWrapper = styled('div')<{
+  $hoverDur: string;
+  $hoverEase: string;
+}>`
   border-bottom: var(--valet-divider-stroke, 1px) solid currentColor;
+  transition: border-bottom-color ${({ $hoverDur }) => $hoverDur} ${({ $hoverEase }) => $hoverEase};
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+
+  /* Hover affordance: divider fades
+     - Do not affect disabled items
+     - When hovering a closed item, hide its bottom divider (not open)
+     - When hovering an item (open or closed), hide the divider directly above it
+       by fading the previous item's bottom border, unless that previous item is disabled */
+  @media (hover: hover) {
+    /*
+      Hide this item's bottom divider only when hovered and not open, and not disabled,
+      AND only if the next sibling is not selected (open). If the next is selected,
+      keep this bottom divider visible to preserve the selected item's top edge.
+    */
+    &:hover:not([data-open='true']):not([data-disabled='true']):not([data-skip-hover='true']):not(
+        :has(+ &[data-open='true'])
+      ) {
+      border-bottom-color: transparent;
+    }
+
+    /*
+      Hide the top divider (previous item's bottom border) when the next item is hovered,
+      unless this item is disabled OR this item is selected (keep selected bottom edge visible).
+    */
+    &:not([data-disabled='true']):not([data-open='true']):has(
+        + &:hover:not([data-disabled='true']):not([data-skip-hover='true'])
+      ) {
+      border-bottom-color: transparent;
+    }
+  }
 `;
 
 const HeaderBtn = styled('button')<{
@@ -114,6 +188,8 @@ const HeaderBtn = styled('button')<{
   &:disabled {
     color: ${({ $disabledColor }) => $disabledColor};
     cursor: not-allowed;
+    opacity: 0.6; /* Iterator-style dim */
+    filter: grayscale(0.2);
   }
 `;
 
@@ -121,14 +197,15 @@ const Chevron = styled('svg')<{ $open: boolean }>`
   width: 1em;
   height: 1em;
   flex-shrink: 0;
-  transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
-  transform: rotate(${({ $open }) => ($open ? 0 : 180)}deg);
+  transition: transform var(--acc-duration) var(--acc-ease);
+  transform: rotate(${({ $open }) => ($open ? 180 : 0)}deg);
 `;
 
-const Content = styled('div')<{ $open: boolean; $height: number }>`
+const Content = styled('div')<{ $open: boolean; $height: number; $reduced: boolean }>`
   overflow: hidden;
   height: ${({ $open, $height }) => ($open ? `${$height}px` : '0')};
-  transition: height 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition: ${({ $reduced }) =>
+    $reduced ? 'none' : 'height var(--acc-duration) var(--acc-ease)'};
   will-change: height;
 `;
 
@@ -144,6 +221,7 @@ export interface AccordionProps
   onOpenChange?: (open: number[]) => void;
   headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
   constrainHeight?: boolean;
+  unmountOnExit?: boolean;
 }
 
 export interface AccordionItemProps extends React.HTMLAttributes<HTMLDivElement>, Presettable {
@@ -164,6 +242,7 @@ export const Accordion: React.FC<AccordionProps> & {
   onOpenChange,
   headingLevel = 3,
   constrainHeight = true,
+  unmountOnExit = false,
   pad: padProp,
   compact = false,
   preset: p,
@@ -186,36 +265,92 @@ export const Accordion: React.FC<AccordionProps> & {
   const [maxHeight, setMaxHeight] = useState<number>();
   const [shouldConstrain, setShouldConstrain] = useState(false);
   const constraintRef = useRef(false);
-  const controlled = openProp !== undefined;
+  // Roving focus state --------------------------------------------------
+  const itemRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const disabledSet = useRef<Set<number>>(new Set());
+  const [activeIndex, setActiveIndex] = useState(0);
   const toArray = (v?: number | number[]) => (v === undefined ? [] : Array.isArray(v) ? v : [v]);
+  const [externalOpen, setExternalOpen] = useControllableState<number[]>(
+    openProp ? toArray(openProp) : undefined,
+    toArray(defaultOpen),
+    onOpenChange,
+  );
 
-  const [selfOpen, setSelfOpen] = useState(() => toArray(defaultOpen));
-  const open = controlled ? toArray(openProp) : selfOpen;
-
+  const mode: Mode = multiple ? 'multiple' : 'single';
+  const open = externalOpen;
   const toggle = useCallback(
     (idx: number) => {
-      let next: number[];
       const isOpen = open.includes(idx);
-
+      let next: number[];
       if (isOpen) next = open.filter((i) => i !== idx);
-      else if (multiple) next = [...open, idx];
-      else next = [idx];
-
-      if (!controlled) setSelfOpen(next);
-      onOpenChange?.(next);
+      else next = mode === 'single' ? [idx] : [...open, idx];
+      setExternalOpen(next);
     },
-    [controlled, multiple, onOpenChange, open],
+    [open, mode, setExternalOpen],
   );
 
-  const ctx = useMemo<Ctx>(
-    () => ({
+  const ctx = useMemo<Ctx>(() => {
+    const nextEnabledFrom = (start: number, step: 1 | -1) => {
+      const count = itemRefs.current.length;
+      if (count === 0) return -1;
+      let i = start;
+      for (let n = 0; n < count; n++) {
+        i = (i + step + count) % count;
+        if (!disabledSet.current.has(i)) return i;
+      }
+      return -1; // all disabled
+    };
+
+    const focusItem = (idx: number) => {
+      if (idx < 0) return;
+      setActiveIndex(idx);
+      const btn = itemRefs.current[idx];
+      if (btn) {
+        // Ensure element is focusable in tab sequence then focus it
+        try {
+          btn.focus();
+        } catch {
+          /* ignore */
+        }
+      }
+    };
+
+    const registerItem = (idx: number, el: HTMLButtonElement | null, disabled: boolean) => {
+      itemRefs.current[idx] = el;
+      if (disabled) disabledSet.current.add(idx);
+      else disabledSet.current.delete(idx);
+      // If nothing active yet or active points to a disabled/non-existent, correct it
+      const a = activeIndex;
+      if (!itemRefs.current[a] || disabledSet.current.has(a)) {
+        const firstEnabled = nextEnabledFrom(-1, 1);
+        if (firstEnabled >= 0) setActiveIndex(firstEnabled);
+      }
+    };
+
+    const updateDisabled = (idx: number, disabled: boolean) => {
+      if (disabled) disabledSet.current.add(idx);
+      else disabledSet.current.delete(idx);
+      if (disabled && activeIndex === idx) {
+        const next = nextEnabledFrom(idx, 1);
+        if (next >= 0) setActiveIndex(next);
+      }
+    };
+
+    return {
       open,
       toggle,
-      multiple,
+      mode,
       headerTag: `h${headingLevel}` as keyof JSX.IntrinsicElements,
-    }),
-    [open, toggle, multiple, headingLevel],
-  );
+      registerItem,
+      updateDisabled,
+      focusItem,
+      focusNext: (from: number) => focusItem(nextEnabledFrom(from, 1)),
+      focusPrev: (from: number) => focusItem(nextEnabledFrom(from, -1)),
+      focusFirst: () => focusItem(nextEnabledFrom(-1, 1)),
+      focusLast: () => focusItem(nextEnabledFrom(0, -1)),
+      activeIndex,
+    };
+  }, [open, toggle, mode, headingLevel, activeIndex]);
 
   const presetClasses = p ? preset(p) : '';
 
@@ -322,9 +457,13 @@ export const Accordion: React.FC<AccordionProps> & {
         >
           {React.Children.map(children, (child, idx) =>
             React.isValidElement(child)
-              ? React.cloneElement(child as React.ReactElement<{ index?: number }>, {
-                  index: idx,
-                })
+              ? React.cloneElement(
+                  child as React.ReactElement<{ index?: number; unmountOnExit?: boolean }>,
+                  {
+                    index: idx,
+                    unmountOnExit,
+                  },
+                )
               : child,
           )}
         </Root>
@@ -345,7 +484,19 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   ...divProps
 }) => {
   const { theme, mode } = useTheme();
-  const { open, toggle, headerTag } = useAccordion();
+  const {
+    open,
+    toggle,
+    headerTag,
+    registerItem,
+    updateDisabled,
+    focusItem,
+    focusNext,
+    focusPrev,
+    focusFirst,
+    focusLast,
+    activeIndex,
+  } = useAccordion();
 
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const wasLongPress = useRef(false);
@@ -355,31 +506,67 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const moveHandler = useRef<((e: PointerEvent) => void) | null>(null);
 
+  // Suppress hover after selection until pointer leaves and re-enters.
+  // We intentionally do not re-enable on movement or timer.
   const disableHoverUntilMove = () => {
-    if (hoverTimer.current) clearTimeout(hoverTimer.current);
+    if (hoverTimer.current) {
+      clearTimeout(hoverTimer.current);
+      hoverTimer.current = null;
+    }
+    if (moveHandler.current) {
+      window.removeEventListener('pointermove', moveHandler.current);
+      moveHandler.current = null;
+    }
     setSkipHover(true);
-    const remove = () => {
-      if (moveHandler.current) {
-        window.removeEventListener('pointermove', moveHandler.current);
-        moveHandler.current = null;
-      }
-      if (hoverTimer.current) {
-        clearTimeout(hoverTimer.current);
-        hoverTimer.current = null;
-      }
-      setSkipHover(false);
-    };
-    moveHandler.current = () => remove();
-    window.addEventListener('pointermove', moveHandler.current, { once: true });
-    hoverTimer.current = setTimeout(remove, 1000);
   };
 
   const isOpen = open.includes(index);
 
+  // Measure content height precisely and keep it fresh. On first
+  // paint fonts or async content can change the height after
+  // layout, which previously caused clipped content until an
+  // interaction triggered a re-measure. Use RO + a couple of
+  // queued rAF passes to stabilize the initial value.
   useLayoutEffect(() => {
-    if (contentRef.current) {
-      setHeight(contentRef.current.scrollHeight);
+    const el = contentRef.current;
+    if (!el) return;
+
+    const measure = () => setHeight(el.scrollHeight);
+
+    // Initial measure + two rAF passes to catch font reflow
+    measure();
+    const raf1 = requestAnimationFrame(measure);
+    const raf2 = requestAnimationFrame(() => requestAnimationFrame(measure));
+
+    const ro = new ResizeObserver(() => measure());
+    ro.observe(el);
+
+    const onResize = () => measure();
+    window.addEventListener('resize', onResize);
+
+    // If supported, update when fonts finish loading
+    const fonts: unknown = (document as unknown as { fonts?: FontFaceSet }).fonts;
+    const fontListener = () => measure();
+    const cleanupFonts = () => {
+      try {
+        (fonts as FontFaceSet | undefined)?.removeEventListener?.('loadingdone', fontListener);
+      } catch {
+        /* ignore */
+      }
+    };
+    try {
+      (fonts as FontFaceSet | undefined)?.addEventListener?.('loadingdone', fontListener);
+    } catch {
+      /* ignore */
     }
+
+    return () => {
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
+      ro.disconnect();
+      window.removeEventListener('resize', onResize);
+      cleanupFonts();
+    };
   }, [children, isOpen]);
   const headerId = `acc-btn-${index}`;
   const panelId = `acc-panel-${index}`;
@@ -397,19 +584,91 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   const shift = theme.spacing(1);
   const padV = theme.spacing(2);
 
+  // Register header button for roving focus and update disabled state
+  const btnRef = useRef<HTMLButtonElement | null>(null);
+  useLayoutEffect(() => {
+    registerItem(index, btnRef.current, disabled);
+    return () => registerItem(index, null, disabled);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [index]);
+  useEffect(() => {
+    updateDisabled(index, !!disabled);
+  }, [disabled, index, updateDisabled]);
+
+  const onKey = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (disabled) return;
+    switch (e.key) {
+      case 'ArrowDown':
+      case 'ArrowRight':
+        e.preventDefault();
+        focusNext(index);
+        break;
+      case 'ArrowUp':
+      case 'ArrowLeft':
+        e.preventDefault();
+        focusPrev(index);
+        break;
+      case 'Home':
+        e.preventDefault();
+        focusFirst();
+        break;
+      case 'End':
+        e.preventDefault();
+        focusLast();
+        break;
+      case ' ':
+      case 'Spacebar': // older Safari/WebKit
+        e.preventDefault();
+        toggle(index);
+        break;
+      case 'Enter':
+        e.preventDefault();
+        toggle(index);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const reducedMotion =
+    typeof window !== 'undefined' && window.matchMedia
+      ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      : false;
+
+  // Optionally unmount content when closed (internal prop injected by root)
+  const shouldRenderContent =
+    isOpen || !(divProps as unknown as { unmountOnExit?: boolean }).unmountOnExit;
+
+  // Strip internal injected prop to avoid DOM warning
+  const restDivProps = { ...(divProps as Record<string, unknown>) } as typeof divProps;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  delete (restDivProps as any).unmountOnExit;
+
   return (
     <ItemWrapper
-      {...divProps}
+      {...(restDivProps as typeof divProps)}
       className={[presetClasses, className].filter(Boolean).join(' ')}
+      $hoverDur={theme.motion.hover.duration}
+      $hoverEase={theme.motion.hover.easing}
+      data-state={isOpen ? 'open' : 'closed'}
+      data-open={isOpen ? 'true' : 'false'}
+      data-disabled={disabled ? 'true' : 'false'}
+      data-skip-hover={skipHover ? 'true' : 'false'}
     >
       <HeaderTag style={{ margin: 0 }}>
         <HeaderBtn
+          ref={btnRef}
           id={headerId}
           type='button'
           aria-expanded={isOpen}
           aria-controls={panelId}
           disabled={disabled}
+          tabIndex={disabled ? -1 : activeIndex === index ? 0 : -1}
+          onFocus={() => {
+            if (!disabled) focusItem(index); // mark this as active for roving tabIndex
+          }}
           onClick={() => toggle(index)}
+          onKeyDown={onKey}
           onContextMenu={(e: React.MouseEvent) => {
             e.preventDefault();
             if (!disabled && !wasLongPress.current) toggle(index);
@@ -514,13 +773,16 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
         aria-labelledby={headerId}
         $open={isOpen}
         $height={height}
+        $reduced={reducedMotion}
       >
-        <div
-          ref={contentRef}
-          style={{ padding: `${theme.spacing(1.5)} 0` }}
-        >
-          {children}
-        </div>
+        {shouldRenderContent && (
+          <div
+            ref={contentRef}
+            style={{ padding: `${theme.spacing(1.5)} 0` }}
+          >
+            {children}
+          </div>
+        )}
       </Content>
     </ItemWrapper>
   );

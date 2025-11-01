@@ -68,8 +68,9 @@ export const Divider: React.FC<DividerProps> = ({
 }) => {
   const { theme } = useTheme();
 
-  // Default color follows surface text color via CSS var, with a theme fallback.
-  const color = lineColor ?? (`var(--valet-text-color, ${theme.colors.text})` as string);
+  // Default color uses divider token via CSS var, with a theme fallback.
+  const color =
+    lineColor ?? (`var(--valet-divider, ${theme.colors.divider ?? theme.colors.text})` as string);
   // Prefer the divider stroke CSS var so surfaces can coordinate line thickness.
   // If a number is provided, treat it as a multiplier of the base divider stroke.
   const thick = (() => {

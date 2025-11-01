@@ -31,7 +31,7 @@ export interface ValetComponentDoc {
   category: string;
   slug: string;
   summary: string;
-  status?: 'golden' | 'stable' | 'experimental' | 'unstable' | 'deprecated';
+  status?: 'production' | 'stable' | 'experimental' | 'unstable' | 'deprecated';
   description?: string;
   usage?: {
     purpose?: string | string[];

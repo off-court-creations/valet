@@ -1,6 +1,6 @@
 {
   "name": "DateSelector",
-  "status": "stable",
+  "status": "experimental",
   "aliases": ["date", "datepicker", "daterange"],
   "docs": {
     "bestPractices": [

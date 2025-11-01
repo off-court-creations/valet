@@ -14,9 +14,18 @@ applications:
             # Install tool versions from .mise.toml (Node, etc.)
             - ~/.local/bin/mise install
 
-            # Verify Node version from mise and install deps
+            # Verify Node version from mise
             - ~/.local/bin/mise exec -- node -v
+
+            # Build local @archway/valet and link it globally so docs use the fresh code
+            # Use subshells so working directory remains at appRoot (docs) between commands
+            - (cd .. && ~/.local/bin/mise exec -- npm ci)
+            - (cd .. && ~/.local/bin/mise exec -- npm run build)
+            - (cd .. && ~/.local/bin/mise exec -- npm link)
+
+            # Install docs deps, then link local @archway/valet into docs
             - ~/.local/bin/mise exec -- npm ci
+            - ~/.local/bin/mise exec -- npm link @archway/valet
 
         build:
           commands:

@@ -36,6 +36,10 @@ export default function AvatarDemoPage() {
       <Typography variant='subtitle'>Gravatar wrapper with custom photo support</Typography>
 
       <Typography variant='h3'>1. Try your Gravatar</Typography>
+      <Typography variant='subtitle'>
+        Note: FormControl prevents native submission. Use onSubmitValues; merge new
+        FormData(event.currentTarget) for files or non‑valet inputs.
+      </Typography>
       <FormControl
         useStore={useEmailForm}
         onSubmitValues={(vals) => setEmail(vals.email as string)}
@@ -87,6 +91,36 @@ export default function AvatarDemoPage() {
         size='l'
         variant='outline'
       />
+
+      <Typography variant='h3'>6. Offline fallback (initials)</Typography>
+      <Stack
+        direction='row'
+        gap={1}
+        sx={{ alignItems: 'center' }}
+      >
+        <Avatar
+          name='Ada Lovelace'
+          preferFallback
+          size='l'
+          alt='Ada Lovelace'
+        />
+        <Typography variant='body'>Prefer offline fallback; derives initials from name</Typography>
+      </Stack>
+
+      <Typography variant='h3'>7. Offline fallback (placeholder)</Typography>
+      <Stack
+        direction='row'
+        gap={1}
+        sx={{ alignItems: 'center' }}
+      >
+        <Avatar
+          preferFallback
+          fallback='placeholder'
+          size='l'
+          aria-label='User avatar'
+        />
+        <Typography variant='body'>Placeholder silhouette, no network required</Typography>
+      </Stack>
     </Stack>
   );
 

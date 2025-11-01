@@ -1,6 +1,6 @@
 {
   "name": "Box",
-  "status": "golden",
+  "status": "stable",
   "aliases": ["box", "container"],
   "docs": {
     "bestPractices": [

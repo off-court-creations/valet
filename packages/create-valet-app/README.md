@@ -69,7 +69,7 @@ Tip (npm create): place flags after `--`, e.g. `npm create @archway/valet-app my
 - React Router (optional), code‑split routes via `React.lazy` + `Suspense`.
 - Zustand store sample (optional).
 - Path alias to `src` (default `@`), wired in Vite + TS/JS config.
-- Lint/format scripts (ESLint + Prettier), plus “agent” variants with parseable status tokens.
+- Lint/format scripts (ESLint + Prettier). The validator emits parseable status tokens for automation.
 - Strict TypeScript in `ts` and `hybrid` templates; split `tsconfig.app.json` and `tsconfig.node.json`.
 
 ## Dev Server / HMR Env Vars
@@ -88,7 +88,6 @@ The generated `vite.config` supports tuning dev server + HMR for tunnels and pro
 - `typecheck`: run TS checks for app + node configs (TS/hybrid).
 - `lint`, `lint:fix`: ESLint (with Prettier rules applied).
 - `format`, `format:fix`: Prettier check/write.
-- Agent variants (`*:agent`) emit `*_STATUS:ok` on success.
 
 ## Examples
 

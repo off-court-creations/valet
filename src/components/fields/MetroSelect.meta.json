@@ -1,6 +1,6 @@
 {
   "name": "MetroSelect",
-  "status": "experimental",
+  "status": "stable",
   "aliases": ["metroselect", "chip", "segmented", "segment", "segmented-control"],
   "docs": {
     "bestPractices": [

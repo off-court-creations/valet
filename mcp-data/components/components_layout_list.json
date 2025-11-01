@@ -3,7 +3,7 @@
   "category": "layout",
   "slug": "components/layout/list",
   "summary": "List component",
-  "status": "unstable",
+  "status": "experimental",
   "aliases": [
     "list",
     "ul",
@@ -33,7 +33,14 @@
     {
       "name": "hoverable",
       "type": "boolean",
-      "required": false
+      "required": false,
+      "description": "If `undefined`, non-striped lists hover by default."
+    },
+    {
+      "name": "reorderable",
+      "type": "boolean",
+      "required": false,
+      "description": "Allow drag-and-drop style reordering via pointer (default: true)"
     },
     {
       "name": "onReorder",
@@ -41,34 +48,63 @@
       "required": false
     },
     {
-      "name": "reorderable",
-      "type": "boolean",
-      "required": false
-    },
-    {
       "name": "selectable",
       "type": "boolean",
-      "required": false
+      "required": false,
+      "description": "Enable single selection when true."
+    },
+    {
+      "name": "focusMode",
+      "type": "'auto' | 'row' | 'none'",
+      "required": false,
+      "description": "Focus behavior for rows.\n- `auto` (default): non-selectable lists keep rows out of the tab order; selectable lists use roving focus (one row has `tabIndex=0`, rest `-1`).\n- `row`: every row is tabbable (`tabIndex=0`). Opt-in only; not recommended for long lists.\n- `none`: rows are not in the tab order (`tabIndex=-1`), allowing programmatic focus only.",
+      "enumValues": [
+        "auto",
+        "row",
+        "none"
+      ]
     },
     {
       "name": "selected",
       "type": "T | null",
-      "required": false
+      "required": false,
+      "description": "Controlled selected item (by reference)."
     },
     {
       "name": "defaultSelected",
       "type": "T | null",
-      "required": false
+      "required": false,
+      "description": "Uncontrolled initial selection."
     },
     {
       "name": "onSelectionChange",
       "type": "(item: T, index: number) => void",
-      "required": false
+      "required": false,
+      "description": "Fired when selection changes."
+    },
+    {
+      "name": "getKey",
+      "type": "(item: T, index: number) => React.Key",
+      "required": false,
+      "description": "Provide stable keys for items (defaults to index)."
+    },
+    {
+      "name": "emptyPlaceholder",
+      "type": "React.ReactNode",
+      "required": false,
+      "description": "Rendered when `data.length === 0`."
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": false
+      "required": false,
+      "description": "Inline styles (with CSS var support)."
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
   "domPassthrough": {
@@ -78,7 +114,10 @@
       "style"
     ]
   },
-  "cssVars": [],
+  "cssVars": [
+    "--valet-bg",
+    "--valet-text-color"
+  ],
   "cssPresets": [],
   "events": [
     {
@@ -97,6 +136,9 @@
     },
     {
       "name": "getSubtitle"
+    },
+    {
+      "name": "emptyPlaceholder"
     }
   ],
   "bestPractices": [
@@ -104,13 +146,25 @@
     "Prefer succinct labels with optional secondary text; avoid deep nested interactivity inside rows.",
     "Use selection or navigation patterns consistently (radio/checkbox icons vs chevrons).",
     "Keep item height comfortable for touch; use tokenized spacing for density.",
-    "Defer dense tabular data to `Table` and two‑dimensional layouts to `Grid`."
+    "Defer dense tabular data to `Table` and two‑dimensional layouts to `Grid`.",
+    "Non‑selectable lists keep rows out of the tab order by default for accessibility; opt into `focusMode=\"row\"` only when you truly need every row tabbable."
   ],
   "examples": [
     {
       "id": "list-basic",
       "title": "Basic list",
       "code": "<List data={[{name:'Ada',role:'Programmer'},{name:'Alan',role:'Mathematician'}]} getTitle={(i)=>i.name} getSubtitle={(i)=>i.role} striped hoverable />",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {
+        "data": [],
+        "getTitle": "() => {}"
+      }
+    },
+    {
+      "id": "list-focus-row",
+      "title": "Row focus (opt‑in)",
+      "code": "<List data={[{name:'Ada',role:'Programmer'},{name:'Alan',role:'Mathematician'}]} getTitle={(i)=>i.name} getSubtitle={(i)=>i.role} focusMode='row' />",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {
@@ -133,6 +187,6 @@
   "sourceFiles": [
     "src/components/layout/List.tsx"
   ],
-  "version": "0.32.0",
+  "version": "0.33.0",
   "schemaVersion": "1.6"
 }

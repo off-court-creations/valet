@@ -1,6 +1,6 @@
 {
   "name": "List",
-  "status": "unstable",
+  "status": "experimental",
   "aliases": ["list", "ul", "ol"],
   "docs": {
     "bestPractices": [
@@ -8,7 +8,8 @@
       "Prefer succinct labels with optional secondary text; avoid deep nested interactivity inside rows.",
       "Use selection or navigation patterns consistently (radio/checkbox icons vs chevrons).",
       "Keep item height comfortable for touch; use tokenized spacing for density.",
-      "Defer dense tabular data to `Table` and two‑dimensional layouts to `Grid`."
+      "Defer dense tabular data to `Table` and two‑dimensional layouts to `Grid`.",
+      "Non‑selectable lists keep rows out of the tab order by default for accessibility; opt into `focusMode=\"row\"` only when you truly need every row tabbable."
     ]
   },
   "examples": [
@@ -16,6 +17,11 @@
       "id": "list-basic",
       "title": "Basic list",
       "code": "<List data={[{name:'Ada',role:'Programmer'},{name:'Alan',role:'Mathematician'}]} getTitle={(i)=>i.name} getSubtitle={(i)=>i.role} striped hoverable />"
+    },
+    {
+      "id": "list-focus-row",
+      "title": "Row focus (opt‑in)",
+      "code": "<List data={[{name:'Ada',role:'Programmer'},{name:'Alan',role:'Mathematician'}]} getTitle={(i)=>i.name} getSubtitle={(i)=>i.role} focusMode='row' />"
     },
     {
       "id": "list-select-reorder",

@@ -72,6 +72,10 @@ export default function FormDemoPage() {
           Contact Form Demo
         </Typography>
 
+        <Typography variant='subtitle'>
+          Note: FormControl prevents native submission. Handle submit in onSubmitValues and use new
+          FormData(event.currentTarget) for files or non‑valet inputs.
+        </Typography>
         <FormControl
           useStore={useContactForm}
           // <- custom callback passes (values, event)

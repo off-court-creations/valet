@@ -1,1 +1,1 @@
-{ "name": "LoadingBackdrop", "status": "experimental", "aliases": ["loadingbackdrop", "backdrop", "scrim"], "docs": { "bestPractices": [] } }
+{ "name": "LoadingBackdrop", "status": "stable", "aliases": ["loadingbackdrop", "backdrop", "scrim"], "docs": { "bestPractices": [] } }

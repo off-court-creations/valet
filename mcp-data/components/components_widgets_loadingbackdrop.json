@@ -3,7 +3,7 @@
   "category": "widgets",
   "slug": "components/widgets/loadingbackdrop",
   "summary": "LoadingBackdrop component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "loadingbackdrop",
     "backdrop",
@@ -21,7 +21,9 @@
       "required": false
     }
   ],
-  "cssVars": [],
+  "cssVars": [
+    "--valet-z-overlay"
+  ],
   "cssPresets": [],
   "events": [],
   "actions": [],
@@ -31,6 +33,6 @@
   "sourceFiles": [
     "src/components/widgets/LoadingBackdrop.tsx"
   ],
-  "version": "0.32.0",
+  "version": "0.33.0",
   "schemaVersion": "1.6"
 }

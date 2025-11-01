@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/fields/FormControl.tsx | valet
-// form context provider wiring labels, errors and disabled state
+// Provides typed form store context and intercepts submit for SPA flows
 // ─────────────────────────────────────────────────────────────
 import React, { createContext, useContext } from 'react';
 import { preset } from '../../css/stylePresets';

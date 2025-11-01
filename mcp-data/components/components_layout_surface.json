@@ -3,7 +3,7 @@
   "category": "layout",
   "slug": "components/layout/surface",
   "summary": "Surface component",
-  "status": "golden",
+  "status": "stable",
   "aliases": [
     "surface",
     "hero"
@@ -13,23 +13,33 @@
       "name": "fullscreen",
       "type": "boolean",
       "required": false,
+      "description": "Fixed-position full-screen surface when true (default).",
       "default": "true"
     },
     {
       "name": "density",
       "type": "Density",
-      "required": false
+      "required": false,
+      "description": "Optional density override for spacing scale"
     },
     {
       "name": "blockUntilFonts",
       "type": "boolean",
       "required": false,
+      "description": "When true, block content visibility until fonts load (FOIT).\nDefaults to false for immediate first paint using fallbacks.",
       "default": "false"
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": false
+      "required": false,
+      "description": "Inline styles (with CSS var support)"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
   "domPassthrough": {
@@ -48,6 +58,7 @@
     "--valet-font-button",
     "--valet-radius",
     "--valet-stroke",
+    "--valet-divider",
     "--valet-focus-width",
     "--valet-focus-offset",
     "--valet-divider-stroke",
@@ -70,6 +81,6 @@
   "sourceFiles": [
     "src/components/layout/Surface.tsx"
   ],
-  "version": "0.32.0",
+  "version": "0.33.0",
   "schemaVersion": "1.6"
 }

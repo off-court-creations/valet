@@ -1,6 +1,6 @@
 {
   "name": "IconButton",
-  "status": "golden",
+  "status": "stable",
   "aliases": ["iconbutton", "icon-button"],
   "docs": {
     "bestPractices": [

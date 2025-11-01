@@ -71,7 +71,7 @@ export default function LiveCodePreview({
         filename: 'LiveExample.tsx',
         presets: [['react', { runtime: 'classic', development: false }], 'typescript'],
       }).code as string;
-      // eslint-disable-next-line no-new-func
+
       const fn = new Function(
         'React',
         'scope',
@@ -79,7 +79,13 @@ export default function LiveCodePreview({
         `${compiled}\nreturn __Example(React, scope, theme);`,
       );
       const node = fn(React, scope, theme);
-      return React.isValidElement(node) ? node : React.createElement(React.Fragment, null, node);
+      // Support three forms:
+      // 1) JSX element literal -> render directly
+      // 2) Function component (() => <...>) -> instantiate it
+      // 3) Other values -> show as-is in a fragment
+      if (React.isValidElement(node)) return node;
+      if (typeof node === 'function') return React.createElement(node as React.ElementType);
+      return React.createElement(React.Fragment, null, node as unknown as React.ReactNode);
     } catch (e) {
       setError((e as Error)?.message || 'Failed to render example');
       return null;

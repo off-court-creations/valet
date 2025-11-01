@@ -1,1 +1,26 @@
-{ "name": "FormControl", "status": "stable", "aliases": ["form", "field", "control"], "docs": { "bestPractices": [] } }
+{
+  "name": "FormControl",
+  "status": "stable",
+  "aliases": ["form", "field", "control"],
+  "docs": {
+    "bestPractices": [
+      "FormControl prevents native submit by default. Handle submission in `onSubmitValues(values, event)` and keep the flow inside your SPA.",
+      "Always provide `name` on fields within a FormControl so values bind to the store and appear in the typed payload.",
+      "For files or non‑valet inputs, merge `new FormData(event.currentTarget)` with your typed `values` in `onSubmitValues`.",
+      "Choose validation mode explicitly: rely on native constraints (default) or pass `noValidate` and surface errors with `error` + `helperText` on fields.",
+      "If you depend on browser autofill, verify final values at submit time by reading `FormData` to avoid stale store state when no change events fired."
+    ]
+  },
+  "examples": [
+    {
+      "id": "formcontrol-basic",
+      "title": "Typed form with onSubmitValues",
+      "code": "() => {\n  const useContact = Valet.createFormStore({ name: '', email: '' });\n  return (\n    <FormControl useStore={useContact} onSubmitValues={(values) => console.log(values)}>\n      <Stack>\n        <TextField name='name' label='Name' />\n        <TextField name='email' type='email' label='Email' autoComplete='email' />\n        <Button type='submit'>Submit</Button>\n      </Stack>\n    </FormControl>\n  );\n}"
+    },
+    {
+      "id": "formcontrol-merge-formdata",
+      "title": "Merging typed values with FormData (files, autofill)",
+      "code": "() => {\n  const useProfile = Valet.createFormStore({ displayName: '' });\n  return (\n    <FormControl\n      useStore={useProfile}\n      onSubmitValues={(values, event) => {\n        const fd = new FormData(event.currentTarget);\n        // Merge: prefer typed values; attach file for upload\n        const payload = { ...values, avatar: fd.get('avatar') };\n        console.log(payload);\n      }}\n    >\n      <Stack>\n        <TextField name='displayName' label='Display name' />\n        <input type='file' name='avatar' />\n        <Button type='submit'>Save</Button>\n      </Stack>\n    </FormControl>\n  );\n}"
+    }
+  ]
+}

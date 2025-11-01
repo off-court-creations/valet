@@ -3,7 +3,7 @@
   "category": "layout",
   "slug": "components/layout/modal",
   "summary": "Modal component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "modal",
     "dialog"
@@ -86,6 +86,10 @@
     }
   ],
   "cssVars": [
+    "--valet-modal-duration",
+    "--valet-modal-easing",
+    "--valet-modal-z-backdrop",
+    "--valet-modal-z",
     "--valet-modal-radius"
   ],
   "cssPresets": [],

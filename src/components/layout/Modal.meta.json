@@ -1,6 +1,6 @@
 {
   "name": "Modal",
-  "status": "unstable",
+  "status": "stable",
   "aliases": ["modal", "dialog"],
   "docs": {
     "bestPractices": [

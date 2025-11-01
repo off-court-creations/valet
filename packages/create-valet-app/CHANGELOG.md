@@ -2,6 +2,9 @@ Changelog
 
 All notable changes to this project are documented here.
 
+Unreleased
+- Removed: Per-template “*:agent” scripts (lint/build/typecheck/format) have been eliminated. The validator now emits parseable status lines (`LINT_STATUS`, `TYPECHECK_STATUS`, `BUILD_STATUS`) while running the standard scripts instead. Legacy projects with “*:agent” scripts continue to validate via a fallback with a deprecation notice.
+
 0.31.0
 - Align: Update CVA to target Valet and MCP 0.31.x minor.
 - Change: Generated apps now depend on `@archway/valet@^0.31.0`.

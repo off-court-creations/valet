@@ -21,7 +21,8 @@ import { preset } from '../../css/stylePresets';
 import { useTheme } from '../../system/themeStore';
 import { toRgb, mix, toHex } from '../../helpers/color';
 import type { Theme } from '../../system/themeStore';
-import type { Presettable, Sx } from '../../types';
+import type { FieldBaseProps, Presettable, Sx } from '../../types';
+import { useOptionalForm } from './FormControl';
 
 /*───────────────────────────────────────────────────────────*/
 /* Context                                                   */
@@ -74,6 +75,7 @@ const RootBase = styled('div')`
 `;
 
 const OptionLabel = styled('label')<{
+  theme: Theme;
   $disabled: boolean;
   $disabledColor: string;
 }>`
@@ -86,6 +88,12 @@ const OptionLabel = styled('label')<{
   /* Mobile tap highlight suppression */
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+
+  /* Focus ring on the visual indicator when the hidden input is focused */
+  input[type='radio']:focus-visible + [data-indicator] {
+    outline: ${({ theme }) => theme.stroke(2)} solid ${({ theme }) => theme.colors.primary};
+    outline-offset: ${({ theme }) => theme.stroke(1)};
+  }
 `;
 
 const HiddenInput = styled('input')`
@@ -100,18 +108,15 @@ const HiddenInput = styled('input')`
 /* Public prop contracts                                     */
 export interface RadioGroupProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'style'>,
-    Presettable {
+    FieldBaseProps {
   value?: string;
   defaultValue?: string;
-  name?: string;
   row?: boolean;
   size?: RadioSize | number | string;
   /** Gap between options */
   spacing?: number | string;
   onChange?: (val: string) => void;
   children: ReactNode;
-  /** Inline styles (with CSS var support) */
-  sx?: Sx;
 }
 
 export interface RadioProps
@@ -138,6 +143,8 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
   preset: p,
   sx,
   className,
+  label,
+  helperText,
   children,
   ...rest
 }) => {
@@ -146,14 +153,21 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
   const name = nameProp ?? `radio-group-${id}`;
   const controlled = valueProp !== undefined;
 
+  // Optional FormControl integration
+  const form = useOptionalForm<Record<string, unknown>>();
+
   /* Controlled/uncontrolled wiring ------------------------------------- */
   const [selfVal, setSelfVal] = useState<string | null>(defaultValue ?? null);
   const setValue = useCallback(
     (v: string) => {
       if (!controlled) setSelfVal(v);
       onChange?.(v);
+      // Push into form store when bound to a provided field name
+      if (form && nameProp) {
+        form.setField(nameProp as keyof Record<string, unknown>, v);
+      }
     },
-    [controlled, onChange],
+    [controlled, onChange, form, nameProp],
   );
 
   const ctxVal = useMemo<RadioCtx>(
@@ -179,7 +193,11 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
   /* Keyboard navigation (roving radio) -------------------------------- */
   const ref = useRef<HTMLDivElement>(null);
   const onKey = (e: KeyboardEvent<HTMLDivElement>) => {
-    if (!['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'].includes(e.key)) return;
+    const key = e.key;
+    const isArrow =
+      key === 'ArrowRight' || key === 'ArrowDown' || key === 'ArrowLeft' || key === 'ArrowUp';
+    const isHomeEnd = key === 'Home' || key === 'End';
+    if (!isArrow && !isHomeEnd) return;
     e.preventDefault();
 
     const radios = ref.current?.querySelectorAll<HTMLInputElement>(
@@ -188,7 +206,17 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
     if (!radios?.length) return;
 
     const idx = Array.from(radios).findIndex((r) => r === document.activeElement);
-    const step = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : -1;
+
+    if (isHomeEnd) {
+      const target = key === 'Home' ? 0 : radios.length - 1;
+      radios[target]?.focus();
+      radios[target]?.click();
+      return;
+    }
+
+    // Horizontal arrows advance; vertical arrows depend on orientation
+    const forward = key === 'ArrowRight' || key === 'ArrowDown';
+    const step = forward ? 1 : -1;
     const next = (idx + step + radios.length) % radios.length;
     radios[next]?.focus();
     radios[next]?.click();
@@ -198,12 +226,31 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
   const presetCls = p ? preset(p) : '';
   const mergedCls = [presetCls, className].filter(Boolean).join(' ') || undefined;
 
+  // a11y: connect optional visible label + helper to the group via ARIA
+  const labelId = label ? `${id}-label` : undefined;
+  const helpId = helperText ? `${id}-help` : undefined;
+
   return (
     <RadioGroupCtx.Provider value={ctxVal}>
+      {label && (
+        <div
+          id={labelId}
+          style={{
+            fontSize: '0.875rem',
+            color: theme.colors.text,
+            marginBottom: theme.spacing(0.5),
+          }}
+        >
+          {label}
+        </div>
+      )}
       <RootBase
         {...rest}
         ref={ref}
         role='radiogroup'
+        aria-labelledby={labelId}
+        aria-describedby={helpId}
+        aria-orientation={row ? 'horizontal' : 'vertical'}
         onKeyDown={onKey}
         className={mergedCls}
         style={{
@@ -215,6 +262,19 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
       >
         {children}
       </RootBase>
+      {helperText && (
+        <div
+          id={helpId}
+          style={{
+            fontSize: '0.75rem',
+            color: theme.colors.text + 'AA',
+            marginTop: theme.spacing(0.5),
+          }}
+          aria-live='polite'
+        >
+          {helperText}
+        </div>
+      )}
     </RadioGroupCtx.Provider>
   );
 };
@@ -244,6 +304,7 @@ const Indicator: React.FC<IndicatorProps> = ({
   return (
     <span
       {...rest}
+      data-indicator
       aria-hidden
       style={{
         width: outerSize,
@@ -254,9 +315,8 @@ const Indicator: React.FC<IndicatorProps> = ({
         display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
-        transition: 'box-shadow 120ms',
+        transition: 'outline 120ms',
         backgroundColor: checked ? ring : undefined,
-        boxShadow: checked ? `inset 0 0 0 ${parseInt(outerSize, 10) / 2}px ${ring}` : undefined,
       }}
     >
       {checked && (
@@ -333,6 +393,7 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
     /*───────────────────────────────────────────────────────────────────*/
     return (
       <OptionLabel
+        theme={theme}
         className={mergedCls}
         style={{ gap: SZ.gapInner, ...sx }}
         $disabled={disabled}

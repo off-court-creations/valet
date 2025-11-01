@@ -1,6 +1,7 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/widgets/Table.tsx  | valet
 // patch: self-narrowing and table-layout fixed to avoid right-edge clipping – 2025-07-18
+// patch: add minConstrainedRows + maxExpandedRows behavior for smart height – 2025-10-07
 // ─────────────────────────────────────────────────────────────
 import React, {
   useMemo,
@@ -17,6 +18,7 @@ import { useSurface } from '../../system/surfaceStore';
 import { shallow } from 'zustand/shallow';
 import { preset } from '../../css/stylePresets';
 import { Checkbox } from '../fields/Checkbox';
+import { Pagination } from './Pagination';
 import { stripe, toRgb, mix, toHex } from '../../helpers/color';
 import type { Presettable, Sx } from '../../types';
 
@@ -45,6 +47,39 @@ export interface TableProps<T>
   onSortChange?: (index: number, desc: boolean) => void;
   onSelectionChange?: (selected: T[]) => void;
   constrainHeight?: boolean;
+  /**
+   * Minimum body rows that must be visible for an internal scrollbar to be used.
+   * If the constrained viewport would show fewer rows than this, height constraining is disabled
+   * to avoid a tiny scroller. Default: 4.
+   */
+  minConstrainedRows?: number;
+  /**
+   * Applies only when `minConstrainedRows` disables the usual constraint. When the dataset
+   * exceeds this size, pagination kicks in (via <Pagination/>) and shows this many rows
+   * per page instead of using an internal scrollbar. Default: 30.
+   */
+  maxExpandedRows?: number;
+  /**
+   * If true, always paginate using `maxExpandedRows` rows per page, regardless of
+   * `minConstrainedRows`/`constrainHeight`. When false (default), pagination engages
+   * automatically only when `minConstrainedRows` disables constraint and the dataset
+   * exceeds `maxExpandedRows`.
+   */
+  paginate?: boolean;
+  /**
+   * Controlled current page (1-based) when `paginate` is true or auto-pagination engages.
+   * If omitted, the table manages its own page state.
+   */
+  page?: number;
+  /**
+   * Called when the page changes (receives the 1-based page number). Used with controlled `page`.
+   */
+  onPageChange?: (page: number) => void;
+  /**
+   * Controls the width of the visible window of page buttons when pagination renders.
+   * Passed to <Pagination visibleWindow>. Optional; defaults to Pagination’s internal behavior.
+   */
+  paginationWindow?: number;
   /** Inline styles (with CSS var support) */
   sx?: Sx;
 }
@@ -168,6 +203,12 @@ export function Table<T extends object>({
   onSortChange,
   onSelectionChange,
   constrainHeight = true,
+  minConstrainedRows = 4,
+  maxExpandedRows = 30,
+  paginate = false,
+  page: pageProp,
+  onPageChange,
+  paginationWindow,
   preset: p,
   className,
   sx,
@@ -192,6 +233,7 @@ export function Table<T extends object>({
   /* height-constraint internal state */
   const [maxHeight, setMaxHeight] = useState<number>();
   const [shouldConstrain, setShouldConstrain] = useState(false);
+  const [kickIn, setKickIn] = useState(false); // true when minConstrainedRows disables constraint
   const constraintRef = useRef(false);
   const bottomRef = useRef(0);
   const rafRef = useRef<number>(0);
@@ -220,9 +262,50 @@ export function Table<T extends object>({
     const available = Math.round(surface.height - top - bottomRef.current);
     const cutoff = calcCutoff();
 
-    const shouldClamp = node.scrollHeight - available > 1 && available >= cutoff;
+    const shouldClampBase = node.scrollHeight - available > 1 && available >= cutoff;
 
-    if (shouldClamp) {
+    // Measure header + a body row to estimate rows visible under a given height.
+    const tableEl = tableRef.current;
+    let headerH = 0;
+    let rowH = 0;
+    if (tableEl) {
+      try {
+        const thead = tableEl.querySelector('thead');
+        const firstRow = tableEl.querySelector('tbody tr');
+        headerH = Math.ceil(thead?.getBoundingClientRect().height || 0);
+        rowH = Math.ceil(firstRow?.getBoundingClientRect().height || 0);
+      } catch {
+        // ignore measurement errors; fall back to defaults
+      }
+    }
+    if (!rowH) {
+      // Reasonable fallback: ~2rem rows if we can't measure
+      rowH = Math.ceil(cutoff);
+    }
+
+    const bodyViewport = Math.max(0, available - headerH);
+    const visibleRows = rowH > 0 ? Math.floor(bodyViewport / rowH) : 0;
+
+    // Decide final constraint mode and target height
+    let nextConstrain = false;
+    let targetHeight: number | undefined = undefined;
+
+    if (shouldClampBase) {
+      const tooFewRows = visibleRows < Math.max(0, Math.floor(minConstrainedRows));
+      setKickIn(tooFewRows);
+      if (!tooFewRows) {
+        // Normal constrain-to-available behavior
+        nextConstrain = true;
+        targetHeight = Math.max(0, available);
+      }
+    } else {
+      setKickIn(false);
+      nextConstrain = false;
+      targetHeight = undefined;
+    }
+
+    // Apply state changes with minimal churn
+    if (nextConstrain) {
       if (!constraintRef.current) {
         surfEl.scrollTop = 0;
         surfEl.scrollLeft = 0;
@@ -232,7 +315,7 @@ export function Table<T extends object>({
         prevConstrainedRef.current = true;
         setShouldConstrain(true);
       }
-      const newHeight = Math.max(0, available);
+      const newHeight = targetHeight ?? undefined;
       if (prevHeightRef.current !== newHeight) {
         prevHeightRef.current = newHeight;
         setMaxHeight(newHeight);
@@ -249,7 +332,7 @@ export function Table<T extends object>({
         setMaxHeight(undefined);
       }
     }
-  }, [surface]); // depend on the selected store slice as a whole
+  }, [surface, minConstrainedRows]); // depend on key inputs
 
   const update = useCallback(() => {
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
@@ -391,6 +474,46 @@ export function Table<T extends object>({
     return sort.desc ? arr.reverse() : arr;
   }, [data, columns, sort]);
 
+  /* pagination ----------------------------------------------------------- */
+  const pageSize = Math.max(1, Math.floor(maxExpandedRows));
+  const shouldAutoPaginate = kickIn && Array.isArray(data) && data.length > pageSize;
+  const doPaginate = paginate || shouldAutoPaginate;
+  const pageCount = doPaginate
+    ? Math.max(1, Math.ceil((Array.isArray(data) ? data.length : 0) / pageSize))
+    : 1;
+
+  const [pageInternal, setPageInternal] = useState(1);
+  const isControlledPage = typeof pageProp === 'number';
+  const effectivePageRaw = isControlledPage && pageProp ? pageProp : pageInternal;
+  const effectivePage = Math.min(pageCount, Math.max(1, effectivePageRaw));
+
+  useEffect(() => {
+    // Reset/clamp when pagination toggles or dataset changes
+    if (!doPaginate) {
+      if (pageInternal !== 1) setPageInternal(1);
+      return;
+    }
+    if (effectivePageRaw !== effectivePage) {
+      setPageInternal(effectivePage);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [doPaginate, pageCount, data.length]);
+
+  const handlePageChange = useCallback(
+    (p: number) => {
+      const next = Math.min(pageCount, Math.max(1, p));
+      if (!isControlledPage) setPageInternal(next);
+      onPageChange?.(next);
+    },
+    [isControlledPage, pageCount, onPageChange],
+  );
+
+  const displayRows = useMemo(() => {
+    if (!doPaginate) return sorted;
+    const start = (effectivePage - 1) * pageSize;
+    return sorted.slice(start, start + pageSize);
+  }, [doPaginate, sorted, effectivePage, pageSize]);
+
   /* class merge */
   const cls = [p ? preset(p) : '', className].filter(Boolean).join(' ') || undefined;
 
@@ -451,7 +574,7 @@ export function Table<T extends object>({
         </thead>
 
         <tbody>
-          {sorted.map((row, rIdx) => (
+          {displayRows.map((row, rIdx) => (
             <tr key={rIdx}>
               {selectable ? (
                 <Td $align='center'>
@@ -489,6 +612,22 @@ export function Table<T extends object>({
           ))}
         </tbody>
       </Root>
+      {doPaginate && pageCount > 1 ? (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            padding: `${theme.spacing(1)} ${pad}`,
+          }}
+        >
+          <Pagination
+            count={pageCount}
+            page={effectivePage}
+            onChange={handlePageChange}
+            visibleWindow={paginationWindow}
+          />
+        </div>
+      ) : null}
     </Wrapper>
   );
 }

@@ -12,61 +12,72 @@
     {
       "name": "sources",
       "type": "VideoSource[]",
-      "required": true
+      "required": true,
+      "description": "One or more video sources (MP4/WebM)."
     },
     {
       "name": "poster",
       "type": "string",
-      "required": false
+      "required": false,
+      "description": "Poster image URL displayed before playback."
     },
     {
       "name": "tracks",
       "type": "VideoTrack[]",
-      "required": false
+      "required": false,
+      "description": "Caption or subtitle tracks."
     },
     {
       "name": "controls",
       "type": "boolean",
       "required": false,
+      "description": "Display native controls. Defaults to `true`.",
       "default": "true"
     },
     {
       "name": "autoPlay",
       "type": "boolean",
       "required": false,
+      "description": "Autoplay when ready. Defaults to `true`.",
       "default": "true"
     },
     {
       "name": "muted",
       "type": "boolean",
       "required": false,
+      "description": "Mute audio. Defaults to `true` for autoplay compliance.",
       "default": "true"
     },
     {
       "name": "loop",
       "type": "boolean",
       "required": false,
+      "description": "Loop video.",
       "default": "false"
     },
     {
       "name": "width",
       "type": "string",
-      "required": false
+      "required": false,
+      "description": "CSS width value, e.g. `100%` or `640px`."
     },
     {
       "name": "height",
       "type": "string",
-      "required": false
+      "required": false,
+      "description": "CSS height value, e.g. `auto` or `360px`."
     },
     {
       "name": "lazy",
       "type": "boolean",
-      "required": false
+      "required": false,
+      "description": "Lazy load when in viewport."
     },
     {
       "name": "objectFit",
       "type": "'contain' | 'cover'",
       "required": false,
+      "description": "Custom CSS object-fit. Defaults to `contain`.",
       "default": "'contain'",
       "enumValues": [
         "contain",
@@ -76,7 +87,34 @@
     {
       "name": "sx",
       "type": "Sx",
+      "required": false,
+      "description": "Inline styles (with CSS var support)"
+    },
+    {
+      "name": "onPlay",
+      "type": "(() => void) | undefined",
       "required": false
+    },
+    {
+      "name": "onPause",
+      "type": "(() => void) | undefined",
+      "required": false
+    },
+    {
+      "name": "onLoop",
+      "type": "(() => void) | undefined",
+      "required": false
+    },
+    {
+      "name": "onError",
+      "type": "((e: ErrorEvent) => void) | undefined",
+      "required": false
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
   "domPassthrough": {
@@ -91,7 +129,21 @@
   },
   "cssVars": [],
   "cssPresets": [],
-  "events": [],
+  "events": [
+    {
+      "name": "onPlay"
+    },
+    {
+      "name": "onPause"
+    },
+    {
+      "name": "onLoop"
+    },
+    {
+      "name": "onError",
+      "payloadType": "ErrorEvent"
+    }
+  ],
   "actions": [],
   "slots": [],
   "bestPractices": [
@@ -106,6 +158,6 @@
   "sourceFiles": [
     "src/components/primitives/Video.tsx"
   ],
-  "version": "0.32.0",
+  "version": "0.33.0",
   "schemaVersion": "1.6"
 }

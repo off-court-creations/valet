@@ -86,21 +86,26 @@ export const Surface: React.FC<SurfaceProps> = ({
     useStore.setState((s) => ({ ...s, element: node }));
     const measure = () => {
       const rect = node.getBoundingClientRect();
+      const hasScrollbar = node.scrollHeight > node.clientHeight;
       useStore.setState((s) => ({
         ...s,
         width: rect.width,
         height: Math.round(rect.height),
         breakpoint: bpFor(rect.width),
+        hasScrollbar,
       }));
     };
     const ro = new ResizeObserver(measure);
     const mo = new MutationObserver(measure);
+    const onScroll = () => measure();
     ro.observe(node);
     mo.observe(node, { childList: true, subtree: true });
+    node.addEventListener('scroll', onScroll, { passive: true });
     measure();
     return () => {
       ro.disconnect();
       mo.disconnect();
+      node.removeEventListener('scroll', onScroll);
     };
   }, [bpFor, useStore]);
 
@@ -186,6 +191,7 @@ export const Surface: React.FC<SurfaceProps> = ({
     '--valet-space': spaceVar,
     '--valet-radius': theme.radiusUnit,
     '--valet-stroke': theme.strokeUnit,
+    '--valet-divider': theme.colors.divider,
     '--valet-focus-width': theme.stroke(2),
     '--valet-focus-offset': theme.stroke(2),
     '--valet-divider-stroke': theme.stroke(1),

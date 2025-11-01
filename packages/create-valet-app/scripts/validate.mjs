@@ -65,17 +65,45 @@ async function install(cwd) {
   return await run('npm', ['install', '--no-audit', '--no-fund'], cwd);
 }
 
+function missingScript(res) {
+  return /Missing script/i.test((res.err || '') + (res.out || ''));
+}
+
 async function lint(cwd) {
-  return await run('npm', ['run', '-s', 'lint:agent'], cwd);
+  let res = await run('npm', ['run', '-s', 'lint'], cwd);
+  let usedFallback = false;
+  if (res.code !== 0 && missingScript(res)) {
+    usedFallback = true;
+    res = await run('npm', ['run', '-s', 'lint:agent'], cwd);
+  }
+  const ok = res.code === 0 || /LINT_STATUS:ok/.test(res.out);
+  const out = `${res.out}\n${usedFallback ? '[validate] fallback: used legacy lint:agent script (deprecated)\n' : ''}LINT_STATUS:${ok ? 'ok' : 'fail'}`;
+  return { code: ok ? 0 : (res.code || 1), out, err: res.err };
 }
 
 async function typecheck(cwd, template) {
   if (template === 'js') return { code: 0, out: 'TYPECHECK_STATUS:skipped', err: '' };
-  return await run('npm', ['run', '-s', 'typecheck:agent'], cwd);
+  let res = await run('npm', ['run', '-s', 'typecheck'], cwd);
+  let usedFallback = false;
+  if (res.code !== 0 && missingScript(res)) {
+    usedFallback = true;
+    res = await run('npm', ['run', '-s', 'typecheck:agent'], cwd);
+  }
+  const ok = res.code === 0 || /TYPECHECK_STATUS:ok/.test(res.out);
+  const out = `${res.out}\n${usedFallback ? '[validate] fallback: used legacy typecheck:agent script (deprecated)\n' : ''}TYPECHECK_STATUS:${ok ? 'ok' : 'fail'}`;
+  return { code: ok ? 0 : (res.code || 1), out, err: res.err };
 }
 
 async function build(cwd) {
-  return await run('npm', ['run', '-s', 'build:agent'], cwd);
+  let res = await run('npm', ['run', '-s', 'build'], cwd);
+  let usedFallback = false;
+  if (res.code !== 0 && missingScript(res)) {
+    usedFallback = true;
+    res = await run('npm', ['run', '-s', 'build:agent'], cwd);
+  }
+  const ok = res.code === 0 || /BUILD_STATUS:ok/.test(res.out);
+  const out = `${res.out}\n${usedFallback ? '[validate] fallback: used legacy build:agent script (deprecated)\n' : ''}BUILD_STATUS:${ok ? 'ok' : 'fail'}`;
+  return { code: ok ? 0 : (res.code || 1), out, err: res.err };
 }
 
 async function preview(cwd) {
@@ -212,14 +240,14 @@ async function postChecks(appDir, s) {
     const md = readFileSafe(path.join(appDir, 'AGENTS.md')) || '';
     if (!md) fail('AGENTS.md should exist when --mcp');
     if (!/This is a TypeScript template\./.test(md)) fail('AGENTS.md should mention TypeScript template');
-    if (!/Typecheck:\s*`npm run -s typecheck:agent`/.test(md)) fail('AGENTS.md should include typecheck command');
+    if (!/Typecheck:\s*`npm run -s typecheck`/.test(md)) fail('AGENTS.md should include typecheck command');
     if (!/Router:\s*enabled/.test(md)) fail('AGENTS.md Router feature should be enabled');
     if (!/Zustand:\s*enabled/.test(md)) fail('AGENTS.md Zustand feature should be enabled');
 
     const cd = readFileSafe(path.join(appDir, 'CLAUDE.md')) || '';
     if (!cd) fail('CLAUDE.md should exist when --mcp');
     if (!/This is a TypeScript template\./.test(cd)) fail('CLAUDE.md should mention TypeScript template');
-    if (!/Typecheck:\s*`npm run -s typecheck:agent`/.test(cd)) fail('CLAUDE.md should include typecheck command');
+    if (!/Typecheck:\s*`npm run -s typecheck`/.test(cd)) fail('CLAUDE.md should include typecheck command');
     if (!/Router:\s*enabled/.test(cd)) fail('CLAUDE.md Router feature should be enabled');
     if (!/Zustand:\s*enabled/.test(cd)) fail('CLAUDE.md Zustand feature should be enabled');
   }
@@ -227,13 +255,13 @@ async function postChecks(appDir, s) {
     const md = readFileSafe(path.join(appDir, 'AGENTS.md')) || '';
     if (!md) fail('AGENTS.md should exist when --mcp');
     if (!/JavaScript-only template/.test(md)) fail('AGENTS.md should mention JavaScript-only template');
-    if (/Typecheck:\s*`npm run -s typecheck:agent`/.test(md)) fail('AGENTS.md should not include typecheck command for JS');
+    if (/Typecheck:\s*`npm run -s typecheck`/.test(md)) fail('AGENTS.md should not include typecheck command for JS');
     if (!/Typecheck:\s*n\/a for JS template\./.test(md)) fail('AGENTS.md should mark typecheck n/a for JS');
 
     const cd = readFileSafe(path.join(appDir, 'CLAUDE.md')) || '';
     if (!cd) fail('CLAUDE.md should exist when --mcp');
     if (!/JavaScript-only template/.test(cd)) fail('CLAUDE.md should mention JavaScript-only template');
-    if (/Typecheck:\s*`npm run -s typecheck:agent`/.test(cd)) fail('CLAUDE.md should not include typecheck command for JS');
+    if (/Typecheck:\s*`npm run -s typecheck`/.test(cd)) fail('CLAUDE.md should not include typecheck command for JS');
     if (!/Typecheck:\s*n\/a for JS template\./.test(cd)) fail('CLAUDE.md should mark typecheck n/a for JS');
   }
   if (s.checks?.includes('agents:hybrid-custom')) {

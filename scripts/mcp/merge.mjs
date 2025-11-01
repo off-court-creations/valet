@@ -129,10 +129,13 @@ function merge(tsMap, docsMap, version, metaMap) {
     })();
 
     const status = (() => {
-      const raw = metaMap?.[name]?.status;
-      const allowed = new Set(['golden', 'stable', 'experimental', 'unstable', 'deprecated']);
-      if (allowed.has(raw)) return raw;
-      return undefined;
+      let raw = metaMap?.[name]?.status;
+      const allowed = new Set(['production', 'stable', 'experimental', 'unstable', 'deprecated']);
+      // Backward-compat: translate legacy 'golden' to 'production'
+      if (typeof raw === 'string' && raw.toLowerCase() === 'golden') {
+        raw = 'production';
+      }
+      return typeof raw === 'string' && allowed.has(raw) ? raw : undefined;
     })();
 
     const bestPractices = Array.isArray(metaMap?.[name]?.docs?.bestPractices) && metaMap[name].docs.bestPractices.length

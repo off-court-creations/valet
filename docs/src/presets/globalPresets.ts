@@ -34,6 +34,20 @@ definePreset(
   `,
 );
 
+// Hero-specific frosted glass panel for readability over visuals
+definePreset(
+  'heroGlass',
+  (t) => `
+    background           : ${t.colors['backgroundAlt']}B3; /* ~70% opacity */
+    backdrop-filter      : blur(10px) saturate(160%);
+    -webkit-backdrop-filter: blur(10px) saturate(160%);
+    border               : 1px solid ${t.colors['text']}22;
+    box-shadow           : 0 12px 40px ${t.colors['text']}1a, 0 2px 8px ${t.colors['text']}14;
+    border-radius        : ${t.radius(2)};
+    padding              : ${t.spacing(2)};
+  `,
+);
+
 // Loud gradient banner
 definePreset(
   'gradientHolder',

@@ -18,7 +18,7 @@
     "category": "fields",
     "summary": "DateSelector component",
     "slug": "components/fields/dateselector",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "FormControl",
@@ -32,21 +32,21 @@
     "category": "fields",
     "summary": "IconButton component",
     "slug": "components/fields/iconbutton",
-    "status": "golden"
+    "status": "stable"
   },
   {
     "name": "Iterator",
     "category": "fields",
     "summary": "Iterator component",
     "slug": "components/fields/iterator",
-    "status": "unstable"
+    "status": "stable"
   },
   {
     "name": "MetroSelect",
     "category": "fields",
     "summary": "MetroSelect component",
     "slug": "components/fields/metroselect",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Radio",
@@ -74,14 +74,14 @@
     "category": "fields",
     "summary": "Switch component",
     "slug": "components/fields/switch",
-    "status": "golden"
+    "status": "stable"
   },
   {
     "name": "TextField",
     "category": "fields",
     "summary": "TextField component",
     "slug": "components/fields/textfield",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Accordion",
@@ -102,7 +102,7 @@
     "category": "layout",
     "summary": "Box component",
     "slug": "components/layout/box",
-    "status": "golden"
+    "status": "stable"
   },
   {
     "name": "Drawer",
@@ -123,14 +123,14 @@
     "category": "layout",
     "summary": "List component",
     "slug": "components/layout/list",
-    "status": "unstable"
+    "status": "experimental"
   },
   {
     "name": "Modal",
     "category": "layout",
     "summary": "Modal component",
     "slug": "components/layout/modal",
-    "status": "unstable"
+    "status": "stable"
   },
   {
     "name": "Panel",
@@ -151,7 +151,7 @@
     "category": "layout",
     "summary": "Surface component",
     "slug": "components/layout/surface",
-    "status": "golden"
+    "status": "stable"
   },
   {
     "name": "Tabs",
@@ -165,7 +165,7 @@
     "category": "primitives",
     "summary": "Avatar component",
     "slug": "components/primitives/avatar",
-    "status": "golden"
+    "status": "stable"
   },
   {
     "name": "Divider",
@@ -186,21 +186,14 @@
     "category": "primitives",
     "summary": "Image component",
     "slug": "components/primitives/image",
-    "status": "unstable"
+    "status": "stable"
   },
   {
     "name": "Progress",
     "category": "primitives",
     "summary": "Progress component",
     "slug": "components/primitives/progress",
-    "status": "unstable"
-  },
-  {
-    "name": "Skeleton",
-    "category": "primitives",
-    "summary": "Skeleton component",
-    "slug": "components/primitives/skeleton",
-    "status": "unstable"
+    "status": "stable"
   },
   {
     "name": "Typography",
@@ -217,6 +210,13 @@
     "status": "stable"
   },
   {
+    "name": "WebGLCanvas",
+    "category": "primitives",
+    "summary": "WebGLCanvas component",
+    "slug": "components/primitives/webglcanvas",
+    "status": "stable"
+  },
+  {
     "name": "Chip",
     "category": "widgets",
     "summary": "Chip component",
@@ -228,14 +228,14 @@
     "category": "widgets",
     "summary": "CodeBlock component",
     "slug": "components/widgets/codeblock",
-    "status": "unstable"
+    "status": "stable"
   },
   {
     "name": "Dropzone",
     "category": "widgets",
     "summary": "Dropzone component",
     "slug": "components/widgets/dropzone",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "LLMChat",
@@ -249,7 +249,7 @@
     "category": "widgets",
     "summary": "LoadingBackdrop component",
     "slug": "components/widgets/loadingbackdrop",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Markdown",
@@ -284,41 +284,34 @@
     "category": "widgets",
     "summary": "Snackbar component",
     "slug": "components/widgets/snackbar",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "SpeedDial",
     "category": "widgets",
     "summary": "SpeedDial component",
     "slug": "components/widgets/speeddial",
-    "status": "experimental"
-  },
-  {
-    "name": "Stepper",
-    "category": "widgets",
-    "summary": "Stepper component",
-    "slug": "components/widgets/stepper",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Table",
     "category": "widgets",
     "summary": "Table component",
     "slug": "components/widgets/table",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Tooltip",
     "category": "widgets",
     "summary": "Tooltip component",
     "slug": "components/widgets/tooltip",
-    "status": "golden"
+    "status": "stable"
   },
   {
     "name": "Tree",
     "category": "widgets",
     "summary": "Tree component",
     "slug": "components/widgets/tree",
-    "status": "experimental"
+    "status": "stable"
   }
 ]

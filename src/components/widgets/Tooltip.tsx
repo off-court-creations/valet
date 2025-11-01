@@ -50,6 +50,12 @@ const Wrapper = styled('span')`
   /* ----- critical: never stretch in a flex column -------- */
   flex: 0 0 auto;
   align-self: flex-start;
+  /* Prevent iOS long‑press selection/callout on trigger wrapper */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 `;
 
 const Bubble = styled('div')<{
@@ -70,6 +76,10 @@ const Bubble = styled('div')<{
   font-size: 0.75rem;
   line-height: 1.3;
   pointer-events: none;
+  /* Avoid iOS selection handles / callout in tooltip text */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 
   opacity: ${({ $show }) => ($show ? 1 : 0)};
   transition:

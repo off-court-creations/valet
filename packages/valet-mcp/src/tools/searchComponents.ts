@@ -22,7 +22,7 @@ const ParamsSchema = {
   status: z
     .union([z.string(), z.array(z.string())])
     .optional()
-    .describe("Optional status filter: 'golden'|'stable'|'experimental'|'unstable'|'deprecated'."),
+    .describe("Optional status filter: 'production'|'stable'|'experimental'|'unstable'|'deprecated'."),
 } as const;
 
 export function registerSearchComponents(server: McpServer): void {

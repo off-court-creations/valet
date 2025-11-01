@@ -1,6 +1,7 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/layout/Modal.tsx  | valet
 // spacing refactor: container pad; rem→spacing; compact – 2025‑08‑12
+// patched: DOM passthrough + sx; viewport-constrained height; a11y guard – 2025‑10‑29
 // Accessible, theme-aware Modal component that supports both “dialog” and
 // “alert” semantics. Fully controlled/uncontrolled, focus-trapping, backdrop &
 // ESC/Click dismissal, no external deps.
@@ -11,7 +12,7 @@ import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { inheritSurfaceFontVars } from '../../system/inheritSurfaceFontVars';
-import type { Presettable } from '../../types';
+import type { Presettable, Sx } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 /* Styled primitives                                         */
@@ -22,8 +23,12 @@ const Backdrop = styled('div')<{ $fade: boolean }>`
   background: rgba(0, 0, 0, 0.55);
   backdrop-filter: blur(2px);
   opacity: ${({ $fade }) => ($fade ? 0 : 1)};
-  transition: opacity 200ms ease;
-  z-index: 9998;
+  transition: opacity var(--valet-modal-duration, 200ms) var(--valet-modal-easing, ease);
+  z-index: var(--valet-modal-z-backdrop, 9998);
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 `;
 
 const Box = styled('div')<{
@@ -40,12 +45,14 @@ const Box = styled('div')<{
   transform: translate(-50%, -50%) scale(${({ $fade }) => ($fade ? 0.92 : 1)});
   opacity: ${({ $fade }) => ($fade ? 0 : 1)};
   transition:
-    opacity 200ms ease,
-    transform 200ms ease;
-  z-index: 9999;
+    opacity var(--valet-modal-duration, 200ms) var(--valet-modal-easing, ease),
+    transform var(--valet-modal-duration, 200ms) var(--valet-modal-easing, ease);
+  z-index: var(--valet-modal-z, 9999);
 
   max-width: ${({ $maxW, $full }) => ($full ? 'none' : $maxW || '32rem')};
-  width: ${({ $full }) => ($full ? 'calc(100% - 2rem)' : 'auto')};
+  /* Use CSS var so callers can adjust viewport margin */
+  width: ${({ $full }) =>
+    $full ? 'calc(100% - var(--valet-modal-viewport-margin, 2rem))' : 'auto'};
   padding: ${({ $pad }) => $pad};
 
   background: ${({ $bg }) => $bg};
@@ -55,6 +62,17 @@ const Box = styled('div')<{
 
   display: flex;
   flex-direction: column;
+  /* Constrain height to viewport; allow internal section to scroll */
+  max-height: calc(100dvh - var(--valet-modal-viewport-margin, 2rem));
+  overflow: hidden;
+  /* Ensure flex children can shrink for overflow */
+  min-width: 0;
+  min-height: 0;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    transform: translate(-50%, -50%) scale(1);
+  }
 `;
 
 const Header = styled('header')<{ $pt: string; $px: string; $pb: string }>`
@@ -88,19 +106,108 @@ const Actions = styled('footer')<{ $pt: string; $px: string; $pb: string; $gap: 
 /*───────────────────────────────────────────────────────────*/
 /* Helpers                                                   */
 
-// Grab all focusable descendants (simplified)
-const FOCUSABLE = 'button, [href], input, textarea, select, [tabindex]';
-const getFocusable = (el: HTMLElement | null): HTMLElement[] =>
-  el
-    ? Array.from(el.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
-        (n) => !n.hasAttribute('disabled') && !n.getAttribute('aria-hidden'),
-      )
-    : [];
+// Grab all focusable & tabbable descendants (robust enough for our needs)
+const FOCUSABLE = [
+  'a[href]',
+  'area[href]',
+  'button:not([disabled])',
+  'input:not([disabled]):not([type="hidden"])',
+  'select:not([disabled])',
+  'textarea:not([disabled])',
+  '[tabindex]:not([tabindex="-1"])',
+].join(',');
+
+const getFocusable = (el: HTMLElement | null): HTMLElement[] => {
+  if (!el) return [];
+  const list = Array.from(el.querySelectorAll<HTMLElement>(FOCUSABLE));
+  return list.filter((n) => {
+    if (n.hasAttribute('disabled')) return false;
+    if (n.getAttribute('aria-hidden') === 'true') return false;
+    const style = (n.ownerDocument?.defaultView || window).getComputedStyle(n);
+    if (!style) return true;
+    if (style.visibility === 'hidden' || style.display === 'none') return false;
+    return true;
+  });
+};
+
+/*───────────────────────────────────────────────────────────*/
+/* Global background lock & inert manager                    */
+
+type InertPrev = { hadInert: boolean; ariaHidden: string | null };
+const __valetModalLock = {
+  count: 0,
+  bodyOverflow: '' as string,
+  bodyPaddingRight: '' as string,
+  inertMap: new WeakMap<HTMLElement, InertPrev>(),
+};
+
+function computeScrollbarWidth(): number {
+  if (typeof window === 'undefined') return 0;
+  const docEl = document.documentElement;
+  const w = window.innerWidth - docEl.clientWidth;
+  return Math.max(0, w || 0);
+}
+
+function applyBackgroundLock(exclude: HTMLElement[]) {
+  if (typeof document === 'undefined') return;
+  // First lock: capture body styles and apply overflow + compensation
+  if (__valetModalLock.count === 0) {
+    const body = document.body;
+    __valetModalLock.bodyOverflow = body.style.overflow || '';
+    __valetModalLock.bodyPaddingRight = body.style.paddingRight || '';
+
+    const currentPad = parseFloat(getComputedStyle(body).paddingRight || '0') || 0;
+    const sbw = computeScrollbarWidth();
+    if (sbw > 0) body.style.paddingRight = `${currentPad + sbw}px`;
+    body.style.overflow = 'hidden';
+
+    // Mark all other body children inert + aria-hidden
+    const children = Array.from(body.children) as HTMLElement[];
+    for (const el of children) {
+      if (exclude.includes(el)) continue;
+      const prev: InertPrev = {
+        hadInert: el.hasAttribute('inert'),
+        ariaHidden: el.getAttribute('aria-hidden'),
+      };
+      __valetModalLock.inertMap.set(el, prev);
+      el.setAttribute('aria-hidden', 'true');
+      el.setAttribute('inert', '');
+    }
+  }
+  __valetModalLock.count += 1;
+}
+
+function releaseBackgroundLock() {
+  if (typeof document === 'undefined') return;
+  if (__valetModalLock.count === 0) return;
+  __valetModalLock.count -= 1;
+  if (__valetModalLock.count > 0) return;
+
+  const body = document.body;
+  // Restore inert/aria-hidden
+  const children = Array.from(body.children) as HTMLElement[];
+  for (const el of children) {
+    const prev = __valetModalLock.inertMap.get(el);
+    if (!prev) continue;
+    // Restore aria-hidden
+    if (prev.ariaHidden == null) el.removeAttribute('aria-hidden');
+    else el.setAttribute('aria-hidden', prev.ariaHidden);
+    // Restore inert
+    if (!prev.hadInert) el.removeAttribute('inert');
+  }
+  __valetModalLock.inertMap = new WeakMap();
+
+  // Restore body styles
+  body.style.overflow = __valetModalLock.bodyOverflow;
+  body.style.paddingRight = __valetModalLock.bodyPaddingRight;
+}
 
 /*───────────────────────────────────────────────────────────*/
 /* Public API                                                */
 
-export interface ModalProps extends Presettable {
+export interface ModalProps
+  extends Omit<React.ComponentProps<'div'>, 'style' | 'title'>,
+    Presettable {
   /** Controlled visiblity */
   open?: boolean;
   /** Default for uncontrolled */
@@ -127,6 +234,8 @@ export interface ModalProps extends Presettable {
   maxWidth?: number | string;
   /** Stretch to full viewport width minus gutter */
   fullWidth?: boolean;
+  /** Inline styles (with CSS var support). */
+  sx?: Sx;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -147,6 +256,9 @@ export const Modal: React.FC<ModalProps> = ({
   maxWidth,
   fullWidth = false,
   preset: presetKey,
+  className,
+  sx,
+  ...rest
 }) => {
   const { theme } = useTheme();
   const presetClasses = presetKey ? preset(presetKey) : '';
@@ -160,6 +272,7 @@ export const Modal: React.FC<ModalProps> = ({
   /* ----- refs ----------------------------------------------------------- */
   const idTitle = useId();
   const dialogRef = useRef<HTMLDivElement | null>(null);
+  const backdropRef = useRef<HTMLDivElement | null>(null);
   const previouslyFocused = useRef<Element | null>(null);
 
   /* ----- open / close helpers ------------------------------------------ */
@@ -183,6 +296,11 @@ export const Modal: React.FC<ModalProps> = ({
       (focusable[0] || el).focus();
     }
 
+    // Lock page scroll and mark background content inert
+    applyBackgroundLock(
+      [backdropRef.current!, dialogRef.current!].filter(Boolean) as HTMLElement[],
+    );
+
     // Focus trap handlers
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && !disableEscapeKeyDown) {
@@ -197,9 +315,17 @@ export const Modal: React.FC<ModalProps> = ({
         }
         const first = nodes[0];
         const last = nodes[nodes.length - 1];
-        if (e.shiftKey ? e.target === first : e.target === last) {
-          e.preventDefault();
-          (e.shiftKey ? last : first).focus();
+        const active = (document.activeElement as HTMLElement) || undefined;
+        if (e.shiftKey) {
+          if (!active || active === first) {
+            e.preventDefault();
+            last.focus();
+          }
+        } else {
+          if (!active || active === last) {
+            e.preventDefault();
+            first.focus();
+          }
         }
       }
     };
@@ -209,12 +335,34 @@ export const Modal: React.FC<ModalProps> = ({
     // Ensure portalled dialog inherits Surface font/typography variables
     if (dialogRef.current) inheritSurfaceFontVars(dialogRef.current);
 
+    // Dev-time a11y guard: dialog/alertdialog should have an accessible name
+    if (process.env.NODE_ENV !== 'production') {
+      try {
+        const ariaLabel = (rest as unknown as Record<string, unknown>)?.['aria-label'] as
+          | string
+          | undefined;
+        const ariaLabelledBy = (rest as unknown as Record<string, unknown>)?.['aria-labelledby'] as
+          | string
+          | undefined;
+        const hasName = Boolean(title || ariaLabel || ariaLabelledBy);
+        if (!hasName) {
+          console.warn(
+            'valet Modal: accessible name missing. Provide `title`, `aria-label`, or `aria-labelledby`.',
+          );
+        }
+      } catch {
+        /* no-op */
+      }
+    }
+
     return () => {
       document.removeEventListener('keydown', handleKeyDown, true);
+      // Release background lock/inert
+      releaseBackgroundLock();
       setFade(true);
       (previouslyFocused.current as HTMLElement | null)?.focus?.();
     };
-  }, [open, disableEscapeKeyDown, requestClose]);
+  }, [open, disableEscapeKeyDown, requestClose, title, rest]);
 
   /* ----- backdrop click ------------------------------------------------- */
   const handleBackdropClick = (e: React.MouseEvent) => {
@@ -229,10 +377,12 @@ export const Modal: React.FC<ModalProps> = ({
   const modalElement = (
     <>
       <Backdrop
+        ref={backdropRef}
         $fade={fade}
         onClick={handleBackdropClick}
       />
       <Box
+        {...rest}
         ref={dialogRef}
         role={variant === 'alert' ? 'alertdialog' : 'dialog'}
         aria-modal='true'
@@ -250,8 +400,16 @@ export const Modal: React.FC<ModalProps> = ({
               ? theme.spacing(padProp)
               : (padProp ?? theme.spacing(1))
         }
-        className={presetClasses}
-        style={{ '--valet-modal-radius': theme.radius(1) } as React.CSSProperties}
+        className={[presetClasses, className].filter(Boolean).join(' ')}
+        style={
+          {
+            '--valet-modal-radius': theme.radius(1),
+            '--valet-modal-duration': theme.motion.duration.base,
+            '--valet-modal-easing': theme.motion.easing.standard,
+            '--valet-modal-viewport-margin': theme.spacing(4),
+            ...(sx as Sx),
+          } as Sx
+        }
       >
         {title && (
           <Header
