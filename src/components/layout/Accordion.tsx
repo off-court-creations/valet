@@ -7,6 +7,7 @@
 // - Semantics: strict ARIA wiring; heading level; data-state attrs
 // - Surface-aware height constraint
 // ─────────────────────────────────────────────────────────────
+/* eslint-disable react/prop-types */
 import React, {
   createContext,
   ReactNode,
@@ -18,7 +19,6 @@ import React, {
   useState,
   useId,
   useEffect,
-  forwardRef,
 } from 'react';
 import type { JSX } from 'react';
 import { styled } from '../../css/createStyled';
@@ -236,19 +236,19 @@ export interface AccordionItemProps extends React.HTMLAttributes<HTMLDivElement>
 export const Accordion: React.FC<AccordionProps> & {
   Item: React.FC<AccordionItemProps>;
 } = ({
-    defaultOpen,
-    open: openProp,
-    multiple = false,
-    onOpenChange,
-    headingLevel = 3,
-    constrainHeight = true,
-    unmountOnExit = false,
-    pad: padProp,
-    compact = false,
-    preset: p,
-    className,
-    children,
-    ...divProps
+  defaultOpen,
+  open: openProp,
+  multiple = false,
+  onOpenChange,
+  headingLevel = 3,
+  constrainHeight = true,
+  unmountOnExit = false,
+  pad: padProp,
+  compact = false,
+  preset: p,
+  className,
+  children,
+  ...divProps
 }) => {
   const { theme } = useTheme();
   const surface = useSurface(
