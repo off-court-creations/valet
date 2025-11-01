@@ -1,6 +1,6 @@
 {
   "name": "@archway/valet-mcp",
-  "version": "0.32.4",
+  "version": "0.33.0",
   "description": "Model Context Protocol server exposing @archway/valet component metadata (props, css vars, examples).",
   "type": "module",
   "main": "dist/index.js",
