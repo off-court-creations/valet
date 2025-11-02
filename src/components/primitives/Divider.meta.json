@@ -2,11 +2,13 @@
   "name": "Divider",
   "status": "stable",
   "aliases": ["divider", "rule", "hr"],
-  "docs": { "bestPractices": [
-    "Use to separate related groups; avoid overuse that creates visual noise.",
-    "Prefer semantic spacing first; add dividers only when separation isn’t clear.",
-    "Match thickness and colour to theme density; avoid heavy borders in content‑dense areas.",
-    "Respect alignment—span appropriate containers and avoid awkward trims.",
-    "Don’t communicate state with dividers; use colour/tokens in the relevant component instead."
-  ]}
+  "docs": {
+    "bestPractices": [
+      "Use to separate related groups; avoid overuse that creates visual noise.",
+      "Prefer semantic spacing first; add dividers only when separation isn’t clear.",
+      "Match thickness and colour to theme density; avoid heavy borders in content‑dense areas.",
+      "Respect alignment—span appropriate containers and avoid awkward trims.",
+      "Don’t communicate state with dividers; use colour/tokens in the relevant component instead."
+    ]
+  }
 }

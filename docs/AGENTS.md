@@ -23,19 +23,23 @@ It encodes project ethos, required workflows, and performance habits that keep A
 
 ### For valet contributors (this repo)
 
-1) Environment
+1. Environment
+
 - Node LTS; repo already includes `node_modules` in CI/dev.
 - No network installs mid‑run unless strictly necessary.
 
-2) Install and link (first setup)
+2. Install and link (first setup)
+
 - `cd valet && npm install`
 - `cd docs && npm install`
 
-3) Dev loop (linked)
+3. Dev loop (linked)
+
 - Terminal A: `cd valet && npm link && npm run dev`
 - Terminal B: `cd docs && npm link @archway/valet && npm run dev`
 
-4) Pre-finish guards (run in this order when you changed code)
+4. Pre-finish guards (run in this order when you changed code)
+
 - From repo root: `npm run lint:fix`
 - From repo root: `npm run build`
 - From `docs/`: `npm run build`
@@ -44,14 +48,16 @@ If any step fails, fix and repeat until clean. Zero lint errors is required.
 
 ### For agents using valet in another project
 
-1) Install: `npm i @archway/valet`
-2) App bootstrap:
+1. Install: `npm i @archway/valet`
+2. App bootstrap:
+
 - Mount `BrowserRouter` in `main.tsx` and render `<App>` inside it.
 - Import presets before render; call `useInitialTheme({ fonts }, [fontList])` once in `<App>`.
 - Wrap each route in `<Surface>`; do not nest `<Surface>`.
-3) Layout: prefer `<Stack>` and `<Panel>` for consistent spacing and responsiveness.
-4) State + semantics: use `useTheme`, avoid hard‑coding colors; leverage `createFormStore` for forms.
-5) Performance: lazy‑load routes with `React.lazy` + `Suspense`.
+
+3. Layout: prefer `<Stack>` and `<Panel>` for consistent spacing and responsiveness.
+4. State + semantics: use `useTheme`, avoid hard‑coding colors; leverage `createFormStore` for forms.
+5. Performance: lazy‑load routes with `React.lazy` + `Suspense`.
 
 ---
 
@@ -113,21 +119,26 @@ These shape how components express semantics, styles, and state. Reuse them.
 
 ## 6) Library Contributor Workflow (valet itself)
 
-1) Scope the change
+1. Scope the change
+
 - What component/system is affected? What user‑visible behavior changes? Any breaking types?
 
-2) Implement
+2. Implement
+
 - Keep updates localized; follow file header conventions; keep props typed and documented.
 
-3) Validate
+3. Validate
+
 - `npm run lint:fix` (root) → fix all issues.
 - `npm run build` (root) → verify the library builds.
 - `cd docs && npm run build` → verify docs app builds with your changes.
 
-4) Changelog
+4. Changelog
+
 - Update `CHANGELOG.md` under `Unreleased`. If similar prior entry exists, revise it to include your changes.
 
-5) Commit style
+5. Commit style
+
 - Short, imperative messages prefixed by your agent tag:
   - `git commit -m "codex - clarify FormControl a11y mapping"`
   - `git commit -m "devstral - optimize Table row virtualization"`
@@ -201,17 +212,20 @@ If in doubt, optimize for clarity and predictable outcomes. Agents should consis
 Valet components intentionally expose semantic props that encode behavior, theming, and accessibility. Prefer these first‑class props instead of reaching for ad‑hoc styles in `sx` when they express the same intent.
 
 Why this matters
+
 - Semantics: props communicate purpose (e.g., centring content) rather than an incidental style.
 - Theming + a11y: built‑ins cooperate with theme tokens, modes, and contrast rules.
 - Consistency: components stay predictable across pages; fewer edge cases.
 - Introspection: MCP data and docs reflect prop‑level behavior; agents rely on this.
 
 Heuristics
+
 - Choose API semantics first; use `sx` only for details that aren’t covered by the component API.
 - If you catch yourself hand‑coding a common pattern, look for a prop or a preset.
 - Prefer tokens (`theme.colors`, spacing units, presets) over raw CSS values.
 
 Concrete examples
+
 - Centring content inside a container
   - Do: `<Box centerContent>…</Box>`
   - Don’t: `<Box sx={{ textAlign: 'center' }}>…</Box>`
@@ -223,4 +237,5 @@ Concrete examples
   - Don’t: `<Panel sx={{ background: 'transparent', outline: '1px solid …' }}>…</Panel>`
 
 Principle in one line
+
 - You shouldn’t use `sx` when a valet prop does the same thing better. Prefer the built‑in props.

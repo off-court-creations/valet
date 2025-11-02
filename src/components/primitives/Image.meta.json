@@ -2,13 +2,15 @@
   "name": "Image",
   "status": "stable",
   "aliases": ["image", "img", "picture"],
-  "docs": { "bestPractices": [
-    "Always set alt text; use empty alt for decorative images.",
-    "Specify dimensions via width/height or aspectRatio to avoid layout shift.",
-    "Choose fit (`cover`/`contain`) and objectPosition deliberately to control cropping/focus.",
-    "Use srcSet/sizes for responsive sources; avoid full‑resolution assets in small spaces.",
-    "Default lazy loading is enabled; use loading='eager' and optionally fetchPriority='high' for LCP heroes.",
-    "Avoid background images for content; prefer `<Image>` so a11y tools can interpret it.",
-    "Apply rounded corners via a wrapper (Panel/Box) with `overflow: hidden` or via sx; avoid per‑component shape props."
-  ]}
+  "docs": {
+    "bestPractices": [
+      "Always set alt text; use empty alt for decorative images.",
+      "Specify dimensions via width/height or aspectRatio to avoid layout shift.",
+      "Choose fit (`cover`/`contain`) and objectPosition deliberately to control cropping/focus.",
+      "Use srcSet/sizes for responsive sources; avoid full‑resolution assets in small spaces.",
+      "Default lazy loading is enabled; use loading='eager' and optionally fetchPriority='high' for LCP heroes.",
+      "Avoid background images for content; prefer `<Image>` so a11y tools can interpret it.",
+      "Apply rounded corners via a wrapper (Panel/Box) with `overflow: hidden` or via sx; avoid per‑component shape props."
+    ]
+  }
 }

@@ -2,11 +2,13 @@
   "name": "Icon",
   "status": "stable",
   "aliases": ["icon", "glyph"],
-  "docs": { "bestPractices": [
-    "Prefer well‑known glyphs and keep sizes consistent with surrounding text or controls.",
-    "Provide accessible labels when icons are actionable or convey status.",
-    "Avoid using colour alone to convey meaning; pair with text or status tokens.",
-    "Use tokens/presets for colour and size; avoid ad‑hoc CSS to preserve consistency.",
-    "Don’t overload meaning—keep one concept per icon and avoid ambiguous metaphors."
-  ]}
+  "docs": {
+    "bestPractices": [
+      "Prefer well‑known glyphs and keep sizes consistent with surrounding text or controls.",
+      "Provide accessible labels when icons are actionable or convey status.",
+      "Avoid using colour alone to convey meaning; pair with text or status tokens.",
+      "Use tokens/presets for colour and size; avoid ad‑hoc CSS to preserve consistency.",
+      "Don’t overload meaning—keep one concept per icon and avoid ambiguous metaphors."
+    ]
+  }
 }

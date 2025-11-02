@@ -2,12 +2,14 @@
   "name": "Progress",
   "status": "stable",
   "aliases": ["progress", "spinner", "loader"],
-  "docs": { "bestPractices": [
-    "Use determinate bars when percent is known; spinners for unknown durations.",
-    "Provide accessible labels (e.g., `aria-label` or nearby text) that explain what is loading.",
-    "Avoid blocking the entire page—prefer inline or section‑level indicators when possible.",
-    "Use theme colours to convey status (e.g., `error` for failures) and tokens for size.",
-    "Don’t rely solely on colour; pair with text or icons for critical states.",
-    "Keep motion subtle and aligned with the theme’s motion tokens."
-  ]}
+  "docs": {
+    "bestPractices": [
+      "Use determinate bars when percent is known; spinners for unknown durations.",
+      "Provide accessible labels (e.g., `aria-label` or nearby text) that explain what is loading.",
+      "Avoid blocking the entire page—prefer inline or section‑level indicators when possible.",
+      "Use theme colours to convey status (e.g., `error` for failures) and tokens for size.",
+      "Don’t rely solely on colour; pair with text or icons for critical states.",
+      "Keep motion subtle and aligned with the theme’s motion tokens."
+    ]
+  }
 }

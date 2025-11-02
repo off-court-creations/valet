@@ -1,6 +1,13 @@
-{ "name": "Stack", "status": "stable", "aliases": ["stack", "vstack", "hstack"], "docs": { "bestPractices": [
-  "Use for one‑dimensional layouts (rows/columns) with consistent gaps.",
-  "Switch direction responsively and keep spacing tokenized; avoid fixed pixel gaps.",
-  "Align items intentionally and avoid mixing diverse alignments within the same group.",
-  "Prefer `Grid` for complex two‑dimensional layouts and `Table` for data."
-] } }
+{
+  "name": "Stack",
+  "status": "stable",
+  "aliases": ["stack", "vstack", "hstack"],
+  "docs": {
+    "bestPractices": [
+      "Use for one‑dimensional layouts (rows/columns) with consistent gaps.",
+      "Switch direction responsively and keep spacing tokenized; avoid fixed pixel gaps.",
+      "Align items intentionally and avoid mixing diverse alignments within the same group.",
+      "Prefer `Grid` for complex two‑dimensional layouts and `Table` for data."
+    ]
+  }
+}
