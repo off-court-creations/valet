@@ -10,7 +10,6 @@
   ```sh
   npm run mcp:build
   npm run mcp:server:build
-  npm run mcp:server:selfcheck
   npm run mcp:server:publish[:patch|:minor|:major]
   ```
 - **create-valet-app** → update template deps, validate, publish from the root.
@@ -27,5 +26,5 @@
   ```
 - **git + deploy** → commit bumps/data, push with tags, PR into `main` for the production docs build.
   ```sh
-  git push --follow-tags origin dev
+  git push origin development --follow-tags 
   ```
