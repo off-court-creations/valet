@@ -11,7 +11,6 @@ import { shallow } from 'zustand/shallow';
 import { preset } from '../../css/stylePresets';
 import IconButton from '../fields/IconButton';
 import TextField from '../fields/TextField';
-import Stack from '../layout/Stack';
 import Panel from '../layout/Panel';
 import Typography from '../primitives/Typography';
 import Markdown from './Markdown';
@@ -69,7 +68,8 @@ const Messages = styled('div')<{
   padding: ${({ $pad }) => $pad};
   box-sizing: border-box;
   min-height: 0; /* enable internal scrolling when constrained */
-  transition: max-height ${({ $dur }) => $dur} ${({ $ease }) => $ease},
+  transition:
+    max-height ${({ $dur }) => $dur} ${({ $ease }) => $ease},
     padding ${({ $dur }) => $dur} ${({ $ease }) => $ease},
     gap ${({ $dur }) => $dur} ${({ $ease }) => $ease};
   @media (prefers-reduced-motion: reduce) {
@@ -98,7 +98,9 @@ const Row = styled('div')<{
     transition: margin-top ${({ $dur }) => $dur} ${({ $ease }) => $ease};
   }
   @media (prefers-reduced-motion: reduce) {
-    > * { transition: none !important; }
+    > * {
+      transition: none !important;
+    }
   }
   /* When the bubble spans multiple lines, align everything to the top */
   &:has([data-valet-multiline='true']) {
@@ -201,10 +203,11 @@ const MeasuredBubble: React.FC<PanelPropsForBubble> = ({ children, sx: sxIn, ...
   }, [children, heightPx]);
 
   // Merge incoming sx with height animation
+  const existingTransition = sxIn && typeof sxIn.transition === 'string' ? sxIn.transition : '';
   const sxMerged: Sx = {
     ...sxIn,
     height: heightPx ? `${heightPx}px` : undefined,
-    transition: `${(sxIn as any)?.transition || ''} height ${theme.motion.duration.base} ${theme.motion.easing.standard}`,
+    transition: `${existingTransition} height ${theme.motion.duration.base} ${theme.motion.easing.standard}`,
     willChange: 'height',
   };
 

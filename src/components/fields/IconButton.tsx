@@ -173,8 +173,7 @@ export const IconButton: React.FC<IconButtonProps> = ({
   };
 
   const bg = resolveToken(background) ?? theme.colors.primary;
-  const equals = (a?: string, b?: string) =>
-    (a || '').toUpperCase() === (b || '').toUpperCase();
+  const equals = (a?: string, b?: string) => (a || '').toUpperCase() === (b || '').toUpperCase();
   const buttonTextFor = (bgHex: string) => {
     if (equals(bgHex, theme.colors.primary)) return theme.colors.primaryButtonText;
     if (equals(bgHex, theme.colors.secondary)) return theme.colors.secondaryButtonText;
