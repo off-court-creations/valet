@@ -57,27 +57,64 @@ const Wrapper = styled('div')<{ $gap: string }>`
   min-height: 0; /* allow children to shrink inside flex column */
 `;
 
-const Messages = styled('div')<{ $gap: string; $pad: string }>`
+const Messages = styled('div')<{
+  $gap: string;
+  $pad: string;
+  $dur: string;
+  $ease: string;
+}>`
   display: flex;
   flex-direction: column;
   gap: ${({ $gap }) => $gap};
   padding: ${({ $pad }) => $pad};
   box-sizing: border-box;
   min-height: 0; /* enable internal scrolling when constrained */
+  transition: max-height ${({ $dur }) => $dur} ${({ $ease }) => $ease},
+    padding ${({ $dur }) => $dur} ${({ $ease }) => $ease},
+    gap ${({ $dur }) => $dur} ${({ $ease }) => $ease};
+  @media (prefers-reduced-motion: reduce) {
+    transition: none !important;
+  }
 `;
 
 const Row = styled('div')<{
   $from: 'user' | 'assistant' | 'system' | 'function' | 'tool';
   $gap: string;
-  $padX: string;
+  $padL: string;
+  $padR: string;
+  $dur: string;
+  $ease: string;
 }>`
   /* Two‑column lane: avatar | bubble (assistant) or bubble | avatar (user) */
   display: grid;
   grid-template-columns: ${({ $from }) => ($from === 'user' ? '1fr auto' : 'auto 1fr')};
-  align-items: start;
+  /* Default to vertical centering; individual cells may override via align-self */
+  align-items: center;
   column-gap: ${({ $gap }) => $gap};
-  padding-left: ${({ $padX }) => $padX};
-  padding-right: ${({ $padX }) => $padX};
+  padding-left: ${({ $padL }) => $padL};
+  padding-right: ${({ $padR }) => $padR};
+  /* Smooth vertical nudges when content reflows */
+  > * {
+    transition: margin-top ${({ $dur }) => $dur} ${({ $ease }) => $ease};
+  }
+  @media (prefers-reduced-motion: reduce) {
+    > * { transition: none !important; }
+  }
+  /* When the bubble spans multiple lines, align everything to the top */
+  &:has([data-valet-multiline='true']) {
+    align-items: start;
+  }
+  /* Nudge avatar slightly down when multiline for better optical alignment */
+  &:has([data-valet-multiline='true']) > :not([data-valet-multiline]) {
+    align-self: start;
+    margin-top: 0.75rem; /* hardcoded per design */
+  }
+  /* Respect reduced motion for bubble height animation */
+  @media (prefers-reduced-motion: reduce) {
+    & [data-valet-animate-height='true'] {
+      transition: none !important;
+    }
+  }
 `;
 
 const typingDot = keyframes`
@@ -108,6 +145,85 @@ const Typing = styled('div')<{ $color: string }>`
     animation-delay: 0.4s;
   }
 `;
+
+// Dedicated input row to avoid width collisions between text field and send button
+const InputRow = styled('div')<{ $gap: string; $pad: string }>`
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: ${({ $gap }) => $gap};
+  padding: ${({ $pad }) => $pad};
+  box-sizing: border-box;
+`;
+
+/*───────────────────────────────────────────────────────────*/
+/* Helpers: measured bubble/avatar alignment                 */
+type PanelPropsForBubble = React.ComponentProps<typeof Panel>;
+
+const MeasuredBubble: React.FC<PanelPropsForBubble> = ({ children, sx: sxIn, ...panelProps }) => {
+  const { theme } = useTheme();
+  const contentRef = useRef<HTMLDivElement | null>(null);
+  const [isMulti, setIsMulti] = useState(false);
+  const [heightPx, setHeightPx] = useState<number | undefined>(undefined);
+
+  useLayoutEffect(() => {
+    const node = contentRef.current;
+    if (!node) return;
+    const compute = () => {
+      try {
+        // Measure content height + panel vertical padding (Panel is border-box)
+        const contentH = Math.ceil(node.getBoundingClientRect().height || 0);
+        let padV = 0;
+        const panelEl = node.parentElement as HTMLElement | null;
+        if (panelEl) {
+          const csP = getComputedStyle(panelEl);
+          const pt = parseFloat(csP.paddingTop || '0') || 0;
+          const pb = parseFloat(csP.paddingBottom || '0') || 0;
+          padV = pt + pb;
+        }
+        // Add a 1px safety buffer to avoid subpixel rounding clipping
+        const h = Math.max(0, contentH + padV + 1);
+        if (h > 0 && h !== heightPx) setHeightPx(h);
+        // Detect multiline via line-height heuristic
+        const cs = getComputedStyle(node);
+        const lhRaw = cs.lineHeight;
+        const lh = Number.isFinite(parseFloat(lhRaw)) ? parseFloat(lhRaw) : 0;
+        const multi = lh > 0 ? h > lh * 1.5 : h > 28; // conservative fallback
+        setIsMulti(multi);
+      } catch {
+        // keep previous state
+      }
+    };
+    compute();
+    const ro = new ResizeObserver(compute);
+    ro.observe(node);
+    return () => ro.disconnect();
+  }, [children, heightPx]);
+
+  // Merge incoming sx with height animation
+  const sxMerged: Sx = {
+    ...sxIn,
+    height: heightPx ? `${heightPx}px` : undefined,
+    transition: `${(sxIn as any)?.transition || ''} height ${theme.motion.duration.base} ${theme.motion.easing.standard}`,
+    willChange: 'height',
+  };
+
+  return (
+    <Panel
+      {...panelProps}
+      data-valet-multiline={isMulti ? 'true' : 'false'}
+      data-valet-animate-height='true'
+      sx={sxMerged}
+    >
+      <div ref={contentRef}>{children}</div>
+    </Panel>
+  );
+};
+
+const MeasuredAvatar: React.FC<React.ComponentProps<typeof Avatar>> = (props) => {
+  // Avatar alignment is driven by Row CSS (:has bubble[data-valet-multiline=true])
+  return <Avatar {...props} />;
+};
 
 /*───────────────────────────────────────────────────────────*/
 /* Component                                                  */
@@ -286,8 +402,9 @@ export const RichChat: React.FC<RichChatProps> = ({
       {...rest}
       fullWidth
       variant='alt'
-      /* Remove outer padding on small portrait screens */
+      /* Trim outer chrome to pull avatars/icons toward edges */
       compact={portrait}
+      pad={'0 0 1rem 0'}
       sx={{ overflowY: 'visible', overflowX: 'hidden', ...sx }}
       className={cls}
     >
@@ -298,9 +415,11 @@ export const RichChat: React.FC<RichChatProps> = ({
       >
         <Messages
           ref={messagesRef}
-          $gap={theme.spacing(1.5)}
-          /* Tighter padding in portrait to maximize horizontal space */
-          $pad={portrait ? theme.spacing(0.5) : theme.spacing(1.5)}
+          $gap={theme.spacing(1.25)}
+          /* Tighter side padding to bring avatars closer to edge */
+          $pad={portrait ? theme.spacing(0.25) : theme.spacing(0.5)}
+          $dur={theme.motion.duration.short}
+          $ease={theme.motion.easing.standard}
           style={{
             overflowY: 'auto',
             maxHeight,
@@ -311,9 +430,10 @@ export const RichChat: React.FC<RichChatProps> = ({
           {messages
             .filter((m) => m.role !== 'system')
             .map((m, i) => {
-              /* Tight, symmetric gutters and consistent gap between avatar and bubble */
-              const padX = portrait ? theme.spacing(1) : theme.spacing(2);
-              const laneGap = portrait ? theme.spacing(0.5) : theme.spacing(1);
+              /* Near-edge gutter (towards container edge) kept tiny; far edge roomy */
+              const near = theme.spacing(0.25);
+              const far = portrait ? theme.spacing(0.5) : theme.spacing(0.75);
+              const laneGap = portrait ? theme.spacing(0.5) : theme.spacing(0.75);
               const content =
                 typeof m.content === 'string' ? (
                   m.role === 'assistant' ? (
@@ -333,16 +453,20 @@ export const RichChat: React.FC<RichChatProps> = ({
                   key={i}
                   $from={m.role}
                   $gap={laneGap}
-                  $padX={padX}
+                  $padL={m.role !== 'user' ? near : far}
+                  $padR={m.role === 'user' ? near : far}
+                  $dur={theme.motion.duration.short}
+                  $ease={theme.motion.easing.standard}
                 >
+                  {/* Measure content height to decide vertical alignment */}
                   {m.role !== 'user' && systemAvatar && (
-                    <Avatar
+                    <MeasuredAvatar
                       src={systemAvatar}
                       size='s'
                       variant='outline'
                     />
                   )}
-                  <Panel
+                  <MeasuredBubble
                     variant='main'
                     background={m.role === 'user' ? theme.colors.primary : undefined}
                     alignX={m.role === 'user' ? 'right' : 'left'}
@@ -351,37 +475,38 @@ export const RichChat: React.FC<RichChatProps> = ({
                       maxWidth: portrait ? '100%' : 'min(75%, 48rem)',
                       width: 'fit-content',
                       borderRadius: theme.spacing(1),
-                      padding: portrait ? theme.spacing(1.25) : theme.spacing(2),
+                      /* Slightly reduce top/bottom padding while keeping sides the same */
+                      padding: `${portrait ? theme.spacing(1) : theme.spacing(1.75)} ${
+                        portrait ? theme.spacing(1.25) : theme.spacing(2)
+                      }`,
                       animation: m.animate ? `${fadeIn} 0.2s ease-out` : undefined,
                       position: 'relative',
                       justifySelf: m.role === 'user' ? 'end' : 'start',
                     }}
                   >
-                    <div>
-                      {m.name && (
-                        <Typography
-                          variant='subtitle'
-                          bold
-                        >
-                          {m.name}
-                        </Typography>
-                      )}
-                      {m.typing ? (
-                        <Typing
-                          $color={m.role === 'user' ? theme.colors.primaryText : theme.colors.text}
-                        >
-                          <span />
-                          <span />
-                          <span />
-                        </Typing>
-                      ) : (
-                        content
-                      )}
-                      {Form && <Form onSubmit={(v: string) => onFormSubmit?.(v, i)} />}
-                    </div>
-                  </Panel>
+                    {m.name && (
+                      <Typography
+                        variant='subtitle'
+                        bold
+                      >
+                        {m.name}
+                      </Typography>
+                    )}
+                    {m.typing ? (
+                      <Typing
+                        $color={m.role === 'user' ? theme.colors.primaryText : theme.colors.text}
+                      >
+                        <span />
+                        <span />
+                        <span />
+                      </Typing>
+                    ) : (
+                      content
+                    )}
+                    {Form && <Form onSubmit={(v: string) => onFormSubmit?.(v, i)} />}
+                  </MeasuredBubble>
                   {m.role === 'user' && userAvatar && (
-                    <Avatar
+                    <MeasuredAvatar
                       src={userAvatar}
                       size='s'
                       variant='outline'
@@ -398,9 +523,9 @@ export const RichChat: React.FC<RichChatProps> = ({
             onSubmit={handleSubmit}
             style={{ width: '100%' }}
           >
-            <Stack
-              direction='row'
-              compact
+            <InputRow
+              $gap={theme.spacing(1)}
+              $pad={theme.spacing(0.5)}
             >
               <TextField
                 as='textarea'
@@ -415,7 +540,7 @@ export const RichChat: React.FC<RichChatProps> = ({
                 }}
                 rows={1}
                 placeholder={placeholder}
-                fullWidth
+                sx={{ width: '100%', minWidth: 0, maxWidth: 'calc(100% - 1rem)' }}
                 fontFamily={fontFamily}
               />
               <IconButton
@@ -423,7 +548,7 @@ export const RichChat: React.FC<RichChatProps> = ({
                 type='submit'
                 aria-label='Send'
               />
-            </Stack>
+            </InputRow>
           </form>
         )}
       </Wrapper>

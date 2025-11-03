@@ -5,7 +5,6 @@
 import React, { ReactElement, SVGProps } from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
-import type { Theme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import type { Presettable, Sx } from '../../types';
 import { Icon } from '../primitives/Icon';
@@ -22,8 +21,18 @@ export interface IconButtonProps
   size?: IconButtonSize | number | string;
   icon?: string;
   svg?: string | ReactElement<SVGProps<SVGSVGElement>>;
-  /** Colour override for the glyph */
+  /**
+   * Foreground colour override for the glyph.
+   * @default Derived from the resolved background token (e.g., primary → primaryButtonText)
+   */
   iconColor?: string | undefined;
+  /**
+   * Background colour token or CSS colour for the button surface.
+   * Accepts theme colour tokens ('primary' | 'secondary' | 'tertiary') or any CSS colour.
+   * For `contained`, it is used as the fill. For `outlined`, it applies on hover/focus
+   * alongside the matching button text token for the glyph colour.
+   */
+  background?: string | undefined;
   /** Inline styles (with CSS var support) */
   sx?: Sx;
 }
@@ -31,7 +40,7 @@ export interface IconButtonProps
 /*───────────────────────────────────────────────────────────*/
 /* Geometry map                                              */
 type Geometry = { d: string; icon: string };
-const geom: (t: Theme) => Record<IconButtonSize, Geometry> = () => ({
+const geom: () => Record<IconButtonSize, Geometry> = () => ({
   xs: { d: '1.5rem', icon: '0.75rem' },
   sm: { d: '2rem', icon: '1rem' },
   md: { d: '3rem', icon: '1.5rem' },
@@ -43,9 +52,9 @@ const geom: (t: Theme) => Record<IconButtonSize, Geometry> = () => ({
 /* Styled “skin” – colours, hover, ripple, **not** size      */
 const Skin = styled('button')<{
   $variant: IconButtonVariant;
-  $primary: string;
-  $text: string;
-  $primaryText: string;
+  $bg: string; // background token (contained, or outlined:hover)
+  $text: string; // base text colour
+  $btnText: string; // button text token (e.g., primaryButtonText)
   $ripple: string;
   $strokeW: string;
 }>`
@@ -59,10 +68,9 @@ const Skin = styled('button')<{
   border: ${({ $variant, $text, $strokeW }) =>
     $variant === 'outlined' ? `${$strokeW} solid ${$text}` : 'none'};
 
-  background: ${({ $variant, $primary }) => ($variant === 'contained' ? $primary : 'transparent')};
+  background: ${({ $variant, $bg }) => ($variant === 'contained' ? $bg : 'transparent')};
 
-  color: ${({ $variant, $text, $primaryText }) =>
-    $variant === 'contained' ? $primaryText : $text};
+  color: ${({ $variant, $text, $btnText }) => ($variant === 'contained' ? $btnText : $text)};
 
   cursor: pointer;
   transition:
@@ -79,23 +87,23 @@ const Skin = styled('button')<{
   touch-action: manipulation;
 
   &:hover:not(:disabled) {
-    ${({ $variant, $primary, $primaryText }) =>
+    ${({ $variant, $bg, $btnText }) =>
       $variant === 'contained'
         ? 'filter: brightness(1.25);'
         : `
-          background: ${$primary};
-          color: ${$primaryText};
+          background: ${$bg};
+          color: ${$btnText};
         `}
   }
 
   /* Keyboard focus should mirror hover visuals for discoverability */
   &:focus-visible:not(:disabled) {
-    ${({ $variant, $primary, $primaryText }) =>
+    ${({ $variant, $bg, $btnText }) =>
       $variant === 'contained'
         ? 'filter: brightness(1.25);'
         : `
-          background: ${$primary};
-          color: ${$primaryText};
+          background: ${$bg};
+          color: ${$btnText};
         `}
   }
 
@@ -135,13 +143,14 @@ export const IconButton: React.FC<IconButtonProps> = ({
   icon,
   svg,
   iconColor,
+  background,
   preset: p,
   className,
   sx,
   ...rest
 }) => {
   const { theme } = useTheme();
-  const sizes = geom(theme);
+  const sizes = geom();
 
   let diam: string;
   let iconSz: string;
@@ -155,6 +164,25 @@ export const IconButton: React.FC<IconButtonProps> = ({
     diam = size;
     iconSz = `calc(${diam} * 0.45)`;
   }
+
+  // Resolve color tokens (accept token names like 'primary')
+  const resolveToken = (v?: string): string | undefined => {
+    if (!v) return undefined;
+    const val = (theme.colors as Record<string, string>)[v as string];
+    return typeof val === 'string' ? val : v;
+  };
+
+  const bg = resolveToken(background) ?? theme.colors.primary;
+  const equals = (a?: string, b?: string) =>
+    (a || '').toUpperCase() === (b || '').toUpperCase();
+  const buttonTextFor = (bgHex: string) => {
+    if (equals(bgHex, theme.colors.primary)) return theme.colors.primaryButtonText;
+    if (equals(bgHex, theme.colors.secondary)) return theme.colors.secondaryButtonText;
+    if (equals(bgHex, theme.colors.tertiary)) return theme.colors.tertiaryButtonText;
+    // Fallbacks for arbitrary backgrounds: use general text token
+    return theme.colors.text;
+  };
+  const btnText = buttonTextFor(bg);
 
   const ripple = variant === 'contained' ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.1)';
 
@@ -174,9 +202,9 @@ export const IconButton: React.FC<IconButtonProps> = ({
       {...rest}
       onContextMenu={(e: React.MouseEvent) => e.preventDefault()}
       $variant={variant}
-      $primary={theme.colors.primary}
+      $bg={bg}
       $text={theme.colors.text}
-      $primaryText={theme.colors.primaryText}
+      $btnText={btnText}
       $ripple={ripple}
       $strokeW={theme.stroke(1)}
       style={{ ...geomStyle, ...sx }}
@@ -186,7 +214,7 @@ export const IconButton: React.FC<IconButtonProps> = ({
         icon={icon}
         svg={svg}
         size={iconSz}
-        color={iconColor}
+        color={resolveToken(iconColor)}
         aria-hidden={rest['aria-label'] ? undefined : true}
       />
     </Skin>

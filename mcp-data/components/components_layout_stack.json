@@ -40,13 +40,13 @@
     },
     {
       "name": "gap",
-      "type": "import(\"/home/xbenc/occ/valet/src/types\").Space | undefined",
+      "type": "import(\"/home/xbenc/occ/brr/valet/src/types\").Space | undefined",
       "required": false,
       "description": "Inter-child spacing as units or CSS length."
     },
     {
       "name": "pad",
-      "type": "import(\"/home/xbenc/occ/valet/src/types\").Space | undefined",
+      "type": "import(\"/home/xbenc/occ/brr/valet/src/types\").Space | undefined",
       "required": false,
       "description": "Container padding as units or CSS length."
     },
@@ -81,6 +81,6 @@
   "sourceFiles": [
     "src/components/layout/Stack.tsx"
   ],
-  "version": "0.33.0",
+  "version": "0.33.1",
   "schemaVersion": "1.6"
 }

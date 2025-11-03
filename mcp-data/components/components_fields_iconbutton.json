@@ -35,7 +35,14 @@
       "name": "iconColor",
       "type": "string | undefined",
       "required": false,
-      "description": "Colour override for the glyph"
+      "description": "Foreground colour override for the glyph.",
+      "default": "Derived from the resolved background token (e.g., primary → primaryButtonText)"
+    },
+    {
+      "name": "background",
+      "type": "string | undefined",
+      "required": false,
+      "description": "Background colour token or CSS colour for the button surface.\nAccepts theme colour tokens ('primary' | 'secondary' | 'tertiary') or any CSS colour.\nFor `contained`, it is used as the fill. For `outlined`, it applies on hover/focus\nalongside the matching button text token for the glyph colour."
     },
     {
       "name": "sx",
@@ -77,6 +84,6 @@
   "sourceFiles": [
     "src/components/fields/IconButton.tsx"
   ],
-  "version": "0.33.0",
+  "version": "0.33.1",
   "schemaVersion": "1.6"
 }
