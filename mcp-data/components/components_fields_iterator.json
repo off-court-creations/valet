@@ -205,6 +205,6 @@
   "sourceFiles": [
     "src/components/fields/Iterator.tsx"
   ],
-  "version": "0.33.1",
+  "version": "0.33.2",
   "schemaVersion": "1.6"
 }
