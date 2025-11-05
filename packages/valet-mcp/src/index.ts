@@ -5,7 +5,7 @@
 // ─────────────────────────────────────────────────────────────
 import { createRequire } from 'node:module';
 import { Readable } from 'node:stream';
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { McpServer, ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { PRIMER_TEXT } from './primer.js';
 import { DATA_DIR, DATA_INFO, getComponentBySlug, getGlossary, getIndex, getMeta } from './tools/shared.js';
@@ -52,35 +52,85 @@ async function createServer() {
 
   // adjust_theme tool removed
 
-  // Optional resources (component JSON as resources)
-  server.resource('valet-index', 'mcp://valet/index', { mimeType: 'application/json', name: 'Valet Components Index' }, async () => ({
-    contents: [{
-      uri: 'mcp://valet/index',
-      mimeType: 'application/json',
-      text: JSON.stringify(getIndex(), null, 2),
-    }],
-  }));
+  // Resources (index + per-component JSON) – modern registerResource API
+  server.registerResource(
+    'valet-index',
+    'mcp://valet/index',
+    { title: 'Valet Components Index', mimeType: 'application/json' },
+    async (uri) => ({
+      contents: [{ uri: uri.href, mimeType: 'application/json', text: JSON.stringify(getIndex(), null, 2) }],
+    })
+  );
 
   // Expose each component JSON as a resource lazily
   try {
     const index = getIndex();
     for (const item of index) {
       const uri = `mcp://valet/component/${item.slug}`;
-      server.resource(`valet-${item.slug}`, uri, { mimeType: 'application/json', name: `${item.name} (${item.slug})` }, async () => ({
-        contents: [{ uri, mimeType: 'application/json', text: JSON.stringify(getComponentBySlug(item.slug), null, 2) }],
-      }));
+      server.registerResource(
+        `valet-${item.slug}`,
+        uri,
+        { title: `${item.name} (${item.slug})`, mimeType: 'application/json' },
+        async (url) => ({
+          contents: [
+            { uri: url.href, mimeType: 'application/json', text: JSON.stringify(getComponentBySlug(item.slug), null, 2) },
+          ],
+        })
+      );
     }
   } catch {
     // ignore
   }
 
   // Primer and Glossary as resources
-  server.resource('valet-primer', 'mcp://valet/primer', { mimeType: 'text/markdown', name: 'valet Primer' }, async () => ({
-    contents: [{ uri: 'mcp://valet/primer', mimeType: 'text/markdown', text: PRIMER_TEXT }],
-  }));
-  server.resource('valet-glossary', 'mcp://valet/glossary', { mimeType: 'application/json', name: 'valet Glossary' }, async () => ({
-    contents: [{ uri: 'mcp://valet/glossary', mimeType: 'application/json', text: JSON.stringify(getGlossary() ?? { entries: [] }, null, 2) }],
-  }));
+  server.registerResource(
+    'valet-primer',
+    'mcp://valet/primer',
+    { title: 'valet Primer', mimeType: 'text/markdown' },
+    async (uri) => ({ contents: [{ uri: uri.href, mimeType: 'text/markdown', text: PRIMER_TEXT }] })
+  );
+  server.registerResource(
+    'valet-glossary',
+    'mcp://valet/glossary',
+    { title: 'valet Glossary', mimeType: 'application/json' },
+    async (uri) => ({
+      contents: [
+        {
+          uri: uri.href,
+          mimeType: 'application/json',
+          text: JSON.stringify(getGlossary() ?? { entries: [] }, null, 2),
+        },
+      ],
+    })
+  );
+
+  // Add a dynamic resource template for components by slug with basic completion
+  const componentTemplate = new ResourceTemplate('mcp://valet/component/{slug}', {
+    list: undefined,
+    complete: {
+      slug: async (value: string) => {
+        try {
+          const q = (value || '').toLowerCase();
+          const slugs = getIndex().map((i) => i.slug);
+          if (!q) return slugs.slice(0, 100);
+          return slugs.filter((s) => s.toLowerCase().includes(q)).slice(0, 100);
+        } catch {
+          return [];
+        }
+      },
+    },
+  });
+  server.registerResource(
+    'valet-component-template',
+    componentTemplate,
+    { title: 'Valet Component (by slug)', mimeType: 'application/json' },
+    async (uri, vars) => {
+      const slug = String((vars as any)?.slug || '').trim();
+      const doc = slug ? getComponentBySlug(slug) : null;
+      const payload = doc ?? { error: 'Component not found', slug };
+      return { contents: [{ uri: uri.href, mimeType: 'application/json', text: JSON.stringify(payload, null, 2) }] };
+    }
+  );
 
   return server;
 }

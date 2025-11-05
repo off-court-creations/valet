@@ -6,7 +6,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import { getComponentBySlug, getIndex } from './shared.js';
 
-const ParamsSchema = {
+const Params = z.object({
   query: z.string().min(1, 'Provide text to search for.').describe('Substring to match in prop names.'),
   limit: z
     .number()
@@ -16,7 +16,8 @@ const ParamsSchema = {
     .default(20)
     .describe('Maximum results to return (default 20).'),
   category: z.string().optional().describe('Optional category filter.'),
-} as const;
+});
+type ParamsType = z.infer<typeof Params>;
 
 export function registerSearchProps(server: McpServer): void {
   server.registerTool(
@@ -24,14 +25,14 @@ export function registerSearchProps(server: McpServer): void {
     {
       title: 'Search Props',
       description: 'Find components exposing props whose names contain the provided substring.',
-      inputSchema: ParamsSchema,
+      inputSchema: Params.shape,
       annotations: {
         readOnlyHint: true,
         idempotentHint: true,
         openWorldHint: false,
       },
     },
-    async ({ query, limit, category }) => {
+    async ({ query, limit, category }: ParamsType) => {
       const normalizedQuery = query.trim().toLowerCase();
       if (!normalizedQuery) return { content: [{ type: 'text', text: '[]' }] };
       const index = getIndex();

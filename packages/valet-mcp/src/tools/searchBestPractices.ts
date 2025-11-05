@@ -13,7 +13,7 @@ import {
   type ValetComponentDoc,
 } from './shared.js';
 
-const ParamsSchema = {
+const Params = z.object({
   query: z.string().min(1, 'Provide text to search.').describe('Primary search text.'),
   limit: z
     .number()
@@ -27,7 +27,8 @@ const ParamsSchema = {
     .union([z.string(), z.array(z.string())])
     .optional()
     .describe('Optional status filter.'),
-} as const;
+});
+type ParamsType = z.infer<typeof Params>;
 
 type SearchArgs = {
   query: string;
@@ -63,14 +64,14 @@ export function registerSearchBestPractices(server: McpServer): void {
     {
       title: 'Search Best Practices',
       description: 'Search best-practice entries across components and surface the most relevant advice.',
-      inputSchema: ParamsSchema,
+      inputSchema: Params.shape,
       annotations: {
         readOnlyHint: true,
         idempotentHint: true,
         openWorldHint: false,
       },
     },
-    async ({ query, limit, category, status }: SearchArgs) => {
+    async ({ query, limit, category, status }: ParamsType) => {
       const trimmed = query.trim();
       if (!trimmed) {
         return { content: [{ type: 'text', text: '[]' }] };
