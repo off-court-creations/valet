@@ -93,6 +93,7 @@ All notable changes to this project will be documented in this file. The format 
 ### Fixed
 
 - Chip: outlined variant border was invisible due to missing `divider` token in theme. Added `colors.divider` for light/dark themes and use it for default outlined borders.
+ - Modal: raise backdrop/dialog z-index above AppBar so modals always cover app bars.
 
  
 ### Removed

@@ -1,1 +1,6 @@
-{ "name": "LLMChat", "status": "experimental", "aliases": ["chat", "assistant"], "docs": { "bestPractices": [] } }
+{
+  "name": "LLMChat",
+  "status": "experimental",
+  "aliases": ["chat", "assistant"],
+  "docs": { "bestPractices": [] }
+}

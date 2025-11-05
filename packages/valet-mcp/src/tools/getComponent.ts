@@ -6,10 +6,11 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import { getComponentBySlug, resolveSlug } from './shared.js';
 
-const ParamsSchema = {
+const Params = z.object({
   name: z.string().describe('Component name, e.g., "Box"').optional(),
   slug: z.string().describe('Component slug, e.g., "components/layout/box"').optional(),
-} as const;
+});
+type ParamsType = z.infer<typeof Params>;
 
 export function registerGetComponent(server: McpServer): void {
   server.registerTool(
@@ -17,14 +18,14 @@ export function registerGetComponent(server: McpServer): void {
     {
       title: 'Get Component',
       description: 'Fetch the full metadata payload for a component by name or slug.',
-      inputSchema: ParamsSchema,
+      inputSchema: Params.shape,
       annotations: {
         readOnlyHint: true,
         idempotentHint: true,
         openWorldHint: false,
       },
     },
-    async (args) => {
+    async (args: ParamsType) => {
       const slug = resolveSlug(args);
       if (!slug) {
         return { content: [{ type: 'text', text: JSON.stringify({ error: 'Component not found' }) }] };

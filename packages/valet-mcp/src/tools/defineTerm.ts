@@ -6,7 +6,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import { getGlossary } from './shared.js';
 
-const ParamsSchema = {
+const Params = z.object({
   word: z
     .string()
     .min(1, 'Provide a term or alias to define.')
@@ -18,7 +18,8 @@ const ParamsSchema = {
     .max(10)
     .default(5)
     .describe('Maximum number of alternatives to return when no exact match exists.'),
-} as const;
+});
+type ParamsType = z.infer<typeof Params>;
 
 export function registerDefineTerm(server: McpServer): void {
   server.registerTool(
@@ -26,14 +27,14 @@ export function registerDefineTerm(server: McpServer): void {
     {
       title: 'Define Term',
       description: 'Look up a glossary definition by term or alias and fall back to the closest matches.',
-      inputSchema: ParamsSchema,
+      inputSchema: Params.shape,
       annotations: {
         readOnlyHint: true,
         idempotentHint: true,
         openWorldHint: false,
       },
     },
-    async ({ word, limit }) => {
+    async ({ word, limit }: ParamsType) => {
       const query = word.trim();
       if (!query) {
         return {

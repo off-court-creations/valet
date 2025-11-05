@@ -1,8 +1,15 @@
-{ "name": "Surface", "status": "stable", "aliases": ["surface", "hero"], "docs": { "bestPractices": [
-  "Use exactly one surface per route. Mount it at the highest level and never nest surfaces so children can subscribe to a single store via useSurface.",
-  "Prefer surface CSS variables over window APIs. Read --valet-screen-width and --valet-screen-height in styles (or query useSurface) instead of window.innerWidth to keep layout deterministic and testable.",
-  "Build on createStyled. Components made with styled register automatically and expose --valet-el-width and --valet-el-height, which the surface updates via ResizeObserver for responsive sizing without layout thrash.",
-  "Keep portalled overlays out of the registry. Drawers and Modals rendered outside the surface root are intentionally not tracked to avoid unnecessary observers. Size them via tokens and breakpoints, not child metrics.",
-  "Respect height constraints. Tables are height‑aware by default; let their content scroll inside the component. Only pass constrainHeight={false} when page context requires full‑document scroll.",
-  "Drive spacing and density with variables. Adjust --valet-space, --valet-radius, and --valet-stroke on the surface to shift an entire view without changing component code."
-] } }
+{
+  "name": "Surface",
+  "status": "stable",
+  "aliases": ["surface", "hero"],
+  "docs": {
+    "bestPractices": [
+      "Use exactly one surface per route. Mount it at the highest level and never nest surfaces so children can subscribe to a single store via useSurface.",
+      "Prefer surface CSS variables over window APIs. Read --valet-screen-width and --valet-screen-height in styles (or query useSurface) instead of window.innerWidth to keep layout deterministic and testable.",
+      "Build on createStyled. Components made with styled register automatically and expose --valet-el-width and --valet-el-height, which the surface updates via ResizeObserver for responsive sizing without layout thrash.",
+      "Keep portalled overlays out of the registry. Drawers and Modals rendered outside the surface root are intentionally not tracked to avoid unnecessary observers. Size them via tokens and breakpoints, not child metrics.",
+      "Respect height constraints. Tables are height‑aware by default; let their content scroll inside the component. Only pass constrainHeight={false} when page context requires full‑document scroll.",
+      "Drive spacing and density with variables. Adjust --valet-space, --valet-radius, and --valet-stroke on the surface to shift an entire view without changing component code."
+    ]
+  }
+}

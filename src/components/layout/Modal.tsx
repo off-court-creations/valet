@@ -24,7 +24,8 @@ const Backdrop = styled('div')<{ $fade: boolean }>`
   backdrop-filter: blur(2px);
   opacity: ${({ $fade }) => ($fade ? 0 : 1)};
   transition: opacity var(--valet-modal-duration, 200ms) var(--valet-modal-easing, ease);
-  z-index: var(--valet-modal-z-backdrop, 9998);
+  /* Ensure backdrop covers AppBar (z-index 10000) */
+  z-index: var(--valet-modal-z-backdrop, 10001);
 
   @media (prefers-reduced-motion: reduce) {
     transition: none;
@@ -47,7 +48,8 @@ const Box = styled('div')<{
   transition:
     opacity var(--valet-modal-duration, 200ms) var(--valet-modal-easing, ease),
     transform var(--valet-modal-duration, 200ms) var(--valet-modal-easing, ease);
-  z-index: var(--valet-modal-z, 9999);
+  /* Dialog sits above backdrop and AppBar */
+  z-index: var(--valet-modal-z, 10002);
 
   max-width: ${({ $maxW, $full }) => ($full ? 'none' : $maxW || '32rem')};
   /* Use CSS var so callers can adjust viewport margin */

@@ -21,8 +21,7 @@
       "id": "table-selectable",
       "title": "Single‑select with initial sort",
       "code": "(() => {\n  const columns = [\n    { header: 'ID', accessor: 'id', align: 'right', sortable: true },\n    { header: 'Name', accessor: 'name', sortable: true },\n    { header: 'Age', accessor: 'age', align: 'right', sortable: true },\n  ];\n  const data = [\n    { id: 1, name: 'Katherine Johnson', age: 41 },\n    { id: 2, name: 'Tim Berners‑Lee', age: 35 },\n    { id: 3, name: 'Linus Torvalds', age: 29 },\n  ];\n  const Demo = () => {\n    const [selected, setSelected] = React.useState([]);\n    return (<Stack>\n      <Panel fullWidth>\n        <Table data={data} columns={columns} selectable='single' initialSort={{ index: 0 }} onSelectionChange={setSelected} />\n      </Panel>\n      <Typography variant='subtitle'>Selected: {selected.map((r) => r.id).join(', ') || '—'}</Typography>\n    </Stack>);\n  };\n  return <Demo />;\n})()"
-    }
-    ,
+    },
     {
       "id": "table-auto-pagination",
       "title": "Auto pagination via minConstrainedRows",

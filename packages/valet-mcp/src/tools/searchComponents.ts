@@ -6,7 +6,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import { getComponentBySlug, getIndex, normalizeStatusFilter, simpleSearch } from './shared.js';
 
-const ParamsSchema = {
+const Params = z.object({
   query: z.string().min(1, 'Enter text to search for.').describe('Search string across names and summaries.'),
   limit: z
     .number()
@@ -23,7 +23,8 @@ const ParamsSchema = {
     .union([z.string(), z.array(z.string())])
     .optional()
     .describe("Optional status filter: 'production'|'stable'|'experimental'|'unstable'|'deprecated'."),
-} as const;
+});
+type ParamsType = z.infer<typeof Params>;
 
 export function registerSearchComponents(server: McpServer): void {
   server.registerTool(
@@ -31,14 +32,14 @@ export function registerSearchComponents(server: McpServer): void {
     {
       title: 'Search Components',
       description: 'Run a relevance-ranked search across the valet component index with optional category and status filters.',
-      inputSchema: ParamsSchema,
+      inputSchema: Params.shape,
       annotations: {
         readOnlyHint: true,
         idempotentHint: true,
         openWorldHint: false,
       },
     },
-    async ({ query, limit, category, status }) => {
+    async ({ query, limit, category, status }: ParamsType) => {
       const normalizedQuery = query.trim();
       if (!normalizedQuery) {
         return { content: [{ type: 'text', text: '[]' }] };

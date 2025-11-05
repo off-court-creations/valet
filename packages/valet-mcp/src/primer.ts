@@ -61,8 +61,8 @@ Tip: Prefer exact component names. If unsure, try synonyms in \`search_component
 
 ## MCP Notes
 
-- Data sources resolve in this order: \`VALET_ROOT + VALET_MCP_DATA_DIR\` → \`VALET_MCP_DATA_DIR\` → nearest \`mcp-data\` from CWD → bundled → optional data package.
-- If self-check returns \`components: 0\`: rebuild the data with \`npm run mcp:build\` in the valet repo.
+- Data sources resolve in this order: \`VALET_MCP_DATA_DIR\` (absolute path) → bundled \`mcp-data\` inside the server package → optional \`@archway/valet-mcp-data\` package.
+- If self-check returns \`components: 0\`: rebuild the data with \`npm run mcp:build\` in the valet repo and point \`VALET_MCP_DATA_DIR\` at its \`mcp-data/\`.
 - Node ≥ 18 (ideally 20+) recommended.
 
 ## Quick Example: New Page Layout

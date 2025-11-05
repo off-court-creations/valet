@@ -2,14 +2,16 @@
   "name": "Typography",
   "status": "stable",
   "aliases": ["typography", "text", "heading", "title"],
-  "docs": { "bestPractices": [
-    "Use semantic variants for headings and body; avoid styling raw text manually.",
-    "Keep line length readable and use theme scale for sizes and weights.",
-    "Don’t rely on bold/colour alone to convey meaning; use structure and labels.",
-    "Respect language/locale when formatting numbers, dates, and direction.",
-    "Truncate thoughtfully; prefer wrapping or responsive layout for important content.",
-    "Use presets/tokens for consistency across pages and components."
-  ]},
+  "docs": {
+    "bestPractices": [
+      "Use semantic variants for headings and body; avoid styling raw text manually.",
+      "Keep line length readable and use theme scale for sizes and weights.",
+      "Don’t rely on bold/colour alone to convey meaning; use structure and labels.",
+      "Respect language/locale when formatting numbers, dates, and direction.",
+      "Truncate thoughtfully; prefer wrapping or responsive layout for important content.",
+      "Use presets/tokens for consistency across pages and components."
+    ]
+  },
   "examples": [
     {
       "id": "typography-variants-overview",

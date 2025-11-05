@@ -2,12 +2,14 @@
   "name": "Video",
   "status": "stable",
   "aliases": ["video", "player"],
-  "docs": { "bestPractices": [
-    "Provide controls and captions; prefer muted autoplay only when appropriate.",
-    "Use poster images for better perceived performance.",
-    "Constrain size and avoid layout shift; select fit modes deliberately.",
-    "Avoid background video for critical content; ensure text contrast remains accessible.",
-    "Respect reduced motion preferences and keep transitions subtle.",
-    "Lazy‑load non‑critical media and prefetch only when beneficial."
-  ]}
+  "docs": {
+    "bestPractices": [
+      "Provide controls and captions; prefer muted autoplay only when appropriate.",
+      "Use poster images for better perceived performance.",
+      "Constrain size and avoid layout shift; select fit modes deliberately.",
+      "Avoid background video for critical content; ensure text contrast remains accessible.",
+      "Respect reduced motion preferences and keep transitions subtle.",
+      "Lazy‑load non‑critical media and prefetch only when beneficial."
+    ]
+  }
 }

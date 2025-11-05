@@ -46,7 +46,7 @@ const HeartSvg = (
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 export default function IconButtonDemoPage() {
-  const { theme, toggleMode } = useTheme();
+  const { toggleMode } = useTheme();
 
   const usageContent = (
     <Stack>
@@ -119,19 +119,60 @@ export default function IconButtonDemoPage() {
         />
       </Stack>
 
-      {/* 3. Colour override */}
-      <Typography variant='h3'>3. Icon colour override</Typography>
+      {/* 3. Background + colour tokens */}
+      <Typography variant='h3'>3. Background + colour tokens</Typography>
+      <Typography variant='subtitle'>
+        Use <code>background</code> with theme tokens (e.g. &apos;primary&apos;,
+        &apos;secondary&apos;, &apos;tertiary&apos;) or any CSS colour. Foreground (icon) defaults
+        to the matching button text token (primaryButtonText, secondaryButtonText,
+        tertiaryButtonText). Override with
+        <code>iconColor</code> if needed.
+      </Typography>
       <Stack direction='row'>
+        {/* Contained with different backgrounds */}
         <IconButton
-          icon='mdi:heart'
-          iconColor='#ff5e5e'
-          aria-label='Favorite'
+          icon='mdi:play'
+          background='primary'
+          aria-label='Primary'
         />
+        <IconButton
+          icon='mdi:pencil'
+          background='secondary'
+          aria-label='Secondary'
+        />
+        <IconButton
+          icon='mdi:gift'
+          background='tertiary'
+          aria-label='Tertiary'
+        />
+        <IconButton
+          icon='mdi:palette'
+          background='#6b21a8'
+          aria-label='Custom hex'
+        />
+      </Stack>
+      <Stack direction='row'>
+        {/* Outlined uses background on hover/focus */}
         <IconButton
           variant='outlined'
           icon='mdi:pencil'
-          iconColor={theme.colors['secondary']}
-          aria-label='Edit'
+          background='secondary'
+          aria-label='Outlined secondary hover'
+        />
+        <IconButton
+          variant='outlined'
+          icon='mdi:play'
+          background='primary'
+          aria-label='Outlined primary hover'
+        />
+      </Stack>
+      <Stack direction='row'>
+        {/* Explicit icon colour override */}
+        <IconButton
+          icon='mdi:heart'
+          background='secondary'
+          iconColor='#ff5e5e'
+          aria-label='Custom icon color'
         />
       </Stack>
 

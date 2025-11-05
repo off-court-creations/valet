@@ -146,7 +146,7 @@ const renderTokens = (tokens: TokensList, codeBg: string): React.ReactNode =>
         return (
           <Typography
             key={i}
-            sx={{ margin: '0.5rem 0' }}
+            sx={{ margin: '0.375rem 0' }}
           >
             {renderInline(p.tokens)}
           </Typography>

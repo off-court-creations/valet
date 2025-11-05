@@ -9,7 +9,7 @@
       "Use avatars consistently for roles. Set `userAvatar` / `systemAvatar` to reinforce identity.",
       "Respect scroll context. With `constrainHeight` the thread scrolls locally; otherwise ensure the page layout accommodates tall threads.",
       "Provide optimistic UI for outgoing messages. Animate entries to maintain a conversational rhythm.",
-      "Sanitize or gate untrusted JSX. RichChat renders JSX content; ensure sources are trusted." 
+      "Sanitize or gate untrusted JSX. RichChat renders JSX content; ensure sources are trusted."
     ]
   },
   "examples": [

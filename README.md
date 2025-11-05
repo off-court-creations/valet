@@ -21,7 +21,7 @@
 The ecosystem also includes the app scaffold `@archway/create-valet-app` and the MCP server `@archway/valet-mcp`.
 
 > [!CAUTION]
-> Pre‑1.0: APIs may change without notice.
+> Pre‑1.0: APIs may change without notice
 
 ## Docs
 
