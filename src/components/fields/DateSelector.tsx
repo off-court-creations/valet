@@ -58,6 +58,21 @@ const Wrapper = styled('div')<{ $bg: string; $text: string; $compact: boolean }>
   padding: 0.5rem;
   background: ${({ $bg }) => $bg};
   color: ${({ $text }) => $text};
+  /* Ensure calendar text uses valet typography (body) */
+  font-family: var(
+    --valet-font-body,
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    Helvetica,
+    Arial,
+    Noto Sans,
+    sans-serif
+  );
+  font-weight: var(--valet-font-weight, 400);
+  letter-spacing: var(--valet-font-tracking, normal);
+  line-height: var(--valet-font-leading, 1.4);
   border-radius: var(--valet-date-radius, 4px);
   user-select: none;
 `;
@@ -112,6 +127,8 @@ const Cell = styled('button')<{
   border-radius: var(--valet-date-cell-radius, 4px);
   cursor: pointer;
   font: inherit;
+  /* Align day numbers neatly in columns */
+  font-variant-numeric: tabular-nums;
   font-weight: ${({ $start, $end }) => ($start || $end ? 'bold' : 'inherit')};
   height: ${({ $compact }) => ($compact ? '1.5rem' : '2rem')};
   transition: background-color 120ms ease; /* ← add this */
