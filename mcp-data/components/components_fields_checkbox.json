@@ -130,6 +130,6 @@
   "sourceFiles": [
     "src/components/fields/Checkbox.tsx"
   ],
-  "version": "0.33.3",
+  "version": "0.33.4",
   "schemaVersion": "1.6"
 }
