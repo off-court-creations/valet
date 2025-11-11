@@ -118,6 +118,10 @@
     ]
   },
   "cssVars": [
+    "--valet-font-body",
+    "--valet-font-weight",
+    "--valet-font-tracking",
+    "--valet-font-leading",
     "--valet-date-radius",
     "--valet-date-cell-radius",
     "--valet-text-color"
@@ -147,6 +151,6 @@
   "sourceFiles": [
     "src/components/fields/DateSelector.tsx"
   ],
-  "version": "0.33.2",
+  "version": "0.33.4",
   "schemaVersion": "1.6"
 }

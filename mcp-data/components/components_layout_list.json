@@ -3,7 +3,7 @@
   "category": "layout",
   "slug": "components/layout/list",
   "summary": "List component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "list",
     "ul",
@@ -187,6 +187,6 @@
   "sourceFiles": [
     "src/components/layout/List.tsx"
   ],
-  "version": "0.33.2",
+  "version": "0.33.4",
   "schemaVersion": "1.6"
 }

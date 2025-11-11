@@ -73,7 +73,7 @@
     },
     {
       "name": "sx",
-      "type": "import(\"/home/xbenc/occ/brr/valet/src/types\").Sx | undefined",
+      "type": "import(\"/home/xbenc/occ/valet/src/types\").Sx | undefined",
       "required": false,
       "description": "Inline styles (with CSS var support)."
     },
@@ -130,6 +130,6 @@
   "sourceFiles": [
     "src/components/fields/Checkbox.tsx"
   ],
-  "version": "0.33.2",
+  "version": "0.33.4",
   "schemaVersion": "1.6"
 }

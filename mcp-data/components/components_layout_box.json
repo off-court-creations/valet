@@ -64,7 +64,7 @@
     },
     {
       "name": "pad",
-      "type": "import(\"/home/xbenc/occ/brr/valet/src/types\").Space | undefined",
+      "type": "import(\"/home/xbenc/occ/valet/src/types\").Space | undefined",
       "required": false,
       "description": "Container padding as units or CSS length."
     },
@@ -131,6 +131,6 @@
     "src/components/layout/Box.tsx",
     "docs/src/pages/components/layout/BoxDemo.tsx"
   ],
-  "version": "0.33.2",
+  "version": "0.33.4",
   "schemaVersion": "1.6"
 }

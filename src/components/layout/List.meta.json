@@ -1,6 +1,6 @@
 {
   "name": "List",
-  "status": "experimental",
+  "status": "stable",
   "aliases": ["list", "ul", "ol"],
   "docs": {
     "bestPractices": [

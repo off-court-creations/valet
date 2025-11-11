@@ -123,6 +123,6 @@
   "sourceFiles": [
     "src/components/layout/Drawer.tsx"
   ],
-  "version": "0.33.2",
+  "version": "0.33.4",
   "schemaVersion": "1.6"
 }
