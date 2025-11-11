@@ -155,6 +155,6 @@
   "sourceFiles": [
     "src/components/widgets/Tooltip.tsx"
   ],
-  "version": "0.33.2",
+  "version": "0.33.3",
   "schemaVersion": "1.6"
 }

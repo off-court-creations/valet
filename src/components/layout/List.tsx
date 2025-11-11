@@ -71,7 +71,7 @@ const Root = styled('ul')<{
   /* Improve touch responsiveness without killing scroll by default */
   touch-action: manipulation;
 
-  li {
+  & > li {
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
@@ -86,16 +86,16 @@ const Root = styled('ul')<{
     /* Ensure touch pointer events are delivered for reordering on mobile */
     touch-action: ${({ $reorderable }) => ($reorderable ? 'none' : 'auto')};
   }
-  li:last-child {
+  & > li:last-child {
     border-bottom: none;
   }
 
-  ${({ $striped, $stripe }) => $striped && `li:nth-of-type(odd){background:${$stripe};}`}
+  ${({ $striped, $stripe }) => $striped && `& > li:nth-of-type(odd){background:${$stripe};}`}
   ${({ $hover, $hoverBg, $dragging, $accent, $accentText }) =>
     $hover &&
     !$dragging &&
-    `li:hover { background:${$hoverBg}; color:${$accentText}; --valet-bg:${$accent}; --valet-text-color:${$accentText}; }`}
-  li[aria-selected="true"] {
+    `& > li:hover { background:${$hoverBg}; color:${$accentText}; --valet-bg:${$accent}; --valet-text-color:${$accentText}; }`}
+  & > li[aria-selected="true"] {
     background: ${({ $selectedBg }) => $selectedBg};
     color: ${({ $accentText }) => $accentText};
     --valet-bg: ${({ $accent }) => $accent};
@@ -112,7 +112,7 @@ const Root = styled('ul')<{
     `}
 
   /* Dragged row visual feedback */
-  li[data-dragging='true'] {
+  & > li[data-dragging='true'] {
     background: ${({ $hoverBg }) => $hoverBg};
     cursor: grabbing;
     transform: translateZ(0) scale(1.01);
@@ -129,7 +129,7 @@ const Root = styled('ul')<{
   }
 
   /* Insertion indicator */
-  li::before {
+  & > li::before {
     content: '';
     position: absolute;
     left: 0;
@@ -141,21 +141,21 @@ const Root = styled('ul')<{
       height ${({ $dragDur }) => $dragDur} ${({ $dragEase }) => $dragEase},
       background ${({ $dragDur }) => $dragDur} ${({ $dragEase }) => $dragEase};
   }
-  li[data-insert-before='true']::before {
+  & > li[data-insert-before='true']::before {
     height: 2px;
     background: ${({ $accent }) => $accent};
   }
-  li:last-child[data-insert-after-last='true'] {
+  & > li:last-child[data-insert-after-last='true'] {
     box-shadow: inset 0 -2px 0 0 ${({ $accent }) => $accent};
   }
   @media (prefers-reduced-motion: reduce) {
-    li {
+    & > li {
       transition: none !important;
     }
-    li::before {
+    & > li::before {
       transition: none !important;
     }
-    li[data-dragging='true'] {
+    & > li[data-dragging='true'] {
       transform: none !important;
       box-shadow: none !important;
     }

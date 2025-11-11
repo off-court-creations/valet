@@ -66,7 +66,7 @@
     },
     {
       "name": "pad",
-      "type": "import(\"/home/xbenc/occ/brr/valet/src/types\").Space | undefined",
+      "type": "import(\"/home/xbenc/occ/valet/src/types\").Space | undefined",
       "required": false,
       "description": "Container padding as units or CSS length."
     },
@@ -149,6 +149,6 @@
   "sourceFiles": [
     "src/components/layout/Panel.tsx"
   ],
-  "version": "0.33.2",
+  "version": "0.33.3",
   "schemaVersion": "1.6"
 }
