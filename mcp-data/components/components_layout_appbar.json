@@ -91,6 +91,6 @@
   "sourceFiles": [
     "src/components/layout/AppBar.tsx"
   ],
-  "version": "0.33.5",
+  "version": "0.33.6",
   "schemaVersion": "1.6"
 }

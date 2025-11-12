@@ -3,14 +3,24 @@
   ```sh
   npm run lint:fix
   npm run build
-  npm version patch|minor|major
+
+  npm version patch
+  # or
+  npm version minor
+  # or 
+  npm version major
+  
   npm publish --access public
   ```
 - **valet-mcp** → rebuild data (captures new valet version), selfcheck, publish via wrapper scripts.
   ```sh
   npm run mcp:build
   npm run mcp:server:build
-  npm run mcp:server:publish[:patch|:minor|:major]
+  npm run mcp:server:publish:patch
+  # or
+  npm run mcp:server:publish:minor
+  # or
+  npm run mcp:server:publish:major
   ```
 - **create-valet-app** → update template deps, validate, publish from the root.
   ```sh
