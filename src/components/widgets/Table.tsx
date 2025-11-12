@@ -22,6 +22,9 @@ import { Pagination } from './Pagination';
 import { stripe, toRgb, mix, toHex } from '../../helpers/color';
 import type { Presettable, Sx } from '../../types';
 
+const INTERACTIVE_ROW_SELECTOR =
+  'a, button, input, textarea, select, label, summary, [role="button"], [role="link"], [role="checkbox"], [role="menuitem"], [role="switch"], [role="radio"]';
+
 /*───────────────────────────────────────────────────────────*/
 /* Column definition                                          */
 export interface TableColumn<T> {
@@ -46,6 +49,11 @@ export interface TableProps<T>
   initialSort?: { index: number; desc?: boolean };
   onSortChange?: (index: number, desc: boolean) => void;
   onSelectionChange?: (selected: T[]) => void;
+  /**
+   * Fired when a row is clicked (ignores clicks that originate from obvious interactive children
+   * like buttons, inputs, or links). Receives the row object, its visible index, and the click event.
+   */
+  onRowClick?: (row: T, rowIndex: number, event: React.MouseEvent<HTMLTableRowElement>) => void;
   constrainHeight?: boolean;
   /**
    * Minimum body rows that must be visible for an internal scrollbar to be used.
@@ -98,6 +106,7 @@ const Root = styled('table')<{
   $striped: boolean;
   $hover: boolean;
   $lines: boolean;
+  $clickable: boolean;
   $border: string;
   $strokeW: string;
   $stripe: string;
@@ -161,6 +170,13 @@ const Root = styled('table')<{
     th:not(:last-child), td:not(:last-child) { border-right: var(--valet-divider-stroke, ${$strokeW}) solid ${$border}; }
   `
       : ''}
+
+  ${({ $clickable }) =>
+    $clickable
+      ? `
+    tbody tr { cursor: pointer; }
+  `
+      : ''}
 `;
 
 const Th = styled('th')<{
@@ -202,6 +218,7 @@ export function Table<T extends object>({
   initialSort,
   onSortChange,
   onSelectionChange,
+  onRowClick,
   constrainHeight = true,
   minConstrainedRows = 4,
   maxExpandedRows = 30,
@@ -514,6 +531,17 @@ export function Table<T extends object>({
     return sorted.slice(start, start + pageSize);
   }, [doPaginate, sorted, effectivePage, pageSize]);
 
+  const rowClickEnabled = typeof onRowClick === 'function';
+  const handleRowClick = useCallback(
+    (row: T, idx: number, event: React.MouseEvent<HTMLTableRowElement>) => {
+      if (!onRowClick || event.defaultPrevented) return;
+      const target = event.target as HTMLElement | null;
+      if (target && target.closest(INTERACTIVE_ROW_SELECTOR)) return;
+      onRowClick(row, idx, event);
+    },
+    [onRowClick],
+  );
+
   /* class merge */
   const cls = [p ? preset(p) : '', className].filter(Boolean).join(' ') || undefined;
 
@@ -530,6 +558,7 @@ export function Table<T extends object>({
         $striped={striped}
         $hover={hoverable}
         $lines={dividers}
+        $clickable={rowClickEnabled}
         $border={theme.colors.backgroundAlt}
         $strokeW={theme.stroke(1)}
         $stripe={stripeColor}
@@ -575,7 +604,10 @@ export function Table<T extends object>({
 
         <tbody>
           {displayRows.map((row, rIdx) => (
-            <tr key={rIdx}>
+            <tr
+              key={rIdx}
+              onClick={rowClickEnabled ? (event) => handleRowClick(row, rIdx, event) : undefined}
+            >
               {selectable ? (
                 <Td $align='center'>
                   <Checkbox

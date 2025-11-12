@@ -119,65 +119,8 @@ export default function IconButtonDemoPage() {
         />
       </Stack>
 
-      {/* 3. Background + colour tokens */}
-      <Typography variant='h3'>3. Background + colour tokens</Typography>
-      <Typography variant='subtitle'>
-        Use <code>background</code> with theme tokens (e.g. &apos;primary&apos;,
-        &apos;secondary&apos;, &apos;tertiary&apos;) or any CSS colour. Foreground (icon) defaults
-        to the matching button text token (primaryButtonText, secondaryButtonText,
-        tertiaryButtonText). Override with
-        <code>iconColor</code> if needed.
-      </Typography>
-      <Stack direction='row'>
-        {/* Contained with different backgrounds */}
-        <IconButton
-          icon='mdi:play'
-          background='primary'
-          aria-label='Primary'
-        />
-        <IconButton
-          icon='mdi:pencil'
-          background='secondary'
-          aria-label='Secondary'
-        />
-        <IconButton
-          icon='mdi:gift'
-          background='tertiary'
-          aria-label='Tertiary'
-        />
-        <IconButton
-          icon='mdi:palette'
-          background='#6b21a8'
-          aria-label='Custom hex'
-        />
-      </Stack>
-      <Stack direction='row'>
-        {/* Outlined uses background on hover/focus */}
-        <IconButton
-          variant='outlined'
-          icon='mdi:pencil'
-          background='secondary'
-          aria-label='Outlined secondary hover'
-        />
-        <IconButton
-          variant='outlined'
-          icon='mdi:play'
-          background='primary'
-          aria-label='Outlined primary hover'
-        />
-      </Stack>
-      <Stack direction='row'>
-        {/* Explicit icon colour override */}
-        <IconButton
-          icon='mdi:heart'
-          background='secondary'
-          iconColor='#ff5e5e'
-          aria-label='Custom icon color'
-        />
-      </Stack>
-
-      {/* 4. Custom SVG */}
-      <Typography variant='h3'>4. Custom SVG graphics</Typography>
+      {/* 3. Custom SVG */}
+      <Typography variant='h3'>3. Custom SVG graphics</Typography>
       <Stack direction='row'>
         <IconButton
           svg={HeartSvg}
@@ -185,8 +128,8 @@ export default function IconButtonDemoPage() {
         />
       </Stack>
 
-      {/* 5. Custom sizes */}
-      <Typography variant='h3'>5. Custom sizes</Typography>
+      {/* 4. Custom sizes */}
+      <Typography variant='h3'>4. Custom sizes</Typography>
       <Stack direction='row'>
         <IconButton
           icon='mdi:play'
@@ -200,8 +143,8 @@ export default function IconButtonDemoPage() {
         />
       </Stack>
 
-      {/* 6. Disabled & active states */}
-      <Typography variant='h3'>6. Disabled state</Typography>
+      {/* 5. Disabled & active states */}
+      <Typography variant='h3'>5. Disabled state</Typography>
       <IconButton
         icon='mdi:delete'
         size='md'
@@ -209,8 +152,8 @@ export default function IconButtonDemoPage() {
         aria-label='Delete disabled'
       />
 
-      {/* 7. Preset usage */}
-      <Typography variant='h3'>7. Preset integration</Typography>
+      {/* 6. Preset usage */}
+      <Typography variant='h3'>6. Preset integration</Typography>
       <Box preset='actionCard'>
         <IconButton
           icon='mdi:credit-card'
@@ -220,8 +163,8 @@ export default function IconButtonDemoPage() {
         <Typography>Pay now</Typography>
       </Box>
 
-      {/* 8. Theme coupling */}
-      <Typography variant='h3'>8. Theme demonstration</Typography>
+      {/* 7. Theme coupling */}
+      <Typography variant='h3'>7. Theme demonstration</Typography>
       <Button
         variant='outlined'
         onClick={toggleMode}
