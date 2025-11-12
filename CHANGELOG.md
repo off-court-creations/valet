@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file. The format 
    - `roundToStep` to snap committed values to `step` from `min` (or `0`)
    - `wheelBehavior`: `'off' | 'focus' | 'hover'` (default `'focus'`)
    - Best Practices and curated Examples added to sidecar; docs page renders them
+ - Fields/Button: add `centered` prop (mirrors Typography) to center CTAs inside columns/Stacks without wrapper elements; docs and MCP metadata updated.
  - Fields: introduce `FieldBaseProps` with JSDoc for shared field props (`name`, `label`, `helperText`, `error`, `fullWidth`, `sx`, `preset`) to seed consistent reference descriptions across all fields.
  - MCP: extractor now reads per‑prop JSDoc comments from shared types and component interfaces to populate the Reference table descriptions by default.
 - Table: smart height constraints for better UX on small viewports

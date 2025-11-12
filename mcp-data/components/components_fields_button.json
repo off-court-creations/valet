@@ -38,6 +38,13 @@
       "default": "false"
     },
     {
+      "name": "centered",
+      "type": "boolean",
+      "required": false,
+      "description": "Center the button within stacked/flex layouts without wrapping",
+      "default": "false"
+    },
+    {
       "name": "sx",
       "type": "Sx",
       "required": false,
@@ -69,12 +76,22 @@
     "Choose sizes by density: `sm` / `md` for typical forms, `lg` for standout CTAs. Avoid mixing sizes within the same control group.",
     "Prefer theme tokens ( `primary` , `secondary` , `tertiary` ) for automatic contrast. If you set a custom `color` , also set `textColor` to keep contrast accessible.",
     "Use `fullWidth` in narrow or linear layouts (mobile, drawers) where the button should span the container. Otherwise let content define width.",
+    "For a single CTA inside a column/Stack, use `centered` to align the button without wrapper elements; pair with `fullWidth` when it should stretch instead.",
     "Prefer succinct verb‑first labels. If the action is icon‑only, use `IconButton` and provide an accessible label via `aria-label` .",
     "When combining icons and text, add a small gap (e.g., `` on the icon) for readable spacing.",
     "Reuse styling with `preset` ( `definePreset()` ) rather than duplicating `sx` across instances.",
     "Avoid multiple primary actions per view and reserve destructive styles for destructive operations."
   ],
-  "examples": [],
+  "examples": [
+    {
+      "id": "button-centered-cta",
+      "title": "Centered CTA in a column",
+      "code": "<Stack gap={theme.spacing(1)}>\n  <Typography variant='subtitle'>Need approval?</Typography>\n  <Button centered>Request review</Button>\n</Stack>",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    }
+  ],
   "sourceFiles": [
     "src/components/fields/Button.tsx"
   ],

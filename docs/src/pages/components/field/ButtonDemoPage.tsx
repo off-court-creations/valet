@@ -40,23 +40,37 @@ export default function ButtonDemoPage() {
         <Button fullWidth>Stretch to parent</Button>
       </Box>
 
-      {/* 4 ▸ Palette tokens */}
-      <Typography variant='h3'>4. Palette tokens</Typography>
+      {/* 4 ▸ centered */}
+      <Typography variant='h3'>4. centered</Typography>
+      <Stack
+        pad={theme.spacing(1)}
+        sx={{
+          borderRadius: theme.radius(1),
+          border: `1px dashed ${theme.colors['divider']}`,
+          background: theme.colors['backgroundAlt'],
+        }}
+      >
+        <Button>Default alignment</Button>
+        <Button centered>Centered CTA</Button>
+      </Stack>
+
+      {/* 5 ▸ Palette tokens */}
+      <Typography variant='h3'>5. Palette tokens</Typography>
       <Stack direction='row'>
         <Button color='primary'>primary</Button>
         <Button color='secondary'>secondary</Button>
         <Button color='tertiary'>tertiary</Button>
       </Stack>
 
-      {/* 5 ▸ Custom colours */}
-      <Typography variant='h3'>5. Custom backgrounds</Typography>
+      {/* 6 ▸ Custom colours */}
+      <Typography variant='h3'>6. Custom backgrounds</Typography>
       <Stack direction='row'>
         <Button color='#9C27B0'>#9C27B0</Button>
         <Button color='#00BFA5'>#00BFA5</Button>
       </Stack>
 
-      {/* 6 ▸ Icons & text */}
-      <Typography variant='h3'>6. Icons &amp; text</Typography>
+      {/* 7 ▸ Icons & text */}
+      <Typography variant='h3'>7. Icons &amp; text</Typography>
       <Button>
         <Icon
           icon='carbon:chat'
@@ -65,8 +79,8 @@ export default function ButtonDemoPage() {
         With icon
       </Button>
 
-      {/* 7 ▸ Outlined overrides */}
-      <Typography variant='h3'>7. Outlined colour override</Typography>
+      {/* 8 ▸ Outlined overrides */}
+      <Typography variant='h3'>8. Outlined colour override</Typography>
       <Stack direction='row'>
         <Button variant='outlined'>default outline</Button>
         <Button
@@ -89,8 +103,8 @@ export default function ButtonDemoPage() {
         </Button>
       </Stack>
 
-      {/* 8 ▸ Disabled */}
-      <Typography variant='h3'>8. Disabled</Typography>
+      {/* 9 ▸ Disabled */}
+      <Typography variant='h3'>9. Disabled</Typography>
       <Stack direction='row'>
         <Button disabled>contained</Button>
         <Button
@@ -107,8 +121,8 @@ export default function ButtonDemoPage() {
         </Button>
       </Stack>
 
-      {/* 9 ▸ Custom label variants */}
-      <Typography variant='h3'>9. Custom label variants</Typography>
+      {/* 10 ▸ Custom label variants */}
+      <Typography variant='h3'>10. Custom label variants</Typography>
       <Stack direction='row'>
         <Button>
           <Typography variant='h4'>h4 in button</Typography>
@@ -121,8 +135,8 @@ export default function ButtonDemoPage() {
         </Button>
       </Stack>
 
-      {/* 10 ▸ Theme toggle (LAST) */}
-      <Typography variant='h3'>10. Theme toggle</Typography>
+      {/* 11 ▸ Theme toggle (LAST) */}
+      <Typography variant='h3'>11. Theme toggle</Typography>
       <Button
         variant='outlined'
         onClick={toggleMode}

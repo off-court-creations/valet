@@ -23,6 +23,8 @@ export interface ButtonProps
   variant?: ButtonVariant;
   size?: ButtonSize | number | string;
   fullWidth?: boolean;
+  /** Center the button within stacked/flex layouts without wrapping */
+  centered?: boolean;
   /** Inline styles (with CSS var support) */
   sx?: Sx;
 }
@@ -77,6 +79,7 @@ const Root = styled('button')<{
   $radius: string;
   $ripple: string;
   $full: boolean;
+  $centered: boolean;
 }>`
   display: inline-flex;
   align-items: center;
@@ -93,8 +96,16 @@ const Root = styled('button')<{
   padding: ${({ $padRule }) => $padRule};
   box-sizing: border-box;
 
-  align-self: ${({ $full }) => ($full ? 'stretch' : 'flex-start')};
+  align-self: ${({ $full, $centered }) =>
+    $full ? 'stretch' : $centered ? 'center' : 'flex-start'};
   width: ${({ $full }) => ($full ? '100%' : 'auto')};
+  ${({ $centered, $full }) =>
+    $centered &&
+    !$full &&
+    `
+      margin-left: auto;
+      margin-right: auto;
+    `}
 
   border-radius: ${({ $radius }) => $radius};
   border: ${({ $variant, $outline, $strokeW }) =>
@@ -162,6 +173,7 @@ export const Button: React.FC<ButtonProps> = ({
   color,
   textColor,
   fullWidth = false,
+  centered = false,
   preset: p,
   className,
   children,
@@ -331,6 +343,7 @@ export const Button: React.FC<ButtonProps> = ({
       $radius={theme.radius(1)}
       $ripple={ripple}
       $full={fullWidth}
+      $centered={!!centered}
     >
       {content}
     </Root>
