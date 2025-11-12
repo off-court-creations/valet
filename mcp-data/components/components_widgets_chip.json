@@ -158,6 +158,6 @@
   "sourceFiles": [
     "src/components/widgets/Chip.tsx"
   ],
-  "version": "0.33.4",
+  "version": "0.33.5",
   "schemaVersion": "1.6"
 }
