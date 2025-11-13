@@ -203,6 +203,18 @@ const Th = styled('th')<{
   }
 `;
 
+const SortIcon = styled('span')<{
+  $opacity: number;
+  $dur: string;
+  $ease: string;
+}>`
+  display: inline-block;
+  margin-left: 0.25em;
+  color: currentColor;
+  opacity: ${({ $opacity }) => $opacity};
+  transition: opacity ${({ $dur }) => $dur} ${({ $ease }) => $ease};
+`;
+
 const Td = styled('td')<{ $align: 'left' | 'center' | 'right' }>`
   text-align: ${({ $align }) => $align};
 `;
@@ -244,6 +256,9 @@ export function Table<T extends object>({
   const wrapRef = useRef<HTMLDivElement>(null);
   const tableRef = useRef<HTMLTableElement>(null);
   const uniqueId = useId();
+  const [hoverCol, setHoverCol] = useState<number | null>(null);
+  const prevSortRef = useRef<{ index: number; desc: boolean } | null>(null);
+  const [fadingOutIndex, setFadingOutIndex] = useState<number | null>(null);
 
   const pad = theme.spacing(1);
 
@@ -433,10 +448,23 @@ export function Table<T extends object>({
         !prev || prev.index !== idx
           ? { index: idx, desc: false }
           : { index: idx, desc: !prev.desc };
+      // Keep snapshot of previous sort when switching columns for smooth fade-out
+      if (prev && prev.index !== idx) {
+        prevSortRef.current = { index: prev.index, desc: prev.desc };
+        setFadingOutIndex(prev.index);
+      }
       onSortChange?.(next.index, next.desc);
       return next;
     });
   };
+
+  // Clear fading-out indicator after the short duration so spacing returns
+  useEffect(() => {
+    if (fadingOutIndex == null) return;
+    const ms = parseInt(String(theme.motion.duration.short)) || 140;
+    const t = setTimeout(() => setFadingOutIndex(null), ms + 20);
+    return () => clearTimeout(t);
+  }, [fadingOutIndex, theme.motion.duration.short]);
 
   const toggleSelect = (row: T, checked: boolean) => {
     setSelected((prev) => {
@@ -586,19 +614,75 @@ export function Table<T extends object>({
                 style={{ width: theme.spacing(6) }}
               />
             ) : null}
-            {columns.map((c, i) => (
-              <Th
-                key={i}
-                $align={c.align ?? 'left'}
-                $sortable={!!c.sortable}
-                $active={sort?.index === i}
-                $primary={theme.colors.primary}
-                onClick={c.sortable ? () => toggleSort(i) : undefined}
-              >
-                {c.header}
-                {sort?.index === i ? (sort.desc ? ' ▼' : ' ▲') : null}
-              </Th>
-            ))}
+            {columns.map((c, i) => {
+              const isSortable = !!c.sortable;
+              const isActive = !!sort && sort.index === i;
+              const isHovering = hoverCol != null && hoverCol === i;
+
+              // Opacity logic: show active triangle unless previewing another column
+              const persistedOpacity = !sort ? 0 : isActive ? 1 : 0;
+
+              // Preview only on a different sortable column than the active one
+              const hoverOpacity =
+                isSortable && hoverCol != null && hoverCol !== sort?.index && isHovering ? 1 : 0;
+
+              // Characters: keep previous direction for graceful fade-out
+              const persistedChar = (() => {
+                if (isActive && sort) return sort.desc ? '▼' : '▲';
+                const prev = prevSortRef.current;
+                if (prev && prev.index === i) return prev.desc ? '▼' : '▲';
+                return '▲';
+              })();
+
+              const hoverChar = (() => {
+                const nextDesc = sort?.index === i ? !sort.desc : false;
+                return nextDesc ? '▼' : '▲';
+              })();
+
+              const ariaSort = isActive ? (sort!.desc ? 'descending' : 'ascending') : undefined;
+              const showPersisted = isActive || fadingOutIndex === i;
+              const showHover = hoverOpacity > 0;
+
+              return (
+                <Th
+                  key={i}
+                  $align={c.align ?? 'left'}
+                  $sortable={isSortable}
+                  $active={isActive}
+                  $primary={theme.colors.primary}
+                  aria-sort={ariaSort as React.AriaAttributes['aria-sort']}
+                  onClick={isSortable ? () => toggleSort(i) : undefined}
+                  onMouseEnter={isSortable ? () => setHoverCol(i) : undefined}
+                  onMouseLeave={
+                    isSortable ? () => setHoverCol((h) => (h === i ? null : h)) : undefined
+                  }
+                >
+                  {c.header}
+                  {/* Persisted sort indicator (active or previous column) */}
+                  {showPersisted ? (
+                    <SortIcon
+                      aria-hidden
+                      $opacity={persistedOpacity}
+                      $dur={theme.motion.duration.short}
+                      $ease={theme.motion.easing.standard}
+                    >
+                      {persistedChar}
+                    </SortIcon>
+                  ) : null}
+                  {/* Hover preview indicator (new column), fades in/out per hover */}
+                  {showHover ? (
+                    <SortIcon
+                      aria-hidden
+                      $opacity={hoverOpacity}
+                      $dur={theme.motion.hover.duration}
+                      $ease={theme.motion.hover.easing}
+                    >
+                      {hoverChar}
+                    </SortIcon>
+                  ) : null}
+                </Th>
+              );
+            })}
           </tr>
         </thead>
 

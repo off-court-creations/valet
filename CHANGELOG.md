@@ -6,6 +6,10 @@ All notable changes to this project will be documented in this file. The format 
 
 ### Added
 
+- Table: hover‑aware sort indicator
+  - On hovering a sortable header, a preview triangle fades in on that column using motion tokens; the active column’s triangle softly fades out.
+  - Clicking promotes the preview to the active indicator; the previously active triangle fades out. Moving the cursor away restores the active triangle if unchanged.
+
 - MCP: added `valet__search_best_practices` and `valet__list_synonyms` tools for agents to surface guidance and inspect alias mappings directly.
 - Primitives: add `WebGLCanvas` — a reusable WebGL2 canvas host that handles context creation, DPR-aware resizing, and RAF. Docs lava-lamp hero now uses this component. Status: stable.
 - Grid/Panel: introduce per-row height normalization.
