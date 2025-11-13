@@ -161,6 +161,6 @@
   "sourceFiles": [
     "src/components/widgets/Dropzone.tsx"
   ],
-  "version": "0.33.6",
+  "version": "0.33.7",
   "schemaVersion": "1.6"
 }
