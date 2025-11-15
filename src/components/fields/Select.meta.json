@@ -4,7 +4,7 @@
   "aliases": ["select", "dropdown", "combobox"],
   "docs": {
     "bestPractices": [
-      "Choose controlled vs uncontrolled deliberately: use `value` + `onChange` to integrate with app state; use `initialValue` for lightweight forms.",
+      "Choose controlled vs uncontrolled deliberately: use `value` + `onValueChange` for controlled state; use `defaultValue` for uncontrolled, and handle commit-time actions in `onValueCommit`.",
       "Keep option labels short, distinct, and ordered predictably (alphabetical or by frequency). Avoid duplicating values with different labels.",
       "Use clear placeholders. Show a short prompt when no value is selected (e.g., ‘Choose one’). Don’t use real values as placeholders.",
       "Keyboard & typeahead. Ensure focus and Arrow keys navigate options; enable first‑letter search for long lists.",

@@ -12,27 +12,32 @@
   "props": [
     {
       "name": "value",
-      "type": "string",
+      "type": "string | [string, string]",
       "required": false,
-      "description": "Controlled ISO date value (YYYY-MM-DD)."
+      "description": "Controlled value. Single-date mode: ISO YYYY-MM-DD string. Range mode: tuple [start, end]."
     },
     {
       "name": "defaultValue",
-      "type": "string",
+      "type": "string | [string, string]",
       "required": false,
-      "description": "Default value for uncontrolled usage."
+      "description": "Default value for uncontrolled usage (same shape as `value`)."
     },
     {
-      "name": "onChange",
-      "type": "(value: string) => void",
+      "name": "onValueChange",
+      "type": "OnValueChange<string | [string, string]>",
       "required": false,
-      "description": "Fires with ISO value when selection changes."
+      "description": "Event trio"
+    },
+    {
+      "name": "onValueCommit",
+      "type": "OnValueCommit<string | [string, string]>",
+      "required": false
     },
     {
       "name": "name",
       "type": "string",
       "required": false,
-      "description": "FormControl field name."
+      "description": "FormControl field name (single-date mode only)."
     },
     {
       "name": "minDate",
@@ -54,54 +59,27 @@
       "default": "false"
     },
     {
-      "name": "endValue",
-      "type": "string",
-      "required": false,
-      "description": "Controlled end date when `range` is true."
-    },
-    {
-      "name": "defaultEndValue",
-      "type": "string",
-      "required": false,
-      "description": "Default end date for uncontrolled range mode."
-    },
-    {
-      "name": "onRangeChange",
-      "type": "(start: string, end: string) => void",
-      "required": false,
-      "description": "Fires with start and end ISO values when range changes."
-    },
-    {
       "name": "sx",
       "type": "Sx",
       "required": false,
       "description": "Inline styles (with CSS var support)"
     },
     {
-      "name": "compactMode",
-      "type": "'auto' | 'on' | 'off'",
+      "name": "density",
+      "type": "'compact' | 'standard' | 'comfortable'",
       "required": false,
-      "description": "Control how compact mode engages.\n- 'auto' (default): measure container and switch at thresholds.\n- 'on': force compact layout always.\n- 'off': disable compact behavior entirely.",
-      "default": "'auto'",
+      "description": "Density override; alias: `compact` maps to `density='compact'`",
       "enumValues": [
-        "auto",
-        "on",
-        "off"
+        "compact",
+        "standard",
+        "comfortable"
       ]
     },
     {
-      "name": "compactThresholdIn",
-      "type": "number",
+      "name": "compact",
+      "type": "boolean",
       "required": false,
-      "description": "Width below which compact turns on (when compactMode='auto'). Default: 340",
-      "default": "340"
-    },
-    {
-      "name": "compactThresholdOut",
-      "type": "number",
-      "required": false,
-      "description": "Width above which compact turns off (when compactMode='auto'). Default: 380",
-      "default": "380"
+      "description": "Legacy alias for density='compact'."
     },
     {
       "name": "preset",
@@ -129,12 +107,12 @@
   "cssPresets": [],
   "events": [
     {
-      "name": "onChange",
-      "payloadType": "string"
+      "name": "onValueChange",
+      "payloadType": "OnValueChange<string | [string, string]>"
     },
     {
-      "name": "onRangeChange",
-      "payloadType": "string"
+      "name": "onValueCommit",
+      "payloadType": "OnValueCommit<string | [string, string]>"
     }
   ],
   "actions": [],

@@ -23,9 +23,21 @@
     },
     {
       "name": "onChange",
-      "type": "(checked: boolean) => void",
+      "type": "(event: React.MouseEvent<HTMLButtonElement>) => void",
       "required": false,
-      "description": "Callback for state changes (fires for both modes)."
+      "description": "DOM click event parity (raw)."
+    },
+    {
+      "name": "onValueChange",
+      "type": "OnValueChange<boolean>",
+      "required": false,
+      "description": "Canonical value change event (fires on each toggle)."
+    },
+    {
+      "name": "onValueCommit",
+      "type": "OnValueCommit<boolean>",
+      "required": false,
+      "description": "Commit event (same moment for toggles)."
     },
     {
       "name": "size",
@@ -93,7 +105,15 @@
   "events": [
     {
       "name": "onChange",
-      "payloadType": "boolean"
+      "payloadType": "React.MouseEvent<HTMLButtonElement>"
+    },
+    {
+      "name": "onValueChange",
+      "payloadType": "OnValueChange<boolean>"
+    },
+    {
+      "name": "onValueCommit",
+      "payloadType": "OnValueCommit<boolean>"
     }
   ],
   "actions": [],

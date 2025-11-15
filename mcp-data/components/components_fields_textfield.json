@@ -60,17 +60,52 @@
       "description": "Override input font"
     },
     {
+      "name": "onChange",
+      "type": "React.ChangeEventHandler<HTMLInputElement> | undefined | React.ChangeEventHandler<HTMLTextAreaElement> | undefined",
+      "required": false,
+      "description": "DOM-parity change event (raw React event)."
+    },
+    {
+      "name": "onValueChange",
+      "type": "OnValueChange<string> | undefined",
+      "required": false,
+      "description": "Canonical value change event (fires on each input)."
+    },
+    {
+      "name": "onValueCommit",
+      "type": "OnValueCommit<string> | undefined",
+      "required": false,
+      "description": "Commit event (on Enter or blur)."
+    },
+    {
       "name": "as",
       "type": "\"input\" | undefined | \"textarea\"",
       "required": false
     }
   ],
+  "domPassthrough": {
+    "element": "input",
+    "omitted": []
+  },
   "cssVars": [
     "--valet-focus-width",
     "--valet-focus-offset"
   ],
   "cssPresets": [],
-  "events": [],
+  "events": [
+    {
+      "name": "onChange",
+      "payloadType": "React.ChangeEventHandler<HTMLInputElement> | undefined | React.ChangeEventHandler<HTMLTextAreaElement> | undefined"
+    },
+    {
+      "name": "onValueChange",
+      "payloadType": "OnValueChange<string> | undefined"
+    },
+    {
+      "name": "onValueCommit",
+      "payloadType": "OnValueCommit<string> | undefined"
+    }
+  ],
   "actions": [],
   "slots": [
     {

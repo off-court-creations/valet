@@ -8,11 +8,26 @@ import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import type { Presettable, Sx } from '../../types';
 import { Icon } from '../primitives/Icon';
+import {
+  createPolymorphicComponent,
+  type PolymorphicProps,
+  type PolymorphicRef,
+} from '../../system/polymorphic';
+import { toRgb, mix, toHex } from '../../helpers/color';
 
 /*───────────────────────────────────────────────────────────*/
 /* Public API                                                */
-export type IconButtonVariant = 'contained' | 'outlined';
+export type IconButtonVariant = 'filled' | 'outlined' | 'plain';
 export type IconButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+type Intent =
+  | 'default'
+  | 'primary'
+  | 'secondary'
+  | 'success'
+  | 'warning'
+  | 'error'
+  | 'info'
+  | (string & {});
 
 export interface IconButtonProps
   extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'style'>,
@@ -21,18 +36,9 @@ export interface IconButtonProps
   size?: IconButtonSize | number | string;
   icon?: string;
   svg?: string | ReactElement<SVGProps<SVGSVGElement>>;
-  /**
-   * Foreground colour override for the glyph.
-   * @default Derived from the resolved background token (e.g., primary → primaryButtonText)
-   */
-  iconColor?: string | undefined;
-  /**
-   * Background colour token or CSS colour for the button surface.
-   * Accepts theme colour tokens ('primary' | 'secondary' | 'tertiary') or any CSS colour.
-   * For `contained`, it is used as the fill. For `outlined`, it applies on hover/focus
-   * alongside the matching button text token for the glyph colour.
-   */
-  background?: string | undefined;
+  intent?: Intent;
+  /** Explicit color override (theme token or CSS color). */
+  color?: string;
   /** Inline styles (with CSS var support) */
   sx?: Sx;
 }
@@ -52,7 +58,7 @@ const geom: () => Record<IconButtonSize, Geometry> = () => ({
 /* Styled “skin” – colours, hover, ripple, **not** size      */
 const Skin = styled('button')<{
   $variant: IconButtonVariant;
-  $bg: string; // background token (contained, or outlined:hover)
+  $bg: string; // resolved color
   $text: string; // base text colour
   $btnText: string; // button text token (e.g., primaryButtonText)
   $ripple: string;
@@ -65,12 +71,12 @@ const Skin = styled('button')<{
   overflow: hidden;
   box-sizing: border-box;
 
-  border: ${({ $variant, $text, $strokeW }) =>
-    $variant === 'outlined' ? `${$strokeW} solid ${$text}` : 'none'};
+  border: ${({ $variant, $bg, $strokeW }) =>
+    $variant === 'outlined' ? `${$strokeW} solid ${$bg}` : 'none'};
 
-  background: ${({ $variant, $bg }) => ($variant === 'contained' ? $bg : 'transparent')};
+  background: ${({ $variant, $bg }) => ($variant === 'filled' ? $bg : 'transparent')};
 
-  color: ${({ $variant, $text, $btnText }) => ($variant === 'contained' ? $btnText : $text)};
+  color: ${({ $variant, $bg, $btnText }) => ($variant === 'filled' ? $btnText : $bg)};
 
   cursor: pointer;
   transition:
@@ -88,23 +94,17 @@ const Skin = styled('button')<{
 
   &:hover:not(:disabled) {
     ${({ $variant, $bg, $btnText }) =>
-      $variant === 'contained'
+      $variant === 'filled'
         ? 'filter: brightness(1.25);'
-        : `
-          background: ${$bg};
-          color: ${$btnText};
-        `}
+        : `background: ${$variant === 'outlined' ? $bg + '22' : 'transparent'}; color: ${$btnText};`}
   }
 
   /* Keyboard focus should mirror hover visuals for discoverability */
   &:focus-visible:not(:disabled) {
     ${({ $variant, $bg, $btnText }) =>
-      $variant === 'contained'
+      $variant === 'filled'
         ? 'filter: brightness(1.25);'
-        : `
-          background: ${$bg};
-          color: ${$btnText};
-        `}
+        : `background: ${$variant === 'outlined' ? $bg + '22' : 'transparent'}; color: ${$btnText};`}
   }
 
   &:active:not(:disabled) {
@@ -137,18 +137,22 @@ const Skin = styled('button')<{
 
 /*───────────────────────────────────────────────────────────*/
 /* Component                                                 */
-export const IconButton: React.FC<IconButtonProps> = ({
-  variant = 'contained',
-  size = 'md',
-  icon,
-  svg,
-  iconColor,
-  background,
-  preset: p,
-  className,
-  sx,
-  ...rest
-}) => {
+const IconButtonImpl = <E extends React.ElementType = 'button'>(
+  props: PolymorphicProps<E, IconButtonProps>,
+  ref: PolymorphicRef<E>,
+) => {
+  const {
+    variant = 'filled',
+    size = 'md',
+    icon,
+    svg,
+    intent,
+    color,
+    preset: p,
+    className,
+    sx,
+    ...rest
+  } = props as IconButtonProps & { as?: E } & Record<string, unknown>;
   const { theme } = useTheme();
   const sizes = geom();
 
@@ -165,14 +169,17 @@ export const IconButton: React.FC<IconButtonProps> = ({
     iconSz = `calc(${diam} * 0.45)`;
   }
 
-  // Resolve color tokens (accept token names like 'primary')
   const resolveToken = (v?: string): string | undefined => {
     if (!v) return undefined;
     const val = (theme.colors as Record<string, string>)[v as string];
     return typeof val === 'string' ? val : v;
   };
-
-  const bg = resolveToken(background) ?? theme.colors.primary;
+  const intentToColor = (i?: Intent): string | undefined => {
+    if (!i) return undefined;
+    const val = (theme.colors as Record<string, string>)[String(i)];
+    return typeof val === 'string' ? val : undefined;
+  };
+  const bg = resolveToken(color) ?? intentToColor(intent) ?? theme.colors.primary;
   const equals = (a?: string, b?: string) => (a || '').toUpperCase() === (b || '').toUpperCase();
   const buttonTextFor = (bgHex: string) => {
     if (equals(bgHex, theme.colors.primary)) return theme.colors.primaryButtonText;
@@ -183,7 +190,7 @@ export const IconButton: React.FC<IconButtonProps> = ({
   };
   const btnText = buttonTextFor(bg);
 
-  const ripple = variant === 'contained' ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.1)';
+  const ripple = variant === 'filled' ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.1)';
 
   const presetClasses = p ? preset(p) : '';
 
@@ -195,10 +202,70 @@ export const IconButton: React.FC<IconButtonProps> = ({
     borderRadius: '50%',
   };
 
+  // Intent CSS variables contract
+  const makeMix = (a: string, b: string, w: number) => toHex(mix(toRgb(a), toRgb(b), w));
+  const intentBg = bg;
+  const intentFg = variant === 'filled' ? btnText : bg;
+  const intentBorder = variant === 'outlined' ? bg : intentBg;
+  const intentFocus = theme.colors.primary;
+  const intentBgHover = variant === 'filled' ? makeMix(bg, btnText, 0.15) : 'transparent';
+  const intentBgActive = variant === 'filled' ? makeMix(bg, btnText, 0.25) : 'transparent';
+  const intentFgDisabled = makeMix(intentFg, theme.colors.background, 0.5);
+
+  const asTag = (props as unknown as { as?: React.ElementType }).as as unknown as
+    | string
+    | undefined;
+  const elementProps: Record<string, unknown> = { ...rest };
+  const roleProps: Record<string, unknown> = {};
+  if (asTag === 'a') delete (elementProps as Record<string, unknown>)['type'];
+  const interactiveFallback = asTag && asTag !== 'button' && asTag !== 'a';
+  if (interactiveFallback) {
+    roleProps['role'] = (rest as Record<string, unknown>)['role'] ?? 'button';
+    roleProps['tabIndex'] = (rest as Record<string, unknown>)['tabIndex'] ?? 0;
+    const orig = (rest as Record<string, unknown>)['onKeyDown'] as
+      | React.KeyboardEventHandler
+      | undefined;
+    roleProps['onKeyDown'] = ((e: React.KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        (e.currentTarget as HTMLElement).click();
+      }
+      orig?.(e);
+    }) as React.KeyboardEventHandler;
+  }
+  // Default to type="button" for native buttons when no type is provided
+  if (asTag !== 'a' && (elementProps as Record<string, unknown>)['type'] == null) {
+    (elementProps as Record<string, unknown>)['type'] = 'button';
+  }
+
+  if (process.env.NODE_ENV !== 'production') {
+    // Dev-time a11y: icon-only controls must have an accessible name
+    const hasAriaLabel = Boolean((elementProps as Record<string, unknown>)['aria-label']);
+    const hasLabelledBy = Boolean((elementProps as Record<string, unknown>)['aria-labelledby']);
+    const hasTitle = Boolean((elementProps as Record<string, unknown>)['title']);
+    if (!hasAriaLabel && !hasLabelledBy && !hasTitle) {
+      console.warn(
+        'IconButton: provide an accessible name via aria-label, aria-labelledby, or title.',
+      );
+    }
+    const providedRole = (rest as Record<string, unknown>)['role'] as string | undefined;
+    if (asTag === 'a' && (rest as Record<string, unknown>)['href'] && providedRole === 'button') {
+      console.warn(
+        'IconButton: role="button" on <a href> contradicts native link semantics. Remove the role.',
+      );
+    }
+    if ((!asTag || asTag === 'button') && providedRole === 'link') {
+      console.warn('IconButton: role="link" on <button> contradicts native button semantics.');
+    }
+  }
   return (
     <Skin
-      type='button'
-      {...rest}
+      {...elementProps}
+      {...roleProps}
+      ref={ref as unknown as React.Ref<HTMLButtonElement>}
+      data-valet-component='IconButton'
+      data-disabled={(rest as Record<string, unknown>)['disabled'] ? 'true' : 'false'}
+      data-state={(rest as Record<string, unknown>)['disabled'] ? 'disabled' : 'enabled'}
       onContextMenu={(e: React.MouseEvent) => e.preventDefault()}
       $variant={variant}
       $bg={bg}
@@ -206,18 +273,32 @@ export const IconButton: React.FC<IconButtonProps> = ({
       $btnText={btnText}
       $ripple={ripple}
       $strokeW={theme.stroke(1)}
-      style={{ ...geomStyle, ...sx }}
+      style={
+        {
+          ...geomStyle,
+          '--valet-intent-bg': intentBg,
+          '--valet-intent-fg': intentFg,
+          '--valet-intent-border': intentBorder,
+          '--valet-intent-focus': intentFocus,
+          '--valet-intent-bg-hover': intentBgHover,
+          '--valet-intent-bg-active': intentBgActive,
+          '--valet-intent-fg-disabled': intentFgDisabled,
+          ...sx,
+        } as React.CSSProperties
+      }
       className={[presetClasses, className].filter(Boolean).join(' ')}
     >
       <Icon
         icon={icon}
         svg={svg}
         size={iconSz}
-        color={resolveToken(iconColor)}
-        aria-hidden={rest['aria-label'] ? undefined : true}
+        color={variant === 'filled' ? btnText : bg}
+        aria-hidden={(elementProps as Record<string, unknown>)['aria-label'] ? undefined : true}
       />
     </Skin>
   );
 };
+
+export const IconButton = createPolymorphicComponent<'button', IconButtonProps>(IconButtonImpl);
 
 export default IconButton;

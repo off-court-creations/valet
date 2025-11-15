@@ -28,6 +28,7 @@ export default function SliderDemoPage() {
 
   /* Controlled slider state ------------------------------------------------ */
   const [ctlValue, setCtlValue] = useState(30);
+  const [ctlCommit, setCtlCommit] = useState(30);
 
   const usageContent = (
     <Stack>
@@ -40,11 +41,15 @@ export default function SliderDemoPage() {
       <Stack>
         <Slider
           value={ctlValue}
-          onChange={setCtlValue}
+          onValueChange={(v) => setCtlValue(v)}
+          onValueCommit={(v) => setCtlCommit(v)}
           showValue
         />
         <Typography>
-          Current value:&nbsp;<code>{ctlValue}</code>
+          live: <code>{ctlValue}</code>
+        </Typography>
+        <Typography>
+          commit: <code>{ctlCommit}</code>
         </Typography>
       </Stack>
 
@@ -166,7 +171,7 @@ export default function SliderDemoPage() {
             max={max - 1}
             step={1}
             value={min}
-            onChange={(n) => setMin(n)}
+            onValueChange={(n) => setMin(n)}
             aria-label='min'
           />
         </Stack>
@@ -178,7 +183,7 @@ export default function SliderDemoPage() {
             max={500}
             step={1}
             value={max}
-            onChange={(n) => setMax(n)}
+            onValueChange={(n) => setMax(n)}
             aria-label='max'
           />
         </Stack>
@@ -190,7 +195,7 @@ export default function SliderDemoPage() {
             max={Math.max(1, Math.floor((max - min) / 2))}
             step={1}
             value={step}
-            onChange={(n) => setStep(n)}
+            onValueChange={(n) => setStep(n)}
             aria-label='step'
           />
         </Stack>
@@ -199,7 +204,7 @@ export default function SliderDemoPage() {
           <Select
             placeholder='snap'
             value={snap}
-            onChange={(v) => setSnap((v as 'step' | 'presets') || 'none')}
+            onValueChange={(v) => setSnap((v as 'step' | 'presets') || 'none')}
             sx={{ width: 160 }}
           >
             <Select.Option value='step'>step</Select.Option>
@@ -223,7 +228,7 @@ export default function SliderDemoPage() {
           <Typography variant='subtitle'>showTicks</Typography>
           <Switch
             checked={showTicks}
-            onChange={setShowTicks}
+            onValueChange={(v) => setShowTicks(v)}
           />
         </Stack>
         <Stack
@@ -234,7 +239,7 @@ export default function SliderDemoPage() {
           <Typography variant='subtitle'>showValue</Typography>
           <Switch
             checked={showValue}
-            onChange={setShowValue}
+            onValueChange={(v) => setShowValue(v)}
           />
         </Stack>
         <Stack
@@ -245,14 +250,14 @@ export default function SliderDemoPage() {
           <Typography variant='subtitle'>showMinMax</Typography>
           <Switch
             checked={showMinMax}
-            onChange={setShowMinMax}
+            onValueChange={(v) => setShowMinMax(v)}
           />
         </Stack>
       </Stack>
 
       <Slider
         value={pv}
-        onChange={setPv}
+        onValueChange={(v) => setPv(v)}
         min={min}
         max={max}
         step={step}

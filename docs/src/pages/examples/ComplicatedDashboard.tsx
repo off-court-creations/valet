@@ -86,7 +86,7 @@ export default function ComplicatedDashboard() {
           columns={3}
           adaptive
         >
-          <Panel variant='alt'>
+          <Panel variant='outlined'>
             <Typography
               variant='h5'
               bold
@@ -146,7 +146,7 @@ export default function ComplicatedDashboard() {
             </Tabs>
           </Panel>
 
-          <Panel variant='alt'>
+          <Panel variant='outlined'>
             <Typography
               variant='h5'
               bold

@@ -111,7 +111,7 @@ export default function FormDemoPage() {
 
             <Button
               type='submit'
-              variant='contained'
+              variant='filled'
               size='lg'
             >
               Send
@@ -134,7 +134,7 @@ export default function FormDemoPage() {
         sx={{ padding: theme.spacing(1) }}
       >
         <Button
-          variant='contained'
+          variant='filled'
           size='lg'
           onClick={() => navigate(-1)}
         >

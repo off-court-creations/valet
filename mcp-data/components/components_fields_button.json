@@ -10,39 +10,32 @@
   ],
   "props": [
     {
-      "name": "color",
-      "type": "ButtonToken | string",
-      "required": false
-    },
-    {
-      "name": "textColor",
-      "type": "ButtonToken | string",
-      "required": false
+      "name": "intent",
+      "type": "Intent",
+      "required": false,
+      "description": "Semantic color intent (maps to theme tokens)."
     },
     {
       "name": "variant",
       "type": "ButtonVariant",
       "required": false,
-      "default": "'contained'"
+      "description": "Visual variant: filled | outlined | plain."
+    },
+    {
+      "name": "color",
+      "type": "string",
+      "required": false,
+      "description": "Explicit color override (any CSS color or theme token name)."
     },
     {
       "name": "size",
       "type": "ButtonSize | number | string",
-      "required": false,
-      "default": "'md'"
+      "required": false
     },
     {
       "name": "fullWidth",
       "type": "boolean",
-      "required": false,
-      "default": "false"
-    },
-    {
-      "name": "centered",
-      "type": "boolean",
-      "required": false,
-      "description": "Center the button within stacked/flex layouts without wrapping",
-      "default": "false"
+      "required": false
     },
     {
       "name": "sx",
@@ -65,7 +58,14 @@
   },
   "cssVars": [
     "--valet-bg",
-    "--valet-text-color"
+    "--valet-text-color",
+    "--valet-intent-bg",
+    "--valet-intent-fg",
+    "--valet-intent-border",
+    "--valet-intent-focus",
+    "--valet-intent-bg-hover",
+    "--valet-intent-bg-active",
+    "--valet-intent-fg-disabled"
   ],
   "cssPresets": [],
   "events": [],
@@ -74,9 +74,9 @@
   "bestPractices": [
     "Establish a clear action hierarchy: use `contained` for the primary action and `outlined` for secondary/tertiary actions. Keep emphasis consistent within a view.",
     "Choose sizes by density: `sm` / `md` for typical forms, `lg` for standout CTAs. Avoid mixing sizes within the same control group.",
-    "Prefer theme tokens ( `primary` , `secondary` , `tertiary` ) for automatic contrast. If you set a custom `color` , also set `textColor` to keep contrast accessible.",
+    "Use `variant` (`filled|outlined|plain`) and semantic `intent` to establish hierarchy. For custom palettes, use `color` (token name or CSS) — `filled` auto-contrasts the label.",
     "Use `fullWidth` in narrow or linear layouts (mobile, drawers) where the button should span the container. Otherwise let content define width.",
-    "For a single CTA inside a column/Stack, use `centered` to align the button without wrapper elements; pair with `fullWidth` when it should stretch instead.",
+    "For a single CTA inside a column/Stack, center using a parent container (`<Box alignX='center'>`) or `fullWidth` for stretch; avoid control-level centering.",
     "Prefer succinct verb‑first labels. If the action is icon‑only, use `IconButton` and provide an accessible label via `aria-label` .",
     "When combining icons and text, add a small gap (e.g., `` on the icon) for readable spacing.",
     "Reuse styling with `preset` ( `definePreset()` ) rather than duplicating `sx` across instances.",
@@ -86,7 +86,7 @@
     {
       "id": "button-centered-cta",
       "title": "Centered CTA in a column",
-      "code": "<Stack gap={theme.spacing(1)}>\n  <Typography variant='subtitle'>Need approval?</Typography>\n  <Button centered>Request review</Button>\n</Stack>",
+      "code": "<Stack gap={theme.spacing(1)}>\n  <Typography variant='subtitle'>Need approval?</Typography>\n  <Box alignX='center'><Button>Request review</Button></Box>\n</Stack>",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {}

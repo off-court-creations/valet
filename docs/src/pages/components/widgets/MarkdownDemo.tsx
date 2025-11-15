@@ -104,7 +104,7 @@ export default function MarkdownDemoPage() {
       <Typography variant='subtitle'>Code block background for fenced blocks</Typography>
       <Select
         placeholder='codeBackground'
-        onChange={() => void 0}
+        onValueChange={() => void 0}
         value={'surfaceElevated'}
         disabled
         sx={{ width: 220 }}

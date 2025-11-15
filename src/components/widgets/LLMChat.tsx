@@ -208,10 +208,7 @@ export const LLMChat: React.FC<ChatProps> = ({
 
     const next = available >= cutoff;
     if (next) {
-      if (!constraintRef.current) {
-        surfEl.scrollTop = 0;
-        surfEl.scrollLeft = 0;
-      }
+      // Do not reset parent scroll when enabling constraint.
       constraintRef.current = true;
       setShouldConstrain(true);
       setMaxHeight(Math.max(0, available));
@@ -274,7 +271,7 @@ export const LLMChat: React.FC<ChatProps> = ({
         {...rest}
         compact
         fullWidth
-        variant='alt'
+        variant='outlined'
         sx={sx}
         className={cls}
       >
@@ -288,7 +285,7 @@ export const LLMChat: React.FC<ChatProps> = ({
             <Select
               size='sm'
               value={model}
-              onChange={(v) => handleModelChange(v as string)}
+              onValueChange={(v) => handleModelChange(v as string)}
             >
               {models[provider].map((m) => (
                 <Select.Option
@@ -342,15 +339,15 @@ export const LLMChat: React.FC<ChatProps> = ({
                     {m.role !== 'user' && systemAvatar && (
                       <Avatar
                         src={systemAvatar}
-                        size='s'
+                        size='sm'
                         variant='outline'
                         sx={{ marginRight: theme.spacing(1) }}
                       />
                     )}
                     <Panel
                       compact
-                      variant='main'
-                      background={m.role === 'user' ? theme.colors.primary : undefined}
+                      variant='filled'
+                      color={m.role === 'user' ? theme.colors.primary : undefined}
                       sx={{
                         maxWidth: '100%',
                         width: 'fit-content',
@@ -386,7 +383,7 @@ export const LLMChat: React.FC<ChatProps> = ({
                     {m.role === 'user' && userAvatar && (
                       <Avatar
                         src={userAvatar}
-                        size='s'
+                        size='sm'
                         variant='outline'
                         sx={{ marginLeft: theme.spacing(1) }}
                       />

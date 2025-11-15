@@ -42,10 +42,31 @@
     "status": "stable"
   },
   {
+    "name": "Option",
+    "category": "fields",
+    "summary": "Option component",
+    "slug": "components/fields/option",
+    "status": "stable"
+  },
+  {
     "name": "MetroSelect",
     "category": "fields",
     "summary": "MetroSelect component",
     "slug": "components/fields/metroselect",
+    "status": "stable"
+  },
+  {
+    "name": "MetroSelect.Option",
+    "category": "fields",
+    "summary": "MetroSelect.Option component",
+    "slug": "components/fields/metroselect.option",
+    "status": "stable"
+  },
+  {
+    "name": "RadioGroup",
+    "category": "fields",
+    "summary": "RadioGroup component",
+    "slug": "components/fields/radiogroup",
     "status": "stable"
   },
   {
@@ -60,6 +81,13 @@
     "category": "fields",
     "summary": "Select component",
     "slug": "components/fields/select",
+    "status": "stable"
+  },
+  {
+    "name": "Select.Option",
+    "category": "fields",
+    "summary": "Select.Option component",
+    "slug": "components/fields/select.option",
     "status": "stable"
   },
   {
@@ -89,6 +117,13 @@
     "summary": "Accordion component",
     "slug": "components/layout/accordion",
     "status": "experimental"
+  },
+  {
+    "name": "Accordion.Item",
+    "category": "layout",
+    "summary": "Accordion.Item component",
+    "slug": "components/layout/accordion.item",
+    "status": "stable"
   },
   {
     "name": "AppBar",
@@ -161,6 +196,20 @@
     "status": "stable"
   },
   {
+    "name": "Tabs.Tab",
+    "category": "layout",
+    "summary": "Tabs.Tab component",
+    "slug": "components/layout/tabs.tab",
+    "status": "stable"
+  },
+  {
+    "name": "Tabs.Panel",
+    "category": "layout",
+    "summary": "Tabs.Panel component",
+    "slug": "components/layout/tabs.panel",
+    "status": "stable"
+  },
+  {
     "name": "Avatar",
     "category": "primitives",
     "summary": "Avatar component",
@@ -186,6 +235,20 @@
     "category": "primitives",
     "summary": "Image component",
     "slug": "components/primitives/image",
+    "status": "stable"
+  },
+  {
+    "name": "ProgressBar",
+    "category": "primitives",
+    "summary": "ProgressBar component",
+    "slug": "components/primitives/progressbar",
+    "status": "stable"
+  },
+  {
+    "name": "ProgressRing",
+    "category": "primitives",
+    "summary": "ProgressRing component",
+    "slug": "components/primitives/progressring",
     "status": "stable"
   },
   {
@@ -263,6 +326,20 @@
     "category": "widgets",
     "summary": "Pagination component",
     "slug": "components/widgets/pagination",
+    "status": "stable"
+  },
+  {
+    "name": "ParallaxScroll",
+    "category": "widgets",
+    "summary": "ParallaxScroll component",
+    "slug": "components/widgets/parallaxscroll",
+    "status": "stable"
+  },
+  {
+    "name": "ParallaxLayer",
+    "category": "widgets",
+    "summary": "ParallaxLayer component",
+    "slug": "components/widgets/parallaxlayer",
     "status": "stable"
   },
   {

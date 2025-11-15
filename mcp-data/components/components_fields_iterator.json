@@ -19,15 +19,16 @@
       "required": false
     },
     {
-      "name": "onChange",
-      "type": "(value: number) => void",
-      "required": false
+      "name": "onValueChange",
+      "type": "OnValueChange<number>",
+      "required": false,
+      "description": "Canonical value change event (fires on each mutation)."
     },
     {
-      "name": "onCommit",
-      "type": "(value: number) => void",
+      "name": "onValueCommit",
+      "type": "OnValueCommit<number>",
       "required": false,
-      "description": "Fires when a value is committed (buttons, wheel, keyboard, or blur)."
+      "description": "Commit event (buttons, wheel, keyboard final, or blur)."
     },
     {
       "name": "min",
@@ -126,17 +127,18 @@
   },
   "cssVars": [
     "--valet-focus-width",
+    "--valet-focus-ring-color",
     "--valet-focus-offset"
   ],
   "cssPresets": [],
   "events": [
     {
-      "name": "onChange",
-      "payloadType": "number"
+      "name": "onValueChange",
+      "payloadType": "OnValueChange<number>"
     },
     {
-      "name": "onCommit",
-      "payloadType": "number"
+      "name": "onValueCommit",
+      "payloadType": "OnValueCommit<number>"
     }
   ],
   "actions": [],

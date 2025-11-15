@@ -12,14 +12,12 @@
     {
       "name": "variant",
       "type": "IconButtonVariant",
-      "required": false,
-      "default": "'contained'"
+      "required": false
     },
     {
       "name": "size",
       "type": "IconButtonSize | number | string",
-      "required": false,
-      "default": "'md'"
+      "required": false
     },
     {
       "name": "icon",
@@ -32,17 +30,15 @@
       "required": false
     },
     {
-      "name": "iconColor",
-      "type": "string | undefined",
-      "required": false,
-      "description": "Foreground colour override for the glyph.",
-      "default": "Derived from the resolved background token (e.g., primary → primaryButtonText)"
+      "name": "intent",
+      "type": "Intent",
+      "required": false
     },
     {
-      "name": "background",
-      "type": "string | undefined",
+      "name": "color",
+      "type": "string",
       "required": false,
-      "description": "Background colour token or CSS colour for the button surface.\nAccepts theme colour tokens ('primary' | 'secondary' | 'tertiary') or any CSS colour.\nFor `contained`, it is used as the fill. For `outlined`, it applies on hover/focus\nalongside the matching button text token for the glyph colour."
+      "description": "Explicit color override (theme token or CSS color)."
     },
     {
       "name": "sx",
@@ -63,7 +59,15 @@
       "style"
     ]
   },
-  "cssVars": [],
+  "cssVars": [
+    "--valet-intent-bg",
+    "--valet-intent-fg",
+    "--valet-intent-border",
+    "--valet-intent-focus",
+    "--valet-intent-bg-hover",
+    "--valet-intent-bg-active",
+    "--valet-intent-fg-disabled"
+  ],
   "cssPresets": [],
   "events": [],
   "actions": [],

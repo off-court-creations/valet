@@ -4,7 +4,7 @@
 // patched: replace centered with Box-like alignX (no alias) – 2025‑08‑20
 // patched: horizontal overflow scroll + drag with styled scrollbar – 2025‑08‑21
 // ─────────────────────────────────────────────────────────────
-/* eslint-disable react/prop-types */
+
 import React, {
   createContext,
   forwardRef,
@@ -30,8 +30,8 @@ import { withAlpha } from '../../helpers/color';
 /*───────────────────────────────────────────────────────────*/
 /* Context                                                   */
 interface Ctx {
-  active: number;
-  setActive: (i: number) => void;
+  activeIndex: number;
+  setActiveIndex: (i: number, phase?: 'input' | 'commit') => void;
   orientation: 'horizontal' | 'vertical';
   registerTab: (i: number, el: HTMLButtonElement | null) => void;
   totalTabs: number;
@@ -230,7 +230,8 @@ const TabBtn = styled('button')<{
   white-space: nowrap; /* keep labels on one line for reliable wrap behavior */
 
   &:focus-visible {
-    outline: var(--valet-focus-width, 2px) solid ${({ $primary }) => $primary};
+    outline: var(--valet-focus-width, 2px) solid
+      var(--valet-focus-ring-color, ${({ $primary }) => $primary});
     outline-offset: var(--valet-focus-offset, 2px);
   }
 
@@ -270,323 +271,407 @@ const Panel = styled('div')`
 export interface TabsProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'style'>,
     Presettable,
-    Pick<SpacingProps, 'gap' | 'pad' | 'compact'> {
-  active?: number;
-  defaultActive?: number;
-  onTabChange?: (i: number) => void;
+    Pick<SpacingProps, 'gap' | 'pad' | 'compact' | 'density'> {
+  value?: string | number;
+  defaultValue?: string | number;
+  onValueChange?: (
+    value: string | number,
+    info: { previousValue?: string | number; phase: 'input' | 'commit' },
+  ) => void;
+  onValueCommit?: (
+    value: string | number,
+    info: { previousValue?: string | number; phase: 'commit' },
+  ) => void;
   orientation?: 'horizontal' | 'vertical';
   placement?: 'top' | 'bottom' | 'left' | 'right';
   /** Horizontal alignment of the tab strip (horizontal orientation). */
-  alignX?: 'left' | 'right' | 'center' | 'centered';
+  alignX?: 'left' | 'right' | 'center';
+  /** Alias for alignX for clarity. */
+  tabAlign?: 'left' | 'right' | 'center';
   /** Inline styles (with CSS var support) */
   sx?: Sx;
 }
 export interface TabProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, Presettable {
   index?: number;
+  value?: string | number;
   label?: ReactNode;
   tooltip?: ReactNode;
 }
 export interface TabPanelProps extends React.HTMLAttributes<HTMLDivElement>, Presettable {
   index?: number;
+  value?: string | number;
   keepMounted?: boolean;
 }
 
 /*───────────────────────────────────────────────────────────*/
-export const Tabs: React.FC<TabsProps> & {
+const TabsBase = forwardRef<HTMLDivElement, TabsProps>(
+  (
+    {
+      value: valueProp,
+      defaultValue,
+      orientation = 'horizontal',
+      placement: placementProp,
+      onValueChange,
+      onValueCommit,
+      alignX,
+      tabAlign,
+      gap: gapProp,
+      pad: padProp,
+      compact = false,
+      preset: p,
+      className,
+      children,
+      sx,
+      ...divProps
+    },
+    ref,
+  ) => {
+    const { theme } = useTheme();
+    const placement = placementProp ?? (orientation === 'horizontal' ? 'top' : 'left');
+
+    const controlled = valueProp !== undefined;
+    // Controlled/uncontrolled guard (dev-only)
+    const initialCtl = React.useRef<boolean | undefined>(undefined);
+    useEffect(() => {
+      if (process.env.NODE_ENV === 'production') return;
+      if (initialCtl.current === undefined) initialCtl.current = controlled;
+      else if (initialCtl.current !== controlled) {
+        console.error(
+          'Tabs: component switched from %s to %s after mount. This is not supported.',
+          initialCtl.current ? 'controlled' : 'uncontrolled',
+          controlled ? 'controlled' : 'uncontrolled',
+        );
+      }
+    }, [controlled]);
+    const [selfValue, setSelfValue] = useState<string | number | undefined>(defaultValue);
+
+    const refs = useRef<Record<number, HTMLButtonElement | null>>({});
+    const registerTab = useCallback((i: number, el: HTMLButtonElement | null) => {
+      refs.current[i] = el;
+    }, []);
+    const tabValuesRef = useRef<(string | number)[]>([]);
+    const activeIndexFromValue = useCallback((val: string | number | undefined) => {
+      const list = tabValuesRef.current;
+      if (val == null) return 0;
+      const idx = list.findIndex((v) => v === val);
+      return idx >= 0 ? idx : 0;
+    }, []);
+    const activeIndex = controlled
+      ? activeIndexFromValue(valueProp)
+      : activeIndexFromValue(selfValue);
+    const setActiveIndex = useCallback(
+      (i: number, phase: 'input' | 'commit' = 'commit') => {
+        const values = tabValuesRef.current;
+        const nextVal = values[i];
+        const prevVal = controlled ? valueProp : selfValue;
+        if (!controlled) setSelfValue(nextVal);
+        onValueChange?.(nextVal, { previousValue: prevVal, phase: 'input' });
+        if (phase === 'commit')
+          onValueCommit?.(nextVal, { previousValue: prevVal, phase: 'commit' });
+        refs.current[i]?.focus();
+      },
+      [controlled, onValueChange, onValueCommit, valueProp, selfValue],
+    );
+
+    const tabs: ReactElement[] = [];
+    const panels: ReactElement[] = [];
+    const values: (string | number)[] = [];
+    React.Children.forEach(children, (child) => {
+      if (!React.isValidElement(child)) return;
+      const name =
+        typeof child.type === 'string'
+          ? child.type
+          : (child.type as { displayName?: string }).displayName;
+
+      if (name === 'Tabs.Tab') {
+        const el = child as React.ReactElement<TabProps>;
+        const i = tabs.length;
+        const childValue = el.props.value ?? el.props.index ?? i;
+        values.push(childValue as string | number);
+        tabs.push(
+          React.cloneElement(el, {
+            index: i,
+            value: childValue,
+            key: i,
+          }),
+        );
+      }
+      if (name === 'Tabs.Panel') {
+        const el = child as React.ReactElement<TabPanelProps>;
+        panels.push(
+          React.cloneElement(el, {
+            index: panels.length,
+            key: panels.length,
+          }),
+        );
+      }
+    });
+    tabValuesRef.current = values;
+
+    const ctx = useMemo<Ctx>(
+      () => ({
+        activeIndex,
+        setActiveIndex,
+        orientation,
+        registerTab,
+        totalTabs: tabs.length,
+        placement,
+      }),
+      [activeIndex, orientation, placement, setActiveIndex, registerTab, tabs.length],
+    );
+
+    const cls = [p ? preset(p) : '', className].filter(Boolean).join(' ');
+    const compactEffective =
+      compact || (divProps as unknown as { density?: string }).density === 'compact';
+    const gap = resolveSpace(gapProp, theme, compactEffective, 1);
+    const pad = resolveSpace(padProp, theme, compactEffective, 1);
+    const stripFirst =
+      (orientation === 'horizontal' && placement === 'top') ||
+      (orientation === 'vertical' && placement === 'left');
+    const edgeGap = theme.spacing(1);
+
+    // Horizontal overflow handling and UX affordances
+    const listRef = useRef<HTMLDivElement | null>(null);
+    const [fadeL, setFadeL] = useState(false);
+    const [fadeR, setFadeR] = useState(false);
+    const [overflowing, setOverflowing] = useState(false);
+
+    useEffect(() => {
+      // Manage overflow fades based on scroll position
+      const el = listRef.current;
+      if (!el || orientation !== 'horizontal') {
+        setFadeL(false);
+        setFadeR(false);
+        return;
+      }
+      const update = () => {
+        const ov = el.scrollWidth > el.clientWidth + 1;
+        setOverflowing(ov);
+        const canL = el.scrollLeft > 0;
+        const canR = el.scrollLeft + el.clientWidth < el.scrollWidth - 1;
+        setFadeL(canL);
+        setFadeR(canR);
+      };
+      update();
+      const onScroll = () => update();
+      const ro = new ResizeObserver(update);
+      ro.observe(el);
+      el.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', update);
+      return () => {
+        ro.disconnect();
+        el.removeEventListener('scroll', onScroll as EventListener);
+        window.removeEventListener('resize', update);
+      };
+    }, [orientation, tabs.length]);
+
+    // When becoming overflowing, reset scroll to show the first tab
+    useEffect(() => {
+      const el = listRef.current;
+      if (!el || orientation !== 'horizontal') return;
+      if (overflowing) {
+        el.scrollLeft = 0;
+      }
+    }, [overflowing, orientation]);
+
+    // Drag-to-scroll behaviour for the horizontal strip
+    useEffect(() => {
+      const el = listRef.current;
+      if (!el || orientation !== 'horizontal') return;
+
+      let dragging = false;
+      let maybeDrag = false;
+      let moved = false;
+      let startX = 0;
+      let startScroll = 0;
+
+      const onPointerDown = (e: PointerEvent) => {
+        if (e.button !== 0) return; // only primary
+        if (el.scrollWidth <= el.clientWidth + 1) return; // no overflow
+
+        // Ignore pointer downs in the scrollbar hover band to prevent
+        // fighting with the native scrollbar interaction.
+        const rect = el.getBoundingClientRect();
+        const scrollbarBandPx = 24; // conservative band to match hover-reveal height
+        const inScrollbar = e.clientY >= rect.bottom - scrollbarBandPx;
+        if (inScrollbar) return;
+
+        maybeDrag = true;
+        moved = false;
+        startX = e.clientX;
+        startScroll = el.scrollLeft;
+      };
+      const onPointerMove = (e: PointerEvent) => {
+        if (!maybeDrag && !dragging) return;
+        const dx = e.clientX - startX;
+        if (!dragging) {
+          if (Math.abs(dx) <= 5) return; // threshold before initiating drag
+          dragging = true;
+          el.setPointerCapture?.(e.pointerId);
+          el.style.cursor = 'grabbing';
+        }
+        moved = true;
+        el.scrollLeft = startScroll - dx;
+        e.preventDefault();
+      };
+      const endDrag = (e: PointerEvent) => {
+        if (!maybeDrag && !dragging) return;
+        maybeDrag = false;
+        if (!dragging) return;
+        dragging = false;
+        el.releasePointerCapture?.(e.pointerId);
+        el.style.cursor = '';
+      };
+      const onClickCapture = (e: MouseEvent) => {
+        // If we moved during this pointer interaction, swallow the click
+        if (moved) {
+          e.preventDefault();
+          e.stopPropagation();
+          moved = false;
+        }
+      };
+
+      el.addEventListener('pointerdown', onPointerDown);
+      el.addEventListener('pointermove', onPointerMove);
+      el.addEventListener('pointerup', endDrag);
+      el.addEventListener('pointercancel', endDrag);
+      el.addEventListener('click', onClickCapture, true);
+      const onWheel = (e: WheelEvent) => {
+        if (el.scrollWidth <= el.clientWidth) return; // no overflow
+        // Convert vertical wheel to horizontal scroll for mouse users
+        if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+          e.preventDefault();
+          e.stopPropagation();
+          el.scrollLeft += e.deltaY;
+        }
+      };
+      el.addEventListener('wheel', onWheel, { passive: false });
+      return () => {
+        el.removeEventListener('pointerdown', onPointerDown);
+        el.removeEventListener('pointermove', onPointerMove);
+        el.removeEventListener('pointerup', endDrag);
+        el.removeEventListener('pointercancel', endDrag);
+        el.removeEventListener('click', onClickCapture, true);
+        el.removeEventListener('wheel', onWheel as unknown as EventListener);
+      };
+    }, [orientation]);
+
+    // Normalize alignX with Box semantics.
+    // Note: alignment resolved inline when rendering TabList via (tabAlign ?? alignX ?? 'left')
+
+    // Root ref + focusable contract: focusing Tabs focuses the active tab button.
+    const rootRef = useRef<HTMLDivElement | null>(null);
+    const setRootRef = useCallback(
+      (node: HTMLDivElement | null) => {
+        rootRef.current = node;
+        if (!ref) return;
+        if (typeof ref === 'function') ref(node);
+        else (ref as React.MutableRefObject<HTMLDivElement | null>).current = node;
+      },
+      [ref],
+    );
+
+    return (
+      <TabsCtx.Provider value={ctx}>
+        <Root
+          {...divProps}
+          ref={setRootRef}
+          tabIndex={-1}
+          data-valet-component='Tabs'
+          $orientation={orientation}
+          $placement={placement}
+          $gap={gap}
+          $pad={pad}
+          className={cls}
+          style={sx}
+          onFocus={(e) => {
+            // Only redirect focus when the root itself receives focus.
+            // Do NOT hijack focus when a child within the tabs (e.g., inputs, buttons)
+            // is focused, otherwise the page may scroll to the tab strip.
+            if (e.target === e.currentTarget) {
+              const btn = refs.current[activeIndex];
+              try {
+                // Prevent scroll jumping when moving focus to the active tab
+                (btn as unknown as HTMLElement | undefined)?.focus?.({ preventScroll: true } as FocusOptions);
+              } catch {
+                btn?.focus();
+              }
+            }
+          }}
+        >
+          {stripFirst && (
+            <TabStripWrap
+              $fadeLeft={fadeL}
+              $fadeRight={fadeR}
+              $fadeCol={theme.colors.primary}
+              $dur={theme.motion.duration.xlong}
+              $ease={theme.motion.easing.emphasized}
+              $slide={theme.spacing(2)}
+            >
+              <TabList
+                ref={listRef}
+                $orientation={orientation}
+                $place={placement}
+                $edgeGap={edgeGap}
+                $align={(tabAlign ?? alignX ?? 'left') as 'left' | 'right' | 'center'}
+                $fadeLeft={fadeL}
+                $fadeRight={fadeR}
+                $fadeCol={theme.colors.primary}
+                $overflow={overflowing}
+              >
+                {tabs}
+              </TabList>
+              {/* Custom scroll hint removed */}
+            </TabStripWrap>
+          )}
+
+          <Panel>{panels}</Panel>
+
+          {!stripFirst && (
+            <TabStripWrap
+              $fadeLeft={fadeL}
+              $fadeRight={fadeR}
+              $fadeCol={theme.colors.primary}
+              $dur={theme.motion.duration.xlong}
+              $ease={theme.motion.easing.emphasized}
+              $slide={theme.spacing(2)}
+            >
+              <TabList
+                ref={listRef}
+                $orientation={orientation}
+                $place={placement}
+                $edgeGap={edgeGap}
+                $align={(tabAlign ?? alignX ?? 'left') as 'left' | 'right' | 'center'}
+                $fadeLeft={fadeL}
+                $fadeRight={fadeR}
+                $fadeCol={theme.colors.primary}
+                $overflow={overflowing}
+              >
+                {tabs}
+              </TabList>
+              {/* Custom scroll hint removed */}
+            </TabStripWrap>
+          )}
+        </Root>
+      </TabsCtx.Provider>
+    );
+  },
+);
+
+TabsBase.displayName = 'Tabs';
+
+export const Tabs = TabsBase as unknown as React.FC<TabsProps> & {
   Tab: React.FC<TabProps>;
   Panel: React.FC<TabPanelProps>;
-} = ({
-  active: controlledActive,
-  defaultActive = 0,
-  orientation = 'horizontal',
-  placement: placementProp,
-  onTabChange,
-  alignX,
-  gap: gapProp,
-  pad: padProp,
-  compact = false,
-  preset: p,
-  className,
-  children,
-  sx,
-  ...divProps
-}) => {
-  const { theme } = useTheme();
-  const placement = placementProp ?? (orientation === 'horizontal' ? 'top' : 'left');
-
-  const controlled = controlledActive !== undefined;
-  const [self, setSelf] = useState(defaultActive);
-  const active = controlled ? controlledActive! : self;
-
-  const refs = useRef<Record<number, HTMLButtonElement | null>>({});
-  const registerTab = useCallback((i: number, el: HTMLButtonElement | null) => {
-    refs.current[i] = el;
-  }, []);
-  const setActive = useCallback(
-    (i: number) => {
-      if (!controlled) setSelf(i);
-      onTabChange?.(i);
-      refs.current[i]?.focus();
-    },
-    [controlled, onTabChange],
-  );
-
-  const tabs: ReactElement[] = [];
-  const panels: ReactElement[] = [];
-  React.Children.forEach(children, (child) => {
-    if (!React.isValidElement(child)) return;
-    const name =
-      typeof child.type === 'string'
-        ? child.type
-        : (child.type as { displayName?: string }).displayName;
-
-    if (name === 'Tabs.Tab') {
-      const el = child as React.ReactElement<TabProps>;
-      tabs.push(
-        React.cloneElement(el, {
-          index: tabs.length,
-          key: tabs.length,
-        }),
-      );
-    }
-    if (name === 'Tabs.Panel') {
-      const el = child as React.ReactElement<TabPanelProps>;
-      panels.push(
-        React.cloneElement(el, {
-          index: panels.length,
-          key: panels.length,
-        }),
-      );
-    }
-  });
-
-  const ctx = useMemo<Ctx>(
-    () => ({
-      active,
-      setActive,
-      orientation,
-      registerTab,
-      totalTabs: tabs.length,
-      placement,
-    }),
-    [active, orientation, placement, setActive, registerTab, tabs.length],
-  );
-
-  const cls = [p ? preset(p) : '', className].filter(Boolean).join(' ');
-  const gap = resolveSpace(gapProp, theme, compact, 1);
-  const pad = resolveSpace(padProp, theme, compact, 1);
-  const stripFirst =
-    (orientation === 'horizontal' && placement === 'top') ||
-    (orientation === 'vertical' && placement === 'left');
-  const edgeGap = theme.spacing(1);
-
-  // Horizontal overflow handling and UX affordances
-  const listRef = useRef<HTMLDivElement | null>(null);
-  const [fadeL, setFadeL] = useState(false);
-  const [fadeR, setFadeR] = useState(false);
-  const [overflowing, setOverflowing] = useState(false);
-
-  useEffect(() => {
-    // Manage overflow fades based on scroll position
-    const el = listRef.current;
-    if (!el || orientation !== 'horizontal') {
-      setFadeL(false);
-      setFadeR(false);
-      return;
-    }
-    const update = () => {
-      const ov = el.scrollWidth > el.clientWidth + 1;
-      setOverflowing(ov);
-      const canL = el.scrollLeft > 0;
-      const canR = el.scrollLeft + el.clientWidth < el.scrollWidth - 1;
-      setFadeL(canL);
-      setFadeR(canR);
-    };
-    update();
-    const onScroll = () => update();
-    const ro = new ResizeObserver(update);
-    ro.observe(el);
-    el.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', update);
-    return () => {
-      ro.disconnect();
-      el.removeEventListener('scroll', onScroll as EventListener);
-      window.removeEventListener('resize', update);
-    };
-  }, [orientation, tabs.length]);
-
-  // When becoming overflowing, reset scroll to show the first tab
-  useEffect(() => {
-    const el = listRef.current;
-    if (!el || orientation !== 'horizontal') return;
-    if (overflowing) {
-      el.scrollLeft = 0;
-    }
-  }, [overflowing, orientation]);
-
-  // Drag-to-scroll behaviour for the horizontal strip
-  useEffect(() => {
-    const el = listRef.current;
-    if (!el || orientation !== 'horizontal') return;
-
-    let dragging = false;
-    let maybeDrag = false;
-    let moved = false;
-    let startX = 0;
-    let startScroll = 0;
-
-    const onPointerDown = (e: PointerEvent) => {
-      if (e.button !== 0) return; // only primary
-      if (el.scrollWidth <= el.clientWidth + 1) return; // no overflow
-
-      // Ignore pointer downs in the scrollbar hover band to prevent
-      // fighting with the native scrollbar interaction.
-      const rect = el.getBoundingClientRect();
-      const scrollbarBandPx = 24; // conservative band to match hover-reveal height
-      const inScrollbar = e.clientY >= rect.bottom - scrollbarBandPx;
-      if (inScrollbar) return;
-
-      maybeDrag = true;
-      moved = false;
-      startX = e.clientX;
-      startScroll = el.scrollLeft;
-    };
-    const onPointerMove = (e: PointerEvent) => {
-      if (!maybeDrag && !dragging) return;
-      const dx = e.clientX - startX;
-      if (!dragging) {
-        if (Math.abs(dx) <= 5) return; // threshold before initiating drag
-        dragging = true;
-        el.setPointerCapture?.(e.pointerId);
-        el.style.cursor = 'grabbing';
-      }
-      moved = true;
-      el.scrollLeft = startScroll - dx;
-      e.preventDefault();
-    };
-    const endDrag = (e: PointerEvent) => {
-      if (!maybeDrag && !dragging) return;
-      maybeDrag = false;
-      if (!dragging) return;
-      dragging = false;
-      el.releasePointerCapture?.(e.pointerId);
-      el.style.cursor = '';
-    };
-    const onClickCapture = (e: MouseEvent) => {
-      // If we moved during this pointer interaction, swallow the click
-      if (moved) {
-        e.preventDefault();
-        e.stopPropagation();
-        moved = false;
-      }
-    };
-
-    el.addEventListener('pointerdown', onPointerDown);
-    el.addEventListener('pointermove', onPointerMove);
-    el.addEventListener('pointerup', endDrag);
-    el.addEventListener('pointercancel', endDrag);
-    el.addEventListener('click', onClickCapture, true);
-    const onWheel = (e: WheelEvent) => {
-      if (el.scrollWidth <= el.clientWidth) return; // no overflow
-      // Convert vertical wheel to horizontal scroll for mouse users
-      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-        e.preventDefault();
-        e.stopPropagation();
-        el.scrollLeft += e.deltaY;
-      }
-    };
-    el.addEventListener('wheel', onWheel, { passive: false });
-    return () => {
-      el.removeEventListener('pointerdown', onPointerDown);
-      el.removeEventListener('pointermove', onPointerMove);
-      el.removeEventListener('pointerup', endDrag);
-      el.removeEventListener('pointercancel', endDrag);
-      el.removeEventListener('click', onClickCapture, true);
-      el.removeEventListener('wheel', onWheel as unknown as EventListener);
-    };
-  }, [orientation]);
-
-  // Normalize alignX with Box semantics.
-  const normalizedAlign: 'left' | 'right' | 'center' = (() => {
-    const raw = (alignX ?? 'left') as 'left' | 'right' | 'center' | 'centered';
-    return raw === 'centered' ? 'center' : (raw as 'left' | 'right' | 'center');
-  })();
-
-  return (
-    <TabsCtx.Provider value={ctx}>
-      <Root
-        {...divProps}
-        $orientation={orientation}
-        $placement={placement}
-        $gap={gap}
-        $pad={pad}
-        className={cls}
-        style={sx}
-      >
-        {stripFirst && (
-          <TabStripWrap
-            $fadeLeft={fadeL}
-            $fadeRight={fadeR}
-            $fadeCol={theme.colors.primary}
-            $dur={theme.motion.duration.xlong}
-            $ease={theme.motion.easing.emphasized}
-            $slide={theme.spacing(2)}
-          >
-            <TabList
-              ref={listRef}
-              $orientation={orientation}
-              $place={placement}
-              $edgeGap={edgeGap}
-              $align={normalizedAlign}
-              $fadeLeft={fadeL}
-              $fadeRight={fadeR}
-              $fadeCol={theme.colors.primary}
-              $overflow={overflowing}
-            >
-              {tabs}
-            </TabList>
-            {/* Custom scroll hint removed */}
-          </TabStripWrap>
-        )}
-
-        <Panel>{panels}</Panel>
-
-        {!stripFirst && (
-          <TabStripWrap
-            $fadeLeft={fadeL}
-            $fadeRight={fadeR}
-            $fadeCol={theme.colors.primary}
-            $dur={theme.motion.duration.xlong}
-            $ease={theme.motion.easing.emphasized}
-            $slide={theme.spacing(2)}
-          >
-            <TabList
-              ref={listRef}
-              $orientation={orientation}
-              $place={placement}
-              $edgeGap={edgeGap}
-              $align={normalizedAlign}
-              $fadeLeft={fadeL}
-              $fadeRight={fadeR}
-              $fadeCol={theme.colors.primary}
-              $overflow={overflowing}
-            >
-              {tabs}
-            </TabList>
-            {/* Custom scroll hint removed */}
-          </TabStripWrap>
-        )}
-      </Root>
-    </TabsCtx.Provider>
-  );
 };
 
 /*───────────────────────────────────────────────────────────*/
 const Tab: React.FC<TabProps> = forwardRef<HTMLButtonElement, TabProps>(
   ({ index = 0, label, tooltip, preset: p, className, onKeyDown, onClick, ...rest }, ref) => {
     const { theme } = useTheme();
-    const { active, setActive, orientation, registerTab, totalTabs, placement } = useTabs();
-    const selected = active === index;
+    const { activeIndex, setActiveIndex, orientation, registerTab, totalTabs, placement } =
+      useTabs();
+    const selected = activeIndex === index;
 
     const nav = (e: KeyboardEvent<HTMLButtonElement>) => {
       const horiz = orientation === 'horizontal';
@@ -594,7 +679,7 @@ const Tab: React.FC<TabProps> = forwardRef<HTMLButtonElement, TabProps>(
       const next = horiz ? 'ArrowRight' : 'ArrowDown';
       if (e.key === prev || e.key === next) {
         e.preventDefault();
-        setActive((active + (e.key === next ? 1 : -1) + totalTabs) % totalTabs);
+        setActiveIndex((activeIndex + (e.key === next ? 1 : -1) + totalTabs) % totalTabs);
       }
       onKeyDown?.(e);
     };
@@ -616,8 +701,11 @@ const Tab: React.FC<TabProps> = forwardRef<HTMLButtonElement, TabProps>(
         aria-selected={selected}
         aria-controls={`panel-${index}`}
         tabIndex={selected ? 0 : -1}
+        data-state={selected ? 'active' : 'inactive'}
+        data-selected={selected ? 'true' : 'false'}
+        data-disabled={(rest as Record<string, unknown>)['disabled'] ? 'true' : 'false'}
         onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-          setActive(index);
+          setActiveIndex(index);
           onClick?.(e);
         }}
         onKeyDown={nav}
@@ -657,8 +745,8 @@ const TabPanel: React.FC<TabPanelProps> = ({
   children,
   ...rest
 }) => {
-  const { active } = useTabs();
-  if (active !== index && !keepMounted) return null;
+  const { activeIndex } = useTabs();
+  if (activeIndex !== index && !keepMounted) return null;
 
   return (
     <div

@@ -16,8 +16,9 @@ export default function ButtonDemoPage() {
       {/* 1 ▸ Variants */}
       <Typography variant='h3'>1. Variants</Typography>
       <Stack direction='row'>
-        <Button>contained (default)</Button>
+        <Button variant='filled'>filled (default)</Button>
         <Button variant='outlined'>outlined</Button>
+        <Button variant='plain'>plain</Button>
       </Stack>
 
       {/* 2 ▸ Sizes */}
@@ -40,8 +41,8 @@ export default function ButtonDemoPage() {
         <Button fullWidth>Stretch to parent</Button>
       </Box>
 
-      {/* 4 ▸ centered */}
-      <Typography variant='h3'>4. centered</Typography>
+      {/* 4 ▸ Placement */}
+      <Typography variant='h3'>4. Placement (use Box.alignX)</Typography>
       <Stack
         pad={theme.spacing(1)}
         sx={{
@@ -51,22 +52,56 @@ export default function ButtonDemoPage() {
         }}
       >
         <Button>Default alignment</Button>
-        <Button centered>Centered CTA</Button>
+        <Box alignX='center'>
+          <Button>Centered CTA</Button>
+        </Box>
       </Stack>
 
-      {/* 5 ▸ Palette tokens */}
-      <Typography variant='h3'>5. Palette tokens</Typography>
+      {/* 5 ▸ Intent (semantic color) */}
+      <Typography variant='h3'>5. Intent (semantic color)</Typography>
+      <Typography>
+        Use <code>intent</code> to choose semantic colors. Combine with <code>variant</code> to
+        control emphasis.
+      </Typography>
       <Stack direction='row'>
-        <Button color='primary'>primary</Button>
-        <Button color='secondary'>secondary</Button>
-        <Button color='tertiary'>tertiary</Button>
+        <Button intent='primary'>primary</Button>
+        <Button intent='secondary'>secondary</Button>
+        <Button intent='success'>success</Button>
+        <Button intent='warning'>warning</Button>
+        <Button intent='error'>error</Button>
+        <Button intent='info'>info</Button>
+      </Stack>
+      <Stack direction='row'>
+        <Button
+          variant='outlined'
+          intent='primary'
+        >
+          outlined primary
+        </Button>
+        <Button
+          variant='plain'
+          intent='secondary'
+        >
+          plain secondary
+        </Button>
       </Stack>
 
-      {/* 6 ▸ Custom colours */}
-      <Typography variant='h3'>6. Custom backgrounds</Typography>
+      {/* 6 ▸ Color override */}
+      <Typography variant='h3'>6. Color override</Typography>
+      <Typography>
+        Pass <code>color</code> to override the resolved token (accepts theme color names or any CSS
+        color). For <code>variant=&quot;filled&quot;</code> the label color auto‑adjusts for
+        contrast.
+      </Typography>
       <Stack direction='row'>
+        <Button color='primary'>token: primary</Button>
         <Button color='#9C27B0'>#9C27B0</Button>
-        <Button color='#00BFA5'>#00BFA5</Button>
+        <Button
+          variant='outlined'
+          color='#00BFA5'
+        >
+          outlined #00BFA5
+        </Button>
       </Stack>
 
       {/* 7 ▸ Icons & text */}

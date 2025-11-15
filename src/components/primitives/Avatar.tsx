@@ -9,7 +9,7 @@ import { useTheme } from '../../system/themeStore';
 import type { Presettable, Sx } from '../../types';
 import { md5 } from '../../helpers/md5';
 
-export type AvatarSize = 'xs' | 's' | 'm' | 'l' | 'xl';
+export type AvatarSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type AvatarVariant = 'plain' | 'outline';
 
 export interface AvatarProps
@@ -37,9 +37,9 @@ export interface AvatarProps
 
 const sizeMap: Record<AvatarSize, string> = {
   xs: '1.5rem',
-  s: '2rem',
-  m: '3rem',
-  l: '4rem',
+  sm: '2rem',
+  md: '3rem',
+  lg: '4rem',
   xl: '6rem',
 };
 
@@ -85,7 +85,7 @@ export const Avatar: React.FC<AvatarProps> = ({
   src,
   email,
   name,
-  size = 'm',
+  size = 'md',
   variant = 'plain',
   gravatarDefault = 'identicon',
   preferFallback = false,
@@ -139,6 +139,7 @@ export const Avatar: React.FC<AvatarProps> = ({
       <Img
         {...rest}
         src={finalSrc}
+        data-valet-component='Avatar'
         $size={rem}
         $variant={variant}
         $stroke={stroke}
@@ -155,6 +156,7 @@ export const Avatar: React.FC<AvatarProps> = ({
       {...(rest as unknown as React.HTMLAttributes<HTMLDivElement>)}
       role='img'
       aria-label={altText || ariaLabelText || name || 'avatar'}
+      data-valet-component='Avatar'
       $size={rem}
       $variant={variant}
       $stroke={stroke}

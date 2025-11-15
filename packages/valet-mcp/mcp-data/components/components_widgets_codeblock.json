@@ -3,7 +3,7 @@
   "category": "widgets",
   "slug": "components/widgets/codeblock",
   "summary": "CodeBlock component",
-  "status": "unstable",
+  "status": "stable",
   "aliases": [
     "codeblock",
     "code",
@@ -30,8 +30,26 @@
       "name": "title",
       "type": "string",
       "required": false
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": false,
+      "description": "Inline styles (with CSS var support)"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": [
+      "style"
+    ]
+  },
   "cssVars": [],
   "cssPresets": [],
   "events": [],
@@ -48,6 +66,6 @@
   "sourceFiles": [
     "src/components/widgets/CodeBlock.tsx"
   ],
-  "version": "0.32.0",
+  "version": "0.33.7",
   "schemaVersion": "1.6"
 }

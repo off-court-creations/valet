@@ -60,14 +60,63 @@
       "required": false
     },
     {
+      "name": "onRowClick",
+      "type": "(row: T, rowIndex: number, event: React.MouseEvent<HTMLTableRowElement>) => void",
+      "required": false,
+      "description": "Fired when a row is clicked (ignores clicks that originate from obvious interactive children\nlike buttons, inputs, or links). Receives the row object, its visible index, and the click event."
+    },
+    {
       "name": "constrainHeight",
       "type": "boolean",
       "required": false
     },
     {
+      "name": "minConstrainedRows",
+      "type": "number",
+      "required": false,
+      "description": "Minimum body rows that must be visible for an internal scrollbar to be used.\nIf the constrained viewport would show fewer rows than this, height constraining is disabled\nto avoid a tiny scroller. Default: 4."
+    },
+    {
+      "name": "maxExpandedRows",
+      "type": "number",
+      "required": false,
+      "description": "Applies only when `minConstrainedRows` disables the usual constraint. When the dataset\nexceeds this size, pagination kicks in (via <Pagination/>) and shows this many rows\nper page instead of using an internal scrollbar. Default: 30."
+    },
+    {
+      "name": "paginate",
+      "type": "boolean",
+      "required": false,
+      "description": "If true, always paginate using `maxExpandedRows` rows per page, regardless of\n`minConstrainedRows`/`constrainHeight`. When false (default), pagination engages\nautomatically only when `minConstrainedRows` disables constraint and the dataset\nexceeds `maxExpandedRows`."
+    },
+    {
+      "name": "page",
+      "type": "number",
+      "required": false,
+      "description": "Controlled current page (1-based) when `paginate` is true or auto-pagination engages.\nIf omitted, the table manages its own page state."
+    },
+    {
+      "name": "onPageChange",
+      "type": "(page: number) => void",
+      "required": false,
+      "description": "Called when the page changes (receives the 1-based page number). Used with controlled `page`."
+    },
+    {
+      "name": "paginationWindow",
+      "type": "number",
+      "required": false,
+      "description": "Controls the width of the visible window of page buttons when pagination renders.\nPassed to <Pagination visibleWindow>. Optional; defaults to Pagination’s internal behavior."
+    },
+    {
       "name": "sx",
       "type": "Sx",
-      "required": false
+      "required": false,
+      "description": "Inline styles (with CSS var support)"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
   "domPassthrough": {
@@ -92,16 +141,25 @@
     {
       "name": "onSelectionChange",
       "payloadType": "T[]"
+    },
+    {
+      "name": "onRowClick",
+      "payloadType": "T"
+    },
+    {
+      "name": "onPageChange",
+      "payloadType": "number"
     }
   ],
   "actions": [],
   "slots": [],
   "bestPractices": [
     "Keep tables readable: enable `striped` and/or `hoverable` for large datasets, but avoid heavy styling that competes with content.",
-    "Constrain height (`constrainHeight`) so the body scrolls inside the table instead of the page scrolling in two directions.",
+    "Prefer smart height over tiny scrollbars: enable `constrainHeight` and set `minConstrainedRows` (default 4). If the viewport would show fewer rows, the table expands; when the dataset exceeds `maxExpandedRows` (default 30), it paginates instead of showing a tiny scroller.",
     "Provide an initial sort (`initialSort`), align numeric columns to the right, and format dates consistently.",
     "Enable selection only when follow‑up actions operate on selected rows; choose `single` vs `multi` to match the action design.",
-    "Keep column count reasonable on narrow screens; prefer fewer, more meaningful columns over many cramped ones. Use succinct headers."
+    "Keep column count reasonable on narrow screens; prefer fewer, more meaningful columns over many cramped ones. Use succinct headers.",
+    "Expose `onRowClick` when rows drive navigation or drill‑ins so the parent surface can react without wiring bespoke click handlers into each cell."
   ],
   "examples": [
     {
@@ -125,11 +183,44 @@
         "data": [],
         "columns": []
       }
+    },
+    {
+      "id": "table-auto-pagination",
+      "title": "Auto pagination via minConstrainedRows",
+      "code": "(() => {\n  type Row = { id: number; name: string; city: string };\n  const columns = [\n    { header: 'ID', accessor: 'id', align: 'right' },\n    { header: 'Name', accessor: 'name' },\n    { header: 'City', accessor: 'city' },\n  ];\n  const data = Array.from({ length: 60 }, (_, i) => ({ id: i + 1, name: 'User ' + (i + 1), city: 'City ' + (i % 8) }));\n  return (\n    <Panel fullWidth>\n      <Table\n        data={data}\n        columns={columns}\n        striped\n        hoverable\n        constrainHeight\n        minConstrainedRows={4}\n        maxExpandedRows={20}\n      />\n    </Panel>\n  );\n})()",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {
+        "data": [],
+        "columns": []
+      }
+    },
+    {
+      "id": "table-force-pagination",
+      "title": "Force pagination with page size",
+      "code": "(() => {\n  type Row = { id: number; name: string; city: string };\n  const columns = [\n    { header: 'ID', accessor: 'id', align: 'right' },\n    { header: 'Name', accessor: 'name' },\n    { header: 'City', accessor: 'city' },\n  ];\n  const data = Array.from({ length: 48 }, (_, i) => ({ id: i + 1, name: 'Row ' + (i + 1), city: 'Metro ' + (i % 5) }));\n  const Demo = () => {\n    const [page, setPage] = React.useState(1);\n    return (\n      <Panel fullWidth>\n        <Table\n          data={data}\n          columns={columns}\n          striped\n          paginate\n          maxExpandedRows={12}\n          page={page}\n          onPageChange={setPage}\n          paginationWindow={7}\n        />\n      </Panel>\n    );\n  };\n  return <Demo />;\n})()",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {
+        "data": [],
+        "columns": []
+      }
+    },
+    {
+      "id": "table-row-click",
+      "title": "Row click actions",
+      "code": "(() => {\n  type Invoice = { id: number; customer: string; total: number };\n  const columns = [\n    { header: 'Invoice', accessor: 'id', align: 'right' },\n    { header: 'Customer', accessor: 'customer' },\n    {\n      header: 'Total',\n      accessor: (row: Invoice) => `$${row.total.toFixed(2)}`,\n      align: 'right',\n    },\n  ];\n  const data: Invoice[] = [\n    { id: 4821, customer: 'Juniper Labs', total: 8421.17 },\n    { id: 4822, customer: 'Halo Forge', total: 311.25 },\n    { id: 4823, customer: 'Even Tide', total: 1775.4 },\n  ];\n  const Demo = () => {\n    const [lastClick, setLastClick] = React.useState<Invoice | null>(null);\n    return (\n      <Stack gap={2}>\n        <Panel fullWidth>\n          <Table\n            data={data}\n            columns={columns}\n            hoverable\n            onRowClick={(row) => setLastClick(row)}\n          />\n        </Panel>\n        <Typography variant='body-sm'>\n          Last clicked: {lastClick ? `${lastClick.customer} (#${lastClick.id})` : '—'}\n        </Typography>\n      </Stack>\n    );\n  };\n  return <Demo />;\n})()",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {
+        "data": [],
+        "columns": []
+      }
     }
   ],
   "sourceFiles": [
     "src/components/widgets/Table.tsx"
   ],
-  "version": "0.32.0",
+  "version": "0.33.7",
   "schemaVersion": "1.6"
 }

@@ -21,6 +21,7 @@ import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { useOptionalForm } from './FormControl';
 import type { FieldBaseProps } from '../../types';
+import type { ChangeInfo, OnValueChange, OnValueCommit } from '../../system/events';
 
 /*───────────────────────────────────────────────────────────*/
 /* Size map                                                  */
@@ -160,8 +161,10 @@ export interface SliderProps
   value?: number;
   /** Default for uncontrolled usage. */
   defaultValue?: number;
-  /** Fires on every change (pointer + keyboard). */
-  onChange?: (value: number) => void;
+  /** Canonical value change (pointer drag, keyboard). */
+  onValueChange?: OnValueChange<number>;
+  /** Commit event (pointer up, blur, or Enter/Page/Home/End key). */
+  onValueCommit?: OnValueCommit<number>;
 
   /** Minimum allowed value. */
   min?: number;
@@ -199,7 +202,8 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
     {
       value: valueProp,
       defaultValue = 0,
-      onChange,
+      onValueChange,
+      onValueCommit,
       min = 0,
       max = 100,
       step = 1,
@@ -248,6 +252,19 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
     /* controlled hierarchy ---------------------------------- */
     const formVal = name ? form?.values[name] : undefined;
     const controlled = formVal !== undefined || valueProp !== undefined;
+    // Controlled/uncontrolled guard (dev-only)
+    const initialCtl = React.useRef<boolean | undefined>(undefined);
+    React.useEffect(() => {
+      if (process.env.NODE_ENV === 'production') return;
+      if (initialCtl.current === undefined) initialCtl.current = controlled;
+      else if (initialCtl.current !== controlled) {
+        console.error(
+          'Slider: component switched from %s to %s after mount. This is not supported.',
+          initialCtl.current ? 'controlled' : 'uncontrolled',
+          controlled ? 'controlled' : 'uncontrolled',
+        );
+      }
+    }, [controlled]);
     const [self, setSelf] = useState(defaultValue);
     const current = controlled ? (formVal !== undefined ? formVal : (valueProp as number)) : self;
 
@@ -298,16 +315,45 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
 
     /* commit helper ----------------------------------------- */
     const commitValue = useCallback(
-      (v: number) => {
+      (v: number, phase: 'input' | 'commit' = 'commit', event?: React.SyntheticEvent) => {
         const snapped = snapValue(Math.min(Math.max(v, min), max), snap, step, presets);
         const rounded = roundTo(snapped, precision);
 
         if (!controlled) setSelf(rounded);
         if (name && form) form.setField(name as keyof Record<string, number | undefined>, rounded);
-        onChange?.(rounded);
+        const info: ChangeInfo<number> = {
+          previousValue: current,
+          phase,
+          source: event
+            ? 'nativeEvent' in event && event.nativeEvent instanceof KeyboardEvent
+              ? 'keyboard'
+              : 'pointer'
+            : 'programmatic',
+          event,
+          name,
+        } as unknown as ChangeInfo<number>;
+        if (phase === 'input') onValueChange?.(rounded, info);
+        else {
+          onValueChange?.(rounded, { ...info, phase: 'input' });
+          onValueCommit?.(rounded, { ...info, phase: 'commit' });
+        }
         renderVisual(rounded);
       },
-      [controlled, form, min, max, name, onChange, presets, snap, step, precision, renderVisual],
+      [
+        controlled,
+        form,
+        min,
+        max,
+        name,
+        onValueChange,
+        onValueCommit,
+        presets,
+        snap,
+        step,
+        precision,
+        renderVisual,
+        current,
+      ],
     );
 
     /* pointer handling -------------------------------------- */
@@ -327,16 +373,33 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
         e.preventDefault();
         updateFromClientX(e.clientX);
 
-        const move = (ev: PointerEvent) => updateFromClientX(ev.clientX);
-        const up = () => {
+        const move = (ev: PointerEvent) => {
+          commitValue(
+            valFor(
+              ((ev.clientX - (wrapRef.current?.getBoundingClientRect().left ?? 0)) /
+                (wrapRef.current?.getBoundingClientRect().width ?? 1)) *
+                100,
+            ),
+            'input',
+          );
+        };
+        const up = (ev: PointerEvent) => {
           document.removeEventListener('pointermove', move);
           document.removeEventListener('pointerup', up as EventListener);
+          commitValue(
+            valFor(
+              ((ev.clientX - (wrapRef.current?.getBoundingClientRect().left ?? 0)) /
+                (wrapRef.current?.getBoundingClientRect().width ?? 1)) *
+                100,
+            ),
+            'commit',
+          );
         };
 
         document.addEventListener('pointermove', move);
         document.addEventListener('pointerup', up as EventListener, { once: true });
       },
-      [disabled, updateFromClientX],
+      [disabled, updateFromClientX, commitValue, valFor],
     );
 
     /* keyboard handling ------------------------------------- */
@@ -347,22 +410,22 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
       const k = e.key;
       if (k === 'Home') {
         e.preventDefault();
-        commitValue(min);
+        commitValue(min, 'commit', e as unknown as React.SyntheticEvent);
         return;
       }
       if (k === 'End') {
         e.preventDefault();
-        commitValue(max);
+        commitValue(max, 'commit', e as unknown as React.SyntheticEvent);
         return;
       }
       if (k === 'PageUp') {
         e.preventDefault();
-        commitValue(current + pageStep);
+        commitValue(current + pageStep, 'commit', e as unknown as React.SyntheticEvent);
         return;
       }
       if (k === 'PageDown') {
         e.preventDefault();
-        commitValue(current - pageStep);
+        commitValue(current - pageStep, 'commit', e as unknown as React.SyntheticEvent);
         return;
       }
       let delta = 0;
@@ -370,7 +433,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
       if (k === 'ArrowLeft' || k === 'ArrowDown') delta = -keyStep;
       if (delta) {
         e.preventDefault();
-        commitValue(current + delta);
+        commitValue(current + delta, 'commit', e as unknown as React.SyntheticEvent);
       }
     };
 
@@ -400,8 +463,16 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
       <Wrapper
         {...rest}
         ref={setWrapperRef}
+        tabIndex={-1}
+        data-valet-component='Slider'
+        data-state={disabled ? 'disabled' : 'enabled'}
+        data-disabled={disabled ? 'true' : 'false'}
         className={mergedCls}
         style={{ paddingTop: padTop, paddingBottom: padBottom, ...sx }}
+        onFocus={() => {
+          // Focus the interactive thumb when the wrapper receives programmatic focus
+          thumbRef.current?.focus();
+        }}
       >
         {/* track + fill */}
         <Track

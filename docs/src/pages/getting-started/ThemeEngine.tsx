@@ -78,7 +78,7 @@ function Swatch({
   return (
     <Panel
       pad={0.75}
-      background={hex}
+      color={hex}
       sx={{ borderRadius: theme.radius(1), minHeight: '6rem' }}
       fullWidth
     >
@@ -129,9 +129,8 @@ function ButtonSwatch({
     >
       <Stack sx={{ gap: theme.spacing(0.5) }}>
         <Button
-          variant='contained'
+          variant='filled'
           color={bg}
-          textColor={text}
         >
           {name}
         </Button>
@@ -205,9 +204,8 @@ function Example() {
           gap={2}
         >
           <Button
-            variant='contained'
+            variant='filled'
             color={t['primary']}
-            textColor={t['primaryText']}
             onClick={toggleMode}
           >
             Toggle Mode
@@ -324,7 +322,7 @@ function Example() {
           >
             <Panel
               pad={1}
-              background={t['backgroundAlt']}
+              color={t['backgroundAlt']}
               sx={{ borderRadius: theme.radius(1) }}
             >
               <Stack sx={{ gap: theme.spacing(0.75) }}>
@@ -334,41 +332,37 @@ function Example() {
                   sx={{ gap: theme.spacing(0.5), flexWrap: 'wrap' }}
                 >
                   <Button
-                    variant='contained'
+                    variant='filled'
                     color={t['primary']}
-                    textColor={t['primaryButtonText']}
                   >
                     Primary
                   </Button>
                   <Button
-                    variant='contained'
+                    variant='filled'
                     color={t['secondary']}
-                    textColor={t['secondaryButtonText']}
                   >
                     Secondary
                   </Button>
                   <Button
-                    variant='contained'
+                    variant='filled'
                     color={t['tertiary']}
-                    textColor={t['tertiaryButtonText']}
                   >
                     Tertiary
                   </Button>
                   <Button
-                    variant='contained'
+                    variant='filled'
                     color={t['error']}
-                    textColor={t['errorText']}
                   >
                     Error
                   </Button>
                   <IconButton
                     icon='mdi:brush'
-                    variant='contained'
+                    variant='filled'
                     color={t['primary']}
                   />
                   <IconButton
                     icon='mdi:alert'
-                    variant='contained'
+                    variant='filled'
                     color={t['error']}
                   />
                 </Stack>
@@ -450,7 +444,7 @@ function Example() {
               <Stack sx={{ gap: theme.spacing(0.75) }}>
                 <Typography bold>Date Selector</Typography>
                 <DateSelector
-                  compactMode='on'
+                  density='compact'
                   minDate='2020-01-01'
                   maxDate='2030-12-31'
                 />
@@ -484,7 +478,7 @@ function Example() {
         <Panel
           fullWidth
           pad={1}
-          background={t['background']}
+          color={t['background']}
         >
           <Typography
             variant='h3'
@@ -523,7 +517,7 @@ function Example() {
             </Panel>
             <Panel
               pad={1}
-              background={t['backgroundAlt']}
+              color={t['backgroundAlt']}
             >
               <Typography
                 variant='h4'

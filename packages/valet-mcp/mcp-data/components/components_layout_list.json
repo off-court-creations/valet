@@ -3,7 +3,7 @@
   "category": "layout",
   "slug": "components/layout/list",
   "summary": "List component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "list",
     "ul",
@@ -33,12 +33,14 @@
     {
       "name": "hoverable",
       "type": "boolean",
-      "required": false
+      "required": false,
+      "description": "If `undefined`, non-striped lists hover by default."
     },
     {
       "name": "reorderable",
       "type": "boolean",
-      "required": false
+      "required": false,
+      "description": "Allow drag-and-drop style reordering via pointer (default: true)"
     },
     {
       "name": "onReorder",
@@ -48,12 +50,14 @@
     {
       "name": "selectable",
       "type": "boolean",
-      "required": false
+      "required": false,
+      "description": "Enable single selection when true."
     },
     {
       "name": "focusMode",
       "type": "'auto' | 'row' | 'none'",
       "required": false,
+      "description": "Focus behavior for rows.\n- `auto` (default): non-selectable lists keep rows out of the tab order; selectable lists use roving focus (one row has `tabIndex=0`, rest `-1`).\n- `row`: every row is tabbable (`tabIndex=0`). Opt-in only; not recommended for long lists.\n- `none`: rows are not in the tab order (`tabIndex=-1`), allowing programmatic focus only.",
       "enumValues": [
         "auto",
         "row",
@@ -63,32 +67,44 @@
     {
       "name": "selected",
       "type": "T | null",
-      "required": false
+      "required": false,
+      "description": "Controlled selected item (by reference)."
     },
     {
       "name": "defaultSelected",
       "type": "T | null",
-      "required": false
+      "required": false,
+      "description": "Uncontrolled initial selection."
     },
     {
       "name": "onSelectionChange",
       "type": "(item: T, index: number) => void",
-      "required": false
+      "required": false,
+      "description": "Fired when selection changes."
     },
     {
       "name": "getKey",
       "type": "(item: T, index: number) => React.Key",
-      "required": false
+      "required": false,
+      "description": "Provide stable keys for items (defaults to index)."
     },
     {
       "name": "emptyPlaceholder",
       "type": "React.ReactNode",
-      "required": false
+      "required": false,
+      "description": "Rendered when `data.length === 0`."
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": false
+      "required": false,
+      "description": "Inline styles (with CSS var support)."
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
   "domPassthrough": {
@@ -171,6 +187,6 @@
   "sourceFiles": [
     "src/components/layout/List.tsx"
   ],
-  "version": "0.32.0",
+  "version": "0.33.7",
   "schemaVersion": "1.6"
 }

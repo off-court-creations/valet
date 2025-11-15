@@ -9,6 +9,7 @@ import React, {
   forwardRef,
   useCallback,
   useContext,
+  useEffect,
   useId,
   useMemo,
   useRef,
@@ -22,6 +23,7 @@ import { useTheme } from '../../system/themeStore';
 import { toRgb, mix, toHex } from '../../helpers/color';
 import type { Theme } from '../../system/themeStore';
 import type { FieldBaseProps, Presettable, Sx } from '../../types';
+import type { ChangeInfo, OnValueChange, OnValueCommit } from '../../system/events';
 import { useOptionalForm } from './FormControl';
 
 /*───────────────────────────────────────────────────────────*/
@@ -30,7 +32,7 @@ export type RadioSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 interface RadioCtx {
   value: string | null;
-  setValue: (v: string) => void;
+  setValue: (v: string, e?: React.ChangeEvent<HTMLInputElement>) => void;
   name: string;
   size: RadioSize | number | string;
 }
@@ -115,7 +117,12 @@ export interface RadioGroupProps
   size?: RadioSize | number | string;
   /** Gap between options */
   spacing?: number | string;
-  onChange?: (val: string) => void;
+  /** DOM-parity change event (raw input event). */
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  /** Canonical value change event (fires on selection). */
+  onValueChange?: OnValueChange<string>;
+  /** Commit event (fires same moment for radios). */
+  onValueCommit?: OnValueCommit<string>;
   children: ReactNode;
 }
 
@@ -140,6 +147,9 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
   size = 'md',
   spacing,
   onChange,
+  onValueChange,
+  onValueCommit,
+  error = false,
   preset: p,
   sx,
   className,
@@ -152,6 +162,19 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
   const id = useId();
   const name = nameProp ?? `radio-group-${id}`;
   const controlled = valueProp !== undefined;
+  // Controlled/uncontrolled guard (dev-only)
+  const initialCtl = useRef<boolean | undefined>(undefined);
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'production') return;
+    if (initialCtl.current === undefined) initialCtl.current = controlled;
+    else if (initialCtl.current !== controlled) {
+      console.error(
+        'RadioGroup: component switched from %s to %s after mount. This is not supported.',
+        initialCtl.current ? 'controlled' : 'uncontrolled',
+        controlled ? 'controlled' : 'uncontrolled',
+      );
+    }
+  }, [controlled]);
 
   // Optional FormControl integration
   const form = useOptionalForm<Record<string, unknown>>();
@@ -159,15 +182,34 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
   /* Controlled/uncontrolled wiring ------------------------------------- */
   const [selfVal, setSelfVal] = useState<string | null>(defaultValue ?? null);
   const setValue = useCallback(
-    (v: string) => {
+    (v: string, e?: React.ChangeEvent<HTMLInputElement>) => {
+      const previous = controlled ? (valueProp ?? null) : selfVal;
       if (!controlled) setSelfVal(v);
-      onChange?.(v);
-      // Push into form store when bound to a provided field name
+      // Form store binding
       if (form && nameProp) {
         form.setField(nameProp as keyof Record<string, unknown>, v);
       }
+      // Fire DOM-parity event
+      if (e) onChange?.(e);
+      // Fire event trio (same moment for radios)
+      const src: ChangeInfo<string>['source'] = e
+        ? e.nativeEvent instanceof KeyboardEvent
+          ? 'keyboard'
+          : e.nativeEvent instanceof MouseEvent || e.nativeEvent instanceof PointerEvent
+            ? 'pointer'
+            : 'programmatic'
+        : 'programmatic';
+      const base: ChangeInfo<string> = {
+        previousValue: previous ?? undefined,
+        phase: 'commit',
+        source: src,
+        event: e,
+        name: nameProp,
+      };
+      onValueChange?.(v, { ...base, phase: 'input' });
+      onValueCommit?.(v, base);
     },
-    [controlled, onChange, form, nameProp],
+    [controlled, form, nameProp, onChange, onValueChange, onValueCommit, selfVal, valueProp],
   );
 
   const ctxVal = useMemo<RadioCtx>(
@@ -247,6 +289,8 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
       <RootBase
         {...rest}
         ref={ref}
+        data-valet-component='RadioGroup'
+        data-state={error ? 'invalid' : 'valid'}
         role='radiogroup'
         aria-labelledby={labelId}
         aria-describedby={helpId}
@@ -384,7 +428,7 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
       mix(toRgb(theme.colors.text), toRgb(mode === 'dark' ? '#000' : '#fff'), 0.4),
     );
 
-    const onChange = () => !disabled && setValue(value);
+    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => !disabled && setValue(value, e);
 
     /* preset → className ---------------------------------------------- */
     const presetCls = p ? preset(p) : '';
@@ -398,6 +442,10 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
         style={{ gap: SZ.gapInner, ...sx }}
         $disabled={disabled}
         $disabledColor={disabledColor}
+        data-valet-component='Radio'
+        data-state={checked ? 'selected' : 'unselected'}
+        data-disabled={disabled ? 'true' : 'false'}
+        data-checked={checked ? 'true' : 'false'}
       >
         <HiddenInput
           {...inputRest}

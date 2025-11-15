@@ -54,7 +54,7 @@ export default function ListDemoPage() {
   const playgroundContent = (
     <Stack>
       <Panel
-        variant='alt'
+        variant='outlined'
         fullWidth
       >
         <Stack
@@ -68,7 +68,7 @@ export default function ListDemoPage() {
             <Switch
               name='striped'
               checked={striped}
-              onChange={setStriped}
+              onValueChange={(v) => setStriped(!!v)}
             />
             <Typography>Striped</Typography>
           </Stack>
@@ -79,7 +79,7 @@ export default function ListDemoPage() {
             <Switch
               name='hoverable'
               checked={hoverable}
-              onChange={setHoverable}
+              onValueChange={(v) => setHoverable(!!v)}
             />
             <Typography>Hoverable</Typography>
           </Stack>
@@ -90,7 +90,7 @@ export default function ListDemoPage() {
             <Switch
               name='selectable'
               checked={selectable}
-              onChange={setSelectable}
+              onValueChange={(v) => setSelectable(!!v)}
             />
             <Typography>Selectable</Typography>
           </Stack>
@@ -101,7 +101,7 @@ export default function ListDemoPage() {
             <Switch
               name='reorderable'
               checked={reorderable}
-              onChange={setReorderable}
+              onValueChange={(v) => setReorderable(!!v)}
             />
             <Typography>Reorderable</Typography>
           </Stack>
@@ -120,7 +120,7 @@ export default function ListDemoPage() {
           <Select
             name='focusMode'
             value={focusMode}
-            onChange={(v) => setFocusMode(v as 'auto' | 'row' | 'none')}
+            onValueChange={(v) => setFocusMode(v as 'auto' | 'row' | 'none')}
             sx={{ minWidth: '8rem' }}
           >
             <Select.Option value='auto'>auto</Select.Option>

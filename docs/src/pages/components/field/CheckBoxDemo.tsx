@@ -60,7 +60,7 @@ export default function CheckboxDemoPage() {
       <Checkbox
         name='newsletter'
         checked={newsletter}
-        onChange={(next) => setNewsletter(next)}
+        onValueChange={(next) => setNewsletter(!!next)}
         label={`Receive newsletter – ${newsletter ? 'yes' : 'no'}`}
       />
 
@@ -158,7 +158,7 @@ export default function CheckboxDemoPage() {
         />
         <Button
           type='submit'
-          variant='contained'
+          variant='filled'
           size='lg'
         >
           Submit
@@ -177,22 +177,22 @@ export default function CheckboxDemoPage() {
               name='selectAll'
               checked={all}
               indeterminate={mixed}
-              onChange={(next) => {
-                setA(next);
-                setB(next);
+              onValueChange={(next) => {
+                setA(!!next);
+                setB(!!next);
               }}
               label='Select all'
             />
             <Checkbox
               name='optA'
               checked={a}
-              onChange={(next) => setA(next)}
+              onValueChange={(next) => setA(!!next)}
               label='Option A'
             />
             <Checkbox
               name='optB'
               checked={b}
-              onChange={(next) => setB(next)}
+              onValueChange={(next) => setB(!!next)}
               label='Option B'
             />
           </Stack>

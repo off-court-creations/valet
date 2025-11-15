@@ -37,6 +37,12 @@
       ]
     },
     {
+      "name": "sx",
+      "type": "Sx",
+      "required": false,
+      "description": "Inline styles via CSSProperties (with CSS var support)"
+    },
+    {
       "name": "preset",
       "type": "string | string[] | undefined",
       "required": false,

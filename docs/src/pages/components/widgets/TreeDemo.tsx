@@ -120,7 +120,7 @@ export default function TreeDemoPage() {
       <Select
         placeholder='variant'
         value={variant}
-        onChange={(v) => setVariant(v as 'chevron' | 'list' | 'files')}
+        onValueChange={(v) => setVariant(v as 'chevron' | 'list' | 'files')}
         sx={{ width: 200 }}
       >
         <Select.Option value='chevron'>chevron</Select.Option>

@@ -3,7 +3,7 @@
   "category": "fields",
   "slug": "components/fields/slider",
   "summary": "Slider component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "slider",
     "range"
@@ -12,72 +12,86 @@
     {
       "name": "value",
       "type": "number",
-      "required": false
+      "required": false,
+      "description": "Controlled value."
     },
     {
       "name": "defaultValue",
       "type": "number",
-      "required": false
+      "required": false,
+      "description": "Default for uncontrolled usage."
     },
     {
-      "name": "onChange",
-      "type": "(value: number) => void",
-      "required": false
+      "name": "onValueChange",
+      "type": "OnValueChange<number>",
+      "required": false,
+      "description": "Canonical value change (pointer drag, keyboard)."
+    },
+    {
+      "name": "onValueCommit",
+      "type": "OnValueCommit<number>",
+      "required": false,
+      "description": "Commit event (pointer up, blur, or Enter/Page/Home/End key)."
     },
     {
       "name": "min",
       "type": "number",
-      "required": false
+      "required": false,
+      "description": "Minimum allowed value."
     },
     {
       "name": "max",
       "type": "number",
-      "required": false
+      "required": false,
+      "description": "Maximum allowed value."
     },
     {
       "name": "step",
       "type": "number",
-      "required": false
+      "required": false,
+      "description": "Fixed increment when `snap=\"step\"`; defaults to 1."
     },
     {
       "name": "presets",
       "type": "number[]",
-      "required": false
+      "required": false,
+      "description": "Preset snap points when `snap=\"presets\"`."
     },
     {
       "name": "snap",
       "type": "SnapMode",
-      "required": false
+      "required": false,
+      "description": "Snap behaviour."
     },
     {
       "name": "precision",
       "type": "number",
-      "required": false
+      "required": false,
+      "description": "Number of decimal places allowed. Default 0 (integers only)."
     },
     {
       "name": "showValue",
       "type": "boolean",
-      "required": false
+      "required": false,
+      "description": "Show live numeric value above thumb."
     },
     {
       "name": "showMinMax",
       "type": "boolean",
-      "required": false
+      "required": false,
+      "description": "Show min/max labels beneath the track ends."
     },
     {
       "name": "showTicks",
       "type": "boolean",
-      "required": false
+      "required": false,
+      "description": "Show tick marks (follows snap points or `ticks`)."
     },
     {
       "name": "ticks",
       "type": "number[]",
-      "required": false
-    },
-    {
-      "name": "name",
-      "type": "string",
-      "required": false
+      "required": false,
+      "description": "Custom tick set (overrides derived ticks)."
     },
     {
       "name": "size",
@@ -90,9 +104,46 @@
       "required": false
     },
     {
+      "name": "name",
+      "type": "string | undefined",
+      "required": false,
+      "description": "Field identifier used for FormControl binding and forwarded to the underlying control\nwhen applicable. Components can require `name` locally if they depend on it."
+    },
+    {
+      "name": "label",
+      "type": "React.ReactNode",
+      "required": false,
+      "description": "Visual label rendered by the component or its wrapper. Accepts string or node."
+    },
+    {
+      "name": "helperText",
+      "type": "React.ReactNode",
+      "required": false,
+      "description": "Supplemental hint or validation content typically rendered under the control."
+    },
+    {
+      "name": "error",
+      "type": "boolean | undefined",
+      "required": false,
+      "description": "Marks the field invalid; components may adjust visuals and helper text color."
+    },
+    {
+      "name": "fullWidth",
+      "type": "boolean | undefined",
+      "required": false,
+      "description": "Stretches the field wrapper to occupy the full available width."
+    },
+    {
       "name": "sx",
-      "type": "Sx",
-      "required": false
+      "type": "import(\"/home/xbenc/occ/valet/src/types\").Sx | undefined",
+      "required": false,
+      "description": "Inline styles (with CSS var support)."
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
   "domPassthrough": {
@@ -109,12 +160,23 @@
   "cssPresets": [],
   "events": [
     {
-      "name": "onChange",
-      "payloadType": "number"
+      "name": "onValueChange",
+      "payloadType": "OnValueChange<number>"
+    },
+    {
+      "name": "onValueCommit",
+      "payloadType": "OnValueCommit<number>"
     }
   ],
   "actions": [],
-  "slots": [],
+  "slots": [
+    {
+      "name": "label"
+    },
+    {
+      "name": "helperText"
+    }
+  ],
   "bestPractices": [
     "Use Slider for ranges where relative position matters; prefer `TextField` for precise numeric entry.",
     "Snap deliberately. Provide step increments that match the domain; avoid overly fine steps that make keyboard or touch fiddly.",
@@ -127,6 +189,6 @@
   "sourceFiles": [
     "src/components/fields/Slider.tsx"
   ],
-  "version": "0.32.0",
+  "version": "0.33.7",
   "schemaVersion": "1.6"
 }

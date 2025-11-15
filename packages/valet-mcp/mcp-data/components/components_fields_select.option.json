@@ -1,0 +1,41 @@
+{
+  "name": "Select.Option",
+  "category": "fields",
+  "slug": "components/fields/select.option",
+  "summary": "Select.Option component",
+  "status": "stable",
+  "props": [
+    {
+      "name": "value",
+      "type": "Primitive",
+      "required": true
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "required": false
+    }
+  ],
+  "domPassthrough": {
+    "element": "li",
+    "omitted": []
+  },
+  "cssVars": [
+    "--valet-border",
+    "--valet-bg",
+    "--valet-text-color",
+    "--valet-focus-ring-color",
+    "--valet-zindex-dropdown"
+  ],
+  "cssPresets": [],
+  "events": [],
+  "actions": [],
+  "slots": [],
+  "bestPractices": [],
+  "examples": [],
+  "sourceFiles": [
+    "src/components/fields/Select.tsx"
+  ],
+  "version": "0.33.7",
+  "schemaVersion": "1.6"
+}

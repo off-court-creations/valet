@@ -3,7 +3,7 @@
   "category": "widgets",
   "slug": "components/widgets/loadingbackdrop",
   "summary": "LoadingBackdrop component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "loadingbackdrop",
     "backdrop",
@@ -19,9 +19,29 @@
       "name": "showSpinner",
       "type": "boolean",
       "required": false
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": false,
+      "description": "Inline styles (with CSS var support)"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
-  "cssVars": [],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": [
+      "style"
+    ]
+  },
+  "cssVars": [
+    "--valet-zindex-modal"
+  ],
   "cssPresets": [],
   "events": [],
   "actions": [],
@@ -31,6 +51,6 @@
   "sourceFiles": [
     "src/components/widgets/LoadingBackdrop.tsx"
   ],
-  "version": "0.32.0",
+  "version": "0.33.7",
   "schemaVersion": "1.6"
 }

@@ -3,11 +3,23 @@
   "category": "fields",
   "slug": "components/fields/checkbox",
   "summary": "Checkbox component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "checkbox"
   ],
   "props": [
+    {
+      "name": "name",
+      "type": "string",
+      "required": false,
+      "description": "Field name used for FormControl binding and form submission. When `bindForm` is false,\n`name` may be omitted and no form binding/submission occurs."
+    },
+    {
+      "name": "bindForm",
+      "type": "boolean",
+      "required": false,
+      "description": "Disable FormControl binding and omit name from submission."
+    },
     {
       "name": "checked",
       "type": "boolean",
@@ -19,29 +31,70 @@
       "required": false
     },
     {
-      "name": "name",
-      "type": "string",
-      "required": true
-    },
-    {
-      "name": "label",
-      "type": "ReactNode",
-      "required": false
-    },
-    {
       "name": "size",
       "type": "CheckboxSize | number | string",
-      "required": false
+      "required": false,
+      "description": "Visual size; token or CSS length."
     },
     {
       "name": "onChange",
-      "type": "(checked: boolean, event: ChangeEvent<HTMLInputElement>) => void",
-      "required": false
+      "type": "(event: ChangeEvent<HTMLInputElement>) => void",
+      "required": false,
+      "description": "DOM-parity change event (raw React event)."
+    },
+    {
+      "name": "onValueChange",
+      "type": "OnValueChange<boolean>",
+      "required": false,
+      "description": "Canonical value change event (fires on each mutation)."
+    },
+    {
+      "name": "onValueCommit",
+      "type": "OnValueCommit<boolean>",
+      "required": false,
+      "description": "Commit event (fires at the same moment for toggles)."
+    },
+    {
+      "name": "indeterminate",
+      "type": "boolean",
+      "required": false,
+      "description": "Mixed (indeterminate) visual state for parent selections."
+    },
+    {
+      "name": "label",
+      "type": "React.ReactNode",
+      "required": false,
+      "description": "Visual label rendered by the component or its wrapper. Accepts string or node."
+    },
+    {
+      "name": "helperText",
+      "type": "React.ReactNode",
+      "required": false,
+      "description": "Supplemental hint or validation content typically rendered under the control."
+    },
+    {
+      "name": "error",
+      "type": "boolean | undefined",
+      "required": false,
+      "description": "Marks the field invalid; components may adjust visuals and helper text color."
+    },
+    {
+      "name": "fullWidth",
+      "type": "boolean | undefined",
+      "required": false,
+      "description": "Stretches the field wrapper to occupy the full available width."
     },
     {
       "name": "sx",
-      "type": "Sx",
-      "required": false
+      "type": "import(\"/home/xbenc/occ/valet/src/types\").Sx | undefined",
+      "required": false,
+      "description": "Inline styles (with CSS var support)."
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
   "domPassthrough": {
@@ -52,7 +105,8 @@
       "onChange",
       "value",
       "defaultValue",
-      "style"
+      "style",
+      "name"
     ]
   },
   "cssVars": [
@@ -64,13 +118,24 @@
   "events": [
     {
       "name": "onChange",
-      "payloadType": "boolean"
+      "payloadType": "ChangeEvent<HTMLInputElement>"
+    },
+    {
+      "name": "onValueChange",
+      "payloadType": "OnValueChange<boolean>"
+    },
+    {
+      "name": "onValueCommit",
+      "payloadType": "OnValueCommit<boolean>"
     }
   ],
   "actions": [],
   "slots": [
     {
       "name": "label"
+    },
+    {
+      "name": "helperText"
     }
   ],
   "bestPractices": [
@@ -86,6 +151,6 @@
   "sourceFiles": [
     "src/components/fields/Checkbox.tsx"
   ],
-  "version": "0.32.0",
+  "version": "0.33.7",
   "schemaVersion": "1.6"
 }

@@ -1,0 +1,71 @@
+{
+  "name": "Accordion.Item",
+  "category": "layout",
+  "slug": "components/layout/accordion.item",
+  "summary": "Accordion.Item component",
+  "status": "stable",
+  "props": [
+    {
+      "name": "header",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "index",
+      "type": "number",
+      "required": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "required": false
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": false,
+      "description": "Inline styles via CSSProperties (with CSS var support)"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
+    }
+  ],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": []
+  },
+  "cssVars": [
+    "--valet-acc-duration",
+    "--valet-acc-ease",
+    "--valet-divider-stroke",
+    "--valet-focus-width",
+    "--valet-focus-ring-color",
+    "--valet-focus-offset"
+  ],
+  "cssPresets": [],
+  "events": [],
+  "actions": [],
+  "slots": [
+    {
+      "name": "header"
+    },
+    {
+      "name": "children"
+    }
+  ],
+  "bestPractices": [],
+  "examples": [],
+  "sourceFiles": [
+    "src/components/layout/Accordion.tsx"
+  ],
+  "version": "0.33.7",
+  "schemaVersion": "1.6"
+}

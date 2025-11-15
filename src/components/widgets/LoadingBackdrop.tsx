@@ -5,19 +5,37 @@
 import React from 'react';
 import { useTheme } from '../../system/themeStore';
 import { Progress } from '../primitives/Progress';
+import { preset } from '../../css/stylePresets';
+import type { Presettable, Sx } from '../../types';
 
-export interface LoadingBackdropProps {
+export interface LoadingBackdropProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'>,
+    Presettable {
   fading?: boolean;
   showSpinner?: boolean;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
-export const LoadingBackdrop: React.FC<LoadingBackdropProps> = ({ fading, showSpinner }) => {
+export const LoadingBackdrop: React.FC<LoadingBackdropProps> = ({
+  fading,
+  showSpinner,
+  className,
+  preset: p,
+  sx,
+  ...rest
+}) => {
   const { theme } = useTheme();
   const fadeMs = theme.motion.duration.base;
   const fadeEase = theme.motion.easing.standard;
+  const presetCls = p ? preset(p) : '';
 
   return (
     <div
+      {...rest}
+      className={[presetCls, className].filter(Boolean).join(' ')}
+      data-valet-component='LoadingBackdrop'
+      data-state={fading ? 'closed' : 'open'}
       style={{
         position: 'fixed',
         inset: 0,
@@ -26,10 +44,11 @@ export const LoadingBackdrop: React.FC<LoadingBackdropProps> = ({ fading, showSp
         justifyContent: 'center',
         background: `color-mix(in srgb, ${theme.colors.background} 92%, black)`,
         color: theme.colors.text,
-        zIndex: 'var(--valet-z-overlay, 9999)',
+        zIndex: 'var(--valet-zindex-modal, 1400)',
         transition: `opacity ${fadeMs} ${fadeEase}`,
         opacity: fading ? 0 : 1,
         pointerEvents: fading ? 'none' : 'auto',
+        ...(sx || {}),
       }}
       aria-hidden={!!fading}
     >

@@ -69,6 +69,7 @@ export function FormControl<T extends Record<string, unknown>>({
       <form
         {...rest}
         onSubmit={handleSubmit}
+        data-valet-component='FormControl'
         className={[presetClasses, className].filter(Boolean).join(' ')}
         style={sx}
       >

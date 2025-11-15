@@ -9,11 +9,13 @@ import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import type { Presettable, SpacingProps, Sx } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
+import {
+  createPolymorphicComponent,
+  type PolymorphicProps,
+  type PolymorphicRef,
+} from '../../system/polymorphic';
 
-export interface BoxProps
-  extends Omit<React.ComponentProps<'div'>, 'style'>,
-    Presettable,
-    Pick<SpacingProps, 'pad' | 'compact'> {
+export interface BoxOwnProps extends Presettable, Pick<SpacingProps, 'pad' | 'compact'> {
   background?: string | undefined;
   textColor?: string | undefined;
   /** Center inner content (layout inside the box) */
@@ -21,9 +23,7 @@ export interface BoxProps
   /** Stretch to 100% width of container when true */
   fullWidth?: boolean;
   /** Horizontal placement of the box when not fullWidth */
-  alignX?: 'left' | 'right' | 'center' | 'centered';
-  /** Deprecated: old prop name retained for BC */
-  centered?: boolean;
+  alignX?: 'left' | 'right' | 'center';
   /** Inline styles (with CSS var support) */
   sx?: Sx;
 }
@@ -71,20 +71,23 @@ const Base = styled('div')<{
     $centerContent !== undefined && `--valet-centered: ${$centerContent ? '1' : '0'};`}
 `;
 
-export const Box: React.FC<BoxProps> = ({
-  preset: p,
-  className,
-  background,
-  textColor,
-  centerContent,
-  fullWidth = false,
-  alignX,
-  centered, // deprecated alias
-  compact,
-  pad: padProp,
-  sx,
-  ...rest
-}) => {
+const BoxImpl = <E extends React.ElementType = 'div'>(
+  props: PolymorphicProps<E, BoxOwnProps>,
+  ref: PolymorphicRef<E>,
+) => {
+  const {
+    preset: p,
+    className,
+    background,
+    textColor,
+    centerContent,
+    fullWidth = false,
+    alignX,
+    compact,
+    pad: padProp,
+    sx,
+    ...rest
+  } = props as unknown as BoxOwnProps & { as?: E } & Record<string, unknown>;
   const { theme } = useTheme();
   const presetClass = p ? preset(p) : '';
 
@@ -102,13 +105,11 @@ export const Box: React.FC<BoxProps> = ({
 
   const pad = resolveSpace(padProp, theme, compact, 1);
 
-  // Back-compat + normalization
-  const internalCenter = centerContent ?? centered ?? false;
-  const normalizedAlign: 'left' | 'right' | 'center' = (() => {
-    const raw = (alignX ?? 'left') as 'left' | 'right' | 'center' | 'centered';
-    if (raw === 'centered') return 'center';
-    return (raw as 'left' | 'right' | 'center') || 'left';
-  })();
+  const internalCenter = !!centerContent;
+  const normalizedAlign: 'left' | 'right' | 'center' = (alignX ?? 'left') as
+    | 'left'
+    | 'right'
+    | 'center';
 
   // Promote background/text overrides to inline style so they always win the cascade.
   // Never clobber an explicit style prop from the caller.
@@ -128,7 +129,9 @@ export const Box: React.FC<BoxProps> = ({
 
   return (
     <Base
-      {...rest}
+      {...(rest as object)}
+      ref={ref as unknown as React.Ref<HTMLDivElement>}
+      data-valet-component='Box'
       $bg={background}
       $text={resolvedText}
       $centerContent={internalCenter}
@@ -140,5 +143,7 @@ export const Box: React.FC<BoxProps> = ({
     />
   );
 };
+
+export const Box = createPolymorphicComponent<'div', BoxOwnProps>(BoxImpl);
 
 export default Box;

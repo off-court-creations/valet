@@ -68,6 +68,13 @@
       "default": "false"
     },
     {
+      "name": "disableOutsideClick",
+      "type": "boolean",
+      "required": false,
+      "description": "If true, outside pointer interactions will not close the tooltip.",
+      "default": "false"
+    },
+    {
       "name": "onOpen",
       "type": "() => void",
       "required": false
@@ -83,13 +90,27 @@
       "required": true
     },
     {
+      "name": "sx",
+      "type": "Sx",
+      "required": false,
+      "description": "Inline styles (with CSS var support)"
+    },
+    {
       "name": "preset",
       "type": "string | string[] | undefined",
       "required": false,
       "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
+  "domPassthrough": {
+    "element": "span",
+    "omitted": [
+      "onChange",
+      "title"
+    ]
+  },
   "cssVars": [
+    "--valet-zindex-tooltip",
     "--valet-tooltip-arrow-size"
   ],
   "cssPresets": [],

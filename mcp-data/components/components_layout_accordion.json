@@ -49,6 +49,12 @@
       "default": "false"
     },
     {
+      "name": "sx",
+      "type": "Sx",
+      "required": false,
+      "description": "Inline styles via CSSProperties (with CSS var support)"
+    },
+    {
       "name": "preset",
       "type": "string | string[] | undefined",
       "required": false,
@@ -79,6 +85,7 @@
     "--valet-acc-ease",
     "--valet-divider-stroke",
     "--valet-focus-width",
+    "--valet-focus-ring-color",
     "--valet-focus-offset"
   ],
   "cssPresets": [],

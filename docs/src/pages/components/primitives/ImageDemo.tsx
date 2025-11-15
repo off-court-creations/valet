@@ -84,7 +84,7 @@ export default function ImageDemoPage() {
           <Select
             placeholder='fit'
             value={pgFit}
-            onChange={(v) => setPgFit(v as typeof pgFit)}
+            onValueChange={(v) => setPgFit(v as typeof pgFit)}
             sx={{ width: 180 }}
           >
             <Select.Option value='cover'>cover</Select.Option>
@@ -96,7 +96,7 @@ export default function ImageDemoPage() {
           <Select
             placeholder='loading'
             value={pgLoading}
-            onChange={(v) => setPgLoading(v as typeof pgLoading)}
+            onValueChange={(v) => setPgLoading(v as typeof pgLoading)}
             sx={{ width: 160 }}
           >
             <Select.Option value='lazy'>lazy</Select.Option>

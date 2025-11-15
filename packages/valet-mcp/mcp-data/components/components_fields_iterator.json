@@ -3,7 +3,7 @@
   "category": "fields",
   "slug": "components/fields/iterator",
   "summary": "Iterator component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "iterator"
   ],
@@ -19,19 +19,16 @@
       "required": false
     },
     {
-      "name": "onChange",
-      "type": "(value: number) => void",
-      "required": false
+      "name": "onValueChange",
+      "type": "OnValueChange<number>",
+      "required": false,
+      "description": "Canonical value change event (fires on each mutation)."
     },
     {
-      "name": "onCommit",
-      "type": "(value: number) => void",
-      "required": false
-    },
-    {
-      "name": "name",
-      "type": "string",
-      "required": false
+      "name": "onValueCommit",
+      "type": "OnValueCommit<number>",
+      "required": false,
+      "description": "Commit event (buttons, wheel, keyboard final, or blur)."
     },
     {
       "name": "min",
@@ -51,17 +48,20 @@
     {
       "name": "commitOnChange",
       "type": "boolean",
-      "required": false
+      "required": false,
+      "description": "When true, committing also happens while typing for any parsable number.\nDefaults to false to avoid interrupting intermediate states like \"1.\" or \"-\"."
     },
     {
       "name": "roundToStep",
       "type": "boolean",
-      "required": false
+      "required": false,
+      "description": "If true, coerces committed values to align to `step` from the origin (min if provided, else 0)."
     },
     {
       "name": "wheelBehavior",
       "type": "'off' | 'focus' | 'hover'",
       "required": false,
+      "description": "Control mouse wheel behavior: off | focus | hover (default: focus)\n - off: disable wheel-based stepping\n - focus: only step when the field has focus\n - hover: step while hovered (prevents page scroll while over the input)",
       "enumValues": [
         "off",
         "focus",
@@ -71,35 +71,85 @@
     {
       "name": "width",
       "type": "number | string",
-      "required": false
+      "required": false,
+      "description": "Control width of the numeric field (token or CSS length)."
+    },
+    {
+      "name": "name",
+      "type": "string | undefined",
+      "required": false,
+      "description": "Field identifier used for FormControl binding and forwarded to the underlying control\nwhen applicable. Components can require `name` locally if they depend on it."
+    },
+    {
+      "name": "label",
+      "type": "React.ReactNode",
+      "required": false,
+      "description": "Visual label rendered by the component or its wrapper. Accepts string or node."
+    },
+    {
+      "name": "helperText",
+      "type": "React.ReactNode",
+      "required": false,
+      "description": "Supplemental hint or validation content typically rendered under the control."
+    },
+    {
+      "name": "error",
+      "type": "boolean | undefined",
+      "required": false,
+      "description": "Marks the field invalid; components may adjust visuals and helper text color."
+    },
+    {
+      "name": "fullWidth",
+      "type": "boolean | undefined",
+      "required": false,
+      "description": "Stretches the field wrapper to occupy the full available width."
     },
     {
       "name": "sx",
-      "type": "Sx",
-      "required": false
+      "type": "import(\"/home/xbenc/occ/valet/src/types\").Sx | undefined",
+      "required": false,
+      "description": "Inline styles (with CSS var support)."
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
   "domPassthrough": {
     "element": "input",
     "omitted": [
       "onChange",
-      "style"
+      "style",
+      "name"
     ]
   },
-  "cssVars": [],
+  "cssVars": [
+    "--valet-focus-width",
+    "--valet-focus-ring-color",
+    "--valet-focus-offset"
+  ],
   "cssPresets": [],
   "events": [
     {
-      "name": "onChange",
-      "payloadType": "number"
+      "name": "onValueChange",
+      "payloadType": "OnValueChange<number>"
     },
     {
-      "name": "onCommit",
-      "payloadType": "number"
+      "name": "onValueCommit",
+      "payloadType": "OnValueCommit<number>"
     }
   ],
   "actions": [],
-  "slots": [],
+  "slots": [
+    {
+      "name": "label"
+    },
+    {
+      "name": "helperText"
+    }
+  ],
   "bestPractices": [
     "Prefer focus-only wheel stepping. Use wheelBehavior='focus' (default) to avoid hijacking page scroll. Opt into wheelBehavior='hover' only when the field lives in a non‑scrolling context, or when hover stepping is strongly desired.",
     "Always provide sensible bounds. Set min and/or max so the control can clamp intent and communicate limits via native input semantics.",
@@ -157,6 +207,6 @@
   "sourceFiles": [
     "src/components/fields/Iterator.tsx"
   ],
-  "version": "0.32.0",
+  "version": "0.33.7",
   "schemaVersion": "1.6"
 }

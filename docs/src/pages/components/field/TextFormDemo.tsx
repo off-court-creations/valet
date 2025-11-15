@@ -38,6 +38,7 @@ export default function TextFieldDemoPage() {
 
   /* Stand-alone controlled example -------------------------------------- */
   const [username, setUsername] = useState('');
+  const [usernameCommit, setUsernameCommit] = useState('');
   const [age, setAge] = useState<number | ''>('');
 
   const usageContent = (
@@ -47,7 +48,7 @@ export default function TextFieldDemoPage() {
       </Typography>
 
       {/* 1. Uncontrolled vs controlled */}
-      <Typography variant='h3'>1. Uncontrolled vs controlled</Typography>
+      <Typography variant='h3'>1. Uncontrolled vs controlled (commit on blur/Enter)</Typography>
       <Stack>
         <TextField
           name='basic'
@@ -58,8 +59,9 @@ export default function TextFieldDemoPage() {
           name='username'
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          onValueCommit={(v) => setUsernameCommit(v)}
           label='Controlled username'
-          helperText={`Value: “${username || '—'}”`}
+          helperText={`live: “${username || '—'}” | commit: “${usernameCommit || '—'}”`}
           autoComplete='username'
         />
       </Stack>
@@ -143,7 +145,7 @@ export default function TextFieldDemoPage() {
         new FormData(event.currentTarget) if you need files or non‑valet inputs.
       </Typography>
       <Panel
-        variant='alt'
+        variant='outlined'
         sx={{ padding: theme.spacing(1) }}
       >
         <FormControl
@@ -173,7 +175,7 @@ export default function TextFieldDemoPage() {
           />
           <Button
             type='submit'
-            variant='contained'
+            variant='filled'
           >
             Submit
           </Button>

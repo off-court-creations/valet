@@ -169,6 +169,8 @@ export const ProgressBar = forwardRef<HTMLDivElement, ProgressBarProps>(
         {...rest}
         {...ariaProps}
         ref={ref}
+        data-valet-component='ProgressBar'
+        data-state={value == null ? 'indeterminate' : 'determinate'}
         className={mergedCls}
         style={sx}
       >
@@ -301,6 +303,8 @@ export const ProgressRing = forwardRef<HTMLDivElement, ProgressRingProps>(
         {...rest}
         {...ariaProps}
         ref={ref}
+        data-valet-component='ProgressRing'
+        data-state={isIndeterminate ? 'indeterminate' : 'determinate'}
         className={mergedCls}
         style={sx}
       >

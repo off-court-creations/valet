@@ -40,7 +40,7 @@ export default function MCPGuidePage() {
 
         <Panel
           fullWidth
-          variant='alt'
+          variant='outlined'
           pad={2}
         >
           <Typography>

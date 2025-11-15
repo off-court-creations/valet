@@ -112,6 +112,14 @@
     {
       "name": "onFilesChange",
       "payloadType": "File[]"
+    },
+    {
+      "name": "onDrop",
+      "payloadType": "DropzoneOptions['onDrop']"
+    },
+    {
+      "name": "onDropRejected",
+      "payloadType": "DropzoneOptions['onDropRejected']"
     }
   ],
   "actions": [],

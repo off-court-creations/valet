@@ -3,7 +3,7 @@
   "category": "widgets",
   "slug": "components/widgets/tooltip",
   "summary": "Tooltip component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "tooltip",
     "hint"
@@ -68,6 +68,13 @@
       "default": "false"
     },
     {
+      "name": "disableOutsideClick",
+      "type": "boolean",
+      "required": false,
+      "description": "If true, outside pointer interactions will not close the tooltip.",
+      "default": "false"
+    },
+    {
       "name": "onOpen",
       "type": "() => void",
       "required": false
@@ -81,9 +88,29 @@
       "name": "children",
       "type": "ReactElement",
       "required": true
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": false,
+      "description": "Inline styles (with CSS var support)"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
+  "domPassthrough": {
+    "element": "span",
+    "omitted": [
+      "onChange",
+      "title"
+    ]
+  },
   "cssVars": [
+    "--valet-zindex-tooltip",
     "--valet-tooltip-arrow-size"
   ],
   "cssPresets": [],
@@ -149,6 +176,6 @@
   "sourceFiles": [
     "src/components/widgets/Tooltip.tsx"
   ],
-  "version": "0.32.0",
+  "version": "0.33.7",
   "schemaVersion": "1.6"
 }

@@ -15,6 +15,7 @@ import { preset } from '../../css/stylePresets';
 import { useOptionalForm } from './FormControl';
 import type { Theme } from '../../system/themeStore';
 import type { FieldBaseProps } from '../../types';
+import type { ChangeInfo, OnValueChange, OnValueCommit } from '../../system/events';
 
 /*───────────────────────────────────────────────────────────────────────────*/
 /* Prop contracts                                                            */
@@ -28,6 +29,12 @@ export type TextFieldProps =
       fontFamily?: string;
       /** Field name is required for TextField to bind and identify the value. */
       name: string;
+      /** DOM-parity change event (raw React event). */
+      onChange?: ChangeEventHandler<HTMLInputElement>;
+      /** Canonical value change event (fires on each input). */
+      onValueChange?: OnValueChange<string>;
+      /** Commit event (on Enter or blur). */
+      onValueCommit?: OnValueCommit<string>;
     }) &
       InputProps & { as?: 'input' })
   | ((FieldBaseProps & {
@@ -35,6 +42,12 @@ export type TextFieldProps =
       fontFamily?: string;
       /** Field name is required for TextField to bind and identify the value. */
       name: string;
+      /** DOM-parity change event (raw React event). */
+      onChange?: ChangeEventHandler<HTMLTextAreaElement>;
+      /** Canonical value change event (fires on each input). */
+      onValueChange?: OnValueChange<string>;
+      /** Commit event (on blur). Enter inserts newline for textarea. */
+      onValueCommit?: OnValueCommit<string>;
     }) &
       TextareaProps & { as: 'textarea' });
 
@@ -111,6 +124,9 @@ export const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
 
     const generatedId = useId();
     const { theme } = useTheme();
+    const prevRef = React.useRef<string | undefined>(
+      (props as unknown as { defaultValue?: unknown }).defaultValue as string | undefined,
+    );
 
     /** Optional FormControl wiring */
     const form = useOptionalForm<Record<string, unknown>>();
@@ -129,9 +145,32 @@ export const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
       | undefined;
     const ariaDescribedBy = [describedByFromProps, helperId].filter(Boolean).join(' ') || undefined;
 
+    // Reflect disabled/readOnly on root for theming/automation selectors
+    const rawDisabled = Boolean((rawRest as Record<string, unknown>)['disabled']);
+    const rawReadOnly = Boolean((rawRest as Record<string, unknown>)['readOnly']);
+
+    // Controlled/uncontrolled guard --------------------------------------
+    const initialCtl = React.useRef<boolean | undefined>(undefined);
+    const isControlled = externalValue !== undefined || Boolean(form && name);
+    React.useEffect(() => {
+      if (process.env.NODE_ENV === 'production') return;
+      if (initialCtl.current === undefined) initialCtl.current = isControlled;
+      else if (initialCtl.current !== isControlled) {
+        console.error(
+          'TextField: component switched from %s to %s after mount. This is not supported.',
+          initialCtl.current ? 'controlled' : 'uncontrolled',
+          isControlled ? 'controlled' : 'uncontrolled',
+        );
+      }
+    }, [isControlled]);
+
     return (
       <Wrapper
         theme={theme}
+        data-valet-component='TextField'
+        data-state={error ? 'invalid' : 'valid'}
+        data-disabled={rawDisabled ? 'true' : 'false'}
+        data-readonly={rawReadOnly ? 'true' : 'false'}
         className={[presetClasses, className].filter(Boolean).join(' ')}
         style={wrapperStyle}
       >
@@ -154,6 +193,24 @@ export const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
                 if (form && name)
                   form.setField(name as keyof Record<string, unknown>, e.target.value);
                 onChangeTextarea?.(e);
+                const info: ChangeInfo<string> = {
+                  previousValue: prevRef.current,
+                  phase: 'input',
+                  source:
+                    e.nativeEvent instanceof KeyboardEvent
+                      ? 'keyboard'
+                      : e.nativeEvent instanceof InputEvent &&
+                          (e.nativeEvent as InputEvent).inputType?.includes('insertFromPaste')
+                        ? 'clipboard'
+                        : 'programmatic',
+                  event: e,
+                  name,
+                };
+                (props as unknown as { onValueChange?: OnValueChange<string> }).onValueChange?.(
+                  e.target.value,
+                  info,
+                );
+                prevRef.current = e.target.value;
               };
 
               const value = (
@@ -178,6 +235,20 @@ export const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
                   aria-describedby={ariaDescribedBy}
                   aria-errormessage={error && helperId ? helperId : undefined}
                   style={fontFamily ? { fontFamily } : undefined}
+                  onBlur={(e: React.FocusEvent<HTMLTextAreaElement>) => {
+                    const commitInfo: ChangeInfo<string> = {
+                      previousValue: prevRef.current,
+                      phase: 'commit',
+                      source: 'programmatic',
+                      event: e,
+                      name,
+                    };
+                    (props as unknown as { onValueCommit?: OnValueCommit<string> }).onValueCommit?.(
+                      (e.target as HTMLTextAreaElement).value,
+                      commitInfo,
+                    );
+                    prevRef.current = (e.target as HTMLTextAreaElement).value;
+                  }}
                 />
               );
             })()
@@ -190,6 +261,24 @@ export const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
                 if (form && name)
                   form.setField(name as keyof Record<string, unknown>, e.target.value);
                 onChangeInput?.(e);
+                const info: ChangeInfo<string> = {
+                  previousValue: prevRef.current,
+                  phase: 'input',
+                  source:
+                    e.nativeEvent instanceof KeyboardEvent
+                      ? 'keyboard'
+                      : e.nativeEvent instanceof InputEvent &&
+                          (e.nativeEvent as InputEvent).inputType?.includes('insertFromPaste')
+                        ? 'clipboard'
+                        : 'programmatic',
+                  event: e,
+                  name,
+                };
+                (props as unknown as { onValueChange?: OnValueChange<string> }).onValueChange?.(
+                  e.target.value,
+                  info,
+                );
+                prevRef.current = e.target.value;
               };
 
               const value = (
@@ -214,6 +303,36 @@ export const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
                   aria-describedby={ariaDescribedBy}
                   aria-errormessage={error && helperId ? helperId : undefined}
                   style={fontFamily ? { fontFamily } : undefined}
+                  onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
+                    const commitInfo: ChangeInfo<string> = {
+                      previousValue: prevRef.current,
+                      phase: 'commit',
+                      source: 'programmatic',
+                      event: e,
+                      name,
+                    };
+                    (props as unknown as { onValueCommit?: OnValueCommit<string> }).onValueCommit?.(
+                      (e.target as HTMLInputElement).value,
+                      commitInfo,
+                    );
+                    prevRef.current = (e.target as HTMLInputElement).value;
+                  }}
+                  onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                    if (e.key === 'Enter') {
+                      const value = (e.currentTarget as HTMLInputElement).value;
+                      const commitInfo: ChangeInfo<string> = {
+                        previousValue: prevRef.current,
+                        phase: 'commit',
+                        source: 'keyboard',
+                        event: e,
+                        name,
+                      };
+                      (
+                        props as unknown as { onValueCommit?: OnValueCommit<string> }
+                      ).onValueCommit?.(value, commitInfo);
+                      prevRef.current = value;
+                    }
+                  }}
                 />
               );
             })()}

@@ -1,0 +1,51 @@
+{
+  "name": "Tabs.Panel",
+  "category": "layout",
+  "slug": "components/layout/tabs.panel",
+  "summary": "Tabs.Panel component",
+  "status": "stable",
+  "props": [
+    {
+      "name": "index",
+      "type": "number",
+      "required": false
+    },
+    {
+      "name": "value",
+      "type": "string | number",
+      "required": false
+    },
+    {
+      "name": "keepMounted",
+      "type": "boolean",
+      "required": false
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
+    }
+  ],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": []
+  },
+  "cssVars": [
+    "--valet-focus-width",
+    "--valet-focus-ring-color",
+    "--valet-focus-offset",
+    "--valet-underline-width"
+  ],
+  "cssPresets": [],
+  "events": [],
+  "actions": [],
+  "slots": [],
+  "bestPractices": [],
+  "examples": [],
+  "sourceFiles": [
+    "src/components/layout/Tabs.tsx"
+  ],
+  "version": "0.33.7",
+  "schemaVersion": "1.6"
+}

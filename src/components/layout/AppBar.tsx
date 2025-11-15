@@ -15,10 +15,25 @@ import { resolveSpace } from '../../utils/resolveSpace';
 
 /*───────────────────────────────────────────────────────────*/
 export type AppBarToken = 'primary' | 'secondary' | 'tertiary';
+type Intent =
+  | 'default'
+  | 'primary'
+  | 'secondary'
+  | 'success'
+  | 'warning'
+  | 'error'
+  | 'info'
+  | (string & {});
 
 export interface AppBarProps extends Omit<React.HTMLAttributes<HTMLElement>, 'style'>, Presettable {
-  color?: AppBarToken | string;
-  textColor?: AppBarToken | string;
+  /** Visual variant: filled | outlined | plain */
+  variant?: 'filled' | 'outlined' | 'plain';
+  /** Semantic color intent; maps to theme tokens */
+  intent?: Intent;
+  /** Explicit color override (theme token name or CSS color) */
+  color?: string;
+  /** Optional explicit text color override */
+  textColor?: string;
   left?: React.ReactNode;
   right?: React.ReactNode;
   pad?: Space;
@@ -62,6 +77,8 @@ const RightWrap = styled('div')`
 
 /*───────────────────────────────────────────────────────────*/
 export const AppBar: React.FC<AppBarProps> = ({
+  variant = 'filled',
+  intent,
   color,
   textColor,
   left,
@@ -85,20 +102,34 @@ export const AppBar: React.FC<AppBarProps> = ({
   const ref = useRef<HTMLElement>(null);
   const id = useId();
 
-  const isToken = (v: unknown): v is AppBarToken =>
-    v === 'primary' || v === 'secondary' || v === 'tertiary';
+  const resolveToken = (v?: string): string | undefined => {
+    if (!v) return undefined;
+    const colors = theme.colors as Record<string, string>;
+    return colors[v] || v;
+  };
+  const fromIntent = (i?: Intent): string | undefined => {
+    if (!i) return undefined;
+    const colors = theme.colors as Record<string, string>;
+    return colors[String(i)];
+  };
+  const equals = (a?: string, b?: string) => (a || '').toUpperCase() === (b || '').toUpperCase();
 
-  const bg =
-    color === undefined ? theme.colors.primary : isToken(color) ? theme.colors[color] : color;
+  const base = resolveToken(color) || fromIntent(intent) || theme.colors.primary;
+  const derivedText = (() => {
+    if (textColor) return resolveToken(textColor) || textColor;
+    if (variant === 'filled') {
+      if (equals(base, theme.colors.primary)) return theme.colors.primaryText;
+      if (equals(base, theme.colors.secondary)) return theme.colors.secondaryText;
+      if (equals(base, theme.colors.tertiary)) return theme.colors.tertiaryText;
+      if (equals(base, theme.colors.error)) return theme.colors.errorText;
+      return theme.colors.text;
+    }
+    // outlined/plain → treat base as emphasis colour; text defaults to theme text
+    return theme.colors.text;
+  })();
 
-  const text =
-    textColor === undefined
-      ? isToken(color)
-        ? theme.colors[`${color}Text`]
-        : theme.colors.text
-      : isToken(textColor)
-        ? theme.colors[`${textColor}Text`]
-        : textColor;
+  const bg = variant === 'filled' ? base : 'transparent';
+  const text = derivedText;
   const presetClass = p ? preset(p) : '';
   // Standardize numeric mapping via resolveSpace; retain two-value default
   const padSingle = resolveSpace(padProp, theme, false, 1);
@@ -131,6 +162,7 @@ export const AppBar: React.FC<AppBarProps> = ({
     <Bar
       ref={ref}
       {...rest}
+      data-valet-component='AppBar'
       $text={text}
       $pad={pad}
       className={[presetClass, className].filter(Boolean).join(' ')}
@@ -140,6 +172,13 @@ export const AppBar: React.FC<AppBarProps> = ({
           '--valet-text-color': text,
           background: bg,
           color: text,
+          '--valet-intent-bg': base,
+          '--valet-intent-fg': text,
+          '--valet-intent-border': base,
+          '--valet-intent-focus': theme.colors.primary,
+          '--valet-intent-bg-hover': variant === 'filled' ? base + 'F0' : 'transparent',
+          '--valet-intent-bg-active': variant === 'filled' ? base + 'E0' : 'transparent',
+          '--valet-intent-fg-disabled': theme.colors.text + '88',
           ...sx,
         } as React.CSSProperties
       }

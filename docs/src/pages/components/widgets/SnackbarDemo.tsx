@@ -150,7 +150,7 @@ export default function SnackbarDemoPage() {
             <Typography variant='subtitle'>controlled</Typography>
             <Switch
               checked={pgControlled}
-              onChange={setPgControlled}
+              onValueChange={(v) => setPgControlled(!!v)}
               aria-label='controlled'
             />
           </Stack>
@@ -162,7 +162,7 @@ export default function SnackbarDemoPage() {
             <Typography variant='subtitle'>open</Typography>
             <Switch
               checked={pgOpen}
-              onChange={setPgOpen}
+              onValueChange={(v) => setPgOpen(!!v)}
               aria-label='open'
             />
           </Stack>
@@ -178,7 +178,7 @@ export default function SnackbarDemoPage() {
               max={10000}
               step={500}
               value={pgAutoHide ?? 0}
-              onChange={(n) => setPgAutoHide(Math.max(0, Math.round(n)) || 0)}
+              onValueChange={(n) => setPgAutoHide(Math.max(0, Math.round(n)) || 0)}
               aria-label='autoHideDuration'
             />
             <Button
@@ -197,7 +197,7 @@ export default function SnackbarDemoPage() {
             <Typography variant='subtitle'>noStack</Typography>
             <Switch
               checked={pgNoStack}
-              onChange={setPgNoStack}
+              onValueChange={(v) => setPgNoStack(!!v)}
               aria-label='noStack'
             />
           </Stack>

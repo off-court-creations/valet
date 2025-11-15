@@ -2,6 +2,7 @@
 // src/components/primitives/Typography.tsx | valet
 // patch: force text wrapping; add noSelect prop – 2025‑07‑17
 // patch: auto text color on surfaces (respects backgroundAlt) – 2025‑09‑11
+// patch: polymorphic `as` support + root data tag – 2025‑11‑14
 // ─────────────────────────────────────────────────────────────
 import React, { useLayoutEffect, useRef, useState } from 'react';
 import type { JSX } from 'react';
@@ -12,12 +13,15 @@ import { shallow } from 'zustand/shallow';
 import { preset } from '../../css/stylePresets';
 import type { Presettable, Sx } from '../../types';
 import type { Variant as VariantType, WeightAlias } from '../../types/typography';
+import {
+  createPolymorphicComponent,
+  type PolymorphicProps,
+  type PolymorphicRef,
+} from '../../system/polymorphic';
 
 export type Variant = VariantType;
 
-export interface TypographyProps
-  extends Omit<React.HTMLAttributes<HTMLElement>, 'style'>,
-    Presettable {
+export interface TypographyOwnProps extends Presettable {
   variant?: Variant;
   bold?: boolean; // deprecated in favor of `weight`
   italic?: boolean;
@@ -53,30 +57,32 @@ const mapping: Record<Variant, keyof JSX.IntrinsicElements> = {
   button: 'span',
 };
 
-export const Typography: React.FC<TypographyProps> = ({
-  variant = 'body',
-  bold = false,
-  italic = false,
-  weight,
-  tracking,
-  leading,
-  optical,
-  fluid,
-  fontSize,
-  scale,
-  autoSize = false,
-  color,
-  family,
-  fontFamily,
-  centered,
-  noSelect = false,
-  whitespace = 'normal',
-  preset: p,
-  className,
-  sx,
-  children,
-  ...props
-}) => {
+const TypographyImpl = <E extends React.ElementType = 'span'>(
+  {
+    variant = 'body',
+    bold = false,
+    italic = false,
+    weight,
+    tracking,
+    leading,
+    optical,
+    fluid,
+    fontSize,
+    scale,
+    autoSize = false,
+    color,
+    family,
+    fontFamily,
+    centered,
+    noSelect = false,
+    whitespace = 'normal',
+    preset: p,
+    className,
+    sx,
+    ...props
+  }: PolymorphicProps<E, TypographyOwnProps>,
+  forwardedRef: PolymorphicRef<E>,
+) => {
   const Tag = mapping[variant];
   const { theme } = useTheme();
   const breakpoint = useSurface((s) => s.breakpoint, shallow);
@@ -290,10 +296,21 @@ export const Typography: React.FC<TypographyProps> = ({
     return typeof val === 'string' ? val : undefined;
   })();
 
+  // Merge refs so we both forward the ref and retain a local handle for computed styles
+  const setRefs = (node: HTMLElement | null) => {
+    elRef.current = node;
+    if (typeof forwardedRef === 'function') {
+      (forwardedRef as (instance: HTMLElement | null) => void)(node);
+    } else if (forwardedRef) {
+      (forwardedRef as React.MutableRefObject<HTMLElement | null>).current = node;
+    }
+  };
+
   return (
     <Component
-      {...props}
-      ref={elRef as React.Ref<HTMLElement>}
+      {...(props as object)}
+      ref={setRefs as unknown as React.Ref<HTMLElement>}
+      data-valet-component='Typography'
       $color={colorFromTokens ?? color ?? autoColor}
       $fontFamily={fontFamily}
       $family={family}
@@ -308,12 +325,12 @@ export const Typography: React.FC<TypographyProps> = ({
       $tracking={resolvedTracking}
       $leading={resolvedLeading}
       $optical={opticalSetting}
-      className={[presetClasses, className].filter(Boolean).join(' ')}
+      className={[presetClasses, className as string].filter(Boolean).join(' ')}
       style={sx}
-    >
-      {children}
-    </Component>
+    />
   );
 };
+
+export const Typography = createPolymorphicComponent<'span', TypographyOwnProps>(TypographyImpl);
 
 export default Typography;

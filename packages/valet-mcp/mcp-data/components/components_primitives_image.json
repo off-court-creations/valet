@@ -3,7 +3,7 @@
   "category": "primitives",
   "slug": "components/primitives/image",
   "summary": "Image component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "image",
     "img",
@@ -13,22 +13,32 @@
     {
       "name": "src",
       "type": "string",
-      "required": true
+      "required": true,
+      "description": "Image source URL"
+    },
+    {
+      "name": "alt",
+      "type": "string",
+      "required": true,
+      "description": "Required alt text. Use empty string for decorative images."
     },
     {
       "name": "width",
       "type": "number | string",
-      "required": false
+      "required": false,
+      "description": "CSS width value (number ⇒ px)"
     },
     {
       "name": "height",
       "type": "number | string",
-      "required": false
+      "required": false,
+      "description": "CSS height value (number ⇒ px)"
     },
     {
-      "name": "objectFit",
+      "name": "fit",
       "type": "'cover' | 'contain' | 'fill' | 'none' | 'scale-down'",
       "required": false,
+      "description": "Object-fit value (maps to CSS object-fit)",
       "enumValues": [
         "cover",
         "contain",
@@ -38,24 +48,28 @@
       ]
     },
     {
-      "name": "lazy",
-      "type": "boolean",
-      "required": false
-    },
-    {
-      "name": "placeholder",
+      "name": "objectPosition",
       "type": "string",
-      "required": false
+      "required": false,
+      "description": "Object-position value (e.g., 'center', 'top', '50% 25%')"
     },
     {
       "name": "aspectRatio",
       "type": "number | string",
-      "required": false
+      "required": false,
+      "description": "CSS aspect-ratio value (number ⇒ n/1)"
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": false
+      "required": false,
+      "description": "Inline styles (with CSS var support)"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
   "domPassthrough": {
@@ -63,7 +77,8 @@
     "omitted": [
       "width",
       "height",
-      "style"
+      "style",
+      "alt"
     ]
   },
   "cssVars": [],
@@ -73,16 +88,17 @@
   "slots": [],
   "bestPractices": [
     "Always set alt text; use empty alt for decorative images.",
-    "Constrain sizes and choose object‑fit (`cover`/`contain`) deliberately to avoid layout shift.",
-    "Use responsive sources or sizes where appropriate; avoid full‑resolution assets in small spaces.",
-    "Lazy‑load below‑the‑fold images; preload critical hero imagery.",
+    "Specify dimensions via width/height or aspectRatio to avoid layout shift.",
+    "Choose fit (`cover`/`contain`) and objectPosition deliberately to control cropping/focus.",
+    "Use srcSet/sizes for responsive sources; avoid full‑resolution assets in small spaces.",
+    "Default lazy loading is enabled; use loading='eager' and optionally fetchPriority='high' for LCP heroes.",
     "Avoid background images for content; prefer `<Image>` so a11y tools can interpret it.",
-    "Apply rounded corners via a wrapper (Panel/Box) with `overflow: hidden`; do not rely on per‑component props."
+    "Apply rounded corners via a wrapper (Panel/Box) with `overflow: hidden` or via sx; avoid per‑component shape props."
   ],
   "examples": [],
   "sourceFiles": [
     "src/components/primitives/Image.tsx"
   ],
-  "version": "0.32.0",
+  "version": "0.33.7",
   "schemaVersion": "1.6"
 }

@@ -77,7 +77,7 @@ export default function RadioGroupDemoPage() {
       <Typography variant='h3'>2. Controlled</Typography>
       <RadioGroup
         value={shipping}
-        onChange={(val) => setShipping(val as 'standard' | 'express')}
+        onValueChange={(val) => setShipping(val as 'standard' | 'express')}
         row
       >
         <Radio
@@ -329,7 +329,7 @@ export default function RadioGroupDemoPage() {
 
         <Button
           type='submit'
-          variant='contained'
+          variant='filled'
           size='lg'
         >
           Submit

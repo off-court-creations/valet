@@ -38,8 +38,21 @@
     },
     {
       "name": "onChange",
-      "type": "(checked: boolean, event: ChangeEvent<HTMLInputElement>) => void",
-      "required": false
+      "type": "(event: ChangeEvent<HTMLInputElement>) => void",
+      "required": false,
+      "description": "DOM-parity change event (raw React event)."
+    },
+    {
+      "name": "onValueChange",
+      "type": "OnValueChange<boolean>",
+      "required": false,
+      "description": "Canonical value change event (fires on each mutation)."
+    },
+    {
+      "name": "onValueCommit",
+      "type": "OnValueCommit<boolean>",
+      "required": false,
+      "description": "Commit event (fires at the same moment for toggles)."
     },
     {
       "name": "indeterminate",
@@ -105,7 +118,15 @@
   "events": [
     {
       "name": "onChange",
-      "payloadType": "boolean"
+      "payloadType": "ChangeEvent<HTMLInputElement>"
+    },
+    {
+      "name": "onValueChange",
+      "payloadType": "OnValueChange<boolean>"
+    },
+    {
+      "name": "onValueCommit",
+      "payloadType": "OnValueCommit<boolean>"
     }
   ],
   "actions": [],

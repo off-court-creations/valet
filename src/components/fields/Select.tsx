@@ -19,6 +19,7 @@ import { preset } from '../../css/stylePresets';
 import { useOptionalForm } from './FormControl';
 import { Checkbox } from './Checkbox';
 import type { FieldBaseProps } from '../../types';
+import type { ChangeInfo, OnValueChange, OnValueCommit } from '../../system/events';
 import type { Theme } from '../../system/themeStore';
 
 type Primitive = string | number;
@@ -29,16 +30,18 @@ export type SelectSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 export interface SelectProps
   extends Omit<
-      React.HTMLAttributes<HTMLDivElement>,
-      'onChange' | 'defaultValue' | 'children' | 'style'
+      React.ButtonHTMLAttributes<HTMLButtonElement>,
+      'onChange' | 'defaultValue' | 'children' | 'style' | 'value'
     >,
     FieldBaseProps {
   /** Controlled value (single) or array (multiple). */
   value?: Primitive | Primitive[];
-  /** Uncontrolled initial value. */
-  initialValue?: Primitive | Primitive[];
-  /** Callback fired whenever selection changes. */
-  onChange?: (v: Primitive | Primitive[]) => void;
+  /** Uncontrolled default value. */
+  defaultValue?: Primitive | Primitive[];
+  /** Canonical value change event (fires on selection). */
+  onValueChange?: OnValueChange<Primitive | Primitive[]>;
+  /** Commit event (fires on selection/confirm). */
+  onValueCommit?: OnValueCommit<Primitive | Primitive[]>;
   /** Multiple-selection mode. */
   multiple?: boolean;
   /** Placeholder when nothing selected. */
@@ -99,7 +102,8 @@ const Trigger = styled('button')<{
     border-color: ${({ $primary }) => $primary};
   }
   &:focus-visible {
-    outline: ${({ $outlineW }) => $outlineW} solid ${({ $primary }) => $primary};
+    outline: ${({ $outlineW }) => $outlineW} solid
+      var(--valet-focus-ring-color, ${({ $primary }) => $primary});
     outline-offset: ${({ $outlineOffset }) => $outlineOffset};
   }
   &[disabled] {
@@ -118,7 +122,8 @@ const Caret = styled('span')`
 const PortalWrap = styled('div')`
   position: fixed;
   inset: 0;
-  z-index: 9999;
+  /* Use overlay token suitable for dropdown menus */
+  z-index: var(--valet-zindex-dropdown, 1000);
 `;
 
 const Menu = styled('ul')<{
@@ -175,11 +180,12 @@ Option.displayName = 'Select.Option';
 
 /*───────────────────────────────────────────────────────────*/
 /* Component                                                 */
-const Inner = (props: SelectProps, ref: React.Ref<HTMLDivElement>) => {
+const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
   const {
     value: valueProp,
-    initialValue,
-    onChange,
+    defaultValue,
+    onValueChange,
+    onValueCommit,
     multiple = false,
     placeholder = 'Select…',
     size = 'md',
@@ -222,8 +228,21 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLDivElement>) => {
   const formVal =
     form && name ? (form.values[name] as Primitive | Primitive[] | undefined) : undefined;
   const controlled = formVal !== undefined || valueProp !== undefined;
+  // Controlled/uncontrolled guard (dev-only)
+  const initialCtl = React.useRef<boolean | undefined>(undefined);
+  React.useEffect(() => {
+    if (process.env.NODE_ENV === 'production') return;
+    if (initialCtl.current === undefined) initialCtl.current = controlled;
+    else if (initialCtl.current !== controlled) {
+      console.error(
+        'Select: component switched from %s to %s after mount. This is not supported.',
+        initialCtl.current ? 'controlled' : 'uncontrolled',
+        controlled ? 'controlled' : 'uncontrolled',
+      );
+    }
+  }, [controlled]);
 
-  const [self, setSelf] = useState<Primitive | Primitive[] | undefined>(initialValue);
+  const [self, setSelf] = useState<Primitive | Primitive[] | undefined>(defaultValue);
   const cur = controlled ? (formVal !== undefined ? formVal : valueProp!) : self;
 
   /* commit helper ------------------------------------------ */
@@ -231,14 +250,28 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLDivElement>) => {
     (next: Primitive | Primitive[]) => {
       if (!controlled) setSelf(next);
       if (form && name) form.setField(name as keyof Record<string, unknown>, next as unknown);
-      onChange?.(next);
+      const info: ChangeInfo<Primitive | Primitive[]> = {
+        previousValue: cur,
+        phase: 'commit',
+        source: 'programmatic',
+        name,
+      } as ChangeInfo<Primitive | Primitive[]>;
+      onValueChange?.(next, { ...info, phase: 'input' });
+      onValueCommit?.(next, info);
     },
-    [controlled, form, name, onChange],
+    [controlled, form, name, onValueChange, onValueCommit, cur],
   );
 
   /* open state & position ---------------------------------- */
   const [open, setOpen] = useState(false);
   const trigRef = useRef<HTMLButtonElement>(null);
+  const setTriggerRef = (node: HTMLButtonElement | null) => {
+    trigRef.current = node;
+    if (typeof ref === 'function') ref(node);
+    else if (ref && typeof ref !== 'function') {
+      (ref as React.MutableRefObject<HTMLButtonElement | null>).current = node;
+    }
+  };
   const menuRef = useRef<HTMLUListElement>(null);
   const [pos, setPos] = useState({ w: 0, top: 0, left: 0 });
 
@@ -361,15 +394,13 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLDivElement>) => {
 
   /*──────────────────────────────────────────────────────────*/
   return (
-    <div
-      {...divRest}
-      ref={ref}
-      className={mergedCls}
-      style={{ ...sx, position: 'relative', display: 'inline-block' }}
-    >
+    <div style={{ position: 'relative', display: 'inline-block' }}>
       {/* Trigger */}
       <Trigger
-        ref={trigRef}
+        ref={setTriggerRef}
+        data-valet-component='Select'
+        data-state={open ? 'open' : 'closed'}
+        data-disabled={disabled ? 'true' : 'false'}
         $h={g.h}
         $pad={g.pad}
         $bg={bg}
@@ -384,6 +415,9 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLDivElement>) => {
         aria-controls={listId}
         aria-expanded={open}
         disabled={disabled}
+        {...(divRest as React.ButtonHTMLAttributes<HTMLButtonElement>)}
+        className={mergedCls}
+        style={sx as React.CSSProperties}
         onClick={() => {
           if (disabled) return;
           setOpen((o) => !o);
@@ -490,6 +524,7 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLDivElement>) => {
                   key={o.props.value}
                   role='option'
                   aria-selected={sel}
+                  data-state={sel ? 'selected' : 'unselected'}
                   data-disabled={o.props.disabled}
                   $pad={g.pad}
                   $padY={theme.spacing(0.75)}
@@ -523,10 +558,10 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLDivElement>) => {
   );
 };
 
-const Forward = forwardRef<HTMLDivElement, SelectProps>(
+const Forward = forwardRef<HTMLButtonElement, SelectProps>(
   Inner,
 ) as unknown as React.ForwardRefExoticComponent<
-  SelectProps & React.RefAttributes<HTMLDivElement>
+  SelectProps & React.RefAttributes<HTMLButtonElement>
 > & { Option: typeof Option };
 
 Forward.displayName = 'Select';

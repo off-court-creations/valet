@@ -12,22 +12,26 @@
     {
       "name": "src",
       "type": "string",
-      "required": true
+      "required": true,
+      "description": "Source for JPG / WEBP / WEBM (auto-detects type if omitted)."
     },
     {
       "name": "mediaType",
       "type": "MediaType",
-      "required": false
+      "required": false,
+      "description": "Force media type (otherwise guessed by file extension)."
     },
     {
       "name": "poster",
       "type": "string",
-      "required": false
+      "required": false,
+      "description": "Optional poster frame for video."
     },
     {
       "name": "loop",
       "type": "boolean",
       "required": false,
+      "description": "Video attributes",
       "default": "true"
     },
     {
@@ -55,17 +59,35 @@
     },
     {
       "name": "speed",
-      "type": "unknown",
+      "type": "number | undefined",
       "required": false,
       "default": "0.5"
     },
     {
       "name": "axis",
-      "type": "unknown",
+      "type": "\"y\" | \"x\" | undefined",
       "required": false,
       "default": "'y'"
+    },
+    {
+      "name": "sx",
+      "type": "Sx | undefined",
+      "required": false,
+      "description": "Inline styles (with CSS var support)"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": [
+      "style"
+    ]
+  },
   "cssVars": [],
   "cssPresets": [],
   "events": [],
@@ -76,6 +98,6 @@
   "sourceFiles": [
     "src/components/widgets/Parallax.tsx"
   ],
-  "version": "0.32.0",
+  "version": "0.33.7",
   "schemaVersion": "1.6"
 }

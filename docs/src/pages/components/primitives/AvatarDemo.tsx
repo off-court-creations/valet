@@ -28,7 +28,7 @@ const useEmailForm = createFormStore<EmailForm>({
 
 export default function AvatarDemoPage() {
   const [email, setEmail] = useState('support@gravatar.com');
-  const [pgSize, setPgSize] = useState<'xs' | 's' | 'm' | 'l' | 'xl'>('m');
+  const [pgSize, setPgSize] = useState<'xs' | 'sm' | 'md' | 'lg' | 'xl'>('md');
   const [pgVariant, setPgVariant] = useState<'plain' | 'outline'>('plain');
 
   const usageContent = (
@@ -58,19 +58,19 @@ export default function AvatarDemoPage() {
       <Typography variant='h3'>2. Default example</Typography>
       <Avatar
         email='support@gravatar.com'
-        size='l'
+        size='lg'
       />
 
       <Typography variant='h3'>3. Custom src</Typography>
       <Avatar
         src='https://avatars.githubusercontent.com/u/9919?s=200&v=4'
-        size='l'
+        size='lg'
         alt='GitHub'
       />
 
       <Typography variant='h3'>4. Sizes</Typography>
       <Stack direction='row'>
-        {(['xl', 'l', 'm', 's', 'xs'] as const).map((s) => (
+        {(['xl', 'lg', 'md', 'sm', 'xs'] as const).map((s) => (
           <Stack
             key={s}
             gap={0.5}
@@ -88,7 +88,7 @@ export default function AvatarDemoPage() {
       <Typography variant='h3'>5. Outline</Typography>
       <Avatar
         email='support@gravatar.com'
-        size='l'
+        size='lg'
         variant='outline'
       />
 
@@ -101,7 +101,7 @@ export default function AvatarDemoPage() {
         <Avatar
           name='Ada Lovelace'
           preferFallback
-          size='l'
+          size='lg'
           alt='Ada Lovelace'
         />
         <Typography variant='body'>Prefer offline fallback; derives initials from name</Typography>
@@ -116,7 +116,7 @@ export default function AvatarDemoPage() {
         <Avatar
           preferFallback
           fallback='placeholder'
-          size='l'
+          size='lg'
           aria-label='User avatar'
         />
         <Typography variant='body'>Placeholder silhouette, no network required</Typography>
@@ -136,19 +136,19 @@ export default function AvatarDemoPage() {
           <Select
             placeholder='size'
             value={pgSize}
-            onChange={(v) => setPgSize(v as typeof pgSize)}
+            onValueChange={(v) => setPgSize(v as typeof pgSize)}
             sx={{ width: 140 }}
           >
             <Select.Option value='xs'>xs</Select.Option>
-            <Select.Option value='s'>s</Select.Option>
-            <Select.Option value='m'>m</Select.Option>
-            <Select.Option value='l'>l</Select.Option>
+            <Select.Option value='sm'>sm</Select.Option>
+            <Select.Option value='md'>md</Select.Option>
+            <Select.Option value='lg'>lg</Select.Option>
             <Select.Option value='xl'>xl</Select.Option>
           </Select>
           <Select
             placeholder='variant'
             value={pgVariant}
-            onChange={(v) => setPgVariant(v as typeof pgVariant)}
+            onValueChange={(v) => setPgVariant(v as typeof pgVariant)}
             sx={{ width: 160 }}
           >
             <Select.Option value='plain'>plain</Select.Option>

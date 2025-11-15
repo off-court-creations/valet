@@ -3,7 +3,7 @@
   "category": "layout",
   "slug": "components/layout/stack",
   "summary": "Stack component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "stack",
     "vstack",
@@ -23,12 +23,56 @@
     {
       "name": "wrap",
       "type": "boolean",
-      "required": false
+      "required": false,
+      "description": "If `true`, children wrap when they run out of space. Defaults to\n`true` for `row`, `false` for `column`."
+    },
+    {
+      "name": "alignX",
+      "type": "'left' | 'center' | 'right'",
+      "required": false,
+      "description": "Horizontal placement of the stack when not full width.",
+      "default": "'left'",
+      "enumValues": [
+        "left",
+        "center",
+        "right"
+      ]
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": false
+      "required": false,
+      "description": "Inline styles (with CSS var support)"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
+    },
+    {
+      "name": "gap",
+      "type": "import(\"/home/xbenc/occ/valet/src/types\").Space | undefined",
+      "required": false,
+      "description": "Inter-child spacing as units or CSS length."
+    },
+    {
+      "name": "pad",
+      "type": "import(\"/home/xbenc/occ/valet/src/types\").Space | undefined",
+      "required": false,
+      "description": "Container padding as units or CSS length."
+    },
+    {
+      "name": "compact",
+      "type": "boolean | undefined",
+      "required": false,
+      "description": "Compact mode zeros gap and pad where supported."
+    },
+    {
+      "name": "density",
+      "type": "\"compact\" | \"standard\" | \"comfortable\" | undefined",
+      "required": false,
+      "description": "Density override for spacing scale; defaults from nearest Surface."
     }
   ],
   "domPassthrough": {
@@ -55,6 +99,6 @@
   "sourceFiles": [
     "src/components/layout/Stack.tsx"
   ],
-  "version": "0.32.0",
+  "version": "0.33.7",
   "schemaVersion": "1.6"
 }

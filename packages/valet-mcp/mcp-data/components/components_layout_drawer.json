@@ -3,7 +3,7 @@
   "category": "layout",
   "slug": "components/layout/drawer",
   "summary": "Drawer component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "drawer",
     "sidenav",
@@ -14,74 +14,117 @@
     {
       "name": "open",
       "type": "boolean",
-      "required": false
+      "required": false,
+      "description": "Controlled visibility"
     },
     {
       "name": "defaultOpen",
       "type": "boolean",
       "required": false,
+      "description": "Default for uncontrolled",
       "default": "false"
     },
     {
       "name": "anchor",
       "type": "DrawerAnchor",
       "required": false,
+      "description": "Drawer side",
       "default": "'left'"
     },
     {
       "name": "onClose",
       "type": "() => void",
-      "required": false
+      "required": false,
+      "description": "Callback fired when user requests close"
     },
     {
       "name": "size",
       "type": "number | string",
       "required": false,
+      "description": "Size (width or height depending on anchor)",
       "default": "'16rem'"
     },
     {
       "name": "disableBackdropClick",
       "type": "boolean",
       "required": false,
+      "description": "Disable closing via backdrop click",
       "default": "false"
     },
     {
       "name": "disableEscapeKeyDown",
       "type": "boolean",
       "required": false,
+      "description": "Disable closing via ESC key",
       "default": "false"
     },
     {
       "name": "persistent",
       "type": "boolean",
       "required": false,
+      "description": "Drawer remains visible without backdrop",
       "default": "false"
     },
     {
       "name": "adaptive",
       "type": "boolean",
       "required": false,
+      "description": "Adaptive behaviour (persistent in landscape, overlay in portrait)",
       "default": "false"
     },
     {
       "name": "toggleIcon",
       "type": "string",
       "required": false,
+      "description": "Icon for the portrait toggle button",
       "default": "'mdi:menu'"
     },
     {
       "name": "closeIcon",
       "type": "string",
       "required": false,
+      "description": "Close button icon when portrait",
       "default": "'mdi:close'"
     },
     {
       "name": "children",
       "type": "React.ReactNode",
-      "required": false
+      "required": false,
+      "description": "Drawer contents"
+    },
+    {
+      "name": "className",
+      "type": "string",
+      "required": false,
+      "description": "Class applied to the Drawer panel root"
+    },
+    {
+      "name": "style",
+      "type": "React.CSSProperties",
+      "required": false,
+      "description": "Inline styles applied to the Drawer panel root"
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": false,
+      "description": "sx convenience for inline styles with CSS var support"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
-  "cssVars": [],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": []
+  },
+  "cssVars": [
+    "--valet-zindex-modal-backdrop",
+    "--valet-zindex-modal"
+  ],
   "cssPresets": [],
   "events": [
     {
@@ -105,6 +148,6 @@
   "sourceFiles": [
     "src/components/layout/Drawer.tsx"
   ],
-  "version": "0.32.0",
+  "version": "0.33.7",
   "schemaVersion": "1.6"
 }

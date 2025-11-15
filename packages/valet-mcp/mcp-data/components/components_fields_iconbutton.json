@@ -12,14 +12,12 @@
     {
       "name": "variant",
       "type": "IconButtonVariant",
-      "required": false,
-      "default": "'contained'"
+      "required": false
     },
     {
       "name": "size",
       "type": "IconButtonSize | number | string",
-      "required": false,
-      "default": "'md'"
+      "required": false
     },
     {
       "name": "icon",
@@ -32,14 +30,27 @@
       "required": false
     },
     {
-      "name": "iconColor",
-      "type": "string | undefined",
+      "name": "intent",
+      "type": "Intent",
       "required": false
+    },
+    {
+      "name": "color",
+      "type": "string",
+      "required": false,
+      "description": "Explicit color override (theme token or CSS color)."
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": false
+      "required": false,
+      "description": "Inline styles (with CSS var support)"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
   "domPassthrough": {
@@ -48,7 +59,15 @@
       "style"
     ]
   },
-  "cssVars": [],
+  "cssVars": [
+    "--valet-intent-bg",
+    "--valet-intent-fg",
+    "--valet-intent-border",
+    "--valet-intent-focus",
+    "--valet-intent-bg-hover",
+    "--valet-intent-bg-active",
+    "--valet-intent-fg-disabled"
+  ],
   "cssPresets": [],
   "events": [],
   "actions": [],
@@ -69,6 +88,6 @@
   "sourceFiles": [
     "src/components/fields/IconButton.tsx"
   ],
-  "version": "0.32.0",
+  "version": "0.33.7",
   "schemaVersion": "1.6"
 }

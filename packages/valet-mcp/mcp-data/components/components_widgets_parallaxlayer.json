@@ -1,0 +1,55 @@
+{
+  "name": "ParallaxLayer",
+  "category": "widgets",
+  "slug": "components/widgets/parallaxlayer",
+  "summary": "ParallaxLayer component",
+  "status": "stable",
+  "props": [
+    {
+      "name": "speed",
+      "type": "number",
+      "required": false,
+      "default": "0.5"
+    },
+    {
+      "name": "axis",
+      "type": "'y' | 'x'",
+      "required": false,
+      "default": "'y'",
+      "enumValues": [
+        "y",
+        "x"
+      ]
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": false,
+      "description": "Inline styles (with CSS var support)"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
+    }
+  ],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": [
+      "style"
+    ]
+  },
+  "cssVars": [],
+  "cssPresets": [],
+  "events": [],
+  "actions": [],
+  "slots": [],
+  "bestPractices": [],
+  "examples": [],
+  "sourceFiles": [
+    "src/components/widgets/Parallax.tsx"
+  ],
+  "version": "0.33.7",
+  "schemaVersion": "1.6"
+}

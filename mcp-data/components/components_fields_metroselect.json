@@ -56,8 +56,13 @@
       "default": "false"
     },
     {
-      "name": "onChange",
-      "type": "(v: Primitive | Primitive[]) => void",
+      "name": "onValueChange",
+      "type": "OnValueChange<Primitive | Primitive[]>",
+      "required": false
+    },
+    {
+      "name": "onValueCommit",
+      "type": "OnValueCommit<Primitive | Primitive[]>",
       "required": false
     },
     {
@@ -127,8 +132,12 @@
   "cssPresets": [],
   "events": [
     {
-      "name": "onChange",
-      "payloadType": "Primitive | Primitive[]"
+      "name": "onValueChange",
+      "payloadType": "OnValueChange<Primitive | Primitive[]>"
+    },
+    {
+      "name": "onValueCommit",
+      "payloadType": "OnValueCommit<Primitive | Primitive[]>"
     }
   ],
   "actions": [],

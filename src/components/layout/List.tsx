@@ -497,6 +497,7 @@ export function List<T>({
     <Root
       {...rest}
       ref={rootRef}
+      data-valet-component='List'
       $striped={striped}
       $hover={enableHover}
       $dragging={dragIdx !== null}

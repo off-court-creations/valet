@@ -17,7 +17,8 @@ import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { inheritSurfaceFontVars } from '../../system/inheritSurfaceFontVars';
-import type { Presettable } from '../../types';
+import type { Presettable, Sx } from '../../types';
+import { getOverlayRoot, useOverlay } from '../../system/overlay';
 
 // Allow CSS custom properties on style objects
 type CSSPropertiesWithVars = React.CSSProperties & { [key: `--${string}`]: string | number };
@@ -67,7 +68,7 @@ const Bubble = styled('div')<{
   $animDist: string;
 }>`
   position: fixed;
-  z-index: 9999;
+  z-index: var(--valet-zindex-tooltip, 1200);
   max-width: 22rem;
   padding: ${({ $padV, $padH }) => `${$padV} ${$padH}`};
   border-radius: ${({ $radius }) => $radius};
@@ -136,7 +137,9 @@ const Arrow = styled('span')<{
 /*───────────────────────────────────────────────────────────*/
 /* Public API                                                */
 
-export interface TooltipProps extends Presettable {
+export interface TooltipProps
+  extends Omit<React.HTMLAttributes<HTMLSpanElement>, 'onChange' | 'title'>,
+    Presettable {
   title: ReactNode;
   placement?: Placement;
   arrow?: boolean;
@@ -147,9 +150,13 @@ export interface TooltipProps extends Presettable {
   disableHoverListener?: boolean;
   disableFocusListener?: boolean;
   disableTouchListener?: boolean;
+  /** If true, outside pointer interactions will not close the tooltip. */
+  disableOutsideClick?: boolean;
   onOpen?: () => void;
   onClose?: () => void;
   children: ReactElement;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -166,10 +173,15 @@ export const Tooltip: React.FC<TooltipProps> = ({
   disableHoverListener = false,
   disableFocusListener = false,
   disableTouchListener = false,
+  disableOutsideClick = false,
   onOpen,
   onClose,
   preset: presetKey,
   children,
+  className,
+  sx,
+  style,
+  ...rest
 }) => {
   const { theme } = useTheme();
   const id = useId();
@@ -206,14 +218,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
     registerTooltip(close);
   }, [controlled, onOpen, close]);
 
-  const handleOutside = useCallback(
-    (e: PointerEvent) => {
-      if (!wrapperRef.current?.contains(e.target as Node)) {
-        close();
-      }
-    },
-    [close],
-  );
+  // outside clicks handled via shared overlay primitives
 
   /* listeners */
   const handleEnter = () => {
@@ -266,13 +271,21 @@ export const Tooltip: React.FC<TooltipProps> = ({
     }
   }, [show, controlled, close]);
 
-  useEffect(() => {
-    if (!show) return;
-    document.addEventListener('pointerdown', handleOutside);
-    return () => {
-      document.removeEventListener('pointerdown', handleOutside);
-    };
-  }, [show, handleOutside]);
+  // Shared overlay wiring when visible: outside click handled globally; no focus trap/inert
+  useOverlay(
+    show && bubbleRef.current
+      ? {
+          element: bubbleRef.current,
+          anchors: [wrapperRef.current!].filter(Boolean) as HTMLElement[],
+          onRequestClose: () => close(),
+          disableOutsideClick,
+          trapFocus: false,
+          restoreFocusOnClose: false,
+          inertBackground: false,
+          label: 'Tooltip',
+        }
+      : null,
+  );
 
   useLayoutEffect(() => {
     if (!show) return;
@@ -320,7 +333,9 @@ export const Tooltip: React.FC<TooltipProps> = ({
 
   return (
     <Wrapper
+      {...rest}
       ref={wrapperRef}
+      data-state={show ? 'open' : 'closed'}
       onMouseEnter={!disableHoverListener ? handleEnter : undefined}
       onMouseLeave={!disableHoverListener ? handleLeave : undefined}
       onFocus={!disableFocusListener ? open : undefined}
@@ -330,6 +345,9 @@ export const Tooltip: React.FC<TooltipProps> = ({
       onPointerCancel={handlePointerCancel}
       onPointerLeave={handlePointerCancel}
       aria-describedby={show ? `tooltip-${id}` : undefined}
+      className={className}
+      data-valet-component='Tooltip'
+      style={{ ...(sx || {}), ...(style as React.CSSProperties) }}
     >
       {children}
       {createPortal(
@@ -366,7 +384,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
             />
           )}
         </Bubble>,
-        document.body,
+        getOverlayRoot(),
       )}
     </Wrapper>
   );

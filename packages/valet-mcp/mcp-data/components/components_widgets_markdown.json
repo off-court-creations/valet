@@ -3,7 +3,7 @@
   "category": "widgets",
   "slug": "components/widgets/markdown",
   "summary": "Markdown component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "markdown",
     "md",
@@ -13,17 +13,26 @@
     {
       "name": "data",
       "type": "string",
-      "required": true
+      "required": true,
+      "description": "Raw markdown text"
     },
     {
       "name": "codeBackground",
       "type": "string",
-      "required": false
+      "required": false,
+      "description": "Optional override for code block background"
     },
     {
       "name": "sx",
       "type": "import('../../types').Sx",
-      "required": false
+      "required": false,
+      "description": "Inline styles (with CSS var support)"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
   "domPassthrough": {
@@ -129,6 +138,6 @@
   "sourceFiles": [
     "src/components/widgets/Markdown.tsx"
   ],
-  "version": "0.32.0",
+  "version": "0.33.7",
   "schemaVersion": "1.6"
 }

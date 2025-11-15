@@ -124,6 +124,7 @@ export const Icon: React.FC<PropsWithChildren<IconProps>> = ({
   return (
     <Wrapper
       $size={finalSize}
+      data-valet-component='Icon'
       className={[presetClasses, className].filter(Boolean).join(' ')}
       style={{ ...colourStyle, ...sx }}
       draggable={false}
