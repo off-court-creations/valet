@@ -1,6 +1,6 @@
 {
   "name": "@archway/create-valet-app",
-  "version": "0.33.0",
+  "version": "0.34.0",
   "description": "Scaffold a valet app using React + Vite (TS by default)",
   "type": "module",
   "bin": {
