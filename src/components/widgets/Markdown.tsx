@@ -14,11 +14,15 @@ import Divider from '../primitives/Divider';
 import Table, { type TableColumn } from './Table';
 import { useTheme } from '../../system/themeStore';
 import { HLJS_LIGHT, HLJS_DARK } from '../../css/hljsThemes';
+import { preset } from '../../css/stylePresets';
+import type { Presettable } from '../../types';
 
 // Enable GFM features (tables, strikethrough, task lists, etc.)
 marked.setOptions({ gfm: true });
 
-export interface MarkdownProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'> {
+export interface MarkdownProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'>,
+    Presettable {
   /** Raw markdown text */
   data: string;
   /** Optional override for code block background */
@@ -195,7 +199,7 @@ const renderTokens = (tokens: TokensList, codeBg: string): React.ReactNode =>
           <Panel
             key={i}
             preset='codePanel'
-            background={codeBg}
+            color={codeBg}
             fullWidth
             sx={{
               margin: '0.5rem 0',
@@ -227,7 +231,7 @@ const renderTokens = (tokens: TokensList, codeBg: string): React.ReactNode =>
         return (
           <Panel
             key={i}
-            variant='alt'
+            variant='outlined'
             sx={{
               borderLeft: '4px solid var(--valet-divider, rgba(0,0,0,0.12))',
               padding: '0.5rem 0.75rem',
@@ -277,6 +281,7 @@ export const Markdown: React.FC<MarkdownProps> = ({
   data,
   codeBackground,
   className,
+  preset: p,
   sx,
   ...rest
 }) => {
@@ -295,10 +300,12 @@ export const Markdown: React.FC<MarkdownProps> = ({
   }, [mode]);
   const tokens = React.useMemo(() => marked.lexer(data) as TokensList, [data]);
   const resolvedBg = codeBackground ?? (mode === 'dark' ? DARK_BG : LIGHT_BG);
+  const presetCls = p ? preset(p) : '';
   return (
     <Stack
       {...rest}
-      className={className}
+      data-valet-component='Markdown'
+      className={[presetCls, className].filter(Boolean).join(' ')}
       sx={sx}
     >
       {renderTokens(tokens, resolvedBg)}

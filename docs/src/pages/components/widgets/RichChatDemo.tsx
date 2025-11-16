@@ -50,7 +50,7 @@ export default function RichChatDemoPage() {
       >
         <DateSelector
           value={date}
-          onChange={setDate}
+          onValueChange={(v) => setDate(v as string)}
         />
         <IconButton
           icon='carbon:checkmark'
@@ -70,7 +70,7 @@ export default function RichChatDemoPage() {
       >
         <Iterator
           value={age}
-          onChange={setAge}
+          onValueChange={(n) => setAge(n)}
           min={1}
           max={12}
         />
@@ -92,7 +92,7 @@ export default function RichChatDemoPage() {
       >
         <Iterator
           value={kids}
-          onChange={setKids}
+          onValueChange={(n) => setKids(n)}
           min={5}
           max={45}
           step={5}

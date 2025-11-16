@@ -45,12 +45,30 @@ function merge(tsMap, docsMap, version, metaMap) {
 
     // DOM passthrough & css vars from ts
     const domPassthrough = ts.domPassthrough;
-    const cssVars = ts.cssVars || [];
+    let cssVars = ts.cssVars ? [...ts.cssVars] : [];
     const cssPresets = ts.cssPresets || [];
 
     // summary/description
     const summary = ts.summary || `${name} component`;
     const description = undefined;
+
+    // If component supports intent/variant, ensure standard intent CSS vars are present
+    try {
+      const hasIntent = (ts.props || props).some((p) => p && typeof p.name === 'string' && p.name === 'intent');
+      if (hasIntent) {
+        const INTENT_VARS = [
+          '--valet-intent-bg',
+          '--valet-intent-fg',
+          '--valet-intent-border',
+          '--valet-intent-focus',
+          '--valet-intent-bg-hover',
+          '--valet-intent-bg-active',
+          '--valet-intent-fg-disabled',
+        ];
+        const set = new Set(cssVars);
+        for (const v of INTENT_VARS) if (!set.has(v)) cssVars.push(v);
+      }
+    } catch {}
 
     // Compute minimalProps for runnable examples: required props without defaults
     const minimalProps = (() => {
@@ -135,7 +153,8 @@ function merge(tsMap, docsMap, version, metaMap) {
       if (typeof raw === 'string' && raw.toLowerCase() === 'golden') {
         raw = 'production';
       }
-      return typeof raw === 'string' && allowed.has(raw) ? raw : undefined;
+      // Default to 'stable' when unspecified to satisfy schema and reflect current maturity.
+      return typeof raw === 'string' && allowed.has(raw) ? raw : 'stable';
     })();
 
     const bestPractices = Array.isArray(metaMap?.[name]?.docs?.bestPractices) && metaMap[name].docs.bestPractices.length
@@ -144,6 +163,25 @@ function merge(tsMap, docsMap, version, metaMap) {
 
     // Examples: prefer curated ones from sidecar meta; optionally only curated
     const rawExamples = Array.isArray(metaMap?.[name]?.examples) ? metaMap[name].examples : [];
+
+    // Build events: prefer TS-reported events; otherwise synthesize from props
+    const events = (() => {
+      const base = Array.isArray(ts.events) ? [...ts.events] : [];
+      const have = new Set(base.map((e) => e.name));
+      for (const p of props) {
+        if (!p || typeof p.name !== 'string') continue;
+        const nm = p.name.trim();
+        if (!/^on[A-Z]/.test(nm)) continue;
+        if (have.has(nm)) continue;
+        // Prefer explicit typed payloads when recognizable
+        const t = String(p.type || '');
+        const isValueEvt = /OnValue(Change|Commit)/.test(t) || /(value\s*[,)]|ChangeInfo)/i.test(t);
+        const payload = isValueEvt ? `${t || 'unknown'}` : (t || 'unknown');
+        base.push({ name: nm, payloadType: payload });
+        have.add(nm);
+      }
+      return base;
+    })();
 
     out[name] = {
       name,
@@ -158,7 +196,7 @@ function merge(tsMap, docsMap, version, metaMap) {
       domPassthrough,
       cssVars,
       cssPresets,
-      events: ts.events || [],
+      events,
       actions: ts.actions || [],
       slots: ts.slots || [],
       bestPractices,
@@ -275,6 +313,26 @@ async function main() {
     fs.writeFileSync(path.join(outDir, 'glossary.json'), JSON.stringify({ entries: glossary, version, builtAt: meta.builtAt }, null, 2));
   } catch (e) {
     console.warn('Glossary extraction error:', e.message);
+  }
+
+  // Mirror snapshot into server package (if present) for parity
+  try {
+    const serverDataDir = path.join(root, 'packages', 'valet-mcp', 'mcp-data');
+    fs.rmSync(serverDataDir, { recursive: true, force: true });
+    fs.mkdirSync(serverDataDir, { recursive: true });
+    // shallow copy files and components subdir
+    for (const fn of ['_meta.json', 'index.json', 'glossary.json', '_ts-extract.json', 'component_synonyms.json']) {
+      const src = path.join(outDir, fn);
+      if (fs.existsSync(src)) fs.copyFileSync(src, path.join(serverDataDir, fn));
+    }
+    const srcComp = path.join(outDir, 'components');
+    const dstComp = path.join(serverDataDir, 'components');
+    fs.mkdirSync(dstComp, { recursive: true });
+    for (const file of fs.readdirSync(srcComp)) {
+      fs.copyFileSync(path.join(srcComp, file), path.join(dstComp, file));
+    }
+  } catch (e) {
+    console.warn('Server data mirror error:', e?.message || e);
   }
 
   console.log(`MCP data written to ${outDir}`);

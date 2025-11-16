@@ -162,7 +162,7 @@ export default function AccordionDemoPage() {
   const playground = (
     <Stack gap={1}>
       <Panel
-        variant='alt'
+        variant='outlined'
         fullWidth
       >
         <Stack
@@ -176,7 +176,7 @@ export default function AccordionDemoPage() {
             <Switch
               name='multiple'
               checked={multiple}
-              onChange={setMultiple}
+              onValueChange={(v) => setMultiple(!!v)}
             />
             <Typography>multiple</Typography>
           </Stack>
@@ -187,7 +187,7 @@ export default function AccordionDemoPage() {
             <Switch
               name='constrainHeight'
               checked={constrain}
-              onChange={setConstrain}
+              onValueChange={(v) => setConstrain(!!v)}
             />
             <Typography>constrainHeight</Typography>
           </Stack>
@@ -198,7 +198,7 @@ export default function AccordionDemoPage() {
             <Typography variant='subtitle'>headingLevel</Typography>
             <Select
               value={String(heading)}
-              onChange={(v) => setHeading(Number(v) as 1 | 2 | 3 | 4 | 5 | 6)}
+              onValueChange={(v) => setHeading(Number(v) as 1 | 2 | 3 | 4 | 5 | 6)}
               sx={{ width: 160 }}
             >
               {[1, 2, 3, 4, 5, 6].map((n) => (

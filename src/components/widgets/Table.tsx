@@ -338,10 +338,10 @@ export function Table<T extends object>({
 
     // Apply state changes with minimal churn
     if (nextConstrain) {
-      if (!constraintRef.current) {
-        surfEl.scrollTop = 0;
-        surfEl.scrollLeft = 0;
-      }
+      // Avoid resetting parent scroll when toggling constrain mode.
+      // Previously we zeroed Surface scrollTop/Left here, which caused
+      // page jump-to-top artifacts in docs/apps. Keep constraint flip
+      // without touching the parent scroll position.
       constraintRef.current = true;
       if (!prevConstrainedRef.current) {
         prevConstrainedRef.current = true;
@@ -578,6 +578,7 @@ export function Table<T extends object>({
     <Wrapper
       ref={wrapRef}
       $pad={pad}
+      data-valet-component='Table'
       style={shouldConstrain ? { overflow: 'auto', maxHeight } : undefined}
     >
       <Root
@@ -690,6 +691,8 @@ export function Table<T extends object>({
           {displayRows.map((row, rIdx) => (
             <tr
               key={rIdx}
+              data-selected={selected.has(row) ? 'true' : 'false'}
+              data-state={selected.has(row) ? 'selected' : 'unselected'}
               onClick={rowClickEnabled ? (event) => handleRowClick(row, rIdx, event) : undefined}
             >
               {selectable ? (
@@ -698,7 +701,7 @@ export function Table<T extends object>({
                     name={`sel-${rIdx}`}
                     size='sm'
                     checked={selected.has(row)}
-                    onChange={(chk) => toggleSelect(row, chk)}
+                    onValueChange={(chk) => toggleSelect(row, !!chk)}
                     aria-label={`Select row ${rIdx + 1}`}
                   />
                 </Td>

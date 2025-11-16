@@ -18,6 +18,8 @@ export default function MetroSelectDemoPage() {
   ];
 
   const [transport, setTransport] = useState('car');
+  const [transportLive, setTransportLive] = useState<string | null>(null);
+  const [transportCommit, setTransportCommit] = useState<string | null>(null);
   const controlled = [
     { icon: 'mdi:car', label: 'Car', value: 'car' },
     { icon: 'mdi:bike', label: 'Bike', value: 'bike' },
@@ -61,7 +63,7 @@ export default function MetroSelectDemoPage() {
       <Typography variant='h3'>2. Controlled value</Typography>
       <MetroSelect
         value={transport}
-        onChange={(v) => setTransport(v as string)}
+        onValueChange={(v) => setTransport(v as string)}
         gap={4}
       >
         {controlled.map((o) => (
@@ -74,6 +76,23 @@ export default function MetroSelectDemoPage() {
       <Typography>
         Current: <b>{transport}</b>
       </Typography>
+
+      <Typography variant='h3'>2a. Commit vs live</Typography>
+      <MetroSelect
+        value={transportLive ?? 'car'}
+        onValueChange={(v) => setTransportLive(v as string)}
+        onValueCommit={(v) => setTransportCommit(v as string)}
+        gap={4}
+      >
+        {controlled.map((o) => (
+          <MetroSelect.Option
+            key={o.value}
+            {...o}
+          />
+        ))}
+      </MetroSelect>
+      <Typography>live: {transportLive ?? '—'}</Typography>
+      <Typography>commit: {transportCommit ?? '—'}</Typography>
 
       <Typography variant='h3'>3. Many options</Typography>
       <MetroSelect gap={4}>
@@ -136,7 +155,7 @@ export default function MetroSelectDemoPage() {
       <Select
         placeholder='mode'
         value={mode}
-        onChange={(v) => setModeSafe(v as 'single' | 'multiple')}
+        onValueChange={(v) => setModeSafe(v as 'single' | 'multiple')}
         sx={{ width: 200 }}
       >
         <Select.Option value='single'>single</Select.Option>
@@ -147,7 +166,7 @@ export default function MetroSelectDemoPage() {
       <Select
         placeholder='size'
         value={size}
-        onChange={(v) => setSize(v as 'sm' | 'md' | 'lg')}
+        onValueChange={(v) => setSize(v as 'sm' | 'md' | 'lg')}
         sx={{ width: 200 }}
       >
         <Select.Option value='sm'>small</Select.Option>
@@ -157,7 +176,7 @@ export default function MetroSelectDemoPage() {
 
       <MetroSelect
         value={sel}
-        onChange={(v) => setSel(v as string | string[])}
+        onValueChange={(v) => setSel(v as string | string[])}
         multiple={mode === 'multiple'}
         size={size}
       >

@@ -38,19 +38,31 @@
       "name": "size",
       "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string",
       "required": false,
+      "description": "Visual size of the tiles; token or explicit CSS size.",
       "default": "'md'",
-      "description": "Controls uniform tile geometry via tokens or explicit CSS size."
+      "enumValues": [
+        "xs",
+        "sm",
+        "md",
+        "lg",
+        "xl"
+      ]
     },
     {
       "name": "disabled",
       "type": "boolean",
       "required": false,
-      "default": "false",
-      "description": "Disables interactions and focus for the entire control."
+      "description": "Disable the entire control.",
+      "default": "false"
     },
     {
-      "name": "onChange",
-      "type": "(v: Primitive | Primitive[]) => void",
+      "name": "onValueChange",
+      "type": "OnValueChange<Primitive | Primitive[]>",
+      "required": false
+    },
+    {
+      "name": "onValueCommit",
+      "type": "OnValueCommit<Primitive | Primitive[]>",
       "required": false
     },
     {
@@ -61,7 +73,44 @@
     {
       "name": "sx",
       "type": "Sx",
-      "required": false
+      "required": false,
+      "description": "Inline styles (with CSS var support)"
+    },
+    {
+      "name": "name",
+      "type": "string | undefined",
+      "required": false,
+      "description": "Field identifier used for FormControl binding and forwarded to the underlying control\nwhen applicable. Components can require `name` locally if they depend on it."
+    },
+    {
+      "name": "label",
+      "type": "React.ReactNode",
+      "required": false,
+      "description": "Visual label rendered by the component or its wrapper. Accepts string or node."
+    },
+    {
+      "name": "helperText",
+      "type": "React.ReactNode",
+      "required": false,
+      "description": "Supplemental hint or validation content typically rendered under the control."
+    },
+    {
+      "name": "error",
+      "type": "boolean | undefined",
+      "required": false,
+      "description": "Marks the field invalid; components may adjust visuals and helper text color."
+    },
+    {
+      "name": "fullWidth",
+      "type": "boolean | undefined",
+      "required": false,
+      "description": "Stretches the field wrapper to occupy the full available width."
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
   "domPassthrough": {
@@ -83,14 +132,24 @@
   "cssPresets": [],
   "events": [
     {
-      "name": "onChange",
-      "payloadType": "Primitive | Primitive[]"
+      "name": "onValueChange",
+      "payloadType": "OnValueChange<Primitive | Primitive[]>"
+    },
+    {
+      "name": "onValueCommit",
+      "payloadType": "OnValueCommit<Primitive | Primitive[]>"
     }
   ],
   "actions": [],
   "slots": [
     {
       "name": "children"
+    },
+    {
+      "name": "label"
+    },
+    {
+      "name": "helperText"
     }
   ],
   "bestPractices": [
@@ -136,6 +195,6 @@
   "sourceFiles": [
     "src/components/fields/MetroSelect.tsx"
   ],
-  "version": "0.32.0",
+  "version": "0.34.0",
   "schemaVersion": "1.6"
 }

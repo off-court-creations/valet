@@ -341,7 +341,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
       {...rest}
       {...rootProps}
       ref={setPanelRef}
-      variant='alt'
+      variant='outlined'
       fullWidth={fullWidth}
       role='button'
       aria-labelledby={instructionId}

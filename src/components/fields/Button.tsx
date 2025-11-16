@@ -9,22 +9,37 @@ import type { Theme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { Typography } from '../primitives/Typography';
 import type { Presettable, Sx } from '../../types';
+import { toRgb, mix, toHex } from '../../helpers/color';
+import {
+  createPolymorphicComponent,
+  type PolymorphicProps,
+  type PolymorphicRef,
+} from '../../system/polymorphic';
 
 /*───────────────────────────────────────────────────────────*/
-export type ButtonVariant = 'contained' | 'outlined';
+export type ButtonVariant = 'filled' | 'outlined' | 'plain';
 export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-export type ButtonToken = 'primary' | 'secondary' | 'tertiary';
+type Intent =
+  | 'default'
+  | 'primary'
+  | 'secondary'
+  | 'success'
+  | 'warning'
+  | 'error'
+  | 'info'
+  | (string & {});
 
-export interface ButtonProps
+export interface ButtonOwnProps
   extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'style'>,
     Presettable {
-  color?: ButtonToken | string;
-  textColor?: ButtonToken | string;
+  /** Semantic color intent (maps to theme tokens). */
+  intent?: Intent;
+  /** Visual variant: filled | outlined | plain. */
   variant?: ButtonVariant;
+  /** Explicit color override (any CSS color or theme token name). */
+  color?: string;
   size?: ButtonSize | number | string;
   fullWidth?: boolean;
-  /** Center the button within stacked/flex layouts without wrapping */
-  centered?: boolean;
   /** Inline styles (with CSS var support) */
   sx?: Sx;
 }
@@ -74,12 +89,10 @@ const Root = styled('button')<{
   $bg: string;
   $label: string;
   $hoverLabel: string;
-  $outline: string;
   $strokeW: string;
   $radius: string;
   $ripple: string;
   $full: boolean;
-  $centered: boolean;
 }>`
   display: inline-flex;
   align-items: center;
@@ -96,22 +109,14 @@ const Root = styled('button')<{
   padding: ${({ $padRule }) => $padRule};
   box-sizing: border-box;
 
-  align-self: ${({ $full, $centered }) =>
-    $full ? 'stretch' : $centered ? 'center' : 'flex-start'};
+  align-self: ${({ $full }) => ($full ? 'stretch' : 'flex-start')};
   width: ${({ $full }) => ($full ? '100%' : 'auto')};
-  ${({ $centered, $full }) =>
-    $centered &&
-    !$full &&
-    `
-      margin-left: auto;
-      margin-right: auto;
-    `}
 
   border-radius: ${({ $radius }) => $radius};
-  border: ${({ $variant, $outline, $strokeW }) =>
-    $variant === 'outlined' ? `${$strokeW} solid ${$outline}` : 'none'};
+  border: ${({ $variant, $strokeW, $bg }) =>
+    $variant === 'outlined' ? `${$strokeW} solid ${$bg}` : 'none'};
 
-  background: ${({ $variant, $bg }) => ($variant === 'contained' ? $bg : 'transparent')};
+  background: ${({ $variant, $bg }) => ($variant === 'filled' ? $bg : 'transparent')};
 
   color: ${({ $label }) => $label};
   font-size: ${({ $font }) => $font};
@@ -129,13 +134,9 @@ const Root = styled('button')<{
   @media (hover: hover) {
     &:hover:not(:disabled) {
       ${({ $variant, $bg, $hoverLabel }) =>
-        $variant === 'contained'
+        $variant === 'filled'
           ? 'filter: brightness(1.25);'
-          : `
-            background: ${$bg};
-            color: ${$hoverLabel};
-            --valet-text-color: ${$hoverLabel};
-          `}
+          : `background: ${$variant === 'outlined' ? $bg + '22' : 'transparent'}; color: ${$hoverLabel}; --valet-text-color: ${$hoverLabel};`}
     }
   }
 
@@ -167,20 +168,23 @@ const Root = styled('button')<{
 `;
 
 /*───────────────────────────────────────────────────────────*/
-export const Button: React.FC<ButtonProps> = ({
-  variant = 'contained',
-  size = 'md',
-  color,
-  textColor,
-  fullWidth = false,
-  centered = false,
-  preset: p,
-  className,
-  children,
-  sx,
-  ...rest
-}) => {
-  const { theme, mode } = useTheme();
+const ButtonImpl = <E extends React.ElementType = 'button'>(
+  props: PolymorphicProps<E, ButtonOwnProps>,
+  ref: PolymorphicRef<E>,
+) => {
+  const {
+    variant = 'filled',
+    size = 'md',
+    color,
+    intent,
+    fullWidth = false,
+    preset: p,
+    className,
+    children,
+    sx,
+    ...rest
+  } = props as ButtonOwnProps & { as?: E } & Record<string, unknown>;
+  const { theme } = useTheme();
   const map = createSizeMap(theme);
   let geom: { padV: string; padH: string; font: string; height: string };
 
@@ -210,78 +214,46 @@ export const Button: React.FC<ButtonProps> = ({
 
   const minW = `calc(${height} * 2)`;
 
-  const isToken = (v: unknown): v is ButtonToken =>
-    typeof v === 'string' && (v === 'primary' || v === 'secondary' || v === 'tertiary');
-
-  // Also allow direct theme color key names, e.g. 'primaryButtonText'.
-  const resolveThemeColor = (key: string | undefined): string | undefined => {
-    if (!key) return undefined;
+  // Map intent to theme color
+  const intentToColor = (i?: Intent): string | undefined => {
+    if (!i) return undefined;
     const colors = theme.colors as Record<string, string>;
+    const key = String(i);
     return colors[key] || undefined;
   };
-
-  const paletteToken: ButtonToken | null =
-    color === undefined ? 'primary' : isToken(color) ? color : null;
-
-  // If `color` is a hex matching a theme token, infer the palette token so
-  // the correct *ButtonText can be chosen by default.
-  const inferTokenFromBg = (): ButtonToken | null => {
-    const bgStr = (typeof color === 'string' ? (color as string) : '')?.toUpperCase?.() ?? '';
-    const eq = (hex: string) => (hex || '').toUpperCase() === bgStr;
-    if (eq(theme.colors.primary)) return 'primary';
-    if (eq(theme.colors.secondary)) return 'secondary';
-    if (eq(theme.colors.tertiary)) return 'tertiary';
-    return null;
+  const resolveToken = (v?: string): string | undefined => {
+    if (!v) return undefined;
+    const colors = theme.colors as Record<string, string>;
+    return colors[v] || v;
   };
-  const paletteFromHex = paletteToken || inferTokenFromBg();
-
-  const bg = paletteFromHex
-    ? theme.colors[paletteFromHex]
-    : color
-      ? isToken(color)
-        ? theme.colors[color]
-        : color
-      : theme.colors.primary;
-
-  const outlineNeutral = mode === 'dark' ? '#eee' : '#111';
-
-  // Resolve text color: support palette tokens ('primary' → primaryButtonText),
-  // and direct theme color keys ('primaryButtonText').
-  const resolveText = (v: ButtonToken | string) => {
-    if (isToken(v)) return theme.colors[`${v}ButtonText`];
-    const fromTheme = resolveThemeColor(v);
-    return fromTheme ?? (v as string);
+  const equals = (a?: string, b?: string) => (a || '').toUpperCase() === (b || '').toUpperCase();
+  const buttonTextFor = (bgHex: string) => {
+    if (equals(bgHex, theme.colors.primary)) return theme.colors.primaryButtonText;
+    if (equals(bgHex, theme.colors.secondary)) return theme.colors.secondaryButtonText;
+    if (equals(bgHex, theme.colors.tertiary)) return theme.colors.tertiaryButtonText;
+    if (equals(bgHex, theme.colors.error)) return theme.colors.errorText;
+    return theme.colors.text;
   };
 
-  let labelColor: string;
-
-  if (variant === 'outlined') {
-    labelColor = textColor ? resolveText(textColor) : outlineNeutral;
-  } else {
-    labelColor = textColor
-      ? resolveText(textColor)
-      : paletteFromHex
-        ? theme.colors[`${paletteFromHex}ButtonText`]
-        : theme.colors.text;
-  }
-
-  const hoverLabel =
-    variant === 'outlined'
-      ? textColor
-        ? resolveText(textColor)
-        : paletteFromHex
-          ? theme.colors[`${paletteFromHex}ButtonText`]
-          : '#fff'
-      : labelColor;
-
-  const ripple =
-    variant === 'contained'
-      ? 'rgba(255,255,255,0.25)'
-      : paletteToken
-        ? `${theme.colors[paletteToken]}33`
-        : 'rgba(0,0,0,0.1)';
+  const resolvedBg = resolveToken(color) || intentToColor(intent) || theme.colors.primary;
+  const labelColor = variant === 'filled' ? buttonTextFor(resolvedBg) : resolvedBg;
+  const hoverLabel = labelColor;
+  const ripple = variant === 'filled' ? 'rgba(255,255,255,0.25)' : `${resolvedBg}33`;
 
   const presetClasses = p ? preset(p) : '';
+
+  // Intent CSS variables contract
+  const makeMix = (a: string, b: string, w: number) => toHex(mix(toRgb(a), toRgb(b), w));
+  const intentBg = resolvedBg;
+  const intentFg = labelColor;
+  const intentBorder =
+    variant === 'outlined' ? resolvedBg : makeMix(resolvedBg, theme.colors.text, 0.25);
+  const intentFocus = theme.colors.primary; // theme focus token
+  const intentBgHover =
+    variant === 'filled' ? makeMix(resolvedBg, labelColor, 0.15) : 'transparent';
+  const intentBgActive =
+    variant === 'filled' ? makeMix(resolvedBg, labelColor, 0.25) : 'transparent';
+  const intentFgDisabled = makeMix(labelColor, theme.colors.background, 0.5);
 
   const childArray = React.Children.toArray(children);
   const grouped: React.ReactNode[] = [];
@@ -325,29 +297,88 @@ export const Button: React.FC<ButtonProps> = ({
 
   const content = grouped;
 
+  // Polymorphic semantics: ensure non-interactive roots behave as buttons
+  const asTag = (props as unknown as { as?: React.ElementType }).as as unknown as
+    | string
+    | undefined;
+  const interactiveFallback = asTag && asTag !== 'button' && asTag !== 'a';
+  const roleProps: Record<string, unknown> = {};
+  const elementProps: Record<string, unknown> = { ...(rest as Record<string, unknown>) };
+  const origOnKeyDown = (rest as Record<string, unknown>)['onKeyDown'] as
+    | React.KeyboardEventHandler
+    | undefined;
+  if (interactiveFallback) {
+    roleProps.role = (rest as Record<string, unknown>)['role'] ?? 'button';
+    roleProps.tabIndex = (rest as Record<string, unknown>)['tabIndex'] ?? 0;
+    roleProps.onKeyDown = ((e: React.KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        (e.currentTarget as HTMLElement).click();
+      }
+      origOnKeyDown?.(e);
+    }) as React.KeyboardEventHandler;
+  }
+  // Default button type to avoid implicit form submission; omit type for anchors
+  if (asTag === 'a') {
+    delete (elementProps as Record<string, unknown>)['type'];
+  } else if ((elementProps as Record<string, unknown>)['type'] == null) {
+    (elementProps as Record<string, unknown>)['type'] = 'button';
+  }
+  if (process.env.NODE_ENV !== 'production') {
+    if (asTag === 'a' && !(rest as Record<string, unknown>)['href']) {
+      console.warn('Button: `as="a"` provided without `href`. Provide href or use a <button>.');
+    }
+    const providedRole = (rest as Record<string, unknown>)['role'] as string | undefined;
+    if (asTag === 'a' && (rest as Record<string, unknown>)['href'] && providedRole === 'button') {
+      console.warn(
+        'Button: role="button" on <a href> contradicts native link semantics. Remove the role.',
+      );
+    }
+    if ((!asTag || asTag === 'button') && providedRole === 'link') {
+      console.warn('Button: role="link" on <button> contradicts native button semantics.');
+    }
+  }
+
   return (
     <Root
-      {...rest}
-      style={{ '--valet-text-color': labelColor, ...(sx as object) } as React.CSSProperties}
+      {...(elementProps as object)}
+      {...roleProps}
+      ref={ref as unknown as React.Ref<HTMLButtonElement>}
+      data-valet-component='Button'
+      data-disabled={(rest as Record<string, unknown>)['disabled'] ? 'true' : 'false'}
+      data-state={(rest as Record<string, unknown>)['disabled'] ? 'disabled' : 'enabled'}
+      style={
+        {
+          '--valet-text-color': labelColor,
+          '--valet-intent-bg': intentBg,
+          '--valet-intent-fg': intentFg,
+          '--valet-intent-border': intentBorder,
+          '--valet-intent-focus': intentFocus,
+          '--valet-intent-bg-hover': intentBgHover,
+          '--valet-intent-bg-active': intentBgActive,
+          '--valet-intent-fg-disabled': intentFgDisabled,
+          ...(sx as object),
+        } as React.CSSProperties
+      }
       className={[presetClasses, className].filter(Boolean).join(' ')}
       $variant={variant}
       $height={height}
       $padRule={padRule}
       $font={font}
       $minW={minW}
-      $bg={bg}
+      $bg={resolvedBg}
       $label={labelColor}
       $hoverLabel={hoverLabel}
-      $outline={outlineNeutral}
       $strokeW={theme.stroke(1)}
       $radius={theme.radius(1)}
       $ripple={ripple}
       $full={fullWidth}
-      $centered={!!centered}
     >
       {content}
     </Root>
   );
 };
+
+export const Button = createPolymorphicComponent<'button', ButtonOwnProps>(ButtonImpl);
 
 export default Button;

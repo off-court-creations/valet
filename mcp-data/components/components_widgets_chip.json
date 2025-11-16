@@ -20,7 +20,7 @@
       "name": "size",
       "type": "ChipSize",
       "required": false,
-      "default": "'m'"
+      "default": "'md'"
     },
     {
       "name": "variant",
@@ -29,10 +29,16 @@
       "default": "'filled'"
     },
     {
-      "name": "color",
-      "type": "ChipColor",
+      "name": "intent",
+      "type": "Intent",
       "required": false,
-      "default": "'default'"
+      "description": "Semantic color intent mapping to theme tokens."
+    },
+    {
+      "name": "color",
+      "type": "string",
+      "required": false,
+      "description": "Explicit color override (theme token or CSS color)."
     },
     {
       "name": "icon",
@@ -77,7 +83,14 @@
     ]
   },
   "cssVars": [
-    "--valet-focus-ring"
+    "--valet-focus-ring",
+    "--valet-intent-bg",
+    "--valet-intent-fg",
+    "--valet-intent-border",
+    "--valet-intent-focus",
+    "--valet-intent-bg-hover",
+    "--valet-intent-bg-active",
+    "--valet-intent-fg-disabled"
   ],
   "cssPresets": [],
   "events": [
@@ -158,6 +171,6 @@
   "sourceFiles": [
     "src/components/widgets/Chip.tsx"
   ],
-  "version": "0.33.7",
+  "version": "0.34.0",
   "schemaVersion": "1.6"
 }

@@ -74,6 +74,7 @@ const ComponentQCLabPage = page(() => import('./pages/examples/ComponentQCLab'))
 const MCPGuidePage = page(() => import('./pages/getting-started/MCP'));
 const GlossaryPage = page(() => import('./pages/getting-started/Glossary'));
 const ComponentStatusPage = page(() => import('./pages/getting-started/ComponentStatus'));
+const EventsConceptPage = page(() => import('./pages/concepts/Events'));
 
 /*───────────────────────────────────────────────────────────*/
 export function App() {
@@ -119,6 +120,10 @@ export function App() {
         <Route
           path='/mcp'
           element={<MCPGuidePage />}
+        />
+        <Route
+          path='/events'
+          element={<EventsConceptPage />}
         />
         <Route
           path='/glossary'

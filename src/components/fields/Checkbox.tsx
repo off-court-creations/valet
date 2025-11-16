@@ -19,6 +19,7 @@ import { useOptionalForm } from './FormControl';
 import { toRgb, mix, toHex } from '../../helpers/color';
 import type { Theme } from '../../system/themeStore';
 import type { FieldBaseProps } from '../../types';
+import type { ChangeInfo, OnValueChange, OnValueCommit } from '../../system/events';
 
 /*───────────────────────────────────────────────────────────────────────────*/
 /* Public prop contracts                                                    */
@@ -41,7 +42,12 @@ export interface CheckboxProps
   defaultChecked?: boolean;
   /** Visual size; token or CSS length. */
   size?: CheckboxSize | number | string;
-  onChange?: (checked: boolean, event: ChangeEvent<HTMLInputElement>) => void;
+  /** DOM-parity change event (raw React event). */
+  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
+  /** Canonical value change event (fires on each mutation). */
+  onValueChange?: OnValueChange<boolean>;
+  /** Commit event (fires at the same moment for toggles). */
+  onValueCommit?: OnValueCommit<boolean>;
   /** Mixed (indeterminate) visual state for parent selections. */
   indeterminate?: boolean;
 }
@@ -174,6 +180,8 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
       disabled = false,
       error,
       onChange,
+      onValueChange,
+      onValueCommit,
       preset: presetKey,
       className,
       sx,
@@ -208,6 +216,19 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
 
     /* Controlled vs uncontrolled logic ---------------------------------- */
     const controlled = checkedProp !== undefined;
+    // Controlled/uncontrolled guard (dev-only)
+    const initialCtl = React.useRef<boolean | undefined>(undefined);
+    React.useEffect(() => {
+      if (process.env.NODE_ENV === 'production') return;
+      if (initialCtl.current === undefined) initialCtl.current = controlled;
+      else if (initialCtl.current !== controlled) {
+        console.error(
+          'Checkbox: component switched from %s to %s after mount. This is not supported.',
+          initialCtl.current ? 'controlled' : 'uncontrolled',
+          controlled ? 'controlled' : 'uncontrolled',
+        );
+      }
+    }, [controlled]);
     const formBound = Boolean(form) && bindForm && Boolean(name);
     const initialState = controlled
       ? checkedProp!
@@ -226,13 +247,31 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
     /* Event handler – updates state, FormStore, and user callback -------- */
     const handleChange = useCallback(
       (e: ChangeEvent<HTMLInputElement>) => {
+        const prev = currentChecked;
         const next = e.target.checked;
         if (!controlled && !formBound) setInternal(next);
         if (form && formBound && name)
           form.setField(name as keyof Record<string, unknown>, next as unknown);
-        onChange?.(next, e);
+
+        // Fire DOM-parity event
+        onChange?.(e);
+        const src: ChangeInfo<boolean>['source'] =
+          e.nativeEvent instanceof KeyboardEvent
+            ? 'keyboard'
+            : e.nativeEvent instanceof MouseEvent || e.nativeEvent instanceof PointerEvent
+              ? 'pointer'
+              : 'programmatic';
+        const info: ChangeInfo<boolean> = {
+          previousValue: prev,
+          phase: 'input',
+          source: src,
+          event: e,
+          name,
+        };
+        onValueChange?.(next, info);
+        onValueCommit?.(next, { ...info, phase: 'commit' });
       },
-      [controlled, formBound, form, name, onChange],
+      [controlled, formBound, form, name, onChange, onValueChange, onValueCommit, currentChecked],
     );
 
     /* Manage native indeterminate property ------------------------------- */
@@ -259,6 +298,9 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
       <Wrapper
         theme={theme}
         htmlFor={id}
+        data-valet-component='Checkbox'
+        data-state={currentChecked ? 'checked' : 'unchecked'}
+        data-disabled={disabled ? 'true' : 'false'}
         style={{ '--checkbox-gap': SZ.gap, ...sx } as React.CSSProperties}
         className={mergedCls}
         $disabled={disabled}

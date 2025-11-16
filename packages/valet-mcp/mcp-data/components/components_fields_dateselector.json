@@ -12,82 +12,80 @@
   "props": [
     {
       "name": "value",
-      "type": "string",
-      "required": false
+      "type": "string | [string, string]",
+      "required": false,
+      "description": "Controlled value. Single-date mode: ISO YYYY-MM-DD string. Range mode: tuple [start, end]."
     },
     {
       "name": "defaultValue",
-      "type": "string",
-      "required": false
+      "type": "string | [string, string]",
+      "required": false,
+      "description": "Default value for uncontrolled usage (same shape as `value`)."
     },
     {
-      "name": "onChange",
-      "type": "(value: string) => void",
+      "name": "onValueChange",
+      "type": "OnValueChange<string | [string, string]>",
+      "required": false,
+      "description": "Event trio"
+    },
+    {
+      "name": "onValueCommit",
+      "type": "OnValueCommit<string | [string, string]>",
       "required": false
     },
     {
       "name": "name",
       "type": "string",
-      "required": false
+      "required": false,
+      "description": "FormControl field name (single-date mode only)."
     },
     {
       "name": "minDate",
       "type": "string",
-      "required": false
+      "required": false,
+      "description": "Earliest selectable ISO date (YYYY-MM-DD)."
     },
     {
       "name": "maxDate",
       "type": "string",
-      "required": false
+      "required": false,
+      "description": "Latest selectable ISO date (YYYY-MM-DD)."
     },
     {
       "name": "range",
       "type": "boolean",
       "required": false,
+      "description": "Enable dual start/end selection mode.",
       "default": "false"
-    },
-    {
-      "name": "endValue",
-      "type": "string",
-      "required": false
-    },
-    {
-      "name": "defaultEndValue",
-      "type": "string",
-      "required": false
-    },
-    {
-      "name": "onRangeChange",
-      "type": "(start: string, end: string) => void",
-      "required": false
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": false
+      "required": false,
+      "description": "Inline styles (with CSS var support)"
     },
     {
-      "name": "compactMode",
-      "type": "'auto' | 'on' | 'off'",
+      "name": "density",
+      "type": "'compact' | 'standard' | 'comfortable'",
       "required": false,
-      "default": "'auto'",
+      "description": "Density override; alias: `compact` maps to `density='compact'`",
       "enumValues": [
-        "auto",
-        "on",
-        "off"
+        "compact",
+        "standard",
+        "comfortable"
       ]
     },
     {
-      "name": "compactThresholdIn",
-      "type": "number",
+      "name": "compact",
+      "type": "boolean",
       "required": false,
-      "default": "340"
+      "description": "Legacy alias for density='compact'."
     },
     {
-      "name": "compactThresholdOut",
-      "type": "number",
+      "name": "preset",
+      "type": "string | string[] | undefined",
       "required": false,
-      "default": "380"
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
   "domPassthrough": {
@@ -98,6 +96,10 @@
     ]
   },
   "cssVars": [
+    "--valet-font-body",
+    "--valet-font-weight",
+    "--valet-font-tracking",
+    "--valet-font-leading",
     "--valet-date-radius",
     "--valet-date-cell-radius",
     "--valet-text-color"
@@ -105,12 +107,12 @@
   "cssPresets": [],
   "events": [
     {
-      "name": "onChange",
-      "payloadType": "string"
+      "name": "onValueChange",
+      "payloadType": "OnValueChange<string | [string, string]>"
     },
     {
-      "name": "onRangeChange",
-      "payloadType": "string"
+      "name": "onValueCommit",
+      "payloadType": "OnValueCommit<string | [string, string]>"
     }
   ],
   "actions": [],
@@ -127,6 +129,6 @@
   "sourceFiles": [
     "src/components/fields/DateSelector.tsx"
   ],
-  "version": "0.32.0",
+  "version": "0.34.0",
   "schemaVersion": "1.6"
 }

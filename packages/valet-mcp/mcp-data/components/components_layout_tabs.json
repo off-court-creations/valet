@@ -3,32 +3,35 @@
   "category": "layout",
   "slug": "components/layout/tabs",
   "summary": "Tabs component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "tabs"
   ],
   "props": [
     {
-      "name": "active",
-      "type": "number",
+      "name": "value",
+      "type": "string | number",
       "required": false
     },
     {
-      "name": "defaultActive",
-      "type": "number",
-      "required": false,
-      "default": "0"
+      "name": "defaultValue",
+      "type": "string | number",
+      "required": false
     },
     {
-      "name": "onTabChange",
-      "type": "(i: number) => void",
+      "name": "onValueChange",
+      "type": "( value: string | number, info: { previousValue?: string | number; phase: 'input' | 'commit' }, ) => void",
+      "required": false
+    },
+    {
+      "name": "onValueCommit",
+      "type": "( value: string | number, info: { previousValue?: string | number; phase: 'commit' }, ) => void",
       "required": false
     },
     {
       "name": "orientation",
       "type": "'horizontal' | 'vertical'",
       "required": false,
-      "default": "'horizontal'",
       "enumValues": [
         "horizontal",
         "vertical"
@@ -47,25 +50,61 @@
     },
     {
       "name": "alignX",
-      "type": "'left' | 'right' | 'center' | 'centered'",
+      "type": "'left' | 'right' | 'center'",
       "required": false,
+      "description": "Horizontal alignment of the tab strip (horizontal orientation).",
       "enumValues": [
         "left",
         "right",
-        "center",
-        "centered"
+        "center"
+      ]
+    },
+    {
+      "name": "tabAlign",
+      "type": "'left' | 'right' | 'center'",
+      "required": false,
+      "description": "Alias for alignX for clarity.",
+      "enumValues": [
+        "left",
+        "right",
+        "center"
       ]
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": false
+      "required": false,
+      "description": "Inline styles (with CSS var support)"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
+    },
+    {
+      "name": "pad",
+      "type": "import(\"/home/xbenc/occ/valet/src/types\").Space | undefined",
+      "required": false,
+      "description": "Container padding as units or CSS length."
     },
     {
       "name": "compact",
-      "type": "unknown",
+      "type": "boolean | undefined",
       "required": false,
-      "default": "false"
+      "description": "Compact mode zeros gap and pad where supported."
+    },
+    {
+      "name": "gap",
+      "type": "import(\"/home/xbenc/occ/valet/src/types\").Space | undefined",
+      "required": false,
+      "description": "Inter-child spacing as units or CSS length."
+    },
+    {
+      "name": "density",
+      "type": "\"compact\" | \"standard\" | \"comfortable\" | undefined",
+      "required": false,
+      "description": "Density override for spacing scale; defaults from nearest Surface."
     }
   ],
   "domPassthrough": {
@@ -77,14 +116,19 @@
   },
   "cssVars": [
     "--valet-focus-width",
+    "--valet-focus-ring-color",
     "--valet-focus-offset",
     "--valet-underline-width"
   ],
   "cssPresets": [],
   "events": [
     {
-      "name": "onTabChange",
-      "payloadType": "number"
+      "name": "onValueChange",
+      "payloadType": "string | number"
+    },
+    {
+      "name": "onValueCommit",
+      "payloadType": "string | number"
     }
   ],
   "actions": [],
@@ -104,6 +148,6 @@
   "sourceFiles": [
     "src/components/layout/Tabs.tsx"
   ],
-  "version": "0.32.0",
+  "version": "0.34.0",
   "schemaVersion": "1.6"
 }

@@ -27,40 +27,82 @@ export default function AppBarDemoPage() {
         }
       />
       <Typography>
-        The AppBar renders left and right slots. Keep content concise; reserve primary actions for
-        the right slot and navigation/branding for the left.
+        AppBar supports <code>variant</code> (<code>filled|outlined|plain</code>) and semantic
+        <code>intent</code> colors, with optional <code>color</code> override for custom themes.
       </Typography>
+      <Stack direction='row'>
+        <AppBar
+          intent='primary'
+          left={<Typography>primary</Typography>}
+        />
+        <AppBar
+          variant='outlined'
+          intent='secondary'
+          left={<Typography>outlined secondary</Typography>}
+        />
+        <AppBar
+          variant='plain'
+          intent='info'
+          left={<Typography>plain info</Typography>}
+        />
+      </Stack>
     </Stack>
   );
 
-  const [color, setColor] = React.useState<'default' | 'primary' | 'secondary' | 'tertiary'>(
-    'default',
-  );
+  const [variant, setVariant] = React.useState<'filled' | 'outlined' | 'plain'>('filled');
+  const [intent, setIntent] = React.useState<
+    'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'info'
+  >('default');
   const playground = (
     <Stack gap={1}>
       <Stack
         direction='row'
         sx={{ alignItems: 'center', gap: theme.spacing(1) }}
       >
-        <Typography variant='subtitle'>color</Typography>
+        <Typography variant='subtitle'>variant</Typography>
         <Select
-          placeholder='color'
-          value={color}
-          onChange={(v) =>
-            setColor((v as 'default' | 'primary' | 'secondary' | 'tertiary') || 'default')
-          }
-          sx={{ width: 180 }}
+          placeholder='variant'
+          value={variant}
+          onValueChange={(v) => setVariant((v as 'filled' | 'outlined' | 'plain') || 'filled')}
+          sx={{ width: 160 }}
         >
-          <Select.Option value='default'>default</Select.Option>
-          <Select.Option value='primary'>primary</Select.Option>
-          <Select.Option value='secondary'>secondary</Select.Option>
-          <Select.Option value='tertiary'>tertiary</Select.Option>
+          <Select.Option value='filled'>filled</Select.Option>
+          <Select.Option value='outlined'>outlined</Select.Option>
+          <Select.Option value='plain'>plain</Select.Option>
+        </Select>
+        <Typography variant='subtitle'>intent</Typography>
+        <Select
+          placeholder='intent'
+          value={intent}
+          onValueChange={(v) =>
+            setIntent(
+              (v as
+                | 'default'
+                | 'primary'
+                | 'secondary'
+                | 'success'
+                | 'warning'
+                | 'error'
+                | 'info') || 'default',
+            )
+          }
+          sx={{ width: 200 }}
+        >
+          {(
+            ['default', 'primary', 'secondary', 'success', 'warning', 'error', 'info'] as const
+          ).map((c) => (
+            <Select.Option
+              key={c}
+              value={c}
+            >
+              {c}
+            </Select.Option>
+          ))}
         </Select>
       </Stack>
       <AppBar
-        {...(color !== 'default'
-          ? { color: theme.colors[color], textColor: theme.colors[`${color}Text`] }
-          : {})}
+        variant={variant}
+        {...(intent !== 'default' ? { intent } : {})}
         left={<Typography>Playground</Typography>}
         right={
           <Button
@@ -70,6 +112,15 @@ export default function AppBarDemoPage() {
             Toggle
           </Button>
         }
+      />
+      <Typography>
+        Color override: you can pass <code>color</code> to use a specific color (token or CSS). For
+        example:
+      </Typography>
+      <AppBar
+        variant='outlined'
+        color={theme.colors['primary'] as string}
+        left={<Typography>outlined + color=primary</Typography>}
       />
     </Stack>
   );

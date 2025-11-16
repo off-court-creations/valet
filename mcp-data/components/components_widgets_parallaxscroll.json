@@ -1,0 +1,46 @@
+{
+  "name": "ParallaxScroll",
+  "category": "widgets",
+  "slug": "components/widgets/parallaxscroll",
+  "summary": "ParallaxScroll component",
+  "status": "stable",
+  "props": [
+    {
+      "name": "trackX",
+      "type": "boolean",
+      "required": false,
+      "description": "Track horizontal scroll in addition to vertical.",
+      "default": "false"
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": false,
+      "description": "Inline styles (with CSS var support)"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
+    }
+  ],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": [
+      "style"
+    ]
+  },
+  "cssVars": [],
+  "cssPresets": [],
+  "events": [],
+  "actions": [],
+  "slots": [],
+  "bestPractices": [],
+  "examples": [],
+  "sourceFiles": [
+    "src/components/widgets/Parallax.tsx"
+  ],
+  "version": "0.34.0",
+  "schemaVersion": "1.6"
+}

@@ -24,6 +24,8 @@ const useFormStore = createFormStore<FormVals>({ amount: 1 });
 export default function IteratorDemoPage() {
   const { toggleMode } = useTheme();
   const [count, setCount] = useState(2);
+  const [countCommit, setCountCommit] = useState(2);
+  const [commitOnChange, setCommitOnChange] = useState(false);
 
   const usageContent = (
     <Stack>
@@ -36,7 +38,7 @@ export default function IteratorDemoPage() {
       <Typography variant='h3'>1. Uncontrolled</Typography>
       <Iterator defaultValue={3} />
 
-      <Typography variant='h3'>2. Controlled</Typography>
+      <Typography variant='h3'>2. Controlled (live vs commit)</Typography>
       <Stack
         direction='row'
         gap={1}
@@ -44,9 +46,26 @@ export default function IteratorDemoPage() {
       >
         <Iterator
           value={count}
-          onChange={setCount}
+          onValueChange={(v) => (commitOnChange ? setCount(v) : setCount(v))}
+          onValueCommit={(v) => setCountCommit(v)}
+          commitOnChange={commitOnChange}
         />
-        <Typography>Value: {count}</Typography>
+        <Typography>live: {count}</Typography>
+        <Typography>commit: {countCommit}</Typography>
+      </Stack>
+      <Stack
+        direction='row'
+        gap={0.5}
+        sx={{ alignItems: 'center' }}
+      >
+        <Typography variant='subtitle'>commitOnChange</Typography>
+        <Iterator
+          value={commitOnChange ? 1 : 0}
+          min={0}
+          max={1}
+          step={1}
+          onValueCommit={(v) => setCommitOnChange(v === 1)}
+        />
       </Stack>
 
       <Typography variant='h3'>3. Min, max &amp; step</Typography>

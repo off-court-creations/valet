@@ -14,46 +14,54 @@
     {
       "name": "src",
       "type": "string",
-      "required": false
+      "required": false,
+      "description": "Image URL override."
     },
     {
       "name": "email",
       "type": "string",
-      "required": false
+      "required": false,
+      "description": "Email used for Gravatar lookup when src missing."
     },
     {
       "name": "name",
       "type": "string",
-      "required": false
+      "required": false,
+      "description": "Display name used to derive initials for offline fallback."
     },
     {
       "name": "size",
       "type": "AvatarSize",
       "required": false,
-      "default": "'m'"
+      "description": "Size token controlling relative dimensions.",
+      "default": "'md'"
     },
     {
       "name": "variant",
       "type": "AvatarVariant",
       "required": false,
+      "description": "Visual style variant.",
       "default": "'plain'"
     },
     {
       "name": "gravatarDefault",
       "type": "string",
       "required": false,
+      "description": "Fallback style when no avatar exists.",
       "default": "'identicon'"
     },
     {
       "name": "preferFallback",
       "type": "boolean",
       "required": false,
+      "description": "When true and no `src` is provided, prefer offline fallback instead of Gravatar.",
       "default": "false"
     },
     {
       "name": "fallback",
       "type": "'initials' | 'placeholder'",
       "required": false,
+      "description": "Offline fallback strategy when showing a non-network avatar.",
       "default": "'initials'",
       "enumValues": [
         "initials",
@@ -63,7 +71,14 @@
     {
       "name": "sx",
       "type": "Sx",
-      "required": false
+      "required": false,
+      "description": "Inline styles (with CSS var support)"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     },
     {
       "name": "loading",
@@ -104,7 +119,7 @@
     {
       "id": "avatar-custom-src",
       "title": "Custom src + alt",
-      "code": "<Avatar src='https://avatars.githubusercontent.com/u/9919?s=200&v=4' alt='GitHub' size='l' />",
+      "code": "<Avatar src='https://avatars.githubusercontent.com/u/9919?s=200&v=4' alt='GitHub' size='lg' />",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {}
@@ -112,7 +127,7 @@
     {
       "id": "avatar-sizes-row",
       "title": "Sizes",
-      "code": "<Stack direction='row' gap={1}>\n  {(['xl','l','m','s','xs'] as const).map(s => (\n    <Avatar key={s} email='support@gravatar.com' size={s} />\n  ))}\n</Stack>",
+      "code": "<Stack direction='row' gap={1}>\n  {(['xl','lg','md','sm','xs'] as const).map(s => (\n    <Avatar key={s} email='support@gravatar.com' size={s} />\n  ))}\n</Stack>",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {}
@@ -120,7 +135,7 @@
     {
       "id": "avatar-outline",
       "title": "Outline variant",
-      "code": "<Avatar email='support@gravatar.com' size='l' variant='outline' />",
+      "code": "<Avatar email='support@gravatar.com' size='lg' variant='outline' />",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {}
@@ -136,7 +151,7 @@
     {
       "id": "avatar-fallback-initials",
       "title": "Offline fallback — initials",
-      "code": "<Avatar name='Ada Lovelace' preferFallback size='l' alt='Ada Lovelace' />",
+      "code": "<Avatar name='Ada Lovelace' preferFallback size='lg' alt='Ada Lovelace' />",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {}
@@ -144,7 +159,7 @@
     {
       "id": "avatar-fallback-placeholder",
       "title": "Offline fallback — placeholder",
-      "code": "<Avatar preferFallback fallback='placeholder' size='l' aria-label='User avatar' />",
+      "code": "<Avatar preferFallback fallback='placeholder' size='lg' aria-label='User avatar' />",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {}
@@ -153,6 +168,6 @@
   "sourceFiles": [
     "src/components/primitives/Avatar.tsx"
   ],
-  "version": "0.32.0",
+  "version": "0.34.0",
   "schemaVersion": "1.6"
 }

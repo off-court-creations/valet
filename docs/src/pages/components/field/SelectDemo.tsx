@@ -33,15 +33,17 @@ export default function SelectDemoPage() {
 
   // controlled examples
   const [pet, setPet] = useState('cat');
+  const [petLive, setPetLive] = useState<string | null>(null);
+  const [petCommit, setPetCommit] = useState<string | null>(null);
   const [langs, setLangs] = useState<string[]>(['ts']);
   const [submitted, setSubmitted] = useState<DemoForm | null>(null);
 
   const usageContent = (
     <>
       {/* Uncontrolled */}
-      <Typography variant='h3'>1. Uncontrolled (initialValue)</Typography>
+      <Typography variant='h3'>1. Uncontrolled (defaultValue)</Typography>
       <Select
-        initialValue='tea'
+        defaultValue='tea'
         placeholder='Choose drink'
       >
         <Select.Option value='coffee'>Coffee</Select.Option>
@@ -57,7 +59,7 @@ export default function SelectDemoPage() {
       >
         <Select
           value={pet}
-          onChange={(v) => setPet(v as string)}
+          onValueChange={(v) => setPet(v as string)}
         >
           <Select.Option value='cat'>Cat</Select.Option>
           <Select.Option value='dog'>Dog</Select.Option>
@@ -77,7 +79,7 @@ export default function SelectDemoPage() {
         <Select
           multiple
           value={langs}
-          onChange={(v) => setLangs(v as string[])}
+          onValueChange={(v) => setLangs(v as string[])}
           placeholder='Languages'
           size='lg'
           sx={{ minWidth: 260 }}
@@ -89,6 +91,26 @@ export default function SelectDemoPage() {
           <Select.Option value='rs'>Rust</Select.Option>
         </Select>
         <Typography>{langs.join(', ')}</Typography>
+      </Stack>
+
+      {/* Commit vs live */}
+      <Typography variant='h3'>3a. Commit vs live</Typography>
+      <Stack
+        direction='row'
+        sx={{ alignItems: 'center' }}
+      >
+        <Select
+          placeholder='Choose pet'
+          onValueChange={(v) => setPetLive(v as string)}
+          onValueCommit={(v) => setPetCommit(v as string)}
+          sx={{ minWidth: 220 }}
+        >
+          <Select.Option value='cat'>Cat</Select.Option>
+          <Select.Option value='dog'>Dog</Select.Option>
+          <Select.Option value='bird'>Bird</Select.Option>
+        </Select>
+        <Typography>live: {petLive ?? '—'}</Typography>
+        <Typography>commit: {petCommit ?? '—'}</Typography>
       </Stack>
 
       {/* Sizes */}
@@ -133,7 +155,7 @@ export default function SelectDemoPage() {
           <Select.Option value='x'>X</Select.Option>
         </Select>
 
-        <Select initialValue='warn'>
+        <Select defaultValue='warn'>
           <Select.Option value='warn'>Danger preset</Select.Option>
           <Select.Option value='safe'>Safe</Select.Option>
         </Select>

@@ -20,6 +20,8 @@ export interface SpacingProps {
   pad?: Space;
   /** Compact mode zeros gap and pad where supported. */
   compact?: boolean;
+  /** Density override for spacing scale; defaults from nearest Surface. */
+  density?: 'compact' | 'standard' | 'comfortable';
 }
 
 /** Sx prop: inline CSS with support for CSS custom properties (e.g. --valet-*) */

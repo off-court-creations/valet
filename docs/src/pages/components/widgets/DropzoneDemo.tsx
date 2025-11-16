@@ -107,7 +107,7 @@ export default function DropzoneDemoPage() {
           <Select
             placeholder='accept'
             value={pgAccept}
-            onChange={(v) => setPgAccept(v as typeof pgAccept)}
+            onValueChange={(v) => setPgAccept(v as typeof pgAccept)}
             sx={{ width: 180 }}
           >
             <Select.Option value='any'>any</Select.Option>
@@ -124,7 +124,7 @@ export default function DropzoneDemoPage() {
             <Typography variant='subtitle'>multiple</Typography>
             <Switch
               checked={pgMultiple}
-              onChange={setPgMultiple}
+              onValueChange={(v) => setPgMultiple(!!v)}
               aria-label='multiple'
             />
           </Stack>
@@ -140,7 +140,7 @@ export default function DropzoneDemoPage() {
               max={20}
               step={1}
               value={pgMaxFiles}
-              onChange={(n) => setPgMaxFiles(Math.round(n))}
+              onValueChange={(n) => setPgMaxFiles(Math.round(n))}
             />
           </Stack>
           <Stack
@@ -151,7 +151,7 @@ export default function DropzoneDemoPage() {
             <Typography variant='subtitle'>showPreviews</Typography>
             <Switch
               checked={pgShowPreviews}
-              onChange={setPgShowPreviews}
+              onValueChange={(v) => setPgShowPreviews(!!v)}
               aria-label='showPreviews'
             />
           </Stack>
@@ -163,7 +163,7 @@ export default function DropzoneDemoPage() {
             <Typography variant='subtitle'>showFileList</Typography>
             <Switch
               checked={pgShowFileList}
-              onChange={setPgShowFileList}
+              onValueChange={(v) => setPgShowFileList(!!v)}
               aria-label='showFileList'
             />
           </Stack>
@@ -175,7 +175,7 @@ export default function DropzoneDemoPage() {
             <Typography variant='subtitle'>fullWidth</Typography>
             <Switch
               checked={pgFullWidth}
-              onChange={setPgFullWidth}
+              onValueChange={(v) => setPgFullWidth(!!v)}
               aria-label='fullWidth'
             />
           </Stack>

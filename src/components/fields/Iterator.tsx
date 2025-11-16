@@ -9,6 +9,7 @@ import { preset } from '../../css/stylePresets';
 import { IconButton } from './IconButton';
 import { useOptionalForm } from './FormControl';
 import type { FieldBaseProps } from '../../types';
+import type { ChangeInfo, OnValueChange, OnValueCommit } from '../../system/events';
 import type { Theme } from '../../system/themeStore';
 
 /*───────────────────────────────────────────────────────────*/
@@ -17,9 +18,10 @@ export interface IteratorProps
     FieldBaseProps {
   value?: number;
   defaultValue?: number;
-  onChange?: (value: number) => void;
-  /** Fires when a value is committed (buttons, wheel, keyboard, or blur). */
-  onCommit?: (value: number) => void;
+  /** Canonical value change event (fires on each mutation). */
+  onValueChange?: OnValueChange<number>;
+  /** Commit event (buttons, wheel, keyboard final, or blur). */
+  onValueCommit?: OnValueCommit<number>;
   min?: number;
   max?: number;
   step?: number;
@@ -67,7 +69,8 @@ const Field = styled('input')<{ theme: Theme; $w: string }>`
     margin: 0;
   }
   &:focus-visible {
-    outline: var(--valet-focus-width, 2px) solid ${({ theme }) => theme.colors.primary};
+    outline: var(--valet-focus-width, 2px) solid
+      var(--valet-focus-ring-color, ${({ theme }) => theme.colors.primary});
     outline-offset: var(--valet-focus-offset, 2px);
   }
   &[disabled] {
@@ -83,8 +86,8 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
     {
       value: valueProp,
       defaultValue,
-      onChange,
-      onCommit,
+      onValueChange,
+      onValueCommit,
       name,
       min,
       max,
@@ -118,6 +121,19 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
 
     const formVal = form && name ? (form.values[name] as number | undefined) : undefined;
     const controlled = valueProp !== undefined || formVal !== undefined;
+    // Controlled/uncontrolled guard (dev-only)
+    const initialCtl = React.useRef<boolean | undefined>(undefined);
+    React.useEffect(() => {
+      if (process.env.NODE_ENV === 'production') return;
+      if (initialCtl.current === undefined) initialCtl.current = controlled;
+      else if (initialCtl.current !== controlled) {
+        console.error(
+          'Iterator: component switched from %s to %s after mount. This is not supported.',
+          initialCtl.current ? 'controlled' : 'uncontrolled',
+          controlled ? 'controlled' : 'uncontrolled',
+        );
+      }
+    }, [controlled]);
     const [internal, setInternal] = useState(defaultValue ?? 0);
     const current = controlled ? (formVal ?? valueProp!) : internal;
     const [text, setText] = useState(String(current));
@@ -148,28 +164,34 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
     );
 
     const commit = useCallback(
-      (next: number) => {
+      (next: number, phase: 'input' | 'commit' = 'commit') => {
         const v = alignToStep(clamp(next));
         if (!controlled) setInternal(v);
         if (form && name) form.setField(name as keyof Record<string, number | undefined>, v);
-        onChange?.(v);
-        onCommit?.(v);
+        const info: ChangeInfo<number> = {
+          previousValue: current,
+          phase,
+          source: 'programmatic',
+          name,
+        };
+        onValueChange?.(v, { ...info, phase: 'input' });
+        if (phase === 'commit') onValueCommit?.(v, { ...info, phase: 'commit' });
         setText(String(v));
       },
-      [alignToStep, clamp, controlled, form, name, onChange, onCommit],
+      [alignToStep, clamp, controlled, form, name, onValueChange, onValueCommit, current],
     );
 
     const handleInput: React.ChangeEventHandler<HTMLInputElement> = (e) => {
       const val = e.target.value;
       setText(val);
       const num = parseFloat(val);
-      if (commitOnChange && !Number.isNaN(num)) commit(num);
+      if (commitOnChange && !Number.isNaN(num)) commit(num, 'input');
     };
 
     const handleBlur: React.FocusEventHandler<HTMLInputElement> = () => {
       const num = parseFloat(text);
       if (Number.isNaN(num)) setText(String(current));
-      else commit(num);
+      else commit(num, 'commit');
     };
 
     const stepBy = useCallback(
@@ -214,16 +236,16 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
         stepBy(-1);
       } else if (key === 'PageUp') {
         e.preventDefault();
-        commit(current + big);
+        commit(current + big, 'commit');
       } else if (key === 'PageDown') {
         e.preventDefault();
-        commit(current - big);
+        commit(current - big, 'commit');
       } else if (key === 'Home' && min !== undefined) {
         e.preventDefault();
-        commit(min);
+        commit(min, 'commit');
       } else if (key === 'End' && max !== undefined) {
         e.preventDefault();
-        commit(max);
+        commit(max, 'commit');
       } else if (key === 'Enter') {
         const num = parseFloat(text);
         if (!Number.isNaN(num)) commit(num);
@@ -239,6 +261,10 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
     return (
       <Wrapper
         theme={theme}
+        data-valet-component='Iterator'
+        data-disabled={disabled ? 'true' : 'false'}
+        data-readonly={readOnly ? 'true' : 'false'}
+        data-state={disabled ? 'disabled' : readOnly ? 'readonly' : 'enabled'}
         className={cls}
         style={sx}
       >

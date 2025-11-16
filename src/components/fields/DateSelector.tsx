@@ -2,7 +2,7 @@
 // src/components/fields/DateSelector.tsx | valet
 // interactive month calendar for picking dates
 // ─────────────────────────────────────────────────────────────
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
@@ -11,18 +11,22 @@ import { Select } from './Select';
 import { useOptionalForm } from './FormControl';
 import { toRgb, mix, toHex } from '../../helpers/color';
 import type { Presettable, Sx } from '../../types';
+import type { ChangeInfo, OnValueChange, OnValueCommit } from '../../system/events';
 
 /*───────────────────────────────────────────────────────────*/
 export interface DateSelectorProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'style'>,
     Presettable {
-  /** Controlled ISO date value (YYYY-MM-DD). */
-  value?: string;
-  /** Default value for uncontrolled usage. */
-  defaultValue?: string;
-  /** Fires with ISO value when selection changes. */
-  onChange?: (value: string) => void;
-  /** FormControl field name. */
+  /**
+   * Controlled value. Single-date mode: ISO YYYY-MM-DD string. Range mode: tuple [start, end].
+   */
+  value?: string | [string, string];
+  /** Default value for uncontrolled usage (same shape as `value`). */
+  defaultValue?: string | [string, string];
+  /** Event trio */
+  onValueChange?: OnValueChange<string | [string, string]>;
+  onValueCommit?: OnValueCommit<string | [string, string]>;
+  /** FormControl field name (single-date mode only). */
   name?: string;
   /** Earliest selectable ISO date (YYYY-MM-DD). */
   minDate?: string;
@@ -30,25 +34,12 @@ export interface DateSelectorProps
   maxDate?: string;
   /** Enable dual start/end selection mode. */
   range?: boolean;
-  /** Controlled end date when `range` is true. */
-  endValue?: string;
-  /** Default end date for uncontrolled range mode. */
-  defaultEndValue?: string;
-  /** Fires with start and end ISO values when range changes. */
-  onRangeChange?: (start: string, end: string) => void;
   /** Inline styles (with CSS var support) */
   sx?: Sx;
-  /**
-   * Control how compact mode engages.
-   * - 'auto' (default): measure container and switch at thresholds.
-   * - 'on': force compact layout always.
-   * - 'off': disable compact behavior entirely.
-   */
-  compactMode?: 'auto' | 'on' | 'off';
-  /** Width below which compact turns on (when compactMode='auto'). Default: 340 */
-  compactThresholdIn?: number;
-  /** Width above which compact turns off (when compactMode='auto'). Default: 380 */
-  compactThresholdOut?: number;
+  /** Density override; alias: `compact` maps to `density='compact'` */
+  density?: 'compact' | 'standard' | 'comfortable';
+  /** Legacy alias for density='compact'. */
+  compact?: boolean;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -170,82 +161,46 @@ const days = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 export const DateSelector: React.FC<DateSelectorProps> = ({
   value,
   defaultValue,
-  onChange,
+  onValueChange,
+  onValueCommit,
   range = false,
-  endValue,
-  defaultEndValue,
-  onRangeChange,
   name,
   minDate: minDateProp,
   maxDate: maxDateProp,
   preset: p,
   className,
   sx,
-  compactMode = 'auto',
-  compactThresholdIn = 340,
-  compactThresholdOut = 380,
+  density,
+  compact,
   ...rest
 }) => {
   const { theme } = useTheme();
   const wrapRef = useRef<HTMLDivElement>(null);
-  const [compact, setCompact] = useState(false);
-  const compactRef = useRef(false);
-  const ENTER_W = compactThresholdIn; // go compact when narrower than this
-  const EXIT_W = compactThresholdOut; // leave compact when wider than this (hysteresis)
-
-  // Compact detection with optional override via compactMode
-  useEffect(() => {
-    const node = wrapRef.current;
-    if (!node) return;
-
-    if (compactMode === 'on') {
-      compactRef.current = true;
-      setCompact(true);
-      return;
-    }
-    if (compactMode === 'off') {
-      compactRef.current = false;
-      setCompact(false);
-      return;
-    }
-
-    // auto
-    const measured = node.parentElement ?? node;
-    let raf = 0;
-
-    const compute = () => {
-      const w = measured.clientWidth;
-      if (!w) return;
-      const prev = compactRef.current;
-      const next = prev ? w < EXIT_W : w < ENTER_W;
-      if (next !== prev) {
-        compactRef.current = next;
-        setCompact(next);
-      }
-    };
-
-    const ro = new ResizeObserver(() => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(compute);
-    });
-    ro.observe(measured);
-    // Initialize immediately
-    raf = requestAnimationFrame(compute);
-    return () => {
-      ro.disconnect();
-      if (raf) cancelAnimationFrame(raf);
-    };
-  }, [compactMode, ENTER_W, EXIT_W]);
+  const compactEffective = compact || density === 'compact';
 
   /* optional FormControl binding --------------------------- */
-  const form = useOptionalForm<Record<string, string | undefined>>();
+  const form = useOptionalForm<Record<string, unknown>>();
 
-  const formVal = form && name ? (form.values[name] as string | undefined) : undefined;
+  const formVal = form && name && !range ? (form.values[name] as string | undefined) : undefined;
   const controlled = value !== undefined || formVal !== undefined;
+  // Controlled/uncontrolled guard (dev-only)
+  const initialCtl = React.useRef<boolean | undefined>(undefined);
+  React.useEffect(() => {
+    if (process.env.NODE_ENV === 'production') return;
+    if (initialCtl.current === undefined) initialCtl.current = controlled;
+    else if (initialCtl.current !== controlled) {
+      console.error(
+        'DateSelector: component switched from %s to %s after mount. This is not supported.',
+        initialCtl.current ? 'controlled' : 'uncontrolled',
+        controlled ? 'controlled' : 'uncontrolled',
+      );
+    }
+  }, [controlled]);
   const parseDate = (v?: string) => (v ? new Date(v + 'T00:00') : new Date());
 
-  const initialStart = value ?? formVal ?? defaultValue;
-  const initialEnd = endValue ?? defaultEndValue ?? initialStart;
+  const initial: string | [string, string] | undefined = value ?? formVal ?? defaultValue;
+  const initialStart = Array.isArray(initial) ? initial[0] : (initial as string | undefined);
+  const initialEnd = Array.isArray(initial) ? initial[1] : initialStart;
 
   const [startInt, setStartInt] = useState(parseDate(initialStart));
   const [endInt, setEndInt] = useState(parseDate(initialEnd));
@@ -257,8 +212,18 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   const minYear = min.getFullYear();
   const maxYear = max.getFullYear();
 
-  const startDate = controlled ? parseDate(value ?? formVal) : startInt;
-  const endDate = range ? (endValue !== undefined ? parseDate(endValue) : endInt) : startDate;
+  const startDate = controlled
+    ? parseDate(Array.isArray(value) ? value[0] : (value ?? formVal))
+    : startInt;
+  const endDate = range
+    ? controlled
+      ? parseDate(
+          Array.isArray(value)
+            ? (value[1] ?? (Array.isArray(defaultValue) ? defaultValue[1] : value?.[1]))
+            : startDate.toISOString().slice(0, 10),
+        )
+      : endInt
+    : startDate;
 
   const [viewYear, setViewYear] = useState(startDate.getFullYear());
   const [viewMonth, setViewMonth] = useState(startDate.getMonth());
@@ -283,8 +248,16 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   const commit = (d: number) => {
     const iso = new Date(viewYear, viewMonth, d).toISOString().slice(0, 10);
     if (!controlled) setStartInt(new Date(viewYear, viewMonth, d));
-    if (form && name) form.setField(name as keyof Record<string, string | undefined>, iso);
-    onChange?.(iso);
+    if (form && name && !range)
+      form.setField(name as keyof Record<string, string | undefined>, iso);
+    const info: ChangeInfo<string | [string, string]> = {
+      previousValue: Array.isArray(value) ? value : (value ?? formVal),
+      phase: 'commit',
+      source: 'programmatic',
+      name,
+    };
+    onValueChange?.(iso, { ...info, phase: 'input' });
+    onValueCommit?.(iso, info);
   };
 
   const commitRange = (d: number) => {
@@ -309,9 +282,36 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
     }
 
     if (!controlled) setStartInt(start);
-    if (endValue === undefined) setEndInt(end);
-    onRangeChange?.(start.toISOString().slice(0, 10), end.toISOString().slice(0, 10));
+    if (!controlled) setEndInt(end);
+    const tuple: [string, string] = [
+      start.toISOString().slice(0, 10),
+      end.toISOString().slice(0, 10),
+    ];
+    if (form && name) {
+      // Bind range tuple into form store under the single field name
+      form.setField(
+        name as keyof Record<string, [string, string] | undefined>,
+        tuple as unknown as [string, string],
+      );
+    }
+    const info: ChangeInfo<string | [string, string]> = {
+      previousValue: Array.isArray(value) ? value : (value ?? formVal),
+      phase: 'commit',
+      source: 'programmatic',
+      name,
+    };
+    onValueChange?.(tuple, { ...info, phase: 'input' });
+    onValueCommit?.(tuple, info);
   };
+
+  // Dev-time warning: when used with FormControl, require `name` for binding.
+  if (process.env.NODE_ENV !== 'production') {
+    try {
+      if (form && !name) {
+        console.warn('DateSelector: provide `name` when used inside a FormControl to bind values.');
+      }
+    } catch {}
+  }
 
   const changeMonth = (delta: number) => {
     setViewMonth((m) => {
@@ -349,15 +349,16 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
     <Wrapper
       {...rest}
       ref={wrapRef}
+      data-valet-component='DateSelector'
       $bg={theme.colors.backgroundAlt}
       $text={`var(--valet-text-color, ${theme.colors.text})` as string}
-      $compact={compact}
+      $compact={!!compactEffective}
       className={cls}
       style={{ '--valet-date-radius': theme.radius(1), ...sx } as React.CSSProperties}
     >
       <Header $gap={theme.spacing(1)}>
         <div style={{ display: 'flex', gap: theme.spacing(0.5) }}>
-          {!compact && (
+          {!compactEffective && (
             <IconButton
               size='sm'
               variant='outlined'
@@ -374,7 +375,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
             />
           )}
           <IconButton
-            size={compact ? 'xs' : 'sm'}
+            size={compactEffective ? 'xs' : 'sm'}
             variant='outlined'
             icon='mdi:chevron-left'
             aria-label='Previous month'
@@ -386,7 +387,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
           <Select
             size='xs'
             value={viewMonth}
-            onChange={(v) => setViewMonth(Number(v))}
+            onValueChange={(v) => setViewMonth(Number(v))}
             sx={{ flex: 1, minWidth: 0 }}
           >
             {months.map((idx) => (
@@ -394,14 +395,14 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
                 key={monthNames[idx]}
                 value={idx}
               >
-                {compact ? monthNames[idx].slice(0, 3) : monthNames[idx]}
+                {compactEffective ? monthNames[idx].slice(0, 3) : monthNames[idx]}
               </Select.Option>
             ))}
           </Select>
           <Select
             size='xs'
             value={viewYear}
-            onChange={(v) => {
+            onValueChange={(v) => {
               const yr = Number(v);
               let m = viewMonth;
               if (yr === minYear && m < minMonth) m = minMonth;
@@ -423,14 +424,14 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
         </div>
         <div style={{ display: 'flex', gap: theme.spacing(0.5) }}>
           <IconButton
-            size={compact ? 'xs' : 'sm'}
+            size={compactEffective ? 'xs' : 'sm'}
             variant='outlined'
             icon='mdi:chevron-right'
             aria-label='Next month'
             onClick={() => changeMonth(1)}
             disabled={new Date(viewYear, viewMonth + 1, 1) > max}
           />
-          {!compact && (
+          {!compactEffective && (
             <IconButton
               size='sm'
               variant='outlined'
@@ -448,13 +449,13 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
           )}
         </div>
       </Header>
-      <Grid $compact={compact}>
+      <Grid $compact={compactEffective}>
         {days.map((d) => (
           <DayLabel
             key={d}
-            $compact={compact}
+            $compact={compactEffective}
           >
-            {compact ? d[0] : d}
+            {compactEffective ? d[0] : d}
           </DayLabel>
         ))}
         {Array.from({ length: startDay }).map((_, i) => (
@@ -490,7 +491,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
               $selText={theme.colors.primaryText}
               $endText={theme.colors.secondaryText}
               $rangeText={theme.colors.primaryText}
-              $compact={compact}
+              $compact={!!compactEffective}
               style={{ '--valet-date-cell-radius': theme.radius(1) } as React.CSSProperties}
               onClick={() => !disabled && (range ? commitRange(day) : commit(day))}
               disabled={disabled}

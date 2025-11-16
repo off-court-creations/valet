@@ -178,7 +178,7 @@ export default function IconDemoPage() {
           <Select
             placeholder='size'
             value={pgSize}
-            onChange={(v) => setPgSize(v as typeof pgSize)}
+            onValueChange={(v) => setPgSize(v as typeof pgSize)}
             sx={{ width: 160 }}
           >
             <Select.Option value='xs'>xs</Select.Option>

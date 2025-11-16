@@ -187,7 +187,7 @@ export default function TableDemoPage() {
   const playgroundContent = (
     <Stack>
       <Panel
-        variant='alt'
+        variant='outlined'
         fullWidth
       >
         <Stack
@@ -211,26 +211,26 @@ export default function TableDemoPage() {
           <Checkbox
             name='striped'
             checked={striped}
-            onChange={setStriped}
+            onValueChange={(v) => setStriped(!!v)}
             label='Striped rows'
           />
           <Checkbox
             name='hover'
             checked={hoverable}
-            onChange={setHoverable}
+            onValueChange={(v) => setHoverable(!!v)}
             label='Row hover'
           />
           <Checkbox
             name='lines'
             checked={dividers}
-            onChange={setDividers}
+            onValueChange={(v) => setDividers(!!v)}
             label='Column dividers'
           />
 
           <Checkbox
             name='constrainHeight'
             checked={constrainHeight}
-            onChange={setConstrainHeight}
+            onValueChange={(v) => setConstrainHeight(!!v)}
             label='Constrain height'
           />
 
@@ -264,7 +264,7 @@ export default function TableDemoPage() {
           <Checkbox
             name='paginate'
             checked={paginate}
-            onChange={setPaginate}
+            onValueChange={(v) => setPaginate(!!v)}
             label='Force pagination'
           />
           <TextField
@@ -285,8 +285,8 @@ export default function TableDemoPage() {
           <Checkbox
             name='pageCtrl'
             checked={pageCtrl}
-            onChange={(c) => {
-              setPageCtrl(c);
+            onValueChange={(c) => {
+              setPageCtrl(!!c);
               if (!c) setPage(1);
             }}
             label='Control page externally'
@@ -307,8 +307,8 @@ export default function TableDemoPage() {
           <Checkbox
             name='enableSel'
             checked={selEnabled}
-            onChange={(c) => {
-              setSelEnabled(c);
+            onValueChange={(c) => {
+              setSelEnabled(!!c);
               if (!c) setMultiSelect(false);
             }}
             label='Enable selection'
@@ -317,7 +317,7 @@ export default function TableDemoPage() {
             name='multiSel'
             checked={multiSelect}
             disabled={!selEnabled}
-            onChange={setMultiSelect}
+            onValueChange={(v) => setMultiSelect(!!v)}
             label='Multi-select'
           />
 

@@ -14,7 +14,7 @@ export default function PanelDemoPage() {
   const [centerContent, setCenterContent] = useState(false);
   const [fullWidth, setFullWidth] = useState(false);
   const [alignX, setAlignX] = useState<'left' | 'right' | 'center'>('left');
-  const [variant, setVariant] = useState<'main' | 'alt'>('main');
+  const [variant, setVariant] = useState<'filled' | 'outlined' | 'plain'>('filled');
   const bgValue: string | undefined =
     bgKey === 'none'
       ? undefined
@@ -26,25 +26,56 @@ export default function PanelDemoPage() {
 
   const usageContent = (
     <Stack>
+      <Typography variant='subtitle'>Variants, intents, and color overrides</Typography>
+
       <Typography variant='h3'>Default Panel</Typography>
       <Panel preset='codePanel'>
         <Typography>(no props) — inherits theme backgroundAlt &amp; text</Typography>
       </Panel>
 
-      <Typography variant='h3'>variant=&quot;alt&quot;</Typography>
+      <Typography variant='h3'>Intent &amp; variants</Typography>
+      <Stack direction='row'>
+        <Panel
+          intent='primary'
+          preset='codePanel'
+        >
+          <Typography>primary filled</Typography>
+        </Panel>
+        <Panel
+          variant='outlined'
+          intent='secondary'
+          preset='codePanel'
+        >
+          <Typography>secondary outlined</Typography>
+        </Panel>
+        <Panel
+          variant='plain'
+          intent='info'
+          preset='codePanel'
+        >
+          <Typography>info plain</Typography>
+        </Panel>
+      </Stack>
+
+      <Typography variant='h3'>variant=&quot;outlined&quot;</Typography>
       <Panel
-        variant='alt'
+        variant='outlined'
         preset='codePanel'
       >
         <Typography>Transparent with outline by default</Typography>
       </Panel>
 
-      <Typography variant='h3'>background override</Typography>
+      <Typography variant='h3'>Color override</Typography>
+      <Typography>
+        Use <code>color</code> to set an explicit background (theme token or CSS color). For
+        outlined/plain, the border/text derive from this color; for filled, label color
+        auto-contrasts.
+      </Typography>
       <Panel
-        background={theme.colors['primary']}
+        color={theme.colors['primary']}
         preset='codePanel'
       >
-        <Typography>{`background=${theme.colors['primary']}`}</Typography>
+        <Typography>{`color=${theme.colors['primary']}`}</Typography>
       </Panel>
 
       <Typography variant='h3'>fullWidth</Typography>
@@ -59,11 +90,11 @@ export default function PanelDemoPage() {
 
       <Typography variant='h3'>Nested Panels</Typography>
       <Panel
-        background={theme.colors['primary']}
+        color={theme.colors['primary']}
         pad={1}
       >
         <Panel
-          variant='alt'
+          variant='outlined'
           fullWidth
           pad={1}
         >
@@ -115,14 +146,14 @@ export default function PanelDemoPage() {
         gap={1}
       >
         <Stack gap={0.25}>
-          <Typography variant='subtitle'>Background</Typography>
+          <Typography variant='subtitle'>Color</Typography>
           <Select
-            placeholder='background'
+            placeholder='color'
             value={bgKey}
-            onChange={(v) => setBgKey(v as 'none' | 'primary' | 'secondary' | 'tertiary')}
+            onValueChange={(v) => setBgKey(v as 'none' | 'primary' | 'secondary' | 'tertiary')}
             sx={{ width: 200 }}
           >
-            <Select.Option value='none'>no background</Select.Option>
+            <Select.Option value='none'>no color</Select.Option>
             <Select.Option value='primary'>primary</Select.Option>
             <Select.Option value='secondary'>secondary</Select.Option>
             <Select.Option value='tertiary'>tertiary</Select.Option>
@@ -136,7 +167,7 @@ export default function PanelDemoPage() {
             max={8}
             step={0.5}
             value={pad}
-            onChange={(n) => setPad(n)}
+            onValueChange={(n) => setPad(n)}
             aria-label='Padding units'
           />
         </Stack>
@@ -145,11 +176,12 @@ export default function PanelDemoPage() {
           <Select
             placeholder='variant'
             value={variant}
-            onChange={(v) => setVariant(v as 'main' | 'alt')}
+            onValueChange={(v) => setVariant(v as 'filled' | 'outlined' | 'plain')}
             sx={{ width: 140 }}
           >
-            <Select.Option value='main'>main</Select.Option>
-            <Select.Option value='alt'>alt</Select.Option>
+            <Select.Option value='filled'>filled</Select.Option>
+            <Select.Option value='outlined'>outlined</Select.Option>
+            <Select.Option value='plain'>plain</Select.Option>
           </Select>
         </Stack>
         <Stack
@@ -161,7 +193,7 @@ export default function PanelDemoPage() {
           <Typography variant='subtitle'>center content</Typography>
           <Switch
             checked={centerContent}
-            onChange={setCenterContent}
+            onValueChange={(v) => setCenterContent(!!v)}
             aria-label='Toggle centerContent'
           />
         </Stack>
@@ -174,7 +206,7 @@ export default function PanelDemoPage() {
           <Typography variant='subtitle'>fullWidth</Typography>
           <Switch
             checked={fullWidth}
-            onChange={setFullWidth}
+            onValueChange={(v) => setFullWidth(!!v)}
             aria-label='Toggle fullWidth'
           />
         </Stack>
@@ -183,7 +215,7 @@ export default function PanelDemoPage() {
           <Select
             placeholder='alignX'
             value={alignX}
-            onChange={(v) => setAlignX(v as 'left' | 'right' | 'center')}
+            onValueChange={(v) => setAlignX(v as 'left' | 'right' | 'center')}
             sx={{ width: 160 }}
             disabled={fullWidth}
           >
@@ -196,7 +228,7 @@ export default function PanelDemoPage() {
 
       <Panel
         variant={variant}
-        background={bgValue}
+        color={bgValue}
         pad={pad}
         centerContent={centerContent}
         fullWidth={fullWidth}

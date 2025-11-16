@@ -93,13 +93,38 @@
       "description": "Drawer contents"
     },
     {
+      "name": "className",
+      "type": "string",
+      "required": false,
+      "description": "Class applied to the Drawer panel root"
+    },
+    {
+      "name": "style",
+      "type": "React.CSSProperties",
+      "required": false,
+      "description": "Inline styles applied to the Drawer panel root"
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": false,
+      "description": "sx convenience for inline styles with CSS var support"
+    },
+    {
       "name": "preset",
       "type": "string | string[] | undefined",
       "required": false,
       "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
-  "cssVars": [],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": []
+  },
+  "cssVars": [
+    "--valet-zindex-modal-backdrop",
+    "--valet-zindex-modal"
+  ],
   "cssPresets": [],
   "events": [
     {
@@ -123,6 +148,6 @@
   "sourceFiles": [
     "src/components/layout/Drawer.tsx"
   ],
-  "version": "0.33.7",
+  "version": "0.34.0",
   "schemaVersion": "1.6"
 }

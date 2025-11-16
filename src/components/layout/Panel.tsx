@@ -10,24 +10,37 @@ import React from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset, presetHas } from '../../css/stylePresets';
-import { mix, toHex, toRgb } from '../../helpers/color';
+import { toRgb, mix, toHex } from '../../helpers/color';
+//
 import type { Presettable, SpacingProps, Sx } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
 
-export type PanelVariant = 'main' | 'alt';
+export type PanelVariant = 'filled' | 'outlined' | 'plain';
+type Intent =
+  | 'default'
+  | 'primary'
+  | 'secondary'
+  | 'success'
+  | 'warning'
+  | 'error'
+  | 'info'
+  | (string & {});
 
 export interface PanelProps
   extends Omit<React.ComponentProps<'div'>, 'style'>,
     Presettable,
-    Pick<SpacingProps, 'pad' | 'compact'> {
+    Pick<SpacingProps, 'pad' | 'compact' | 'density'> {
+  /** Visual variant: filled | outlined | plain */
   variant?: PanelVariant;
+  /** Semantic color intent; maps to theme tokens */
+  intent?: Intent;
+  /** Explicit color override (theme token name or CSS color) */
+  color?: string | undefined;
   fullWidth?: boolean;
-  /** Explicit background override */
-  background?: string | undefined;
   /** Centre contents & propagate intent via CSS var */
   centerContent?: boolean;
   /** Horizontal placement of the panel when not fullWidth */
-  alignX?: 'left' | 'right' | 'center' | 'centered';
+  alignX?: 'left' | 'right' | 'center';
   /**
    * Opt out of row height normalization (when a parent Grid enables it).
    * Defaults to true (normalize). Set to false to keep intrinsic heights.
@@ -45,10 +58,10 @@ const Base = styled('div')<{
   $full?: boolean;
   $center?: boolean;
   $alignX: 'left' | 'right' | 'center';
-  $outline?: string;
   $strokeW: string;
   $bg?: string;
   $text?: string;
+  $border?: string;
   $pad: string;
   $noNormalize?: boolean;
 }>`
@@ -94,17 +107,16 @@ const Base = styled('div')<{
       align-items: center;
     `}
 
-  /* Background handling ------------------------------------- */
-  ${({ $variant, $bg }) =>
-    $bg &&
-    `
-      background: ${$variant === 'main' ? $bg : 'transparent'};
-      --valet-bg: ${$bg};
-    `}
-
-  /* Variant “alt” gets outline ------------------------------ */
-  ${({ $variant, $outline, $strokeW }) =>
-    $variant === 'alt' && $outline ? `border: ${$strokeW} solid ${$outline};` : ''}
+  /* Background / variant handling --------------------------- */
+  ${({ $variant, $bg, $border, $strokeW }) => {
+    if ($variant === 'filled') {
+      return $bg ? `background: ${$bg}; --valet-bg: ${$bg};` : '';
+    }
+    if ($variant === 'outlined') {
+      return $border ? `background: transparent; border: ${$strokeW} solid ${$border};` : '';
+    }
+    return 'background: transparent;';
+  }}
 
   ${({ $text }) =>
     $text &&
@@ -117,7 +129,7 @@ const Base = styled('div')<{
 `;
 
 export const Panel: React.FC<PanelProps> = ({
-  variant = 'main',
+  variant = 'filled',
   fullWidth = false,
   centerContent,
   alignX,
@@ -125,66 +137,89 @@ export const Panel: React.FC<PanelProps> = ({
   preset: p,
   className,
   sx,
-  background,
+  color,
+  intent,
   compact,
   pad: padProp,
   children,
   ...rest
 }) => {
   const { theme } = useTheme();
-  const hasBgProp = typeof background === 'string';
   const hasPresetBg = p ? presetHas(p, 'background') : false;
 
-  /* Resolve background */
-  const bg: string | undefined = hasBgProp
-    ? background!
-    : !hasPresetBg && variant === 'main'
-      ? theme.colors.backgroundAlt
+  // Resolve color override / intent into a background or border color
+  const resolveToken = (v?: string): string | undefined => {
+    if (!v) return undefined;
+    const colors = theme.colors as Record<string, string>;
+    return colors[v] || v;
+  };
+  const fromIntent = (i?: Intent): string | undefined => {
+    if (!i) return undefined;
+    const colors = theme.colors as Record<string, string>;
+    return colors[String(i)];
+  };
+  const resolved = resolveToken(color) || fromIntent(intent);
+  const bg: string | undefined =
+    variant === 'filled'
+      ? resolved || (!hasPresetBg ? theme.colors.backgroundAlt : undefined)
       : undefined;
-
-  /* Derive legible text colour */
+  const borderColor: string | undefined =
+    variant === 'outlined' ? resolved || theme.colors.divider : undefined;
+  // Derive legible text colour for filled variant
   let textColour: string | undefined;
-  if (bg) {
-    textColour =
-      bg === theme.colors.primary
-        ? theme.colors.primaryText
-        : bg === theme.colors.secondary
-          ? theme.colors.secondaryText
-          : bg === theme.colors.tertiary
-            ? theme.colors.tertiaryText
-            : bg === theme.colors.backgroundAlt
-              ? theme.colors.text
-              : theme.colors.text;
+  if (variant === 'filled' && bg) {
+    const eq = (x?: string, y?: string) => (x || '').toUpperCase() === (y || '').toUpperCase();
+    if (eq(bg, theme.colors.primary)) textColour = theme.colors.primaryText;
+    else if (eq(bg, theme.colors.secondary)) textColour = theme.colors.secondaryText;
+    else if (eq(bg, theme.colors.tertiary)) textColour = theme.colors.tertiaryText;
+    else if (eq(bg, theme.colors.error)) textColour = theme.colors.errorText;
+    else if (eq(bg, theme.colors.backgroundAlt)) textColour = theme.colors.text;
+    else textColour = theme.colors.text;
   }
 
-  const pad = resolveSpace(padProp, theme, compact, 1);
+  const compactEffective =
+    compact || (rest as unknown as { density?: string }).density === 'compact';
+  const pad = resolveSpace(padProp, theme, compactEffective, 1);
   const presetClasses = p ? preset(p) : '';
 
-  // Normalize alignX with Box semantics, keep 'centered' as alias for 'center'.
-  const normalizedAlign: 'left' | 'right' | 'center' = (() => {
-    const raw = (alignX ?? 'left') as 'left' | 'right' | 'center' | 'centered';
-    return raw === 'centered' ? 'center' : (raw as 'left' | 'right' | 'center');
-  })();
-
-  // Outline colour for variant="alt":
-  //  - Light mode: darken backgroundAlt by mixing with black
-  //  - Dark mode:  lighten backgroundAlt by mixing with white
-  const outline = toHex(mix(toRgb(theme.colors.backgroundAlt), toRgb(theme.colors.text), 0.5));
+  // Normalize alignX with Box semantics
+  const normalizedAlign: 'left' | 'right' | 'center' = (alignX ?? 'left') as
+    | 'left'
+    | 'right'
+    | 'center';
 
   return (
     <Base
       {...rest}
+      data-valet-component='Panel'
       $variant={variant}
       $full={fullWidth}
       $center={centerContent}
       $alignX={normalizedAlign}
-      $outline={outline}
       $strokeW={theme.stroke(1)}
       $bg={bg}
       $text={textColour}
+      $border={borderColor}
       $pad={pad}
       $noNormalize={!normalizeRowHeight}
-      style={sx}
+      style={
+        {
+          '--valet-intent-bg': bg ?? 'transparent',
+          '--valet-intent-fg': textColour ?? theme.colors.text,
+          '--valet-intent-border': borderColor ?? theme.colors.divider,
+          '--valet-intent-focus': theme.colors.primary,
+          '--valet-intent-bg-hover': bg
+            ? toHex(mix(toRgb(bg), toRgb(textColour ?? theme.colors.text), 0.12))
+            : 'transparent',
+          '--valet-intent-bg-active': bg
+            ? toHex(mix(toRgb(bg), toRgb(textColour ?? theme.colors.text), 0.2))
+            : 'transparent',
+          '--valet-intent-fg-disabled': toHex(
+            mix(toRgb(textColour ?? theme.colors.text), toRgb(theme.colors.background), 0.5),
+          ),
+          ...(sx as object),
+        } as React.CSSProperties
+      }
       className={[presetClasses, className].filter(Boolean).join(' ')}
     >
       {children}

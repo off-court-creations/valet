@@ -13,7 +13,7 @@ export default function DrawerDemoPage() {
   const usage = (
     <Stack gap={1}>
       <Panel
-        variant='alt'
+        variant='outlined'
         fullWidth
       >
         <Typography>

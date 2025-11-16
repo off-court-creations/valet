@@ -23,6 +23,12 @@
       "description": "Optional density override for spacing scale"
     },
     {
+      "name": "compact",
+      "type": "boolean",
+      "required": false,
+      "description": "Alias: when true, maps to density='compact' (no override when false)."
+    },
+    {
       "name": "blockUntilFonts",
       "type": "boolean",
       "required": false,
@@ -62,6 +68,7 @@
     "--valet-focus-width",
     "--valet-focus-offset",
     "--valet-divider-stroke",
+    "--valet-focus-ring-color",
     "--valet-screen-width",
     "--valet-screen-height"
   ],
@@ -81,6 +88,6 @@
   "sourceFiles": [
     "src/components/layout/Surface.tsx"
   ],
-  "version": "0.33.7",
+  "version": "0.34.0",
   "schemaVersion": "1.6"
 }

@@ -4,6 +4,10 @@
   npm run lint:fix
   npm run build
 
+  git add .
+
+  git commit -m "MSG"
+
   npm version patch
   # or
   npm version minor

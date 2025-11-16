@@ -58,7 +58,7 @@ export default function WebGLCanvasDemoPage() {
           sx={{ alignItems: 'center', gap: 8 }}
         >
           <Typography variant='subtitle'>Pause</Typography>
-          <Switch onChange={(v) => (pausedRef.current = v)} />
+          <Switch onValueChange={(v) => (pausedRef.current = !!v)} />
         </Stack>
         <Stack>
           <Typography variant='subtitle'>Speed</Typography>
@@ -67,7 +67,7 @@ export default function WebGLCanvasDemoPage() {
             max={3}
             step={0.1}
             defaultValue={1}
-            onChange={(v) => (timeScaleRef.current = Array.isArray(v) ? v[0] : v)}
+            onValueChange={(v) => (timeScaleRef.current = Array.isArray(v) ? v[0] : v)}
           />
         </Stack>
         <div style={{ position: 'relative', height: 220 }}>

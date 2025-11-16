@@ -51,7 +51,7 @@ export default function SpeedDialDemoPage() {
         <Select
           placeholder='direction'
           value={direction}
-          onChange={(v) => setDirection(v as 'up' | 'down' | 'left' | 'right')}
+          onValueChange={(v) => setDirection(v as 'up' | 'down' | 'left' | 'right')}
           sx={{ width: 160 }}
         >
           <Select.Option value='up'>up</Select.Option>

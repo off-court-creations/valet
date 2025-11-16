@@ -3,7 +3,7 @@
   "category": "widgets",
   "slug": "components/widgets/speeddial",
   "summary": "SpeedDial component",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "speeddial",
     "speed-dial",
@@ -14,17 +14,20 @@
     {
       "name": "icon",
       "type": "React.ReactNode",
-      "required": true
+      "required": true,
+      "description": "Icon for the main FAB (usually a ➕)."
     },
     {
       "name": "actions",
       "type": "SpeedDialAction[]",
-      "required": true
+      "required": true,
+      "description": "Speed-dial actions revealed when the FAB is toggled."
     },
     {
       "name": "direction",
       "type": "'up' | 'down' | 'left' | 'right'",
       "required": false,
+      "description": "Direction in which actions should expand.",
       "default": "'up'",
       "enumValues": [
         "up",
@@ -32,6 +35,18 @@
         "left",
         "right"
       ]
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": false,
+      "description": "Inline styles via CSSProperties (with CSS var support)"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
   "domPassthrough": {
@@ -59,6 +74,6 @@
   "sourceFiles": [
     "src/components/widgets/SpeedDial.tsx"
   ],
-  "version": "0.32.0",
+  "version": "0.34.0",
   "schemaVersion": "1.6"
 }

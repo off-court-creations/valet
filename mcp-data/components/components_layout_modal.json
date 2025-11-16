@@ -118,10 +118,11 @@
     ]
   },
   "cssVars": [
+    "--valet-backdrop-bg",
     "--valet-modal-duration",
     "--valet-modal-easing",
-    "--valet-modal-z-backdrop",
-    "--valet-modal-z",
+    "--valet-zindex-modal-backdrop",
+    "--valet-zindex-modal",
     "--valet-modal-viewport-margin",
     "--valet-modal-radius"
   ],
@@ -155,6 +156,6 @@
   "sourceFiles": [
     "src/components/layout/Modal.tsx"
   ],
-  "version": "0.33.7",
+  "version": "0.34.0",
   "schemaVersion": "1.6"
 }

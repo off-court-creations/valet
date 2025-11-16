@@ -65,7 +65,7 @@ export const ParallaxDemo: React.FC = () => {
         >
           <Button
             size='lg'
-            variant='contained'
+            variant='filled'
           >
             Get Started →
           </Button>

@@ -26,6 +26,8 @@ export interface SurfaceProps
   fullscreen?: boolean;
   /** Optional density override for spacing scale */
   density?: Density;
+  /** Alias: when true, maps to density='compact' (no override when false). */
+  compact?: boolean;
   /**
    * When true, block content visibility until fonts load (FOIT).
    * Defaults to false for immediate first paint using fallbacks.
@@ -43,6 +45,7 @@ export const Surface: React.FC<SurfaceProps> = ({
   className,
   fullscreen = true,
   density,
+  compact: compactAlias,
   blockUntilFonts = false,
   ...props
 }) => {
@@ -180,8 +183,12 @@ export const Surface: React.FC<SurfaceProps> = ({
   const gap = theme.spacing(1);
 
   /* Density → --valet-space ------------------------------------------- */
-  const dens: Density = density ?? globalDensity;
-  const scale = dens === 'comfortable' ? 1 : dens === 'compact' ? 0.75 : dens === 'tight' ? 0.5 : 0;
+  // Public density tokens: 'compact' | 'standard' | 'comfortable'.
+  // Alias: compact?: true ⇒ density='compact'.
+  const effectiveDensity: Density =
+    (density as Density | undefined) ?? (compactAlias ? 'compact' : globalDensity);
+  const scale =
+    effectiveDensity === 'comfortable' ? 1.15 : effectiveDensity === 'standard' ? 1.0 : 0.9;
   const spaceVar = `calc(${theme.spacingUnit} * ${scale})`;
 
   const containerStyle: CSSVarStyles = {
@@ -195,6 +202,7 @@ export const Surface: React.FC<SurfaceProps> = ({
     '--valet-focus-width': theme.stroke(2),
     '--valet-focus-offset': theme.stroke(2),
     '--valet-divider-stroke': theme.stroke(1),
+    '--valet-focus-ring-color': theme.colors.primary,
     '--valet-screen-width': `${width}px`,
     '--valet-screen-height': `${Math.round(height)}px`,
     ...(sx ?? {}),
@@ -206,6 +214,7 @@ export const Surface: React.FC<SurfaceProps> = ({
         ref={ref}
         {...props}
         data-valet-surface-root=''
+        data-valet-component='Surface'
         className={[presetClasses, className].filter(Boolean).join(' ')}
         style={containerStyle}
       >

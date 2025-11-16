@@ -29,26 +29,18 @@
       "name": "fullWidth",
       "type": "boolean",
       "required": false,
-      "description": "Stretch to 100% width of container when true",
-      "default": "false"
+      "description": "Stretch to 100% width of container when true"
     },
     {
       "name": "alignX",
-      "type": "'left' | 'right' | 'center' | 'centered'",
+      "type": "'left' | 'right' | 'center'",
       "required": false,
       "description": "Horizontal placement of the box when not fullWidth",
       "enumValues": [
         "left",
         "right",
-        "center",
-        "centered"
+        "center"
       ]
-    },
-    {
-      "name": "centered",
-      "type": "boolean",
-      "required": false,
-      "description": "Deprecated: old prop name retained for BC"
     },
     {
       "name": "sx",
@@ -77,9 +69,7 @@
   ],
   "domPassthrough": {
     "element": "div",
-    "omitted": [
-      "style"
-    ]
+    "omitted": []
   },
   "cssVars": [
     "--valet-box-max-h",
@@ -131,6 +121,6 @@
     "src/components/layout/Box.tsx",
     "docs/src/pages/components/layout/BoxDemo.tsx"
   ],
-  "version": "0.33.7",
+  "version": "0.34.0",
   "schemaVersion": "1.6"
 }

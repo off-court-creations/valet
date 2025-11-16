@@ -12,39 +12,88 @@
     {
       "name": "checked",
       "type": "boolean",
-      "required": false
+      "required": false,
+      "description": "Controlled checked state."
     },
     {
       "name": "defaultChecked",
       "type": "boolean",
-      "required": false
+      "required": false,
+      "description": "Default state for uncontrolled usage."
     },
     {
       "name": "onChange",
-      "type": "(checked: boolean) => void",
-      "required": false
+      "type": "(event: React.MouseEvent<HTMLButtonElement>) => void",
+      "required": false,
+      "description": "DOM click event parity (raw)."
     },
     {
-      "name": "name",
-      "type": "string",
-      "required": false
+      "name": "onValueChange",
+      "type": "OnValueChange<boolean>",
+      "required": false,
+      "description": "Canonical value change event (fires on each toggle)."
+    },
+    {
+      "name": "onValueCommit",
+      "type": "OnValueCommit<boolean>",
+      "required": false,
+      "description": "Commit event (same moment for toggles)."
     },
     {
       "name": "size",
       "type": "SwitchSize",
-      "required": false
+      "required": false,
+      "description": "Visual size; defaults to `md`."
+    },
+    {
+      "name": "name",
+      "type": "string | undefined",
+      "required": false,
+      "description": "Field identifier used for FormControl binding and forwarded to the underlying control\nwhen applicable. Components can require `name` locally if they depend on it."
+    },
+    {
+      "name": "label",
+      "type": "React.ReactNode",
+      "required": false,
+      "description": "Visual label rendered by the component or its wrapper. Accepts string or node."
+    },
+    {
+      "name": "helperText",
+      "type": "React.ReactNode",
+      "required": false,
+      "description": "Supplemental hint or validation content typically rendered under the control."
+    },
+    {
+      "name": "error",
+      "type": "boolean | undefined",
+      "required": false,
+      "description": "Marks the field invalid; components may adjust visuals and helper text color."
+    },
+    {
+      "name": "fullWidth",
+      "type": "boolean | undefined",
+      "required": false,
+      "description": "Stretches the field wrapper to occupy the full available width."
     },
     {
       "name": "sx",
-      "type": "Sx",
-      "required": false
+      "type": "import(\"/home/xbenc/occ/valet/src/types\").Sx | undefined",
+      "required": false,
+      "description": "Inline styles (with CSS var support)."
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
   "domPassthrough": {
     "element": "button",
     "omitted": [
       "onChange",
-      "style"
+      "style",
+      "name"
     ]
   },
   "cssVars": [
@@ -56,11 +105,26 @@
   "events": [
     {
       "name": "onChange",
-      "payloadType": "boolean"
+      "payloadType": "React.MouseEvent<HTMLButtonElement>"
+    },
+    {
+      "name": "onValueChange",
+      "payloadType": "OnValueChange<boolean>"
+    },
+    {
+      "name": "onValueCommit",
+      "payloadType": "OnValueCommit<boolean>"
     }
   ],
   "actions": [],
-  "slots": [],
+  "slots": [
+    {
+      "name": "label"
+    },
+    {
+      "name": "helperText"
+    }
+  ],
   "bestPractices": [
     "Use Switch for immediate on/off settings that apply instantly; for form submissions, prefer `Checkbox`.",
     "Label state, not action (e.g., 'Wi‑Fi' rather than 'Enable'). Set a stable `name` when part of a form.",
@@ -90,6 +154,6 @@
   "sourceFiles": [
     "src/components/fields/Switch.tsx"
   ],
-  "version": "0.32.0",
+  "version": "0.34.0",
   "schemaVersion": "1.6"
 }

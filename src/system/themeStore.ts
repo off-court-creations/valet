@@ -7,7 +7,7 @@ import type { Variant, FluidSize, WeightAlias } from '../types/typography';
 
 export type Breakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type ThemeMode = 'light' | 'dark';
-export type Density = 'comfortable' | 'compact' | 'tight' | 'zero';
+export type Density = 'compact' | 'standard' | 'comfortable';
 
 export interface Theme {
   colors: Record<string, string>;
@@ -307,7 +307,7 @@ export const useTheme = create<ThemeStore>((set, get) => ({
     colors: darkColors,
     colorNames: { ...darkColorNames },
   },
-  density: 'comfortable',
+  density: 'standard',
 
   setMode: (mode) =>
     set((state) => ({

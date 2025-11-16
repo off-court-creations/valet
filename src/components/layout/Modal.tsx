@@ -11,6 +11,7 @@ import { createPortal } from 'react-dom';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
+import { getOverlayRoot, useOverlay } from '../../system/overlay';
 import { inheritSurfaceFontVars } from '../../system/inheritSurfaceFontVars';
 import type { Presettable, Sx } from '../../types';
 
@@ -20,12 +21,12 @@ import type { Presettable, Sx } from '../../types';
 const Backdrop = styled('div')<{ $fade: boolean }>`
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.55);
+  background: var(--valet-backdrop-bg, rgba(0, 0, 0, 0.55));
   backdrop-filter: blur(2px);
   opacity: ${({ $fade }) => ($fade ? 0 : 1)};
   transition: opacity var(--valet-modal-duration, 200ms) var(--valet-modal-easing, ease);
-  /* Ensure backdrop covers AppBar (z-index 10000) */
-  z-index: var(--valet-modal-z-backdrop, 10001);
+  /* Shared overlay token parity */
+  z-index: var(--valet-zindex-modal-backdrop, 1390);
 
   @media (prefers-reduced-motion: reduce) {
     transition: none;
@@ -49,7 +50,7 @@ const Box = styled('div')<{
     opacity var(--valet-modal-duration, 200ms) var(--valet-modal-easing, ease),
     transform var(--valet-modal-duration, 200ms) var(--valet-modal-easing, ease);
   /* Dialog sits above backdrop and AppBar */
-  z-index: var(--valet-modal-z, 10002);
+  z-index: var(--valet-zindex-modal, 1400);
 
   max-width: ${({ $maxW, $full }) => ($full ? 'none' : $maxW || '32rem')};
   /* Use CSS var so callers can adjust viewport margin */
@@ -107,102 +108,6 @@ const Actions = styled('footer')<{ $pt: string; $px: string; $pb: string; $gap: 
 
 /*───────────────────────────────────────────────────────────*/
 /* Helpers                                                   */
-
-// Grab all focusable & tabbable descendants (robust enough for our needs)
-const FOCUSABLE = [
-  'a[href]',
-  'area[href]',
-  'button:not([disabled])',
-  'input:not([disabled]):not([type="hidden"])',
-  'select:not([disabled])',
-  'textarea:not([disabled])',
-  '[tabindex]:not([tabindex="-1"])',
-].join(',');
-
-const getFocusable = (el: HTMLElement | null): HTMLElement[] => {
-  if (!el) return [];
-  const list = Array.from(el.querySelectorAll<HTMLElement>(FOCUSABLE));
-  return list.filter((n) => {
-    if (n.hasAttribute('disabled')) return false;
-    if (n.getAttribute('aria-hidden') === 'true') return false;
-    const style = (n.ownerDocument?.defaultView || window).getComputedStyle(n);
-    if (!style) return true;
-    if (style.visibility === 'hidden' || style.display === 'none') return false;
-    return true;
-  });
-};
-
-/*───────────────────────────────────────────────────────────*/
-/* Global background lock & inert manager                    */
-
-type InertPrev = { hadInert: boolean; ariaHidden: string | null };
-const __valetModalLock = {
-  count: 0,
-  bodyOverflow: '' as string,
-  bodyPaddingRight: '' as string,
-  inertMap: new WeakMap<HTMLElement, InertPrev>(),
-};
-
-function computeScrollbarWidth(): number {
-  if (typeof window === 'undefined') return 0;
-  const docEl = document.documentElement;
-  const w = window.innerWidth - docEl.clientWidth;
-  return Math.max(0, w || 0);
-}
-
-function applyBackgroundLock(exclude: HTMLElement[]) {
-  if (typeof document === 'undefined') return;
-  // First lock: capture body styles and apply overflow + compensation
-  if (__valetModalLock.count === 0) {
-    const body = document.body;
-    __valetModalLock.bodyOverflow = body.style.overflow || '';
-    __valetModalLock.bodyPaddingRight = body.style.paddingRight || '';
-
-    const currentPad = parseFloat(getComputedStyle(body).paddingRight || '0') || 0;
-    const sbw = computeScrollbarWidth();
-    if (sbw > 0) body.style.paddingRight = `${currentPad + sbw}px`;
-    body.style.overflow = 'hidden';
-
-    // Mark all other body children inert + aria-hidden
-    const children = Array.from(body.children) as HTMLElement[];
-    for (const el of children) {
-      if (exclude.includes(el)) continue;
-      const prev: InertPrev = {
-        hadInert: el.hasAttribute('inert'),
-        ariaHidden: el.getAttribute('aria-hidden'),
-      };
-      __valetModalLock.inertMap.set(el, prev);
-      el.setAttribute('aria-hidden', 'true');
-      el.setAttribute('inert', '');
-    }
-  }
-  __valetModalLock.count += 1;
-}
-
-function releaseBackgroundLock() {
-  if (typeof document === 'undefined') return;
-  if (__valetModalLock.count === 0) return;
-  __valetModalLock.count -= 1;
-  if (__valetModalLock.count > 0) return;
-
-  const body = document.body;
-  // Restore inert/aria-hidden
-  const children = Array.from(body.children) as HTMLElement[];
-  for (const el of children) {
-    const prev = __valetModalLock.inertMap.get(el);
-    if (!prev) continue;
-    // Restore aria-hidden
-    if (prev.ariaHidden == null) el.removeAttribute('aria-hidden');
-    else el.setAttribute('aria-hidden', prev.ariaHidden);
-    // Restore inert
-    if (!prev.hadInert) el.removeAttribute('inert');
-  }
-  __valetModalLock.inertMap = new WeakMap();
-
-  // Restore body styles
-  body.style.overflow = __valetModalLock.bodyOverflow;
-  body.style.paddingRight = __valetModalLock.bodyPaddingRight;
-}
 
 /*───────────────────────────────────────────────────────────*/
 /* Public API                                                */
@@ -275,7 +180,7 @@ export const Modal: React.FC<ModalProps> = ({
   const idTitle = useId();
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const backdropRef = useRef<HTMLDivElement | null>(null);
-  const previouslyFocused = useRef<Element | null>(null);
+  // overlay handles focus capture/restore
 
   /* ----- open / close helpers ------------------------------------------ */
   const requestClose = useCallback(() => {
@@ -286,57 +191,10 @@ export const Modal: React.FC<ModalProps> = ({
   /* ----- mount / unmount side-effects ----------------------------------- */
   useLayoutEffect(() => {
     if (!open) return;
-
     // start fade-in on mount
     setFade(false);
-    previouslyFocused.current = document.activeElement;
-
-    const el = dialogRef.current;
-    if (el) {
-      // Focus first focusable or dialog itself
-      const focusable = getFocusable(el);
-      (focusable[0] || el).focus();
-    }
-
-    // Lock page scroll and mark background content inert
-    applyBackgroundLock(
-      [backdropRef.current!, dialogRef.current!].filter(Boolean) as HTMLElement[],
-    );
-
-    // Focus trap handlers
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && !disableEscapeKeyDown) {
-        e.stopPropagation();
-        requestClose();
-      }
-      if (e.key === 'Tab') {
-        const nodes = getFocusable(dialogRef.current);
-        if (nodes.length === 0) {
-          e.preventDefault();
-          return;
-        }
-        const first = nodes[0];
-        const last = nodes[nodes.length - 1];
-        const active = (document.activeElement as HTMLElement) || undefined;
-        if (e.shiftKey) {
-          if (!active || active === first) {
-            e.preventDefault();
-            last.focus();
-          }
-        } else {
-          if (!active || active === last) {
-            e.preventDefault();
-            first.focus();
-          }
-        }
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown, true);
-
     // Ensure portalled dialog inherits Surface font/typography variables
     if (dialogRef.current) inheritSurfaceFontVars(dialogRef.current);
-
     // Dev-time a11y guard: dialog/alertdialog should have an accessible name
     if (process.env.NODE_ENV !== 'production') {
       try {
@@ -356,15 +214,27 @@ export const Modal: React.FC<ModalProps> = ({
         /* no-op */
       }
     }
-
     return () => {
-      document.removeEventListener('keydown', handleKeyDown, true);
-      // Release background lock/inert
-      releaseBackgroundLock();
       setFade(true);
-      (previouslyFocused.current as HTMLElement | null)?.focus?.();
     };
   }, [open, disableEscapeKeyDown, requestClose, title, rest]);
+
+  // Shared overlay wiring: focus trap, Escape/outside, inert background & restore focus
+  useOverlay(
+    open && dialogRef.current
+      ? {
+          element: dialogRef.current,
+          anchors: [backdropRef.current!].filter(Boolean) as HTMLElement[],
+          onRequestClose: () => requestClose(),
+          disableOutsideClick: disableBackdropClick,
+          disableEscapeKeyDown,
+          trapFocus: true,
+          restoreFocusOnClose: true,
+          inertBackground: true,
+          label: 'Modal',
+        }
+      : null,
+  );
 
   /* ----- backdrop click ------------------------------------------------- */
   const handleBackdropClick = (e: React.MouseEvent) => {
@@ -386,6 +256,8 @@ export const Modal: React.FC<ModalProps> = ({
       <Box
         {...rest}
         ref={dialogRef}
+        data-valet-component='Modal'
+        data-state='open'
         role={variant === 'alert' ? 'alertdialog' : 'dialog'}
         aria-modal='true'
         aria-labelledby={title ? idTitle : undefined}
@@ -443,7 +315,7 @@ export const Modal: React.FC<ModalProps> = ({
     </>
   );
 
-  return createPortal(modalElement, document.body);
+  return createPortal(modalElement, getOverlayRoot());
 };
 
 export default Modal;

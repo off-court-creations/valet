@@ -34,7 +34,7 @@
       "type": "AvatarSize",
       "required": false,
       "description": "Size token controlling relative dimensions.",
-      "default": "'m'"
+      "default": "'md'"
     },
     {
       "name": "variant",
@@ -119,7 +119,7 @@
     {
       "id": "avatar-custom-src",
       "title": "Custom src + alt",
-      "code": "<Avatar src='https://avatars.githubusercontent.com/u/9919?s=200&v=4' alt='GitHub' size='l' />",
+      "code": "<Avatar src='https://avatars.githubusercontent.com/u/9919?s=200&v=4' alt='GitHub' size='lg' />",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {}
@@ -127,7 +127,7 @@
     {
       "id": "avatar-sizes-row",
       "title": "Sizes",
-      "code": "<Stack direction='row' gap={1}>\n  {(['xl','l','m','s','xs'] as const).map(s => (\n    <Avatar key={s} email='support@gravatar.com' size={s} />\n  ))}\n</Stack>",
+      "code": "<Stack direction='row' gap={1}>\n  {(['xl','lg','md','sm','xs'] as const).map(s => (\n    <Avatar key={s} email='support@gravatar.com' size={s} />\n  ))}\n</Stack>",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {}
@@ -135,7 +135,7 @@
     {
       "id": "avatar-outline",
       "title": "Outline variant",
-      "code": "<Avatar email='support@gravatar.com' size='l' variant='outline' />",
+      "code": "<Avatar email='support@gravatar.com' size='lg' variant='outline' />",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {}
@@ -151,7 +151,7 @@
     {
       "id": "avatar-fallback-initials",
       "title": "Offline fallback — initials",
-      "code": "<Avatar name='Ada Lovelace' preferFallback size='l' alt='Ada Lovelace' />",
+      "code": "<Avatar name='Ada Lovelace' preferFallback size='lg' alt='Ada Lovelace' />",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {}
@@ -159,7 +159,7 @@
     {
       "id": "avatar-fallback-placeholder",
       "title": "Offline fallback — placeholder",
-      "code": "<Avatar preferFallback fallback='placeholder' size='l' aria-label='User avatar' />",
+      "code": "<Avatar preferFallback fallback='placeholder' size='lg' aria-label='User avatar' />",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {}
@@ -168,6 +168,6 @@
   "sourceFiles": [
     "src/components/primitives/Avatar.tsx"
   ],
-  "version": "0.33.7",
+  "version": "0.34.0",
   "schemaVersion": "1.6"
 }

@@ -27,6 +27,18 @@
       "description": "If `true`, children wrap when they run out of space. Defaults to\n`true` for `row`, `false` for `column`."
     },
     {
+      "name": "alignX",
+      "type": "'left' | 'center' | 'right'",
+      "required": false,
+      "description": "Horizontal placement of the stack when not full width.",
+      "default": "'left'",
+      "enumValues": [
+        "left",
+        "center",
+        "right"
+      ]
+    },
+    {
       "name": "sx",
       "type": "Sx",
       "required": false,
@@ -55,6 +67,12 @@
       "type": "boolean | undefined",
       "required": false,
       "description": "Compact mode zeros gap and pad where supported."
+    },
+    {
+      "name": "density",
+      "type": "\"compact\" | \"standard\" | \"comfortable\" | undefined",
+      "required": false,
+      "description": "Density override for spacing scale; defaults from nearest Surface."
     }
   ],
   "domPassthrough": {
@@ -81,6 +99,6 @@
   "sourceFiles": [
     "src/components/layout/Stack.tsx"
   ],
-  "version": "0.33.7",
+  "version": "0.34.0",
   "schemaVersion": "1.6"
 }

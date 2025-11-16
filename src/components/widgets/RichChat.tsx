@@ -404,7 +404,7 @@ export const RichChat: React.FC<RichChatProps> = ({
     <Panel
       {...rest}
       fullWidth
-      variant='alt'
+      variant='outlined'
       /* Trim outer chrome to pull avatars/icons toward edges */
       compact={portrait}
       pad={'0 0 1rem 0'}
@@ -465,13 +465,13 @@ export const RichChat: React.FC<RichChatProps> = ({
                   {m.role !== 'user' && systemAvatar && (
                     <MeasuredAvatar
                       src={systemAvatar}
-                      size='s'
+                      size='sm'
                       variant='outline'
                     />
                   )}
                   <MeasuredBubble
-                    variant='main'
-                    background={m.role === 'user' ? theme.colors.primary : undefined}
+                    variant='filled'
+                    color={m.role === 'user' ? theme.colors.primary : undefined}
                     alignX={m.role === 'user' ? 'right' : 'left'}
                     sx={{
                       /* Readable max width and clean right/left alignment */
@@ -511,7 +511,7 @@ export const RichChat: React.FC<RichChatProps> = ({
                   {m.role === 'user' && userAvatar && (
                     <MeasuredAvatar
                       src={userAvatar}
-                      size='s'
+                      size='sm'
                       variant='outline'
                     />
                   )}

@@ -22,19 +22,19 @@
       "id": "avatar-custom-src",
       "title": "Custom src + alt",
       "lang": "tsx",
-      "code": "<Avatar src='https://avatars.githubusercontent.com/u/9919?s=200&v=4' alt='GitHub' size='l' />"
+      "code": "<Avatar src='https://avatars.githubusercontent.com/u/9919?s=200&v=4' alt='GitHub' size='lg' />"
     },
     {
       "id": "avatar-sizes-row",
       "title": "Sizes",
       "lang": "tsx",
-      "code": "<Stack direction='row' gap={1}>\n  {(['xl','l','m','s','xs'] as const).map(s => (\n    <Avatar key={s} email='support@gravatar.com' size={s} />\n  ))}\n</Stack>"
+      "code": "<Stack direction='row' gap={1}>\n  {(['xl','lg','md','sm','xs'] as const).map(s => (\n    <Avatar key={s} email='support@gravatar.com' size={s} />\n  ))}\n</Stack>"
     },
     {
       "id": "avatar-outline",
       "title": "Outline variant",
       "lang": "tsx",
-      "code": "<Avatar email='support@gravatar.com' size='l' variant='outline' />"
+      "code": "<Avatar email='support@gravatar.com' size='lg' variant='outline' />"
     },
     {
       "id": "avatar-gravatar-default",
@@ -46,13 +46,13 @@
       "id": "avatar-fallback-initials",
       "title": "Offline fallback — initials",
       "lang": "tsx",
-      "code": "<Avatar name='Ada Lovelace' preferFallback size='l' alt='Ada Lovelace' />"
+      "code": "<Avatar name='Ada Lovelace' preferFallback size='lg' alt='Ada Lovelace' />"
     },
     {
       "id": "avatar-fallback-placeholder",
       "title": "Offline fallback — placeholder",
       "lang": "tsx",
-      "code": "<Avatar preferFallback fallback='placeholder' size='l' aria-label='User avatar' />"
+      "code": "<Avatar preferFallback fallback='placeholder' size='lg' aria-label='User avatar' />"
     }
   ]
 }

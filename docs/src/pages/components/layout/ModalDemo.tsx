@@ -37,7 +37,7 @@ export default function ModalDemoPage() {
       {/* 1. Simple dialog ------------------------------------------------ */}
       <Typography variant='h3'>1. Dialog modal</Typography>
       <Button
-        variant='contained'
+        variant='filled'
         onClick={() => setDialogOpen(true)}
       >
         Open dialog
@@ -50,7 +50,7 @@ export default function ModalDemoPage() {
           <>
             <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
             <Button
-              variant='contained'
+              variant='filled'
               onClick={() => setDialogOpen(false)}
             >
               Confirm
