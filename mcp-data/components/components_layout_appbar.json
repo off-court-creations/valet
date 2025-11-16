@@ -56,6 +56,19 @@
       "required": false
     },
     {
+      "name": "fixed",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the bar is fixed to the viewport (and offsets content). Defaults to true.",
+      "default": "true"
+    },
+    {
+      "name": "portal",
+      "type": "boolean",
+      "required": false,
+      "description": "Force portal behavior. Defaults to following `fixed` (true when fixed)."
+    },
+    {
       "name": "sx",
       "type": "Sx",
       "required": false,

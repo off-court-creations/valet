@@ -108,14 +108,22 @@ export default function MainPage() {
           </Stack>
         }
         right={
-          <Tooltip title='Toggle light / dark'>
-            <IconButton
-              size='sm'
-              aria-label='Toggle theme mode'
-              icon={mode === 'dark' ? 'mdi:weather-night' : 'mdi:weather-sunny'}
-              onClick={toggleMode}
-            />
-          </Tooltip>
+          <Stack
+            direction='row'
+            sx={{ alignItems: 'center', gap: theme.spacing(2) }}
+          >
+            {/* Demonstrate text on the right side of the AppBar */}
+            <Typography variant='button'>Docs</Typography>
+            <Typography variant='button'>v{valetVersion}</Typography>
+            <Tooltip title='Toggle light / dark'>
+              <IconButton
+                size='sm'
+                aria-label='Toggle theme mode'
+                icon={mode === 'dark' ? 'mdi:weather-night' : 'mdi:weather-sunny'}
+                onClick={toggleMode}
+              />
+            </Tooltip>
+          </Stack>
         }
       />
 
