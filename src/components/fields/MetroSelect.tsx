@@ -25,6 +25,7 @@ import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { toHex, toRgb, mix } from '../../helpers/color';
 import type { FieldBaseProps, Presettable, Sx } from '../../types';
+import type { ChangeInfo, OnValueChange, OnValueCommit } from '../../system/events';
 import { styled } from '../../css/createStyled';
 import { useOptionalForm } from './FormControl';
 
@@ -58,7 +59,8 @@ export interface MetroSelectProps
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string;
   /** Disable the entire control. */
   disabled?: boolean;
-  onChange?: (v: Primitive | Primitive[]) => void;
+  onValueChange?: OnValueChange<Primitive | Primitive[]>;
+  onValueCommit?: OnValueCommit<Primitive | Primitive[]>;
   children: React.ReactNode;
   /** Inline styles (with CSS var support) */
   sx?: Sx;
@@ -182,7 +184,7 @@ export const Option: React.FC<MetroOptionProps> = ({
        */}
       <Panel
         {...rest}
-        variant='alt'
+        variant='outlined'
         compact
         onClick={() => !disabled && !allDisabled && setValue(value)}
         sx={{
@@ -247,7 +249,8 @@ export const MetroSelect: MetroSelectComponent = ({
   value: valueProp,
   defaultValue,
   gap = 0,
-  onChange,
+  onValueChange,
+  onValueCommit,
   multiple = false,
   size = 'md',
   disabled = false,
@@ -264,6 +267,19 @@ export const MetroSelect: MetroSelectComponent = ({
   const formVal =
     form && name ? (form.values[name] as Primitive | Primitive[] | undefined) : undefined;
   const controlled = formVal !== undefined || valueProp !== undefined;
+  // Controlled/uncontrolled guard (dev-only)
+  const initialCtl = React.useRef<boolean | undefined>(undefined);
+  React.useEffect(() => {
+    if (process.env.NODE_ENV === 'production') return;
+    if (initialCtl.current === undefined) initialCtl.current = controlled;
+    else if (initialCtl.current !== controlled) {
+      console.error(
+        'MetroSelect: component switched from %s to %s after mount. This is not supported.',
+        initialCtl.current ? 'controlled' : 'uncontrolled',
+        controlled ? 'controlled' : 'uncontrolled',
+      );
+    }
+  }, [controlled]);
   const [self, setSelf] = useState<Primitive | Primitive[] | null>(defaultValue ?? null);
 
   const val = controlled
@@ -273,20 +289,28 @@ export const MetroSelect: MetroSelectComponent = ({
   const setValue = useCallback(
     (v: Primitive) => {
       if (disabled) return;
+      const infoBase: ChangeInfo<Primitive | Primitive[]> = {
+        previousValue: val ?? (multiple ? [] : null),
+        phase: 'commit',
+        source: 'programmatic',
+        name,
+      } as ChangeInfo<Primitive | Primitive[]>;
       if (multiple) {
         const current = Array.isArray(val) ? val : [];
         const idx = current.findIndex((x) => String(x) === String(v));
         const next = idx === -1 ? [...current, v] : current.filter((_, i) => i !== idx);
         if (!controlled) setSelf(next);
         if (form && name) form.setField(name as keyof Record<string, unknown>, next as unknown);
-        onChange?.(next);
+        onValueChange?.(next, { ...infoBase, phase: 'input' });
+        onValueCommit?.(next, infoBase);
       } else {
         if (!controlled) setSelf(v);
         if (form && name) form.setField(name as keyof Record<string, unknown>, v as unknown);
-        onChange?.(v);
+        onValueChange?.(v, { ...infoBase, phase: 'input' });
+        onValueCommit?.(v, infoBase);
       }
     },
-    [controlled, disabled, form, multiple, name, onChange, val],
+    [controlled, disabled, form, multiple, name, onValueChange, onValueCommit, val],
   );
 
   const presetCls = p ? preset(p) : '';
@@ -428,6 +452,9 @@ export const MetroSelect: MetroSelectComponent = ({
         wrap
         compact
         gap={gap}
+        data-valet-component='MetroSelect'
+        data-disabled={disabled ? 'true' : 'false'}
+        data-state={disabled ? 'disabled' : 'enabled'}
         role='listbox'
         aria-multiselectable={multiple || undefined}
         aria-disabled={disabled || undefined}

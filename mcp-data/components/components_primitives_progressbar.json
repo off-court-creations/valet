@@ -1,0 +1,66 @@
+{
+  "name": "ProgressBar",
+  "category": "primitives",
+  "slug": "components/primitives/progressbar",
+  "summary": "ProgressBar component",
+  "status": "stable",
+  "props": [
+    {
+      "name": "value",
+      "type": "number",
+      "required": false,
+      "description": "0–100. Omit for indeterminate."
+    },
+    {
+      "name": "buffer",
+      "type": "number",
+      "required": false,
+      "description": "Secondary/buffer value for streaming."
+    },
+    {
+      "name": "height",
+      "type": "number | string | undefined",
+      "required": false,
+      "description": "Height of the bar (px, rem, etc.)."
+    },
+    {
+      "name": "color",
+      "type": "string | undefined",
+      "required": false,
+      "description": "Override primary color."
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": false,
+      "description": "Inline styles (supports CSS vars)."
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
+    }
+  ],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": [
+      "style"
+    ]
+  },
+  "cssVars": [
+    "--valet-progress-radius",
+    "--valet-text-color"
+  ],
+  "cssPresets": [],
+  "events": [],
+  "actions": [],
+  "slots": [],
+  "bestPractices": [],
+  "examples": [],
+  "sourceFiles": [
+    "src/components/primitives/Progress.tsx"
+  ],
+  "version": "0.34.0",
+  "schemaVersion": "1.6"
+}

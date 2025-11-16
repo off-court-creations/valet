@@ -105,7 +105,7 @@ export default function PresetDemoPage() {
         sx={{ padding: theme.spacing(1) }}
       >
         <Button
-          variant='contained'
+          variant='filled'
           size='lg'
           preset='ghostButton'
           onClick={() => navigate(-1)}

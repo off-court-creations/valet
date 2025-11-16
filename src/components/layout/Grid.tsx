@@ -15,11 +15,13 @@ import { resolveSpace } from '../../utils/resolveSpace';
 export interface GridProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'>,
     Presettable,
-    Pick<SpacingProps, 'gap' | 'pad' | 'compact'> {
+    Pick<SpacingProps, 'gap' | 'pad' | 'compact' | 'density'> {
   columns?: number;
   /** Auto switch to 1 column in portrait */
   adaptive?: boolean;
-  /** Compact zeros both pad and gap */
+  /** Density override; alias: `compact` maps to `density='compact'` */
+  density?: 'compact' | 'standard' | 'comfortable';
+  /** Compact zeros both pad and gap (alias for density='compact') */
   compact?: boolean;
   /**
    * Normalize child heights per row by stretching items to match
@@ -99,14 +101,16 @@ export const Grid: React.FC<GridProps> = ({
   const effectiveCols = adaptive && portrait ? 1 : columns;
 
   // Standardize default gap to 1 for consistency with Stack/Tabs
-  const g = resolveSpace(gapProp as Space, theme, compact, 1);
-  const pad = resolveSpace(padProp, theme, compact, 1);
+  const compactEffective = compact || rest.density === 'compact';
+  const g = resolveSpace(gapProp as Space, theme, compactEffective, 1);
+  const pad = resolveSpace(padProp, theme, compactEffective, 1);
 
   const presetClass = p ? preset(p) : '';
 
   return (
     <Root
       {...rest}
+      data-valet-component='Grid'
       $cols={effectiveCols}
       $gap={g}
       $pad={pad}

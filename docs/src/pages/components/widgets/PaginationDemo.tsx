@@ -60,7 +60,7 @@ export default function PaginationDemoPage() {
             max={300}
             step={1}
             value={count}
-            onChange={(n) => {
+            onValueChange={(n) => {
               setCount(n);
               setPage((p) => Math.min(n, Math.max(1, p)));
               setVisibleWindow((w) => (w > 0 ? Math.min(Math.max(1, n), w) : 0));
@@ -76,7 +76,7 @@ export default function PaginationDemoPage() {
             max={Math.max(0, count)}
             step={1}
             value={visibleWindow}
-            onChange={(n) => setVisibleWindow(n)}
+            onValueChange={(n) => setVisibleWindow(n)}
             aria-label='visibleWindow'
           />
         </Stack>
@@ -84,7 +84,7 @@ export default function PaginationDemoPage() {
           <Typography variant='subtitle'>autoFollowActive</Typography>
           <Switch
             checked={autoFollowActive}
-            onChange={setAutoFollowActive}
+            onValueChange={(v) => setAutoFollowActive(!!v)}
           />
         </Stack>
       </Stack>

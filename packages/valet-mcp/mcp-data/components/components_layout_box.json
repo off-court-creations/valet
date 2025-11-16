@@ -22,42 +22,54 @@
     {
       "name": "centerContent",
       "type": "boolean",
-      "required": false
+      "required": false,
+      "description": "Center inner content (layout inside the box)"
     },
     {
       "name": "fullWidth",
       "type": "boolean",
       "required": false,
-      "default": "false"
+      "description": "Stretch to 100% width of container when true"
     },
     {
       "name": "alignX",
-      "type": "'left' | 'right' | 'center' | 'centered'",
+      "type": "'left' | 'right' | 'center'",
       "required": false,
+      "description": "Horizontal placement of the box when not fullWidth",
       "enumValues": [
         "left",
         "right",
-        "center",
-        "centered"
+        "center"
       ]
-    },
-    {
-      "name": "centered",
-      "type": "boolean",
-      "required": false,
-      "deprecated": true
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": false
+      "required": false,
+      "description": "Inline styles (with CSS var support)"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
+    },
+    {
+      "name": "pad",
+      "type": "import(\"/home/xbenc/occ/valet/src/types\").Space | undefined",
+      "required": false,
+      "description": "Container padding as units or CSS length."
+    },
+    {
+      "name": "compact",
+      "type": "boolean | undefined",
+      "required": false,
+      "description": "Compact mode zeros gap and pad where supported."
     }
   ],
   "domPassthrough": {
     "element": "div",
-    "omitted": [
-      "style"
-    ]
+    "omitted": []
   },
   "cssVars": [
     "--valet-box-max-h",
@@ -109,6 +121,6 @@
     "src/components/layout/Box.tsx",
     "docs/src/pages/components/layout/BoxDemo.tsx"
   ],
-  "version": "0.32.0",
+  "version": "0.34.0",
   "schemaVersion": "1.6"
 }

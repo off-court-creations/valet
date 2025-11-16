@@ -197,7 +197,7 @@ function GridPlayground() {
             max={8}
             step={1}
             value={columns}
-            onChange={(n) => setColumns(Math.round(n))}
+            onValueChange={(n) => setColumns(Math.round(n))}
             aria-label='Columns'
           />
         </Stack>
@@ -209,7 +209,7 @@ function GridPlayground() {
             max={4}
             step={0.5}
             value={gap}
-            onChange={setGap}
+            onValueChange={(n) => setGap(n)}
             aria-label='Gap units'
           />
         </Stack>
@@ -221,7 +221,7 @@ function GridPlayground() {
             max={4}
             step={0.5}
             value={pad}
-            onChange={setPad}
+            onValueChange={(n) => setPad(n)}
             aria-label='Pad units'
           />
         </Stack>
@@ -234,7 +234,7 @@ function GridPlayground() {
           <Typography variant='subtitle'>adaptive</Typography>
           <Switch
             checked={adaptive}
-            onChange={setAdaptive}
+            onValueChange={(v) => setAdaptive(!!v)}
             aria-label='Toggle adaptive'
           />
         </Stack>

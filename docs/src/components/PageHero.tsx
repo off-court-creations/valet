@@ -31,7 +31,7 @@ export default function PageHero({
       <Panel
         fullWidth
         pad={pad}
-        background={gradient}
+        color={gradient}
         sx={{ borderRadius: theme.radius(2), overflow: 'hidden', position: 'relative' }}
       >
         <Stack

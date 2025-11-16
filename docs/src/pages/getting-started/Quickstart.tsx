@@ -225,7 +225,7 @@ npm run typecheck`; // only typecheck exists in TS/hybrid; still mention
         </Panel>
 
         <Panel
-          variant='alt'
+          variant='outlined'
           fullWidth
         >
           <Stack gap={1.5}>

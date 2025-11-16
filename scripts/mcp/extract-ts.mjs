@@ -104,6 +104,14 @@ function inferDomPassthroughFromTypeText(text) {
     // React.ComponentProps<'div'>
     const mComp = t.match(/React\.ComponentProps<'([^']+)'>/);
     if (mComp) return { element: mComp[1], omitted: extractOmittedKeys(t) };
+    // React.HTMLAttributes<HTMLElement> (generic, non-specific) → assume 'div'
+    const mGeneric = t.match(/React\.HTMLAttributes\s*<\s*([^>]+)\s*>/);
+    if (mGeneric) {
+      const gen = mGeneric[1].trim();
+      if (/^HTMLElement$/.test(gen)) return { element: 'div', omitted: extractOmittedKeys(t) };
+      const mGen = gen.match(/HTML([A-Za-z]+)Element/);
+      if (mGen) return { element: mapHtmlElementToTag(mGen[1]), omitted: extractOmittedKeys(t) };
+    }
     // React.<X>HTMLAttributes<...>
     const mAttr = t.match(/React\.([A-Za-z]+)HTMLAttributes\s*<\s*([^>]+)\s*>/);
     if (mAttr) {
@@ -171,21 +179,45 @@ export function extractFromTs(projectRoot) {
     .filter((sf) => sf.getFilePath().includes(`${path.sep}src${path.sep}components${path.sep}`) && sf.getFilePath().endsWith('.tsx'));
   for (const sf of files) {
     const exports = sf.getExportedDeclarations();
-    // Find default export component name if any
-    let componentName = undefined;
+    // Collect all exported component names (supports multiple per file)
+    const componentNames = [];
     for (const [name, decs] of exports) {
       for (const d of decs) {
-        if (d.getKind() === SyntaxKind.FunctionDeclaration || d.getKind() === SyntaxKind.VariableDeclaration) {
-          // Heuristic: exported const X: React.FC<XProps> = (...)
-          if (/^[A-Z]/.test(name)) componentName = name;
-        }
-        if (d.getKind() === SyntaxKind.ClassDeclaration && /^[A-Z]/.test(name)) {
-          componentName = name;
+        const isComponentExport =
+          d.getKind() === SyntaxKind.FunctionDeclaration ||
+          d.getKind() === SyntaxKind.VariableDeclaration ||
+          d.getKind() === SyntaxKind.ClassDeclaration;
+        if (isComponentExport && /^[A-Z]/.test(name)) {
+          if (!componentNames.includes(name)) componentNames.push(name);
         }
       }
     }
 
-    if (!componentName) continue;
+    // Heuristic: add well-known nested subcomponents when present in the file.
+    // Tabs.Tab / Tabs.Panel are not top-level exports; include them for MCP parity.
+    try {
+      if (componentNames.includes('Tabs')) {
+        const hasTabProps = sf.getInterface('TabProps');
+        const hasPanelProps = sf.getInterface('TabPanelProps');
+        if (hasTabProps && !componentNames.includes('Tabs.Tab')) componentNames.push('Tabs.Tab');
+        if (hasPanelProps && !componentNames.includes('Tabs.Panel')) componentNames.push('Tabs.Panel');
+      }
+    } catch {}
+
+    // Generic nested components via displayName convention, e.g. Option.displayName = 'Select.Option'
+    try {
+      const text = sf.getFullText();
+      const re = /\.displayName\s*=\s*'([^']+\.[^']+)'/g;
+      let m;
+      while ((m = re.exec(text))) {
+        const nestedName = m[1];
+        if (/^[A-Z]/.test(nestedName) && !componentNames.includes(nestedName)) {
+          componentNames.push(nestedName);
+        }
+      }
+    } catch {}
+
+    if (!componentNames.length) continue;
 
     // Guard: ensure file contains JSX – exclude utility/contexts/constants
     const hasJsx =
@@ -198,20 +230,47 @@ export function extractFromTs(projectRoot) {
     const category = guessCategoryFromPath(filePath);
     const cssVars = collectCssVarsFromFile(sf);
 
-    // Resolve Props from interface or type alias
-    const propsName = `${componentName}Props`;
+    for (const componentName of componentNames) {
+      // Resolve Props from interface or type alias
+      // Support common patterns: <Name>Props, <Name>OwnProps
+      let propsNamePrimary = `${componentName}Props`;
+      const propsNameFallback = `${componentName}OwnProps`;
 
-    /** @type {import('./schema').ValetProp[]} */
-    const props = [];
-    const propSet = new Set();
+      // Map nested child names to their conventional props names within the file
+      if (componentName.includes('.')) {
+        const parts = componentName.split('.');
+        const parent = parts[0];
+        const last = parts[1];
+        if (last === 'Tab') propsNamePrimary = 'TabProps';
+        else if (last === 'Panel') propsNamePrimary = 'TabPanelProps';
+        else {
+          // Try to resolve by scanning for interfaces ending with <Child>Props or <Parent><Child>Props
+          try {
+            const allIfaces = sf.getInterfaces().map((i) => i.getName());
+            const candidates = [
+              `${parent}${last}Props`,
+              `${last}Props`,
+              `${parent}${last}OwnProps`,
+              `${last}OwnProps`,
+            ];
+            const found = allIfaces.find((n) => candidates.includes(n)) ||
+              allIfaces.find((n) => n?.endsWith(`${last}Props`));
+            if (found) propsNamePrimary = found;
+          } catch {}
+        }
+      }
 
-    let domPassthrough = undefined;
-    /** @type {Array<{ name: string; payloadType?: string }>} */
-    const events = [];
-    /** @type {Array<{ name: string; signature?: string }>} */
-    const actions = [];
-    /** @type {Array<{ name: string }>} */
-    const slots = [];
+      /** @type {import('./schema').ValetProp[]} */
+      const props = [];
+      const propSet = new Set();
+
+      let domPassthrough = undefined;
+      /** @type {Array<{ name: string; payloadType?: string }>} */
+      const events = [];
+      /** @type {Array<{ name: string; signature?: string }>} */
+      const actions = [];
+      /** @type {Array<{ name: string }>} */
+      const slots = [];
 
     // Helper: push a prop if not seen; allow attaching description/deprecated/default via `extra`
     function pushProp(name, typeText, required, extra = {}) {
@@ -234,14 +293,36 @@ export function extractFromTs(projectRoot) {
     }
 
     // 1) Prefer interface
-    let iface = sf.getInterface(propsName);
+    // Attempt to resolve interface by conventional names, or by reading the variable's FC generic
+    let iface = sf.getInterface(propsNamePrimary) || sf.getInterface(propsNameFallback);
+    if (!iface) {
+      try {
+        const decls = exports.get(componentName) || [];
+        for (const d of decls) {
+          if (d.getKind() !== SyntaxKind.VariableDeclaration) continue;
+          const typeNode = d.getTypeNode?.();
+          const tText = typeNode?.getText?.() || '';
+          const m = tText.match(/React\.(FC|FunctionComponent)\s*<\s*([^>]+)\s*>/);
+          if (m && m[2]) {
+            const maybeName = m[2].trim().replace(/\s+/g, ' ');
+            if (/Props\b/.test(maybeName)) {
+              iface = sf.getInterface(maybeName) || project.getSourceFiles().map((f) => f.getInterface(maybeName)).find(Boolean);
+              if (iface) break;
+            }
+          }
+        }
+      } catch {}
+    }
     if (!iface) {
       // Search whole project just in case props are declared elsewhere
       for (const osf of project.getSourceFiles()) {
-        const cand = osf.getInterface(propsName);
+        const cand = osf.getInterface(propsNamePrimary) || osf.getInterface(propsNameFallback);
         if (cand) { iface = cand; break; }
       }
     }
+
+    // Note: Do not greedily pick unrelated "*Props" interfaces in the file.
+    // We only use the exact `<Name>Props` interface (if present) or fall back to the type alias path below.
 
     if (iface) {
       // DOM passthrough from heritage and compute omitted keys (e.g., Omit<..., 'style'>)
@@ -250,6 +331,27 @@ export function extractFromTs(projectRoot) {
         const t = h.getText();
         const inferred = inferDomPassthroughFromTypeText(t);
         if (inferred && !domPassthrough) domPassthrough = inferred;
+        // Heuristic: If this is Omit<SomeProps, ...>, chase SomeProps' extends
+        try {
+          const m = t.match(/Omit\s*<\s*([A-Za-z0-9_]+)\s*,/);
+          if (!domPassthrough && m && m[1]) {
+            const targetName = m[1];
+            let target = sf.getInterface(targetName);
+            if (!target) {
+              for (const osf of project.getSourceFiles()) {
+                target = osf.getInterface(targetName);
+                if (target) break;
+              }
+            }
+            if (target) {
+              for (const inh of target.getExtends()) {
+                const ti = inh.getText();
+                const deep = inferDomPassthroughFromTypeText(ti);
+                if (deep && !domPassthrough) domPassthrough = deep;
+              }
+            }
+          }
+        } catch {}
         try {
           for (const k of extractOmittedKeys(t)) omittedFromExtends.add(k);
         } catch {}
@@ -358,10 +460,10 @@ export function extractFromTs(projectRoot) {
       }
     } else {
       // 2) Try type alias resolution, including unions/intersections
-      let aliasDecl = sf.getTypeAlias(propsName);
+      let aliasDecl = sf.getTypeAlias(propsNamePrimary) || sf.getTypeAlias(propsNameFallback);
       if (!aliasDecl) {
         for (const osf of project.getSourceFiles()) {
-          const cand = osf.getTypeAlias(propsName);
+          const cand = osf.getTypeAlias(propsNamePrimary) || osf.getTypeAlias(propsNameFallback);
           if (cand) { aliasDecl = cand; break; }
         }
       }
@@ -549,6 +651,99 @@ export function extractFromTs(projectRoot) {
       // ignore
     }
 
+    // Fallback: Props defined as a type alias (including unions/intersections)
+    if (!iface) {
+      let alias = sf.getTypeAlias(propsNamePrimary) || sf.getTypeAlias(propsNameFallback);
+      if (!alias) {
+        // Search project-wide for the alias if not colocated
+        for (const osf of project.getSourceFiles()) {
+          const cand = osf.getTypeAlias?.(propsNamePrimary) || osf.getTypeAlias?.(propsNameFallback);
+          if (cand) {
+            alias = cand;
+            break;
+          }
+        }
+      }
+      if (alias) {
+        // Infer DOM passthrough from the type text when possible
+        try {
+          const tn = alias.getTypeNode?.();
+          const txt = tn ? tn.getText() : alias.getText?.();
+          const inferred = txt ? inferDomPassthroughFromTypeText(txt) : null;
+          if (inferred && !domPassthrough) domPassthrough = inferred;
+        } catch {}
+
+        const aliasType = alias.getType();
+
+        /**
+         * Collect properties from a ts-morph Type while filtering out DOM/@types/react noise.
+         * Uses symbol declarations to decide if a property originates from userland (src/**).
+         */
+        function collectFromType(t) {
+          try {
+            const syms = t.getProperties();
+            for (const sym of syms) {
+              const name = sym.getName();
+              if (!name || propSet.has(name)) continue;
+              const decls = sym.getDeclarations?.() || [];
+              const isUserland = decls.some((d) => {
+                try {
+                  const fp = d.getSourceFile().getFilePath();
+                  return fp.includes(`${path.sep}src${path.sep}`);
+                } catch {
+                  return false;
+                }
+              });
+              if (!isUserland) continue; // skip DOM attribute spillover
+
+              // Determine requiredness using symbol optional where available.
+              // Default to optional for alias/union-based collection to avoid over-reporting required props.
+              let required = false;
+              try {
+                if (typeof sym.isOptional === 'function') {
+                  const opt = sym.isOptional();
+                  required = !opt;
+                }
+              } catch {}
+
+              // Derive type text anchored at the alias node for best context
+              let typeText = 'any';
+              try {
+                const anchor = alias.getTypeNode?.() || alias.getNameNode?.();
+                const tAt = anchor ? sym.getTypeAtLocation(anchor) : sym.getDeclaredType?.();
+                typeText = (tAt && tAt.getText()) || typeText;
+              } catch {}
+
+              pushProp(name, typeText, required);
+            }
+          } catch {
+            // graceful degradation
+          }
+        }
+
+        if (aliasType.isUnion?.()) {
+          for (const ut of aliasType.getUnionTypes()) collectFromType(ut);
+        } else {
+          collectFromType(aliasType);
+        }
+
+        // Heuristic: parse alias type text to ensure event props are captured for unions/aliases
+        try {
+          const tn = alias.getTypeNode?.();
+          const raw = (tn ? tn.getText() : alias.getText?.()) || '';
+          const re = /(on[A-Z][A-Za-z0-9_]*)\s*\??\s*:\s*([^;\n|&]+)/g;
+          let m;
+          while ((m = re.exec(raw))) {
+            const name = (m[1] || '').trim();
+            const typeText = (m[2] || 'any').trim();
+            if (!name || propSet.has(name)) continue;
+            // Treat event props as optional by default in union aliases
+            pushProp(name, typeText, false);
+          }
+        } catch {}
+      }
+    }
+
     // Collect CSS preset names referenced via preset('name')
     const cssPresets = (() => {
       try {
@@ -578,6 +773,32 @@ export function extractFromTs(projectRoot) {
       if (desc) summary = desc.trim();
     }
 
+    // If no domPassthrough yet, attempt to infer from polymorphic helper usage
+    try {
+      if (!domPassthrough) {
+        const decls = exports.get(componentName) || [];
+        for (const d of decls) {
+          if (d.getKind() !== SyntaxKind.VariableDeclaration) continue;
+          const init = d.getInitializer?.();
+          const txt = init?.getText?.() || '';
+          const m = txt.match(/createPolymorphicComponent\s*<\s*'([^']+)'\s*,/);
+          if (m && m[1]) {
+            domPassthrough = { element: m[1], omitted: [] };
+            break;
+          }
+        }
+      }
+    } catch {}
+
+    // If still no domPassthrough, but HTML-ish props are present, provide a sensible default.
+    try {
+      if (!domPassthrough) {
+        const htmlish = new Set(['id', 'className', 'style', 'role', 'tabIndex', 'title']);
+        const hasHtmlish = (props || []).some((p) => htmlish.has(String(p.name)));
+        if (hasHtmlish) domPassthrough = { element: 'div', omitted: [] };
+      }
+    } catch {}
+
     result[componentName] = {
       name: componentName,
       category,
@@ -592,6 +813,7 @@ export function extractFromTs(projectRoot) {
       slots,
       sourceFiles: [path.relative(projectRoot, filePath)],
     };
+    }
   }
 
   return result;

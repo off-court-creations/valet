@@ -65,7 +65,7 @@ const md = `
 
 function HeroSlot() {
   return (
-    <Panel variant='alt'>
+    <Panel variant='outlined'>
       <Stack>
         <Typography
           variant='h4'
@@ -148,7 +148,7 @@ export default function ComponentQCLab() {
             </Tabs>
           </Panel>
 
-          <Panel variant='alt'>
+          <Panel variant='outlined'>
             <Typography
               variant='h5'
               bold
@@ -227,7 +227,7 @@ export default function ComponentQCLab() {
             />
           </Panel>
 
-          <Panel variant='alt'>
+          <Panel variant='outlined'>
             <Typography
               variant='h5'
               bold

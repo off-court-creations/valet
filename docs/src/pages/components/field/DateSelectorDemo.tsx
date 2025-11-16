@@ -10,6 +10,7 @@ import DateSelectorMeta from '../../../../../src/components/fields/DateSelector.
 export default function DateSelectorDemoPage() {
   const { toggleMode } = useTheme();
   const [selected, setSelected] = useState('2025-01-01');
+  const [selCommit, setSelCommit] = useState('2025-01-01');
   const [limited, setLimited] = useState('2025-07-15');
   const [rangeDates, setRangeDates] = useState<[string, string]>(['2025-07-01', '2025-07-10']);
 
@@ -20,8 +21,11 @@ export default function DateSelectorDemoPage() {
       <Typography variant='h3'>1. Basic</Typography>
       <DateSelector
         value={selected}
-        onChange={setSelected}
+        onValueChange={(v) => setSelected(v as string)}
+        onValueCommit={(v) => setSelCommit(v as string)}
       />
+      <Typography>live: {selected}</Typography>
+      <Typography>commit: {selCommit}</Typography>
 
       <Typography variant='h3'>2. Custom width</Typography>
       <Grid
@@ -30,14 +34,16 @@ export default function DateSelectorDemoPage() {
       >
         <DateSelector
           value={selected}
-          onChange={setSelected}
+          onValueChange={(v) => setSelected(v as string)}
+          onValueCommit={(v) => setSelCommit(v as string)}
         />
       </Grid>
 
       <Typography variant='h3'>3. Limited range</Typography>
       <DateSelector
         value={limited}
-        onChange={setLimited}
+        onValueChange={(v) => setLimited(v as string)}
+        onValueCommit={(v) => setLimited(v as string)}
         minDate='2025-06-01'
         maxDate='2025-09-15'
       />
@@ -45,30 +51,30 @@ export default function DateSelectorDemoPage() {
       <Typography variant='h3'>4. Range mode</Typography>
       <DateSelector
         range
-        value={rangeDates[0]}
-        endValue={rangeDates[1]}
-        onRangeChange={(s, e) => setRangeDates([s, e])}
+        value={rangeDates as [string, string]}
+        onValueChange={(v) => setRangeDates(v as [string, string])}
+        onValueCommit={(v) => setRangeDates(v as [string, string])}
       />
 
-      <Typography variant='h3'>5. Compact controls</Typography>
+      <Typography variant='h3'>5. Density</Typography>
       <Stack
         direction='row'
         gap={1}
       >
         <Stack>
-          <Typography variant='subtitle'>Force compact</Typography>
+          <Typography variant='subtitle'>Compact</Typography>
           <DateSelector
-            compactMode='on'
+            density='compact'
             value={selected}
-            onChange={setSelected}
+            onValueChange={(v) => setSelected(v as string)}
           />
         </Stack>
         <Stack>
-          <Typography variant='subtitle'>Force non-compact</Typography>
+          <Typography variant='subtitle'>Standard</Typography>
           <DateSelector
-            compactMode='off'
+            density='standard'
             value={selected}
-            onChange={setSelected}
+            onValueChange={(v) => setSelected(v as string)}
           />
         </Stack>
       </Stack>

@@ -86,7 +86,7 @@ export default function TypographyDemoPage() {
           </Panel>
           <Panel
             compact
-            background={theme.colors['backgroundAlt']}
+            color={theme.colors['backgroundAlt']}
           >
             <Typography variant='h4'>Init via code</Typography>
             <CodeBlock
@@ -111,7 +111,7 @@ export default function TypographyDemoPage() {
       <Typography variant='h3'>Styling props</Typography>
       <Panel
         fullWidth
-        background={theme.colors['backgroundAlt']}
+        color={theme.colors['backgroundAlt']}
         sx={{ borderRadius: theme.radius(2) }}
       >
         <Typography variant='body'>(regular body text)</Typography>
@@ -228,7 +228,7 @@ export default function TypographyDemoPage() {
           </Panel>
           <Panel
             compact
-            background={theme.colors['tertiary']}
+            color={theme.colors['tertiary']}
           >
             <Typography variant='h4'>Tips</Typography>
             <Typography>• Prefer autoSize + scale for rhythm.</Typography>
@@ -311,7 +311,7 @@ export default function TypographyDemoPage() {
           </Panel>
           <Panel
             compact
-            background={theme.colors['tertiary']}
+            color={theme.colors['tertiary']}
           >
             <Typography variant='h4'>Why use family?</Typography>
             <Typography>• Single source of truth for fonts.</Typography>
@@ -389,7 +389,7 @@ export default function TypographyDemoPage() {
           </Panel>
           <Panel
             compact
-            background={theme.colors['tertiary']}
+            color={theme.colors['tertiary']}
           >
             <Typography variant='h4'>Tips</Typography>
             <Typography>• Keep weight steps limited for rhythm.</Typography>
@@ -475,7 +475,7 @@ export default function TypographyDemoPage() {
         >
           <Panel
             compact
-            background={theme.colors['tertiary']}
+            color={theme.colors['tertiary']}
           >
             <Typography variant='h4'>Why fluid?</Typography>
             <Typography>
@@ -538,7 +538,7 @@ setTheme({
           <Select
             placeholder='variant'
             value={variant}
-            onChange={(v) => setVariant(v as typeof variant)}
+            onValueChange={(v) => setVariant(v as typeof variant)}
             sx={{ width: 180 }}
           >
             <Select.Option value='body'>body</Select.Option>
@@ -560,7 +560,7 @@ setTheme({
             max={1.2}
             step={0.05}
             value={scale}
-            onChange={setScale}
+            onValueChange={(n) => setScale(n)}
             aria-label='Scale'
           />
         </Stack>
@@ -572,7 +572,7 @@ setTheme({
           <Typography variant='subtitle'>autoSize</Typography>
           <Switch
             checked={autoSize}
-            onChange={setAutoSize}
+            onValueChange={(v) => setAutoSize(!!v)}
             aria-label='autoSize'
           />
         </Stack>
@@ -584,7 +584,7 @@ setTheme({
           <Typography variant='subtitle'>bold</Typography>
           <Switch
             checked={bold}
-            onChange={setBold}
+            onValueChange={(v) => setBold(!!v)}
             aria-label='bold'
           />
         </Stack>
@@ -596,7 +596,7 @@ setTheme({
           <Typography variant='subtitle'>italic</Typography>
           <Switch
             checked={italic}
-            onChange={setItalic}
+            onValueChange={(v) => setItalic(!!v)}
             aria-label='italic'
           />
         </Stack>
@@ -608,7 +608,7 @@ setTheme({
           <Typography variant='subtitle'>centered</Typography>
           <Switch
             checked={centered}
-            onChange={setCentered}
+            onValueChange={(v) => setCentered(!!v)}
             aria-label='centered'
           />
         </Stack>

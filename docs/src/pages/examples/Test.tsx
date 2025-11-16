@@ -45,7 +45,7 @@ export default function TestPage() {
         <RadioGroup
           name='shipping'
           value={method}
-          onChange={setMethod}
+          onValueChange={(v) => setMethod(v as string)}
           row
           size='lg'
         >

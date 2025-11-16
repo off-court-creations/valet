@@ -9,19 +9,20 @@ import type { Presettable, Sx } from '../../types';
 import { useTheme } from '../../system/themeStore';
 import type { Theme } from '../../system/themeStore';
 import { Icon } from '../primitives/Icon';
+import { toRgb, mix, toHex } from '../../helpers/color';
 import { Typography } from '../primitives/Typography';
 
-export type ChipSize = 's' | 'm' | 'l';
-export type ChipVariant = 'filled' | 'outlined';
-export type ChipColor =
+export type ChipSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+export type ChipVariant = 'filled' | 'outlined' | 'plain';
+type Intent =
   | 'default'
   | 'primary'
   | 'secondary'
-  | 'tertiary'
-  | 'error'
   | 'success'
   | 'warning'
-  | 'info';
+  | 'error'
+  | 'info'
+  | (string & {});
 
 export interface ChipProps
   extends Presettable,
@@ -32,7 +33,10 @@ export interface ChipProps
   label: React.ReactNode;
   size?: ChipSize;
   variant?: ChipVariant;
-  color?: ChipColor;
+  /** Semantic color intent mapping to theme tokens. */
+  intent?: Intent;
+  /** Explicit color override (theme token or CSS color). */
+  color?: string;
   icon?: string; // iconify name for leading icon
   avatar?: React.ReactNode; // custom leading element
   onDelete?: (e: React.MouseEvent<HTMLButtonElement>) => void;
@@ -44,9 +48,11 @@ const sizeMap: Record<
   ChipSize,
   { h: string; padX: string; gap: string; fz: string; icon: number }
 > = {
-  s: { h: '1.5rem', padX: '0.5rem', gap: '0.25rem', fz: '0.8125rem', icon: 14 },
-  m: { h: '2rem', padX: '0.75rem', gap: '0.375rem', fz: '0.9rem', icon: 16 },
-  l: { h: '2.5rem', padX: '0.875rem', gap: '0.5rem', fz: '1rem', icon: 18 },
+  xs: { h: '1.25rem', padX: '0.375rem', gap: '0.25rem', fz: '0.75rem', icon: 12 },
+  sm: { h: '1.5rem', padX: '0.5rem', gap: '0.25rem', fz: '0.8125rem', icon: 14 },
+  md: { h: '2rem', padX: '0.75rem', gap: '0.375rem', fz: '0.9rem', icon: 16 },
+  lg: { h: '2.5rem', padX: '0.875rem', gap: '0.5rem', fz: '1rem', icon: 18 },
+  xl: { h: '3rem', padX: '1rem', gap: '0.5rem', fz: '1.125rem', icon: 20 },
 };
 
 const Root = styled('div')<{
@@ -81,7 +87,9 @@ const Root = styled('div')<{
   ${({ $variant, $bg, $fg, $bd }) =>
     $variant === 'filled'
       ? `background: ${$bg}; color: ${$fg};`
-      : `background: transparent; color: ${$fg}; box-shadow: inset 0 0 0 1px ${$bd};`}
+      : $variant === 'outlined'
+        ? `background: transparent; color: ${$bg}; box-shadow: inset 0 0 0 1px ${$bd};`
+        : `background: transparent; color: ${$bg};`}
   opacity: ${({ $disabled }) => ($disabled ? 0.6 : 1)};
   &:focus-visible {
     outline: 2px solid var(--valet-focus-ring, currentColor);
@@ -117,46 +125,33 @@ const DeleteBtn = styled('button')<{ $fz: number }>`
   }
 `;
 
-function resolveColors(theme: Theme, color?: ChipColor) {
-  const c = color || 'default';
-  const map: Record<ChipColor, { bg: string; fg: string; bd: string }> = {
-    default: { bg: theme.colors.backgroundAlt, fg: theme.colors.text, bd: theme.colors.divider },
-    primary: { bg: theme.colors.primary, fg: theme.colors.primaryText, bd: theme.colors.primary },
-    secondary: {
-      bg: theme.colors.secondary,
-      fg: theme.colors.secondaryText,
-      bd: theme.colors.secondary,
-    },
-    tertiary: {
-      bg: theme.colors.tertiary,
-      fg: theme.colors.tertiaryText,
-      bd: theme.colors.tertiary,
-    },
-    error: { bg: theme.colors.error, fg: theme.colors.errorText, bd: theme.colors.error },
-    success: {
-      bg: theme.colors.success || theme.colors.primary,
-      fg: theme.colors.primaryText,
-      bd: theme.colors.success || theme.colors.primary,
-    },
-    warning: {
-      bg: theme.colors.warning || theme.colors.secondary,
-      fg: theme.colors.secondaryText,
-      bd: theme.colors.warning || theme.colors.secondary,
-    },
-    info: {
-      bg: theme.colors.info || theme.colors.tertiary,
-      fg: theme.colors.tertiaryText,
-      bd: theme.colors.info || theme.colors.tertiary,
-    },
-  };
-  return map[c];
+function resolveColors(theme: Theme, intent?: Intent, override?: string) {
+  const colors = theme.colors as Record<string, string>;
+  const token = override
+    ? colors[override] || override
+    : intent
+      ? colors[String(intent)]
+      : undefined;
+  const bg = token ?? theme.colors.backgroundAlt;
+  const equals = (a?: string, b?: string) => (a || '').toUpperCase() === (b || '').toUpperCase();
+  const fg = equals(bg, theme.colors.primary)
+    ? theme.colors.primaryText
+    : equals(bg, theme.colors.secondary)
+      ? theme.colors.secondaryText
+      : equals(bg, theme.colors.tertiary)
+        ? theme.colors.tertiaryText
+        : equals(bg, theme.colors.error)
+          ? theme.colors.errorText
+          : theme.colors.text;
+  return { bg, fg, bd: bg };
 }
 
 export const Chip: React.FC<ChipProps> = ({
   label,
-  size = 'm',
+  size = 'md',
   variant = 'filled',
-  color = 'default',
+  intent,
+  color,
   icon,
   avatar,
   onDelete,
@@ -168,9 +163,15 @@ export const Chip: React.FC<ChipProps> = ({
 }) => {
   const { theme } = useTheme();
   const s = sizeMap[size];
-  const { bg, fg, bd } = resolveColors(theme, color);
+  const { bg, fg, bd } = resolveColors(theme, intent, color);
   const presetCls = p ? preset(p) : '';
-  const sizeScaleMap: Record<ChipSize, number> = { s: 0.9, m: 1, l: 1.1 };
+  const sizeScaleMap: Record<ChipSize, number> = {
+    xs: 0.85,
+    sm: 0.9,
+    md: 1,
+    lg: 1.1,
+    xl: 1.2,
+  };
   // Chips are static descriptors; strip any attempted interactivity props so the DOM stays inert.
   const domProps = { ...rest } as Record<string, unknown>;
 
@@ -202,7 +203,20 @@ export const Chip: React.FC<ChipProps> = ({
       $padX={s.padX}
       $gap={s.gap}
       $disabled={disabled}
-      style={sx}
+      style={
+        {
+          '--valet-intent-bg': bg,
+          '--valet-intent-fg': fg,
+          '--valet-intent-border': bd,
+          '--valet-intent-focus': theme.colors.primary,
+          '--valet-intent-bg-hover':
+            variant === 'filled' ? toHex(mix(toRgb(bg), toRgb(fg), 0.12)) : 'transparent',
+          '--valet-intent-bg-active':
+            variant === 'filled' ? toHex(mix(toRgb(bg), toRgb(fg), 0.2)) : 'transparent',
+          '--valet-intent-fg-disabled': toHex(mix(toRgb(fg), toRgb(theme.colors.background), 0.5)),
+          ...(sx as object),
+        } as React.CSSProperties
+      }
       className={[presetCls, className].filter(Boolean).join(' ')}
       aria-disabled={disabled || undefined}
     >

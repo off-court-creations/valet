@@ -27,6 +27,12 @@
       "type": "import('../../types').Sx",
       "required": false,
       "description": "Inline styles (with CSS var support)"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
   "domPassthrough": {
@@ -132,6 +138,6 @@
   "sourceFiles": [
     "src/components/widgets/Markdown.tsx"
   ],
-  "version": "0.33.7",
+  "version": "0.34.0",
   "schemaVersion": "1.6"
 }

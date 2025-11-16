@@ -1,0 +1,72 @@
+{
+  "name": "MetroSelect.Option",
+  "category": "fields",
+  "slug": "components/fields/metroselect.option",
+  "summary": "MetroSelect.Option component",
+  "status": "stable",
+  "props": [
+    {
+      "name": "value",
+      "type": "Primitive",
+      "required": true
+    },
+    {
+      "name": "icon",
+      "type": "string | React.ReactElement",
+      "required": true
+    },
+    {
+      "name": "label",
+      "type": "React.ReactNode",
+      "required": true
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "required": false
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": false,
+      "description": "Inline styles (with CSS var support)"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
+    }
+  ],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": [
+      "style"
+    ]
+  },
+  "cssVars": [
+    "--valet-text-color",
+    "--valet-metro-tile-w",
+    "--valet-metro-tile-h",
+    "--valet-metro-icon-size",
+    "--valet-metro-font-size"
+  ],
+  "cssPresets": [],
+  "events": [],
+  "actions": [],
+  "slots": [
+    {
+      "name": "icon"
+    },
+    {
+      "name": "label"
+    }
+  ],
+  "bestPractices": [],
+  "examples": [],
+  "sourceFiles": [
+    "src/components/fields/MetroSelect.tsx"
+  ],
+  "version": "0.34.0",
+  "schemaVersion": "1.6"
+}

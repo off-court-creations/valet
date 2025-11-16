@@ -36,7 +36,7 @@ export default function DividerDemoPage() {
   const usageContent = (
     <Stack gap={1}>
       <Typography variant='h3'>1. Default</Typography>
-      <Panel variant='alt'>
+      <Panel variant='outlined'>
         <Stack gap={1}>
           <Typography>Content above</Typography>
           <Divider />
@@ -45,7 +45,7 @@ export default function DividerDemoPage() {
       </Panel>
 
       <Typography variant='h3'>2. Vertical</Typography>
-      <Panel variant='alt'>
+      <Panel variant='outlined'>
         <Stack
           direction='row'
           gap={1}
@@ -59,7 +59,7 @@ export default function DividerDemoPage() {
 
       <Typography variant='h3'>3. Thickness and Color</Typography>
       <Panel
-        variant='alt'
+        variant='outlined'
         fullWidth
       >
         <Stack gap={1}>
@@ -76,7 +76,7 @@ export default function DividerDemoPage() {
       </Panel>
 
       <Typography variant='h3'>4. Spacing (pad)</Typography>
-      <Panel variant='alt'>
+      <Panel variant='outlined'>
         <Stack gap={0}>
           <Typography>Above</Typography>
           <Divider pad={2} />
@@ -85,7 +85,7 @@ export default function DividerDemoPage() {
       </Panel>
 
       <Typography variant='h3'>5. Fixed length</Typography>
-      <Panel variant='alt'>
+      <Panel variant='outlined'>
         <Stack gap={1}>
           <Divider length='10rem' />
           <Box sx={{ width: '12rem' }}>
@@ -109,7 +109,7 @@ export default function DividerDemoPage() {
           <Typography variant='subtitle'>orientation</Typography>
           <Select
             value={orientation}
-            onChange={(v) => setOrientation(v as Orient)}
+            onValueChange={(v) => setOrientation(v as Orient)}
             sx={{ width: 180 }}
           >
             <Select.Option value='horizontal'>horizontal</Select.Option>
@@ -124,7 +124,7 @@ export default function DividerDemoPage() {
             max={6}
             step={0.5}
             value={thickness}
-            onChange={(n) => setThickness(n)}
+            onValueChange={(n) => setThickness(n)}
           />
         </Stack>
         <Stack gap={0.25}>
@@ -135,7 +135,7 @@ export default function DividerDemoPage() {
             max={6}
             step={0.5}
             value={pad}
-            onChange={(n) => setPad(n)}
+            onValueChange={(n) => setPad(n)}
           />
         </Stack>
         <Stack gap={0.25}>
@@ -167,13 +167,13 @@ export default function DividerDemoPage() {
           <Typography variant='subtitle'>compact</Typography>
           <Switch
             checked={compact}
-            onChange={setCompact}
+            onValueChange={(v) => setCompact(!!v)}
             aria-label='Toggle compact'
           />
         </Stack>
       </Stack>
 
-      <Panel variant='alt'>
+      <Panel variant='outlined'>
         <Stack
           direction={orientation === 'horizontal' ? 'column' : 'row'}
           gap={1}

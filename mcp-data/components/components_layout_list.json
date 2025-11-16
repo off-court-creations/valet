@@ -187,6 +187,6 @@
   "sourceFiles": [
     "src/components/layout/List.tsx"
   ],
-  "version": "0.33.7",
+  "version": "0.34.0",
   "schemaVersion": "1.6"
 }

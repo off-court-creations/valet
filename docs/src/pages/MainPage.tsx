@@ -46,7 +46,7 @@ export default function MainPage() {
   // ── Theme Playground: density toggle
   const nextDensity = () =>
     setDensity(
-      density === 'comfortable' ? 'compact' : density === 'compact' ? 'tight' : 'comfortable',
+      density === 'comfortable' ? 'compact' : density === 'compact' ? 'standard' : 'comfortable',
     );
 
   // ── Live demo state
@@ -123,7 +123,7 @@ export default function MainPage() {
       <Panel
         fullWidth
         pad={2}
-        background={`linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.35) 70%, rgba(0,0,0,0.0) 100%)`}
+        color={`linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.35) 70%, rgba(0,0,0,0.0) 100%)`}
         sx={{ borderRadius: theme.radius(2), overflow: 'hidden' }}
       >
         <div style={{ position: 'relative', minHeight: '60vh' }}>
@@ -251,7 +251,7 @@ export default function MainPage() {
           ].map((f, i) => (
             <Panel
               key={`f-${i}`}
-              variant='alt'
+              variant='outlined'
               pad={2}
             >
               <Stack>
@@ -306,7 +306,7 @@ export default function MainPage() {
                   <Stack>
                     <MetroSelect
                       value={transport}
-                      onChange={(v) => setTransport(v as string)}
+                      onValueChange={(v) => setTransport(v as string)}
                       gap={4}
                     >
                       {[
@@ -389,7 +389,7 @@ export default function MainPage() {
                   <Stack>
                     <DateSelector
                       value={selectedDate}
-                      onChange={setSelectedDate}
+                      onValueChange={(v) => setSelectedDate(v as string)}
                     />
                     <Typography>Selected: {selectedDate}</Typography>
                     <Tooltip title='See docs'>

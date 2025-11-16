@@ -112,6 +112,14 @@
     {
       "name": "onFilesChange",
       "payloadType": "File[]"
+    },
+    {
+      "name": "onDrop",
+      "payloadType": "DropzoneOptions['onDrop']"
+    },
+    {
+      "name": "onDropRejected",
+      "payloadType": "DropzoneOptions['onDropRejected']"
     }
   ],
   "actions": [],
@@ -161,6 +169,6 @@
   "sourceFiles": [
     "src/components/widgets/Dropzone.tsx"
   ],
-  "version": "0.33.7",
+  "version": "0.34.0",
   "schemaVersion": "1.6"
 }

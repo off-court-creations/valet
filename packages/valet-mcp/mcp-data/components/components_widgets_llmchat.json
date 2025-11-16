@@ -10,27 +10,97 @@
   ],
   "props": [
     {
+      "name": "messages",
+      "type": "ChatMessage[]",
+      "required": true
+    },
+    {
+      "name": "onSend",
+      "type": "(message: ChatMessage) => void",
+      "required": false
+    },
+    {
+      "name": "userAvatar",
+      "type": "string",
+      "required": false,
+      "description": "Avatar image for user messages"
+    },
+    {
+      "name": "systemAvatar",
+      "type": "string",
+      "required": false,
+      "description": "Avatar image for system / assistant messages"
+    },
+    {
       "name": "placeholder",
-      "type": "unknown",
+      "type": "string",
       "required": false,
       "default": "'Message…'"
     },
     {
       "name": "disableInput",
-      "type": "unknown",
+      "type": "boolean",
       "required": false,
       "default": "false"
     },
     {
       "name": "constrainHeight",
-      "type": "unknown",
+      "type": "boolean",
       "required": false,
       "default": "true"
+    },
+    {
+      "name": "apiKey",
+      "type": "string",
+      "required": false
+    },
+    {
+      "name": "provider",
+      "type": "AIProvider",
+      "required": false
+    },
+    {
+      "name": "model",
+      "type": "string",
+      "required": false
+    },
+    {
+      "name": "onModelChange",
+      "type": "(m: string) => void",
+      "required": false
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": false,
+      "description": "Inline styles (with CSS var support)"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": [
+      "onSubmit",
+      "style"
+    ]
+  },
   "cssVars": [],
   "cssPresets": [],
-  "events": [],
+  "events": [
+    {
+      "name": "onSend",
+      "payloadType": "ChatMessage"
+    },
+    {
+      "name": "onModelChange",
+      "payloadType": "string"
+    }
+  ],
   "actions": [],
   "slots": [],
   "bestPractices": [],
@@ -38,6 +108,6 @@
   "sourceFiles": [
     "src/components/widgets/LLMChat.tsx"
   ],
-  "version": "0.32.0",
+  "version": "0.34.0",
   "schemaVersion": "1.6"
 }

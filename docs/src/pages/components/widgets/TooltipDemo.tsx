@@ -31,7 +31,7 @@ export default function TooltipDemoPage() {
     <Stack>
       <Typography variant='h3'>1. Default</Typography>
       <Tooltip title='Hello, valet!'>
-        <Button variant='contained'>Hover me</Button>
+        <Button variant='filled'>Hover me</Button>
       </Tooltip>
 
       <Typography variant='h3'>2. Controlled visibility</Typography>
@@ -92,7 +92,7 @@ export default function TooltipDemoPage() {
           <Select
             placeholder='placement'
             value={pgPlacement}
-            onChange={(v) => setPgPlacement(v as Placement)}
+            onValueChange={(v) => setPgPlacement(v as Placement)}
             sx={{ width: 180 }}
           >
             <Select.Option value='top'>top</Select.Option>
@@ -108,7 +108,7 @@ export default function TooltipDemoPage() {
             <Typography variant='subtitle'>arrow</Typography>
             <Switch
               checked={pgArrow}
-              onChange={setPgArrow}
+              onValueChange={(v) => setPgArrow(!!v)}
               aria-label='arrow'
             />
           </Stack>
@@ -120,7 +120,7 @@ export default function TooltipDemoPage() {
             <Typography variant='subtitle'>controlled</Typography>
             <Switch
               checked={pgControlled}
-              onChange={setPgControlled}
+              onValueChange={(v) => setPgControlled(!!v)}
               aria-label='controlled'
             />
           </Stack>
@@ -132,7 +132,7 @@ export default function TooltipDemoPage() {
             <Typography variant='subtitle'>open</Typography>
             <Switch
               checked={pgOpen}
-              onChange={setPgOpen}
+              onValueChange={(v) => setPgOpen(!!v)}
               aria-label='open'
             />
           </Stack>
@@ -148,7 +148,7 @@ export default function TooltipDemoPage() {
               max={1000}
               step={50}
               value={pgEnterDelay}
-              onChange={(n) => setPgEnterDelay(Math.round(n))}
+              onValueChange={(n) => setPgEnterDelay(Math.round(n))}
             />
           </Stack>
           <Stack
@@ -163,7 +163,7 @@ export default function TooltipDemoPage() {
               max={1000}
               step={50}
               value={pgLeaveDelay}
-              onChange={(n) => setPgLeaveDelay(Math.round(n))}
+              onValueChange={(n) => setPgLeaveDelay(Math.round(n))}
             />
           </Stack>
           <Stack
@@ -174,7 +174,7 @@ export default function TooltipDemoPage() {
             <Typography variant='subtitle'>disableHover</Typography>
             <Switch
               checked={pgDisableHover}
-              onChange={setPgDisableHover}
+              onValueChange={(v) => setPgDisableHover(!!v)}
               aria-label='disableHover'
             />
           </Stack>
@@ -186,7 +186,7 @@ export default function TooltipDemoPage() {
             <Typography variant='subtitle'>disableFocus</Typography>
             <Switch
               checked={pgDisableFocus}
-              onChange={setPgDisableFocus}
+              onValueChange={(v) => setPgDisableFocus(!!v)}
               aria-label='disableFocus'
             />
           </Stack>
@@ -198,7 +198,7 @@ export default function TooltipDemoPage() {
             <Typography variant='subtitle'>disableTouch</Typography>
             <Switch
               checked={pgDisableTouch}
-              onChange={setPgDisableTouch}
+              onValueChange={(v) => setPgDisableTouch(!!v)}
               aria-label='disableTouch'
             />
           </Stack>

@@ -21,6 +21,8 @@ export interface StackProps
   /** If `true`, children wrap when they run out of space. Defaults to
    *  `true` for `row`, `false` for `column`. */
   wrap?: boolean;
+  /** Horizontal placement of the stack when not full width. */
+  alignX?: 'left' | 'center' | 'right';
   /** Inline styles (with CSS var support) */
   sx?: Sx;
 }
@@ -31,12 +33,22 @@ const StackContainer = styled('div')<{
   $gap: string;
   $wrap: boolean;
   $pad: string;
+  $alignX: 'left' | 'center' | 'right';
 }>`
   display: flex;
   flex-direction: ${({ $dir }) => $dir};
   align-items: ${({ $dir }) => ($dir === 'row' ? 'center' : 'stretch')};
   gap: ${({ $gap }) => $gap};
   ${({ $wrap }) => ($wrap ? 'flex-wrap: wrap;' : '')};
+
+  /* Optional anchoring similar to Box/Panel */
+  ${({ $alignX }) =>
+    $alignX !== 'left'
+      ? `
+    width: max-content;
+    ${$alignX === 'right' ? 'margin-left:auto;' : 'margin-left:auto; margin-right:auto;'}
+  `
+      : ''}
 
   /* Boundary guards */
   max-width: 100%;
@@ -67,7 +79,9 @@ export const Stack: React.FC<StackProps> = ({
   gap: gapProp,
   pad: padProp,
   wrap,
+  alignX = 'left',
   compact,
+  density,
   preset: p,
   className,
   children,
@@ -76,21 +90,24 @@ export const Stack: React.FC<StackProps> = ({
 }) => {
   const { theme } = useTheme();
 
-  const gap = resolveSpace(gapProp, theme, compact, 1);
+  const compactEffective = compact || density === 'compact';
+  const gap = resolveSpace(gapProp, theme, compactEffective, 1);
 
   /* Enable wrapping by default for rows */
   const shouldWrap = typeof wrap === 'boolean' ? wrap : direction === 'row';
 
   const presetClasses = p ? preset(p) : '';
-  const pad = resolveSpace(padProp, theme, compact, 1);
+  const pad = resolveSpace(padProp, theme, compactEffective, 1);
 
   return (
     <StackContainer
       {...rest}
+      data-valet-component='Stack'
       $dir={direction}
       $gap={gap}
       $wrap={shouldWrap}
       $pad={pad}
+      $alignX={alignX}
       className={[presetClasses, className].filter(Boolean).join(' ')}
       style={sx}
     >

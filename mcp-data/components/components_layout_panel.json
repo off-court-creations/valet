@@ -14,19 +14,26 @@
       "name": "variant",
       "type": "PanelVariant",
       "required": false,
-      "default": "'main'"
+      "description": "Visual variant: filled | outlined | plain",
+      "default": "'filled'"
+    },
+    {
+      "name": "intent",
+      "type": "Intent",
+      "required": false,
+      "description": "Semantic color intent; maps to theme tokens"
+    },
+    {
+      "name": "color",
+      "type": "string | undefined",
+      "required": false,
+      "description": "Explicit color override (theme token name or CSS color)"
     },
     {
       "name": "fullWidth",
       "type": "boolean",
       "required": false,
       "default": "false"
-    },
-    {
-      "name": "background",
-      "type": "string | undefined",
-      "required": false,
-      "description": "Explicit background override"
     },
     {
       "name": "centerContent",
@@ -36,14 +43,13 @@
     },
     {
       "name": "alignX",
-      "type": "'left' | 'right' | 'center' | 'centered'",
+      "type": "'left' | 'right' | 'center'",
       "required": false,
       "description": "Horizontal placement of the panel when not fullWidth",
       "enumValues": [
         "left",
         "right",
-        "center",
-        "centered"
+        "center"
       ]
     },
     {
@@ -75,6 +81,12 @@
       "type": "boolean | undefined",
       "required": false,
       "description": "Compact mode zeros gap and pad where supported."
+    },
+    {
+      "name": "density",
+      "type": "\"compact\" | \"standard\" | \"comfortable\" | undefined",
+      "required": false,
+      "description": "Density override for spacing scale; defaults from nearest Surface."
     }
   ],
   "domPassthrough": {
@@ -89,7 +101,14 @@
     "--valet-panel-ov-y",
     "--valet-bg",
     "--valet-text-color",
-    "--valet-centered"
+    "--valet-centered",
+    "--valet-intent-bg",
+    "--valet-intent-fg",
+    "--valet-intent-border",
+    "--valet-intent-focus",
+    "--valet-intent-bg-hover",
+    "--valet-intent-bg-active",
+    "--valet-intent-fg-disabled"
   ],
   "cssPresets": [],
   "events": [],
@@ -149,6 +168,6 @@
   "sourceFiles": [
     "src/components/layout/Panel.tsx"
   ],
-  "version": "0.33.7",
+  "version": "0.34.0",
   "schemaVersion": "1.6"
 }

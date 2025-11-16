@@ -22,10 +22,21 @@
       "default": "false"
     },
     {
+      "name": "density",
+      "type": "'compact' | 'standard' | 'comfortable'",
+      "required": false,
+      "description": "Density override; alias: `compact` maps to `density='compact'`",
+      "enumValues": [
+        "compact",
+        "standard",
+        "comfortable"
+      ]
+    },
+    {
       "name": "compact",
       "type": "boolean",
       "required": false,
-      "description": "Compact zeros both pad and gap",
+      "description": "Compact zeros both pad and gap (alias for density='compact')",
       "default": "false"
     },
     {
@@ -125,6 +136,6 @@
   "sourceFiles": [
     "src/components/layout/Grid.tsx"
   ],
-  "version": "0.33.7",
+  "version": "0.34.0",
   "schemaVersion": "1.6"
 }

@@ -12,10 +12,11 @@ import { useTheme } from '../../system/themeStore';
 import { useSurface } from '../../system/surfaceStore';
 import { shallow } from 'zustand/shallow';
 import { preset } from '../../css/stylePresets';
-import type { Presettable } from '../../types';
+import type { Presettable, Sx } from '../../types';
 import { IconButton } from '../fields/IconButton';
 import { withAlpha } from '../../helpers/color';
 import { inheritSurfaceFontVars } from '../../system/inheritSurfaceFontVars';
+import { getOverlayRoot, useOverlay } from '../../system/overlay';
 
 /* Allow strongly-typed CSS custom properties (e.g. --valet-*) */
 type CSSVarName = `--${string}`;
@@ -49,6 +50,12 @@ export interface DrawerProps extends Presettable {
   closeIcon?: string;
   /** Drawer contents */
   children?: React.ReactNode;
+  /** Class applied to the Drawer panel root */
+  className?: string;
+  /** Inline styles applied to the Drawer panel root */
+  style?: React.CSSProperties;
+  /** sx convenience for inline styles with CSS var support */
+  sx?: Sx;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -61,7 +68,7 @@ const Backdrop = styled('div')<{ $fade: boolean }>`
   backdrop-filter: blur(2px);
   opacity: ${({ $fade }) => ($fade ? 0 : 1)};
   transition: opacity 200ms ease;
-  z-index: 9998;
+  z-index: var(--valet-zindex-modal-backdrop, 1390);
 `;
 
 const Panel = styled('div')<{
@@ -75,7 +82,8 @@ const Panel = styled('div')<{
   $adaptive: boolean;
 }>`
   position: fixed;
-  z-index: ${({ $persistent }) => ($persistent ? 9998 : 9999)};
+  z-index: ${({ $persistent }) =>
+    $persistent ? 'calc(var(--valet-zindex-modal, 1400) - 1)' : 'var(--valet-zindex-modal, 1400)'};
   display: flex;
   flex-direction: column;
   overflow-y: ${({ $anchor }) => ($anchor === 'left' || $anchor === 'right' ? 'auto' : 'visible')};
@@ -133,6 +141,9 @@ export const Drawer: React.FC<DrawerProps> = ({
   closeIcon = 'mdi:close',
   children,
   preset: presetKey,
+  className,
+  style,
+  sx,
 }) => {
   const { theme } = useTheme();
   // Only subscribe to width/height when adaptive logic is enabled to
@@ -252,20 +263,13 @@ export const Drawer: React.FC<DrawerProps> = ({
 
   /* Mount / unmount side-effects */
   useLayoutEffect(() => {
-    if (persistentEffective || !open) return;
+    if (!(open && !persistentEffective)) return;
     setFade(false);
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && !disableEscapeKeyDown) {
-        e.stopPropagation();
-        requestClose();
-      }
-    };
-    document.addEventListener('keydown', handleKeyDown, true);
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown, true);
-      setFade(true);
-    };
-  }, [open, persistentEffective, disableEscapeKeyDown, requestClose]);
+    return () => setFade(true);
+  }, [open, persistentEffective]);
+
+  // Shared overlay wiring for overlay mode (not persistent)
+  // (placed after panelRef declaration)
 
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (persistentEffective || disableBackdropClick) return;
@@ -295,6 +299,21 @@ export const Drawer: React.FC<DrawerProps> = ({
 
   // Ref to the portalled panel root; used to mirror Surface font vars
   const panelRef = React.useRef<HTMLDivElement>(null);
+
+  useOverlay(
+    open && !persistentEffective && panelRef.current
+      ? {
+          element: panelRef.current,
+          onRequestClose: () => requestClose(),
+          disableOutsideClick: disableBackdropClick,
+          disableEscapeKeyDown,
+          trapFocus: false,
+          restoreFocusOnClose: true,
+          inertBackground: true,
+          label: 'Drawer',
+        }
+      : null,
+  );
 
   // Mirror Surface font/typography vars into the portalled panel
   useLayoutEffect(() => {
@@ -341,7 +360,9 @@ export const Drawer: React.FC<DrawerProps> = ({
         $primary={theme.colors.primary}
         $persistent={persistentEffective}
         $adaptive={adaptiveMode}
-        className={presetClasses}
+        data-state='open'
+        className={[presetClasses, className].filter(Boolean).join(' ')}
+        data-valet-component='Drawer'
         style={
           {
             // Preserve top offset when docked on sides/top
@@ -352,6 +373,8 @@ export const Drawer: React.FC<DrawerProps> = ({
             ...(persistentEffective && (anchor === 'left' || anchor === 'right')
               ? { height: `calc(100% - ${offsetTop}px)` }
               : null),
+            ...(sx || {}),
+            ...(style as React.CSSProperties),
           } as CSSVarStyles
         }
       >
@@ -376,7 +399,7 @@ export const Drawer: React.FC<DrawerProps> = ({
     </>
   );
 
-  return createPortal(drawerElement, document.body);
+  return createPortal(drawerElement, getOverlayRoot());
 };
 
 export default Drawer;

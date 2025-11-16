@@ -54,8 +54,8 @@ export default function IconButtonDemoPage() {
         Circular icon-only buttons with contained &amp; outlined styles
       </Typography>
 
-      {/* 1. Contained sizes */}
-      <Typography variant='h3'>1. Contained sizes</Typography>
+      {/* 1. Filled sizes */}
+      <Typography variant='h3'>1. Filled sizes</Typography>
       <Stack direction='row'>
         <IconButton
           icon='mdi:play'
@@ -119,8 +119,65 @@ export default function IconButtonDemoPage() {
         />
       </Stack>
 
-      {/* 3. Custom SVG */}
-      <Typography variant='h3'>3. Custom SVG graphics</Typography>
+      {/* 3. Intent & variants */}
+      <Typography variant='h3'>3. Intent &amp; variants</Typography>
+      <Stack direction='row'>
+        <IconButton
+          icon='mdi:check'
+          intent='success'
+          aria-label='Success'
+        />
+        <IconButton
+          icon='mdi:alert'
+          intent='warning'
+          aria-label='Warning'
+        />
+        <IconButton
+          icon='mdi:close'
+          intent='error'
+          aria-label='Error'
+        />
+        <IconButton
+          icon='mdi:information'
+          variant='outlined'
+          intent='info'
+          aria-label='Info'
+        />
+        <IconButton
+          icon='mdi:star'
+          variant='plain'
+          intent='secondary'
+          aria-label='Plain'
+        />
+      </Stack>
+
+      {/* 4. Color override */}
+      <Typography variant='h3'>4. Color override</Typography>
+      <Typography>
+        Use <code>color</code> to override token colors (theme names or CSS values). For
+        <code>variant=&quot;filled&quot;</code>, the glyph auto‑contrasts with the background.
+      </Typography>
+      <Stack direction='row'>
+        <IconButton
+          icon='mdi:palette'
+          color='primary'
+          aria-label='Primary token'
+        />
+        <IconButton
+          icon='mdi:palette'
+          color='#8e24aa'
+          aria-label='Purple hex'
+        />
+        <IconButton
+          icon='mdi:palette'
+          variant='outlined'
+          color='#00bfa5'
+          aria-label='Teal outline'
+        />
+      </Stack>
+
+      {/* 5. Custom SVG */}
+      <Typography variant='h3'>5. Custom SVG graphics</Typography>
       <Stack direction='row'>
         <IconButton
           svg={HeartSvg}
@@ -128,8 +185,8 @@ export default function IconButtonDemoPage() {
         />
       </Stack>
 
-      {/* 4. Custom sizes */}
-      <Typography variant='h3'>4. Custom sizes</Typography>
+      {/* 6. Custom sizes */}
+      <Typography variant='h3'>6. Custom sizes</Typography>
       <Stack direction='row'>
         <IconButton
           icon='mdi:play'
@@ -143,8 +200,8 @@ export default function IconButtonDemoPage() {
         />
       </Stack>
 
-      {/* 5. Disabled & active states */}
-      <Typography variant='h3'>5. Disabled state</Typography>
+      {/* 7. Disabled & active states */}
+      <Typography variant='h3'>7. Disabled state</Typography>
       <IconButton
         icon='mdi:delete'
         size='md'

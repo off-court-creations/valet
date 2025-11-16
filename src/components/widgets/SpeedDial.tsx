@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import { styled } from '../../css/createStyled';
 import { preset } from '../../css/stylePresets';
 import { useTheme } from '../../system/themeStore';
-import type { Presettable } from '../../types';
+import type { Presettable, Sx } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 export interface SpeedDialAction {
@@ -22,6 +22,8 @@ export interface SpeedDialProps extends React.HTMLAttributes<HTMLDivElement>, Pr
   actions: SpeedDialAction[];
   /** Direction in which actions should expand. */
   direction?: 'up' | 'down' | 'left' | 'right';
+  /** Inline styles via CSSProperties (with CSS var support) */
+  sx?: Sx;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -137,6 +139,8 @@ export const SpeedDial: React.FC<SpeedDialProps> = ({
   direction = 'up',
   preset: p,
   className,
+  sx,
+  style,
   ...rest
 }) => {
   const { theme } = useTheme();
@@ -159,6 +163,9 @@ export const SpeedDial: React.FC<SpeedDialProps> = ({
       {...rest}
       $gap='0.5rem'
       className={[presetCls, className].filter(Boolean).join(' ')}
+      data-valet-component='SpeedDial'
+      data-state={open ? 'open' : 'closed'}
+      style={{ ...(sx || {}), ...(style as React.CSSProperties) }}
     >
       {/* — actions — kept mounted for buttery open/close — */}
       {actions.map((a, idx) => {

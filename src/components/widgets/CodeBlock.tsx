@@ -7,12 +7,18 @@ import IconButton from '../fields/IconButton';
 import { Markdown } from './Markdown';
 import Snackbar from './Snackbar';
 import { useTheme } from '../../system/themeStore';
+import { preset } from '../../css/stylePresets';
+import type { Presettable, Sx } from '../../types';
 
-export interface CodeBlockProps {
+export interface CodeBlockProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'>,
+    Presettable {
   code: string;
   language?: string;
   ariaLabel?: string;
   title?: string;
+  /** Inline styles (with CSS var support) */
+  sx?: Sx;
 }
 
 export const CodeBlock: React.FC<CodeBlockProps> = ({
@@ -20,6 +26,10 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
   language = 'typescript',
   ariaLabel,
   title,
+  className,
+  preset: p,
+  sx,
+  ...rest
 }) => {
   const [copied, setCopied] = useState(false);
   const { mode, theme } = useTheme();
@@ -71,14 +81,19 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
     );
   };
 
+  const presetCls = p ? preset(p) : '';
   return (
     <div
+      {...rest}
       ref={containerRef}
+      className={[presetCls, className].filter(Boolean).join(' ')}
+      data-valet-component='CodeBlock'
       style={{
         display: 'flex',
         flexDirection: stackControls ? ('column' as const) : ('row' as const),
         alignItems: 'flex-start',
         width: '100%',
+        ...(sx || {}),
       }}
     >
       <div style={{ flex: 1, minWidth: 0 }}>

@@ -22,10 +22,16 @@
       "description": "Default for uncontrolled usage."
     },
     {
-      "name": "onChange",
-      "type": "(value: number) => void",
+      "name": "onValueChange",
+      "type": "OnValueChange<number>",
       "required": false,
-      "description": "Fires on every change (pointer + keyboard)."
+      "description": "Canonical value change (pointer drag, keyboard)."
+    },
+    {
+      "name": "onValueCommit",
+      "type": "OnValueCommit<number>",
+      "required": false,
+      "description": "Commit event (pointer up, blur, or Enter/Page/Home/End key)."
     },
     {
       "name": "min",
@@ -154,8 +160,12 @@
   "cssPresets": [],
   "events": [
     {
-      "name": "onChange",
-      "payloadType": "number"
+      "name": "onValueChange",
+      "payloadType": "OnValueChange<number>"
+    },
+    {
+      "name": "onValueCommit",
+      "payloadType": "OnValueCommit<number>"
     }
   ],
   "actions": [],
@@ -179,6 +189,6 @@
   "sourceFiles": [
     "src/components/fields/Slider.tsx"
   ],
-  "version": "0.33.7",
+  "version": "0.34.0",
   "schemaVersion": "1.6"
 }

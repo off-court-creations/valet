@@ -14,20 +14,17 @@
     {
       "name": "variant",
       "type": "Variant",
-      "required": false,
-      "default": "'body'"
+      "required": false
     },
     {
       "name": "bold",
       "type": "boolean",
-      "required": false,
-      "default": "false"
+      "required": false
     },
     {
       "name": "italic",
       "type": "boolean",
-      "required": false,
-      "default": "false"
+      "required": false
     },
     {
       "name": "weight",
@@ -72,8 +69,7 @@
     {
       "name": "noSelect",
       "type": "boolean",
-      "required": false,
-      "default": "false"
+      "required": false
     },
     {
       "name": "fontSize",
@@ -88,8 +84,7 @@
     {
       "name": "autoSize",
       "type": "boolean",
-      "required": false,
-      "default": "false"
+      "required": false
     },
     {
       "name": "color",
@@ -118,7 +113,6 @@
       "type": "'normal' | 'pre' | 'pre-wrap' | 'pre-line'",
       "required": false,
       "description": "Control whitespace handling for multi-line/code text",
-      "default": "'normal'",
       "enumValues": [
         "normal",
         "pre",
@@ -139,6 +133,10 @@
       "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
+  "domPassthrough": {
+    "element": "span",
+    "omitted": []
+  },
   "cssVars": [
     "--valet-bg",
     "--valet-text-color",
@@ -214,6 +212,6 @@
     "src/components/primitives/Typography.tsx",
     "docs/src/pages/components/primitives/TypographyDemoPage.tsx"
   ],
-  "version": "0.33.7",
+  "version": "0.34.0",
   "schemaVersion": "1.6"
 }

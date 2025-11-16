@@ -7,17 +7,9 @@ import { Stack, Typography, Chip, Panel, Select, Switch } from '@archway/valet';
 import ComponentMetaPage from '../../../components/ComponentMetaPage';
 import ChipMeta from '../../../../../src/components/widgets/Chip.meta.json';
 
-type Size = 's' | 'm' | 'l';
-type Variant = 'filled' | 'outlined';
-type Color =
-  | 'default'
-  | 'primary'
-  | 'secondary'
-  | 'tertiary'
-  | 'error'
-  | 'success'
-  | 'warning'
-  | 'info';
+type Size = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+type Variant = 'filled' | 'outlined' | 'plain';
+type Intent = 'default' | 'primary' | 'secondary' | 'error' | 'success' | 'warning' | 'info';
 
 export default function ChipDemoPage() {
   const usageContent = (
@@ -36,7 +28,7 @@ export default function ChipDemoPage() {
         <Chip label='Active' />
         <Chip
           label='Primary'
-          color='primary'
+          intent='primary'
         />
         <Chip
           label='Outlined'
@@ -66,24 +58,32 @@ export default function ChipDemoPage() {
         gap={0.5}
       >
         <Chip
-          label='Small'
-          size='s'
+          label='XS'
+          size='xs'
         />
         <Chip
-          label='Medium'
-          size='m'
+          label='SM'
+          size='sm'
         />
         <Chip
-          label='Large'
-          size='l'
+          label='MD'
+          size='md'
+        />
+        <Chip
+          label='LG'
+          size='lg'
+        />
+        <Chip
+          label='XL'
+          size='xl'
         />
       </Stack>
     </Stack>
   );
 
-  const [size, setSize] = useState<Size>('m');
+  const [size, setSize] = useState<Size>('md');
   const [variant, setVariant] = useState<Variant>('filled');
-  const [color, setColor] = useState<Color>('default');
+  const [intent, setIntent] = useState<Intent>('default');
   const [deletable, setDeletable] = useState(false);
 
   const playgroundContent = (
@@ -97,18 +97,20 @@ export default function ChipDemoPage() {
           <Select
             placeholder='size'
             value={size}
-            onChange={(v) => setSize(v as Size)}
+            onValueChange={(v) => setSize(v as Size)}
             sx={{ width: 140 }}
           >
-            <Select.Option value='s'>s</Select.Option>
-            <Select.Option value='m'>m</Select.Option>
-            <Select.Option value='l'>l</Select.Option>
+            <Select.Option value='xs'>xs</Select.Option>
+            <Select.Option value='sm'>sm</Select.Option>
+            <Select.Option value='md'>md</Select.Option>
+            <Select.Option value='lg'>lg</Select.Option>
+            <Select.Option value='xl'>xl</Select.Option>
           </Select>
 
           <Select
             placeholder='variant'
             value={variant}
-            onChange={(v) => setVariant(v as Variant)}
+            onValueChange={(v) => setVariant(v as Variant)}
             sx={{ width: 160 }}
           >
             <Select.Option value='filled'>filled</Select.Option>
@@ -116,22 +118,13 @@ export default function ChipDemoPage() {
           </Select>
 
           <Select
-            placeholder='color'
-            value={color}
-            onChange={(v) => setColor(v as Color)}
+            placeholder='intent'
+            value={intent}
+            onValueChange={(v) => setIntent(v as Intent)}
             sx={{ width: 180 }}
           >
             {(
-              [
-                'default',
-                'primary',
-                'secondary',
-                'tertiary',
-                'error',
-                'success',
-                'warning',
-                'info',
-              ] as const
+              ['default', 'primary', 'secondary', 'error', 'success', 'warning', 'info'] as const
             ).map((c) => (
               <Select.Option
                 key={c}
@@ -145,7 +138,7 @@ export default function ChipDemoPage() {
           <Typography>deletable</Typography>
           <Switch
             checked={deletable}
-            onChange={setDeletable}
+            onValueChange={(v) => setDeletable(!!v)}
             aria-label='deletable'
           />
         </Stack>
@@ -159,7 +152,7 @@ export default function ChipDemoPage() {
           label='Preview'
           size={size}
           variant={variant}
-          color={color}
+          intent={intent}
           {...(deletable ? { onDelete: () => {} } : {})}
         />
       </Stack>

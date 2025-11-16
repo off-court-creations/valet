@@ -589,13 +589,18 @@
         "required": false
       },
       {
-        "name": "initialValue",
+        "name": "defaultValue",
         "type": "Primitive | Primitive[]",
         "required": false
       },
       {
-        "name": "onChange",
-        "type": "(v: Primitive | Primitive[]) => void",
+        "name": "onValueChange",
+        "type": "(value: Primitive | Primitive[], info: ChangeInfo<Primitive | Primitive[]>) => void",
+        "required": false
+      },
+      {
+        "name": "onValueCommit",
+        "type": "(value: Primitive | Primitive[], info: ChangeInfo<Primitive | Primitive[]>) => void",
         "required": false
       },
       {

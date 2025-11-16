@@ -3,7 +3,7 @@
   "category": "layout",
   "slug": "components/layout/accordion",
   "summary": "Accordion component",
-  "status": "unstable",
+  "status": "experimental",
   "aliases": [
     "accordion",
     "expander"
@@ -43,9 +43,34 @@
       "default": "true"
     },
     {
-      "name": "compact",
-      "type": "unknown",
+      "name": "unmountOnExit",
+      "type": "boolean",
       "required": false,
+      "default": "false"
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": false,
+      "description": "Inline styles via CSSProperties (with CSS var support)"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
+    },
+    {
+      "name": "pad",
+      "type": "import(\"/home/xbenc/occ/valet/src/types\").Space | undefined",
+      "required": false,
+      "description": "Container padding as units or CSS length."
+    },
+    {
+      "name": "compact",
+      "type": "boolean | undefined",
+      "required": false,
+      "description": "Compact mode zeros gap and pad where supported.",
       "default": "false"
     }
   ],
@@ -56,8 +81,11 @@
     ]
   },
   "cssVars": [
+    "--valet-acc-duration",
+    "--valet-acc-ease",
     "--valet-divider-stroke",
     "--valet-focus-width",
+    "--valet-focus-ring-color",
     "--valet-focus-offset"
   ],
   "cssPresets": [],
@@ -75,6 +103,7 @@
     "Control model deliberately: use `open` + `onOpenChange` for app‑driven state, or `defaultOpen` for uncontrolled.",
     "Respect heading levels. Set `headingLevel` so the outline remains semantic within the page.",
     "Constrain height in dense pages so the thread scrolls locally rather than the document.",
+    "Prefer keeping content mounted unless heavy: use `unmountOnExit` to remove expensive trees when closed.",
     "Ensure keyboard support: Space/Enter toggles, Arrow keys move focus, and focus styles are visible."
   ],
   "examples": [
@@ -82,6 +111,14 @@
       "id": "accordion-uncontrolled",
       "title": "Uncontrolled (single)",
       "code": "<Accordion>\n  <Accordion.Item header='Item 1'>Content</Accordion.Item>\n  <Accordion.Item header='Item 2'>Content</Accordion.Item>\n</Accordion>",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    },
+    {
+      "id": "accordion-unmount-on-exit",
+      "title": "Unmount on exit",
+      "code": "<Accordion unmountOnExit>\n  <Accordion.Item header='Lazy'>Content mounts only when open</Accordion.Item>\n  <Accordion.Item header='Also lazy'>Content mounts only when open</Accordion.Item>\n</Accordion>",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {}
@@ -98,6 +135,6 @@
   "sourceFiles": [
     "src/components/layout/Accordion.tsx"
   ],
-  "version": "0.32.0",
+  "version": "0.34.0",
   "schemaVersion": "1.6"
 }

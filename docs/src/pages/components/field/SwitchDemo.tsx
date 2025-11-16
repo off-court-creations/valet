@@ -79,7 +79,7 @@ export default function SwitchDemoPage() {
           <Switch
             name='wifi'
             checked={wifi}
-            onChange={setWifi}
+            onValueChange={(v) => setWifi(!!v)}
           />
         }
       />
@@ -164,7 +164,7 @@ export default function SwitchDemoPage() {
         />
         <Button
           type='submit'
-          variant='contained'
+          variant='filled'
           size='lg'
         >
           Save preferences

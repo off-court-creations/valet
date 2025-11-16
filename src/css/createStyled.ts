@@ -117,7 +117,10 @@ export function styled<Tag extends keyof JSX.IntrinsicElements>(tag: Tag) {
       }
 
       const merged = [className, props.className].filter(Boolean).join(' ');
-      const domProps = filterStyledProps<PropsArg>(props);
+      const rawProps = filterStyledProps<PropsArg>(props);
+      // Support polymorphic `as` to override the intrinsic tag. Strip it from DOM props.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { as: asProp, ...domProps } = rawProps as any as PropsArg & { as?: React.ElementType };
 
       useLayoutEffect(() => {
         const el = localRef.current;
@@ -137,7 +140,8 @@ export function styled<Tag extends keyof JSX.IntrinsicElements>(tag: Tag) {
         };
       }, [surface]);
 
-      return React.createElement(tag, {
+      const elementTag = (asProp as unknown as keyof JSX.IntrinsicElements) || tag;
+      return React.createElement(elementTag, {
         ...(domProps as unknown as JSX.IntrinsicElements[Tag] & ExtraProps),
         className: merged,
         ref: (node: DomRef | null) => {

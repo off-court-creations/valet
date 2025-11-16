@@ -27,7 +27,7 @@ import { preset } from '../../css/stylePresets';
 import { toRgb, mix, toHex } from '../../helpers/color';
 import { useSurface } from '../../system/surfaceStore';
 import { shallow } from 'zustand/shallow';
-import type { Presettable, SpacingProps } from '../../types';
+import type { Presettable, SpacingProps, Sx } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
 import { Typography } from '../primitives/Typography';
 
@@ -181,7 +181,8 @@ const HeaderBtn = styled('button')<{
   ${({ $open, $highlight }) => $open && `background:${$highlight};`}
 
   &:focus-visible {
-    outline: var(--valet-focus-width, 2px) solid ${({ $primary }) => $primary};
+    outline: var(--valet-focus-width, 2px) solid
+      var(--valet-focus-ring-color, ${({ $primary }) => $primary});
     outline-offset: var(--valet-focus-offset, 2px);
   }
 
@@ -222,6 +223,8 @@ export interface AccordionProps
   headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
   constrainHeight?: boolean;
   unmountOnExit?: boolean;
+  /** Inline styles via CSSProperties (with CSS var support) */
+  sx?: Sx;
 }
 
 export interface AccordionItemProps extends React.HTMLAttributes<HTMLDivElement>, Presettable {
@@ -229,6 +232,8 @@ export interface AccordionItemProps extends React.HTMLAttributes<HTMLDivElement>
   index?: number;
   disabled?: boolean;
   children: ReactNode;
+  /** Inline styles via CSSProperties (with CSS var support) */
+  sx?: Sx;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -247,6 +252,7 @@ export const Accordion: React.FC<AccordionProps> & {
   compact = false,
   preset: p,
   className,
+  sx,
   children,
   ...divProps
 }) => {
@@ -382,10 +388,7 @@ export const Accordion: React.FC<AccordionProps> & {
     const shouldClamp = node.scrollHeight - available > 1 && available >= cutoff;
 
     if (shouldClamp) {
-      if (!constraintRef.current) {
-        surfEl.scrollTop = 0;
-        surfEl.scrollLeft = 0;
-      }
+      // Do not reset parent scroll position when entering constrain mode.
       constraintRef.current = true;
       if (!prevConstrainedRef.current) {
         prevConstrainedRef.current = true;
@@ -451,9 +454,14 @@ export const Accordion: React.FC<AccordionProps> & {
         style={shouldConstrain ? { overflow: 'auto', maxHeight } : undefined}
       >
         <Root
-          {...divProps}
+          {...(() => {
+            const { style: styleProp, ...rest } = divProps;
+            const mergedStyle = { ...(sx || {}), ...(styleProp as React.CSSProperties) };
+            return { ...rest, style: mergedStyle } as typeof divProps;
+          })()}
           $pad={resolveSpace(padProp, theme, compact, 1)}
           className={[presetClasses, className].filter(Boolean).join(' ')}
+          data-valet-component='Accordion'
         >
           {React.Children.map(children, (child, idx) =>
             React.isValidElement(child)
@@ -481,6 +489,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   preset: p,
   className,
   index = 0,
+  sx,
   ...divProps
 }) => {
   const { theme, mode } = useTheme();
@@ -646,7 +655,13 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
 
   return (
     <ItemWrapper
-      {...(restDivProps as typeof divProps)}
+      {...(() => {
+        const { style: styleProp, ...rest } = restDivProps as unknown as {
+          style?: React.CSSProperties;
+        } & typeof restDivProps;
+        const mergedStyle = { ...(sx || {}), ...(styleProp as React.CSSProperties) };
+        return { ...rest, style: mergedStyle } as typeof restDivProps;
+      })()}
       className={[presetClasses, className].filter(Boolean).join(' ')}
       $hoverDur={theme.motion.hover.duration}
       $hoverEase={theme.motion.hover.easing}
@@ -654,6 +669,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
       data-open={isOpen ? 'true' : 'false'}
       data-disabled={disabled ? 'true' : 'false'}
       data-skip-hover={skipHover ? 'true' : 'false'}
+      data-valet-component='Accordion.Item'
     >
       <HeaderTag style={{ margin: 0 }}>
         <HeaderBtn

@@ -1,0 +1,145 @@
+{
+  "name": "RadioGroup",
+  "category": "fields",
+  "slug": "components/fields/radiogroup",
+  "summary": "RadioGroup component",
+  "status": "stable",
+  "props": [
+    {
+      "name": "value",
+      "type": "string",
+      "required": false
+    },
+    {
+      "name": "defaultValue",
+      "type": "string",
+      "required": false
+    },
+    {
+      "name": "row",
+      "type": "boolean",
+      "required": false,
+      "default": "false"
+    },
+    {
+      "name": "size",
+      "type": "RadioSize | number | string",
+      "required": false,
+      "default": "'md'"
+    },
+    {
+      "name": "spacing",
+      "type": "number | string",
+      "required": false,
+      "description": "Gap between options"
+    },
+    {
+      "name": "onChange",
+      "type": "(event: React.ChangeEvent<HTMLInputElement>) => void",
+      "required": false,
+      "description": "DOM-parity change event (raw input event)."
+    },
+    {
+      "name": "onValueChange",
+      "type": "OnValueChange<string>",
+      "required": false,
+      "description": "Canonical value change event (fires on selection)."
+    },
+    {
+      "name": "onValueCommit",
+      "type": "OnValueCommit<string>",
+      "required": false,
+      "description": "Commit event (fires same moment for radios)."
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "name",
+      "type": "string | undefined",
+      "required": false,
+      "description": "Field identifier used for FormControl binding and forwarded to the underlying control\nwhen applicable. Components can require `name` locally if they depend on it."
+    },
+    {
+      "name": "label",
+      "type": "React.ReactNode",
+      "required": false,
+      "description": "Visual label rendered by the component or its wrapper. Accepts string or node."
+    },
+    {
+      "name": "helperText",
+      "type": "React.ReactNode",
+      "required": false,
+      "description": "Supplemental hint or validation content typically rendered under the control."
+    },
+    {
+      "name": "error",
+      "type": "boolean | undefined",
+      "required": false,
+      "description": "Marks the field invalid; components may adjust visuals and helper text color.",
+      "default": "false"
+    },
+    {
+      "name": "fullWidth",
+      "type": "boolean | undefined",
+      "required": false,
+      "description": "Stretches the field wrapper to occupy the full available width."
+    },
+    {
+      "name": "sx",
+      "type": "Sx | undefined",
+      "required": false,
+      "description": "Inline styles (with CSS var support)."
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
+    }
+  ],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": [
+      "onChange",
+      "style"
+    ]
+  },
+  "cssVars": [],
+  "cssPresets": [],
+  "events": [
+    {
+      "name": "onChange",
+      "payloadType": "React.ChangeEvent<HTMLInputElement>"
+    },
+    {
+      "name": "onValueChange",
+      "payloadType": "OnValueChange<string>"
+    },
+    {
+      "name": "onValueCommit",
+      "payloadType": "OnValueCommit<string>"
+    }
+  ],
+  "actions": [],
+  "slots": [
+    {
+      "name": "children"
+    },
+    {
+      "name": "label"
+    },
+    {
+      "name": "helperText"
+    }
+  ],
+  "bestPractices": [],
+  "examples": [],
+  "sourceFiles": [
+    "src/components/fields/RadioGroup.tsx"
+  ],
+  "version": "0.34.0",
+  "schemaVersion": "1.6"
+}

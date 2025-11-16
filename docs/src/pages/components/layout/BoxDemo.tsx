@@ -175,7 +175,7 @@ export default function BoxDemoPage() {
       <Divider />
 
       <Typography variant='h3'>Presets</Typography>
-      <Panel variant='alt'>
+      <Panel variant='outlined'>
         <Stack>
           <Box preset='fancyHolder'>
             <Typography>preset=&quot;fancyHolder&quot;</Typography>
@@ -242,7 +242,7 @@ export default function BoxDemoPage() {
           <Select
             placeholder='background'
             value={bgKey}
-            onChange={(v) => setBgKey(v as 'none' | 'primary' | 'secondary' | 'tertiary')}
+            onValueChange={(v) => setBgKey(v as 'none' | 'primary' | 'secondary' | 'tertiary')}
             sx={{ width: 200 }}
           >
             <Select.Option value='none'>no background</Select.Option>
@@ -259,7 +259,7 @@ export default function BoxDemoPage() {
             max={8}
             step={0.5}
             value={pad}
-            onChange={(n) => setPad(n)}
+            onValueChange={(n) => setPad(n)}
             aria-label='Padding units'
           />
         </Stack>
@@ -272,7 +272,7 @@ export default function BoxDemoPage() {
           <Typography variant='subtitle'>center content</Typography>
           <Switch
             checked={centerContent}
-            onChange={setCenterContent}
+            onValueChange={(v) => setCenterContent(!!v)}
             aria-label='Toggle centerContent'
           />
         </Stack>
@@ -285,7 +285,7 @@ export default function BoxDemoPage() {
           <Typography variant='subtitle'>fullWidth</Typography>
           <Switch
             checked={fullWidth}
-            onChange={setFullWidth}
+            onValueChange={(v) => setFullWidth(!!v)}
             aria-label='Toggle fullWidth'
           />
         </Stack>
@@ -294,7 +294,7 @@ export default function BoxDemoPage() {
           <Select
             placeholder='alignX'
             value={alignX}
-            onChange={(v) => setAlignX(v as 'left' | 'right' | 'center')}
+            onValueChange={(v) => setAlignX(v as 'left' | 'right' | 'center')}
             sx={{ width: 160 }}
             disabled={fullWidth}
           >

@@ -20,8 +20,8 @@ const SIX = 'Six → Morbi tristique, sapien nec fringilla cursus, nisi risus.';
 export default function TabsDemoPage() {
   const { theme, toggleMode } = useTheme();
 
-  // Controlled example state
-  const [activeCtl, setActiveCtl] = useState(0);
+  // Controlled example state (string|number per spec)
+  const [activeCtl, setActiveCtl] = useState<string | number>(0);
 
   // Many tabs to demonstrate wrapping on narrow widths
   const months = [
@@ -99,14 +99,14 @@ export default function TabsDemoPage() {
       <Button
         size='sm'
         variant='outlined'
-        onClick={() => setActiveCtl((prev) => (prev === 2 ? 0 : prev + 1))}
+        onClick={() => setActiveCtl((prev) => (Number(prev) === 2 ? 0 : Number(prev) + 1))}
         sx={{ alignSelf: 'flex-start' }}
       >
         Next tab programmatically
       </Button>
       <Tabs
-        active={activeCtl}
-        onTabChange={setActiveCtl}
+        value={activeCtl}
+        onValueCommit={(v) => setActiveCtl(v)}
       >
         <Tabs.Tab label='First' />
         <Tabs.Panel>{'First → ' + ONE}</Tabs.Panel>

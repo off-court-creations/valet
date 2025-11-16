@@ -16,7 +16,6 @@ import {
   IconButton,
   Divider,
 } from '@archway/valet';
-import type { ChipColor } from '@archway/valet';
 import NavDrawer from '../../components/NavDrawer';
 import type { DocMeta } from '../../types';
 
@@ -169,7 +168,7 @@ export default function GlossaryPage() {
     mcp: 'MCP',
     misc: 'Misc',
   };
-  const categoryChipColor: Record<NonNullable<GlossaryEntry['category']>, ChipColor> = {
+  const categoryChipColor: Record<NonNullable<GlossaryEntry['category']>, string> = {
     core: 'primary',
     css: 'secondary',
     state: 'info',
@@ -301,7 +300,7 @@ export default function GlossaryPage() {
   const ControlsBar = (
     <Panel
       fullWidth
-      variant='alt'
+      variant='outlined'
       sx={{ position: 'sticky', top: 0, zIndex: 1 }}
       pad={1}
     >
@@ -320,7 +319,7 @@ export default function GlossaryPage() {
 
         <Select
           value={category ?? 'all'}
-          onChange={(v) =>
+          onValueChange={(v) =>
             setCategory((v as string) === 'all' ? 'all' : (v as GlossaryEntry['category']))
           }
           placeholder='Category'
@@ -340,7 +339,7 @@ export default function GlossaryPage() {
 
         <Select
           value={groupBy}
-          onChange={(v) => setGroupBy(v as 'alphabet' | 'category')}
+          onValueChange={(v) => setGroupBy(v as 'alphabet' | 'category')}
           placeholder='Group by'
           sx={{ width: 160 }}
         >
@@ -393,7 +392,7 @@ export default function GlossaryPage() {
           >
             <Chip
               label={g.key}
-              size='s'
+              size='sm'
               variant='outlined'
             />
           </a>
@@ -437,9 +436,9 @@ export default function GlossaryPage() {
           {e.category ? (
             <Chip
               label={categoryLabel[e.category]}
-              size='s'
+              size='sm'
               variant='outlined'
-              color={categoryChipColor[e.category as NonNullable<GlossaryEntry['category']>]}
+              intent={categoryChipColor[e.category as NonNullable<GlossaryEntry['category']>]}
             />
           ) : null}
           <IconButton

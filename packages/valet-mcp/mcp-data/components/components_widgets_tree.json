@@ -33,12 +33,14 @@
     {
       "name": "selected",
       "type": "string",
-      "required": false
+      "required": false,
+      "description": "Active selection (controlled)."
     },
     {
       "name": "defaultSelected",
       "type": "string",
-      "required": false
+      "required": false,
+      "description": "Default selection for uncontrolled usage."
     },
     {
       "name": "onNodeSelect",
@@ -58,12 +60,20 @@
     {
       "name": "iconToggleOnly",
       "type": "boolean",
-      "required": false
+      "required": false,
+      "description": "If true, expanding/collapsing is only triggered by clicking the icon.\nDefaults to false: clicking anywhere on the row toggles when the node has children."
     },
     {
       "name": "sx",
       "type": "Sx",
-      "required": false
+      "required": false,
+      "description": "Inline styles (with CSS var support)"
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
   "domPassthrough": {
@@ -133,6 +143,6 @@
   "sourceFiles": [
     "src/components/widgets/Tree.tsx"
   ],
-  "version": "0.32.0",
+  "version": "0.34.0",
   "schemaVersion": "1.6"
 }
