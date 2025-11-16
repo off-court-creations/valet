@@ -4,7 +4,6 @@
 // ─────────────────────────────────────────────────────────────
 import fs from 'node:fs';
 import path from 'node:path';
-import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 
 export type ValetIndexItem = {
@@ -102,24 +101,11 @@ function resolveBundledDir(): { dir: string; source: DataSource } | null {
   return null;
 }
 
-function resolvePackageData(): { dir: string; source: DataSource } | null {
-  try {
-    const req = createRequire(import.meta.url);
-    const dataEntry = req.resolve('@archway/valet-mcp-data/mcp-data/index.json');
-    const pkgDataDir = path.dirname(dataEntry);
-    const maybeDir = path.resolve(pkgDataDir, '..');
-    if (fs.existsSync(maybeDir)) return { dir: maybeDir, source: 'bundled' };
-  } catch {
-    // ignore if not installed
-  }
-  return null;
-}
-
 function getDataInfo(): { dir: string; source: DataSource } {
   const explicit = resolveExplicitDir();
   if (explicit) return explicit;
 
-  const bundled = resolveBundledDir() ?? resolvePackageData();
+  const bundled = resolveBundledDir();
   if (bundled) return bundled;
 
   throw new Error('Unable to locate bundled valet MCP data.');

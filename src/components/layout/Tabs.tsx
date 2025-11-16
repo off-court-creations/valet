@@ -592,7 +592,9 @@ const TabsBase = forwardRef<HTMLDivElement, TabsProps>(
               const btn = refs.current[activeIndex];
               try {
                 // Prevent scroll jumping when moving focus to the active tab
-                (btn as unknown as HTMLElement | undefined)?.focus?.({ preventScroll: true } as FocusOptions);
+                (btn as unknown as HTMLElement | undefined)?.focus?.({
+                  preventScroll: true,
+                } as FocusOptions);
               } catch {
                 btn?.focus();
               }

@@ -325,7 +325,6 @@ args = []`}
           <Stack gap={1}>
             <Typography>
               <b>Resolution</b>: <code>VALET_MCP_DATA_DIR</code> (absolute path) → bundled snapshot
-              (or optional <code>@archway/valet-mcp-data</code> package)
             </Typography>
             <CodeBlock
               code={`# Use bundled data (default)
