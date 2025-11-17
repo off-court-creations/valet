@@ -15,7 +15,7 @@ import { toRgb, mix, toHex } from '../../helpers/color';
 import type { Presettable, SpacingProps, Sx } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
 
-export type PanelVariant = 'filled' | 'outlined' | 'plain';
+export type PanelVariant = 'filled' | 'outlined';
 type Intent =
   | 'default'
   | 'primary'
@@ -30,7 +30,7 @@ export interface PanelProps
   extends Omit<React.ComponentProps<'div'>, 'style'>,
     Presettable,
     Pick<SpacingProps, 'pad' | 'compact' | 'density'> {
-  /** Visual variant: filled | outlined | plain */
+  /** Visual variant: filled | outlined */
   variant?: PanelVariant;
   /** Semantic color intent; maps to theme tokens */
   intent?: Intent;
@@ -101,11 +101,12 @@ const Base = styled('div')<{
   ${({ $noNormalize }) => ($noNormalize ? `--valet-panel-align-self: flex-start;` : '')}
 
   ${({ $center }) =>
-    $center &&
-    `
-      justify-content: center;
-      align-items: center;
-    `}
+    $center
+      ? `
+          justify-content: center;
+          align-items: center;
+        `
+      : ''}
 
   /* Background / variant handling --------------------------- */
   ${({ $variant, $bg, $border, $strokeW }) => {
@@ -119,13 +120,14 @@ const Base = styled('div')<{
   }}
 
   ${({ $text }) =>
-    $text &&
-    `
-      color: ${$text};
-      --valet-text-color: ${$text};
-    `}
+    $text
+      ? `
+          color: ${$text};
+          --valet-text-color: ${$text};
+        `
+      : ''}
 
-  ${({ $center }) => $center !== undefined && `--valet-centered: ${$center ? '1' : '0'};`}
+  ${({ $center }) => ($center !== undefined ? `--valet-centered: ${$center ? '1' : '0'};` : '')}
 `;
 
 export const Panel: React.FC<PanelProps> = ({

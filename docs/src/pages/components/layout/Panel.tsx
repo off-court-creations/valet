@@ -14,7 +14,7 @@ export default function PanelDemoPage() {
   const [centerContent, setCenterContent] = useState(false);
   const [fullWidth, setFullWidth] = useState(false);
   const [alignX, setAlignX] = useState<'left' | 'right' | 'center'>('left');
-  const [variant, setVariant] = useState<'filled' | 'outlined' | 'plain'>('filled');
+  const [variant, setVariant] = useState<'filled' | 'outlined'>('filled');
   const bgValue: string | undefined =
     bgKey === 'none'
       ? undefined
@@ -48,13 +48,6 @@ export default function PanelDemoPage() {
         >
           <Typography>secondary outlined</Typography>
         </Panel>
-        <Panel
-          variant='plain'
-          intent='info'
-          preset='codePanel'
-        >
-          <Typography>info plain</Typography>
-        </Panel>
       </Stack>
 
       <Typography variant='h3'>variant=&quot;outlined&quot;</Typography>
@@ -68,8 +61,7 @@ export default function PanelDemoPage() {
       <Typography variant='h3'>Color override</Typography>
       <Typography>
         Use <code>color</code> to set an explicit background (theme token or CSS color). For
-        outlined/plain, the border/text derive from this color; for filled, label color
-        auto-contrasts.
+        outlined, the border/text derive from this color; for filled, label color auto-contrasts.
       </Typography>
       <Panel
         color={theme.colors['primary']}
@@ -176,12 +168,11 @@ export default function PanelDemoPage() {
           <Select
             placeholder='variant'
             value={variant}
-            onValueChange={(v) => setVariant(v as 'filled' | 'outlined' | 'plain')}
+            onValueChange={(v) => setVariant(v as 'filled' | 'outlined')}
             sx={{ width: 140 }}
           >
             <Select.Option value='filled'>filled</Select.Option>
             <Select.Option value='outlined'>outlined</Select.Option>
-            <Select.Option value='plain'>plain</Select.Option>
           </Select>
         </Stack>
         <Stack
