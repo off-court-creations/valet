@@ -80,6 +80,7 @@ const Trigger = styled('button')<{
   $radius: string;
   $outlineW: string;
   $outlineOffset: string;
+  $border: string;
 }>`
   all: unset;
   box-sizing: border-box;
@@ -91,7 +92,7 @@ const Trigger = styled('button')<{
   justify-content: space-between;
   gap: 6px;
 
-  border: 1px solid var(--valet-border, #ffffff22);
+  border: 1px solid var(--valet-border, ${({ $border }) => $border});
   border-radius: ${({ $radius }) => $radius};
   background: var(--valet-bg, ${({ $bg }) => $bg});
   color: var(--valet-text-color, ${({ $text }) => $text});
@@ -220,6 +221,7 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
   const bg = theme.colors.backgroundAlt;
   const bgElev = theme.colors.backgroundAlt;
   const primary = theme.colors.primary;
+  const border = theme.colors.divider ?? 'rgba(255, 255, 255, 0.25)';
 
   /* optional FormControl hook ------------------------------ */
   const form = useOptionalForm<Record<string, unknown>>();
@@ -409,6 +411,7 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
         $radius={theme.radius(1)}
         $outlineW={theme.stroke(2)}
         $outlineOffset={theme.stroke(2)}
+        $border={border}
         type='button'
         role='combobox'
         aria-haspopup='listbox'
