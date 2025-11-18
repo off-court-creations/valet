@@ -37,17 +37,25 @@ export interface AppBarProps extends Omit<React.HTMLAttributes<HTMLElement>, 'st
   left?: React.ReactNode;
   right?: React.ReactNode;
   pad?: Space;
+  /** Whether the bar is fixed to the viewport (and offsets content). Defaults to true. */
+  fixed?: boolean;
+  /** Force portal behavior. Defaults to following `fixed` (true when fixed). */
+  portal?: boolean;
   /** Inline styles (with CSS var support) */
   sx?: Sx;
 }
 
 /*───────────────────────────────────────────────────────────*/
-const Bar = styled('header')<{ $text: string; $pad: string }>`
+const Bar = styled('header')<{
+  $text: string;
+  $pad: string;
+  $pos: 'fixed' | 'relative' | 'sticky';
+}>`
   box-sizing: border-box;
   display: flex;
   align-items: center;
   padding: ${({ $pad }) => $pad};
-  position: fixed;
+  position: ${({ $pos }) => $pos};
   top: 0;
   left: 0;
   right: 0;
@@ -84,6 +92,8 @@ export const AppBar: React.FC<AppBarProps> = ({
   left,
   right,
   pad: padProp,
+  fixed = true,
+  portal,
   preset: p,
   className,
   sx,
@@ -140,6 +150,7 @@ export const AppBar: React.FC<AppBarProps> = ({
     const node = ref.current;
     const surfEl = element;
     if (!node || !surfEl) return;
+    if (!fixed) return; // inline bars shouldn't offset the Surface
 
     // Mirror Surface font/typography vars into the portalled bar element
     inheritSurfaceFontVars(node);
@@ -156,7 +167,7 @@ export const AppBar: React.FC<AppBarProps> = ({
       unregisterChild(id);
       surfaceEl.style.marginTop = prev;
     };
-  }, [element, id, registerChild, unregisterChild]);
+  }, [element, id, registerChild, unregisterChild, fixed]);
 
   const bar = (
     <Bar
@@ -165,6 +176,7 @@ export const AppBar: React.FC<AppBarProps> = ({
       data-valet-component='AppBar'
       $text={text}
       $pad={pad}
+      $pos={fixed ? 'fixed' : 'relative'}
       className={[presetClass, className].filter(Boolean).join(' ')}
       style={
         {
@@ -189,8 +201,9 @@ export const AppBar: React.FC<AppBarProps> = ({
     </Bar>
   );
 
-  /* Avoiding fixed-in-fixed bug on older Safari by portaling to body */
-  return createPortal(bar, document.body);
+  /* Avoiding fixed-in-fixed bug on older Safari by portaling to body when fixed; inline otherwise */
+  const shouldPortal = typeof portal === 'boolean' ? portal : fixed;
+  return shouldPortal ? createPortal(bar, document.body) : bar;
 };
 
 export default AppBar;

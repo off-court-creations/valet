@@ -14,7 +14,7 @@
       "name": "variant",
       "type": "PanelVariant",
       "required": false,
-      "description": "Visual variant: filled | outlined | plain",
+      "description": "Visual variant: filled | outlined",
       "default": "'filled'"
     },
     {
@@ -116,7 +116,7 @@
   "slots": [],
   "bestPractices": [
     "Use Panel to group related content and provide visual separation.",
-    "Choose variant='alt' when you want a transparent surface with an outline.",
+    "Choose variant='outlined' when you want a transparent surface with an outline.",
     "Prefer theme tokens for backgrounds; if you set a custom background ensure text maintains contrast.",
     "Use presets to standardize repeating styles; avoid duplicating sx across pages.",
     "Reserve fullWidth for sections that should span the container; otherwise, anchor with alignX.",
@@ -134,16 +134,16 @@
     },
     {
       "id": "panel-alt-on-alt",
-      "title": "Alt on backgroundAlt surface",
-      "code": "<Box background={theme.colors['backgroundAlt']} sx={{ padding: theme.spacing(1) }}><Panel variant=\"alt\" sx={{ padding: theme.spacing(1) }}><Typography>Outline contrasts backgroundAlt</Typography></Panel></Box>",
+      "title": "Outlined on backgroundAlt surface",
+      "code": "<Box background={theme.colors['backgroundAlt']} sx={{ padding: theme.spacing(1) }}><Panel variant=\"outlined\" sx={{ padding: theme.spacing(1) }}><Typography>Outline contrasts backgroundAlt</Typography></Panel></Box>",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {}
     },
     {
       "id": "panel-alt",
-      "title": "Alt variant (outline)",
-      "code": "<Panel variant=\"alt\"><Typography>Transparent with outline</Typography></Panel>",
+      "title": "Outlined variant",
+      "code": "<Panel variant=\"outlined\"><Typography>Transparent with outline</Typography></Panel>",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {}
@@ -168,6 +168,6 @@
   "sourceFiles": [
     "src/components/layout/Panel.tsx"
   ],
-  "version": "0.34.0",
+  "version": "0.34.1",
   "schemaVersion": "1.6"
 }

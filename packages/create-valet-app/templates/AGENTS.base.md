@@ -26,7 +26,7 @@ Valet components expose semantic props that encode layout and behavior. Prefer t
   - Do: `<Box fullWidth alignX='center'>…</Box>`
   - Don’t: `<Box sx={{ width: '100%', margin: '0 auto' }}>…</Box>`
 - Visual variants and presets
-  - Do: `<Panel variant='alt' />`, `preset='glassHolder'`
+  - Do: `<Panel variant='outlined' />`, `preset='glassHolder'`
   - Don’t: reproduce the variant via raw `sx`.
 
 Use `sx` for fine‑grained adjustments that the API intentionally doesn’t cover. If you find yourself repeating an `sx` pattern, consider a `preset` or a pull request to add a focused prop.

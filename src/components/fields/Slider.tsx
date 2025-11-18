@@ -72,7 +72,6 @@ const Thumb = styled('button')<{
   $primary: string;
 }>`
   position: absolute;
-  top: 50%;
   transform: translate(-50%, -50%);
   width: ${({ $d }) => $d};
   height: ${({ $d }) => $d};
@@ -119,7 +118,6 @@ const EndLabel = styled('span')<{ $font: string }>`
 
 const Tick = styled('span')<{ $h: string }>`
   position: absolute;
-  top: 50%;
   transform: translate(-50%, -50%);
   width: 1px;
   height: ${({ $h }) => $h};
@@ -456,8 +454,12 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
     const id = useId();
     const format = (v: number) => (precision ? v.toFixed(precision) : v);
 
-    const padTop = showValue ? theme.spacing(1) : theme.spacing(0.25);
-    const padBottom = showMinMax ? theme.spacing(1) : theme.spacing(0.25);
+    const baseTop = showValue ? theme.spacing(1) : theme.spacing(0.25);
+    const baseBottom = showMinMax ? theme.spacing(1) : theme.spacing(0.25);
+    const thumbOverflow = `calc((${geom.thumb} - ${geom.trackH}) / 2)`;
+    const padTop = `calc(${baseTop} + ${thumbOverflow})`;
+    const padBottom = `calc(${baseBottom} + ${thumbOverflow})`;
+    const trackCenter = `calc(${padTop} + (${geom.trackH} / 2))`;
 
     return (
       <Wrapper
@@ -502,7 +504,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
           $primary={theme.colors.primary}
           onKeyDown={onKeyDown}
           onPointerDown={onPointerDown}
-          style={{ top: `calc(${geom.trackH} / 2)` }}
+          style={{ top: trackCenter }}
         >
           {showValue && <ValueBubble $font={geom.font}>{format(current)}</ValueBubble>}
         </Thumb>
@@ -531,7 +533,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
             <Tick
               key={t}
               $h={geom.tickH}
-              style={{ left: `${pctFor(t)}%` }}
+              style={{ left: `${pctFor(t)}%`, top: trackCenter }}
             />
           ))}
       </Wrapper>

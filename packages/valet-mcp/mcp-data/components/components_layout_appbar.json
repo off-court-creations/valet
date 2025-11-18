@@ -56,6 +56,19 @@
       "required": false
     },
     {
+      "name": "fixed",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the bar is fixed to the viewport (and offsets content). Defaults to true.",
+      "default": "true"
+    },
+    {
+      "name": "portal",
+      "type": "boolean",
+      "required": false,
+      "description": "Force portal behavior. Defaults to following `fixed` (true when fixed)."
+    },
+    {
       "name": "sx",
       "type": "Sx",
       "required": false,
@@ -124,6 +137,6 @@
   "sourceFiles": [
     "src/components/layout/AppBar.tsx"
   ],
-  "version": "0.34.0",
+  "version": "0.34.1",
   "schemaVersion": "1.6"
 }

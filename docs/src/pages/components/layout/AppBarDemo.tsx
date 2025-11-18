@@ -11,6 +11,8 @@ export default function AppBarDemoPage() {
   const usage = (
     <Stack gap={1}>
       <AppBar
+        fixed={false}
+        portal={false}
         left={
           <>
             <Icon icon='mdi:car' />
@@ -32,15 +34,21 @@ export default function AppBarDemoPage() {
       </Typography>
       <Stack direction='row'>
         <AppBar
+          fixed={false}
+          portal={false}
           intent='primary'
           left={<Typography>primary</Typography>}
         />
         <AppBar
+          fixed={false}
+          portal={false}
           variant='outlined'
           intent='secondary'
           left={<Typography>outlined secondary</Typography>}
         />
         <AppBar
+          fixed={false}
+          portal={false}
           variant='plain'
           intent='info'
           left={<Typography>plain info</Typography>}
@@ -101,6 +109,8 @@ export default function AppBarDemoPage() {
         </Select>
       </Stack>
       <AppBar
+        fixed={false}
+        portal={false}
         variant={variant}
         {...(intent !== 'default' ? { intent } : {})}
         left={<Typography>Playground</Typography>}
@@ -118,6 +128,8 @@ export default function AppBarDemoPage() {
         example:
       </Typography>
       <AppBar
+        fixed={false}
+        portal={false}
         variant='outlined'
         color={theme.colors['primary'] as string}
         left={<Typography>outlined + color=primary</Typography>}

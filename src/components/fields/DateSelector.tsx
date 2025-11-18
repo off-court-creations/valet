@@ -109,7 +109,11 @@ const Cell = styled('button')<{
   $rangeText: string;
   $compact?: boolean;
 }>`
-  padding: 0.25rem 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0;
   border: none;
   background: ${({ $start, $end, $inRange, $primary, $secondary, $rangeBg }) =>
     $start ? $primary : $end ? $secondary : $inRange ? $rangeBg : 'transparent'};
@@ -118,6 +122,8 @@ const Cell = styled('button')<{
   border-radius: var(--valet-date-cell-radius, 4px);
   cursor: pointer;
   font: inherit;
+  text-align: center;
+  line-height: 1;
   /* Align day numbers neatly in columns */
   font-variant-numeric: tabular-nums;
   font-weight: ${({ $start, $end }) => ($start || $end ? 'bold' : 'inherit')};
@@ -362,6 +368,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
             <IconButton
               size='sm'
               variant='outlined'
+              color='primaryText'
               icon='mdi:chevron-double-left'
               aria-label='Previous year'
               onClick={() => {
@@ -377,6 +384,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
           <IconButton
             size={compactEffective ? 'xs' : 'sm'}
             variant='outlined'
+            color='primaryText'
             icon='mdi:chevron-left'
             aria-label='Previous month'
             onClick={() => changeMonth(-1)}
@@ -426,6 +434,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
           <IconButton
             size={compactEffective ? 'xs' : 'sm'}
             variant='outlined'
+            color='primaryText'
             icon='mdi:chevron-right'
             aria-label='Next month'
             onClick={() => changeMonth(1)}
@@ -435,6 +444,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
             <IconButton
               size='sm'
               variant='outlined'
+              color='primaryText'
               icon='mdi:chevron-double-right'
               aria-label='Next year'
               onClick={() => {

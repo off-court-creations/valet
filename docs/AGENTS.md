@@ -233,7 +233,7 @@ Concrete examples
   - Do: `<Box fullWidth alignX='center'>…</Box>`
   - Don’t: `<Box sx={{ width: '100%', margin: '0 auto' }}>…</Box>`
 - Variant/visual affordances
-  - Do: `<Panel variant='alt'>…</Panel>` (or `preset='glassHolder'`)
+  - Do: `<Panel variant='outlined'>…</Panel>` (or `preset='glassHolder'`)
   - Don’t: `<Panel sx={{ background: 'transparent', outline: '1px solid …' }}>…</Panel>`
 
 Principle in one line
