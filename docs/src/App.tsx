@@ -67,6 +67,7 @@ const CodeBlockDemoPage = page(() => import('./pages/components/widgets/CodeBloc
 const MarkdownDemoPage = page(() => import('./pages/components/widgets/MarkdownDemo'));
 const QuickstartPage = page(() => import('./pages/getting-started/Quickstart'));
 const ThemeEnginePage = page(() => import('./pages/getting-started/ThemeEngine'));
+const MigrateFromMUIPage = page(() => import('./pages/getting-started/MigrateFromMUI'));
 const SurfaceExplainerPage = page(() => import('./pages/components/layout/Surface'));
 const PropPatternsPage = page(() => import('./pages/getting-started/PropPatterns'));
 const ComplicatedDashboardPage = page(() => import('./pages/examples/ComplicatedDashboard'));
@@ -116,6 +117,10 @@ export function App() {
         <Route
           path='/quickstart'
           element={<QuickstartPage />}
+        />
+        <Route
+          path='/migrate-from-mui'
+          element={<MigrateFromMUIPage />}
         />
         <Route
           path='/mcp'

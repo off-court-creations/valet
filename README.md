@@ -16,34 +16,93 @@
 
 ## Welcome
 
-`valet` is a TypeScript CSS‑in‑JS engine + UI kit with an AI‑forward agentic layer. Beautiful by default; precise and accessible when customized.
+`@archway/valet` is a library for making beautiful websites and apps.
+Valet is capable and easy for people who have never coded or made websites. 
+Valet feels familiar and powerful to experienced devs.
+You can tinker with every last thing, or valet can literally drive itself.
 
-The ecosystem also includes the app scaffold `@archway/create-valet-app` and the MCP server `@archway/valet-mcp`.
+Valet includes opinions on **design** and **style**. 
+If you prefer, you can easily reconfigure valet to look however you want.
 
-> [!CAUTION]
-> Pre‑1.0: APIs may change without notice
+Valet produces experiences that are:
+ - stable
+ - beautiful
+ - scalable
+ - dependable across devices 
+ - AI-enabled, no fluff or gimmicks
+
+## MCP
+
+An MCP is a toolbox which AI chatbots and coding agents can use to learn things as well as act on your behalf. 
+
+Whether this is your first frontend or your 1000th, valet has a compelling X-factor. Valet has traditional docs, which experienced developers would benefit from reading, but the `@archway/valet-mcp` is better than any docs can be. 
+
+The MCP teaches AI everything there is to know about valet, quickly and efficiently, and then it gives it the tools to make beautiful and functional apps and experiences from your natural language requests.
+
+## Tech Specs
+
+Human developers and AI proxies may wish to learn what specific areas of a modern stack valet covers. Valet is:
+
+- a TypeScript CSS‑in‑JS engine
+  - you don't need `Styled` or `Emotion` when you use valet
+- a fully-typed UI component library
+  - If you've used `MUI` or `chakra`, you'll pick it up quick, and you won't go back
+- color, motion, and spacing engines
+  - powerful tokens are easy to remember
+- `@archway/valet-mcp`
+  - your companion that uses valet to its fullest potential
+- `@archway/create-valet-app`
+  - for when you need a whole app / website, not just a component library
+- built for `React`
+  - powerful and compatible with the modern web
 
 ## Docs
 
-- Live docs (components, concepts, guides): https://main.db2j7e5kim3gg.amplifyapp.com/
-- Develop docs locally:
+Our live docs can be found [here](https://main.db2j7e5kim3gg.amplifyapp.com/).
+
+To use the docs locally:
 
 ```shell
-cd docs && npm install && npm run dev
+cd docs
+npm install
+npm run dev
 ```
 
-### MCP (introspection)
+## Getting Started
 
-- MCP server: https://www.npmjs.com/package/@archway/valet-mcp
-- Guide: “MCP & Introspection” in the docs (tools, examples, best practices)
+### natural language + valet
 
-Quick install:
+Use `create-valet-app` to make a modern web app. Use codex or Claude Code to provide natural language input. 
+
+If you have used codex or Claude Code before, `create-valet-app` will automatically install the `valet MCP` into your tools
+
+Get started by running this command in your terminal with the folder name you want
 
 ```shell
-npm i -g @archway/valet-mcp
+npx @archway/create-valet-app REPLACE-WITH-YOUR-FOLDERNAME 
 ```
 
-Codex config (see docs for details):
+Follow the installation flow on screen.
+
+### Integration with existing app
+
+```shell
+npm i @archway/valet
+```
+
+To migrate a website / app from another component UI system to valet, see  [Migrate from MUI](https://main.db2j7e5kim3gg.amplifyapp.com/migrate-from-mui).
+
+## MCP manual installation
+
+https://www.npmjs.com/package/@archway/valet-mcp
+
+```shell
+npm i -g @archway/valet-mcp@latest
+```
+
+Codex config (`~/.codex/config.toml`)
+
+add these lines:
 
 ```toml
 [mcp_servers.valet]
@@ -56,17 +115,5 @@ args = []
 We welcome issues and PRs. See [valet issues](https://github.com/off-court-creations/valet/issues). If you’re an agent/AI, read `AGENTS.md`.
 
 Targets React 19.x.
-
-## Scripts (essentials)
-
-- `build` – build the library
-- `dev` – watch mode for components
-- `lint`, `lint:fix` – ESLint
-- `format`, `format:fix` – Prettier
-- `link:docs` – build + link `@archway/valet` into `docs`
-- `mcp:build` – generate `mcp-data/`
-- `mcp:server:selfcheck` – MCP selfcheck using fresh `mcp-data/`
-
-See `package.json` for the full list.
 
 > made with love by Archway

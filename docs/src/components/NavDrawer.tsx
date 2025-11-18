@@ -91,6 +91,10 @@ const treeData: TreeNode<Item>[] = [
     data: { label: 'Getting Started' },
     children: [
       { id: '/quickstart', data: { label: 'Quickstart', path: '/quickstart' } },
+      {
+        id: '/migrate-from-mui',
+        data: { label: 'Migrate from MUI', path: '/migrate-from-mui' },
+      },
       { id: '/mcp', data: { label: 'MCP & Introspection', path: '/mcp' } },
       { id: '/events', data: { label: 'Events & Commits', path: '/events' } },
       { id: '/glossary', data: { label: 'Glossary', path: '/glossary' } },
