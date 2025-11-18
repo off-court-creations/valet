@@ -95,6 +95,6 @@
   "sourceFiles": [
     "src/components/fields/Button.tsx"
   ],
-  "version": "0.34.0",
+  "version": "0.34.1",
   "schemaVersion": "1.6"
 }
