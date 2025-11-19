@@ -8,20 +8,33 @@
       "Keep the bar sticky only when it benefits navigation; avoid stacking multiple sticky bars.",
       "Ensure contrast and focus styles for interactive items meet accessibility.",
       "Balance icon vs text: label primary actions, reserve icon‑only for well‑known actions.",
-      "Coordinate with Drawer and Surface offsets so content doesn’t sit underneath."
+      "Coordinate with Drawer and Surface offsets so content doesn’t sit underneath.",
+      "Group navigation buttons with the `navigation` prop so they sit inline and respond to available space."
     ]
   },
   "examples": [
     {
       "id": "appbar-basic",
       "title": "Basic AppBar",
-      "code": "<AppBar left={<><Icon icon='mdi:car' /><Typography>Title</Typography></>} right={<Button variant='outlined'>Action</Button>} />",
+      "code": "<AppBar logo={<Icon icon='mdi:car' />} title={<Typography>Title</Typography>} right={<Button variant='outlined'>Action</Button>} />",
       "runnable": false
     },
     {
       "id": "appbar-colored",
       "title": "Colored AppBar",
       "code": "() => {\n  const { theme } = Valet.useTheme();\n  return <AppBar color={theme.colors.primary} textColor={theme.colors.primaryText} left={<Typography>Primary</Typography>} />;\n}",
+      "runnable": false
+    },
+    {
+      "id": "appbar-navigation",
+      "title": "Navigation Buttons",
+      "code": "() => {\n  const [active, setActive] = React.useState('home');\n  const navigation = [\n    { id: 'home', label: 'Home', active: active === 'home', onClick: () => setActive('home') },\n    { id: 'docs', label: 'Docs', active: active === 'docs', onClick: () => setActive('docs') },\n    { id: 'account', label: 'Account', active: active === 'account', onClick: () => setActive('account') }\n  ];\n  return (\n    <AppBar\n      fixed={false}\n      portal={false}\n      left={<Typography variant='subtitle'>Product</Typography>}\n      navigation={navigation}\n      navigationLabel='Primary navigation'\n      right={<Button size='sm' variant='outlined'>CTA</Button>}\n    />\n  );\n}",
+      "runnable": false
+    },
+    {
+      "id": "appbar-icon-buttons",
+      "title": "Icon Navigation",
+      "code": "() => {\n  const navigation = [\n    { id: 'home', icon: <Icon icon='mdi:home' />, ariaLabel: 'Home', active: true },\n    { id: 'search', icon: <Icon icon='mdi:magnify' />, ariaLabel: 'Search', href: '#' },\n    { id: 'profile', icon: <Icon icon='mdi:account' />, ariaLabel: 'Profile', href: '#' }\n  ];\n  return (\n    <AppBar\n      fixed={false}\n      portal={false}\n      navigation={navigation.map((item) => ({ ...item, iconOnly: true }))}\n      navigationLabel='Icon navigation'\n      right={<Button size='sm'>Sign up</Button>}\n    />\n  );\n}",
       "runnable": false
     }
   ]
