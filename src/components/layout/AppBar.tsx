@@ -26,9 +26,9 @@ type Intent =
   | 'info'
   | (string & {});
 
-export interface AppBarProps extends Omit<React.HTMLAttributes<HTMLElement>, 'style'>, Presettable {
-  /** Visual variant: filled | outlined | plain */
-  variant?: 'filled' | 'outlined' | 'plain';
+export interface AppBarProps
+  extends Omit<React.HTMLAttributes<HTMLElement>, 'style' | 'title'>,
+    Presettable {
   /** Semantic color intent; maps to theme tokens */
   intent?: Intent;
   /** Explicit color override (theme token name or CSS color) */
@@ -143,7 +143,6 @@ const NavWrap = styled('nav')<{
 
 /*───────────────────────────────────────────────────────────*/
 export const AppBar: React.FC<AppBarProps> = ({
-  variant = 'filled',
   intent,
   color,
   textColor,
@@ -192,18 +191,14 @@ export const AppBar: React.FC<AppBarProps> = ({
   const base = resolveToken(color) || fromIntent(intent) || theme.colors.primary;
   const derivedText = (() => {
     if (textColor) return resolveToken(textColor) || textColor;
-    if (variant === 'filled') {
-      if (equals(base, theme.colors.primary)) return theme.colors.primaryText;
-      if (equals(base, theme.colors.secondary)) return theme.colors.secondaryText;
-      if (equals(base, theme.colors.tertiary)) return theme.colors.tertiaryText;
-      if (equals(base, theme.colors.error)) return theme.colors.errorText;
-      return theme.colors.text;
-    }
-    // outlined/plain → treat base as emphasis colour; text defaults to theme text
+    if (equals(base, theme.colors.primary)) return theme.colors.primaryText;
+    if (equals(base, theme.colors.secondary)) return theme.colors.secondaryText;
+    if (equals(base, theme.colors.tertiary)) return theme.colors.tertiaryText;
+    if (equals(base, theme.colors.error)) return theme.colors.errorText;
     return theme.colors.text;
   })();
 
-  const bg = variant === 'filled' ? base : 'transparent';
+  const bg = base;
   const text = derivedText;
   const presetClass = p ? preset(p) : '';
   // Standardize numeric mapping via resolveSpace; retain two-value default
@@ -236,15 +231,19 @@ export const AppBar: React.FC<AppBarProps> = ({
     };
   }, [element, id, registerChild, unregisterChild, fixed]);
 
-  const brand = logo || title ? <BrandWrap $gap={logoTitleGap}>{logo}{title}</BrandWrap> : null;
+  const brand =
+    logo || title ? (
+      <BrandWrap $gap={logoTitleGap}>
+        {logo}
+        {title}
+      </BrandWrap>
+    ) : null;
   const leftContent = (
     <>
       {brand}
       {left ?? children}
     </>
   );
-  const hasLeft = Boolean(leftContent);
-  const hasRight = Boolean(right);
   const hasNav = Boolean(navigation && navigation.length > 0);
   const computedNavAlign = (() => {
     if (navigationAlign !== 'auto') return navigationAlign;
@@ -261,8 +260,8 @@ export const AppBar: React.FC<AppBarProps> = ({
   const resolveNavColor = (itemVariant: ButtonVariant, itemIntent?: Intent) => {
     const intentColor = fromIntent(itemIntent);
     if (intentColor) return intentColor;
-    // On solid app bars, plain/outlined buttons need contrast vs the bar background.
-    if (variant === 'filled' && (itemVariant === 'plain' || itemVariant === 'outlined')) {
+    // Plain/outlined buttons need contrast vs the bar background.
+    if (itemVariant === 'plain' || itemVariant === 'outlined') {
       return text;
     }
     return base;
@@ -287,8 +286,8 @@ export const AppBar: React.FC<AppBarProps> = ({
           '--valet-intent-fg': text,
           '--valet-intent-border': base,
           '--valet-intent-focus': theme.colors.primary,
-          '--valet-intent-bg-hover': variant === 'filled' ? base + 'F0' : 'transparent',
-          '--valet-intent-bg-active': variant === 'filled' ? base + 'E0' : 'transparent',
+          '--valet-intent-bg-hover': base + 'F0',
+          '--valet-intent-bg-active': base + 'E0',
           '--valet-intent-fg-disabled': theme.colors.text + '88',
           ...sx,
         } as React.CSSProperties
@@ -306,15 +305,7 @@ export const AppBar: React.FC<AppBarProps> = ({
         >
           {navigation!.map((item, idx) => {
             const key = item.id ?? (typeof item.label === 'string' ? item.label : idx);
-            const navVariant: ButtonVariant =
-              item.variant ??
-              (variant === 'filled'
-                ? item.active
-                  ? 'outlined'
-                  : 'plain'
-                : item.active
-                  ? 'filled'
-                  : 'plain');
+            const navVariant: ButtonVariant = item.variant ?? (item.active ? 'outlined' : 'plain');
             const colorForNav = resolveNavColor(navVariant, item.intent);
             const asTag = item.href ? ('a' as const) : undefined;
             const iconOnly = item.iconOnly || (!item.label && !!item.icon);
@@ -343,9 +334,7 @@ export const AppBar: React.FC<AppBarProps> = ({
                   borderRadius: theme.radius(999),
                   whiteSpace: 'nowrap',
                   boxShadow:
-                    navVariant === 'filled'
-                      ? `0 0 0 1px ${text}33`
-                      : `0 0 0 1px ${colorForNav}33`,
+                    navVariant === 'filled' ? `0 0 0 1px ${text}33` : `0 0 0 1px ${colorForNav}33`,
                   ...(iconOnly
                     ? {
                         minWidth: theme.spacing(3.5),
@@ -357,7 +346,7 @@ export const AppBar: React.FC<AppBarProps> = ({
                       }
                     : null),
                   ...(item.active && navVariant !== 'filled'
-                    ? { background: variant === 'filled' ? `${text}1A` : `${colorForNav}16` }
+                    ? { background: `${colorForNav}16` }
                     : null),
                 }}
               >

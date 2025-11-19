@@ -8,6 +8,8 @@ import AppBarMeta from '../../../../../src/components/layout/AppBar.meta.json';
 export default function AppBarDemoPage() {
   const { theme, toggleMode } = useTheme();
   const [page, setPage] = React.useState<'home' | 'billing' | 'account'>('home');
+  const subtleTextColor = ((theme.colors as Record<string, string>)['textSubtle'] ??
+    (theme.colors as Record<string, string>)['text']) as string;
 
   const navigation = [
     { id: 'home', label: 'Home', active: page === 'home', onClick: () => setPage('home') },
@@ -49,31 +51,23 @@ export default function AppBarDemoPage() {
         navigationLabel='Primary navigation'
       />
       <Typography>
-        AppBar supports <code>variant</code> (<code>filled|outlined|plain</code>) and semantic
-        <code>intent</code> colors, with optional <code>color</code> override for custom themes.
-        Pass <code>navigation</code> to render inline navigation buttons; alignment defaults to the
-        available space (centered when both left and right slots are set).
+        AppBar ships as a solid bar with optional semantic <code>intent</code> colors and
+        <code>color</code> overrides. Pass <code>navigation</code> to render inline navigation
+        buttons; alignment defaults to the available space (centered when both left and right slots
+        are set).
       </Typography>
       <Stack direction='row'>
         <AppBar
           fixed={false}
           portal={false}
-          intent='primary'
-          left={<Typography>primary</Typography>}
+          intent='success'
+          left={<Typography>filled success</Typography>}
         />
         <AppBar
           fixed={false}
           portal={false}
-          variant='outlined'
-          intent='secondary'
-          left={<Typography>outlined secondary</Typography>}
-        />
-        <AppBar
-          fixed={false}
-          portal={false}
-          variant='plain'
-          intent='info'
-          left={<Typography>plain info</Typography>}
+          intent='warning'
+          left={<Typography>warning</Typography>}
         />
       </Stack>
       <AppBar
@@ -99,7 +93,6 @@ export default function AppBarDemoPage() {
     </Stack>
   );
 
-  const [variant, setVariant] = React.useState<'filled' | 'outlined' | 'plain'>('filled');
   const [intent, setIntent] = React.useState<
     'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'info'
   >('default');
@@ -110,17 +103,6 @@ export default function AppBarDemoPage() {
         direction='row'
         sx={{ alignItems: 'center', gap: theme.spacing(1) }}
       >
-        <Typography variant='subtitle'>variant</Typography>
-        <Select
-          placeholder='variant'
-          value={variant}
-          onValueChange={(v) => setVariant((v as 'filled' | 'outlined' | 'plain') || 'filled')}
-          sx={{ width: 160 }}
-        >
-          <Select.Option value='filled'>filled</Select.Option>
-          <Select.Option value='outlined'>outlined</Select.Option>
-          <Select.Option value='plain'>plain</Select.Option>
-        </Select>
         <Typography variant='subtitle'>intent</Typography>
         <Select
           placeholder='intent'
@@ -154,9 +136,7 @@ export default function AppBarDemoPage() {
         <Select
           placeholder='navigation align'
           value={navAlign}
-          onValueChange={(v) =>
-            setNavAlign((v as 'auto' | 'left' | 'center' | 'right') || 'auto')
-          }
+          onValueChange={(v) => setNavAlign((v as 'auto' | 'left' | 'center' | 'right') || 'auto')}
           sx={{ width: 180 }}
         >
           {(['auto', 'left', 'center', 'right'] as const).map((align) => (
@@ -172,12 +152,15 @@ export default function AppBarDemoPage() {
       <AppBar
         fixed={false}
         portal={false}
-        variant={variant}
         {...(intent !== 'default' ? { intent } : {})}
         left={
           <Stack direction='row'>
             <Typography>Playground</Typography>
-            <Typography variant='bodySm' color={theme.colors.textSubtle}>
+            <Typography
+              variant='body'
+              color={subtleTextColor}
+              scale={0.9}
+            >
               {page}
             </Typography>
           </Stack>
@@ -197,11 +180,10 @@ export default function AppBarDemoPage() {
       <AppBar
         fixed={false}
         portal={false}
-        variant={variant}
         navigationAlign={navAlign}
         navigation={iconNavigation.map((item) => ({
           ...item,
-          active: item.id === 'home' ? page === 'home' : item.active,
+          active: item.id === 'home' ? page === 'home' : Boolean(item.active),
           iconOnly: true,
         }))}
         navigationLabel='Playground icon navigation'
@@ -214,9 +196,8 @@ export default function AppBarDemoPage() {
       <AppBar
         fixed={false}
         portal={false}
-        variant='outlined'
         color={theme.colors['primary'] as string}
-        left={<Typography>outlined + color=primary</Typography>}
+        left={<Typography>color=primary override</Typography>}
         navigation={navigation}
       />
     </Stack>

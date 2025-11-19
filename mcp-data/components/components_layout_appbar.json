@@ -11,18 +11,6 @@
   ],
   "props": [
     {
-      "name": "variant",
-      "type": "'filled' | 'outlined' | 'plain'",
-      "required": false,
-      "description": "Visual variant: filled | outlined | plain",
-      "default": "'filled'",
-      "enumValues": [
-        "filled",
-        "outlined",
-        "plain"
-      ]
-    },
-    {
       "name": "intent",
       "type": "Intent",
       "required": false,
@@ -51,6 +39,24 @@
       "required": false
     },
     {
+      "name": "logo",
+      "type": "React.ReactNode",
+      "required": false,
+      "description": "Optional brand/logo node, typically an SVG"
+    },
+    {
+      "name": "title",
+      "type": "React.ReactNode",
+      "required": false,
+      "description": "Optional primary title to the right of the logo"
+    },
+    {
+      "name": "logoGap",
+      "type": "Space",
+      "required": false,
+      "description": "Spacing between logo and title"
+    },
+    {
       "name": "pad",
       "type": "Space",
       "required": false
@@ -69,6 +75,37 @@
       "description": "Force portal behavior. Defaults to following `fixed` (true when fixed)."
     },
     {
+      "name": "navigation",
+      "type": "AppBarNavigationItem[]",
+      "required": false,
+      "description": "Optional navigation buttons; rendered inline for page-level navigation"
+    },
+    {
+      "name": "navigationAlign",
+      "type": "'left' | 'center' | 'right' | 'auto'",
+      "required": false,
+      "description": "Where navigation buttons live; auto centers when both sides are populated",
+      "default": "'auto'",
+      "enumValues": [
+        "left",
+        "center",
+        "right",
+        "auto"
+      ]
+    },
+    {
+      "name": "navigationLabel",
+      "type": "string",
+      "required": false,
+      "description": "ARIA label for the navigation group"
+    },
+    {
+      "name": "navigationGap",
+      "type": "Space",
+      "required": false,
+      "description": "Gap between navigation buttons"
+    },
+    {
       "name": "sx",
       "type": "Sx",
       "required": false,
@@ -84,7 +121,8 @@
   "domPassthrough": {
     "element": "div",
     "omitted": [
-      "style"
+      "style",
+      "title"
     ]
   },
   "cssVars": [
@@ -107,6 +145,12 @@
     },
     {
       "name": "right"
+    },
+    {
+      "name": "logo"
+    },
+    {
+      "name": "title"
     }
   ],
   "bestPractices": [
@@ -114,13 +158,14 @@
     "Keep the bar sticky only when it benefits navigation; avoid stacking multiple sticky bars.",
     "Ensure contrast and focus styles for interactive items meet accessibility.",
     "Balance icon vs text: label primary actions, reserve icon‑only for well‑known actions.",
-    "Coordinate with Drawer and Surface offsets so content doesn’t sit underneath."
+    "Coordinate with Drawer and Surface offsets so content doesn’t sit underneath.",
+    "Group navigation buttons with the `navigation` prop so they sit inline and respond to available space."
   ],
   "examples": [
     {
       "id": "appbar-basic",
       "title": "Basic AppBar",
-      "code": "<AppBar left={<><Icon icon='mdi:car' /><Typography>Title</Typography></>} right={<Button variant='outlined'>Action</Button>} />",
+      "code": "<AppBar logo={<Icon icon='mdi:car' />} title={<Typography>Title</Typography>} right={<Button variant='outlined'>Action</Button>} />",
       "lang": "tsx",
       "runnable": false,
       "minimalProps": {}
@@ -129,6 +174,22 @@
       "id": "appbar-colored",
       "title": "Colored AppBar",
       "code": "() => {\n  const { theme } = Valet.useTheme();\n  return <AppBar color={theme.colors.primary} textColor={theme.colors.primaryText} left={<Typography>Primary</Typography>} />;\n}",
+      "lang": "tsx",
+      "runnable": false,
+      "minimalProps": {}
+    },
+    {
+      "id": "appbar-navigation",
+      "title": "Navigation Buttons",
+      "code": "() => {\n  const [active, setActive] = React.useState('home');\n  const navigation = [\n    { id: 'home', label: 'Home', active: active === 'home', onClick: () => setActive('home') },\n    { id: 'docs', label: 'Docs', active: active === 'docs', onClick: () => setActive('docs') },\n    { id: 'account', label: 'Account', active: active === 'account', onClick: () => setActive('account') }\n  ];\n  return (\n    <AppBar\n      fixed={false}\n      portal={false}\n      left={<Typography variant='subtitle'>Product</Typography>}\n      navigation={navigation}\n      navigationLabel='Primary navigation'\n      right={<Button size='sm' variant='outlined'>CTA</Button>}\n    />\n  );\n}",
+      "lang": "tsx",
+      "runnable": false,
+      "minimalProps": {}
+    },
+    {
+      "id": "appbar-icon-buttons",
+      "title": "Icon Navigation",
+      "code": "() => {\n  const navigation = [\n    { id: 'home', icon: <Icon icon='mdi:home' />, ariaLabel: 'Home', active: true },\n    { id: 'search', icon: <Icon icon='mdi:magnify' />, ariaLabel: 'Search', href: '#' },\n    { id: 'profile', icon: <Icon icon='mdi:account' />, ariaLabel: 'Profile', href: '#' }\n  ];\n  return (\n    <AppBar\n      fixed={false}\n      portal={false}\n      navigation={navigation.map((item) => ({ ...item, iconOnly: true }))}\n      navigationLabel='Icon navigation'\n      right={<Button size='sm'>Sign up</Button>}\n    />\n  );\n}",
       "lang": "tsx",
       "runnable": false,
       "minimalProps": {}
