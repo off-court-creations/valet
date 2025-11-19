@@ -7,6 +7,23 @@ import AppBarMeta from '../../../../../src/components/layout/AppBar.meta.json';
 
 export default function AppBarDemoPage() {
   const { theme, toggleMode } = useTheme();
+  const [page, setPage] = React.useState<'home' | 'billing' | 'account'>('home');
+
+  const navigation = [
+    { id: 'home', label: 'Home', active: page === 'home', onClick: () => setPage('home') },
+    {
+      id: 'billing',
+      label: 'Billing',
+      active: page === 'billing',
+      onClick: () => setPage('billing'),
+    },
+    {
+      id: 'account',
+      label: 'Account',
+      active: page === 'account',
+      onClick: () => setPage('account'),
+    },
+  ];
 
   const usage = (
     <Stack gap={1}>
@@ -27,10 +44,14 @@ export default function AppBarDemoPage() {
             Toggle
           </Button>
         }
+        navigation={navigation}
+        navigationLabel='Primary navigation'
       />
       <Typography>
         AppBar supports <code>variant</code> (<code>filled|outlined|plain</code>) and semantic
         <code>intent</code> colors, with optional <code>color</code> override for custom themes.
+        Pass <code>navigation</code> to render inline navigation buttons; alignment defaults to the
+        available space (centered when both left and right slots are set).
       </Typography>
       <Stack direction='row'>
         <AppBar
@@ -54,6 +75,19 @@ export default function AppBarDemoPage() {
           left={<Typography>plain info</Typography>}
         />
       </Stack>
+      <AppBar
+        fixed={false}
+        portal={false}
+        navigationAlign='left'
+        navigationLabel='Secondary nav'
+        navigation={navigation.map((item) => ({ ...item, active: item.id === page }))}
+        right={
+          <Stack direction='row'>
+            <Button variant='outlined'>Filters</Button>
+            <Button>Invite</Button>
+          </Stack>
+        }
+      />
     </Stack>
   );
 
@@ -61,6 +95,7 @@ export default function AppBarDemoPage() {
   const [intent, setIntent] = React.useState<
     'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'info'
   >('default');
+  const [navAlign, setNavAlign] = React.useState<'auto' | 'left' | 'center' | 'right'>('auto');
   const playground = (
     <Stack gap={1}>
       <Stack
@@ -107,13 +142,41 @@ export default function AppBarDemoPage() {
             </Select.Option>
           ))}
         </Select>
+        <Typography variant='subtitle'>navigationAlign</Typography>
+        <Select
+          placeholder='navigation align'
+          value={navAlign}
+          onValueChange={(v) =>
+            setNavAlign((v as 'auto' | 'left' | 'center' | 'right') || 'auto')
+          }
+          sx={{ width: 180 }}
+        >
+          {(['auto', 'left', 'center', 'right'] as const).map((align) => (
+            <Select.Option
+              key={align}
+              value={align}
+            >
+              {align}
+            </Select.Option>
+          ))}
+        </Select>
       </Stack>
       <AppBar
         fixed={false}
         portal={false}
         variant={variant}
         {...(intent !== 'default' ? { intent } : {})}
-        left={<Typography>Playground</Typography>}
+        left={
+          <Stack direction='row'>
+            <Typography>Playground</Typography>
+            <Typography variant='bodySm' color={theme.colors.textSubtle}>
+              {page}
+            </Typography>
+          </Stack>
+        }
+        navigationAlign={navAlign}
+        navigation={navigation}
+        navigationLabel='Playground navigation'
         right={
           <Button
             variant='outlined'
@@ -133,6 +196,7 @@ export default function AppBarDemoPage() {
         variant='outlined'
         color={theme.colors['primary'] as string}
         left={<Typography>outlined + color=primary</Typography>}
+        navigation={navigation}
       />
     </Stack>
   );

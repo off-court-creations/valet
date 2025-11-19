@@ -12,6 +12,7 @@ import { preset } from '../../css/stylePresets';
 import { inheritSurfaceFontVars } from '../../system/inheritSurfaceFontVars';
 import type { Presettable, Space, Sx } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
+import { Button, type ButtonVariant } from '../fields/Button';
 
 /*───────────────────────────────────────────────────────────*/
 export type AppBarToken = 'primary' | 'secondary' | 'tertiary';
@@ -41,8 +42,30 @@ export interface AppBarProps extends Omit<React.HTMLAttributes<HTMLElement>, 'st
   fixed?: boolean;
   /** Force portal behavior. Defaults to following `fixed` (true when fixed). */
   portal?: boolean;
+  /** Optional navigation buttons; rendered inline for page-level navigation */
+  navigation?: AppBarNavigationItem[];
+  /** Where navigation buttons live; auto centers when both sides are populated */
+  navigationAlign?: 'left' | 'center' | 'right' | 'auto';
+  /** ARIA label for the navigation group */
+  navigationLabel?: string;
+  /** Gap between navigation buttons */
+  navigationGap?: Space;
   /** Inline styles (with CSS var support) */
   sx?: Sx;
+}
+
+export interface AppBarNavigationItem {
+  id?: string;
+  label: React.ReactNode;
+  icon?: React.ReactNode;
+  href?: string;
+  target?: string;
+  rel?: string;
+  disabled?: boolean;
+  active?: boolean;
+  intent?: Intent;
+  variant?: ButtonVariant;
+  onClick?: React.MouseEventHandler<HTMLButtonElement | HTMLAnchorElement>;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -75,12 +98,30 @@ const LeftWrap = styled('div')<{ $gap: string }>`
   display: flex;
   align-items: center;
   gap: ${({ $gap }) => $gap};
+  min-width: 0;
 `;
 
-const RightWrap = styled('div')`
-  margin-left: auto;
+const RightWrap = styled('div')<{ $gap: string; $push: boolean }>`
   display: flex;
   align-items: center;
+  gap: ${({ $gap }) => $gap};
+  margin-left: ${({ $push }) => ($push ? 'auto' : '0')};
+  min-width: 0;
+`;
+
+const NavWrap = styled('nav')<{
+  $justify: 'flex-start' | 'center' | 'flex-end';
+  $gap: string;
+  $push: boolean;
+  $grow: boolean;
+}>`
+  display: flex;
+  align-items: center;
+  justify-content: ${({ $justify }) => $justify};
+  gap: ${({ $gap }) => $gap};
+  flex: ${({ $grow }) => ($grow ? '1 1 auto' : '0 0 auto')};
+  min-width: 0;
+  margin-left: ${({ $push }) => ($push ? 'auto' : '0')};
 `;
 
 /*───────────────────────────────────────────────────────────*/
@@ -96,6 +137,10 @@ export const AppBar: React.FC<AppBarProps> = ({
   portal,
   preset: p,
   className,
+  navigation,
+  navigationAlign = 'auto',
+  navigationLabel,
+  navigationGap,
   sx,
   children,
   ...rest
@@ -145,6 +190,7 @@ export const AppBar: React.FC<AppBarProps> = ({
   const padSingle = resolveSpace(padProp, theme, false, 1);
   const pad = padProp === undefined ? `${theme.spacing(1)} ${theme.spacing(2)}` : padSingle;
   const gap = theme.spacing(2);
+  const navGap = resolveSpace(navigationGap ?? 2, theme, false, 2);
 
   useLayoutEffect(() => {
     const node = ref.current;
@@ -168,6 +214,32 @@ export const AppBar: React.FC<AppBarProps> = ({
       surfaceEl.style.marginTop = prev;
     };
   }, [element, id, registerChild, unregisterChild, fixed]);
+
+  const leftContent = left ?? children;
+  const hasLeft = Boolean(leftContent);
+  const hasRight = Boolean(right);
+  const hasNav = Boolean(navigation && navigation.length > 0);
+  const computedNavAlign = (() => {
+    if (navigationAlign !== 'auto') return navigationAlign;
+    return 'right';
+  })();
+  const navJustify: 'flex-start' | 'center' | 'flex-end' =
+    computedNavAlign === 'left'
+      ? 'flex-start'
+      : computedNavAlign === 'right'
+        ? 'flex-end'
+        : 'center';
+  const navPush = computedNavAlign === 'right';
+  const navGrow = computedNavAlign === 'center';
+  const resolveNavColor = (itemVariant: ButtonVariant, itemIntent?: Intent) => {
+    const intentColor = fromIntent(itemIntent);
+    if (intentColor) return intentColor;
+    // On solid app bars, plain/outlined buttons need contrast vs the bar background.
+    if (variant === 'filled' && (itemVariant === 'plain' || itemVariant === 'outlined')) {
+      return text;
+    }
+    return base;
+  };
 
   const bar = (
     <Bar
@@ -196,8 +268,67 @@ export const AppBar: React.FC<AppBarProps> = ({
       }
     >
       <BarBg $bg={bg} />
-      <LeftWrap $gap={gap}>{left ?? children}</LeftWrap>
-      {right && <RightWrap>{right}</RightWrap>}
+      <LeftWrap $gap={gap}>{leftContent}</LeftWrap>
+      {hasNav && (
+        <NavWrap
+          $justify={navJustify}
+          $gap={navGap}
+          $push={navPush}
+          $grow={navGrow}
+          aria-label={navigationLabel}
+        >
+          {navigation!.map((item, idx) => {
+            const key = item.id ?? (typeof item.label === 'string' ? item.label : idx);
+            const navVariant: ButtonVariant =
+              item.variant ?? (item.active ? 'filled' : 'plain');
+            const colorForNav = resolveNavColor(navVariant, item.intent);
+            const asTag = item.href ? ('a' as const) : undefined;
+            return (
+              <Button
+                key={key}
+                as={asTag}
+                href={item.href}
+                target={item.target}
+                rel={item.rel}
+                intent={item.intent}
+                color={colorForNav}
+                variant={navVariant}
+                size='sm'
+                disabled={item.disabled}
+                onClick={item.onClick}
+                sx={{
+                  '--valet-intent-bg': colorForNav,
+                  '--valet-intent-fg': navVariant === 'filled' ? text : colorForNav,
+                  '--valet-intent-border': colorForNav,
+                  borderRadius: theme.radius(999),
+                  whiteSpace: 'nowrap',
+                  boxShadow:
+                    navVariant === 'filled'
+                      ? `0 0 0 1px ${text}33`
+                      : `0 0 0 1px ${colorForNav}33`,
+                  ...(item.active && navVariant !== 'filled'
+                    ? { background: base + '11', color: colorForNav }
+                    : null),
+                }}
+              >
+                {item.icon}
+                {item.icon ? (
+                  <span style={{ display: 'inline-block', width: theme.spacing(0.5) }} />
+                ) : null}
+                {item.label}
+              </Button>
+            );
+          })}
+        </NavWrap>
+      )}
+      {right && (
+        <RightWrap
+          $gap={gap}
+          $push={!hasNav}
+        >
+          {right}
+        </RightWrap>
+      )}
     </Bar>
   );
 
