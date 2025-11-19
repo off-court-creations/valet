@@ -16,7 +16,7 @@
     {
       "id": "appbar-basic",
       "title": "Basic AppBar",
-      "code": "<AppBar left={<><Icon icon='mdi:car' /><Typography>Title</Typography></>} right={<Button variant='outlined'>Action</Button>} />",
+      "code": "<AppBar logo={<Icon icon='mdi:car' />} title={<Typography>Title</Typography>} right={<Button variant='outlined'>Action</Button>} />",
       "runnable": false
     },
     {
@@ -29,6 +29,12 @@
       "id": "appbar-navigation",
       "title": "Navigation Buttons",
       "code": "() => {\n  const [active, setActive] = React.useState('home');\n  const navigation = [\n    { id: 'home', label: 'Home', active: active === 'home', onClick: () => setActive('home') },\n    { id: 'docs', label: 'Docs', active: active === 'docs', onClick: () => setActive('docs') },\n    { id: 'account', label: 'Account', active: active === 'account', onClick: () => setActive('account') }\n  ];\n  return (\n    <AppBar\n      fixed={false}\n      portal={false}\n      left={<Typography variant='subtitle'>Product</Typography>}\n      navigation={navigation}\n      navigationLabel='Primary navigation'\n      right={<Button size='sm' variant='outlined'>CTA</Button>}\n    />\n  );\n}",
+      "runnable": false
+    },
+    {
+      "id": "appbar-icon-buttons",
+      "title": "Icon Navigation",
+      "code": "() => {\n  const navigation = [\n    { id: 'home', icon: <Icon icon='mdi:home' />, ariaLabel: 'Home', active: true },\n    { id: 'search', icon: <Icon icon='mdi:magnify' />, ariaLabel: 'Search', href: '#' },\n    { id: 'profile', icon: <Icon icon='mdi:account' />, ariaLabel: 'Profile', href: '#' }\n  ];\n  return (\n    <AppBar\n      fixed={false}\n      portal={false}\n      navigation={navigation.map((item) => ({ ...item, iconOnly: true }))}\n      navigationLabel='Icon navigation'\n      right={<Button size='sm'>Sign up</Button>}\n    />\n  );\n}",
       "runnable": false
     }
   ]

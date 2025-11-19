@@ -24,18 +24,19 @@ export default function AppBarDemoPage() {
       onClick: () => setPage('account'),
     },
   ];
+  const iconNavigation = [
+    { id: 'home', icon: <Icon icon='mdi:home' />, ariaLabel: 'Home', active: true, iconOnly: true },
+    { id: 'search', icon: <Icon icon='mdi:magnify' />, ariaLabel: 'Search', iconOnly: true },
+    { id: 'profile', icon: <Icon icon='mdi:account' />, ariaLabel: 'Profile', iconOnly: true },
+  ];
 
   const usage = (
     <Stack gap={1}>
       <AppBar
         fixed={false}
         portal={false}
-        left={
-          <>
-            <Icon icon='mdi:car' />
-            <Typography fontFamily='Cabin'>AppBar Slots</Typography>
-          </>
-        }
+        logo={<Icon icon='mdi:car' />}
+        title={<Typography fontFamily='Cabin'>AppBar Slots</Typography>}
         right={
           <Button
             variant='outlined'
@@ -87,6 +88,13 @@ export default function AppBarDemoPage() {
             <Button>Invite</Button>
           </Stack>
         }
+      />
+      <AppBar
+        fixed={false}
+        portal={false}
+        navigation={iconNavigation}
+        navigationLabel='Icon navigation'
+        right={<Button size='sm'>Join</Button>}
       />
     </Stack>
   );
@@ -185,6 +193,19 @@ export default function AppBarDemoPage() {
             Toggle
           </Button>
         }
+      />
+      <AppBar
+        fixed={false}
+        portal={false}
+        variant={variant}
+        navigationAlign={navAlign}
+        navigation={iconNavigation.map((item) => ({
+          ...item,
+          active: item.id === 'home' ? page === 'home' : item.active,
+          iconOnly: true,
+        }))}
+        navigationLabel='Playground icon navigation'
+        right={<Button size='sm'>CTA</Button>}
       />
       <Typography>
         Color override: you can pass <code>color</code> to use a specific color (token or CSS). For

@@ -1,0 +1,31 @@
+/* ────────────────────────────────────────────────────────────
+ * src/styles.css  | valet
+ * core token fallbacks for first paint (importable stylesheet)
+ * ─────────────────────────────────────────────────────────── */
+:root {
+  /* Colors (fallbacks; real values set by Surface) */
+  --valet-bg: #242424;
+  --valet-text-color: #f7f7f7;
+
+  /* Spacing / radii / stroke (fallbacks; scaled by Surface density) */
+  --valet-space: 0.5rem;
+  --valet-radius: calc(var(--valet-space) * 0.75);
+  --valet-stroke: calc(var(--valet-space) * 0.125);
+
+  /* Font families (fallback stacks ensure no FOIT) */
+  --valet-font-heading:
+    'Kumbh Sans', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Noto Sans,
+    Apple Color Emoji, Segoe UI Emoji, sans-serif;
+  --valet-font-body:
+    Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Noto Sans,
+    Apple Color Emoji, Segoe UI Emoji, sans-serif;
+  --valet-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, Liberation Mono, monospace;
+  --valet-font-button:
+    'Kumbh Sans', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Noto Sans,
+    Apple Color Emoji, Segoe UI Emoji, sans-serif;
+
+  /* Typography CSS vars (component-level fallbacks) */
+  --valet-font-weight: 400;
+  --valet-font-tracking: normal;
+  --valet-font-leading: 1.4;
+}

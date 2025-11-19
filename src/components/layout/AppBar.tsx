@@ -37,6 +37,12 @@ export interface AppBarProps extends Omit<React.HTMLAttributes<HTMLElement>, 'st
   textColor?: string;
   left?: React.ReactNode;
   right?: React.ReactNode;
+  /** Optional brand/logo node, typically an SVG */
+  logo?: React.ReactNode;
+  /** Optional primary title to the right of the logo */
+  title?: React.ReactNode;
+  /** Spacing between logo and title */
+  logoGap?: Space;
   pad?: Space;
   /** Whether the bar is fixed to the viewport (and offsets content). Defaults to true. */
   fixed?: boolean;
@@ -56,8 +62,12 @@ export interface AppBarProps extends Omit<React.HTMLAttributes<HTMLElement>, 'st
 
 export interface AppBarNavigationItem {
   id?: string;
-  label: React.ReactNode;
+  label?: React.ReactNode;
   icon?: React.ReactNode;
+  /** Provide when using icon-only buttons for accessible name. Falls back to label text. */
+  ariaLabel?: string;
+  /** Force icon-only rendering (no label). */
+  iconOnly?: boolean;
   href?: string;
   target?: string;
   rel?: string;
@@ -101,6 +111,13 @@ const LeftWrap = styled('div')<{ $gap: string }>`
   min-width: 0;
 `;
 
+const BrandWrap = styled('div')<{ $gap: string }>`
+  display: inline-flex;
+  align-items: center;
+  gap: ${({ $gap }) => $gap};
+  min-width: 0;
+`;
+
 const RightWrap = styled('div')<{ $gap: string; $push: boolean }>`
   display: flex;
   align-items: center;
@@ -132,6 +149,9 @@ export const AppBar: React.FC<AppBarProps> = ({
   textColor,
   left,
   right,
+  logo,
+  title,
+  logoGap,
   pad: padProp,
   fixed = true,
   portal,
@@ -191,6 +211,7 @@ export const AppBar: React.FC<AppBarProps> = ({
   const pad = padProp === undefined ? `${theme.spacing(1)} ${theme.spacing(2)}` : padSingle;
   const gap = theme.spacing(2);
   const navGap = resolveSpace(navigationGap ?? 2, theme, false, 2);
+  const logoTitleGap = resolveSpace(logoGap, theme, false, 1);
 
   useLayoutEffect(() => {
     const node = ref.current;
@@ -215,7 +236,13 @@ export const AppBar: React.FC<AppBarProps> = ({
     };
   }, [element, id, registerChild, unregisterChild, fixed]);
 
-  const leftContent = left ?? children;
+  const brand = logo || title ? <BrandWrap $gap={logoTitleGap}>{logo}{title}</BrandWrap> : null;
+  const leftContent = (
+    <>
+      {brand}
+      {left ?? children}
+    </>
+  );
   const hasLeft = Boolean(leftContent);
   const hasRight = Boolean(right);
   const hasNav = Boolean(navigation && navigation.length > 0);
@@ -280,9 +307,20 @@ export const AppBar: React.FC<AppBarProps> = ({
           {navigation!.map((item, idx) => {
             const key = item.id ?? (typeof item.label === 'string' ? item.label : idx);
             const navVariant: ButtonVariant =
-              item.variant ?? (item.active ? 'filled' : 'plain');
+              item.variant ??
+              (variant === 'filled'
+                ? item.active
+                  ? 'outlined'
+                  : 'plain'
+                : item.active
+                  ? 'filled'
+                  : 'plain');
             const colorForNav = resolveNavColor(navVariant, item.intent);
             const asTag = item.href ? ('a' as const) : undefined;
+            const iconOnly = item.iconOnly || (!item.label && !!item.icon);
+            const buttonLabel =
+              item.ariaLabel ?? (typeof item.label === 'string' ? item.label : undefined);
+            const navSize = iconOnly ? 'md' : 'sm';
             return (
               <Button
                 key={key}
@@ -293,9 +331,11 @@ export const AppBar: React.FC<AppBarProps> = ({
                 intent={item.intent}
                 color={colorForNav}
                 variant={navVariant}
-                size='sm'
+                size={navSize}
                 disabled={item.disabled}
                 onClick={item.onClick}
+                aria-label={buttonLabel}
+                title={buttonLabel}
                 sx={{
                   '--valet-intent-bg': colorForNav,
                   '--valet-intent-fg': navVariant === 'filled' ? text : colorForNav,
@@ -306,16 +346,26 @@ export const AppBar: React.FC<AppBarProps> = ({
                     navVariant === 'filled'
                       ? `0 0 0 1px ${text}33`
                       : `0 0 0 1px ${colorForNav}33`,
+                  ...(iconOnly
+                    ? {
+                        minWidth: theme.spacing(3.5),
+                        width: theme.spacing(3.5),
+                        padding: theme.spacing(0.5),
+                        justifyContent: 'center',
+                        fontSize: '1.25rem',
+                        lineHeight: 1.1,
+                      }
+                    : null),
                   ...(item.active && navVariant !== 'filled'
-                    ? { background: base + '11', color: colorForNav }
+                    ? { background: variant === 'filled' ? `${text}1A` : `${colorForNav}16` }
                     : null),
                 }}
               >
                 {item.icon}
-                {item.icon ? (
+                {item.icon && item.label && !iconOnly ? (
                   <span style={{ display: 'inline-block', width: theme.spacing(0.5) }} />
                 ) : null}
-                {item.label}
+                {!iconOnly && item.label}
               </Button>
             );
           })}
