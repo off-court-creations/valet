@@ -128,9 +128,29 @@ export function createLavaLampProgram(
   const uVeilMaskScale = gl.getUniformLocation(prog, 'uVeilMaskScale');
   const uBaseDesaturate = gl.getUniformLocation(prog, 'uBaseDesaturate');
   const uVeilMix = gl.getUniformLocation(prog, 'uVeilMix');
-  const uGlowWidth = gl.getUniformLocation(prog, 'uGlowWidth');
-  const uGlowGain = gl.getUniformLocation(prog, 'uGlowGain');
+  const uGlowSigmaPx = gl.getUniformLocation(prog, 'uGlowSigmaPx');
+  const uGlowAlpha = gl.getUniformLocation(prog, 'uGlowAlpha');
   const uGlowColor = gl.getUniformLocation(prog, 'uGlowColor');
+  const uGlowChromaticPx = gl.getUniformLocation(prog, 'uGlowChromaticPx');
+  const uLampPos = gl.getUniformLocation(prog, 'uLampPos');
+  const uLampColor = gl.getUniformLocation(prog, 'uLampColor');
+  const uLampGain = gl.getUniformLocation(prog, 'uLampGain');
+  const uLampRadius = gl.getUniformLocation(prog, 'uLampRadius');
+  const uShellSigmaPx = gl.getUniformLocation(prog, 'uShellSigmaPx');
+  const uShellIntensity = gl.getUniformLocation(prog, 'uShellIntensity');
+  const uShellSpecPower = gl.getUniformLocation(prog, 'uShellSpecPower');
+  const uShellSpecIntensity = gl.getUniformLocation(prog, 'uShellSpecIntensity');
+  const uShellColor = gl.getUniformLocation(prog, 'uShellColor');
+  const uShellIridescence = gl.getUniformLocation(prog, 'uShellIridescence');
+  const uFillDir = gl.getUniformLocation(prog, 'uFillDir');
+  const uFillColor = gl.getUniformLocation(prog, 'uFillColor');
+  const uFillGain = gl.getUniformLocation(prog, 'uFillGain');
+  const uSaturation = gl.getUniformLocation(prog, 'uSaturation');
+  const uContrast = gl.getUniformLocation(prog, 'uContrast');
+  const uThicknessGain = gl.getUniformLocation(prog, 'uThicknessGain');
+  const uAbsorption = gl.getUniformLocation(prog, 'uAbsorption');
+  const uDither = gl.getUniformLocation(prog, 'uDither');
+  const uAlphaMax = gl.getUniformLocation(prog, 'uAlphaMax');
   const uVignetteK = gl.getUniformLocation(prog, 'uVignetteK');
 
   // Helpers ------------------------------------------------------------------
@@ -682,8 +702,17 @@ export function createLavaLampProgram(
   // Public API ---------------------------------------------------------------
   // Resize/update/render/dispose are driven by the wrapper.
   const api: GLProgram = {
-    resize: () => {
-      // viewport managed by wrapper; no-op here for now
+    resize: (_width: number, _height: number, dpr: number) => {
+      // Viewport is managed by wrapper; we only update DPR-sensitive uniforms.
+      // These are tuned in CSS pixels in LavaLampParams, then scaled to device
+      // pixels here for consistent appearance on hi-DPI screens.
+      const d = Math.max(0.5, dpr || 1);
+      gl.useProgram(prog);
+      gl.uniform1f(uLocalSmoothPx, LavaLampParams.shader.center.localSmooth.pxScale * d);
+      gl.uniform1f(uGlowSigmaPx, LavaLampParams.shader.glow.sigmaPx * d);
+      gl.uniform1f(uGlowChromaticPx, LavaLampParams.shader.glow.chromaticPx * d);
+      gl.uniform1f(uShellSigmaPx, LavaLampParams.shader.shell.sigmaPx * d);
+      gl.useProgram(null);
     },
     update: (dt: number, t: number) => {
       currentTime = t;
@@ -1242,15 +1271,50 @@ export function createLavaLampProgram(
   gl.uniform1f(uVeilMaskScale, sp.shader.veil.maskScale);
   gl.uniform1f(uBaseDesaturate, sp.shader.veil.baseDesaturate);
   gl.uniform1f(uVeilMix, sp.shader.veil.mix);
-  gl.uniform1f(uGlowWidth, sp.shader.glow.width);
-  gl.uniform1f(uGlowGain, sp.shader.glow.gain);
+  gl.uniform1f(uThicknessGain, sp.shader.volume.thicknessGain);
+  gl.uniform1f(uAbsorption, sp.shader.volume.absorption);
+  gl.uniform2f(uLampPos, sp.shader.lamp.pos[0], sp.shader.lamp.pos[1]);
+  gl.uniform3f(
+    uLampColor,
+    sp.shader.lamp.color[0],
+    sp.shader.lamp.color[1],
+    sp.shader.lamp.color[2],
+  );
+  gl.uniform1f(uLampGain, sp.shader.lamp.gain);
+  gl.uniform1f(uLampRadius, sp.shader.lamp.radius);
+  gl.uniform1f(uGlowSigmaPx, sp.shader.glow.sigmaPx);
+  gl.uniform1f(uGlowAlpha, sp.shader.glow.alpha);
+  gl.uniform1f(uGlowChromaticPx, sp.shader.glow.chromaticPx);
   gl.uniform3f(
     uGlowColor,
     sp.shader.glow.color[0],
     sp.shader.glow.color[1],
     sp.shader.glow.color[2],
   );
+  gl.uniform1f(uShellSigmaPx, sp.shader.shell.sigmaPx);
+  gl.uniform1f(uShellIntensity, sp.shader.shell.intensity);
+  gl.uniform1f(uShellSpecPower, sp.shader.shell.specular.power);
+  gl.uniform1f(uShellSpecIntensity, sp.shader.shell.specular.intensity);
+  gl.uniform3f(
+    uShellColor,
+    sp.shader.shell.color[0],
+    sp.shader.shell.color[1],
+    sp.shader.shell.color[2],
+  );
+  gl.uniform1f(uShellIridescence, sp.shader.shell.iridescence);
+  gl.uniform3f(uFillDir, sp.shader.fill.dir[0], sp.shader.fill.dir[1], sp.shader.fill.dir[2]);
+  gl.uniform3f(
+    uFillColor,
+    sp.shader.fill.color[0],
+    sp.shader.fill.color[1],
+    sp.shader.fill.color[2],
+  );
+  gl.uniform1f(uFillGain, sp.shader.fill.gain);
   gl.uniform1f(uVignetteK, sp.shader.vignette.k);
+  gl.uniform1f(uDither, sp.shader.post.dither);
+  gl.uniform1f(uAlphaMax, sp.shader.post.alphaMax);
+  gl.uniform1f(uSaturation, sp.shader.post.grade.saturation);
+  gl.uniform1f(uContrast, sp.shader.post.grade.contrast);
   gl.useProgram(null);
 
   return api;
