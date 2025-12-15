@@ -280,6 +280,21 @@ But `Tabs` uses the same prop names with a different payload shape:
 
 This is subtle because it “looks consistent” at the call site, but isn’t.
 
+#### `ChangeInfo` completeness/accuracy drift (even when types match)
+
+Even among components that *do* use `OnValueChange<T>` / `OnValueCommit<T>`, the supplied
+`ChangeInfo<T>` is not consistently populated:
+
+- `Select` always reports `source: 'programmatic'` and does not include the triggering event
+  even for user interaction (`src/components/fields/Select.tsx:251`).
+- `MetroSelect` does the same (`src/components/fields/MetroSelect.tsx:289`).
+- `Iterator` does the same (`src/components/fields/Iterator.tsx:166`).
+- `Switch` attempts to infer `source` via `e.detail != null`, which is effectively always true
+  for click events, so it tends to report `'pointer'` even for keyboard activation
+  (`src/components/fields/Switch.tsx:169`).
+
+This matters for apps/agents that want to differentiate keyboard vs pointer vs programmatic changes.
+
 ---
 
 ### 4) Field-base prop adoption is incomplete / inconsistent
@@ -307,6 +322,33 @@ Observed issues:
 Also: only `Checkbox` has `bindForm` to explicitly disable form binding (`src/components/fields/Checkbox.tsx`).
 Other field-like components don’t have a parallel escape hatch, so the “visual-only” pattern differs
 (e.g. `Select` passes `bindForm={false}` to a Checkbox inside the menu).
+
+#### FieldBaseProps “looks supported” but is often ignored (and may leak to the DOM)
+
+Several field components extend `FieldBaseProps` in their public types, which implies consistent
+support for `label`, `helperText`, `error`, and `fullWidth`. In practice, multiple fields implement
+only a subset, and the unused props can get forwarded to a DOM node via `{...rest}` spreads
+(causing React unknown-prop warnings and “it compiles but does nothing” confusion).
+
+Concrete examples:
+
+- `Checkbox` renders `label` and uses `error` only for `aria-invalid`, but does not render
+  `helperText` or honor `fullWidth`; those can fall into `...inputRest` and land on the native
+  `<input>` (`src/components/fields/Checkbox.tsx:309`).
+- `Switch` extends `FieldBaseProps` but does not use `label/helperText/error/fullWidth`; these can
+  land on the root `<button>` via `...btnProps` (`src/components/fields/Switch.tsx:190`).
+- `Slider` extends `FieldBaseProps` but does not use `label/helperText/error/fullWidth`; these can
+  land on the wrapper `<div>` via `...rest` (`src/components/fields/Slider.tsx:465`).
+- `Iterator` extends `FieldBaseProps` but does not use `label/helperText/error/fullWidth`; these can
+  land on the native `<input>` via `...rest` (`src/components/fields/Iterator.tsx:279`).
+- `MetroSelect` renders `label` + `helperText` but ignores `error/fullWidth`; since `...rest` is
+  spread, `error/fullWidth` can still be forwarded through to the DOM (`src/components/fields/MetroSelect.tsx:505`).
+- `RadioGroup` renders `label` + `helperText` + uses `error`, but ignores `fullWidth`; `fullWidth`
+  can still be forwarded through to the DOM (`src/components/fields/RadioGroup.tsx:289`).
+- `Select` extends `FieldBaseProps` but does not implement `label/helperText/error/fullWidth`.
+  It also uses an internal `label` identifier for the *selected option display string*
+  (`src/components/fields/Select.tsx:345`), while `props.label` is forwarded to the root `<button>`
+  via `...divRest` (`src/components/fields/Select.tsx:401`).
 
 ---
 
@@ -394,6 +436,28 @@ These are smaller issues that still add cognitive load:
 
 ---
 
+### 8) Intrinsic passthrough gotchas (handler precedence isn’t stable)
+
+Many components accept intrinsic props via `React.*HTMLAttributes`/`ComponentProps<'...'>` and then
+layer internal behavior on top. Today, the precedence between internal handlers and user handlers is
+not consistent:
+
+- Some components override user handlers and don’t call them (e.g. `Select` sets `onClick/onKeyDown`
+  after spreading `divRest`, so user handlers are effectively ignored: `src/components/fields/Select.tsx:401`).
+- Some components override user handlers on a wrapper element (e.g. `Slider` sets `onFocus` after
+  spreading `rest`: `src/components/fields/Slider.tsx:465`; `RadioGroup` sets `onKeyDown` after
+  spreading `rest`: `src/components/fields/RadioGroup.tsx:289`).
+- Some components allow user handlers to override internal accessibility behavior (e.g. `MetroSelect`
+  spreads `...rest` after its own `onKeyDown`, so a user-provided `onKeyDown` can replace the
+  keyboard navigation: `src/components/fields/MetroSelect.tsx:470`).
+- Some components explicitly call through to user handlers (good precedent): `Switch` calls
+  `btnProps.onClick?.(e)` from within its internal toggle handler (`src/components/fields/Switch.tsx:158`).
+
+For adoption ease, it helps to choose a consistent rule: either omit “owned” handlers from public
+types, or always call user handlers while preserving internal behavior.
+
+---
+
 ## Suggested priority order (so another agent can pick up)
 
 This is a suggested sequence; it’s not implemented here.
@@ -413,6 +477,10 @@ This is a suggested sequence; it’s not implemented here.
 - Make `Select.Option` actually apply the props it claims to accept, or narrow the type so it cannot.
 - Align `Tabs` `onValueChange/onValueCommit` payloads with `ChangeInfo<T>` (`src/system/events.ts`).
 - Bring `DateSelector` onto `FieldBaseProps` (or document why it intentionally differs).
+- Decide whether field components should truly support the full `FieldBaseProps` cluster; if yes,
+  implement it and stop leaking unused field props onto DOM nodes (Checkbox/Switch/Slider/Iterator/Select/MetroSelect/RadioGroup).
+- Standardize intrinsic handler precedence (avoid swallowing handlers in Select/Slider/RadioGroup,
+  and avoid letting user handlers replace internal keyboard nav in MetroSelect).
 - Fix MCP data mismatches (e.g. `TextField.name` required vs reported optional; `Select.name` missing).
 
 ### P2 (paper-cuts / naming polish)
