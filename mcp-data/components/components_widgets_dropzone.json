@@ -122,7 +122,6 @@
       "payloadType": "DropzoneOptions['onDropRejected']"
     }
   ],
-  "actions": [],
   "slots": [],
   "bestPractices": [
     "Indicate accepted file types and size limits clearly before upload.",
@@ -172,5 +171,5 @@
     "docs/src/pages/components/widgets/DropzoneDemo.tsx"
   ],
   "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "schemaVersion": "1.7"
 }

@@ -56,7 +56,6 @@
   "cssVars": [],
   "cssPresets": [],
   "events": [],
-  "actions": [],
   "slots": [
     {
       "name": "icon"
@@ -77,5 +76,5 @@
     "docs/src/pages/components/widgets/SpeedDialDemo.tsx"
   ],
   "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "schemaVersion": "1.7"
 }

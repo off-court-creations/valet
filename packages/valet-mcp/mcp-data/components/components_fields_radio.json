@@ -55,7 +55,6 @@
   "cssVars": [],
   "cssPresets": [],
   "events": [],
-  "actions": [],
   "slots": [
     {
       "name": "children"
@@ -76,5 +75,5 @@
     "docs/src/pages/components/field/RadioGroupDemo.tsx"
   ],
   "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "schemaVersion": "1.7"
 }

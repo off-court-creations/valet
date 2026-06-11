@@ -57,6 +57,7 @@
     "format": "prettier --ignore-path .gitignore \"{src,docs}/**/*.{ts,tsx,js,jsx,json,md,css}\" --check",
     "format:fix": "prettier --ignore-path .gitignore \"{src,docs}/**/*.{ts,tsx,js,jsx,json,md,css}\" --write",
     "mcp:build": "node scripts/mcp/merge.mjs",
+    "mcp:check": "node scripts/mcp/check-fresh.mjs",
     "mcp:watch": "node --watch scripts/mcp/merge.mjs",
     "mcp:schema:check": "node scripts/mcp/validate.mjs",
     "mcp:server:install": "cd packages/valet-mcp && npm install",

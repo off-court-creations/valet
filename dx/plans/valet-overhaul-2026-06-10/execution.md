@@ -31,6 +31,47 @@
 
 ---
 
+## Master checklist — Phase 1 (plan §5)
+
+| #   | Wave | Contents                                                                                                                                                                                              | Status |
+| --- | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------ |
+| 6   | 1.0  | **Pure cores:** FIELDS S5 hooks · A11Y S7 locale + S9 dateLocale · THEMING S3 waitForFonts + S8 modePreference · MCP-TRUTH S7→S8→S9 (gates, freshness, schema 1.7) · OVERLAY S3 registry v2 + TEST-CI S6 suite | ✅     |
+| 7   | 1.1  | **Engine/packaging serial lane:** ENGINE S6 → S7 → S8 → PACKAGING S4 (ESM-only, Q1) → S5 probes → ENGINE S10 (Q2) → S9 → S11 · PACKAGING S6 highlight (Q22) parallel                                      | ⬜     |
+| 8   | 1.2  | **Component lanes (parallel trains):** fields S6–S11 · overlay S4/S5/S6/S8 (+A11Y S4) · Table A11Y S3 → PERF S8 · Snackbar A11Y S1 · Pagination ENGINE-S9 → click-drop · THEMING S4/S5/S7 · SECURITY S5–S8 · A11Y S2/S5/S6 · API-TYPES S4–S8+S13 · OVERLAY S7 z-scale (Q3) last | ⬜     |
+| 9   | 1.3  | **Docs/config:** TEST-CI S9 + S11 · GOVERNANCE S7 RELEASING.md · PERF S10 harness · PACKAGING S8 deps (Q21) · wave-end mcp regen · Phase-1 gate                                                          | ⬜     |
+
+### Wave 1.0 — pure cores — ✅
+
+**What shipped:** `useControlledState` + `useFieldState` (internal; ONE
+precedence rule prop > form > internal, latched, no mount writes; the 10
+existing guards' behaviors verified expressible; conflict-mode write-through
+test-pinned) · locale core (`ValetLocaleProvider` React context, ValetStrings
+seeded verbatim from all 11 components' literals with line citations,
+mergeStrings, isRtlLocale w/ 3-tier script detection; KeyModal excluded per
+Q8) · dateLocale Intl helpers (all three weekInfo shapes; display digits
+locale-aware, value contract stays ISO Latin per veto) · waitForFonts
+(rejected-inflight eviction, never-reject wrappers, 5000ms resolve-on-timeout)
+· modePreference (stored > requested > system > fallback; `mode:'system'` +
+`persistMode` opts on useInitialTheme; 'valet-mode' key; boot default stays
+dark) · MCP hard gates (Q16: placeholders=0, glossary ≥10, floors below
+measured actuals — docsUrl 80.7%, examples 38.6%, bestPractices 73.7%) +
+`mcp:check` freshness guard (buildCorpus refactor; drift = exit 1) + real
+selfcheck in valet-mcp src + **schema 1.7, dead `actions` field dropped** ·
+overlay registry v2 (live getOptions, `useOverlay` ref-callback, stack-aware
+outside-click as pure `resolveOutsideClick`; legacy API kept working for the
+Wave-1.2 migrations) + the full jsdom overlay suite (R28, ships passing).
+
+**Verification:** contract reviewer **pass** (ran the whole gate; coverage
+floors verified below actuals; migration sketches for TextField/RadioGroup/
+Checkbox confirmed expressible); scope reviewer **pass** (zero strays across
+147 dirty files; registrar discipline held — package.json/index.ts zero
+diff from lanes); fixer NO-OP (false-positive trigger; all triaged, none
+real). **Registrar batch (orchestrator):** `export * from './system/locale'`
++ `"mcp:check"` script. **Gate:** lint ✅ tsc ✅ **625/625 tests** ✅ build ✅
+check:engine ✅ mcp:check ✅.
+
+---
+
 ## Master checklist (plan §5 — Phase 0)
 
 | #   | Wave | Contents (plan §3 slice ids)                                                                                                                                                                   | Status |

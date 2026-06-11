@@ -101,7 +101,6 @@
       "payloadType": "string"
     }
   ],
-  "actions": [],
   "slots": [],
   "bestPractices": [],
   "examples": [],
@@ -111,5 +110,5 @@
     "docs/src/pages/components/widgets/LLMChatDemo.tsx"
   ],
   "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "schemaVersion": "1.7"
 }

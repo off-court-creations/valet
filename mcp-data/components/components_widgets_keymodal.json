@@ -23,7 +23,6 @@
       "name": "onClose"
     }
   ],
-  "actions": [],
   "slots": [],
   "bestPractices": [],
   "examples": [],
@@ -31,5 +30,5 @@
     "src/components/widgets/KeyModal.tsx"
   ],
   "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "schemaVersion": "1.7"
 }

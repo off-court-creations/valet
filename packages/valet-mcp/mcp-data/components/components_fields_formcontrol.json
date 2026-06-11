@@ -50,7 +50,6 @@
       "payloadType": "T"
     }
   ],
-  "actions": [],
   "slots": [],
   "bestPractices": [
     "FormControl prevents native submit by default. Handle submission in `onSubmitValues(values, event)` and keep the flow inside your SPA.",
@@ -85,5 +84,5 @@
     "src/components/fields/FormControl.tsx"
   ],
   "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "schemaVersion": "1.7"
 }

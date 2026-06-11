@@ -44,7 +44,10 @@ export type ValetComponentDoc = {
   cssVars?: string[];
   cssPresets?: string[];
   events?: Array<{ name: string; payloadType?: string }>;
-  actions?: Array<{ name: string; signature?: string }>;
+  // schema 1.7: `actions` removed (always-empty; its only heuristic detected
+  // useImperativeHandle, used by zero components). The server reads corpora
+  // tolerantly (plain JSON.parse, no strict field validation), so a pre-1.7
+  // corpus carrying `actions: []` still loads — the key is simply not typed.
   slots?: Array<{ name: string }>;
   bestPractices?: string[];
   bestPracticeSlugs?: string[];

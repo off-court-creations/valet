@@ -8,6 +8,7 @@ import { Readable } from 'node:stream';
 import { McpServer, ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { PRIMER_TEXT } from './primer.js';
+import { evaluateSelfcheck } from './selfcheck.js';
 import { DATA_DIR, DATA_INFO, getComponentBySlug, getGlossary, getIndex, getMeta } from './tools/shared.js';
 import { registerListComponents } from './tools/listComponents.js';
 import { registerListCategories } from './tools/listCategories.js';
@@ -137,7 +138,9 @@ async function createServer() {
 
 async function main() {
   if (process.env.MCP_SELFCHECK === '1') {
-    // Quick data sanity check and exit
+    // Data sanity gate (prepublishOnly): hardened per MCP-TRUTH S8 —
+    // asserts index >= MIN_COMPONENTS, glossary > 0, every component doc
+    // loads, and no placeholder '<Name> component' summaries anywhere.
     try {
       const index = getIndex();
       const box = index.find((i) => i.name === 'Box');
@@ -146,9 +149,13 @@ async function main() {
       const mcpMinor = MCP_VERSION.split('.').slice(0, 2).join('.');
       const valetMinor = meta?.valetVersion ? meta.valetVersion.split('.').slice(0, 2).join('.') : undefined;
       const parity = valetMinor ? (mcpMinor === valetMinor) : undefined;
+      const glossaryEntries = (getGlossary()?.entries?.length) ?? 0;
+      const docs = index.map((i) => ({ slug: i.slug, name: i.name, doc: getComponentBySlug(i.slug) }));
+      const verdict = evaluateSelfcheck({ index, glossaryEntries, docs });
       // eslint-disable-next-line no-console
       console.log(JSON.stringify({
-        ok: true,
+        ok: verdict.ok,
+        failures: verdict.ok ? undefined : verdict.failures,
         components: index.length,
         hasBox,
         mcpVersion: MCP_VERSION,
@@ -158,10 +165,10 @@ async function main() {
         versionParity: parity,
         schemaVersion: meta?.schemaVersion,
         buildHash: meta?.buildHash,
-        glossaryEntries: (getGlossary()?.entries?.length) ?? 0,
+        glossaryEntries,
         hasPrimer: true,
       }, null, 2));
-      process.exit(0);
+      process.exit(verdict.ok ? 0 : 1);
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error(JSON.stringify({ ok: false, error: (err as Error).message, mcpVersion: MCP_VERSION }));

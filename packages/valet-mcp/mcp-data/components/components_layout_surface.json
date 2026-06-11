@@ -74,7 +74,6 @@
   ],
   "cssPresets": [],
   "events": [],
-  "actions": [],
   "slots": [],
   "bestPractices": [
     "Use exactly one surface per route. Mount it at the highest level and never nest surfaces so children can subscribe to a single store via useSurface.",
@@ -91,5 +90,5 @@
     "docs/src/pages/components/layout/Surface.tsx"
   ],
   "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "schemaVersion": "1.7"
 }

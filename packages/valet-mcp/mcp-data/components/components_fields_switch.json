@@ -116,7 +116,6 @@
       "payloadType": "OnValueCommit<boolean>"
     }
   ],
-  "actions": [],
   "slots": [
     {
       "name": "label"
@@ -157,5 +156,5 @@
     "docs/src/pages/components/field/SwitchDemo.tsx"
   ],
   "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "schemaVersion": "1.7"
 }

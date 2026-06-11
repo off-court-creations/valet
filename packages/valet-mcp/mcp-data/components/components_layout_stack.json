@@ -87,7 +87,6 @@
   ],
   "cssPresets": [],
   "events": [],
-  "actions": [],
   "slots": [],
   "bestPractices": [
     "Use for one‑dimensional layouts (rows/columns) with consistent gaps.",
@@ -102,5 +101,5 @@
     "docs/src/pages/components/layout/StackDemo.tsx"
   ],
   "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "schemaVersion": "1.7"
 }

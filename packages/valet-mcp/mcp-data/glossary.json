@@ -155,7 +155,7 @@
     },
     {
       "term": "Web Action Graph",
-      "definition": "A conceptual graph of user and system actions captured at runtime to enable introspection, automation, and adaptation.",
+      "definition": "Planned — not implemented. A conceptual graph of user and system actions captured at runtime to enable introspection, automation, and adaptation.",
       "category": "ai",
       "aliases": [
         "action graph",
@@ -167,5 +167,5 @@
     }
   ],
   "version": "0.34.1",
-  "builtAt": "2026-06-11T10:35:06.936Z"
+  "builtAt": "2026-06-11T11:50:36.629Z"
 }

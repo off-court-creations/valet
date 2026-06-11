@@ -154,7 +154,6 @@
   ],
   "cssPresets": [],
   "events": [],
-  "actions": [],
   "slots": [],
   "bestPractices": [
     "Use semantic variants for headings and body; avoid styling raw text manually.",
@@ -220,5 +219,5 @@
     "docs/src/pages/components/primitives/TypographyDemoPage.tsx"
   ],
   "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "schemaVersion": "1.7"
 }

@@ -115,7 +115,6 @@
       "payloadType": "OnValueCommit<string | [string, string]>"
     }
   ],
-  "actions": [],
   "slots": [],
   "bestPractices": [
     "Use ISO 'YYYY-MM-DD' strings for values; avoid locale-dependent parsing.",
@@ -132,5 +131,5 @@
     "docs/src/pages/components/field/DateSelectorDemo.tsx"
   ],
   "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "schemaVersion": "1.7"
 }

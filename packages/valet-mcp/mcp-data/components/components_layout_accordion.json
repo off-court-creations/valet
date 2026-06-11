@@ -95,7 +95,6 @@
       "payloadType": "number[]"
     }
   ],
-  "actions": [],
   "slots": [],
   "bestPractices": [
     "Use for short, scannable sections. Keep headers concise and content lightweight.",
@@ -138,5 +137,5 @@
     "docs/src/pages/components/layout/AccordionDemo.tsx"
   ],
   "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "schemaVersion": "1.7"
 }

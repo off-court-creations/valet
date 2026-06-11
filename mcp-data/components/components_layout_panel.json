@@ -112,7 +112,6 @@
   ],
   "cssPresets": [],
   "events": [],
-  "actions": [],
   "slots": [],
   "bestPractices": [
     "Use Panel to group related content and provide visual separation.",
@@ -171,5 +170,5 @@
     "docs/src/pages/components/layout/Panel.tsx"
   ],
   "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "schemaVersion": "1.7"
 }

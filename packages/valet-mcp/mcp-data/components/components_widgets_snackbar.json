@@ -69,7 +69,6 @@
       "name": "onClose"
     }
   ],
-  "actions": [],
   "slots": [
     {
       "name": "message"
@@ -91,5 +90,5 @@
     "docs/src/pages/components/widgets/SnackbarDemo.tsx"
   ],
   "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "schemaVersion": "1.7"
 }

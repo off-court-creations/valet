@@ -99,7 +99,6 @@
       "payloadType": "React.MouseEvent<HTMLButtonElement>"
     }
   ],
-  "actions": [],
   "slots": [
     {
       "name": "label"
@@ -174,5 +173,5 @@
     "docs/src/pages/components/widgets/ChipDemo.tsx"
   ],
   "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "schemaVersion": "1.7"
 }

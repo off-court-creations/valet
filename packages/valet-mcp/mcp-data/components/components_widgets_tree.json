@@ -102,7 +102,6 @@
       "payloadType": "T"
     }
   ],
-  "actions": [],
   "slots": [
     {
       "name": "getLabel"
@@ -146,5 +145,5 @@
     "docs/src/pages/components/widgets/TreeDemo.tsx"
   ],
   "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "schemaVersion": "1.7"
 }

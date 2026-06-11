@@ -144,7 +144,6 @@
       "payloadType": "ErrorEvent"
     }
   ],
-  "actions": [],
   "slots": [],
   "bestPractices": [
     "Provide controls and captions; prefer muted autoplay only when appropriate.",
@@ -161,5 +160,5 @@
     "docs/src/pages/components/primitives/VideoDemo.tsx"
   ],
   "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "schemaVersion": "1.7"
 }

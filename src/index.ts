@@ -75,6 +75,7 @@ export * from './system/createFormStore';
 export * from './system/themeStore';
 export * from './system/fontStore';
 export * from './system/createInitialTheme';
+export * from './system/locale';
 export * from './hooks/useGoogleFonts';
 export type { Font, CustomFont } from './helpers/fontLoader';
 export type { Variant as TypographyVariant, WeightAlias } from './types/typography';

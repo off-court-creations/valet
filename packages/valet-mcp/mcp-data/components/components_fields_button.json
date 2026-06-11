@@ -74,7 +74,6 @@
   ],
   "cssPresets": [],
   "events": [],
-  "actions": [],
   "slots": [],
   "bestPractices": [
     "Establish a clear action hierarchy: use `contained` for the primary action and `outlined` for secondary/tertiary actions. Keep emphasis consistent within a view.",
@@ -103,5 +102,5 @@
     "docs/src/pages/components/field/ButtonDemoPage.tsx"
   ],
   "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "schemaVersion": "1.7"
 }

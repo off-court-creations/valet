@@ -93,7 +93,6 @@
       "payloadType": "RichMessage"
     }
   ],
-  "actions": [],
   "slots": [],
   "bestPractices": [
     "Keep messages concise and chunked; prefer multiple short assistant turns over monolithic walls of text.",
@@ -131,5 +130,5 @@
     "docs/src/pages/components/widgets/RichChatDemo.tsx"
   ],
   "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "schemaVersion": "1.7"
 }

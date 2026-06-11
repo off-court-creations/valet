@@ -6,6 +6,8 @@
 // • extract-docs — route-table docsUrls (real SPA routes, not file paths)
 // • extract-glossary — candidate list + recursive fallback, hard failures
 // • merge — dotted subcomponents inherit the parent page's docsUrl
+// Plus the S9 schema-1.7 regression: the always-empty `actions` field is
+// gone from extraction and merge output (plan §3.9 S9).
 // ─────────────────────────────────────────────────────────────
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import fs from 'node:fs';
@@ -103,6 +105,30 @@ export const ProbeBox = createPolymorphicComponent<'div', ProbeBoxOwnProps>(
 );
 `;
 
+// Under schema ≤1.6 this fixture would have produced
+// actions: [{ name: 'focus' }, { name: 'scrollIntoView' }] via the
+// useImperativeHandle heuristic — the field must now never appear.
+const PROBE_HANDLE_SUMMARY = 'Widget probe with an imperative handle';
+const FIXTURE_PROBE_HANDLE = `// ─────────────────────────────────────────────────────────────
+// src/components/widgets/ProbeHandle.tsx | valet
+// ${PROBE_HANDLE_SUMMARY}
+// ─────────────────────────────────────────────────────────────
+declare function useImperativeHandle(ref: unknown, factory: () => unknown): void;
+
+export interface ProbeHandleProps {
+  label?: string;
+  handleRef?: unknown;
+}
+
+export const ProbeHandle = (props: ProbeHandleProps) => {
+  useImperativeHandle(props.handleRef, () => ({
+    focus: () => {},
+    scrollIntoView: () => {},
+  }));
+  return <div>{props.label}</div>;
+};
+`;
+
 describe('extractFromTs', () => {
   let res;
 
@@ -112,6 +138,7 @@ describe('extractFromTs', () => {
     write(root, 'src/types.ts', FIXTURE_TYPES);
     write(root, 'src/components/fields/ProbeField.tsx', FIXTURE_PROBE_FIELD);
     write(root, 'src/components/layout/ProbeBox.tsx', FIXTURE_PROBE_BOX);
+    write(root, 'src/components/widgets/ProbeHandle.tsx', FIXTURE_PROBE_HANDLE);
     res = extractFromTs(root);
   });
 
@@ -139,6 +166,15 @@ describe('extractFromTs', () => {
     expect(res.ProbeBox.summary).toBe(PROBE_BOX_SUMMARY);
     for (const entry of Object.values(res)) {
       expect(entry.summary).not.toBe(`${entry.name} component`);
+    }
+  });
+
+  it('schema 1.7: emits no `actions` field, even for useImperativeHandle components', () => {
+    // The probe deliberately uses the exact pattern the deleted heuristic
+    // matched; nothing in the extraction may resurrect the field.
+    expect(res.ProbeHandle).toBeDefined();
+    for (const entry of Object.values(res)) {
+      expect(entry).not.toHaveProperty('actions');
     }
   });
 });
@@ -253,7 +289,6 @@ describe('merge docsUrl resolution', () => {
     cssVars: [],
     cssPresets: [],
     events: [],
-    actions: [],
     slots: [],
     sourceFiles: [],
   });
@@ -285,5 +320,43 @@ describe('merge docsUrl resolution', () => {
       { 'Menu.Item': { docs: { docsUrl: '/menu' } } },
     );
     expect(out['Menu.Item'].docsUrl).toBe('/menu');
+  });
+});
+
+// ── merge: schema 1.7 — `actions` dropped from the corpus ────
+describe('merge schema 1.7 (actions removed)', () => {
+  const tsEntry = (name, extra = {}) => ({
+    name,
+    category: 'widgets',
+    slug: `components/widgets/${name.toLowerCase()}`,
+    summary: `${name} probe summary`,
+    props: [],
+    cssVars: [],
+    cssPresets: [],
+    events: [],
+    slots: [],
+    sourceFiles: [],
+    ...extra,
+  });
+
+  it('stamps every merged doc with schemaVersion 1.7', () => {
+    const out = merge({ Probe: tsEntry('Probe') }, {}, '0.0.0-test', {});
+    expect(out.Probe.schemaVersion).toBe('1.7');
+  });
+
+  it('emits no `actions` key, and drops a legacy actions array from a stale TS extraction', () => {
+    const out = merge(
+      {
+        Probe: tsEntry('Probe'),
+        Legacy: tsEntry('Legacy', { actions: [{ name: 'focus' }] }),
+      },
+      {},
+      '0.0.0-test',
+      {},
+    );
+    expect(out.Probe).not.toHaveProperty('actions');
+    // a pre-1.7 _ts-extract.json (or cached map) carrying actions must not
+    // leak the field back into the served corpus
+    expect(out.Legacy).not.toHaveProperty('actions');
   });
 });

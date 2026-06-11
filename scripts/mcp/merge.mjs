@@ -6,7 +6,9 @@ import { extractFromDocs } from './extract-docs.mjs';
 import { extractGlossary } from './extract-glossary.mjs';
 import { loadComponentMeta } from './load-meta.mjs';
 
-const SCHEMA_VERSION = '1.6';
+// 1.7: the always-empty `actions` field was dropped from component docs
+// (extraction + merge + served corpus). See plan §3.9 S9.
+const SCHEMA_VERSION = '1.7';
 
 // Aliases are now sourced from per-component meta sidecars.
 
@@ -202,7 +204,6 @@ export function merge(tsMap, docsMap, version, metaMap) {
       cssVars,
       cssPresets,
       events,
-      actions: ts.actions || [],
       slots: ts.slots || [],
       bestPractices,
       bestPracticeSlugs,
@@ -236,8 +237,31 @@ function indexFromComponents(map) {
   }));
 }
 
-async function main() {
-  const root = process.cwd();
+/**
+ * Build the full MCP corpus in memory. Single source of truth shared by the
+ * CLI below (mcp:build) and the freshness guard (scripts/mcp/check-fresh.mjs,
+ * mcp:check) so the checker can never drift from what the builder produces.
+ *
+ * Known side effects (unchanged from the historical CLI path, documented for
+ * check-fresh which snapshots around them):
+ *  • extractFromDocs(root) rewrites mcp-data/_routes.json (route artifact).
+ *  • loadComponentMeta(root) uses mcp-data/_tmp-meta as a compile scratch
+ *    dir; it is removed here so it never lingers in the dataset.
+ *
+ * @param {string} root  repo root (must contain package.json, src/, docs/)
+ * @returns {Promise<{
+ *   version: string,
+ *   schemaVersion: string,
+ *   components: Record<string, object>,  // merged component docs, keyed by name
+ *   index: Array<object>,
+ *   tsMap: Record<string, object>,       // raw TS extraction (_ts-extract.json)
+ *   synonyms: Record<string, string[]>,
+ *   buildHash: string,                   // sha1 over {merged, index} — no timestamps
+ *   glossary: Array<object>|undefined,   // undefined when extraction failed
+ *   glossaryError: Error|undefined,
+ * }>}
+ */
+export async function buildCorpus(root) {
   const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
   const version = pkg.version || '0.0.0';
 
@@ -274,6 +298,47 @@ async function main() {
   })();
 
   const merged = merge(tsMap, docsMap, version, metaMap);
+  const index = indexFromComponents(merged);
+
+  // Deterministic content hash: derived only from corpus content (no
+  // timestamps). Note the object-key order inside follows filesystem
+  // enumeration order, so the hash is stable per checkout but not
+  // guaranteed identical across machines — check-fresh compares content
+  // canonically instead of comparing this hash.
+  const buildHash = crypto
+    .createHash('sha1')
+    .update(JSON.stringify({ merged, index }))
+    .digest('hex');
+
+  // Component synonyms (alias -> [component names])
+  /** @type {Record<string, string[]>} */
+  const synonyms = {};
+  for (const c of Object.values(merged)) {
+    const aliases = Array.isArray(c.aliases) ? c.aliases : [];
+    for (const a of aliases) {
+      const key = String(a).trim().toLowerCase();
+      if (!key) continue;
+      if (!synonyms[key]) synonyms[key] = [];
+      if (!synonyms[key].includes(c.name)) synonyms[key].push(c.name);
+    }
+  }
+
+  // Glossary — error captured (not thrown) so the CLI keeps its historical
+  // warn-and-skip behavior; check-fresh treats a capture as a hard failure.
+  let glossary;
+  let glossaryError;
+  try {
+    glossary = extractGlossary(root);
+  } catch (e) {
+    glossaryError = e;
+  }
+
+  return { version, schemaVersion: SCHEMA_VERSION, components: merged, index, tsMap, synonyms, buildHash, glossary, glossaryError };
+}
+
+async function main() {
+  const root = process.cwd();
+  const { version, components: merged, index, tsMap, synonyms, buildHash, glossary, glossaryError } = await buildCorpus(root);
 
   const outDir = path.join(root, 'mcp-data');
   const compDir = path.join(outDir, 'components');
@@ -289,7 +354,6 @@ async function main() {
   }
 
   // Write index
-  const index = indexFromComponents(merged);
   fs.writeFileSync(path.join(outDir, 'index.json'), JSON.stringify(index, null, 2));
 
   // Write the raw TS extraction snapshot from the in-memory map so the
@@ -297,36 +361,23 @@ async function main() {
   fs.writeFileSync(path.join(outDir, '_ts-extract.json'), JSON.stringify(tsMap, null, 2));
 
   // meta
-  const hash = crypto
-    .createHash('sha1')
-    .update(JSON.stringify({ merged, index }))
-    .digest('hex');
-  const meta = { version, builtAt: new Date().toISOString(), schemaVersion: SCHEMA_VERSION, buildHash: hash };
+  const meta = { version, builtAt: new Date().toISOString(), schemaVersion: SCHEMA_VERSION, buildHash };
   fs.writeFileSync(path.join(outDir, '_meta.json'), JSON.stringify(meta, null, 2));
 
-  // Component synonyms (alias -> [component names])
-  /** @type {Record<string, string[]>} */
-  const synonyms = {};
-  for (const c of Object.values(merged)) {
-    const aliases = Array.isArray(c.aliases) ? c.aliases : [];
-    for (const a of aliases) {
-      const key = String(a).trim().toLowerCase();
-      if (!key) continue;
-      if (!synonyms[key]) synonyms[key] = [];
-      if (!synonyms[key].includes(c.name)) synonyms[key].push(c.name);
-    }
-  }
   const synPath = path.join(outDir, 'component_synonyms.json');
   // Always write the file, even if empty. The server has built-in defaults,
   // but emitting an empty object avoids validator warnings and clarifies intent.
   fs.writeFileSync(synPath, JSON.stringify(synonyms, null, 2));
 
   // Glossary
-  try {
-    const glossary = extractGlossary(root);
-    fs.writeFileSync(path.join(outDir, 'glossary.json'), JSON.stringify({ entries: glossary, version, builtAt: meta.builtAt }, null, 2));
-  } catch (e) {
-    console.warn('Glossary extraction error:', e.message);
+  if (glossaryError) {
+    console.warn('Glossary extraction error:', glossaryError.message);
+  } else {
+    try {
+      fs.writeFileSync(path.join(outDir, 'glossary.json'), JSON.stringify({ entries: glossary, version, builtAt: meta.builtAt }, null, 2));
+    } catch (e) {
+      console.warn('Glossary extraction error:', e.message);
+    }
   }
 
   // Mirror snapshot into server package (if present) for parity

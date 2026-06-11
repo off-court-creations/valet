@@ -86,7 +86,6 @@
   "cssVars": [],
   "cssPresets": [],
   "events": [],
-  "actions": [],
   "slots": [],
   "bestPractices": [
     "Prefer low DPR on animated backgrounds to reduce fill-rate.",
@@ -100,5 +99,5 @@
     "docs/src/pages/components/primitives/WebGLCanvasDemo.tsx"
   ],
   "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "schemaVersion": "1.7"
 }

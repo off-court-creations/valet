@@ -296,8 +296,6 @@ export function extractFromTs(projectRoot) {
       let domPassthrough = undefined;
       /** @type {Array<{ name: string; payloadType?: string }>} */
       const events = [];
-      /** @type {Array<{ name: string; signature?: string }>} */
-      const actions = [];
       /** @type {Array<{ name: string }>} */
       const slots = [];
 
@@ -659,33 +657,9 @@ export function extractFromTs(projectRoot) {
       }
     }
 
-    // Detect actions via useImperativeHandle(() => ({ ... }))
-    try {
-      const calls = sf.getDescendantsOfKind(SyntaxKind.CallExpression);
-      for (const call of calls) {
-        const exprText = call.getExpression().getText();
-        if (!/useImperativeHandle$/.test(exprText)) continue;
-        const args = call.getArguments();
-        const factory = args[1];
-        if (factory && (factory.getKind() === SyntaxKind.ArrowFunction || factory.getKind() === SyntaxKind.FunctionExpression)) {
-          // Find returned object literal
-          const returns = factory.getDescendantsOfKind(SyntaxKind.ReturnStatement);
-          for (const ret of returns) {
-            const obj = ret.getExpression();
-            if (obj && obj.getKind() === SyntaxKind.ObjectLiteralExpression) {
-              for (const prop of obj.getProperties()) {
-                const name = prop.getName?.();
-                if (name && /^[a-zA-Z_$][\w$]*$/.test(name)) {
-                  actions.push({ name });
-                }
-              }
-            }
-          }
-        }
-      }
-    } catch {
-      // ignore
-    }
+    // NOTE (schema 1.7): the `actions` field was removed. Its only heuristic
+    // detected useImperativeHandle, which zero components use — the field was
+    // `[]` for all 56 components and only misled agents (plan §3.9 S9).
 
     // Fallback: Props defined as a type alias (including unions/intersections)
     if (!iface) {
@@ -863,7 +837,6 @@ export function extractFromTs(projectRoot) {
       cssVars,
       cssPresets,
       events,
-      actions,
       slots,
       sourceFiles: [path.relative(projectRoot, filePath)],
     };

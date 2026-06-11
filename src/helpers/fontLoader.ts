@@ -270,25 +270,65 @@ export function injectFontLinks(fonts: Font[], options: GoogleFontOptions = {}):
 
 function nextFrame(): Promise<void> {
   return new Promise<void>((resolve) => {
-    requestAnimationFrame(() => resolve());
+    if (typeof requestAnimationFrame === 'function') requestAnimationFrame(() => resolve());
+    else setTimeout(resolve, 16);
   });
 }
 
-export async function waitForFonts(fonts: Font[]): Promise<void> {
-  // Create or reuse in-flight promises per normalized request key
-  const promises = fonts.map((font) => {
+/** Default upper bound on how long waitForFonts may block (THEMING S3). */
+export const DEFAULT_FONT_WAIT_TIMEOUT_MS = 5000;
+
+export interface WaitForFontsOptions {
+  /** Milliseconds before waitForFonts resolves anyway (default 5000). */
+  timeoutMs?: number;
+}
+
+/* Human-readable label for dev warnings */
+function fontLabel(font: Font): string {
+  if (typeof font === 'string') return sanitizeFamily(font);
+  if ('family' in font) return sanitizeFamily(font.family);
+  return font.name;
+}
+
+/* Guarded document.fonts.ready — absent/throwing FontFaceSet never breaks the wait */
+function fontsReady(): Promise<unknown> {
+  try {
+    return document.fonts?.ready ?? Promise.resolve();
+  } catch {
+    return Promise.resolve();
+  }
+}
+
+/**
+ * Cache an in-flight load per normalized request key. Rejected loads are
+ * evicted so one failure cannot poison the cache for the whole session
+ * (THEMING S3 — failures stay retryable).
+ */
+function cachedLoad(key: string, factory: () => Promise<unknown>): Promise<unknown> {
+  const existing = inflight.get(key);
+  if (existing) return existing;
+  const p = factory();
+  inflight.set(key, p);
+  p.catch(() => {
+    if (inflight.get(key) === p) inflight.delete(key);
+  });
+  return p;
+}
+
+/* Create or reuse the in-flight promise for one Font. Throw-safe: sync
+   failures (no document.fonts, no FontFace) surface as rejections that the
+   per-load wrappers in waitForFonts absorb. */
+function startFontLoad(font: Font): Promise<unknown> {
+  try {
     if (typeof font === 'string') {
       const fam = sanitizeFamily(font);
-      const key = `fam:${fam.toLowerCase()}`;
-      if (!inflight.has(key)) inflight.set(key, document.fonts.load(`400 1em ${fam}`));
-      return inflight.get(key)!;
+      if (!fam) return Promise.resolve();
+      return cachedLoad(`fam:${fam.toLowerCase()}`, () => document.fonts.load(`400 1em ${fam}`));
     }
     if ('family' in font) {
       const g = toGoogleRequest(font, {});
       if (!g) return Promise.resolve();
-      const key = `gcss:${g.key}`;
-      if (!inflight.has(key)) inflight.set(key, document.fonts.ready);
-      return inflight.get(key)!;
+      return cachedLoad(`gcss:${g.key}`, () => fontsReady());
     }
     const existing = customFaces.get(font.name);
     const face = existing ?? new FontFace(font.name, `url(${font.src})`);
@@ -296,21 +336,87 @@ export async function waitForFonts(fonts: Font[]): Promise<void> {
       customFaces.set(font.name, face);
       document.fonts.add(face);
     }
-    const key = `face:${font.name}`;
-    if (!inflight.has(key)) inflight.set(key, face.load());
-    return inflight.get(key)!;
+    return cachedLoad(`face:${font.name}`, () =>
+      face.load().catch((err) => {
+        // A failed FontFace stays status 'error' forever — drop it so a
+        // retry constructs a fresh face instead of reusing the dead one.
+        if (customFaces.get(font.name) === face) customFaces.delete(font.name);
+        try {
+          document.fonts.delete(face);
+        } catch {
+          /* best-effort cleanup */
+        }
+        throw err;
+      }),
+    );
+  } catch (err) {
+    return Promise.reject(err);
+  }
+}
+
+/**
+ * Wait for the given fonts to be usable. Fail-safe by contract (THEMING S3):
+ * - never rejects — each load gets a never-rejects wrapper, so one failed
+ *   FontFace cannot reject the batch;
+ * - resolves after `timeoutMs` (default 5000) even if loads hang, with a
+ *   dev-only warning naming the fonts that never settled;
+ * - rejected in-flight loads are evicted from the cache so they stay
+ *   retryable within the session.
+ */
+export async function waitForFonts(
+  fonts: Font[],
+  options: WaitForFontsOptions = {},
+): Promise<void> {
+  const { timeoutMs = DEFAULT_FONT_WAIT_TIMEOUT_MS } = options;
+
+  /* Per-load never-rejects wrappers over the shared in-flight cache */
+  const unsettled = new Set<string>();
+  const loads = fonts.map((font) => {
+    const label = fontLabel(font);
+    if (label) unsettled.add(label);
+    return startFontLoad(font).then(
+      () => {
+        unsettled.delete(label);
+      },
+      () => {
+        unsettled.delete(label);
+        if (process.env.NODE_ENV !== 'production') {
+          console.warn(`valet waitForFonts: "${label}" failed to load; continuing without it.`);
+        }
+      },
+    );
   });
 
-  await Promise.all(promises);
+  /* Composed only of never-rejecting pieces — see wrappers/fontsReady above */
+  const settle = (async () => {
+    await Promise.all(loads);
+    await fontsReady();
+    // Let layout/paint settle before returning (two frames)
+    await nextFrame();
+    await nextFrame();
+    // Small safety delay for late layout
+    await new Promise<void>((r) => setTimeout(r, 200));
+  })();
 
-  await document.fonts.ready;
+  /* Resolve-on-timeout: a hung load or stylesheet must never wedge
+     `blockUntilFonts` surfaces. Resolves — never rejects. */
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timedOut = await Promise.race([
+    settle.then(() => false),
+    new Promise<true>((resolve) => {
+      timer = setTimeout(() => resolve(true), timeoutMs);
+    }),
+  ]);
+  if (timer !== undefined) clearTimeout(timer);
 
-  // Let layout/paint settle before returning (two frames)
-  await nextFrame();
-  await nextFrame();
-
-  // Small safety delay for late layout
-  await new Promise<void>((r) => setTimeout(r, 200));
+  if (timedOut && process.env.NODE_ENV !== 'production') {
+    const names = Array.from(unsettled);
+    console.warn(
+      `valet waitForFonts: timed out after ${timeoutMs}ms` +
+        (names.length ? ` waiting for: ${names.join(', ')}` : '') +
+        '; continuing without blocking.',
+    );
+  }
 }
 
 export { injectFontLinks as injectGoogleFontLinks, waitForFonts as waitForGoogleFonts };

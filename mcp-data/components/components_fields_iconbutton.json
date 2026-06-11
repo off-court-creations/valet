@@ -75,7 +75,6 @@
   ],
   "cssPresets": [],
   "events": [],
-  "actions": [],
   "slots": [
     {
       "name": "svg"
@@ -96,5 +95,5 @@
     "docs/src/pages/components/field/IconButtonDemoPage.tsx"
   ],
   "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "schemaVersion": "1.7"
 }

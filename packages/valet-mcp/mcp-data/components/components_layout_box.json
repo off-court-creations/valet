@@ -86,7 +86,6 @@
   ],
   "cssPresets": [],
   "events": [],
-  "actions": [],
   "slots": [],
   "bestPractices": [
     "Treat as the neutral building block: backgrounds, padding, and simple width/height constraints.",
@@ -129,5 +128,5 @@
     "docs/src/pages/components/layout/BoxDemo.tsx"
   ],
   "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "schemaVersion": "1.7"
 }

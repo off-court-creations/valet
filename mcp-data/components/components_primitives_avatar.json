@@ -98,7 +98,6 @@
   ],
   "cssPresets": [],
   "events": [],
-  "actions": [],
   "slots": [],
   "bestPractices": [
     "Use initials fallback for missing images; ensure background/foreground meet contrast.",
@@ -171,5 +170,5 @@
     "docs/src/pages/components/primitives/AvatarDemo.tsx"
   ],
   "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "schemaVersion": "1.7"
 }

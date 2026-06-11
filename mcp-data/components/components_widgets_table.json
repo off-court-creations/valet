@@ -151,7 +151,6 @@
       "payloadType": "number"
     }
   ],
-  "actions": [],
   "slots": [],
   "bestPractices": [
     "Keep tables readable: enable `striped` and/or `hoverable` for large datasets, but avoid heavy styling that competes with content.",
@@ -224,5 +223,5 @@
     "docs/src/pages/components/widgets/TableDemo.tsx"
   ],
   "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "schemaVersion": "1.7"
 }

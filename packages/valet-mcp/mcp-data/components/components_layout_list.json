@@ -129,7 +129,6 @@
       "payloadType": "T"
     }
   ],
-  "actions": [],
   "slots": [
     {
       "name": "getTitle"
@@ -190,5 +189,5 @@
     "docs/src/pages/components/layout/ListDemoPage.tsx"
   ],
   "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "schemaVersion": "1.7"
 }

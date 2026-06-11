@@ -2,11 +2,17 @@
 // src/system/createInitialTheme.ts | valet
 // helper for setting the initial theme and loading fonts
 // ─────────────────────────────────────────────────────────────
-import type { Theme } from './themeStore';
+import type { Theme, ThemeMode } from './themeStore';
 import { useTheme } from './themeStore';
 import { useFonts } from './fontStore';
 import { useEffect } from 'react';
 import { injectFontLinks, waitForFonts, GoogleFontOptions, Font } from '../helpers/fontLoader';
+import {
+  getSystemMode,
+  readStoredMode,
+  resolveInitialMode,
+  writeStoredMode,
+} from './modePreference';
 
 // Infer keys from Theme so this stays in sync if you add/remove slots later
 type FontKeys = keyof Theme['fonts'];
@@ -91,6 +97,27 @@ export async function createInitialTheme(
   }
 }
 
+/** Options accepted by useInitialTheme (font options + THEMING S8 mode opts). */
+export interface UseInitialThemeOptions extends GoogleFontOptions {
+  /**
+   * Initial color mode. 'light'/'dark' apply directly; 'system' reads
+   * prefers-color-scheme once at boot (no live `change` listener yet —
+   * deferred). Omitted → valet's boot default ('dark') stands.
+   */
+  mode?: ThemeMode | 'system';
+  /**
+   * Persist real user mode changes (setMode/toggleMode) to localStorage
+   * under 'valet-mode' and restore the stored choice at boot.
+   * Boot precedence: stored > requested > system > fallback('dark').
+   */
+  persistMode?: boolean;
+}
+
+/* True while useInitialTheme applies the boot-resolved mode: the persist
+   subscription must not record a system/stored-derived initial as if the
+   user chose it (veto register: applyingSystem flag). */
+let applyingSystem = false;
+
 export function useInitialTheme(
   patch: Partial<
     Omit<Theme, 'fonts'> & {
@@ -98,9 +125,41 @@ export function useInitialTheme(
     }
   >,
   extras: Font[] = [],
-  options?: GoogleFontOptions,
+  options?: UseInitialThemeOptions,
 ) {
   useEffect(() => {
+    const { mode: requestedMode, persistMode = false } = options ?? {};
+
+    /* THEMING S8 persistence — install the subscription BEFORE the boot
+       apply so ordering can never hide a user toggle; the applyingSystem
+       flag filters the boot apply itself. Persisting lives here, not in
+       themeStore: stores stay storage-free. */
+    let unsubscribe: (() => void) | undefined;
+    if (persistMode) {
+      unsubscribe = useTheme.subscribe((state, prev) => {
+        if (applyingSystem) return;
+        if (state.mode !== prev.mode) writeStoredMode(state.mode);
+      });
+    }
+
+    /* THEMING S8 mode preference — resolved exactly once at boot.
+       stored > requested > system > fallback('dark'). 'system' is a
+       one-shot prefers-color-scheme read; live follow is deferred. */
+    if (requestedMode !== undefined || persistMode) {
+      const { mode } = resolveInitialMode({
+        stored: persistMode ? readStoredMode() : null,
+        requested: requestedMode === 'system' ? null : (requestedMode ?? null),
+        system: requestedMode === 'system' ? getSystemMode() : null,
+        fallback: 'dark',
+      });
+      applyingSystem = true;
+      try {
+        useTheme.getState().setMode(mode);
+      } finally {
+        applyingSystem = false;
+      }
+    }
+
     // Catch the floating promise: a failed font load should warn in dev,
     // never surface as an unhandled rejection or block the UI.
     createInitialTheme(patch, extras, options).catch((err) => {
@@ -108,6 +167,8 @@ export function useInitialTheme(
         console.warn('valet useInitialTheme: font loading failed; continuing without fonts.', err);
       }
     });
+
+    return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 }

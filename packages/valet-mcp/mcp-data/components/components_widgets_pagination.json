@@ -72,7 +72,6 @@
       "payloadType": "number"
     }
   ],
-  "actions": [],
   "slots": [],
   "bestPractices": [
     "Keep visible pages small. For large `count`, set a reasonable `siblingCount` and rely on first/last controls.",
@@ -110,5 +109,5 @@
     "docs/src/pages/components/widgets/PaginationDemo.tsx"
   ],
   "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "schemaVersion": "1.7"
 }
