@@ -162,7 +162,9 @@ These shape how components express semantics, styles, and state. Reuse them.
 
 ---
 
-## 8) Web Action Graph & Semantics
+## 8) Semantics & Surface Introspection
+
+> Roadmap note: the Web Action Graph (interaction telemetry) is planned — not implemented. What ships today is the registration/sizing introspection below.
 
 - Components register themselves via `createStyled`; surfaces track child dimensions.
 - CSS variables exposed:

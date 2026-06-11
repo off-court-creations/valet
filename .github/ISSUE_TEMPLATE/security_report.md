@@ -1,21 +1,23 @@
 ---
-name: Security report
-about: Create a report to help us remove a vulnerability
-title: "[SEC]"
+name: "Security report (do not use — see SECURITY.md)"
+about: Do NOT report vulnerabilities in public issues. Use GitHub Private Vulnerability Reporting instead.
+title: "[SEC] Do not use this template — report privately"
 labels: security
-assignees: 0xbenc
-
 ---
 
-**Describe the vulnerability**
-A clear and concise description of what the vuln is.
+<!-- ⚠️ STOP — do not put vulnerability details in this public issue. -->
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+**Please do not report security vulnerabilities through public GitHub
+issues.** Public issues disclose the vulnerability to everyone before a fix
+exists.
 
-**Additional context**
-Add any other context about the problem here.
+Instead, use GitHub Private Vulnerability Reporting:
+
+- Repository **Security** tab → **Report a vulnerability**
+- Direct link: <https://github.com/off-court-creations/valet/security/advisories/new>
+
+See the full policy (supported versions, response expectations, scope):
+<https://github.com/off-court-creations/valet/blob/main/SECURITY.md>
+
+If you already posted vulnerability details here, please delete them and
+re-submit through the private channel.

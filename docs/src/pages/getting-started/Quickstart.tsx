@@ -199,8 +199,10 @@ npm run typecheck`; // only typecheck exists in TS/hybrid; still mention
               replace this folder—nothing in the template depends on it.
             </Typography>
             <Typography>
-              Forms and actions should live inside valet components whenever possible so the Surface
-              can capture telemetry via the Web Action Graph.
+              Forms and actions should live inside valet components whenever possible so state stays
+              in typed Zustand stores and the Surface can track every registered component. The Web
+              Action Graph — automatic interaction telemetry built on that tracking — is planned and
+              not implemented yet.
             </Typography>
           </Stack>
         </Panel>
@@ -209,9 +211,8 @@ npm run typecheck`; // only typecheck exists in TS/hybrid; still mention
           <Stack gap={1.5}>
             <Typography variant='h3'>Scripts and next moves</Typography>
             <Typography>
-              Generated apps include agent-friendly scripts. TypeScript and Hybrid templates also
-              add
-              <code>typecheck</code> variants.
+              Generated apps include the quality scripts below. TypeScript and Hybrid templates also
+              add <code>typecheck</code>.
             </Typography>
             <CodeBlock
               code={scriptsList}
@@ -219,7 +220,8 @@ npm run typecheck`; // only typecheck exists in TS/hybrid; still mention
             />
             <Typography>
               Use <code>npm run dev</code> for HMR, <code>npm run build</code> for production
-              bundles, and the <code>*:agent</code> scripts when automating checks with LLM tooling.
+              bundles, and <code>lint</code>/<code>format</code> (plus their <code>:fix</code>{' '}
+              variants) when automating checks with LLM tooling.
             </Typography>
           </Stack>
         </Panel>

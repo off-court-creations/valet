@@ -39,8 +39,43 @@
 | 2   | 0.1  | **Pure cores (parallel, disjoint new files):** TEST-CI S1 harness (fast-tracked) · FIELDS S1 dateUtils + S2 sliderMath · THEMING S1 themeUtils + S2 createInitialTheme recovery · SECURITY S2/S3 aiKeyStore + S4 svgSafe · GOVERNANCE S6 gate scripts + S9 devErrors (module only) · MCP-TRUTH S1/S2/S5 extractor fixes · OVERLAY S1 focus trap · TEST-CI S2/S4/S5 suites | ✅     |
 | 3   | 0.2  | **Serialized shared-file lanes:** (a) root package.json: TEST-CI S1 scripts → PACKAGING S2 prepack/verify-pack → PACKAGING S1 metadata → ENGINE S5 check:engine · (b) css lane: ENGINE S2 compile → TEST-CI S3 normalize extraction → ENGINE S4 presets · (c) index.ts: MCP-TRUTH S3 KeyModal move → API-TYPES S1 exports · (d) valet-mcp package.json: MCP-TRUTH S6 · TEST-CI S5 TZ suite (after FIELDS S1) | ✅     |
 | 4   | 0.3  | **Component edits (parallel disjoint; serialized within contended files):** ENGINE S3 prefixes → PERF S3 Table · OVERLAY S2 Select · FIELDS S3 Tabs + S4 Accordion + S1 DateSelector flip (Q5) · PERF S1 Surface, S2 surfaceStore, S4 List, S5 effect hygiene + Markdown/RichChat fixes (PERF S11 part) · API-TYPES S2 Box/Typography, S3 Button/IconButton · THEMING S6 docs snippet · wave end: GOVERNANCE S9 throw-site sweep | ✅     |
-| 5   | 0.4  | **Docs/config (one writer), then the phase gate:** GOVERNANCE S1 changelog → S2 README/AGENTS → S3 WAG sweep → S5 VALIGNMENT archive · SECURITY S9 amplify pin (S1 ⏸️ until Ben enables PVR) · MCP-TRUTH S11 glossary truth · TEST-CI S8 CI workflow + S10 SSR regression | ⬜     |
-| —   | gate | **Phase-0 gate:** CI green on Node 20/22 (lint, typecheck, test, build, mcp:schema:check, verify:pack, check:engine) + manual docs-app sweep                                                     | ⬜     |
+| 5   | 0.4  | **Docs/config (one writer), then the phase gate:** GOVERNANCE S1 changelog → S2 README/AGENTS → S3 WAG sweep → S5 VALIGNMENT archive · SECURITY S1 SECURITY.md + S9 amplify pin · MCP-TRUTH S11 glossary truth · TEST-CI S8 CI workflow + S10 SSR regression | ✅     |
+| —   | gate | **Phase-0 gate:** CI green on Node 20/22 (lint, typecheck, test, build, mcp:schema:check, verify:pack, check:engine) + manual docs-app sweep                                                     | ✅ (local equivalent + docs build; Actions runs on first push) |
+
+### Wave 0.4 — docs/config + CI (Phase-0 close-out) — ✅
+
+**What shipped:** CHANGELOG backfilled for all 10 published releases
+0.33.0–0.34.1 (stale 140-line Unreleased blob redistributed via `git log -S`
+archaeology, summary-level, "(backfilled)"-marked) + a `0.34.2 (planned
+hotfix)` section per Q4(a) (the 6 stranded no-merge commits + the two
+cherry-pick candidates) + fresh `## Unreleased` targeting 0.35.0 with every
+behavior/breaking change Q-cited · README local-docs flow → `dx`/`dx:link`,
+React claim → `^18 || ^19` · AGENTS.md: phantom script gone, MCP.tsx path
+fixed, "typed JSON schemas" → truthful zustand wording, quality gates rewritten
+to the new CI reality, Testing section landed · WAG truth sweep: MainPage card
+now sells the REAL MCP server (14 tools), Quickstart/AGENTS/README/docs
+AGENTS.md roadmap-framed, enforced by a repo-wide grep gate test
+(`scripts/mcp/wagTruth.test.mjs`) · VALIGNMENT*.md archived to
+`dx/archive/valignment/` with a closure README adjudicating all 3 open
+regressions (all RESOLVED, claims spot-checked by the reviewer against current
+code) · SECURITY.md: latest-0.x supported, PVR reporting flow (enable-PVR
+note for Ben), public issue template → redirect stub + config.yml ·
+amplify.yml mise pinned · `.github/workflows/ci.yml`: core matrix Node
+20/22 (lint, typecheck, mcp:schema:check, test, build, verify:pack,
+check:engine, check-pins --warn) + mcp-server job (build + selfcheck against
+pkgRoot data) · `src/ssr-import.test.ts` (skips pre-build, asserts both
+import formats + deterministic SSR classes post-build).
+
+**Verification:** truth reviewer **pass** (every factual claim in the new docs
+verified against the repo — tag archaeology spot-checked, scripts
+grepped, 14-tools claim counted); scope reviewer **pass** (one justified
+addition: docs/AGENTS.md WAG heading, required for the repo-wide gate).
+**Phase-0 gate:** lint ✅ tsc ✅ **394/394 tests** ✅ build ✅ check:engine ✅
+verify:pack ✅ mcp:schema:check ✅ ssr-import post-build ✅ · docs app
+**builds green against the linked overhauled library** (`npm run dx:link` →
+`docs && npm run build`, 7.5s vite build) · GitHub Actions itself runs on
+first push (local command-list equivalent green); real-browser visual checks
+(focus rings, zebra striping on Chrome ≤119) remain flagged for Ben.
 
 ## Decisions — provisional rulings (agent-adopted, pending Ben's review)
 

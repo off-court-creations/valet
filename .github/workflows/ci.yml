@@ -1,0 +1,66 @@
+# ─────────────────────────────────────────────────────────────
+# .github/workflows/ci.yml  | valet
+# Phase-0 CI gate (TEST-CI S8) for development and main.
+# ubuntu-only, Node 20/22 (veto register). cva:validate is
+# excluded from this PR gate by design — it gets a weekly cron +
+# dispatch workflow in TEST-CI S9. check-pins runs --warn on
+# non-release branches; the release integrator flips it hard.
+# ─────────────────────────────────────────────────────────────
+name: CI
+
+on:
+  push:
+    branches: [development, main]
+  pull_request:
+    branches: [development, main]
+
+permissions:
+  contents: read
+
+jobs:
+  core:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [20.x, 22.x]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run mcp:schema:check
+      - run: npm test
+      - run: npm run build
+      # SSR dist-import regression (TEST-CI S10): inside `npm test` above
+      # it skips when dist/ is absent; this post-build run is the real
+      # assertion (require + dynamic import of dist, deterministic classes).
+      - run: npx vitest run src/ssr-import.test.ts
+      - run: npm run verify:pack
+      - run: npm run check:engine
+      # Pin skew is informational off the release branch (--warn never
+      # fails; release integration runs it hard).
+      - run: node scripts/release/check-pins.mjs --warn
+
+  mcp-server:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: npm
+      - run: npm ci
+      - run: npm ci
+        working-directory: packages/valet-mcp
+      - run: npm run build
+        working-directory: packages/valet-mcp
+      # Selfcheck resolves the committed <pkg>/mcp-data copy — the true
+      # package root is the FIRST bundled candidate (shared.ts
+      # resolveBundledDir; ruling R23 as corrected in execution.md Flags #4).
+      - run: MCP_SELFCHECK=1 node dist/index.js
+        working-directory: packages/valet-mcp

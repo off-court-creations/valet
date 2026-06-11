@@ -4,142 +4,150 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+Target: **0.35.0** — the valet overhaul (`feat/valet-overhaul`). Phase 0 (decision-free correctness + test harness) summarized by theme below. Behavior and type-level changes are flagged explicitly with their ruling (Q*/R* in `dx/plans/valet-overhaul-2026-06-10/`).
+
 ### Added
 
-- Table: hover‑aware sort indicator
-  - On hovering a sortable header, a preview triangle fades in on that column using motion tokens; the active column’s triangle softly fades out.
-  - Clicking promotes the preview to the active indicator; the previously active triangle fades out. Moving the cursor away restores the active triangle if unchanged.
-
-- MCP: added `valet__search_best_practices` and `valet__list_synonyms` tools for agents to surface guidance and inspect alias mappings directly.
-- Primitives: add `WebGLCanvas` — a reusable WebGL2 canvas host that handles context creation, DPR-aware resizing, and RAF. Docs lava-lamp hero now uses this component. Status: stable.
-- Grid/Panel: introduce per-row height normalization.
-  - Grid: new `normalizeRowHeights` prop (default `true`) stretches items so each row matches its tallest Panel when in 2+ columns (adaptive not collapsed).
-  - Panel: new `normalizeRowHeight` prop (default `true`) to opt out on a per-panel basis.
- - Iterator: new props and docs
-   - `onCommit(value)` event for blur/controls/wheel/keyboard commits
-   - `commitOnChange` opt-in to live commits while typing
-   - `roundToStep` to snap committed values to `step` from `min` (or `0`)
-   - `wheelBehavior`: `'off' | 'focus' | 'hover'` (default `'focus'`)
-   - Best Practices and curated Examples added to sidecar; docs page renders them
- - Fields/Button: add `centered` prop (mirrors Typography) to center CTAs inside columns/Stacks without wrapper elements; docs and MCP metadata updated.
- - Fields: introduce `FieldBaseProps` with JSDoc for shared field props (`name`, `label`, `helperText`, `error`, `fullWidth`, `sx`, `preset`) to seed consistent reference descriptions across all fields.
- - MCP: extractor now reads per‑prop JSDoc comments from shared types and component interfaces to populate the Reference table descriptions by default.
-- Table: smart height constraints for better UX on small viewports
-  - New `minConstrainedRows` (default `4`): when `constrainHeight` would show fewer than this many rows, the table temporarily disables internal scrolling to avoid a tiny scroller.
-  - New `maxExpandedRows` (default `30`): when `minConstrainedRows` disables constraining and the dataset exceeds this size, Table paginates (using `<Pagination/>`) with `maxExpandedRows` rows per page instead of using a scrollbar.
-  - New `paginate` (default `false`): force pagination always using `maxExpandedRows`; otherwise pagination engages automatically only when `minConstrainedRows` kicks in.
-  - Controlled pagination support via `page`, `onPageChange`, and `paginationWindow` (forwarded to Pagination’s `visibleWindow`).
+- Testing: vitest two-project harness (node + jsdom selected by `*.dom.test` suffix), 380+ colocated tests — hash vectors, normalize characterization, createFormStore, TZ-parameterized date math, focus-trap keydown matrix, 50+ adversarial svgSafe vectors, a repo-wide bare-nested-selector source gate, StrictMode purity suites.
+- CI/release safety: GitHub Actions workflow gating `development` and `main` (Node 20.x/22.x: lint, typecheck, test, build, `mcp:schema:check`, `verify:pack`, `check:engine`); `scripts/verify-pack.mjs` + `prepack: npm run build` make the previously-shipped 4-file empty tarball structurally impossible; release gates `scripts/release/check-changelog.mjs` (this file is now enforced at publish time) and `check-pins.mjs`; `check:engine` Node smoke (import-no-throw in both formats, deterministic class names, keyframes/presets in Node).
+- Engine: `src/css/sheet.ts` — lazy, `document`-guarded stylesheet init; non-DOM environments record pending rules and flush them in order if a sheet later exists; `insertRule` failures dev-log diagnostics instead of crashing (behavior note: malformed preset CSS no longer throws from `definePreset`; prod is silent).
+- Types (API-TYPES S1): the consumer vocabulary is now importable from the barrel — `Sx`, `Presettable`, `Space`, `SpacingProps`, `FieldBaseProps`, `ChangeInfo`/`OnValueChange`/`OnValueCommit`/`InputPhase`/`InputSource`, `PolymorphicProps`/`PolymorphicRef`/`PolymorphicComponent`/`PropsOf` (all nine were TS2305 before); committed type probes under `dx/type-tests/`.
+- Security: `src/helpers/svgSafe.ts` allowlist SVG parser (Icon wiring itself is Phase 1, gated Q6); `src/system/devErrors.ts` (`valetError` + `warnOnce`) with enriched messages at 7 throw sites (component name + fix hint).
 
 ### Changed
 
-- Security: require Vite >= 6.4.1 across docs and templates.
- - Fields/Checkbox: add `indeterminate` prop with ARIA mixed state; accept `id` to pair with external labels/descriptions.
- - Fields/Checkbox: improve contrast — unchecked outline uses `theme.colors.divider`; checked fill uses `theme.colors.primary` with white indicator.
- - Fields/Checkbox: mark status to `stable`.
-- CSS hashing: replace runtime siphash with dependency‑free BigInt FNV‑1a (64‑bit).
-  - Hash output remains base36 but now includes a `-<len>` suffix (input length in base36) to further reduce practical collision risk.
-  - Removes the `siphash` runtime dependency; reduces bundle size and CPU.
-  - Generated class/keyframe names change; this is internal and does not affect public APIs.
-- CVA: bump create‑valet‑app templates to Vite >=6.4.1 by default.
-- MCP: extend component status enum to include `production` (very stable, polished; formerly `golden`) and `unstable` (known problem; avoid depending on it). Bumped MCP `schemaVersion` to `1.6` and regenerated `mcp-data/`.
-- Docs: extracted LavaLampBackgroundGL shaders to standalone GLSL files under `docs/src/shaders/lava-lamp` and import via `?raw` for readability and better editor support.
-- Docs: increase lava‑lamp pulse crowd repulsion ~100× (stronger scene reconfiguration). Parameters in `docs/src/shaders/lava-lamp/lavaLampParams.ts`.
-- Docs: MetroSelect playground now controls selection mode (single/multiple) and tile size; removed non-functional `gap` control.
-- Grid: now normalizes row heights by default for multi-column layouts; behavior is disabled automatically when adaptive collapses to a single column.
- - Modal: graduate to stable and refine API/UX
-   - Add DOM passthrough and `sx` support; merge `className` with presets
-   - Constrain dialog height to viewport via `--valet-modal-viewport-margin` and scroll content inside
-   - Dev-time a11y guard warns when no accessible name (`title`, `aria-label`, or `aria-labelledby`)
-   - Docs: simplify page; remove alert/controlled/size sections and add a11y + long-content demos
- - Iterator: UX and a11y improvements
-   - Forward native `min`/`max`/`step` to the input for correct browser semantics
-   - Wheel steps only when focused by default; `'hover'` mode is opt-in
-   - Keyboard: ArrowUp/Down step; PageUp/Down big-step; Home/End to bounds; Enter commits; Escape reverts
-   - Plus/minus icons use bold glyphs for readability (`mdi:plus-thick`/`mdi:minus-thick`)
- - Docs usage spacing refined to use `gap`/`pad` props (no `sx`)
- - List: `focusMode` prop to control row focus behavior
-   - `auto` (default): non-selectable rows are not tabbable; selectable lists use roving focus
-   - `row`: every row is tabbable (opt-in; not recommended for long lists)
-   - `none`: rows are not in the tab order; programmatic focus only
-
- - Image: simplify and promote to `stable`
-   - Remove custom IntersectionObserver lazy logic; rely on native `loading="lazy"`
-   - Add `aspectRatio` prop and `max-width: 100%` default for better responsiveness
-   - Remove `rounded` prop; apply rounding via wrapper with `overflow: hidden` (more robust across object-fit modes)
-   - Forward refs; default `decoding="async"`; keep `sx` and preset support
-
- - Image: finalize simple API and defaults
-   - Replace `objectFit` with `fit`; add `objectPosition` for focus/cropping control
-   - Remove `lazy` boolean and `placeholder`; use native `loading` (default `'lazy'`)
-   - Require `alt` text (empty string allowed for decorative)
-   - Keep `aspectRatio`, `width`/`height` (number ⇒ px), `decoding='async'`, and `draggable={false}` by default
-   - Passthrough responsive imaging attributes (`srcSet`, `sizes`) and `fetchPriority`
-
- - Progress: complete redesign with simpler API and better a11y/compat
-  - New primitives `ProgressBar` and `ProgressRing` replace mode/variant juggling
-  - Back-compat `Progress` wrapper remains (maps legacy `variant`/`mode`/`showLabel`)
-  - Fewer props; more control via CSS vars and sensible defaults
- - Improved visuals: ring track + rounded caps; subtle indeterminate motion
- - Tight ARIA: role, value range, and indeterminate implied by omitted `value`
-
-- Fields: migrate Checkbox, TextField, Select, RadioGroup/Radio, Switch, Slider, Iterator, and MetroSelect to extend `FieldBaseProps`. No runtime behavior changes; types and docs only.
-- MCP: safer extractor for inherited props
-  - Includes inherited userland props (from `src/`) and their JSDoc in component docs
-  - Filters DOM attributes from alias/union shapes to avoid noisy Reference tables
-  - Honors `Omit<...>` for DOM inheritance while still including same‑name userland props (e.g., `name`).
-
-- Docs: Glossary page significantly improved for readability and navigation
-  - Search across terms, aliases, definitions; live result count (ARIA‑announced)
-  - Category filter and grouping (A–Z or by category) with section headings
-  - Per‑entry deep links with copy‑link button; clickable “See also” anchors
-  - Clear spacing, dividers, and sticky controls bar; optional JSON copy action
-  - Preserves `GLOSSARY` structure for MCP extraction; recommend regenerating `mcp-data/`
+- Engine (SSR guard, audit Tier-1 #1): importing valet in Node/SSR no longer crashes — the module-scope `document.createElement` is gone; `renderToString` emits deterministic hash-derived classes. `globalSheet` widened to `CSSStyleSheet | undefined`.
+- Engine: falsy interpolations (`false`/`null`/`undefined`) are dropped at template compile (`src/css/compile.ts`) — the `falsedisplay:flex` bug class is dead; `0`/`''` still render.
+- Engine (behavior, ruling R5): `definePreset` redefinition now **replaces** the prior rule with a one-time dev warning (was: silent stale rule across HMR); theme updates re-insert full rule text so nested rules survive.
+- Engine: bare nested selectors gained explicit `& ` prefixes (RadioGroup, Checkbox, Table, Video, Pagination) — lowers the floor toward Chrome 112/Safari 16.5; **generated class hashes changed** for the touched components (internal names only).
+- Theme (behavioral fix, THEMING S1): `setMode` recomposes the theme from base + the caller's accumulated overlay instead of resetting to factory palettes — brand overrides now survive mode toggles; new `resetTheme()`; dark palette `colorNames` data errors and by-reference palette sharing fixed.
+- Packaging (package.json truth pass): `sideEffects: ["*.css"]` (the previous `false` was provably wrong), explicit per-format `types` conditions, `./package.json` subpath export, unused `marked-highlight` dependency removed, root `engines` removed (CLIs keep theirs).
+- Performance: Surface no longer re-renders the app on every scroll/mount — shallow store selector, measure bail-when-unchanged, **document scroll listener removed** (verified unconsumed); `surfaceStore.registerChild` drops the sync `getBoundingClientRect` + per-element Map clone and microtask-batches commits (n mounts → 1 notification).
+- Types (type-level breaking, decision-free P0, API-TYPES S3): Button/IconButton polymorphism is sound — `<Button as='a' disabled type='submit'>` no longer compiles; runtime behavior identical.
+- Types (documented-but-broken behavior now real, API-TYPES S2): Box/Typography merge caller `style` with `sx` (caller `style` loses to `sx`) instead of silently clobbering one with the other.
+- MCP corpus honesty: all 56 placeholder summaries replaced with real header-comment summaries; glossary populated (0 → 13 entries); `docsUrls` derived from the real docs route table; KeyModal relocated to `widgets/` (public import path unchanged) and now visible to MCP; required-prop detection fixed (TextField `name`) and the polymorphic `as` prop extracted; `_ts-extract.json` regenerated fresh instead of mirroring a stale copy; valet-mcp resolves its bundled `mcp-data` from the true package root (selfcheck green, `dataSource: "bundled"`).
 
 ### Fixed
 
-- Chip: outlined variant border was invisible due to missing `divider` token in theme. Added `colors.divider` for light/dark themes and use it for default outlined borders.
-- Modal: raise backdrop/dialog z-index above AppBar so modals always cover app bars.
- - DateSelector: calendar day numbers and labels now inherit valet body typography (font family, tracking, leading) instead of rendering in a system default font.
- - AppBar: add `fixed` (default `true`) and `portal` props to allow inline rendering in docs/demos. Docs AppBar page now renders examples inline to avoid overlapping the page hero and top bar.
+- A11y/Overlay (audit Tier-1 #2; 0.34.2 cherry-pick candidate): the focus trap no longer swallows Tab mid-dialog — the unconditional `preventDefault` is deleted, wrap branches own their `preventDefault`, and escaped focus is recaptured.
+- Overlay (0.34.2 cherry-pick candidate): Select's portal wrapper no longer blocks pointer events on content beneath it (`pointer-events: none` on the wrapper, `auto` on the menu).
+- DateSelector (behavior flip, ruling Q5(a)): date math is local-time (`src/components/fields/dateUtils.ts`) instead of `toISOString().slice(0,10)` UTC — users west of UTC no longer see or select the previous day; TZ-parameterized tests (UTC through Pacific/Kiritimati) pin it.
+- Tabs: the first committed render honors the controlled `value` (prod-only bug previously masked by StrictMode).
+- Accordion: `open={0}` is treated as controlled (`openProp !== undefined` instead of falsiness).
+- Slider: arrow keys can no longer compute a 0-pixel step (`computeKeyStep` floor).
+- Table: selection/sort callbacks moved out of state updaters (StrictMode double-fire); the selection-prune effect's infinite update loop is fixed; descending sort is stable (negated comparator instead of reversal).
+- List: `onReorder` fires exactly once with the latest items — stale pre-drag arrays in pointer-end and touch-move paths fixed.
+- Markdown: token rendering recurses into nested tokens — bold/links/nested lists/fenced code inside list items render formatted instead of flattening to plain text.
+- RichChat: form submissions emit the correct index when the message list is filtered.
+- Dropzone/Snackbar/WebGLCanvas effect hygiene: Dropzone removeAt purity; Snackbar cross-instance rAF crosstalk eliminated (module global → effect-local); WebGLCanvas clearColor dependency fix.
+- Fonts: a failed font load can no longer wedge first paint (`try/finally` around `waitForFonts`; the floating promise is caught).
+- Security: aiKeyStore evicts stale localStorage ciphertext before falling back to sessionStorage; `crypto.subtle` unavailability raises a descriptive secure-context error; the never-read in-memory `passphrase` field is deleted.
+- RadioGroup/Slider: react `KeyboardEvent` value-imports fixed (ESM-in-Node instantiation failure; also a latent `instanceof undefined` TypeError in keyboard source detection).
+- Docs: the theme-toggle snippet branched on a nonexistent `theme.mode`; it now uses `toggleMode`.
 
- 
+## 0.34.2 (planned hotfix — unpublished)
+
+Per adopted ruling **Q4(a)** (`dx/plans/valet-overhaul-2026-06-10/execution.md`): a small hotfix resets the publish baseline before the 0.35.0 overhaul minor. Payload = the six `development` commits stranded since 0.34.1 plus two cherry-picks from the overhaul branch. Prepared as a branch; publishing is Ben's call.
+
+Stranded `development` commits (`v0.34.1..0a31fee`):
+
+- AppBar: buttons and icon-button support in the app bar (`31ee72c`, `d5fb059`, merged via PR #479) with follow-up prop/metadata adjustments (`f48172b`).
+- Docs: prop-pattern audit notes (`0a31fee`, `PROP_PATTERNS_AUDIT.md`) and audit follow-ups + new lava-lamp shader (`3f350f1`).
+- MCP: data regeneration (`fb07a02`).
+
+Cherry-pick candidates (also listed under Unreleased; land here if the hotfix ships first):
+
+- Overlay focus trap: Tab no longer swallowed mid-dialog (OVERLAY S1).
+- Select: portal wrapper no longer blocks pointer events beneath the dropdown (OVERLAY S2).
+
+## [0.34.1] — 2025-11-18 (backfilled)
+
+- AppBar: new `fixed` (default `true`) and `portal` props allow inline rendering in docs/demos; the docs AppBar page renders examples inline to avoid overlapping the hero and top bar.
+- DateSelector: visual bug fix.
+- Panel: background/props bugfix.
+- Select and Slider: bugfixes.
+- README updates; MCP data regenerated.
+
+## [0.34.0] — 2025-11-15 (backfilled)
+
+- Library/docs stability and alignment pass (~212 files): polish across fields (Button, IconButton, Select, DateSelector, Iterator, MetroSelect, Slider, Switch, Checkbox, RadioGroup) and layout (AppBar, Accordion, Box, Grid, List, Modal, Panel, Tabs); most docs demo pages reworked.
+- Added VALIGNMENT tracking docs (alignment audit, issues, progress) — archived to `dx/archive/valignment/` by the 0.35.0 overhaul.
+- Publish-order message added; MCP cleanup and data regeneration.
+
+## [0.33.7] — 2025-11-13 (backfilled)
+
+- Table: hover-aware sort indicator — hovering a sortable header fades in a preview triangle on that column using motion tokens while the active column's triangle softly fades out; clicking promotes the preview to the active indicator; moving the cursor away restores the active triangle if unchanged.
+
+## [0.33.6] — 2025-11-12 (backfilled)
+
+- Button: add `centered` prop (mirrors Typography) to center CTAs inside columns/Stacks without wrapper elements; docs and MCP metadata updated.
+- MCP data regenerated.
+
+## [0.33.5] — 2025-11-12 (backfilled)
+
+- IconButton and Table: surface-area adjustments.
+- Removed a junk file; MCP adjustments and data regeneration.
+
+## [0.33.4] — 2025-11-11 (backfilled)
+
+- List: compatibility improvements.
+
+## [0.33.3] — 2025-11-09 (backfilled)
+
+- DateSelector: calendar day numbers and labels now inherit valet body typography (font family, tracking, leading) instead of rendering in a system default font.
+- MCP internals updated; publish-order docs corrected; cross-package version alignment.
+
+## [0.33.2] — 2025-11-02 (backfilled)
+
+- RichChat: substantial layout/behavior adjustments; IconButton tweaks; `styles.css` updates.
+- Linting improvements.
+
+## [0.33.1] — 2025-11-02 (backfilled)
+
+- Modal: raise backdrop/dialog z-index above AppBar so modals always cover app bars.
+- README update; cleaning/linting-only changes; version alignment; MCP data regenerated.
+
+## [0.33.0] — 2025-10-31 (backfilled)
+
+The largest 0.33.x release (73 commits). Most of the entries that sat in the stale "Unreleased" blob shipped here.
+
+### Added
+
+- Primitives: `WebGLCanvas` — a reusable WebGL2 canvas host handling context creation, DPR-aware resizing, and RAF; the docs lava-lamp hero uses it.
+- Grid/Panel: per-row height normalization — Grid `normalizeRowHeights` (default `true`) stretches items so each row matches its tallest Panel in 2+ columns; Panel `normalizeRowHeight` opts out per panel.
+- Iterator: `onCommit(value)`, `commitOnChange`, `roundToStep`, and `wheelBehavior` (`'off' | 'focus' | 'hover'`, default `'focus'`); Best Practices and curated examples in the sidecar.
+- Table: smart height constraints — `minConstrainedRows` (default `4`) disables internal scrolling when too few rows would show; `maxExpandedRows` (default `30`) paginates large unconstrained datasets via `<Pagination/>`; `paginate` forces pagination; controlled `page`/`onPageChange`/`paginationWindow`.
+- Checkbox: `indeterminate` prop with ARIA mixed state; `id` pairing with external labels; contrast improvements (`divider` outline, `primary` fill); marked stable.
+- Fields: `FieldBaseProps` shared vocabulary (`name`, `label`, `helperText`, `error`, `fullWidth`, `sx`, `preset`) with JSDoc; Checkbox, TextField, Select, RadioGroup/Radio, Switch, Slider, Iterator, and MetroSelect extend it (types/docs only).
+- MCP: `valet__search_best_practices` and `valet__list_synonyms` tools; extractor reads per-prop JSDoc and safely includes inherited userland props; component status enum extended with `production` and `unstable` (schema 1.6); mcp-data regenerated.
+- Docs: Glossary page revamp — search with live ARIA-announced result count, category filter/grouping, per-entry deep links with copy-link.
+
+### Changed
+
+- CSS hashing: runtime siphash replaced with dependency-free BigInt FNV-1a (64-bit) plus a `-<len>` suffix; removes the `siphash` dependency; generated class/keyframe names changed (internal only).
+- Security: require Vite >= 6.4.1 across docs and templates; CVA templates bumped to match.
+- Modal: graduated to stable — DOM passthrough and `sx`, viewport-height constraint via `--valet-modal-viewport-margin`, dev-time accessible-name guard.
+- Image: simplified and promoted to stable — `fit`/`objectPosition` replace `objectFit`; native `loading` (default `'lazy'`) replaces custom IntersectionObserver logic; `alt` required; `aspectRatio`; `srcSet`/`sizes`/`fetchPriority` passthrough; rounding via wrapper.
+- Progress: complete redesign — new `ProgressBar` and `ProgressRing` primitives; back-compat `Progress` wrapper maps legacy `variant`/`mode`/`showLabel`; tighter ARIA.
+- List: ground-up rewrite — unified pointer reordering (mouse/touch/pen) plus Alt+Arrow keyboard reorder, roving tabIndex selection, `getKey`, `emptyPlaceholder`, and `focusMode` (`'auto' | 'row' | 'none'`).
+- Iterator: UX/a11y — native `min`/`max`/`step` forwarding, wheel steps only when focused by default, full keyboard map (Arrows/PageUp/PageDown/Home/End/Enter/Escape), bold plus/minus glyphs.
+- Docs: lava-lamp shaders extracted to standalone GLSL files under `docs/src/shaders/lava-lamp`; landing-page performance work; MetroSelect playground controls selection mode and tile size; README overhauled; docs usage spacing moved to `gap`/`pad` props.
+- CVA: removed `*:agent` scripts; validator emits status tokens.
+
+### Fixed
+
+- Theme: added missing `colors.divider` token (light/dark) — Chip outlined borders were invisible without it.
+- Accessibility: Tree keyboard navigation (roving tabindex, Arrow/Home/End/`*`, `aria-level`/`aria-setsize`/`aria-posinset`); Accordion keyboard support consistent across browsers including Safari, chevron orientation flipped, hover divider fades, disabled dimming.
+- Avatar: stable default image when neither `src` nor `email` is provided (was a broken URL); default `loading="lazy"`.
+- Switch: `type="button"` to avoid unintended form submissions.
+- iOS/Android long-press and selection fixes across Tooltip, IconButton, Icon, and SpeedDial (`user-select`, touch-callout, tap-highlight, `touch-action` guards).
+- Iterator: disabled field dims to match disabled icon buttons; `readOnly` respected across wheel/buttons/keyboard; typing no longer forces premature commits.
+- Image: respect `draggable` when true.
+- Docs: LiveCodePreview executes function-component examples.
+
 ### Removed
 
-- Skeleton: remove component from library, docs, and MCP data.
-
-### Fixed
-
-- Accessibility: Enhance `Tree` with robust keyboard navigation
-  - Roving tabindex and initial focus on selected/first item
-  - Arrow Up/Down, Left/Right, Home/End, and `*` siblings expand
-  - ARIA `aria-level`, `aria-setsize`, `aria-posinset` on items
-  - Docs NavDrawer now passes `aria-label` and is keyboard operable
- - Accessibility: Accordion keyboard support now consistent across browsers (incl. Safari)
-   - Roving tabIndex on headers; Arrow Up/Down/Left/Right moves focus; Home/End jump
-   - Space/Enter toggle reliably without page scroll in Safari
-   - Disabled state dims with opacity and slight grayscale (Iterator-style), and is skipped by keyboard navigation
-- Docs: LiveCodePreview now executes function component examples (e.g. `() => <...>`), fixing MetroSelect “Controlled value” example rendering in the playground/examples.
-- Avatar: Gravatar fallback when neither `src` nor `email` is provided now resolves to a stable default image instead of a broken URL; default `loading="lazy"` for better performance.
-- Switch: set `type="button"` to avoid unintended form submissions when used inside a `<form>`.
- - Iterator: Disabled field now dims text/border to match disabled icon buttons; `readOnly` respected across wheel/buttons/keyboard; typing no longer forces premature commit unless `commitOnChange` is enabled.
- - Image: respect `draggable` when true; no longer prevents dragstart unconditionally
- - Accordion: flip chevron orientation so collapsed shows down and expanded shows up.
- - Accordion: divider borders now fade using theme motion tokens on hover; selected (open) item keeps dividers visible when hovered.
-
-- Tooltip/IconButton: prevent iOS long‑press selection handles (“selection gates”) from appearing in Tooltip demos. Added `-webkit-user-select: none`, `-webkit-touch-callout: none`, and tap‑highlight/`touch-action` guards to IconButton and disabled selection on the Tooltip bubble.
-
-- Icon: prevent selection and long‑press callout on iOS/Android by disabling selection and touch callout on the wrapper and SVG; also remove tap highlight and mark the wrapper `draggable={false}`.
-
-- List: ground‑up rewrite for simplicity and function
-  - Unified pointer-based reordering (mouse/touch/pen), plus Alt+Arrow keyboard reorder
-  - Cleaner selection with roving tabIndex and Arrow/Enter/Space navigation
-  - Optional `getKey(item, index)` for stable keys; `emptyPlaceholder` for empty states
-  - Simpler styling (striped/hover/selected) with fewer side-effects; retains presets and `sx`
- - Accessibility: List no longer forces non-selectable rows into the tab order
-   - Non-selectable lists keep `tabIndex` unset; selectable lists retain roving focus
-  - Adds explicit override via `focusMode` for advanced use cases
-
-- SpeedDial: prevent iOS long‑press text selection and callout on the main FAB and action buttons by disabling selection (`user-select: none`), iOS touch callout, and using `touch-action: manipulation`; also suppress the long‑press context menu.
+- Skeleton: removed from library, docs, and MCP data.
 
 ## [0.32.0]
 
@@ -743,6 +751,16 @@ All notable changes to this project will be documented in this file. The format 
 
 - vibe coded
 
+[0.34.1]: https://github.com/off-court-creations/valet/releases/tag/v0.34.1
+[0.34.0]: https://github.com/off-court-creations/valet/releases/tag/v0.34.0
+[0.33.7]: https://github.com/off-court-creations/valet/releases/tag/v0.33.7
+[0.33.6]: https://github.com/off-court-creations/valet/releases/tag/v0.33.6
+[0.33.5]: https://github.com/off-court-creations/valet/releases/tag/v0.33.5
+[0.33.4]: https://github.com/off-court-creations/valet/releases/tag/v0.33.4
+[0.33.3]: https://github.com/off-court-creations/valet/releases/tag/v0.33.3
+[0.33.2]: https://github.com/off-court-creations/valet/releases/tag/v0.33.2
+[0.33.1]: https://github.com/off-court-creations/valet/releases/tag/v0.33.1
+[0.33.0]: https://github.com/off-court-creations/valet/releases/tag/v0.33.0
 [v0.30.1]: https://github.com/off-court-creations/valet/releases/tag/v0.30.1
 [v0.30.0]: https://github.com/off-court-creations/valet/releases/tag/v0.30.0
 [v0.29.1]: https://github.com/off-court-creations/valet/releases/tag/v0.29.1

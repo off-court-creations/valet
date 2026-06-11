@@ -17,30 +17,71 @@ Welcome to **@archway/valet**, a performant, AI-forward UI library designed as a
 
 - **Next-gen design language** with advanced runtime theming.
 - **Semantic Interface Layer** for component-level metadata and AI-driven behavior.
-- **Context Bridge for State** built on Zustand and typed JSON schemas.
-- **Web Action Graph** capturing interactions for introspection and adaptation.
+- **Context Bridge for State** built on Zustand with typed TypeScript stores (see `createFormStore`).
 - **Integrated AI-centric architecture** that unifies semantics, state, and actions.
+
+### Roadmap (planned — not implemented)
+
+- **Web Action Graph** — a runtime graph of user and system interactions for
+  introspection and adaptation. There is no implementation today; never describe
+  it to users or agents as a shipped feature.
 
 ## MCP Era Quickstart (valet-mcp)
 
 You have access to the valet MCP. Use it whenever you are building UI with valet to search components, inspect typed props/defaults, and grab examples.
 
-See also the detailed MCP guide in docs at `docs/src/pages/concepts/MCP.tsx`.
+See also the detailed MCP guide in docs at `docs/src/pages/getting-started/MCP.tsx`.
 
-## NPM Scripts and Agent Testing Behavior
+## Quality Gates (definition of done)
 
-Before finishing your task, if you made changes to the code, ensure the following in order:
+CI (`.github/workflows/ci.yml`) runs lint, typecheck, test, build,
+`mcp:schema:check`, and `verify:pack` (plus an SSR dist-import test and an
+engine smoke check) on Node 20 and 22 for every push/PR to `development` and
+`main`. Before finishing your task, if you made changes to the code, run the
+same gates locally, in order:
 
-- You are in an environment where the valet docs have been `npm link @archway/valet` linked to the local
-valet 
-- no linting issues after running `npm run lint:fix`
+- `npm run lint:fix` — zero lint issues
   - if there are linting issues rinse and repeat until it's fixed
-- valet will successfully build `npm run build`
-  - if it wont rinse and repeat until it's fixed
-- valet docs will successfully build `npm run build`
-  - if it wont rinse and repeat until it's fixed
+- `npm run typecheck` — zero type errors
+- `npm test` — all suites green; behavior changes and bug fixes land with a
+  named regression test (see Testing below)
+- `npm run build` — valet builds successfully
+- `npm run mcp:schema:check` — after `npm run mcp:build` if you changed
+  components or docs
+- `npm run verify:pack` — the packed tarball is complete
+- if you changed docs pages: the docs app builds with the local valet linked
+  (`npm run dx:link`, then `npm --prefix docs run build`) — CI does not build
+  the docs app; this gate is local
 
 ^ IMPORTANT ^
+
+## Testing
+
+The test harness is a two-project vitest setup in `vitest.config.ts`
+(TEST-CI owns that file and the test devDeps — do not add a second harness or
+test runner):
+
+- **node project** — `environment: 'node'`; plain unit tests over pure
+  modules. Globs: `src/**/*.test.ts` and `scripts/**/*.test.{js,mjs,ts}`.
+- **dom project** — `environment: 'jsdom'`; selected by filename suffix.
+  Glob: `src/**/*.dom.test.{ts,tsx}`.
+
+Conventions:
+
+- Tests are colocated with the code they cover (in `src/`, or next to the
+  script under `scripts/`).
+- Naming: `*.test.ts` for node suites, `*.dom.test.ts(x)` for jsdom suites.
+  `.spec.*` is banned — it would never match the globs and silently not run.
+- `pool: 'forks'` is load-bearing: each test file runs in its own process.
+  The house timezone convention (`withTZ` in `src/test-utils/withTZ.ts`)
+  relies on per-file processes to vary `TZ` safely.
+- JSX in `.tsx` tests uses the automatic runtime, configured via
+  `oxc: { jsx: { runtime: 'automatic' } }` — vitest 4 bundles rolldown-vite,
+  where oxc supersedes esbuild; an `esbuild:` config block would be ignored
+  with a warning.
+- `it.fails` tripwires are reserved for known, deferred bugs — never for new
+  work.
+- Run with `npm test` (single pass) or `npm run test:watch`.
 
 ## MCP: Valet Introspection (for @openai/codex)
 
@@ -83,12 +124,12 @@ Running the local MCP server (optional):
 2. Build: `npm run mcp:server:build`
 3. Start (dev use): `npm run mcp:server:start`
 4. Self-check: `npm run mcp:server:selfcheck`
-5. Link globally (if your Codex host discovers global bins): `npm run mcp:server:link` (provides `valet-mcp`)
+5. Link globally (if your Codex host discovers global bins): `npm run dx:link` links `packages/valet-mcp` (provides the `valet-mcp` bin), or install the published server with `npm i -g @archway/valet-mcp@latest`
 
 Notes:
 
 - The Codex harness may expose the introspection tools directly without the server; still keep `mcp-data/` up to date via `npm run mcp:build`.
-- Node ≥ 18 is required. This repo targets Node 20+ in practice; CI/dev here runs Node 22.
+- Develop on Node 20+. CI (`.github/workflows/ci.yml`) runs the gates on Node 20 and 22.
 - If `components` in selfcheck is 0, re-run `npm run mcp:build` and ensure docs and src are present.
 
 ## End‑to‑End Flow (DX overview)
@@ -98,7 +139,7 @@ Notes:
 - Link `@archway/valet` into docs and iterate locally with HMR.
 - Build MCP data (`mcp-data/`), self‑check, and (optionally) run local MCP server.
 - Point codex to local MCP (config.toml) and verify introspection.
-- Run lint/build gates (lib + docs), update CHANGELOG, version bump.
+- Run the quality gates (lint, typecheck, test, build, `mcp:schema:check`, `verify:pack`; docs build locally), update CHANGELOG, version bump.
 - Publish valet; publish MCP server (if changed); tag and release.
 
 ## Coding Standards
@@ -157,28 +198,23 @@ git commit -m "devstral - commit message here"
 
 ## Building the Project
 
-1. Install dependencies with: 
+1. Install dependencies (repo root, docs, and packages) with:
 
 ```shell
-cd valet
-npm install
-cd docs
-npm install
+npm run dx
 ```
 
-2. You can build the library and docs with `npm run build`.
+2. Build the library with `npm run build`; build the docs app with
+   `npm --prefix docs run build` (after linking — see below).
 
-3. To test WIP changes in the components or system code using a page from the docs, use an NPM link:
+3. To test WIP changes in the components or system code using a page from the
+   docs, use the standardized link flow:
 
 ```shell
-cd valet
-npm link
-npm run dev
+npm run dx:link   # builds valet and links it into docs + packages
+npm run dev       # terminal 1: rebuilds valet on change
 # Second terminal emulator, or use TMUX
-cd valet
-cd docs
-npm link @archway/valet
-npm run dev
+npm --prefix docs run dev   # terminal 2: docs dev server with HMR
 ```
 
 ## CHANGELOG

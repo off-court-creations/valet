@@ -106,7 +106,7 @@ export const GLOSSARY: GlossaryEntry[] = [
     aliases: ['action graph', 'WAG'],
     category: 'ai',
     definition:
-      'A conceptual graph of user and system actions captured at runtime to enable introspection, automation, and adaptation.',
+      'Planned — not implemented. A conceptual graph of user and system actions captured at runtime to enable introspection, automation, and adaptation.',
     seeAlso: ['Semantic Interface Layer'],
   },
   {
