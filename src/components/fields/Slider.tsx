@@ -14,7 +14,6 @@ import React, {
   useRef,
   useState,
   PointerEvent as PE,
-  KeyboardEvent,
 } from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
@@ -403,7 +402,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
     /* keyboard handling ------------------------------------- */
     const keyStep = snap === 'step' ? step : (max - min) / 100;
     const pageStep = Math.max(step, Math.round((max - min) / 10));
-    const onKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
+    const onKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
       if (disabled) return;
       const k = e.key;
       if (k === 'Home') {

@@ -12,6 +12,7 @@
 import React, { useContext, useLayoutEffect, useRef } from 'react';
 import type { JSX } from 'react';
 import { hashStr } from './hash';
+import { insertRuleText } from './sheet';
 import { SurfaceCtx } from '../system/surfaceStore';
 
 function labelize(raw: string) {
@@ -23,14 +24,10 @@ function labelize(raw: string) {
 const styleCache = new Map<string, string>(); // normal rules
 const injected = new Set<string>(); // injected IDs
 
-/* Single global stylesheet for all rules ------------------------------ */
-const styleEl = document.createElement('style');
-document.head.appendChild(styleEl);
-const globalSheet = styleEl.sheet as CSSStyleSheet;
-
+/* Single global stylesheet for all rules (lazy, see sheet.ts) --------- */
 function inject(cssId: string, css: string) {
   if (injected.has(cssId)) return;
-  globalSheet.insertRule(css, globalSheet.cssRules.length);
+  insertRuleText(css);
   injected.add(cssId);
 }
 
@@ -185,4 +182,7 @@ export function keyframes(
 }
 
 /*───────────────────────────────────────────────────────────*/
-export { styleCache, globalSheet };
+/* `globalSheet` is `undefined` until the first injection in a DOM
+   environment (and stays `undefined` in Node/SSR). */
+export { styleCache };
+export { globalSheet } from './sheet';

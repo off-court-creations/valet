@@ -14,7 +14,6 @@ import React, {
   useMemo,
   useRef,
   useState,
-  KeyboardEvent,
   createContext,
 } from 'react';
 import { styled } from '../../css/createStyled';
@@ -234,7 +233,7 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
 
   /* Keyboard navigation (roving radio) -------------------------------- */
   const ref = useRef<HTMLDivElement>(null);
-  const onKey = (e: KeyboardEvent<HTMLDivElement>) => {
+  const onKey = (e: React.KeyboardEvent<HTMLDivElement>) => {
     const key = e.key;
     const isArrow =
       key === 'ArrowRight' || key === 'ArrowDown' || key === 'ArrowLeft' || key === 'ArrowUp';

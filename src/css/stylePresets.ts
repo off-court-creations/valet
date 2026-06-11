@@ -4,14 +4,16 @@
 // ─────────────────────────────────────────────────────────────
 import { hashStr } from './hash';
 import { Theme, useTheme } from '../system/themeStore';
-import { styleCache, globalSheet } from './createStyled';
+import { styleCache } from './createStyled';
+import { insertRuleText } from './sheet';
 
 type CSSFn = (theme: Theme) => string;
 
 interface PresetEntry {
   cssFn: CSSFn;
   class: string;
-  rule: CSSStyleRule;
+  /* Live rule when a DOM is present; undefined in Node/SSR */
+  rule: CSSStyleRule | undefined;
 }
 
 const registry = new Map<string, PresetEntry>(); // name → entry
@@ -28,6 +30,7 @@ function ensureSubscription() {
   /* Re-run every preset whenever the theme changes */
   useTheme.subscribe(({ theme }) => {
     for (const { cssFn, rule } of registry.values()) {
+      if (!rule) continue;
       const nextCSS = normalise(cssFn(theme));
       rule.style.cssText = nextCSS;
     }
@@ -51,8 +54,7 @@ export function definePreset(name: string, cssFn: CSSFn) {
   const rawCSS = normalise(cssFn(theme));
 
   const ruleText = `.${className}{${rawCSS}}`;
-  const index = globalSheet.insertRule(ruleText, globalSheet.cssRules.length);
-  const rule = globalSheet.cssRules[index] as CSSStyleRule;
+  const rule = insertRuleText(ruleText) as CSSStyleRule | undefined;
   styleCache.set(className, rawCSS);
 
   registry.set(name, { cssFn, class: className, rule });
@@ -73,7 +75,7 @@ export function presetHas(names: string | string[], property: string): boolean {
   const list = Array.isArray(names) ? names : [names];
   for (const name of list) {
     const entry = registry.get(name);
-    if (entry && entry.rule.style.getPropertyValue(property)) {
+    if (entry && entry.rule?.style.getPropertyValue(property)) {
       return true;
     }
   }
