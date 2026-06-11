@@ -33,7 +33,9 @@ export interface RichChatProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onSubmit' | 'style'>,
     Presettable {
   messages: RichMessage[];
-  /** Called when a form message collects a response */
+  /** Called when a form message collects a response; `index` is the
+   *  message's position in the caller's `messages` array (system
+   *  messages included), not its position in the rendered list. */
   onFormSubmit?: (value: string, index: number) => void;
   onSend?: (message: RichMessage) => void;
   userAvatar?: string;
@@ -431,8 +433,11 @@ export const RichChat: React.FC<RichChatProps> = ({
           }}
         >
           {messages
-            .filter((m) => m.role !== 'system')
-            .map((m, i) => {
+            /* Pair each message with its index in the caller's array BEFORE
+               filtering — onFormSubmit must report the original index. */
+            .map((m, i) => ({ m, i }))
+            .filter(({ m }) => m.role !== 'system')
+            .map(({ m, i }) => {
               /* Near-edge gutter (towards container edge) kept tiny; far edge roomy */
               const near = theme.spacing(0.25);
               const far = portrait ? theme.spacing(0.5) : theme.spacing(0.75);

@@ -78,6 +78,7 @@ const TypographyImpl = <E extends React.ElementType = 'span'>(
     whitespace = 'normal',
     preset: p,
     className,
+    style,
     sx,
     ...props
   }: PolymorphicProps<E, TypographyOwnProps>,
@@ -306,6 +307,11 @@ const TypographyImpl = <E extends React.ElementType = 'span'>(
     }
   };
 
+  // Merge the caller's style prop underneath sx — uniform precedence:
+  // caller style < sx.
+  const mergedStyle: React.CSSProperties | undefined =
+    style || sx ? { ...(style as React.CSSProperties | undefined), ...sx } : undefined;
+
   return (
     <Component
       {...(props as object)}
@@ -326,7 +332,7 @@ const TypographyImpl = <E extends React.ElementType = 'span'>(
       $leading={resolvedLeading}
       $optical={opticalSetting}
       className={[presetClasses, className as string].filter(Boolean).join(' ')}
-      style={sx}
+      style={mergedStyle}
     />
   );
 };

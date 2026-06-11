@@ -74,7 +74,7 @@ const VideoWrapper = styled('div')<{
   height: ${({ $h }) => $h || 'auto'};
   overflow: hidden;
 
-  video {
+  & video {
     width: 100%;
     height: 100%;
     object-fit: ${({ $fit }) => $fit};

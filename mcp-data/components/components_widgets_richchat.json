@@ -20,7 +20,7 @@
       "name": "onFormSubmit",
       "type": "(value: string, index: number) => void",
       "required": false,
-      "description": "Called when a form message collects a response"
+      "description": "Called when a form message collects a response; `index` is the\nmessage's position in the caller's `messages` array (system\nmessages included), not its position in the rendered list."
     },
     {
       "name": "onSend",

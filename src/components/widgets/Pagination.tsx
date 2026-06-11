@@ -50,7 +50,7 @@ const Root = styled('nav')<{
   display: flex;
   gap: ${({ $gap }) => $gap};
 
-  button {
+  & button {
     -webkit-appearance: none;
     appearance: none;
     background: none;
@@ -66,7 +66,7 @@ const Root = styled('nav')<{
       opacity ${({ $durOpacity }) => $durOpacity} ${({ $ease }) => $ease}; /* smooth fades for disabled/enabled */
   }
 
-  button:disabled {
+  & button:disabled {
     opacity: 0.4;
     cursor: default;
   }

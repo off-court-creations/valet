@@ -192,7 +192,13 @@ export function List<T>({
 
   // Local state
   const [items, setItems] = useState<T[]>(data);
-  useEffect(() => setItems(data), [data]);
+  /* Latest-items ref — event closures created at drag start (touch
+     finish, pointer drop) must never report a stale pre-drag array. */
+  const itemsRef = useRef<T[]>(data);
+  useEffect(() => {
+    itemsRef.current = data;
+    setItems(data);
+  }, [data]);
 
   const controlled = selectedProp !== undefined;
   const [selfSelected, setSelfSelected] = useState<T | null>(defaultSelected);
@@ -235,6 +241,21 @@ export function List<T>({
     return nodes.length;
   };
 
+  /* Apply one in-flight drag move. Computed outside any setState updater:
+     updaters must stay pure (StrictMode double-invokes them), and the ref
+     writes keep itemsRef authoritative for the drop callbacks. */
+  const applyDragMove = (from: number, insertIndex: number) => {
+    const arr = [...itemsRef.current];
+    const [m] = arr.splice(from, 1);
+    const clamped = Math.max(0, Math.min(arr.length, insertIndex));
+    arr.splice(clamped, 0, m);
+    itemsRef.current = arr;
+    draggingIdx.current = clamped;
+    setItems(arr);
+    setDragIdx(clamped);
+    setInsertIdx(insertIndex);
+  };
+
   const beginReorder = (idx: number, e: React.PointerEvent<HTMLLIElement>) => {
     if (!reorderable) return;
     if (draggingIdx.current != null) return; // prevent double-start from touch + pointer
@@ -273,16 +294,7 @@ export function List<T>({
     const first = new Map<HTMLElement, DOMRect>();
     nodes.forEach((n) => first.set(n, n.getBoundingClientRect()));
 
-    setItems((prev) => {
-      const arr = [...prev];
-      const [m] = arr.splice(from, 1);
-      const clamped = Math.max(0, Math.min(arr.length, insertIndex));
-      arr.splice(clamped, 0, m);
-      draggingIdx.current = clamped;
-      setDragIdx(clamped);
-      setInsertIdx(insertIndex);
-      return arr;
-    });
+    applyDragMove(from, insertIndex);
     // FLIP animation using theme motion tokens
     requestAnimationFrame(() => {
       const list2 = rootRef.current;
@@ -348,16 +360,7 @@ export function List<T>({
       const first = new Map<HTMLElement, DOMRect>();
       nodes.forEach((n) => first.set(n, n.getBoundingClientRect()));
 
-      setItems((prev) => {
-        const arr = [...prev];
-        const [m] = arr.splice(from, 1);
-        const clamped = Math.max(0, Math.min(arr.length, insertIndex));
-        arr.splice(clamped, 0, m);
-        draggingIdx.current = clamped;
-        setDragIdx(clamped);
-        setInsertIdx(insertIndex);
-        return arr;
-      });
+      applyDragMove(from, insertIndex);
 
       // FLIP animate
       requestAnimationFrame(() => {
@@ -420,7 +423,9 @@ export function List<T>({
     setInsertIdx(null);
     if (moved.current && from != null) {
       moved.current = false;
-      onReorder?.(items);
+      /* itemsRef, not the render closure: the touch finish handler captures
+         endPointer at drag start, and the data prop may change mid-drag. */
+      onReorder?.(itemsRef.current);
     }
     // Allow the pointer-up triggered click to be ignored once after drag
     setTimeout(() => {
@@ -457,14 +462,15 @@ export function List<T>({
       if (e.key === 'ArrowUp') {
         e.preventDefault();
         if (idx > 0) {
-          setItems((prev) => {
-            const arr = [...prev];
-            const tmp = arr[idx - 1];
-            arr[idx - 1] = arr[idx];
-            arr[idx] = tmp;
-            onReorder?.(arr);
-            return arr;
-          });
+          /* Outside the updater — StrictMode double-invokes updaters,
+             which double-fired onReorder. */
+          const arr = [...itemsRef.current];
+          const tmp = arr[idx - 1];
+          arr[idx - 1] = arr[idx];
+          arr[idx] = tmp;
+          itemsRef.current = arr;
+          setItems(arr);
+          onReorder?.(arr);
           const to = Math.max(0, idx - 1);
           setFocusIdx(to);
           (rootRef.current?.children[to] as HTMLElement | undefined)?.focus();
@@ -472,14 +478,13 @@ export function List<T>({
       } else if (e.key === 'ArrowDown') {
         e.preventDefault();
         if (idx < items.length - 1) {
-          setItems((prev) => {
-            const arr = [...prev];
-            const tmp = arr[idx + 1];
-            arr[idx + 1] = arr[idx];
-            arr[idx] = tmp;
-            onReorder?.(arr);
-            return arr;
-          });
+          const arr = [...itemsRef.current];
+          const tmp = arr[idx + 1];
+          arr[idx + 1] = arr[idx];
+          arr[idx] = tmp;
+          itemsRef.current = arr;
+          setItems(arr);
+          onReorder?.(arr);
           const to = Math.min(items.length - 1, idx + 1);
           setFocusIdx(to);
           (rootRef.current?.children[to] as HTMLElement | undefined)?.focus();

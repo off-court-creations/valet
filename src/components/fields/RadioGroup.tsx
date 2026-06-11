@@ -23,6 +23,7 @@ import { toRgb, mix, toHex } from '../../helpers/color';
 import type { Theme } from '../../system/themeStore';
 import type { FieldBaseProps, Presettable, Sx } from '../../types';
 import type { ChangeInfo, OnValueChange, OnValueCommit } from '../../system/events';
+import { valetError } from '../../system/devErrors';
 import { useOptionalForm } from './FormControl';
 
 /*───────────────────────────────────────────────────────────*/
@@ -39,7 +40,12 @@ interface RadioCtx {
 const RadioGroupCtx = createContext<RadioCtx | null>(null);
 const useRadioGroup = () => {
   const ctx = useContext(RadioGroupCtx);
-  if (!ctx) throw new Error('Radio must be used within a <RadioGroup>.');
+  if (!ctx)
+    throw valetError(
+      'RadioGroup',
+      '<Radio> must be used within a <RadioGroup> — it reads its name, value and size from group context. Wrap your radios in <RadioGroup>.',
+      'radio-demo',
+    );
   return ctx;
 };
 
@@ -91,7 +97,7 @@ const OptionLabel = styled('label')<{
   touch-action: manipulation;
 
   /* Focus ring on the visual indicator when the hidden input is focused */
-  input[type='radio']:focus-visible + [data-indicator] {
+  & input[type='radio']:focus-visible + [data-indicator] {
     outline: ${({ theme }) => theme.stroke(2)} solid ${({ theme }) => theme.colors.primary};
     outline-offset: ${({ theme }) => theme.stroke(1)};
   }

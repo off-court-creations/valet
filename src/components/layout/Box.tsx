@@ -78,6 +78,7 @@ const BoxImpl = <E extends React.ElementType = 'div'>(
   const {
     preset: p,
     className,
+    style,
     background,
     textColor,
     centerContent,
@@ -87,7 +88,9 @@ const BoxImpl = <E extends React.ElementType = 'div'>(
     pad: padProp,
     sx,
     ...rest
-  } = props as unknown as BoxOwnProps & { as?: E } & Record<string, unknown>;
+  } = props as unknown as BoxOwnProps & { as?: E } & {
+    style?: React.CSSProperties;
+  } & Record<string, unknown>;
   const { theme } = useTheme();
   const presetClass = p ? preset(p) : '';
 
@@ -111,20 +114,23 @@ const BoxImpl = <E extends React.ElementType = 'div'>(
     | 'right'
     | 'center';
 
-  // Promote background/text overrides to inline style so they always win the cascade.
-  // Never clobber an explicit style prop from the caller.
+  // Merge the caller's style prop underneath sx-derived styles — uniform
+  // precedence: caller style < sx. Background/text overrides are promoted to
+  // inline style so they always win the cascade, but never clobber sx.
+  const sxStyle = (sx ?? {}) as React.CSSProperties & Record<string, string | number>;
   const inlineStyle: React.CSSProperties & Record<string, string | number> = {
-    ...(sx || {}),
+    ...style,
+    ...sxStyle,
   };
 
-  if (background && inlineStyle.background == null) {
+  if (background && sxStyle.background == null) {
     inlineStyle.background = background;
     // Expose as CSS var for children that key off --valet-bg
-    (inlineStyle as Record<string, string | number>)['--valet-bg'] = background;
+    inlineStyle['--valet-bg'] = background;
   }
-  if (resolvedText && inlineStyle.color == null) {
+  if (resolvedText && sxStyle.color == null) {
     inlineStyle.color = resolvedText;
-    (inlineStyle as Record<string, string | number>)['--valet-text-color'] = resolvedText;
+    inlineStyle['--valet-text-color'] = resolvedText;
   }
 
   return (

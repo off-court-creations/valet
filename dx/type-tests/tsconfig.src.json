@@ -1,0 +1,27 @@
+{
+  "//": [
+    "src-direct variant of ./tsconfig.json: maps @archway/valet to",
+    "src/index.ts so probes verify BEFORE a build exists. Mirrors the",
+    "root tsconfig (lib DOM, no types restriction) because it compiles",
+    "the whole src tree, not just dist/index.d.ts. The dist-mapped",
+    "./tsconfig.json remains the canonical post-build gate."
+  ],
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["DOM", "ES2020"],
+    "jsx": "react-jsx",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "paths": {
+      "@archway/valet": ["../../src/index.ts"]
+    }
+  },
+  "include": ["./*.test-d.ts", "../../src/types/*.d.ts"]
+}

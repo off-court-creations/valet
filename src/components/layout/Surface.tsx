@@ -1,8 +1,10 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/layout/Surface.tsx  | valet
 // overhaul: density-controlled spacing via --valet-space – 2025-08-12
+// perf: shallow selector, measure() bail, rAF-coalesced observers
 // ─────────────────────────────────────────────────────────────
 import React, { useContext, useEffect, useRef, useState, useCallback } from 'react';
+import { shallow } from 'zustand/shallow';
 import { Breakpoint, Density, useTheme } from '../../system/themeStore';
 import { useFonts } from '../../system/fontStore';
 import LoadingBackdrop from '../widgets/LoadingBackdrop';
@@ -12,6 +14,7 @@ import {
   useSurface as useSurfaceState,
 } from '../../system/surfaceStore';
 import { preset } from '../../css/stylePresets';
+import { valetError } from '../../system/devErrors';
 import type { Presettable, Sx } from '../../types';
 
 /* Allow strongly-typed CSS custom properties (e.g. --valet-*) */
@@ -51,7 +54,12 @@ export const Surface: React.FC<SurfaceProps> = ({
 }) => {
   /* Prevent nested surfaces ------------------------------------------- */
   const parent = useContext(SurfaceCtx);
-  if (parent) throw new Error('Nested <Surface> components are not allowed');
+  if (parent)
+    throw valetError(
+      'Surface',
+      'Nested <Surface> components are not allowed — each screen mounts exactly one. Remove the inner <Surface> and use <Box> or <Panel> for sub-regions.',
+      'surface',
+    );
 
   /* Local reactive store (width / height / breakpoint) ----------------- */
   const storeRef = useRef<ReturnType<typeof createSurfaceStore> | null>(null);
@@ -67,10 +75,13 @@ export const Surface: React.FC<SurfaceProps> = ({
 
   const presetClasses = p ? preset(p) : '';
 
-  const { width, height } = useStore((s) => ({
-    width: s.width,
-    height: s.height,
-  }));
+  const { width, height } = useStore(
+    (s) => ({
+      width: s.width,
+      height: s.height,
+    }),
+    shallow,
+  );
 
   /* Helper: resolve breakpoint for given width ------------------------- */
   const bpFor = useCallback(
@@ -83,32 +94,48 @@ export const Surface: React.FC<SurfaceProps> = ({
   );
 
   /* Measure size whenever the element or its children change ----------- */
+  /* Scroll cannot change the surface's own geometry, so there is no
+     scroll listener here — ResizeObserver + MutationObserver cover
+     every case measure() can act on. */
   useEffect(() => {
     const node = ref.current;
     if (!node) return;
-    useStore.setState((s) => ({ ...s, element: node }));
+    useStore.setState({ element: node });
     const measure = () => {
       const rect = node.getBoundingClientRect();
+      const width = rect.width;
+      const height = Math.round(rect.height);
+      const breakpoint = bpFor(width);
       const hasScrollbar = node.scrollHeight > node.clientHeight;
-      useStore.setState((s) => ({
-        ...s,
-        width: rect.width,
-        height: Math.round(rect.height),
-        breakpoint: bpFor(rect.width),
-        hasScrollbar,
-      }));
+      const s = useStore.getState();
+      /* Bail without notifying subscribers when nothing changed. */
+      if (
+        s.width === width &&
+        s.height === height &&
+        s.breakpoint === breakpoint &&
+        s.hasScrollbar === hasScrollbar
+      )
+        return;
+      useStore.setState({ width, height, breakpoint, hasScrollbar });
     };
-    const ro = new ResizeObserver(measure);
-    const mo = new MutationObserver(measure);
-    const onScroll = () => measure();
+    /* rAF-coalesce observer storms into one measure per frame. */
+    let frame = 0;
+    const schedule = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        measure();
+      });
+    };
+    const ro = new ResizeObserver(schedule);
+    const mo = new MutationObserver(schedule);
     ro.observe(node);
     mo.observe(node, { childList: true, subtree: true });
-    node.addEventListener('scroll', onScroll, { passive: true });
     measure();
     return () => {
       ro.disconnect();
       mo.disconnect();
-      node.removeEventListener('scroll', onScroll);
+      if (frame) cancelAnimationFrame(frame);
     };
   }, [bpFor, useStore]);
 

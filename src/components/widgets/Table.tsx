@@ -130,8 +130,8 @@ const Root = styled('table')<{
   /* Ensure text color adapts to the surrounding surface */
   color: ${({ $textColor }) => $textColor};
 
-  th,
-  td {
+  & th,
+  & td {
     padding: ${({ $padV, $padH }) => `${$padV} ${$padH}`};
     text-align: left;
     border-bottom: var(--valet-divider-stroke, ${({ $strokeW }) => $strokeW}) solid
@@ -140,8 +140,8 @@ const Root = styled('table')<{
     word-break: break-word;
     overflow-wrap: anywhere;
   }
-  th code,
-  td code {
+  & th code,
+  & td code {
     word-break: break-word;
     overflow-wrap: anywhere;
   }
@@ -150,7 +150,7 @@ const Root = styled('table')<{
   ${({ $striped, $stripe }) =>
     $striped
       ? `
-    tbody tr:nth-of-type(odd) td { background: ${$stripe}; }
+    & tbody tr:nth-of-type(odd) td { background: ${$stripe}; }
   `
       : ''}
 
@@ -158,8 +158,8 @@ const Root = styled('table')<{
   ${({ $hover, $hoverBg }) =>
     $hover
       ? `
-    tbody tr:hover,
-    tbody tr:hover > td { background: ${$hoverBg}; }
+    & tbody tr:hover,
+    & tbody tr:hover > td { background: ${$hoverBg}; }
   `
       : ''}
 
@@ -167,14 +167,14 @@ const Root = styled('table')<{
   ${({ $lines, $border, $strokeW }) =>
     $lines
       ? `
-    th:not(:last-child), td:not(:last-child) { border-right: var(--valet-divider-stroke, ${$strokeW}) solid ${$border}; }
+    & th:not(:last-child), & td:not(:last-child) { border-right: var(--valet-divider-stroke, ${$strokeW}) solid ${$border}; }
   `
       : ''}
 
   ${({ $clickable }) =>
     $clickable
       ? `
-    tbody tr { cursor: pointer; }
+    & tbody tr { cursor: pointer; }
   `
       : ''}
 `;
@@ -407,13 +407,17 @@ export function Table<T extends object>({
   );
   const [selected, setSelected] = useState<Set<T>>(new Set());
 
+  /* Prune selection when rows leave the dataset. Bail out when nothing
+     was pruned — the previous unconditional fresh-Set + in-updater
+     callback re-rendered on every `data` identity change and looped
+     forever with parents that store the selection in state (PERF S3).
+     Callback fires after setState, only when the selection shrank. */
   useEffect(() => {
-    setSelected((prev) => {
-      const next = new Set(Array.from(prev).filter((r) => data.includes(r)));
-      onSelectionChange?.(Array.from(next));
-      return next;
-    });
-  }, [data, onSelectionChange]);
+    const kept = Array.from(selected).filter((r) => data.includes(r));
+    if (kept.length === selected.size) return;
+    setSelected(new Set(kept));
+    onSelectionChange?.(kept);
+  }, [data, selected, onSelectionChange]);
 
   /* colours */
   const stripeColor = stripe(theme.colors.background, theme.colors.text);
@@ -441,21 +445,20 @@ export function Table<T extends object>({
     }
   }, [theme.colors]);
 
-  /* callbacks */
+  /* callbacks — compute next state from rendered state, set, then fire
+     callbacks after (never inside updaters: StrictMode double-invokes
+     them, double-firing the callbacks — PERF S3). */
   const toggleSort = (idx: number) => {
-    setSort((prev) => {
-      const next =
-        !prev || prev.index !== idx
-          ? { index: idx, desc: false }
-          : { index: idx, desc: !prev.desc };
-      // Keep snapshot of previous sort when switching columns for smooth fade-out
-      if (prev && prev.index !== idx) {
-        prevSortRef.current = { index: prev.index, desc: prev.desc };
-        setFadingOutIndex(prev.index);
-      }
-      onSortChange?.(next.index, next.desc);
-      return next;
-    });
+    const prev = sort;
+    const next =
+      !prev || prev.index !== idx ? { index: idx, desc: false } : { index: idx, desc: !prev.desc };
+    // Keep snapshot of previous sort when switching columns for smooth fade-out
+    if (prev && prev.index !== idx) {
+      prevSortRef.current = { index: prev.index, desc: prev.desc };
+      setFadingOutIndex(prev.index);
+    }
+    setSort(next);
+    onSortChange?.(next.index, next.desc);
   };
 
   // Clear fading-out indicator after the short duration so spacing returns
@@ -467,19 +470,17 @@ export function Table<T extends object>({
   }, [fadingOutIndex, theme.motion.duration.short]);
 
   const toggleSelect = (row: T, checked: boolean) => {
-    setSelected((prev) => {
-      const next = new Set(prev);
-      if (selectable === 'single') next.clear();
+    const next = new Set(selected);
+    if (selectable === 'single') next.clear();
 
-      if (checked) {
-        next.add(row);
-      } else {
-        next.delete(row);
-      }
+    if (checked) {
+      next.add(row);
+    } else {
+      next.delete(row);
+    }
 
-      onSelectionChange?.(Array.from(next));
-      return next;
-    });
+    setSelected(next);
+    onSelectionChange?.(Array.from(next));
   };
 
   /* sorted data */
@@ -515,8 +516,10 @@ export function Table<T extends object>({
             return sa.localeCompare(sb);
           };
 
-    const arr = [...data].sort(cmp);
-    return sort.desc ? arr.reverse() : arr;
+    /* Stable descending: negate the comparator — reversing the sorted
+       ascending copy flipped the relative order of ties (PERF S3). */
+    const desc = sort.desc;
+    return [...data].sort((a, b) => (desc ? -cmp(a, b) : cmp(a, b)));
   }, [data, columns, sort]);
 
   /* pagination ----------------------------------------------------------- */

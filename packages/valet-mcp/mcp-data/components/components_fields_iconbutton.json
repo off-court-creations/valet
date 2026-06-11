@@ -62,9 +62,7 @@
   ],
   "domPassthrough": {
     "element": "button",
-    "omitted": [
-      "style"
-    ]
+    "omitted": []
   },
   "cssVars": [
     "--valet-intent-bg",

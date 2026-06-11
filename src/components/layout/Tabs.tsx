@@ -26,6 +26,7 @@ import type { Presettable, SpacingProps, Sx } from '../../types';
 import { Typography } from '../primitives/Typography';
 import { resolveSpace } from '../../utils/resolveSpace';
 import { withAlpha } from '../../helpers/color';
+import { valetError } from '../../system/devErrors';
 
 /*───────────────────────────────────────────────────────────*/
 /* Context                                                   */
@@ -40,7 +41,12 @@ interface Ctx {
 const TabsCtx = createContext<Ctx | null>(null);
 const useTabs = () => {
   const ctx = useContext(TabsCtx);
-  if (!ctx) throw new Error('Tabs.Tab / Tabs.Panel must be inside <Tabs>');
+  if (!ctx)
+    throw valetError(
+      'Tabs',
+      '<Tabs.Tab> / <Tabs.Panel> must be inside <Tabs> — they read the active index from its context. Move them under a <Tabs> parent.',
+      'tabs-demo',
+    );
   return ctx;
 };
 
@@ -349,30 +355,12 @@ const TabsBase = forwardRef<HTMLDivElement, TabsProps>(
     const registerTab = useCallback((i: number, el: HTMLButtonElement | null) => {
       refs.current[i] = el;
     }, []);
-    const tabValuesRef = useRef<(string | number)[]>([]);
-    const activeIndexFromValue = useCallback((val: string | number | undefined) => {
-      const list = tabValuesRef.current;
-      if (val == null) return 0;
-      const idx = list.findIndex((v) => v === val);
-      return idx >= 0 ? idx : 0;
-    }, []);
-    const activeIndex = controlled
-      ? activeIndexFromValue(valueProp)
-      : activeIndexFromValue(selfValue);
-    const setActiveIndex = useCallback(
-      (i: number, phase: 'input' | 'commit' = 'commit') => {
-        const values = tabValuesRef.current;
-        const nextVal = values[i];
-        const prevVal = controlled ? valueProp : selfValue;
-        if (!controlled) setSelfValue(nextVal);
-        onValueChange?.(nextVal, { previousValue: prevVal, phase: 'input' });
-        if (phase === 'commit')
-          onValueCommit?.(nextVal, { previousValue: prevVal, phase: 'commit' });
-        refs.current[i]?.focus();
-      },
-      [controlled, onValueChange, onValueCommit, valueProp, selfValue],
-    );
 
+    /* Build tabs / panels / values BEFORE deriving activeIndex so
+       `value` / `defaultValue` resolve on the very first render.
+       (Previously the values lived in a ref populated later in the
+       render body; the first paint always showed tab 0 — masked in
+       dev by StrictMode's double render.) */
     const tabs: ReactElement[] = [];
     const panels: ReactElement[] = [];
     const values: (string | number)[] = [];
@@ -406,7 +394,35 @@ const TabsBase = forwardRef<HTMLDivElement, TabsProps>(
         );
       }
     });
-    tabValuesRef.current = values;
+
+    const activeIndexFromValue = (val: string | number | undefined) => {
+      if (val == null) return 0;
+      const idx = values.findIndex((v) => v === val);
+      return idx >= 0 ? idx : 0;
+    };
+    const activeIndex = controlled
+      ? activeIndexFromValue(valueProp)
+      : activeIndexFromValue(selfValue);
+
+    /* Event handlers need the latest values without re-memoising on
+       every render; sync the ref in an effect — it is never read or
+       mutated during render. */
+    const tabValuesRef = useRef<(string | number)[]>([]);
+    useEffect(() => {
+      tabValuesRef.current = values;
+    });
+    const setActiveIndex = useCallback(
+      (i: number, phase: 'input' | 'commit' = 'commit') => {
+        const nextVal = tabValuesRef.current[i];
+        const prevVal = controlled ? valueProp : selfValue;
+        if (!controlled) setSelfValue(nextVal);
+        onValueChange?.(nextVal, { previousValue: prevVal, phase: 'input' });
+        if (phase === 'commit')
+          onValueCommit?.(nextVal, { previousValue: prevVal, phase: 'commit' });
+        refs.current[i]?.focus();
+      },
+      [controlled, onValueChange, onValueCommit, valueProp, selfValue],
+    );
 
     const ctx = useMemo<Ctx>(
       () => ({

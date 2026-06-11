@@ -51,6 +51,43 @@ export interface DropzoneProps
 }
 
 /*───────────────────────────────────────────────────────────*/
+const iconMap: Record<string, string> = {
+  jpg: 'carbon:image',
+  jpeg: 'carbon:image',
+  png: 'carbon:image',
+  gif: 'carbon:image',
+  svg: 'carbon:image',
+  bmp: 'carbon:image',
+  webp: 'carbon:image',
+  mp3: 'carbon:music',
+  wav: 'carbon:music',
+  ogg: 'carbon:music',
+  flac: 'carbon:music',
+  mp4: 'carbon:video',
+  webm: 'carbon:video',
+  mov: 'carbon:video',
+  mkv: 'carbon:video',
+  pdf: 'carbon:pdf',
+  doc: 'carbon:document',
+  docx: 'carbon:document',
+  txt: 'carbon:document',
+  csv: 'carbon:csv',
+  xls: 'carbon:csv',
+  xlsx: 'carbon:csv',
+  zip: 'carbon:zip',
+  rar: 'carbon:zip',
+  gz: 'carbon:zip',
+};
+
+const fileIcon = (name: string) => {
+  const ext = name.split('.').pop()?.toLowerCase() ?? '';
+  return iconMap[ext] ?? 'carbon:document';
+};
+
+/** Only image MIME types get object-URL `<img>` previews. */
+const isImageFile = (f: File) => f.type.startsWith('image/');
+
+/*───────────────────────────────────────────────────────────*/
 export const Dropzone: React.FC<DropzoneProps> = ({
   accept,
   previewMinHeight,
@@ -78,12 +115,12 @@ export const Dropzone: React.FC<DropzoneProps> = ({
   const toCssSize = (v: number | string | undefined, fallback: string) =>
     v == null ? fallback : typeof v === 'number' ? `${v}px` : String(v);
 
-  // Create/revoke object URLs as files change
+  // Create/revoke object URLs as files change (image files only)
   useEffect(() => {
     const map = previewsRef.current;
     // add new URLs
     files.forEach((f) => {
-      if (!map.has(f)) map.set(f, URL.createObjectURL(f));
+      if (isImageFile(f) && !map.has(f)) map.set(f, URL.createObjectURL(f));
     });
     // revoke removed URLs
     for (const [f, url] of Array.from(map.entries())) {
@@ -104,12 +141,16 @@ export const Dropzone: React.FC<DropzoneProps> = ({
   }, []);
 
   const handleDrop = useCallback(
-    (accepted: File[], _rej: FileRejection[], _evt: DropEvent) => {
+    (accepted: File[], rej: FileRejection[], evt: DropEvent) => {
       const next = multiple ? [...files, ...accepted] : accepted.slice(0, 1);
       const limited = maxFiles ? next.slice(0, maxFiles) : next;
       setFiles(limited);
+      /* react-dropzone fires onDrop on every drop (accepted and/or
+         rejected), so syncing here both surfaces fresh rejections and
+         clears stale ones after a later successful drop. */
+      setRejections(rej);
       onFilesChange?.(limited);
-      onDropCb?.(accepted, _rej, _evt);
+      onDropCb?.(accepted, rej, evt);
     },
     [files, multiple, maxFiles, onFilesChange, onDropCb],
   );
@@ -147,35 +188,69 @@ export const Dropzone: React.FC<DropzoneProps> = ({
             minHeight: toCssSize(previewMinHeight, '140px'),
             borderRadius: 6,
             overflow: 'hidden',
-            background: loaded.has(f) ? 'transparent' : theme.colors.backgroundAlt,
+            background:
+              isImageFile(f) && loaded.has(f) ? 'transparent' : theme.colors.backgroundAlt,
           }}
         >
-          <img
-            src={previewsRef.current.get(f)}
-            alt={f.name}
-            style={{
-              width: '100%',
-              height: 'auto',
-              display: 'block',
-              borderRadius: 6,
-              opacity: loaded.has(f) ? 1 : 0,
-              transition: 'opacity 200ms ease-out',
-            }}
-            onLoad={() => setLoaded((prev) => (prev.has(f) ? prev : new Set(prev).add(f)))}
-            onError={() => setLoaded((prev) => (prev.has(f) ? prev : new Set(prev).add(f)))}
-          />
-          {!loaded.has(f) && (
+          {isImageFile(f) ? (
+            <>
+              <img
+                src={previewsRef.current.get(f)}
+                alt={f.name}
+                style={{
+                  width: '100%',
+                  height: 'auto',
+                  display: 'block',
+                  borderRadius: 6,
+                  opacity: loaded.has(f) ? 1 : 0,
+                  transition: 'opacity 200ms ease-out',
+                }}
+                onLoad={() => setLoaded((prev) => (prev.has(f) ? prev : new Set(prev).add(f)))}
+                onError={() => setLoaded((prev) => (prev.has(f) ? prev : new Set(prev).add(f)))}
+              />
+              {!loaded.has(f) && (
+                <div
+                  aria-hidden
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    display: 'grid',
+                    placeItems: 'center',
+                    background: 'linear-gradient(180deg, #00000010, #00000022)',
+                  }}
+                >
+                  <ProgressRing size={40} />
+                </div>
+              )}
+            </>
+          ) : (
+            /* Non-image files never get an object-URL <img>; show an icon tile. */
             <div
-              aria-hidden
               style={{
                 position: 'absolute',
                 inset: 0,
                 display: 'grid',
                 placeItems: 'center',
-                background: 'linear-gradient(180deg, #00000010, #00000022)',
+                padding: theme.spacing(0.5),
               }}
             >
-              <ProgressRing size={40} />
+              <Stack sx={{ alignItems: 'center', gap: theme.spacing(0.5), maxWidth: '100%' }}>
+                <Icon
+                  icon={fileIcon(f.name)}
+                  size='lg'
+                />
+                <span
+                  style={{
+                    fontSize: '0.75rem',
+                    maxWidth: '100%',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {f.name}
+                </span>
+              </Stack>
             </div>
           )}
           <button
@@ -206,39 +281,6 @@ export const Dropzone: React.FC<DropzoneProps> = ({
       ))}
     </Grid>
   );
-
-  const iconMap: Record<string, string> = {
-    jpg: 'carbon:image',
-    jpeg: 'carbon:image',
-    png: 'carbon:image',
-    gif: 'carbon:image',
-    svg: 'carbon:image',
-    bmp: 'carbon:image',
-    webp: 'carbon:image',
-    mp3: 'carbon:music',
-    wav: 'carbon:music',
-    ogg: 'carbon:music',
-    flac: 'carbon:music',
-    mp4: 'carbon:video',
-    webm: 'carbon:video',
-    mov: 'carbon:video',
-    mkv: 'carbon:video',
-    pdf: 'carbon:pdf',
-    doc: 'carbon:document',
-    docx: 'carbon:document',
-    txt: 'carbon:document',
-    csv: 'carbon:csv',
-    xls: 'carbon:csv',
-    xlsx: 'carbon:csv',
-    zip: 'carbon:zip',
-    rar: 'carbon:zip',
-    gz: 'carbon:zip',
-  };
-
-  const fileIcon = (name: string) => {
-    const ext = name.split('.').pop()?.toLowerCase() ?? '';
-    return iconMap[ext] ?? 'carbon:document';
-  };
 
   const fileList = showFileList && !showPreviews && files.length > 0 && (
     <Stack sx={{ width: '100%' }}>
@@ -283,22 +325,16 @@ export const Dropzone: React.FC<DropzoneProps> = ({
     </Stack>
   );
 
-  // Remove helper
+  // Remove helper — pure: no callbacks or side effects inside the state
+  // updater (StrictMode double-invokes updaters); URL revocation is owned
+  // by the object-URL effect above, keyed on `files`.
   const removeAt = useCallback(
     (idx: number) => {
-      setFiles((prev) => {
-        const next = prev.slice();
-        const [removed] = next.splice(idx, 1);
-        const url = removed ? previewsRef.current.get(removed) : undefined;
-        if (url) {
-          URL.revokeObjectURL(url);
-          previewsRef.current.delete(removed!);
-        }
-        onFilesChange?.(next);
-        return next;
-      });
+      const next = files.filter((_, i) => i !== idx);
+      setFiles(next);
+      onFilesChange?.(next);
     },
-    [onFilesChange],
+    [files, onFilesChange],
   );
 
   // Helpers for instructions / a11y

@@ -26,6 +26,7 @@ import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { toRgb, mix, toHex } from '../../helpers/color';
 import { useSurface } from '../../system/surfaceStore';
+import { valetError } from '../../system/devErrors';
 import { shallow } from 'zustand/shallow';
 import type { Presettable, SpacingProps, Sx } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
@@ -77,7 +78,12 @@ interface Ctx {
 const AccordionCtx = createContext<Ctx | null>(null);
 const useAccordion = () => {
   const ctx = useContext(AccordionCtx);
-  if (!ctx) throw new Error('<Accordion.Item> must be inside <Accordion>');
+  if (!ctx)
+    throw valetError(
+      'Accordion',
+      '<Accordion.Item> must be inside <Accordion> — items read open state from its context. Move the item under an <Accordion> parent.',
+      'accordion-demo',
+    );
   return ctx;
 };
 
@@ -277,7 +283,9 @@ export const Accordion: React.FC<AccordionProps> & {
   const [activeIndex, setActiveIndex] = useState(0);
   const toArray = (v?: number | number[]) => (v === undefined ? [] : Array.isArray(v) ? v : [v]);
   const [externalOpen, setExternalOpen] = useControllableState<number[]>(
-    openProp ? toArray(openProp) : undefined,
+    /* `openProp !== undefined` — a bare truthiness check made
+       `open={0}` (index 0, the common case) flip to uncontrolled. */
+    openProp !== undefined ? toArray(openProp) : undefined,
     toArray(defaultOpen),
     onOpenChange,
   );

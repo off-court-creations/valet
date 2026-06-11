@@ -173,24 +173,17 @@ export const Snackbar: React.FC<SnackbarProps> = ({
   useEffect(() => {
     if (visible) {
       setShow(false);
+      /* Effect-local nested id — a shared window global here let
+         concurrent snackbars cancel each other's enter frame and
+         stick at opacity 0. */
+      let id2: number | undefined;
       const id = requestAnimationFrame(() => {
         // second RAF ensures layout is committed before transition
-        const id2 = requestAnimationFrame(() => setShow(true));
-        // store nested id on outer id for cleanup
-        const w = window as typeof window & {
-          __valet_snackbar_enter_id2?: number;
-        };
-        w.__valet_snackbar_enter_id2 = id2;
+        id2 = requestAnimationFrame(() => setShow(true));
       });
       return () => {
         cancelAnimationFrame(id);
-        const w = window as typeof window & {
-          __valet_snackbar_enter_id2?: number;
-        };
-        if (w.__valet_snackbar_enter_id2) {
-          cancelAnimationFrame(w.__valet_snackbar_enter_id2);
-          w.__valet_snackbar_enter_id2 = undefined;
-        }
+        if (id2 !== undefined) cancelAnimationFrame(id2);
       };
     } else {
       setShow(false);

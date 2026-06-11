@@ -312,49 +312,67 @@ export const AppBar: React.FC<AppBarProps> = ({
             const buttonLabel =
               item.ariaLabel ?? (typeof item.label === 'string' ? item.label : undefined);
             const navSize = iconOnly ? 'md' : 'sm';
-            return (
-              <Button
-                key={key}
-                as={asTag}
-                href={item.href}
-                target={item.target}
-                rel={item.rel}
-                intent={item.intent}
-                color={colorForNav}
-                variant={navVariant}
-                size={navSize}
-                disabled={item.disabled}
-                onClick={item.onClick}
-                aria-label={buttonLabel}
-                title={buttonLabel}
-                sx={{
-                  '--valet-intent-bg': colorForNav,
-                  '--valet-intent-fg': navVariant === 'filled' ? text : colorForNav,
-                  '--valet-intent-border': colorForNav,
-                  borderRadius: theme.radius(999),
-                  whiteSpace: 'nowrap',
-                  boxShadow:
-                    navVariant === 'filled' ? `0 0 0 1px ${text}33` : `0 0 0 1px ${colorForNav}33`,
-                  ...(iconOnly
-                    ? {
-                        minWidth: theme.spacing(3.5),
-                        width: theme.spacing(3.5),
-                        padding: theme.spacing(0.5),
-                        justifyContent: 'center',
-                        fontSize: '1.25rem',
-                        lineHeight: 1.1,
-                      }
-                    : null),
-                  ...(item.active && navVariant !== 'filled'
-                    ? { background: `${colorForNav}16` }
-                    : null),
-                }}
-              >
+            const navSx: Sx = {
+              '--valet-intent-bg': colorForNav,
+              '--valet-intent-fg': navVariant === 'filled' ? text : colorForNav,
+              '--valet-intent-border': colorForNav,
+              borderRadius: theme.radius(999),
+              whiteSpace: 'nowrap',
+              boxShadow:
+                navVariant === 'filled' ? `0 0 0 1px ${text}33` : `0 0 0 1px ${colorForNav}33`,
+              ...(iconOnly
+                ? {
+                    minWidth: theme.spacing(3.5),
+                    width: theme.spacing(3.5),
+                    padding: theme.spacing(0.5),
+                    justifyContent: 'center',
+                    fontSize: '1.25rem',
+                    lineHeight: 1.1,
+                  }
+                : null),
+              ...(item.active && navVariant !== 'filled'
+                ? { background: `${colorForNav}16` }
+                : null),
+            };
+            const shared = {
+              intent: item.intent,
+              color: colorForNav,
+              variant: navVariant,
+              size: navSize,
+              onClick: item.onClick,
+              'aria-label': buttonLabel,
+              title: buttonLabel,
+              sx: navSx,
+            };
+            const content = (
+              <>
                 {item.icon}
                 {item.icon && item.label && !iconOnly ? (
                   <span style={{ display: 'inline-block', width: theme.spacing(0.5) }} />
                 ) : null}
                 {!iconOnly && item.label}
+              </>
+            );
+            /* Sound polymorphic Button: anchors take anchor attributes,
+               buttons take `disabled` — split per element type. */
+            return asTag === 'a' ? (
+              <Button
+                key={key}
+                as='a'
+                href={item.href}
+                target={item.target}
+                rel={item.rel}
+                {...shared}
+              >
+                {content}
+              </Button>
+            ) : (
+              <Button
+                key={key}
+                disabled={item.disabled}
+                {...shared}
+              >
+                {content}
               </Button>
             );
           })}

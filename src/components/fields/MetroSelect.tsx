@@ -27,6 +27,7 @@ import { toHex, toRgb, mix } from '../../helpers/color';
 import type { FieldBaseProps, Presettable, Sx } from '../../types';
 import type { ChangeInfo, OnValueChange, OnValueCommit } from '../../system/events';
 import { styled } from '../../css/createStyled';
+import { valetError } from '../../system/devErrors';
 import { useOptionalForm } from './FormControl';
 
 export type Primitive = string | number;
@@ -41,7 +42,12 @@ interface MetroCtx {
 const MetroCtx = createContext<MetroCtx | null>(null);
 const useMetro = () => {
   const ctx = useContext(MetroCtx);
-  if (!ctx) throw new Error('MetroSelect.Option must be inside MetroSelect');
+  if (!ctx)
+    throw valetError(
+      'MetroSelect',
+      '<MetroSelect.Option> must be inside <MetroSelect> — options read selection state from its context. Move the option under a <MetroSelect> parent.',
+      'metroselect-demo',
+    );
   return ctx;
 };
 

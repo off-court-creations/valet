@@ -82,7 +82,7 @@ const Wrapper = styled('label')<{
   touch-action: manipulation;
 
   /* Visible focus ring on the visual box when input is focused */
-  input[type='checkbox']:focus-visible + [data-indicator] {
+  & input[type='checkbox']:focus-visible + [data-indicator] {
     outline: ${({ theme }) => theme.stroke(2)} solid ${({ theme }) => theme.colors.primary};
     outline-offset: ${({ theme }) => theme.stroke(1)};
   }

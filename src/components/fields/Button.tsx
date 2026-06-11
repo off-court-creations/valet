@@ -29,9 +29,13 @@ type Intent =
   | 'info'
   | (string & {});
 
-export interface ButtonOwnProps
-  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'style'>,
-    Presettable {
+/**
+ * Behavior-only props. Element attributes (onClick, disabled, type, …)
+ * deliberately do NOT live here — they flow from `PropsOf<E>` inside
+ * `PolymorphicProps`, so `<Button as='a'>` gets anchor attributes and
+ * anchor-typed handlers instead of button ones.
+ */
+export interface ButtonOwnProps extends Presettable {
   /** Semantic color intent (maps to theme tokens). */
   intent?: Intent;
   /** Visual variant: filled | outlined | plain. */
@@ -42,6 +46,24 @@ export interface ButtonOwnProps
   fullWidth?: boolean;
   /** Inline styles (with CSS var support) */
   sx?: Sx;
+}
+
+/**
+ * The runtime strips `type` when rendering an anchor (see ButtonImpl),
+ * so the type level refuses it up front instead of silently dropping it.
+ */
+type AnchorTypeGuard<E extends React.ElementType> = E extends 'a' ? { type?: never } : unknown;
+
+/** Fully resolved Button props for a given element type. */
+export type ButtonProps<E extends React.ElementType = 'button'> = PolymorphicProps<
+  E,
+  ButtonOwnProps
+> &
+  AnchorTypeGuard<E>;
+
+export interface ButtonComponent {
+  <E extends React.ElementType = 'button'>(props: ButtonProps<E>): React.ReactElement | null;
+  displayName?: string;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -180,10 +202,16 @@ const ButtonImpl = <E extends React.ElementType = 'button'>(
     fullWidth = false,
     preset: p,
     className,
+    style,
     children,
     sx,
     ...rest
-  } = props as ButtonOwnProps & { as?: E } & Record<string, unknown>;
+  } = props as ButtonOwnProps & {
+    as?: E;
+    className?: string;
+    style?: React.CSSProperties;
+    children?: React.ReactNode;
+  } & Record<string, unknown>;
   const { theme } = useTheme();
   const map = createSizeMap(theme);
   let geom: { padV: string; padH: string; font: string; height: string };
@@ -347,8 +375,10 @@ const ButtonImpl = <E extends React.ElementType = 'button'>(
       data-valet-component='Button'
       data-disabled={(rest as Record<string, unknown>)['disabled'] ? 'true' : 'false'}
       data-state={(rest as Record<string, unknown>)['disabled'] ? 'disabled' : 'enabled'}
+      /* precedence: caller style < intent vars < sx */
       style={
         {
+          ...style,
           '--valet-text-color': labelColor,
           '--valet-intent-bg': intentBg,
           '--valet-intent-fg': intentFg,
@@ -379,6 +409,8 @@ const ButtonImpl = <E extends React.ElementType = 'button'>(
   );
 };
 
-export const Button = createPolymorphicComponent<'button', ButtonOwnProps>(ButtonImpl);
+export const Button: ButtonComponent = createPolymorphicComponent<'button', ButtonOwnProps>(
+  ButtonImpl,
+);
 
 export default Button;

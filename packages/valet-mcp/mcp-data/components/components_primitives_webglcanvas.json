@@ -42,7 +42,7 @@
       "type": "readonly [number, number, number, number]",
       "required": false,
       "description": "Optional clear color, defaults to transparent. Only sets clearColor, not clearing each frame.",
-      "default": "[0, 0, 0, 0]"
+      "default": "DEFAULT_CLEAR_COLOR"
     },
     {
       "name": "asBackground",

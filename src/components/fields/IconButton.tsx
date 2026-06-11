@@ -29,9 +29,13 @@ type Intent =
   | 'info'
   | (string & {});
 
-export interface IconButtonProps
-  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'style'>,
-    Presettable {
+/**
+ * Behavior-only props. Element attributes (onClick, disabled, type, …)
+ * deliberately do NOT live here — they flow from `PropsOf<E>` inside
+ * `PolymorphicProps`, so `<IconButton as='a'>` gets anchor attributes
+ * and anchor-typed handlers instead of button ones.
+ */
+export interface IconButtonOwnProps extends Presettable {
   variant?: IconButtonVariant;
   size?: IconButtonSize | number | string;
   icon?: string;
@@ -41,6 +45,24 @@ export interface IconButtonProps
   color?: string;
   /** Inline styles (with CSS var support) */
   sx?: Sx;
+}
+
+/**
+ * The runtime strips `type` when rendering an anchor (see IconButtonImpl),
+ * so the type level refuses it up front instead of silently dropping it.
+ */
+type AnchorTypeGuard<E extends React.ElementType> = E extends 'a' ? { type?: never } : unknown;
+
+/** Fully resolved IconButton props for a given element type (back-compat alias). */
+export type IconButtonProps<E extends React.ElementType = 'button'> = PolymorphicProps<
+  E,
+  IconButtonOwnProps
+> &
+  AnchorTypeGuard<E>;
+
+export interface IconButtonComponent {
+  <E extends React.ElementType = 'button'>(props: IconButtonProps<E>): React.ReactElement | null;
+  displayName?: string;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -138,7 +160,7 @@ const Skin = styled('button')<{
 /*───────────────────────────────────────────────────────────*/
 /* Component                                                 */
 const IconButtonImpl = <E extends React.ElementType = 'button'>(
-  props: PolymorphicProps<E, IconButtonProps>,
+  props: PolymorphicProps<E, IconButtonOwnProps>,
   ref: PolymorphicRef<E>,
 ) => {
   const {
@@ -150,9 +172,14 @@ const IconButtonImpl = <E extends React.ElementType = 'button'>(
     color,
     preset: p,
     className,
+    style,
     sx,
     ...rest
-  } = props as IconButtonProps & { as?: E } & Record<string, unknown>;
+  } = props as IconButtonOwnProps & {
+    as?: E;
+    className?: string;
+    style?: React.CSSProperties;
+  } & Record<string, unknown>;
   const { theme } = useTheme();
   const sizes = geom();
 
@@ -273,8 +300,10 @@ const IconButtonImpl = <E extends React.ElementType = 'button'>(
       $btnText={btnText}
       $ripple={ripple}
       $strokeW={theme.stroke(1)}
+      /* precedence: caller style < geometry < intent vars < sx */
       style={
         {
+          ...style,
           ...geomStyle,
           '--valet-intent-bg': intentBg,
           '--valet-intent-fg': intentFg,
@@ -299,6 +328,9 @@ const IconButtonImpl = <E extends React.ElementType = 'button'>(
   );
 };
 
-export const IconButton = createPolymorphicComponent<'button', IconButtonProps>(IconButtonImpl);
+export const IconButton: IconButtonComponent = createPolymorphicComponent<
+  'button',
+  IconButtonOwnProps
+>(IconButtonImpl);
 
 export default IconButton;

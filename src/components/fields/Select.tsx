@@ -125,6 +125,11 @@ const PortalWrap = styled('div')`
   inset: 0;
   /* Use overlay token suitable for dropdown menus */
   z-index: var(--valet-zindex-dropdown, 1000);
+  /* Interim fix (OVERLAY S2): PortalWrap is no portal — a full-viewport
+     fixed div that would otherwise swallow every pointer event page-wide
+     while the menu is open. Let events pass through; the Menu below
+     re-enables them. OVERLAY S6 replaces PortalWrap with a real portal. */
+  pointer-events: none;
 `;
 
 const Menu = styled('ul')<{
@@ -150,6 +155,9 @@ const Menu = styled('ul')<{
   box-shadow: 0 8px 24px #00000040;
   overflow-y: auto;
   overflow-x: hidden;
+  /* Interim fix (OVERLAY S2): restore interactivity under the
+     pointer-events:none PortalWrap above. */
+  pointer-events: auto;
 `;
 
 const Item = styled('li')<{

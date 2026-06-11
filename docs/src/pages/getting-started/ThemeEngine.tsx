@@ -170,10 +170,10 @@ export default function ThemeEnginePage() {
   const themeStoreSnippet = `import { useTheme } from '@archway/valet';
 
 function Example() {
-  const { theme, setMode } = useTheme();
+  const { mode, toggleMode } = useTheme();
   return (
-    <button onClick={() => setMode(theme.mode === 'light' ? 'dark' : 'light')}>
-      Toggle {theme.mode}
+    <button onClick={toggleMode}>
+      Toggle {mode}
     </button>
   );
 }`;

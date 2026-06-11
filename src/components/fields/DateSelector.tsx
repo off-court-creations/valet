@@ -9,6 +9,7 @@ import { preset } from '../../css/stylePresets';
 import { IconButton } from './IconButton';
 import { Select } from './Select';
 import { useOptionalForm } from './FormControl';
+import { formatLocalISO } from './dateUtils';
 import { toRgb, mix, toHex } from '../../helpers/color';
 import type { Presettable, Sx } from '../../types';
 import type { ChangeInfo, OnValueChange, OnValueCommit } from '../../system/events';
@@ -226,7 +227,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
       ? parseDate(
           Array.isArray(value)
             ? (value[1] ?? (Array.isArray(defaultValue) ? defaultValue[1] : value?.[1]))
-            : startDate.toISOString().slice(0, 10),
+            : formatLocalISO(startDate),
         )
       : endInt
     : startDate;
@@ -252,7 +253,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
 
   const commit = (d: number) => {
-    const iso = new Date(viewYear, viewMonth, d).toISOString().slice(0, 10);
+    const iso = formatLocalISO(new Date(viewYear, viewMonth, d));
     if (!controlled) setStartInt(new Date(viewYear, viewMonth, d));
     if (form && name && !range)
       form.setField(name as keyof Record<string, string | undefined>, iso);
@@ -289,10 +290,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
 
     if (!controlled) setStartInt(start);
     if (!controlled) setEndInt(end);
-    const tuple: [string, string] = [
-      start.toISOString().slice(0, 10),
-      end.toISOString().slice(0, 10),
-    ];
+    const tuple: [string, string] = [formatLocalISO(start), formatLocalISO(end)];
     if (form && name) {
       // Bind range tuple into form store under the single field name
       form.setField(

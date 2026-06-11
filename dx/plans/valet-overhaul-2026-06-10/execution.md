@@ -38,7 +38,7 @@
 | 1   | 0.0  | **Keystone (solo):** ENGINE S1 lazy guarded sheet init (`createStyled.ts`, new `sheet.ts`, `stylePresets.ts`)                                                                                    | ✅ `e3e3280` |
 | 2   | 0.1  | **Pure cores (parallel, disjoint new files):** TEST-CI S1 harness (fast-tracked) · FIELDS S1 dateUtils + S2 sliderMath · THEMING S1 themeUtils + S2 createInitialTheme recovery · SECURITY S2/S3 aiKeyStore + S4 svgSafe · GOVERNANCE S6 gate scripts + S9 devErrors (module only) · MCP-TRUTH S1/S2/S5 extractor fixes · OVERLAY S1 focus trap · TEST-CI S2/S4/S5 suites | ✅     |
 | 3   | 0.2  | **Serialized shared-file lanes:** (a) root package.json: TEST-CI S1 scripts → PACKAGING S2 prepack/verify-pack → PACKAGING S1 metadata → ENGINE S5 check:engine · (b) css lane: ENGINE S2 compile → TEST-CI S3 normalize extraction → ENGINE S4 presets · (c) index.ts: MCP-TRUTH S3 KeyModal move → API-TYPES S1 exports · (d) valet-mcp package.json: MCP-TRUTH S6 · TEST-CI S5 TZ suite (after FIELDS S1) | ✅     |
-| 4   | 0.3  | **Component edits (parallel disjoint; serialized within contended files):** ENGINE S3 prefixes → PERF S3 Table · OVERLAY S2 Select · FIELDS S3 Tabs + S4 Accordion · PERF S1 Surface, S2 surfaceStore, S4 List, S5 effect hygiene + Markdown/RichChat fixes (PERF S11 part) · API-TYPES S2 Box/Typography, S3 Button/IconButton · THEMING S6 docs snippet · wave end: GOVERNANCE S9 throw-site sweep | ⬜     |
+| 4   | 0.3  | **Component edits (parallel disjoint; serialized within contended files):** ENGINE S3 prefixes → PERF S3 Table · OVERLAY S2 Select · FIELDS S3 Tabs + S4 Accordion + S1 DateSelector flip (Q5) · PERF S1 Surface, S2 surfaceStore, S4 List, S5 effect hygiene + Markdown/RichChat fixes (PERF S11 part) · API-TYPES S2 Box/Typography, S3 Button/IconButton · THEMING S6 docs snippet · wave end: GOVERNANCE S9 throw-site sweep | ✅     |
 | 5   | 0.4  | **Docs/config (one writer), then the phase gate:** GOVERNANCE S1 changelog → S2 README/AGENTS → S3 WAG sweep → S5 VALIGNMENT archive · SECURITY S9 amplify pin (S1 ⏸️ until Ben enables PVR) · MCP-TRUTH S11 glossary truth · TEST-CI S8 CI workflow + S10 SSR regression | ⬜     |
 | —   | gate | **Phase-0 gate:** CI green on Node 20/22 (lint, typecheck, test, build, mcp:schema:check, verify:pack, check:engine) + manual docs-app sweep                                                     | ⬜     |
 
@@ -208,6 +208,47 @@ verify:pack ✅ valet-mcp selfcheck ✅.
 **Flags:** stylePresets `replaceRuleText` error path can hold a stale rule
 when insertRule throws on invalid CSS (dev-observable, invalid-CSS edge only —
 noted for ENGINE S11's preset work).
+
+### Wave 0.3 — component edits + throw-site sweep — ✅
+
+**What shipped (11 lanes + sweep, every fix with a failing-first or
+bite-tested regression test):** ENGINE S3 `& ` prefixes (RadioGroup, Checkbox,
+Table ×10 incl. interpolation-returned selectors) **+ a repo-wide source-level
+gate** (`src/css/nestedSelectors.test.ts` lexes all 120 styled templates; found
+3 MORE bare selectors beyond the audit — Video.tsx, Pagination.tsx ×2 — fixed
+as the orchestrator follow-up, gate now asserts zero) · PERF S3 Table purity
+(callbacks out of updaters — pre-fix the prune test HUNG the fork in a
+synchronous update loop; stable descending sort via negated comparator) ·
+FIELDS S3 Tabs first-render value (values built before activeIndex; bite test
+3/4 fail on stash) + S4 Accordion `open={0}` + **S1 DateSelector flip (Q5)** —
+exactly one import + three `toISOString` call-site swaps, TZ test fails
+pre-flip · PERF S1/S2 Surface+surfaceStore (shallow selector, measure bail,
+scroll listener REMOVED — reviewer verified no consumer depended on it;
+registerChild drops sync gBCR + microtask-batched: n mounts → 1 notification)
+· PERF S4 List (onReorder exactly-once, latest-items ref) · PERF S5 Dropzone/
+Snackbar (cross-instance rAF crosstalk fixed)/WebGLCanvas · PERF S11 Markdown
+token recursion (bold/links/nested lists/fenced code in list items render
+formatted — "the AI-first library mangles AI output" is dead) + RichChat
+filtered-index fix · API-TYPES S2 Box/Typography style merge (caller style <
+sx) + S3 sound polymorphic Button/IconButton (7 @ts-expect-error negative
+probes; runtime-identical) · OVERLAY S2 Select pointer-events interim fix ·
+THEMING S6 docs toggle snippet · GOVERNANCE S9 sweep: 7 throw sites enriched
+via valetError (component name + fix hint; surfaceStore includes the caller).
+
+**Verification:** both adversarial reviewers **pass** (one re-ran every gate +
+bite-tested Tabs by stashing; scope reviewer mapped all 44 files to lanes and
+verified DateSelector/Select diffs are exactly minimal). Session-limit
+interruption killed the first review run; workflow resumed from the journal
+with all 12 lanes + sweep served from cache. Orchestrator gate: lint ✅ tsc ✅
+**382/382** ✅ build ✅ check:engine ✅ verify:pack ✅ type-probes ✅;
+mcp-data regenerated + schema check ✅.
+
+**Flags:** (a) audit undercount on bare selectors (3 found by the new gate) —
+gate is now the source of truth; (b) Table selection still object-identity
+keyed by design until PERF S8 rowKey (Phase 1); (c) class hashes changed for
+the prefixed components (no test/doc pinned them — verified); (d) real-browser
+checks (focus rings, zebra striping on Chrome ≤119) remain on the phase-gate
+manual checklist.
 
 ---
 

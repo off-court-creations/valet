@@ -77,6 +77,35 @@ const isSafeImageSrc = (src?: string | null): string | null => {
   return allowed.has(scheme) ? trimmed : null;
 };
 
+/*───────────────────────────────────────────────────────────*/
+/* Entity decoding                                            */
+/* marked's lexer leaves HTML entities verbatim in token text
+   (it expects an HTML renderer); React escapes text itself, so
+   decode exactly once here. A single left-to-right replace pass
+   guarantees `&amp;lt;` → `&lt;`, never `<`.                  */
+const NAMED_ENTITIES: Record<string, string> = {
+  amp: '&',
+  lt: '<',
+  gt: '>',
+  quot: '"',
+  apos: "'",
+  nbsp: ' ',
+};
+
+const decodeEntities = (text: string): string =>
+  text.replace(
+    /&(?:#x([0-9a-fA-F]{1,6})|#(\d{1,7})|([a-zA-Z][a-zA-Z0-9]*));/g,
+    (match, hex: string | undefined, dec: string | undefined, named: string | undefined) => {
+      if (hex || dec) {
+        const codePoint = hex ? parseInt(hex, 16) : parseInt(dec!, 10);
+        if (codePoint === 0 || codePoint > 0x10ffff) return match;
+        if (codePoint >= 0xd800 && codePoint <= 0xdfff) return match; // lone surrogate
+        return String.fromCodePoint(codePoint);
+      }
+      return NAMED_ENTITIES[named!.toLowerCase()] ?? match;
+    },
+  );
+
 const renderInline = (tokens?: Token[]): React.ReactNode => {
   if (!tokens) return null;
   return tokens.map((t: Token, i: number) => {
@@ -120,8 +149,19 @@ const renderInline = (tokens?: Token[]): React.ReactNode => {
       }
       case 'br':
         return <br key={i} />;
-      case 'text':
-        return (t as Tokens.Text).text;
+      case 'escape':
+        /* marked HTML-escapes the unescaped char (`\<` → `&lt;`) */
+        return decodeEntities((t as Tokens.Escape).text);
+      case 'text': {
+        const text = t as Tokens.Text;
+        /* Block-level text tokens (e.g. inside list items) carry their
+           inline children in `.tokens` — recurse instead of dumping the
+           still-marked-up source text. */
+        if (text.tokens?.length) {
+          return <React.Fragment key={i}>{renderInline(text.tokens)}</React.Fragment>;
+        }
+        return decodeEntities(text.text);
+      }
       default:
         // Fallback to raw token text when no specific renderer exists
         return (t as Token).raw ?? '';
@@ -129,7 +169,25 @@ const renderInline = (tokens?: Token[]): React.ReactNode => {
   });
 };
 
-const renderTokens = (tokens: TokensList, codeBg: string): React.ReactNode =>
+/* Block tokens inside a list item (marked: list → items → tokens).
+   Tight-list `text` tokens hold the item's inline content in `.tokens`
+   and must NOT gain paragraph chrome; every other token (nested list,
+   fenced code, paragraph in a loose list, …) is a block token that is
+   routed back through the block renderer. */
+const renderListItemTokens = (tokens: Token[], codeBg: string): React.ReactNode =>
+  tokens.map((t: Token, i: number) => {
+    if (t.type === 'text') {
+      const text = t as Tokens.Text;
+      return (
+        <React.Fragment key={i}>
+          {text.tokens?.length ? renderInline(text.tokens) : decodeEntities(text.text)}
+        </React.Fragment>
+      );
+    }
+    return <React.Fragment key={i}>{renderTokens([t], codeBg)}</React.Fragment>;
+  });
+
+const renderTokens = (tokens: Token[], codeBg: string): React.ReactNode =>
   tokens.map((t: Token, i: number) => {
     switch (t.type) {
       case 'heading': {
@@ -180,10 +238,10 @@ const renderTokens = (tokens: TokensList, codeBg: string): React.ReactNode =>
                       aria-checked={!!item.checked}
                       style={{ marginRight: '0.5rem' }}
                     />
-                    {renderInline(item.tokens)}
+                    {renderListItemTokens(item.tokens, codeBg)}
                   </>
                 ) : (
-                  renderInline(item.tokens)
+                  renderListItemTokens(item.tokens, codeBg)
                 )}
               </li>
             ))}
@@ -238,7 +296,7 @@ const renderTokens = (tokens: TokensList, codeBg: string): React.ReactNode =>
               margin: '0.5rem 0',
             }}
           >
-            {renderTokens(bq.tokens as unknown as TokensList, codeBg)}
+            {renderTokens(bq.tokens, codeBg)}
           </Panel>
         );
       }
@@ -272,6 +330,16 @@ const renderTokens = (tokens: TokensList, codeBg: string): React.ReactNode =>
       }
       case 'space':
         return null;
+      case 'text': {
+        /* Block-level text (top level or routed from a list item) —
+           render its inline children, never the raw markdown source. */
+        const text = t as Tokens.Text;
+        return (
+          <Typography key={i}>
+            {text.tokens?.length ? renderInline(text.tokens) : decodeEntities(text.text)}
+          </Typography>
+        );
+      }
       default:
         return <Typography key={i}>{(t as Token).raw ?? ''}</Typography>;
     }
