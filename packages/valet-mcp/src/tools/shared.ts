@@ -86,10 +86,12 @@ function resolveExplicitDir(): { dir: string; source: DataSource } | null {
 
 function resolveBundledDir(): { dir: string; source: DataSource } | null {
   try {
-    const fileDir = path.dirname(fileURLToPath(import.meta.url)); // ..../dist
-    const pkgRoot = path.resolve(fileDir, '..');
+    const fileDir = path.dirname(fileURLToPath(import.meta.url)); // <pkg>/dist/tools
+    const distRoot = path.resolve(fileDir, '..'); // <pkg>/dist
+    const pkgRoot = path.resolve(distRoot, '..'); // <pkg>
     const localCandidates = [
-      path.join(pkgRoot, 'mcp-data'),
+      path.join(pkgRoot, 'mcp-data'), // shipped copy (package.json files: ["mcp-data"])
+      path.join(distRoot, 'mcp-data'), // legacy bundle:data location
       path.join(fileDir, 'mcp-data'),
     ];
     for (const c of localCandidates) {

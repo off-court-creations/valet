@@ -1,15 +1,15 @@
 // ─────────────────────────────────────────────────────────────
-// src/components/KeyModal.tsx | valet
+// src/components/widgets/KeyModal.tsx | valet
 // modal to capture an AI provider API key
 // ─────────────────────────────────────────────────────────────
 import { useState } from 'react';
-import Modal from './layout/Modal';
-import Panel from './layout/Panel';
-import Stack from './layout/Stack';
-import Typography from './primitives/Typography';
-import Button from './fields/Button';
-import { useAIKey, AIProvider } from '../system/aiKeyStore';
-import { useTheme } from '../system/themeStore';
+import Modal from '../layout/Modal';
+import Panel from '../layout/Panel';
+import Stack from '../layout/Stack';
+import Typography from '../primitives/Typography';
+import Button from '../fields/Button';
+import { useAIKey, AIProvider } from '../../system/aiKeyStore';
+import { useTheme } from '../../system/themeStore';
 
 export interface KeyModalProps {
   open: boolean;

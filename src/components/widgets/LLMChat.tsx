@@ -15,7 +15,7 @@ import Panel from '../layout/Panel';
 import Typography from '../primitives/Typography';
 import Markdown from './Markdown';
 import Avatar from '../primitives/Avatar';
-import KeyModal from '../KeyModal';
+import KeyModal from './KeyModal';
 import Select from '../fields/Select';
 import { useAIKey, AIProvider } from '../../system/aiKeyStore';
 import type { Presettable, Sx } from '../../types';

@@ -259,6 +259,11 @@ async function main() {
       }
     }
   } catch {}
+  // load-meta compiles .meta.ts sidecars into mcp-data/_tmp-meta; remove the
+  // scratch dir so it never lingers as a stale artifact in the dataset.
+  try {
+    fs.rmSync(path.join(root, 'mcp-data', '_tmp-meta'), { recursive: true, force: true });
+  } catch {}
   const docsMap = (() => {
     try {
       return extractFromDocs(root);
@@ -286,6 +291,10 @@ async function main() {
   // Write index
   const index = indexFromComponents(merged);
   fs.writeFileSync(path.join(outDir, 'index.json'), JSON.stringify(index, null, 2));
+
+  // Write the raw TS extraction snapshot from the in-memory map so the
+  // mirrored/shipped copy can never go stale relative to the dataset.
+  fs.writeFileSync(path.join(outDir, '_ts-extract.json'), JSON.stringify(tsMap, null, 2));
 
   // meta
   const hash = crypto

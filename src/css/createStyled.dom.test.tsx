@@ -6,7 +6,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import React, { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import { styled } from './createStyled';
+import { keyframes, styled } from './createStyled';
 import * as sheet from './sheet';
 
 /* react-dom warns unless act usage is announced ----------------------- */
@@ -103,6 +103,40 @@ describe('createStyled (jsdom)', () => {
     expect(two.container.querySelector('div')!.className).toBe(cls);
     /* z-<tag>-<base36 hash>-<base36 length> (hash.ts contract) */
     expect(cls).toMatch(/^z-div-[0-9a-z]+-[0-9a-z]+$/);
+  });
+
+  it("drops `${cond && 'color:red'}` vetoes — no 'false' in generated CSS", () => {
+    const spy = spyInsertRule();
+    const cond = false as boolean;
+    const F = styled('div')<{ $active?: boolean }>`
+      ${cond && 'color: red;'}
+      display: flex;
+      ${(p) => p.$active && 'color: red;'}
+    `;
+    const { container } = renderStrict(<F />);
+    const cls = container.querySelector('div')!.className;
+    const calls = spy.mock.calls.filter(([text]) => String(text).startsWith(`.${cls}{`));
+    expect(calls).toHaveLength(1);
+    const ruleText = String(calls[0][0]);
+    expect(ruleText).not.toContain('false');
+    expect(ruleText).toContain('display: flex;');
+  });
+
+  it("keyframes drops veto interpolations — no 'false' in the @keyframes body", () => {
+    const spy = spyInsertRule();
+    const cond = false as boolean;
+    const name = keyframes`
+      from { opacity: ${0}; }
+      ${cond && '50% { opacity: 0.5; }'}
+      to { opacity: ${1}; }
+    `;
+    expect(name).toMatch(/^z-kf-/);
+    const calls = spy.mock.calls.filter(([text]) => String(text).startsWith(`@keyframes ${name}{`));
+    expect(calls).toHaveLength(1);
+    const ruleText = String(calls[0][0]);
+    expect(ruleText).not.toContain('false');
+    /* normalizeCSS collapses `; }` → `}` — 0 still renders. */
+    expect(ruleText).toContain('from { opacity: 0}');
   });
 
   it('DOM mode bypasses the pending-rule path and writes the live sheet', () => {

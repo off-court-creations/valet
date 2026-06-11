@@ -63,7 +63,7 @@ export * from './components/widgets/Tree';
 export * from './components/widgets/Markdown';
 export * from './components/widgets/CodeBlock';
 export * from './components/widgets/Chip';
-export { default as KeyModal } from './components/KeyModal';
+export { default as KeyModal } from './components/widgets/KeyModal';
 
 // ─── AI Helpers ─────────────────────────────────────────────
 export * from './system/aiKeyStore';
@@ -79,3 +79,19 @@ export * from './hooks/useGoogleFonts';
 export type { Font, CustomFont } from './helpers/fontLoader';
 export type { Variant as TypographyVariant, WeightAlias } from './types/typography';
 export { inheritSurfaceFontVars } from './system/inheritSurfaceFontVars';
+
+// ─── Public vocabulary types ────────────────────────────────
+export type { Sx, Presettable, Space, SpacingProps, FieldBaseProps } from './types';
+export type {
+  ChangeInfo,
+  OnValueChange,
+  OnValueCommit,
+  InputPhase,
+  InputSource,
+} from './system/events';
+export type {
+  PolymorphicProps,
+  PolymorphicRef,
+  PolymorphicComponent,
+  PropsOf,
+} from './system/polymorphic';

@@ -37,7 +37,7 @@
 | --- | ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
 | 1   | 0.0  | **Keystone (solo):** ENGINE S1 lazy guarded sheet init (`createStyled.ts`, new `sheet.ts`, `stylePresets.ts`)                                                                                    | ✅ `e3e3280` |
 | 2   | 0.1  | **Pure cores (parallel, disjoint new files):** TEST-CI S1 harness (fast-tracked) · FIELDS S1 dateUtils + S2 sliderMath · THEMING S1 themeUtils + S2 createInitialTheme recovery · SECURITY S2/S3 aiKeyStore + S4 svgSafe · GOVERNANCE S6 gate scripts + S9 devErrors (module only) · MCP-TRUTH S1/S2/S5 extractor fixes · OVERLAY S1 focus trap · TEST-CI S2/S4/S5 suites | ✅     |
-| 3   | 0.2  | **Serialized shared-file lanes:** (a) root package.json: TEST-CI S1 scripts → PACKAGING S2 prepack/verify-pack → PACKAGING S1 metadata → ENGINE S5 check:engine · (b) css lane: ENGINE S2 compile → TEST-CI S3 normalize extraction → ENGINE S4 presets · (c) index.ts: MCP-TRUTH S3 KeyModal move → API-TYPES S1 exports · (d) valet-mcp package.json: MCP-TRUTH S6 · TEST-CI S5 TZ suite (after FIELDS S1) | ⬜     |
+| 3   | 0.2  | **Serialized shared-file lanes:** (a) root package.json: TEST-CI S1 scripts → PACKAGING S2 prepack/verify-pack → PACKAGING S1 metadata → ENGINE S5 check:engine · (b) css lane: ENGINE S2 compile → TEST-CI S3 normalize extraction → ENGINE S4 presets · (c) index.ts: MCP-TRUTH S3 KeyModal move → API-TYPES S1 exports · (d) valet-mcp package.json: MCP-TRUTH S6 · TEST-CI S5 TZ suite (after FIELDS S1) | ✅     |
 | 4   | 0.3  | **Component edits (parallel disjoint; serialized within contended files):** ENGINE S3 prefixes → PERF S3 Table · OVERLAY S2 Select · FIELDS S3 Tabs + S4 Accordion · PERF S1 Surface, S2 surfaceStore, S4 List, S5 effect hygiene + Markdown/RichChat fixes (PERF S11 part) · API-TYPES S2 Box/Typography, S3 Button/IconButton · THEMING S6 docs snippet · wave end: GOVERNANCE S9 throw-site sweep | ⬜     |
 | 5   | 0.4  | **Docs/config (one writer), then the phase gate:** GOVERNANCE S1 changelog → S2 README/AGENTS → S3 WAG sweep → S5 VALIGNMENT archive · SECURITY S9 amplify pin (S1 ⏸️ until Ben enables PVR) · MCP-TRUTH S11 glossary truth · TEST-CI S8 CI workflow + S10 SSR regression | ⬜     |
 | —   | gate | **Phase-0 gate:** CI green on Node 20/22 (lint, typecheck, test, build, mcp:schema:check, verify:pack, check:engine) + manual docs-app sweep                                                     | ⬜     |
@@ -165,6 +165,50 @@ files (vitest.config.ts unlinted → TEST-CI S11); (c) tsconfig `include:[src]`
 leaves vitest.config.ts untypechecked (S11); (d) vitest 4 oxc-vs-esbuild
 transform note for AGENTS.md.
 
+### Wave 0.2 — serialized shared-file lanes — ✅
+
+**What shipped:** *(lane a)* `scripts/verify-pack.mjs` (layout-agnostic per R2;
+pure functions + CLI, 15 tests incl. the automated dist-absent negative) +
+`prepack: npm run build` — **the audited 4-file empty tarball is structurally
+impossible**; package.json truth pass (`sideEffects:["*.css"]`, per-format
+`types` conditions, `./package.json` subpath, `marked-highlight` removed
+(grep-verified zero imports), root `engines` removed — CLIs keep theirs).
+*(lane b)* `src/css/compile.ts` pure `compileTemplate` (false/null/undefined
+dropped at concat — the `falsedisplay:flex` class of bug is dead; `0`/`''`
+preserved; `false` stays in the union per veto register) wired into both styled
++ keyframes paths; `src/css/normalize.ts` mechanical extraction with
+characterization tests pinning the known deficiencies as ENGINE S7 tripwires
+(hashes unchanged); stylePresets cleanup (dead cache write deleted,
+redefine-replaces + warnOnce per R5, theme updates re-insert full rule text so
+nested rules survive). *(lane c)* KeyModal `git mv` → widgets/ (public path
+unchanged) + extractor default-export handling — **KeyModal is now visible to
+MCP** (`components_widgets_keymodal.json`, real summary); API-TYPES S1
+vocabulary exports from src/index.ts (9×TS2305 → clean, probe committed at
+`dx/type-tests/`). *(lane d)* valet-mcp: `bundle:data` deleted, `prepublishOnly
+= build && selfcheck`, fresh `_ts-extract.json` from in-memory maps, extract
+artifacts gitignored. *(post-barrier)* `scripts/checks/engine-smoke.mjs` as
+`npm run check:engine` (import-no-throw both formats, cross-process
+deterministic classes, keyframes/presets in Node, no-'false'-leak).
+
+**The wave's headline catch (adversarial review working as designed):** the
+correctness reviewer **failed** the wave by reproducing that ruling R23's
+premise was factually wrong — shared.ts resolves relative to `dist/tools`, so
+the shipped `<pkg>/mcp-data` was NEVER a bundled-resolution candidate and
+deleting `bundle:data` broke selfcheck + every consumer import. The fixer
+repaired `packages/valet-mcp/src/tools/shared.ts` (true package root prepended
+to candidates; out-of-slice by necessity, logged in Flags #4); plan.md §3.9 S6
+amended. Selfcheck now green from the bundled path (`dataSource: "bundled"`,
+56 components, versionParity true).
+
+**Integration (orchestrator):** `npm install --package-lock-only` (lockfile
+sync after dep removal); mcp-data regenerated + `mcp:schema:check` green.
+**Gate:** lint ✅ tsc ✅ **314/314 tests** ✅ build ✅ check:engine ✅
+verify:pack ✅ valet-mcp selfcheck ✅.
+
+**Flags:** stylePresets `replaceRuleText` error path can hold a stale rule
+when insertRule throws on invalid CSS (dev-observable, invalid-CSS edge only —
+noted for ENGINE S11's preset work).
+
 ---
 
 ## Flags & Issues
@@ -186,3 +230,17 @@ transform note for AGENTS.md.
    proving them, but leaves DateSelector.tsx's three buggy call sites untouched
    until Q5 is ruled (rec: fix now → the swap is then a Phase-1 one-liner with
    tests already green).
+4. **2026-06-11 — R23 premise corrected (Wave 0.2 fixer).** R23/plan §3.9 S6
+   claimed "resolver order verified, shared.ts:87–93: pkgRoot/mcp-data wins" —
+   false. shared.ts compiles to `dist/tools/shared.js`, so its `pkgRoot`
+   resolved to `<pkg>/dist`; the bundled candidates were `dist/mcp-data` (only
+   ever populated by the now-deleted `bundle:data`) and `dist/tools/mcp-data`.
+   The shipped `<pkg>/mcp-data` copy was never a candidate, so with
+   `bundle:data` gone, `MCP_SELFCHECK=1 node dist/index.js` (and every consumer
+   import) threw `Unable to locate bundled valet MCP data`. Fixed in
+   `packages/valet-mcp/src/tools/shared.ts` (out-of-slice by necessity, no
+   other lane owns valet-mcp src): true package root
+   (`path.resolve(distRoot, '..')`) prepended to the candidate list, legacy
+   `dist/mcp-data` kept for back-compat. Selfcheck now green from the bundled
+   path (`dataSource: "bundled"`, 56 components, versionParity true); env-dir
+   override still wins.

@@ -1,0 +1,35 @@
+{
+  "name": "KeyModal",
+  "category": "widgets",
+  "slug": "components/widgets/keymodal",
+  "summary": "modal to capture an AI provider API key",
+  "status": "stable",
+  "props": [
+    {
+      "name": "open",
+      "type": "boolean",
+      "required": true
+    },
+    {
+      "name": "onClose",
+      "type": "() => void",
+      "required": false
+    }
+  ],
+  "cssVars": [],
+  "cssPresets": [],
+  "events": [
+    {
+      "name": "onClose"
+    }
+  ],
+  "actions": [],
+  "slots": [],
+  "bestPractices": [],
+  "examples": [],
+  "sourceFiles": [
+    "src/components/widgets/KeyModal.tsx"
+  ],
+  "version": "0.34.1",
+  "schemaVersion": "1.6"
+}

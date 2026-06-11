@@ -26,6 +26,12 @@ build/Release
 .temp
 .cache
 
+# MCP pipeline scratch artifacts (rewritten on every mcp:build; never commit)
+mcp-data/_ts-extract.json
+mcp-data/_docs-extract.json
+mcp-data/_tmp-meta
+packages/valet-mcp/mcp-data/_ts-extract.json
+
 # VitePress artifacts
 **/.vitepress/dist
 **/.vitepress/cache

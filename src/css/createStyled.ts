@@ -11,7 +11,9 @@
 // ─────────────────────────────────────────────────────────────
 import React, { useContext, useLayoutEffect, useRef } from 'react';
 import type { JSX } from 'react';
+import { compileTemplate, type Interpolation } from './compile';
 import { hashStr } from './hash';
+import { normalizeCSS } from './normalize';
 import { insertRuleText } from './sheet';
 import { SurfaceCtx } from '../system/surfaceStore';
 
@@ -29,10 +31,6 @@ function inject(cssId: string, css: string) {
   if (injected.has(cssId)) return;
   insertRuleText(css);
   injected.add(cssId);
-}
-
-function normalizeCSS(css: string): string {
-  return css.trim().replace(/\s+/g, ' ').replace(/; ?}/g, '}');
 }
 
 /* Remove transient props that start with `$` -------------------------- */
@@ -74,33 +72,17 @@ export function styled<Tag extends keyof JSX.IntrinsicElements>(tag: Tag) {
 
     type PropsArg = React.PropsWithoutRef<StyledProps>;
 
-    type Interpolation =
-      | string
-      | number
-      | false
-      | null
-      | undefined
-      | ((props: PropsArg) => string | number | false | null | undefined);
-
     const StyledComponent = React.forwardRef<DomRef, StyledProps>((props, ref) => {
       const localRef = useRef<DomRef | null>(null);
       const surface = useContext(SurfaceCtx);
       const idRef = useRef(`el-${Math.random().toString(36).slice(2)}`);
 
       /* Build raw CSS string (inc. interpolations) ------------------- */
-      let rawCSS = '';
-      for (let i = 0; i < strings.length; i++) {
-        rawCSS += strings[i];
-        if (i < exprs.length) {
-          const piece = exprs[i] as Interpolation;
-          if (typeof piece === 'function') {
-            const fn = piece as (p: PropsArg) => string | number | false | null | undefined;
-            rawCSS += fn(props) ?? '';
-          } else {
-            rawCSS += piece ?? '';
-          }
-        }
-      }
+      const rawCSS = compileTemplate<PropsArg>(
+        strings,
+        exprs as ReadonlyArray<Interpolation<PropsArg>>,
+        props,
+      );
 
       const normalized = normalizeCSS(rawCSS);
       let className = styleCache.get(normalized);
@@ -164,11 +146,7 @@ export function keyframes(
   ...exprs: Array<string | number | false | null | undefined>
 ): string {
   /* Build raw keyframe body ------------------------------------------- */
-  let rawCSS = '';
-  for (let i = 0; i < strings.length; i++) {
-    rawCSS += strings[i];
-    if (i < exprs.length) rawCSS += exprs[i] ?? '';
-  }
+  const rawCSS = compileTemplate(strings, exprs, undefined);
 
   const normalized = normalizeCSS(rawCSS);
   const animName = `z-kf-${hashStr(normalized)}`;

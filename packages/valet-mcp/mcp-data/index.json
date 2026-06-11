@@ -301,6 +301,13 @@
     "status": "stable"
   },
   {
+    "name": "KeyModal",
+    "category": "widgets",
+    "summary": "modal to capture an AI provider API key",
+    "slug": "components/widgets/keymodal",
+    "status": "stable"
+  },
+  {
     "name": "LLMChat",
     "category": "widgets",
     "summary": "LLM style chat component with height constraint",

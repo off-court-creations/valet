@@ -152,7 +152,11 @@ function guessCategoryFromPath(filePath) {
   // expects src/components/<category>/<Name>.tsx
   const parts = filePath.split(path.sep);
   const idx = parts.indexOf('components');
-  if (idx >= 0 && parts[idx + 1]) return parts[idx + 1];
+  const candidate = idx >= 0 ? parts[idx + 1] : undefined;
+  // Guard: a file sitting directly under src/components/ has no category
+  // directory — without this, the filename itself (e.g. 'KeyModal.tsx')
+  // leaks through as the category.
+  if (candidate && !candidate.includes('.')) return candidate;
   return 'unknown';
 }
 
@@ -181,16 +185,41 @@ export function extractFromTs(projectRoot) {
     const exports = sf.getExportedDeclarations();
     // Collect all exported component names (supports multiple per file)
     const componentNames = [];
+    const isComponentDeclaration = (d) =>
+      d.getKind() === SyntaxKind.FunctionDeclaration ||
+      d.getKind() === SyntaxKind.VariableDeclaration ||
+      d.getKind() === SyntaxKind.ClassDeclaration;
+    const defaultExportDecs = [];
     for (const [name, decs] of exports) {
       for (const d of decs) {
-        const isComponentExport =
-          d.getKind() === SyntaxKind.FunctionDeclaration ||
-          d.getKind() === SyntaxKind.VariableDeclaration ||
-          d.getKind() === SyntaxKind.ClassDeclaration;
-        if (isComponentExport && /^[A-Z]/.test(name)) {
-          if (!componentNames.includes(name)) componentNames.push(name);
+        if (!isComponentDeclaration(d)) continue;
+        // Defer the default export: it arrives under the key 'default', which
+        // fails the capital-letter test, so default-exported components
+        // (e.g. KeyModal) used to be invisible to MCP.
+        if (name === 'default') {
+          defaultExportDecs.push(d);
+          continue;
         }
+        if (/^[A-Z]/.test(name) && !componentNames.includes(name)) componentNames.push(name);
       }
+    }
+    // Resolve default-export component names from the declaration itself
+    // (file basename for anonymous defaults) — but skip declarations a named
+    // export already aliases, so `export const Select = Forward` +
+    // `export default Forward` doesn't mint a junk 'Forward' component.
+    for (const d of defaultExportDecs) {
+      const resolved = d.getName?.() || path.basename(sf.getFilePath(), '.tsx');
+      if (!/^[A-Z]/.test(resolved) || componentNames.includes(resolved)) continue;
+      const aliasedByNamedExport = Array.from(exports.entries()).some(
+        ([n, ds]) =>
+          n !== 'default' &&
+          ds.some(
+            (nd) =>
+              nd.getKind?.() === SyntaxKind.VariableDeclaration &&
+              nd.getInitializer?.()?.getText?.() === resolved,
+          ),
+      );
+      if (!aliasedByNamedExport) componentNames.push(resolved);
     }
 
     // Heuristic: add well-known nested subcomponents when present in the file.

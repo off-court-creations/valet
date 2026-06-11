@@ -18,10 +18,17 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
     },
-    "./styles.css": "./styles.css"
+    "./styles.css": "./styles.css",
+    "./package.json": "./package.json"
   },
   "files": [
     "dist",
@@ -30,16 +37,18 @@
     "LICENSE",
     "package.json"
   ],
-  "sideEffects": false,
-  "engines": {
-    "node": ">=18.0.0"
-  },
+  "sideEffects": [
+    "*.css"
+  ],
   "scripts": {
     "clean": "rimraf dist",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "build": "npm run clean && tsup src/index.ts --format esm,cjs --dts --tsconfig tsconfig.build.json && cp -f src/styles.css styles.css",
+    "prepack": "npm run build",
+    "verify:pack": "node scripts/verify-pack.mjs",
+    "check:engine": "node scripts/checks/engine-smoke.mjs",
     "dev": "tsup src/index.ts --format esm,cjs --watch --dts",
     "dx": "npm install && npm --prefix ./docs install && npm --prefix ./packages/create-valet-app install && npm run mcp:server:install",
     "dx:link": "npm run build && npm link && cd docs && npm link @archway/valet && cd ../packages/valet-mcp && npm link && cd ../create-valet-app && npm link",
@@ -65,7 +74,6 @@
     "@iconify/react": "^6.0.0",
     "highlight.js": "^11.11.1",
     "marked": "^16.1.1",
-    "marked-highlight": "^2.2.2",
     "react-dropzone": "^14.2.3",
     "zustand": "^4.5.7"
   },
