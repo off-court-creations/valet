@@ -115,27 +115,46 @@ function getFocusable(el: HTMLElement | null): HTMLElement[] {
   });
 }
 
+// Pure decision core for the Tab focus trap. Exported for unit testing only;
+// not re-exported from the package index.
+export type TabAction = 'wrap-to-first' | 'wrap-to-last' | 'allow-default' | 'refocus-first';
+
+/**
+ * Decide what a trapped Tab keypress should do.
+ *
+ * @param activeIndex    index of the active element within the focusable list,
+ *                       or -1 when focus escaped the dialog / sits on the
+ *                       container / nothing is focused
+ * @param shiftKey       whether Shift was held
+ * @param focusableCount number of focusable nodes inside the dialog
+ *
+ * Only wrap/refocus results suppress the browser default — a mid-list Tab
+ * resolves to 'allow-default' so native sequential focus keeps working.
+ */
+export function resolveTabAction(
+  activeIndex: number,
+  shiftKey: boolean,
+  focusableCount: number,
+): TabAction {
+  // Nothing focusable inside — hold focus on the container itself
+  if (focusableCount <= 0) return 'refocus-first';
+  // Focus escaped the dialog (or index is stale) — pull it back inside
+  if (activeIndex < 0 || activeIndex >= focusableCount) return 'refocus-first';
+  if (shiftKey) return activeIndex === 0 ? 'wrap-to-last' : 'allow-default';
+  return activeIndex === focusableCount - 1 ? 'wrap-to-first' : 'allow-default';
+}
+
 function trapTabWithin(container: HTMLElement, e: KeyboardEvent) {
   const nodes = getFocusable(container);
-  if (nodes.length === 0) {
-    e.preventDefault();
-    container.focus();
-    return;
-  }
-  const first = nodes[0];
-  const last = nodes[nodes.length - 1];
-  const active = (document.activeElement as HTMLElement) || undefined;
-  if (e.shiftKey) {
-    if (!active || active === first) {
-      e.preventDefault();
-      last.focus();
-    }
-  } else {
-    if (!active || active === last) {
-      e.preventDefault();
-      first.focus();
-    }
-  }
+  const active = document.activeElement as HTMLElement | null;
+  const activeIndex = active ? nodes.indexOf(active) : -1;
+  const action = resolveTabAction(activeIndex, e.shiftKey, nodes.length);
+  // Mid-list Tab falls through to the browser's own focus handling
+  if (action === 'allow-default') return;
+  e.preventDefault();
+  if (action === 'wrap-to-last') nodes[nodes.length - 1].focus();
+  // 'wrap-to-first' | 'refocus-first' (container when nothing is focusable)
+  else (nodes[0] || container).focus();
 }
 
 // Global listeners (attached when stack is non-empty) ---------------------
@@ -167,7 +186,7 @@ function handleKeyDown(ev: KeyboardEvent) {
     return;
   }
   if (ev.key === 'Tab' && top.trapFocus) {
-    ev.preventDefault();
+    // preventDefault happens inside trapTabWithin, and only on wrap/refocus
     trapTabWithin(top.element, ev);
   }
 }

@@ -19,6 +19,7 @@ import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { useOptionalForm } from './FormControl';
+import { computeKeyStep } from './sliderMath';
 import type { FieldBaseProps } from '../../types';
 import type { ChangeInfo, OnValueChange, OnValueCommit } from '../../system/events';
 
@@ -400,7 +401,8 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
     );
 
     /* keyboard handling ------------------------------------- */
-    const keyStep = snap === 'step' ? step : (max - min) / 100;
+    // Floored at 10**-precision so the step survives commit-path rounding
+    const keyStep = computeKeyStep({ min, max, step, snap, precision });
     const pageStep = Math.max(step, Math.round((max - min) / 10));
     const onKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
       if (disabled) return;

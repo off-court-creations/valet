@@ -2,7 +2,7 @@
   "name": "Option",
   "category": "fields",
   "slug": "components/fields/option",
-  "summary": "Option component",
+  "summary": "Fully-typed, FormControl-aware <Select/> (single + multiple).",
   "status": "stable",
   "props": [
     {

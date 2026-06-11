@@ -2,7 +2,7 @@
   "name": "CodeBlock",
   "category": "widgets",
   "slug": "components/widgets/codeblock",
-  "summary": "CodeBlock component",
+  "summary": "Reusable code block with Markdown highlighting, copy button, and snackbar feedback",
   "status": "stable",
   "aliases": [
     "codeblock",
@@ -63,8 +63,10 @@
     "Keep code immutable in this component; use an editor widget for editable code."
   ],
   "examples": [],
+  "docsUrl": "/codeblock-demo",
   "sourceFiles": [
-    "src/components/widgets/CodeBlock.tsx"
+    "src/components/widgets/CodeBlock.tsx",
+    "docs/src/pages/components/widgets/CodeBlockDemo.tsx"
   ],
   "version": "0.34.1",
   "schemaVersion": "1.6"

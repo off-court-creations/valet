@@ -2,7 +2,7 @@
   "name": "Grid",
   "category": "layout",
   "slug": "components/layout/grid",
-  "summary": "Grid component",
+  "summary": "spacing refactor: container pad + gap, compact – 2025-08-12",
   "status": "stable",
   "aliases": [
     "grid"
@@ -133,8 +133,10 @@
       "minimalProps": {}
     }
   ],
+  "docsUrl": "/grid-demo",
   "sourceFiles": [
-    "src/components/layout/Grid.tsx"
+    "src/components/layout/Grid.tsx",
+    "docs/src/pages/components/layout/GridDemo.tsx"
   ],
   "version": "0.34.1",
   "schemaVersion": "1.6"

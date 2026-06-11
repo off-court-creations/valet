@@ -2,7 +2,7 @@
   "name": "Drawer",
   "category": "layout",
   "slug": "components/layout/drawer",
-  "summary": "Drawer component",
+  "summary": "Minimal sliding drawer component akin to MUI's Drawer.",
   "status": "stable",
   "aliases": [
     "drawer",
@@ -145,8 +145,10 @@
     "Prefer tokens for backdrop colour and motion; keep transitions aligned with theme."
   ],
   "examples": [],
+  "docsUrl": "/drawer-demo",
   "sourceFiles": [
-    "src/components/layout/Drawer.tsx"
+    "src/components/layout/Drawer.tsx",
+    "docs/src/pages/components/layout/DrawerDemo.tsx"
   ],
   "version": "0.34.1",
   "schemaVersion": "1.6"

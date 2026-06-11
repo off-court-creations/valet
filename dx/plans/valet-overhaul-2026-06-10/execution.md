@@ -35,33 +35,135 @@
 
 | #   | Wave | Contents (plan §3 slice ids)                                                                                                                                                                   | Status |
 | --- | ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
-| 1   | 0.0  | **Keystone (solo):** ENGINE S1 lazy guarded sheet init (`createStyled.ts`, new `sheet.ts`, `stylePresets.ts`)                                                                                    | ⬜     |
-| 2   | 0.1  | **Pure cores (parallel, disjoint new files):** TEST-CI S1 harness (fast-tracked) · FIELDS S1 dateUtils + S2 sliderMath · THEMING S1 themeUtils + S2 createInitialTheme recovery · SECURITY S2/S3 aiKeyStore + S4 svgSafe · GOVERNANCE S6 gate scripts + S9 devErrors (module only) · MCP-TRUTH S1/S2/S5 extractor fixes · OVERLAY S1 focus trap · TEST-CI S2/S4 suites | ⬜     |
+| 1   | 0.0  | **Keystone (solo):** ENGINE S1 lazy guarded sheet init (`createStyled.ts`, new `sheet.ts`, `stylePresets.ts`)                                                                                    | ✅ `e3e3280` |
+| 2   | 0.1  | **Pure cores (parallel, disjoint new files):** TEST-CI S1 harness (fast-tracked) · FIELDS S1 dateUtils + S2 sliderMath · THEMING S1 themeUtils + S2 createInitialTheme recovery · SECURITY S2/S3 aiKeyStore + S4 svgSafe · GOVERNANCE S6 gate scripts + S9 devErrors (module only) · MCP-TRUTH S1/S2/S5 extractor fixes · OVERLAY S1 focus trap · TEST-CI S2/S4/S5 suites | ✅     |
 | 3   | 0.2  | **Serialized shared-file lanes:** (a) root package.json: TEST-CI S1 scripts → PACKAGING S2 prepack/verify-pack → PACKAGING S1 metadata → ENGINE S5 check:engine · (b) css lane: ENGINE S2 compile → TEST-CI S3 normalize extraction → ENGINE S4 presets · (c) index.ts: MCP-TRUTH S3 KeyModal move → API-TYPES S1 exports · (d) valet-mcp package.json: MCP-TRUTH S6 · TEST-CI S5 TZ suite (after FIELDS S1) | ⬜     |
 | 4   | 0.3  | **Component edits (parallel disjoint; serialized within contended files):** ENGINE S3 prefixes → PERF S3 Table · OVERLAY S2 Select · FIELDS S3 Tabs + S4 Accordion · PERF S1 Surface, S2 surfaceStore, S4 List, S5 effect hygiene + Markdown/RichChat fixes (PERF S11 part) · API-TYPES S2 Box/Typography, S3 Button/IconButton · THEMING S6 docs snippet · wave end: GOVERNANCE S9 throw-site sweep | ⬜     |
 | 5   | 0.4  | **Docs/config (one writer), then the phase gate:** GOVERNANCE S1 changelog → S2 README/AGENTS → S3 WAG sweep → S5 VALIGNMENT archive · SECURITY S9 amplify pin (S1 ⏸️ until Ben enables PVR) · MCP-TRUTH S11 glossary truth · TEST-CI S8 CI workflow + S10 SSR regression | ⬜     |
 | —   | gate | **Phase-0 gate:** CI green on Node 20/22 (lint, typecheck, test, build, mcp:schema:check, verify:pack, check:engine) + manual docs-app sweep                                                     | ⬜     |
 
-## Decisions awaiting Ben
+## Decisions — provisional rulings (agent-adopted, pending Ben's review)
 
-Plan §9 Q1–Q22. **Batch 1** (rule before Phase 1): Q1, Q2, Q3, Q5, Q6, Q7, Q9,
-Q13, Q16, Q17, Q20, Q21, Q22 — plus **Q4 (release plan) which should be ruled
-first**. **Batch 2** (before Phase 2): Q8, Q10, Q11, Q12, Q14, Q15, Q18, Q19.
-The §9 veto-candidate register ships-as-specified unless vetoed; review it with
-the batch-1 rulings.
+> **2026-06-10:** Ben set a session goal — "complete the entire overhaul. all
+> waves. be exhaustive and excellent" — without pausing for the batch rulings.
+> Per the house "adopted-by-recommendation, vetoable" precedent, **every §9
+> recommendation is adopted as the provisional ruling** below. All are
+> reversible; Ben's section-by-section review supersedes this table and lands
+> in plan.md §0. The §9 veto-candidate register likewise ships as specified.
 
-Two Phase-0 items have human dependencies and are tracked ⏸️ rather than
-blocking the gate:
+| Q | Adopted (the §9 "Rec:") |
+|---|---|
+| Q1 | (a) ESM-only per-module dist |
+| Q2 | (a) privatize styleCache/globalSheet; `Symbol.for` registry |
+| Q3 | (a) full z-order scale (AppBar 1100, Snackbar 1500, Tooltip 1600) |
+| Q4 | (a) 0.34.2 hotfix (OVERLAY S1/S2 + the 6 stranded commits) **prepared as a branch + CHANGELOG section; publish itself stays Ben's** — then the overhaul as 0.35.0 |
+| Q5 | (a) fix DateSelector TZ now (TZ-parameterized tests landed Wave 0.1) |
+| Q6 | (a) allowlist svg parser + `dangerouslySetSvg` escape hatch |
+| Q7 | (a) `gravatar` opt-in, default false |
+| Q8 | (a) AI runtime stays as loudly-documented dev tool; LLMChat `models` prop |
+| Q9 | (a) `$trackSize` opt-in size tracking |
+| Q10 | (a) shared FieldShell rendering the full advertised cluster |
+| Q11 | (a) keyed selection unification across List/Table/Tree |
+| Q12 | (a) renames ship as aliases + dev warnings; old names removed at 1.0 |
+| Q13 | (a) `injectRemote` stays true through 0.x + opt-out + dev notice |
+| Q14 | (a) explicit-fonts-only: `useInitialTheme({})` triggers zero network |
+| Q15 | (a) CVA templates gain @fontsource deps |
+| Q16 | (a) hard publish gates with coverage floors |
+| Q17 | (a) adopted; **execution deferred to Ben** (repo-settings mutation) — exact `gh api` commands delivered in dx/RELEASING.md once CI lands |
+| Q18 | (a) enriched hard throws + opt-in `ValetErrorBoundary` |
+| Q19 | (c) staged co-maintainer + CI provenance publishing; **naming the person is Ben's** — documented in RELEASING.md |
+| Q20 | (a) publish the browser-support floor |
+| Q21 | (a) zustand widens to `^4 \|\| ^5` as a peerDependency (+ devDep for local dev) |
+| Q22 | (a) curated highlight.js set (13 languages + `registerHighlightLanguage`) |
 
-- **SECURITY S1** (SECURITY.md rewrite) — merges only after Ben enables GitHub
-  Private Vulnerability Reporting on the repo (Settings → Security).
-- **Q17 branch protection** — `gh api` commands will be supplied once CI lands.
+Human-only actions (never executed by the agent, prepared + documented
+instead): npm publishes, merges/pushes to `development`/`main`, GitHub repo
+settings (branch protection Q17, **Private Vulnerability Reporting** — SECURITY
+S1's content lands on the epic branch with the PVR step called out in
+RELEASING.md).
 
 ---
 
 ## Wave log
 
-(appended as waves execute)
+### Wave 0.0 — ENGINE S1 (keystone) — ✅ commit `e3e3280`
+
+**What shipped:** new `src/css/sheet.ts` (lazy guarded sheet; pending-rule
+recording in non-DOM envs, in-order flush if a sheet is later created;
+insertRule try/catch with dev-only diagnostics); `createStyled.ts` module-scope
+document access deleted; `stylePresets.ts` routed through the guarded sheet;
+`globalSheet` stays exported (Q2 gate) widened to `CSSStyleSheet | undefined`
+as a live binding in both formats.
+
+**Verification (adversarial reviewer, independent):** built pristine HEAD in a
+worktree and ran an instrumented stub-DOM harness (every createElement/
+appendChild/insertRule/cssText write) over both dists across first-injection,
+cache-hit, keyframes, definePreset, presetHas, theme-driven preset
+re-registration — **log diff empty (108 lines each)**; identical class names,
+rule text, insertion indices, dedupe. DoD: build ✅ · CJS require ✅ (HEAD
+fails) · ESM import ✅ (HEAD fails) · styled-in-Node ✅ · lint+tsc ✅.
+`renderToString` in Node renders deterministic `z-div-*` classes.
+
+**Scope deviation (justified, reviewer-verified):** RadioGroup.tsx + Slider.tsx
+had `KeyboardEvent` in react *value*-imports — a pre-existing ESM-in-Node
+instantiation failure (`Named export 'KeyboardEvent' not found`) reproduced on
+pristine HEAD, unreachable-before-the-document-crash. Minimal fix applied;
+incidentally repairs a latent `instanceof undefined` TypeError in those two
+components' ChangeInfo.source keyboard detection (relevant to FIELDS S7–S9).
+
+**Flags raised:** (a) error-path behavior change: malformed rules now dev-log
+instead of crashing (styled) / throwing from definePreset — prod is silent;
+(b) Node→DOM same-process edge: if only cached rules re-render after a DOM
+appears, pending rules never flush (no public flush API; cross-process SSR
+unaffected) — note for ENGINE S10; (c) Tabs.tsx has a type-only react
+`KeyboardEvent` import (harmless) — a `consistent-type-imports` lint rule would
+prevent the class (note for TEST-CI S11); (d) style element is now created on
+first injection rather than module eval — observable only when valet is
+imported in a non-DOM context first (note for ENGINE S11 `@layer` work).
+
+### Wave 0.1 — pure cores (15 slices, 13 lanes) — ✅
+
+**What shipped:** vitest two-project harness (`vitest.config.ts`: node +
+jsdom-by-suffix, pool forks, oxc JSX automatic — vitest 4 superseded the
+plan's esbuild option, noted in-config) · suites: resolveSpace (10),
+createStyled jsdom StrictMode one-rule-per-class (4), hash (30, incl. seeded
+re-import vectors), createFormStore, dateUtils + TZ-parameterized suite
+(`src/test-utils/withTZ.ts`, Pacific/Kiritimati ⋯ America/Anchorage), svgSafe
+(50+ adversarial vectors), release-gate scripts, devErrors, resolveTabAction
+matrix, extractors (added by the fixer) — **251 tests, 15 files, all green** ·
+fixes: OVERLAY S1 focus trap (mid-dialog Tab reaches the browser; wrap branches
+own preventDefault; escaped-focus refocuses first), THEMING S1 setMode
+brand-wipe (overlay-composition model + `resetTheme`, audit Node repro ported),
+THEMING S2 try/finally font recovery, FIELDS S2 slider keyStep floor wired,
+SECURITY S2/S3 aiKeyStore (stale-cipher eviction, secure-context error,
+passphrase field deleted), GOVERNANCE S6 check-changelog/check-pins (+tests),
+MCP-TRUTH S1/S2/S5 (real summaries via first-statement comment ranges +
+required-prop checker-verdict fix + polymorphic `as`; glossary path fixed,
+silent-empty now impossible; route-table docsUrls).
+
+**Verification:** 3-lens adversarial review — correctness **pass** (all eight
+behavioral areas re-proven: focus-trap 6/6 end-to-end jsdom keydowns, theme
+repro survives double toggle, 50-vector svgSafe sweep, old-vs-new extractor
+diff surgical: exactly TextField.name flips required, 4 `as` props added, 56
+real summaries, zero collateral); scope **pass** (every file maps to a
+sanctioned slice; forbidden files untouched); test-quality **fail** → fixer
+added `scripts/mcp/extractors.test.mjs` + flagged registrar scripts.
+Orchestrator gate after registrar: lint ✅ tsc ✅ **251/251** ✅ build ✅
+CJS+ESM smokes ✅ mcp:build + mcp:schema:check ✅ (corpus regenerated: 0
+placeholder summaries, 13 glossary entries, kebab-route docsUrls, buildHash
+fresh).
+
+**Registrar actions (R1):** devDeps vitest/jsdom/react/react-dom; scripts
+`test`/`test:watch`/`typecheck`. AGENTS.md Testing section text captured from
+S1's report — lands with the Wave 0.4 GOVERNANCE batch (R24).
+
+**Flags:** (a) workflow-harness lesson: `args` reaches scripts as a string —
+inline constants in future wave scripts (the Wave-0.1 fixer agent died
+returning its summary after finishing; work recovered intact from its
+transcript and the journal); (b) eslint globs don't cover repo-root config
+files (vitest.config.ts unlinted → TEST-CI S11); (c) tsconfig `include:[src]`
+leaves vitest.config.ts untypechecked (S11); (d) vitest 4 oxc-vs-esbuild
+transform note for AGENTS.md.
 
 ---
 

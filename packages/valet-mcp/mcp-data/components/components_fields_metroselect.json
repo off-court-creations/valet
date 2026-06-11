@@ -2,7 +2,7 @@
   "name": "MetroSelect",
   "category": "fields",
   "slug": "components/fields/metroselect",
-  "summary": "MetroSelect component",
+  "summary": "windows 8 start screen style grid select",
   "status": "stable",
   "aliases": [
     "metroselect",
@@ -192,8 +192,10 @@
       }
     }
   ],
+  "docsUrl": "/metroselect-demo",
   "sourceFiles": [
-    "src/components/fields/MetroSelect.tsx"
+    "src/components/fields/MetroSelect.tsx",
+    "docs/src/pages/components/field/MetroSelectDemo.tsx"
   ],
   "version": "0.34.1",
   "schemaVersion": "1.6"

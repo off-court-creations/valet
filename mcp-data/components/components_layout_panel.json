@@ -2,7 +2,7 @@
   "name": "Panel",
   "category": "layout",
   "slug": "components/layout/panel",
-  "summary": "Panel component",
+  "summary": "spacing refactor: container pad + compact – 2025‑08‑12",
   "status": "stable",
   "aliases": [
     "panel",
@@ -165,8 +165,10 @@
       "minimalProps": {}
     }
   ],
+  "docsUrl": "/panel-demo",
   "sourceFiles": [
-    "src/components/layout/Panel.tsx"
+    "src/components/layout/Panel.tsx",
+    "docs/src/pages/components/layout/Panel.tsx"
   ],
   "version": "0.34.1",
   "schemaVersion": "1.6"

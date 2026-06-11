@@ -2,7 +2,7 @@
   "name": "Accordion",
   "category": "layout",
   "slug": "components/layout/accordion",
-  "summary": "Accordion component",
+  "summary": "Re-architected single-file Accordion",
   "status": "experimental",
   "aliases": [
     "accordion",
@@ -132,8 +132,10 @@
       "minimalProps": {}
     }
   ],
+  "docsUrl": "/accordion-demo",
   "sourceFiles": [
-    "src/components/layout/Accordion.tsx"
+    "src/components/layout/Accordion.tsx",
+    "docs/src/pages/components/layout/AccordionDemo.tsx"
   ],
   "version": "0.34.1",
   "schemaVersion": "1.6"

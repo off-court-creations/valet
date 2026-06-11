@@ -2,7 +2,7 @@
   "name": "Typography",
   "category": "primitives",
   "slug": "components/primitives/typography",
-  "summary": "Typography component",
+  "summary": "patch: force text wrapping; add noSelect prop – 2025‑07‑17",
   "status": "stable",
   "aliases": [
     "typography",
@@ -131,6 +131,13 @@
       "type": "string | string[] | undefined",
       "required": false,
       "description": "One or many style-preset names registered via `definePreset()`"
+    },
+    {
+      "name": "as",
+      "type": "React.ElementType",
+      "required": false,
+      "description": "Polymorphic element override (renders this element/component instead of the default).",
+      "default": "'span'"
     }
   ],
   "domPassthrough": {
@@ -207,7 +214,7 @@
       "minimalProps": {}
     }
   ],
-  "docsUrl": "/components/primitives/TypographyDemoPage",
+  "docsUrl": "/typography",
   "sourceFiles": [
     "src/components/primitives/Typography.tsx",
     "docs/src/pages/components/primitives/TypographyDemoPage.tsx"

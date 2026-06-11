@@ -2,7 +2,7 @@
   "name": "Tabs.Tab",
   "category": "layout",
   "slug": "components/layout/tabs.tab",
-  "summary": "Tabs.Tab component",
+  "summary": "spacing refactor: container pad + gap; rem→spacing – 2025‑08‑12",
   "status": "stable",
   "props": [
     {
@@ -55,6 +55,7 @@
   ],
   "bestPractices": [],
   "examples": [],
+  "docsUrl": "/tabs-demo",
   "sourceFiles": [
     "src/components/layout/Tabs.tsx"
   ],

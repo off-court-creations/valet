@@ -2,7 +2,7 @@
   "name": "Stack",
   "category": "layout",
   "slug": "components/layout/stack",
-  "summary": "Stack component",
+  "summary": "overhaul: spacing refactor (container pad + gap, compact) – 2025-08-12",
   "status": "stable",
   "aliases": [
     "stack",
@@ -96,8 +96,10 @@
     "Prefer `Grid` for complex two‑dimensional layouts and `Table` for data."
   ],
   "examples": [],
+  "docsUrl": "/stack-demo",
   "sourceFiles": [
-    "src/components/layout/Stack.tsx"
+    "src/components/layout/Stack.tsx",
+    "docs/src/pages/components/layout/StackDemo.tsx"
   ],
   "version": "0.34.1",
   "schemaVersion": "1.6"

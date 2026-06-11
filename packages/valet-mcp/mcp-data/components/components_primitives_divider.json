@@ -2,7 +2,7 @@
   "name": "Divider",
   "category": "primitives",
   "slug": "components/primitives/divider",
-  "summary": "Divider component",
+  "summary": "theme-aware line separator with spacing ergonomics",
   "status": "stable",
   "aliases": [
     "divider",
@@ -84,8 +84,10 @@
     "Don’t communicate state with dividers; use colour/tokens in the relevant component instead."
   ],
   "examples": [],
+  "docsUrl": "/divider-demo",
   "sourceFiles": [
-    "src/components/primitives/Divider.tsx"
+    "src/components/primitives/Divider.tsx",
+    "docs/src/pages/components/primitives/DividerDemo.tsx"
   ],
   "version": "0.34.1",
   "schemaVersion": "1.6"

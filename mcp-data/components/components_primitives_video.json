@@ -2,7 +2,7 @@
   "name": "Video",
   "category": "primitives",
   "slug": "components/primitives/video",
-  "summary": "Video component",
+  "summary": "flexible <Video /> component with lazy loading & fullscreen",
   "status": "stable",
   "aliases": [
     "video",
@@ -155,8 +155,10 @@
     "Lazy‑load non‑critical media and prefetch only when beneficial."
   ],
   "examples": [],
+  "docsUrl": "/video-demo",
   "sourceFiles": [
-    "src/components/primitives/Video.tsx"
+    "src/components/primitives/Video.tsx",
+    "docs/src/pages/components/primitives/VideoDemo.tsx"
   ],
   "version": "0.34.1",
   "schemaVersion": "1.6"

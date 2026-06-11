@@ -2,7 +2,7 @@
   "name": "Avatar",
   "category": "primitives",
   "slug": "components/primitives/avatar",
-  "summary": "Avatar component",
+  "summary": "User avatar with optional Gravatar fallback",
   "status": "stable",
   "aliases": [
     "avatar",
@@ -165,8 +165,10 @@
       "minimalProps": {}
     }
   ],
+  "docsUrl": "/avatar-demo",
   "sourceFiles": [
-    "src/components/primitives/Avatar.tsx"
+    "src/components/primitives/Avatar.tsx",
+    "docs/src/pages/components/primitives/AvatarDemo.tsx"
   ],
   "version": "0.34.1",
   "schemaVersion": "1.6"

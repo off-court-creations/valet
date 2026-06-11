@@ -2,392 +2,392 @@
   {
     "name": "Button",
     "category": "fields",
-    "summary": "Button component",
+    "summary": "Theme-aware <Button /> – automatic Typography wrapping",
     "slug": "components/fields/button",
     "status": "stable"
   },
   {
     "name": "Checkbox",
     "category": "fields",
-    "summary": "Checkbox component",
+    "summary": "Theme-aware, accessible Checkbox – consistent outline, no blue flash,",
     "slug": "components/fields/checkbox",
     "status": "stable"
   },
   {
     "name": "DateSelector",
     "category": "fields",
-    "summary": "DateSelector component",
+    "summary": "interactive month calendar for picking dates",
     "slug": "components/fields/dateselector",
     "status": "experimental"
   },
   {
     "name": "FormControl",
     "category": "fields",
-    "summary": "FormControl component",
+    "summary": "Provides typed form store context and intercepts submit for SPA flows",
     "slug": "components/fields/formcontrol",
     "status": "stable"
   },
   {
     "name": "IconButton",
     "category": "fields",
-    "summary": "IconButton component",
+    "summary": "strict‑optional clean build",
     "slug": "components/fields/iconbutton",
     "status": "stable"
   },
   {
     "name": "Iterator",
     "category": "fields",
-    "summary": "Iterator component",
+    "summary": "numeric stepper with plus/minus buttons and scroll wheel support",
     "slug": "components/fields/iterator",
     "status": "stable"
   },
   {
     "name": "Option",
     "category": "fields",
-    "summary": "Option component",
+    "summary": "Fully-typed, FormControl-aware <Select/> (single + multiple).",
     "slug": "components/fields/option",
     "status": "stable"
   },
   {
     "name": "MetroSelect",
     "category": "fields",
-    "summary": "MetroSelect component",
+    "summary": "windows 8 start screen style grid select",
     "slug": "components/fields/metroselect",
     "status": "stable"
   },
   {
     "name": "MetroSelect.Option",
     "category": "fields",
-    "summary": "MetroSelect.Option component",
+    "summary": "windows 8 start screen style grid select",
     "slug": "components/fields/metroselect.option",
     "status": "stable"
   },
   {
     "name": "RadioGroup",
     "category": "fields",
-    "summary": "RadioGroup component",
+    "summary": "Theme-aware radio groups with keyboard nav & refined spacing",
     "slug": "components/fields/radiogroup",
     "status": "stable"
   },
   {
     "name": "Radio",
     "category": "fields",
-    "summary": "Radio component",
+    "summary": "Theme-aware radio groups with keyboard nav & refined spacing",
     "slug": "components/fields/radio",
     "status": "stable"
   },
   {
     "name": "Select",
     "category": "fields",
-    "summary": "Select component",
+    "summary": "Fully-typed, FormControl-aware <Select/> (single + multiple).",
     "slug": "components/fields/select",
     "status": "stable"
   },
   {
     "name": "Select.Option",
     "category": "fields",
-    "summary": "Select.Option component",
+    "summary": "Fully-typed, FormControl-aware <Select/> (single + multiple).",
     "slug": "components/fields/select.option",
     "status": "stable"
   },
   {
     "name": "Slider",
     "category": "fields",
-    "summary": "Slider component",
+    "summary": "Theme-aware, ultra-fast <Slider/> for @archway/valet",
     "slug": "components/fields/slider",
     "status": "stable"
   },
   {
     "name": "Switch",
     "category": "fields",
-    "summary": "Switch component",
+    "summary": "Theme-aware, accessible boolean <Switch /> component",
     "slug": "components/fields/switch",
     "status": "stable"
   },
   {
     "name": "TextField",
     "category": "fields",
-    "summary": "TextField component",
+    "summary": "controlled text input integrating with FormControl; add fontFamily prop",
     "slug": "components/fields/textfield",
     "status": "stable"
   },
   {
     "name": "Accordion",
     "category": "layout",
-    "summary": "Accordion component",
+    "summary": "Re-architected single-file Accordion",
     "slug": "components/layout/accordion",
     "status": "experimental"
   },
   {
     "name": "Accordion.Item",
     "category": "layout",
-    "summary": "Accordion.Item component",
+    "summary": "Re-architected single-file Accordion",
     "slug": "components/layout/accordion.item",
     "status": "stable"
   },
   {
     "name": "AppBar",
     "category": "layout",
-    "summary": "AppBar component",
+    "summary": "spacing refactor: controlled pad; remove child padding – 2025‑08‑12",
     "slug": "components/layout/appbar",
     "status": "stable"
   },
   {
     "name": "Box",
     "category": "layout",
-    "summary": "Box component",
+    "summary": "width modes: content-left (default), content-right, centered, full",
     "slug": "components/layout/box",
     "status": "stable"
   },
   {
     "name": "Drawer",
     "category": "layout",
-    "summary": "Drawer component",
+    "summary": "Minimal sliding drawer component akin to MUI's Drawer.",
     "slug": "components/layout/drawer",
     "status": "stable"
   },
   {
     "name": "Grid",
     "category": "layout",
-    "summary": "Grid component",
+    "summary": "spacing refactor: container pad + gap, compact – 2025-08-12",
     "slug": "components/layout/grid",
     "status": "stable"
   },
   {
     "name": "List",
     "category": "layout",
-    "summary": "List component",
+    "summary": "Simplified, accessible list with optional selection and reorder",
     "slug": "components/layout/list",
     "status": "stable"
   },
   {
     "name": "Modal",
     "category": "layout",
-    "summary": "Modal component",
+    "summary": "spacing refactor: container pad; rem→spacing; compact – 2025‑08‑12",
     "slug": "components/layout/modal",
     "status": "stable"
   },
   {
     "name": "Panel",
     "category": "layout",
-    "summary": "Panel component",
+    "summary": "spacing refactor: container pad + compact – 2025‑08‑12",
     "slug": "components/layout/panel",
     "status": "stable"
   },
   {
     "name": "Stack",
     "category": "layout",
-    "summary": "Stack component",
+    "summary": "overhaul: spacing refactor (container pad + gap, compact) – 2025-08-12",
     "slug": "components/layout/stack",
     "status": "stable"
   },
   {
     "name": "Surface",
     "category": "layout",
-    "summary": "Surface component",
+    "summary": "overhaul: density-controlled spacing via --valet-space – 2025-08-12",
     "slug": "components/layout/surface",
     "status": "stable"
   },
   {
     "name": "Tabs",
     "category": "layout",
-    "summary": "Tabs component",
+    "summary": "spacing refactor: container pad + gap; rem→spacing – 2025‑08‑12",
     "slug": "components/layout/tabs",
     "status": "stable"
   },
   {
     "name": "Tabs.Tab",
     "category": "layout",
-    "summary": "Tabs.Tab component",
+    "summary": "spacing refactor: container pad + gap; rem→spacing – 2025‑08‑12",
     "slug": "components/layout/tabs.tab",
     "status": "stable"
   },
   {
     "name": "Tabs.Panel",
     "category": "layout",
-    "summary": "Tabs.Panel component",
+    "summary": "spacing refactor: container pad + gap; rem→spacing – 2025‑08‑12",
     "slug": "components/layout/tabs.panel",
     "status": "stable"
   },
   {
     "name": "Avatar",
     "category": "primitives",
-    "summary": "Avatar component",
+    "summary": "User avatar with optional Gravatar fallback",
     "slug": "components/primitives/avatar",
     "status": "stable"
   },
   {
     "name": "Divider",
     "category": "primitives",
-    "summary": "Divider component",
+    "summary": "theme-aware line separator with spacing ergonomics",
     "slug": "components/primitives/divider",
     "status": "stable"
   },
   {
     "name": "Icon",
     "category": "primitives",
-    "summary": "Icon component",
+    "summary": "strict‑optional safe typings",
     "slug": "components/primitives/icon",
     "status": "stable"
   },
   {
     "name": "Image",
     "category": "primitives",
-    "summary": "Image component",
+    "summary": "Simple, excellent <Image /> — no SSR, no skeletons",
     "slug": "components/primitives/image",
     "status": "stable"
   },
   {
     "name": "ProgressBar",
     "category": "primitives",
-    "summary": "ProgressBar component",
+    "summary": "Redesign: simpler API, better aesthetics, stronger a11y",
     "slug": "components/primitives/progressbar",
     "status": "stable"
   },
   {
     "name": "ProgressRing",
     "category": "primitives",
-    "summary": "ProgressRing component",
+    "summary": "Redesign: simpler API, better aesthetics, stronger a11y",
     "slug": "components/primitives/progressring",
     "status": "stable"
   },
   {
     "name": "Progress",
     "category": "primitives",
-    "summary": "Progress component",
+    "summary": "Redesign: simpler API, better aesthetics, stronger a11y",
     "slug": "components/primitives/progress",
     "status": "stable"
   },
   {
     "name": "Typography",
     "category": "primitives",
-    "summary": "Typography component",
+    "summary": "patch: force text wrapping; add noSelect prop – 2025‑07‑17",
     "slug": "components/primitives/typography",
     "status": "stable"
   },
   {
     "name": "Video",
     "category": "primitives",
-    "summary": "Video component",
+    "summary": "flexible <Video /> component with lazy loading & fullscreen",
     "slug": "components/primitives/video",
     "status": "stable"
   },
   {
     "name": "WebGLCanvas",
     "category": "primitives",
-    "summary": "WebGLCanvas component",
+    "summary": "WebGL2 canvas wrapper: DPI-aware, resizes to parent, RAF loop",
     "slug": "components/primitives/webglcanvas",
     "status": "stable"
   },
   {
     "name": "Chip",
     "category": "widgets",
-    "summary": "Chip component",
+    "summary": "Compact label with optional icon/avatar and removal action",
     "slug": "components/widgets/chip",
     "status": "stable"
   },
   {
     "name": "CodeBlock",
     "category": "widgets",
-    "summary": "CodeBlock component",
+    "summary": "Reusable code block with Markdown highlighting, copy button, and snackbar feedback",
     "slug": "components/widgets/codeblock",
     "status": "stable"
   },
   {
     "name": "Dropzone",
     "category": "widgets",
-    "summary": "Dropzone component",
+    "summary": "react-dropzone wrapper with theming, keyboard a11y, previews, and rejections",
     "slug": "components/widgets/dropzone",
     "status": "stable"
   },
   {
     "name": "LLMChat",
     "category": "widgets",
-    "summary": "LLMChat component",
+    "summary": "LLM style chat component with height constraint",
     "slug": "components/widgets/llmchat",
     "status": "experimental"
   },
   {
     "name": "LoadingBackdrop",
     "category": "widgets",
-    "summary": "LoadingBackdrop component",
+    "summary": "simple theme-aware loading overlay",
     "slug": "components/widgets/loadingbackdrop",
     "status": "stable"
   },
   {
     "name": "Markdown",
     "category": "widgets",
-    "summary": "Markdown component",
+    "summary": "Lightweight Markdown renderer using valet primitives",
     "slug": "components/widgets/markdown",
     "status": "stable"
   },
   {
     "name": "Pagination",
     "category": "widgets",
-    "summary": "Pagination component",
+    "summary": "Tab-style pagination with stretch-follow elastic underline for active page",
     "slug": "components/widgets/pagination",
     "status": "stable"
   },
   {
     "name": "ParallaxScroll",
     "category": "widgets",
-    "summary": "ParallaxScroll component",
+    "summary": "simple scroll-aware container for parallax effects",
     "slug": "components/widgets/parallaxscroll",
     "status": "stable"
   },
   {
     "name": "ParallaxLayer",
     "category": "widgets",
-    "summary": "ParallaxLayer component",
+    "summary": "simple scroll-aware container for parallax effects",
     "slug": "components/widgets/parallaxlayer",
     "status": "stable"
   },
   {
     "name": "ParallaxBackground",
     "category": "widgets",
-    "summary": "ParallaxBackground component",
+    "summary": "simple scroll-aware container for parallax effects",
     "slug": "components/widgets/parallaxbackground",
     "status": "experimental"
   },
   {
     "name": "RichChat",
     "category": "widgets",
-    "summary": "RichChat component",
+    "summary": "Local chat component with embeddable content; add fontFamily prop",
     "slug": "components/widgets/richchat",
     "status": "experimental"
   },
   {
     "name": "Snackbar",
     "category": "widgets",
-    "summary": "Snackbar component",
+    "summary": "Fully-typed, theme-aware snackbar with fade + auto-dismiss",
     "slug": "components/widgets/snackbar",
     "status": "stable"
   },
   {
     "name": "SpeedDial",
     "category": "widgets",
-    "summary": "SpeedDial component",
+    "summary": "Floating action button with slide-out action animation",
     "slug": "components/widgets/speeddial",
     "status": "stable"
   },
   {
     "name": "Table",
     "category": "widgets",
-    "summary": "Table component",
+    "summary": "patch: self-narrowing and table-layout fixed to avoid right-edge clipping – 2025-07-18",
     "slug": "components/widgets/table",
     "status": "experimental"
   },
   {
     "name": "Tooltip",
     "category": "widgets",
-    "summary": "Tooltip component",
+    "summary": "Robust CSS-only tooltip (MUI-style API) – width-safe in flex columns",
     "slug": "components/widgets/tooltip",
     "status": "stable"
   },
   {
     "name": "Tree",
     "category": "widgets",
-    "summary": "Tree component",
+    "summary": "Basic accessible tree view component",
     "slug": "components/widgets/tree",
     "status": "stable"
   }

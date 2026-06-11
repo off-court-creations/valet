@@ -2,7 +2,7 @@
   "name": "Accordion.Item",
   "category": "layout",
   "slug": "components/layout/accordion.item",
-  "summary": "Accordion.Item component",
+  "summary": "Re-architected single-file Accordion",
   "status": "stable",
   "props": [
     {
@@ -63,6 +63,7 @@
   ],
   "bestPractices": [],
   "examples": [],
+  "docsUrl": "/accordion-demo",
   "sourceFiles": [
     "src/components/layout/Accordion.tsx"
   ],

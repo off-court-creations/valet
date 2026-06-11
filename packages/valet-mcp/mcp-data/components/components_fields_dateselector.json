@@ -2,7 +2,7 @@
   "name": "DateSelector",
   "category": "fields",
   "slug": "components/fields/dateselector",
-  "summary": "DateSelector component",
+  "summary": "interactive month calendar for picking dates",
   "status": "experimental",
   "aliases": [
     "date",
@@ -126,8 +126,10 @@
     "Prefer compactMode on small viewports; use default/adaptive on larger layouts."
   ],
   "examples": [],
+  "docsUrl": "/dateselector-demo",
   "sourceFiles": [
-    "src/components/fields/DateSelector.tsx"
+    "src/components/fields/DateSelector.tsx",
+    "docs/src/pages/components/field/DateSelectorDemo.tsx"
   ],
   "version": "0.34.1",
   "schemaVersion": "1.6"

@@ -2,7 +2,7 @@
   "name": "TextField",
   "category": "fields",
   "slug": "components/fields/textfield",
-  "summary": "TextField component",
+  "summary": "controlled text input integrating with FormControl; add fontFamily prop",
   "status": "stable",
   "aliases": [
     "textfield",
@@ -14,7 +14,7 @@
     {
       "name": "name",
       "type": "string",
-      "required": false,
+      "required": true,
       "description": "Field identifier used for FormControl binding and forwarded to the underlying control\nwhen applicable. Components can require `name` locally if they depend on it."
     },
     {
@@ -132,7 +132,9 @@
       "code": "<Stack gap={1}>\n  <TextField name='email' type='email' label='Email' placeholder='you@example.com' autoComplete='email' />\n  <TextField name='password' type='password' label='Password' autoComplete='new-password' />\n</Stack>",
       "lang": "tsx",
       "runnable": true,
-      "minimalProps": {}
+      "minimalProps": {
+        "name": ""
+      }
     },
     {
       "id": "textfield-textarea",
@@ -140,7 +142,9 @@
       "code": "<Stack gap={1}>\n  <TextField name='bio' as='textarea' rows={4} label='Bio' placeholder='Tell us about yourself' helperText='Use 2–3 sentences.' />\n</Stack>",
       "lang": "tsx",
       "runnable": true,
-      "minimalProps": {}
+      "minimalProps": {
+        "name": ""
+      }
     }
   ],
   "sourceFiles": [

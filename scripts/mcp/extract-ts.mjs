@@ -516,13 +516,20 @@ export function extractFromTs(projectRoot) {
               const name = sym.getName();
               const symType = sym.getTypeAtLocation(ps || aliasDecl);
               const typeText = symType.getText(ps || aliasDecl);
+              // Prefer the checker's verdict on the merged symbol: intersections
+              // like `FieldBaseProps & { name: string }` carry one optional and
+              // one required declaration, and the first PropertySignature found
+              // may be the optional base — hasQuestionToken() alone misreports
+              // required props (e.g. TextField's `name`).
               let isRequired = true;
               try {
-                const propDecl = decls.find((d) => d.getKind && d.getKind() === SyntaxKind.PropertySignature);
-                if (propDecl && typeof propDecl.hasQuestionToken === 'function') {
-                  isRequired = !propDecl.hasQuestionToken();
-                } else if (typeof sym.isOptional === 'function') {
+                if (typeof sym.isOptional === 'function') {
                   isRequired = !sym.isOptional();
+                } else {
+                  const propDecl = decls.find((d) => d.getKind && d.getKind() === SyntaxKind.PropertySignature);
+                  if (propDecl && typeof propDecl.hasQuestionToken === 'function') {
+                    isRequired = !propDecl.hasQuestionToken();
+                  }
                 }
               } catch {}
               addPropAgg(name, typeText, !!isRequired);
@@ -764,28 +771,46 @@ export function extractFromTs(projectRoot) {
       }
     })();
 
-    // summary: derive from file header comments if present
+    // summary: derive from the file header comment if present.
+    // ts-morph attaches leading comments to the first statement, not the
+    // SourceFile (sf.getLeadingCommentRanges() is always [] here), and each
+    // `//` line is its own range — so gather them all, then skip the
+    // box-drawing rule lines and the `<path> | valet` banner line.
     let summary = '';
-    const headerComment = sf.getLeadingCommentRanges()?.[0]?.getText?.();
-    if (headerComment) {
-      const lines = headerComment.split(/\r?\n/).map((l) => l.replace(/^\/\/[\s*]*/, ''));
-      const desc = lines.find((l) => l && !l.includes('| valet'));
-      if (desc) summary = desc.trim();
-    }
-
-    // If no domPassthrough yet, attempt to infer from polymorphic helper usage
     try {
-      if (!domPassthrough) {
-        const decls = exports.get(componentName) || [];
-        for (const d of decls) {
-          if (d.getKind() !== SyntaxKind.VariableDeclaration) continue;
-          const init = d.getInitializer?.();
-          const txt = init?.getText?.() || '';
-          const m = txt.match(/createPolymorphicComponent\s*<\s*'([^']+)'\s*,/);
-          if (m && m[1]) {
-            domPassthrough = { element: m[1], omitted: [] };
-            break;
-          }
+      const ranges = sf.getStatements()[0]?.getLeadingCommentRanges() || [];
+      const lines = ranges
+        .flatMap((r) => r.getText().split(/\r?\n/))
+        .map((l) =>
+          l
+            .replace(/^\s*\/\*+/, '')
+            .replace(/\*+\/\s*$/, '')
+            .replace(/^\s*\/\/+/, '')
+            .replace(/^[\s*]+/, '')
+            .trim(),
+        );
+      const desc = lines.find((l) => l && !l.includes('| valet') && /[A-Za-z0-9]/.test(l));
+      if (desc) summary = desc;
+    } catch {}
+
+    // Polymorphic components built via createPolymorphicComponent: surface the
+    // `as` prop (it lives on PolymorphicProps, not OwnProps, so the paths above
+    // never see it) and infer domPassthrough from the default element when
+    // nothing better was found.
+    try {
+      const decls = exports.get(componentName) || [];
+      for (const d of decls) {
+        if (d.getKind() !== SyntaxKind.VariableDeclaration) continue;
+        const init = d.getInitializer?.();
+        const txt = init?.getText?.() || '';
+        const m = txt.match(/createPolymorphicComponent\s*<\s*'([^']+)'\s*,/);
+        if (m && m[1]) {
+          pushProp('as', 'React.ElementType', false, {
+            description: 'Polymorphic element override (renders this element/component instead of the default).',
+            default: `'${m[1]}'`,
+          });
+          if (!domPassthrough) domPassthrough = { element: m[1], omitted: [] };
+          break;
         }
       }
     } catch {}

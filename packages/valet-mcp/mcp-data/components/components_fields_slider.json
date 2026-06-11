@@ -2,7 +2,7 @@
   "name": "Slider",
   "category": "fields",
   "slug": "components/fields/slider",
-  "summary": "Slider component",
+  "summary": "Theme-aware, ultra-fast <Slider/> for @archway/valet",
   "status": "stable",
   "aliases": [
     "slider",
@@ -186,8 +186,10 @@
     "Use presets/tokens for colour and shape. Keep theme‑aligned styling rather than per‑instance CSS."
   ],
   "examples": [],
+  "docsUrl": "/slider-demo",
   "sourceFiles": [
-    "src/components/fields/Slider.tsx"
+    "src/components/fields/Slider.tsx",
+    "docs/src/pages/components/field/SliderDemo.tsx"
   ],
   "version": "0.34.1",
   "schemaVersion": "1.6"

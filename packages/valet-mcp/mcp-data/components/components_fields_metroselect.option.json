@@ -2,7 +2,7 @@
   "name": "MetroSelect.Option",
   "category": "fields",
   "slug": "components/fields/metroselect.option",
-  "summary": "MetroSelect.Option component",
+  "summary": "windows 8 start screen style grid select",
   "status": "stable",
   "props": [
     {
@@ -64,6 +64,7 @@
   ],
   "bestPractices": [],
   "examples": [],
+  "docsUrl": "/metroselect-demo",
   "sourceFiles": [
     "src/components/fields/MetroSelect.tsx"
   ],

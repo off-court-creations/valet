@@ -82,8 +82,13 @@ export async function createInitialTheme(
 
   const { start, finish } = useFonts.getState();
   start();
-  await waitForFonts(fontsToLoad);
-  finish();
+  try {
+    await waitForFonts(fontsToLoad);
+  } finally {
+    // A rejected font load must never leave fontStore stuck in loading —
+    // finish() always runs so `blockUntilFonts` Surfaces can't wedge.
+    finish();
+  }
 }
 
 export function useInitialTheme(
@@ -96,7 +101,13 @@ export function useInitialTheme(
   options?: GoogleFontOptions,
 ) {
   useEffect(() => {
-    createInitialTheme(patch, extras, options);
+    // Catch the floating promise: a failed font load should warn in dev,
+    // never surface as an unhandled rejection or block the UI.
+    createInitialTheme(patch, extras, options).catch((err) => {
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn('valet useInitialTheme: font loading failed; continuing without fonts.', err);
+      }
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 }

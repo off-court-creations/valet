@@ -2,7 +2,7 @@
   "name": "ParallaxScroll",
   "category": "widgets",
   "slug": "components/widgets/parallaxscroll",
-  "summary": "ParallaxScroll component",
+  "summary": "simple scroll-aware container for parallax effects",
   "status": "stable",
   "props": [
     {

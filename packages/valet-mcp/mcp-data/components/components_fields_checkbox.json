@@ -2,7 +2,7 @@
   "name": "Checkbox",
   "category": "fields",
   "slug": "components/fields/checkbox",
-  "summary": "Checkbox component",
+  "summary": "Theme-aware, accessible Checkbox – consistent outline, no blue flash,",
   "status": "stable",
   "aliases": [
     "checkbox"
@@ -148,8 +148,10 @@
     "Tokens/presets. Style with theme tokens and `preset` rather than ad‑hoc CSS to keep density and branding consistent."
   ],
   "examples": [],
+  "docsUrl": "/checkbox-demo",
   "sourceFiles": [
-    "src/components/fields/Checkbox.tsx"
+    "src/components/fields/Checkbox.tsx",
+    "docs/src/pages/components/field/CheckBoxDemo.tsx"
   ],
   "version": "0.34.1",
   "schemaVersion": "1.6"

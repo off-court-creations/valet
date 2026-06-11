@@ -2,7 +2,7 @@
   "name": "Chip",
   "category": "widgets",
   "slug": "components/widgets/chip",
-  "summary": "Chip component",
+  "summary": "Compact label with optional icon/avatar and removal action",
   "status": "stable",
   "aliases": [
     "chip",
@@ -168,8 +168,10 @@
       }
     }
   ],
+  "docsUrl": "/chip-demo",
   "sourceFiles": [
-    "src/components/widgets/Chip.tsx"
+    "src/components/widgets/Chip.tsx",
+    "docs/src/pages/components/widgets/ChipDemo.tsx"
   ],
   "version": "0.34.1",
   "schemaVersion": "1.6"

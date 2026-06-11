@@ -2,7 +2,7 @@
   "name": "RichChat",
   "category": "widgets",
   "slug": "components/widgets/richchat",
-  "summary": "RichChat component",
+  "summary": "Local chat component with embeddable content; add fontFamily prop",
   "status": "experimental",
   "aliases": [
     "richchat",
@@ -125,8 +125,10 @@
       }
     }
   ],
+  "docsUrl": "/rich-chat-demo",
   "sourceFiles": [
-    "src/components/widgets/RichChat.tsx"
+    "src/components/widgets/RichChat.tsx",
+    "docs/src/pages/components/widgets/RichChatDemo.tsx"
   ],
   "version": "0.34.1",
   "schemaVersion": "1.6"

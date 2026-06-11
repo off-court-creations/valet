@@ -2,7 +2,7 @@
   "name": "Switch",
   "category": "fields",
   "slug": "components/fields/switch",
-  "summary": "Switch component",
+  "summary": "Theme-aware, accessible boolean <Switch /> component",
   "status": "stable",
   "aliases": [
     "switch",
@@ -151,8 +151,10 @@
       "minimalProps": {}
     }
   ],
+  "docsUrl": "/switch-demo",
   "sourceFiles": [
-    "src/components/fields/Switch.tsx"
+    "src/components/fields/Switch.tsx",
+    "docs/src/pages/components/field/SwitchDemo.tsx"
   ],
   "version": "0.34.1",
   "schemaVersion": "1.6"

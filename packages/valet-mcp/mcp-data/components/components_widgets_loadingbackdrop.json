@@ -2,7 +2,7 @@
   "name": "LoadingBackdrop",
   "category": "widgets",
   "slug": "components/widgets/loadingbackdrop",
-  "summary": "LoadingBackdrop component",
+  "summary": "simple theme-aware loading overlay",
   "status": "stable",
   "aliases": [
     "loadingbackdrop",

@@ -41,8 +41,9 @@ function readDocsFiles(root) {
     }
   };
   if (fs.existsSync(docsRoot)) walk(docsRoot);
-  // Only include component demo pages to avoid polluting MCP with concept/tutorial pages
-  return files.filter((fp) => fp.includes(`${path.sep}components${path.sep}`));
+  // Only include component demo pages to avoid polluting MCP with concept/tutorial pages.
+  // Sorted so two pages guessing the same component resolve deterministically.
+  return files.filter((fp) => fp.includes(`${path.sep}components${path.sep}`)).sort();
 }
 
 function guessNameFromFile(fp) {
@@ -68,8 +69,111 @@ function getAttrString(el, name) {
   return undefined;
 }
 
+function dynamicImportSpec(node) {
+  // Matches the lazy-loader argument: `() => import('./pages/Foo')`.
+  // Babel emits CallExpression with an Import callee (or ImportExpression on newer configs).
+  if (!node || node.type !== 'ArrowFunctionExpression') return undefined;
+  const body = node.body;
+  if (body.type === 'CallExpression' && body.callee.type === 'Import') {
+    const arg = body.arguments[0];
+    return arg && arg.type === 'StringLiteral' ? arg.value : undefined;
+  }
+  if (body.type === 'ImportExpression' && body.source && body.source.type === 'StringLiteral') {
+    return body.source.value;
+  }
+  return undefined;
+}
+
+function resolvePageFile(docsSrc, spec) {
+  // './pages/components/layout/BoxDemo' -> existing file (imports are extensionless)
+  if (!spec || !spec.startsWith('.')) return undefined;
+  const base = path.resolve(docsSrc, spec);
+  const candidates = [base, `${base}.tsx`, `${base}.ts`, path.join(base, 'index.tsx'), path.join(base, 'index.ts')];
+  return candidates.find((c) => fs.existsSync(c) && fs.statSync(c).isFile());
+}
+
+export function extractRouteTable(root) {
+  // Parse the docs SPA route table (docs/src/App.tsx): lazy `page(() => import(...))`
+  // declarations + <Route path element> pairs yield route -> page-file mappings, so
+  // docsUrls are real navigable routes ('/box-demo'), not source-file paths.
+  /** @type {{ routes: Record<string, string>, routeByPageFile: Record<string, string> }} */
+  const empty = { routes: {}, routeByPageFile: {} };
+  const appFile = path.join(root, 'docs', 'src', 'App.tsx');
+  if (!fs.existsSync(appFile)) return empty;
+  const code = fs.readFileSync(appFile, 'utf8');
+  let ast;
+  try {
+    ast = parse(code, { sourceType: 'module', plugins: ['typescript', 'jsx'] });
+  } catch (e) {
+    console.warn('Route table parse error:', e.message);
+    return empty;
+  }
+
+  const docsSrc = path.join(root, 'docs', 'src');
+  /** lazy page variable name -> repo-relative page file */
+  const pageFiles = new Map();
+  traverse(ast, {
+    VariableDeclarator(p) {
+      const { id, init } = p.node;
+      if (id.type !== 'Identifier' || !init || init.type !== 'CallExpression') return;
+      if (init.callee.type !== 'Identifier' || init.callee.name !== 'page') return;
+      const file = resolvePageFile(docsSrc, dynamicImportSpec(init.arguments[0]));
+      if (file) pageFiles.set(id.name, path.relative(root, file).split(path.sep).join('/'));
+    },
+  });
+
+  /** @type {Record<string, string>} route path -> repo-relative page file */
+  const routes = {};
+  /** @type {Record<string, string>} repo-relative page file -> first route in document order */
+  const routeByPageFile = {};
+  traverse(ast, {
+    JSXElement(p) {
+      const el = p.node.openingElement;
+      if (el.name.type !== 'JSXIdentifier' || el.name.name !== 'Route') return;
+      const routePath = getAttrString(p.node, 'path');
+      if (!routePath || routePath.includes('*')) return; // catch-alls are not linkable
+      const attr = el.attributes.find((a) => a.type === 'JSXAttribute' && a.name.name === 'element');
+      const expr = attr && attr.value && attr.value.type === 'JSXExpressionContainer' ? attr.value.expression : undefined;
+      const elName =
+        expr && expr.type === 'JSXElement' && expr.openingElement.name.type === 'JSXIdentifier'
+          ? expr.openingElement.name.name
+          : undefined;
+      const file = elName ? pageFiles.get(elName) : undefined;
+      if (!file) return;
+      routes[routePath] = file;
+      if (!(file in routeByPageFile)) routeByPageFile[file] = routePath;
+    },
+  });
+
+  return { routes, routeByPageFile };
+}
+
+function writeRoutesArtifact(root, routes) {
+  // Build artifact for the docsUrl-vs-routes cross-check in validate.mjs.
+  try {
+    const outPath = path.join(root, 'mcp-data', '_routes.json');
+    const sorted = Object.fromEntries(Object.keys(routes).sort().map((k) => [k, routes[k]]));
+    fs.mkdirSync(path.dirname(outPath), { recursive: true });
+    fs.writeFileSync(outPath, JSON.stringify({ source: 'docs/src/App.tsx', routes: sorted }, null, 2));
+  } catch (e) {
+    console.warn('Routes artifact write error:', e?.message || e);
+  }
+}
+
+function preferPrev(prev, next) {
+  // Two docs pages can guess the same component (LLMChatDemo.tsx and LLMChat.tsx);
+  // keep the richer page, tie-breaking toward *Demo/*DemoPage files, then sorted order.
+  const score = (e) => e.propsRows.length + e.examples.length + e.bestPractices.length;
+  if (score(prev) !== score(next)) return score(prev) > score(next);
+  const isDemo = (e) => /Demo(Page)?\.tsx?$/.test(e.sourceFile);
+  if (isDemo(prev) !== isDemo(next)) return isDemo(prev);
+  return true;
+}
+
 export function extractFromDocs(root) {
   const filePaths = readDocsFiles(root);
+  const { routes, routeByPageFile } = extractRouteTable(root);
+  writeRoutesArtifact(root, routes);
   /** @type {Record<string, any>} */
   const result = {};
 
@@ -220,17 +324,21 @@ export function extractFromDocs(root) {
     // Deduplicate best practices; keep insertion order
     const bp = Array.from(new Set(bestPractices.map((s) => s.trim()).filter(Boolean)));
 
-    if (!propsRows.length && !examples.length && !bp.length) continue;
+    const sourceFile = path.relative(root, file).split(path.sep).join('/');
+    // Real SPA route for this page (undefined when the page is not in the route table)
+    const docsUrl = routeByPageFile[sourceFile];
 
-    result[componentName] = {
+    if (!propsRows.length && !examples.length && !bp.length && !docsUrl) continue;
+
+    const entry = {
       propsRows,
       examples,
       bestPractices: bp,
-      docsUrl: file.includes('docs/src/pages')
-        ? '/' + path.relative(path.join(root, 'docs', 'src', 'pages'), file).replace(/\\/g, '/').replace(/\.tsx?$/, '')
-        : undefined,
-      sourceFile: path.relative(root, file),
+      docsUrl,
+      sourceFile,
     };
+    const prev = result[componentName];
+    result[componentName] = prev && preferPrev(prev, entry) ? prev : entry;
   }
 
   return result;

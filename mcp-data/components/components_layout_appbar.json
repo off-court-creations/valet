@@ -2,7 +2,7 @@
   "name": "AppBar",
   "category": "layout",
   "slug": "components/layout/appbar",
-  "summary": "AppBar component",
+  "summary": "spacing refactor: controlled pad; remove child padding – 2025‑08‑12",
   "status": "stable",
   "aliases": [
     "appbar",
@@ -195,8 +195,10 @@
       "minimalProps": {}
     }
   ],
+  "docsUrl": "/appbar-demo",
   "sourceFiles": [
-    "src/components/layout/AppBar.tsx"
+    "src/components/layout/AppBar.tsx",
+    "docs/src/pages/components/layout/AppBarDemo.tsx"
   ],
   "version": "0.34.1",
   "schemaVersion": "1.6"

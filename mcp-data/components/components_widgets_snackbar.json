@@ -2,7 +2,7 @@
   "name": "Snackbar",
   "category": "widgets",
   "slug": "components/widgets/snackbar",
-  "summary": "Snackbar component",
+  "summary": "Fully-typed, theme-aware snackbar with fade + auto-dismiss",
   "status": "stable",
   "aliases": [
     "snackbar",
@@ -85,8 +85,10 @@
     "Style via tokens/presets. Use theme colors for status (e.g., `primary` / `error`) and consolidate variants with `preset`."
   ],
   "examples": [],
+  "docsUrl": "/snackbar-demo",
   "sourceFiles": [
-    "src/components/widgets/Snackbar.tsx"
+    "src/components/widgets/Snackbar.tsx",
+    "docs/src/pages/components/widgets/SnackbarDemo.tsx"
   ],
   "version": "0.34.1",
   "schemaVersion": "1.6"

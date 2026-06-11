@@ -2,7 +2,7 @@
   "name": "WebGLCanvas",
   "category": "primitives",
   "slug": "components/primitives/webglcanvas",
-  "summary": "WebGLCanvas component",
+  "summary": "WebGL2 canvas wrapper: DPI-aware, resizes to parent, RAF loop",
   "status": "stable",
   "aliases": [
     "webgl",
@@ -94,8 +94,10 @@
     "Dispose GL resources on unmount to prevent leaks."
   ],
   "examples": [],
+  "docsUrl": "/webglcanvas-demo",
   "sourceFiles": [
-    "src/components/primitives/WebGLCanvas.tsx"
+    "src/components/primitives/WebGLCanvas.tsx",
+    "docs/src/pages/components/primitives/WebGLCanvasDemo.tsx"
   ],
   "version": "0.34.1",
   "schemaVersion": "1.6"

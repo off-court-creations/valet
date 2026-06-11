@@ -2,7 +2,7 @@
   "name": "ProgressBar",
   "category": "primitives",
   "slug": "components/primitives/progressbar",
-  "summary": "ProgressBar component",
+  "summary": "Redesign: simpler API, better aesthetics, stronger a11y",
   "status": "stable",
   "props": [
     {

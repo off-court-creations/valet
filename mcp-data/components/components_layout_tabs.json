@@ -2,7 +2,7 @@
   "name": "Tabs",
   "category": "layout",
   "slug": "components/layout/tabs",
-  "summary": "Tabs component",
+  "summary": "spacing refactor: container pad + gap; rem→spacing – 2025‑08‑12",
   "status": "stable",
   "aliases": [
     "tabs"
@@ -145,8 +145,10 @@
     "Announce active tab for screen readers with `aria-selected` and `role=tablist`."
   ],
   "examples": [],
+  "docsUrl": "/tabs-demo",
   "sourceFiles": [
-    "src/components/layout/Tabs.tsx"
+    "src/components/layout/Tabs.tsx",
+    "docs/src/pages/components/layout/TabsDemo.tsx"
   ],
   "version": "0.34.1",
   "schemaVersion": "1.6"

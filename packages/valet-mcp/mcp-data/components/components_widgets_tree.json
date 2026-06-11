@@ -2,7 +2,7 @@
   "name": "Tree",
   "category": "widgets",
   "slug": "components/widgets/tree",
-  "summary": "Tree component",
+  "summary": "Basic accessible tree view component",
   "status": "stable",
   "props": [
     {
@@ -140,8 +140,10 @@
       }
     }
   ],
+  "docsUrl": "/tree-demo",
   "sourceFiles": [
-    "src/components/widgets/Tree.tsx"
+    "src/components/widgets/Tree.tsx",
+    "docs/src/pages/components/widgets/TreeDemo.tsx"
   ],
   "version": "0.34.1",
   "schemaVersion": "1.6"

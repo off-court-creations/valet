@@ -2,7 +2,7 @@
   "name": "Tooltip",
   "category": "widgets",
   "slug": "components/widgets/tooltip",
-  "summary": "Tooltip component",
+  "summary": "Robust CSS-only tooltip (MUI-style API) – width-safe in flex columns",
   "status": "stable",
   "aliases": [
     "tooltip",
@@ -173,8 +173,10 @@
       }
     }
   ],
+  "docsUrl": "/tooltip-demo",
   "sourceFiles": [
-    "src/components/widgets/Tooltip.tsx"
+    "src/components/widgets/Tooltip.tsx",
+    "docs/src/pages/components/widgets/TooltipDemo.tsx"
   ],
   "version": "0.34.1",
   "schemaVersion": "1.6"

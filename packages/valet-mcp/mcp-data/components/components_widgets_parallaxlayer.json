@@ -2,7 +2,7 @@
   "name": "ParallaxLayer",
   "category": "widgets",
   "slug": "components/widgets/parallaxlayer",
-  "summary": "ParallaxLayer component",
+  "summary": "simple scroll-aware container for parallax effects",
   "status": "stable",
   "props": [
     {

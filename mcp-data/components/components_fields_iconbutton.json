@@ -2,7 +2,7 @@
   "name": "IconButton",
   "category": "fields",
   "slug": "components/fields/iconbutton",
-  "summary": "IconButton component",
+  "summary": "strict‑optional clean build",
   "status": "stable",
   "aliases": [
     "iconbutton",
@@ -51,6 +51,13 @@
       "type": "string | string[] | undefined",
       "required": false,
       "description": "One or many style-preset names registered via `definePreset()`"
+    },
+    {
+      "name": "as",
+      "type": "React.ElementType",
+      "required": false,
+      "description": "Polymorphic element override (renders this element/component instead of the default).",
+      "default": "'button'"
     }
   ],
   "domPassthrough": {
@@ -85,8 +92,10 @@
     "Keep ripple/motion subtle. Align custom presets with the theme’s motion tokens for a cohesive feel."
   ],
   "examples": [],
+  "docsUrl": "/icon-button-demo",
   "sourceFiles": [
-    "src/components/fields/IconButton.tsx"
+    "src/components/fields/IconButton.tsx",
+    "docs/src/pages/components/field/IconButtonDemoPage.tsx"
   ],
   "version": "0.34.1",
   "schemaVersion": "1.6"

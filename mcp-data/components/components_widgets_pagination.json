@@ -2,7 +2,7 @@
   "name": "Pagination",
   "category": "widgets",
   "slug": "components/widgets/pagination",
-  "summary": "Pagination component",
+  "summary": "Tab-style pagination with stretch-follow elastic underline for active page",
   "status": "stable",
   "aliases": [
     "pagination",
@@ -104,8 +104,10 @@
       }
     }
   ],
+  "docsUrl": "/pagination-demo",
   "sourceFiles": [
-    "src/components/widgets/Pagination.tsx"
+    "src/components/widgets/Pagination.tsx",
+    "docs/src/pages/components/widgets/PaginationDemo.tsx"
   ],
   "version": "0.34.1",
   "schemaVersion": "1.6"

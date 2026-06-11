@@ -2,7 +2,7 @@
   "name": "Tabs.Panel",
   "category": "layout",
   "slug": "components/layout/tabs.panel",
-  "summary": "Tabs.Panel component",
+  "summary": "spacing refactor: container pad + gap; rem→spacing – 2025‑08‑12",
   "status": "stable",
   "props": [
     {
@@ -43,6 +43,7 @@
   "slots": [],
   "bestPractices": [],
   "examples": [],
+  "docsUrl": "/tabs-demo",
   "sourceFiles": [
     "src/components/layout/Tabs.tsx"
   ],

@@ -2,7 +2,7 @@
   "name": "Box",
   "category": "layout",
   "slug": "components/layout/box",
-  "summary": "Box component",
+  "summary": "width modes: content-left (default), content-right, centered, full",
   "status": "stable",
   "aliases": [
     "box",
@@ -65,6 +65,13 @@
       "type": "boolean | undefined",
       "required": false,
       "description": "Compact mode zeros gap and pad where supported."
+    },
+    {
+      "name": "as",
+      "type": "React.ElementType",
+      "required": false,
+      "description": "Polymorphic element override (renders this element/component instead of the default).",
+      "default": "'div'"
     }
   ],
   "domPassthrough": {
@@ -116,7 +123,7 @@
       "minimalProps": {}
     }
   ],
-  "docsUrl": "/components/layout/BoxDemo",
+  "docsUrl": "/box-demo",
   "sourceFiles": [
     "src/components/layout/Box.tsx",
     "docs/src/pages/components/layout/BoxDemo.tsx"

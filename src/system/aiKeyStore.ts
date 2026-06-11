@@ -10,17 +10,31 @@ export type AIProvider = 'openai' | 'anthropic';
 /* ---- 1. simple AES-GCM helpers ---------------------------------- */
 const algo = { name: 'AES-GCM', length: 256 } as const;
 
+// crypto.subtle only exists in secure contexts (HTTPS / localhost);
+// fail with a readable error instead of an opaque TypeError
+function getSubtle(): SubtleCrypto {
+  const subtle = globalThis.crypto?.subtle;
+  if (!subtle) {
+    throw new Error(
+      'valet: crypto.subtle is unavailable — AI key encryption requires a ' +
+        'secure context (HTTPS or localhost).',
+    );
+  }
+  return subtle;
+}
+
 // TS 5.8 typed arrays can be ArrayBufferLike; WebCrypto wants BufferSource (ArrayBuffer)
 async function deriveKey(passphrase: string, salt: ArrayBuffer) {
+  const subtle = getSubtle();
   const enc = new TextEncoder();
-  const keyMaterial = await crypto.subtle.importKey(
+  const keyMaterial = await subtle.importKey(
     'raw',
     enc.encode(passphrase),
     { name: 'PBKDF2' },
     false,
     ['deriveKey'],
   );
-  return crypto.subtle.deriveKey(
+  return subtle.deriveKey(
     { name: 'PBKDF2', salt, iterations: 120_000, hash: 'SHA-256' },
     keyMaterial,
     algo,
@@ -36,7 +50,7 @@ export async function encrypt(plaintext: string, passphrase: string) {
   const salt = crypto.getRandomValues(new Uint8Array(16));
   const iv = crypto.getRandomValues(new Uint8Array(12));
   const key = await deriveKey(passphrase, salt.buffer);
-  const data = await crypto.subtle.encrypt(
+  const data = await getSubtle().encrypt(
     { name: 'AES-GCM', iv: iv.buffer },
     key,
     enc.encode(plaintext),
@@ -53,7 +67,7 @@ export async function encrypt(plaintext: string, passphrase: string) {
 export async function decrypt(cipherB64: string, passphrase: string) {
   const { iv, salt, data } = JSON.parse(atob(cipherB64)) as CipherPayload;
   const key = await deriveKey(passphrase, new Uint8Array(salt).buffer);
-  const dec = await crypto.subtle.decrypt(
+  const dec = await getSubtle().decrypt(
     { name: 'AES-GCM', iv: new Uint8Array(iv).buffer },
     key,
     new Uint8Array(data).buffer,
@@ -84,6 +98,9 @@ const dynamicStorage: StateStorage = {
       // ignore invalid JSON; fall back to sessionStorage
       void 0;
     }
+    // Session records evict any stale localStorage cipher; otherwise getItem
+    // (which prefers localStorage) would resurrect a superseded credential
+    localStorage.removeItem(n);
     sessionStorage.setItem(n, v);
   },
   removeItem: (n) => {
@@ -98,7 +115,6 @@ type KeyState = {
   provider: AIProvider | null;
   model: string | null;
   cipher: string | null;
-  passphrase: string | null;
   setKey: (k: string, provider: AIProvider, pass?: string) => Promise<void>;
   setModel: (m: string) => void;
   applyPassphrase: (pass: string) => Promise<boolean>;
@@ -112,19 +128,12 @@ export const useAIKey = create<KeyState>()(
       provider: null,
       model: null,
       cipher: null,
-      passphrase: null,
       setKey: async (k, provider, pass) => {
         if (pass) {
           const cipher = await encrypt(k, pass);
-          set({ apiKey: k, provider, model: null, cipher, passphrase: pass });
+          set({ apiKey: k, provider, model: null, cipher });
         } else {
-          set({
-            apiKey: k,
-            provider,
-            model: null,
-            cipher: null,
-            passphrase: null,
-          });
+          set({ apiKey: k, provider, model: null, cipher: null });
         }
       },
       setModel: (m) => set({ model: m }),
@@ -133,7 +142,7 @@ export const useAIKey = create<KeyState>()(
         if (!cipher) return false;
         try {
           const key = await decrypt(cipher, pass);
-          set({ apiKey: key, passphrase: pass });
+          set({ apiKey: key });
           return true;
         } catch {
           return false;
@@ -146,7 +155,6 @@ export const useAIKey = create<KeyState>()(
           provider: null,
           model: null,
           cipher: null,
-          passphrase: null,
         });
       },
     }),

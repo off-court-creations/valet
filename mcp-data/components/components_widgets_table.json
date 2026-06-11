@@ -2,7 +2,7 @@
   "name": "Table",
   "category": "widgets",
   "slug": "components/widgets/table",
-  "summary": "Table component",
+  "summary": "patch: self-narrowing and table-layout fixed to avoid right-edge clipping – 2025-07-18",
   "status": "experimental",
   "aliases": [
     "table",
@@ -218,8 +218,10 @@
       }
     }
   ],
+  "docsUrl": "/table-demo",
   "sourceFiles": [
-    "src/components/widgets/Table.tsx"
+    "src/components/widgets/Table.tsx",
+    "docs/src/pages/components/widgets/TableDemo.tsx"
   ],
   "version": "0.34.1",
   "schemaVersion": "1.6"

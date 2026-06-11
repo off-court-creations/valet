@@ -2,7 +2,7 @@
   "name": "RadioGroup",
   "category": "fields",
   "slug": "components/fields/radiogroup",
-  "summary": "RadioGroup component",
+  "summary": "Theme-aware radio groups with keyboard nav & refined spacing",
   "status": "stable",
   "props": [
     {

@@ -2,7 +2,7 @@
   "name": "Icon",
   "category": "primitives",
   "slug": "components/primitives/icon",
-  "summary": "Icon component",
+  "summary": "strict‑optional safe typings",
   "status": "stable",
   "aliases": [
     "icon",
@@ -70,8 +70,10 @@
     "Don’t overload meaning—keep one concept per icon and avoid ambiguous metaphors."
   ],
   "examples": [],
+  "docsUrl": "/icon-demo",
   "sourceFiles": [
-    "src/components/primitives/Icon.tsx"
+    "src/components/primitives/Icon.tsx",
+    "docs/src/pages/components/primitives/IconDemoPage.tsx"
   ],
   "version": "0.34.1",
   "schemaVersion": "1.6"

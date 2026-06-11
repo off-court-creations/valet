@@ -2,7 +2,7 @@
   "name": "List",
   "category": "layout",
   "slug": "components/layout/list",
-  "summary": "List component",
+  "summary": "Simplified, accessible list with optional selection and reorder",
   "status": "stable",
   "aliases": [
     "list",
@@ -184,8 +184,10 @@
       }
     }
   ],
+  "docsUrl": "/list-demo",
   "sourceFiles": [
-    "src/components/layout/List.tsx"
+    "src/components/layout/List.tsx",
+    "docs/src/pages/components/layout/ListDemoPage.tsx"
   ],
   "version": "0.34.1",
   "schemaVersion": "1.6"

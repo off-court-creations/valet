@@ -2,7 +2,7 @@
   "name": "ParallaxBackground",
   "category": "widgets",
   "slug": "components/widgets/parallaxbackground",
-  "summary": "ParallaxBackground component",
+  "summary": "simple scroll-aware container for parallax effects",
   "status": "experimental",
   "aliases": [
     "parallax",

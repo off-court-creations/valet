@@ -10,7 +10,7 @@ const SCHEMA_VERSION = '1.6';
 
 // Aliases are now sourced from per-component meta sidecars.
 
-function merge(tsMap, docsMap, version, metaMap) {
+export function merge(tsMap, docsMap, version, metaMap) {
   /** @type {Record<string, any>} */
   const out = {};
 
@@ -108,7 +108,12 @@ function merge(tsMap, docsMap, version, metaMap) {
     })();
 
     // Docs URL and best practice slugs integration
-    const docsUrl = docs.docsUrl || (metaMap?.[name]?.docs && metaMap[name].docs.docsUrl) || undefined;
+    // Dotted subcomponents (Tabs.Tab, Select.Option, …) document on their parent's page.
+    const docsUrl =
+      docs.docsUrl ||
+      (name.includes('.') ? docsMap[name.split('.')[0]]?.docsUrl : undefined) ||
+      (metaMap?.[name]?.docs && metaMap[name].docs.docsUrl) ||
+      undefined;
     const bestPracticeSlugs = (() => {
       const shorten = (slug) => {
         const limit = 72;

@@ -2,7 +2,7 @@
   "name": "Radio",
   "category": "fields",
   "slug": "components/fields/radio",
-  "summary": "Radio component",
+  "summary": "Theme-aware radio groups with keyboard nav & refined spacing",
   "status": "stable",
   "aliases": [
     "radio",
@@ -70,8 +70,10 @@
     "Use presets for visual variants. Capture chip/pill styles with `definePreset` and apply via `preset` so branding and states stay consistent."
   ],
   "examples": [],
+  "docsUrl": "/radio-demo",
   "sourceFiles": [
-    "src/components/fields/RadioGroup.tsx"
+    "src/components/fields/RadioGroup.tsx",
+    "docs/src/pages/components/field/RadioGroupDemo.tsx"
   ],
   "version": "0.34.1",
   "schemaVersion": "1.6"

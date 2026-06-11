@@ -2,7 +2,7 @@
   "name": "Dropzone",
   "category": "widgets",
   "slug": "components/widgets/dropzone",
-  "summary": "Dropzone component",
+  "summary": "react-dropzone wrapper with theming, keyboard a11y, previews, and rejections",
   "status": "stable",
   "aliases": [
     "dropzone",
@@ -166,8 +166,10 @@
       "minimalProps": {}
     }
   ],
+  "docsUrl": "/dropzone-demo",
   "sourceFiles": [
-    "src/components/widgets/Dropzone.tsx"
+    "src/components/widgets/Dropzone.tsx",
+    "docs/src/pages/components/widgets/DropzoneDemo.tsx"
   ],
   "version": "0.34.1",
   "schemaVersion": "1.6"

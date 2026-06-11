@@ -2,7 +2,7 @@
   "name": "ProgressRing",
   "category": "primitives",
   "slug": "components/primitives/progressring",
-  "summary": "ProgressRing component",
+  "summary": "Redesign: simpler API, better aesthetics, stronger a11y",
   "status": "stable",
   "props": [
     {

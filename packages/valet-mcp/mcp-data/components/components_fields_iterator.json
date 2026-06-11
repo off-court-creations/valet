@@ -2,7 +2,7 @@
   "name": "Iterator",
   "category": "fields",
   "slug": "components/fields/iterator",
-  "summary": "Iterator component",
+  "summary": "numeric stepper with plus/minus buttons and scroll wheel support",
   "status": "stable",
   "aliases": [
     "iterator"
@@ -204,8 +204,10 @@
       "minimalProps": {}
     }
   ],
+  "docsUrl": "/iterator-demo",
   "sourceFiles": [
-    "src/components/fields/Iterator.tsx"
+    "src/components/fields/Iterator.tsx",
+    "docs/src/pages/components/field/IteratorDemo.tsx"
   ],
   "version": "0.34.1",
   "schemaVersion": "1.6"

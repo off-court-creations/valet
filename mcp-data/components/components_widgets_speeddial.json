@@ -2,7 +2,7 @@
   "name": "SpeedDial",
   "category": "widgets",
   "slug": "components/widgets/speeddial",
-  "summary": "SpeedDial component",
+  "summary": "Floating action button with slide-out action animation",
   "status": "stable",
   "aliases": [
     "speeddial",
@@ -71,8 +71,10 @@
     "Motion tokens. Animations use theme motion tokens; keep custom presets aligned for a cohesive feel with the rest of the app."
   ],
   "examples": [],
+  "docsUrl": "/speeddial-demo",
   "sourceFiles": [
-    "src/components/widgets/SpeedDial.tsx"
+    "src/components/widgets/SpeedDial.tsx",
+    "docs/src/pages/components/widgets/SpeedDialDemo.tsx"
   ],
   "version": "0.34.1",
   "schemaVersion": "1.6"

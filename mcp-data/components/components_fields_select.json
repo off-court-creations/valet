@@ -2,7 +2,7 @@
   "name": "Select",
   "category": "fields",
   "slug": "components/fields/select",
-  "summary": "Select component",
+  "summary": "Fully-typed, FormControl-aware <Select/> (single + multiple).",
   "status": "stable",
   "aliases": [
     "select",
@@ -152,8 +152,10 @@
     "A11y. Ensure the trigger is labelled (via `label` or surrounding `FormControl`) and that the selected value is announced clearly."
   ],
   "examples": [],
+  "docsUrl": "/select-demo",
   "sourceFiles": [
-    "src/components/fields/Select.tsx"
+    "src/components/fields/Select.tsx",
+    "docs/src/pages/components/field/SelectDemo.tsx"
   ],
   "version": "0.34.1",
   "schemaVersion": "1.6"

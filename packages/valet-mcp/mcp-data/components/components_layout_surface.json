@@ -2,7 +2,7 @@
   "name": "Surface",
   "category": "layout",
   "slug": "components/layout/surface",
-  "summary": "Surface component",
+  "summary": "overhaul: density-controlled spacing via --valet-space – 2025-08-12",
   "status": "stable",
   "aliases": [
     "surface",
@@ -85,8 +85,10 @@
     "Drive spacing and density with variables. Adjust --valet-space, --valet-radius, and --valet-stroke on the surface to shift an entire view without changing component code."
   ],
   "examples": [],
+  "docsUrl": "/surface",
   "sourceFiles": [
-    "src/components/layout/Surface.tsx"
+    "src/components/layout/Surface.tsx",
+    "docs/src/pages/components/layout/Surface.tsx"
   ],
   "version": "0.34.1",
   "schemaVersion": "1.6"

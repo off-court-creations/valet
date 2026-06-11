@@ -2,7 +2,7 @@
   "name": "Select.Option",
   "category": "fields",
   "slug": "components/fields/select.option",
-  "summary": "Select.Option component",
+  "summary": "Fully-typed, FormControl-aware <Select/> (single + multiple).",
   "status": "stable",
   "props": [
     {
@@ -33,6 +33,7 @@
   "slots": [],
   "bestPractices": [],
   "examples": [],
+  "docsUrl": "/select-demo",
   "sourceFiles": [
     "src/components/fields/Select.tsx"
   ],

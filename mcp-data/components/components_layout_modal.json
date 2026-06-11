@@ -2,7 +2,7 @@
   "name": "Modal",
   "category": "layout",
   "slug": "components/layout/modal",
-  "summary": "Modal component",
+  "summary": "spacing refactor: container pad; rem→spacing; compact – 2025‑08‑12",
   "status": "stable",
   "aliases": [
     "modal",
@@ -153,8 +153,10 @@
     "Respect reduced motion and keep transitions subtle and consistent with theme tokens."
   ],
   "examples": [],
+  "docsUrl": "/modal-demo",
   "sourceFiles": [
-    "src/components/layout/Modal.tsx"
+    "src/components/layout/Modal.tsx",
+    "docs/src/pages/components/layout/ModalDemo.tsx"
   ],
   "version": "0.34.1",
   "schemaVersion": "1.6"

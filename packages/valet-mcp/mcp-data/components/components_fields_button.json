@@ -2,7 +2,7 @@
   "name": "Button",
   "category": "fields",
   "slug": "components/fields/button",
-  "summary": "Button component",
+  "summary": "Theme-aware <Button /> – automatic Typography wrapping",
   "status": "stable",
   "aliases": [
     "button",
@@ -48,6 +48,13 @@
       "type": "string | string[] | undefined",
       "required": false,
       "description": "One or many style-preset names registered via `definePreset()`"
+    },
+    {
+      "name": "as",
+      "type": "React.ElementType",
+      "required": false,
+      "description": "Polymorphic element override (renders this element/component instead of the default).",
+      "default": "'button'"
     }
   ],
   "domPassthrough": {
@@ -92,8 +99,10 @@
       "minimalProps": {}
     }
   ],
+  "docsUrl": "/button-demo",
   "sourceFiles": [
-    "src/components/fields/Button.tsx"
+    "src/components/fields/Button.tsx",
+    "docs/src/pages/components/field/ButtonDemoPage.tsx"
   ],
   "version": "0.34.1",
   "schemaVersion": "1.6"

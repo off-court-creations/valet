@@ -2,7 +2,7 @@
   "name": "LLMChat",
   "category": "widgets",
   "slug": "components/widgets/llmchat",
-  "summary": "LLMChat component",
+  "summary": "LLM style chat component with height constraint",
   "status": "experimental",
   "aliases": [
     "chat",
@@ -105,8 +105,10 @@
   "slots": [],
   "bestPractices": [],
   "examples": [],
+  "docsUrl": "/chat-demo",
   "sourceFiles": [
-    "src/components/widgets/LLMChat.tsx"
+    "src/components/widgets/LLMChat.tsx",
+    "docs/src/pages/components/widgets/LLMChatDemo.tsx"
   ],
   "version": "0.34.1",
   "schemaVersion": "1.6"
