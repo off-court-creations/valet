@@ -2,8 +2,13 @@
   "name": "ProgressBar",
   "category": "primitives",
   "slug": "components/primitives/progressbar",
-  "summary": "Redesign: simpler API, better aesthetics, stronger a11y",
+  "summary": "Horizontal linear progress track; pass a 0–100 `value` for determinate progress or omit it for an indeterminate sweep — the preferred primitive for inline loading and completion bars.",
   "status": "stable",
+  "aliases": [
+    "progressbar",
+    "progress-bar",
+    "linear-progress"
+  ],
   "props": [
     {
       "name": "value",

@@ -1,0 +1,6 @@
+{
+  "name": "ParallaxScroll",
+  "summary": "Scroll-tracking container that provides parallax context to its `ParallaxLayer`/`ParallaxBackground` children; wrap a section in it (optionally `trackX` for horizontal) to drive depth effects — the motion auto-disables under reduced-motion.",
+  "status": "experimental",
+  "aliases": ["parallax", "parallaxscroll", "parallax-scroll"]
+}

@@ -2,7 +2,7 @@
   "name": "LLMChat",
   "category": "widgets",
   "slug": "components/widgets/llmchat",
-  "summary": "LLM-style chat component with height constraint",
+  "summary": "Height-constrained LLM chat surface (role='log', typing/aria-busy) that renders a message list and input; you own the request loop and pass available models via `models` — an experimental widget for prototyping assistant UIs.",
   "status": "experimental",
   "aliases": [
     "chat",

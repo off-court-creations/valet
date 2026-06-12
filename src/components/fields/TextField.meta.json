@@ -1,5 +1,6 @@
 {
   "name": "TextField",
+  "summary": "Single- or multi-line text input with label/helperText/error support; controlled via `value` + `onChange` or auto-bound to a `FormControl` by `name` — the default for free-form text entry.",
   "status": "stable",
   "aliases": ["textfield", "textinput", "input", "textbox"],
   "docs": {

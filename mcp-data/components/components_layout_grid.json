@@ -2,7 +2,7 @@
   "name": "Grid",
   "category": "layout",
   "slug": "components/layout/grid",
-  "summary": "spacing refactor: container pad + gap, compact – 2025-08-12",
+  "summary": "CSS-grid container with `columns` and `gap` for two-dimensional layouts; use it for galleries, dashboards, and card grids — prefer `Stack` when you only need one-directional flow.",
   "status": "stable",
   "aliases": [
     "grid"

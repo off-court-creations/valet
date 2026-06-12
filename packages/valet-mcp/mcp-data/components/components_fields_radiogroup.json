@@ -2,8 +2,13 @@
   "name": "RadioGroup",
   "category": "fields",
   "slug": "components/fields/radiogroup",
-  "summary": "Theme-aware radio groups with keyboard nav & refined spacing",
+  "summary": "Single-choice group of `Radio` options with keyboard roving focus; controlled via `value` + `onValueChange` or bound to a `FormControl` by `name`, with `gap` for option spacing (the old `spacing` prop is a deprecated alias).",
   "status": "stable",
+  "aliases": [
+    "radiogroup",
+    "radio-group",
+    "radio-buttons"
+  ],
   "props": [
     {
       "name": "value",

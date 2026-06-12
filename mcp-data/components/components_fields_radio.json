@@ -2,12 +2,10 @@
   "name": "Radio",
   "category": "fields",
   "slug": "components/fields/radio",
-  "summary": "Theme-aware radio groups with keyboard nav & refined spacing",
+  "summary": "A single radio option rendered inside a `RadioGroup`; author it as a `RadioGroup` child rather than standalone — the group owns selection, keyboard roving focus, and form binding.",
   "status": "stable",
   "aliases": [
-    "radio",
-    "radiogroup",
-    "radio-group"
+    "radio"
   ],
   "props": [
     {

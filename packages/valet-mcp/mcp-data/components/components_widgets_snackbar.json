@@ -2,7 +2,7 @@
   "name": "Snackbar",
   "category": "widgets",
   "slug": "components/widgets/snackbar",
-  "summary": "Fully-typed, theme-aware snackbar with fade + auto-dismiss",
+  "summary": "Transient toast notification (role='status') that fades in and auto-dismisses, pausing its timer on hover/focus; control with `open`/`message`/`autoHideDuration` — use it for brief, non-blocking feedback.",
   "status": "stable",
   "aliases": [
     "snackbar",

@@ -2,7 +2,7 @@
   "name": "MetroSelect.Option",
   "category": "fields",
   "slug": "components/fields/metroselect.option",
-  "summary": "windows 8 start screen style grid select",
+  "summary": "A single tile inside a `MetroSelect`, identified by `value` with icon/label children; author one per choice as a direct `MetroSelect` child — the parent owns selection state.",
   "status": "stable",
   "props": [
     {

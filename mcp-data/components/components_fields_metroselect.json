@@ -2,7 +2,7 @@
   "name": "MetroSelect",
   "category": "fields",
   "slug": "components/fields/metroselect",
-  "summary": "windows 8 start screen style grid select",
+  "summary": "Grid of large tappable tiles (`MetroSelect.Option`) for single or `multiple` selection from a small visual set; controlled by `value` + `onValueChange` with `gap` for tile spacing — use it when options benefit from icons/imagery rather than a compact dropdown.",
   "status": "stable",
   "aliases": [
     "metroselect",

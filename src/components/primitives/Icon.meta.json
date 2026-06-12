@@ -1,5 +1,6 @@
 {
   "name": "Icon",
+  "summary": "Renders an Iconify icon by name (`icon`) or a safe inline SVG (`svg`); arbitrary SVG strings go through an allowlist parser, so use the explicit `dangerouslySetSvg` escape hatch only for trusted full-SVG markup. Size and color follow the surrounding text.",
   "status": "stable",
   "aliases": ["icon", "glyph"],
   "docs": {

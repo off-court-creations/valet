@@ -20,6 +20,16 @@ export function App() {
       },
     },
     ["Kumbh Sans", "JetBrains Mono", "Inter"],
+    {
+      // The three families are self-hosted via @fontsource (see main.tsx), so
+      // skip every request to fonts.googleapis.com — injectRemote:false makes
+      // valet resolve them from the installed faces instead.
+      injectRemote: false,
+      // Follow the OS light/dark preference at boot and remember the visitor's
+      // explicit toggle across reloads ('valet-mode' in localStorage).
+      mode: "system",
+      persistMode: true,
+    },
   );
 
   const Fallback = (

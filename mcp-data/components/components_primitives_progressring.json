@@ -2,8 +2,14 @@
   "name": "ProgressRing",
   "category": "primitives",
   "slug": "components/primitives/progressring",
-  "summary": "Redesign: simpler API, better aesthetics, stronger a11y",
+  "summary": "Circular progress indicator; pass a 0–100 `value` for determinate progress or omit it for an indeterminate spinner, with an optional `label` in the center — the preferred primitive for compact, radial loading states.",
   "status": "stable",
+  "aliases": [
+    "progressring",
+    "progress-ring",
+    "spinner",
+    "circular-progress"
+  ],
   "props": [
     {
       "name": "value",

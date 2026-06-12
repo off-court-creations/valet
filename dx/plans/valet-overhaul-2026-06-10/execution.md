@@ -261,7 +261,35 @@ sites verified intact.
 `SelectionProps` + `Intent` type exports, `check:rtl` script. **Gate:**
 lint ✅ tsc ✅ **1197/1197 tests** ✅ build ✅ check:engine ✅ check:rtl ✅
 check:bundle ✅ mcp:check ✅ type-probes ✅ docs build ✅.
-| 12  | 2.2  | **Docs/templates:** THEMING S10 templates (Q15) → S11 privacy page · GOVERNANCE S8 support statement (Q20) → S11 CONTRIBUTING · MCP-TRUTH S10 curated summaries → S12 dead pipeline | ⬜     |
+| 12  | 2.2  | **Docs/templates:** THEMING S10 templates (Q15) → S11 privacy page · GOVERNANCE S8 support statement (Q20) → S11 CONTRIBUTING · MCP-TRUTH S10 curated summaries → S12 dead pipeline | ✅     |
+| —   | gate | **Phase-2 gate:** check:rtl exit 0 · validate floors (docsUrl 81.0%) · 1203/1203 · mcp regen fresh · docs build · RTL/LTR screenshot diff **flagged for Ben**                          | ✅ (local) |
+
+### Wave 2.2 — docs/templates (Phase-2 close-out) — ✅
+
+**What shipped:** all three CVA templates + the docs app self-host fonts
+(@fontsource 400/700 faces for the three built-in families + Poppins;
+`injectRemote:false, mode:'system', persistMode:true`; **zero
+googleapis/gstatic requests verified three ways** — emitted CSS, built HTML,
+and a jsdom runtime probe of injectFontLinks) · Fonts & Privacy docs page at
+the exact URL the library's dev notice already links (GDPR posture, LG
+München precedent, three loading strategies, timeout semantics) +
+ThemeEngine overlay/mode docs + README privacy paragraph · browser-support
+statement (Q20: Chrome/Edge 112+, Safari 16.5+, Firefox per-feature-cited;
+ESM-only + no-SSR-yet honesty; README canonical + Quickstart mirror) ·
+CONTRIBUTING.md (~120 lines, one shared DoD with AGENTS.md) · curated
+summaries (sidecars authoritative in merge; editorial pass over all
+existing + 12 new minimal sidecars incl. KeyModal with its dev-tool
+posture; docsUrl coverage ROSE to 81.0%) · dead .meta.ts pipeline deleted.
+
+**Verification:** truth reviewer **pass** (every support-floor claim
+verified against actual feature usage; template package names + Q14
+compliance checked; the googleapis-strings-in-bundle false-signal
+documented); exit auditor **fail** → fixer resolved (a Wave-2.1 prettier
+reflow in index.ts kept lint red — whitespace-only, justified; everything
+else was the pending regen). **Phase-2 exit audit: every slice landed, no
+gaps.** **Gate:** lint ✅ tsc ✅ **1203/1203** ✅ build ✅ check:engine ✅
+check:rtl ✅ check:bundle ✅ schema+freshness ✅ docsUrl 81.0% ✅. RTL/LTR
+screenshot diff remains flagged for Ben (no real browser here).
 
 ### Wave 2.0 — shim cores — ✅
 

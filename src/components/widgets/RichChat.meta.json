@@ -1,5 +1,6 @@
 {
   "name": "RichChat",
+  "summary": "Local chat thread (role='log') whose messages can embed interactive valet content, including forms; use it for guided, in-app conversational flows you drive yourself — experimental, no network built in.",
   "status": "experimental",
   "aliases": ["richchat", "chat", "conversation", "thread"],
   "docs": {

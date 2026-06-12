@@ -2,7 +2,7 @@
   "name": "Dropzone",
   "category": "widgets",
   "slug": "components/widgets/dropzone",
-  "summary": "react-dropzone wrapper with theming, keyboard a11y, previews, and rejections",
+  "summary": "Keyboard-accessible drag-and-drop file uploader with previews and rejection handling; read selected files via `onFilesChange` and constrain input with `accept`/`maxFiles` — use it for in-page file intake.",
   "status": "stable",
   "aliases": [
     "dropzone",

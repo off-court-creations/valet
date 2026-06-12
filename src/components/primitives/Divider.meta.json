@@ -1,5 +1,6 @@
 {
   "name": "Divider",
+  "summary": "Theme-aware horizontal or vertical rule with spacing ergonomics; use it to separate content sections or list items without drawing your own border.",
   "status": "stable",
   "aliases": ["divider", "rule", "hr"],
   "docs": {

@@ -87,7 +87,15 @@ export type { Variant as TypographyVariant, WeightAlias } from './types/typograp
 export { inheritSurfaceFontVars } from './system/inheritSurfaceFontVars';
 
 // ─── Public vocabulary types ────────────────────────────────
-export type { Sx, Presettable, Space, SpacingProps, FieldBaseProps, SelectionProps, Intent } from './types';
+export type {
+  Sx,
+  Presettable,
+  Space,
+  SpacingProps,
+  FieldBaseProps,
+  SelectionProps,
+  Intent,
+} from './types';
 export type {
   ChangeInfo,
   OnValueChange,

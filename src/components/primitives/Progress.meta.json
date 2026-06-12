@@ -1,5 +1,6 @@
 {
   "name": "Progress",
+  "summary": "Back-compat progress indicator that switches between bar and ring via `variant`; prefer the dedicated `ProgressBar` or `ProgressRing` primitives directly for new code, and omit `value` for an indeterminate (unknown-duration) loading state.",
   "status": "stable",
   "aliases": ["progress", "spinner", "loader"],
   "docs": {

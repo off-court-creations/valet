@@ -1,5 +1,6 @@
 {
   "name": "Select",
+  "summary": "Fully-typed dropdown for single or `multiple` choice from `Select.Option` children; controlled via `value` + `onValueChange` and FormControl-aware — use it for compact pick-one(-or-many) lists, and prefer `MetroSelect` when options need a visual tile grid.",
   "status": "stable",
   "aliases": ["select", "dropdown", "combobox"],
   "docs": {

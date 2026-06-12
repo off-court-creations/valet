@@ -2,7 +2,7 @@
   "name": "Tooltip",
   "category": "widgets",
   "slug": "components/widgets/tooltip",
-  "summary": "Robust CSS-only tooltip (MUI-style API) – width-safe in flex columns",
+  "summary": "CSS-driven hover/focus tooltip that wraps a single child and exposes `title` content via aria-describedby; use it for brief supplementary hints, not essential or interactive content.",
   "status": "stable",
   "aliases": [
     "tooltip",

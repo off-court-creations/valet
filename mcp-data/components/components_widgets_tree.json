@@ -2,7 +2,7 @@
   "name": "Tree",
   "category": "widgets",
   "slug": "components/widgets/tree",
-  "summary": "Basic accessible tree view component",
+  "summary": "Accessible expand/collapse tree over a `nodes` hierarchy (label via `getLabel`), with `expanded`/`onExpandedChange` for disclosure and `selectionMode='single'` selecting by node id; use it for nested data like file trees and outlines — reach for `List` when items are flat.",
   "status": "stable",
   "props": [
     {

@@ -2,7 +2,7 @@
   "name": "Markdown",
   "category": "widgets",
   "slug": "components/widgets/markdown",
-  "summary": "Lightweight Markdown renderer using valet primitives",
+  "summary": "Renders a Markdown string into valet primitives (headings, lists, links, fenced code with highlighting); use it to display AI/CMS output as themed React, not raw HTML.",
   "status": "stable",
   "aliases": [
     "markdown",

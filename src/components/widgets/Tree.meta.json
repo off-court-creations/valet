@@ -1,5 +1,6 @@
 {
   "name": "Tree",
+  "summary": "Accessible expand/collapse tree over a `nodes` hierarchy (label via `getLabel`), with `expanded`/`onExpandedChange` for disclosure and `selectionMode='single'` selecting by node id; use it for nested data like file trees and outlines — reach for `List` when items are flat.",
   "status": "stable",
   "docs": {
     "bestPractices": [

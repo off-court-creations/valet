@@ -2,7 +2,7 @@
   "name": "Drawer",
   "category": "layout",
   "slug": "components/layout/drawer",
-  "summary": "Minimal sliding drawer component akin to MUI's Drawer.",
+  "summary": "Panel that slides in from an `anchor` edge (`left`/`right`/`top`/`bottom`, or RTL-aware `start`/`end`); non-`persistent` drawers are true focus-trapping dialogs, so supply `aria-label`/`aria-labelledby` — use it for side navigation and contextual panels.",
   "status": "stable",
   "aliases": [
     "drawer",

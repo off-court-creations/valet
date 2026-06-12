@@ -2,7 +2,7 @@
   "name": "Tabs.Panel",
   "category": "layout",
   "slug": "components/layout/tabs.panel",
-  "summary": "spacing refactor: container pad + gap; rem→spacing – 2025‑08‑12",
+  "summary": "The content region for one tab inside `Tabs`, identified by the `value` of its matching `Tabs.Tab`; only the active panel is shown — author one per tab as a direct `Tabs` child.",
   "status": "stable",
   "props": [
     {

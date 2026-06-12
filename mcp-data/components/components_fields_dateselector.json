@@ -2,7 +2,7 @@
   "name": "DateSelector",
   "category": "fields",
   "slug": "components/fields/dateselector",
-  "summary": "interactive month calendar for picking dates",
+  "summary": "Interactive month calendar for picking a single date or a `range`; emits/accepts timezone-safe ISO `YYYY-MM-DD` strings, with display localized via `locale` and `firstDayOfWeek` (the value contract stays ISO Latin digits).",
   "status": "experimental",
   "aliases": [
     "date",

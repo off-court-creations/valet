@@ -2,7 +2,7 @@
   "name": "FormControl",
   "category": "fields",
   "slug": "components/fields/formcontrol",
-  "summary": "Provides typed form store context and intercepts submit for SPA flows",
+  "summary": "Wraps a form to provide a typed store context that field components bind to by `name`; use it to collect and submit grouped field values without lifting every field into local state.",
   "status": "stable",
   "aliases": [
     "form",

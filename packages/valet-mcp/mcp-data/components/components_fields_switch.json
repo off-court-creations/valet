@@ -2,7 +2,7 @@
   "name": "Switch",
   "category": "fields",
   "slug": "components/fields/switch",
-  "summary": "Theme-aware, accessible boolean <Switch /> component",
+  "summary": "Accessible toggle for a single boolean that takes effect immediately; controlled via `checked` + `onValueChange` (the old `onChange` is a deprecated alias) — prefer it over Checkbox for instant on/off settings rather than form submission.",
   "status": "stable",
   "aliases": [
     "switch",

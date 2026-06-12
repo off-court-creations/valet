@@ -2,7 +2,7 @@
   "name": "Box",
   "category": "layout",
   "slug": "components/layout/box",
-  "summary": "width modes: content-left (default), content-right, centered, full",
+  "summary": "Polymorphic (`as`) workhorse container with spacing, `sx`, and `alignX` content alignment; reach for it as the default building block when no more specialized layout primitive (Stack, Grid, Panel) fits.",
   "status": "stable",
   "aliases": [
     "box",

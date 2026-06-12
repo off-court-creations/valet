@@ -2,7 +2,7 @@
   "name": "Tabs.Tab",
   "category": "layout",
   "slug": "components/layout/tabs.tab",
-  "summary": "spacing refactor: container pad + gap; rem→spacing – 2025‑08‑12",
+  "summary": "A clickable tab trigger inside `Tabs`, identified by `value`; pair each one with a matching `Tabs.Panel` of the same value — the parent `Tabs` owns the active selection and `tablist` ARIA.",
   "status": "stable",
   "props": [
     {

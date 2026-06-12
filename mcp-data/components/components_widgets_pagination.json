@@ -2,7 +2,7 @@
   "name": "Pagination",
   "category": "widgets",
   "slug": "components/widgets/pagination",
-  "summary": "Tab-style pagination with stretch-follow elastic underline for active page",
+  "summary": "Tab-style page navigator with an elastic active-page underline; controlled by `count` + `page` + `onPageChange` (the old `onChange` is a deprecated alias) — use it to page through large lists or tables.",
   "status": "stable",
   "aliases": [
     "pagination",

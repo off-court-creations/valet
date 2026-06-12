@@ -2,7 +2,7 @@
   "name": "Checkbox",
   "category": "fields",
   "slug": "components/fields/checkbox",
-  "summary": "Theme-aware, accessible Checkbox – consistent outline, no blue flash,",
+  "summary": "Accessible boolean checkbox for a single on/off choice; controlled via `checked` + `onValueChange`, or auto-bound to a `FormControl` with `name` (keep `bindForm` to opt a form-bound box out of writing the store).",
   "status": "stable",
   "aliases": [
     "checkbox"

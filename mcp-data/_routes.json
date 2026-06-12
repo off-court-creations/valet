@@ -20,6 +20,7 @@
     "/dropzone-demo": "docs/src/pages/components/widgets/DropzoneDemo.tsx",
     "/error-boundary-demo": "docs/src/pages/components/widgets/ValetErrorBoundaryDemo.tsx",
     "/events": "docs/src/pages/concepts/Events.tsx",
+    "/fonts-privacy": "docs/src/pages/getting-started/FontsPrivacy.tsx",
     "/form": "docs/src/pages/examples/FormDemoPage.tsx",
     "/glossary": "docs/src/pages/getting-started/Glossary.tsx",
     "/grid-demo": "docs/src/pages/components/layout/GridDemo.tsx",

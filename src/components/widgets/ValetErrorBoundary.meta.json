@@ -1,5 +1,6 @@
 {
   "name": "ValetErrorBoundary",
+  "summary": "Opt-in React error boundary that catches render errors in its subtree and shows a role='alert' fallback with a `reset()` action; wrap risky regions to stop one component from white-screening the host app.",
   "status": "stable",
   "aliases": [
     "error-boundary",

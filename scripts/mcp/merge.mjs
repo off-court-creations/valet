@@ -57,7 +57,25 @@ export function merge(tsMap, docsMap, version, metaMap) {
     const cssPresets = ts.cssPresets || [];
 
     // summary/description
-    const summary = ts.summary || `${name} component`;
+    // Precedence (plan §3.9 S10, ruling R29): a curated sidecar summary is
+    // authoritative — it is the one sharp, agent-actionable sentence an editor
+    // wrote and verified against the current API. Fall back to the header-comment
+    // summary (MCP-TRUTH S1) only when no sidecar summary exists, then to the
+    // placeholder (which the validate gate rejects). A blank/whitespace sidecar
+    // summary is treated as absent so it can never mask a real header comment.
+    //
+    // Dotted subcomponents (Tabs.Tab, Select.Option, …) accept their own
+    // dotted-name sidecar; lacking one, they inherit the parent's curated
+    // summary rather than repeating the parent file's raw header comment
+    // (mirrors the docsUrl inheritance below). A dotted sidecar always wins
+    // over the inherited parent summary.
+    const sidecarSummary = (key) =>
+      typeof metaMap?.[key]?.summary === 'string' && metaMap[key].summary.trim()
+        ? metaMap[key].summary.trim()
+        : undefined;
+    const parentSummary = name.includes('.') ? sidecarSummary(name.split('.')[0]) : undefined;
+    const metaSummary = sidecarSummary(name) || parentSummary;
+    const summary = metaSummary || ts.summary || `${name} component`;
     const description = undefined;
 
     // If component supports intent/variant, ensure standard intent CSS vars are present
@@ -263,8 +281,6 @@ function indexFromComponents(map) {
  * Known side effects (unchanged from the historical CLI path, documented for
  * check-fresh which snapshots around them):
  *  • extractFromDocs(root) rewrites mcp-data/_routes.json (route artifact).
- *  • loadComponentMeta(root) uses mcp-data/_tmp-meta as a compile scratch
- *    dir; it is removed here so it never lingers in the dataset.
  *
  * @param {string} root  repo root (must contain package.json, src/, docs/)
  * @returns {Promise<{
@@ -301,8 +317,10 @@ export async function buildCorpus(root) {
       }
     }
   } catch {}
-  // load-meta compiles .meta.ts sidecars into mcp-data/_tmp-meta; remove the
-  // scratch dir so it never lingers as a stale artifact in the dataset.
+  // Legacy cleanup: the old .meta.ts pipeline compiled sidecars into
+  // mcp-data/_tmp-meta. That branch is gone (sidecars are JSON-only), so the
+  // dir is no longer produced — sweep any stale copy left by an older checkout
+  // so it never lingers as an artifact in the dataset.
   try {
     fs.rmSync(path.join(root, 'mcp-data', '_tmp-meta'), { recursive: true, force: true });
   } catch {}

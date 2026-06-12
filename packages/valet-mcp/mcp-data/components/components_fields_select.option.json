@@ -2,7 +2,7 @@
   "name": "Select.Option",
   "category": "fields",
   "slug": "components/fields/select.option",
-  "summary": "Fully-typed, FormControl-aware <Select/> (single + multiple).",
+  "summary": "A single option inside a `Select`, carrying its `value` and label children; author one per choice as a direct `Select` child — it forwards `className`/`style`/`id`/`data-*` onto the rendered `<li>`.",
   "status": "stable",
   "props": [
     {

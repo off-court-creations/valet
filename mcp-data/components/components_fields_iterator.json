@@ -2,7 +2,7 @@
   "name": "Iterator",
   "category": "fields",
   "slug": "components/fields/iterator",
-  "summary": "numeric stepper with plus/minus buttons and scroll wheel support",
+  "summary": "Numeric stepper with plus/minus buttons and scroll-wheel support for bounded integer/decimal input; use it for small quantity-style values (counts, steps) where a full slider or text field is overkill.",
   "status": "stable",
   "aliases": [
     "iterator"

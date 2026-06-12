@@ -1,5 +1,6 @@
 {
   "name": "Table",
+  "summary": "Data table with sortable columns, smart height/auto-pagination, and unified `selectionMode` (`'none'|'single'|'multiple'`) keyed by `getItemKey` for selection that survives data refreshes (the `selectable`/`rowKey` props are deprecated aliases); use it for tabular data with columns.",
   "status": "experimental",
   "aliases": ["table", "datagrid", "data-grid"],
   "docs": {

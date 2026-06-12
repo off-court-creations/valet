@@ -2,7 +2,7 @@
   "name": "Image",
   "category": "primitives",
   "slug": "components/primitives/image",
-  "summary": "Simple, excellent <Image /> — no SSR, no skeletons",
+  "summary": "Theme-aware `<img>` wrapper with sizing and object-fit ergonomics for static raster/vector images; use it for content imagery, and `Avatar` for circular user pictures or `Video` for playable media.",
   "status": "stable",
   "aliases": [
     "image",

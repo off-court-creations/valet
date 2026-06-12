@@ -51,13 +51,16 @@
   "segmented-control": [
     "MetroSelect"
   ],
-  "radio": [
-    "Radio"
-  ],
   "radiogroup": [
-    "Radio"
+    "RadioGroup"
   ],
   "radio-group": [
+    "RadioGroup"
+  ],
+  "radio-buttons": [
+    "RadioGroup"
+  ],
+  "radio": [
     "Radio"
   ],
   "select": [
@@ -207,10 +210,29 @@
   "picture": [
     "Image"
   ],
-  "progress": [
-    "Progress"
+  "progressbar": [
+    "ProgressBar"
+  ],
+  "progress-bar": [
+    "ProgressBar"
+  ],
+  "linear-progress": [
+    "ProgressBar"
+  ],
+  "progressring": [
+    "ProgressRing"
+  ],
+  "progress-ring": [
+    "ProgressRing"
   ],
   "spinner": [
+    "ProgressRing",
+    "Progress"
+  ],
+  "circular-progress": [
+    "ProgressRing"
+  ],
+  "progress": [
     "Progress"
   ],
   "loader": [
@@ -273,6 +295,15 @@
   "upload": [
     "Dropzone"
   ],
+  "keymodal": [
+    "KeyModal"
+  ],
+  "apikey": [
+    "KeyModal"
+  ],
+  "api-key": [
+    "KeyModal"
+  ],
   "chat": [
     "LLMChat",
     "RichChat"
@@ -308,7 +339,20 @@
     "Pagination"
   ],
   "parallax": [
+    "ParallaxScroll",
     "ParallaxBackground"
+  ],
+  "parallaxscroll": [
+    "ParallaxScroll"
+  ],
+  "parallax-scroll": [
+    "ParallaxScroll"
+  ],
+  "parallaxlayer": [
+    "ParallaxLayer"
+  ],
+  "parallax-layer": [
+    "ParallaxLayer"
   ],
   "parallaxbackground": [
     "ParallaxBackground"

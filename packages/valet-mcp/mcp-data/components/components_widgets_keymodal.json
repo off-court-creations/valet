@@ -2,8 +2,13 @@
   "name": "KeyModal",
   "category": "widgets",
   "slug": "components/widgets/keymodal",
-  "summary": "modal to capture an AI provider API key",
-  "status": "stable",
+  "summary": "Dev-tool modal that captures an AI provider API key for browser-direct LLM calls (`open`/`onClose`); the key is reachable by any script on the page and at-rest encryption is opt-in — never collect production or multi-tenant keys with it.",
+  "status": "experimental",
+  "aliases": [
+    "keymodal",
+    "apikey",
+    "api-key"
+  ],
   "props": [
     {
       "name": "open",

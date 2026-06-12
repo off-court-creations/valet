@@ -2,7 +2,7 @@
   "name": "ParallaxBackground",
   "category": "widgets",
   "slug": "components/widgets/parallaxbackground",
-  "summary": "simple scroll-aware container for parallax effects",
+  "summary": "Full-bleed background layer that drifts on scroll for a depth effect; place it inside a `ParallaxScroll` as the backmost layer, and honor reduced-motion (the effect auto-disables) — experimental decorative widget.",
   "status": "experimental",
   "aliases": [
     "parallax",

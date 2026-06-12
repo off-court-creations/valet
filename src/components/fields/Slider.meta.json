@@ -1,5 +1,6 @@
 {
   "name": "Slider",
+  "summary": "Theme-aware draggable slider for selecting a number within `min`/`max` (optionally snapped to `step`); use it for continuous or coarse-grained ranges where the approximate value matters more than an exact typed number.",
   "status": "stable",
   "aliases": ["slider", "range"],
   "docs": {

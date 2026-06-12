@@ -2,7 +2,7 @@
   "name": "Button",
   "category": "fields",
   "slug": "components/fields/button",
-  "summary": "Theme-aware <Button /> – automatic Typography wrapping",
+  "summary": "Theme-aware action button with `variant` (filled/outlined/plain), semantic `intent`, and `size`; reach for it for any primary or secondary click action, and use `IconButton` instead when the control is icon-only.",
   "status": "stable",
   "aliases": [
     "button",

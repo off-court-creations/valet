@@ -2,7 +2,7 @@
   "name": "Tabs",
   "category": "layout",
   "slug": "components/layout/tabs",
-  "summary": "spacing refactor: container pad + gap; rem→spacing – 2025‑08‑12",
+  "summary": "Tabbed interface with `Tabs.Tab` triggers and `Tabs.Panel` content and full `tablist` ARIA; controlled via `value`/`onValueChange` — use it to switch between sibling views in the same region.",
   "status": "stable",
   "aliases": [
     "tabs"

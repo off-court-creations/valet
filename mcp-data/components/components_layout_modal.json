@@ -2,7 +2,7 @@
   "name": "Modal",
   "category": "layout",
   "slug": "components/layout/modal",
-  "summary": "spacing refactor: container pad; rem→spacing; compact – 2025‑08‑12",
+  "summary": "Centered focus-trapping dialog rendered above a backdrop, controlled by `open`/`onClose`; use it for confirmations and focused tasks that must interrupt the page — reach for `Drawer` when the panel should slide from an edge.",
   "status": "stable",
   "aliases": [
     "modal",

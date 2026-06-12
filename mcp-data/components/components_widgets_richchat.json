@@ -2,7 +2,7 @@
   "name": "RichChat",
   "category": "widgets",
   "slug": "components/widgets/richchat",
-  "summary": "Local chat component with embeddable content; add fontFamily prop",
+  "summary": "Local chat thread (role='log') whose messages can embed interactive valet content, including forms; use it for guided, in-app conversational flows you drive yourself — experimental, no network built in.",
   "status": "experimental",
   "aliases": [
     "richchat",

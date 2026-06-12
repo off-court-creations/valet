@@ -79,11 +79,15 @@ const MCPGuidePage = page(() => import('./pages/getting-started/MCP'));
 const GlossaryPage = page(() => import('./pages/getting-started/Glossary'));
 const ComponentStatusPage = page(() => import('./pages/getting-started/ComponentStatus'));
 const RTLStatusPage = page(() => import('./pages/getting-started/RTLStatus'));
+const FontsPrivacyPage = page(() => import('./pages/getting-started/FontsPrivacy'));
 const EventsConceptPage = page(() => import('./pages/concepts/Events'));
 
 /*───────────────────────────────────────────────────────────*/
 export function App() {
-  /* One-time initial theme + Google-font preload */
+  /* One-time initial theme. Fonts are self-hosted via @fontsource (see
+     main.tsx), so injectRemote:false keeps the docs off Google's servers —
+     the named families resolve from the installed faces. mode:'system' +
+     persistMode:true follow the OS theme at boot and remember toggles. */
   useInitialTheme(
     {
       fonts: {
@@ -94,6 +98,11 @@ export function App() {
       },
     },
     ['Kumbh Sans', 'JetBrains Mono', 'Inter'],
+    {
+      injectRemote: false,
+      mode: 'system',
+      persistMode: true,
+    },
   );
 
   /* Simple fallback – swap for a branded spinner when ready */
@@ -145,6 +154,10 @@ export function App() {
         <Route
           path='/rtl-status'
           element={<RTLStatusPage />}
+        />
+        <Route
+          path='/fonts-privacy'
+          element={<FontsPrivacyPage />}
         />
 
         <Route

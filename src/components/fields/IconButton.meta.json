@@ -1,5 +1,6 @@
 {
   "name": "IconButton",
+  "summary": "Compact icon-only button (same `variant`/`intent`/`size` system as Button); use it for toolbar and inline actions, and always supply an `aria-label` since there is no visible text.",
   "status": "stable",
   "aliases": ["iconbutton", "icon-button"],
   "docs": {

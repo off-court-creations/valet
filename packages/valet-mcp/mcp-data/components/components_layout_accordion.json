@@ -2,7 +2,7 @@
   "name": "Accordion",
   "category": "layout",
   "slug": "components/layout/accordion",
-  "summary": "Re-architected single-file Accordion",
+  "summary": "Vertical stack of collapsible `Accordion.Item` panels with single or `multiple` open behavior and roving-focus ARIA; control which panels are open with `expanded`/`defaultExpanded`/`onExpandedChange` (the `open*` props are deprecated aliases).",
   "status": "experimental",
   "aliases": [
     "accordion",

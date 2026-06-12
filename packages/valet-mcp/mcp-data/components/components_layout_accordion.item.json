@@ -2,8 +2,8 @@
   "name": "Accordion.Item",
   "category": "layout",
   "slug": "components/layout/accordion.item",
-  "summary": "Re-architected single-file Accordion",
-  "status": "stable",
+  "summary": "One collapsible panel inside an `Accordion`, supplying its header and body content; author items as direct `Accordion` children — the parent owns open/closed state, focus, and ARIA wiring.",
+  "status": "experimental",
   "props": [
     {
       "name": "header",

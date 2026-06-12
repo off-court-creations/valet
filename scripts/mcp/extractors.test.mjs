@@ -6,6 +6,9 @@
 // • extract-docs — route-table docsUrls (real SPA routes, not file paths)
 // • extract-glossary — candidate list + recursive fallback, hard failures
 // • merge — dotted subcomponents inherit the parent page's docsUrl
+// • merge — curated sidecar summary is authoritative (MCP-TRUTH S10): it wins
+//   over the TS header summary; blank sidecar summaries fall back to the
+//   header; dotted subcomponents inherit the parent sidecar summary.
 // Plus the S9 schema-1.7 regression: the always-empty `actions` field is
 // gone from extraction and merge output (plan §3.9 S9).
 // ─────────────────────────────────────────────────────────────
@@ -328,6 +331,87 @@ describe('merge docsUrl resolution', () => {
       'Menu.Item': { docs: { docsUrl: '/menu' } },
     });
     expect(out['Menu.Item'].docsUrl).toBe('/menu');
+  });
+});
+
+// ── merge: curated sidecar summary wins (MCP-TRUTH S10) ──────
+describe('merge summary precedence', () => {
+  const tsEntry = (name, summary) => ({
+    name,
+    category: 'widgets',
+    slug: `components/widgets/${name.toLowerCase()}`,
+    summary,
+    props: [],
+    cssVars: [],
+    cssPresets: [],
+    events: [],
+    slots: [],
+    sourceFiles: [],
+  });
+
+  it('prefers the curated sidecar summary over the TS header summary', () => {
+    const out = merge(
+      { Widget: tsEntry('Widget', 'raw header comment – 2025-01-01') },
+      {},
+      '0.0.0-test',
+      {
+        Widget: { summary: 'Sharp, agent-actionable one-liner.' },
+      },
+    );
+    expect(out.Widget.summary).toBe('Sharp, agent-actionable one-liner.');
+  });
+
+  it('falls back to the TS header summary when the sidecar summary is blank/whitespace', () => {
+    const out = merge({ Widget: tsEntry('Widget', 'header summary') }, {}, '0.0.0-test', {
+      Widget: { summary: '   ' },
+    });
+    expect(out.Widget.summary).toBe('header summary');
+  });
+
+  it('falls back to the placeholder only when neither sidecar nor header supplies one', () => {
+    const out = merge({ Widget: tsEntry('Widget', undefined) }, {}, '0.0.0-test', {});
+    expect(out.Widget.summary).toBe('Widget component');
+  });
+
+  it('dotted subcomponents accept their own dotted-name sidecar summary', () => {
+    const out = merge(
+      { 'Tabs.Tab': tsEntry('Tabs.Tab', 'parent header comment') },
+      {},
+      '0.0.0-test',
+      { 'Tabs.Tab': { summary: 'A clickable tab trigger inside Tabs.' } },
+    );
+    expect(out['Tabs.Tab'].summary).toBe('A clickable tab trigger inside Tabs.');
+  });
+
+  it('dotted subcomponents inherit the parent sidecar summary when they lack their own', () => {
+    const out = merge(
+      {
+        Tabs: tsEntry('Tabs', 'tabs header comment'),
+        'Tabs.Panel': tsEntry('Tabs.Panel', 'tabs header comment'),
+      },
+      {},
+      '0.0.0-test',
+      { Tabs: { summary: 'Tabbed interface curated summary.' } },
+    );
+    // the parent's curated summary wins over the subcomponent's raw header
+    expect(out['Tabs.Panel'].summary).toBe('Tabbed interface curated summary.');
+    expect(out.Tabs.summary).toBe('Tabbed interface curated summary.');
+  });
+
+  it('a dotted subcomponent sidecar wins over the inherited parent summary', () => {
+    const out = merge(
+      {
+        Tabs: tsEntry('Tabs', 'tabs header'),
+        'Tabs.Tab': tsEntry('Tabs.Tab', 'tabs header'),
+      },
+      {},
+      '0.0.0-test',
+      {
+        Tabs: { summary: 'Parent summary.' },
+        'Tabs.Tab': { summary: 'Subcomponent summary.' },
+      },
+    );
+    expect(out['Tabs.Tab'].summary).toBe('Subcomponent summary.');
   });
 });
 

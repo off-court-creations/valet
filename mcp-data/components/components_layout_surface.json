@@ -2,7 +2,7 @@
   "name": "Surface",
   "category": "layout",
   "slug": "components/layout/surface",
-  "summary": "overhaul: density-controlled spacing via --valet-space – 2025-08-12",
+  "summary": "Per-route root container that establishes the theme, density spacing, writing `dir`, and font-loading gate; wrap each top-level screen in exactly one Surface — most valet components require an ancestor Surface and will throw without it.",
   "status": "stable",
   "aliases": [
     "surface",
