@@ -75,6 +75,12 @@
       "description": "Control width of the numeric field (token or CSS length)."
     },
     {
+      "name": "labels",
+      "type": "DeepPartialStrings<ValetStrings['iterator']>",
+      "required": false,
+      "description": "Instance-level overrides for this component's i18n strings. Wins over the\n`ValetLocaleProvider` value, which in turn wins over the built-in English\ndefaults (A11Y S8 resolution contract; see `src/system/locale.tsx`)."
+    },
+    {
       "name": "name",
       "type": "string | undefined",
       "required": false,
@@ -161,7 +167,8 @@
     "Guard precision for decimals. When stepping in fractional increments (e.g., 0.1), use roundToStep to reduce floating‑point drift in committed values.",
     "Disable wheel interactions when undesirable. Set wheelBehavior='off' in scroll‑heavy views or when accidental stepping is likely.",
     "Binding precedence (prop > form > internal). An explicit `value` prop always wins; otherwise a `name` inside a `FormControl` binds to the store (seed the key in `createFormStore(initial)` so the initial value is honoured); otherwise the Iterator is uncontrolled. The binding is latched at mount.",
-    "Change source. `onValueChange`/`onValueCommit` report a truthful `info.source`: the +/- buttons report `'pointer'`, the Arrow/Page/Home/End/Enter keys and blur report `'keyboard'`, and wheel stepping reports `'wheel'`, not a blanket `'programmatic'`."
+    "Change source. `onValueChange`/`onValueCommit` report a truthful `info.source`: the +/- buttons report `'pointer'`, the Arrow/Page/Home/End/Enter keys and blur report `'keyboard'`, and wheel stepping reports `'wheel'`, not a blanket `'programmatic'`.",
+    "Internationalize the built-in labels with the `labels` prop (instance-level) or a `ValetLocaleProvider` (app-wide). Resolution is instance `labels` > provider strings > built-in English."
   ],
   "examples": [
     {

@@ -158,6 +158,7 @@ const Menu = styled('ul')<{
   max-width: min(100vw - 2rem, 360px);
   max-height: 260px;
   top: ${({ $top }) => $top}px;
+  /* rtl: physical-by-design — fixed portal anchored to the trigger's measured getBoundingClientRect().left */
   left: ${({ $left }) => $left}px;
   margin: 0;
   padding: ${({ $padY }) => `${$padY} 0`};

@@ -82,7 +82,7 @@ const Root = styled('div')<{
   $ease: string;
 }>`
   position: fixed;
-  right: ${({ $spacing }) => $spacing};
+  inset-inline-end: ${({ $spacing }) => $spacing};
   bottom: ${({ $spacing }) => $spacing};
   transform: translateY(${({ $visible, $offset }) => ($visible ? '0' : $offset)});
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};

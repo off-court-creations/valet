@@ -20,7 +20,8 @@ import { preset } from '../../css/stylePresets';
 import { Checkbox } from '../fields/Checkbox';
 import { Pagination } from './Pagination';
 import { stripe, toRgb, mix, toHex } from '../../helpers/color';
-import type { Presettable, Sx } from '../../types';
+import { resolveDeprecatedProp } from '../../system/deprecate';
+import type { Presettable, SelectionProps, Sx } from '../../types';
 
 const INTERACTIVE_ROW_SELECTOR =
   'a, button, input, textarea, select, label, summary, [role="button"], [role="link"], [role="checkbox"], [role="menuitem"], [role="switch"], [role="radio"]';
@@ -42,25 +43,47 @@ export type RowKey<T> = keyof T | ((row: T, index: number) => string | number);
 /* Public props                                               */
 export interface TableProps<T>
   extends Omit<React.TableHTMLAttributes<HTMLTableElement>, 'children' | 'style'>,
-    Presettable {
+    Presettable,
+    /* Unified selection vocabulary (API-TYPES S11, Q11(a)). Table's selection
+       unit is the row type `T`: `onSelectionChange` emits the selected rows,
+       and `getItemKey` (the cross-component name for `rowKey`) keys identity.
+       `selected`/`defaultSelected` are accepted for vocabulary parity; Table's
+       selection is internally managed (PERF S8) and does not yet read them — a
+       controlled-selection prop is a logged deferral, not part of this slice. */
+    SelectionProps<T> {
   data: T[];
   columns: TableColumn<T>[];
   striped?: boolean;
   hoverable?: boolean;
   dividers?: boolean;
+  /**
+   * @deprecated Use {@link SelectionProps.selectionMode} (`'none' | 'single' | 'multiple'`)
+   * instead. `selectable` keeps working through 0.x and is removed at 1.0; its
+   * `'multi'` value maps to `selectionMode='multiple'`. When both are supplied,
+   * `selectionMode` wins.
+   */
   selectable?: 'single' | 'multi' | undefined;
   /**
+   * @deprecated Use {@link SelectionProps.getItemKey} instead — the same
+   * `keyof T | ((row, index) => key)` shape under the cross-component name.
+   * `rowKey` keeps working through 0.x and is removed at 1.0; when both are
+   * supplied, `getItemKey` wins.
+   *
    * Identity for each row, used to key React rows and to track selection
-   * across data refreshes. Either a property name (`rowKey="id"`) or a function
-   * (`rowKey={(row) => row.id}`). When omitted, rows fall back to object
-   * identity — selection then behaves exactly as before and is lost when an
-   * immutable refresh replaces the row objects. Provide `rowKey` so selection
-   * survives such refreshes.
+   * across data refreshes. Either a property name (`getItemKey="id"`) or a
+   * function (`getItemKey={(row) => row.id}`). When omitted, rows fall back to
+   * object identity — selection then behaves exactly as before and is lost
+   * when an immutable refresh replaces the row objects. Provide a key so
+   * selection survives such refreshes.
    */
   rowKey?: RowKey<T>;
   initialSort?: { index: number; desc?: boolean };
   onSortChange?: (index: number, desc: boolean) => void;
-  /** Fired only on user interaction (checkbox toggle) and when pruning drops rows. */
+  /**
+   * Fired only on user interaction (checkbox toggle) and when pruning drops
+   * rows — the unified {@link SelectionProps.onSelectionChange}, emitting the
+   * selected **rows** (Table's selection unit is `T`).
+   */
   onSelectionChange?: (selected: T[]) => void;
   /**
    * Fired when a row is clicked (ignores clicks that originate from obvious interactive children
@@ -146,7 +169,7 @@ const Root = styled('table')<{
   & th,
   & td {
     padding: ${({ $padV, $padH }) => `${$padV} ${$padH}`};
-    text-align: left;
+    text-align: start;
     border-bottom: var(--valet-divider-stroke, ${({ $strokeW }) => $strokeW}) solid
       ${({ $border }) => $border};
     transition: background 120ms ease;
@@ -180,7 +203,7 @@ const Root = styled('table')<{
   ${({ $lines, $border, $strokeW }) =>
     $lines
       ? `
-    & th:not(:last-child), & td:not(:last-child) { border-right: var(--valet-divider-stroke, ${$strokeW}) solid ${$border}; }
+    & th:not(:last-child), & td:not(:last-child) { border-inline-end: var(--valet-divider-stroke, ${$strokeW}) solid ${$border}; }
   `
       : ''}
 
@@ -204,8 +227,7 @@ const Th = styled('th')<{
   &::after {
     content: '';
     position: absolute;
-    left: 0;
-    right: 0;
+    inset-inline: 0;
     bottom: calc(-0.5 * var(--valet-underline-width, 1px));
     height: var(--valet-underline-width, 1px);
     background: ${({ $primary, $active }) => ($active ? $primary : 'transparent')};
@@ -271,7 +293,7 @@ const SortIcon = styled('span')<{
   $ease: string;
 }>`
   display: inline-block;
-  margin-left: 0.25em;
+  margin-inline-start: 0.25em;
   color: currentColor;
   opacity: ${({ $opacity }) => $opacity};
   transition: opacity ${({ $dur }) => $dur} ${({ $ease }) => $ease};
@@ -288,8 +310,12 @@ export function Table<T extends object>({
   striped = true,
   hoverable = false,
   dividers = true,
-  selectable,
-  rowKey,
+  selectionMode,
+  selectable: selectableProp,
+  getItemKey,
+  rowKey: rowKeyProp,
+  selected: _selected,
+  defaultSelected: _defaultSelected,
   initialSort,
   onSortChange,
   onSelectionChange,
@@ -306,6 +332,32 @@ export function Table<T extends object>({
   sx,
   ...rest
 }: TableProps<T>) {
+  /* Unified selection vocabulary (API-TYPES S11, Q11(a), ruling R12). The
+     canonical `selectionMode`/`getItemKey` win over the deprecated
+     `selectable`/`rowKey` aliases; the old names keep working through 0.x and
+     dev-warn once each (deprecate.ts). PERF S8's keyed internals are untouched
+     — we only resolve the alias names down to the existing internal shapes
+     (`selectable: 'single' | 'multi'` and `rowKey`). */
+  const resolvedMode = resolveDeprecatedProp(
+    'Table',
+    'selectionMode',
+    selectionMode,
+    'selectable',
+    /* map the legacy union to the canonical one so both can be compared */
+    selectableProp === 'multi' ? 'multiple' : selectableProp,
+  );
+  /* Internal Table machinery still speaks 'single' | 'multi' | undefined. */
+  const selectable: 'single' | 'multi' | undefined =
+    resolvedMode === 'multiple' ? 'multi' : resolvedMode === 'single' ? 'single' : undefined;
+  const rowKey = resolveDeprecatedProp('Table', 'getItemKey', getItemKey, 'rowKey', rowKeyProp) as
+    | RowKey<T>
+    | undefined;
+  /* `selected`/`defaultSelected` are part of the unified vocabulary but Table's
+     selection is internally managed (PERF S8); a controlled-selection prop is a
+     logged deferral. Observed here so the destructure stays exhaustive. */
+  void _selected;
+  void _defaultSelected;
+
   const { theme } = useTheme();
   const surface = useSurface(
     (s) => ({

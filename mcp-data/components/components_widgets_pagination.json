@@ -49,6 +49,12 @@
       "default": "true"
     },
     {
+      "name": "labels",
+      "type": "DeepPartialStrings<ValetStrings['pagination']>",
+      "required": false,
+      "description": "Instance-level overrides for this component's i18n strings (nav root label,\nscroll/step button labels, per-page labels). Wins over the\n`ValetLocaleProvider` value, which in turn wins over the built-in English\ndefaults (A11Y S8 resolution contract; see `src/system/locale.tsx`)."
+    },
+    {
       "name": "sx",
       "type": "Sx",
       "required": false,
@@ -99,7 +105,8 @@
     "Prefer server‑side slicing for large datasets; ensure Table or List reflects the current page cleanly.",
     "Use accessible labels and titles for buttons (Prev/Next) and indicate current page to assistive tech.",
     "Consider infinite scroll for content feeds where paging is less meaningful.",
-    "Align placement near the data it controls and avoid duplicating controls unless justified."
+    "Align placement near the data it controls and avoid duplicating controls unless justified.",
+    "Internationalize the built-in labels with the `labels` prop (instance-level) or a `ValetLocaleProvider` (app-wide). Resolution is instance `labels` > provider strings > built-in English."
   ],
   "examples": [
     {

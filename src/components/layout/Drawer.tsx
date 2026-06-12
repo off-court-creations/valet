@@ -19,20 +19,38 @@ import { inheritSurfaceFontVars } from '../../system/inheritSurfaceFontVars';
 import { getOverlayRoot, useOverlay } from '../../system/overlay';
 import { warnOnce } from '../../system/devErrors';
 import { zVar } from '../../system/zIndex';
+import { useComponentStrings, useValetLocale } from '../../system/locale';
+import type { DeepPartialStrings, ValetStrings } from '../../system/locale';
+import { resolveAnchor } from './resolveAnchor';
+import type { DrawerAnchorInput, PhysicalDrawerAnchor } from './resolveAnchor';
 
 /* Allow strongly-typed CSS custom properties (e.g. --valet-*) */
 type CSSVarName = `--${string}`;
 type CSSVarStyles = React.CSSProperties & Record<CSSVarName, string | number>;
 
 /*───────────────────────────────────────────────────────────*/
-export type DrawerAnchor = 'left' | 'right' | 'top' | 'bottom';
+/**
+ * Public anchor values. The four physical sides ('left'/'right'/'top'/
+ * 'bottom') are direction-invariant; the additive logical 'start'/'end'
+ * (A11Y S12) resolve to left/right per the active writing direction via
+ * {@link resolveAnchor} — 'start' = leading edge, 'end' = trailing edge.
+ */
+export type DrawerAnchor = DrawerAnchorInput;
+
+/** Physical anchor the styled panel paints with (post-resolution). */
+type ResolvedAnchor = PhysicalDrawerAnchor;
 
 export interface DrawerProps extends Presettable {
   /** Controlled visibility */
   open?: boolean;
   /** Default for uncontrolled */
   defaultOpen?: boolean;
-  /** Drawer side */
+  /**
+   * Drawer side. Physical 'left'/'right'/'top'/'bottom' are
+   * direction-invariant; the additive logical 'start'/'end' resolve to
+   * left/right per the active writing direction (RTL-aware — 'start' is the
+   * leading edge). Default 'left'.
+   */
   anchor?: DrawerAnchor;
   /** Callback fired when user requests close */
   onClose?: () => void;
@@ -67,6 +85,14 @@ export interface DrawerProps extends Presettable {
   'aria-label'?: string;
   /** Id of an element labelling the dialog (alternative to `aria-label`). */
   'aria-labelledby'?: string;
+  /**
+   * Instance-level overrides for this component's i18n strings (the portrait
+   * open/close toggle-button aria-labels). Wins over the `ValetLocaleProvider`
+   * value, which in turn wins over the built-in English defaults (A11Y S8
+   * resolution contract; see `src/system/locale.tsx`). Distinct from the
+   * dialog's accessible name, which comes from `aria-label`/`aria-labelledby`.
+   */
+  labels?: DeepPartialStrings<ValetStrings['drawer']>;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -83,7 +109,7 @@ const Backdrop = styled('div')<{ $fade: boolean }>`
 `;
 
 const Panel = styled('div')<{
-  $anchor: DrawerAnchor;
+  $anchor: ResolvedAnchor;
   $fade: boolean;
   $size: string;
   $bg: string;
@@ -101,11 +127,16 @@ const Panel = styled('div')<{
   background: ${({ $bg }) => $bg};
   color: ${({ $text }) => $text};
   box-shadow: ${({ $adaptive }) => ($adaptive ? 'none' : '0 4px 16px rgba(0, 0, 0, 0.3)')};
+  /* rtl: physical-by-design — the accent border, edge-pinning and slide
+     transform are all driven by the physical $anchor prop (left/right/top/
+     bottom). A11Y S12 adds additive logical 'start'/'end' anchors that
+     resolve to physical at the component boundary; the painted side stays
+     physical so an explicit anchor='left' drawer never flips under RTL. */
   ${({ $anchor, $primary }) =>
     $anchor === 'left'
-      ? `border-right:0.25rem solid ${$primary};`
+      ? `border-right:0.25rem solid ${$primary};` /* rtl: physical-by-design */
       : $anchor === 'right'
-        ? `border-left:0.25rem solid ${$primary};`
+        ? `border-left:0.25rem solid ${$primary};` /* rtl: physical-by-design */
         : $anchor === 'top'
           ? `border-bottom:0.25rem solid ${$primary};`
           : `border-top:0.25rem solid ${$primary};`}
@@ -113,14 +144,16 @@ const Panel = styled('div')<{
     $anchor === 'left' || $anchor === 'right'
       ? `width:${$size}; height:100%;`
       : `height:${$size}; width:100%;`}
-  ${({ $anchor }) =>
-    $anchor === 'left'
-      ? 'top:0; left:0;'
-      : $anchor === 'right'
-        ? 'top:0; right:0;'
-        : $anchor === 'top'
-          ? 'top:0; left:0;'
-          : 'bottom:0; left:0;'}
+  ${
+    ({ $anchor }) =>
+      $anchor === 'left'
+        ? 'top:0; left:0;' /* rtl: physical-by-design */
+        : $anchor === 'right'
+          ? 'top:0; right:0;' /* rtl: physical-by-design */
+          : $anchor === 'top'
+            ? 'top:0; left:0;' /* rtl: physical-by-design */
+            : 'bottom:0; left:0;' /* rtl: physical-by-design */
+  }
   transform: ${({ $anchor, $fade, $persistent }) =>
     $persistent
       ? 'none'
@@ -140,7 +173,7 @@ const Panel = styled('div')<{
 export const Drawer: React.FC<DrawerProps> = ({
   open: controlledOpen,
   defaultOpen = false,
-  anchor = 'left',
+  anchor: anchorProp = 'left',
   onClose,
   size = '16rem',
   disableBackdropClick = false,
@@ -156,8 +189,17 @@ export const Drawer: React.FC<DrawerProps> = ({
   sx,
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledBy,
+  labels,
 }) => {
   const { theme } = useTheme();
+  const t = useComponentStrings('drawer', labels);
+  /* Resolve the (possibly logical) anchor to a physical side for the active
+     writing direction (A11Y S12). Everything downstream — the styled Panel's
+     physical $anchor math, the persistent-drawer margin offset, the portrait
+     toggle placement — consumes this PHYSICAL value, so 'start'/'end' follow
+     `dir` while explicit 'left'/'right'/'top'/'bottom' stay put. */
+  const { dir } = useValetLocale();
+  const anchor = resolveAnchor(anchorProp, dir);
   // Only subscribe to width/height when adaptive logic is enabled to
   // prevent unnecessary renders during horizontal window resize with
   // persistent drawers. Always read the surface element for offset.
@@ -380,7 +422,7 @@ export const Drawer: React.FC<DrawerProps> = ({
               background: toggleBg,
             } as unknown as import('../../types').Sx
           }
-          aria-label='Open drawer'
+          aria-label={t.openDrawer}
         />
       );
     }
@@ -448,7 +490,7 @@ export const Drawer: React.FC<DrawerProps> = ({
               size='sm'
               variant='outlined'
               onClick={requestClose}
-              aria-label='Close drawer'
+              aria-label={t.closeDrawer}
             />
           </div>
         )}

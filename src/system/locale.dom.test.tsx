@@ -13,10 +13,12 @@ import {
   enStrings,
   isRtlLocale,
   mergeStrings,
+  useComponentStrings,
   useValetLocale,
   ValetLocaleProvider,
   type PartialValetStrings,
   type ValetLocaleContextValue,
+  type ValetStrings,
 } from './locale';
 
 /* react-dom warns unless act usage is announced ----------------------- */
@@ -254,9 +256,11 @@ describe('enStrings verbatim seeds', () => {
     expect(enStrings.pagination.goToPage(2)).toBe('Go to page 2'); // :1150
     expect(enStrings.iterator.decrement).toBe('decrement'); // Iterator.tsx:277
     expect(enStrings.iterator.increment).toBe('increment'); // Iterator.tsx:303
-    expect(enStrings.speedDial.mainButton).toBe('Speed dial'); // SpeedDial.tsx:211
+    expect(enStrings.speedDial.mainButton).toBe('Speed dial'); // SpeedDial.tsx FAB
+    expect(enStrings.speedDial.actions).toBe('Speed dial actions'); // SpeedDial group label
     expect(enStrings.dropzone.removeFile('a.txt')).toBe('Remove a.txt'); // Dropzone.tsx:263/:311
     expect(enStrings.dropzone.removeFileTitle).toBe('Remove file'); // :264/:312
+    expect(enStrings.dropzone.remove).toBe('Remove'); // Dropzone file-list visible text
     expect(enStrings.dropzone.instructionsActive).toBe('Drop files here…'); // :341
     expect(enStrings.dropzone.instructionsIdle).toBe('Drag files or click to browse'); // :341
     expect(enStrings.dropzone.fileRejected).toBe('File rejected'); // :422
@@ -276,6 +280,95 @@ describe('enStrings verbatim seeds', () => {
     expect(() => {
       (enStrings.chip as { remove: string }).remove = 'X';
     }).toThrow();
+  });
+});
+
+describe('useComponentStrings (A11Y S8 resolution contract)', () => {
+  const lastOf = <T,>(log: T[]): T => log[log.length - 1];
+
+  /** Probe that resolves a slice with an optional instance override. */
+  function SliceProbe<K extends keyof ValetStrings>({
+    sliceKey,
+    labels,
+    log,
+  }: {
+    sliceKey: K;
+    labels?: Parameters<typeof useComponentStrings<K>>[1];
+    log: ValetStrings[K][];
+  }) {
+    log.push(useComponentStrings(sliceKey, labels));
+    return null;
+  }
+
+  it('falls back to built-in English with no provider and no labels', () => {
+    const log: ValetStrings['chip'][] = [];
+    renderStrict(
+      <SliceProbe
+        sliceKey='chip'
+        log={log}
+      />,
+    );
+    expect(lastOf(log).remove).toBe('Remove');
+    /* untouched slice keeps enStrings identity */
+    expect(lastOf(log)).toBe(enStrings.chip);
+  });
+
+  it('resolves provider strings over built-in English (provider tier)', () => {
+    const log: ValetStrings['chip'][] = [];
+    renderStrict(
+      <ValetLocaleProvider strings={{ chip: { remove: 'Entfernen' } }}>
+        <SliceProbe
+          sliceKey='chip'
+          log={log}
+        />
+      </ValetLocaleProvider>,
+    );
+    expect(lastOf(log).remove).toBe('Entfernen');
+  });
+
+  it('resolves the instance labels prop over the provider (prop tier wins)', () => {
+    const log: ValetStrings['chip'][] = [];
+    renderStrict(
+      <ValetLocaleProvider strings={{ chip: { remove: 'Entfernen' } }}>
+        <SliceProbe
+          sliceKey='chip'
+          labels={{ remove: 'Dismiss' }}
+          log={log}
+        />
+      </ValetLocaleProvider>,
+    );
+    expect(lastOf(log).remove).toBe('Dismiss');
+  });
+
+  it('lets the instance prop win over built-in English with no provider', () => {
+    const log: ValetStrings['pagination'][] = [];
+    renderStrict(
+      <SliceProbe
+        sliceKey='pagination'
+        labels={{ root: 'navigation', nextPage: 'Forward' }}
+        log={log}
+      />,
+    );
+    expect(lastOf(log).root).toBe('navigation');
+    expect(lastOf(log).nextPage).toBe('Forward');
+    /* untouched leaves keep their English default */
+    expect(lastOf(log).previousPage).toBe('Previous page');
+    /* formatter leaves still work */
+    expect(lastOf(log).pageLabel(3, true)).toBe('Page 3, current page');
+  });
+
+  it('overrides interpolated formatter leaves at the instance tier', () => {
+    const log: ValetStrings['dropzone'][] = [];
+    renderStrict(
+      <SliceProbe
+        sliceKey='dropzone'
+        labels={{ removeFile: (n: string) => `Entferne ${n}` }}
+        log={log}
+      />,
+    );
+    expect(lastOf(log).removeFile('a.txt')).toBe('Entferne a.txt');
+    /* sibling default survives */
+    expect(lastOf(log).removeFileTitle).toBe('Remove file');
   });
 });
 

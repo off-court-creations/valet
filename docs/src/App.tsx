@@ -53,7 +53,9 @@ const AppBarDemoPage = page(() => import('./pages/components/layout/AppBarDemo')
 const GridDemoPage = page(() => import('./pages/components/layout/GridDemo'));
 const StackDemoPage = page(() => import('./pages/components/layout/StackDemo'));
 const PaginationDemoPage = page(() => import('./pages/components/widgets/PaginationDemo'));
-const ErrorBoundaryDemoPage = page(() => import('./pages/components/widgets/ValetErrorBoundaryDemo'));
+const ErrorBoundaryDemoPage = page(
+  () => import('./pages/components/widgets/ValetErrorBoundaryDemo'),
+);
 const SpeedDialDemoPage = page(() => import('./pages/components/widgets/SpeedDialDemo'));
 const RadioGroupDemoPage = page(() => import('./pages/components/field/RadioGroupDemo'));
 const MetroSelectDemoPage = page(() => import('./pages/components/field/MetroSelectDemo'));
@@ -76,6 +78,7 @@ const ComponentQCLabPage = page(() => import('./pages/examples/ComponentQCLab'))
 const MCPGuidePage = page(() => import('./pages/getting-started/MCP'));
 const GlossaryPage = page(() => import('./pages/getting-started/Glossary'));
 const ComponentStatusPage = page(() => import('./pages/getting-started/ComponentStatus'));
+const RTLStatusPage = page(() => import('./pages/getting-started/RTLStatus'));
 const EventsConceptPage = page(() => import('./pages/concepts/Events'));
 
 /*───────────────────────────────────────────────────────────*/
@@ -138,6 +141,10 @@ export function App() {
         <Route
           path='/component-status'
           element={<ComponentStatusPage />}
+        />
+        <Route
+          path='/rtl-status'
+          element={<RTLStatusPage />}
         />
 
         <Route

@@ -15,6 +15,8 @@ import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { IconButton } from './IconButton';
 import { useFieldState } from '../../hooks/useControlledState';
+import { useComponentStrings } from '../../system/locale';
+import type { DeepPartialStrings, ValetStrings } from '../../system/locale';
 import type { FieldBaseProps } from '../../types';
 import type { ChangeInfo, InputSource, OnValueChange, OnValueCommit } from '../../system/events';
 import type { Theme } from '../../system/themeStore';
@@ -50,6 +52,12 @@ export interface IteratorProps
   wheelBehavior?: 'off' | 'focus' | 'hover';
   /** Control width of the numeric field (token or CSS length). */
   width?: number | string;
+  /**
+   * Instance-level overrides for this component's i18n strings. Wins over the
+   * `ValetLocaleProvider` value, which in turn wins over the built-in English
+   * defaults (A11Y S8 resolution contract; see `src/system/locale.tsx`).
+   */
+  labels?: DeepPartialStrings<ValetStrings['iterator']>;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -115,6 +123,7 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
       fullWidth: _fullWidth,
       preset: p,
       className,
+      labels,
       sx,
       ...rest
     },
@@ -124,6 +133,7 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
     void _helperText;
     void _fullWidth;
     const { theme } = useTheme();
+    const t = useComponentStrings('iterator', labels);
 
     const localRef = useRef<HTMLInputElement | null>(null);
     const setRef = useCallback(
@@ -295,7 +305,7 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
           icon='mdi:minus-thick'
           onClick={() => stepBy(-1)}
           disabled={decDisabled}
-          aria-label='decrement'
+          aria-label={t.decrement}
         />
         <Field
           {...rest}
@@ -322,7 +332,7 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
           icon='mdi:plus-thick'
           onClick={() => stepBy(1)}
           disabled={incDisabled}
-          aria-label='increment'
+          aria-label={t.increment}
         />
       </Wrapper>
     );

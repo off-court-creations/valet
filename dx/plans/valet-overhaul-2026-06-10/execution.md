@@ -236,7 +236,31 @@ first push (local command-list equivalent green); real-browser visual checks
 | #   | Wave | Contents                                                                                                                                                  | Status |
 | --- | ---- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
 | 10  | 2.0  | **Pure/shim cores:** API-TYPES S9 deprecate.ts + Accordion rename → S10 onChange normalization → S12 paper cuts · GOVERNANCE S10 ValetErrorBoundary (Q18) · PERF S9 $trackSize (Q9) | ✅     |
-| 11  | 2.1  | **Serialized component sweeps:** API-TYPES S11 selection (Q11) · A11Y S8 labels · A11Y S10 DateSelector Intl · THEMING S9 (Q14) · A11Y S11 logical props → S12 dir plumbing | ⬜     |
+| 11  | 2.1  | **Serialized component sweeps:** API-TYPES S11 selection (Q11) · A11Y S8 labels · A11Y S10 DateSelector Intl · THEMING S9 (Q14) · A11Y S11 logical props → S12 dir plumbing | ✅     |
+
+### Wave 2.1 — serialized sweeps — ✅
+
+**What shipped:** `SelectionProps<K>` unification (Q11: Table
+selectionMode/getItemKey canonical with deprecated selectable/rowKey
+aliases; List getItemKey + selectionMode; Tree selectionMode incl. 'none';
+controlled-Table-selection logged as a deferral) · labels wiring across 10
+components via a new `useComponentStrings` three-tier hook (instance prop >
+provider > English; two missing literals added to the table) · DateSelector
+Intl (locale/firstDayOfWeek props; en-US default byte-identical; de-DE
+Monday grids; ar-EG display digits with ISO Latin values) · explicit-fonts-
+only (Q14: `useInitialTheme({})` = zero font network) · the
+logical-properties sweep (~82 physical usages → logical or
+`/* rtl: physical-by-design */` annotated ×27; **check:rtl gate green over
+58 files**; LTR pixel-identity reviewed declaration-by-declaration) ·
+dir plumbing (Surface dir from provider; Snackbar/SpeedDial
+inset-inline-end; Drawer 'start'|'end' anchors via pure resolveAnchor;
+honest RTL-status docs page) · throw-site rebase check: all 7 enriched
+sites verified intact.
+
+**Verification:** both reviewers **pass**, zero fixer. Registrar batch:
+`SelectionProps` + `Intent` type exports, `check:rtl` script. **Gate:**
+lint ✅ tsc ✅ **1197/1197 tests** ✅ build ✅ check:engine ✅ check:rtl ✅
+check:bundle ✅ mcp:check ✅ type-probes ✅ docs build ✅.
 | 12  | 2.2  | **Docs/templates:** THEMING S10 templates (Q15) → S11 privacy page · GOVERNANCE S8 support statement (Q20) → S11 CONTRIBUTING · MCP-TRUTH S10 curated summaries → S12 dead pipeline | ⬜     |
 
 ### Wave 2.0 — shim cores — ✅

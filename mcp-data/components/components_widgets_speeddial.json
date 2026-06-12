@@ -37,6 +37,12 @@
       ]
     },
     {
+      "name": "labels",
+      "type": "DeepPartialStrings<ValetStrings['speedDial']>",
+      "required": false,
+      "description": "Instance-level overrides for this component's i18n strings (the main FAB\nand actions-group aria-labels). Wins over the `ValetLocaleProvider` value,\nwhich in turn wins over the built-in English defaults (A11Y S8 resolution\ncontract; see `src/system/locale.tsx`). Per-action accessible names come\nfrom each action's own `label`."
+    },
+    {
       "name": "sx",
       "type": "Sx",
       "required": false,
@@ -70,7 +76,8 @@
     "Label actions clearly. Provide short, specific labels; each action's `label` becomes its accessible name (`aria-label`) and hover `title`. The dial uses disclosure semantics (`aria-expanded`/`aria-controls` on the trigger, a `role='group'` actions container) and shows a visible keyboard focus ring.",
     "Dismissal is automatic. The open dial registers on the shared overlay stack: pressing Escape closes it and returns focus to the FAB, clicking outside closes it, and invoking any action collapses the dial back to a stable state. You do not need to manage open/closed state yourself.",
     "Pick direction by context. Choose `up` / `left` when anchored to bottom/right edges to prevent overflow. Keep action order predictable.",
-    "Motion tokens. Animations use theme motion tokens; keep custom presets aligned for a cohesive feel with the rest of the app."
+    "Motion tokens. Animations use theme motion tokens; keep custom presets aligned for a cohesive feel with the rest of the app.",
+    "Internationalize the built-in labels with the `labels` prop (instance-level) or a `ValetLocaleProvider` (app-wide). Resolution is instance `labels` > provider strings > built-in English."
   ],
   "examples": [],
   "docsUrl": "/speeddial-demo",

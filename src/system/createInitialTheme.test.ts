@@ -34,7 +34,10 @@ const mockedWaitForFonts = vi.mocked(waitForFonts);
 const mockedInjectFontLinks = vi.mocked(injectFontLinks);
 
 beforeEach(() => {
-  useFonts.setState({ loading: 0, ready: false });
+  // Reset `started` too: it latches true on the first start() and is never
+  // reset by finish(), so without this an earlier test's load would leak the
+  // flag into the explicit-fonts-only zero-network assertions below.
+  useFonts.setState({ loading: 0, ready: false, started: false });
   mockedWaitForFonts.mockReset();
   mockedInjectFontLinks.mockReset();
 });
@@ -49,7 +52,8 @@ describe('createInitialTheme', () => {
   it('balances start/finish when fonts resolve', async () => {
     mockedWaitForFonts.mockResolvedValue(undefined);
 
-    await createInitialTheme({});
+    // Name a font so the explicit-fonts-only path actually loads something.
+    await createInitialTheme({ fonts: { body: 'Brand Sans' } });
 
     expect(mockedInjectFontLinks).toHaveBeenCalledTimes(1);
     expect(useFonts.getState().loading).toBe(0);
@@ -59,11 +63,78 @@ describe('createInitialTheme', () => {
   it('still runs finish() when waitForFonts rejects — fontStore never wedges', async () => {
     mockedWaitForFonts.mockRejectedValue(new Error('FontFace 404'));
 
-    await expect(createInitialTheme({})).rejects.toThrow('FontFace 404');
+    await expect(createInitialTheme({ fonts: { body: 'Brand Sans' } })).rejects.toThrow(
+      'FontFace 404',
+    );
 
     // Without the try/finally this stayed at loading=1 / ready=false forever
     expect(useFonts.getState().loading).toBe(0);
     expect(useFonts.getState().ready).toBe(true);
+  });
+});
+
+/*───────────────────────────────────────────────────────────*/
+/* THEMING S9 (ruling Q14(a)): explicit-fonts-only. An empty patch loads no
+   fonts and triggers zero network; only caller-named fonts inject. */
+describe('createInitialTheme explicit-fonts-only (THEMING S9, Q14(a))', () => {
+  it('empty options trigger ZERO network — no injectFontLinks, no fontStore start', async () => {
+    mockedWaitForFonts.mockResolvedValue(undefined);
+
+    await createInitialTheme({});
+
+    // The built-in family defaults (Kumbh Sans / Inter / JetBrains Mono) are
+    // no longer auto-loaded: nothing is injected and waitForFonts never runs.
+    expect(mockedInjectFontLinks).not.toHaveBeenCalled();
+    expect(mockedWaitForFonts).not.toHaveBeenCalled();
+    // fontStore stays untouched — never enters a loading state for zero fonts.
+    expect(useFonts.getState().started).toBe(false);
+    expect(useFonts.getState().loading).toBe(0);
+  });
+
+  it('a theme patch without fonts still loads nothing (defaults never auto-load)', async () => {
+    mockedWaitForFonts.mockResolvedValue(undefined);
+
+    await createInitialTheme({ fonts: {} });
+
+    expect(mockedInjectFontLinks).not.toHaveBeenCalled();
+    expect(mockedWaitForFonts).not.toHaveBeenCalled();
+    expect(useFonts.getState().started).toBe(false);
+  });
+
+  it('only the caller-named font is injected — built-in defaults are not appended', async () => {
+    mockedWaitForFonts.mockResolvedValue(undefined);
+
+    await createInitialTheme({ fonts: { heading: 'Brand Sans' } });
+
+    expect(mockedInjectFontLinks).toHaveBeenCalledTimes(1);
+    const injected = mockedInjectFontLinks.mock.calls[0][0];
+    expect(injected).toEqual(['Brand Sans']);
+    // Inter/JetBrains Mono/Kumbh Sans (the theme defaults) must NOT ride along.
+    expect(injected).not.toContain('Inter');
+    expect(injected).not.toContain('JetBrains Mono');
+    expect(injected).not.toContain('Kumbh Sans');
+    expect(useFonts.getState().ready).toBe(true);
+  });
+
+  it('extras are loaded even when no patch fonts are named', async () => {
+    mockedWaitForFonts.mockResolvedValue(undefined);
+
+    await createInitialTheme({}, ['Brand Mono']);
+
+    expect(mockedInjectFontLinks).toHaveBeenCalledTimes(1);
+    expect(mockedInjectFontLinks.mock.calls[0][0]).toEqual(['Brand Mono']);
+  });
+
+  it('caller-named fonts and extras are merged and de-duplicated', async () => {
+    mockedWaitForFonts.mockResolvedValue(undefined);
+
+    await createInitialTheme({ fonts: { heading: 'Brand Sans', body: 'Brand Sans' } }, [
+      'Brand Mono',
+      'Brand Sans',
+    ]);
+
+    expect(mockedInjectFontLinks).toHaveBeenCalledTimes(1);
+    expect(mockedInjectFontLinks.mock.calls[0][0]).toEqual(['Brand Sans', 'Brand Mono']);
   });
 });
 
@@ -72,7 +143,8 @@ describe('useInitialTheme', () => {
     mockedWaitForFonts.mockRejectedValue(new Error('offline'));
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-    expect(() => useInitialTheme({})).not.toThrow();
+    // A named font drives the load path that can reject.
+    expect(() => useInitialTheme({ fonts: { body: 'Brand Sans' } })).not.toThrow();
 
     await vi.waitFor(() => {
       expect(warn).toHaveBeenCalledWith(
@@ -87,12 +159,28 @@ describe('useInitialTheme', () => {
     mockedWaitForFonts.mockResolvedValue(undefined);
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-    useInitialTheme({});
+    useInitialTheme({ fonts: { body: 'Brand Sans' } });
 
     await vi.waitFor(() => {
       expect(useFonts.getState().ready).toBe(true);
     });
     expect(warn).not.toHaveBeenCalled();
+  });
+
+  it('explicit-fonts-only (THEMING S9): an empty patch loads no fonts and never warns', async () => {
+    mockedWaitForFonts.mockResolvedValue(undefined);
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    useInitialTheme({});
+
+    await vi.waitFor(() => {
+      // The createInitialTheme promise resolves immediately (early return);
+      // give the microtask queue a turn so any stray warn would have fired.
+      expect(mockedWaitForFonts).not.toHaveBeenCalled();
+    });
+    expect(mockedInjectFontLinks).not.toHaveBeenCalled();
+    expect(warn).not.toHaveBeenCalled();
+    expect(useFonts.getState().started).toBe(false);
   });
 });
 

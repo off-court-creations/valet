@@ -46,7 +46,7 @@ const StackContainer = styled('div')<{
     $alignX !== 'left'
       ? `
     width: max-content;
-    ${$alignX === 'right' ? 'margin-left:auto;' : 'margin-left:auto; margin-right:auto;'}
+    ${$alignX === 'right' ? 'margin-inline-start:auto;' : 'margin-inline-start:auto; margin-inline-end:auto;'}
   `
       : ''}
 

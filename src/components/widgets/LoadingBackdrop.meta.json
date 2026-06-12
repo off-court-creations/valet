@@ -2,5 +2,9 @@
   "name": "LoadingBackdrop",
   "status": "stable",
   "aliases": ["loadingbackdrop", "backdrop", "scrim"],
-  "docs": { "bestPractices": [] }
+  "docs": {
+    "bestPractices": [
+      "Internationalize the built-in labels with the `labels` prop (instance-level) or a `ValetLocaleProvider` (app-wide). Resolution is instance `labels` > provider strings > built-in English."
+    ]
+  }
 }

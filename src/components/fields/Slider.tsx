@@ -73,6 +73,11 @@ const Track = styled('div')<{ $h: string }>`
 const Fill = styled('div')<{ $primary: string }>`
   position: absolute;
   top: 0;
+  /* rtl: physical-by-design — the slider is a physical coordinate system:
+     pointer math maps clientX→value and the thumb/ticks are positioned by
+     percentage from the physical left edge (style={{ left: pct% }}). The fill
+     origin must share that frame; interactive-RTL drag math is a logged
+     deferral, so this stays physical-left to track the thumb exactly. */
   left: 0;
   height: 100%;
   background: ${({ $primary }) => $primary};
@@ -559,7 +564,8 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
           {showValue && <ValueBubble $font={geom.font}>{format(current)}</ValueBubble>}
         </Thumb>
 
-        {/* min / max labels */}
+        {/* min / max labels — rtl: physical-by-design, pinned to the same
+            physical track frame as the percentage-positioned thumb/ticks */}
         {showMinMax && (
           <>
             <EndLabel
@@ -577,7 +583,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
           </>
         )}
 
-        {/* ticks */}
+        {/* ticks — rtl: physical-by-design, pctFor() is a physical-left percentage */}
         {showTicks &&
           tickValues.map((t) => (
             <Tick

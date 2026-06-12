@@ -25,6 +25,7 @@ Target: **0.35.0** — the valet overhaul (`feat/valet-overhaul`). Phase 0 (deci
 - Engine: bare nested selectors gained explicit `& ` prefixes (RadioGroup, Checkbox, Table, Video, Pagination) — lowers the floor toward Chrome 112/Safari 16.5; **generated class hashes changed** for the touched components (internal names only).
 - Engine (behavior, ENGINE S7 / ruling R4, §9 veto register): `normalizeCSS` is now a quote/`url()`-aware scanner — whitespace inside quoted strings and `url(…)` is byte-preserved (no more corrupted `content` strings, data URIs, or multi-space font names), `;` runs before `}` are fully stripped (`;;}` included), and normalization is idempotent; **every generated class hash changes this release** (class names were never a contract).
 - Theme (behavioral fix, THEMING S1): `setMode` recomposes the theme from base + the caller's accumulated overlay instead of resetting to factory palettes — brand overrides now survive mode toggles; new `resetTheme()`; dark palette `colorNames` data errors and by-reference palette sharing fixed.
+- Fonts (**BREAKING** default, ruling Q14(a), THEMING S9): `useInitialTheme`/`createInitialTheme` now load **only the fonts the caller explicitly names** — the `patch.fonts.*` overrides plus the `extras` array. The three built-in family defaults (`Kumbh Sans`, `Inter`, `JetBrains Mono`) are **no longer auto-loaded**, so a zero-config `useInitialTheme({})` injects no font links, starts no font load, and makes **zero network requests** (the truly unconditional GDPR path — it removes the request site entirely, where `injectRemote:false` only reinterprets named Google families as local). Those default families still appear as the theme's `fontFamily` values and fall back to whatever face the platform already has installed; only the _webfont download_ is gone. **Migration:** zero-config third-party apps will visibly change fonts (the built-in families render in a system/installed fallback). To keep loading them, name them — `useInitialTheme({ fonts: { heading: 'Kumbh Sans', body: 'Inter', mono: 'JetBrains Mono', button: 'Kumbh Sans' } }, ['Kumbh Sans', 'Inter', 'JetBrains Mono'])` — or self-host via `extras`; the generated CVA templates and docs app already pass their fonts explicitly and are unaffected.
 - Packaging (package.json truth pass): `sideEffects: ["*.css"]` (the previous `false` was provably wrong), explicit per-format `types` conditions, `./package.json` subpath export, unused `marked-highlight` dependency removed, root `engines` removed (CLIs keep theirs).
 - Packaging (**BREAKING** for `require()` consumers, ruling Q1(a), PACKAGING S4): the package is now **ESM-only with a per-module dist** — tsup multi-entry + code splitting emits `dist/**/*.mjs` so bundlers tree-shake at module granularity (Button-only consumer ≈136KB→19.7KB raw / 40KB→7.8KB gzip, measured), types are one bundled `dist/index.d.mts`, the CJS build (`dist/index.js`/`index.d.ts`) is gone, and the barrel `dist/index.mjs` stays the only public JS entry (no deep-import subpaths).
 - Engine (behavior, ENGINE S11, §9 veto register): preset rules now insert with **doubled-specificity selectors** (`.zp-x.zp-x`, 0-2-0) so a preset can finally override equal-specificity styled() base rules (0-1-0) regardless of insertion order — pre-fix, presets registered at app init always lost the cascade tie to component rules inserted at first render (audit `stylePresets.ts:54`). The DOM class attribute is unchanged (`preset()` still returns one class); only the rule text doubles. Chosen over `@layer`: layering valet's rules would demote them below all unlayered consumer CSS and break the in-place themed rule swap. Consumer note: single-class consumer CSS that previously out-ordered a preset rule now loses to it — use `sx`/inline style (always wins) or a more specific selector for one-off overrides.
@@ -49,27 +50,33 @@ Target: **0.35.0** — the valet overhaul (`feat/valet-overhaul`). Phase 0 (deci
   - **`Video` width/height widening** — `width`/`height` were `string`-only; both widen to `Space` (`number | string`). A bare number is now treated as a CSS pixel length (`640` → `640px`); strings pass through unchanged. Purely additive — no existing call breaks.
   - **`RadioGroup` `spacing` → `gap` (rename with deprecation alias, ruling Q12(a))** — the inter-option gap prop is renamed to `gap` (aligning with the shared `SpacingProps` vocabulary). `spacing` keeps working through 0.x as an additive alias that dev-warns once; `gap` wins when both are supplied. **Migration:** rename `spacing` → `gap` on `<RadioGroup>`.
   - **`Panel` `normalizeRowHeight` → `normalizeRowHeights` (rename with deprecation alias, ruling Q12(a))** — the per-Panel row-height opt-out is renamed to the canonical plural `normalizeRowHeights` (matching Grid's `normalizeRowHeights`). The singular keeps working through 0.x as an additive alias that dev-warns once; the plural wins when both are supplied; default stays `true` (normalize). **Migration:** rename `normalizeRowHeight` → `normalizeRowHeights` on `<Panel>`.
+- Types (selection unification, ruling Q11(a)/R12, API-TYPES S11): a single keyed selection vocabulary — `SelectionProps<K>` in `src/types.ts` (exported from the barrel) — now spans the collection components so the same name means the same thing everywhere. `K` is each component's **selection unit**: `selectionMode` (`'none' | 'single' | 'multiple'`), keyed `selected`/`defaultSelected` arrays, `onSelectionChange(selected: K[])`, and a cross-component `getItemKey` (`keyof K | ((item, index) => key)`). Each component carries its pre-0.35 names as additive deprecation aliases (via `deprecate.ts`) that keep working through 0.x, dev-warn **once each**, and are removed at **1.0**; the canonical name **wins** when both are supplied. The keyed Table internals (PERF S8) are unchanged — this is alias wiring + the unified vocabulary only.
+  - **`Table` (`K = T`, the row type)** — `selectable` (`'single' | 'multi'`) → `selectionMode` (`'none' | 'single' | 'multiple'`, where `'multi'` ≡ `'multiple'`); `rowKey` → `getItemKey` (identical `keyof T | fn` shape). `onSelectionChange` already emitted the selected **rows** and keeps doing so. **Migration:** `selectable='multi'` → `selectionMode='multiple'`, `rowKey=…` → `getItemKey=…`.
+  - **`List` (`K = T`, single-by-reference)** — the boolean `selectable` → `selectionMode` (`'none' | 'single'`; `selectable` ≡ `selectionMode='single'`); `getKey` → `getItemKey`. List keeps its single-reference `selected`/`onSelectionChange(item, index)` model. **Migration:** `selectable` → `selectionMode='single'`, `getKey=…` → `getItemKey=…`.
+  - **`Tree` (`K = string`, node ids)** — adopts `selectionMode` (`'none' | 'single'`; default `'single'` preserves today's behavior, `'none'` disables selection writes — rows still expand/collapse and navigate). Expansion already spoke the canonical `expanded`/`defaultExpanded`/`onExpandedChange` trio (shared with Accordion). No deprecated alias — Tree had no pre-0.35 selection flag to rename.
 - Overlay (z-order normalization, ruling Q3(a), OVERLAY S7): every overlaying layer now stacks on one TS-defined scale in `src/system/zIndex.ts` (`VALET_ZINDEX` + the `zVar(layer)` helper emitting `var(--valet-zindex-<layer>, <fallback>)`), replacing the ad-hoc literals that let the AppBar cover modals and left Snackbar/Tooltip below them. A repo-scan test rejects any literal `z-index ≥ 1000` outside `zIndex.ts`. Hosts can re-order layers by setting the `--valet-zindex-*` custom properties. Old → new per component:
 
-  | Component | Layer | Old z-index | New z-index |
-  |---|---|---|---|
-  | SpeedDial (FAB container) | `fab` | _(none)_ | 1050 |
-  | AppBar | `appbar` | 10000 | 1100 |
-  | Drawer collapsed-toggle button | `appbar` | 9999 | 1100 |
-  | Modal backdrop | `modalBackdrop` | 1390 | 1390 |
-  | Modal dialog | `modal` | 1400 | 1400 |
-  | Drawer backdrop | `modalBackdrop` | 1390 | 1390 |
-  | Drawer panel | `modal` | 1400 (persistent 1399) | 1400 (persistent 1399) |
-  | LoadingBackdrop | `modal` | 1400 | 1400 |
-  | Select dropdown | `dropdown` | 1450 | 1450 |
-  | Snackbar | `snackbar` | 1000 | 1500 |
-  | Tooltip | `tooltip` | 1200 | 1600 |
+  | Component                      | Layer           | Old z-index            | New z-index            |
+  | ------------------------------ | --------------- | ---------------------- | ---------------------- |
+  | SpeedDial (FAB container)      | `fab`           | _(none)_               | 1050                   |
+  | AppBar                         | `appbar`        | 10000                  | 1100                   |
+  | Drawer collapsed-toggle button | `appbar`        | 9999                   | 1100                   |
+  | Modal backdrop                 | `modalBackdrop` | 1390                   | 1390                   |
+  | Modal dialog                   | `modal`         | 1400                   | 1400                   |
+  | Drawer backdrop                | `modalBackdrop` | 1390                   | 1390                   |
+  | Drawer panel                   | `modal`         | 1400 (persistent 1399) | 1400 (persistent 1399) |
+  | LoadingBackdrop                | `modal`         | 1400                   | 1400                   |
+  | Select dropdown                | `dropdown`      | 1450                   | 1450                   |
+  | Snackbar                       | `snackbar`      | 1000                   | 1500                   |
+  | Tooltip                        | `tooltip`       | 1200                   | 1600                   |
 
 - MCP corpus honesty: all 56 placeholder summaries replaced with real header-comment summaries; glossary populated (0 → 13 entries); `docsUrls` derived from the real docs route table; KeyModal relocated to `widgets/` (public import path unchanged) and now visible to MCP; required-prop detection fixed (TextField `name`) and the polymorphic `as` prop extracted; `_ts-extract.json` regenerated fresh instead of mirroring a stale copy; valet-mcp resolves its bundled `mcp-data` from the true package root (selfcheck green, `dataSource: "bundled"`).
 - Security (**BREAKING** default, ruling Q7(a), SECURITY S6; audit MEDIUM `Avatar.tsx:104`): `<Avatar>` no longer makes a third-party Gravatar request by default. A src-less avatar previously hashed `email` (or `''`) and fetched `gravatar.com/avatar/{md5}`, disclosing a reversible email hash plus the viewer's IP/UA to Automattic with no opt-in — and it did so even when `email` was undefined (hashing `''`). Gravatar is now gated behind a new `gravatar?: boolean` prop (default `false`); src-less avatars render the offline initials/placeholder fallback and make **no network request**. New `src/helpers/gravatar.ts` (`gravatarUrl`/`gravatarHash`/`canonicalizeEmail`) returns `undefined` for an empty/whitespace email, so even opted-in avatars never hash `''`. **Migration:** add `gravatar` to any `<Avatar email=… />` that should still load a Gravatar; the bundled `LLMChat`/`RichChat` avatars pass an explicit `src` and are unaffected.
 - Security posture docs (SECURITY S7, gated Q8(a)): `src/system/aiKeyStore.ts` now carries a loud threat-model header — the key store, `sendChat`, `useAIKey`, KeyModal, and LLMChat are a **dev tool** for browser-direct LLM prototyping, not secret management (keys are reachable by any script on the page and sent straight to the provider; at-rest encryption is opt-in and defends only against casual storage inspection, never a hostile runtime). `KeyModal` gained a matching header comment plus a visible in-modal posture note; `LLMChat`'s header now documents honestly that it is a **presentational shell** that never calls `sendChat`. `LLMChat.meta.json` carries the same guidance for MCP consumers.
 - Dependencies (**BREAKING** install semantics, ruling Q21(a), PACKAGING S8): `zustand` moved out of `dependencies` and is now a **peer dependency** (`^4.5.7 || ^5.0.0`, declared non-optional via `peerDependenciesMeta`); it is also a `devDependency` so valet's own dev/test/build runs against v4. **Why:** as a regular `^4`-only dependency, apps already on zustand v5 silently shipped two copies (two store registries, split theme/surface state). A non-optional peer lets the consumer's single install (v4 **or** v5) satisfy valet. **Migration:** consumers that did not already depend on zustand directly must add `zustand` (`^4.5.7 || ^5.0.0`) to their own `dependencies`; npm 7+ no longer auto-installs peers it cannot find, so a missing peer surfaces as an install warning (and, for stricter package managers, a resolution error) rather than a silent duplicate. valet's public API does not require any zustand import from consumers — the peer exists so the engine's internal stores deduplicate against the app's copy. **v5 compatibility:** verified — valet only touches APIs unchanged across the v4→v5 boundary: `createWithEqualityFn` (`zustand/traditional`), `shallow` (`zustand/shallow`), `persist`/`createJSONStorage`/`StateStorage` (`zustand/middleware`), and the `StoreApi`/`UseBoundStore` types (`zustand`) all exist with identical signatures in v5; valet uses neither the removed default `equalityFn` of the bare `create` (it is on `zustand/traditional`, which v5 keeps) nor any of the v4 deep-import paths (`zustand/context`, default `shallow` from the root) that v5 dropped.
 - Dependencies (dev-chain CVEs, PACKAGING S8): `npm audit fix` cleared all 9 reported dev-chain advisories (6 high incl. rollup arbitrary-file-write path traversal `GHSA-mw96-cpmx-2vgc` and the `@babel/plugin-transform-modules-systemjs` issue, 3 moderate) — all transitive, all resolved without a breaking-major bump (`npm audit` → 0 vulnerabilities). No runtime dependency changed; the lockfile-only updates affect the toolchain that builds the published artifacts.
+- A11y/RTL (A11Y S11, §9 a11y veto register — RTL Phase A; ships unflagged, **LTR pixel-identical**): the mechanical subset of physical CSS across `src/components/**` migrated to logical properties — `margin-left`/`margin-right` → `margin-inline-start`/`-end`, `padding-left`/`-right` → `padding-inline-start`/`-end` (symmetric pairs collapsed to `padding-inline`), `border-left`/`-right` → `border-inline-start`/`-end`, `text-align: left`/`right` → `start`/`end`, and symmetric/edge `left`/`right` positioning → `inset-inline[-start/-end]`. Touched: Box/Stack/Panel/AppBar anchoring margins, Modal/Tabs padding, Accordion/Table `text-align`, Table column dividers + sort-icon gap, the whole Tree indentation/connector axis, LLMChat/RichChat sender-relative bubble padding, List/Table/Tabs underline-and-indicator insets, Snackbar/SpeedDial corner anchors, the Progress determinate fill, and the Dropzone remove-button badge. In `dir: ltr` every logical property resolves to the exact same box, so LTR rendering is byte-identical; the payoff is correct mirroring once `dir: rtl` lands (A11Y S12). Genuinely physical declarations — Drawer slide/anchor transforms (driven by the physical `anchor` prop), Pagination/Tabs/Slider/Switch measured-pixel and thumb-slide math, Tooltip arrow placement, Select/Tooltip `getBoundingClientRect` portal anchoring, Modal viewport centering, and the Progress indeterminate sweep keyframes — are kept physical and marked `/* rtl: physical-by-design */` (full interactive RTL: drag math, animated underline, sweep mirroring is a logged deferral). New source-scan gate `scripts/checks/rtl-physical.mjs` (`check:rtl`) lexes every `styled()`/`keyframes()` template under `src/components` + `src/css` and **fails on any unannotated physical property** (mirrors the ENGINE S3 nested-selector gate). Class hashes changed for every touched component — already covered by this release's blanket "every generated class hash changes" note above (internal names only; never a contract).
+- A11y/RTL (A11Y S12, §9 a11y veto register — RTL Phase A direction plumbing; **additive**, **LTR pixel-identical**): writing direction now flows from the locale into the DOM and into Drawer placement. `Surface` stamps `dir="ltr"|"rtl"` (from `useValetLocale().dir`) on its single root element, so the logical properties migrated in S11 finally resolve RTL for the whole subtree; SSR-safe (React context only, no `document`/`window` access — identical server and client output) and overridable by a caller-supplied `dir` prop on a specific `Surface`. `Drawer` gains additive **logical anchors** `anchor='start'`/`anchor='end'` via a pure `resolveAnchor(anchor, dir)` helper (`src/components/layout/resolveAnchor.ts`): `start` resolves to the leading edge, `end` to the trailing edge (LTR: start=left/end=right; RTL: start=right/end=left). The existing physical `'left'`/`'right'`/`'top'`/`'bottom'` values are **unchanged and direction-invariant** — an explicit `anchor='left'` Drawer never flips under RTL. Snackbar/SpeedDial already pin with `inset-inline-end` (S11), so they sit at the trailing corner automatically. New honest **RTL Status** docs page (`/rtl-status`) documents exactly what works (dir plumbing, logical properties, start/end anchors) and what does **not** yet (interactive drag math, animated-underline direction, full visual mirroring — all logged deferrals). Default behavior is unchanged for every existing app: no provider ⇒ `dir="ltr"`, no anchor change.
 
 ### Fixed
 
@@ -227,10 +234,12 @@ The largest 0.33.x release (73 commits). Most of the entries that sat in the sta
 - MCP: Add `adjust_theme` tool to safely update `useInitialTheme` in an App file. Supports marker-bound edits, merging theme and font overrides/extras, and always applies with a pre-write backup and diff.
 
 ## [0.30.5]
+
 - MCP: Add glossary pipeline and tools. New docs page at `/glossary` powers `glossary.json` via `scripts/mcp/extract-glossary.mjs`; server exposes `get_glossary` and `define_term` (soft-fail suggestions).
 - MCP: Add hardcoded `get_primer` tool and resources to guide agents on ethos, patterns, and recommended flows; selfcheck now reports `glossaryEntries` and `hasPrimer`.
 
 ## [0.30.4]
+
 - docs: add Best Practices sections for Surface, Styled Engine, and Theme concept pages; plus AppBar, Stack, and Drawer component demos for consistent guidance.
 - docs: add Best Practices sections for Pagination, Snackbar, and RadioGroup demos to strengthen accessibility, motion, and state guidance.
 - docs: enhance Best Practices for Tabs, Grid, and Select demos with surface-aware overflow, tokenized motion/spacing, and accessibility guidance.
@@ -245,20 +254,25 @@ The largest 0.33.x release (73 commits). Most of the entries that sat in the sta
 - Updated docs to represent the changes and upgrades to `@archway/valet-mcp`!
 
 ## [0.30.2]
+
 - Updated AGENTS.md and the docs to represent the changes and upgrades to `@archway/valet-mcp`!
 
 ## [0.30.1]
+
 - `Tabs`: switch overflow behavior to single-row horizontal scroll with edge fade indicators; removes multi-row wrapping when tab strip exceeds width. Improves discoverability with a subtle gradient implying more content.
 - `Tabs`: drag-to-scroll with mouse when the tab strip overflows horizontally; vertical mouse wheel converts to horizontal scroll for usability.
 
 ## [0.30.0]
+
 - Tabs: replace `centered` with Box-like `alignX` prop for tab strip alignment. Removed `centered`.
 - Panel: add Box-like `alignX` and rename `centered` (content centering) to `centerContent`.
 
 ## [0.29.1]
+
 - `MetroSelect` color theme adjustments
 
 ## [0.29.0]
+
 - Theme: add `error`/`errorText` tokens to light and dark palettes.
 - Fields: use `theme.colors.error` for `TextField` borders/helpers and `KeyModal` error text.
 - `Select`: fix `--valet-text-color` usage and standardize control backgrounds on `backgroundAlt`.
@@ -267,60 +281,74 @@ The largest 0.33.x release (73 commits). Most of the entries that sat in the sta
 - Docs: update Styled Engine badge example to `primary`/`primaryText` tokens.
 
 ## [0.28.7]
+
 - Fix: Adaptive `Grid` on older iOS/WebKit no longer forces an inner scrollbar on the first item. Panels now respect CSS vars for overflow/max-height, and `Grid` relaxes them in single‑column portrait so content stacks and the page scrolls naturally.
 
 ## [0.28.6]
+
 - RichChat styling
 
 ## [0.28.5]
+
 - RichChat: auto-scrolls to bottom on new messages when scrollable, ensuring latest user/system messages are visible.
 
 ## [0.28.4]
+
 - Fix: RichChat always keeps input visible and makes messages the scroll container. Resolves portrait screens not showing newest chat or input; messages now scroll under the input instead of hiding it.
 
 ## [0.28.3]
+
 - Pagination: normalize WebKit button appearance with transparent background
 
 ## [0.28.2]
+
 - DateSelector: auto-compact mode for narrow containers
 
 ## [0.28.1]
+
 - Fix: persistent Drawer now respects AppBar offset and no longer renders under the AppBar; height adjusts to avoid overlap. Also offsets the adaptive toggle button.
 
 ## [0.28.0]
+
 - `style={{}}` behavior changed to `sx={{}}` for all Valet components
 
 ## [0.27.0]
+
 - `Grid` behavior change to improve `adpative` behavior
 
 ## [0.26.2]
-- Enhance `SpeedDial` with slide-out/in animation for actions with direction-aware offsets and staggered transitions. 
+
+- Enhance `SpeedDial` with slide-out/in animation for actions with direction-aware offsets and staggered transitions.
 
 ## [0.26.1]
+
 - Adjusted `Pagination` component
 - Adjusted theme values for motion
 
 ## [0.26.0]
+
 - Added theme tokens for motion!
 - `Pagination` now powered by theme token.
 - `Pagination` now has fancy animations.
 
 ## [0.25.5]
+
 - Enhanced `Pagination` with windowed view via `visibleWindow` and non-destructive window scroll controls
 - Performance: optimize `Pagination`
 
 ## [0.25.4]
-- Improved vertically aligned `Tabs` styling.
-- Improved `Accordion` styling. 
 
+- Improved vertically aligned `Tabs` styling.
+- Improved `Accordion` styling.
 
 ## [0.25.3]
+
 - Add `Divider` component with spacing ergonomics and docs page (Usage/Playground/Reference); wired into docs Nav.
 - Enhance `Pagination` with animated sliding underline and subtle elastic width pulse for active page
 - Improved docs
 
-
 ## [0.25.2]
+
 - Docs improvements
 - `Drawer`, `Typography`, `Tree` interplay improvements
 - Fix: eliminate resize-induced leak with persistent `Drawer`

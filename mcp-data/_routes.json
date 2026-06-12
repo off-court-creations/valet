@@ -45,6 +45,7 @@
     "/radio-demo": "docs/src/pages/components/field/RadioGroupDemo.tsx",
     "/rich-chat-demo": "docs/src/pages/components/widgets/RichChatDemo.tsx",
     "/richchat": "docs/src/pages/components/widgets/RichChat.tsx",
+    "/rtl-status": "docs/src/pages/getting-started/RTLStatus.tsx",
     "/select-demo": "docs/src/pages/components/field/SelectDemo.tsx",
     "/slider-demo": "docs/src/pages/components/field/SliderDemo.tsx",
     "/snackbar-demo": "docs/src/pages/components/widgets/SnackbarDemo.tsx",

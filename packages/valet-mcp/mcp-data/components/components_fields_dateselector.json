@@ -82,6 +82,25 @@
       "description": "Legacy alias for density='compact'."
     },
     {
+      "name": "locale",
+      "type": "string",
+      "required": false,
+      "description": "BCP-47 locale for the DISPLAY of month names, weekday headers, and day\nnumbers (via native `Intl`). Defaults to `'en-US'`, preserving the prior\nEnglish / Sunday-start output exactly. The committed VALUE is always ISO\n'YYYY-MM-DD' with Latin digits regardless of locale (e.g. `'ar-EG'` shows\nArabic-Indic display digits while `onValueChange` still emits Latin ISO).",
+      "default": "'en-US'"
+    },
+    {
+      "name": "firstDayOfWeek",
+      "type": "1 | 2 | 3 | 4 | 5 | 6 | 7",
+      "required": false,
+      "description": "First day of the calendar week as an ISO weekday number\n(**1 = Monday … 7 = Sunday**). When omitted, the locale's own first day is\nused (`en-US` → 7/Sunday, `de-DE` → 1/Monday), keeping the default behavior\nSunday-first for the `en-US` default."
+    },
+    {
+      "name": "labels",
+      "type": "DeepPartialStrings<ValetStrings['dateSelector']>",
+      "required": false,
+      "description": "Instance-level overrides for this component's i18n strings (the month/year\nnavigation aria-labels). Wins over the `ValetLocaleProvider` value, which\nin turn wins over the built-in English defaults (A11Y S8 resolution\ncontract; see `src/system/locale.tsx`). Month/weekday names are Intl's\ndomain (A11Y S10), driven by `locale`, not part of this string table."
+    },
+    {
       "name": "preset",
       "type": "string | string[] | undefined",
       "required": false,
@@ -124,7 +143,10 @@
     "Avoid timezone pitfalls: treat values as local dates to prevent off-by-one errors.",
     "Prefer compactMode on small viewports; use default/adaptive on larger layouts.",
     "Binding precedence (prop > form > internal). An explicit `value` prop always wins; otherwise, in single-date mode, a `name` inside a `FormControl` binds the ISO string to the store (seed the key in `createFormStore(initial)` so the initial selection is honoured); otherwise the picker is uncontrolled. The binding is latched at mount. Range mode binds the `[start, end]` tuple under the same `name`.",
-    "Change source. `onValueChange`/`onValueCommit` report a truthful `info.source`: a day cell is selected by clicking, so the source is `'pointer'` rather than a blanket `'programmatic'`."
+    "Change source. `onValueChange`/`onValueCommit` report a truthful `info.source`: a day cell is selected by clicking, so the source is `'pointer'` rather than a blanket `'programmatic'`.",
+    "Internationalize the built-in labels with the `labels` prop (instance-level) or a `ValetLocaleProvider` (app-wide). Resolution is instance `labels` > provider strings > built-in English.",
+    "Localize the calendar DISPLAY (month names, weekday headers, day-number digits) with the `locale` prop (BCP-47, default 'en-US' which preserves the prior English/Sunday-start output). The committed VALUE is always ISO 'YYYY-MM-DD' with Latin digits regardless of locale — e.g. locale='ar-EG' shows Arabic-Indic day digits while onValueChange/onValueCommit still emit Latin ISO.",
+    "By default the week starts on the locale's own first day (en-US → Sunday, de-DE → Monday). Override it explicitly with `firstDayOfWeek` (1 = Monday … 7 = Sunday) to force a fixed start regardless of locale."
   ],
   "examples": [],
   "docsUrl": "/dateselector-demo",

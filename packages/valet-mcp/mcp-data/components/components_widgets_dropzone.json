@@ -87,6 +87,12 @@
       "default": "false"
     },
     {
+      "name": "labels",
+      "type": "DeepPartialStrings<ValetStrings['dropzone']>",
+      "required": false,
+      "description": "Instance-level overrides for this component's i18n strings (instructions,\nper-file remove affordance, rejection fallback). Wins over the\n`ValetLocaleProvider` value, which in turn wins over the built-in English\ndefaults (A11Y S8 resolution contract; see `src/system/locale.tsx`)."
+    },
+    {
       "name": "sx",
       "type": "Sx",
       "required": false,
@@ -129,7 +135,8 @@
     "Validate optimistically on drop and show per‑file status/errors with polite announcements.",
     "Avoid blocking the UI; use background uploads and concise feedback.",
     "Revoke object URLs for previews when files are removed or on unmount to avoid leaks.",
-    "Sanitize file names and never execute or render untrusted content."
+    "Sanitize file names and never execute or render untrusted content.",
+    "Internationalize the built-in labels with the `labels` prop (instance-level) or a `ValetLocaleProvider` (app-wide). Resolution is instance `labels` > provider strings > built-in English."
   ],
   "examples": [
     {

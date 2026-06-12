@@ -21,6 +21,12 @@
       "required": false
     },
     {
+      "name": "labels",
+      "type": "DeepPartialStrings<ValetStrings['loadingBackdrop']>",
+      "required": false,
+      "description": "Instance-level overrides for this component's i18n strings. Wins over the\n`ValetLocaleProvider` value, which in turn wins over the built-in English\ndefaults (A11Y S8 resolution contract; see `src/system/locale.tsx`)."
+    },
+    {
       "name": "sx",
       "type": "Sx",
       "required": false,
@@ -43,7 +49,9 @@
   "cssPresets": [],
   "events": [],
   "slots": [],
-  "bestPractices": [],
+  "bestPractices": [
+    "Internationalize the built-in labels with the `labels` prop (instance-level) or a `ValetLocaleProvider` (app-wide). Resolution is instance `labels` > provider strings > built-in English."
+  ],
   "examples": [],
   "sourceFiles": [
     "src/components/widgets/LoadingBackdrop.tsx"

@@ -48,10 +48,19 @@
       "required": false
     },
     {
+      "name": "selectionMode",
+      "type": "'none' | 'single'",
+      "required": false,
+      "description": "How selection behaves (API-TYPES S11, Q11(a)). List supports single\nselection: `'single'` enables it, `'none'` (default) disables it. The\nunified cross-component name; the boolean `selectable` is a deprecated\nalias (`selectable={true}` ≡ `selectionMode='single'`). When both are\nsupplied, `selectionMode` wins.",
+      "enumValues": [
+        "none",
+        "single"
+      ]
+    },
+    {
       "name": "selectable",
       "type": "boolean",
-      "required": false,
-      "description": "Enable single selection when true."
+      "required": false
     },
     {
       "name": "focusMode",
@@ -83,10 +92,15 @@
       "description": "Fired when selection changes."
     },
     {
+      "name": "getItemKey",
+      "type": "keyof T | ((item: T, index: number) => React.Key)",
+      "required": false,
+      "description": "Stable identity for each item — the unified cross-component name\n(API-TYPES S11, Q11(a)). Used to key React rows and standardize reorder\nidentity. Defaults to the item's index when omitted. The cross-component\nshape is `keyof T | ((item, index) => key)`; List narrows the function form\nto a React.Key return."
+    },
+    {
       "name": "getKey",
       "type": "(item: T, index: number) => React.Key",
-      "required": false,
-      "description": "Provide stable keys for items (defaults to index)."
+      "required": false
     },
     {
       "name": "emptyPlaceholder",
@@ -143,7 +157,8 @@
   "bestPractices": [
     "Use for simple rows such as menus, settings, or short feeds; keep each row self‑contained.",
     "Prefer succinct labels with optional secondary text; avoid deep nested interactivity inside rows.",
-    "Use selection or navigation patterns consistently (radio/checkbox icons vs chevrons).",
+    "Use selection or navigation patterns consistently (radio/checkbox icons vs chevrons). Enable single selection with the unified `selectionMode='single'` prop; the pre‑0.35 boolean `selectable` is a deprecated alias (`selectable` ≡ `selectionMode='single'`) that still works but dev‑warns once and is removed at 1.0.",
+    "Provide stable per‑item identity with `getItemKey` (a property name or `(item, index) => key`) so rows keep identity across reorders and refreshes. The pre‑0.35 `getKey` prop is a deprecated alias of `getItemKey` (removed at 1.0).",
     "Keep item height comfortable for touch; use tokenized spacing for density.",
     "Defer dense tabular data to `Table` and two‑dimensional layouts to `Grid`.",
     "Non‑selectable lists keep rows out of the tab order by default for accessibility; opt into `focusMode=\"row\"` only when you truly need every row tabbable."
@@ -174,7 +189,7 @@
     {
       "id": "list-select-reorder",
       "title": "Selectable & reorderable",
-      "code": "() => {\n  const [items, setItems] = React.useState([{name:'Ada',role:'Programmer'},{name:'Alan',role:'Mathematician'}]);\n  const [sel, setSel] = React.useState(null);\n  return (<Stack>\n    <List data={items} getTitle={(i)=>i.name} getSubtitle={(i)=>i.role} selectable reorderable selected={sel} onSelectionChange={setSel} onReorder={setItems} />\n    <Typography variant='subtitle'>Selected: {sel?.name || '—'}</Typography>\n  </Stack>);\n}",
+      "code": "() => {\n  const [items, setItems] = React.useState([{name:'Ada',role:'Programmer'},{name:'Alan',role:'Mathematician'}]);\n  const [sel, setSel] = React.useState(null);\n  return (<Stack>\n    <List data={items} getTitle={(i)=>i.name} getSubtitle={(i)=>i.role} getItemKey={(i)=>i.name} selectionMode='single' reorderable selected={sel} onSelectionChange={setSel} onReorder={setItems} />\n    <Typography variant='subtitle'>Selected: {sel?.name || '—'}</Typography>\n  </Stack>);\n}",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {

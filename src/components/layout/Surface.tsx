@@ -15,6 +15,7 @@ import {
 } from '../../system/surfaceStore';
 import { preset } from '../../css/stylePresets';
 import { valetError } from '../../system/devErrors';
+import { useValetLocale } from '../../system/locale';
 import type { Presettable, Sx } from '../../types';
 
 /* Allow strongly-typed CSS custom properties (e.g. --valet-*) */
@@ -68,6 +69,14 @@ export const Surface: React.FC<SurfaceProps> = ({
 
   const ref = useRef<HTMLDivElement>(null);
   const { theme, density: globalDensity } = useTheme();
+  /* Writing direction from the locale provider (A11Y S12). Stamping `dir` on
+     the Surface root — the single per-screen element — lets logical CSS
+     properties (inset-inline-*, margin-inline-*, …) resolve RTL for the whole
+     subtree without per-component plumbing. SSR-safe: `useValetLocale` reads
+     React context only (no document/window), so the attribute renders
+     identically on the server and hydrates without mismatch. Without a
+     provider this is the frozen default 'ltr'. */
+  const { dir } = useValetLocale();
   const fontsReady = useFonts((s) => s.ready);
   const fontsStarted = useFonts((s) => s.started);
   /* Never-block grace (THEMING S5): if no font load has *started* within
@@ -261,6 +270,7 @@ export const Surface: React.FC<SurfaceProps> = ({
     <SurfaceCtx.Provider value={useStore}>
       <div
         ref={ref}
+        dir={dir}
         {...props}
         data-valet-surface-root=''
         data-valet-component='Surface'

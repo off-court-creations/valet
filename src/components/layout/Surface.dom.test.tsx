@@ -17,6 +17,7 @@ import Surface from './Surface';
 import { styled } from '../../css/createStyled';
 import { SurfaceCtx, type SurfaceStore } from '../../system/surfaceStore';
 import { useFonts } from '../../system/fontStore';
+import { ValetLocaleProvider } from '../../system/locale';
 
 /* react-dom warns unless act usage is announced ----------------------- */
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -378,5 +379,59 @@ describe('Surface blockUntilFonts grace (jsdom, fake timers)', () => {
     });
     expect(innerWrapper(container).style.visibility).toBe('visible');
     expect(backdrop(container)).toBeNull();
+  });
+});
+
+/* A11Y S12 — direction plumbing -----------------------------------------
+   Surface stamps `dir` from the ValetLocaleProvider on its single root
+   element, so logical CSS properties resolve RTL for the whole subtree.
+   These run under the file-level beforeEach (RO/rAF stubs, real timers). */
+const surfaceRoot = (container: HTMLElement) =>
+  container.querySelector('[data-valet-surface-root]') as HTMLDivElement;
+
+describe('Surface dir attribute (A11Y S12)', () => {
+  it('defaults to dir="ltr" with no provider (frozen locale default)', () => {
+    const { container } = renderStrict(<Surface>hi</Surface>);
+    expect(surfaceRoot(container).getAttribute('dir')).toBe('ltr');
+  });
+
+  it('stamps dir="rtl" when the provider resolves an RTL locale', () => {
+    const { container } = renderStrict(
+      <ValetLocaleProvider locale='ar-EG'>
+        <Surface>hi</Surface>
+      </ValetLocaleProvider>,
+    );
+    expect(surfaceRoot(container).getAttribute('dir')).toBe('rtl');
+  });
+
+  it('stamps dir="ltr" for an LTR provider locale', () => {
+    const { container } = renderStrict(
+      <ValetLocaleProvider locale='de-DE'>
+        <Surface>hi</Surface>
+      </ValetLocaleProvider>,
+    );
+    expect(surfaceRoot(container).getAttribute('dir')).toBe('ltr');
+  });
+
+  it('honours an explicit provider dir override regardless of locale', () => {
+    const { container } = renderStrict(
+      <ValetLocaleProvider
+        locale='en-US'
+        dir='rtl'
+      >
+        <Surface>hi</Surface>
+      </ValetLocaleProvider>,
+    );
+    expect(surfaceRoot(container).getAttribute('dir')).toBe('rtl');
+  });
+
+  it('lets a caller-supplied dir prop win over the provider value', () => {
+    /* `dir` sits before {...props}, so an explicit dom prop overrides it. */
+    const { container } = renderStrict(
+      <ValetLocaleProvider locale='ar-EG'>
+        <Surface dir='ltr'>hi</Surface>
+      </ValetLocaleProvider>,
+    );
+    expect(surfaceRoot(container).getAttribute('dir')).toBe('ltr');
   });
 });

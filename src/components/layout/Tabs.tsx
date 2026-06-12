@@ -144,7 +144,8 @@ const TabList = styled('div')<{
      push the indicator away from the container edge */
   ${({ $orientation, $place, $edgeGap }) =>
     $orientation === 'vertical' && $place === 'right' && $edgeGap
-      ? `padding-right: ${$edgeGap};`
+      ? /* rtl: physical-by-design — gap pushes the indicator off the physical $place='right' container edge */
+        `padding-right: ${$edgeGap};`
       : ''}
 
   /* Hide native scrollbars for a clean gradient-only affordance */
@@ -187,7 +188,7 @@ const TabStripWrap = styled('div')<{
     will-change: opacity, transform;
   }
   &::before {
-    left: 0;
+    left: 0; /* rtl: physical-by-design — horizontal-scroll overflow fade pinned to the physical scroll origin */
     opacity: ${({ $fadeLeft }) => ($fadeLeft ? 1 : 0)};
     transform: translateX(${({ $fadeLeft, $slide }) => ($fadeLeft ? '0' : `-${$slide ?? '8px'}`)});
     background: linear-gradient(
@@ -198,7 +199,7 @@ const TabStripWrap = styled('div')<{
     );
   }
   &::after {
-    right: 0;
+    right: 0; /* rtl: physical-by-design — horizontal-scroll overflow fade pinned to the physical scroll end */
     opacity: ${({ $fadeRight }) => ($fadeRight ? 1 : 0)};
     transform: translateX(${({ $fadeRight, $slide }) => ($fadeRight ? '0' : `${$slide ?? '8px'}`)});
     background: linear-gradient(
@@ -256,10 +257,11 @@ const TabBtn = styled('button')<{
     position: absolute;
     ${({ $orient, $place, $barW }) =>
       $orient === 'horizontal'
-        ? `left: 0; right: 0; bottom: calc(-0.5 * var(--valet-underline-width, ${$barW})); height: var(--valet-underline-width, ${$barW});`
-        : $place === 'left'
-          ? `top: 0; bottom: 0; left: calc(-0.5 * var(--valet-underline-width, ${$barW})); width: var(--valet-underline-width, ${$barW});`
-          : `top: 0; bottom: 0; right: calc(-0.5 * var(--valet-underline-width, ${$barW})); width: var(--valet-underline-width, ${$barW});`}
+        ? `inset-inline: 0; bottom: calc(-0.5 * var(--valet-underline-width, ${$barW})); height: var(--valet-underline-width, ${$barW});`
+        : // vertical strip indicator hugs the physical $place edge (left/right placement is physical, not inline)
+          $place === 'left'
+          ? /* rtl: physical-by-design */ `top: 0; bottom: 0; left: calc(-0.5 * var(--valet-underline-width, ${$barW})); width: var(--valet-underline-width, ${$barW});`
+          : /* rtl: physical-by-design */ `top: 0; bottom: 0; right: calc(-0.5 * var(--valet-underline-width, ${$barW})); width: var(--valet-underline-width, ${$barW});`}
     background: ${({ $primary, $active }) => ($active ? $primary : 'transparent')};
     transition: background 150ms ease;
   }

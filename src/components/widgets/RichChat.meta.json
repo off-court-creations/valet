@@ -11,7 +11,8 @@
       "Provide optimistic UI for outgoing messages. Animate entries to maintain a conversational rhythm.",
       "Sanitize or gate untrusted JSX. RichChat renders JSX content; ensure sources are trusted.",
       "The message list is a polite live region (role='log', aria-relevant='additions') so screen readers announce new turns as they arrive. While a turn is composing (a message with `typing: true`), the list reports aria-busy so announcements are held until the message settles — set `typing` on the in-flight message and clear it when the content is final.",
-      "The typing indicator honors `prefers-reduced-motion: reduce`: the bouncing dots stop animating and stay visible at full opacity, so the composing state still reads without motion."
+      "The typing indicator honors `prefers-reduced-motion: reduce`: the bouncing dots stop animating and stay visible at full opacity, so the composing state still reads without motion.",
+      "Internationalize the built-in labels with the `labels` prop (instance-level) or a `ValetLocaleProvider` (app-wide). Resolution is instance `labels` > provider strings > built-in English."
     ]
   },
   "examples": [

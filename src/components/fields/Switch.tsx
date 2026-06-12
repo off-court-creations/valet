@@ -94,6 +94,9 @@ const Thumb = styled('span')<{
 }>`
   position: absolute;
   top: 50%;
+  /* rtl: physical-by-design — thumb off-position origin paired with the
+     positive-px translate slide below; mirroring the slide direction needs
+     a negated $offset (interactive-RTL drag/slide math is a logged deferral). */
   left: var(--valet-switch-pad, 2px); /* gutter */
   transform: translate(${({ $checked, $offset }) => ($checked ? `${$offset}px` : '0')}, -50%);
   width: ${({ $size }) => $size}px;

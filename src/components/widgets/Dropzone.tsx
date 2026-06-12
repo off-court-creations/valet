@@ -16,6 +16,8 @@ import Icon from '../primitives/Icon';
 import { ProgressRing } from '../primitives/Progress';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
+import { useComponentStrings } from '../../system/locale';
+import type { DeepPartialStrings, ValetStrings } from '../../system/locale';
 import type { Presettable, Sx } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
@@ -46,6 +48,13 @@ export interface DropzoneProps
   onDropRejected?: DropzoneOptions['onDropRejected'];
   /** Stretch to fill parent width */
   fullWidth?: boolean;
+  /**
+   * Instance-level overrides for this component's i18n strings (instructions,
+   * per-file remove affordance, rejection fallback). Wins over the
+   * `ValetLocaleProvider` value, which in turn wins over the built-in English
+   * defaults (A11Y S8 resolution contract; see `src/system/locale.tsx`).
+   */
+  labels?: DeepPartialStrings<ValetStrings['dropzone']>;
   /** Inline styles (with CSS var support) */
   sx?: Sx;
 }
@@ -103,12 +112,14 @@ export const Dropzone: React.FC<DropzoneProps> = ({
   preset: p,
   fullWidth = false,
   className,
+  labels,
   sx,
   ...rest
 }) => {
   const [files, setFiles] = useState<File[]>([]);
   const [rejections, setRejections] = useState<FileRejection[]>([]);
   const { theme } = useTheme();
+  const t = useComponentStrings('dropzone', labels);
   const previewsRef = useRef<Map<File, string>>(new Map());
   const [loaded, setLoaded] = useState<Set<File>>(() => new Set());
 
@@ -260,12 +271,12 @@ export const Dropzone: React.FC<DropzoneProps> = ({
               e.stopPropagation();
               removeAt(i);
             }}
-            aria-label={`Remove ${f.name}`}
-            title='Remove file'
+            aria-label={t.removeFile(f.name)}
+            title={t.removeFileTitle}
             style={{
               position: 'absolute',
               top: 4,
-              right: 4,
+              insetInlineEnd: 4,
               background: theme.colors.backgroundAlt,
               color: theme.colors.text,
               border: `${theme.stroke(1)} solid ${theme.colors.text}33`,
@@ -308,8 +319,8 @@ export const Dropzone: React.FC<DropzoneProps> = ({
               e.stopPropagation();
               removeAt(i);
             }}
-            aria-label={`Remove ${f.name}`}
-            title='Remove file'
+            aria-label={t.removeFile(f.name)}
+            title={t.removeFileTitle}
             style={{
               background: 'transparent',
               color: theme.colors.text,
@@ -318,7 +329,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
               padding: '2px 4px',
             }}
           >
-            Remove
+            {t.remove}
           </button>
         </Stack>
       ))}
@@ -338,7 +349,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
   );
 
   // Helpers for instructions / a11y
-  const instr = isDragActive ? 'Drop files here…' : 'Drag files or click to browse';
+  const instr = isDragActive ? t.instructionsActive : t.instructionsIdle;
   const sizeHint = useMemo(() => {
     const human = (n: number) =>
       n >= 1024 * 1024 ? `${(n / 1024 / 1024).toFixed(1)}MB` : `${Math.ceil(n / 1024)}KB`;
@@ -419,7 +430,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
               key={`${r.file.name}-${i}`}
               style={{ fontSize: '0.75rem', color: theme.colors.error }}
             >
-              {r.file.name}: {r.errors[0]?.message ?? 'File rejected'}
+              {r.file.name}: {r.errors[0]?.message ?? t.fileRejected}
             </div>
           ))}
         </div>

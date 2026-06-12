@@ -44,7 +44,7 @@ const Box = styled('div')<{
 }>`
   position: fixed;
   top: 50%;
-  left: 50%;
+  left: 50%; /* rtl: physical-by-design — viewport centering paired with translate(-50%) */
   transform: translate(-50%, -50%) scale(${({ $fade }) => ($fade ? 0.92 : 1)});
   opacity: ${({ $fade }) => ($fade ? 0 : 1)};
   transition:
@@ -81,8 +81,7 @@ const Box = styled('div')<{
 
 const Header = styled('header')<{ $pt: string; $px: string; $pb: string }>`
   padding-top: ${({ $pt }) => $pt};
-  padding-right: ${({ $px }) => $px};
-  padding-left: ${({ $px }) => $px};
+  padding-inline: ${({ $px }) => $px};
   padding-bottom: ${({ $pb }) => $pb};
   font-weight: 600;
   font-size: 1.125rem;
@@ -90,8 +89,7 @@ const Header = styled('header')<{ $pt: string; $px: string; $pb: string }>`
 
 const Content = styled('section')<{ $px: string; $pb: string }>`
   padding-top: 0;
-  padding-right: ${({ $px }) => $px};
-  padding-left: ${({ $px }) => $px};
+  padding-inline: ${({ $px }) => $px};
   padding-bottom: ${({ $pb }) => $pb};
   flex: 1 1 auto;
   overflow: auto;
@@ -99,8 +97,7 @@ const Content = styled('section')<{ $px: string; $pb: string }>`
 
 const Actions = styled('footer')<{ $pt: string; $px: string; $pb: string; $gap: string }>`
   padding-top: ${({ $pt }) => $pt};
-  padding-right: ${({ $px }) => $px};
-  padding-left: ${({ $px }) => $px};
+  padding-inline: ${({ $px }) => $px};
   padding-bottom: ${({ $pb }) => $pb};
   display: flex;
   justify-content: flex-end;

@@ -26,6 +26,20 @@ const fontToName = (f: Font): string => {
   return '';
 };
 
+/**
+ * Apply a theme patch and load only the fonts the caller explicitly named.
+ *
+ * **Fonts are explicit-only** (THEMING S9, ruling Q14(a)). The fonts loaded are
+ * exactly the `patch.fonts.*` overrides plus `extras` — nothing else. The
+ * theme's built-in family defaults (Kumbh Sans / Inter / JetBrains Mono) are
+ * **not** auto-loaded; a zero-config `createInitialTheme({})` injects no links,
+ * starts no font load, and makes **zero network requests** — those families
+ * simply fall back to whatever face the platform already has installed. To
+ * load a webfont, name it (`fonts: { body: 'Inter' }`) or pass it in `extras`.
+ * This is the unconditional privacy/GDPR path: it removes the request site
+ * rather than reinterpreting it like `injectRemote:false` (which still treats
+ * named Google families as local).
+ */
 export async function createInitialTheme(
   patch: Partial<
     Omit<Theme, 'fonts'> & {
@@ -62,19 +76,24 @@ export async function createInitialTheme(
   // Apply the theme patch
   setTheme(themePatch);
 
-  // Now resolve the effective theme (after patch) to know which fonts to load
-  const { theme } = useTheme.getState();
-
-  // Build a unique list of Font entries to load (overrides win; extras appended)
+  // Build a unique list of Font entries to load (THEMING S9, ruling Q14(a):
+  // explicit-fonts-only). Only fonts the caller named are loaded — the
+  // explicit `patch.fonts.*` overrides plus `extras`. The theme's built-in
+  // family defaults (Kumbh Sans / Inter / JetBrains Mono) are deliberately
+  // NOT loaded: a zero-config `useInitialTheme({})` triggers zero network and
+  // falls back to those families' system/installed faces. Loading them is now
+  // an opt-in act of naming them (or, for a self-hosted brand, passing them
+  // as `extras`). This is the truly unconditional GDPR path the rest of the
+  // pipeline (`injectRemote:false`) could not cover, because it eliminated the
+  // request site entirely rather than reinterpreting it.
   const fontsToLoad = (() => {
-    // Prefer any explicit overrides from the original patch if present; otherwise use theme values
-    const base: Font[] = [
-      patch.fonts?.heading ?? theme.fonts.heading,
-      patch.fonts?.body ?? theme.fonts.body,
-      patch.fonts?.mono ?? theme.fonts.mono,
-      patch.fonts?.button ?? theme.fonts.button,
-      ...extras,
-    ];
+    const base: Font[] = [];
+    if (incomingFonts) {
+      for (const v of Object.values(incomingFonts) as Font[]) {
+        if (v) base.push(v);
+      }
+    }
+    base.push(...extras);
 
     const uniq = new Map<string, Font>();
     for (const f of base) {
@@ -83,6 +102,11 @@ export async function createInitialTheme(
     }
     return Array.from(uniq.values());
   })();
+
+  // No caller-named fonts → no injection, no fontStore start/finish cycle,
+  // and crucially zero network. Returning early keeps `blockUntilFonts`
+  // Surfaces from ever entering a loading state for the zero-font case.
+  if (fontsToLoad.length === 0) return;
 
   injectFontLinks(fontsToLoad, options);
 
@@ -118,6 +142,16 @@ export interface UseInitialThemeOptions extends GoogleFontOptions {
    user chose it (veto register: applyingSystem flag). */
 let applyingSystem = false;
 
+/**
+ * Boot hook: apply the theme patch once at mount, resolve the initial color
+ * mode (THEMING S8), and load the caller's fonts.
+ *
+ * **Fonts are explicit-only** (THEMING S9, ruling Q14(a)). Like
+ * {@link createInitialTheme}, only `patch.fonts.*` overrides and `extras` are
+ * loaded — `useInitialTheme({})` triggers **zero network**, and the theme's
+ * built-in families fall back to installed system faces. Name a font (or pass
+ * it in `extras`) to load a webfont.
+ */
 export function useInitialTheme(
   patch: Partial<
     Omit<Theme, 'fonts'> & {

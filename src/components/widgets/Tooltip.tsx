@@ -124,13 +124,18 @@ const Arrow = styled('span')<{
   background: var(--tt-bg, #000);
   transform: rotate(45deg);
 
+  /* rtl: physical-by-design — the arrow is pinned to the physical $placement
+     edge (top/bottom arrows centre at left:50%; left/right placement faces the
+     trigger via physical right/left). The tooltip itself is positioned by
+     measured getBoundingClientRect pixels (style={{ left: pos.left }}), so the
+     arrow shares that physical frame. */
   ${({ $placement }) =>
     (
       ({
-        top: `bottom: calc(-0.5 * var(--valet-tooltip-arrow-size, 1rem)); left: 50%; transform: translateX(-50%) rotate(45deg);`,
-        bottom: `top:    calc(-0.5 * var(--valet-tooltip-arrow-size, 1rem)); left: 50%; transform: translateX(-50%) rotate(45deg);`,
-        left: `right:  calc(-0.5 * var(--valet-tooltip-arrow-size, 1rem)); top: 50%; transform: translateY(-50%) rotate(45deg);`,
-        right: `left:   calc(-0.5 * var(--valet-tooltip-arrow-size, 1rem)); top: 50%; transform: translateY(-50%) rotate(45deg);`,
+        /* rtl: physical-by-design */ top: `bottom: calc(-0.5 * var(--valet-tooltip-arrow-size, 1rem)); left: 50%; transform: translateX(-50%) rotate(45deg);`,
+        /* rtl: physical-by-design */ bottom: `top:    calc(-0.5 * var(--valet-tooltip-arrow-size, 1rem)); left: 50%; transform: translateX(-50%) rotate(45deg);`,
+        /* rtl: physical-by-design */ left: `right:  calc(-0.5 * var(--valet-tooltip-arrow-size, 1rem)); top: 50%; transform: translateY(-50%) rotate(45deg);`,
+        /* rtl: physical-by-design */ right: `left:   calc(-0.5 * var(--valet-tooltip-arrow-size, 1rem)); top: 50%; transform: translateY(-50%) rotate(45deg);`,
       }) as Record<Placement, string>
     )[$placement as Placement]}
 `;

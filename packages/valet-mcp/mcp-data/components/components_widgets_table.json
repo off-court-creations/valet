@@ -47,8 +47,7 @@
     {
       "name": "rowKey",
       "type": "RowKey<T>",
-      "required": false,
-      "description": "Identity for each row, used to key React rows and to track selection\nacross data refreshes. Either a property name (`rowKey=\"id\"`) or a function\n(`rowKey={(row) => row.id}`). When omitted, rows fall back to object\nidentity — selection then behaves exactly as before and is lost when an\nimmutable refresh replaces the row objects. Provide `rowKey` so selection\nsurvives such refreshes."
+      "required": false
     },
     {
       "name": "initialSort",
@@ -64,7 +63,7 @@
       "name": "onSelectionChange",
       "type": "(selected: T[]) => void",
       "required": false,
-      "description": "Fired only on user interaction (checkbox toggle) and when pruning drops rows."
+      "description": "[object Object],[object Object],[object Object]"
     },
     {
       "name": "onRowClick",
@@ -124,6 +123,30 @@
       "type": "string | string[] | undefined",
       "required": false,
       "description": "One or many style-preset names registered via `definePreset()`"
+    },
+    {
+      "name": "selectionMode",
+      "type": "\"multiple\" | \"none\" | \"single\" | undefined",
+      "required": false,
+      "description": "How many items may be selected at once.\n- `'none'` — selection is disabled (the default for components that gate it).\n- `'single'` — at most one item is selected.\n- `'multiple'` — any number of items may be selected.\n\nCanonical replacement for the per-component flags (Table's `selectable`)."
+    },
+    {
+      "name": "selected",
+      "type": "T[] | undefined",
+      "required": false,
+      "description": "Controlled selection as an array of selection units (`K`)."
+    },
+    {
+      "name": "defaultSelected",
+      "type": "T[] | undefined",
+      "required": false,
+      "description": "Uncontrolled initial selection as an array of selection units (`K`)."
+    },
+    {
+      "name": "getItemKey",
+      "type": "keyof T | ((item: T, index: number) => string | number) | undefined",
+      "required": false,
+      "description": "Stable identity for each item — a property name or a function of the item\nand its index. Canonical, cross-component replacement for Table's `rowKey`\nand List's `getKey`. When omitted, components fall back to reference/index\nidentity exactly as before."
     }
   ],
   "domPassthrough": {
@@ -165,8 +188,8 @@
     "Keep tables readable: enable `striped` and/or `hoverable` for large datasets, but avoid heavy styling that competes with content.",
     "Prefer smart height over tiny scrollbars: enable `constrainHeight` and set `minConstrainedRows` (default 4). If the viewport would show fewer rows, the table expands; when the dataset exceeds `maxExpandedRows` (default 30), it paginates instead of showing a tiny scroller.",
     "Provide an initial sort (`initialSort`), align numeric columns to the right, and format dates consistently.",
-    "Enable selection only when follow‑up actions operate on selected rows; choose `single` vs `multi` to match the action design.",
-    "When the table is selectable and the data is refreshed immutably (new row objects fetched or re‑mapped), set `rowKey` (a property name like `rowKey=\"id\"` or a function `rowKey={(row) => row.id}`) so selection is tracked by a stable key and survives the refresh. Without `rowKey`, selection falls back to object identity and is cleared whenever the row objects are replaced.",
+    "Enable selection only when follow‑up actions operate on selected rows; use the unified `selectionMode` prop (`'none' | 'single' | 'multiple'`) to match the action design. The pre‑0.35 `selectable` prop (`'single' | 'multi'`) is a deprecated alias that still works but dev‑warns once and is removed at 1.0 — migrate `selectable='multi'` to `selectionMode='multiple'`.",
+    "When the table is selectable and the data is refreshed immutably (new row objects fetched or re‑mapped), set `getItemKey` (a property name like `getItemKey=\"id\"` or a function `getItemKey={(row) => row.id}`) so selection is tracked by a stable key and survives the refresh. Without it, selection falls back to object identity and is cleared whenever the row objects are replaced. The pre‑0.35 `rowKey` prop is a deprecated alias of `getItemKey` (same shape; removed at 1.0).",
     "Keep column count reasonable on narrow screens; prefer fewer, more meaningful columns over many cramped ones. Use succinct headers.",
     "Expose `onRowClick` when rows drive navigation or drill‑ins so the parent surface can react without wiring bespoke click handlers into each cell."
   ],
@@ -197,6 +220,17 @@
       "id": "table-rowkey-selection",
       "title": "Selection that survives a data refresh (rowKey)",
       "code": "(() => {\n  type Row = { id: number; name: string };\n  const columns = [\n    { header: 'ID', accessor: 'id', align: 'right' },\n    { header: 'Name', accessor: 'name' },\n  ];\n  const seed = [\n    { id: 1, name: 'Ada Lovelace' },\n    { id: 2, name: 'Alan Turing' },\n    { id: 3, name: 'Grace Hopper' },\n  ];\n  const Demo = () => {\n    const [data, setData] = React.useState<Row[]>(seed);\n    const [selected, setSelected] = React.useState<Row[]>([]);\n    // Immutable refresh: brand-new row objects, same ids. With rowKey='id'\n    // the current selection is preserved across the refresh.\n    const refresh = () => setData((d) => d.map((r) => ({ ...r })));\n    return (\n      <Stack gap={2}>\n        <Panel fullWidth>\n          <Table data={data} columns={columns} selectable='multi' rowKey='id' onSelectionChange={setSelected} />\n        </Panel>\n        <Button onClick={refresh}>Refresh data</Button>\n        <Typography variant='subtitle'>Selected: {selected.map((r) => r.id).join(', ') || '—'}</Typography>\n      </Stack>\n    );\n  };\n  return <Demo />;\n})()",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {
+        "data": [],
+        "columns": []
+      }
+    },
+    {
+      "id": "table-selection-mode",
+      "title": "Unified selection vocabulary (selectionMode + getItemKey)",
+      "code": "(() => {\n  type Row = { id: number; name: string };\n  const columns = [\n    { header: 'ID', accessor: 'id', align: 'right' },\n    { header: 'Name', accessor: 'name' },\n  ];\n  const data: Row[] = [\n    { id: 1, name: 'Ada Lovelace' },\n    { id: 2, name: 'Alan Turing' },\n    { id: 3, name: 'Grace Hopper' },\n  ];\n  const Demo = () => {\n    const [selected, setSelected] = React.useState<Row[]>([]);\n    return (\n      <Stack gap={2}>\n        <Panel fullWidth>\n          <Table data={data} columns={columns} selectionMode='multiple' getItemKey='id' onSelectionChange={setSelected} />\n        </Panel>\n        <Typography variant='subtitle'>Selected: {selected.map((r) => r.id).join(', ') || '—'}</Typography>\n      </Stack>\n    );\n  };\n  return <Demo />;\n})()",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {

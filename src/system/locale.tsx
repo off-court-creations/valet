@@ -69,21 +69,25 @@ export interface ValetStrings {
     decrement: string;
     increment: string;
   };
-  /** SpeedDial.tsx:211 — main FAB aria-label. */
+  /** SpeedDial.tsx — main FAB aria-label + actions-group aria-label. */
   speedDial: {
     mainButton: string;
+    /** Disclosure `role='group'` actions-container aria-label. */
+    actions: string;
   };
   /** Dropzone.tsx — instructions + per-file remove + live region. */
   dropzone: {
-    /** :263/:311 — per-file remove button aria-label. */
+    /** per-file remove button aria-label. */
     removeFile: (fileName: string) => string;
-    /** :264/:312 — per-file remove button title. */
+    /** per-file remove button title. */
     removeFileTitle: string;
-    /** :341 — instruction while a drag is active. */
+    /** file-list visible remove button text (short form). */
+    remove: string;
+    /** instruction while a drag is active. */
     instructionsActive: string;
-    /** :341 — idle instruction. */
+    /** idle instruction. */
     instructionsIdle: string;
-    /** :422 — rejection live-region fallback message. */
+    /** rejection live-region fallback message. */
     fileRejected: string;
   };
   /** LoadingBackdrop.tsx:64 — spinner aria-label. */
@@ -158,10 +162,12 @@ export const enStrings: ValetStrings = deepFreeze({
   },
   speedDial: {
     mainButton: 'Speed dial',
+    actions: 'Speed dial actions',
   },
   dropzone: {
     removeFile: (fileName: string) => `Remove ${fileName}`,
     removeFileTitle: 'Remove file',
+    remove: 'Remove',
     instructionsActive: 'Drop files here…',
     instructionsIdle: 'Drag files or click to browse',
     fileRejected: 'File rejected',
@@ -361,4 +367,34 @@ export const ValetLocaleProvider: React.FC<ValetLocaleProviderProps> = ({
  */
 export function useValetLocale(): ValetLocaleContextValue {
   return useContext(ValetLocaleContext);
+}
+
+/*───────────────────────────────────────────────────────────────*/
+/* Per-component label resolution (A11Y S8)                      */
+
+/**
+ * Resolves one component's slice of the string table following the
+ * documented three-tier contract:
+ *
+ *   instance `labels` prop  >  provider `strings`  >  built-in English
+ *
+ * The provider value (`useValetLocale().strings`) already merges its
+ * overrides over the built-in English table, so this hook only needs to
+ * layer the instance-level `labels` prop on top of the resolved provider
+ * slice. Untouched leaves keep the provider/English reference.
+ *
+ * @param key    the {@link ValetStrings} slice this component renders.
+ * @param labels optional instance-level deep-partial override.
+ *
+ * @example
+ *   const t = useComponentStrings('chip', labels);
+ *   // t.remove === labels?.remove ?? provider.chip.remove ?? 'Remove'
+ */
+export function useComponentStrings<K extends keyof ValetStrings>(
+  key: K,
+  labels?: DeepPartialStrings<ValetStrings[K]>,
+): ValetStrings[K] {
+  const { strings } = useValetLocale();
+  const base = strings[key];
+  return useMemo(() => mergeStrings(base as ValetStrings[K] & object, labels), [base, labels]);
 }

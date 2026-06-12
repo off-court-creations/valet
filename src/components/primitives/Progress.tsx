@@ -19,15 +19,18 @@ const dashSpin = keyframes`
   50%  { stroke-dasharray: 90,150; stroke-dashoffset: -35; }
   100% { stroke-dasharray: 90,150; stroke-dashoffset: -124; }
 `;
+// The indeterminate bar sweeps left→right across the track; the sweep is a
+// directional animation, not an inline-axis layout. Full interactive RTL
+// (mirroring the sweep direction) is a logged deferral.
 const indetBarA = keyframes`
-  0%   { left: -35%; right: 100%; }
-  60%  { left: 100%; right: -90%; }
-  100% { left: 100%; right: -90%; }
+  0%   { left: -35%; right: 100%; } /* rtl: physical-by-design */
+  60%  { left: 100%; right: -90%; } /* rtl: physical-by-design */
+  100% { left: 100%; right: -90%; } /* rtl: physical-by-design */
 `;
 const indetBarB = keyframes`
-  0%   { left: -200%; right: 100%; }
-  60%  { left: 107%;  right: -8%;  }
-  100% { left: 107%;  right: -8%;  }
+  0%   { left: -200%; right: 100%; } /* rtl: physical-by-design */
+  60%  { left: 107%;  right: -8%;  } /* rtl: physical-by-design */
+  100% { left: 107%;  right: -8%;  } /* rtl: physical-by-design */
 `;
 
 /*───────────────────────────────────────────────────────────*/
@@ -70,9 +73,7 @@ const Bar = styled('div')<{
   @media (prefers-reduced-motion: reduce) {
     ${({ $indet, $index }) =>
       $indet &&
-      ($index === 1
-        ? 'animation: none; left: 30%; right: 30%;'
-        : 'animation: none; display: none;')}
+      ($index === 1 ? 'animation: none; inset-inline: 30%;' : 'animation: none; display: none;')}
   }
 `;
 
@@ -172,9 +173,9 @@ export const ProgressBar = forwardRef<HTMLDivElement, ProgressBarProps>(
     const mergedCls = [presetCls, className].filter(Boolean).join(' ') || undefined;
 
     const barStyle: React.CSSProperties =
-      value == null ? {} : { width: `${clamp(value)}%`, left: 0 };
+      value == null ? {} : { width: `${clamp(value)}%`, insetInlineStart: 0 };
     const bufferStyle: React.CSSProperties =
-      buffer == null ? {} : { width: `${clamp(buffer)}%`, left: 0 };
+      buffer == null ? {} : { width: `${clamp(buffer)}%`, insetInlineStart: 0 };
 
     return (
       <Root

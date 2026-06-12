@@ -8,6 +8,8 @@ import { preset } from '../../css/stylePresets';
 import { useTheme } from '../../system/themeStore';
 import { useOverlay } from '../../system/overlay';
 import { zVar } from '../../system/zIndex';
+import { useComponentStrings } from '../../system/locale';
+import type { DeepPartialStrings, ValetStrings } from '../../system/locale';
 import type { Presettable, Sx } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
@@ -24,6 +26,14 @@ export interface SpeedDialProps extends React.HTMLAttributes<HTMLDivElement>, Pr
   actions: SpeedDialAction[];
   /** Direction in which actions should expand. */
   direction?: 'up' | 'down' | 'left' | 'right';
+  /**
+   * Instance-level overrides for this component's i18n strings (the main FAB
+   * and actions-group aria-labels). Wins over the `ValetLocaleProvider` value,
+   * which in turn wins over the built-in English defaults (A11Y S8 resolution
+   * contract; see `src/system/locale.tsx`). Per-action accessible names come
+   * from each action's own `label`.
+   */
+  labels?: DeepPartialStrings<ValetStrings['speedDial']>;
   /** Inline styles via CSSProperties (with CSS var support) */
   sx?: Sx;
 }
@@ -33,7 +43,7 @@ export interface SpeedDialProps extends React.HTMLAttributes<HTMLDivElement>, Pr
 const Container = styled('div')<{ $gap: string }>`
   position: fixed;
   bottom: 1rem;
-  right: 1rem;
+  inset-inline-end: 1rem;
   /* FAB sits below the app bar on the shared z-scale (OVERLAY S7). */
   z-index: ${zVar('fab')};
   /* Reserve a minimal footprint; actions are absolutely positioned */
@@ -106,7 +116,7 @@ const ActionFab = styled('button')<{
 }>`
   position: absolute;
   bottom: 0; /* Anchor to main FAB corner */
-  right: 0;
+  inset-inline-end: 0;
   border: none;
   width: var(--sd-size);
   height: var(--sd-size);
@@ -176,11 +186,13 @@ export const SpeedDial: React.FC<SpeedDialProps> = ({
   direction = 'up',
   preset: p,
   className,
+  labels,
   sx,
   style,
   ...rest
 }) => {
   const { theme } = useTheme();
+  const t = useComponentStrings('speedDial', labels);
   const [open, setOpen] = useState(false);
   const actionsId = useId();
   const fabRef = useRef<HTMLButtonElement | null>(null);
@@ -233,7 +245,7 @@ export const SpeedDial: React.FC<SpeedDialProps> = ({
       <Group
         role='group'
         id={actionsId}
-        aria-label='Speed dial actions'
+        aria-label={t.actions}
       >
         {actions.map((a, idx) => {
           const i = idx + 1; // 1-based step distance
@@ -283,7 +295,7 @@ export const SpeedDial: React.FC<SpeedDialProps> = ({
         $durBg={durBg}
         $durT={durMainT}
         $ease={easeStd}
-        aria-label='Speed dial'
+        aria-label={t.mainButton}
         aria-expanded={open}
         aria-controls={actionsId}
         style={{ position: 'relative', zIndex: 1 }}

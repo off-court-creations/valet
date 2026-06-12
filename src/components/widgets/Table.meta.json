@@ -7,8 +7,8 @@
       "Keep tables readable: enable `striped` and/or `hoverable` for large datasets, but avoid heavy styling that competes with content.",
       "Prefer smart height over tiny scrollbars: enable `constrainHeight` and set `minConstrainedRows` (default 4). If the viewport would show fewer rows, the table expands; when the dataset exceeds `maxExpandedRows` (default 30), it paginates instead of showing a tiny scroller.",
       "Provide an initial sort (`initialSort`), align numeric columns to the right, and format dates consistently.",
-      "Enable selection only when follow‑up actions operate on selected rows; choose `single` vs `multi` to match the action design.",
-      "When the table is selectable and the data is refreshed immutably (new row objects fetched or re‑mapped), set `rowKey` (a property name like `rowKey=\"id\"` or a function `rowKey={(row) => row.id}`) so selection is tracked by a stable key and survives the refresh. Without `rowKey`, selection falls back to object identity and is cleared whenever the row objects are replaced.",
+      "Enable selection only when follow‑up actions operate on selected rows; use the unified `selectionMode` prop (`'none' | 'single' | 'multiple'`) to match the action design. The pre‑0.35 `selectable` prop (`'single' | 'multi'`) is a deprecated alias that still works but dev‑warns once and is removed at 1.0 — migrate `selectable='multi'` to `selectionMode='multiple'`.",
+      "When the table is selectable and the data is refreshed immutably (new row objects fetched or re‑mapped), set `getItemKey` (a property name like `getItemKey=\"id\"` or a function `getItemKey={(row) => row.id}`) so selection is tracked by a stable key and survives the refresh. Without it, selection falls back to object identity and is cleared whenever the row objects are replaced. The pre‑0.35 `rowKey` prop is a deprecated alias of `getItemKey` (same shape; removed at 1.0).",
       "Keep column count reasonable on narrow screens; prefer fewer, more meaningful columns over many cramped ones. Use succinct headers.",
       "Expose `onRowClick` when rows drive navigation or drill‑ins so the parent surface can react without wiring bespoke click handlers into each cell."
     ]
@@ -28,6 +28,11 @@
       "id": "table-rowkey-selection",
       "title": "Selection that survives a data refresh (rowKey)",
       "code": "(() => {\n  type Row = { id: number; name: string };\n  const columns = [\n    { header: 'ID', accessor: 'id', align: 'right' },\n    { header: 'Name', accessor: 'name' },\n  ];\n  const seed = [\n    { id: 1, name: 'Ada Lovelace' },\n    { id: 2, name: 'Alan Turing' },\n    { id: 3, name: 'Grace Hopper' },\n  ];\n  const Demo = () => {\n    const [data, setData] = React.useState<Row[]>(seed);\n    const [selected, setSelected] = React.useState<Row[]>([]);\n    // Immutable refresh: brand-new row objects, same ids. With rowKey='id'\n    // the current selection is preserved across the refresh.\n    const refresh = () => setData((d) => d.map((r) => ({ ...r })));\n    return (\n      <Stack gap={2}>\n        <Panel fullWidth>\n          <Table data={data} columns={columns} selectable='multi' rowKey='id' onSelectionChange={setSelected} />\n        </Panel>\n        <Button onClick={refresh}>Refresh data</Button>\n        <Typography variant='subtitle'>Selected: {selected.map((r) => r.id).join(', ') || '—'}</Typography>\n      </Stack>\n    );\n  };\n  return <Demo />;\n})()"
+    },
+    {
+      "id": "table-selection-mode",
+      "title": "Unified selection vocabulary (selectionMode + getItemKey)",
+      "code": "(() => {\n  type Row = { id: number; name: string };\n  const columns = [\n    { header: 'ID', accessor: 'id', align: 'right' },\n    { header: 'Name', accessor: 'name' },\n  ];\n  const data: Row[] = [\n    { id: 1, name: 'Ada Lovelace' },\n    { id: 2, name: 'Alan Turing' },\n    { id: 3, name: 'Grace Hopper' },\n  ];\n  const Demo = () => {\n    const [selected, setSelected] = React.useState<Row[]>([]);\n    return (\n      <Stack gap={2}>\n        <Panel fullWidth>\n          <Table data={data} columns={columns} selectionMode='multiple' getItemKey='id' onSelectionChange={setSelected} />\n        </Panel>\n        <Typography variant='subtitle'>Selected: {selected.map((r) => r.id).join(', ') || '—'}</Typography>\n      </Stack>\n    );\n  };\n  return <Demo />;\n})()"
     },
     {
       "id": "table-auto-pagination",

@@ -15,6 +15,8 @@ import Panel from '../layout/Panel';
 import Typography from '../primitives/Typography';
 import Markdown from './Markdown';
 import Avatar from '../primitives/Avatar';
+import { useComponentStrings } from '../../system/locale';
+import type { DeepPartialStrings, ValetStrings } from '../../system/locale';
 import type { Presettable, Sx } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
@@ -45,6 +47,13 @@ export interface RichChatProps
   constrainHeight?: boolean;
   /** Override input font */
   fontFamily?: string;
+  /**
+   * Instance-level overrides for this component's i18n strings (the send button
+   * aria-label). Wins over the `ValetLocaleProvider` value, which in turn wins
+   * over the built-in English defaults (A11Y S8 resolution contract; see
+   * `src/system/locale.tsx`).
+   */
+  labels?: DeepPartialStrings<ValetStrings['richChat']>;
   /** Inline styles (with CSS var support) */
   sx?: Sx;
 }
@@ -93,8 +102,8 @@ const Row = styled('div')<{
   /* Default to vertical centering; individual cells may override via align-self */
   align-items: center;
   column-gap: ${({ $gap }) => $gap};
-  padding-left: ${({ $padL }) => $padL};
-  padding-right: ${({ $padR }) => $padR};
+  padding-inline-start: ${({ $padL }) => $padL};
+  padding-inline-end: ${({ $padR }) => $padR};
   /* Smooth vertical nudges when content reflows */
   > * {
     transition: margin-top ${({ $dur }) => $dur} ${({ $ease }) => $ease};
@@ -252,10 +261,12 @@ export const RichChat: React.FC<RichChatProps> = ({
   fontFamily,
   preset: p,
   className,
+  labels,
   sx,
   ...rest
 }) => {
   const { theme } = useTheme();
+  const t = useComponentStrings('richChat', labels);
   const surface = useSurface(
     (s) => ({
       element: s.element,
@@ -570,7 +581,7 @@ export const RichChat: React.FC<RichChatProps> = ({
               <IconButton
                 icon='carbon:send'
                 type='submit'
-                aria-label='Send'
+                aria-label={t.send}
               />
             </InputRow>
           </form>

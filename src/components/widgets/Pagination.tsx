@@ -9,6 +9,8 @@ import Typography from '../primitives/Typography';
 import { preset } from '../../css/stylePresets';
 import { useTheme } from '../../system/themeStore';
 import { resolveDeprecatedProp } from '../../system/deprecate';
+import { useComponentStrings } from '../../system/locale';
+import type { DeepPartialStrings, ValetStrings } from '../../system/locale';
 import type { Presettable, Sx } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
@@ -39,6 +41,13 @@ export interface PaginationProps
    * whenever `page` changes outside the current window. Defaults to true.
    */
   autoFollowActive?: boolean;
+  /**
+   * Instance-level overrides for this component's i18n strings (nav root label,
+   * scroll/step button labels, per-page labels). Wins over the
+   * `ValetLocaleProvider` value, which in turn wins over the built-in English
+   * defaults (A11Y S8 resolution contract; see `src/system/locale.tsx`).
+   */
+  labels?: DeepPartialStrings<ValetStrings['pagination']>;
   /** Inline styles (with CSS var support) */
   sx?: Sx;
 }
@@ -153,7 +162,7 @@ const HiddenMeasure = styled('div')`
   position: absolute;
   visibility: hidden;
   pointer-events: none;
-  left: -99999px;
+  left: -99999px; /* rtl: physical-by-design — off-screen measurement parking, never painted */
   top: -99999px;
   display: inline-flex;
 `;
@@ -172,7 +181,7 @@ const Underline = styled('div')<{
   $fadeEase: string;
 }>`
   position: absolute;
-  left: 0;
+  left: 0; /* rtl: physical-by-design — rail origin; slide offset is measured-pixel translateX math (bRect.left - wRect.left), a logged interactive-RTL deferral */
   bottom: calc(-0.5 * var(--valet-underline-width, 2px));
   height: ${({ $height }) => $height};
   width: var(--valet-pag-w, 0px);
@@ -217,10 +226,12 @@ export const Pagination: React.FC<PaginationProps> = ({
   autoFollowActive = true,
   preset: p,
   className,
+  labels,
   sx,
   ...rest
 }) => {
   const { theme } = useTheme();
+  const t = useComponentStrings('pagination', labels);
 
   /* `onChange` was renamed to `onPageChange` (API-TYPES S10, Q12 / ruling
      R30). Canonical wins; the deprecated alias keeps working through 0.x
@@ -1031,7 +1042,7 @@ export const Pagination: React.FC<PaginationProps> = ({
   return (
     <Root
       {...restProps}
-      aria-label='pagination'
+      aria-label={t.root}
       $text={theme.colors.text}
       $gap={theme.spacing(1)}
       $padV={theme.spacing(1)}
@@ -1055,7 +1066,7 @@ export const Pagination: React.FC<PaginationProps> = ({
       {hasWindow && (
         <button
           type='button'
-          aria-label='Scroll pages left'
+          aria-label={t.scrollPagesLeft}
           onClick={scrollLeft}
           disabled={winStart <= 1 || isAnimating}
         >
@@ -1066,10 +1077,10 @@ export const Pagination: React.FC<PaginationProps> = ({
       {/* Inside: single-step previous page (icon) */}
       <button
         type='button'
-        aria-label='Previous page'
+        aria-label={t.previousPage}
         onClick={handlePrev}
         disabled={page === 1 || isAnimating || isSliding}
-        title='Previous page'
+        title={t.previousPage}
       >
         ‹
       </button>
@@ -1200,9 +1211,9 @@ export const Pagination: React.FC<PaginationProps> = ({
                     $durColor={theme.motion.duration.medium}
                     $durOpacity={theme.motion.duration.base}
                     $ease={theme.motion.easing.standard}
-                    aria-label={`Page ${n}${n === page ? ', current page' : ''}`}
+                    aria-label={t.pageLabel(n, n === page)}
                     aria-current={n === page ? 'page' : undefined}
-                    title={`Go to page ${n}`}
+                    title={t.goToPage(n)}
                   >
                     <Typography
                       variant='button'
@@ -1255,10 +1266,10 @@ export const Pagination: React.FC<PaginationProps> = ({
       {/* Inside: single-step next page (icon) */}
       <button
         type='button'
-        aria-label='Next page'
+        aria-label={t.nextPage}
         onClick={handleNext}
         disabled={page === count || isAnimating || isSliding}
-        title='Next page'
+        title={t.nextPage}
       >
         ›
       </button>
@@ -1267,7 +1278,7 @@ export const Pagination: React.FC<PaginationProps> = ({
       {hasWindow && (
         <button
           type='button'
-          aria-label='Scroll pages right'
+          aria-label={t.scrollPagesRight}
           onClick={scrollRight}
           disabled={winEnd >= count || isAnimating || isSliding}
         >

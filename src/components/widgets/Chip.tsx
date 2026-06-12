@@ -11,6 +11,8 @@ import type { Theme } from '../../system/themeStore';
 import { Icon } from '../primitives/Icon';
 import { computeIntentVars } from '../../system/intentVars';
 import { Typography } from '../primitives/Typography';
+import { useComponentStrings } from '../../system/locale';
+import type { DeepPartialStrings, ValetStrings } from '../../system/locale';
 
 export type ChipSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type ChipVariant = 'filled' | 'outlined' | 'plain';
@@ -32,6 +34,12 @@ export interface ChipProps
   avatar?: React.ReactNode; // custom leading element
   onDelete?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   disabled?: boolean;
+  /**
+   * Instance-level overrides for this component's i18n strings. Wins over the
+   * `ValetLocaleProvider` value, which in turn wins over the built-in English
+   * defaults (A11Y S8 resolution contract; see `src/system/locale.tsx`).
+   */
+  labels?: DeepPartialStrings<ValetStrings['chip']>;
   sx?: Sx;
 }
 
@@ -149,10 +157,12 @@ export const Chip: React.FC<ChipProps> = ({
   disabled,
   className,
   preset: p,
+  labels,
   sx,
   ...rest
 }) => {
   const { theme } = useTheme();
+  const t = useComponentStrings('chip', labels);
   const s = sizeMap[size];
   const { bg, fg, bd } = resolveColors(theme, intent, color);
   // Intent CSS variables contract (shared helper, API-TYPES S13). Chip blends
@@ -233,8 +243,8 @@ export const Chip: React.FC<ChipProps> = ({
       </LabelWrap>
       {onDelete && !disabled ? (
         <DeleteBtn
-          aria-label='Remove'
-          title='Remove'
+          aria-label={t.remove}
+          title={t.remove}
           onClick={(e) => {
             e.stopPropagation();
             onDelete?.(e);

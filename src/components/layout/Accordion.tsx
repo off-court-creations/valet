@@ -156,7 +156,7 @@ const HeaderBtn = styled('button')<{
   color: inherit;
   font: inherit;
   cursor: pointer;
-  text-align: left;
+  text-align: start;
   appearance: none;
   box-sizing: border-box;
   margin-inline-start: -${({ $shift }) => $shift};

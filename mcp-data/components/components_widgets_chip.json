@@ -61,6 +61,12 @@
       "required": false
     },
     {
+      "name": "labels",
+      "type": "DeepPartialStrings<ValetStrings['chip']>",
+      "required": false,
+      "description": "Instance-level overrides for this component's i18n strings. Wins over the\n`ValetLocaleProvider` value, which in turn wins over the built-in English\ndefaults (A11Y S8 resolution contract; see `src/system/locale.tsx`)."
+    },
+    {
       "name": "sx",
       "type": "Sx",
       "required": false
@@ -113,7 +119,8 @@
     "Keep labels short; truncate is automatic. Use Tooltip if critical text may be hidden.",
     "Use the built-in variant/size/color props or presets instead of custom inline styles for consistency.",
     "Only expose removal via the dedicated `onDelete` affordance so keyboard and pointer users can target a clear control.",
-    "Tie Chip colours to theme tokens so meaning remains clear across light and dark modes."
+    "Tie Chip colours to theme tokens so meaning remains clear across light and dark modes.",
+    "Internationalize the built-in labels with the `labels` prop (instance-level) or a `ValetLocaleProvider` (app-wide). Resolution is instance `labels` > provider strings > built-in English."
   ],
   "examples": [
     {

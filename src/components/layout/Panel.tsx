@@ -72,9 +72,9 @@ const Base = styled('div')<{
   /* Panels cooperate with Grid via CSS var to equalize row heights */
   align-self: var(--valet-panel-align-self, ${({ $full }) => ($full ? 'stretch' : 'flex-start')});
   /* Anchor when not full width */
-  margin-left: ${({ $full, $alignX }) =>
+  margin-inline-start: ${({ $full, $alignX }) =>
     $full ? '0' : $alignX === 'right' ? 'auto' : $alignX === 'center' ? 'auto' : '0'};
-  margin-right: ${({ $full, $alignX }) =>
+  margin-inline-end: ${({ $full, $alignX }) =>
     $full ? '0' : $alignX === 'left' ? 'auto' : $alignX === 'center' ? 'auto' : '0'};
 
   /* Boundary guards */

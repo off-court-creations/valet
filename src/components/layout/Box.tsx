@@ -44,9 +44,9 @@ const Base = styled('div')<{
   width: ${({ $full }) => ($full ? '100%' : 'max-content')};
   align-self: ${({ $full }) => ($full ? 'stretch' : 'flex-start')};
   /* Anchor when in content mode: occupy intrinsic width and push to edge */
-  margin-left: ${({ $full, $alignX }) =>
+  margin-inline-start: ${({ $full, $alignX }) =>
     $full ? '0' : $alignX === 'right' ? 'auto' : $alignX === 'center' ? 'auto' : '0'};
-  margin-right: ${({ $full, $alignX }) =>
+  margin-inline-end: ${({ $full, $alignX }) =>
     $full ? '0' : $alignX === 'left' ? 'auto' : $alignX === 'center' ? 'auto' : '0'};
 
   /* Boundary guards */

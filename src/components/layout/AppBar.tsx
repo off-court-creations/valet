@@ -83,8 +83,7 @@ const Bar = styled('header')<{
   padding: ${({ $pad }) => $pad};
   position: ${({ $pos }) => $pos};
   top: 0;
-  left: 0;
-  right: 0;
+  inset-inline: 0;
   z-index: ${zVar('appbar')};
   color: ${({ $text }) => $text};
 `;
@@ -115,7 +114,7 @@ const RightWrap = styled('div')<{ $gap: string; $push: boolean }>`
   display: flex;
   align-items: center;
   gap: ${({ $gap }) => $gap};
-  margin-left: ${({ $push }) => ($push ? 'auto' : '0')};
+  margin-inline-start: ${({ $push }) => ($push ? 'auto' : '0')};
   min-width: 0;
 `;
 
@@ -131,7 +130,7 @@ const NavWrap = styled('nav')<{
   gap: ${({ $gap }) => $gap};
   flex: ${({ $grow }) => ($grow ? '1 1 auto' : '0 0 auto')};
   min-width: 0;
-  margin-left: ${({ $push }) => ($push ? 'auto' : '0')};
+  margin-inline-start: ${({ $push }) => ($push ? 'auto' : '0')};
 `;
 
 /*───────────────────────────────────────────────────────────*/

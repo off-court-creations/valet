@@ -18,7 +18,8 @@
     {
       "name": "defaultExpanded",
       "type": "string[]",
-      "required": false
+      "required": false,
+      "description": "Unified expansion vocabulary (API-TYPES S11, Q11(a)) — already the\ncanonical `expanded`/`defaultExpanded`/`onExpandedChange` trio (matching\nAccordion). Node ids that are expanded."
     },
     {
       "name": "expanded",
@@ -31,16 +32,26 @@
       "required": false
     },
     {
+      "name": "selectionMode",
+      "type": "'none' | 'single'",
+      "required": false,
+      "description": "Selection mode (API-TYPES S11, Q11(a)). Tree is single-select by node id:\n`'single'` (default) selects the clicked node; `'none'` disables selection\n(rows still expand/collapse and remain keyboard-navigable, but never become\n`aria-selected` and `onNodeSelect` never fires). The cross-component\nvocabulary name; Tree's selection unit is the node `id` (`K = string`),\nwhose identity is the structural `TreeNode.id` — so no `getItemKey` is\nneeded.",
+      "enumValues": [
+        "none",
+        "single"
+      ]
+    },
+    {
       "name": "selected",
       "type": "string",
       "required": false,
-      "description": "Active selection (controlled)."
+      "description": "Active selection (controlled) — the selected node id."
     },
     {
       "name": "defaultSelected",
       "type": "string",
       "required": false,
-      "description": "Default selection for uncontrolled usage."
+      "description": "Default selection for uncontrolled usage — the initially-selected node id."
     },
     {
       "name": "onNodeSelect",
@@ -111,7 +122,8 @@
     "Use stable ids. Provide deterministic `id`s for nodes so expanded/selected state can be controlled and persisted across renders.",
     "Keep labels compact. Tree rows should be glanceable; favor short labels and use variants (`list` or `files`) to convey structure.",
     "Align behavior with expectations. Support Arrow keys, Enter/Space for selection, and Left/Right to collapse/expand; let double‑click toggle when appropriate.",
-    "Choose control model. Use `expanded` / `onExpandedChange` and `selected` / `onNodeSelect` when external state or routing must drive the tree; otherwise use defaults.",
+    "Choose control model. Use `expanded` / `onExpandedChange` and `selected` / `onNodeSelect` when external state or routing must drive the tree; otherwise use defaults. The expansion trio is the unified vocabulary shared with Accordion.",
+    "Control selection with the unified `selectionMode` prop: `'single'` (default) selects the clicked node by id; `'none'` disables selection entirely (rows still expand/collapse and stay keyboard‑navigable, but never become `aria-selected` and `onNodeSelect` never fires).",
     "Avoid over‑nesting. Deep hierarchies are hard to scan; flatten where possible and consider search/filter affordances for large trees.",
     "Tokenized spacing. Use theme spacing for indentation so density and breakpoints scale predictably."
   ],

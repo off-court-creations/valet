@@ -36,6 +36,8 @@ import Avatar from '../primitives/Avatar';
 import KeyModal from './KeyModal';
 import Select from '../fields/Select';
 import { useAIKey, AIProvider } from '../../system/aiKeyStore';
+import { useComponentStrings } from '../../system/locale';
+import type { DeepPartialStrings, ValetStrings } from '../../system/locale';
 import type { Presettable, Sx } from '../../types';
 
 /**
@@ -84,6 +86,14 @@ export interface ChatProps
    * built-in defaults are a convenience and drift from provider availability.
    */
   models?: string[];
+  /**
+   * Instance-level overrides for this component's i18n strings (the set-API-key
+   * and send button aria-labels). Wins over the `ValetLocaleProvider` value,
+   * which in turn wins over the built-in English defaults (A11Y S8 resolution
+   * contract; see `src/system/locale.tsx`). The Connected/Disconnected status
+   * text stays with the KeyModal flow (deferred pending Q8).
+   */
+  labels?: DeepPartialStrings<ValetStrings['llmChat']>;
   /** Inline styles (with CSS var support) */
   sx?: Sx;
 }
@@ -110,8 +120,8 @@ const Row = styled('div')<{
   display: flex;
   align-items: center;
   justify-content: ${({ $from }) => ($from === 'user' ? 'flex-end' : 'flex-start')};
-  padding-left: ${({ $left }) => $left};
-  padding-right: ${({ $right }) => $right};
+  padding-inline-start: ${({ $left }) => $left};
+  padding-inline-end: ${({ $right }) => $right};
 `;
 
 const Bar = styled('div')<{ $bg: string; $text: string; $gap: string; $pad: string }>`
@@ -178,10 +188,12 @@ export const LLMChat: React.FC<ChatProps> = ({
   models: modelsProp,
   preset: p,
   className,
+  labels,
   sx,
   ...rest
 }) => {
   const { theme } = useTheme();
+  const t = useComponentStrings('llmChat', labels);
   const surface = useSurface(
     (s) => ({
       element: s.element,
@@ -360,7 +372,7 @@ export const LLMChat: React.FC<ChatProps> = ({
             <Typography variant='subtitle'>{key ? 'Connected' : 'Disconnected'}</Typography>
             <IconButton
               icon={key ? 'carbon:checkmark' : 'carbon:circle-dash'}
-              aria-label='Set API key'
+              aria-label={t.setApiKey}
             />
           </span>
         </Bar>
@@ -473,7 +485,7 @@ export const LLMChat: React.FC<ChatProps> = ({
                 <IconButton
                   icon='carbon:send'
                   type='submit'
-                  aria-label='Send'
+                  aria-label={t.send}
                 />
               </Stack>
             </form>
