@@ -44,17 +44,24 @@
       "default": "'plain'"
     },
     {
+      "name": "gravatar",
+      "type": "boolean",
+      "required": false,
+      "description": "Opt in to a third-party Gravatar lookup from `email` when no `src`\nis given. Default `false`: src-less avatars render an offline\ninitials/placeholder fallback and make **no network request**.\n\nPrivacy: enabling this discloses a reversible md5 of the email plus\nthe viewer's IP/UA to Automattic. Requires a non-empty `email`.",
+      "default": "false"
+    },
+    {
       "name": "gravatarDefault",
       "type": "string",
       "required": false,
-      "description": "Fallback style when no avatar exists.",
+      "description": "Gravatar default-image style (`d` param) when `gravatar` is enabled.",
       "default": "'identicon'"
     },
     {
       "name": "preferFallback",
       "type": "boolean",
       "required": false,
-      "description": "When true and no `src` is provided, prefer offline fallback instead of Gravatar.",
+      "description": "Force the offline fallback even when `gravatar` + `email` would\notherwise resolve a network avatar. Legacy escape hatch; with\n`gravatar` defaulting to `false` the fallback is already the default.",
       "default": "false"
     },
     {
@@ -104,13 +111,22 @@
     "Keep size tokens consistent across lists, menus, and headers.",
     "Provide alt text or aria-label describing the person or entity.",
     "Avoid using Avatar for content images; use `Image` instead.",
-    "Group with labels or presence indicators when they add value; avoid redundant decoration."
+    "Group with labels or presence indicators when they add value; avoid redundant decoration.",
+    "Gravatar is opt-in (`gravatar`, default false): a src-less Avatar renders an offline initials/placeholder fallback and makes no network request. Enable `gravatar` only with the user's awareness — loading the URL discloses a reversible md5 of their email plus their IP/UA to a third party (Automattic)."
   ],
   "examples": [
     {
       "id": "avatar-email-basic",
-      "title": "Email (Gravatar)",
-      "code": "<Avatar email='support@gravatar.com' />",
+      "title": "Email — offline fallback (default)",
+      "code": "<Avatar email='ada@example.com' name='Ada Lovelace' />",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    },
+    {
+      "id": "avatar-email-gravatar",
+      "title": "Email — Gravatar (opt-in)",
+      "code": "<Avatar email='support@gravatar.com' gravatar />",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {}
@@ -126,7 +142,7 @@
     {
       "id": "avatar-sizes-row",
       "title": "Sizes",
-      "code": "<Stack direction='row' gap={1}>\n  {(['xl','lg','md','sm','xs'] as const).map(s => (\n    <Avatar key={s} email='support@gravatar.com' size={s} />\n  ))}\n</Stack>",
+      "code": "<Stack direction='row' gap={1}>\n  {(['xl','lg','md','sm','xs'] as const).map(s => (\n    <Avatar key={s} email='support@gravatar.com' gravatar size={s} />\n  ))}\n</Stack>",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {}
@@ -134,7 +150,7 @@
     {
       "id": "avatar-outline",
       "title": "Outline variant",
-      "code": "<Avatar email='support@gravatar.com' size='lg' variant='outline' />",
+      "code": "<Avatar email='support@gravatar.com' gravatar size='lg' variant='outline' />",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {}
@@ -142,7 +158,7 @@
     {
       "id": "avatar-gravatar-default",
       "title": "Gravatar default style",
-      "code": "<Stack direction='row' gap={1}><Avatar email='no-such@example.com' gravatarDefault='retro' /><Avatar email='no-such@example.com' gravatarDefault='monsterid' /></Stack>",
+      "code": "<Stack direction='row' gap={1}><Avatar email='no-such@example.com' gravatar gravatarDefault='retro' /><Avatar email='no-such@example.com' gravatar gravatarDefault='monsterid' /></Stack>",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {}
@@ -150,7 +166,7 @@
     {
       "id": "avatar-fallback-initials",
       "title": "Offline fallback — initials",
-      "code": "<Avatar name='Ada Lovelace' preferFallback size='lg' alt='Ada Lovelace' />",
+      "code": "<Avatar name='Ada Lovelace' size='lg' alt='Ada Lovelace' />",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {}
@@ -158,7 +174,7 @@
     {
       "id": "avatar-fallback-placeholder",
       "title": "Offline fallback — placeholder",
-      "code": "<Avatar preferFallback fallback='placeholder' size='lg' aria-label='User avatar' />",
+      "code": "<Avatar fallback='placeholder' size='lg' aria-label='User avatar' />",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {}

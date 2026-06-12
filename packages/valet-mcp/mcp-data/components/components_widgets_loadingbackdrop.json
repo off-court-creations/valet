@@ -39,9 +39,7 @@
       "style"
     ]
   },
-  "cssVars": [
-    "--valet-zindex-modal"
-  ],
+  "cssVars": [],
   "cssPresets": [],
   "events": [],
   "slots": [],

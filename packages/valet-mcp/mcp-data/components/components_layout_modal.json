@@ -121,8 +121,6 @@
     "--valet-backdrop-bg",
     "--valet-modal-duration",
     "--valet-modal-easing",
-    "--valet-zindex-modal-backdrop",
-    "--valet-zindex-modal",
     "--valet-modal-viewport-margin",
     "--valet-modal-radius"
   ],

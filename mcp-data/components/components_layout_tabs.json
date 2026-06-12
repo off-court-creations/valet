@@ -20,12 +20,13 @@
     },
     {
       "name": "onValueChange",
-      "type": "( value: string | number, info: { previousValue?: string | number; phase: 'input' | 'commit' }, ) => void",
-      "required": false
+      "type": "OnValueChange<string | number>",
+      "required": false,
+      "description": "[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     },
     {
       "name": "onValueCommit",
-      "type": "( value: string | number, info: { previousValue?: string | number; phase: 'commit' }, ) => void",
+      "type": "OnValueCommit<string | number>",
       "required": false
     },
     {
@@ -124,11 +125,11 @@
   "events": [
     {
       "name": "onValueChange",
-      "payloadType": "string | number"
+      "payloadType": "OnValueChange<string | number>"
     },
     {
       "name": "onValueCommit",
-      "payloadType": "string | number"
+      "payloadType": "OnValueCommit<string | number>"
     }
   ],
   "slots": [],
@@ -141,7 +142,8 @@
     "Prefer tokenized spacing and motion for a cohesive feel.",
     "Avoid mixing tabs and inline navigation within the same strip.",
     "Use appropriate variants and placement to reflect app hierarchy.",
-    "Announce active tab for screen readers with `aria-selected` and `role=tablist`."
+    "Announce active tab for screen readers: the strip exposes `role=tablist` with `aria-orientation` tracking the `orientation` prop, each tab carries `aria-selected` and `aria-controls`, and tab/panel ids are namespaced per instance so multiple Tabs on a page never collide.",
+    "Prefer the canonical `onValueChange`/`onValueCommit` events: each fires with the full `ChangeInfo` payload (`previousValue`, `phase`, and an honest `info.source`) — a tab click reports `'pointer'` and Arrow-key navigation reports `'keyboard'`."
   ],
   "examples": [],
   "docsUrl": "/tabs-demo",

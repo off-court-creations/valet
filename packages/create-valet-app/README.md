@@ -54,6 +54,7 @@ Choose with `--template ts|js|hybrid`.
 - `--pm npm|pnpm|yarn|bun` choose the package manager (default: auto/npm).
 - `--git` / `--no-git` initialize a git repo (default: `--git`). The CLI writes a sensible `.gitignore`, checks for your git identity (`user.name`/`user.email`) and, if missing, prompts to set it locally for the new repo (non‑interactive runs will skip the initial commit if identity is missing).
 - `--mcp` / `--no-mcp` include or skip AGENTS.md and CLAUDE.md (Valet MCP guidance). Default: include.
+- `--global-mcp` / `--no-global-mcp` opt in or out of the **global** MCP server install (`npm i -g @archway/valet-mcp`) and the `~/.codex/config.toml` edit. See [MCP server install (consent)](#mcp-server-install-consent) for the defaults.
 - `--router` / `--no-router` include or remove React Router (default: include).
 - `--zustand` / `--no-zustand` include or remove Zustand sample store (default: include).
 - `--three` or `--r3f` enables an opt-in 3D experience (React Three Fiber) that installs `three`, `@react-three/fiber`, and `@react-three/drei`, and swaps the Quickstart page to a fullscreen `<Canvas>` with a spinning cube and a Valet HUD overlay. Use `--no-three` to force disable.
@@ -61,6 +62,28 @@ Choose with `--template ts|js|hybrid`.
 - `--path-alias <token>` change `@` alias token for `src` (e.g., `app`).
 
 Tip (npm create): place flags after `--`, e.g. `npm create @archway/valet-app my-app -- --template js --minimal`.
+
+## MCP server install (consent)
+
+Enabling MCP guidance (`--mcp`, the default) always generates `AGENTS.md` / `CLAUDE.md`. Installing the MCP **server itself** is a machine-wide side effect — it runs `npm i -g @archway/valet-mcp` and edits `~/.codex/config.toml` — so it is gated behind consent:
+
+- **Interactive terminal:** you are asked once, with a yes-default prompt, before the global install and config edit run. Press Enter to accept.
+- **Non-interactive runs (CI, no TTY, or `CVA_NONINTERACTIVE=1`):** the global install and config edit are **skipped by default**. A copy-paste tip is printed so you can wire it up later. Opt back in with the `--global-mcp` flag or `CVA_GLOBAL_MCP=1`.
+- `--no-global-mcp` forces the skip even in interactive runs.
+- `CVA_SKIP_GLOBAL_MCP=1` is a hard opt-out that overrides every other signal (including `--global-mcp`).
+
+Manual setup, if you skip it:
+
+```bash
+npm i -g @archway/valet-mcp@^0.34.0
+```
+
+```toml
+# ~/.codex/config.toml
+[mcp_servers.valet]
+command = "valet-mcp"
+args = []
+```
 
 ## What You Get
 

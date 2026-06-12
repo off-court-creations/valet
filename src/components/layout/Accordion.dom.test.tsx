@@ -5,11 +5,12 @@
 // most common controlled value) was treated as "no prop" and the
 // component silently flipped to uncontrolled, desyncing the parent.
 // ─────────────────────────────────────────────────────────────
-import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import React, { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { Surface } from './Surface';
 import { Accordion } from './Accordion';
+import { resetWarnOnce } from '../../system/devErrors';
 
 /* react-dom warns unless act usage is announced ----------------------- */
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -109,5 +110,69 @@ describe('Accordion controlled open={0} (jsdom)', () => {
       root.render(ui(0));
     });
     expect(expandedOf(container)).toEqual(['true', 'false']);
+  });
+});
+
+/* ─────────────────────────────────────────────────────────────
+   FIELDS S10 (ruling R9/R14) — Accordion's private
+   `useControllableState` copy was deleted; it now consumes the
+   shared `useControlledState` hook. The controlled/uncontrolled
+   behavior must be byte-equivalent, and a post-mount flip now
+   warns once through the shared warnOnce (the private copy was
+   silent on flips). The `open={0}` fix above is unchanged.
+   ───────────────────────────────────────────────────────────── */
+describe('Accordion controlled-state hook integration (jsdom)', () => {
+  let warnSpy: ReturnType<typeof vi.spyOn>;
+  const valetWarns = () =>
+    warnSpy.mock.calls
+      .map((c: unknown[]) => String(c[0]))
+      .filter((m: string) => m.startsWith('valet:'));
+
+  beforeEach(() => {
+    resetWarnOnce();
+    warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+  });
+  afterEach(() => warnSpy.mockRestore());
+
+  it('uncontrolled: defaultOpen seeds internal state and clicks toggle it (no warning)', () => {
+    const { container } = render(
+      <Surface>
+        <Accordion defaultOpen={0}>
+          <Accordion.Item header='First'>one</Accordion.Item>
+          <Accordion.Item header='Second'>two</Accordion.Item>
+        </Accordion>
+      </Surface>,
+    );
+    expect(expandedOf(container)).toEqual(['true', 'false']);
+    /* Single mode: opening the second closes the first via internal state. */
+    act(() => {
+      headersOf(container)[1].dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+    expect(expandedOf(container)).toEqual(['false', 'true']);
+    expect(valetWarns()).toEqual([]);
+  });
+
+  it('a controlled→uncontrolled flip warns once and keeps the mode latched', () => {
+    const ui = (props: { open?: number; defaultOpen?: number }) => (
+      <Surface>
+        <Accordion {...props}>
+          <Accordion.Item header='First'>one</Accordion.Item>
+          <Accordion.Item header='Second'>two</Accordion.Item>
+        </Accordion>
+      </Surface>
+    );
+    const { root, container } = render(ui({ open: 1 }));
+    expect(expandedOf(container)).toEqual(['false', 'true']);
+
+    /* Drop `open`. The hook latches controlled at mount and never adopts
+       internal state, so it renders the latched-controlled value falling
+       back to `defaultValue` (toArray(undefined) ⇒ [] ⇒ nothing open). */
+    act(() => root.render(ui({})));
+    expect(expandedOf(container)).toEqual(['false', 'false']);
+    expect(valetWarns()).toEqual([expect.stringContaining('controlled to uncontrolled')]);
+
+    /* warnOnce — a second uncontrolled render does not warn again. */
+    act(() => root.render(ui({})));
+    expect(valetWarns()).toHaveLength(1);
   });
 });

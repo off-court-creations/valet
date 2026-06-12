@@ -9,7 +9,9 @@
       "Keep options short and distinct; avoid long labels that wrap unpredictably.",
       "Expose clear values via `value` so form binding and analytics stay consistent.",
       "Control spacing with `gap` using theme spacing tokens or numbers to match density.",
-      "Keyboard: ensure arrow keys move focus predictably and Space toggles selection."
+      "Keyboard: ensure arrow keys move focus predictably and Space toggles selection.",
+      "Binding precedence (prop > form > internal). An explicit `value` prop always wins; otherwise a `name` inside a `FormControl` binds to the store (seed the key in `createFormStore(initial)` so the initial selection is honoured); otherwise the control is uncontrolled. The binding is latched at mount.",
+      "Change source. `onValueChange`/`onValueCommit` report a truthful `info.source`: `'pointer'` for a tile click and `'keyboard'` for keyboard activation (Enter/Space), not a blanket `'programmatic'`."
     ]
   },
   "examples": [

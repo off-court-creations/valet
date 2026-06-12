@@ -1,6 +1,13 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/widgets/KeyModal.tsx | valet
 // modal to capture an AI provider API key
+//
+// POSTURE: this captures a provider key for browser-direct LLM calls — a
+// dev-tool convenience, not secret management. The key is reachable by any
+// script on the page and is sent straight to the provider; at-rest encryption
+// is opt-in (passphrase) and defends only against casual storage inspection,
+// never against a hostile runtime. See src/system/aiKeyStore.ts for the full
+// threat model. Do not collect production/multi-tenant keys here.
 // ─────────────────────────────────────────────────────────────
 import { useState } from 'react';
 import Modal from '../layout/Modal';
@@ -45,6 +52,12 @@ export default function KeyModal({ open, onClose }: KeyModalProps) {
             {cipher
               ? `Unlock ${prov === 'anthropic' ? 'Anthropic' : 'OpenAI'} key`
               : 'Paste your API key'}
+          </Typography>
+
+          <Typography variant='subtitle'>
+            Dev tool: your key is sent browser-direct to the provider and is readable by any script
+            on this page. Use a key you own for your own session — not a production key. A
+            passphrase encrypts it at rest only.
           </Typography>
 
           {!cipher && (

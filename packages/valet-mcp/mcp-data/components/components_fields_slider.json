@@ -182,7 +182,9 @@
     "Label min/max or current value. Show ticks or helper text for context; keep labels short and avoid clutter.",
     "Keyboard support. Ensure Left/Right (or Up/Down) adjust values by one step, and Page/Home/End jump predictably.",
     "Size for touch. Pick token sizes or numeric height to keep the thumb easy to grab on mobile.",
-    "Use presets/tokens for colour and shape. Keep theme‑aligned styling rather than per‑instance CSS."
+    "Use presets/tokens for colour and shape. Keep theme‑aligned styling rather than per‑instance CSS.",
+    "Binding precedence (prop > form > internal). An explicit `value` prop always wins; otherwise a `name` inside a `FormControl` binds to the store (seed the key in `createFormStore(initial)` so the initial value is honoured); otherwise the Slider is uncontrolled. The binding is latched at mount — don't switch a Slider between controlled and uncontrolled.",
+    "Change source. `onValueChange`/`onValueCommit` report a truthful `info.source`: `'pointer'` for a drag/click on the track and `'keyboard'` for the arrow/Page/Home/End keys, not a blanket `'programmatic'`."
   ],
   "examples": [],
   "docsUrl": "/slider-demo",

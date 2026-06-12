@@ -2,5 +2,9 @@
   "name": "ParallaxBackground",
   "status": "experimental",
   "aliases": ["parallax", "parallaxbackground"],
-  "docs": { "bestPractices": [] }
+  "docs": {
+    "bestPractices": [
+      "Parallax layers honor `prefers-reduced-motion: reduce`: the scroll-driven displacement collapses to zero, so layers track the page 1:1 (no relative movement) for motion-sensitive users. The media still renders; only the parallax effect is removed."
+    ]
+  }
 }

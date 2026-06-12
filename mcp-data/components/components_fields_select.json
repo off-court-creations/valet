@@ -89,7 +89,7 @@
     },
     {
       "name": "sx",
-      "type": "import(\"/home/xbenc/occ/valet/src/types\").Sx | undefined",
+      "type": "Sx | undefined",
       "required": false,
       "description": "Inline styles (with CSS var support)."
     },
@@ -114,8 +114,7 @@
     "--valet-border",
     "--valet-bg",
     "--valet-text-color",
-    "--valet-focus-ring-color",
-    "--valet-zindex-dropdown"
+    "--valet-focus-ring-color"
   ],
   "cssPresets": [],
   "events": [
@@ -148,7 +147,11 @@
     "Multiple selections. Prefer `MetroSelect` with visible chips when the number of selections should be immediately clear.",
     "Performance. For very long lists, consider server‑side filtering or virtualized menus; keep menu height bounded.",
     "Presets/tokens. Style via theme tokens and `preset` to maintain consistent control density and colours.",
-    "A11y. Ensure the trigger is labelled (via `label` or surrounding `FormControl`) and that the selected value is announced clearly."
+    "A11y. Ensure the trigger is labelled (via `label` or surrounding `FormControl`) and that the selected value is announced clearly.",
+    "Overlay behaviour. The open menu portals to the shared overlay root and registers on the overlay stack, so it escapes any `transform`/`overflow` clipping ancestor of the trigger. Inside a Modal, pressing Escape closes only the dropdown (the top-most layer); the Modal stays open.",
+    "Binding precedence (prop > form > internal). An explicit `value` prop always wins; otherwise a `name` inside a `FormControl` binds to the store (seed the key in `createFormStore(initial)` so the initial selection and `form.reset()` are honoured); otherwise the Select is uncontrolled. The binding is latched at mount — don't switch a Select between controlled and uncontrolled.",
+    "Change source. `onValueChange`/`onValueCommit` report a truthful `info.source`: `'pointer'` for a mouse selection and `'keyboard'` for keyboard activation (Enter/Space/arrow), not a blanket `'programmatic'`.",
+    "Option props. `Select.Option` forwards its own `className`, `style`, `id`, `data-*` (and arbitrary `<li>` attributes), plus `sx`/`preset`, onto the rendered option element. A custom `id` wins over the generated one and keeps `aria-activedescendant` in sync. Internal listbox semantics (`role`, `aria-selected`) always take precedence on collision, and `sx` wins over a caller `style`."
   ],
   "examples": [],
   "docsUrl": "/select-demo",

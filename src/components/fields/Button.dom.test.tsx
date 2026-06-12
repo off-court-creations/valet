@@ -89,4 +89,26 @@ describe('Button (jsdom)', () => {
     );
     expect(container.querySelector('button')!.getAttribute('type')).toBe('button');
   });
+
+  /* API-TYPES S13 — the intent-var contract moved to the shared
+     computeIntentVars helper. This characterization pins the default
+     filled-Button output (intent=primary, dark theme) so the refactor is
+     provably behaviour-preserving. */
+  it('emits the same intent CSS variables after the shared-helper refactor (characterization)', () => {
+    const { container } = renderStrict(
+      <Button intent='primary'>
+        <span>Go</span>
+      </Button>,
+    );
+    const s = container.querySelector('button')!.style;
+    expect(s.getPropertyValue('--valet-intent-bg')).toBe('#0E65C0');
+    expect(s.getPropertyValue('--valet-intent-fg')).toBe('#F7F7F7');
+    expect(s.getPropertyValue('--valet-intent-border')).toBe('#488ace');
+    expect(s.getPropertyValue('--valet-intent-focus')).toBe('#0E65C0');
+    expect(s.getPropertyValue('--valet-intent-bg-hover')).toBe('#317bc8');
+    expect(s.getPropertyValue('--valet-intent-bg-active')).toBe('#488ace');
+    expect(s.getPropertyValue('--valet-intent-fg-disabled')).toBe('#878787');
+    // the non-intent label var is still set alongside
+    expect(s.getPropertyValue('--valet-text-color')).toBe('#F7F7F7');
+  });
 });

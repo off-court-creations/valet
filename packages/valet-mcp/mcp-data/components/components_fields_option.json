@@ -14,6 +14,18 @@
       "name": "disabled",
       "type": "boolean",
       "required": false
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": false,
+      "description": "Inline styles (with CSS var support); merged over `style` (sx wins)."
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
   "domPassthrough": {
@@ -24,8 +36,7 @@
     "--valet-border",
     "--valet-bg",
     "--valet-text-color",
-    "--valet-focus-ring-color",
-    "--valet-zindex-dropdown"
+    "--valet-focus-ring-color"
   ],
   "cssPresets": [],
   "events": [],

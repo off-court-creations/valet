@@ -3,7 +3,14 @@
 // PERF S3 — Table purity: sort/selection callbacks fire exactly
 // once (outside setState updaters) under StrictMode, the selection
 // prune effect cannot loop on data identity churn, and descending
-// sort is a stable negation of the ascending comparator
+// sort is a stable negation of the ascending comparator.
+// A11Y S3 — sortable headers are a real keyboard-operable <button>
+// inside the <th> (native Enter/Space activation); aria-sort stays
+// on the <th>; non-sortable headers carry no button.
+// PERF S8 — `rowKey` keys selection so an immutable data refresh that
+// replaces the row objects but keeps the same keys preserves selection
+// (THE audit bug). Without rowKey, selection stays object-identity
+// keyed and behaves exactly as before (the refresh prunes it).
 // ─────────────────────────────────────────────────────────────
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import React, { act } from 'react';
@@ -102,12 +109,14 @@ describe('Table (jsdom)', () => {
         onSortChange={onSortChange}
       />,
     );
-    const th = container.querySelector('thead th')!;
+    /* A11Y S3: the sortable header's click target is now a real <button>
+       inside the <th>. */
+    const sortBtn = container.querySelector('thead th button')!;
 
-    click(th);
+    click(sortBtn);
     expect(onSortChange.mock.calls).toEqual([[0, false]]);
 
-    click(th);
+    click(sortBtn);
     expect(onSortChange.mock.calls).toEqual([
       [0, false],
       [0, true],
@@ -209,6 +218,69 @@ describe('Table (jsdom)', () => {
     expect(onSelectionChange).toHaveBeenCalledTimes(3);
   });
 
+  /* A11Y S3 — sortable headers are keyboard-operable: a real <button>
+     inside the <th> (native Enter/Space activation), aria-sort stays on
+     the <th>, and non-sortable headers carry no button. */
+  it('renders a real focusable <button> only inside sortable headers; aria-sort lives on the th', () => {
+    const cols: TableColumn<Row>[] = [
+      { header: 'Name', accessor: 'name', sortable: true },
+      { header: 'Id', accessor: 'id' /* not sortable */ },
+    ];
+    const { container } = renderStrict(
+      <Table<Row>
+        data={makeRows()}
+        columns={cols}
+        constrainHeight={false}
+      />,
+    );
+    const ths = container.querySelectorAll('thead th');
+    const sortBtn = ths[0].querySelector('button');
+    const plainBtn = ths[1].querySelector('button');
+
+    /* sortable column → a real native button (default type, keyboard-activatable) */
+    expect(sortBtn).toBeInstanceOf(HTMLButtonElement);
+    expect(sortBtn!.tagName).toBe('BUTTON');
+    expect(sortBtn!.getAttribute('type')).toBe('button');
+    /* native buttons are focusable without an explicit tabindex */
+    expect(sortBtn!.hasAttribute('tabindex')).toBe(false);
+
+    /* non-sortable column → no button, header text rendered directly */
+    expect(plainBtn).toBeNull();
+    expect(ths[1].textContent?.trim()).toBe('Id');
+
+    /* aria-sort is owned by the th, never the button */
+    expect(sortBtn!.hasAttribute('aria-sort')).toBe(false);
+  });
+
+  it('keyboard activation (Enter/Space) of the header button sorts and updates aria-sort on the th', () => {
+    const onSortChange = vi.fn();
+    const { container } = renderStrict(
+      <Table<Row>
+        data={makeRows()}
+        columns={nameColumns}
+        constrainHeight={false}
+        onSortChange={onSortChange}
+      />,
+    );
+    const th = container.querySelector('thead th')!;
+    const sortBtn = th.querySelector('button')!;
+
+    expect(th.getAttribute('aria-sort')).toBeNull();
+
+    /* A native <button> turns Enter/Space into a click; .click() is the
+       exact activation the browser dispatches for those keys. */
+    act(() => sortBtn.click());
+    expect(onSortChange.mock.calls).toEqual([[0, false]]);
+    expect(th.getAttribute('aria-sort')).toBe('ascending');
+
+    act(() => sortBtn.click());
+    expect(onSortChange.mock.calls).toEqual([
+      [0, false],
+      [0, true],
+    ]);
+    expect(th.getAttribute('aria-sort')).toBe('descending');
+  });
+
   it('descending sort is stable — ties keep insertion order instead of reversing', () => {
     interface Ranked {
       k: number;
@@ -235,5 +307,109 @@ describe('Table (jsdom)', () => {
     /* Stable desc: the k=1 ties stay a, b, d (insertion order), k=0 last.
        The old `[...].sort(cmp).reverse()` produced d, b, a, c. */
     expect(columnTexts(container, 1)).toEqual(['a', 'b', 'd', 'c']);
+  });
+
+  /* PERF S8 — keyed selection: THE audit bug ("Table selection wiped on
+     data identity change"). A consumer that refreshes its data with new
+     row objects carrying the same logical ids must keep its selection. */
+  it('rowKey preserves selection across an immutable refresh with new row objects', () => {
+    const rows = makeRows();
+    const onSelectionChange = vi.fn();
+    const cols: TableColumn<Row>[] = [{ header: 'Name', accessor: 'name', sortable: true }];
+    const table = (data: Row[]) => (
+      <Table<Row>
+        data={data}
+        columns={cols}
+        selectable='multi'
+        rowKey='id'
+        constrainHeight={false}
+        onSelectionChange={onSelectionChange}
+      />
+    );
+    const { container, rerender } = renderStrict(table(rows));
+
+    clickCheckbox(container, 0); /* select id 1 */
+    clickCheckbox(container, 1); /* select id 2 */
+    expect(onSelectionChange).toHaveBeenCalledTimes(2);
+    expect(container.querySelectorAll('tbody tr[data-selected="true"]')).toHaveLength(2);
+
+    /* Immutable refresh: brand-new objects, same ids, same order. With the
+       old object-identity Set this wiped the selection and fired a spurious
+       prune callback; keyed by `id` it is a pure no-op. */
+    const refreshed = rows.map((r) => ({ ...r }));
+    rerender(table(refreshed));
+
+    expect(container.querySelectorAll('tbody tr[data-selected="true"]')).toHaveLength(2);
+    /* No prune fired — keys were all still present. */
+    expect(onSelectionChange).toHaveBeenCalledTimes(2);
+
+    /* A genuine removal (id 2 leaves) still prunes exactly once, against the
+       refreshed objects, returning the kept fresh row. */
+    rerender(table([refreshed[0], refreshed[2]]));
+    expect(onSelectionChange).toHaveBeenCalledTimes(3);
+    expect(onSelectionChange).toHaveBeenLastCalledWith([refreshed[0]]);
+    expect(container.querySelectorAll('tbody tr[data-selected="true"]')).toHaveLength(1);
+  });
+
+  /* The fallback (no rowKey) must behave exactly as before: object-identity
+     selection, so an immutable refresh with new row objects prunes it. This
+     pins that PERF S8 changed nothing for the unkeyed path. */
+  it('without rowKey, selection stays object-identity keyed and an immutable refresh prunes it', () => {
+    const rows = makeRows();
+    const onSelectionChange = vi.fn();
+    const table = (data: Row[]) => (
+      <Table<Row>
+        data={data}
+        columns={nameColumns}
+        selectable='multi'
+        constrainHeight={false}
+        onSelectionChange={onSelectionChange}
+      />
+    );
+    const { container, rerender } = renderStrict(table(rows));
+
+    clickCheckbox(container, 0);
+    clickCheckbox(container, 1);
+    expect(onSelectionChange).toHaveBeenCalledTimes(2);
+    expect(container.querySelectorAll('tbody tr[data-selected="true"]')).toHaveLength(2);
+
+    /* Brand-new objects (different identities) → the prune effect drops the
+       now-absent rows, exactly as the pre-S8 behavior. */
+    const refreshed = rows.map((r) => ({ ...r }));
+    rerender(table(refreshed));
+
+    expect(container.querySelectorAll('tbody tr[data-selected="true"]')).toHaveLength(0);
+    expect(onSelectionChange).toHaveBeenCalledTimes(3);
+    expect(onSelectionChange).toHaveBeenLastCalledWith([]);
+  });
+
+  /* A function rowKey is honored identically and survives reordering: select
+     by derived key, sort the table, the same logical rows stay selected. */
+  it('function rowKey keeps selection stable across a re-sort', () => {
+    const rows = makeRows();
+    const cols: TableColumn<Row>[] = [{ header: 'Name', accessor: 'name', sortable: true }];
+    const { container } = renderStrict(
+      <Table<Row>
+        data={rows}
+        columns={cols}
+        selectable='multi'
+        rowKey={(r) => r.id}
+        constrainHeight={false}
+      />,
+    );
+
+    clickCheckbox(container, 0); /* select the row rendered first (alpha, id 1) */
+    expect(container.querySelectorAll('tbody tr[data-selected="true"]')).toHaveLength(1);
+
+    /* Sort by name descending (two clicks): rows reorder, but the id-1 row
+       stays selected wherever it lands. */
+    const sortBtn = container.querySelector('thead th button')!;
+    click(sortBtn);
+    click(sortBtn);
+    expect(container.querySelectorAll('tbody tr[data-selected="true"]')).toHaveLength(1);
+
+    /* The selected row is still the one whose Name cell reads "alpha". */
+    const selectedRow = container.querySelector('tbody tr[data-selected="true"]')!;
+    expect(selectedRow.querySelectorAll('td')[1].textContent?.trim()).toBe('alpha');
   });
 });

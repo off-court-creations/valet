@@ -2,5 +2,13 @@
   "name": "LLMChat",
   "status": "experimental",
   "aliases": ["chat", "assistant"],
-  "docs": { "bestPractices": [] }
+  "docs": {
+    "bestPractices": [
+      "LLMChat is a presentational shell: it renders the conversation, a model picker, and the input, and emits typed messages via onSend. It does not call any AI provider — wire the request (and own the API key) yourself.",
+      "The built-in model catalog (DEFAULT_MODELS) is a convenience default that drifts from real provider availability between releases. Pass the `models` prop to advertise the exact set your integration supports.",
+      "The optional KeyModal flow and aiKeyStore are a dev-tool convenience: keys are sent browser-direct to the provider and are readable by any script on the page. Use them only for local prototyping or apps where the end user supplies their own session key — never collect production or multi-tenant keys in the browser. See the aiKeyStore threat model.",
+      "The message list is a polite live region (role='log', aria-relevant='additions') so screen readers announce new turns as they arrive. While a turn is composing (a message with `typing: true`), the list reports aria-busy so announcements are held until the reply settles — set `typing` on the in-flight assistant message and clear it when the content is final.",
+      "The typing indicator honors `prefers-reduced-motion: reduce`: the bouncing dots stop animating and stay visible at full opacity, so the composing state still reads without motion."
+    ]
+  }
 }

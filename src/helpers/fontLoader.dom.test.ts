@@ -10,7 +10,8 @@
 // test uses unique family names to stay independent.
 // ─────────────────────────────────────────────────────────────
 import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
-import { waitForFonts, DEFAULT_FONT_WAIT_TIMEOUT_MS } from './fontLoader';
+import { injectFontLinks, waitForFonts, DEFAULT_FONT_WAIT_TIMEOUT_MS } from './fontLoader';
+import { resetWarnOnce } from '../system/devErrors';
 
 /* Controllable FontFaceSet stub --------------------------------------- */
 let fontsLoad: Mock;
@@ -169,5 +170,122 @@ describe('waitForFonts — never-rejects wrappers + rejected-inflight eviction (
     // A FontFace whose load failed is status 'error' forever — the retry
     // must construct a fresh face rather than reuse the cached dead one.
     expect(FakeFontFace.constructed).toHaveLength(2);
+  });
+});
+
+/* ───────────────────────────────────────────────────────────────────────
+ * injectFontLinks — injectRemote option (THEMING S7, Q13)
+ *
+ * Default true (preconnect + googleapis stylesheet links, once-per-session
+ * privacy notice). injectRemote:false skips ALL remote Google resources and
+ * reinterprets Google-shaped entries as local families; self-hosted
+ * CustomFont entries still construct a FontFace. Module-level state
+ * (activeLinks/loadedFonts/the preconnect node/the warnOnce memo) persists
+ * across tests, so each test uses a unique family and scrubs <head>.
+ * ─────────────────────────────────────────────────────────────────────── */
+describe('injectFontLinks — injectRemote (S7)', () => {
+  const headLinks = () => Array.from(document.head.querySelectorAll('link'));
+  const stylesheetTo = (host: string) =>
+    headLinks().filter((l) => l.rel === 'stylesheet' && l.href.includes(host));
+
+  beforeEach(() => {
+    resetWarnOnce();
+    document.head.querySelectorAll('link').forEach((l) => l.remove());
+  });
+
+  afterEach(() => {
+    document.head.querySelectorAll('link').forEach((l) => l.remove());
+  });
+
+  it('default (injectRemote omitted) appends preconnect + googleapis stylesheet links', () => {
+    const cleanup = injectFontLinks(['Remote Default Family']);
+    expect(document.getElementById('valet-fonts-preconnect')).not.toBeNull();
+    expect(document.getElementById('valet-fonts-preconnect-gstatic')).not.toBeNull();
+    expect(stylesheetTo('fonts.googleapis.com')).toHaveLength(1);
+    cleanup();
+  });
+
+  it('injectRemote:false appends NO preconnect and NO googleapis links (Google entry → local family)', () => {
+    const cleanup = injectFontLinks(['Local Only Family'], { injectRemote: false });
+    expect(document.getElementById('valet-fonts-preconnect')).toBeNull();
+    expect(document.getElementById('valet-fonts-preconnect-gstatic')).toBeNull();
+    expect(stylesheetTo('fonts.googleapis.com')).toHaveLength(0);
+    // No remote links of any kind for a Google-shaped entry treated as local.
+    expect(headLinks()).toHaveLength(0);
+    cleanup();
+  });
+
+  it('injectRemote:false also suppresses object {family} requests (not just string shorthand)', () => {
+    const cleanup = injectFontLinks(
+      [{ family: 'Local Object Family', axes: { wght: [400, 700] } }],
+      { injectRemote: false },
+    );
+    expect(headLinks()).toHaveLength(0);
+    cleanup();
+  });
+
+  it('injectRemote:false still self-hosts CustomFont entries (FontFace constructed, no remote links)', () => {
+    FakeFontFace.constructed = [];
+    const font = { name: 'Self Hosted Face', src: 'https://example.test/self.woff2' };
+    const cleanup = injectFontLinks([font], { injectRemote: false });
+
+    // The self-hosted face is constructed and added — only Google entries are
+    // reinterpreted as local; CustomFonts are unaffected by the opt-out.
+    expect(FakeFontFace.constructed).toHaveLength(1);
+    expect(FakeFontFace.constructed[0]!.family).toBe('Self Hosted Face');
+    // The only link is the self-host preload (rel=preload, as=font) — nothing remote.
+    expect(stylesheetTo('fonts.googleapis.com')).toHaveLength(0);
+    expect(headLinks().every((l) => !l.href.includes('googleapis'))).toBe(true);
+    cleanup();
+  });
+
+  it("injectRemote:false teardown is a clean no-op for Google entries (doesn't throw / removes nothing it didn't add)", () => {
+    const cleanup = injectFontLinks(['Teardown Local Family'], { injectRemote: false });
+    expect(headLinks()).toHaveLength(0);
+    expect(() => cleanup()).not.toThrow();
+    expect(headLinks()).toHaveLength(0);
+  });
+});
+
+describe('injectFontLinks — remote-injection privacy notice (S7)', () => {
+  beforeEach(() => {
+    resetWarnOnce();
+    document.head.querySelectorAll('link').forEach((l) => l.remove());
+  });
+
+  afterEach(() => {
+    document.head.querySelectorAll('link').forEach((l) => l.remove());
+  });
+
+  it('warns once per session, pointing at the privacy docs, when remote injection happens', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    const c1 = injectFontLinks(['Notice Family One']);
+    const c2 = injectFontLinks(['Notice Family Two']); // second remote inject, same session
+
+    expect(warn).toHaveBeenCalledTimes(1); // warnOnce — not per call
+    const message = String(warn.mock.calls[0]![0]);
+    expect(message).toContain('injectRemote: false');
+    expect(message).toContain('fonts.googleapis.com');
+    expect(message).toContain('/fonts-privacy');
+
+    c1();
+    c2();
+  });
+
+  it('does NOT warn when injectRemote:false (no remote request leaves the page)', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const cleanup = injectFontLinks(['Silent Local Family'], { injectRemote: false });
+    expect(warn).not.toHaveBeenCalled();
+    cleanup();
+  });
+
+  it('does NOT warn for a custom-font-only batch (no Google entries → no remote request)', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const cleanup = injectFontLinks([
+      { name: 'Notice Custom Only', src: 'https://example.test/custom.woff2' },
+    ]);
+    expect(warn).not.toHaveBeenCalled();
+    cleanup();
   });
 });

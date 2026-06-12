@@ -285,17 +285,24 @@ export const Pagination: React.FC<PaginationProps> = ({
     after?: () => void;
   }>(null);
 
-  // stable click handler shared by all page buttons
+  // stable click handler shared by all page buttons.
+  // A click mid-animation must still commit its target page: the underline
+  // stretch-follow effect is re-entrant (every page change mints a fresh
+  // animationRunId that retires the prior run's queued frames/timers), so we
+  // never drop the click — we just hand the new page to onChange and let the
+  // effect restart from the underline's current geometry. We only ignore
+  // clicks during a window slide, where the rendered page buttons are
+  // aria-hidden, disabled duplicates inside the sliding track.
   const handlePageClick = React.useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
-      if (animatingRef.current || isAnimating) return; // prevent page changes mid-animation
+      if (isSliding) return; // sliding-track buttons are inert duplicates
       const target = e.currentTarget as HTMLButtonElement;
       const n = Number(target.dataset.page || 0);
       if (!Number.isFinite(n) || n < 1) return;
       if (n === page) return;
       onChange?.(n);
     },
-    [onChange, page, isAnimating],
+    [onChange, page, isSliding],
   );
 
   // windowing state
@@ -399,7 +406,13 @@ export const Pagination: React.FC<PaginationProps> = ({
     const wRect = wrap.getBoundingClientRect();
     const bRect = btn.getBoundingClientRect();
     const target = { x: bRect.left - wRect.left, w: bRect.width };
-    let prev = prevUxRef.current ?? { x: anim.x, w: anim.w };
+    // When a new page change interrupts an in-flight animation, prevUxRef still
+    // holds the *previous* run's start point (it is only committed at settle).
+    // Restart from the underline's current visual geometry (anim.x/anim.w) so
+    // the re-entrant click animates from where the underline actually is.
+    let prev = animatingRef.current
+      ? { x: anim.x, w: anim.w }
+      : (prevUxRef.current ?? { x: anim.x, w: anim.w });
 
     // If an edge-step slide just completed, snap underline to the new target without anim
     if (suppressNextUnderlineAnim.current) {
@@ -1156,7 +1169,10 @@ export const Pagination: React.FC<PaginationProps> = ({
                     ref={getBtnRef(n)}
                     data-page={n}
                     onClick={handlePageClick}
-                    disabled={isAnimating || isSliding}
+                    /* Page buttons stay clickable mid-underline-animation so a
+                       rapid second click is never dropped; only a window slide
+                       (which swaps in aria-hidden duplicates) disables them. */
+                    disabled={isSliding}
                     $active={n === page}
                     $primary={theme.colors.primary}
                     $text={theme.colors.text}

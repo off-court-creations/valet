@@ -19,6 +19,7 @@ import { preset } from '../../css/stylePresets';
 import { inheritSurfaceFontVars } from '../../system/inheritSurfaceFontVars';
 import type { Presettable, Sx } from '../../types';
 import { getOverlayRoot, useOverlay } from '../../system/overlay';
+import { zVar } from '../../system/zIndex';
 
 // Allow CSS custom properties on style objects
 type CSSPropertiesWithVars = React.CSSProperties & { [key: `--${string}`]: string | number };
@@ -68,7 +69,7 @@ const Bubble = styled('div')<{
   $animDist: string;
 }>`
   position: fixed;
-  z-index: var(--valet-zindex-tooltip, 1200);
+  z-index: ${zVar('tooltip')};
   max-width: 22rem;
   padding: ${({ $padV, $padH }) => `${$padV} ${$padH}`};
   border-radius: ${({ $radius }) => $radius};
@@ -271,20 +272,28 @@ export const Tooltip: React.FC<TooltipProps> = ({
     }
   }, [show, controlled, close]);
 
-  // Shared overlay wiring when visible: outside click handled globally; no focus trap/inert
-  useOverlay(
-    show && bubbleRef.current
-      ? {
-          element: bubbleRef.current,
-          anchors: [wrapperRef.current!].filter(Boolean) as HTMLElement[],
-          onRequestClose: () => close(),
-          disableOutsideClick,
-          trapFocus: false,
-          restoreFocusOnClose: false,
-          inertBackground: false,
-          label: 'Tooltip',
-        }
-      : null,
+  // Shared overlay wiring (registry v2) when visible: outside-click dismissal
+  // handled by the stack; no focus trap/inert. The ref-callback registers on
+  // the first visible commit (bubble attach) — outside-click dismissal lands in
+  // the same render the bubble mounts, not one render late (audit Modal.tsx:223,
+  // same shape). Options (incl. disableOutsideClick) resolve live at event time.
+  const overlayRef = useOverlay(show, () => ({
+    anchors: [wrapperRef.current!].filter(Boolean) as HTMLElement[],
+    onRequestClose: () => close(),
+    disableOutsideClick,
+    trapFocus: false,
+    restoreFocusOnClose: false,
+    inertBackground: false,
+    label: 'Tooltip',
+  }));
+
+  // Merge the overlay registration ref with the local bubbleRef.
+  const setBubbleRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      bubbleRef.current = node;
+      overlayRef(node);
+    },
+    [overlayRef],
   );
 
   useLayoutEffect(() => {
@@ -331,6 +340,22 @@ export const Tooltip: React.FC<TooltipProps> = ({
   /* preset classes */
   const presetClasses = presetKey ? preset(presetKey) : '';
 
+  /* A11Y S6 (audit Tooltip.tsx:347): `aria-describedby` must sit on the
+     FOCUSABLE control, not the non-focusable wrapper span — otherwise the
+     tooltip is never announced on keyboard focus. Clone the single child
+     and attach the id there, merging (deduped) with any `aria-describedby`
+     the consumer already set on the child. */
+  const bubbleId = `tooltip-${id}`;
+  const describedChild = React.isValidElement(children)
+    ? React.cloneElement(children as ReactElement<{ 'aria-describedby'?: string }>, {
+        'aria-describedby': show
+          ? [(children.props as { 'aria-describedby'?: string })['aria-describedby'], bubbleId]
+              .filter(Boolean)
+              .join(' ')
+          : (children.props as { 'aria-describedby'?: string })['aria-describedby'],
+      })
+    : children;
+
   return (
     <Wrapper
       {...rest}
@@ -344,15 +369,15 @@ export const Tooltip: React.FC<TooltipProps> = ({
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerCancel}
       onPointerLeave={handlePointerCancel}
-      aria-describedby={show ? `tooltip-${id}` : undefined}
       className={className}
       data-valet-component='Tooltip'
-      style={{ ...(sx || {}), ...(style as React.CSSProperties) }}
+      /* precedence: caller style < sx (API-TYPES S8) */
+      style={{ ...(style as React.CSSProperties), ...(sx || {}) }}
     >
-      {children}
+      {describedChild}
       {createPortal(
         <Bubble
-          ref={bubbleRef}
+          ref={setBubbleRef}
           $show={show}
           $placement={placement}
           $padV={theme.spacing(1)}
@@ -360,7 +385,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
           $radius={theme.radius(1)}
           $animDist={theme.spacing(0.5)}
           role='tooltip'
-          id={`tooltip-${id}`}
+          id={bubbleId}
           className={presetClasses}
           style={
             {

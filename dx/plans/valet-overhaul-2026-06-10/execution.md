@@ -37,7 +37,47 @@
 | --- | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------ |
 | 6   | 1.0  | **Pure cores:** FIELDS S5 hooks · A11Y S7 locale + S9 dateLocale · THEMING S3 waitForFonts + S8 modePreference · MCP-TRUTH S7→S8→S9 (gates, freshness, schema 1.7) · OVERLAY S3 registry v2 + TEST-CI S6 suite | ✅     |
 | 7   | 1.1  | **Engine/packaging serial lane:** ENGINE S6 → S7 → S8 → PACKAGING S4 (ESM-only, Q1) → S5 probes → ENGINE S10 (Q2) → S9 → S11 · PACKAGING S6 highlight (Q22) parallel                                      | ✅     |
-| 8   | 1.2  | **Component lanes (parallel trains):** fields S6–S11 · overlay S4/S5/S6/S8 (+A11Y S4) · Table A11Y S3 → PERF S8 · Snackbar A11Y S1 · Pagination ENGINE-S9 → click-drop · THEMING S4/S5/S7 · SECURITY S5–S8 · A11Y S2/S5/S6 · API-TYPES S4–S8+S13 · OVERLAY S7 z-scale (Q3) last | ⬜     |
+| 8   | 1.2  | **Component lanes (parallel trains):** fields S6–S11 · overlay S4/S5/S6/S8 (+A11Y S4) · Table A11Y S3 → PERF S8 · Snackbar A11Y S1 · Pagination ENGINE-S9 → click-drop · THEMING S4/S5/S7 · SECURITY S5–S8 · A11Y S2/S5/S6 · API-TYPES S4–S8+S13 · OVERLAY S7 z-scale (Q3) last | ✅     |
+
+### Wave 1.2 — component trains — ✅
+
+**What shipped (29 slices, 4 dependency stages, all binding lane orders
+honored):** all 11 fields/controls migrated onto the shared hooks with ONE
+precedence rule + honest ChangeInfo.source (real InputEvent/detail
+classification; TextField's ignored-value-prop and Switch's dead checked
+props are dead; RadioGroup reads form values; Accordion's private hook
+deleted) + the cross-field contract suite as the workstream gate · overlay
+consumers on registry v2 (live options — stale onRequestClose dies; Drawer is
+a real dialog with trapFocus + naming props; Select's menu is a REAL portal
+on the stack — Escape-in-Modal closes the menu only, hand-rolled listeners
+deleted; SpeedDial gets ARIA/focus-visible + stack dismissal with FAB
+refocus; Modal light-mode contrast fixed) · Table keyboard sort (<button> in
+th) + keyed selection via rowKey (immutable refreshes preserve selection) ·
+Snackbar role='status' + hover/focus-pausable auto-hide + unmount cleanup ·
+Pagination mid-animation clicks commit · theming: useGoogleFonts leak fix,
+fontStore started-flag + 500ms never-block Surface grace, injectRemote
+opt-out + dev notice (Q13) · security: Icon allowlist parser +
+dangerouslySetSvg (Q6, BREAKING), Avatar gravatar opt-in default-false (Q7,
+BREAKING), aiKeyStore/KeyModal/LLMChat posture docs + models prop (Q8), CVA
+consent prompt with non-interactive skip · a11y: chat role='log',
+prefers-reduced-motion guards + repo gate test, Tabs tablist/Accordion
+useId/Tooltip describedby · API-TYPES: canonical ChangeInfo trio + the
+cross-field source matrix, FieldBaseProps DOM-leak fix across 7 fields,
+Select.Option props applied, uniform caller style < sx, shared
+computeIntentVars (152-line Button/IconButton dup gone; AppBar's invalid
+hex-concat hover math fixed via real color math) · OVERLAY S7 z-scale (Q3):
+`zIndex.ts` tokens (fab 1050 < appbar 1100 < modal 1400 < dropdown 1450 <
+snackbar 1500 < tooltip 1600), every literal swapped, repo-scan gate test.
+
+**Verification:** behavioral reviewer **pass** (full gate + Select-in-Modal/
+Drawer-focus/listener-leak/Icon-vector/Avatar-no-fetch/StrictMode sweeps);
+scope reviewer **pass** with two integration items, both dispositioned by the
+orchestrator: the missing VALET_ZINDEX/zVar registrar export (applied + type)
+and DEFAULT_MODELS extractor pollution (PascalCase guard in extract-ts.mjs +
+regression test; DEFAULT_MODELS exported to match the CHANGELOG). **Gate:**
+lint ✅ tsc ✅ **1032/1032 tests** (94 files) ✅ build ✅ check:engine ✅
+verify:pack (173 files) ✅ check:bundle ✅ mcp:check ✅ (corpus regenerated
+with all sidecar updates); barrel exports verified from the built dist.
 | 9   | 1.3  | **Docs/config:** TEST-CI S9 + S11 · GOVERNANCE S7 RELEASING.md · PERF S10 harness · PACKAGING S8 deps (Q21) · wave-end mcp regen · Phase-1 gate                                                          | ⬜     |
 
 ### Wave 1.0 — pure cores — ✅

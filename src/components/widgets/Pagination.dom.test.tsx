@@ -94,6 +94,56 @@ function mount() {
   return { container, render };
 }
 
+/* Controlled mount: parent owns `page` and commits it on every onChange,
+   exactly like a real consumer. Returns the click count log + a clicker that
+   fires a real DOM click on the live (non-duplicate) page button. */
+function mountControlled(initial = 1, count = 60) {
+  const container = document.createElement('div');
+  document.body.appendChild(container);
+  const root = createRoot(container);
+  roots.push({ root, container });
+  const store = createSurfaceStore();
+  const changes: number[] = [];
+  let current = initial;
+
+  const renderAt = (page: number) => {
+    root.render(
+      <React.StrictMode>
+        <SurfaceCtx.Provider value={store}>
+          <Pagination
+            count={count}
+            page={page}
+            onChange={(n) => {
+              changes.push(n);
+              current = n;
+              renderAt(n);
+            }}
+          />
+        </SurfaceCtx.Provider>
+      </React.StrictMode>,
+    );
+  };
+
+  act(() => renderAt(current));
+  flushFrames();
+
+  /* Click the live page button (the one outside the sliding track: not
+     aria-hidden, not disabled) carrying data-page === n. */
+  const click = (n: number): boolean => {
+    const btn = Array.from(
+      container.querySelectorAll<HTMLButtonElement>(`button[data-page="${n}"]`),
+    ).find((b) => !b.disabled && b.getAttribute('aria-hidden') == null);
+    if (!btn) return false;
+    act(() => {
+      btn.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+    flushFrames();
+    return true;
+  };
+
+  return { container, changes, click, page: () => current };
+}
+
 beforeEach(() => {
   rafQueue = new Map();
   rafSeq = 0;
@@ -172,5 +222,52 @@ describe('Pagination rule lifecycle (ENGINE S9, jsdom)', () => {
     /* No measured pixel ever lands in Pagination rule text: the only px
        values allowed are the discrete theme paddings minted at mount. */
     expect(underlineRule).not.toMatch(/translateX\(-?\d+px\)/);
+  });
+});
+
+/* ─────────────────────────────────────────────────────────────────────────
+   PERF S11 — animation click-drop (plan §3.7 / R21; audit Pagination.tsx:282).
+   The underline stretch-follow animation runs on every page change and used to
+   (a) `disabled` every page button and (b) early-return from the click handler
+   while `isAnimating`, so a second rapid click landing mid-animation was
+   silently dropped. Fixed: page-number buttons stay clickable during the
+   animation and the click always commits its target page.
+   ───────────────────────────────────────────────────────────────────────── */
+describe('Pagination mid-animation click-drop (PERF S11, jsdom)', () => {
+  it('commits a second click that lands during the underline animation', () => {
+    const { changes, click, page } = mountControlled(1);
+
+    /* First click starts the multi-phase underline animation. Fake timers are
+       NOT advanced, so phase2 never settles → isAnimating stays true. */
+    expect(click(3)).toBe(true);
+    expect(changes).toEqual([3]);
+
+    /* Second click lands WHILE the first animation is still in flight. Pre-fix
+       the button was `disabled` and the handler bailed on isAnimating, so this
+       was dropped. It must now commit. */
+    expect(click(5)).toBe(true);
+    expect(changes).toEqual([3, 5]);
+    expect(page()).toBe(5);
+  });
+
+  it('keeps page buttons enabled while the underline animates', () => {
+    const { container, click } = mountControlled(1);
+
+    expect(click(4)).toBe(true); // kick off the animation (timers frozen)
+
+    /* Every live (non-duplicate) page button stays enabled mid-animation. */
+    const liveButtons = Array.from(
+      container.querySelectorAll<HTMLButtonElement>('button[data-page]'),
+    ).filter((b) => b.getAttribute('aria-hidden') == null);
+    expect(liveButtons.length).toBeGreaterThan(0);
+    expect(liveButtons.every((b) => !b.disabled)).toBe(true);
+  });
+
+  it('lands on the final target after several rapid mid-animation clicks', () => {
+    const { changes, click, page } = mountControlled(1);
+
+    [2, 6, 9, 4].forEach((n) => expect(click(n)).toBe(true));
+    expect(changes).toEqual([2, 6, 9, 4]);
+    expect(page()).toBe(4);
   });
 });

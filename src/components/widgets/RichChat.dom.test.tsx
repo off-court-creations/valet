@@ -89,3 +89,55 @@ describe('RichChat onFormSubmit index (jsdom)', () => {
     expect(messages[calls[0][1]].form).toBe(CannedForm);
   });
 });
+
+/* ── A11Y S2: chat message list is a live log ──────────────────────────── */
+describe('RichChat live log (jsdom)', () => {
+  const logOf = (container: HTMLElement) => container.querySelector('[role="log"]');
+
+  it('marks the message list as a polite additions-only log', () => {
+    const messages: RichMessage[] = [
+      { role: 'user', content: 'hi' },
+      { role: 'assistant', content: 'hello' },
+    ];
+    const container = renderStrict(<RichChat messages={messages} />);
+    const log = logOf(container);
+    expect(log).not.toBeNull();
+    expect(log!.getAttribute('role')).toBe('log');
+    expect(log!.getAttribute('aria-relevant')).toBe('additions');
+    expect(log!.getAttribute('aria-busy')).toBe('false');
+    expect(log!.textContent).toContain('hello');
+  });
+
+  it('sets aria-busy while a message is typing, and clears it when settled', () => {
+    const typing: RichMessage[] = [
+      { role: 'user', content: 'ping' },
+      { role: 'assistant', content: '', typing: true },
+    ];
+    const container = renderStrict(<RichChat messages={typing} />);
+    expect(logOf(container)!.getAttribute('aria-busy')).toBe('true');
+
+    const settled: RichMessage[] = [
+      { role: 'user', content: 'ping' },
+      { role: 'assistant', content: 'pong' },
+    ];
+    act(() => {
+      roots[roots.length - 1].root.render(
+        <React.StrictMode>
+          <SurfaceCtx.Provider value={createSurfaceStore()}>
+            <RichChat messages={settled} />
+          </SurfaceCtx.Provider>
+        </React.StrictMode>,
+      );
+    });
+    expect(logOf(container)!.getAttribute('aria-busy')).toBe('false');
+  });
+
+  it('ignores a typing system message (filtered from the rendered log)', () => {
+    const messages: RichMessage[] = [
+      { role: 'system', content: 'context', typing: true },
+      { role: 'assistant', content: 'done' },
+    ];
+    const container = renderStrict(<RichChat messages={messages} />);
+    expect(logOf(container)!.getAttribute('aria-busy')).toBe('false');
+  });
+});

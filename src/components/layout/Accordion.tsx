@@ -31,31 +31,16 @@ import { shallow } from 'zustand/shallow';
 import type { Presettable, SpacingProps, Sx } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
 import { Typography } from '../primitives/Typography';
+import { useControlledState } from '../../hooks/useControlledState';
 
 /*───────────────────────────────────────────────────────────*/
 /* Types / machine                                           */
 type Mode = 'single' | 'multiple';
 
 // (internal note) A reducer-based machine was considered; for simplicity and
-// alignment with controllable state, we compute next state in callbacks using Mode.
-
-function useControllableState<T>(
-  controlled: T | undefined,
-  defaultValue: T,
-  onChange?: (next: T) => void,
-) {
-  const [inner, setInner] = useState<T>(defaultValue);
-  const isControlled = controlled !== undefined;
-  const value = isControlled ? (controlled as T) : inner;
-  const setValue = useCallback(
-    (next: T) => {
-      if (!isControlled) setInner(next);
-      onChange?.(next);
-    },
-    [isControlled, onChange],
-  );
-  return [value, setValue] as const;
-}
+// alignment with controllable state, we compute next state in callbacks using
+// the shared `useControlledState` hook (ruling R9) — the previous private
+// `useControllableState` copy was deleted by FF S10, its sole deleter.
 
 /*───────────────────────────────────────────────────────────*/
 /* Context (roving focus + actions)                          */
@@ -73,6 +58,10 @@ interface Ctx {
   focusFirst: () => void;
   focusLast: () => void;
   activeIndex: number;
+  /** `useId()`-derived prefix (A11Y S6): header/panel DOM ids are namespaced
+      per <Accordion> instance so `id`/`aria-controls`/`aria-labelledby` never
+      collide when two Accordions render on the same page. */
+  idBase: string;
 }
 
 const AccordionCtx = createContext<Ctx | null>(null);
@@ -274,6 +263,9 @@ export const Accordion: React.FC<AccordionProps> & {
   );
   const wrapRef = useRef<HTMLDivElement>(null);
   const uniqueId = useId();
+  /* Per-instance id namespace (A11Y S6). Sanitise `useId()`'s `:`
+     delimiters so the resulting ids stay valid CSS selectors. */
+  const idBase = `valet-acc-${uniqueId.replace(/:/g, '')}`;
   const [maxHeight, setMaxHeight] = useState<number>();
   const [shouldConstrain, setShouldConstrain] = useState(false);
   const constraintRef = useRef(false);
@@ -282,12 +274,14 @@ export const Accordion: React.FC<AccordionProps> & {
   const disabledSet = useRef<Set<number>>(new Set());
   const [activeIndex, setActiveIndex] = useState(0);
   const toArray = (v?: number | number[]) => (v === undefined ? [] : Array.isArray(v) ? v : [v]);
-  const [externalOpen, setExternalOpen] = useControllableState<number[]>(
+  const [externalOpen, setExternalOpen] = useControlledState<number[]>(
     /* `openProp !== undefined` — a bare truthiness check made
-       `open={0}` (index 0, the common case) flip to uncontrolled. */
+       `open={0}` (index 0, the common case) flip to uncontrolled.
+       (Wave-0.3 fix preserved; do not regress to `openProp ? …`.) */
     openProp !== undefined ? toArray(openProp) : undefined,
     toArray(defaultOpen),
     onOpenChange,
+    'Accordion',
   );
 
   const mode: Mode = multiple ? 'multiple' : 'single';
@@ -363,8 +357,9 @@ export const Accordion: React.FC<AccordionProps> & {
       focusFirst: () => focusItem(nextEnabledFrom(-1, 1)),
       focusLast: () => focusItem(nextEnabledFrom(0, -1)),
       activeIndex,
+      idBase,
     };
-  }, [open, toggle, mode, headingLevel, activeIndex]);
+  }, [open, toggle, mode, headingLevel, activeIndex, idBase]);
 
   const presetClasses = p ? preset(p) : '';
 
@@ -513,6 +508,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
     focusFirst,
     focusLast,
     activeIndex,
+    idBase,
   } = useAccordion();
 
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -585,8 +581,8 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
       cleanupFonts();
     };
   }, [children, isOpen]);
-  const headerId = `acc-btn-${index}`;
-  const panelId = `acc-panel-${index}`;
+  const headerId = `${idBase}-btn-${index}`;
+  const panelId = `${idBase}-panel-${index}`;
 
   /* ----- compute disabled colour (greyed-out, mode-aware) -- */
   const disabledColor = toHex(

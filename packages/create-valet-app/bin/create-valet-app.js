@@ -144,6 +144,8 @@ function usage() {
   console.log('  ', chalk.green('--git|--no-git'), chalk.gray('Initialize git repo (default: --git)'));
   console.log('  ', chalk.green('--mcp'), chalk.gray('Enable valet MCP guidance (default)'));
   console.log('  ', chalk.green('--no-mcp'), chalk.gray('Disable MCP guidance'));
+  console.log('  ', chalk.green('--global-mcp'), chalk.gray('Install @archway/valet-mcp globally + edit ~/.codex/config.toml'));
+  console.log('  ', chalk.green('--no-global-mcp'), chalk.gray('Skip the global MCP install/config edit (default in CI)'));
   console.log('  ', chalk.green('--router|--no-router'), chalk.gray('Include React Router (default: --router)'));
   console.log('  ', chalk.green('--zustand|--no-zustand'), chalk.gray('Include Zustand store (default: --zustand)'));
   console.log('  ', chalk.green('--three|--r3f'), chalk.gray('Enable 3D (React Three Fiber) experience (default: off)'));
@@ -169,6 +171,10 @@ function parseArgs(argv) {
     minimal: false,
     pathAlias: '@',
     help: false,
+    // Opt back into the global @archway/valet-mcp install + ~/.codex/config.toml
+    // edit during non-interactive runs (CI). undefined = not set on the CLI;
+    // CVA_GLOBAL_MCP=1 is the env equivalent. Interactive runs prompt regardless.
+    globalMcp: undefined,
     // true if any CLI flag (starts with '-') was supplied
     hadFlags: false,
   };
@@ -185,6 +191,8 @@ function parseArgs(argv) {
     if (a === '--no-git') { out.git = false; continue; }
     if (a === '--mcp') { out.mcp = true; continue; }
     if (a === '--no-mcp') { out.mcp = false; continue; }
+    if (a === '--global-mcp') { out.globalMcp = true; continue; }
+    if (a === '--no-global-mcp') { out.globalMcp = false; continue; }
     if (a === '--router') { out.router = true; continue; }
     if (a === '--no-router') { out.router = false; continue; }
     if (a === '--zustand') { out.zustand = true; continue; }
@@ -375,13 +383,25 @@ async function main() {
     });
   });
 
-  // If MCP is enabled, attempt to install the valet MCP server globally
+  // If MCP guidance is enabled, optionally install the valet MCP server
+  // globally and register it in ~/.codex/config.toml — but only with explicit
+  // consent. AGENTS.md/CLAUDE.md guidance (above) is always generated; the
+  // machine-mutating side effects below are gated.
+  //   • Interactive: a yes-default consent prompt.
+  //   • Non-interactive (CI): SKIP by default; opt back in with --global-mcp
+  //     or CVA_GLOBAL_MCP=1.
   if (opts.mcp) {
+    if (await consentGlobalMCP(opts, interactive)) {
       await withSpinner('Installing MCP', async () => {
-      await installGlobalMCP();
-    });
-    // Run potential interactive config outside spinner to avoid UI conflicts
-    await ensureMCPConfig();
+        await installGlobalMCP();
+      });
+      // Consent already granted upstream (the single yes-default gate) — write
+      // the ~/.codex/config.toml entry without a second prompt. Run outside the
+      // spinner to avoid UI conflicts.
+      await ensureMCPConfig(true);
+    } else {
+      mcpManualTip();
+    }
   }
 
   // Git init (default; opt-out with --no-git)
@@ -1197,9 +1217,63 @@ async function generateAgentsDoc({ targetDir, include, template, router, zustand
   fs.writeFileSync(claudePath, renderedClaude);
 }
 
-// Attempt to install @archway/valet-mcp globally when MCP is enabled.
-// Uses the same minor line as the Valet dependency in templates.
-// Skips install if CVA_SKIP_GLOBAL_MCP=1 is set, or if install fails (non-fatal).
+// Pure decision: should the global @archway/valet-mcp install + ~/.codex
+// config edit run without any prompt? This covers only the cases that can be
+// decided up front (the non-interactive path, plus the CVA_SKIP_GLOBAL_MCP and
+// CVA_GLOBAL_MCP env overrides). Interactive runs with no override fall through
+// to a prompt (returns 'prompt'). Kept pure/side-effect-free so the consent
+// behavior is auditable in isolation (the sandbox test in scripts/consent.test.mjs
+// drives the whole bin as a subprocess rather than importing this function,
+// since the module runs main() on load).
+//   Returns: true (run), false (skip), or 'prompt' (ask the user).
+//   Precedence: CVA_SKIP_GLOBAL_MCP (hard opt-out) > explicit opt-in
+//   (--global-mcp / --no-global-mcp / CVA_GLOBAL_MCP) > interactivity default
+//   (interactive → prompt; non-interactive/CI → skip).
+function decideGlobalMCP({ interactive, globalMcp, env } = {}) {
+  const e = env || process.env;
+  // Hard opt-out always wins (pre-existing escape hatch, kept for back-compat).
+  if (e.CVA_SKIP_GLOBAL_MCP === '1') return false;
+  // Explicit opt-in/out via flag or env removes all ambiguity.
+  if (globalMcp === true) return true;
+  if (globalMcp === false) return false;
+  if (e.CVA_GLOBAL_MCP === '1') return true;
+  // No explicit signal: interactive asks; non-interactive (CI) skips by default.
+  return interactive ? 'prompt' : false;
+}
+
+// Resolve decideGlobalMCP, prompting the user when interactive and undecided.
+// The prompt is yes-default so the historical happy path is one Enter away.
+async function consentGlobalMCP(opts, interactive) {
+  const decision = decideGlobalMCP({ interactive, globalMcp: opts.globalMcp });
+  if (decision === true) return true;
+  if (decision === false) return false;
+  // decision === 'prompt'
+  return await promptConfirm(
+    'Install the @archway/valet-mcp server globally (npm i -g) and register it in ~/.codex/config.toml?',
+    true,
+  );
+}
+
+// Printed when the global MCP install + config edit is skipped, so users always
+// know how to wire it up by hand (or opt back in for CI).
+function mcpManualTip() {
+  const minor = resolveValetMinor();
+  const range = valetMinorRange(minor);
+  log('Skipping global MCP install and ~/.codex/config.toml edit.');
+  console.log('    To enable MCP later:');
+  console.log('   ', chalk.gray('npm'), 'i -g', chalk.cyan(`@archway/valet-mcp@${range}`));
+  console.log('    then add to ~/.codex/config.toml:');
+  console.log(chalk.gray('    [mcp_servers.valet]'));
+  console.log(chalk.gray('    command = "valet-mcp"'));
+  console.log(chalk.gray('    args = []'));
+  console.log('    Non-interactive runs can opt in with', chalk.cyan('--global-mcp'), 'or', chalk.cyan('CVA_GLOBAL_MCP=1') + '.');
+}
+
+// Attempt to install @archway/valet-mcp globally. Only called after
+// consentGlobalMCP() has approved the operation (interactive prompt, or a
+// non-interactive --global-mcp / CVA_GLOBAL_MCP=1 opt-in). Uses the same minor
+// line as the Valet dependency in templates. Honors the hard CVA_SKIP_GLOBAL_MCP=1
+// opt-out as a final guard; failures are non-fatal.
 async function installGlobalMCP() {
   if (process.env.CVA_SKIP_GLOBAL_MCP === '1') return;
   try {
@@ -1241,9 +1315,11 @@ async function installGlobalMCP() {
 }
 
 // Ensure Codex CLI knows about the valet MCP server by checking ~/.codex/config.toml.
-// If the file is missing the valet entry, prompt the user to add it.
-async function ensureMCPConfig() {
-  const nonInteractive = process.env.CVA_NONINTERACTIVE === '1' || !process.stdin.isTTY || !process.stdout.isTTY;
+// Reached only after consentGlobalMCP() granted consent for the global MCP
+// side effects. `consented` is true when that grant was explicit (the interactive
+// prompt's yes, or a non-interactive --global-mcp / CVA_GLOBAL_MCP=1 opt-in), in
+// which case the edit proceeds without a second prompt.
+async function ensureMCPConfig(consented = false) {
   const configDir = path.join(os.homedir(), '.codex');
   const configPath = path.join(configDir, 'config.toml');
   let content = '';
@@ -1257,18 +1333,15 @@ async function ensureMCPConfig() {
 
   const block = `\n[mcp_servers.valet]\ncommand = "valet-mcp"\nargs = []\n`;
 
-  if (nonInteractive) {
+  // Without explicit upstream consent, never mutate the file: leave a
+  // copy-paste tip and touch nothing. (The main flow always passes
+  // consented=true; this guards any other/future caller and keeps the
+  // mutation strictly consent-gated.)
+  if (!consented) {
     log('MCP is enabled. Tip: add valet server to ~/.codex/config.toml:');
     console.log(block.trim());
     return;
   }
-
-  const question = exists
-    ? 'MCP enabled, but ~/.codex/config.toml lacks a valet entry. Add it now?'
-    : 'MCP enabled. Create ~/.codex/config.toml with a valet entry?';
-
-  const answer = await promptConfirm(question, true);
-  if (!answer) return;
 
   try {
     if (!fs.existsSync(configDir)) fs.mkdirSync(configDir, { recursive: true });

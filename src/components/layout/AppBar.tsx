@@ -13,6 +13,8 @@ import { inheritSurfaceFontVars } from '../../system/inheritSurfaceFontVars';
 import type { Presettable, Space, Sx } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
 import { Button, type ButtonVariant } from '../fields/Button';
+import { computeIntentVars } from '../../system/intentVars';
+import { zVar } from '../../system/zIndex';
 
 /*───────────────────────────────────────────────────────────*/
 export type AppBarToken = 'primary' | 'secondary' | 'tertiary';
@@ -92,7 +94,7 @@ const Bar = styled('header')<{
   top: 0;
   left: 0;
   right: 0;
-  z-index: 10000;
+  z-index: ${zVar('appbar')};
   color: ${({ $text }) => $text};
 `;
 
@@ -200,6 +202,21 @@ export const AppBar: React.FC<AppBarProps> = ({
 
   const bg = base;
   const text = derivedText;
+
+  // Intent CSS variables contract (shared helper, API-TYPES S13). Replaces the
+  // old hex-concat hover math (`base + 'F0'`/`'E0'`, `text + '88'`) which
+  // produced invalid CSS for rgb()/hsl()/named theme colours. `makeMix` parses
+  // any colour format and blends `bg` toward `text` for hover/active.
+  const intentVars = computeIntentVars({
+    bg,
+    fg: text,
+    focus: theme.colors.primary,
+    // Disabled foreground fades the bar text toward the bar background
+    // (the old `text + '88'` was a ~53% alpha; this is the opaque analog).
+    disabledMixColor: bg,
+    variant: 'filled',
+  });
+
   const presetClass = p ? preset(p) : '';
   // Standardize numeric mapping via resolveSpace; retain two-value default
   const padSingle = resolveSpace(padProp, theme, false, 1);
@@ -282,13 +299,7 @@ export const AppBar: React.FC<AppBarProps> = ({
           '--valet-text-color': text,
           background: bg,
           color: text,
-          '--valet-intent-bg': base,
-          '--valet-intent-fg': text,
-          '--valet-intent-border': base,
-          '--valet-intent-focus': theme.colors.primary,
-          '--valet-intent-bg-hover': base + 'F0',
-          '--valet-intent-bg-active': base + 'E0',
-          '--valet-intent-fg-disabled': theme.colors.text + '88',
+          ...intentVars,
           ...sx,
         } as React.CSSProperties
       }

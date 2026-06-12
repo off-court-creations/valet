@@ -103,6 +103,10 @@ declare function createPolymorphicComponent<E extends string, P>(
 export const ProbeBox = createPolymorphicComponent<'div', ProbeBoxOwnProps>(
   (props: ProbeBoxOwnProps) => <div data-compact={props.compact} />,
 );
+
+// Constant exports beside a component (LLMChat's DEFAULT_MODELS regression)
+// must never be extracted as components.
+export const PROBE_DEFAULTS: Record<string, string[]> = { probe: ['a'] };
 `;
 
 // Under schema ≤1.6 this fixture would have produced
@@ -167,6 +171,11 @@ describe('extractFromTs', () => {
     for (const entry of Object.values(res)) {
       expect(entry.summary).not.toBe(`${entry.name} component`);
     }
+  });
+
+  it('ignores SCREAMING_SNAKE constant exports beside components (DEFAULT_MODELS regression)', () => {
+    expect(res.PROBE_DEFAULTS).toBeUndefined();
+    expect(Object.keys(res)).not.toContain('PROBE_DEFAULTS');
   });
 
   it('schema 1.7: emits no `actions` field, even for useImperativeHandle components', () => {

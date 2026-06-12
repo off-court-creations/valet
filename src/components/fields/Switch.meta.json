@@ -16,7 +16,7 @@
     {
       "id": "switch-controlled",
       "title": "Controlled switch",
-      "code": "() => {\n  const [on, setOn] = React.useState(false);\n  return (<Stack>\n    <Switch name='wifi' checked={on} onChange={setOn} />\n    <Typography>Wi‑Fi is {on ? 'on' : 'off'}</Typography>\n  </Stack>);\n}"
+      "code": "() => {\n  const [on, setOn] = React.useState(false);\n  return (<Stack>\n    <Switch name='wifi' checked={on} onValueChange={(next) => setOn(next)} />\n    <Typography>Wi‑Fi is {on ? 'on' : 'off'}</Typography>\n  </Stack>);\n}"
     },
     {
       "id": "switch-form",

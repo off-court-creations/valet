@@ -6,7 +6,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import React, { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import Snackbar from './Snackbar';
+import Snackbar, { useSnackbar } from './Snackbar';
 import { SurfaceCtx, createSurfaceStore } from '../../system/surfaceStore';
 import * as sheet from '../../css/sheet';
 
@@ -157,5 +157,354 @@ describe('Snackbar (jsdom)', () => {
 
     /* The window global is gone for good. */
     expect('__valet_snackbar_enter_id2' in window).toBe(false);
+  });
+});
+
+/* ── A11Y S1: live region + pausable auto-hide ─────────────────────────── */
+describe('Snackbar a11y (live region + pausable auto-hide)', () => {
+  const render = (ui: React.ReactNode) => {
+    const root = makeRoot();
+    const store = createSurfaceStore();
+    act(() => {
+      root.render(<SurfaceCtx.Provider value={store}>{ui}</SurfaceCtx.Provider>);
+    });
+    return root;
+  };
+
+  /* Drive the two enter frames so the node is fully shown. */
+  const settleEnter = () => {
+    flushFrame();
+    flushFrame();
+  };
+
+  /* React polyfills onPointerEnter/Leave via native pointerover/out (with a
+     relatedTarget boundary check) and onFocusCapture/onBlurCapture via native
+     focusin/focusout. Dispatch what React actually listens for. `outside` is
+     a node not contained by the snackbar so enter/leave semantics hold.    */
+  const outside = document.body;
+  const hoverIn = (el: Element) =>
+    act(() => {
+      el.dispatchEvent(new PointerEvent('pointerover', { bubbles: true, relatedTarget: outside }));
+    });
+  const hoverOut = (el: Element) =>
+    act(() => {
+      el.dispatchEvent(new PointerEvent('pointerout', { bubbles: true, relatedTarget: outside }));
+    });
+  const focusIn = (el: Element) =>
+    act(() => {
+      el.dispatchEvent(new FocusEvent('focusin', { bubbles: true, relatedTarget: outside }));
+    });
+  const focusOut = (el: Element) =>
+    act(() => {
+      el.dispatchEvent(new FocusEvent('focusout', { bubbles: true, relatedTarget: outside }));
+    });
+
+  it('defaults to role=status / aria-live=polite (a polite live region)', () => {
+    render(
+      <Snackbar
+        id='snack-live'
+        autoHideDuration={null}
+        message='saved'
+      />,
+    );
+    const el = document.getElementById('snack-live')!;
+    expect(el.getAttribute('role')).toBe('status');
+    expect(el.getAttribute('aria-live')).toBe('polite');
+  });
+
+  it('lets callers override role/aria-live (role placed before the rest spread)', () => {
+    render(
+      <Snackbar
+        id='snack-alert'
+        autoHideDuration={null}
+        role='alert'
+        aria-live='assertive'
+        message='boom'
+      />,
+    );
+    const el = document.getElementById('snack-alert')!;
+    expect(el.getAttribute('role')).toBe('alert');
+    expect(el.getAttribute('aria-live')).toBe('assertive');
+  });
+
+  it('auto-hides after autoHideDuration', () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'Date'] });
+    try {
+      const onClose = vi.fn();
+      render(
+        <Snackbar
+          id='snack-auto'
+          autoHideDuration={4000}
+          onClose={onClose}
+          message='bye'
+        />,
+      );
+      settleEnter();
+      expect(document.getElementById('snack-auto')).not.toBeNull();
+      // Auto-hide fires the close-fade, then the fade settles and unmounts.
+      act(() => {
+        vi.advanceTimersByTime(4000); // hide deadline → handleClose
+      });
+      act(() => {
+        vi.advanceTimersByTime(200); // exit-fade settle → unmount + onClose
+      });
+      expect(onClose).toHaveBeenCalledTimes(1);
+      expect(document.getElementById('snack-auto')).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('pauses the auto-hide clock on hover and resumes with the REMAINDER', () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'Date'] });
+    try {
+      const onClose = vi.fn();
+      render(
+        <Snackbar
+          id='snack-hover'
+          autoHideDuration={4000}
+          onClose={onClose}
+          message='hover me'
+        />,
+      );
+      settleEnter();
+      const el = document.getElementById('snack-hover')!;
+
+      // 3s elapse, then hover pauses with 1s remaining.
+      act(() => {
+        vi.advanceTimersByTime(3000);
+      });
+      hoverIn(el);
+      // While paused, the full original duration must NOT dismiss it.
+      act(() => {
+        vi.advanceTimersByTime(4000);
+      });
+      expect(onClose).not.toHaveBeenCalled();
+      expect(document.getElementById('snack-hover')).not.toBeNull();
+
+      // Leaving resumes with the banked ~1s remainder, not a fresh 4s.
+      hoverOut(el);
+      act(() => {
+        vi.advanceTimersByTime(1000); // remainder elapses → handleClose
+      });
+      act(() => {
+        vi.advanceTimersByTime(200); // exit fade settles
+      });
+      expect(onClose).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('also pauses on focus and stays paused while either hover OR focus is active', () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'Date'] });
+    try {
+      const onClose = vi.fn();
+      render(
+        <Snackbar
+          id='snack-focus'
+          autoHideDuration={4000}
+          onClose={onClose}
+          message={
+            <>
+              <button id='snack-focus-btn'>act</button>
+            </>
+          }
+        />,
+      );
+      settleEnter();
+      const el = document.getElementById('snack-focus')!;
+
+      // Hover AND focus both active.
+      hoverIn(el);
+      focusIn(el);
+      // Releasing only ONE input must keep the clock paused.
+      hoverOut(el);
+      act(() => {
+        vi.advanceTimersByTime(10000);
+      });
+      expect(onClose).not.toHaveBeenCalled();
+
+      // Releasing the other input too resumes; the full budget then dismisses.
+      focusOut(el);
+      act(() => {
+        vi.advanceTimersByTime(4000);
+      });
+      act(() => {
+        vi.advanceTimersByTime(200);
+      });
+      expect(onClose).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('controlled dismissal fades out instead of vanishing, then unmounts', () => {
+    const onClose = vi.fn();
+    const root = makeRoot();
+    const store = createSurfaceStore();
+    const ui = (openProp: boolean) => (
+      <SurfaceCtx.Provider value={store}>
+        <Snackbar
+          id='snack-ctl'
+          open={openProp}
+          autoHideDuration={null}
+          onClose={onClose}
+          message='controlled'
+        />
+      </SurfaceCtx.Provider>
+    );
+    act(() => root.render(ui(true)));
+    settleEnter();
+    const el = document.getElementById('snack-ctl')!;
+    expect(opacityOf(el)).toBe(1);
+
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'Date'] });
+    try {
+      // Parent flips open=false: node must stay mounted and fade (opacity 0),
+      // NOT disappear on the same commit (audit Snackbar.tsx:176).
+      act(() => root.render(ui(false)));
+      expect(document.getElementById('snack-ctl')).toBe(el);
+      expect(opacityOf(el)).toBe(0);
+      // After the fade settles it unmounts.
+      act(() => {
+        vi.advanceTimersByTime(200);
+      });
+      expect(document.getElementById('snack-ctl')).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('a controlled re-open mid-fade cancels the exit and stays visible', () => {
+    const onClose = vi.fn();
+    const root = makeRoot();
+    const store = createSurfaceStore();
+    const ui = (openProp: boolean) => (
+      <SurfaceCtx.Provider value={store}>
+        <Snackbar
+          id='snack-reopen'
+          open={openProp}
+          autoHideDuration={null}
+          onClose={onClose}
+          message='controlled'
+        />
+      </SurfaceCtx.Provider>
+    );
+    act(() => root.render(ui(true)));
+    settleEnter();
+    const el = document.getElementById('snack-reopen')!;
+
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'Date'] });
+    try {
+      // Begin the exit fade ...
+      act(() => root.render(ui(false)));
+      expect(opacityOf(el)).toBe(0);
+      // ... then re-open before it settles: the fade is cancelled.
+      act(() => root.render(ui(true)));
+      // Re-run the enter frames and confirm it's shown, not unmounted.
+      settleEnter();
+      expect(document.getElementById('snack-reopen')).toBe(el);
+      // The cancelled fade must never fire its completion callback.
+      act(() => {
+        vi.advanceTimersByTime(1000);
+      });
+      expect(onClose).not.toHaveBeenCalled();
+      expect(opacityOf(el)).toBe(1);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('dismisses via the useSnackbar() context with a fade-out (uncontrolled)', () => {
+    const onClose = vi.fn();
+    const Closer = () => {
+      const dismiss = useSnackbar();
+      return (
+        <button
+          id='snack-dismiss-btn'
+          onClick={() => dismiss?.()}
+        >
+          dismiss
+        </button>
+      );
+    };
+    const root = makeRoot();
+    const store = createSurfaceStore();
+    act(() => {
+      root.render(
+        <SurfaceCtx.Provider value={store}>
+          <Snackbar
+            id='snack-ctx'
+            autoHideDuration={null}
+            onClose={onClose}
+          >
+            <Closer />
+          </Snackbar>
+        </SurfaceCtx.Provider>,
+      );
+    });
+    settleEnter();
+    const el = document.getElementById('snack-ctx')!;
+    expect(opacityOf(el)).toBe(1);
+
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'Date'] });
+    try {
+      act(() => {
+        document
+          .getElementById('snack-dismiss-btn')!
+          .dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      });
+      // Fades first (still mounted at opacity 0) ...
+      expect(document.getElementById('snack-ctx')).toBe(el);
+      expect(opacityOf(el)).toBe(0);
+      // ... then settles, unmounts, and reports completion exactly once.
+      act(() => {
+        vi.advanceTimersByTime(200);
+      });
+      expect(document.getElementById('snack-ctx')).toBeNull();
+      expect(onClose).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('cleans the close-fade timeout on unmount (no setState after unmount)', () => {
+    const errSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'Date'] });
+    try {
+      const onClose = vi.fn();
+      const root = makeRoot();
+      const store = createSurfaceStore();
+      act(() => {
+        root.render(
+          <SurfaceCtx.Provider value={store}>
+            <Snackbar
+              id='snack-unmount'
+              autoHideDuration={4000}
+              onClose={onClose}
+              message='will be torn down mid-fade'
+            />
+          </SurfaceCtx.Provider>,
+        );
+      });
+      settleEnter();
+      // Start the close-fade (auto-hide fires) ...
+      act(() => {
+        vi.advanceTimersByTime(4000);
+      });
+      // ... then unmount BEFORE the fade settles. The pending timeout must be
+      // cleared so it never fires setState on the gone component.
+      act(() => root.unmount());
+      act(() => {
+        vi.advanceTimersByTime(1000);
+      });
+      // React logs an error if a timer setState lands after unmount.
+      const lateStateWarnings = errSpy.mock.calls.filter((c) => String(c[0]).includes('unmounted'));
+      expect(lateStateWarnings).toHaveLength(0);
+    } finally {
+      vi.useRealTimers();
+      errSpy.mockRestore();
+    }
   });
 });

@@ -9,11 +9,12 @@
 // render. No state update follows the initial commit in these
 // scenarios, so the DOM asserted on IS the first committed paint.
 // ─────────────────────────────────────────────────────────────
-import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import React, { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { Surface } from './Surface';
 import { Tabs } from './Tabs';
+import { resetWarnOnce } from '../../system/devErrors';
 
 /* react-dom warns unless act usage is announced ----------------------- */
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -131,11 +132,17 @@ describe('Tabs first-render value (jsdom, no StrictMode)', () => {
     );
     expect(selectedOf(container)).toEqual(['false', 'true']);
     act(() => {
-      tabsOf(container)[0].dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      // detail: 1 => a genuine pointer click (ruling R10 / API-TYPES S4).
+      tabsOf(container)[0].dispatchEvent(new MouseEvent('click', { bubbles: true, detail: 1 }));
     });
     expect(selectedOf(container)).toEqual(['true', 'false']);
     expect(onValueChange).toHaveBeenCalledTimes(1);
-    expect(onValueChange).toHaveBeenCalledWith('a', { previousValue: 'b', phase: 'input' });
+    // Canonical ChangeInfo payload now includes the honest `source`.
+    expect(onValueChange).toHaveBeenCalledWith('a', {
+      previousValue: 'b',
+      phase: 'input',
+      source: 'pointer',
+    });
   });
 
   it('controlled Tabs follow the `value` prop across re-renders', () => {
@@ -159,5 +166,81 @@ describe('Tabs first-render value (jsdom, no StrictMode)', () => {
       root.render(ui('b'));
     });
     expect(selectedOf(container)).toEqual(['false', 'true']);
+  });
+});
+
+/* ─────────────────────────────────────────────────────────────
+   FIELDS S10 (ruling R9/R13) — Tabs now tracks its value through
+   the shared `useControlledState` hook instead of a hand-rolled
+   guard. The hook is the single definition of "controlled":
+   latched at mount, dev-warn-once (via warnOnce → console.warn,
+   not the old console.error) on a post-mount flip. These lock that
+   contract onto Tabs.
+   ───────────────────────────────────────────────────────────── */
+describe('Tabs controlled-state hook integration (jsdom)', () => {
+  let warnSpy: ReturnType<typeof vi.spyOn>;
+  const valetWarns = () =>
+    warnSpy.mock.calls
+      .map((c: unknown[]) => String(c[0]))
+      .filter((m: string) => m.startsWith('valet:'));
+
+  beforeEach(() => {
+    resetWarnOnce();
+    warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+  });
+  afterEach(() => warnSpy.mockRestore());
+
+  const ui = (props: { value?: string; defaultValue?: string }) => (
+    <Surface>
+      <Tabs {...props}>
+        <Tabs.Tab
+          value='a'
+          label='Alpha'
+        />
+        <Tabs.Tab
+          value='b'
+          label='Beta'
+        />
+      </Tabs>
+    </Surface>
+  );
+
+  it('a controlled→uncontrolled flip warns once and keeps the mode latched', () => {
+    const { root, container } = renderPlain(ui({ value: 'b' }));
+    expect(selectedOf(container)).toEqual(['false', 'true']);
+
+    /* Drop the `value` prop after mount. The mode is latched: the hook
+       does NOT adopt internal state, so the latched-controlled value
+       (now undefined ⇒ defaultValue undefined ⇒ index 0) is rendered,
+       and a single valet warning is emitted. */
+    act(() => root.render(ui({})));
+    expect(valetWarns()).toEqual([expect.stringContaining('controlled to uncontrolled')]);
+
+    /* warnOnce — re-rendering still uncontrolled does not warn again. */
+    act(() => root.render(ui({})));
+    expect(valetWarns()).toHaveLength(1);
+  });
+
+  it('an uncontrolled mount ignores a `value` prop appearing later — warns once', () => {
+    const { root, container } = renderPlain(ui({ defaultValue: 'a' }));
+    expect(selectedOf(container)).toEqual(['true', 'false']);
+
+    /* Click to move internal state to 'b'. */
+    act(() => {
+      tabsOf(container)[1].dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+    expect(selectedOf(container)).toEqual(['false', 'true']);
+
+    /* A late `value` prop is ignored for reading (mode latched uncontrolled). */
+    act(() => root.render(ui({ value: 'a' })));
+    expect(selectedOf(container)).toEqual(['false', 'true']); // still internal 'b'
+    expect(valetWarns()).toEqual([expect.stringContaining('uncontrolled to controlled')]);
+  });
+
+  it('a stable controlled Tabs emits no controlled-state warning', () => {
+    const { root, container } = renderPlain(ui({ value: 'a' }));
+    act(() => root.render(ui({ value: 'b' })));
+    expect(selectedOf(container)).toEqual(['false', 'true']);
+    expect(valetWarns()).toEqual([]);
   });
 });

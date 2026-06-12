@@ -9,7 +9,7 @@ import type { Theme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { Typography } from '../primitives/Typography';
 import type { Presettable, Sx } from '../../types';
-import { toRgb, mix, toHex } from '../../helpers/color';
+import { computeIntentVars } from '../../system/intentVars';
 import {
   createPolymorphicComponent,
   type PolymorphicProps,
@@ -270,18 +270,18 @@ const ButtonImpl = <E extends React.ElementType = 'button'>(
 
   const presetClasses = p ? preset(p) : '';
 
-  // Intent CSS variables contract
-  const makeMix = (a: string, b: string, w: number) => toHex(mix(toRgb(a), toRgb(b), w));
-  const intentBg = resolvedBg;
-  const intentFg = labelColor;
-  const intentBorder =
-    variant === 'outlined' ? resolvedBg : makeMix(resolvedBg, theme.colors.text, 0.25);
-  const intentFocus = theme.colors.primary; // theme focus token
-  const intentBgHover =
-    variant === 'filled' ? makeMix(resolvedBg, labelColor, 0.15) : 'transparent';
-  const intentBgActive =
-    variant === 'filled' ? makeMix(resolvedBg, labelColor, 0.25) : 'transparent';
-  const intentFgDisabled = makeMix(labelColor, theme.colors.background, 0.5);
+  // Intent CSS variables contract (shared helper, API-TYPES S13).
+  // Button's border blends `bg` toward `text` at 0.25 for non-outlined
+  // variants; hover/active blend `bg` toward the label colour.
+  const intentVars = computeIntentVars({
+    bg: resolvedBg,
+    fg: labelColor,
+    focus: theme.colors.primary,
+    disabledMixColor: theme.colors.background,
+    variant,
+    borderMixColor: theme.colors.text,
+    borderMixWeight: 0.25,
+  });
 
   const childArray = React.Children.toArray(children);
   const grouped: React.ReactNode[] = [];
@@ -380,13 +380,7 @@ const ButtonImpl = <E extends React.ElementType = 'button'>(
         {
           ...style,
           '--valet-text-color': labelColor,
-          '--valet-intent-bg': intentBg,
-          '--valet-intent-fg': intentFg,
-          '--valet-intent-border': intentBorder,
-          '--valet-intent-focus': intentFocus,
-          '--valet-intent-bg-hover': intentBgHover,
-          '--valet-intent-bg-active': intentBgActive,
-          '--valet-intent-fg-disabled': intentFgDisabled,
+          ...intentVars,
           ...(sx as object),
         } as React.CSSProperties
       }

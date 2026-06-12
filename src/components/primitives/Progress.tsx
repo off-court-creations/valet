@@ -6,6 +6,7 @@ import React, { forwardRef, useLayoutEffect, useRef, useState } from 'react';
 import { styled, keyframes } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
+import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion';
 import type { Presettable, Sx } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
@@ -62,6 +63,17 @@ const Bar = styled('div')<{
     ($index === 1
       ? `animation: ${indetBarA} 2.1s infinite ease-out;`
       : `animation: ${indetBarB} 2.1s infinite ease-in;`)}
+  /* A11Y S5 — reduced motion: stop the sweeping indeterminate animation
+     and degrade to a static, still-visible band so the progressbar reads
+     as "busy" rather than blanking out. The first lane is shown as a
+     centered ~40% fill; the second is suppressed (it would only overlap). */
+  @media (prefers-reduced-motion: reduce) {
+    ${({ $indet, $index }) =>
+      $indet &&
+      ($index === 1
+        ? 'animation: none; left: 30%; right: 30%;'
+        : 'animation: none; display: none;')}
+  }
 `;
 
 // Circular parts
@@ -230,6 +242,10 @@ export const ProgressRing = forwardRef<HTMLDivElement, ProgressRingProps>(
   ) => {
     const { theme } = useTheme();
     const primary = (color ?? theme.colors.primary) as string;
+    // A11Y S5 — these two ring animations live in inline JS style (the SVG
+    // rotate + the stroke dash spin), so the @media guard in styled CSS can't
+    // reach them; gate them on the live preference instead.
+    const reduceMotion = usePrefersReducedMotion();
 
     const dDefault = toCssSize(size, '2.25rem');
     // Convert dimension and thickness to px to compute circumference.
@@ -313,7 +329,11 @@ export const ProgressRing = forwardRef<HTMLDivElement, ProgressRingProps>(
             width={autoDPx ? `${autoDPx}px` : dDefault}
             height={autoDPx ? `${autoDPx}px` : dDefault}
             viewBox={`0 0 ${dPx} ${dPx}`}
-            style={isIndeterminate ? { animation: `${rotate360} 1.4s linear infinite` } : undefined}
+            style={
+              isIndeterminate && !reduceMotion
+                ? { animation: `${rotate360} 1.4s linear infinite` }
+                : undefined
+            }
           >
             {/* Track */}
             <circle
@@ -335,11 +355,18 @@ export const ProgressRing = forwardRef<HTMLDivElement, ProgressRingProps>(
               strokeLinecap='round'
               {...(isIndeterminate
                 ? {
-                    style: {
-                      strokeDasharray: '80,200',
-                      strokeDashoffset: 0,
-                      animation: `${dashSpin} 1.4s ease-in-out infinite`,
-                    },
+                    // Reduced motion: drop the dash spin but keep a static arc
+                    // (~25% of the circumference) so the ring reads as busy.
+                    style: reduceMotion
+                      ? {
+                          strokeDasharray: `${circ * 0.25},${circ}`,
+                          strokeDashoffset: 0,
+                        }
+                      : {
+                          strokeDasharray: '80,200',
+                          strokeDashoffset: 0,
+                          animation: `${dashSpin} 1.4s ease-in-out infinite`,
+                        },
                   }
                 : {
                     strokeDasharray: circ,

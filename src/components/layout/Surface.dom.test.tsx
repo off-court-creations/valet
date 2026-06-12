@@ -16,6 +16,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import Surface from './Surface';
 import { styled } from '../../css/createStyled';
 import { SurfaceCtx, type SurfaceStore } from '../../system/surfaceStore';
+import { useFonts } from '../../system/fontStore';
 
 /* react-dom warns unless act usage is announced ----------------------- */
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -250,5 +251,95 @@ describe('Surface (jsdom)', () => {
     await drain();
     expect(notifications).toBe(2);
     expect(store.getState().children.size).toBe(0);
+  });
+});
+
+/* THEMING S5 — never-block grace ---------------------------------------- */
+/* A `blockUntilFonts` Surface used to hide its content forever whenever no
+   font load ever started (e.g. an app that never calls useInitialTheme):
+   fontStore stays {loading:0, ready:false} and `ready` never flips. The
+   500ms never-started grace reveals content anyway. Driven with fake timers;
+   the manual rAF queue from the file-level beforeEach is independent of
+   setTimeout, so the two coexist. */
+const innerWrapper = (container: HTMLElement) =>
+  container.querySelector('[data-valet-surface-root] > div:last-child') as HTMLDivElement;
+const backdrop = (container: HTMLElement) =>
+  container.querySelector('[data-valet-component="LoadingBackdrop"]');
+
+describe('Surface blockUntilFonts grace (jsdom, fake timers)', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    useFonts.setState({ loading: 0, ready: false, started: false });
+  });
+  afterEach(() => {
+    // Drain pending roots under fake timers, then restore real timers.
+    for (const { root, container } of roots.splice(0)) {
+      act(() => root.unmount());
+      container.remove();
+    }
+    act(() => {
+      vi.runOnlyPendingTimers();
+    });
+    vi.useRealTimers();
+    useFonts.setState({ loading: 0, ready: false, started: false });
+  });
+
+  it('hides content while blocking and no load has started yet (within grace)', () => {
+    const { container } = renderStrict(<Surface blockUntilFonts>hi</Surface>);
+    expect(innerWrapper(container).style.visibility).toBe('hidden');
+    expect(backdrop(container)).not.toBeNull();
+  });
+
+  it('reveals content after 500ms when a font load never starts (no wedge)', () => {
+    const { container } = renderStrict(<Surface blockUntilFonts>hi</Surface>);
+    expect(innerWrapper(container).style.visibility).toBe('hidden');
+
+    /* Grace elapses with started:false — the wedge-forever case. */
+    act(() => {
+      vi.advanceTimersByTime(500);
+    });
+    expect(innerWrapper(container).style.visibility).toBe('visible');
+    /* No fonts ever loaded → nothing to fade for → backdrop dropped at once. */
+    expect(backdrop(container)).toBeNull();
+  });
+
+  it('keeps blocking past the grace once a load has actually started', () => {
+    const { container } = renderStrict(<Surface blockUntilFonts>hi</Surface>);
+
+    /* A load begins before the grace expires → grace must NOT release it. */
+    act(() => {
+      useFonts.getState().start();
+    });
+    act(() => {
+      vi.advanceTimersByTime(500);
+    });
+    expect(innerWrapper(container).style.visibility).toBe('hidden');
+    expect(backdrop(container)).not.toBeNull();
+
+    /* Only the real ready signal unblocks an in-flight load. */
+    act(() => {
+      useFonts.getState().finish();
+    });
+    expect(useFonts.getState().ready).toBe(true);
+    expect(innerWrapper(container).style.visibility).toBe('visible');
+  });
+
+  it('never blocks when fonts are already ready at mount', () => {
+    act(() => {
+      useFonts.setState({ loading: 0, ready: true, started: true });
+    });
+    const { container } = renderStrict(<Surface blockUntilFonts>hi</Surface>);
+    expect(innerWrapper(container).style.visibility).toBe('visible');
+    expect(backdrop(container)).toBeNull();
+  });
+
+  it('never hides content when blockUntilFonts is off, regardless of grace', () => {
+    const { container } = renderStrict(<Surface>hi</Surface>);
+    expect(innerWrapper(container).style.visibility).toBe('visible');
+    act(() => {
+      vi.advanceTimersByTime(500);
+    });
+    expect(innerWrapper(container).style.visibility).toBe('visible');
+    expect(backdrop(container)).toBeNull();
   });
 });

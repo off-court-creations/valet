@@ -6,9 +6,10 @@
     "bestPractices": [
       "Always provide a clear `label`. Avoid placeholder‑only fields; labels remain visible and accessible.",
       "Choose the correct `type` (e.g., `email`, `password`, `number`) and set `autoComplete` to improve UX and a11y.",
-      "Pick a control model deliberately: use `value` + `onChange` for app‑state control; use `defaultValue` for simple local inputs.",
-      "In forms, set a stable `name` so values submit predictably and validation maps cleanly.",
+      "Pick a control model deliberately: use `value` for app‑state control; use `defaultValue` for simple local inputs. Resolution precedence is explicit `value` prop > FormControl binding > internal state, latched at mount — passing both a `value` prop and a form `name` dev‑warns (the prop wins for rendering; edits still write through to the store).",
+      "In forms, set a stable `name` so values submit predictably, and seed every bound key in `createFormStore(initial)`. An unseeded `name` renders `defaultValue ?? ''` as a controlled value with a one‑time dev warning and never writes to the store on mount, so it stays absent from submit/reset until the first edit.",
       "Use `as='textarea'` with `rows` for multi‑line input; keep width comfortable and avoid forcing long single‑line fields.",
+      "Prefer the canonical `onValueChange`/`onValueCommit` events over raw `onChange`: each `ChangeInfo.source` is classified honestly — typing reports `keyboard`, paste/drop reports `clipboard`, programmatic value writes report `programmatic`; Enter commits as `keyboard` and blur commits as `programmatic`.",
       "Convey issues via `error` + `helperText`. Keep helper text succinct; reserve errors for actionable feedback.",
       "Use `fullWidth` in narrow or linear layouts; otherwise size with `sx` or parent layout for consistency.",
       "Prefer theme tokens and `preset` over ad‑hoc CSS to keep density and colours consistent."

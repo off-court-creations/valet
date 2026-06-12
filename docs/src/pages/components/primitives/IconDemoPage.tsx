@@ -107,9 +107,37 @@ export default function IconDemoPage() {
         />
       </Stack>
 
-      <Typography variant='h3'>4. Custom SVG element</Typography>
+      <Typography variant='h3'>4. Custom SVG</Typography>
+      <Typography>
+        A <code>svg</code> string is parsed against a strict allowlist (bare path&nbsp;
+        <code>d</code>-data or <code>&lt;path&gt;</code>-only markup) and rendered as real elements
+        — safe for untrusted or AI-generated markup. Anything outside that grammar renders nothing.
+      </Typography>
+      <Stack
+        direction='row'
+        gap={1}
+        sx={{ alignItems: 'center' }}
+      >
+        <Icon
+          svg='M12 2 2 22h20z'
+          size={40}
+          color={theme.colors['primary']}
+          aria-label='triangle-from-d-data'
+        />
+        <Icon
+          svg='<path d="M12 2 2 22h20z" /><path d="M12 8 7 18h10z" fill="#fff" />'
+          size={40}
+          color={theme.colors['secondary']}
+          aria-label='triangle-from-path-markup'
+        />
+      </Stack>
+      <Typography>
+        For <strong>trusted</strong> full-SVG markup you control (here a bundled brand asset), the
+        named <code>dangerouslySetSvg</code> escape hatch injects it verbatim. Never pass user input
+        or model output to it.
+      </Typography>
       <Icon
-        svg={mymoSVG}
+        dangerouslySetSvg={mymoSVG}
         size={40}
         aria-label='custom-svg'
       />

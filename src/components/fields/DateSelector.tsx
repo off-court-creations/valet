@@ -1,6 +1,19 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/fields/DateSelector.tsx | valet
 // interactive month calendar for picking dates
+//
+// FIELDS S9 (rulings R9/R10): the controlled/uncontrolled decision and the
+// single-date FormControl binding are delegated to the shared `useFieldState`
+// hook (precedence prop > form > internal, latched at mount, no mount-time
+// store writes), replacing the hand-rolled `initialCtl` effect guard. The
+// internal `Date` state and the `formatLocalISO` commit sites are left intact
+// for A11Y S10 (ruling R8: it is the last writer and must not re-touch those
+// three sites; the month/day name constants are likewise A11Y S10's locale
+// territory). Range mode keeps its explicit tuple write (the hook is single-
+// value typed, so it owns the single-date string binding only — matching the
+// pre-migration read semantics exactly). ChangeInfo.source is now 'pointer'
+// (a day cell is only committed via a click) instead of the old hardcoded
+// 'programmatic'.
 // ─────────────────────────────────────────────────────────────
 import React, { useMemo, useRef, useState } from 'react';
 import { styled } from '../../css/createStyled';
@@ -9,6 +22,7 @@ import { preset } from '../../css/stylePresets';
 import { IconButton } from './IconButton';
 import { Select } from './Select';
 import { useOptionalForm } from './FormControl';
+import { useFieldState } from '../../hooks/useControlledState';
 import { formatLocalISO } from './dateUtils';
 import { toRgb, mix, toHex } from '../../helpers/color';
 import type { Presettable, Sx } from '../../types';
@@ -186,23 +200,32 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   const compactEffective = compact || density === 'compact';
 
   /* optional FormControl binding --------------------------- */
+  // `useFieldState` (below) also reads this context; the direct read here keeps
+  // the raw single-date store string available for the `Date`-based derivation
+  // that A11Y S10 owns (ruling R8). The range tuple is bound explicitly in
+  // `commitRange` because the hook is single-value typed.
   const form = useOptionalForm<Record<string, unknown>>();
-
   const formVal = form && name && !range ? (form.values[name] as string | undefined) : undefined;
-  const controlled = value !== undefined || formVal !== undefined;
-  // Controlled/uncontrolled guard (dev-only)
-  const initialCtl = React.useRef<boolean | undefined>(undefined);
-  React.useEffect(() => {
-    if (process.env.NODE_ENV === 'production') return;
-    if (initialCtl.current === undefined) initialCtl.current = controlled;
-    else if (initialCtl.current !== controlled) {
-      console.error(
-        'DateSelector: component switched from %s to %s after mount. This is not supported.',
-        initialCtl.current ? 'controlled' : 'uncontrolled',
-        controlled ? 'controlled' : 'uncontrolled',
-      );
-    }
-  }, [controlled]);
+
+  /**
+   * Single resolution of the controlled/uncontrolled decision + single-date
+   * form binding (ruling R9). Precedence is prop > form > internal, latched at
+   * mount; the hand-rolled `initialCtl` effect guard is gone. `name` is passed
+   * only in single-date mode, so the hook's write-through replaces the old
+   * single-mode `form.setField`; range mode keeps its explicit tuple write.
+   * The hook's own resolved value/internal state is unused — DateSelector keeps
+   * its `Date`-based `startInt`/`endInt` state — so only `meta.isControlled`
+   * and `setFieldValue` are consumed.
+   */
+  const [, setFieldValue, meta] = useFieldState<string | [string, string]>({
+    value,
+    defaultValue,
+    fallback: '',
+    name: range ? undefined : name,
+    component: 'DateSelector',
+  });
+  const controlled = meta.isControlled;
+
   const parseDate = (v?: string) => (v ? new Date(v + 'T00:00') : new Date());
 
   const initial: string | [string, string] | undefined = value ?? formVal ?? defaultValue;
@@ -219,8 +242,13 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   const minYear = min.getFullYear();
   const maxYear = max.getFullYear();
 
+  // An unseeded form key is now treated as controlled (useFieldState contract:
+  // unseeded keys render `defaultValue ?? fallback`), so the controlled branch
+  // falls through to `initialStart` (= value ?? formVal ?? defaultValue) to
+  // honour `defaultValue` instead of snapping to today. (No formatLocalISO site
+  // is touched here — ruling R8.)
   const startDate = controlled
-    ? parseDate(Array.isArray(value) ? value[0] : (value ?? formVal))
+    ? parseDate(Array.isArray(value) ? value[0] : (value ?? formVal ?? initialStart))
     : startInt;
   const endDate = range
     ? controlled
@@ -255,12 +283,15 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   const commit = (d: number) => {
     const iso = formatLocalISO(new Date(viewYear, viewMonth, d));
     if (!controlled) setStartInt(new Date(viewYear, viewMonth, d));
-    if (form && name && !range)
-      form.setField(name as keyof Record<string, string | undefined>, iso);
+    // Single-mode form write-through is owned by the hook (`name` was passed to
+    // useFieldState only in single mode); this replaces the old explicit
+    // `form.setField(name, iso)`.
+    setFieldValue(iso);
     const info: ChangeInfo<string | [string, string]> = {
       previousValue: Array.isArray(value) ? value : (value ?? formVal),
       phase: 'commit',
-      source: 'programmatic',
+      // A day cell only commits via a click (ruling R10).
+      source: 'pointer',
       name,
     };
     onValueChange?.(iso, { ...info, phase: 'input' });
@@ -292,7 +323,9 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
     if (!controlled) setEndInt(end);
     const tuple: [string, string] = [formatLocalISO(start), formatLocalISO(end)];
     if (form && name) {
-      // Bind range tuple into form store under the single field name
+      // Bind range tuple into form store under the single field name. Range mode
+      // is single-value typed away from the hook (`name` was passed to
+      // useFieldState only in single mode), so the tuple write stays explicit.
       form.setField(
         name as keyof Record<string, [string, string] | undefined>,
         tuple as unknown as [string, string],
@@ -301,7 +334,8 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
     const info: ChangeInfo<string | [string, string]> = {
       previousValue: Array.isArray(value) ? value : (value ?? formVal),
       phase: 'commit',
-      source: 'programmatic',
+      // A day cell only commits via a click (ruling R10).
+      source: 'pointer',
       name,
     };
     onValueChange?.(tuple, { ...info, phase: 'input' });

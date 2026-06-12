@@ -6,8 +6,8 @@
     "bestPractices": [
       "Use sparingly. SpeedDial is for a small cluster of high‑value actions (typically 2–5). If you have more, consider a toolbar or menu instead.",
       "Place with intent. Default bottom‑right works well; adjust offsets with spacing tokens to avoid overlapping content or platform UI (e.g., safe areas).",
-      "Label actions clearly. Provide short, specific labels; the component exposes them via `title` and keyboard focus when open.",
-      "Close on action. After invoking an action, collapse the dial so the UI returns to a stable state and prevents accidental re‑taps.",
+      "Label actions clearly. Provide short, specific labels; each action's `label` becomes its accessible name (`aria-label`) and hover `title`. The dial uses disclosure semantics (`aria-expanded`/`aria-controls` on the trigger, a `role='group'` actions container) and shows a visible keyboard focus ring.",
+      "Dismissal is automatic. The open dial registers on the shared overlay stack: pressing Escape closes it and returns focus to the FAB, clicking outside closes it, and invoking any action collapses the dial back to a stable state. You do not need to manage open/closed state yourself.",
       "Pick direction by context. Choose `up` / `left` when anchored to bottom/right edges to prevent overflow. Keep action order predictable.",
       "Motion tokens. Animations use theme motion tokens; keep custom presets aligned for a cohesive feel with the rest of the app."
     ]

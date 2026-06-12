@@ -103,7 +103,8 @@
     "Respect heading levels. Set `headingLevel` so the outline remains semantic within the page.",
     "Constrain height in dense pages so the thread scrolls locally rather than the document.",
     "Prefer keeping content mounted unless heavy: use `unmountOnExit` to remove expensive trees when closed.",
-    "Ensure keyboard support: Space/Enter toggles, Arrow keys move focus, and focus styles are visible."
+    "Ensure keyboard support: Space/Enter toggles, Arrow keys move focus, and focus styles are visible.",
+    "Each header is wired to its panel via `aria-controls`/`aria-labelledby` with ids namespaced per instance, so multiple Accordions on one page never produce colliding ARIA references."
   ],
   "examples": [
     {

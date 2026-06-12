@@ -9,7 +9,7 @@ import type { Presettable, Sx } from '../../types';
 import { useTheme } from '../../system/themeStore';
 import type { Theme } from '../../system/themeStore';
 import { Icon } from '../primitives/Icon';
-import { toRgb, mix, toHex } from '../../helpers/color';
+import { computeIntentVars } from '../../system/intentVars';
 import { Typography } from '../primitives/Typography';
 
 export type ChipSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -164,6 +164,18 @@ export const Chip: React.FC<ChipProps> = ({
   const { theme } = useTheme();
   const s = sizeMap[size];
   const { bg, fg, bd } = resolveColors(theme, intent, color);
+  // Intent CSS variables contract (shared helper, API-TYPES S13). Chip blends
+  // hover/active at its own slightly lighter weights; border is always `bd`.
+  const intentVars = computeIntentVars({
+    bg,
+    fg,
+    focus: theme.colors.primary,
+    disabledMixColor: theme.colors.background,
+    variant,
+    border: bd,
+    hoverWeight: 0.12,
+    activeWeight: 0.2,
+  });
   const presetCls = p ? preset(p) : '';
   const sizeScaleMap: Record<ChipSize, number> = {
     xs: 0.85,
@@ -205,15 +217,7 @@ export const Chip: React.FC<ChipProps> = ({
       $disabled={disabled}
       style={
         {
-          '--valet-intent-bg': bg,
-          '--valet-intent-fg': fg,
-          '--valet-intent-border': bd,
-          '--valet-intent-focus': theme.colors.primary,
-          '--valet-intent-bg-hover':
-            variant === 'filled' ? toHex(mix(toRgb(bg), toRgb(fg), 0.12)) : 'transparent',
-          '--valet-intent-bg-active':
-            variant === 'filled' ? toHex(mix(toRgb(bg), toRgb(fg), 0.2)) : 'transparent',
-          '--valet-intent-fg-disabled': toHex(mix(toRgb(fg), toRgb(theme.colors.background), 0.5)),
+          ...intentVars,
           ...(sx as object),
         } as React.CSSProperties
       }

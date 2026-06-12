@@ -1,6 +1,40 @@
 // ─────────────────────────────────────────────────────────────
 // src/system/aiKeyStore.ts | valet
-// secure in-browser store for AI provider keys
+// in-browser store for AI provider keys — DEV-TOOL POSTURE
+// ─────────────────────────────────────────────────────────────
+//
+// THREAT MODEL — read before shipping this to production.
+//
+// aiKeyStore, `sendChat`, `useAIKey`, and the KeyModal/LLMChat widgets are a
+// convenience dev tool for prototyping browser-direct LLM calls. They are NOT
+// a secret-management solution. Treat every key handed to this module as
+// exposed to the page it runs on.
+//
+//   • Browser-direct transport. `sendChat` calls api.openai.com /
+//     api.anthropic.com straight from the page, sending the raw key in the
+//     request. Anthropic requires the explicit
+//     `anthropic-dangerous-direct-browser-access` opt-in for exactly this
+//     reason — the key is visible to anyone who can read the network tab or
+//     inject script into the origin. There is no backend proxy.
+//   • At-rest encryption is opt-in and only as strong as the passphrase.
+//     With a passphrase, the key is AES-GCM encrypted (PBKDF2, 120k
+//     iterations) and the ciphertext lives in localStorage. WITHOUT a
+//     passphrase the plaintext key is held in memory and persisted only as
+//     `provider`/`model` metadata (the key itself is not written to storage,
+//     but it is readable from the live store while the tab is open).
+//   • No XSS isolation. Any third-party script, browser extension, or
+//     supply-chain compromise on the page can read the decrypted key from the
+//     zustand store or intercept it in flight. Encryption-at-rest does not
+//     defend against a hostile runtime.
+//   • Secure-context requirement. crypto.subtle is unavailable on plain HTTP;
+//     encryption silently cannot run outside HTTPS/localhost (see getSubtle).
+//
+// SAFE USE: local prototyping, internal demos, and apps where the end user
+// supplies and owns the key for their own session. For multi-tenant or
+// production traffic, terminate keys on a server you control and proxy the
+// request — do not ship provider keys to the browser. A future AI-runtime
+// redesign (streaming/abort/tool-calling + a server contract) is the intended
+// home for production use; this module is deliberately scoped to dev tooling.
 // ─────────────────────────────────────────────────────────────
 import { createWithEqualityFn as create } from 'zustand/traditional';
 import { persist, StateStorage, createJSONStorage } from 'zustand/middleware';

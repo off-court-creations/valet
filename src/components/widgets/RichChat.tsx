@@ -148,6 +148,14 @@ const Typing = styled('div')<{ $color: string }>`
   & span:nth-child(3) {
     animation-delay: 0.4s;
   }
+  /* A11Y S5 — reduced motion: drop the bouncing dots but keep them
+     visible at full opacity so the typing indicator still shows. */
+  @media (prefers-reduced-motion: reduce) {
+    & span {
+      animation: none;
+      opacity: 1;
+    }
+  }
 `;
 
 // Dedicated input row to avoid width collisions between text field and send button
@@ -402,6 +410,11 @@ export const RichChat: React.FC<RichChatProps> = ({
   const presetClasses = p ? preset(p) : '';
   const cls = [presetClasses, className].filter(Boolean).join(' ') || undefined;
 
+  // A11Y S2: the message list is a live log. While a turn is composing (any
+  // rendered message carries `typing`), mark it busy so assistive tech holds
+  // announcements until the message settles.
+  const isTyping = messages.some((m) => m.role !== 'system' && m.typing);
+
   return (
     <Panel
       {...rest}
@@ -420,6 +433,9 @@ export const RichChat: React.FC<RichChatProps> = ({
       >
         <Messages
           ref={messagesRef}
+          role='log'
+          aria-relevant='additions'
+          aria-busy={isTyping}
           $gap={theme.spacing(1.25)}
           /* Tighter side padding to bring avatars closer to edge */
           $pad={portrait ? theme.spacing(0.25) : theme.spacing(0.5)}

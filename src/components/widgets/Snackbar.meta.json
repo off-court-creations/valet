@@ -2,13 +2,23 @@
   "name": "Snackbar",
   "status": "stable",
   "aliases": ["snackbar", "toast", "notification", "alert"],
+  "a11y": {
+    "roles": ["status"],
+    "aria": ["aria-live"],
+    "keyboard": [
+      "Does not steal focus; any action button inside stays in the tab order",
+      "Hovering or focusing the snackbar pauses the auto-hide countdown and resumes with the remaining time (WCAG 2.2.1)"
+    ],
+    "notes": "Renders as a polite live region (role='status' / aria-live='polite') so screen readers announce the message without moving focus. Both attributes sit before the rest spread, so error toasts can override them (e.g. role='alert', aria-live='assertive'). Controlled dismissals fade out rather than vanishing. Under `prefers-reduced-motion: reduce` the slide-in/fade transition is dropped — the snackbar appears and disappears instantly while the auto-hide timer (and its hover/focus pause) is unchanged. Multi-message queueing is intentionally not provided yet — one Snackbar shows one message at a time."
+  },
   "docs": {
     "bestPractices": [
       "Keep messages short and specific. Snackbars confirm actions or provide brief status; avoid long instructions or multi‑step interactions.",
       "Place them consistently, typically bottom center/right depending on platform.",
       "Offer a single, clear action when needed; prefer undo when appropriate.",
-      "Respect motion and timing. Use `autoHideDuration` for transient messages (3–6s typical); longer durations should be deliberate.",
-      "Don’t stack excessively. Queue messages when necessary; ensure important ones aren’t missed.",
+      "Respect motion and timing. Use `autoHideDuration` for transient messages (3–6s typical); longer durations should be deliberate. The countdown pauses while the snackbar is hovered or focused and resumes with the remaining time. The slide/fade transition is automatically suppressed for users who request reduced motion.",
+      "For urgent errors, override the default live region with `role='alert'`/`aria-live='assertive'` so it is announced immediately.",
+      "Don’t rely on queueing — one Snackbar shows one message at a time; manage your own queue/state if several messages can overlap.",
       "Keep focus behavior intact. Snackbars shouldn’t steal focus; any action button must be keyboard reachable.",
       "Style via tokens/presets. Use theme colors for status (e.g., `primary` / `error`) and consolidate variants with `preset`."
     ]

@@ -4,6 +4,18 @@
 // – Un/controlled, FormControl-aware, preset-friendly
 // – Optional min/max & live value labels, ticks, three snap modes
 // – NEW: `precision` prop - default 0 (integers only); specify decimals if needed
+//
+// FIELDS S9 (rulings R9/R10): value/form/internal resolution delegated to the
+// shared `useFieldState` hook (precedence prop > form > internal, latched at
+// mount, no mount-time store writes). ChangeInfo.source is now classified
+// honestly per interaction path (pointer drag ⇒ 'pointer', arrow/Page/Home/End
+// keys ⇒ 'keyboard', no-event programmatic commits ⇒ 'programmatic') instead of
+// the old `instanceof KeyboardEvent` check that mislabelled every pointer drag
+// as 'programmatic' (the pointer path passed no event). Orphan fix
+// (audit Slider.tsx:368): a canceled pointer gesture left the document
+// `pointermove`/`pointerup` listeners tracking forever — `pointercancel` now
+// tears them down, and the thumb captures the pointer so the drag survives the
+// pointer leaving the element.
 // ─────────────────────────────────────────────────────────────
 import React, {
   forwardRef,
@@ -12,16 +24,15 @@ import React, {
   useId,
   useMemo,
   useRef,
-  useState,
   PointerEvent as PE,
 } from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
-import { useOptionalForm } from './FormControl';
+import { useFieldState } from '../../hooks/useControlledState';
 import { computeKeyStep } from './sliderMath';
 import type { FieldBaseProps } from '../../types';
-import type { ChangeInfo, OnValueChange, OnValueCommit } from '../../system/events';
+import type { ChangeInfo, InputSource, OnValueChange, OnValueCommit } from '../../system/events';
 
 /*───────────────────────────────────────────────────────────*/
 /* Size map                                                  */
@@ -215,6 +226,15 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
       name,
       size = 'md',
       disabled = false,
+      // API-TYPES S6 (stage A): destructure the FieldBaseProps cluster BEFORE the
+      // rest-spread so label/helperText/error/fullWidth stop leaking onto the
+      // <Wrapper> div as invalid DOM attributes. Only `error` is wired
+      // (aria-invalid on the thumb below); FieldShell rendering of the rest is
+      // Phase 2 / Q10.
+      label: _label,
+      helperText: _helperText,
+      error,
+      fullWidth: _fullWidth,
       preset: p,
       className,
       sx,
@@ -222,6 +242,9 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
     },
     forwardedRef,
   ) => {
+    void _label;
+    void _helperText;
+    void _fullWidth;
     /* theme + geom tokens ----------------------------------- */
     const { theme } = useTheme();
     const map = createSizeMap();
@@ -243,28 +266,20 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
       };
     }
 
-    /* optional FormControl binding --------------------------- */
-    // We only rely on `values` and an optional `setField`.
-    const form = useOptionalForm<Record<string, number | undefined>>();
-
-    /* controlled hierarchy ---------------------------------- */
-    const formVal = name ? form?.values[name] : undefined;
-    const controlled = formVal !== undefined || valueProp !== undefined;
-    // Controlled/uncontrolled guard (dev-only)
-    const initialCtl = React.useRef<boolean | undefined>(undefined);
-    React.useEffect(() => {
-      if (process.env.NODE_ENV === 'production') return;
-      if (initialCtl.current === undefined) initialCtl.current = controlled;
-      else if (initialCtl.current !== controlled) {
-        console.error(
-          'Slider: component switched from %s to %s after mount. This is not supported.',
-          initialCtl.current ? 'controlled' : 'uncontrolled',
-          controlled ? 'controlled' : 'uncontrolled',
-        );
-      }
-    }, [controlled]);
-    const [self, setSelf] = useState(defaultValue);
-    const current = controlled ? (formVal !== undefined ? formVal : (valueProp as number)) : self;
+    /**
+     * Single resolution of value/control/form binding (ruling R9). Precedence
+     * is prop > form > internal, latched at mount; an unseeded form key renders
+     * `defaultValue ?? 0` as controlled and never writes on mount. The setter
+     * writes through to the store whenever live-bound; the hook itself decides
+     * whether `setValue` updates internal state.
+     */
+    const [current, setValue] = useFieldState<number>({
+      value: valueProp,
+      defaultValue,
+      fallback: 0,
+      name,
+      component: 'Slider',
+    });
 
     /* derived ticks ----------------------------------------- */
     const tickValues: number[] = useMemo(() => {
@@ -312,24 +327,31 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
     }, [current, renderVisual]);
 
     /* commit helper ----------------------------------------- */
+    // `source` is supplied explicitly by each interaction path (ruling R10):
+    // pointer drag/click ⇒ 'pointer', arrow/Page/Home/End keys ⇒ 'keyboard',
+    // a bare programmatic commit ⇒ 'programmatic'. The old `instanceof
+    // KeyboardEvent` inference mislabelled every pointer drag as 'programmatic'
+    // because the pointer path passed no event.
     const commitValue = useCallback(
-      (v: number, phase: 'input' | 'commit' = 'commit', event?: React.SyntheticEvent) => {
+      (
+        v: number,
+        phase: 'input' | 'commit' = 'commit',
+        source: InputSource = 'programmatic',
+        event?: React.SyntheticEvent,
+      ) => {
         const snapped = snapValue(Math.min(Math.max(v, min), max), snap, step, presets);
         const rounded = roundTo(snapped, precision);
 
-        if (!controlled) setSelf(rounded);
-        if (name && form) form.setField(name as keyof Record<string, number | undefined>, rounded);
+        // Updates internal state (uncontrolled) and/or writes through to the
+        // form store (live-bound) via the hook's single precedence rule.
+        setValue(rounded);
         const info: ChangeInfo<number> = {
           previousValue: current,
           phase,
-          source: event
-            ? 'nativeEvent' in event && event.nativeEvent instanceof KeyboardEvent
-              ? 'keyboard'
-              : 'pointer'
-            : 'programmatic',
+          source,
           event,
           name,
-        } as unknown as ChangeInfo<number>;
+        };
         if (phase === 'input') onValueChange?.(rounded, info);
         else {
           onValueChange?.(rounded, { ...info, phase: 'input' });
@@ -338,8 +360,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
         renderVisual(rounded);
       },
       [
-        controlled,
-        form,
+        setValue,
         min,
         max,
         name,
@@ -360,7 +381,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
         if (!wrapRef.current) return;
         const rect = wrapRef.current.getBoundingClientRect();
         const pct = ((clientX - rect.left) / rect.width) * 100;
-        commitValue(valFor(pct));
+        commitValue(valFor(pct), 'commit', 'pointer');
       },
       [commitValue, valFor],
     );
@@ -371,33 +392,60 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
         e.preventDefault();
         updateFromClientX(e.clientX);
 
-        const move = (ev: PointerEvent) => {
-          commitValue(
-            valFor(
-              ((ev.clientX - (wrapRef.current?.getBoundingClientRect().left ?? 0)) /
-                (wrapRef.current?.getBoundingClientRect().width ?? 1)) *
-                100,
-            ),
-            'input',
+        // Capture the pointer on the thumb so the drag survives the pointer
+        // leaving the element; the matching release happens in `cleanup`.
+        const captureTarget = thumbRef.current;
+        const pointerId = e.pointerId;
+        if (captureTarget) {
+          try {
+            captureTarget.setPointerCapture(pointerId);
+          } catch {
+            /* setPointerCapture can throw if the pointer is already gone */
+          }
+        }
+
+        const valueFromEvent = (ev: PointerEvent) =>
+          valFor(
+            ((ev.clientX - (wrapRef.current?.getBoundingClientRect().left ?? 0)) /
+              (wrapRef.current?.getBoundingClientRect().width ?? 1)) *
+              100,
           );
-        };
-        const up = (ev: PointerEvent) => {
+
+        // Orphan fix (audit Slider.tsx:368): tear down BOTH document listeners
+        // and release the captured pointer. Called from `pointerup` (commit)
+        // AND `pointercancel` (a canceled gesture used to leak `move` forever).
+        const cleanup = () => {
           document.removeEventListener('pointermove', move);
           document.removeEventListener('pointerup', up as EventListener);
-          commitValue(
-            valFor(
-              ((ev.clientX - (wrapRef.current?.getBoundingClientRect().left ?? 0)) /
-                (wrapRef.current?.getBoundingClientRect().width ?? 1)) *
-                100,
-            ),
-            'commit',
-          );
+          document.removeEventListener('pointercancel', cancel as EventListener);
+          if (captureTarget?.hasPointerCapture?.(pointerId)) {
+            try {
+              captureTarget.releasePointerCapture(pointerId);
+            } catch {
+              /* already released */
+            }
+          }
+        };
+
+        const move = (ev: PointerEvent) => {
+          commitValue(valueFromEvent(ev), 'input', 'pointer');
+        };
+        const up = (ev: PointerEvent) => {
+          cleanup();
+          commitValue(valueFromEvent(ev), 'commit', 'pointer');
+        };
+        const cancel = () => {
+          // Gesture aborted: stop tracking and snap the visual back to the
+          // current value without firing a spurious commit.
+          cleanup();
+          renderVisual(current);
         };
 
         document.addEventListener('pointermove', move);
-        document.addEventListener('pointerup', up as EventListener, { once: true });
+        document.addEventListener('pointerup', up as EventListener);
+        document.addEventListener('pointercancel', cancel as EventListener);
       },
-      [disabled, updateFromClientX, commitValue, valFor],
+      [disabled, updateFromClientX, commitValue, valFor, renderVisual, current],
     );
 
     /* keyboard handling ------------------------------------- */
@@ -409,22 +457,22 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
       const k = e.key;
       if (k === 'Home') {
         e.preventDefault();
-        commitValue(min, 'commit', e as unknown as React.SyntheticEvent);
+        commitValue(min, 'commit', 'keyboard', e);
         return;
       }
       if (k === 'End') {
         e.preventDefault();
-        commitValue(max, 'commit', e as unknown as React.SyntheticEvent);
+        commitValue(max, 'commit', 'keyboard', e);
         return;
       }
       if (k === 'PageUp') {
         e.preventDefault();
-        commitValue(current + pageStep, 'commit', e as unknown as React.SyntheticEvent);
+        commitValue(current + pageStep, 'commit', 'keyboard', e);
         return;
       }
       if (k === 'PageDown') {
         e.preventDefault();
-        commitValue(current - pageStep, 'commit', e as unknown as React.SyntheticEvent);
+        commitValue(current - pageStep, 'commit', 'keyboard', e);
         return;
       }
       let delta = 0;
@@ -432,7 +480,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
       if (k === 'ArrowLeft' || k === 'ArrowDown') delta = -keyStep;
       if (delta) {
         e.preventDefault();
-        commitValue(current + delta, 'commit', e as unknown as React.SyntheticEvent);
+        commitValue(current + delta, 'commit', 'keyboard', e);
       }
     };
 
@@ -498,6 +546,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
           aria-valuemax={max}
           aria-valuenow={current}
           aria-valuetext={String(format(current))}
+          aria-invalid={error || undefined}
           aria-disabled={disabled || undefined}
           tabIndex={disabled ? -1 : 0}
           disabled={disabled}

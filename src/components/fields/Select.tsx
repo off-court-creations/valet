@@ -2,6 +2,17 @@
 // src/components/fields/Select.tsx | valet
 // Fully-typed, FormControl-aware <Select/> (single + multiple).
 // © 2025 Off-Court Creations – MIT licence
+//
+// FIELDS S8 (rulings R9/R10): value/form/internal resolution delegated to the
+// shared `useFieldState` hook (precedence prop > form > internal, latched at
+// mount, no mount-time store writes). This replaces the old hand-rolled guard
+// whose `controlled = formVal !== undefined || valueProp !== undefined`
+// predicate let form-presence override an explicit `value` prop and recomputed
+// the mode every render. ChangeInfo.source is classified honestly: an option
+// chosen by pointer click reports 'pointer', one chosen via keyboard
+// (Enter/Space/arrow-activation) reports 'keyboard', instead of the old
+// hardcoded 'programmatic'.
+// Rebased on OVERLAY S6 (the real-portal migration, ruling R11).
 // ─────────────────────────────────────────────────────────────
 import React, {
   forwardRef,
@@ -13,13 +24,17 @@ import React, {
   useLayoutEffect,
   useEffect,
 } from 'react';
+import { createPortal } from 'react-dom';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
-import { useOptionalForm } from './FormControl';
 import { Checkbox } from './Checkbox';
-import type { FieldBaseProps } from '../../types';
-import type { ChangeInfo, OnValueChange, OnValueCommit } from '../../system/events';
+import { getOverlayRoot, useOverlay } from '../../system/overlay';
+import { inheritSurfaceFontVars } from '../../system/inheritSurfaceFontVars';
+import { zVar } from '../../system/zIndex';
+import { useFieldState } from '../../hooks/useControlledState';
+import type { FieldBaseProps, Presettable, Sx } from '../../types';
+import type { ChangeInfo, InputSource, OnValueChange, OnValueCommit } from '../../system/events';
 import type { Theme } from '../../system/themeStore';
 
 type Primitive = string | number;
@@ -53,9 +68,11 @@ export interface SelectProps
   children: React.ReactNode;
 }
 
-export interface OptionProps extends React.LiHTMLAttributes<HTMLLIElement> {
+export interface OptionProps extends React.LiHTMLAttributes<HTMLLIElement>, Presettable {
   value: Primitive;
   disabled?: boolean;
+  /** Inline styles (with CSS var support); merged over `style` (sx wins). */
+  sx?: Sx;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -120,18 +137,13 @@ const Caret = styled('span')`
   transform: rotate(45deg);
 `;
 
-const PortalWrap = styled('div')`
-  position: fixed;
-  inset: 0;
-  /* Use overlay token suitable for dropdown menus */
-  z-index: var(--valet-zindex-dropdown, 1000);
-  /* Interim fix (OVERLAY S2): PortalWrap is no portal — a full-viewport
-     fixed div that would otherwise swallow every pointer event page-wide
-     while the menu is open. Let events pass through; the Menu below
-     re-enables them. OVERLAY S6 replaces PortalWrap with a real portal. */
-  pointer-events: none;
-`;
-
+/* OVERLAY S6: the menu is now a REAL portal into #valet-overlay-root
+   (see getOverlayRoot). It is `position: fixed`, anchored to the trigger's
+   viewport rect — so it escapes any transform/overflow-clipping ancestor of
+   the trigger, and outside-click/Escape route through the shared overlay
+   stack (useOverlay) instead of hand-rolled document listeners. The
+   Wave-0.3/OVERLAY-S2 fake full-viewport wrap div and its pointer-event
+   passthrough insurance are deleted. */
 const Menu = styled('ul')<{
   $w: number;
   $top: number;
@@ -140,7 +152,7 @@ const Menu = styled('ul')<{
   $radius: string;
   $padY: string;
 }>`
-  position: absolute;
+  position: fixed;
   min-width: ${({ $w }) => $w}px;
   width: max-content;
   max-width: min(100vw - 2rem, 360px);
@@ -155,9 +167,8 @@ const Menu = styled('ul')<{
   box-shadow: 0 8px 24px #00000040;
   overflow-y: auto;
   overflow-x: hidden;
-  /* Interim fix (OVERLAY S2): restore interactivity under the
-     pointer-events:none PortalWrap above. */
-  pointer-events: auto;
+  /* Dropdown sits above modals/appbar on the shared z-scale. */
+  z-index: ${zVar('dropdown')};
 `;
 
 const Item = styled('li')<{
@@ -204,8 +215,22 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
     preset: presetKey,
     className,
     sx,
+    // API-TYPES S6 (stage A): destructure the FieldBaseProps cluster BEFORE the
+    // rest-spread so label/helperText/error/fullWidth stop leaking onto the
+    // <Trigger> button as invalid DOM attributes. FieldShell rendering is
+    // Phase 2 / Q10 — only `error` is wired (aria-invalid below); the rest are
+    // swallowed for now. `label` is aliased to avoid shadowing the internal
+    // selected-option display text (const below); the swallowed members are
+    // void-referenced so they neither leak nor trip no-unused-vars.
+    label: _label,
+    helperText: _helperText,
+    error,
+    fullWidth: _fullWidth,
     ...divRest
   } = props;
+  void _label;
+  void _helperText;
+  void _fullWidth;
 
   /* theme + geometry --------------------------------------- */
   const { theme } = useTheme();
@@ -231,45 +256,38 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
   const primary = theme.colors.primary;
   const border = theme.colors.divider ?? 'rgba(255, 255, 255, 0.25)';
 
-  /* optional FormControl hook ------------------------------ */
-  const form = useOptionalForm<Record<string, unknown>>();
-
   /* value management --------------------------------------- */
-  const formVal =
-    form && name ? (form.values[name] as Primitive | Primitive[] | undefined) : undefined;
-  const controlled = formVal !== undefined || valueProp !== undefined;
-  // Controlled/uncontrolled guard (dev-only)
-  const initialCtl = React.useRef<boolean | undefined>(undefined);
-  React.useEffect(() => {
-    if (process.env.NODE_ENV === 'production') return;
-    if (initialCtl.current === undefined) initialCtl.current = controlled;
-    else if (initialCtl.current !== controlled) {
-      console.error(
-        'Select: component switched from %s to %s after mount. This is not supported.',
-        initialCtl.current ? 'controlled' : 'uncontrolled',
-        controlled ? 'controlled' : 'uncontrolled',
-      );
-    }
-  }, [controlled]);
+  /**
+   * Single resolution of value/control/form binding (ruling R9). Precedence is
+   * prop > form > internal, latched at mount; an unseeded form key renders
+   * `defaultValue ?? null` as controlled and never writes on mount. `null` is
+   * the empty value (nothing selected) — it renders the placeholder. The setter
+   * writes through to the store whenever live-bound. This replaces the old
+   * hand-rolled guard where form-presence could override an explicit `value`.
+   */
+  const [curRaw, setValue] = useFieldState<Primitive | Primitive[] | null>({
+    value: valueProp,
+    defaultValue,
+    fallback: null,
+    name,
+    component: 'Select',
+  });
+  const cur = curRaw ?? undefined;
 
-  const [self, setSelf] = useState<Primitive | Primitive[] | undefined>(defaultValue);
-  const cur = controlled ? (formVal !== undefined ? formVal : valueProp!) : self;
-
-  /* commit helper ------------------------------------------ */
+  /* commit helper — `src` is the honest activation source (ruling R10). */
   const commit = useCallback(
-    (next: Primitive | Primitive[]) => {
-      if (!controlled) setSelf(next);
-      if (form && name) form.setField(name as keyof Record<string, unknown>, next as unknown);
+    (next: Primitive | Primitive[], src: InputSource) => {
+      setValue(next);
       const info: ChangeInfo<Primitive | Primitive[]> = {
         previousValue: cur,
         phase: 'commit',
-        source: 'programmatic',
+        source: src,
         name,
       } as ChangeInfo<Primitive | Primitive[]>;
       onValueChange?.(next, { ...info, phase: 'input' });
       onValueCommit?.(next, info);
     },
-    [controlled, form, name, onValueChange, onValueCommit, cur],
+    [setValue, name, onValueChange, onValueCommit, cur],
   );
 
   /* open state & position ---------------------------------- */
@@ -285,31 +303,56 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
   const menuRef = useRef<HTMLUListElement>(null);
   const [pos, setPos] = useState({ w: 0, top: 0, left: 0 });
 
-  const calcPos = () => {
+  const calcPos = useCallback(() => {
     if (!trigRef.current) return;
     const r = trigRef.current.getBoundingClientRect();
+    // Viewport coordinates — the menu is `position: fixed` in the portal.
     setPos({ w: r.width, top: r.bottom + 4, left: r.left });
-  };
+  }, []);
 
-  /* close on click-away / Esc ------------------------------ */
-  React.useLayoutEffect(() => {
+  /* close helper: closes the menu and returns focus to the trigger ----- */
+  const closeMenu = useCallback(() => {
+    setOpen(false);
+    trigRef.current?.focus();
+  }, []);
+
+  /* Shared overlay wiring (registry v2): outside-click + Escape dismissal
+     route through the stack while open. Escape closes ONLY this menu — the
+     top-most layer — so a Select opened inside a Modal no longer closes the
+     Modal too (audit Select.tsx:286 / overlay.ts:169). No focus trap or inert
+     background: the menu is a transient popup, not a dialog. onRequestClose
+     resolves live at event time. */
+  const overlayRef = useOverlay(open, () => ({
+    anchors: [trigRef.current!].filter(Boolean) as HTMLElement[],
+    onRequestClose: () => closeMenu(),
+    trapFocus: false,
+    restoreFocusOnClose: false,
+    inertBackground: false,
+    label: 'Select',
+  }));
+
+  /* Merge the overlay registration ref with the local menuRef. */
+  const setMenuRef = useCallback(
+    (node: HTMLUListElement | null) => {
+      menuRef.current = node;
+      overlayRef(node);
+    },
+    [overlayRef],
+  );
+
+  /* Reposition on scroll/resize while open; mirror Surface font/typography
+     vars into the portalled menu (it lives outside the Surface subtree). */
+  useLayoutEffect(() => {
     if (!open) return;
-    const onDoc = (e: MouseEvent) => {
-      if (
-        menuRef.current &&
-        !menuRef.current.contains(e.target as Node) &&
-        !trigRef.current?.contains(e.target as Node)
-      )
-        setOpen(false);
-    };
-    const onEsc = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
-    document.addEventListener('mousedown', onDoc);
-    document.addEventListener('keydown', onEsc);
+    if (menuRef.current) inheritSurfaceFontVars(menuRef.current);
+    calcPos();
+    window.addEventListener('scroll', calcPos, true);
+    window.addEventListener('resize', calcPos);
     return () => {
-      document.removeEventListener('mousedown', onDoc);
-      document.removeEventListener('keydown', onEsc);
+      window.removeEventListener('scroll', calcPos, true);
+      window.removeEventListener('resize', calcPos);
     };
-  }, [open]);
+  }, [open, calcPos]);
 
   /* flatten options ---------------------------------------- */
   const opts = useMemo(
@@ -339,13 +382,13 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
   const isSel = (v: Primitive) =>
     multiple ? (array(cur ?? []) as Primitive[]).some((x) => eq(x, v)) : eq(cur as Primitive, v);
 
-  const toggle = (v: Primitive) => {
+  const toggle = (v: Primitive, src: InputSource) => {
     if (multiple) {
       const arr = array(cur ?? []) as Primitive[];
       const exists = arr.some((x) => eq(x, v));
-      commit(exists ? arr.filter((x) => !eq(x, v)) : [...arr, v]);
+      commit(exists ? arr.filter((x) => !eq(x, v)) : [...arr, v], src);
     } else {
-      commit(v);
+      commit(v, src);
       setOpen(false);
     }
   };
@@ -366,7 +409,14 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
 
   /* aria linking ------------------------------------------ */
   const listId = useId();
-  const optIds = useMemo(() => opts.map((_, i) => `${listId}-opt-${i}`), [opts, listId]);
+  /* Resolved <li> ids: a caller-supplied `id` on a <Select.Option> wins,
+     otherwise a generated `${listId}-opt-${i}`. Used for the rendered id,
+     `aria-activedescendant`, and scroll-into-view so all three agree even when
+     an Option forwards its own id (API-TYPES S7). */
+  const optIds = useMemo(
+    () => opts.map((o, i) => o.props.id ?? `${listId}-opt-${i}`),
+    [opts, listId],
+  );
 
   // Ensure focused option is visible as user navigates
   useEffect(() => {
@@ -425,6 +475,7 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
         aria-haspopup='listbox'
         aria-controls={listId}
         aria-expanded={open}
+        aria-invalid={error || undefined}
         disabled={disabled}
         {...(divRest as React.ButtonHTMLAttributes<HTMLButtonElement>)}
         className={mergedCls}
@@ -459,17 +510,18 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
         <Caret />
       </Trigger>
 
-      {/* Menu */}
-      {open && (
-        <PortalWrap>
+      {/* Menu — real portal into #valet-overlay-root (OVERLAY S6) */}
+      {open &&
+        createPortal(
           <Menu
-            ref={menuRef}
+            ref={setMenuRef}
             $w={pos.w}
             $top={pos.top}
             $left={pos.left}
             $bg={bgElev}
             $radius={theme.radius(1)}
             $padY={theme.spacing(0.5)}
+            data-valet-component='SelectMenu'
             role='listbox'
             id={listId}
             aria-multiselectable={multiple || undefined}
@@ -478,8 +530,11 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
             onKeyDown={(e: React.KeyboardEvent<HTMLUListElement>) => {
               const { key } = e;
               if (key === 'Escape') {
-                setOpen(false);
-                trigRef.current?.focus();
+                // Stop the shared overlay stack from also seeing this Escape
+                // (it would close-and-refocus a second time / reach an outer
+                // layer). Close exactly this menu.
+                e.stopPropagation();
+                closeMenu();
                 return;
               }
               if (key === 'Tab') {
@@ -518,32 +573,62 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
                 const o = opts[active];
                 if (!o || o.props.disabled) return;
                 const val = o.props.value;
-                toggle(val);
+                toggle(val, 'keyboard');
                 if (!multiple) {
                   // Close for single-select and return focus to trigger
-                  setOpen(false);
-                  trigRef.current?.focus();
+                  closeMenu();
                 }
               }
             }}
           >
             {opts.map((o, i) => {
               const sel = isSel(o.props.value);
+              /* API-TYPES S7: forward the <Select.Option>'s own props onto the
+                 rendered <li>. Previously OptionProps (className/style/id/data-*)
+                 were declared but ignored. We strip the marker-only props (value,
+                 children) and the styling props handled explicitly (preset/sx/
+                 style/className/id), then spread the remainder so arbitrary
+                 LiHTMLAttributes (data-*, title, lang, onContextMenu, …) reach
+                 the element. Internal listbox semantics (role/aria-selected/
+                 data-state/data-disabled/handlers) are applied AFTER the spread
+                 so they win on collision. */
+              const {
+                value: _optValue,
+                children: optChildren,
+                disabled: optDisabled,
+                preset: optPreset,
+                sx: optSx,
+                style: optStyle,
+                className: optClassName,
+                // `id` is resolved through `optIds[i]` (caller id wins there);
+                // drop it here so the explicit `id` below is authoritative.
+                id: _optId,
+                ...optRest
+              } = o.props;
+              void _optValue;
+              void _optId;
+              const optPresetCls = optPreset ? preset(optPreset) : '';
+              const optCls = [optPresetCls, optClassName].filter(Boolean).join(' ') || undefined;
               return (
                 <Item
+                  {...optRest}
+                  className={optCls}
+                  // sx wins over caller `style` (uniform precedence, plan §3.11 S8).
+                  style={{ ...optStyle, ...optSx } as React.CSSProperties}
+                  // optIds[i] already resolves caller id ?? generated id.
                   id={optIds[i]}
                   key={o.props.value}
                   role='option'
                   aria-selected={sel}
                   data-state={sel ? 'selected' : 'unselected'}
-                  data-disabled={o.props.disabled}
+                  data-disabled={optDisabled}
                   $pad={g.pad}
                   $padY={theme.spacing(0.75)}
                   $active={i === active}
-                  $disabled={o.props.disabled}
+                  $disabled={optDisabled}
                   $primary={primary}
                   onMouseEnter={() => setActive(i)}
-                  onClick={() => !o.props.disabled && toggle(o.props.value)}
+                  onClick={() => !optDisabled && toggle(o.props.value, 'pointer')}
                 >
                   {multiple && (
                     <Checkbox
@@ -558,13 +643,13 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
                       tabIndex={-1}
                     />
                   )}
-                  {o.props.children}
+                  {optChildren}
                 </Item>
               );
             })}
-          </Menu>
-        </PortalWrap>
-      )}
+          </Menu>,
+          getOverlayRoot(),
+        )}
     </div>
   );
 };

@@ -69,6 +69,17 @@ export const Surface: React.FC<SurfaceProps> = ({
   const ref = useRef<HTMLDivElement>(null);
   const { theme, density: globalDensity } = useTheme();
   const fontsReady = useFonts((s) => s.ready);
+  const fontsStarted = useFonts((s) => s.started);
+  /* Never-block grace (THEMING S5): if no font load has *started* within
+     GRACE_MS of mount, a `blockUntilFonts` Surface must render anyway — a
+     consumer that never kicks off a load (no useInitialTheme) would otherwise
+     wedge hidden forever. Once a load has started, the existing ready/finish
+     pipeline (try/finally, 5s resolve-on-timeout) governs; the grace only
+     covers the never-started case. */
+  const [graceExpired, setGraceExpired] = useState(false);
+  /* True only while we should actually hold content back: blocking is requested,
+     fonts aren't ready, and we're not in the never-started-past-grace escape. */
+  const blocking = blockUntilFonts && !fontsReady && !(graceExpired && !fontsStarted);
   const [showBackdrop, setShowBackdrop] = useState(blockUntilFonts ? !fontsReady : false);
   const [fade, setFade] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
@@ -139,31 +150,42 @@ export const Surface: React.FC<SurfaceProps> = ({
     };
   }, [bpFor, useStore]);
 
+  /* Never-block grace timer (THEMING S5) ------------------------------- */
+  /* Arm once on mount when blocking is requested. If a load is already in
+     flight (`started`) the grace is moot — the normal pipeline runs — but
+     arming unconditionally keeps the timer lifecycle simple; `blocking`
+     already gates the escape hatch on `!fontsStarted`. */
+  const GRACE_MS = 500;
+  useEffect(() => {
+    if (!blockUntilFonts) return;
+    const t = setTimeout(() => setGraceExpired(true), GRACE_MS);
+    return () => clearTimeout(t);
+  }, [blockUntilFonts]);
+
   /* Font-loading backdrop handling ------------------------------------- */
   useEffect(() => {
-    if (!blockUntilFonts) {
+    if (!blocking) {
+      /* Not blocking: fade the backdrop out only when fonts actually became
+         ready. When the never-started grace elapsed (no load ever began,
+         nothing to fade for) drop it immediately. */
+      if (showBackdrop && fontsReady) {
+        setFade(true);
+        const t = setTimeout(() => setShowBackdrop(false), 200);
+        setShowSpinner(false);
+        return () => clearTimeout(t);
+      }
       setShowBackdrop(false);
       setShowSpinner(false);
       return;
     }
-    if (!fontsReady) {
-      setShowBackdrop(true);
-      setFade(false);
-      setShowSpinner(false);
-      return;
-    }
-    setFade(true);
-    const t = setTimeout(() => setShowBackdrop(false), 200);
+    setShowBackdrop(true);
+    setFade(false);
     setShowSpinner(false);
-    return () => clearTimeout(t);
-  }, [fontsReady, blockUntilFonts]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [blocking, fontsReady]);
 
   useEffect(() => {
-    if (!blockUntilFonts) {
-      setShowSpinner(false);
-      return;
-    }
-    if (fontsReady) {
+    if (!blocking) {
       setShowSpinner(false);
       return;
     }
@@ -171,7 +193,7 @@ export const Surface: React.FC<SurfaceProps> = ({
       if (!useFonts.getState().ready) setShowSpinner(true);
     }, 1250);
     return () => clearTimeout(t);
-  }, [fontsReady, blockUntilFonts]);
+  }, [blocking]);
 
   /* Defaults + CSS custom properties ----------------------------------- */
   const defaults: React.CSSProperties = {
@@ -251,10 +273,12 @@ export const Surface: React.FC<SurfaceProps> = ({
             showSpinner={showSpinner}
           />
         )}
-        {/* Inner wrapper gains padding but NO scrollbars */}
+        {/* Inner wrapper gains padding but NO scrollbars. `blocking` (not raw
+            blockUntilFonts) drives visibility so the never-started grace can
+            reveal content even when fonts never load. */}
         <div
           style={{
-            visibility: blockUntilFonts ? (fontsReady ? 'visible' : 'hidden') : 'visible',
+            visibility: blocking ? 'hidden' : 'visible',
             padding: gap,
             maxWidth: '100%',
             maxHeight: '100%',

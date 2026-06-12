@@ -13,6 +13,7 @@ import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { getOverlayRoot, useOverlay } from '../../system/overlay';
 import { inheritSurfaceFontVars } from '../../system/inheritSurfaceFontVars';
+import { zVar } from '../../system/zIndex';
 import type { Presettable, Sx } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
@@ -26,7 +27,7 @@ const Backdrop = styled('div')<{ $fade: boolean }>`
   opacity: ${({ $fade }) => ($fade ? 0 : 1)};
   transition: opacity var(--valet-modal-duration, 200ms) var(--valet-modal-easing, ease);
   /* Shared overlay token parity */
-  z-index: var(--valet-zindex-modal-backdrop, 1390);
+  z-index: ${zVar('modalBackdrop')};
 
   @media (prefers-reduced-motion: reduce) {
     transition: none;
@@ -50,7 +51,7 @@ const Box = styled('div')<{
     opacity var(--valet-modal-duration, 200ms) var(--valet-modal-easing, ease),
     transform var(--valet-modal-duration, 200ms) var(--valet-modal-easing, ease);
   /* Dialog sits above backdrop and AppBar */
-  z-index: var(--valet-zindex-modal, 1400);
+  z-index: ${zVar('modal')};
 
   max-width: ${({ $maxW, $full }) => ($full ? 'none' : $maxW || '32rem')};
   /* Use CSS var so callers can adjust viewport margin */
@@ -188,6 +189,15 @@ export const Modal: React.FC<ModalProps> = ({
     onClose?.();
   }, [uncontrolled, onClose]);
 
+  // Read the accessible-name inputs that the dev guard inspects without keying
+  // the effect on the fresh `rest` spread object (audit Modal.tsx:220 churn).
+  const restAriaLabel = (rest as unknown as Record<string, unknown>)['aria-label'] as
+    | string
+    | undefined;
+  const restAriaLabelledBy = (rest as unknown as Record<string, unknown>)['aria-labelledby'] as
+    | string
+    | undefined;
+
   /* ----- mount / unmount side-effects ----------------------------------- */
   useLayoutEffect(() => {
     if (!open) return;
@@ -197,43 +207,41 @@ export const Modal: React.FC<ModalProps> = ({
     if (dialogRef.current) inheritSurfaceFontVars(dialogRef.current);
     // Dev-time a11y guard: dialog/alertdialog should have an accessible name
     if (process.env.NODE_ENV !== 'production') {
-      try {
-        const ariaLabel = (rest as unknown as Record<string, unknown>)?.['aria-label'] as
-          | string
-          | undefined;
-        const ariaLabelledBy = (rest as unknown as Record<string, unknown>)?.['aria-labelledby'] as
-          | string
-          | undefined;
-        const hasName = Boolean(title || ariaLabel || ariaLabelledBy);
-        if (!hasName) {
-          console.warn(
-            'valet Modal: accessible name missing. Provide `title`, `aria-label`, or `aria-labelledby`.',
-          );
-        }
-      } catch {
-        /* no-op */
+      const hasName = Boolean(title || restAriaLabel || restAriaLabelledBy);
+      if (!hasName) {
+        console.warn(
+          'valet Modal: accessible name missing. Provide `title`, `aria-label`, or `aria-labelledby`.',
+        );
       }
     }
     return () => {
       setFade(true);
     };
-  }, [open, disableEscapeKeyDown, requestClose, title, rest]);
+  }, [open, title, restAriaLabel, restAriaLabelledBy]);
 
-  // Shared overlay wiring: focus trap, Escape/outside, inert background & restore focus
-  useOverlay(
-    open && dialogRef.current
-      ? {
-          element: dialogRef.current,
-          anchors: [backdropRef.current!].filter(Boolean) as HTMLElement[],
-          onRequestClose: () => requestClose(),
-          disableOutsideClick: disableBackdropClick,
-          disableEscapeKeyDown,
-          trapFocus: true,
-          restoreFocusOnClose: true,
-          inertBackground: true,
-          label: 'Modal',
-        }
-      : null,
+  // Shared overlay wiring (registry v2): focus trap, Escape/outside, inert
+  // background & restore focus. The ref-callback registers on the FIRST open
+  // commit (element attach) — escape/trap/inert land in the same render the
+  // dialog mounts, not one render late (audit Modal.tsx:223). Options resolve
+  // live at event time, so a swapped onClose/onRequestClose always fires fresh.
+  const overlayRef = useOverlay(open, () => ({
+    anchors: [backdropRef.current!].filter(Boolean) as HTMLElement[],
+    onRequestClose: () => requestClose(),
+    disableOutsideClick: disableBackdropClick,
+    disableEscapeKeyDown,
+    trapFocus: true,
+    restoreFocusOnClose: true,
+    inertBackground: true,
+    label: 'Modal',
+  }));
+
+  // Merge the overlay registration ref with the local dialogRef.
+  const setDialogRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      dialogRef.current = node;
+      overlayRef(node);
+    },
+    [overlayRef],
   );
 
   /* ----- backdrop click ------------------------------------------------- */
@@ -255,7 +263,7 @@ export const Modal: React.FC<ModalProps> = ({
       />
       <Box
         {...rest}
-        ref={dialogRef}
+        ref={setDialogRef}
         data-valet-component='Modal'
         data-state='open'
         role={variant === 'alert' ? 'alertdialog' : 'dialog'}
@@ -263,7 +271,10 @@ export const Modal: React.FC<ModalProps> = ({
         aria-labelledby={title ? idTitle : undefined}
         tabIndex={-1}
         $bg={theme.colors.backgroundAlt}
-        $text={theme.colors.primaryText}
+        // Readable foreground over backgroundAlt in BOTH modes (audit
+        // Modal.tsx:266: primaryText is ~1.3:1 on light backgroundAlt). Mirrors
+        // Panel's bg→text mapping (Panel.tsx:184).
+        $text={theme.colors.text}
         $fade={fade}
         $maxW={maxWidth}
         $full={fullWidth}

@@ -310,7 +310,7 @@
   {
     "name": "LLMChat",
     "category": "widgets",
-    "summary": "LLM style chat component with height constraint",
+    "summary": "LLM-style chat component with height constraint",
     "slug": "components/widgets/llmchat",
     "status": "experimental"
   },

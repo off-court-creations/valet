@@ -189,6 +189,9 @@ export function extractFromTs(projectRoot) {
       d.getKind() === SyntaxKind.FunctionDeclaration ||
       d.getKind() === SyntaxKind.VariableDeclaration ||
       d.getKind() === SyntaxKind.ClassDeclaration;
+    // PascalCase with at least one lowercase letter (KeyModal yes;
+    // DEFAULT_MODELS / SCREAMING_SNAKE constants no).
+    const looksLikeComponentName = (name) => /^[A-Z][A-Za-z0-9]*$/.test(name) && /[a-z]/.test(name);
     const defaultExportDecs = [];
     for (const [name, decs] of exports) {
       for (const d of decs) {
@@ -200,7 +203,9 @@ export function extractFromTs(projectRoot) {
           defaultExportDecs.push(d);
           continue;
         }
-        if (/^[A-Z]/.test(name) && !componentNames.includes(name)) componentNames.push(name);
+        // PascalCase only: an uppercase start alone also matches constant
+        // exports like DEFAULT_MODELS, which are not components.
+        if (looksLikeComponentName(name) && !componentNames.includes(name)) componentNames.push(name);
       }
     }
     // Resolve default-export component names from the declaration itself
@@ -209,7 +214,7 @@ export function extractFromTs(projectRoot) {
     // `export default Forward` doesn't mint a junk 'Forward' component.
     for (const d of defaultExportDecs) {
       const resolved = d.getName?.() || path.basename(sf.getFilePath(), '.tsx');
-      if (!/^[A-Z]/.test(resolved) || componentNames.includes(resolved)) continue;
+      if (!looksLikeComponentName(resolved) || componentNames.includes(resolved)) continue;
       const aliasedByNamedExport = Array.from(exports.entries()).some(
         ([n, ds]) =>
           n !== 'default' &&

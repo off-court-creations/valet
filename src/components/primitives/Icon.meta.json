@@ -8,7 +8,9 @@
       "Provide accessible labels when icons are actionable or convey status.",
       "Avoid using colour alone to convey meaning; pair with text or status tokens.",
       "Use tokens/presets for colour and size; avoid ad‑hoc CSS to preserve consistency.",
-      "Don’t overload meaning—keep one concept per icon and avoid ambiguous metaphors."
+      "Don’t overload meaning—keep one concept per icon and avoid ambiguous metaphors.",
+      "For a custom `svg` string, pass bare path `d`-data or `<path>`-only markup: it is parsed against an allowlist and rendered as real React elements, never via innerHTML. Untrusted or model-generated icon markup is safe here—anything outside that grammar renders nothing and dev-warns.",
+      "Only use `dangerouslySetSvg` for markup you fully control. It injects raw SVG verbatim (innerHTML) and can execute scripts—never pass user input or AI output to it."
     ]
   }
 }

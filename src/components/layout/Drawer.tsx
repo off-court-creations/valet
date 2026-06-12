@@ -17,6 +17,8 @@ import { IconButton } from '../fields/IconButton';
 import { withAlpha } from '../../helpers/color';
 import { inheritSurfaceFontVars } from '../../system/inheritSurfaceFontVars';
 import { getOverlayRoot, useOverlay } from '../../system/overlay';
+import { warnOnce } from '../../system/devErrors';
+import { zVar } from '../../system/zIndex';
 
 /* Allow strongly-typed CSS custom properties (e.g. --valet-*) */
 type CSSVarName = `--${string}`;
@@ -56,6 +58,15 @@ export interface DrawerProps extends Presettable {
   style?: React.CSSProperties;
   /** sx convenience for inline styles with CSS var support */
   sx?: Sx;
+  /**
+   * Accessible name for the dialog. Required (alongside `aria-labelledby`) for
+   * non-persistent/overlay Drawers, which are real `role='dialog'` modals; a
+   * dev warning fires when neither is provided. Ignored by persistent Drawers,
+   * which are inline navigation regions, not dialogs.
+   */
+  'aria-label'?: string;
+  /** Id of an element labelling the dialog (alternative to `aria-label`). */
+  'aria-labelledby'?: string;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -68,7 +79,7 @@ const Backdrop = styled('div')<{ $fade: boolean }>`
   backdrop-filter: blur(2px);
   opacity: ${({ $fade }) => ($fade ? 0 : 1)};
   transition: opacity 200ms ease;
-  z-index: var(--valet-zindex-modal-backdrop, 1390);
+  z-index: ${zVar('modalBackdrop')};
 `;
 
 const Panel = styled('div')<{
@@ -82,8 +93,7 @@ const Panel = styled('div')<{
   $adaptive: boolean;
 }>`
   position: fixed;
-  z-index: ${({ $persistent }) =>
-    $persistent ? 'calc(var(--valet-zindex-modal, 1400) - 1)' : 'var(--valet-zindex-modal, 1400)'};
+  z-index: ${({ $persistent }) => ($persistent ? `calc(${zVar('modal')} - 1)` : zVar('modal'))};
   display: flex;
   flex-direction: column;
   overflow-y: ${({ $anchor }) => ($anchor === 'left' || $anchor === 'right' ? 'auto' : 'visible')};
@@ -144,6 +154,8 @@ export const Drawer: React.FC<DrawerProps> = ({
   className,
   style,
   sx,
+  'aria-label': ariaLabel,
+  'aria-labelledby': ariaLabelledBy,
 }) => {
   const { theme } = useTheme();
   // Only subscribe to width/height when adaptive logic is enabled to
@@ -300,25 +312,56 @@ export const Drawer: React.FC<DrawerProps> = ({
   // Ref to the portalled panel root; used to mirror Surface font vars
   const panelRef = React.useRef<HTMLDivElement>(null);
 
-  useOverlay(
-    open && !persistentEffective && panelRef.current
-      ? {
-          element: panelRef.current,
-          onRequestClose: () => requestClose(),
-          disableOutsideClick: disableBackdropClick,
-          disableEscapeKeyDown,
-          trapFocus: false,
-          restoreFocusOnClose: true,
-          inertBackground: true,
-          label: 'Drawer',
-        }
-      : null,
+  // Shared overlay wiring (registry v2): Escape/outside dismissal + inert
+  // background for overlay (non-persistent) mode. The ref-callback registers on
+  // the first open commit (panel attach) — Escape/inert land in the same render
+  // the panel mounts, not one render late (audit Modal.tsx:223, same shape).
+  // Options resolve live at event time, so a swapped onClose fires fresh.
+  const overlayActive = open && !persistentEffective;
+  const overlayRef = useOverlay(overlayActive, () => ({
+    onRequestClose: () => requestClose(),
+    disableOutsideClick: disableBackdropClick,
+    disableEscapeKeyDown,
+    // S5: an overlay Drawer is a real modal dialog — trap Tab focus and move
+    // focus into the panel on open (registerOverlayV2 focuses the first
+    // focusable / the tabIndex=-1 panel). Fixes the stranded-focus bug: the
+    // pre-S5 Drawer made the background inert but, with trapFocus:false, never
+    // moved focus in, leaving focus on the now-inert trigger. Persistent
+    // Drawers never reach here (overlayActive is false), so they keep their
+    // non-dialog, non-trapping inline-navigation semantics.
+    trapFocus: true,
+    restoreFocusOnClose: true,
+    inertBackground: true,
+    label: 'Drawer',
+  }));
+
+  // Merge the overlay registration ref with the local panelRef.
+  const setPanelRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      panelRef.current = node;
+      overlayRef(node);
+    },
+    [overlayRef],
   );
 
   // Mirror Surface font/typography vars into the portalled panel
   useLayoutEffect(() => {
     if (panelRef.current) inheritSurfaceFontVars(panelRef.current);
   });
+
+  // Dev-time a11y guard: an overlay Drawer is role='dialog'/aria-modal and so
+  // must carry an accessible name. Persistent Drawers are inline regions, not
+  // dialogs, and are exempt. warnOnce keeps it to a single message per name.
+  useLayoutEffect(() => {
+    if (!overlayActive) return;
+    if (process.env.NODE_ENV === 'production') return;
+    if (ariaLabel || ariaLabelledBy) return;
+    warnOnce(
+      'Drawer:accessible-name',
+      'valet Drawer: an overlay (non-persistent) Drawer is a modal dialog and ' +
+        'needs an accessible name. Provide `aria-label` or `aria-labelledby`.',
+    );
+  }, [overlayActive, ariaLabel, ariaLabelledBy]);
 
   if (!open && !persistentEffective) {
     if (adaptiveMode && portrait) {
@@ -331,7 +374,9 @@ export const Drawer: React.FC<DrawerProps> = ({
               position: 'fixed',
               top: `calc(${theme.spacing(1)} + ${offsetTop}px)`,
               [anchor]: theme.spacing(1),
-              zIndex: 9999,
+              /* Collapsed-drawer toggle sits at the app-bar chrome layer
+                 (OVERLAY S7) so it stays tappable above page content. */
+              zIndex: zVar('appbar'),
               background: toggleBg,
             } as unknown as import('../../types').Sx
           }
@@ -351,7 +396,7 @@ export const Drawer: React.FC<DrawerProps> = ({
         />
       )}
       <Panel
-        ref={panelRef}
+        ref={setPanelRef}
         $anchor={anchor}
         $fade={fade}
         $size={typeof size === 'number' ? `${size}px` : size}
@@ -361,8 +406,21 @@ export const Drawer: React.FC<DrawerProps> = ({
         $persistent={persistentEffective}
         $adaptive={adaptiveMode}
         data-state='open'
+        // Dialog semantics for overlay (modal) Drawers only. Persistent
+        // Drawers are inline navigation regions and intentionally carry no
+        // dialog role / aria-modal / focusable container (R17, plan §3.4 S5).
+        {...(persistentEffective
+          ? null
+          : {
+              role: 'dialog' as const,
+              'aria-modal': true,
+              'aria-label': ariaLabel,
+              'aria-labelledby': ariaLabelledBy,
+              tabIndex: -1,
+            })}
         className={[presetClasses, className].filter(Boolean).join(' ')}
         data-valet-component='Drawer'
+        /* precedence: component-owned layout < caller style < sx (API-TYPES S8) */
         style={
           {
             // Preserve top offset when docked on sides/top
@@ -373,8 +431,8 @@ export const Drawer: React.FC<DrawerProps> = ({
             ...(persistentEffective && (anchor === 'left' || anchor === 'right')
               ? { height: `calc(100% - ${offsetTop}px)` }
               : null),
-            ...(sx || {}),
             ...(style as React.CSSProperties),
+            ...(sx || {}),
           } as CSSVarStyles
         }
       >

@@ -6,6 +6,7 @@ import React from 'react';
 import { useTheme } from '../../system/themeStore';
 import { Progress } from '../primitives/Progress';
 import { preset } from '../../css/stylePresets';
+import { zVar } from '../../system/zIndex';
 import type { Presettable, Sx } from '../../types';
 
 export interface LoadingBackdropProps
@@ -44,7 +45,7 @@ export const LoadingBackdrop: React.FC<LoadingBackdropProps> = ({
         justifyContent: 'center',
         background: `color-mix(in srgb, ${theme.colors.background} 92%, black)`,
         color: theme.colors.text,
-        zIndex: 'var(--valet-zindex-modal, 1400)',
+        zIndex: zVar('modal'),
         transition: `opacity ${fadeMs} ${fadeEase}`,
         opacity: fading ? 0 : 1,
         pointerEvents: fading ? 'none' : 'auto',

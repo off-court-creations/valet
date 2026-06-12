@@ -9,7 +9,9 @@
       "Constrain input with minDate/maxDate to prevent out-of-range selection.",
       "For ranges, keep [start, end] ordered and handle partial selection gracefully.",
       "Avoid timezone pitfalls: treat values as local dates to prevent off-by-one errors.",
-      "Prefer compactMode on small viewports; use default/adaptive on larger layouts."
+      "Prefer compactMode on small viewports; use default/adaptive on larger layouts.",
+      "Binding precedence (prop > form > internal). An explicit `value` prop always wins; otherwise, in single-date mode, a `name` inside a `FormControl` binds the ISO string to the store (seed the key in `createFormStore(initial)` so the initial selection is honoured); otherwise the picker is uncontrolled. The binding is latched at mount. Range mode binds the `[start, end]` tuple under the same `name`.",
+      "Change source. `onValueChange`/`onValueCommit` report a truthful `info.source`: a day cell is selected by clicking, so the source is `'pointer'` rather than a blanket `'programmatic'`."
     ]
   }
 }

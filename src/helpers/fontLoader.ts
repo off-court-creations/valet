@@ -4,7 +4,11 @@
 // - Google Fonts v2 URL builder with axes (wght/ital/opsz)
 // - Normalized request keys, in-flight coalescing, refcount cleanup
 // - Backward compatible with simple string family names
+// - injectRemote:false privacy opt-out (THEMING S7, Q13): skip remote
+//   Google links + treat Google-shaped entries as local families
 // ─────────────────────────────────────────────────────────────
+
+import { warnOnce, VALET_DOCS_BASE } from '../system/devErrors';
 
 export interface GoogleFontOptions {
   /** Preload CSS (google) or font file (custom) */
@@ -13,6 +17,21 @@ export interface GoogleFontOptions {
   display?: 'auto' | 'block' | 'swap' | 'fallback' | 'optional';
   /** Restrict glyphs to speed up delivery */
   text?: string;
+  /**
+   * Whether to inject remote Google Fonts resources (THEMING S7, Q13).
+   *
+   * Default `true` through 0.x (flips to `false` at 1.0). When `false`:
+   * no `preconnect`/`fonts.googleapis.com` links are appended and
+   * Google-shaped entries (string family names or `{ family }` requests)
+   * are treated as **local families** — they emit zero network requests
+   * and resolve only via FontFace observation of an already-installed
+   * face. Self-hosted `CustomFont` entries are unaffected. Use this to
+   * keep a third-party app off Google's servers (GDPR; the privacy docs
+   * cover the three loading strategies).
+   *
+   * @default true
+   */
+  injectRemote?: boolean;
 }
 
 export interface CustomFont {
@@ -155,7 +174,7 @@ function toGoogleRequest(
 }
 
 export function injectFontLinks(fonts: Font[], options: GoogleFontOptions = {}): () => void {
-  const { preload = true } = options;
+  const { preload = true, injectRemote = true } = options;
   const added: HTMLLinkElement[] = [];
 
   const isGoogleReq = (v: unknown): v is { family: string } => {
@@ -166,7 +185,10 @@ export function injectFontLinks(fonts: Font[], options: GoogleFontOptions = {}):
   const googleFonts = fonts.filter(
     (f): f is GoogleFontRequest => typeof f === 'string' || isGoogleReq(f),
   );
-  if (googleFonts.length && !document.getElementById('valet-fonts-preconnect')) {
+  // injectRemote:false reinterprets Google-shaped entries as local families:
+  // no preconnect, no googleapis links — they resolve via FontFace observation
+  // of an already-installed face in waitForFonts (THEMING S7, Q13).
+  if (injectRemote && googleFonts.length && !document.getElementById('valet-fonts-preconnect')) {
     const preconnect1 = document.createElement('link');
     preconnect1.id = 'valet-fonts-preconnect';
     preconnect1.rel = 'preconnect';
@@ -181,8 +203,25 @@ export function injectFontLinks(fonts: Font[], options: GoogleFontOptions = {}):
     document.head.appendChild(preconnect2);
   }
 
+  // Dev-only, once per session: a remote third-party request is about to leave
+  // the page. Pointing at the privacy docs (GDPR posture + the injectRemote:false
+  // opt-out) keeps the default honest without spamming the console.
+  if (injectRemote && googleFonts.length) {
+    warnOnce(
+      'fontLoader:remote-injection',
+      'valet: loading Google Fonts from fonts.googleapis.com (remote third-party ' +
+        "request). Pass `injectRemote: false` to keep this app off Google's servers " +
+        '(self-host or use already-installed families). Privacy: ' +
+        `${VALET_DOCS_BASE}/fonts-privacy`,
+    );
+  }
+
   fonts.forEach((font) => {
     if (typeof font === 'string' || (typeof font === 'object' && 'family' in font)) {
+      // injectRemote:false → local family: emit nothing, let waitForFonts
+      // observe the installed face. Keep the dedupe key out of activeLinks so
+      // the teardown closure is a clean no-op for these entries.
+      if (!injectRemote) return;
       const g = toGoogleRequest(font as GoogleFontRequest, options);
       if (!g) return;
       const { href, key, preload: reqPreload } = g;
