@@ -36,7 +36,7 @@
 | #   | Wave | Contents                                                                                                                                                                                              | Status |
 | --- | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------ |
 | 6   | 1.0  | **Pure cores:** FIELDS S5 hooks · A11Y S7 locale + S9 dateLocale · THEMING S3 waitForFonts + S8 modePreference · MCP-TRUTH S7→S8→S9 (gates, freshness, schema 1.7) · OVERLAY S3 registry v2 + TEST-CI S6 suite | ✅     |
-| 7   | 1.1  | **Engine/packaging serial lane:** ENGINE S6 → S7 → S8 → PACKAGING S4 (ESM-only, Q1) → S5 probes → ENGINE S10 (Q2) → S9 → S11 · PACKAGING S6 highlight (Q22) parallel                                      | ⬜     |
+| 7   | 1.1  | **Engine/packaging serial lane:** ENGINE S6 → S7 → S8 → PACKAGING S4 (ESM-only, Q1) → S5 probes → ENGINE S10 (Q2) → S9 → S11 · PACKAGING S6 highlight (Q22) parallel                                      | ✅     |
 | 8   | 1.2  | **Component lanes (parallel trains):** fields S6–S11 · overlay S4/S5/S6/S8 (+A11Y S4) · Table A11Y S3 → PERF S8 · Snackbar A11Y S1 · Pagination ENGINE-S9 → click-drop · THEMING S4/S5/S7 · SECURITY S5–S8 · A11Y S2/S5/S6 · API-TYPES S4–S8+S13 · OVERLAY S7 z-scale (Q3) last | ⬜     |
 | 9   | 1.3  | **Docs/config:** TEST-CI S9 + S11 · GOVERNANCE S7 RELEASING.md · PERF S10 harness · PACKAGING S8 deps (Q21) · wave-end mcp regen · Phase-1 gate                                                          | ⬜     |
 
@@ -69,6 +69,48 @@ diff from lanes); fixer NO-OP (false-positive trigger; all triaged, none
 real). **Registrar batch (orchestrator):** `export * from './system/locale'`
 + `"mcp:check"` script. **Gate:** lint ✅ tsc ✅ **625/625 tests** ✅ build ✅
 check:engine ✅ mcp:check ✅.
+
+### Wave 1.1 — engine internals + ESM-only dist (strict serial) — ✅
+
+**What shipped (8 serial steps + parallel highlight):** ENGINE S6 render
+purity (rule insertion via `useInsertionEffect` queue/flush — classnames stay
+synchronous so SSR is unaffected; `Math.random` id → `useId`; insertRule
+proven absent from the render phase by spy-in-component-body tests) · S7 the
+real normalize (single-pass token-aware scanner: quoted strings + url() byte-
+preserved escape-aware, `;`-runs before `}` dropped, idempotent — 53-test
+contract suite REPLACED the old pinned-bug tripwires in the same step;
+class-hash churn release-noted, no stale hash pinned anywhere) · S8 bounded
+LRU memo (cap 4096, generic lru.ts) + per-instance last-raw short-circuit +
+`check:bench` reporter; the never-evict bookkeeping invariant test-pinned ·
+PACKAGING S4 **ESM-only per-module dist** (Q1: tsup.config.ts two passes,
+splitting, es2020; `main` removed, single bundled index.d.mts; engine-smoke/
+ssr-import/ci.yml atomically rewritten; docs app builds against the linked
+new dist) · S5 probes: publint ✅, attw esm-only profile ✅, `check:bundle`
+(Button fixture ≤12KB gzip, zero highlight.js/marked/react-dropzone bytes) ·
+ENGINE S10 singleton privatization (Q2: styleCache/globalSheet unexported,
+state in `globalThis[Symbol.for('@archway/valet/style-registry/v1')]`, dev
+hash-collision guard) · S9 rule-lifecycle policy (Pagination measured pixels
+→ `--valet-pag-*` CSS vars on inline style; >256-rules-per-label dev
+cardinality warning; policy documented in AGENTS.md) · S11 preset specificity
+(presets beat equal-specificity component styles; Panel presetHas workaround
+retired) · PACKAGING S6 curated highlight registry (Q22: lib/core + 13
+languages, ~306KB→~40KB gzip for Markdown users, zero for others;
+`registerHighlightLanguage` public).
+
+**Verification:** engine-dist reviewer **pass** (gate + StrictMode/insertion
+timing + LRU invariant + two-copies registry sim + Pagination rule-count
+stability all hands-on); scope/fallout reviewer **fail** → three issues, all
+dispositioned by the orchestrator: a stray reviewer scratch test breaking
+typecheck (already self-cleaned), the missing `registerHighlightLanguage`
+barrel export (applied as the sanctioned R6 registrar line; verified
+`function` from the built dist), and this log entry. Consumer-fallout sweep:
+zero stale CJS/require mentions repo-wide. **Gate:** lint ✅ tsc ✅
+**711/711 tests** ✅ build ✅ check:engine ✅ verify:pack (163 files) ✅
+check:package ✅ check:bundle ✅ mcp:check ✅.
+
+**Quota note:** the fable-tier weekly subagent quota exhausted mid-wave;
+reviews re-ran on opus via workflow resume (implementation steps served from
+the journal cache). Subsequent waves pin workflow agents to opus until reset.
 
 ---
 

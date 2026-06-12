@@ -4,7 +4,7 @@
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
 import { marked } from 'marked';
-import hljs from 'highlight.js';
+import hljs from '../../system/highlight';
 import type { TokensList, Token, Tokens } from 'marked';
 import Stack from '../layout/Stack';
 import Panel from '../layout/Panel';

@@ -5,31 +5,37 @@
 // `npm run build && npm run check:engine`). Exits non-zero with a
 // clear message per failed check.
 //
-// Checks
-//  1. require('./dist/index.js') and import('./dist/index.mjs')
-//     both succeed in plain Node (ENGINE S1 — no document at import).
+// Checks (ESM-only since PACKAGING S4, ruling Q1(a) — the CJS build
+// is gone, so the old require('./dist/index.js') assertion went with it)
+//  1. import('./dist/index.mjs') succeeds in plain Node
+//     (ENGINE S1 — no document at import).
 //  2. styled class names are deterministic `z-<tag>-*` across two
 //     SEPARATE node invocations (subprocesses spawned and compared).
 //  3. keyframes() and definePreset() are callable in Node without
-//     throwing and return stable `z-kf-*` / `zp-*` names.
+//     throwing and return stable `z-kf-*` / `zp-*` names; the
+//     recorded preset rule text uses the DOUBLED selector
+//     (`.zp-x.zp-x`, ENGINE S11) so presets out-specifify
+//     single-class styled() base rules in the cascade.
 //  4. No literal 'false' substring in any recorded rule after
 //     rendering a fixture with false-conditional interpolations
 //     (asserts ENGINE S2's compileTemplate fix at the dist level).
+//  5. Privatization (ENGINE S10, ruling Q2(a)): the barrel must NOT
+//     export `styleCache`/`globalSheet` any more, and the style
+//     registry must exist at
+//     globalThis[Symbol.for('@archway/valet/style-registry/v1')].
 //
-// Probe path for check 4 (documented per the slice spec): the sheet
-// module's pending-rule store (src/css/sheet.ts `getPendingRules`) is
-// NOT reachable from dist — tsup bundles a single entry and the public
-// barrel re-exports only `globalSheet` (undefined in Node). Instead:
-//  • `styleCache` IS public (createStyled.ts re-export) and its keys
-//    are byte-identical to the normalized rule bodies the sheet
-//    records as pending (`.<class>{<key>}`), so scanning every key
-//    (plus every rendered class name) for 'false' inspects exactly
-//    what was recorded for styled rules; and
-//  • hash equality: a fixture WITH `${false && …}` interpolations
-//    must produce the same class / keyframes name as its clean twin —
-//    names are FNV-1a hashes of the normalized CSS, so equality
-//    proves the 'false' text never entered the recorded rule.
-// ENGINE S10 (registry privatization) revisits this probe by design.
+// Probe path for check 4 (re-pathed by ENGINE S10 as planned): the
+// engine singletons are no longer public, so this gate reads the
+// process-wide style registry off globalThis — the same object every
+// duplicated module instance shares. Its `styleCache` keys are
+// byte-identical to the normalized rule bodies (`.<class>{<key>}`),
+// and `pendingRules` holds the keyframes/preset rule text recorded in
+// Node — scanning both (plus every rendered class name) for 'false'
+// inspects exactly what was recorded. Hash equality backs it up: a
+// fixture WITH `${false && …}` interpolations must produce the same
+// class / keyframes name as its clean twin — names are FNV-1a hashes
+// of the normalized CSS, so equality proves the 'false' text never
+// entered the recorded rule.
 //
 // CLI: node scripts/checks/engine-smoke.mjs [--root <dir>]
 // ─────────────────────────────────────────────────────────────
@@ -45,8 +51,11 @@ export function fixtureSource(distMjsUrl) {
   return `
 import React from 'react';
 import { renderToString } from 'react-dom/server';
-const { styled, keyframes, definePreset, preset, styleCache } =
-  await import(${JSON.stringify(distMjsUrl)});
+const mod = await import(${JSON.stringify(distMjsUrl)});
+const { styled, keyframes, definePreset, preset } = mod;
+
+/* ENGINE S10: singletons are private — read the shared registry. */
+const registry = globalThis[Symbol.for('@archway/valet/style-registry/v1')];
 
 /* styled fixture with false-conditional interpolations (value + fn) */
 const Box = styled('div')\`
@@ -90,7 +99,11 @@ console.log(
       kfClean,
       kfVeto,
       presetClass,
-      recorded: [...styleCache.keys()],
+      registryOk: !!registry && registry.styleCache instanceof Map,
+      leaks: ['styleCache', 'globalSheet'].filter((k) => k in mod),
+      recorded: registry
+        ? [...registry.styleCache.keys(), ...registry.pendingRules]
+        : [],
     }),
 );
 `;
@@ -127,18 +140,11 @@ function parseFixture(run, problems, label) {
   return JSON.parse(line.slice(SENTINEL.length));
 }
 
-/* ─── Check 1: both module formats import without throwing ─────────── */
+/* ─── Check 1: the ESM barrel imports without throwing ─────────────── */
 export function checkImports(root) {
   const problems = [];
-  const cjsPath = path.join(root, 'dist', 'index.js');
   const mjsUrl = pathToFileURL(path.join(root, 'dist', 'index.mjs')).href;
 
-  const cjs = runNode(['-e', `require(${JSON.stringify(cjsPath)})`], root);
-  if (cjs.status !== 0) {
-    problems.push(
-      `require('./dist/index.js') threw (exit ${cjs.status}):\n${cjs.stderr.trim().slice(-1000)}`,
-    );
-  }
   const esm = runNode(
     ['--input-type=module', '-e', `await import(${JSON.stringify(mjsUrl)});`],
     root,
@@ -175,6 +181,22 @@ export function verifyFixtureRuns(a, b) {
   if (!/^zp-enginesmoke-[0-9a-z]+-[0-9a-z]+$/.test(a.presetClass ?? '')) {
     problems.push(`definePreset()/preset() class is not zp-enginesmoke-*: ${a.presetClass}`);
   }
+  /* ENGINE S11 — preset rules must carry the doubled-specificity selector */
+  if (a.presetClass) {
+    const doubled = `.${a.presetClass}.${a.presetClass}{`;
+    const single = `.${a.presetClass}{`;
+    const recorded = a.recorded ?? [];
+    if (!recorded.some((css) => css.startsWith(doubled))) {
+      problems.push(
+        `preset rule was not recorded with the doubled selector ${doubled}… (ENGINE S11 preset specificity)`,
+      );
+    }
+    if (recorded.some((css) => css.startsWith(single))) {
+      problems.push(
+        `preset rule recorded with a SINGLE-class selector ${single}… — presets would lose equal-specificity ties to component base rules again`,
+      );
+    }
+  }
 
   /* Check 4 — false vetoes never reach the recorded CSS */
   if (a.boxClass !== a.boxCleanClass) {
@@ -197,6 +219,23 @@ export function verifyFixtureRuns(a, b) {
       problems.push(`literal 'false' in generated name: ${cls}`);
     }
   }
+
+  /* Check 5 — singletons privatized, registry present (ENGINE S10/Q2) */
+  for (const [label, run] of [
+    ['run A', a],
+    ['run B', b],
+  ]) {
+    if (!run.registryOk) {
+      problems.push(
+        `${label}: style registry missing/malformed at globalThis[Symbol.for('@archway/valet/style-registry/v1')]`,
+      );
+    }
+    if ((run.leaks ?? []).length > 0) {
+      problems.push(
+        `${label}: privatized singleton(s) leaked from the barrel: ${run.leaks.join(', ')} (removed per Q2)`,
+      );
+    }
+  }
   return problems;
 }
 
@@ -211,7 +250,7 @@ function parseArgs(argv) {
 export function main(argv = process.argv.slice(2)) {
   const { root } = parseArgs(argv);
 
-  for (const rel of ['dist/index.js', 'dist/index.mjs']) {
+  for (const rel of ['dist/index.mjs']) {
     if (!fs.existsSync(path.join(root, rel))) {
       console.error(`engine-smoke: FAIL — ${rel} missing. Run \`npm run build\` first.`);
       return 1;
@@ -227,7 +266,7 @@ export function main(argv = process.argv.slice(2)) {
     }
   };
 
-  record('import-no-throw (CJS require + ESM import)', checkImports(root));
+  record('import-no-throw (ESM import)', checkImports(root));
 
   const mjsUrl = pathToFileURL(path.join(root, 'dist', 'index.mjs')).href;
   const src = fixtureSource(mjsUrl);
@@ -235,7 +274,10 @@ export function main(argv = process.argv.slice(2)) {
   const a = parseFixture(runNode(['--input-type=module', '-e', src], root), problems, 'run A');
   const b = parseFixture(runNode(['--input-type=module', '-e', src], root), problems, 'run B');
   if (a && b) problems.push(...verifyFixtureRuns(a, b));
-  record('deterministic classes, keyframes/presets in Node, no false leak', problems);
+  record(
+    'deterministic classes, keyframes/presets in Node, no false leak, singletons privatized',
+    problems,
+  );
 
   if (failures.length === 0) {
     console.log('engine-smoke: OK — all checks passed');

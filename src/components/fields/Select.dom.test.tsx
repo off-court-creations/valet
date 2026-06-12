@@ -46,7 +46,7 @@ function openMenu(container: HTMLElement) {
 
 /** Full text of the injected rule for `.cls` from the live global sheet. */
 function ruleTextFor(cls: string) {
-  const rules = Array.from(sheet.globalSheet!.cssRules, (r) => r.cssText);
+  const rules = Array.from(sheet.getGlobalSheet()!.cssRules, (r) => r.cssText);
   return rules.find((t) => t.startsWith(`.${cls}`)) ?? '';
 }
 

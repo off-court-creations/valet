@@ -63,7 +63,16 @@
     ]
   },
   "cssVars": [
-    "--valet-underline-width"
+    "--valet-pag-vp-w",
+    "--valet-pag-vp-h",
+    "--valet-pag-track-x",
+    "--valet-pag-x",
+    "--valet-pag-w",
+    "--valet-pag-trans-x",
+    "--valet-pag-trans-w",
+    "--valet-underline-width",
+    "--valet-pag-scale",
+    "--valet-pag-scale-trans"
   ],
   "cssPresets": [],
   "events": [

@@ -3,7 +3,7 @@
     "src-direct variant of ./tsconfig.json: maps @archway/valet to",
     "src/index.ts so probes verify BEFORE a build exists. Mirrors the",
     "root tsconfig (lib DOM, no types restriction) because it compiles",
-    "the whole src tree, not just dist/index.d.ts. The dist-mapped",
+    "the whole src tree, not just dist/index.d.mts. The dist-mapped",
     "./tsconfig.json remains the canonical post-build gate."
   ],
   "compilerOptions": {

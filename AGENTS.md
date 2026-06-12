@@ -240,10 +240,30 @@ component rather than the page. Pass `constrainHeight={false}` to opt out.
 ## Internal Files
 
 - **src/css/createStyled.ts** – minimal CSS-in-JS engine exporting `styled` and `keyframes`.
-- **src/css/stylePresets.ts** – registry of reusable style presets via `definePreset` and `preset` helpers.
+- **src/css/stylePresets.ts** – registry of reusable style presets via `definePreset` and `preset` helpers. Preset rules carry doubled-specificity selectors (`.zp-x.zp-x`), so a preset overrides a component's equal-specificity base styles no matter which rule was inserted first — components must never probe the registry to suppress their own defaults (the old `presetHas` workaround is gone).
 - **src/hooks/useGoogleFonts.ts** – hook for dynamically loading Google Fonts once.
 - **src/system/themeStore.ts** – Zustand store holding the current theme and mode.
 - **src/system/createFormStore.ts** – factory creating typed Zustand stores for form state.
+
+## Rule lifecycle policy (styling engine)
+
+Styled rules are **immortal**: once `styled`/`keyframes`/`definePreset` inserts
+a rule into the global sheet it is never removed — there is no `deleteRule`,
+refcounting, or LRU over the CSSOM (only the raw-css memo is bounded; the
+injected-rule bookkeeping is not). That is a deliberate invariant, and it puts
+a hard requirement on every styled template: **the rule space must be
+discrete**. Interpolations may only produce a bounded set of variants (theme
+tokens, enum props, booleans). A continuously-varying value — measured pixels,
+width ratios, distance-derived durations, anything from
+`getBoundingClientRect` — baked into rule text mints a permanent CSSOM rule
+per unique value: a memory leak that survives for the lifetime of the page.
+Continuous values must instead flow through **CSS custom properties set on
+inline `style`**, with the template reading `var(--…, fallback)` (see
+`Pagination.tsx` — `--valet-pag-x`/`--valet-pag-w` et al. — for the canonical
+pattern; updating an inline custom property still drives CSS transitions on
+the dependent property). The tripwire: dev builds count distinct rules per
+styled component and `warnOnce` past 256 — if that warning fires, fix the
+interpolation, never raise the limit.
 
 ## valet Best Practices
 

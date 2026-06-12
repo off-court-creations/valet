@@ -38,7 +38,8 @@ jobs:
       - run: npm run build
       # SSR dist-import regression (TEST-CI S10): inside `npm test` above
       # it skips when dist/ is absent; this post-build run is the real
-      # assertion (require + dynamic import of dist, deterministic classes).
+      # assertion (ESM import of the dist barrel, deterministic classes —
+      # ESM-only since PACKAGING S4, ruling Q1(a)).
       - run: npx vitest run src/ssr-import.test.ts
       - run: npm run verify:pack
       - run: npm run check:engine

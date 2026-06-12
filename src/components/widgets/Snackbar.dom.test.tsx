@@ -47,7 +47,7 @@ function makeRoot() {
 /** Effective opacity of a styled element via its injected rule. */
 const opacityOf = (el: Element) => {
   const cls = el.className.split(' ')[0];
-  const rules = Array.from(sheet.globalSheet?.cssRules ?? [], (r) => r.cssText);
+  const rules = Array.from(sheet.getGlobalSheet()?.cssRules ?? [], (r) => r.cssText);
   const rule = rules.find((t) => t.startsWith(`.${cls}`)) ?? '';
   const m = rule.match(/opacity:\s*([\d.]+)/);
   return m ? Number(m[1]) : NaN;

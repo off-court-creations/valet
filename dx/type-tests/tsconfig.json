@@ -10,7 +10,7 @@
     "types": [],
     "baseUrl": ".",
     "paths": {
-      "@archway/valet": ["../../dist/index.d.ts"]
+      "@archway/valet": ["../../dist/index.d.mts"]
     }
   },
   "include": ["./*.test-d.ts"]

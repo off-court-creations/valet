@@ -37,13 +37,25 @@ describe('stylePresets (node)', () => {
 
     /* Node has no live rule to swap, so each distinct body is recorded;
        the LAST pending rule for the class is the latest registration
-       (same selector ⇒ last-in wins on flush) */
-    const mine = getPendingRules().filter((t) => t.startsWith(`.${cls}{`));
+       (same selector ⇒ last-in wins on flush). Selector is DOUBLED
+       (ENGINE S11) so presets out-specifify component base rules. */
+    const mine = getPendingRules().filter((t) => t.startsWith(`.${cls}.${cls}{`));
     expect(mine).toEqual([
-      `.${cls}{color: red;}`,
-      `.${cls}{color: green;}`,
-      `.${cls}{color: blue;}`,
+      `.${cls}.${cls}{color: red;}`,
+      `.${cls}.${cls}{color: green;}`,
+      `.${cls}.${cls}{color: blue;}`,
     ]);
+  });
+
+  it('records doubled-specificity selectors — never a single-class preset rule', () => {
+    definePreset('specificity-probe', () => 'color: rgb(11, 12, 13);');
+    const cls = preset('specificity-probe');
+    const single = getPendingRules().filter(
+      (t) => t.startsWith(`.${cls}{`) || t.startsWith(`.${cls} `),
+    );
+    const doubled = getPendingRules().filter((t) => t.startsWith(`.${cls}.${cls}{`));
+    expect(single).toEqual([]);
+    expect(doubled).toEqual([`.${cls}.${cls}{color: rgb(11, 12, 13);}`]);
   });
 
   it('identical-content redefine keeps the class stable and records nothing new', () => {

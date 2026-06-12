@@ -109,19 +109,27 @@ const PagesWrap = styled('div')`
   display: inline-flex;
 `;
 
-// Viewport that holds the sliding track. Width can be frozen during slide.
-const PagesViewport = styled('div')<{ $width?: number; $height?: number }>`
+/* Rule-lifecycle policy (ENGINE S9): styled rules are immortal — every
+   unique rule body mints a permanent CSSOM rule. Measured pixels (and any
+   other continuously-varying value) must therefore NEVER be interpolated
+   into rule text; they flow through CSS custom properties set on inline
+   style, so each component below injects exactly one rule per discrete
+   theme/prop variant no matter how the measurements change. */
+
+// Viewport that holds the sliding track. Width can be frozen during slide
+// (measured px arrive via --valet-pag-vp-w / --valet-pag-vp-h).
+const PagesViewport = styled('div')`
   overflow: hidden;
   display: inline-block;
   vertical-align: middle; /* align with surrounding inline controls */
   line-height: 1; /* normalize inline-block baseline height */
-  width: ${({ $width }) => ($width && $width > 0 ? `${Math.round($width)}px` : 'auto')};
-  height: ${({ $height }) => ($height && $height > 0 ? `${Math.round($height)}px` : 'auto')};
+  width: var(--valet-pag-vp-w, auto);
+  height: var(--valet-pag-vp-h, auto);
 `;
 
-// Track containing one or two page groups that translate horizontally.
+// Track containing one or two page groups that translate horizontally
+// (measured offset arrives via --valet-pag-track-x).
 const PagesTrack = styled('div')<{
-  $x: number;
   $dur: string;
   $ease: string;
 }>`
@@ -129,7 +137,7 @@ const PagesTrack = styled('div')<{
   flex-wrap: nowrap;
   white-space: nowrap;
   will-change: transform;
-  transform: ${({ $x }) => `translateX(${Math.round($x)}px)`};
+  transform: translateX(var(--valet-pag-track-x, 0px));
   transition: transform ${({ $dur }) => $dur} ${({ $ease }) => $ease};
 `;
 
@@ -143,13 +151,13 @@ const HiddenMeasure = styled('div')`
   display: inline-flex;
 `;
 
-/* Underline rail that slides under the active page */
+/* Underline rail that slides under the active page. Measured geometry
+   (--valet-pag-x / --valet-pag-w) and the distance-derived transition
+   durations (--valet-pag-trans-x / --valet-pag-trans-w) are continuous,
+   so they ride on inline-style CSS vars; only discrete theme tokens
+   (easing names, fade duration, 0/1 opacity) appear in rule text. */
 const Underline = styled('div')<{
   $height: string;
-  $x: number;
-  $w: number;
-  $transX: string;
-  $transW: string;
   $easeX: string;
   $easeW: string;
   $opacity: number;
@@ -160,11 +168,11 @@ const Underline = styled('div')<{
   left: 0;
   bottom: calc(-0.5 * var(--valet-underline-width, 2px));
   height: ${({ $height }) => $height};
-  width: ${({ $w }) => `${Math.max(0, Math.round($w))}px`};
-  transform: ${({ $x }) => `translateX(${Math.round($x)}px)`};
+  width: var(--valet-pag-w, 0px);
+  transform: translateX(var(--valet-pag-x, 0px));
   transition:
-    transform ${({ $transX }) => $transX} ${({ $easeX }) => $easeX},
-    width ${({ $transW }) => $transW} ${({ $easeW }) => $easeW},
+    transform var(--valet-pag-trans-x, 0ms) ${({ $easeX }) => $easeX},
+    width var(--valet-pag-trans-w, 0ms) ${({ $easeW }) => $easeW},
     opacity ${({ $fadeDur }) => $fadeDur} ${({ $fadeEase }) => $fadeEase};
   will-change: transform, width;
   pointer-events: none;
@@ -174,10 +182,9 @@ const Underline = styled('div')<{
   background: transparent; /* actual colour on the fill */
 `;
 
+/* Fill scale is a measured-width ratio (continuous) → CSS vars too. */
 const UnderlineFill = styled('div')<{
   $color: string;
-  $scale: number;
-  $scaleTrans: string;
   $scaleEase: string;
   $origin: 'left' | 'right' | 'center';
 }>`
@@ -186,8 +193,8 @@ const UnderlineFill = styled('div')<{
   background: ${({ $color }) => $color};
   border-radius: 0; /* Always a right-angle rectangle */
   transform-origin: ${({ $origin }) => $origin} center;
-  transform: ${({ $scale }) => `scaleX(${Number.isFinite($scale) ? $scale : 1})`};
-  transition: transform ${({ $scaleTrans }) => $scaleTrans} ${({ $scaleEase }) => $scaleEase};
+  transform: scaleX(var(--valet-pag-scale, 1));
+  transition: transform var(--valet-pag-scale-trans, 0ms) ${({ $scaleEase }) => $scaleEase};
   will-change: transform;
   backface-visibility: hidden;
 `;
@@ -1068,14 +1075,25 @@ export const Pagination: React.FC<PaginationProps> = ({
         )}
 
         <PagesViewport
-          $width={viewportW}
-          $height={viewportH}
+          style={
+            {
+              /* measured px → CSS vars (rule-lifecycle policy, ENGINE S9) */
+              '--valet-pag-vp-w':
+                viewportW && viewportW > 0 ? `${Math.round(viewportW)}px` : undefined,
+              '--valet-pag-vp-h':
+                viewportH && viewportH > 0 ? `${Math.round(viewportH)}px` : undefined,
+            } as React.CSSProperties
+          }
         >
           <PagesTrack
             ref={trackRef}
-            $x={isSliding ? slideX : 0}
             $dur={isSliding ? `${slideDurMs}ms` : '0ms'}
             $ease={slideEase}
+            style={
+              {
+                '--valet-pag-track-x': `${Math.round(isSliding ? slideX : 0)}px`,
+              } as React.CSSProperties
+            }
           >
             {isSliding
               ? [
@@ -1166,24 +1184,33 @@ export const Pagination: React.FC<PaginationProps> = ({
         {/* Underline slider – always mounted, visibility faded to avoid flicker */}
         <Underline
           aria-hidden
-          $x={anim.x}
-          $w={anim.w}
           $height={theme.stroke(4)}
-          $transX={anim.transX}
-          $transW={anim.transW}
           $easeX={anim.easeX}
           $easeW={anim.easeW}
           $opacity={underlineVisible ? 1 : 0}
           $fadeDur={underlineFadeInstant ? '0ms' : theme.motion.duration.medium}
           $fadeEase={theme.motion.easing.standard}
+          style={
+            {
+              /* continuous geometry/durations → CSS vars (ENGINE S9) */
+              '--valet-pag-x': `${Math.round(anim.x)}px`,
+              '--valet-pag-w': `${Math.max(0, Math.round(anim.w))}px`,
+              '--valet-pag-trans-x': anim.transX,
+              '--valet-pag-trans-w': anim.transW,
+            } as React.CSSProperties
+          }
         >
           <UnderlineFill
             key={`pulse-${page}`}
             $color={theme.colors.primary}
-            $scale={anim.scale}
-            $scaleTrans={anim.scaleTrans}
             $scaleEase={anim.scaleEase}
             $origin={anim.origin}
+            style={
+              {
+                '--valet-pag-scale': String(Number.isFinite(anim.scale) ? anim.scale : 1),
+                '--valet-pag-scale-trans': anim.scaleTrans,
+              } as React.CSSProperties
+            }
           />
         </Underline>
       </PagesWrap>

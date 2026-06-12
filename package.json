@@ -13,19 +13,13 @@
   ],
   "author": "0xbenc",
   "license": "MIT",
-  "main": "./dist/index.js",
+  "type": "commonjs",
   "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/index.d.mts",
   "exports": {
     ".": {
-      "import": {
-        "types": "./dist/index.d.mts",
-        "default": "./dist/index.mjs"
-      },
-      "require": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      }
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
     },
     "./styles.css": "./styles.css",
     "./package.json": "./package.json"
@@ -45,11 +39,14 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "build": "npm run clean && tsup src/index.ts --format esm,cjs --dts --tsconfig tsconfig.build.json && cp -f src/styles.css styles.css",
+    "build": "npm run clean && tsup && cp -f src/styles.css styles.css",
     "prepack": "npm run build",
     "verify:pack": "node scripts/verify-pack.mjs",
     "check:engine": "node scripts/checks/engine-smoke.mjs",
-    "dev": "tsup src/index.ts --format esm,cjs --watch --dts",
+    "check:bench": "node scripts/checks/engine-bench.mjs",
+    "check:package": "publint && attw --pack . --profile esm-only --exclude-entrypoints ./styles.css",
+    "check:bundle": "node scripts/check-bundle.mjs",
+    "dev": "tsup --watch",
     "dx": "npm install && npm --prefix ./docs install && npm --prefix ./packages/create-valet-app install && npm run mcp:server:install",
     "dx:link": "npm run build && npm link && cd docs && npm link @archway/valet && cd ../packages/valet-mcp && npm link && cd ../create-valet-app && npm link",
     "lint": "eslint \"{src,docs}/**/*.{ts,tsx}\"",
@@ -83,6 +80,7 @@
     "react-dom": "^18.0.0 || ^19.0.0"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.3",
     "@babel/core": "^7.27.1",
     "@babel/parser": "^7.27.2",
     "@babel/preset-env": "^7.27.2",
@@ -99,6 +97,7 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "jsdom": "^29.1.1",
     "prettier": "^3.2.5",
+    "publint": "^0.3.21",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "rimraf": "^5.0.5",
