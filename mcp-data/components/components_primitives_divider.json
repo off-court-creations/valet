@@ -88,6 +88,6 @@
     "src/components/primitives/Divider.tsx",
     "docs/src/pages/components/primitives/DividerDemo.tsx"
   ],
-  "version": "0.34.1",
+  "version": "0.35.0",
   "schemaVersion": "1.7"
 }

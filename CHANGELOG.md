@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
-Target: **0.35.0** — the valet overhaul (`feat/valet-overhaul`). Phase 0 (decision-free correctness + test harness) summarized by theme below. Behavior and type-level changes are flagged explicitly with their ruling (Q*/R* in `dx/plans/valet-overhaul-2026-06-10/`).
+## [0.35.0] — 2026-06-12
 
 ### Added
 

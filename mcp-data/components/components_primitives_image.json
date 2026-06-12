@@ -100,6 +100,6 @@
     "src/components/primitives/Image.tsx",
     "docs/src/pages/components/primitives/ImageDemo.tsx"
   ],
-  "version": "0.34.1",
+  "version": "0.35.0",
   "schemaVersion": "1.7"
 }
