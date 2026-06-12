@@ -318,6 +318,56 @@ mcp:check (58 components) ✅ docs tsc + build ✅.
 
 ---
 
+## Master checklist — Phase 3 (plan §5)
+
+| #   | Step | Contents                                                                                                              | Status |
+| --- | ---- | ------------------------------------------------------------------------------------------------------------------------ | ------ |
+| 13  | 3.a  | Version 0.35.0 · docs + 3 template pins ^0.35.0 (check-pins hard) · valet-mcp + CVA 0.35.0 (versionParity true)        | ✅ `0d59a58` |
+| 14  | 3.b  | CHANGELOG Unreleased → [0.35.0] — 2026-06-12 (check-changelog non-warn green) · final mcp regen at 0.35.0              | ✅     |
+| 15  | 3.c  | Full RELEASING.md preflight dry-run (every gate, publishes skipped)                                                    | ✅     |
+| 16  | 3.d  | `fix/0.34.2-hotfix` branch prepared per Q4(a) (commit `22fbbfc`, adversarially verified)                               | ✅     |
+
+### Phase 3 — integration & release prep — ✅ THE OVERHAUL IS CODE-COMPLETE
+
+**0.35.0 release prep (commit `0d59a58`):** version bumps + pins + CHANGELOG
+move + corpus regen, full preflight green (lint, 3-project tsc, 1203/1203,
+build, check:engine, verify:pack 179 files, publint + attw esm-only,
+check:bundle, check:rtl, mcp schema/freshness, valet-mcp selfcheck with
+versionParity true, docs build).
+
+**0.34.2 hotfix branch (`fix/0.34.2-hotfix` @ `22fbbfc`, off `0a31fee`):**
+the 6 stranded commits + the minimal focus-trap fix (one-line preventDefault
+relocation) + the minimal Select pointer-events fix + version + truthful
+CHANGELOG — adversarially verified (base, scope, semantics, truthfulness,
+overhaul-branch isolation all confirmed). Builds green on the 0.34.x
+toolchain.
+
+---
+
+## Hand-off — the [Ben] list (everything the agent cannot/should not do)
+
+1. **Review this plan + rulings.** Section-by-section review of plan.md; your
+   rulings land in a §0 amendments block. The provisional Q1–Q22 adoptions
+   below are all reversible — anything you veto, we unwind.
+2. **Publish 0.34.2** (optional, per Q4a): `fix/0.34.2-hotfix` @ `22fbbfc` is
+   ready — tag + `npm publish` per dx/RELEASING.md §4.
+3. **Publish 0.35.0:** from `feat/valet-overhaul` (after your review/merge):
+   the full runbook is dx/RELEASING.md; every preflight gate is already
+   green at `0d59a58`. Publish order: valet → valet-mcp → create-valet-app →
+   docs deploy.
+4. **Push the branch / open the PR / merge to development** — your call per
+   the no-merges-without-Ben rule. Nothing has been pushed.
+5. **GitHub settings (one-time):** enable Private Vulnerability Reporting
+   (Settings → Security; SECURITY.md's flow depends on it); branch
+   protection per Q17 — exact `gh api` commands in dx/RELEASING.md §0.
+6. **Manual sweeps the harness cannot do:** real-browser pass (Safari
+   16.5/Chrome 112 — nested-selector focus rings, Table zebra/hover, overlay
+   stack) · NVDA/VoiceOver pass (focus trap, Drawer dialog, Snackbar
+   role=status, Table sort buttons, SpeedDial disclosure) · RTL vs LTR
+   screenshot diff (dir='rtl' on a Surface).
+7. **Q19:** name the co-maintainer; then the CI-provenance publish path in
+   RELEASING.md §0.3.3.
+
 ## Decisions — provisional rulings (agent-adopted, pending Ben's review)
 
 > **2026-06-10:** Ben set a session goal — "complete the entire overhaul. all
