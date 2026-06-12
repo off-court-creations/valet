@@ -26,7 +26,8 @@ export function registerDefineTerm(server: McpServer): void {
     'valet__define_term',
     {
       title: 'Define Term',
-      description: 'Look up a glossary definition by term or alias and fall back to the closest matches.',
+      description:
+        'Look up a glossary definition by term or alias and fall back to the closest matches.',
       inputSchema: Params.shape,
       annotations: {
         readOnlyHint: true,
@@ -41,7 +42,11 @@ export function registerDefineTerm(server: McpServer): void {
           content: [
             {
               type: 'text',
-              text: JSON.stringify({ found: false, suggestions: [], error: 'Empty search term after trimming.' }),
+              text: JSON.stringify({
+                found: false,
+                suggestions: [],
+                error: 'Empty search term after trimming.',
+              }),
             },
           ],
         };
@@ -63,7 +68,8 @@ export function registerDefineTerm(server: McpServer): void {
           let score = 0;
           const name = entry.term.toLowerCase();
           if (name.includes(normalized)) score += 3;
-          if ((entry.aliases || []).some((alias) => alias.toLowerCase().includes(normalized))) score += 2;
+          if ((entry.aliases || []).some((alias) => alias.toLowerCase().includes(normalized)))
+            score += 2;
           if ((entry.definition || '').toLowerCase().includes(normalized)) score += 1;
           return { entry, score };
         })
@@ -72,6 +78,6 @@ export function registerDefineTerm(server: McpServer): void {
 
       const suggestions = scored.slice(0, limit).map((result) => result.entry);
       return { content: [{ type: 'text', text: JSON.stringify({ found: false, suggestions }) }] };
-    }
+    },
   );
 }

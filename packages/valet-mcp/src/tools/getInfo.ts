@@ -15,7 +15,8 @@ export function registerGetInfo(server: McpServer): void {
     'valet__get_info',
     {
       title: 'Get Server Info',
-      description: 'Summarise the MCP server version, bundled data snapshot, and basic parity indicators.',
+      description:
+        'Summarise the MCP server version, bundled data snapshot, and basic parity indicators.',
       annotations: {
         readOnlyHint: true,
         idempotentHint: true,
@@ -35,7 +36,9 @@ export function registerGetInfo(server: McpServer): void {
         const dataSource = (DATA_INFO as any).source;
         const dataDir = DATA_DIR;
         const mcpMinor = String(mcpVersion).split('.').slice(0, 2).join('.');
-        const valetMinor = valetVersion ? String(valetVersion).split('.').slice(0, 2).join('.') : undefined;
+        const valetMinor = valetVersion
+          ? String(valetVersion).split('.').slice(0, 2).join('.')
+          : undefined;
         const versionParity = typeof valetMinor === 'string' ? mcpMinor === valetMinor : undefined;
 
         const payload = {
@@ -57,6 +60,6 @@ export function registerGetInfo(server: McpServer): void {
         const error = (err as Error)?.message || String(err);
         return { content: [{ type: 'text', text: JSON.stringify({ ok: false, error }) }] };
       }
-    }
+    },
   );
 }

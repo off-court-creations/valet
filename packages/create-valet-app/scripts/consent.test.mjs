@@ -84,21 +84,17 @@ function writeShim(shimDir, name, body) {
 }
 
 function runBin({ home, shim, target, env = {}, args = [] }) {
-  const res = spawnSync(
-    process.execPath,
-    [BIN, target, '--no-install', '--no-git', ...args],
-    {
-      // stdin from a closed pipe → not a TTY → non-interactive.
-      stdio: ['ignore', 'pipe', 'pipe'],
-      env: {
-        ...process.env,
-        HOME: home,
-        PATH: `${shim}${path.delimiter}${process.env.PATH}`,
-        CVA_NONINTERACTIVE: '1',
-        ...env,
-      },
+  const res = spawnSync(process.execPath, [BIN, target, '--no-install', '--no-git', ...args], {
+    // stdin from a closed pipe → not a TTY → non-interactive.
+    stdio: ['ignore', 'pipe', 'pipe'],
+    env: {
+      ...process.env,
+      HOME: home,
+      PATH: `${shim}${path.delimiter}${process.env.PATH}`,
+      CVA_NONINTERACTIVE: '1',
+      ...env,
     },
-  );
+  });
   const stdout = res.stdout ? res.stdout.toString() : '';
   const stderr = res.stderr ? res.stderr.toString() : '';
   return { status: res.status, stdout, stderr };
@@ -133,7 +129,10 @@ function codexConfigWritten(home) {
   const sbx = makeSandbox();
   const r = runBin({ ...sbx, env: { CVA_GLOBAL_MCP: '1' } });
   check(r.status === 0, 'bin exits 0');
-  check(npmGlobalMcpAttempted(sbx.callsLog), '`npm i -g @archway/valet-mcp` WAS attempted (fake npm)');
+  check(
+    npmGlobalMcpAttempted(sbx.callsLog),
+    '`npm i -g @archway/valet-mcp` WAS attempted (fake npm)',
+  );
   check(codexConfigWritten(sbx.home), '~/.codex/config.toml WAS written');
   fs.rmSync(sbx.root, { recursive: true, force: true });
 }
@@ -144,7 +143,10 @@ function codexConfigWritten(home) {
   const sbx = makeSandbox();
   const r = runBin({ ...sbx, args: ['--global-mcp'] });
   check(r.status === 0, 'bin exits 0');
-  check(npmGlobalMcpAttempted(sbx.callsLog), '`npm i -g @archway/valet-mcp` WAS attempted (fake npm)');
+  check(
+    npmGlobalMcpAttempted(sbx.callsLog),
+    '`npm i -g @archway/valet-mcp` WAS attempted (fake npm)',
+  );
   check(codexConfigWritten(sbx.home), '~/.codex/config.toml WAS written');
   fs.rmSync(sbx.root, { recursive: true, force: true });
 }

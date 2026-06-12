@@ -27,7 +27,13 @@ import path from 'path';
 import { buildCorpus } from './merge.mjs';
 
 /** Mirror files copied into packages/valet-mcp/mcp-data by mcp:build. */
-export const MIRROR_FILES = ['_meta.json', 'index.json', 'glossary.json', '_ts-extract.json', 'component_synonyms.json'];
+export const MIRROR_FILES = [
+  '_meta.json',
+  'index.json',
+  'glossary.json',
+  '_ts-extract.json',
+  'component_synonyms.json',
+];
 
 /** Recursively sort object keys so comparisons ignore insertion order. */
 export function canonicalize(value) {
@@ -136,7 +142,12 @@ export function diffAgainstDir(expected, dir) {
     }
   }
 
-  return { ok: stale.length === 0 && missing.length === 0 && extra.length === 0, stale, missing, extra };
+  return {
+    ok: stale.length === 0 && missing.length === 0 && extra.length === 0,
+    stale,
+    missing,
+    extra,
+  };
 }
 
 /**
@@ -189,7 +200,10 @@ async function main() {
 
   const expected = expectedFilesFromCorpus(corpus);
   if (routesTruth != null) expected['_routes.json'] = routesTruth;
-  else console.warn('mcp:check: _routes.json was not produced by the build; skipping routes comparison.');
+  else
+    console.warn(
+      'mcp:check: _routes.json was not produced by the build; skipping routes comparison.',
+    );
 
   /** @type {Array<{ label: string, result: ReturnType<typeof diffAgainstDir> }>} */
   const runs = [];
@@ -209,13 +223,17 @@ async function main() {
 
   const failed = runs.filter((r) => !r.result.ok);
   if (failed.length) {
-    console.error('mcp:check ✗ committed MCP corpus is stale — run `npm run mcp:build` and commit the result:');
+    console.error(
+      'mcp:check ✗ committed MCP corpus is stale — run `npm run mcp:build` and commit the result:',
+    );
     for (const r of failed) report(r.label, r.result);
     process.exit(1);
   }
 
   const fileCount = Object.keys(expected).length;
-  console.log(`mcp:check ✓ committed MCP corpus is fresh (${fileCount} files, ${corpus.index.length} components, ${corpus.glossary?.length ?? 0} glossary entries).`);
+  console.log(
+    `mcp:check ✓ committed MCP corpus is fresh (${fileCount} files, ${corpus.index.length} components, ${corpus.glossary?.length ?? 0} glossary entries).`,
+  );
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {

@@ -34,6 +34,9 @@
   "scripts": {
     "dev": "node bin/create-valet-app.js --help",
     "validate": "node scripts/validate.mjs",
+    "pack:check": "node scripts/pack.test.mjs",
+    "consent:test": "node scripts/consent.test.mjs",
+    "prepublishOnly": "node scripts/pack.test.mjs && node scripts/validate.mjs",
     "bump:minor": "node scripts/bump.mjs minor",
     "bump:major": "node scripts/bump.mjs major"
   },

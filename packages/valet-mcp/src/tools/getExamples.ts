@@ -17,7 +17,8 @@ export function registerGetExamples(server: McpServer): void {
     'valet__get_examples',
     {
       title: 'Get Examples',
-      description: 'Return vetted usage snippets for a component so agents can embed ready-made examples.',
+      description:
+        'Return vetted usage snippets for a component so agents can embed ready-made examples.',
       inputSchema: Params.shape,
       annotations: {
         readOnlyHint: true,
@@ -30,6 +31,6 @@ export function registerGetExamples(server: McpServer): void {
       if (!slug) return { content: [{ type: 'text', text: '[]' }] };
       const comp = getComponentBySlug(slug);
       return { content: [{ type: 'text', text: JSON.stringify(comp?.examples ?? []) }] };
-    }
+    },
   );
 }

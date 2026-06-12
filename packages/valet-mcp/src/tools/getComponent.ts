@@ -28,13 +28,17 @@ export function registerGetComponent(server: McpServer): void {
     async (args: ParamsType) => {
       const slug = resolveSlug(args);
       if (!slug) {
-        return { content: [{ type: 'text', text: JSON.stringify({ error: 'Component not found' }) }] };
+        return {
+          content: [{ type: 'text', text: JSON.stringify({ error: 'Component not found' }) }],
+        };
       }
       const comp = getComponentBySlug(slug);
       if (!comp) {
-        return { content: [{ type: 'text', text: JSON.stringify({ error: 'Component doc missing' }) }] };
+        return {
+          content: [{ type: 'text', text: JSON.stringify({ error: 'Component doc missing' }) }],
+        };
       }
       return { content: [{ type: 'text', text: JSON.stringify(comp) }] };
-    }
+    },
   );
 }

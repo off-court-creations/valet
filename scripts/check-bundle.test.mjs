@@ -63,9 +63,9 @@ describe('scanContributions', () => {
   it('flags forbidden node_modules files that contribute bytes', () => {
     expect(scanContributions(meta('node_modules/highlight.js/lib/core.js', 10))).toHaveLength(1);
     expect(scanContributions(meta('node_modules/marked/lib/marked.esm.js', 1))).toHaveLength(1);
-    expect(
-      scanContributions(meta('node_modules/react-dropzone/dist/es/index.js', 5)),
-    ).toHaveLength(1);
+    expect(scanContributions(meta('node_modules/react-dropzone/dist/es/index.js', 5))).toHaveLength(
+      1,
+    );
   });
 
   it('ignores graph members with zero output bytes (tree-shaken away)', () => {

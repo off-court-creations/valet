@@ -29,7 +29,9 @@ function findGlossaryFile(root) {
   const stack = [pagesDir];
   while (stack.length) {
     const dir = stack.shift();
-    const entries = fs.readdirSync(dir, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name));
+    const entries = fs
+      .readdirSync(dir, { withFileTypes: true })
+      .sort((a, b) => a.name.localeCompare(b.name));
     for (const entry of entries) {
       const fp = path.join(dir, entry.name);
       if (entry.isDirectory()) stack.push(fp);
@@ -89,7 +91,13 @@ export function extractGlossary(root) {
           }
         }
         if (term && definition) {
-          out.push({ term, definition, category, aliases: aliases.length ? aliases : undefined, seeAlso: seeAlso.length ? seeAlso : undefined });
+          out.push({
+            term,
+            definition,
+            category,
+            aliases: aliases.length ? aliases : undefined,
+            seeAlso: seeAlso.length ? seeAlso : undefined,
+          });
         }
       }
     },
@@ -120,4 +128,3 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     process.exit(1);
   }
 }
-

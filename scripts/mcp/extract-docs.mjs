@@ -15,7 +15,8 @@ function jsxToText(node) {
       case 'JSXText':
         return n.value.replace(/\s+/g, ' ').trim();
       case 'JSXElement': {
-        const name = n.openingElement.name.type === 'JSXIdentifier' ? n.openingElement.name.name : 'el';
+        const name =
+          n.openingElement.name.type === 'JSXIdentifier' ? n.openingElement.name.name : 'el';
         const inner = (n.children || []).map(t).join('');
         if (name === 'code') return '`' + inner + '`';
         if (name === 'br') return '\n';
@@ -49,7 +50,7 @@ function readDocsFiles(root) {
 function guessNameFromFile(fp) {
   // e.g., docs/src/pages/components/layout/BoxDemo.tsx -> Box
   let base = path.basename(fp, path.extname(fp));
-  base = base.replace(/(DemoPage|Demo)$/,'');
+  base = base.replace(/(DemoPage|Demo)$/, '');
   // Normalize a few historical/casing mismatches so docs merge with TS components
   const NAME_ALIASES = {
     CheckBox: 'Checkbox',
@@ -88,7 +89,13 @@ function resolvePageFile(docsSrc, spec) {
   // './pages/components/layout/BoxDemo' -> existing file (imports are extensionless)
   if (!spec || !spec.startsWith('.')) return undefined;
   const base = path.resolve(docsSrc, spec);
-  const candidates = [base, `${base}.tsx`, `${base}.ts`, path.join(base, 'index.tsx'), path.join(base, 'index.ts')];
+  const candidates = [
+    base,
+    `${base}.tsx`,
+    `${base}.ts`,
+    path.join(base, 'index.tsx'),
+    path.join(base, 'index.ts'),
+  ];
   return candidates.find((c) => fs.existsSync(c) && fs.statSync(c).isFile());
 }
 
@@ -132,8 +139,13 @@ export function extractRouteTable(root) {
       if (el.name.type !== 'JSXIdentifier' || el.name.name !== 'Route') return;
       const routePath = getAttrString(p.node, 'path');
       if (!routePath || routePath.includes('*')) return; // catch-alls are not linkable
-      const attr = el.attributes.find((a) => a.type === 'JSXAttribute' && a.name.name === 'element');
-      const expr = attr && attr.value && attr.value.type === 'JSXExpressionContainer' ? attr.value.expression : undefined;
+      const attr = el.attributes.find(
+        (a) => a.type === 'JSXAttribute' && a.name.name === 'element',
+      );
+      const expr =
+        attr && attr.value && attr.value.type === 'JSXExpressionContainer'
+          ? attr.value.expression
+          : undefined;
       const elName =
         expr && expr.type === 'JSXElement' && expr.openingElement.name.type === 'JSXIdentifier'
           ? expr.openingElement.name.name
@@ -152,9 +164,16 @@ function writeRoutesArtifact(root, routes) {
   // Build artifact for the docsUrl-vs-routes cross-check in validate.mjs.
   try {
     const outPath = path.join(root, 'mcp-data', '_routes.json');
-    const sorted = Object.fromEntries(Object.keys(routes).sort().map((k) => [k, routes[k]]));
+    const sorted = Object.fromEntries(
+      Object.keys(routes)
+        .sort()
+        .map((k) => [k, routes[k]]),
+    );
     fs.mkdirSync(path.dirname(outPath), { recursive: true });
-    fs.writeFileSync(outPath, JSON.stringify({ source: 'docs/src/App.tsx', routes: sorted }, null, 2));
+    fs.writeFileSync(
+      outPath,
+      JSON.stringify({ source: 'docs/src/App.tsx', routes: sorted }, null, 2),
+    );
   } catch (e) {
     console.warn('Routes artifact write error:', e?.message || e);
   }
@@ -235,7 +254,10 @@ export function extractFromDocs(root) {
               // Try to infer a title from a nearby Typography heading
               let title;
               try {
-                const parent = path.parent && path.parent.node && path.parent.node.type === 'JSXElement' ? path.parent.node : null;
+                const parent =
+                  path.parent && path.parent.node && path.parent.node.type === 'JSXElement'
+                    ? path.parent.node
+                    : null;
                 if (parent) {
                   const children = parent.children || [];
                   const idx = children.indexOf(path.node);
@@ -253,7 +275,14 @@ export function extractFromDocs(root) {
                   }
                 }
               } catch {}
-              examples.push({ id: `${componentName.toLowerCase()}-example-${examples.length + 1}`, title, code: codeStr, lang: 'tsx', source: { file }, runnable: true });
+              examples.push({
+                id: `${componentName.toLowerCase()}-example-${examples.length + 1}`,
+                title,
+                code: codeStr,
+                lang: 'tsx',
+                source: { file },
+                runnable: true,
+              });
             }
           }
         }
@@ -266,7 +295,12 @@ export function extractFromDocs(root) {
           if (isBestPracticesHeading) {
             try {
               // Walk subsequent siblings until the next heading Typography
-              const parent = path.parentPath && path.parentPath.node && path.parentPath.node.type === 'JSXElement' ? path.parentPath.node : null;
+              const parent =
+                path.parentPath &&
+                path.parentPath.node &&
+                path.parentPath.node.type === 'JSXElement'
+                  ? path.parentPath.node
+                  : null;
               if (parent) {
                 const siblings = parent.children || [];
                 const idx = siblings.indexOf(path.node);
@@ -290,10 +324,18 @@ export function extractFromDocs(root) {
                         .filter((s) => s.startsWith('- '))
                         .map((s) => s.replace(/^\-\s*/, '').trim());
                       for (const b of bullets) if (b) bestPractices.push(b);
-                    } else if (sibName.type === 'JSXIdentifier' && (sibName.name === 'ul' || sibName.name === 'ol')) {
+                    } else if (
+                      sibName.type === 'JSXIdentifier' &&
+                      (sibName.name === 'ul' || sibName.name === 'ol')
+                    ) {
                       // Collect list items inside ul/ol within section
                       for (const li of sib.children || []) {
-                        if (li && li.type === 'JSXElement' && li.openingElement.name.type === 'JSXIdentifier' && li.openingElement.name.name === 'li') {
+                        if (
+                          li &&
+                          li.type === 'JSXElement' &&
+                          li.openingElement.name.type === 'JSXIdentifier' &&
+                          li.openingElement.name.name === 'li'
+                        ) {
                           const txt = (li.children || [])
                             .map(jsxToText)
                             .join(' ')

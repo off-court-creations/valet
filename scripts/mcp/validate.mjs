@@ -49,7 +49,13 @@ function validateComponent(c) {
   if (c.aliases && !Array.isArray(c.aliases)) problems.push('aliases must be an array');
   // status validation (REQUIRED and constrained)
   {
-    const allowedStatus = new Set(['production', 'stable', 'experimental', 'unstable', 'deprecated']);
+    const allowedStatus = new Set([
+      'production',
+      'stable',
+      'experimental',
+      'unstable',
+      'deprecated',
+    ]);
     if (!c.status) {
       problems.push('missing status');
     } else if (!allowedStatus.has(c.status)) {
@@ -60,16 +66,31 @@ function validateComponent(c) {
   if (c.usage && typeof c.usage !== 'object') problems.push('usage must be an object');
   if (c.usage && typeof c.usage === 'object') {
     const u = c.usage;
-    if (u.purpose && !(typeof u.purpose === 'string' || Array.isArray(u.purpose))) problems.push('usage.purpose must be string or string[]');
+    if (u.purpose && !(typeof u.purpose === 'string' || Array.isArray(u.purpose)))
+      problems.push('usage.purpose must be string or string[]');
     if (Array.isArray(u.purpose)) {
-      for (const p of u.purpose) if (typeof p !== 'string' || !p.trim()) problems.push('usage.purpose contains invalid entry');
+      for (const p of u.purpose)
+        if (typeof p !== 'string' || !p.trim())
+          problems.push('usage.purpose contains invalid entry');
     }
-    if (u.whenToUse && !Array.isArray(u.whenToUse)) problems.push('usage.whenToUse must be string[]');
-    if (Array.isArray(u.whenToUse)) for (const it of u.whenToUse) if (typeof it !== 'string' || !it.trim()) problems.push('usage.whenToUse contains invalid entry');
-    if (u.whenNotToUse && !Array.isArray(u.whenNotToUse)) problems.push('usage.whenNotToUse must be string[]');
-    if (Array.isArray(u.whenNotToUse)) for (const it of u.whenNotToUse) if (typeof it !== 'string' || !it.trim()) problems.push('usage.whenNotToUse contains invalid entry');
-    if (u.alternatives && !Array.isArray(u.alternatives)) problems.push('usage.alternatives must be string[]');
-    if (Array.isArray(u.alternatives)) for (const it of u.alternatives) if (typeof it !== 'string' || !it.trim()) problems.push('usage.alternatives contains invalid entry');
+    if (u.whenToUse && !Array.isArray(u.whenToUse))
+      problems.push('usage.whenToUse must be string[]');
+    if (Array.isArray(u.whenToUse))
+      for (const it of u.whenToUse)
+        if (typeof it !== 'string' || !it.trim())
+          problems.push('usage.whenToUse contains invalid entry');
+    if (u.whenNotToUse && !Array.isArray(u.whenNotToUse))
+      problems.push('usage.whenNotToUse must be string[]');
+    if (Array.isArray(u.whenNotToUse))
+      for (const it of u.whenNotToUse)
+        if (typeof it !== 'string' || !it.trim())
+          problems.push('usage.whenNotToUse contains invalid entry');
+    if (u.alternatives && !Array.isArray(u.alternatives))
+      problems.push('usage.alternatives must be string[]');
+    if (Array.isArray(u.alternatives))
+      for (const it of u.alternatives)
+        if (typeof it !== 'string' || !it.trim())
+          problems.push('usage.alternatives contains invalid entry');
   }
   if (Array.isArray(c.aliases)) {
     const seen = new Set();
@@ -93,7 +114,8 @@ function validateComponent(c) {
     if (p.required) requiredCount++;
     if (typeof p.type === 'string' && p.type.trim() === 'any') anyCount++;
     if (p.required && p.default != null) hasDefaultAndRequired = true;
-    if (['onClick', 'id', 'className', 'style', 'role', 'aria-label'].includes(p.name)) hasHtmlishProps = true;
+    if (['onClick', 'id', 'className', 'style', 'role', 'aria-label'].includes(p.name))
+      hasHtmlishProps = true;
   }
   const allowedCats = new Set(['primitives', 'fields', 'layout', 'widgets']);
   if (c.category && !allowedCats.has(c.category)) {
@@ -106,9 +128,13 @@ function validateComponent(c) {
   }
   if ((c.props || []).length >= 4) {
     const ratio = requiredCount / (c.props || []).length;
-    if (ratio > 0.7) problems.push(`warn: unusually high required prop ratio (${Math.round(ratio * 100)}%)`);
+    if (ratio > 0.7)
+      problems.push(`warn: unusually high required prop ratio (${Math.round(ratio * 100)}%)`);
   }
-  if (hasDefaultAndRequired) problems.push('warn: some props are marked required but have defaults (likely optional at callsite)');
+  if (hasDefaultAndRequired)
+    problems.push(
+      'warn: some props are marked required but have defaults (likely optional at callsite)',
+    );
   if ((c.props || []).length > 0 && anyCount >= Math.ceil((c.props || []).length / 2)) {
     problems.push('warn: many props have type any');
   }
@@ -241,7 +267,9 @@ export function validateCorpus(corpus) {
       error(`doc missing status for ${item.name}`);
     }
     if (item.status && doc.status && item.status !== doc.status) {
-      error(`index/doc status mismatch for ${item.name}: index='${item.status}' doc='${doc.status}'`);
+      error(
+        `index/doc status mismatch for ${item.name}: index='${item.status}' doc='${doc.status}'`,
+      );
     }
 
     for (const p of validateComponent(doc)) {
@@ -266,12 +294,19 @@ export function validateCorpus(corpus) {
     // ── content gate: placeholder / empty summaries (hard) ────
     const summary = typeof doc.summary === 'string' ? doc.summary.trim() : '';
     if (!summary) {
-      error(`${item.name}: summary is empty — the sidecar or header comment must supply a real summary`);
+      error(
+        `${item.name}: summary is empty — the sidecar or header comment must supply a real summary`,
+      );
     } else if (isPlaceholderSummary(item.name, summary)) {
       placeholderSummaries++;
-      error(`${item.name}: placeholder summary '${item.name} component' — write a real summary (sidecar or component header comment)`);
+      error(
+        `${item.name}: placeholder summary '${item.name} component' — write a real summary (sidecar or component header comment)`,
+      );
     }
-    if (isPlaceholderSummary(item.name, item.summary) && !isPlaceholderSummary(item.name, doc.summary)) {
+    if (
+      isPlaceholderSummary(item.name, item.summary) &&
+      !isPlaceholderSummary(item.name, doc.summary)
+    ) {
       error(`${item.name}: index.json summary is the '<Name> component' placeholder (stale index)`);
     }
 
@@ -292,6 +327,7 @@ export function validateCorpus(corpus) {
   if (total === 0) {
     error('index.json lists zero components — empty corpus');
   } else {
+    /** @type {Array<[string, number, number, string[]]>} */
     const floorChecks = [
       ['docsUrl', docsUrlCount, COVERAGE_FLOORS.docsUrl, missing.docsUrl],
       ['examples', examplesCount, COVERAGE_FLOORS.examples, missing.examples],
@@ -315,11 +351,15 @@ export function validateCorpus(corpus) {
       ? routes.routes
       : null;
   if (docsUrls.length > 0 && !routeTable) {
-    error(`docsUrl cross-check impossible: mcp-data/_routes.json missing or malformed while ${docsUrls.length} components declare a docsUrl`);
+    error(
+      `docsUrl cross-check impossible: mcp-data/_routes.json missing or malformed while ${docsUrls.length} components declare a docsUrl`,
+    );
   } else if (routeTable) {
     for (const { name, url } of docsUrls) {
       if (!(url in routeTable)) {
-        error(`${name}: docsUrl '${url}' is not a route in _routes.json (${routes.source || 'route table'})`);
+        error(
+          `${name}: docsUrl '${url}' is not a route in _routes.json (${routes.source || 'route table'})`,
+        );
       }
     }
   }
@@ -431,7 +471,9 @@ export function validateCorpus(corpus) {
     }
   }
   if (glossaryEntries < GLOSSARY_FLOOR) {
-    error(`glossary gate: ${glossaryEntries} entries below floor ${GLOSSARY_FLOOR} (mcp-data/glossary.json)`);
+    error(
+      `glossary gate: ${glossaryEntries} entries below floor ${GLOSSARY_FLOOR} (mcp-data/glossary.json)`,
+    );
   }
 
   // ── content gate: orphan sidecars (hard) ────────────────────
@@ -440,10 +482,14 @@ export function validateCorpus(corpus) {
     if (!sc || typeof sc !== 'object') continue;
     if (!sc.name || typeof sc.name !== 'string' || !sc.name.trim()) {
       orphanSidecars++;
-      error(`orphan sidecar: ${sc.file} has no readable 'name' field — it can never attach to a component`);
+      error(
+        `orphan sidecar: ${sc.file} has no readable 'name' field — it can never attach to a component`,
+      );
     } else if (!compNames.has(sc.name)) {
       orphanSidecars++;
-      error(`orphan sidecar: ${sc.file} names '${sc.name}' but no such component exists in the corpus`);
+      error(
+        `orphan sidecar: ${sc.file} names '${sc.name}' but no such component exists in the corpus`,
+      );
     }
   }
 
@@ -474,7 +520,9 @@ function main() {
   const { ok, errors, warnings, stats } = validateCorpus(corpus);
   for (const w of warnings) console.warn(`[warn] ${w}`);
   for (const e of errors) console.error(`[error] ${e}`);
-  console.log(JSON.stringify({ ok, errors: errors.length, warnings: warnings.length, ...stats }, null, 2));
+  console.log(
+    JSON.stringify({ ok, errors: errors.length, warnings: warnings.length, ...stats }, null, 2),
+  );
   process.exit(ok ? 0 : 1);
 }
 

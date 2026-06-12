@@ -180,7 +180,9 @@ describe('validateCorpus — coverage floor gates (hard)', () => {
     const res = validateCorpus(corpus);
     expect(res.ok).toBe(false);
     const msg = res.errors.find((e) => e.startsWith('coverage gate: bestPractices'));
-    expect(msg).toMatch(/^coverage gate: bestPractices 13\/20 \(65\.0%\) below floor 70% — missing: /);
+    expect(msg).toMatch(
+      /^coverage gate: bestPractices 13\/20 \(65\.0%\) below floor 70% — missing: /,
+    );
   });
 
   it('truncates long missing-component lists at 10 names', () => {
@@ -306,9 +308,15 @@ describe('committed corpus — mcp:schema:check stays green (floors below actual
     // (2026-06-11: docsUrl 46/57 = 80.7%, examples 22/57 = 38.6%,
     //  bestPractices 42/57 = 73.7%, glossary 13, sidecars 45/0 orphans).
     const { coverage, glossaryEntries, placeholderSummaries, sidecars } = res.stats;
-    expect(coverage.docsUrl.count / coverage.docsUrl.total).toBeGreaterThanOrEqual(COVERAGE_FLOORS.docsUrl);
-    expect(coverage.examples.count / coverage.examples.total).toBeGreaterThanOrEqual(COVERAGE_FLOORS.examples);
-    expect(coverage.bestPractices.count / coverage.bestPractices.total).toBeGreaterThanOrEqual(COVERAGE_FLOORS.bestPractices);
+    expect(coverage.docsUrl.count / coverage.docsUrl.total).toBeGreaterThanOrEqual(
+      COVERAGE_FLOORS.docsUrl,
+    );
+    expect(coverage.examples.count / coverage.examples.total).toBeGreaterThanOrEqual(
+      COVERAGE_FLOORS.examples,
+    );
+    expect(coverage.bestPractices.count / coverage.bestPractices.total).toBeGreaterThanOrEqual(
+      COVERAGE_FLOORS.bestPractices,
+    );
     expect(glossaryEntries).toBeGreaterThanOrEqual(GLOSSARY_FLOOR);
     expect(placeholderSummaries).toBe(0);
     expect(sidecars.orphans).toBe(0);

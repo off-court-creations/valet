@@ -51,7 +51,13 @@ export type ValetComponentDoc = {
   slots?: Array<{ name: string }>;
   bestPractices?: string[];
   bestPracticeSlugs?: string[];
-  examples?: Array<{ id: string; title?: string; code: string; lang?: string; source?: { file: string; line?: number } }>;
+  examples?: Array<{
+    id: string;
+    title?: string;
+    code: string;
+    lang?: string;
+    source?: { file: string; line?: number };
+  }>;
   docsUrl?: string;
   sourceFiles: string[];
   version: string;
@@ -65,7 +71,13 @@ export function normalizeStatusFilter(input?: string | string[]): Set<string> {
   return new Set(normalized);
 }
 
-export type GlossaryEntry = { term: string; definition: string; aliases?: string[]; seeAlso?: string[]; category?: string };
+export type GlossaryEntry = {
+  term: string;
+  definition: string;
+  aliases?: string[];
+  seeAlso?: string[];
+  category?: string;
+};
 
 type DataSource = 'env-dir' | 'bundled';
 
@@ -143,12 +155,27 @@ export function getComponentBySlug(slug: string): ValetComponentDoc | null {
   return readJSON<ValetComponentDoc>(file);
 }
 
-export function getMeta(): { valetVersion?: string; generatedAt?: string; schemaVersion?: string; buildHash?: string } | null {
+export function getMeta(): {
+  valetVersion?: string;
+  generatedAt?: string;
+  schemaVersion?: string;
+  buildHash?: string;
+} | null {
   try {
     const file = path.join(DATA_DIR, '_meta.json');
     if (!fs.existsSync(file)) return null;
-    const raw = readJSON<{ version?: string; builtAt?: string; schemaVersion?: string; buildHash?: string }>(file);
-    return { valetVersion: raw.version, generatedAt: raw.builtAt, schemaVersion: raw.schemaVersion, buildHash: raw.buildHash };
+    const raw = readJSON<{
+      version?: string;
+      builtAt?: string;
+      schemaVersion?: string;
+      buildHash?: string;
+    }>(file);
+    return {
+      valetVersion: raw.version,
+      generatedAt: raw.builtAt,
+      schemaVersion: raw.schemaVersion,
+      buildHash: raw.buildHash,
+    };
   } catch {
     return null;
   }
@@ -239,7 +266,9 @@ function normalizeSynonymEntries(source: SynonymsMap | undefined | null): Synony
   for (const [alias, rawTargets] of Object.entries(source)) {
     const key = alias.trim().toLowerCase();
     if (!key) continue;
-    const targets = Array.from(new Set((rawTargets ?? []).map((t) => t.trim()).filter((t) => t.length > 0)));
+    const targets = Array.from(
+      new Set((rawTargets ?? []).map((t) => t.trim()).filter((t) => t.length > 0)),
+    );
     if (targets.length) normalized[key] = targets;
   }
   return normalized;
@@ -277,7 +306,11 @@ export function loadSynonyms(): SynonymInfo {
   return synonymCache;
 }
 
-export function simpleSearch(query: string, items: ValetIndexItem[], opts?: { category?: string }): Array<{ item: ValetIndexItem; score: number }> {
+export function simpleSearch(
+  query: string,
+  items: ValetIndexItem[],
+  opts?: { category?: string },
+): Array<{ item: ValetIndexItem; score: number }> {
   const q = query.trim().toLowerCase();
   if (!q) return [];
   const { map: synonyms } = loadSynonyms();

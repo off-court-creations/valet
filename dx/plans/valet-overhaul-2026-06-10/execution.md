@@ -78,7 +78,38 @@ regression test; DEFAULT_MODELS exported to match the CHANGELOG). **Gate:**
 lint ✅ tsc ✅ **1032/1032 tests** (94 files) ✅ build ✅ check:engine ✅
 verify:pack (173 files) ✅ check:bundle ✅ mcp:check ✅ (corpus regenerated
 with all sidecar updates); barrel exports verified from the built dist.
-| 9   | 1.3  | **Docs/config:** TEST-CI S9 + S11 · GOVERNANCE S7 RELEASING.md · PERF S10 harness · PACKAGING S8 deps (Q21) · wave-end mcp regen · Phase-1 gate                                                          | ⬜     |
+| 9   | 1.3  | **Docs/config:** TEST-CI S9 + S11 · GOVERNANCE S7 RELEASING.md · PERF S10 harness · PACKAGING S8 deps (Q21) · wave-end mcp regen · Phase-1 gate                                                          | ✅     |
+| —   | gate | **Phase-1 gate:** full CI-equivalent + check:package/check:bundle + bench recorded + docs build · manual real-browser (Safari 16.5/Chrome 112) + NVDA/VoiceOver sweeps **flagged for Ben**                | ✅ (local) |
+
+### Wave 1.3 — Phase-1 close-out — ✅
+
+**What shipped:** TEST-CI S9 validator chaining (`mcp:server:preflight` =
+build + schema + freshness before every MCP publish; CVA `prepublishOnly` =
+pack assertions + validate; weekly `validate-cva.yml` cron — documented why
+it can't gate PRs; the dangling CVA bin symlink DELETED with an lstat-based
+recurrence gate) · TEST-CI S11 lint+typecheck coverage for the ~4,900
+previously-ungated lines (`eslint .` flat-config over scripts/, root
+configs, valet-mcp src, CVA bin/scripts; `typecheck` chains src + scripts
+checkJs + valet-mcp; mechanical fixes for everything surfaced;
+extract-ts.mjs got a documented `@ts-nocheck` TODO — ts-morph union typing
+is a real refactor, behavior covered by tests) · GOVERNANCE S7
+**dx/RELEASING.md** (every gate mandatory, publish order, CHANGELOG
+discipline, Q17 branch-protection `gh api` commands, Q19 staged
+co-maintainer/provenance plan, PVR step, Q4(a) 0.34.2 hotfix path;
+PUBLISH_ORDER.md tombstoned) · PACKAGING S8 deps currency (audit CVEs
+fixed; zustand → peerDependency `^4.5.7 || ^5.0.0` + devDep per Q21;
+marked/react-dropzone/@iconify majors reviewed → deferred with rationale) ·
+PERF S10 render-count harness consolidation.
+
+**The completeness reviewer's catch:** a Phase-1 exit audit found exactly ONE
+missing slice — **PERF S7 (Typography per-tag styled cache)** — and the fixer
+implemented it with a spy test proving 3 mounts → ≤1 `styled('h5')` call
+(fails on the old per-instance version). **Gate:** lint ✅ tsc (3 projects) ✅
+**1041/1041 tests** (3× deterministic) ✅ build ✅ check:engine ✅
+verify:pack ✅ check:package ✅ check:bundle (Button 10.0KB gzip ≤ 12KB) ✅
+mcp:check/schema/selfcheck ✅ docs build ✅. Manual real-browser
+(Safari 16.5/Chrome 112 selector+overlay) and NVDA/VoiceOver sweeps remain
+**flagged for Ben** per the plan's verification-limits note.
 
 ### Wave 1.0 — pure cores — ✅
 

@@ -46,12 +46,14 @@ function parseArgs(argv) {
     reps: 5,
     iters: 2000,
   };
-  for (const [flag, key, map] of [
+  /** @type {Array<[string, string, (v: string) => unknown]>} */
+  const flags = [
     ['--root', 'root', (v) => path.resolve(v)],
     ['--n', 'n', Number],
     ['--reps', 'reps', Number],
     ['--iters', 'iters', Number],
-  ]) {
+  ];
+  for (const [flag, key, map] of flags) {
     const i = argv.indexOf(flag);
     if (i !== -1 && argv[i + 1]) opts[key] = map(argv[i + 1]);
   }
@@ -84,7 +86,7 @@ async function main() {
   const registry = globalThis[Symbol.for('@archway/valet/style-registry/v1')];
   if (!registry?.styleCache) {
     console.error(
-      'engine-bench: style registry missing at globalThis[Symbol.for(\'@archway/valet/style-registry/v1\')]',
+      "engine-bench: style registry missing at globalThis[Symbol.for('@archway/valet/style-registry/v1')]",
     );
     return 1;
   }
@@ -139,7 +141,9 @@ async function main() {
   const cold = performance.now() - t0;
   const uniqueAdded = styleCache.size - cacheBefore;
   console.log(`(a) cold  styled render, ${n} unique css strings: ${fmtMs(cold)}`);
-  console.log(`          (${fmtUs((cold * 1000) / n)} per unique string · ${uniqueAdded} classes cached)`);
+  console.log(
+    `          (${fmtUs((cold * 1000) / n)} per unique string · ${uniqueAdded} classes cached)`,
+  );
 
   /* (b) WARM — identical tree, identical strings ----------------------- */
   const warmRuns = [];
@@ -185,7 +189,9 @@ async function main() {
   const styledMs = performance.now() - tStyled;
 
   console.log(`(c) fn-interpolation per-render overhead (${renders} renders):`);
-  console.log(`    (c0) plain <div> reference:        ${fmtMs(plain)} (${fmtUs((plain * 1000) / renders)}/render)`);
+  console.log(
+    `    (c0) plain <div> reference:        ${fmtMs(plain)} (${fmtUs((plain * 1000) / renders)}/render)`,
+  );
   console.log(
     `    (c1) styled, fresh instances:      ${fmtMs(styledMs)} (${fmtUs((styledMs * 1000) / renders)}/render · +${fmtUs(((styledMs - plain) * 1000) / renders)} over plain)`,
   );

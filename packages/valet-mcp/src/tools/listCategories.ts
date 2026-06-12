@@ -21,6 +21,6 @@ export function registerListCategories(server: McpServer): void {
       const index = getIndex();
       const cats = Array.from(new Set(index.map((i) => i.category))).sort();
       return { content: [{ type: 'text', text: JSON.stringify(cats) }] };
-    }
+    },
   );
 }

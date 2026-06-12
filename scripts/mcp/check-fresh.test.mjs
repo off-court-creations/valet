@@ -58,7 +58,9 @@ describe('volatile-field policy (determinism exclusions)', () => {
   it('index.json and synonym target lists compare order-insensitively', () => {
     const idx = normalizeActual('index.json', [{ slug: 'b' }, { slug: 'a' }]);
     expect(idx.map((i) => i.slug)).toEqual(['a', 'b']);
-    expect(normalizeActual('component_synonyms.json', { k: ['B', 'A'] })).toEqual({ k: ['A', 'B'] });
+    expect(normalizeActual('component_synonyms.json', { k: ['B', 'A'] })).toEqual({
+      k: ['A', 'B'],
+    });
   });
 });
 
@@ -76,11 +78,16 @@ describe('diffAgainstDir drift detection (fixture corpus)', () => {
     fs.writeFileSync(path.join(dir, 'index.json'), JSON.stringify(expected['index.json']));
     fs.writeFileSync(
       path.join(dir, 'components', 'components_layout_box.json'),
-      JSON.stringify(expected['components/components_layout_box.json'])
+      JSON.stringify(expected['components/components_layout_box.json']),
     );
     fs.writeFileSync(
       path.join(dir, '_meta.json'),
-      JSON.stringify({ version: '1.0.0', schemaVersion: '1.6', builtAt: 'whenever', buildHash: 'xyz' })
+      JSON.stringify({
+        version: '1.0.0',
+        schemaVersion: '1.6',
+        builtAt: 'whenever',
+        buildHash: 'xyz',
+      }),
     );
   };
 
@@ -99,7 +106,7 @@ describe('diffAgainstDir drift detection (fixture corpus)', () => {
     writeFresh();
     fs.writeFileSync(
       path.join(dir, 'components', 'components_layout_box.json'),
-      JSON.stringify({ name: 'Box', summary: 'OUT OF DATE' })
+      JSON.stringify({ name: 'Box', summary: 'OUT OF DATE' }),
     );
     const res = diffAgainstDir(expected, dir);
     expect(res.ok).toBe(false);
@@ -160,7 +167,10 @@ describe('check-fresh integration (real corpus)', () => {
   it('regression: shipped mirror packages/valet-mcp/mcp-data is fresh too', () => {
     const mirrorExpected = { ...expected };
     delete mirrorExpected['_routes.json'];
-    const res = diffAgainstDir(mirrorExpected, path.join(ROOT, 'packages', 'valet-mcp', 'mcp-data'));
+    const res = diffAgainstDir(
+      mirrorExpected,
+      path.join(ROOT, 'packages', 'valet-mcp', 'mcp-data'),
+    );
     expect(res).toEqual({ ok: true, stale: [], missing: [], extra: [] });
   });
 
@@ -186,7 +196,9 @@ describe('check-fresh integration (real corpus)', () => {
     if (second.routesTruth != null) expected2['_routes.json'] = second.routesTruth;
     expect(Object.keys(expected2).sort()).toEqual(Object.keys(expected).sort());
     for (const key of Object.keys(expected)) {
-      expect(stableStringify(expected2[key]), `file ${key} differs between rebuilds`).toBe(stableStringify(expected[key]));
+      expect(stableStringify(expected2[key]), `file ${key} differs between rebuilds`).toBe(
+        stableStringify(expected[key]),
+      );
     }
     // buildHash contains no timestamps; it must be reproducible per checkout.
     expect(second.corpus.buildHash).toBe(corpus.buildHash);

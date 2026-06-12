@@ -33,9 +33,15 @@ export function merge(tsMap, docsMap, version, metaMap) {
 
     // Enrich from docs prop table
     for (const row of docs.propsRows || []) {
-      const nameGuess = String(row.prop || '').replace(/`/g, '').trim();
+      const nameGuess = String(row.prop || '')
+        .replace(/`/g, '')
+        .trim();
       if (!nameGuess) continue;
-      const target = byName.get(nameGuess) || { name: nameGuess, type: row.type || 'unknown', required: false };
+      const target = byName.get(nameGuess) || {
+        name: nameGuess,
+        type: row.type || 'unknown',
+        required: false,
+      };
       if (row.type) target.type = row.type.replace(/`/g, '');
       if (row.default) target.default = row.default.replace(/`/g, '');
       if (row.description) target.description = row.description;
@@ -56,7 +62,9 @@ export function merge(tsMap, docsMap, version, metaMap) {
 
     // If component supports intent/variant, ensure standard intent CSS vars are present
     try {
-      const hasIntent = (ts.props || props).some((p) => p && typeof p.name === 'string' && p.name === 'intent');
+      const hasIntent = (ts.props || props).some(
+        (p) => p && typeof p.name === 'string' && p.name === 'intent',
+      );
       if (hasIntent) {
         const INTENT_VARS = [
           '--valet-intent-bg',
@@ -81,9 +89,11 @@ export function merge(tsMap, docsMap, version, metaMap) {
         const t = (p.type || '').toLowerCase();
         if (/^boolean\b/.test(t)) out[p.name] = false;
         else if (/^number\b/.test(t)) out[p.name] = 0;
-        else if (/^string\b/.test(t)) out[p.name] = (p.enumValues && p.enumValues[0]) ? p.enumValues[0] : '';
+        else if (/^string\b/.test(t))
+          out[p.name] = p.enumValues && p.enumValues[0] ? p.enumValues[0] : '';
         else if (/react\./.test(p.type) || /jsx\./i.test(p.type)) out[p.name] = '<div />';
-        else if (/=>/.test(p.type) || /^function/i.test(p.type) || /^\(/.test(p.type)) out[p.name] = '() => {}';
+        else if (/=>/.test(p.type) || /^function/i.test(p.type) || /^\(/.test(p.type))
+          out[p.name] = '() => {}';
         else if (/\[\]/.test(p.type)) out[p.name] = [];
         else out[p.name] = null;
       }
@@ -100,12 +110,19 @@ export function merge(tsMap, docsMap, version, metaMap) {
     const usage = (() => {
       const raw = metaMap?.[name]?.usage;
       if (!raw) return undefined;
-      const normArr = (arr) => Array.isArray(arr) ? Array.from(new Set(arr.map((s) => String(s).trim()).filter(Boolean))) : undefined;
+      const normArr = (arr) =>
+        Array.isArray(arr)
+          ? Array.from(new Set(arr.map((s) => String(s).trim()).filter(Boolean)))
+          : undefined;
       const purpose = typeof raw.purpose === 'string' ? raw.purpose.trim() : normArr(raw.purpose);
       const whenToUse = normArr(raw.whenToUse);
       const whenNotToUse = normArr(raw.whenNotToUse);
       const alternatives = normArr(raw.alternatives);
-      const any = (purpose && (typeof purpose === 'string' ? purpose : purpose.length)) || (whenToUse && whenToUse.length) || (whenNotToUse && whenNotToUse.length) || (alternatives && alternatives.length);
+      const any =
+        (purpose && (typeof purpose === 'string' ? purpose : purpose.length)) ||
+        (whenToUse && whenToUse.length) ||
+        (whenNotToUse && whenNotToUse.length) ||
+        (alternatives && alternatives.length);
       return any ? { purpose, whenToUse, whenNotToUse, alternatives } : undefined;
     })();
 
@@ -137,7 +154,7 @@ export function merge(tsMap, docsMap, version, metaMap) {
         .map((s) => s.trim().toLowerCase())
         .map((s) => s.replace(/\s+/g, '-').replace(/_/g, '-'))
         .map((s) => s.replace(/[^a-z0-9-]/g, ''))
-      .filter(Boolean);
+        .filter(Boolean);
       const fromDocs = Array.isArray(docs.bestPractices)
         ? docs.bestPractices
             .map((s) => String(s))
@@ -164,9 +181,10 @@ export function merge(tsMap, docsMap, version, metaMap) {
       return typeof raw === 'string' && allowed.has(raw) ? raw : 'stable';
     })();
 
-    const bestPractices = Array.isArray(metaMap?.[name]?.docs?.bestPractices) && metaMap[name].docs.bestPractices.length
-      ? metaMap[name].docs.bestPractices
-      : (docs.bestPractices || []);
+    const bestPractices =
+      Array.isArray(metaMap?.[name]?.docs?.bestPractices) && metaMap[name].docs.bestPractices.length
+        ? metaMap[name].docs.bestPractices
+        : docs.bestPractices || [];
 
     // Examples: prefer curated ones from sidecar meta; optionally only curated
     const rawExamples = Array.isArray(metaMap?.[name]?.examples) ? metaMap[name].examples : [];
@@ -183,7 +201,7 @@ export function merge(tsMap, docsMap, version, metaMap) {
         // Prefer explicit typed payloads when recognizable
         const t = String(p.type || '');
         const isValueEvt = /OnValue(Change|Commit)/.test(t) || /(value\s*[,)]|ChangeInfo)/i.test(t);
-        const payload = isValueEvt ? `${t || 'unknown'}` : (t || 'unknown');
+        const payload = isValueEvt ? `${t || 'unknown'}` : t || 'unknown';
         base.push({ name: nm, payloadType: payload });
         have.add(nm);
       }
@@ -193,7 +211,7 @@ export function merge(tsMap, docsMap, version, metaMap) {
     out[name] = {
       name,
       category: ts.category || 'unknown',
-      slug: ts.slug || `components/${(ts.category || 'unknown')}/${name.toLowerCase()}`,
+      slug: ts.slug || `components/${ts.category || 'unknown'}/${name.toLowerCase()}`,
       summary,
       description,
       status,
@@ -333,12 +351,31 @@ export async function buildCorpus(root) {
     glossaryError = e;
   }
 
-  return { version, schemaVersion: SCHEMA_VERSION, components: merged, index, tsMap, synonyms, buildHash, glossary, glossaryError };
+  return {
+    version,
+    schemaVersion: SCHEMA_VERSION,
+    components: merged,
+    index,
+    tsMap,
+    synonyms,
+    buildHash,
+    glossary,
+    glossaryError,
+  };
 }
 
 async function main() {
   const root = process.cwd();
-  const { version, components: merged, index, tsMap, synonyms, buildHash, glossary, glossaryError } = await buildCorpus(root);
+  const {
+    version,
+    components: merged,
+    index,
+    tsMap,
+    synonyms,
+    buildHash,
+    glossary,
+    glossaryError,
+  } = await buildCorpus(root);
 
   const outDir = path.join(root, 'mcp-data');
   const compDir = path.join(outDir, 'components');
@@ -347,7 +384,7 @@ async function main() {
   fs.mkdirSync(compDir, { recursive: true });
 
   // Write per-component
-  for (const [name, doc] of Object.entries(merged)) {
+  for (const doc of Object.values(merged)) {
     const safeSlug = doc.slug.replace(/\//g, '_');
     const fp = path.join(compDir, `${safeSlug}.json`);
     fs.writeFileSync(fp, JSON.stringify(doc, null, 2));
@@ -361,7 +398,12 @@ async function main() {
   fs.writeFileSync(path.join(outDir, '_ts-extract.json'), JSON.stringify(tsMap, null, 2));
 
   // meta
-  const meta = { version, builtAt: new Date().toISOString(), schemaVersion: SCHEMA_VERSION, buildHash };
+  const meta = {
+    version,
+    builtAt: new Date().toISOString(),
+    schemaVersion: SCHEMA_VERSION,
+    buildHash,
+  };
   fs.writeFileSync(path.join(outDir, '_meta.json'), JSON.stringify(meta, null, 2));
 
   const synPath = path.join(outDir, 'component_synonyms.json');
@@ -374,7 +416,10 @@ async function main() {
     console.warn('Glossary extraction error:', glossaryError.message);
   } else {
     try {
-      fs.writeFileSync(path.join(outDir, 'glossary.json'), JSON.stringify({ entries: glossary, version, builtAt: meta.builtAt }, null, 2));
+      fs.writeFileSync(
+        path.join(outDir, 'glossary.json'),
+        JSON.stringify({ entries: glossary, version, builtAt: meta.builtAt }, null, 2),
+      );
     } catch (e) {
       console.warn('Glossary extraction error:', e.message);
     }
@@ -386,7 +431,13 @@ async function main() {
     fs.rmSync(serverDataDir, { recursive: true, force: true });
     fs.mkdirSync(serverDataDir, { recursive: true });
     // shallow copy files and components subdir
-    for (const fn of ['_meta.json', 'index.json', 'glossary.json', '_ts-extract.json', 'component_synonyms.json']) {
+    for (const fn of [
+      '_meta.json',
+      'index.json',
+      'glossary.json',
+      '_ts-extract.json',
+      'component_synonyms.json',
+    ]) {
       const src = path.join(outDir, fn);
       if (fs.existsSync(src)) fs.copyFileSync(src, path.join(serverDataDir, fn));
     }

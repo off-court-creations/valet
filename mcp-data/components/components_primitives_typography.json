@@ -145,12 +145,12 @@
     "omitted": []
   },
   "cssVars": [
-    "--valet-bg",
     "--valet-text-color",
     "--valet-font-weight",
     "--valet-font-tracking",
     "--valet-font-leading",
-    "--valet-font-"
+    "--valet-font-",
+    "--valet-bg"
   ],
   "cssPresets": [],
   "events": [],

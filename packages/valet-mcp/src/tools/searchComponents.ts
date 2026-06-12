@@ -7,7 +7,10 @@ import { z } from 'zod';
 import { getComponentBySlug, getIndex, normalizeStatusFilter, simpleSearch } from './shared.js';
 
 const Params = z.object({
-  query: z.string().min(1, 'Enter text to search for.').describe('Search string across names and summaries.'),
+  query: z
+    .string()
+    .min(1, 'Enter text to search for.')
+    .describe('Search string across names and summaries.'),
   limit: z
     .number()
     .int()
@@ -22,7 +25,9 @@ const Params = z.object({
   status: z
     .union([z.string(), z.array(z.string())])
     .optional()
-    .describe("Optional status filter: 'production'|'stable'|'experimental'|'unstable'|'deprecated'."),
+    .describe(
+      "Optional status filter: 'production'|'stable'|'experimental'|'unstable'|'deprecated'.",
+    ),
 });
 type ParamsType = z.infer<typeof Params>;
 
@@ -31,7 +36,8 @@ export function registerSearchComponents(server: McpServer): void {
     'valet__search_components',
     {
       title: 'Search Components',
-      description: 'Run a relevance-ranked search across the valet component index with optional category and status filters.',
+      description:
+        'Run a relevance-ranked search across the valet component index with optional category and status filters.',
       inputSchema: Params.shape,
       annotations: {
         readOnlyHint: true,
@@ -52,16 +58,18 @@ export function registerSearchComponents(server: McpServer): void {
       const wantStatus = statusSet.size > 0;
       const filtered = wantStatus
         ? scoredAll.filter((s) => {
-          const stFromIndex = (s.item as any).status ? String((s.item as any).status).toLowerCase() : '';
-          if (stFromIndex) return statusSet.has(stFromIndex);
-          // Fallback to full component doc if index lacks status (older snapshots)
-          const comp = getComponentBySlug(s.item.slug);
-          const st = (comp?.status || '').toLowerCase();
-          return st && statusSet.has(st);
-        })
-      : scoredAll;
+            const stFromIndex = (s.item as any).status
+              ? String((s.item as any).status).toLowerCase()
+              : '';
+            if (stFromIndex) return statusSet.has(stFromIndex);
+            // Fallback to full component doc if index lacks status (older snapshots)
+            const comp = getComponentBySlug(s.item.slug);
+            const st = (comp?.status || '').toLowerCase();
+            return st && statusSet.has(st);
+          })
+        : scoredAll;
       const top = filtered.slice(0, limit).map((s) => ({ ...s.item, score: s.score }));
       return { content: [{ type: 'text', text: JSON.stringify(top) }] };
-    }
+    },
   );
 }

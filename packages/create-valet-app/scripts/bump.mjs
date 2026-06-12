@@ -20,7 +20,9 @@ function writeJSON(p, obj) {
 }
 
 function parseSemver(v) {
-  const m = String(v || '').trim().match(/^(\d+)\.(\d+)\.(\d+)/);
+  const m = String(v || '')
+    .trim()
+    .match(/^(\d+)\.(\d+)\.(\d+)/);
   if (!m) throw new Error(`Invalid semver: ${v}`);
   return { major: Number(m[1]), minor: Number(m[2]), patch: Number(m[3]) };
 }
@@ -34,12 +36,6 @@ function bumpVersion(ver, kind) {
   if (kind === 'major') return { major: p.major + 1, minor: 0, patch: 0 };
   if (kind === 'minor') return { major: p.major, minor: p.minor + 1, patch: 0 };
   throw new Error(`Unsupported bump kind: ${kind}`);
-}
-
-function updateFileText(p, updater) {
-  const before = fs.readFileSync(p, 'utf8');
-  const after = updater(before);
-  if (after !== before) fs.writeFileSync(p, after);
 }
 
 async function main() {
@@ -88,7 +84,10 @@ async function main() {
         if (!dry) lock.packages[''].version = next;
       }
       if (!dry) writeJSON(lockPath, lock);
-      changes.push({ file: lockPath, change: `version: ${beforeTop} -> ${next}${beforePkg ? `; packages[""] ${beforePkg} -> ${next}` : ''}` });
+      changes.push({
+        file: lockPath,
+        change: `version: ${beforeTop} -> ${next}${beforePkg ? `; packages[""] ${beforePkg} -> ${next}` : ''}`,
+      });
     } catch (e) {
       console.warn(`[warn] Could not update ${path.relative(ROOT, lockPath)}: ${e.message}`);
     }
@@ -123,7 +122,10 @@ async function main() {
           d.dependencies['@archway/valet'] = targetMinorRange;
           writeJSON(docsPkgPath, d);
         }
-        changes.push({ file: docsPkgPath, change: `@archway/valet: ${before} -> ${targetMinorRange}` });
+        changes.push({
+          file: docsPkgPath,
+          change: `@archway/valet: ${before} -> ${targetMinorRange}`,
+        });
       }
     } catch (e) {
       console.warn(`[warn] Skipping ${path.relative(ROOT, docsPkgPath)}: ${e.message}`);
@@ -135,11 +137,17 @@ async function main() {
     try {
       const prev = fs.readFileSync(binPath, 'utf8');
       const newFallback = `'${nextParts.major}.${nextParts.minor}.0'`;
-      const updated = prev.replace(/(PKG\.version \|\| ')\d+\.\d+\.\d+('\))/m, `$1${nextParts.major}.${nextParts.minor}.0$2`);
+      const updated = prev.replace(
+        /(PKG\.version \|\| ')\d+\.\d+\.\d+('\))/m,
+        `$1${nextParts.major}.${nextParts.minor}.0$2`,
+      );
       if (updated !== prev && !dry) fs.writeFileSync(binPath, updated);
-      if (updated !== prev) changes.push({ file: binPath, change: `fallback version -> ${newFallback}` });
+      if (updated !== prev)
+        changes.push({ file: binPath, change: `fallback version -> ${newFallback}` });
     } catch (e) {
-      console.warn(`[warn] Could not update ${path.relative(ROOT, binPath)} fallback: ${e.message}`);
+      console.warn(
+        `[warn] Could not update ${path.relative(ROOT, binPath)} fallback: ${e.message}`,
+      );
     }
   }
 
@@ -155,4 +163,3 @@ main().catch((e) => {
   console.error(e.stack || e.message || String(e));
   process.exit(1);
 });
-

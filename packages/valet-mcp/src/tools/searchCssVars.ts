@@ -7,7 +7,10 @@ import { z } from 'zod';
 import { getComponentBySlug, getIndex } from './shared.js';
 
 const Params = z.object({
-  query: z.string().min(1, 'Provide text to search for.').describe('Substring to match in CSS variable names.'),
+  query: z
+    .string()
+    .min(1, 'Provide text to search for.')
+    .describe('Substring to match in CSS variable names.'),
   limit: z
     .number()
     .int()
@@ -24,7 +27,8 @@ export function registerSearchCssVars(server: McpServer): void {
     'valet__search_css_vars',
     {
       title: 'Search CSS Vars',
-      description: 'Find components that expose CSS custom properties matching the provided substring.',
+      description:
+        'Find components that expose CSS custom properties matching the provided substring.',
       inputSchema: Params.shape,
       annotations: {
         readOnlyHint: true,
@@ -42,10 +46,11 @@ export function registerSearchCssVars(server: McpServer): void {
         const comp = getComponentBySlug(it.slug);
         const vars = comp?.cssVars || [];
         const hits = vars.filter((v) => String(v).toLowerCase().includes(normalizedQuery));
-        if (hits.length) results.push({ name: it.name, slug: it.slug, cssVars: Array.from(new Set(hits)) });
+        if (hits.length)
+          results.push({ name: it.name, slug: it.slug, cssVars: Array.from(new Set(hits)) });
       }
       results.sort((a, b) => b.cssVars.length - a.cssVars.length || a.name.localeCompare(b.name));
       return { content: [{ type: 'text', text: JSON.stringify(results.slice(0, limit)) }] };
-    }
+    },
   );
 }

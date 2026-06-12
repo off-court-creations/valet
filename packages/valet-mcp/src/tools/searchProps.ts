@@ -7,7 +7,10 @@ import { z } from 'zod';
 import { getComponentBySlug, getIndex } from './shared.js';
 
 const Params = z.object({
-  query: z.string().min(1, 'Provide text to search for.').describe('Substring to match in prop names.'),
+  query: z
+    .string()
+    .min(1, 'Provide text to search for.')
+    .describe('Substring to match in prop names.'),
   limit: z
     .number()
     .int()
@@ -44,11 +47,12 @@ export function registerSearchProps(server: McpServer): void {
         const hits = comp.props
           .map((p) => p.name)
           .filter((n) => n && n.toLowerCase().includes(normalizedQuery));
-        if (hits.length) results.push({ name: it.name, slug: it.slug, props: Array.from(new Set(hits)) });
+        if (hits.length)
+          results.push({ name: it.name, slug: it.slug, props: Array.from(new Set(hits)) });
       }
       // simple relevance: more hits first, then name
       results.sort((a, b) => b.props.length - a.props.length || a.name.localeCompare(b.name));
       return { content: [{ type: 'text', text: JSON.stringify(results.slice(0, limit)) }] };
-    }
+    },
   );
 }

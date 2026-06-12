@@ -55,7 +55,8 @@ function locateValetRange(pkg: Record<string, any>): string | undefined {
 
 function extractVersionFromRange(range: string | undefined): string | undefined {
   if (!range) return undefined;
-  const normalized = range.trim()
+  const normalized = range
+    .trim()
     .replace(/^workspace:/i, '')
     .replace(/^npm:/i, '')
     .replace(/^link:/i, '')
@@ -113,7 +114,8 @@ export function registerCheckVersionParity(server: McpServer): void {
     'valet__check_version_parity',
     {
       title: 'Check Version Parity',
-      description: 'Compare the MCP package minor version with the application’s @archway/valet dependency and bundled mcp-data snapshot.',
+      description:
+        'Compare the MCP package minor version with the application’s @archway/valet dependency and bundled mcp-data snapshot.',
       annotations: {
         readOnlyHint: true,
         idempotentHint: true,
@@ -161,8 +163,10 @@ export function registerCheckVersionParity(server: McpServer): void {
 
         const mismatches: string[] = [];
         if (mcpMinor !== valetMinor) mismatches.push('MCP package vs application dependency');
-        if (dataValetMinor && dataValetMinor !== mcpMinor) mismatches.push('MCP package vs bundled mcp-data');
-        if (dataValetMinor && dataValetMinor !== valetMinor) mismatches.push('Application dependency vs bundled mcp-data');
+        if (dataValetMinor && dataValetMinor !== mcpMinor)
+          mismatches.push('MCP package vs bundled mcp-data');
+        if (dataValetMinor && dataValetMinor !== valetMinor)
+          mismatches.push('Application dependency vs bundled mcp-data');
 
         const ok = mismatches.length === 0;
         const payload: ParityResult = ok
@@ -214,6 +218,6 @@ export function registerCheckVersionParity(server: McpServer): void {
         };
         return { content: [{ type: 'text', text: JSON.stringify(payload) }] };
       }
-    }
+    },
   );
 }

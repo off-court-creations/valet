@@ -49,16 +49,17 @@ export async function loadComponentMeta(rootDir) {
         if (!fs.existsSync(shimPath)) {
           fs.writeFileSync(
             shimPath,
-            "export const defineComponentMeta = (x) => x; export default { defineComponentMeta };\n",
+            'export const defineComponentMeta = (x) => x; export default { defineComponentMeta };\n',
             'utf8',
           );
         }
-        const relShim = path
-          .relative(path.dirname(outPath), shimPath)
-          .replace(/\\/g, '/');
+        const relShim = path.relative(path.dirname(outPath), shimPath).replace(/\\/g, '/');
         let code = fs.readFileSync(fp, 'utf8');
         // Rewrite helper import to point at local shim
-        code = code.replace(/from\s+['\"][.\/]+mcp\/metaTypes['\"]/g, `from '${relShim.startsWith('.') ? relShim : './' + relShim}'`);
+        code = code.replace(
+          /from\s+['\"][.\/]+mcp\/metaTypes['\"]/g,
+          `from '${relShim.startsWith('.') ? relShim : './' + relShim}'`,
+        );
         const { code: out } = babel.transformSync(code, {
           filename: fp,
           presets: [
@@ -96,13 +97,7 @@ function normalizeMeta(raw, source) {
     return null;
   }
   const aliases = Array.isArray(raw.aliases)
-    ? Array.from(
-        new Set(
-          raw.aliases
-            .map((s) => String(s).trim().toLowerCase())
-            .filter(Boolean),
-        ),
-      )
+    ? Array.from(new Set(raw.aliases.map((s) => String(s).trim().toLowerCase()).filter(Boolean)))
     : undefined;
 
   // Shallow clone and attach normalized aliases

@@ -75,7 +75,9 @@ export function main(argv = process.argv.slice(2)) {
     ? checkChangelog({ version: pkg.version, changelog: fs.readFileSync(changelogPath, 'utf8') })
     : ['CHANGELOG.md not found at the repo root'];
   if (problems.length === 0) {
-    console.log(`check-changelog: OK — CHANGELOG.md has a [${pkg.version}] section and Unreleased is empty`);
+    console.log(
+      `check-changelog: OK — CHANGELOG.md has a [${pkg.version}] section and Unreleased is empty`,
+    );
     return 0;
   }
   for (const p of problems) console.error(`check-changelog: ${warn ? 'WARN' : 'ERROR'} — ${p}`);

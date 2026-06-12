@@ -120,9 +120,7 @@ describe('SpeedDial a11y (jsdom)', () => {
 
     /* A focus-visible outline rule exists (main FAB + action share the
        same pattern, so at least one such rule must be present). */
-    const focusRules = texts.filter(
-      (t) => t.includes(':focus-visible') && /outline:/.test(t),
-    );
+    const focusRules = texts.filter((t) => t.includes(':focus-visible') && /outline:/.test(t));
     expect(focusRules.length).toBeGreaterThan(0);
   });
 });

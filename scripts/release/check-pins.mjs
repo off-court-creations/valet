@@ -39,7 +39,9 @@ export function collectPins(root) {
     }
     const pkg = JSON.parse(fs.readFileSync(file, 'utf8'));
     const spec =
-      pkg.dependencies?.[PKG_NAME] ?? pkg.devDependencies?.[PKG_NAME] ?? pkg.peerDependencies?.[PKG_NAME];
+      pkg.dependencies?.[PKG_NAME] ??
+      pkg.devDependencies?.[PKG_NAME] ??
+      pkg.peerDependencies?.[PKG_NAME];
     pins.push({ label, file: rel, spec });
   };
   add('docs', 'docs/package.json');

@@ -10,7 +10,8 @@ export function registerListComponents(server: McpServer): void {
     'valet__list_components',
     {
       title: 'List Components',
-      description: 'Return every component entry in the valet index, including category, status, and summary.',
+      description:
+        'Return every component entry in the valet index, including category, status, and summary.',
       annotations: {
         readOnlyHint: true,
         idempotentHint: true,
@@ -19,6 +20,6 @@ export function registerListComponents(server: McpServer): void {
     },
     async () => ({
       content: [{ type: 'text', text: JSON.stringify(getIndex()) }],
-    })
+    }),
   );
 }

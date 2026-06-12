@@ -239,7 +239,9 @@ describe('extract-docs route table', () => {
 
   it('writes the _routes.json artifact under the given root for validate cross-checks', () => {
     extractFromDocs(root);
-    const artifact = JSON.parse(fs.readFileSync(path.join(root, 'mcp-data', '_routes.json'), 'utf8'));
+    const artifact = JSON.parse(
+      fs.readFileSync(path.join(root, 'mcp-data', '_routes.json'), 'utf8'),
+    );
     expect(artifact.source).toBe('docs/src/App.tsx');
     expect(artifact.routes['/box-demo']).toBe('docs/src/pages/components/layout/BoxDemo.tsx');
     expect(Object.keys(artifact.routes)).not.toContain('*');
@@ -322,12 +324,9 @@ describe('merge docsUrl resolution', () => {
   });
 
   it('sidecar meta docsUrl still applies when neither page nor parent has one', () => {
-    const out = merge(
-      { 'Menu.Item': tsEntry('Menu.Item') },
-      {},
-      '0.0.0-test',
-      { 'Menu.Item': { docs: { docsUrl: '/menu' } } },
-    );
+    const out = merge({ 'Menu.Item': tsEntry('Menu.Item') }, {}, '0.0.0-test', {
+      'Menu.Item': { docs: { docsUrl: '/menu' } },
+    });
     expect(out['Menu.Item'].docsUrl).toBe('/menu');
   });
 });
