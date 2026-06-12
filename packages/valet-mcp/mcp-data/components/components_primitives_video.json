@@ -57,15 +57,15 @@
     },
     {
       "name": "width",
-      "type": "string",
+      "type": "Space",
       "required": false,
-      "description": "CSS width value, e.g. `100%` or `640px`."
+      "description": "CSS width value, e.g. `100%` or `640px`. A bare number is treated as px."
     },
     {
       "name": "height",
-      "type": "string",
+      "type": "Space",
       "required": false,
-      "description": "CSS height value, e.g. `auto` or `360px`."
+      "description": "CSS height value, e.g. `auto` or `360px`. A bare number is treated as px."
     },
     {
       "name": "lazy",

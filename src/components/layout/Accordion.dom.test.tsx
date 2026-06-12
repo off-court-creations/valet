@@ -1,9 +1,12 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/layout/Accordion.dom.test.tsx | valet
-// FIELDS S4 regression — `open={0}` must stay controlled. The
+// FIELDS S4 regression — `expanded={0}` must stay controlled. The
 // original guard was `openProp ? … : undefined`, so index 0 (the
 // most common controlled value) was treated as "no prop" and the
 // component silently flipped to uncontrolled, desyncing the parent.
+// API-TYPES S9 renamed the canonical prop `open` → `expanded`
+// (Q12); the falsiness fix lives on the resolved value and is
+// unchanged. Alias coverage is in Accordion.deprecate.dom.test.tsx.
 // ─────────────────────────────────────────────────────────────
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import React, { act } from 'react';
@@ -58,11 +61,11 @@ afterEach(() => {
    item at the default index 0. */
 
 /* Suite ----------------------------------------------------------------- */
-describe('Accordion controlled open={0} (jsdom)', () => {
-  it('open={0} renders the first panel expanded', () => {
+describe('Accordion controlled expanded={0} (jsdom)', () => {
+  it('expanded={0} renders the first panel expanded', () => {
     const { container } = render(
       <Surface>
-        <Accordion open={0}>
+        <Accordion expanded={0}>
           <Accordion.Item header='First'>one</Accordion.Item>
           <Accordion.Item header='Second'>two</Accordion.Item>
         </Accordion>
@@ -71,13 +74,13 @@ describe('Accordion controlled open={0} (jsdom)', () => {
     expect(expandedOf(container)).toEqual(['true', 'false']);
   });
 
-  it('open={0} stays controlled — clicking reports intent but never mutates internal state', () => {
-    const onOpenChange = vi.fn();
+  it('expanded={0} stays controlled — clicking reports intent but never mutates internal state', () => {
+    const onExpandedChange = vi.fn();
     const { container } = render(
       <Surface>
         <Accordion
-          open={0}
-          onOpenChange={onOpenChange}
+          expanded={0}
+          onExpandedChange={onExpandedChange}
         >
           <Accordion.Item header='First'>one</Accordion.Item>
           <Accordion.Item header='Second'>two</Accordion.Item>
@@ -89,15 +92,15 @@ describe('Accordion controlled open={0} (jsdom)', () => {
     act(() => {
       headersOf(container)[0].dispatchEvent(new MouseEvent('click', { bubbles: true }));
     });
-    expect(onOpenChange).toHaveBeenCalledTimes(1);
-    expect(onOpenChange).toHaveBeenCalledWith([]);
+    expect(onExpandedChange).toHaveBeenCalledTimes(1);
+    expect(onExpandedChange).toHaveBeenCalledWith([]);
     expect(expandedOf(container)).toEqual(['true', 'false']);
   });
 
-  it('the first panel responds to `open` prop changes, including back to 0', () => {
-    const ui = (open: number) => (
+  it('the first panel responds to `expanded` prop changes, including back to 0', () => {
+    const ui = (expanded: number) => (
       <Surface>
-        <Accordion open={open}>
+        <Accordion expanded={expanded}>
           <Accordion.Item header='First'>one</Accordion.Item>
           <Accordion.Item header='Second'>two</Accordion.Item>
         </Accordion>
@@ -105,7 +108,7 @@ describe('Accordion controlled open={0} (jsdom)', () => {
     );
     const { root, container } = render(ui(1));
     expect(expandedOf(container)).toEqual(['false', 'true']);
-    /* Pre-fix, open={0} flipped the component to uncontrolled here. */
+    /* Pre-fix, expanded={0} flipped the component to uncontrolled here. */
     act(() => {
       root.render(ui(0));
     });
@@ -134,10 +137,10 @@ describe('Accordion controlled-state hook integration (jsdom)', () => {
   });
   afterEach(() => warnSpy.mockRestore());
 
-  it('uncontrolled: defaultOpen seeds internal state and clicks toggle it (no warning)', () => {
+  it('uncontrolled: defaultExpanded seeds internal state and clicks toggle it (no warning)', () => {
     const { container } = render(
       <Surface>
-        <Accordion defaultOpen={0}>
+        <Accordion defaultExpanded={0}>
           <Accordion.Item header='First'>one</Accordion.Item>
           <Accordion.Item header='Second'>two</Accordion.Item>
         </Accordion>
@@ -153,7 +156,7 @@ describe('Accordion controlled-state hook integration (jsdom)', () => {
   });
 
   it('a controlled→uncontrolled flip warns once and keeps the mode latched', () => {
-    const ui = (props: { open?: number; defaultOpen?: number }) => (
+    const ui = (props: { expanded?: number; defaultExpanded?: number }) => (
       <Surface>
         <Accordion {...props}>
           <Accordion.Item header='First'>one</Accordion.Item>
@@ -161,7 +164,7 @@ describe('Accordion controlled-state hook integration (jsdom)', () => {
         </Accordion>
       </Surface>
     );
-    const { root, container } = render(ui({ open: 1 }));
+    const { root, container } = render(ui({ expanded: 1 }));
     expect(expandedOf(container)).toEqual(['false', 'true']);
 
     /* Drop `open`. The hook latches controlled at mount and never adopts

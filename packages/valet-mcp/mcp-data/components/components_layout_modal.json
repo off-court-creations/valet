@@ -59,7 +59,7 @@
     },
     {
       "name": "pad",
-      "type": "number | string",
+      "type": "Space",
       "required": false,
       "description": "Container padding override"
     },

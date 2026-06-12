@@ -5,7 +5,7 @@
 import React from 'react';
 import { styled } from '../../css/createStyled';
 import { preset } from '../../css/stylePresets';
-import type { Presettable, Sx } from '../../types';
+import type { Intent, Presettable, Sx } from '../../types';
 import { useTheme } from '../../system/themeStore';
 import type { Theme } from '../../system/themeStore';
 import { Icon } from '../primitives/Icon';
@@ -14,15 +14,6 @@ import { Typography } from '../primitives/Typography';
 
 export type ChipSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type ChipVariant = 'filled' | 'outlined' | 'plain';
-type Intent =
-  | 'default'
-  | 'primary'
-  | 'secondary'
-  | 'success'
-  | 'warning'
-  | 'error'
-  | 'info'
-  | (string & {});
 
 export interface ChipProps
   extends Presettable,

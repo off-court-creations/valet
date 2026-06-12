@@ -24,8 +24,9 @@
     },
     {
       "name": "gap",
-      "type": "number | string",
+      "type": "Space",
       "required": false,
+      "description": "Inter-tile spacing as units or CSS length.",
       "default": "0"
     },
     {

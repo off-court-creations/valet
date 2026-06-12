@@ -6,6 +6,14 @@
 // • Atomic – each unique rule hashed → single class / keyframes injection
 // • Zero deps at runtime (only dev-time hash util)
 // • Filters out `$prop` transient values so they never hit the DOM
+// • Size tracking is OPT-IN (PERF S9, ruling Q9(a)): a styled element
+//   registers with the surface store — and gets the `--valet-el-width`/
+//   `--valet-el-height` CSS vars set on it via ResizeObserver — ONLY when
+//   it is passed the `$trackSize` transient prop. The previous universal
+//   registration was dead on arrival (it ran for every styled element but
+//   the `--valet-el-*` contract never held on the initial mount and nothing
+//   consumed the vars), so it was pure ResizeObserver/store churn. Opt-in
+//   keeps the contract truthful and the default path allocation-free.
 // • Render purity (ENGINE S6): class names are still computed
 //   synchronously in render (cache lookup + hash — SSR renderToString
 //   keeps producing classes), but the CSSOM mutation is queued via
@@ -158,6 +166,15 @@ export function styled<Tag extends keyof JSX.IntrinsicElements>(tag: Tag) {
     type StyledProps = ExtraProps &
       JSX.IntrinsicElements[Tag] & {
         className?: string;
+        /**
+         * Opt into per-element size tracking (PERF S9, ruling Q9(a)). When
+         * truthy, this element registers with the nearest <Surface> store and
+         * the surface writes `--valet-el-width`/`--valet-el-height` onto its
+         * inline style via ResizeObserver. Transient: stripped before the DOM.
+         * Off by default — most elements never need their own metrics, and the
+         * old universal registration was unconsumed observer churn.
+         */
+        $trackSize?: boolean;
       };
 
     type PropsArg = React.PropsWithoutRef<StyledProps>;
@@ -250,7 +267,13 @@ export function styled<Tag extends keyof JSX.IntrinsicElements>(tag: Tag) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { as: asProp, ...domProps } = rawProps as any as PropsArg & { as?: React.ElementType };
 
+      /* Size tracking is OPT-IN (PERF S9, ruling Q9(a)): register with the
+         surface store — and expose the `--valet-el-*` vars — only when the
+         caller passes `$trackSize`. The default path does no registration,
+         no ResizeObserver observe, and no store churn. */
+      const trackSize = Boolean((props as { $trackSize?: boolean }).$trackSize);
       useLayoutEffect(() => {
+        if (!trackSize) return;
         const el = localRef.current;
         if (!surface || !el) return;
         const root = surface.getState().element;
@@ -265,7 +288,7 @@ export function styled<Tag extends keyof JSX.IntrinsicElements>(tag: Tag) {
         return () => {
           surface.getState().unregisterChild(instanceId);
         };
-      }, [surface, instanceId]);
+      }, [trackSize, surface, instanceId]);
 
       const elementTag = (asProp as unknown as keyof JSX.IntrinsicElements) || tag;
       return React.createElement(elementTag, {

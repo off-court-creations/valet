@@ -231,6 +231,41 @@ verify:pack ✅ mcp:schema:check ✅ ssr-import post-build ✅ · docs app
 first push (local command-list equivalent green); real-browser visual checks
 (focus rings, zebra striping on Chrome ≤119) remain flagged for Ben.
 
+## Master checklist — Phase 2 (plan §5)
+
+| #   | Wave | Contents                                                                                                                                                  | Status |
+| --- | ---- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
+| 10  | 2.0  | **Pure/shim cores:** API-TYPES S9 deprecate.ts + Accordion rename → S10 onChange normalization → S12 paper cuts · GOVERNANCE S10 ValetErrorBoundary (Q18) · PERF S9 $trackSize (Q9) | ✅     |
+| 11  | 2.1  | **Serialized component sweeps:** API-TYPES S11 selection (Q11) · A11Y S8 labels · A11Y S10 DateSelector Intl · THEMING S9 (Q14) · A11Y S11 logical props → S12 dir plumbing | ⬜     |
+| 12  | 2.2  | **Docs/templates:** THEMING S10 templates (Q15) → S11 privacy page · GOVERNANCE S8 support statement (Q20) → S11 CONTRIBUTING · MCP-TRUTH S10 curated summaries → S12 dead pipeline | ⬜     |
+
+### Wave 2.0 — shim cores — ✅
+
+**What shipped:** `deprecate.ts` (warn-once `deprecateProp` +
+`resolveDeprecatedProp` on the devErrors core, R30) · Accordion
+`expanded`/`defaultExpanded`/`onExpandedChange` with deprecated `open*`
+aliases (Q12; falsiness fix preserved) · Pagination `onPageChange` canonical
++ deprecated `onChange`; Switch raw-event `onChange` deprecated-on-presence
+toward `onValueChange` (judgment call: the two were never mutually exclusive)
+· token paper cuts (Space retypes, shared Intent union, RadioGroup `gap`,
+Panel `normalizeRowHeights`, Video size widening) · `ValetErrorBoundary`
+(Q18: opt-in, zero styled()/theme machinery, role='alert' fallback +
+reset(), exported + sidecar + a real docs demo page at /error-boundary-demo)
+· PERF S9 `$trackSize` opt-in (Q9: dead universal registration removed; the
+six internal child-metrics consumers opt in at their styled call sites).
+
+**Verification:** the boundary lane died once on an API overload; workflow
+resumed from cache, lane completed. Both reviewers initially **fail** → fixer
+resolved everything incl. applying the boundary's registrar export; the
+orchestrator then closed the wave-end items the regen surfaced: sidecar
+alias-with-space fixed, and the docsUrl coverage floor (79.3% < 80% after
+adding the 58th component) restored by shipping a REAL ValetErrorBoundary
+docs page (route + nav + filename-matched demo so the route-table extractor
+maps it). **Gate:** lint ✅ tsc ✅ **1081/1081** ✅ build ✅ check:engine ✅
+mcp:check (58 components) ✅ docs tsc + build ✅.
+
+---
+
 ## Decisions — provisional rulings (agent-adopted, pending Ben's review)
 
 > **2026-06-10:** Ben set a session goal — "complete the entire overhaul. all

@@ -66,6 +66,7 @@
     "Binding precedence (prop > form > internal). An explicit `value` prop always wins; otherwise a `name` inside a `FormControl` binds to the store; otherwise the group is uncontrolled. The binding is latched at mount.",
     "Form binding reads and writes. When bound by `name`, the group both reads the store (a seeded value drives the initial selection and `form.reset()` is reflected) and writes selections back. Seed the key in `createFormStore(initial)` so the initial selection and reset behave as expected.",
     "Change source. `onValueChange`/`onValueCommit` report a truthful `info.source`: `'pointer'` for a mouse selection and `'keyboard'` for keyboard activation (arrow roving, Home/End, Space/Enter), not a blanket `'programmatic'`.",
+    "Set option spacing with `gap`. RadioGroup's `gap` controls the spacing between options (theme spacing units or a CSS length). The old `spacing` prop is a deprecated alias (Q12): it keeps working through 0.x with a one-time dev warning and is removed at 1.0 — migrate to `gap`, which wins when both are supplied.",
     "Align to available space. Use `row` for short option lists in wide layouts; prefer a column for long labels or narrow screens.",
     "Keep targets comfortable. Use token sizes ( `'sm'` .. `'xl'` ) or numeric values to maintain touch targets ≥ 40–48px depending on density.",
     "Avoid nesting interactive content inside labels. Keep each option’s label succinct and non-interactive so keyboard and screen reader navigation remain predictable.",

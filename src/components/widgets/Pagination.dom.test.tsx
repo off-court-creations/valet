@@ -83,7 +83,7 @@ function mount() {
             <Pagination
               count={60}
               page={page}
-              onChange={() => {}}
+              onPageChange={() => {}}
             />
           </SurfaceCtx.Provider>
         </React.StrictMode>,
@@ -113,7 +113,7 @@ function mountControlled(initial = 1, count = 60) {
           <Pagination
             count={count}
             page={page}
-            onChange={(n) => {
+            onPageChange={(n) => {
               changes.push(n);
               current = n;
               renderAt(n);

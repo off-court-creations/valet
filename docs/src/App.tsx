@@ -53,6 +53,7 @@ const AppBarDemoPage = page(() => import('./pages/components/layout/AppBarDemo')
 const GridDemoPage = page(() => import('./pages/components/layout/GridDemo'));
 const StackDemoPage = page(() => import('./pages/components/layout/StackDemo'));
 const PaginationDemoPage = page(() => import('./pages/components/widgets/PaginationDemo'));
+const ErrorBoundaryDemoPage = page(() => import('./pages/components/widgets/ValetErrorBoundaryDemo'));
 const SpeedDialDemoPage = page(() => import('./pages/components/widgets/SpeedDialDemo'));
 const RadioGroupDemoPage = page(() => import('./pages/components/field/RadioGroupDemo'));
 const MetroSelectDemoPage = page(() => import('./pages/components/field/MetroSelectDemo'));
@@ -274,6 +275,10 @@ export function App() {
         <Route
           path='/pagination-demo'
           element={<PaginationDemoPage />}
+        />
+        <Route
+          path='/error-boundary-demo'
+          element={<ErrorBoundaryDemoPage />}
         />
         <Route
           path='/speeddial-demo'

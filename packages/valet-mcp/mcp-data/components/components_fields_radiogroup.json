@@ -28,10 +28,17 @@
       "default": "'md'"
     },
     {
-      "name": "spacing",
-      "type": "number | string",
+      "name": "gap",
+      "type": "Space",
       "required": false,
-      "description": "Gap between options"
+      "description": "Gap between options as spacing units or a CSS length."
+    },
+    {
+      "name": "spacing",
+      "type": "Space",
+      "required": false,
+      "deprecated": true,
+      "description": "Gap between options."
     },
     {
       "name": "onChange",

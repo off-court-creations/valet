@@ -14,6 +14,7 @@ import { keyframes, styled } from './createStyled';
 import { LRU } from './lru';
 import { normalizeCSS } from './normalize';
 import * as sheet from './sheet';
+import { SurfaceCtx, type SurfaceStore, type SurfaceState } from '../system/surfaceStore';
 
 /* Spy-mode module mock (real implementation, observable call counts) —
    lets the S8 suite assert which renders actually paid for normalize. */
@@ -398,6 +399,92 @@ describe('createStyled (jsdom)', () => {
     expect(
       warnSpy.mock.calls.filter(([msg]) => String(msg).includes('distinct CSS rules')),
     ).toHaveLength(0);
+  });
+
+  /* ─── PERF S9 (ruling Q9(a)): opt-in size tracking ─────────────────
+     A styled element registers with the surface store — and receives the
+     `--valet-el-*` CSS vars — ONLY when passed `$trackSize`. The default
+     path performs zero registration (the universal one was dead on arrival:
+     it ran for every styled element but nothing consumed the vars). These
+     tests drive createStyled directly against a fake surface store so the
+     registration contract is asserted independent of <Surface>. */
+  type ChildMetrics = SurfaceState['children'] extends Map<string, infer M> ? M : never;
+  type RegCall = { id: string; node: HTMLElement; cb?: (m: ChildMetrics) => void };
+  function fakeSurfaceProvider() {
+    const registerCalls: RegCall[] = [];
+    const unregisterCalls: string[] = [];
+    /* createStyled skips elements outside the surface root, so the fake root
+       must contain the mounted child. `renderStrict` appends into
+       document.body, which always contains it — and document.body is attached
+       before any styled-child layout effect runs (unlike a callback-ref div,
+       whose ref attaches child-first, after the child's own layout effect). */
+    const state = {
+      get element() {
+        return document.body;
+      },
+      registerChild: (id: string, node: HTMLElement, cb?: RegCall['cb']) => {
+        registerCalls.push({ id, node, cb });
+      },
+      unregisterChild: (id: string) => {
+        unregisterCalls.push(id);
+      },
+    } as unknown as SurfaceState;
+    const store = (() => state) as unknown as SurfaceStore;
+    (store as unknown as { getState: () => SurfaceState }).getState = () => state;
+    const Provider: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+      <SurfaceCtx.Provider value={store}>{children}</SurfaceCtx.Provider>
+    );
+    return { Provider, registerCalls, unregisterCalls };
+  }
+
+  it('S9: $trackSize registers the element with the surface store', () => {
+    const { Provider, registerCalls } = fakeSurfaceProvider();
+    const T = styled('div')`
+      color: rgb(91, 92, 93);
+    `;
+    renderStrict(
+      <Provider>
+        <T $trackSize />
+      </Provider>,
+    );
+    expect(registerCalls.length).toBeGreaterThanOrEqual(1);
+    /* The registration callback writes the per-element vars. */
+    const { node, cb } = registerCalls[registerCalls.length - 1];
+    expect(node.tagName).toBe('DIV');
+    cb?.({ width: 120, height: 40, top: 0, left: 0 });
+    expect(node.style.getPropertyValue('--valet-el-width')).toBe('120px');
+    expect(node.style.getPropertyValue('--valet-el-height')).toBe('40px');
+  });
+
+  it('S9: default styled element does NOT register (no $trackSize)', () => {
+    const { Provider, registerCalls } = fakeSurfaceProvider();
+    const U = styled('div')`
+      color: rgb(94, 95, 96);
+    `;
+    renderStrict(
+      <Provider>
+        <U />
+      </Provider>,
+    );
+    expect(registerCalls).toHaveLength(0);
+  });
+
+  it('S9: $trackSize is transient — never leaks onto the DOM element', () => {
+    const { Provider } = fakeSurfaceProvider();
+    const V = styled('div')`
+      color: rgb(97, 98, 99);
+    `;
+    const { container } = renderStrict(
+      <Provider>
+        <V
+          $trackSize
+          data-testid='v'
+        />
+      </Provider>,
+    );
+    const el = container.querySelector('[data-testid="v"]') as HTMLDivElement;
+    expect(el.getAttribute('$trackSize')).toBeNull();
+    expect(el.getAttribute('trackSize')).toBeNull();
   });
 
   it('DOM mode bypasses the pending-rule path and writes the live sheet', () => {

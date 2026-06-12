@@ -33,9 +33,10 @@ import { preset } from '../../css/stylePresets';
 import { useTheme } from '../../system/themeStore';
 import { toRgb, mix, toHex } from '../../helpers/color';
 import type { Theme } from '../../system/themeStore';
-import type { FieldBaseProps, Presettable, Sx } from '../../types';
+import type { FieldBaseProps, Presettable, Space, Sx } from '../../types';
 import type { ChangeInfo, InputSource, OnValueChange, OnValueCommit } from '../../system/events';
 import { valetError } from '../../system/devErrors';
+import { resolveDeprecatedProp } from '../../system/deprecate';
 import { useFieldState } from '../../hooks/useControlledState';
 
 /*───────────────────────────────────────────────────────────*/
@@ -155,8 +156,14 @@ export interface RadioGroupProps
   defaultValue?: string;
   row?: boolean;
   size?: RadioSize | number | string;
-  /** Gap between options */
-  spacing?: number | string;
+  /** Gap between options as spacing units or a CSS length. */
+  gap?: Space;
+  /**
+   * Gap between options.
+   * @deprecated Renamed to `gap` (Q12); `spacing` keeps working through 0.x
+   *   and is removed at 1.0. `gap` wins when both are supplied.
+   */
+  spacing?: Space;
   /** DOM-parity change event (raw input event). */
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   /** Canonical value change event (fires on selection). */
@@ -185,7 +192,8 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
   name: nameProp,
   row = false,
   size = 'md',
-  spacing,
+  gap: gapProp,
+  spacing: spacingProp,
   onChange,
   onValueChange,
   onValueCommit,
@@ -269,13 +277,16 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
   );
 
   /* Gap between radio items ------------------------------------------- */
+  // `gap` is canonical (Q12); `spacing` is the deprecated alias. `gap` wins
+  // when both are supplied; passing `spacing` dev-warns once.
+  const gap = resolveDeprecatedProp('RadioGroup', 'gap', gapProp, 'spacing', spacingProp);
   let gapCss: string;
-  if (spacing === undefined) {
+  if (gap === undefined) {
     gapCss = row ? theme.spacing(1) : theme.spacing(1.5);
-  } else if (typeof spacing === 'number') {
-    gapCss = theme.spacing(spacing);
+  } else if (typeof gap === 'number') {
+    gapCss = theme.spacing(gap);
   } else {
-    gapCss = String(spacing);
+    gapCss = String(gap);
   }
 
   /* Keyboard navigation (roving radio) -------------------------------- */

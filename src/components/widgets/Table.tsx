@@ -881,7 +881,7 @@ export function Table<T extends object>({
           <Pagination
             count={pageCount}
             page={effectivePage}
-            onChange={handlePageChange}
+            onPageChange={handlePageChange}
             visibleWindow={paginationWindow}
           />
         </div>

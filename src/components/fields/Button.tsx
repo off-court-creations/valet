@@ -8,7 +8,7 @@ import { useTheme } from '../../system/themeStore';
 import type { Theme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { Typography } from '../primitives/Typography';
-import type { Presettable, Sx } from '../../types';
+import type { Intent, Presettable, Sx } from '../../types';
 import { computeIntentVars } from '../../system/intentVars';
 import {
   createPolymorphicComponent,
@@ -19,15 +19,6 @@ import {
 /*───────────────────────────────────────────────────────────*/
 export type ButtonVariant = 'filled' | 'outlined' | 'plain';
 export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-type Intent =
-  | 'default'
-  | 'primary'
-  | 'secondary'
-  | 'success'
-  | 'warning'
-  | 'error'
-  | 'info'
-  | (string & {});
 
 /**
  * Behavior-only props. Element attributes (onClick, disabled, type, …)

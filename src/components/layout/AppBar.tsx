@@ -10,7 +10,7 @@ import { useSurface } from '../../system/surfaceStore';
 import { shallow } from 'zustand/shallow';
 import { preset } from '../../css/stylePresets';
 import { inheritSurfaceFontVars } from '../../system/inheritSurfaceFontVars';
-import type { Presettable, Space, Sx } from '../../types';
+import type { Intent, Presettable, Space, Sx } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
 import { Button, type ButtonVariant } from '../fields/Button';
 import { computeIntentVars } from '../../system/intentVars';
@@ -18,15 +18,6 @@ import { zVar } from '../../system/zIndex';
 
 /*───────────────────────────────────────────────────────────*/
 export type AppBarToken = 'primary' | 'secondary' | 'tertiary';
-type Intent =
-  | 'default'
-  | 'primary'
-  | 'secondary'
-  | 'success'
-  | 'warning'
-  | 'error'
-  | 'info'
-  | (string & {});
 
 export interface AppBarProps
   extends Omit<React.HTMLAttributes<HTMLElement>, 'style' | 'title'>,

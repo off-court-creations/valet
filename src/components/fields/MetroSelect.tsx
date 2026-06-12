@@ -33,7 +33,7 @@ import { Typography } from '../primitives/Typography';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { toHex, toRgb, mix } from '../../helpers/color';
-import type { FieldBaseProps, Presettable, Sx } from '../../types';
+import type { FieldBaseProps, Presettable, Space, Sx } from '../../types';
 import type { ChangeInfo, InputSource, OnValueChange, OnValueCommit } from '../../system/events';
 import { styled } from '../../css/createStyled';
 import { valetError } from '../../system/devErrors';
@@ -68,7 +68,8 @@ export interface MetroSelectProps
     FieldBaseProps {
   value?: Primitive | Primitive[];
   defaultValue?: Primitive | Primitive[];
-  gap?: number | string;
+  /** Inter-tile spacing as units or CSS length. */
+  gap?: Space;
   multiple?: boolean;
   /** Visual size of the tiles; token or explicit CSS size. */
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string;

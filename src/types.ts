@@ -28,6 +28,27 @@ export interface SpacingProps {
 export type Sx = React.CSSProperties & { [key: `--${string}`]: string | number };
 
 /**
+ * Semantic colour intent shared by every intent-driven component
+ * (Button, IconButton, Chip, Panel, AppBar). The seven named tokens map to
+ * theme colours; the `(string & {})` member keeps the union open so a caller
+ * can pass an arbitrary theme-token name or CSS colour while preserving
+ * autocomplete on the canonical names.
+ *
+ * Canonical single source of truth (API-TYPES S12): the five components above
+ * each declared this union verbatim — a copy-paste that drifts on edit. They
+ * now alias this type instead.
+ */
+export type Intent =
+  | 'default'
+  | 'primary'
+  | 'secondary'
+  | 'success'
+  | 'warning'
+  | 'error'
+  | 'info'
+  | (string & {});
+
+/**
  * Base props shared by value field components (TextField, Checkbox, Select, Slider, Switch, etc.).
  * Attach these to ensure consistent behavior and documentation across fields.
  *

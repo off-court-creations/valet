@@ -64,6 +64,7 @@ export * from './components/widgets/Markdown';
 export * from './components/widgets/CodeBlock';
 export * from './components/widgets/Chip';
 export { default as KeyModal } from './components/widgets/KeyModal';
+export * from './components/widgets/ValetErrorBoundary';
 
 // ─── AI Helpers ─────────────────────────────────────────────
 export * from './system/aiKeyStore';

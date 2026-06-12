@@ -14,7 +14,7 @@ import { preset } from '../../css/stylePresets';
 import { getOverlayRoot, useOverlay } from '../../system/overlay';
 import { inheritSurfaceFontVars } from '../../system/inheritSurfaceFontVars';
 import { zVar } from '../../system/zIndex';
-import type { Presettable, Sx } from '../../types';
+import type { Presettable, Space, Sx } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 /* Styled primitives                                         */
@@ -131,7 +131,7 @@ export interface ModalProps
   /** Action buttons */
   actions?: ReactNode;
   /** Container padding override */
-  pad?: number | string;
+  pad?: Space;
   /** Compact removes container + internal paddings */
   compact?: boolean;
   /** Disable closing via backdrop click */

@@ -6,7 +6,7 @@ import React, { ReactElement, SVGProps } from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
-import type { Presettable, Sx } from '../../types';
+import type { Intent, Presettable, Sx } from '../../types';
 import { Icon } from '../primitives/Icon';
 import {
   createPolymorphicComponent,
@@ -19,15 +19,6 @@ import { computeIntentVars } from '../../system/intentVars';
 /* Public API                                                */
 export type IconButtonVariant = 'filled' | 'outlined' | 'plain';
 export type IconButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-type Intent =
-  | 'default'
-  | 'primary'
-  | 'secondary'
-  | 'success'
-  | 'warning'
-  | 'error'
-  | 'info'
-  | (string & {});
 
 /**
  * Behavior-only props. Element attributes (onClick, disabled, type, …)

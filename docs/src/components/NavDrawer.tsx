@@ -63,6 +63,7 @@ const widgets: [string, string][] = [
   ['Dropzone', '/dropzone-demo'],
   ['Tree', '/tree-demo'],
   ['Markdown', '/markdown-demo'],
+  ['Error Boundary', '/error-boundary-demo'],
 ];
 
 const examples: [string, string][] = [

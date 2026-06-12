@@ -228,10 +228,15 @@ re-edit the last `Unreleased` change of that nature to be more descriptive to al
 ## Surface state and child registry
 
 Each `<Surface>` instance owns a small Zustand store that tracks screen size
-and every registered child element. Components created with `createStyled`
-register themselves automatically and expose `--valet-el-width` and
-`--valet-el-height` CSS variables. The surface exposes
-`--valet-screen-width` and `--valet-screen-height` on its root element.
+and every registered child element. Size tracking is **opt-in** (PERF S9,
+ruling Q9(a)): a `createStyled` element registers with the surface store — and
+exposes `--valet-el-width` and `--valet-el-height` CSS variables (updated via
+ResizeObserver) — only when it is passed the `$trackSize` transient prop. By
+default a styled element does not register, so the common path does no
+ResizeObserver/store work. (The previous universal registration was dead on
+arrival: it ran for every styled element but the `--valet-el-*` contract never
+held on the initial mount and nothing consumed the vars.) The surface itself
+exposes `--valet-screen-width` and `--valet-screen-height` on its root element.
 Nested `<Surface>` components are disallowed.
 
 Tables respect available height by default. Their content scrolls inside the

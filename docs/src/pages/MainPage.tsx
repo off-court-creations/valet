@@ -355,7 +355,7 @@ export default function MainPage() {
                       count={loremByPage.length}
                       visibleWindow={5}
                       page={demoPage}
-                      onChange={setDemoPage}
+                      onPageChange={setDemoPage}
                     />
                     <Typography>Current page: {demoPage}</Typography>
                   </Stack>

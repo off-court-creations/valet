@@ -5,6 +5,7 @@
   "docs": {
     "bestPractices": [
       "Use Switch for immediate on/off settings that apply instantly; for form submissions, prefer `Checkbox`.",
+      "Read the new boolean from `onValueChange(next, info)`. The raw-event `onChange` is deprecated; it still fires through 0.x with a one-time dev warning and is removed at 1.0 — read `info.event` or attach a native `onClick` if you need the DOM event.",
       "Label state, not action (e.g., 'Wi‑Fi' rather than 'Enable'). Set a stable `name` when part of a form.",
       "Provide clear feedback on change (e.g., brief text confirmation, or reflect the new state in the UI).",
       "Respect platform conventions for motion and colours; avoid ambiguous palettes for on/off states.",

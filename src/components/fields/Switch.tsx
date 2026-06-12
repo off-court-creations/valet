@@ -8,6 +8,7 @@ import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { useFieldState } from '../../hooks/useControlledState';
+import { deprecateProp } from '../../system/deprecate';
 import type { FieldBaseProps } from '../../types';
 import type { ChangeInfo, InputSource, OnValueChange, OnValueCommit } from '../../system/events';
 
@@ -113,7 +114,15 @@ export interface SwitchProps
   checked?: boolean;
   /** Default state for uncontrolled usage. */
   defaultChecked?: boolean;
-  /** DOM click event parity (raw). */
+  /**
+   * Raw DOM click passthrough.
+   *
+   * @deprecated Deprecated in favour of `onValueChange` (API-TYPES S10, Q12).
+   * It still fires with the raw `MouseEvent` through 0.x but logs a one-time
+   * dev warning and is removed at 1.0. For the new boolean value (with the
+   * typed {@link ChangeInfo} payload), use `onValueChange`; for the raw DOM
+   * event, read `event` off that payload or attach a native `onClick`.
+   */
   onChange?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   /** Canonical value change event (fires on each toggle). */
   onValueChange?: OnValueChange<boolean>;
@@ -172,6 +181,16 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
       name,
       component: 'Switch',
     });
+
+    /* `onChange` (raw DOM passthrough) is deprecated in favour of the
+       canonical `onValueChange` (API-TYPES S10, Q12 / ruling R30). It keeps
+       firing through 0.x but warns once when supplied; removed at 1.0. Unlike
+       a renamed value prop the two are not mutually exclusive — the old code
+       always fired both — so we warn on presence rather than resolve one over
+       the other. */
+    if (onChange !== undefined) {
+      deprecateProp('Switch', 'onChange', 'onValueChange');
+    }
 
     /* ----- event handler ----------------------------------- */
     const handleToggle: MouseEventHandler<HTMLButtonElement> = useCallback(

@@ -738,7 +738,15 @@ describe('controlled contract — Tabs (useControlledState)', () => {
   });
 });
 
-const accordionTree = (props: { open?: number | number[]; defaultOpen?: number | number[] }) => (
+/* API-TYPES S9 renamed Accordion `open`/`defaultOpen` → `expanded`/
+   `defaultExpanded` (Q12). The contract suite tracks the canonical names so
+   it tests the controlled behaviour, not the deprecation path (which has its
+   own suite in Accordion.deprecate.dom.test.tsx and would otherwise dirty the
+   strayConsole/valetWarns assertions). */
+const accordionTree = (props: {
+  expanded?: number | number[];
+  defaultExpanded?: number | number[];
+}) => (
   <Accordion {...props}>
     <Accordion.Item header='First'>one</Accordion.Item>
     <Accordion.Item header='Second'>two</Accordion.Item>
@@ -747,23 +755,23 @@ const accordionTree = (props: { open?: number | number[]; defaultOpen?: number |
 );
 
 describe('controlled contract — Accordion (useControlledState)', () => {
-  it('pure-controlled: `open={0}` stays controlled — clicks report intent, view never self-moves', () => {
-    const { container } = mount(accordionTree({ open: 0 }));
+  it('pure-controlled: `expanded={0}` stays controlled — clicks report intent, view never self-moves', () => {
+    const { container } = mount(accordionTree({ expanded: 0 }));
     expect(accordionExpanded(container)).toEqual([0]);
 
     const headers = Array.from(
       container.querySelectorAll<HTMLButtonElement>('button[aria-expanded]'),
     );
     clickEl(headers[1]);
-    // Controlled: the parent didn't change `open`, so the view is unchanged.
+    // Controlled: the parent didn't change `expanded`, so the view is unchanged.
     expect(accordionExpanded(container)).toEqual([0]);
 
     expect(strayConsole()).toEqual([]);
     expect(valetWarns()).toEqual([]);
   });
 
-  it('pure-uncontrolled: `defaultOpen` seeds and a header click toggles the panel', () => {
-    const { container } = mount(accordionTree({ defaultOpen: 0 }));
+  it('pure-uncontrolled: `defaultExpanded` seeds and a header click toggles the panel', () => {
+    const { container } = mount(accordionTree({ defaultExpanded: 0 }));
     expect(accordionExpanded(container)).toEqual([0]);
 
     const headers = Array.from(

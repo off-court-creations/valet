@@ -397,5 +397,12 @@
     "summary": "Basic accessible tree view component",
     "slug": "components/widgets/tree",
     "status": "stable"
+  },
+  {
+    "name": "ValetErrorBoundary",
+    "category": "widgets",
+    "summary": "GOVERNANCE S10 (plan §3.12 S10, ruling Q18(a)): opt-in resilience.",
+    "slug": "components/widgets/valeterrorboundary",
+    "status": "stable"
   }
 ]

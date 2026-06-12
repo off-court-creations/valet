@@ -360,5 +360,14 @@
   ],
   "hint": [
     "Tooltip"
+  ],
+  "error-boundary": [
+    "ValetErrorBoundary"
+  ],
+  "errorboundary": [
+    "ValetErrorBoundary"
+  ],
+  "boundary": [
+    "ValetErrorBoundary"
   ]
 }

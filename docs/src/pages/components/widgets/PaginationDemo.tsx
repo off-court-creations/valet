@@ -39,7 +39,7 @@ export default function PaginationDemoPage() {
         count={10}
         visibleWindow={5}
         page={usagePage}
-        onChange={setUsagePage}
+        onPageChange={setUsagePage}
       />
       <Typography>Current page: {usagePage}</Typography>
     </Stack>
@@ -92,7 +92,7 @@ export default function PaginationDemoPage() {
       <Pagination
         count={count}
         page={page}
-        onChange={setPage}
+        onPageChange={setPage}
         {...(visibleWindow > 0 ? { visibleWindow } : {})}
         autoFollowActive={autoFollowActive}
       />

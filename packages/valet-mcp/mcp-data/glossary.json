@@ -104,7 +104,7 @@
     },
     {
       "term": "Surface",
-      "definition": "A route-level container that owns a small Zustand store and CSS variables for screen size. Disallows nesting; components register themselves under a Surface.",
+      "definition": "A route-level container that owns a small Zustand store and CSS variables for screen size. Disallows nesting; styled elements opt into per-element size tracking under a Surface via the $trackSize prop.",
       "category": "core",
       "seeAlso": [
         "Stack",
@@ -114,7 +114,7 @@
     },
     {
       "term": "Surface state",
-      "definition": "Per-Surface Zustand store tracking screen and registered child element sizes. Components expose --valet-el-* CSS vars; Surface exposes screen vars.",
+      "definition": "Per-Surface Zustand store tracking screen and registered child element sizes. Styled elements opt into per-element metrics with the $trackSize prop (which exposes --valet-el-* CSS vars); Surface always exposes screen vars.",
       "category": "core",
       "aliases": [
         "element registry"
@@ -167,5 +167,5 @@
     }
   ],
   "version": "0.34.1",
-  "builtAt": "2026-06-12T19:05:37.972Z"
+  "builtAt": "2026-06-12T20:42:09.369Z"
 }

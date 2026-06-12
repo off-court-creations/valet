@@ -194,7 +194,11 @@ describe('Surface (jsdom)', () => {
     expect(scrollCalls).toHaveLength(0);
   });
 
-  it('n styled-child mounts → one children notification; Surface does not re-render', async () => {
+  /* PERF S9 (ruling Q9(a)): size tracking is OPT-IN via the `$trackSize`
+     transient prop. Only `$trackSize` elements register with the surface
+     store and receive the `--valet-el-*` vars; plain styled children do
+     not (the old universal registration was unconsumed observer churn). */
+  it('$trackSize styled-child mounts → one children notification; Surface does not re-render', async () => {
     ROStub.deliverInitial = true;
     const Kid = styled('div')`
       color: rgb(200, 100, 50);
@@ -206,7 +210,10 @@ describe('Surface (jsdom)', () => {
       return (
         <>
           {Array.from({ length: n }, (_, i) => (
-            <Kid key={i} />
+            <Kid
+              key={i}
+              $trackSize
+            />
           ))}
         </>
       );
@@ -240,7 +247,7 @@ describe('Surface (jsdom)', () => {
     expect(store.getState().children.size).toBe(5);
     expect(commits).toBe(commitsAfterMount); // children commit ≠ Surface render
 
-    /* registerChild cb still feeds per-element CSS vars (via RO). */
+    /* registerChild cb feeds per-element CSS vars (via RO) — opt-in only. */
     const kid = container.querySelector('div[class^="z-div-"]') as HTMLDivElement;
     expect(kid.style.getPropertyValue('--valet-el-width')).toBe('0px');
 
@@ -251,6 +258,36 @@ describe('Surface (jsdom)', () => {
     await drain();
     expect(notifications).toBe(2);
     expect(store.getState().children.size).toBe(0);
+  });
+
+  it('default styled children do NOT register (no $trackSize) — zero store churn, no --valet-el-* vars', async () => {
+    ROStub.deliverInitial = true;
+    const Kid = styled('div')`
+      color: rgb(10, 20, 30);
+    `;
+    const { container } = renderStrict(
+      <Surface>
+        <Capture />
+        {Array.from({ length: 5 }, (_, i) => (
+          <Kid key={i} />
+        ))}
+      </Surface>,
+    );
+    const store = storeRef.current!;
+    let notifications = 0;
+    store.subscribe(() => {
+      notifications += 1;
+    });
+    await drain();
+
+    /* No registration: no children in the store, no notifications. */
+    expect(notifications).toBe(0);
+    expect(store.getState().children.size).toBe(0);
+
+    /* …and the dead-on-arrival `--valet-el-*` vars are absent by default. */
+    const kid = container.querySelector('div[class^="z-div-"]') as HTMLDivElement;
+    expect(kid.style.getPropertyValue('--valet-el-width')).toBe('');
+    expect(kid.style.getPropertyValue('--valet-el-height')).toBe('');
   });
 });
 
