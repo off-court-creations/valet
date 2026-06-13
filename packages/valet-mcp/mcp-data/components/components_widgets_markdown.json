@@ -2,7 +2,7 @@
   "name": "Markdown",
   "category": "widgets",
   "slug": "components/widgets/markdown",
-  "summary": "Markdown component",
+  "summary": "Renders a Markdown string into valet primitives (headings, lists, links, fenced code with highlighting); use it to display AI/CMS output as themed React, not raw HTML.",
   "status": "stable",
   "aliases": [
     "markdown",
@@ -24,7 +24,7 @@
     },
     {
       "name": "sx",
-      "type": "import('../../types').Sx",
+      "type": "Sx",
       "required": false,
       "description": "Inline styles (with CSS var support)"
     },
@@ -46,7 +46,6 @@
   ],
   "cssPresets": [],
   "events": [],
-  "actions": [],
   "slots": [],
   "bestPractices": [
     "Keep input trusted or sanitized. Do not feed untrusted Markdown unless you sanitize it first.",
@@ -135,9 +134,11 @@
       }
     }
   ],
+  "docsUrl": "/markdown-demo",
   "sourceFiles": [
-    "src/components/widgets/Markdown.tsx"
+    "src/components/widgets/Markdown.tsx",
+    "docs/src/pages/components/widgets/MarkdownDemo.tsx"
   ],
-  "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "version": "0.35.1",
+  "schemaVersion": "1.7"
 }

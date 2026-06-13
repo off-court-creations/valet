@@ -5,8 +5,12 @@ applications:
       phases:
         preBuild:
           commands:
-            # Install mise (runtime manager) and activate it for this shell
-            - curl -fsSL https://mise.jdx.dev/install.sh | sh
+            # Install mise (runtime manager) and activate it for this shell.
+            # MISE_VERSION pins the installer to a known release (supply-chain
+            # hygiene — install.sh defaults to whatever is latest). Bump the
+            # pin deliberately; the script reads MISE_VERSION per mise's
+            # documented install mechanism.
+            - curl -fsSL https://mise.jdx.dev/install.sh | MISE_VERSION=v2026.6.2 sh
             - export PATH="$HOME/.local/bin:$PATH"
             - eval "$($HOME/.local/bin/mise activate bash)"
             - ~/.local/bin/mise --version

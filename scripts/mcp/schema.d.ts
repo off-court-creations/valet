@@ -45,7 +45,6 @@ export interface ValetComponentDoc {
   cssVars?: string[];
   cssPresets?: string[];
   events?: Array<{ name: string; payloadType?: string; description?: string }>;
-  actions?: Array<{ name: string; signature?: string; description?: string }>;
   slots?: Array<{ name: string; description?: string }>;
   bestPractices?: string[];
   examples?: ValetExample[];

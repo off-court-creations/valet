@@ -2,7 +2,7 @@
   "name": "Panel",
   "category": "layout",
   "slug": "components/layout/panel",
-  "summary": "Panel component",
+  "summary": "Bordered, padded surface card for grouping related content into a visually distinct section; supports `normalizeRowHeights` (the old `normalizeRowHeight` is a deprecated alias) for equal-height children — use it to frame a block, and `Box` for an unstyled container.",
   "status": "stable",
   "aliases": [
     "panel",
@@ -53,11 +53,19 @@
       ]
     },
     {
+      "name": "normalizeRowHeights",
+      "type": "boolean",
+      "required": false,
+      "description": "Opt out of row height normalization (when a parent Grid enables it).\nDefaults to true (normalize). Set to false to keep intrinsic heights."
+    },
+    {
       "name": "normalizeRowHeight",
       "type": "boolean",
       "required": false,
-      "description": "Opt out of row height normalization (when a parent Grid enables it).\nDefaults to true (normalize). Set to false to keep intrinsic heights.",
-      "default": "true"
+      "deprecated": {
+        "replacement": "normalizeRowHeights"
+      },
+      "description": "Opt out of row height normalization."
     },
     {
       "name": "sx",
@@ -72,7 +80,7 @@
     },
     {
       "name": "pad",
-      "type": "import(\"/home/xbenc/occ/valet/src/types\").Space | undefined",
+      "type": "Space | undefined",
       "required": false,
       "description": "Container padding as units or CSS length."
     },
@@ -112,7 +120,6 @@
   ],
   "cssPresets": [],
   "events": [],
-  "actions": [],
   "slots": [],
   "bestPractices": [
     "Use Panel to group related content and provide visual separation.",
@@ -120,6 +127,7 @@
     "Prefer theme tokens for backgrounds; if you set a custom background ensure text maintains contrast.",
     "Use presets to standardize repeating styles; avoid duplicating sx across pages.",
     "Reserve fullWidth for sections that should span the container; otherwise, anchor with alignX.",
+    "Control row-height normalization with `normalizeRowHeights` (plural). Inside a Grid that normalizes row heights, set `normalizeRowHeights={false}` to keep intrinsic heights. The old singular `normalizeRowHeight` is a deprecated alias (Q12): it keeps working through 0.x with a one-time dev warning and is removed at 1.0 — migrate to `normalizeRowHeights`, which wins when both are supplied.",
     "Center content with centerContent for compact UI elements, not long-form text blocks.",
     "Nest Panels judiciously to create hierarchy; keep padding consistent using spacing tokens."
   ],
@@ -151,7 +159,7 @@
     {
       "id": "panel-background",
       "title": "Background + padding",
-      "code": "<Panel background={theme.colors['secondary']} sx={{ padding: theme.spacing(1) }}><Typography>Readable on themed background</Typography></Panel>",
+      "code": "<Panel color={theme.colors['secondary']} sx={{ padding: theme.spacing(1) }}><Typography>Readable on themed background</Typography></Panel>",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {}
@@ -165,9 +173,11 @@
       "minimalProps": {}
     }
   ],
+  "docsUrl": "/panel-demo",
   "sourceFiles": [
-    "src/components/layout/Panel.tsx"
+    "src/components/layout/Panel.tsx",
+    "docs/src/pages/components/layout/Panel.tsx"
   ],
-  "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "version": "0.35.1",
+  "schemaVersion": "1.7"
 }

@@ -82,8 +82,8 @@ export default function AccordionDemoPage() {
         Toggle second programmatically
       </Button>
       <Accordion
-        open={openSingle}
-        onOpenChange={setOpenSingle}
+        expanded={openSingle}
+        onExpandedChange={setOpenSingle}
       >
         <Accordion.Item header='First'>
           <Typography>{LOREM}</Typography>
@@ -99,8 +99,8 @@ export default function AccordionDemoPage() {
       <Typography variant='h3'>4. Controlled (multiple)</Typography>
       <Accordion
         multiple
-        open={openMulti}
-        onOpenChange={setOpenMulti}
+        expanded={openMulti}
+        onExpandedChange={setOpenMulti}
       >
         <Accordion.Item header='Alpha'>
           <Typography>{LOREM}</Typography>

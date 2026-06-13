@@ -1,15 +1,24 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/fields/Iterator.tsx | valet
 // numeric stepper with plus/minus buttons and scroll wheel support
+//
+// FIELDS S9 (rulings R9/R10): value/form/internal resolution delegated to the
+// shared `useFieldState` hook (precedence prop > form > internal, latched at
+// mount, no mount-time store writes). ChangeInfo.source is now classified
+// honestly per interaction path (wheel ⇒ 'wheel', +/- buttons & Arrow keys ⇒
+// the caller-supplied source, Page/Home/End/Enter keys ⇒ 'keyboard', typing
+// commit & blur ⇒ 'keyboard') instead of the old hardcoded 'programmatic'.
 // ─────────────────────────────────────────────────────────────
 import React, { forwardRef, useState, useEffect, useRef, useCallback } from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { IconButton } from './IconButton';
-import { useOptionalForm } from './FormControl';
+import { useFieldState } from '../../hooks/useControlledState';
+import { useComponentStrings } from '../../system/locale';
+import type { DeepPartialStrings, ValetStrings } from '../../system/locale';
 import type { FieldBaseProps } from '../../types';
-import type { ChangeInfo, OnValueChange, OnValueCommit } from '../../system/events';
+import type { ChangeInfo, InputSource, OnValueChange, OnValueCommit } from '../../system/events';
 import type { Theme } from '../../system/themeStore';
 
 /*───────────────────────────────────────────────────────────*/
@@ -43,6 +52,12 @@ export interface IteratorProps
   wheelBehavior?: 'off' | 'focus' | 'hover';
   /** Control width of the numeric field (token or CSS length). */
   width?: number | string;
+  /**
+   * Instance-level overrides for this component's i18n strings. Wins over the
+   * `ValetLocaleProvider` value, which in turn wins over the built-in English
+   * defaults (A11Y S8 resolution contract; see `src/system/locale.tsx`).
+   */
+  labels?: DeepPartialStrings<ValetStrings['iterator']>;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -98,14 +113,27 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
       width = '3.5rem',
       disabled = false,
       readOnly = false,
+      // API-TYPES S6 (stage A): destructure the FieldBaseProps cluster BEFORE the
+      // rest-spread so label/helperText/error/fullWidth stop leaking onto the
+      // <input> as invalid DOM attributes. Only `error` is wired (aria-invalid
+      // below); FieldShell rendering of the rest is Phase 2 / Q10.
+      label: _label,
+      helperText: _helperText,
+      error,
+      fullWidth: _fullWidth,
       preset: p,
       className,
+      labels,
       sx,
       ...rest
     },
     ref,
   ) => {
+    void _label;
+    void _helperText;
+    void _fullWidth;
     const { theme } = useTheme();
+    const t = useComponentStrings('iterator', labels);
 
     const localRef = useRef<HTMLInputElement | null>(null);
     const setRef = useCallback(
@@ -117,25 +145,20 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
       [ref],
     );
 
-    const form = useOptionalForm<Record<string, number | undefined>>();
-
-    const formVal = form && name ? (form.values[name] as number | undefined) : undefined;
-    const controlled = valueProp !== undefined || formVal !== undefined;
-    // Controlled/uncontrolled guard (dev-only)
-    const initialCtl = React.useRef<boolean | undefined>(undefined);
-    React.useEffect(() => {
-      if (process.env.NODE_ENV === 'production') return;
-      if (initialCtl.current === undefined) initialCtl.current = controlled;
-      else if (initialCtl.current !== controlled) {
-        console.error(
-          'Iterator: component switched from %s to %s after mount. This is not supported.',
-          initialCtl.current ? 'controlled' : 'uncontrolled',
-          controlled ? 'controlled' : 'uncontrolled',
-        );
-      }
-    }, [controlled]);
-    const [internal, setInternal] = useState(defaultValue ?? 0);
-    const current = controlled ? (formVal ?? valueProp!) : internal;
+    /**
+     * Single resolution of value/control/form binding (ruling R9). Precedence
+     * is prop > form > internal, latched at mount; an unseeded form key renders
+     * `defaultValue ?? 0` as controlled and never writes on mount. The setter
+     * writes through to the store whenever live-bound; the hook itself decides
+     * whether `setValue` updates internal state.
+     */
+    const [current, setValue] = useFieldState<number>({
+      value: valueProp,
+      defaultValue,
+      fallback: 0,
+      name,
+      component: 'Iterator',
+    });
     const [text, setText] = useState(String(current));
 
     useEffect(() => {
@@ -163,40 +186,48 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
       [min, max],
     );
 
+    // `source` is supplied explicitly by each interaction path (ruling R10);
+    // the old code hardcoded 'programmatic' for every change, including real
+    // user typing, wheel stepping and button presses.
     const commit = useCallback(
-      (next: number, phase: 'input' | 'commit' = 'commit') => {
+      (
+        next: number,
+        phase: 'input' | 'commit' = 'commit',
+        source: InputSource = 'programmatic',
+      ) => {
         const v = alignToStep(clamp(next));
-        if (!controlled) setInternal(v);
-        if (form && name) form.setField(name as keyof Record<string, number | undefined>, v);
+        // Updates internal state (uncontrolled) and/or writes through to the
+        // form store (live-bound) via the hook's single precedence rule.
+        setValue(v);
         const info: ChangeInfo<number> = {
           previousValue: current,
           phase,
-          source: 'programmatic',
+          source,
           name,
         };
         onValueChange?.(v, { ...info, phase: 'input' });
         if (phase === 'commit') onValueCommit?.(v, { ...info, phase: 'commit' });
         setText(String(v));
       },
-      [alignToStep, clamp, controlled, form, name, onValueChange, onValueCommit, current],
+      [alignToStep, clamp, setValue, name, onValueChange, onValueCommit, current],
     );
 
     const handleInput: React.ChangeEventHandler<HTMLInputElement> = (e) => {
       const val = e.target.value;
       setText(val);
       const num = parseFloat(val);
-      if (commitOnChange && !Number.isNaN(num)) commit(num, 'input');
+      if (commitOnChange && !Number.isNaN(num)) commit(num, 'input', 'keyboard');
     };
 
     const handleBlur: React.FocusEventHandler<HTMLInputElement> = () => {
       const num = parseFloat(text);
       if (Number.isNaN(num)) setText(String(current));
-      else commit(num, 'commit');
+      else commit(num, 'commit', 'keyboard');
     };
 
     const stepBy = useCallback(
-      (dir: number) => {
-        commit(current + dir * step);
+      (dir: number, source: InputSource = 'pointer') => {
+        commit(current + dir * step, 'commit', source);
       },
       [commit, current, step],
     );
@@ -208,7 +239,7 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
         if (wheelBehavior === 'focus' && localRef.current !== document.activeElement) return;
         e.preventDefault();
         e.stopPropagation();
-        stepBy(e.deltaY < 0 ? 1 : -1);
+        stepBy(e.deltaY < 0 ? 1 : -1, 'wheel');
       },
       [disabled, readOnly, stepBy, wheelBehavior],
     );
@@ -230,25 +261,25 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
       const big = Math.max(step * 10, step);
       if (key === 'ArrowUp') {
         e.preventDefault();
-        stepBy(1);
+        stepBy(1, 'keyboard');
       } else if (key === 'ArrowDown') {
         e.preventDefault();
-        stepBy(-1);
+        stepBy(-1, 'keyboard');
       } else if (key === 'PageUp') {
         e.preventDefault();
-        commit(current + big, 'commit');
+        commit(current + big, 'commit', 'keyboard');
       } else if (key === 'PageDown') {
         e.preventDefault();
-        commit(current - big, 'commit');
+        commit(current - big, 'commit', 'keyboard');
       } else if (key === 'Home' && min !== undefined) {
         e.preventDefault();
-        commit(min, 'commit');
+        commit(min, 'commit', 'keyboard');
       } else if (key === 'End' && max !== undefined) {
         e.preventDefault();
-        commit(max, 'commit');
+        commit(max, 'commit', 'keyboard');
       } else if (key === 'Enter') {
         const num = parseFloat(text);
-        if (!Number.isNaN(num)) commit(num);
+        if (!Number.isNaN(num)) commit(num, 'commit', 'keyboard');
         else setText(String(current));
       } else if (key === 'Escape') {
         setText(String(current));
@@ -274,7 +305,7 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
           icon='mdi:minus-thick'
           onClick={() => stepBy(-1)}
           disabled={decDisabled}
-          aria-label='decrement'
+          aria-label={t.decrement}
         />
         <Field
           {...rest}
@@ -293,6 +324,7 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
           onKeyDown={handleKeyDown}
           disabled={disabled}
           readOnly={readOnly}
+          aria-invalid={error || undefined}
         />
         <IconButton
           size='xs'
@@ -300,7 +332,7 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
           icon='mdi:plus-thick'
           onClick={() => stepBy(1)}
           disabled={incDisabled}
-          aria-label='increment'
+          aria-label={t.increment}
         />
       </Wrapper>
     );

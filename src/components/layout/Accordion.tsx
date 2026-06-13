@@ -26,35 +26,22 @@ import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { toRgb, mix, toHex } from '../../helpers/color';
 import { useSurface } from '../../system/surfaceStore';
+import { valetError } from '../../system/devErrors';
+import { resolveDeprecatedProp } from '../../system/deprecate';
 import { shallow } from 'zustand/shallow';
 import type { Presettable, SpacingProps, Sx } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
 import { Typography } from '../primitives/Typography';
+import { useControlledState } from '../../hooks/useControlledState';
 
 /*───────────────────────────────────────────────────────────*/
 /* Types / machine                                           */
 type Mode = 'single' | 'multiple';
 
 // (internal note) A reducer-based machine was considered; for simplicity and
-// alignment with controllable state, we compute next state in callbacks using Mode.
-
-function useControllableState<T>(
-  controlled: T | undefined,
-  defaultValue: T,
-  onChange?: (next: T) => void,
-) {
-  const [inner, setInner] = useState<T>(defaultValue);
-  const isControlled = controlled !== undefined;
-  const value = isControlled ? (controlled as T) : inner;
-  const setValue = useCallback(
-    (next: T) => {
-      if (!isControlled) setInner(next);
-      onChange?.(next);
-    },
-    [isControlled, onChange],
-  );
-  return [value, setValue] as const;
-}
+// alignment with controllable state, we compute next state in callbacks using
+// the shared `useControlledState` hook (ruling R9) — the previous private
+// `useControllableState` copy was deleted by FF S10, its sole deleter.
 
 /*───────────────────────────────────────────────────────────*/
 /* Context (roving focus + actions)                          */
@@ -72,12 +59,21 @@ interface Ctx {
   focusFirst: () => void;
   focusLast: () => void;
   activeIndex: number;
+  /** `useId()`-derived prefix (A11Y S6): header/panel DOM ids are namespaced
+      per <Accordion> instance so `id`/`aria-controls`/`aria-labelledby` never
+      collide when two Accordions render on the same page. */
+  idBase: string;
 }
 
 const AccordionCtx = createContext<Ctx | null>(null);
 const useAccordion = () => {
   const ctx = useContext(AccordionCtx);
-  if (!ctx) throw new Error('<Accordion.Item> must be inside <Accordion>');
+  if (!ctx)
+    throw valetError(
+      'Accordion',
+      '<Accordion.Item> must be inside <Accordion> — items read open state from its context. Move the item under an <Accordion> parent.',
+      'accordion-demo',
+    );
   return ctx;
 };
 
@@ -160,7 +156,7 @@ const HeaderBtn = styled('button')<{
   color: inherit;
   font: inherit;
   cursor: pointer;
-  text-align: left;
+  text-align: start;
   appearance: none;
   box-sizing: border-box;
   margin-inline-start: -${({ $shift }) => $shift};
@@ -216,9 +212,30 @@ export interface AccordionProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'>,
     Presettable,
     Pick<SpacingProps, 'pad' | 'compact'> {
-  defaultOpen?: number | number[];
-  open?: number | number[];
+  /** Uncontrolled seed: index (or indices) expanded on first render. */
+  defaultExpanded?: number | number[];
+  /** Controlled expanded index (or indices). */
+  expanded?: number | number[];
   multiple?: boolean;
+  /** Fires with the next expanded indices whenever the user toggles a panel. */
+  onExpandedChange?: (expanded: number[]) => void;
+  /**
+   * @deprecated Renamed to {@link AccordionProps.defaultExpanded | `defaultExpanded`}
+   * (Q12). The `defaultOpen` alias keeps working through 0.x with a one-time dev
+   * warning and is removed at 1.0.
+   */
+  defaultOpen?: number | number[];
+  /**
+   * @deprecated Renamed to {@link AccordionProps.expanded | `expanded`} (Q12).
+   * The `open` alias keeps working through 0.x with a one-time dev warning and
+   * is removed at 1.0.
+   */
+  open?: number | number[];
+  /**
+   * @deprecated Renamed to {@link AccordionProps.onExpandedChange | `onExpandedChange`}
+   * (Q12). The `onOpenChange` alias keeps working through 0.x with a one-time dev
+   * warning and is removed at 1.0.
+   */
   onOpenChange?: (open: number[]) => void;
   headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
   constrainHeight?: boolean;
@@ -241,10 +258,13 @@ export interface AccordionItemProps extends React.HTMLAttributes<HTMLDivElement>
 export const Accordion: React.FC<AccordionProps> & {
   Item: React.FC<AccordionItemProps>;
 } = ({
-  defaultOpen,
+  expanded: expandedProp,
+  defaultExpanded,
+  onExpandedChange,
   open: openProp,
-  multiple = false,
+  defaultOpen,
   onOpenChange,
+  multiple = false,
   headingLevel = 3,
   constrainHeight = true,
   unmountOnExit = false,
@@ -268,6 +288,9 @@ export const Accordion: React.FC<AccordionProps> & {
   );
   const wrapRef = useRef<HTMLDivElement>(null);
   const uniqueId = useId();
+  /* Per-instance id namespace (A11Y S6). Sanitise `useId()`'s `:`
+     delimiters so the resulting ids stay valid CSS selectors. */
+  const idBase = `valet-acc-${uniqueId.replace(/:/g, '')}`;
   const [maxHeight, setMaxHeight] = useState<number>();
   const [shouldConstrain, setShouldConstrain] = useState(false);
   const constraintRef = useRef(false);
@@ -276,10 +299,35 @@ export const Accordion: React.FC<AccordionProps> & {
   const disabledSet = useRef<Set<number>>(new Set());
   const [activeIndex, setActiveIndex] = useState(0);
   const toArray = (v?: number | number[]) => (v === undefined ? [] : Array.isArray(v) ? v : [v]);
-  const [externalOpen, setExternalOpen] = useControllableState<number[]>(
-    openProp ? toArray(openProp) : undefined,
-    toArray(defaultOpen),
+
+  /* Canonical names win; deprecated `open*` aliases warn once each (Q12,
+     ruling R30). Resolution happens BEFORE the shared hook — the hook just
+     consumes the resolved props (rebases on FF S4/S10; the `!== undefined`
+     falsiness fix below is untouched). */
+  const expanded = resolveDeprecatedProp('Accordion', 'expanded', expandedProp, 'open', openProp);
+  const resolvedDefaultExpanded = resolveDeprecatedProp(
+    'Accordion',
+    'defaultExpanded',
+    defaultExpanded,
+    'defaultOpen',
+    defaultOpen,
+  );
+  const onExpanded = resolveDeprecatedProp(
+    'Accordion',
+    'onExpandedChange',
+    onExpandedChange,
+    'onOpenChange',
     onOpenChange,
+  );
+
+  const [externalOpen, setExternalOpen] = useControlledState<number[]>(
+    /* `expanded !== undefined` — a bare truthiness check made
+       `expanded={0}` (index 0, the common case) flip to uncontrolled.
+       (Wave-0.3 fix preserved; do not regress to `expanded ? …`.) */
+    expanded !== undefined ? toArray(expanded) : undefined,
+    toArray(resolvedDefaultExpanded),
+    onExpanded,
+    'Accordion',
   );
 
   const mode: Mode = multiple ? 'multiple' : 'single';
@@ -355,8 +403,9 @@ export const Accordion: React.FC<AccordionProps> & {
       focusFirst: () => focusItem(nextEnabledFrom(-1, 1)),
       focusLast: () => focusItem(nextEnabledFrom(0, -1)),
       activeIndex,
+      idBase,
     };
-  }, [open, toggle, mode, headingLevel, activeIndex]);
+  }, [open, toggle, mode, headingLevel, activeIndex, idBase]);
 
   const presetClasses = p ? preset(p) : '';
 
@@ -505,6 +554,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
     focusFirst,
     focusLast,
     activeIndex,
+    idBase,
   } = useAccordion();
 
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -577,8 +627,8 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
       cleanupFonts();
     };
   }, [children, isOpen]);
-  const headerId = `acc-btn-${index}`;
-  const panelId = `acc-panel-${index}`;
+  const headerId = `${idBase}-btn-${index}`;
+  const panelId = `${idBase}-panel-${index}`;
 
   /* ----- compute disabled colour (greyed-out, mode-aware) -- */
   const disabledColor = toHex(

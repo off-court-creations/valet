@@ -11,6 +11,7 @@ import { useTheme } from '../../system/themeStore';
 import { useSurface } from '../../system/surfaceStore';
 import { shallow } from 'zustand/shallow';
 import { preset } from '../../css/stylePresets';
+import { warnOnce } from '../../system/devErrors';
 import type { Presettable, Sx } from '../../types';
 import type { Variant as VariantType, WeightAlias } from '../../types/typography';
 import {
@@ -57,9 +58,127 @@ const mapping: Record<Variant, keyof JSX.IntrinsicElements> = {
   button: 'span',
 };
 
+/* ─── Unknown-variant guard ──────────────────────────────────────────────
+   `variant` is checked at compile time, but Typography is rendered live in
+   the docs from un-type-checked sidecar example code (Babel-transpiled JSON).
+   A typo like `variant='body-sm'` therefore reaches the runtime as a non-key
+   string and previously white-screened the page: `theme.typography[variant]`
+   is `undefined`, so the unguarded `.md` read threw a TypeError (and
+   `mapping[variant]` resolved to an `undefined` host tag).
+
+   This is an enum typo, NOT the missing-context/required-prop misuse that the
+   Q18 hard-throw policy governs — so the agent-DX answer here is to degrade
+   gracefully: dev-warn once (naming the component, the bad variant, and the
+   valid set) and fall back to 'body' rather than throw. Validation is keyed on
+   `theme.typography` (the source of truth for size tokens); `mapping` shares
+   the same key set, so the fallback fixes both the size lookup and the host
+   tag. */
+const VALID_VARIANTS = Object.keys(mapping) as Variant[];
+
+function resolveVariant(variant: Variant, themeTypography: Record<string, unknown>): Variant {
+  if (Object.prototype.hasOwnProperty.call(themeTypography, variant)) return variant;
+  warnOnce(
+    `Typography:variant:${String(variant)}`,
+    `valet: Typography: unknown variant ${JSON.stringify(variant)}. ` +
+      `Valid variants are: ${VALID_VARIANTS.join(', ')}. Falling back to 'body'.`,
+  );
+  return 'body';
+}
+
+// ─── PERF S7 — per-tag module-scope styled cache ──────────────────────
+// The styled component reads everything it needs from its `$`-prefixed
+// props (none of the interpolations close over component-instance state),
+// so its identity depends *only* on the host tag. A per-instance
+// `useMemo(() => styled(Tag), [Tag])` was minting a fresh component for
+// every Typography mount: a brand-new identity remounts the entire styled
+// subtree (loses DOM state, re-runs child effects) instead of reusing one.
+// Hoisting the factory to module scope and caching by tag gives every
+// `<Typography>` of the same element a single stable component identity,
+// shared across mounts and unaffected by re-renders — no subtree remounts.
+type TypographyStyleProps = {
+  $variant: Variant;
+  $color?: string;
+  $fontFamily?: string;
+  $family?: 'heading' | 'body' | 'mono' | 'button';
+  $size: string;
+  $bold: boolean; // retained for backwards compat in styles
+  $italic: boolean;
+  $center?: boolean;
+  $noSelect: boolean;
+  $ws: 'normal' | 'pre' | 'pre-wrap' | 'pre-line';
+  $weight: number;
+  $tracking: string;
+  $leading: number;
+  $optical: 'auto' | number | 'none';
+};
+
+const styledTagCache = new Map<keyof JSX.IntrinsicElements, ReturnType<typeof makeStyledTag>>();
+
+function makeStyledTag(Tag: keyof JSX.IntrinsicElements) {
+  return styled(Tag)<TypographyStyleProps>`
+    margin: 0;
+    color: ${({ $color }) => $color || 'var(--valet-text-color, inherit)'};
+    font-size: ${({ $size }) => $size};
+    /* Prefer CSS var to maximize style cache hits */
+    --valet-font-weight: ${({ $weight, $bold }) => ($bold ? 700 : $weight)};
+    --valet-font-tracking: ${({ $tracking }) => $tracking};
+    --valet-font-leading: ${({ $leading }) => $leading};
+    font-weight: var(--valet-font-weight);
+    font-style: ${({ $italic }) => ($italic ? 'italic' : 'normal')};
+    line-height: var(--valet-font-leading);
+    letter-spacing: var(--valet-font-tracking);
+    font-family: ${({ $fontFamily, $family, $variant }) =>
+      $fontFamily ||
+      ($family
+        ? `var(--valet-font-${$family})`
+        : `var(--valet-font-${
+            $variant === 'button' ? 'button' : $variant.startsWith('h') ? 'heading' : 'body'
+          })`)};
+    ${({ $optical }) =>
+      $optical === 'auto'
+        ? 'font-optical-sizing: auto;'
+        : $optical === 'none'
+          ? 'font-optical-sizing: none;'
+          : typeof $optical === 'number'
+            ? `font-variation-settings: 'opsz' ${$optical};`
+            : ''};
+    ${({ $center }) =>
+      $center &&
+      `
+          text-align: center;
+          align-self: center;
+          margin-inline: auto;
+        `};
+    ${({ $noSelect }) =>
+      $noSelect &&
+      `
+          user-select: none;
+          -webkit-user-select: none;
+          -ms-user-select: none;
+          -webkit-touch-callout: none;
+        `};
+
+    /* Newline & wrapping guards */
+    white-space: ${({ $ws }) => $ws};
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    max-width: 100%;
+  `;
+}
+
+/** Return the stable, module-cached styled component for a given host tag. */
+function getStyledTag(Tag: keyof JSX.IntrinsicElements) {
+  let cached = styledTagCache.get(Tag);
+  if (!cached) {
+    cached = makeStyledTag(Tag);
+    styledTagCache.set(Tag, cached);
+  }
+  return cached;
+}
+
 const TypographyImpl = <E extends React.ElementType = 'span'>(
   {
-    variant = 'body',
+    variant: variantProp = 'body',
     bold = false,
     italic = false,
     weight,
@@ -78,13 +197,17 @@ const TypographyImpl = <E extends React.ElementType = 'span'>(
     whitespace = 'normal',
     preset: p,
     className,
+    style,
     sx,
     ...props
   }: PolymorphicProps<E, TypographyOwnProps>,
   forwardedRef: PolymorphicRef<E>,
 ) => {
-  const Tag = mapping[variant];
   const { theme } = useTheme();
+  // Resolve an unknown/typo variant to a valid key (dev-warns once) before any
+  // indexed lookup into `theme.typography` / `mapping` can throw on it.
+  const variant = resolveVariant(variantProp, theme.typography);
+  const Tag = mapping[variant];
   const breakpoint = useSurface((s) => s.breakpoint, shallow);
   const elRef = useRef<HTMLElement | null>(null);
   const [autoColor, setAutoColor] = useState<string | undefined>(undefined);
@@ -220,73 +343,10 @@ const TypographyImpl = <E extends React.ElementType = 'span'>(
     }
   }, [color, hasTextVar, theme.colors]);
 
-  const Component = React.useMemo(
-    () => styled(Tag)<{
-      $variant: Variant;
-      $color?: string;
-      $fontFamily?: string;
-      $family?: 'heading' | 'body' | 'mono' | 'button';
-      $size: string;
-      $bold: boolean; // retained for backwards compat in styles
-      $italic: boolean;
-      $center?: boolean;
-      $noSelect: boolean;
-      $ws: 'normal' | 'pre' | 'pre-wrap' | 'pre-line';
-      $weight: number;
-      $tracking: string;
-      $leading: number;
-      $optical: 'auto' | number | 'none';
-    }>`
-      margin: 0;
-      color: ${({ $color }) => $color || 'var(--valet-text-color, inherit)'};
-      font-size: ${({ $size }) => $size};
-      /* Prefer CSS var to maximize style cache hits */
-      --valet-font-weight: ${({ $weight, $bold }) => ($bold ? 700 : $weight)};
-      --valet-font-tracking: ${({ $tracking }) => $tracking};
-      --valet-font-leading: ${({ $leading }) => $leading};
-      font-weight: var(--valet-font-weight);
-      font-style: ${({ $italic }) => ($italic ? 'italic' : 'normal')};
-      line-height: var(--valet-font-leading);
-      letter-spacing: var(--valet-font-tracking);
-      font-family: ${({ $fontFamily, $family, $variant }) =>
-        $fontFamily ||
-        ($family
-          ? `var(--valet-font-${$family})`
-          : `var(--valet-font-${
-              $variant === 'button' ? 'button' : $variant.startsWith('h') ? 'heading' : 'body'
-            })`)};
-      ${({ $optical }) =>
-        $optical === 'auto'
-          ? 'font-optical-sizing: auto;'
-          : $optical === 'none'
-            ? 'font-optical-sizing: none;'
-            : typeof $optical === 'number'
-              ? `font-variation-settings: 'opsz' ${$optical};`
-              : ''};
-      ${({ $center }) =>
-        $center &&
-        `
-            text-align: center;
-            align-self: center;
-            margin-inline: auto;
-          `};
-      ${({ $noSelect }) =>
-        $noSelect &&
-        `
-            user-select: none;
-            -webkit-user-select: none;
-            -ms-user-select: none;
-            -webkit-touch-callout: none;
-          `};
-
-      /* Newline & wrapping guards */
-      white-space: ${({ $ws }) => $ws};
-      overflow-wrap: anywhere;
-      word-break: break-word;
-      max-width: 100%;
-    `,
-    [Tag],
-  );
+  // Stable per-tag identity from the module-scope cache (PERF S7): every
+  // Typography of the same host element shares one styled component, so a
+  // mount or re-render never remounts the styled subtree.
+  const Component = getStyledTag(Tag);
 
   // Allow passing theme color token names (e.g., 'primary', 'primaryText', 'primaryButtonText').
   const colorFromTokens = (() => {
@@ -305,6 +365,11 @@ const TypographyImpl = <E extends React.ElementType = 'span'>(
       (forwardedRef as React.MutableRefObject<HTMLElement | null>).current = node;
     }
   };
+
+  // Merge the caller's style prop underneath sx — uniform precedence:
+  // caller style < sx.
+  const mergedStyle: React.CSSProperties | undefined =
+    style || sx ? { ...(style as React.CSSProperties | undefined), ...sx } : undefined;
 
   return (
     <Component
@@ -326,7 +391,7 @@ const TypographyImpl = <E extends React.ElementType = 'span'>(
       $leading={resolvedLeading}
       $optical={opticalSetting}
       className={[presetClasses, className as string].filter(Boolean).join(' ')}
-      style={sx}
+      style={mergedStyle}
     />
   );
 };

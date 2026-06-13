@@ -47,6 +47,11 @@ const DEFAULT_CTX_ATTRS: WebGLContextAttributes = {
   preserveDrawingBuffer: false,
 };
 
+/* Stable default — an inline `[0, 0, 0, 0]` default would be a fresh
+   array every render and (as an effect dep) tear down the GL program
+   on every parent re-render. */
+const DEFAULT_CLEAR_COLOR: readonly [number, number, number, number] = [0, 0, 0, 0];
+
 /**
  * WebGLCanvas – A small, opinionated WebGL2 canvas host.
  * - Creates a WebGL2 context with provided attributes.
@@ -59,7 +64,7 @@ export const WebGLCanvas: React.FC<WebGLCanvasProps> = ({
   contextAttributes,
   dprMax = 2,
   timeScale = 1,
-  clearColor = [0, 0, 0, 0],
+  clearColor = DEFAULT_CLEAR_COLOR,
   asBackground = false,
   preset: p,
   sx,
@@ -77,6 +82,12 @@ export const WebGLCanvas: React.FC<WebGLCanvasProps> = ({
     timeScaleRef.current = timeScale;
   }, [timeScale]);
 
+  // Keep latest clearColor without re-subscribing the main effect; the
+  // live context is held in a ref so colour changes apply in place.
+  const glRef = useRef<WebGL2RenderingContext | null>(null);
+  const [clearR, clearG, clearB, clearA] = clearColor;
+  const clearColorRef = useRef<readonly [number, number, number, number]>(clearColor);
+
   useEffect(() => {
     const wrap = wrapRef.current;
     const canvas = canvasRef.current;
@@ -85,8 +96,10 @@ export const WebGLCanvas: React.FC<WebGLCanvasProps> = ({
     const attrs = { ...DEFAULT_CTX_ATTRS, ...(contextAttributes ?? {}) };
     const gl = canvas.getContext('webgl2', attrs);
     if (!gl) return;
+    glRef.current = gl;
 
-    gl.clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
+    const [r, g, b, a] = clearColorRef.current;
+    gl.clearColor(r, g, b, a);
 
     const program = create(gl, canvas);
     if (!program) return;
@@ -135,8 +148,17 @@ export const WebGLCanvas: React.FC<WebGLCanvasProps> = ({
       cancelAnimationFrame(raf);
       ro.disconnect();
       program.dispose();
+      glRef.current = null;
     };
-  }, [create, dprMax, contextAttributes, clearColor]);
+  }, [create, dprMax, contextAttributes]);
+
+  /* Apply clearColor changes in place (component scalars as deps), so a
+     fresh array identity never rebuilds the GL program. Declared after
+     the main effect so the context exists on mount. */
+  useEffect(() => {
+    clearColorRef.current = [clearR, clearG, clearB, clearA];
+    glRef.current?.clearColor(clearR, clearG, clearB, clearA);
+  }, [clearR, clearG, clearB, clearA]);
 
   const presetClasses = p ? preset(p) : '';
 

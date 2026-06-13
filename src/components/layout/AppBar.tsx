@@ -10,24 +10,18 @@ import { useSurface } from '../../system/surfaceStore';
 import { shallow } from 'zustand/shallow';
 import { preset } from '../../css/stylePresets';
 import { inheritSurfaceFontVars } from '../../system/inheritSurfaceFontVars';
-import type { Presettable, Space, Sx } from '../../types';
+import type { Intent, Presettable, Space, Sx } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
+import { Button, type ButtonVariant } from '../fields/Button';
+import { computeIntentVars } from '../../system/intentVars';
+import { zVar } from '../../system/zIndex';
 
 /*───────────────────────────────────────────────────────────*/
 export type AppBarToken = 'primary' | 'secondary' | 'tertiary';
-type Intent =
-  | 'default'
-  | 'primary'
-  | 'secondary'
-  | 'success'
-  | 'warning'
-  | 'error'
-  | 'info'
-  | (string & {});
 
-export interface AppBarProps extends Omit<React.HTMLAttributes<HTMLElement>, 'style'>, Presettable {
-  /** Visual variant: filled | outlined | plain */
-  variant?: 'filled' | 'outlined' | 'plain';
+export interface AppBarProps
+  extends Omit<React.HTMLAttributes<HTMLElement>, 'style' | 'title'>,
+    Presettable {
   /** Semantic color intent; maps to theme tokens */
   intent?: Intent;
   /** Explicit color override (theme token name or CSS color) */
@@ -36,13 +30,45 @@ export interface AppBarProps extends Omit<React.HTMLAttributes<HTMLElement>, 'st
   textColor?: string;
   left?: React.ReactNode;
   right?: React.ReactNode;
+  /** Optional brand/logo node, typically an SVG */
+  logo?: React.ReactNode;
+  /** Optional primary title to the right of the logo */
+  title?: React.ReactNode;
+  /** Spacing between logo and title */
+  logoGap?: Space;
   pad?: Space;
   /** Whether the bar is fixed to the viewport (and offsets content). Defaults to true. */
   fixed?: boolean;
   /** Force portal behavior. Defaults to following `fixed` (true when fixed). */
   portal?: boolean;
+  /** Optional navigation buttons; rendered inline for page-level navigation */
+  navigation?: AppBarNavigationItem[];
+  /** Where navigation buttons live; auto centers when both sides are populated */
+  navigationAlign?: 'left' | 'center' | 'right' | 'auto';
+  /** ARIA label for the navigation group */
+  navigationLabel?: string;
+  /** Gap between navigation buttons */
+  navigationGap?: Space;
   /** Inline styles (with CSS var support) */
   sx?: Sx;
+}
+
+export interface AppBarNavigationItem {
+  id?: string;
+  label?: React.ReactNode;
+  icon?: React.ReactNode;
+  /** Provide when using icon-only buttons for accessible name. Falls back to label text. */
+  ariaLabel?: string;
+  /** Force icon-only rendering (no label). */
+  iconOnly?: boolean;
+  href?: string;
+  target?: string;
+  rel?: string;
+  disabled?: boolean;
+  active?: boolean;
+  intent?: Intent;
+  variant?: ButtonVariant;
+  onClick?: React.MouseEventHandler<HTMLButtonElement | HTMLAnchorElement>;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -57,9 +83,8 @@ const Bar = styled('header')<{
   padding: ${({ $pad }) => $pad};
   position: ${({ $pos }) => $pos};
   top: 0;
-  left: 0;
-  right: 0;
-  z-index: 10000;
+  inset-inline: 0;
+  z-index: ${zVar('appbar')};
   color: ${({ $text }) => $text};
 `;
 
@@ -75,27 +100,58 @@ const LeftWrap = styled('div')<{ $gap: string }>`
   display: flex;
   align-items: center;
   gap: ${({ $gap }) => $gap};
+  min-width: 0;
 `;
 
-const RightWrap = styled('div')`
-  margin-left: auto;
+const BrandWrap = styled('div')<{ $gap: string }>`
+  display: inline-flex;
+  align-items: center;
+  gap: ${({ $gap }) => $gap};
+  min-width: 0;
+`;
+
+const RightWrap = styled('div')<{ $gap: string; $push: boolean }>`
   display: flex;
   align-items: center;
+  gap: ${({ $gap }) => $gap};
+  margin-inline-start: ${({ $push }) => ($push ? 'auto' : '0')};
+  min-width: 0;
+`;
+
+const NavWrap = styled('nav')<{
+  $justify: 'flex-start' | 'center' | 'flex-end';
+  $gap: string;
+  $push: boolean;
+  $grow: boolean;
+}>`
+  display: flex;
+  align-items: center;
+  justify-content: ${({ $justify }) => $justify};
+  gap: ${({ $gap }) => $gap};
+  flex: ${({ $grow }) => ($grow ? '1 1 auto' : '0 0 auto')};
+  min-width: 0;
+  margin-inline-start: ${({ $push }) => ($push ? 'auto' : '0')};
 `;
 
 /*───────────────────────────────────────────────────────────*/
 export const AppBar: React.FC<AppBarProps> = ({
-  variant = 'filled',
   intent,
   color,
   textColor,
   left,
   right,
+  logo,
+  title,
+  logoGap,
   pad: padProp,
   fixed = true,
   portal,
   preset: p,
   className,
+  navigation,
+  navigationAlign = 'auto',
+  navigationLabel,
+  navigationGap,
   sx,
   children,
   ...rest
@@ -127,24 +183,37 @@ export const AppBar: React.FC<AppBarProps> = ({
   const base = resolveToken(color) || fromIntent(intent) || theme.colors.primary;
   const derivedText = (() => {
     if (textColor) return resolveToken(textColor) || textColor;
-    if (variant === 'filled') {
-      if (equals(base, theme.colors.primary)) return theme.colors.primaryText;
-      if (equals(base, theme.colors.secondary)) return theme.colors.secondaryText;
-      if (equals(base, theme.colors.tertiary)) return theme.colors.tertiaryText;
-      if (equals(base, theme.colors.error)) return theme.colors.errorText;
-      return theme.colors.text;
-    }
-    // outlined/plain → treat base as emphasis colour; text defaults to theme text
+    if (equals(base, theme.colors.primary)) return theme.colors.primaryText;
+    if (equals(base, theme.colors.secondary)) return theme.colors.secondaryText;
+    if (equals(base, theme.colors.tertiary)) return theme.colors.tertiaryText;
+    if (equals(base, theme.colors.error)) return theme.colors.errorText;
     return theme.colors.text;
   })();
 
-  const bg = variant === 'filled' ? base : 'transparent';
+  const bg = base;
   const text = derivedText;
+
+  // Intent CSS variables contract (shared helper, API-TYPES S13). Replaces the
+  // old hex-concat hover math (`base + 'F0'`/`'E0'`, `text + '88'`) which
+  // produced invalid CSS for rgb()/hsl()/named theme colours. `makeMix` parses
+  // any colour format and blends `bg` toward `text` for hover/active.
+  const intentVars = computeIntentVars({
+    bg,
+    fg: text,
+    focus: theme.colors.primary,
+    // Disabled foreground fades the bar text toward the bar background
+    // (the old `text + '88'` was a ~53% alpha; this is the opaque analog).
+    disabledMixColor: bg,
+    variant: 'filled',
+  });
+
   const presetClass = p ? preset(p) : '';
   // Standardize numeric mapping via resolveSpace; retain two-value default
   const padSingle = resolveSpace(padProp, theme, false, 1);
   const pad = padProp === undefined ? `${theme.spacing(1)} ${theme.spacing(2)}` : padSingle;
   const gap = theme.spacing(2);
+  const navGap = resolveSpace(navigationGap ?? 2, theme, false, 2);
+  const logoTitleGap = resolveSpace(logoGap, theme, false, 1);
 
   useLayoutEffect(() => {
     const node = ref.current;
@@ -169,6 +238,42 @@ export const AppBar: React.FC<AppBarProps> = ({
     };
   }, [element, id, registerChild, unregisterChild, fixed]);
 
+  const brand =
+    logo || title ? (
+      <BrandWrap $gap={logoTitleGap}>
+        {logo}
+        {title}
+      </BrandWrap>
+    ) : null;
+  const leftContent = (
+    <>
+      {brand}
+      {left ?? children}
+    </>
+  );
+  const hasNav = Boolean(navigation && navigation.length > 0);
+  const computedNavAlign = (() => {
+    if (navigationAlign !== 'auto') return navigationAlign;
+    return 'right';
+  })();
+  const navJustify: 'flex-start' | 'center' | 'flex-end' =
+    computedNavAlign === 'left'
+      ? 'flex-start'
+      : computedNavAlign === 'right'
+        ? 'flex-end'
+        : 'center';
+  const navPush = computedNavAlign === 'right';
+  const navGrow = computedNavAlign === 'center';
+  const resolveNavColor = (itemVariant: ButtonVariant, itemIntent?: Intent) => {
+    const intentColor = fromIntent(itemIntent);
+    if (intentColor) return intentColor;
+    // Plain/outlined buttons need contrast vs the bar background.
+    if (itemVariant === 'plain' || itemVariant === 'outlined') {
+      return text;
+    }
+    return base;
+  };
+
   const bar = (
     <Bar
       ref={ref}
@@ -184,20 +289,104 @@ export const AppBar: React.FC<AppBarProps> = ({
           '--valet-text-color': text,
           background: bg,
           color: text,
-          '--valet-intent-bg': base,
-          '--valet-intent-fg': text,
-          '--valet-intent-border': base,
-          '--valet-intent-focus': theme.colors.primary,
-          '--valet-intent-bg-hover': variant === 'filled' ? base + 'F0' : 'transparent',
-          '--valet-intent-bg-active': variant === 'filled' ? base + 'E0' : 'transparent',
-          '--valet-intent-fg-disabled': theme.colors.text + '88',
+          ...intentVars,
           ...sx,
         } as React.CSSProperties
       }
     >
       <BarBg $bg={bg} />
-      <LeftWrap $gap={gap}>{left ?? children}</LeftWrap>
-      {right && <RightWrap>{right}</RightWrap>}
+      <LeftWrap $gap={gap}>{leftContent}</LeftWrap>
+      {hasNav && (
+        <NavWrap
+          $justify={navJustify}
+          $gap={navGap}
+          $push={navPush}
+          $grow={navGrow}
+          aria-label={navigationLabel}
+        >
+          {navigation!.map((item, idx) => {
+            const key = item.id ?? (typeof item.label === 'string' ? item.label : idx);
+            const navVariant: ButtonVariant = item.variant ?? (item.active ? 'outlined' : 'plain');
+            const colorForNav = resolveNavColor(navVariant, item.intent);
+            const asTag = item.href ? ('a' as const) : undefined;
+            const iconOnly = item.iconOnly || (!item.label && !!item.icon);
+            const buttonLabel =
+              item.ariaLabel ?? (typeof item.label === 'string' ? item.label : undefined);
+            const navSize = iconOnly ? 'md' : 'sm';
+            const navSx: Sx = {
+              '--valet-intent-bg': colorForNav,
+              '--valet-intent-fg': navVariant === 'filled' ? text : colorForNav,
+              '--valet-intent-border': colorForNav,
+              borderRadius: theme.radius(999),
+              whiteSpace: 'nowrap',
+              boxShadow:
+                navVariant === 'filled' ? `0 0 0 1px ${text}33` : `0 0 0 1px ${colorForNav}33`,
+              ...(iconOnly
+                ? {
+                    minWidth: theme.spacing(3.5),
+                    width: theme.spacing(3.5),
+                    padding: theme.spacing(0.5),
+                    justifyContent: 'center',
+                    fontSize: '1.25rem',
+                    lineHeight: 1.1,
+                  }
+                : null),
+              ...(item.active && navVariant !== 'filled'
+                ? { background: `${colorForNav}16` }
+                : null),
+            };
+            const shared = {
+              intent: item.intent,
+              color: colorForNav,
+              variant: navVariant,
+              size: navSize,
+              onClick: item.onClick,
+              'aria-label': buttonLabel,
+              title: buttonLabel,
+              sx: navSx,
+            };
+            const content = (
+              <>
+                {item.icon}
+                {item.icon && item.label && !iconOnly ? (
+                  <span style={{ display: 'inline-block', width: theme.spacing(0.5) }} />
+                ) : null}
+                {!iconOnly && item.label}
+              </>
+            );
+            /* Sound polymorphic Button: anchors take anchor attributes,
+               buttons take `disabled` — split per element type. */
+            return asTag === 'a' ? (
+              <Button
+                key={key}
+                as='a'
+                href={item.href}
+                target={item.target}
+                rel={item.rel}
+                {...shared}
+              >
+                {content}
+              </Button>
+            ) : (
+              <Button
+                key={key}
+                disabled={item.disabled}
+                {...shared}
+              >
+                {content}
+              </Button>
+            );
+          })}
+        </NavWrap>
+      )}
+      {right && (
+        <RightWrap
+          $gap={gap}
+          $push={!hasNav}
+        >
+          {right}
+        </RightWrap>
+      )}
     </Bar>
   );
 

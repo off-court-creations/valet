@@ -2,7 +2,7 @@
   "name": "Divider",
   "category": "primitives",
   "slug": "components/primitives/divider",
-  "summary": "Divider component",
+  "summary": "Theme-aware horizontal or vertical rule with spacing ergonomics; use it to separate content sections or list items without drawing your own border.",
   "status": "stable",
   "aliases": [
     "divider",
@@ -74,7 +74,6 @@
   ],
   "cssPresets": [],
   "events": [],
-  "actions": [],
   "slots": [],
   "bestPractices": [
     "Use to separate related groups; avoid overuse that creates visual noise.",
@@ -83,10 +82,21 @@
     "Respect alignment—span appropriate containers and avoid awkward trims.",
     "Don’t communicate state with dividers; use colour/tokens in the relevant component instead."
   ],
-  "examples": [],
-  "sourceFiles": [
-    "src/components/primitives/Divider.tsx"
+  "examples": [
+    {
+      "id": "divider-sections",
+      "title": "Separating content sections",
+      "code": "<Stack gap={1}>\n  <Typography variant='h4'>Account</Typography>\n  <Typography>Manage your profile and preferences.</Typography>\n  <Divider />\n  <Typography variant='h4'>Billing</Typography>\n  <Typography>Review invoices and payment methods.</Typography>\n</Stack>",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    }
   ],
-  "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "docsUrl": "/divider-demo",
+  "sourceFiles": [
+    "src/components/primitives/Divider.tsx",
+    "docs/src/pages/components/primitives/DividerDemo.tsx"
+  ],
+  "version": "0.35.1",
+  "schemaVersion": "1.7"
 }

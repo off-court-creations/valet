@@ -2,7 +2,7 @@
   "name": "Tooltip",
   "category": "widgets",
   "slug": "components/widgets/tooltip",
-  "summary": "Tooltip component",
+  "summary": "CSS-driven hover/focus tooltip that wraps a single child and exposes `title` content via aria-describedby; use it for brief supplementary hints, not essential or interactive content.",
   "status": "stable",
   "aliases": [
     "tooltip",
@@ -110,7 +110,6 @@
     ]
   },
   "cssVars": [
-    "--valet-zindex-tooltip",
     "--valet-tooltip-arrow-size"
   ],
   "cssPresets": [],
@@ -122,7 +121,6 @@
       "name": "onClose"
     }
   ],
-  "actions": [],
   "slots": [
     {
       "name": "title"
@@ -133,7 +131,7 @@
   ],
   "bestPractices": [
     "Use tooltips for supplemental hints, not essential instructions. The UI should remain usable without hovering.",
-    "Ensure the trigger is focusable and labelled. For icon‑only controls, provide `aria-label` on the target.",
+    "Ensure the trigger is focusable and labelled. For icon‑only controls, provide `aria-label` on the target. While shown, the tooltip's `aria-describedby` is attached to the focusable child (any `aria-describedby` you set on the child is preserved and the tooltip id appended), so screen readers announce it on keyboard focus.",
     "Keep content concise; avoid interactive controls inside tooltips. Prefer short phrases over sentences.",
     "Prefer `placement='top'` when space allows; adjust placement to avoid clipping and viewport edges.",
     "Use sensible delays. Avoid long `enterDelay` / `leaveDelay` that make tooltips feel sluggish or sticky, especially on touch devices."
@@ -173,9 +171,11 @@
       }
     }
   ],
+  "docsUrl": "/tooltip-demo",
   "sourceFiles": [
-    "src/components/widgets/Tooltip.tsx"
+    "src/components/widgets/Tooltip.tsx",
+    "docs/src/pages/components/widgets/TooltipDemo.tsx"
   ],
-  "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "version": "0.35.1",
+  "schemaVersion": "1.7"
 }

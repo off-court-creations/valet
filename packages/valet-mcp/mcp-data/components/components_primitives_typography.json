@@ -2,7 +2,7 @@
   "name": "Typography",
   "category": "primitives",
   "slug": "components/primitives/typography",
-  "summary": "Typography component",
+  "summary": "Renders themed text at a semantic `variant` (h1–h6, subtitle, body, button, …) mapped to the correct HTML element; use it for all text so type scale, color, and wrapping stay consistent.",
   "status": "stable",
   "aliases": [
     "typography",
@@ -131,6 +131,13 @@
       "type": "string | string[] | undefined",
       "required": false,
       "description": "One or many style-preset names registered via `definePreset()`"
+    },
+    {
+      "name": "as",
+      "type": "React.ElementType",
+      "required": false,
+      "description": "Polymorphic element override (renders this element/component instead of the default).",
+      "default": "'span'"
     }
   ],
   "domPassthrough": {
@@ -138,16 +145,15 @@
     "omitted": []
   },
   "cssVars": [
-    "--valet-bg",
     "--valet-text-color",
     "--valet-font-weight",
     "--valet-font-tracking",
     "--valet-font-leading",
-    "--valet-font-"
+    "--valet-font-",
+    "--valet-bg"
   ],
   "cssPresets": [],
   "events": [],
-  "actions": [],
   "slots": [],
   "bestPractices": [
     "Use semantic variants for headings and body; avoid styling raw text manually.",
@@ -207,11 +213,11 @@
       "minimalProps": {}
     }
   ],
-  "docsUrl": "/components/primitives/TypographyDemoPage",
+  "docsUrl": "/typography",
   "sourceFiles": [
     "src/components/primitives/Typography.tsx",
     "docs/src/pages/components/primitives/TypographyDemoPage.tsx"
   ],
-  "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "version": "0.35.1",
+  "schemaVersion": "1.7"
 }

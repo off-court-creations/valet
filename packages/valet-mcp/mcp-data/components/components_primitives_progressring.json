@@ -2,8 +2,14 @@
   "name": "ProgressRing",
   "category": "primitives",
   "slug": "components/primitives/progressring",
-  "summary": "ProgressRing component",
+  "summary": "Circular progress indicator; pass a 0–100 `value` for determinate progress or omit it for an indeterminate spinner, with an optional `label` in the center — the preferred primitive for compact, radial loading states.",
   "status": "stable",
+  "aliases": [
+    "progressring",
+    "progress-ring",
+    "spinner",
+    "circular-progress"
+  ],
   "props": [
     {
       "name": "value",
@@ -78,7 +84,6 @@
   ],
   "cssPresets": [],
   "events": [],
-  "actions": [],
   "slots": [
     {
       "name": "children"
@@ -92,6 +97,6 @@
   "sourceFiles": [
     "src/components/primitives/Progress.tsx"
   ],
-  "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "version": "0.35.1",
+  "schemaVersion": "1.7"
 }

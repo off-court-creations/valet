@@ -451,10 +451,12 @@ export default function MigrateFromMUIPage() {
             ariaLabel='Layout migration example from MUI Box/Stack to valet Surface/Stack/Panel'
           />
           <Typography>
-            Components created with <code>createStyled</code> register with the surface store and
-            expose <code>--valet-el-width</code> and <code>--valet-el-height</code>, so complex
-            widgets like <code>Table</code> can size themselves without consulting{' '}
-            <code>window.innerWidth</code>. Keep one surface per route to avoid nested stores.
+            Components created with <code>createStyled</code> can opt into per-element metrics with
+            the <code>$trackSize</code> prop — those elements register with the surface store and
+            expose <code>--valet-el-width</code> and <code>--valet-el-height</code>. Widgets like{' '}
+            <code>Table</code> register their own root to size themselves without consulting{' '}
+            <code>window.innerWidth</code>; plain styled elements stay untracked by default. Keep
+            one surface per route to avoid nested stores.
           </Typography>
         </Panel>
 

@@ -1,27 +1,30 @@
 {
   "name": "Pagination",
+  "summary": "Tab-style page navigator with an elastic active-page underline; controlled by `count` + `page` + `onPageChange` (the old `onChange` is a deprecated alias) — use it to page through large lists or tables.",
   "status": "stable",
   "aliases": ["pagination", "pager", "paginator"],
   "docs": {
     "bestPractices": [
+      "Use `onPageChange` to receive the new 1-based page. The legacy `onChange` prop is deprecated (use `onPageChange`); it keeps working through 0.x with a one-time dev warning and is removed at 1.0.",
       "Keep visible pages small. For large `count`, set a reasonable `siblingCount` and rely on first/last controls.",
       "Sync state when relevant. Mirror page in the router (query or path) so refresh/back behaves predictably.",
       "Prefer server‑side slicing for large datasets; ensure Table or List reflects the current page cleanly.",
       "Use accessible labels and titles for buttons (Prev/Next) and indicate current page to assistive tech.",
       "Consider infinite scroll for content feeds where paging is less meaningful.",
-      "Align placement near the data it controls and avoid duplicating controls unless justified."
+      "Align placement near the data it controls and avoid duplicating controls unless justified.",
+      "Internationalize the built-in labels with the `labels` prop (instance-level) or a `ValetLocaleProvider` (app-wide). Resolution is instance `labels` > provider strings > built-in English."
     ]
   },
   "examples": [
     {
       "id": "pagination-controlled",
       "title": "Controlled pagination",
-      "code": "() => {\n  const [page, setPage] = React.useState(1);\n  return (<Stack>\n    <Pagination count={12} page={page} onChange={setPage} />\n    <Typography>Current page: {page}</Typography>\n  </Stack>);\n}"
+      "code": "() => {\n  const [page, setPage] = React.useState(1);\n  return (<Stack>\n    <Pagination count={12} page={page} onPageChange={setPage} />\n    <Typography>Current page: {page}</Typography>\n  </Stack>);\n}"
     },
     {
       "id": "pagination-window",
       "title": "Visible window + autoFollow",
-      "code": "() => {\n  const [page, setPage] = React.useState(5);\n  const [follow, setFollow] = React.useState(true);\n  return (<Stack>\n    <Pagination count={50} visibleWindow={7} autoFollowActive={follow} page={page} onChange={setPage} />\n    <Stack direction='row' sx={{ alignItems: 'center' }}>\n      <Typography variant='subtitle'>autoFollowActive</Typography>\n      <Switch checked={follow} onChange={setFollow} aria-label='toggle autoFollowActive' />\n    </Stack>\n  </Stack>);\n}"
+      "code": "() => {\n  const [page, setPage] = React.useState(5);\n  const [follow, setFollow] = React.useState(true);\n  return (<Stack>\n    <Pagination count={50} visibleWindow={7} autoFollowActive={follow} page={page} onPageChange={setPage} />\n    <Stack direction='row' sx={{ alignItems: 'center' }}>\n      <Typography variant='subtitle'>autoFollowActive</Typography>\n      <Switch checked={follow} onValueChange={(next) => setFollow(next)} aria-label='toggle autoFollowActive' />\n    </Stack>\n  </Stack>);\n}"
     }
   ]
 }

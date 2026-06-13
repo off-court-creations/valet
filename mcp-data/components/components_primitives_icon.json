@@ -2,7 +2,7 @@
   "name": "Icon",
   "category": "primitives",
   "slug": "components/primitives/icon",
-  "summary": "Icon component",
+  "summary": "Renders an Iconify icon by name (`icon`) or a safe inline SVG (`svg`); arbitrary SVG strings go through an allowlist parser, so use the explicit `dangerouslySetSvg` escape hatch only for trusted full-SVG markup. Size and color follow the surrounding text.",
   "status": "stable",
   "aliases": [
     "icon",
@@ -19,7 +19,13 @@
       "name": "svg",
       "type": "string | ReactElement<React.SVGProps<SVGSVGElement>>",
       "required": false,
-      "description": "Custom SVG:\n• **string** – raw `<path …>` data (wrapped in 24×24 viewBox)\n• **ReactElement** – a full `<svg>` element"
+      "description": "Custom SVG:\n• **string** – passed through the parseSvgString allowlist\n  parser. Accepted forms: bare path `d`-data (`\"M12 2L2 22h20z\"`,\n  wrapped in a 24×24 viewBox) or `<path>`-only markup, optionally\n  inside one `<svg>` wrapper. The result is rendered as real React\n  `<svg>`/`<path>` elements — never via `innerHTML`. Anything outside\n  that grammar renders nothing and dev-warns.\n• **ReactElement** – a full `<svg>` element you already trust.\n\n**BREAKING (Q6):** full-SVG strings (`<svg>…</svg>` containing anything\nother than `<path>`, or any string with entities/comments/scripts) no\nlonger render here — they are an XSS vector through the old\n`dangerouslySetInnerHTML` sink. For trusted full-SVG markup, pass a\nReactElement or use IconProps.dangerouslySetSvg."
+    },
+    {
+      "name": "dangerouslySetSvg",
+      "type": "string",
+      "required": false,
+      "description": "Escape hatch for **trusted** raw SVG markup. Reproduces the pre-0.35\n`svg` string behavior exactly: the markup is injected verbatim via\n`dangerouslySetInnerHTML`, so it can execute scripts/event handlers and\nload remote references. The name is the warning — only ever pass markup\nyou fully control (never model output or user input). For untrusted or\nagent-generated markup use IconProps.svg, which is parsed."
     },
     {
       "name": "size",
@@ -56,7 +62,6 @@
   "cssVars": [],
   "cssPresets": [],
   "events": [],
-  "actions": [],
   "slots": [
     {
       "name": "svg"
@@ -67,12 +72,25 @@
     "Provide accessible labels when icons are actionable or convey status.",
     "Avoid using colour alone to convey meaning; pair with text or status tokens.",
     "Use tokens/presets for colour and size; avoid ad‑hoc CSS to preserve consistency.",
-    "Don’t overload meaning—keep one concept per icon and avoid ambiguous metaphors."
+    "Don’t overload meaning—keep one concept per icon and avoid ambiguous metaphors.",
+    "For a custom `svg` string, pass bare path `d`-data or `<path>`-only markup: it is parsed against an allowlist and rendered as real React elements, never via innerHTML. Untrusted or model-generated icon markup is safe here—anything outside that grammar renders nothing and dev-warns.",
+    "Only use `dangerouslySetSvg` for markup you fully control. It injects raw SVG verbatim (innerHTML) and can execute scripts—never pass user input or AI output to it."
   ],
-  "examples": [],
+  "examples": [
+    {
+      "id": "icon-inline",
+      "title": "Iconify glyph inline with text",
+      "code": "<Stack direction='row' gap={1}>\n  <Icon icon='mdi:home' />\n  <Typography>Home</Typography>\n</Stack>",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    }
+  ],
+  "docsUrl": "/icon-demo",
   "sourceFiles": [
-    "src/components/primitives/Icon.tsx"
+    "src/components/primitives/Icon.tsx",
+    "docs/src/pages/components/primitives/IconDemoPage.tsx"
   ],
-  "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "version": "0.35.1",
+  "schemaVersion": "1.7"
 }

@@ -35,6 +35,9 @@ export default [
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',
+      parserOptions: {
+        ecmaFeatures: { jsx: true },
+      },
     },
     plugins: { react, 'react-hooks': hooks, prettier },
     settings: { react: { version: 'detect' } },

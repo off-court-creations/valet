@@ -2,7 +2,7 @@
   "name": "MetroSelect",
   "category": "fields",
   "slug": "components/fields/metroselect",
-  "summary": "MetroSelect component",
+  "summary": "Grid of large tappable tiles (`MetroSelect.Option`) for single or `multiple` selection from a small visual set; controlled by `value` + `onValueChange` with `gap` for tile spacing — use it when options benefit from icons/imagery rather than a compact dropdown.",
   "status": "stable",
   "aliases": [
     "metroselect",
@@ -24,8 +24,9 @@
     },
     {
       "name": "gap",
-      "type": "number | string",
+      "type": "Space",
       "required": false,
+      "description": "Inter-tile spacing as units or CSS length.",
       "default": "0"
     },
     {
@@ -140,7 +141,6 @@
       "payloadType": "OnValueCommit<Primitive | Primitive[]>"
     }
   ],
-  "actions": [],
   "slots": [
     {
       "name": "children"
@@ -158,7 +158,9 @@
     "Keep options short and distinct; avoid long labels that wrap unpredictably.",
     "Expose clear values via `value` so form binding and analytics stay consistent.",
     "Control spacing with `gap` using theme spacing tokens or numbers to match density.",
-    "Keyboard: ensure arrow keys move focus predictably and Space toggles selection."
+    "Keyboard: ensure arrow keys move focus predictably and Space toggles selection.",
+    "Binding precedence (prop > form > internal). An explicit `value` prop always wins; otherwise a `name` inside a `FormControl` binds to the store (seed the key in `createFormStore(initial)` so the initial selection is honoured); otherwise the control is uncontrolled. The binding is latched at mount.",
+    "Change source. `onValueChange`/`onValueCommit` report a truthful `info.source`: `'pointer'` for a tile click and `'keyboard'` for keyboard activation (Enter/Space), not a blanket `'programmatic'`."
   ],
   "examples": [
     {
@@ -174,7 +176,7 @@
     {
       "id": "metroselect-controlled",
       "title": "Controlled value",
-      "code": "() => {\n  const [v, setV] = React.useState('car');\n  return (<Stack>\n    <MetroSelect value={v} onChange={(x) => setV(x as string)} gap={4}>\n      <MetroSelect.Option icon='mdi:car' value='car' label='Car' />\n      <MetroSelect.Option icon='mdi:bike' value='bike' label='Bike' />\n      <MetroSelect.Option icon='mdi:train' value='train' label='Train' />\n    </MetroSelect>\n    <Typography>Current: <b>{v}</b></Typography>\n  </Stack>);\n}",
+      "code": "() => {\n  const [v, setV] = React.useState('car');\n  return (<Stack>\n    <MetroSelect value={v} onValueChange={(next) => setV(next as string)} gap={4}>\n      <MetroSelect.Option icon='mdi:car' value='car' label='Car' />\n      <MetroSelect.Option icon='mdi:bike' value='bike' label='Bike' />\n      <MetroSelect.Option icon='mdi:train' value='train' label='Train' />\n    </MetroSelect>\n    <Typography>Current: <b>{v}</b></Typography>\n  </Stack>);\n}",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {
@@ -192,9 +194,11 @@
       }
     }
   ],
+  "docsUrl": "/metroselect-demo",
   "sourceFiles": [
-    "src/components/fields/MetroSelect.tsx"
+    "src/components/fields/MetroSelect.tsx",
+    "docs/src/pages/components/field/MetroSelectDemo.tsx"
   ],
-  "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "version": "0.35.1",
+  "schemaVersion": "1.7"
 }

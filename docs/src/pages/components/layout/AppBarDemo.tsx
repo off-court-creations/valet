@@ -7,18 +7,38 @@ import AppBarMeta from '../../../../../src/components/layout/AppBar.meta.json';
 
 export default function AppBarDemoPage() {
   const { theme, toggleMode } = useTheme();
+  const [page, setPage] = React.useState<'home' | 'billing' | 'account'>('home');
+  const subtleTextColor = ((theme.colors as Record<string, string>)['textSubtle'] ??
+    (theme.colors as Record<string, string>)['text']) as string;
+
+  const navigation = [
+    { id: 'home', label: 'Home', active: page === 'home', onClick: () => setPage('home') },
+    {
+      id: 'billing',
+      label: 'Billing',
+      active: page === 'billing',
+      onClick: () => setPage('billing'),
+    },
+    {
+      id: 'account',
+      label: 'Account',
+      active: page === 'account',
+      onClick: () => setPage('account'),
+    },
+  ];
+  const iconNavigation = [
+    { id: 'home', icon: <Icon icon='mdi:home' />, ariaLabel: 'Home', active: true, iconOnly: true },
+    { id: 'search', icon: <Icon icon='mdi:magnify' />, ariaLabel: 'Search', iconOnly: true },
+    { id: 'profile', icon: <Icon icon='mdi:account' />, ariaLabel: 'Profile', iconOnly: true },
+  ];
 
   const usage = (
     <Stack gap={1}>
       <AppBar
         fixed={false}
         portal={false}
-        left={
-          <>
-            <Icon icon='mdi:car' />
-            <Typography fontFamily='Cabin'>AppBar Slots</Typography>
-          </>
-        }
+        logo={<Icon icon='mdi:car' />}
+        title={<Typography fontFamily='Cabin'>AppBar Slots</Typography>}
         right={
           <Button
             variant='outlined'
@@ -27,57 +47,62 @@ export default function AppBarDemoPage() {
             Toggle
           </Button>
         }
+        navigation={navigation}
+        navigationLabel='Primary navigation'
       />
       <Typography>
-        AppBar supports <code>variant</code> (<code>filled|outlined|plain</code>) and semantic
-        <code>intent</code> colors, with optional <code>color</code> override for custom themes.
+        AppBar ships as a solid bar with optional semantic <code>intent</code> colors and
+        <code>color</code> overrides. Pass <code>navigation</code> to render inline navigation
+        buttons; alignment defaults to the available space (centered when both left and right slots
+        are set).
       </Typography>
       <Stack direction='row'>
         <AppBar
           fixed={false}
           portal={false}
-          intent='primary'
-          left={<Typography>primary</Typography>}
+          intent='success'
+          left={<Typography>filled success</Typography>}
         />
         <AppBar
           fixed={false}
           portal={false}
-          variant='outlined'
-          intent='secondary'
-          left={<Typography>outlined secondary</Typography>}
-        />
-        <AppBar
-          fixed={false}
-          portal={false}
-          variant='plain'
-          intent='info'
-          left={<Typography>plain info</Typography>}
+          intent='warning'
+          left={<Typography>warning</Typography>}
         />
       </Stack>
+      <AppBar
+        fixed={false}
+        portal={false}
+        navigationAlign='left'
+        navigationLabel='Secondary nav'
+        navigation={navigation.map((item) => ({ ...item, active: item.id === page }))}
+        right={
+          <Stack direction='row'>
+            <Button variant='outlined'>Filters</Button>
+            <Button>Invite</Button>
+          </Stack>
+        }
+      />
+      <AppBar
+        fixed={false}
+        portal={false}
+        navigation={iconNavigation}
+        navigationLabel='Icon navigation'
+        right={<Button size='sm'>Join</Button>}
+      />
     </Stack>
   );
 
-  const [variant, setVariant] = React.useState<'filled' | 'outlined' | 'plain'>('filled');
   const [intent, setIntent] = React.useState<
     'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'info'
   >('default');
+  const [navAlign, setNavAlign] = React.useState<'auto' | 'left' | 'center' | 'right'>('auto');
   const playground = (
     <Stack gap={1}>
       <Stack
         direction='row'
         sx={{ alignItems: 'center', gap: theme.spacing(1) }}
       >
-        <Typography variant='subtitle'>variant</Typography>
-        <Select
-          placeholder='variant'
-          value={variant}
-          onValueChange={(v) => setVariant((v as 'filled' | 'outlined' | 'plain') || 'filled')}
-          sx={{ width: 160 }}
-        >
-          <Select.Option value='filled'>filled</Select.Option>
-          <Select.Option value='outlined'>outlined</Select.Option>
-          <Select.Option value='plain'>plain</Select.Option>
-        </Select>
         <Typography variant='subtitle'>intent</Typography>
         <Select
           placeholder='intent'
@@ -107,13 +132,42 @@ export default function AppBarDemoPage() {
             </Select.Option>
           ))}
         </Select>
+        <Typography variant='subtitle'>navigationAlign</Typography>
+        <Select
+          placeholder='navigation align'
+          value={navAlign}
+          onValueChange={(v) => setNavAlign((v as 'auto' | 'left' | 'center' | 'right') || 'auto')}
+          sx={{ width: 180 }}
+        >
+          {(['auto', 'left', 'center', 'right'] as const).map((align) => (
+            <Select.Option
+              key={align}
+              value={align}
+            >
+              {align}
+            </Select.Option>
+          ))}
+        </Select>
       </Stack>
       <AppBar
         fixed={false}
         portal={false}
-        variant={variant}
         {...(intent !== 'default' ? { intent } : {})}
-        left={<Typography>Playground</Typography>}
+        left={
+          <Stack direction='row'>
+            <Typography>Playground</Typography>
+            <Typography
+              variant='body'
+              color={subtleTextColor}
+              scale={0.9}
+            >
+              {page}
+            </Typography>
+          </Stack>
+        }
+        navigationAlign={navAlign}
+        navigation={navigation}
+        navigationLabel='Playground navigation'
         right={
           <Button
             variant='outlined'
@@ -123,6 +177,18 @@ export default function AppBarDemoPage() {
           </Button>
         }
       />
+      <AppBar
+        fixed={false}
+        portal={false}
+        navigationAlign={navAlign}
+        navigation={iconNavigation.map((item) => ({
+          ...item,
+          active: item.id === 'home' ? page === 'home' : Boolean(item.active),
+          iconOnly: true,
+        }))}
+        navigationLabel='Playground icon navigation'
+        right={<Button size='sm'>CTA</Button>}
+      />
       <Typography>
         Color override: you can pass <code>color</code> to use a specific color (token or CSS). For
         example:
@@ -130,9 +196,9 @@ export default function AppBarDemoPage() {
       <AppBar
         fixed={false}
         portal={false}
-        variant='outlined'
         color={theme.colors['primary'] as string}
-        left={<Typography>outlined + color=primary</Typography>}
+        left={<Typography>color=primary override</Typography>}
+        navigation={navigation}
       />
     </Stack>
   );

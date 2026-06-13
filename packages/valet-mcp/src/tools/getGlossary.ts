@@ -10,7 +10,8 @@ export function registerGetGlossary(server: McpServer): void {
     'valet__get_glossary',
     {
       title: 'Get Glossary',
-      description: 'Return the entire valet glossary, including definitions, aliases, and cross references.',
+      description:
+        'Return the entire valet glossary, including definitions, aliases, and cross references.',
       annotations: {
         readOnlyHint: true,
         idempotentHint: true,
@@ -21,6 +22,6 @@ export function registerGetGlossary(server: McpServer): void {
       const g = getGlossary();
       if (!g) return { content: [{ type: 'text', text: JSON.stringify({ entries: [] }) }] };
       return { content: [{ type: 'text', text: JSON.stringify(g) }] };
-    }
+    },
   );
 }

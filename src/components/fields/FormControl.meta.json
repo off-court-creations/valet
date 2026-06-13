@@ -1,5 +1,6 @@
 {
   "name": "FormControl",
+  "summary": "Wraps a form to provide a typed store context that field components bind to by `name`; use it to collect and submit grouped field values without lifting every field into local state.",
   "status": "stable",
   "aliases": ["form", "field", "control"],
   "docs": {

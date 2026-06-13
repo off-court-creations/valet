@@ -2,7 +2,7 @@
   "name": "MetroSelect.Option",
   "category": "fields",
   "slug": "components/fields/metroselect.option",
-  "summary": "MetroSelect.Option component",
+  "summary": "A single tile inside a `MetroSelect`, identified by `value` with icon/label children; author one per choice as a direct `MetroSelect` child — the parent owns selection state.",
   "status": "stable",
   "props": [
     {
@@ -53,7 +53,6 @@
   ],
   "cssPresets": [],
   "events": [],
-  "actions": [],
   "slots": [
     {
       "name": "icon"
@@ -64,9 +63,10 @@
   ],
   "bestPractices": [],
   "examples": [],
+  "docsUrl": "/metroselect-demo",
   "sourceFiles": [
     "src/components/fields/MetroSelect.tsx"
   ],
-  "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "version": "0.35.1",
+  "schemaVersion": "1.7"
 }

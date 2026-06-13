@@ -1,5 +1,6 @@
 {
   "name": "Divider",
+  "summary": "Theme-aware horizontal or vertical rule with spacing ergonomics; use it to separate content sections or list items without drawing your own border.",
   "status": "stable",
   "aliases": ["divider", "rule", "hr"],
   "docs": {
@@ -10,5 +11,12 @@
       "Respect alignment—span appropriate containers and avoid awkward trims.",
       "Don’t communicate state with dividers; use colour/tokens in the relevant component instead."
     ]
-  }
+  },
+  "examples": [
+    {
+      "id": "divider-sections",
+      "title": "Separating content sections",
+      "code": "<Stack gap={1}>\n  <Typography variant='h4'>Account</Typography>\n  <Typography>Manage your profile and preferences.</Typography>\n  <Divider />\n  <Typography variant='h4'>Billing</Typography>\n  <Typography>Review invoices and payment methods.</Typography>\n</Stack>"
+    }
+  ]
 }

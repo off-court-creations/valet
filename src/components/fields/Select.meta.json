@@ -1,5 +1,6 @@
 {
   "name": "Select",
+  "summary": "Fully-typed dropdown for single or `multiple` choice from `Select.Option` children; controlled via `value` + `onValueChange` and FormControl-aware — use it for compact pick-one(-or-many) lists, and prefer `MetroSelect` when options need a visual tile grid.",
   "status": "stable",
   "aliases": ["select", "dropdown", "combobox"],
   "docs": {
@@ -12,7 +13,28 @@
       "Multiple selections. Prefer `MetroSelect` with visible chips when the number of selections should be immediately clear.",
       "Performance. For very long lists, consider server‑side filtering or virtualized menus; keep menu height bounded.",
       "Presets/tokens. Style via theme tokens and `preset` to maintain consistent control density and colours.",
-      "A11y. Ensure the trigger is labelled (via `label` or surrounding `FormControl`) and that the selected value is announced clearly."
+      "A11y. Ensure the trigger is labelled (via `label` or surrounding `FormControl`) and that the selected value is announced clearly.",
+      "Overlay behaviour. The open menu portals to the shared overlay root and registers on the overlay stack, so it escapes any `transform`/`overflow` clipping ancestor of the trigger. Inside a Modal, pressing Escape closes only the dropdown (the top-most layer); the Modal stays open.",
+      "Binding precedence (prop > form > internal). An explicit `value` prop always wins; otherwise a `name` inside a `FormControl` binds to the store (seed the key in `createFormStore(initial)` so the initial selection and `form.reset()` are honoured); otherwise the Select is uncontrolled. The binding is latched at mount — don't switch a Select between controlled and uncontrolled.",
+      "Change source. `onValueChange`/`onValueCommit` report a truthful `info.source`: `'pointer'` for a mouse selection and `'keyboard'` for keyboard activation (Enter/Space/arrow), not a blanket `'programmatic'`.",
+      "Option props. `Select.Option` forwards its own `className`, `style`, `id`, `data-*` (and arbitrary `<li>` attributes), plus `sx`/`preset`, onto the rendered option element. A custom `id` wins over the generated one and keeps `aria-activedescendant` in sync. Internal listbox semantics (`role`, `aria-selected`) always take precedence on collision, and `sx` wins over a caller `style`."
     ]
-  }
+  },
+  "examples": [
+    {
+      "id": "select-controlled",
+      "title": "Controlled single Select",
+      "code": "() => {\n  const [fruit, setFruit] = React.useState('apple');\n  return (<Stack gap={1}>\n    <Select value={fruit} onValueChange={(next) => setFruit(String(next))} placeholder='Choose a fruit'>\n      <Select.Option value='apple'>Apple</Select.Option>\n      <Select.Option value='banana'>Banana</Select.Option>\n      <Select.Option value='cherry'>Cherry</Select.Option>\n    </Select>\n    <Typography>Selected: {fruit}</Typography>\n  </Stack>);\n}"
+    },
+    {
+      "id": "select-form",
+      "title": "FormControl binding",
+      "code": "() => {\n  const useStore = Valet.createFormStore({ size: 'md' });\n  return (<FormControl useStore={useStore} onSubmitValues={(values) => void values}>\n    <Stack gap={1}>\n      <Select name='size' placeholder='Pick a size'>\n        <Select.Option value='sm'>Small</Select.Option>\n        <Select.Option value='md'>Medium</Select.Option>\n        <Select.Option value='lg'>Large</Select.Option>\n      </Select>\n      <Button type='submit'>Save</Button>\n    </Stack>\n  </FormControl>);\n}"
+    },
+    {
+      "id": "select-multiple",
+      "title": "Multiple selection from many options",
+      "code": "() => {\n  const [picked, setPicked] = React.useState<(string | number)[]>(['react']);\n  const options = ['react', 'vue', 'svelte', 'angular', 'solid', 'qwik', 'preact'];\n  return (<Stack gap={1}>\n    <Select multiple value={picked} onValueChange={(next) => setPicked(Array.isArray(next) ? next : [next])} placeholder='Pick frameworks'>\n      {options.map((opt) => (<Select.Option key={opt} value={opt}>{opt}</Select.Option>))}\n    </Select>\n    <Typography>Picked {picked.length} of {options.length}</Typography>\n  </Stack>);\n}"
+    }
+  ]
 }

@@ -1,5 +1,6 @@
 {
   "name": "Video",
+  "summary": "Theme-aware video player with lazy loading and fullscreen support; use it for playable media clips, and `Image` for static pictures.",
   "status": "stable",
   "aliases": ["video", "player"],
   "docs": {

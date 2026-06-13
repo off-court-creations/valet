@@ -58,7 +58,7 @@ export const GLOSSARY: GlossaryEntry[] = [
     term: 'Surface',
     category: 'core',
     definition:
-      'A route-level container that owns a small Zustand store and CSS variables for screen size. Disallows nesting; components register themselves under a Surface.',
+      'A route-level container that owns a small Zustand store and CSS variables for screen size. Disallows nesting; styled elements opt into per-element size tracking under a Surface via the $trackSize prop.',
     seeAlso: ['Stack', 'Panel', 'styled'],
   },
   {
@@ -106,7 +106,7 @@ export const GLOSSARY: GlossaryEntry[] = [
     aliases: ['action graph', 'WAG'],
     category: 'ai',
     definition:
-      'A conceptual graph of user and system actions captured at runtime to enable introspection, automation, and adaptation.',
+      'Planned — not implemented. A conceptual graph of user and system actions captured at runtime to enable introspection, automation, and adaptation.',
     seeAlso: ['Semantic Interface Layer'],
   },
   {
@@ -114,7 +114,7 @@ export const GLOSSARY: GlossaryEntry[] = [
     aliases: ['element registry'],
     category: 'core',
     definition:
-      'Per-Surface Zustand store tracking screen and registered child element sizes. Components expose --valet-el-* CSS vars; Surface exposes screen vars.',
+      'Per-Surface Zustand store tracking screen and registered child element sizes. Styled elements opt into per-element metrics with the $trackSize prop (which exposes --valet-el-* CSS vars); Surface always exposes screen vars.',
     seeAlso: ['Surface', 'styled'],
   },
   {

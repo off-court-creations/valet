@@ -6,6 +6,9 @@ import React from 'react';
 import { useTheme } from '../../system/themeStore';
 import { Progress } from '../primitives/Progress';
 import { preset } from '../../css/stylePresets';
+import { zVar } from '../../system/zIndex';
+import { useComponentStrings } from '../../system/locale';
+import type { DeepPartialStrings, ValetStrings } from '../../system/locale';
 import type { Presettable, Sx } from '../../types';
 
 export interface LoadingBackdropProps
@@ -13,6 +16,12 @@ export interface LoadingBackdropProps
     Presettable {
   fading?: boolean;
   showSpinner?: boolean;
+  /**
+   * Instance-level overrides for this component's i18n strings. Wins over the
+   * `ValetLocaleProvider` value, which in turn wins over the built-in English
+   * defaults (A11Y S8 resolution contract; see `src/system/locale.tsx`).
+   */
+  labels?: DeepPartialStrings<ValetStrings['loadingBackdrop']>;
   /** Inline styles (with CSS var support) */
   sx?: Sx;
 }
@@ -22,10 +31,12 @@ export const LoadingBackdrop: React.FC<LoadingBackdropProps> = ({
   showSpinner,
   className,
   preset: p,
+  labels,
   sx,
   ...rest
 }) => {
   const { theme } = useTheme();
+  const t = useComponentStrings('loadingBackdrop', labels);
   const fadeMs = theme.motion.duration.base;
   const fadeEase = theme.motion.easing.standard;
   const presetCls = p ? preset(p) : '';
@@ -44,7 +55,7 @@ export const LoadingBackdrop: React.FC<LoadingBackdropProps> = ({
         justifyContent: 'center',
         background: `color-mix(in srgb, ${theme.colors.background} 92%, black)`,
         color: theme.colors.text,
-        zIndex: 'var(--valet-zindex-modal, 1400)',
+        zIndex: zVar('modal'),
         transition: `opacity ${fadeMs} ${fadeEase}`,
         opacity: fading ? 0 : 1,
         pointerEvents: fading ? 'none' : 'auto',
@@ -61,7 +72,7 @@ export const LoadingBackdrop: React.FC<LoadingBackdropProps> = ({
         <Progress
           variant='circular'
           mode='indeterminate'
-          aria-label='Loading'
+          aria-label={t.loading}
         />
       </div>
     </div>

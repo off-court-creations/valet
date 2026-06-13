@@ -2,7 +2,7 @@
   "name": "Tabs.Panel",
   "category": "layout",
   "slug": "components/layout/tabs.panel",
-  "summary": "Tabs.Panel component",
+  "summary": "The content region for one tab inside `Tabs`, identified by the `value` of its matching `Tabs.Tab`; only the active panel is shown — author one per tab as a direct `Tabs` child.",
   "status": "stable",
   "props": [
     {
@@ -39,13 +39,13 @@
   ],
   "cssPresets": [],
   "events": [],
-  "actions": [],
   "slots": [],
   "bestPractices": [],
   "examples": [],
+  "docsUrl": "/tabs-demo",
   "sourceFiles": [
     "src/components/layout/Tabs.tsx"
   ],
-  "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "version": "0.35.1",
+  "schemaVersion": "1.7"
 }

@@ -1,5 +1,6 @@
 {
   "name": "WebGLCanvas",
+  "summary": "DPI-aware WebGL2 canvas that resizes to its parent and runs a render callback on a requestAnimationFrame loop; use it for custom GPU graphics, shaders, and visualizations rather than 2D drawing.",
   "status": "stable",
   "aliases": ["webgl", "webgl2", "glcanvas", "webglcanvas"],
   "docs": {

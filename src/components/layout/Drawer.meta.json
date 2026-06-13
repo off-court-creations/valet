@@ -1,5 +1,6 @@
 {
   "name": "Drawer",
+  "summary": "Panel that slides in from an `anchor` edge (`left`/`right`/`top`/`bottom`, or RTL-aware `start`/`end`); non-`persistent` drawers are true focus-trapping dialogs, so supply `aria-label`/`aria-labelledby` — use it for side navigation and contextual panels.",
   "status": "stable",
   "aliases": ["drawer", "sidenav", "side-nav", "sidebar"],
   "docs": {
@@ -8,7 +9,11 @@
       "Coordinate with AppBar and Surface so the drawer doesn’t overlap or hide important content.",
       "Use persistent vs temporary modes appropriately; auto‑collapse on narrow screens.",
       "Keep content scannable and avoid deep nesting; provide headings for sections.",
-      "Prefer tokens for backdrop colour and motion; keep transitions aligned with theme."
+      "Prefer tokens for backdrop colour and motion; keep transitions aligned with theme.",
+      "Overlay (non-persistent) Drawers are modal dialogs: they expose `role='dialog'` + `aria-modal`, trap Tab focus, move focus into the panel on open, and restore it on close. Always give them an accessible name via `aria-label` or `aria-labelledby` (a dev warning fires when neither is set).",
+      "Persistent Drawers are inline navigation regions — they intentionally carry no dialog semantics, no focus trap, and need no `aria-label`.",
+      "Internationalize the built-in labels with the `labels` prop (instance-level) or a `ValetLocaleProvider` (app-wide). Resolution is instance `labels` > provider strings > built-in English.",
+      "For RTL-aware placement, prefer the logical `anchor='start'`/`anchor='end'` over physical `'left'`/`'right'`: they resolve to the leading/trailing edge for the active writing direction (set via `ValetLocaleProvider`). Physical anchors are direction-invariant and never flip under RTL."
     ]
   }
 }

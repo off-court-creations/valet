@@ -9,6 +9,7 @@ import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { Typography } from '../primitives/Typography';
 import { stripe, toRgb, mix, toHex } from '../../helpers/color';
+import { resolveDeprecatedProp } from '../../system/deprecate';
 import type { Presettable, Sx } from '../../types';
 
 /* Props */
@@ -24,7 +25,21 @@ export interface ListProps<T>
   /** Allow drag-and-drop style reordering via pointer (default: true) */
   reorderable?: boolean;
   onReorder?: (items: T[]) => void;
-  /** Enable single selection when true. */
+  /**
+   * How selection behaves (API-TYPES S11, Q11(a)). List supports single
+   * selection: `'single'` enables it, `'none'` (default) disables it. The
+   * unified cross-component name; the boolean `selectable` is a deprecated
+   * alias (`selectable={true}` ≡ `selectionMode='single'`). When both are
+   * supplied, `selectionMode` wins.
+   */
+  selectionMode?: 'none' | 'single';
+  /**
+   * @deprecated Use {@link selectionMode} (`'none' | 'single'`) instead.
+   * `selectable` keeps working through 0.x and is removed at 1.0;
+   * `selectable={true}` maps to `selectionMode='single'`.
+   *
+   * Enable single selection when true.
+   */
   selectable?: boolean;
   /**
    * Focus behavior for rows.
@@ -39,7 +54,21 @@ export interface ListProps<T>
   defaultSelected?: T | null;
   /** Fired when selection changes. */
   onSelectionChange?: (item: T, index: number) => void;
-  /** Provide stable keys for items (defaults to index). */
+  /**
+   * Stable identity for each item — the unified cross-component name
+   * (API-TYPES S11, Q11(a)). Used to key React rows and standardize reorder
+   * identity. Defaults to the item's index when omitted. The cross-component
+   * shape is `keyof T | ((item, index) => key)`; List narrows the function form
+   * to a React.Key return.
+   */
+  getItemKey?: keyof T | ((item: T, index: number) => React.Key);
+  /**
+   * @deprecated Use {@link getItemKey} instead — the same per-item identity
+   * under the cross-component name. `getKey` keeps working through 0.x and is
+   * removed at 1.0; when both are supplied, `getItemKey` wins.
+   *
+   * Provide stable keys for items (defaults to index).
+   */
   getKey?: (item: T, index: number) => React.Key;
   /** Rendered when `data.length === 0`. */
   emptyPlaceholder?: React.ReactNode;
@@ -132,8 +161,7 @@ const Root = styled('ul')<{
   & > li::before {
     content: '';
     position: absolute;
-    left: 0;
-    right: 0;
+    inset-inline: 0;
     top: 0;
     height: 0px;
     background: transparent;
@@ -172,18 +200,34 @@ export function List<T>({
   hoverable,
   reorderable = true,
   onReorder,
-  selectable = false,
+  selectionMode,
+  selectable: selectableProp,
   focusMode = 'auto',
   selected: selectedProp,
   defaultSelected = null,
   onSelectionChange,
-  getKey,
+  getItemKey,
+  getKey: getKeyProp,
   emptyPlaceholder,
   preset: p,
   className,
   sx,
   ...rest
 }: ListProps<T>) {
+  /* Unified selection vocabulary (API-TYPES S11, Q11(a)). Canonical
+     `selectionMode`/`getItemKey` win over the deprecated `selectable`/`getKey`
+     aliases (warn once each via deprecate.ts; old names removed at 1.0). */
+  const resolvedMode = resolveDeprecatedProp(
+    'List',
+    'selectionMode',
+    selectionMode,
+    'selectable',
+    /* boolean alias → the canonical union so both can be compared */
+    selectableProp === undefined ? undefined : selectableProp ? 'single' : 'none',
+  );
+  const selectable = resolvedMode === 'single';
+  const getKey = resolveDeprecatedProp('List', 'getItemKey', getItemKey, 'getKey', getKeyProp);
+
   const { theme } = useTheme();
   const stripeColor = stripe(theme.colors.background, theme.colors.text);
   const hoverBg = toHex(mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.2));
@@ -192,7 +236,13 @@ export function List<T>({
 
   // Local state
   const [items, setItems] = useState<T[]>(data);
-  useEffect(() => setItems(data), [data]);
+  /* Latest-items ref — event closures created at drag start (touch
+     finish, pointer drop) must never report a stale pre-drag array. */
+  const itemsRef = useRef<T[]>(data);
+  useEffect(() => {
+    itemsRef.current = data;
+    setItems(data);
+  }, [data]);
 
   const controlled = selectedProp !== undefined;
   const [selfSelected, setSelfSelected] = useState<T | null>(defaultSelected);
@@ -221,7 +271,12 @@ export function List<T>({
   const suppressClickRef = useRef<boolean>(false);
   const touchActiveRef = useRef<boolean>(false);
 
-  const keyFor = (item: T, idx: number) => (getKey ? getKey(item, idx) : idx);
+  const keyFor = (item: T, idx: number): React.Key => {
+    if (getKey === undefined) return idx;
+    /* getItemKey/getKey accepts the cross-component `keyof T | fn` shape. */
+    if (typeof getKey === 'function') return getKey(item, idx);
+    return item[getKey] as React.Key;
+  };
 
   const calcInsertIndex = (clientY: number): number => {
     const list = rootRef.current;
@@ -233,6 +288,21 @@ export function List<T>({
       if (clientY < mid) return i;
     }
     return nodes.length;
+  };
+
+  /* Apply one in-flight drag move. Computed outside any setState updater:
+     updaters must stay pure (StrictMode double-invokes them), and the ref
+     writes keep itemsRef authoritative for the drop callbacks. */
+  const applyDragMove = (from: number, insertIndex: number) => {
+    const arr = [...itemsRef.current];
+    const [m] = arr.splice(from, 1);
+    const clamped = Math.max(0, Math.min(arr.length, insertIndex));
+    arr.splice(clamped, 0, m);
+    itemsRef.current = arr;
+    draggingIdx.current = clamped;
+    setItems(arr);
+    setDragIdx(clamped);
+    setInsertIdx(insertIndex);
   };
 
   const beginReorder = (idx: number, e: React.PointerEvent<HTMLLIElement>) => {
@@ -273,16 +343,7 @@ export function List<T>({
     const first = new Map<HTMLElement, DOMRect>();
     nodes.forEach((n) => first.set(n, n.getBoundingClientRect()));
 
-    setItems((prev) => {
-      const arr = [...prev];
-      const [m] = arr.splice(from, 1);
-      const clamped = Math.max(0, Math.min(arr.length, insertIndex));
-      arr.splice(clamped, 0, m);
-      draggingIdx.current = clamped;
-      setDragIdx(clamped);
-      setInsertIdx(insertIndex);
-      return arr;
-    });
+    applyDragMove(from, insertIndex);
     // FLIP animation using theme motion tokens
     requestAnimationFrame(() => {
       const list2 = rootRef.current;
@@ -348,16 +409,7 @@ export function List<T>({
       const first = new Map<HTMLElement, DOMRect>();
       nodes.forEach((n) => first.set(n, n.getBoundingClientRect()));
 
-      setItems((prev) => {
-        const arr = [...prev];
-        const [m] = arr.splice(from, 1);
-        const clamped = Math.max(0, Math.min(arr.length, insertIndex));
-        arr.splice(clamped, 0, m);
-        draggingIdx.current = clamped;
-        setDragIdx(clamped);
-        setInsertIdx(insertIndex);
-        return arr;
-      });
+      applyDragMove(from, insertIndex);
 
       // FLIP animate
       requestAnimationFrame(() => {
@@ -420,7 +472,9 @@ export function List<T>({
     setInsertIdx(null);
     if (moved.current && from != null) {
       moved.current = false;
-      onReorder?.(items);
+      /* itemsRef, not the render closure: the touch finish handler captures
+         endPointer at drag start, and the data prop may change mid-drag. */
+      onReorder?.(itemsRef.current);
     }
     // Allow the pointer-up triggered click to be ignored once after drag
     setTimeout(() => {
@@ -457,14 +511,15 @@ export function List<T>({
       if (e.key === 'ArrowUp') {
         e.preventDefault();
         if (idx > 0) {
-          setItems((prev) => {
-            const arr = [...prev];
-            const tmp = arr[idx - 1];
-            arr[idx - 1] = arr[idx];
-            arr[idx] = tmp;
-            onReorder?.(arr);
-            return arr;
-          });
+          /* Outside the updater — StrictMode double-invokes updaters,
+             which double-fired onReorder. */
+          const arr = [...itemsRef.current];
+          const tmp = arr[idx - 1];
+          arr[idx - 1] = arr[idx];
+          arr[idx] = tmp;
+          itemsRef.current = arr;
+          setItems(arr);
+          onReorder?.(arr);
           const to = Math.max(0, idx - 1);
           setFocusIdx(to);
           (rootRef.current?.children[to] as HTMLElement | undefined)?.focus();
@@ -472,14 +527,13 @@ export function List<T>({
       } else if (e.key === 'ArrowDown') {
         e.preventDefault();
         if (idx < items.length - 1) {
-          setItems((prev) => {
-            const arr = [...prev];
-            const tmp = arr[idx + 1];
-            arr[idx + 1] = arr[idx];
-            arr[idx] = tmp;
-            onReorder?.(arr);
-            return arr;
-          });
+          const arr = [...itemsRef.current];
+          const tmp = arr[idx + 1];
+          arr[idx + 1] = arr[idx];
+          arr[idx] = tmp;
+          itemsRef.current = arr;
+          setItems(arr);
+          onReorder?.(arr);
           const to = Math.min(items.length - 1, idx + 1);
           setFocusIdx(to);
           (rootRef.current?.children[to] as HTMLElement | undefined)?.focus();

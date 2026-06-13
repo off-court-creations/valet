@@ -1,6 +1,13 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/fields/TextField.tsx  | valet
 // controlled text input integrating with FormControl; add fontFamily prop
+//
+// FIELDS S6 (rulings R9/R10): value/form/internal resolution delegated to
+// the shared `useFieldState` hook (precedence prop > form > internal,
+// latched at mount, no mount-time store writes). Fixes the ignored `value`
+// prop under FormControl and the unseeded-name uncontrolled→controlled flip.
+// ChangeInfo.source is classified honestly from the native event instead of
+// the old dead `instanceof KeyboardEvent` check.
 // ─────────────────────────────────────────────────────────────
 import React, {
   forwardRef,
@@ -12,10 +19,10 @@ import React, {
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
-import { useOptionalForm } from './FormControl';
+import { useFieldState } from '../../hooks/useControlledState';
 import type { Theme } from '../../system/themeStore';
 import type { FieldBaseProps } from '../../types';
-import type { ChangeInfo, OnValueChange, OnValueCommit } from '../../system/events';
+import type { ChangeInfo, InputSource, OnValueChange, OnValueCommit } from '../../system/events';
 
 /*───────────────────────────────────────────────────────────────────────────*/
 /* Prop contracts                                                            */
@@ -50,6 +57,31 @@ export type TextFieldProps =
       onValueCommit?: OnValueCommit<string>;
     }) &
       TextareaProps & { as: 'textarea' });
+
+/*───────────────────────────────────────────────────────────────────────────*/
+/* ChangeInfo.source classification (ruling R10)                             */
+
+/**
+ * Classify the real input source of a text-edit `change` event.
+ *
+ * Browsers deliver `change`/`input` on text controls with an `InputEvent`
+ * native event whose `inputType` distinguishes paste/drop from typing — the
+ * old `instanceof KeyboardEvent` check was dead (change never carries a
+ * KeyboardEvent). Paste / quotation-paste / drop ⇒ `'clipboard'`; any other
+ * `inputType` (typed text, deletions, IME composition) ⇒ `'keyboard'`. When
+ * the native event is not an `InputEvent` (programmatic `value` assignment
+ * + dispatched event) the source is `'programmatic'`.
+ */
+function classifyInputSource(native: Event): InputSource {
+  if (typeof InputEvent !== 'undefined' && native instanceof InputEvent) {
+    const inputType = native.inputType ?? '';
+    if (inputType.startsWith('insertFromPaste') || inputType === 'insertFromDrop') {
+      return 'clipboard';
+    }
+    return 'keyboard';
+  }
+  return 'programmatic';
+}
 
 /*───────────────────────────────────────────────────────────────────────────*/
 /* Shared styled helpers                                                     */
@@ -119,17 +151,47 @@ export const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
       ...rawRest
     } = props;
 
-    // Keys we manage/control
-    const { onChange: externalOnChange, value: externalValue, defaultValue, ...rest } = rawRest;
+    // Keys we manage/control. `onValueChange`/`onValueCommit` are valet's
+    // canonical event trio (read off `props` in the handlers below); strip them
+    // here so they never leak onto the DOM element via the rest-spread.
+    const {
+      onChange: externalOnChange,
+      value: externalValue,
+      defaultValue,
+      onValueChange: _onValueChange,
+      onValueCommit: _onValueCommit,
+      ...rest
+    } = rawRest as typeof rawRest & {
+      onValueChange?: OnValueChange<string>;
+      onValueCommit?: OnValueCommit<string>;
+    };
+    void _onValueChange;
+    void _onValueCommit;
 
     const generatedId = useId();
     const { theme } = useTheme();
     const prevRef = React.useRef<string | undefined>(
-      (props as unknown as { defaultValue?: unknown }).defaultValue as string | undefined,
+      (externalValue ?? defaultValue) as string | undefined,
     );
 
-    /** Optional FormControl wiring */
-    const form = useOptionalForm<Record<string, unknown>>();
+    /**
+     * Single resolution of value/control/form binding (ruling R9). Precedence
+     * is prop > form > internal, latched at mount; an unseeded form key renders
+     * `defaultValue ?? fallback` as controlled and never writes on mount. The
+     * setter writes through to the store whenever live-bound.
+     */
+    const [current, setValue, meta] = useFieldState<string>({
+      value: externalValue as string | undefined,
+      defaultValue: defaultValue as string | undefined,
+      fallback: '',
+      name,
+      component: 'TextField',
+    });
+
+    // Keep prevRef seeded with the current rendered value for ChangeInfo.
+    // (Effect-free: a ref write in render is fine because it tracks the value
+    //  we already resolved; React re-runs this on every render.)
+    prevRef.current = prevRef.current ?? current;
 
     const presetClasses = presetName ? preset(presetName) : '';
     const wrapperStyle = fullWidth ? { flex: 1, width: '100%', ...sxProp } : sxProp;
@@ -148,21 +210,6 @@ export const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
     // Reflect disabled/readOnly on root for theming/automation selectors
     const rawDisabled = Boolean((rawRest as Record<string, unknown>)['disabled']);
     const rawReadOnly = Boolean((rawRest as Record<string, unknown>)['readOnly']);
-
-    // Controlled/uncontrolled guard --------------------------------------
-    const initialCtl = React.useRef<boolean | undefined>(undefined);
-    const isControlled = externalValue !== undefined || Boolean(form && name);
-    React.useEffect(() => {
-      if (process.env.NODE_ENV === 'production') return;
-      if (initialCtl.current === undefined) initialCtl.current = isControlled;
-      else if (initialCtl.current !== isControlled) {
-        console.error(
-          'TextField: component switched from %s to %s after mount. This is not supported.',
-          initialCtl.current ? 'controlled' : 'uncontrolled',
-          isControlled ? 'controlled' : 'uncontrolled',
-        );
-      }
-    }, [isControlled]);
 
     return (
       <Wrapper
@@ -190,32 +237,22 @@ export const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
                 | undefined;
 
               const handleChange: ChangeEventHandler<HTMLTextAreaElement> = (e) => {
-                if (form && name)
-                  form.setField(name as keyof Record<string, unknown>, e.target.value);
+                const next = e.target.value;
+                setValue(next);
                 onChangeTextarea?.(e);
                 const info: ChangeInfo<string> = {
                   previousValue: prevRef.current,
                   phase: 'input',
-                  source:
-                    e.nativeEvent instanceof KeyboardEvent
-                      ? 'keyboard'
-                      : e.nativeEvent instanceof InputEvent &&
-                          (e.nativeEvent as InputEvent).inputType?.includes('insertFromPaste')
-                        ? 'clipboard'
-                        : 'programmatic',
+                  source: classifyInputSource(e.nativeEvent),
                   event: e,
                   name,
                 };
                 (props as unknown as { onValueChange?: OnValueChange<string> }).onValueChange?.(
-                  e.target.value,
+                  next,
                   info,
                 );
-                prevRef.current = e.target.value;
+                prevRef.current = next;
               };
-
-              const value = (
-                form ? (form.values[name] as TextareaProps['value'] | undefined) : externalValue
-              ) as TextareaProps['value'] | undefined;
 
               return (
                 <FieldTextarea
@@ -225,8 +262,8 @@ export const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
                   theme={theme}
                   $error={error}
                   {...(rest as Omit<TextareaProps, 'onChange' | 'value' | 'defaultValue'>)}
-                  {...(value !== undefined
-                    ? { value }
+                  {...(meta.isControlled
+                    ? { value: current }
                     : defaultValue !== undefined
                       ? { defaultValue: defaultValue as TextareaProps['defaultValue'] }
                       : {})}
@@ -258,32 +295,22 @@ export const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
                 | undefined;
 
               const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
-                if (form && name)
-                  form.setField(name as keyof Record<string, unknown>, e.target.value);
+                const next = e.target.value;
+                setValue(next);
                 onChangeInput?.(e);
                 const info: ChangeInfo<string> = {
                   previousValue: prevRef.current,
                   phase: 'input',
-                  source:
-                    e.nativeEvent instanceof KeyboardEvent
-                      ? 'keyboard'
-                      : e.nativeEvent instanceof InputEvent &&
-                          (e.nativeEvent as InputEvent).inputType?.includes('insertFromPaste')
-                        ? 'clipboard'
-                        : 'programmatic',
+                  source: classifyInputSource(e.nativeEvent),
                   event: e,
                   name,
                 };
                 (props as unknown as { onValueChange?: OnValueChange<string> }).onValueChange?.(
-                  e.target.value,
+                  next,
                   info,
                 );
-                prevRef.current = e.target.value;
+                prevRef.current = next;
               };
-
-              const value = (
-                form ? (form.values[name] as InputProps['value'] | undefined) : externalValue
-              ) as InputProps['value'] | undefined;
 
               return (
                 <FieldInput
@@ -293,8 +320,8 @@ export const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
                   theme={theme}
                   $error={error}
                   {...(rest as Omit<InputProps, 'onChange' | 'value' | 'defaultValue'>)}
-                  {...(value !== undefined
-                    ? { value }
+                  {...(meta.isControlled
+                    ? { value: current }
                     : defaultValue !== undefined
                       ? { defaultValue: defaultValue as InputProps['defaultValue'] }
                       : {})}

@@ -1,6 +1,28 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/fields/DateSelector.tsx | valet
 // interactive month calendar for picking dates
+//
+// FIELDS S9 (rulings R9/R10): the controlled/uncontrolled decision and the
+// single-date FormControl binding are delegated to the shared `useFieldState`
+// hook (precedence prop > form > internal, latched at mount, no mount-time
+// store writes), replacing the hand-rolled `initialCtl` effect guard. The
+// internal `Date` state and the `formatLocalISO` commit sites are left intact
+// (ruling R8). Range mode keeps its explicit tuple write (the hook is single-
+// value typed, so it owns the single-date string binding only — matching the
+// pre-migration read semantics exactly). ChangeInfo.source is now 'pointer'
+// (a day cell is only committed via a click) instead of the old hardcoded
+// 'programmatic'.
+//
+// A11Y S10 (plan §3.6 S10, ruling R8 — last writer): Intl wiring. The
+// hardcoded English `monthNames`/`days` constants and the Sunday-fixed
+// `startDay` math are gone; month/weekday names, the first-day-of-week
+// rotation, and the day-number DISPLAY digits all flow from the locale-aware
+// helpers in `src/helpers/dateLocale.ts`. New `locale`/`firstDayOfWeek` props
+// default to en-US / Sunday-start, preserving the previous output byte-for-
+// byte (characterization-tested). The committed VALUE contract is untouched —
+// `formatLocalISO` still emits ISO-8601 'YYYY-MM-DD' with Latin digits (veto
+// register: ar-EG renders Arabic-Indic display digits while onChange emits
+// Latin ISO).
 // ─────────────────────────────────────────────────────────────
 import React, { useMemo, useRef, useState } from 'react';
 import { styled } from '../../css/createStyled';
@@ -9,7 +31,18 @@ import { preset } from '../../css/stylePresets';
 import { IconButton } from './IconButton';
 import { Select } from './Select';
 import { useOptionalForm } from './FormControl';
+import { useFieldState } from '../../hooks/useControlledState';
+import { formatLocalISO } from './dateUtils';
+import {
+  getMonthNames,
+  getWeekdayNames,
+  getFirstDayOfWeek,
+  orderWeekdays,
+  formatDayNumber,
+} from '../../helpers/dateLocale';
 import { toRgb, mix, toHex } from '../../helpers/color';
+import { useComponentStrings } from '../../system/locale';
+import type { DeepPartialStrings, ValetStrings } from '../../system/locale';
 import type { Presettable, Sx } from '../../types';
 import type { ChangeInfo, OnValueChange, OnValueCommit } from '../../system/events';
 
@@ -40,6 +73,29 @@ export interface DateSelectorProps
   density?: 'compact' | 'standard' | 'comfortable';
   /** Legacy alias for density='compact'. */
   compact?: boolean;
+  /**
+   * BCP-47 locale for the DISPLAY of month names, weekday headers, and day
+   * numbers (via native `Intl`). Defaults to `'en-US'`, preserving the prior
+   * English / Sunday-start output exactly. The committed VALUE is always ISO
+   * 'YYYY-MM-DD' with Latin digits regardless of locale (e.g. `'ar-EG'` shows
+   * Arabic-Indic display digits while `onValueChange` still emits Latin ISO).
+   */
+  locale?: string;
+  /**
+   * First day of the calendar week as an ISO weekday number
+   * (**1 = Monday … 7 = Sunday**). When omitted, the locale's own first day is
+   * used (`en-US` → 7/Sunday, `de-DE` → 1/Monday), keeping the default behavior
+   * Sunday-first for the `en-US` default.
+   */
+  firstDayOfWeek?: 1 | 2 | 3 | 4 | 5 | 6 | 7;
+  /**
+   * Instance-level overrides for this component's i18n strings (the month/year
+   * navigation aria-labels). Wins over the `ValetLocaleProvider` value, which
+   * in turn wins over the built-in English defaults (A11Y S8 resolution
+   * contract; see `src/system/locale.tsx`). Month/weekday names are Intl's
+   * domain (A11Y S10), driven by `locale`, not part of this string table.
+   */
+  labels?: DeepPartialStrings<ValetStrings['dateSelector']>;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -147,23 +203,6 @@ const Cell = styled('button')<{
 `;
 
 /*───────────────────────────────────────────────────────────*/
-const monthNames = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-];
-const days = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
-
-/*───────────────────────────────────────────────────────────*/
 export const DateSelector: React.FC<DateSelectorProps> = ({
   value,
   defaultValue,
@@ -175,33 +214,64 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   maxDate: maxDateProp,
   preset: p,
   className,
+  labels,
+  locale = 'en-US',
+  firstDayOfWeek,
   sx,
   density,
   compact,
   ...rest
 }) => {
   const { theme } = useTheme();
+  const t = useComponentStrings('dateSelector', labels);
   const wrapRef = useRef<HTMLDivElement>(null);
   const compactEffective = compact || density === 'compact';
 
-  /* optional FormControl binding --------------------------- */
-  const form = useOptionalForm<Record<string, unknown>>();
+  /* Intl-derived localization (A11Y S10) ------------------------------------
+   * Display-only: month names, weekday headers, the first day of the week, and
+   * the day-number digits all follow `locale`. The committed VALUE is untouched
+   * (formatLocalISO → ISO Latin digits). Defaults to en-US / Sunday-start so
+   * the prior English output is byte-identical. */
+  const monthNames = useMemo(() => getMonthNames(locale, 'long'), [locale]);
+  /* Non-compact weekday headers reproduce the previous 2-letter English form
+   * (`Su`, `Mo`, …) via the locale's long names truncated to two characters;
+   * compact takes the first character (the previous `d[0]` behavior). The base
+   * array is Monday-first (helper contract), rotated to the resolved first day. */
+  const weekdays = useMemo(() => {
+    const base = getWeekdayNames(locale, 'long').map((d) => d.slice(0, 2));
+    const firstDay = firstDayOfWeek ?? getFirstDayOfWeek(locale);
+    return orderWeekdays(base, firstDay);
+  }, [locale, firstDayOfWeek]);
+  /* ISO weekday (1=Mon … 7=Sun) the grid starts on. */
+  const weekStart = firstDayOfWeek ?? getFirstDayOfWeek(locale);
 
+  /* optional FormControl binding --------------------------- */
+  // `useFieldState` (below) also reads this context; the direct read here keeps
+  // the raw single-date store string available for the `Date`-based derivation
+  // that A11Y S10 owns (ruling R8). The range tuple is bound explicitly in
+  // `commitRange` because the hook is single-value typed.
+  const form = useOptionalForm<Record<string, unknown>>();
   const formVal = form && name && !range ? (form.values[name] as string | undefined) : undefined;
-  const controlled = value !== undefined || formVal !== undefined;
-  // Controlled/uncontrolled guard (dev-only)
-  const initialCtl = React.useRef<boolean | undefined>(undefined);
-  React.useEffect(() => {
-    if (process.env.NODE_ENV === 'production') return;
-    if (initialCtl.current === undefined) initialCtl.current = controlled;
-    else if (initialCtl.current !== controlled) {
-      console.error(
-        'DateSelector: component switched from %s to %s after mount. This is not supported.',
-        initialCtl.current ? 'controlled' : 'uncontrolled',
-        controlled ? 'controlled' : 'uncontrolled',
-      );
-    }
-  }, [controlled]);
+
+  /**
+   * Single resolution of the controlled/uncontrolled decision + single-date
+   * form binding (ruling R9). Precedence is prop > form > internal, latched at
+   * mount; the hand-rolled `initialCtl` effect guard is gone. `name` is passed
+   * only in single-date mode, so the hook's write-through replaces the old
+   * single-mode `form.setField`; range mode keeps its explicit tuple write.
+   * The hook's own resolved value/internal state is unused — DateSelector keeps
+   * its `Date`-based `startInt`/`endInt` state — so only `meta.isControlled`
+   * and `setFieldValue` are consumed.
+   */
+  const [, setFieldValue, meta] = useFieldState<string | [string, string]>({
+    value,
+    defaultValue,
+    fallback: '',
+    name: range ? undefined : name,
+    component: 'DateSelector',
+  });
+  const controlled = meta.isControlled;
+
   const parseDate = (v?: string) => (v ? new Date(v + 'T00:00') : new Date());
 
   const initial: string | [string, string] | undefined = value ?? formVal ?? defaultValue;
@@ -218,15 +288,20 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   const minYear = min.getFullYear();
   const maxYear = max.getFullYear();
 
+  // An unseeded form key is now treated as controlled (useFieldState contract:
+  // unseeded keys render `defaultValue ?? fallback`), so the controlled branch
+  // falls through to `initialStart` (= value ?? formVal ?? defaultValue) to
+  // honour `defaultValue` instead of snapping to today. (No formatLocalISO site
+  // is touched here — ruling R8.)
   const startDate = controlled
-    ? parseDate(Array.isArray(value) ? value[0] : (value ?? formVal))
+    ? parseDate(Array.isArray(value) ? value[0] : (value ?? formVal ?? initialStart))
     : startInt;
   const endDate = range
     ? controlled
       ? parseDate(
           Array.isArray(value)
             ? (value[1] ?? (Array.isArray(defaultValue) ? defaultValue[1] : value?.[1]))
-            : startDate.toISOString().slice(0, 10),
+            : formatLocalISO(startDate),
         )
       : endInt
     : startDate;
@@ -248,18 +323,26 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
     [firstMonth, lastMonth],
   );
 
-  const startDay = new Date(viewYear, viewMonth, 1).getDay();
+  /* Leading blank cells before the 1st, relative to the resolved first day of
+   * the week. `getDay()` is JS-convention (0=Sun … 6=Sat); convert to ISO
+   * (1=Mon … 7=Sun) and measure the gap from `weekStart`. With the en-US
+   * default (weekStart=7/Sunday) this reduces to the previous `getDay()`. */
+  const firstIsoWeekday = new Date(viewYear, viewMonth, 1).getDay() || 7;
+  const startDay = (firstIsoWeekday - weekStart + 7) % 7;
   const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
 
   const commit = (d: number) => {
-    const iso = new Date(viewYear, viewMonth, d).toISOString().slice(0, 10);
+    const iso = formatLocalISO(new Date(viewYear, viewMonth, d));
     if (!controlled) setStartInt(new Date(viewYear, viewMonth, d));
-    if (form && name && !range)
-      form.setField(name as keyof Record<string, string | undefined>, iso);
+    // Single-mode form write-through is owned by the hook (`name` was passed to
+    // useFieldState only in single mode); this replaces the old explicit
+    // `form.setField(name, iso)`.
+    setFieldValue(iso);
     const info: ChangeInfo<string | [string, string]> = {
       previousValue: Array.isArray(value) ? value : (value ?? formVal),
       phase: 'commit',
-      source: 'programmatic',
+      // A day cell only commits via a click (ruling R10).
+      source: 'pointer',
       name,
     };
     onValueChange?.(iso, { ...info, phase: 'input' });
@@ -289,12 +372,11 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
 
     if (!controlled) setStartInt(start);
     if (!controlled) setEndInt(end);
-    const tuple: [string, string] = [
-      start.toISOString().slice(0, 10),
-      end.toISOString().slice(0, 10),
-    ];
+    const tuple: [string, string] = [formatLocalISO(start), formatLocalISO(end)];
     if (form && name) {
-      // Bind range tuple into form store under the single field name
+      // Bind range tuple into form store under the single field name. Range mode
+      // is single-value typed away from the hook (`name` was passed to
+      // useFieldState only in single mode), so the tuple write stays explicit.
       form.setField(
         name as keyof Record<string, [string, string] | undefined>,
         tuple as unknown as [string, string],
@@ -303,7 +385,8 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
     const info: ChangeInfo<string | [string, string]> = {
       previousValue: Array.isArray(value) ? value : (value ?? formVal),
       phase: 'commit',
-      source: 'programmatic',
+      // A day cell only commits via a click (ruling R10).
+      source: 'pointer',
       name,
     };
     onValueChange?.(tuple, { ...info, phase: 'input' });
@@ -370,7 +453,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
               variant='outlined'
               color='primaryText'
               icon='mdi:chevron-double-left'
-              aria-label='Previous year'
+              aria-label={t.previousYear}
               onClick={() => {
                 const yr = viewYear - 1;
                 let m = viewMonth;
@@ -386,7 +469,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
             variant='outlined'
             color='primaryText'
             icon='mdi:chevron-left'
-            aria-label='Previous month'
+            aria-label={t.previousMonth}
             onClick={() => changeMonth(-1)}
             disabled={new Date(viewYear, viewMonth, 0) < min}
           />
@@ -406,6 +489,8 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
                 {compactEffective ? monthNames[idx].slice(0, 3) : monthNames[idx]}
               </Select.Option>
             ))}
+            {/* monthNames is locale-derived (Intl); compact still shows the
+                first three characters, matching the previous 3-letter form. */}
           </Select>
           <Select
             size='xs'
@@ -436,7 +521,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
             variant='outlined'
             color='primaryText'
             icon='mdi:chevron-right'
-            aria-label='Next month'
+            aria-label={t.nextMonth}
             onClick={() => changeMonth(1)}
             disabled={new Date(viewYear, viewMonth + 1, 1) > max}
           />
@@ -446,7 +531,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
               variant='outlined'
               color='primaryText'
               icon='mdi:chevron-double-right'
-              aria-label='Next year'
+              aria-label={t.nextYear}
               onClick={() => {
                 const yr = viewYear + 1;
                 let m = viewMonth;
@@ -460,9 +545,9 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
         </div>
       </Header>
       <Grid $compact={compactEffective}>
-        {days.map((d) => (
+        {weekdays.map((d, i) => (
           <DayLabel
-            key={d}
+            key={`${d}-${i}`}
             $compact={compactEffective}
           >
             {compactEffective ? d[0] : d}
@@ -506,7 +591,9 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
               onClick={() => !disabled && (range ? commitRange(day) : commit(day))}
               disabled={disabled}
             >
-              {day}
+              {/* DISPLAY-only locale digits; the committed VALUE stays ISO
+                  Latin via formatLocalISO (veto register / ruling R7/R8). */}
+              {formatDayNumber(day, locale)}
             </Cell>
           );
         })}

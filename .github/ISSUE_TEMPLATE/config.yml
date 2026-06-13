@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Report a security vulnerability (private)
+    url: https://github.com/off-court-creations/valet/security/advisories/new
+    about: >-
+      Please use GitHub Private Vulnerability Reporting — never a public
+      issue. See SECURITY.md for supported versions, response expectations,
+      and scope.

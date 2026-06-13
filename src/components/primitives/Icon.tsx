@@ -6,6 +6,7 @@ import React, { ReactElement, isValidElement, PropsWithChildren } from 'react';
 import { Icon as Iconify } from '@iconify/react';
 import { styled } from '../../css/createStyled';
 import { preset } from '../../css/stylePresets';
+import { parseSvgString } from '../../helpers/svgSafe';
 import type { Presettable, Sx } from '../../types';
 
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -17,10 +18,30 @@ export interface IconProps
   icon?: string;
   /**
    * Custom SVG:
-   * • **string** – raw `<path …>` data (wrapped in 24×24 viewBox)
-   * • **ReactElement** – a full `<svg>` element
+   * • **string** – passed through the {@link parseSvgString} allowlist
+   *   parser. Accepted forms: bare path `d`-data (`"M12 2L2 22h20z"`,
+   *   wrapped in a 24×24 viewBox) or `<path>`-only markup, optionally
+   *   inside one `<svg>` wrapper. The result is rendered as real React
+   *   `<svg>`/`<path>` elements — never via `innerHTML`. Anything outside
+   *   that grammar renders nothing and dev-warns.
+   * • **ReactElement** – a full `<svg>` element you already trust.
+   *
+   * **BREAKING (Q6):** full-SVG strings (`<svg>…</svg>` containing anything
+   * other than `<path>`, or any string with entities/comments/scripts) no
+   * longer render here — they are an XSS vector through the old
+   * `dangerouslySetInnerHTML` sink. For trusted full-SVG markup, pass a
+   * ReactElement or use {@link IconProps.dangerouslySetSvg}.
    */
   svg?: string | ReactElement<React.SVGProps<SVGSVGElement>>;
+  /**
+   * Escape hatch for **trusted** raw SVG markup. Reproduces the pre-0.35
+   * `svg` string behavior exactly: the markup is injected verbatim via
+   * `dangerouslySetInnerHTML`, so it can execute scripts/event handlers and
+   * load remote references. The name is the warning — only ever pass markup
+   * you fully control (never model output or user input). For untrusted or
+   * agent-generated markup use {@link IconProps.svg}, which is parsed.
+   */
+  dangerouslySetSvg?: string;
   /** Icon size token or explicit CSS size. */
   size?: IconSize | number | string;
   /** Explicit colour override; otherwise inherits `currentColor`. */
@@ -65,6 +86,7 @@ const sizeMap: Record<IconSize, string> = {
 export const Icon: React.FC<PropsWithChildren<IconProps>> = ({
   icon,
   svg,
+  dangerouslySetSvg,
   size = 'md',
   color,
   preset: p,
@@ -98,13 +120,57 @@ export const Icon: React.FC<PropsWithChildren<IconProps>> = ({
       fill: svgEl.props.fill ?? 'currentColor',
     });
   } else if (typeof svg === 'string') {
+    /* Trusted-shape string: the allowlist parser turns it into structured
+       attribute records (or null). We render those as real React elements —
+       the markup is never re-serialized to innerHTML, so a parser misjudge
+       can never reach an HTML sink. Anything outside the grammar → null. */
+    const parsed = parseSvgString(svg);
+    if (parsed) {
+      content = (
+        <svg
+          width='100%'
+          height='100%'
+          viewBox={parsed.root.viewBox ?? '0 0 24 24'}
+          fill={parsed.root.fill ?? 'currentColor'}
+          stroke={parsed.root.stroke}
+          strokeWidth={parsed.root.strokeWidth}
+          fillRule={parsed.root.fillRule as React.SVGProps<SVGSVGElement>['fillRule']}
+          clipRule={parsed.root.clipRule as React.SVGProps<SVGSVGElement>['clipRule']}
+        >
+          {parsed.paths.map((path, i) => (
+            <path
+              key={i}
+              d={path.d}
+              fill={path.fill}
+              stroke={path.stroke}
+              strokeWidth={path.strokeWidth}
+              fillRule={path.fillRule as React.SVGProps<SVGPathElement>['fillRule']}
+              clipRule={path.clipRule as React.SVGProps<SVGPathElement>['clipRule']}
+            />
+          ))}
+        </svg>
+      );
+    } else {
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn(
+          '<Icon svg="…" /> rejected: the string is not bare path `d`-data or `<path>`-only markup. ' +
+            'For untrusted/agent-generated markup keep it within that grammar; for trusted full-SVG markup ' +
+            'pass a React element or use the `dangerouslySetSvg` escape hatch.',
+        );
+      }
+      return null;
+    }
+  } else if (typeof dangerouslySetSvg === 'string') {
+    /* Explicit, named escape hatch (Q6): reproduces the pre-0.35 raw
+       innerHTML behavior for caller-trusted markup. The prop name is the
+       warning — this can execute scripts; never pass untrusted input. */
     content = (
       <svg
         width='100%'
         height='100%'
         viewBox='0 0 24 24'
         fill='currentColor'
-        dangerouslySetInnerHTML={{ __html: svg.trim() }}
+        dangerouslySetInnerHTML={{ __html: dangerouslySetSvg.trim() }}
       />
     );
   } else if (isValidElement(children)) {
@@ -116,7 +182,9 @@ export const Icon: React.FC<PropsWithChildren<IconProps>> = ({
     });
   } else {
     if (process.env.NODE_ENV !== 'production') {
-      console.warn('<Icon /> requires `icon`, `svg`, or children containing an <svg>.');
+      console.warn(
+        '<Icon /> requires `icon`, `svg`, `dangerouslySetSvg`, or children containing an <svg>.',
+      );
     }
     return null;
   }

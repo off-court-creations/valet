@@ -2,7 +2,7 @@
   "name": "LoadingBackdrop",
   "category": "widgets",
   "slug": "components/widgets/loadingbackdrop",
-  "summary": "LoadingBackdrop component",
+  "summary": "Full-area scrim with a centered spinner (`showSpinner`) that overlays content while it loads; render it conditionally to block interaction during an async operation, and toggle `fading` for the exit transition.",
   "status": "stable",
   "aliases": [
     "loadingbackdrop",
@@ -19,6 +19,12 @@
       "name": "showSpinner",
       "type": "boolean",
       "required": false
+    },
+    {
+      "name": "labels",
+      "type": "DeepPartialStrings<ValetStrings['loadingBackdrop']>",
+      "required": false,
+      "description": "Instance-level overrides for this component's i18n strings. Wins over the\n`ValetLocaleProvider` value, which in turn wins over the built-in English\ndefaults (A11Y S8 resolution contract; see `src/system/locale.tsx`)."
     },
     {
       "name": "sx",
@@ -39,18 +45,17 @@
       "style"
     ]
   },
-  "cssVars": [
-    "--valet-zindex-modal"
-  ],
+  "cssVars": [],
   "cssPresets": [],
   "events": [],
-  "actions": [],
   "slots": [],
-  "bestPractices": [],
+  "bestPractices": [
+    "Internationalize the built-in labels with the `labels` prop (instance-level) or a `ValetLocaleProvider` (app-wide). Resolution is instance `labels` > provider strings > built-in English."
+  ],
   "examples": [],
   "sourceFiles": [
     "src/components/widgets/LoadingBackdrop.tsx"
   ],
-  "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "version": "0.35.1",
+  "schemaVersion": "1.7"
 }

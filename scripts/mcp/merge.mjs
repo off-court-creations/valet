@@ -6,11 +6,13 @@ import { extractFromDocs } from './extract-docs.mjs';
 import { extractGlossary } from './extract-glossary.mjs';
 import { loadComponentMeta } from './load-meta.mjs';
 
-const SCHEMA_VERSION = '1.6';
+// 1.7: the always-empty `actions` field was dropped from component docs
+// (extraction + merge + served corpus). See plan §3.9 S9.
+const SCHEMA_VERSION = '1.7';
 
 // Aliases are now sourced from per-component meta sidecars.
 
-function merge(tsMap, docsMap, version, metaMap) {
+export function merge(tsMap, docsMap, version, metaMap) {
   /** @type {Record<string, any>} */
   const out = {};
 
@@ -31,9 +33,15 @@ function merge(tsMap, docsMap, version, metaMap) {
 
     // Enrich from docs prop table
     for (const row of docs.propsRows || []) {
-      const nameGuess = String(row.prop || '').replace(/`/g, '').trim();
+      const nameGuess = String(row.prop || '')
+        .replace(/`/g, '')
+        .trim();
       if (!nameGuess) continue;
-      const target = byName.get(nameGuess) || { name: nameGuess, type: row.type || 'unknown', required: false };
+      const target = byName.get(nameGuess) || {
+        name: nameGuess,
+        type: row.type || 'unknown',
+        required: false,
+      };
       if (row.type) target.type = row.type.replace(/`/g, '');
       if (row.default) target.default = row.default.replace(/`/g, '');
       if (row.description) target.description = row.description;
@@ -49,12 +57,32 @@ function merge(tsMap, docsMap, version, metaMap) {
     const cssPresets = ts.cssPresets || [];
 
     // summary/description
-    const summary = ts.summary || `${name} component`;
+    // Precedence (plan §3.9 S10, ruling R29): a curated sidecar summary is
+    // authoritative — it is the one sharp, agent-actionable sentence an editor
+    // wrote and verified against the current API. Fall back to the header-comment
+    // summary (MCP-TRUTH S1) only when no sidecar summary exists, then to the
+    // placeholder (which the validate gate rejects). A blank/whitespace sidecar
+    // summary is treated as absent so it can never mask a real header comment.
+    //
+    // Dotted subcomponents (Tabs.Tab, Select.Option, …) accept their own
+    // dotted-name sidecar; lacking one, they inherit the parent's curated
+    // summary rather than repeating the parent file's raw header comment
+    // (mirrors the docsUrl inheritance below). A dotted sidecar always wins
+    // over the inherited parent summary.
+    const sidecarSummary = (key) =>
+      typeof metaMap?.[key]?.summary === 'string' && metaMap[key].summary.trim()
+        ? metaMap[key].summary.trim()
+        : undefined;
+    const parentSummary = name.includes('.') ? sidecarSummary(name.split('.')[0]) : undefined;
+    const metaSummary = sidecarSummary(name) || parentSummary;
+    const summary = metaSummary || ts.summary || `${name} component`;
     const description = undefined;
 
     // If component supports intent/variant, ensure standard intent CSS vars are present
     try {
-      const hasIntent = (ts.props || props).some((p) => p && typeof p.name === 'string' && p.name === 'intent');
+      const hasIntent = (ts.props || props).some(
+        (p) => p && typeof p.name === 'string' && p.name === 'intent',
+      );
       if (hasIntent) {
         const INTENT_VARS = [
           '--valet-intent-bg',
@@ -79,9 +107,11 @@ function merge(tsMap, docsMap, version, metaMap) {
         const t = (p.type || '').toLowerCase();
         if (/^boolean\b/.test(t)) out[p.name] = false;
         else if (/^number\b/.test(t)) out[p.name] = 0;
-        else if (/^string\b/.test(t)) out[p.name] = (p.enumValues && p.enumValues[0]) ? p.enumValues[0] : '';
+        else if (/^string\b/.test(t))
+          out[p.name] = p.enumValues && p.enumValues[0] ? p.enumValues[0] : '';
         else if (/react\./.test(p.type) || /jsx\./i.test(p.type)) out[p.name] = '<div />';
-        else if (/=>/.test(p.type) || /^function/i.test(p.type) || /^\(/.test(p.type)) out[p.name] = '() => {}';
+        else if (/=>/.test(p.type) || /^function/i.test(p.type) || /^\(/.test(p.type))
+          out[p.name] = '() => {}';
         else if (/\[\]/.test(p.type)) out[p.name] = [];
         else out[p.name] = null;
       }
@@ -98,17 +128,29 @@ function merge(tsMap, docsMap, version, metaMap) {
     const usage = (() => {
       const raw = metaMap?.[name]?.usage;
       if (!raw) return undefined;
-      const normArr = (arr) => Array.isArray(arr) ? Array.from(new Set(arr.map((s) => String(s).trim()).filter(Boolean))) : undefined;
+      const normArr = (arr) =>
+        Array.isArray(arr)
+          ? Array.from(new Set(arr.map((s) => String(s).trim()).filter(Boolean)))
+          : undefined;
       const purpose = typeof raw.purpose === 'string' ? raw.purpose.trim() : normArr(raw.purpose);
       const whenToUse = normArr(raw.whenToUse);
       const whenNotToUse = normArr(raw.whenNotToUse);
       const alternatives = normArr(raw.alternatives);
-      const any = (purpose && (typeof purpose === 'string' ? purpose : purpose.length)) || (whenToUse && whenToUse.length) || (whenNotToUse && whenNotToUse.length) || (alternatives && alternatives.length);
+      const any =
+        (purpose && (typeof purpose === 'string' ? purpose : purpose.length)) ||
+        (whenToUse && whenToUse.length) ||
+        (whenNotToUse && whenNotToUse.length) ||
+        (alternatives && alternatives.length);
       return any ? { purpose, whenToUse, whenNotToUse, alternatives } : undefined;
     })();
 
     // Docs URL and best practice slugs integration
-    const docsUrl = docs.docsUrl || (metaMap?.[name]?.docs && metaMap[name].docs.docsUrl) || undefined;
+    // Dotted subcomponents (Tabs.Tab, Select.Option, …) document on their parent's page.
+    const docsUrl =
+      docs.docsUrl ||
+      (name.includes('.') ? docsMap[name.split('.')[0]]?.docsUrl : undefined) ||
+      (metaMap?.[name]?.docs && metaMap[name].docs.docsUrl) ||
+      undefined;
     const bestPracticeSlugs = (() => {
       const shorten = (slug) => {
         const limit = 72;
@@ -130,7 +172,7 @@ function merge(tsMap, docsMap, version, metaMap) {
         .map((s) => s.trim().toLowerCase())
         .map((s) => s.replace(/\s+/g, '-').replace(/_/g, '-'))
         .map((s) => s.replace(/[^a-z0-9-]/g, ''))
-      .filter(Boolean);
+        .filter(Boolean);
       const fromDocs = Array.isArray(docs.bestPractices)
         ? docs.bestPractices
             .map((s) => String(s))
@@ -157,9 +199,10 @@ function merge(tsMap, docsMap, version, metaMap) {
       return typeof raw === 'string' && allowed.has(raw) ? raw : 'stable';
     })();
 
-    const bestPractices = Array.isArray(metaMap?.[name]?.docs?.bestPractices) && metaMap[name].docs.bestPractices.length
-      ? metaMap[name].docs.bestPractices
-      : (docs.bestPractices || []);
+    const bestPractices =
+      Array.isArray(metaMap?.[name]?.docs?.bestPractices) && metaMap[name].docs.bestPractices.length
+        ? metaMap[name].docs.bestPractices
+        : docs.bestPractices || [];
 
     // Examples: prefer curated ones from sidecar meta; optionally only curated
     const rawExamples = Array.isArray(metaMap?.[name]?.examples) ? metaMap[name].examples : [];
@@ -176,7 +219,7 @@ function merge(tsMap, docsMap, version, metaMap) {
         // Prefer explicit typed payloads when recognizable
         const t = String(p.type || '');
         const isValueEvt = /OnValue(Change|Commit)/.test(t) || /(value\s*[,)]|ChangeInfo)/i.test(t);
-        const payload = isValueEvt ? `${t || 'unknown'}` : (t || 'unknown');
+        const payload = isValueEvt ? `${t || 'unknown'}` : t || 'unknown';
         base.push({ name: nm, payloadType: payload });
         have.add(nm);
       }
@@ -186,7 +229,7 @@ function merge(tsMap, docsMap, version, metaMap) {
     out[name] = {
       name,
       category: ts.category || 'unknown',
-      slug: ts.slug || `components/${(ts.category || 'unknown')}/${name.toLowerCase()}`,
+      slug: ts.slug || `components/${ts.category || 'unknown'}/${name.toLowerCase()}`,
       summary,
       description,
       status,
@@ -197,7 +240,6 @@ function merge(tsMap, docsMap, version, metaMap) {
       cssVars,
       cssPresets,
       events,
-      actions: ts.actions || [],
       slots: ts.slots || [],
       bestPractices,
       bestPracticeSlugs,
@@ -231,8 +273,29 @@ function indexFromComponents(map) {
   }));
 }
 
-async function main() {
-  const root = process.cwd();
+/**
+ * Build the full MCP corpus in memory. Single source of truth shared by the
+ * CLI below (mcp:build) and the freshness guard (scripts/mcp/check-fresh.mjs,
+ * mcp:check) so the checker can never drift from what the builder produces.
+ *
+ * Known side effects (unchanged from the historical CLI path, documented for
+ * check-fresh which snapshots around them):
+ *  • extractFromDocs(root) rewrites mcp-data/_routes.json (route artifact).
+ *
+ * @param {string} root  repo root (must contain package.json, src/, docs/)
+ * @returns {Promise<{
+ *   version: string,
+ *   schemaVersion: string,
+ *   components: Record<string, object>,  // merged component docs, keyed by name
+ *   index: Array<object>,
+ *   tsMap: Record<string, object>,       // raw TS extraction (_ts-extract.json)
+ *   synonyms: Record<string, string[]>,
+ *   buildHash: string,                   // sha1 over {merged, index} — no timestamps
+ *   glossary: Array<object>|undefined,   // undefined when extraction failed
+ *   glossaryError: Error|undefined,
+ * }>}
+ */
+export async function buildCorpus(root) {
   const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
   const version = pkg.version || '0.0.0';
 
@@ -254,6 +317,13 @@ async function main() {
       }
     }
   } catch {}
+  // Legacy cleanup: the old .meta.ts pipeline compiled sidecars into
+  // mcp-data/_tmp-meta. That branch is gone (sidecars are JSON-only), so the
+  // dir is no longer produced — sweep any stale copy left by an older checkout
+  // so it never lingers as an artifact in the dataset.
+  try {
+    fs.rmSync(path.join(root, 'mcp-data', '_tmp-meta'), { recursive: true, force: true });
+  } catch {}
   const docsMap = (() => {
     try {
       return extractFromDocs(root);
@@ -264,31 +334,17 @@ async function main() {
   })();
 
   const merged = merge(tsMap, docsMap, version, metaMap);
-
-  const outDir = path.join(root, 'mcp-data');
-  const compDir = path.join(outDir, 'components');
-  // Clean output dir to avoid stale entries (e.g., old docs pages)
-  fs.rmSync(compDir, { recursive: true, force: true });
-  fs.mkdirSync(compDir, { recursive: true });
-
-  // Write per-component
-  for (const [name, doc] of Object.entries(merged)) {
-    const safeSlug = doc.slug.replace(/\//g, '_');
-    const fp = path.join(compDir, `${safeSlug}.json`);
-    fs.writeFileSync(fp, JSON.stringify(doc, null, 2));
-  }
-
-  // Write index
   const index = indexFromComponents(merged);
-  fs.writeFileSync(path.join(outDir, 'index.json'), JSON.stringify(index, null, 2));
 
-  // meta
-  const hash = crypto
+  // Deterministic content hash: derived only from corpus content (no
+  // timestamps). Note the object-key order inside follows filesystem
+  // enumeration order, so the hash is stable per checkout but not
+  // guaranteed identical across machines — check-fresh compares content
+  // canonically instead of comparing this hash.
+  const buildHash = crypto
     .createHash('sha1')
     .update(JSON.stringify({ merged, index }))
     .digest('hex');
-  const meta = { version, builtAt: new Date().toISOString(), schemaVersion: SCHEMA_VERSION, buildHash: hash };
-  fs.writeFileSync(path.join(outDir, '_meta.json'), JSON.stringify(meta, null, 2));
 
   // Component synonyms (alias -> [component names])
   /** @type {Record<string, string[]>} */
@@ -302,17 +358,89 @@ async function main() {
       if (!synonyms[key].includes(c.name)) synonyms[key].push(c.name);
     }
   }
+
+  // Glossary — error captured (not thrown) so the CLI keeps its historical
+  // warn-and-skip behavior; check-fresh treats a capture as a hard failure.
+  let glossary;
+  let glossaryError;
+  try {
+    glossary = extractGlossary(root);
+  } catch (e) {
+    glossaryError = e;
+  }
+
+  return {
+    version,
+    schemaVersion: SCHEMA_VERSION,
+    components: merged,
+    index,
+    tsMap,
+    synonyms,
+    buildHash,
+    glossary,
+    glossaryError,
+  };
+}
+
+async function main() {
+  const root = process.cwd();
+  const {
+    version,
+    components: merged,
+    index,
+    tsMap,
+    synonyms,
+    buildHash,
+    glossary,
+    glossaryError,
+  } = await buildCorpus(root);
+
+  const outDir = path.join(root, 'mcp-data');
+  const compDir = path.join(outDir, 'components');
+  // Clean output dir to avoid stale entries (e.g., old docs pages)
+  fs.rmSync(compDir, { recursive: true, force: true });
+  fs.mkdirSync(compDir, { recursive: true });
+
+  // Write per-component
+  for (const doc of Object.values(merged)) {
+    const safeSlug = doc.slug.replace(/\//g, '_');
+    const fp = path.join(compDir, `${safeSlug}.json`);
+    fs.writeFileSync(fp, JSON.stringify(doc, null, 2));
+  }
+
+  // Write index
+  fs.writeFileSync(path.join(outDir, 'index.json'), JSON.stringify(index, null, 2));
+
+  // Write the raw TS extraction snapshot from the in-memory map so the
+  // mirrored/shipped copy can never go stale relative to the dataset.
+  fs.writeFileSync(path.join(outDir, '_ts-extract.json'), JSON.stringify(tsMap, null, 2));
+
+  // meta
+  const meta = {
+    version,
+    builtAt: new Date().toISOString(),
+    schemaVersion: SCHEMA_VERSION,
+    buildHash,
+  };
+  fs.writeFileSync(path.join(outDir, '_meta.json'), JSON.stringify(meta, null, 2));
+
   const synPath = path.join(outDir, 'component_synonyms.json');
   // Always write the file, even if empty. The server has built-in defaults,
   // but emitting an empty object avoids validator warnings and clarifies intent.
   fs.writeFileSync(synPath, JSON.stringify(synonyms, null, 2));
 
   // Glossary
-  try {
-    const glossary = extractGlossary(root);
-    fs.writeFileSync(path.join(outDir, 'glossary.json'), JSON.stringify({ entries: glossary, version, builtAt: meta.builtAt }, null, 2));
-  } catch (e) {
-    console.warn('Glossary extraction error:', e.message);
+  if (glossaryError) {
+    console.warn('Glossary extraction error:', glossaryError.message);
+  } else {
+    try {
+      fs.writeFileSync(
+        path.join(outDir, 'glossary.json'),
+        JSON.stringify({ entries: glossary, version, builtAt: meta.builtAt }, null, 2),
+      );
+    } catch (e) {
+      console.warn('Glossary extraction error:', e.message);
+    }
   }
 
   // Mirror snapshot into server package (if present) for parity
@@ -321,7 +449,13 @@ async function main() {
     fs.rmSync(serverDataDir, { recursive: true, force: true });
     fs.mkdirSync(serverDataDir, { recursive: true });
     // shallow copy files and components subdir
-    for (const fn of ['_meta.json', 'index.json', 'glossary.json', '_ts-extract.json', 'component_synonyms.json']) {
+    for (const fn of [
+      '_meta.json',
+      'index.json',
+      'glossary.json',
+      '_ts-extract.json',
+      'component_synonyms.json',
+    ]) {
       const src = path.join(outDir, fn);
       if (fs.existsSync(src)) fs.copyFileSync(src, path.join(serverDataDir, fn));
     }

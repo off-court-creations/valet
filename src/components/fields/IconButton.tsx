@@ -6,32 +6,27 @@ import React, { ReactElement, SVGProps } from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
-import type { Presettable, Sx } from '../../types';
+import type { Intent, Presettable, Sx } from '../../types';
 import { Icon } from '../primitives/Icon';
 import {
   createPolymorphicComponent,
   type PolymorphicProps,
   type PolymorphicRef,
 } from '../../system/polymorphic';
-import { toRgb, mix, toHex } from '../../helpers/color';
+import { computeIntentVars } from '../../system/intentVars';
 
 /*───────────────────────────────────────────────────────────*/
 /* Public API                                                */
 export type IconButtonVariant = 'filled' | 'outlined' | 'plain';
 export type IconButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-type Intent =
-  | 'default'
-  | 'primary'
-  | 'secondary'
-  | 'success'
-  | 'warning'
-  | 'error'
-  | 'info'
-  | (string & {});
 
-export interface IconButtonProps
-  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'style'>,
-    Presettable {
+/**
+ * Behavior-only props. Element attributes (onClick, disabled, type, …)
+ * deliberately do NOT live here — they flow from `PropsOf<E>` inside
+ * `PolymorphicProps`, so `<IconButton as='a'>` gets anchor attributes
+ * and anchor-typed handlers instead of button ones.
+ */
+export interface IconButtonOwnProps extends Presettable {
   variant?: IconButtonVariant;
   size?: IconButtonSize | number | string;
   icon?: string;
@@ -41,6 +36,24 @@ export interface IconButtonProps
   color?: string;
   /** Inline styles (with CSS var support) */
   sx?: Sx;
+}
+
+/**
+ * The runtime strips `type` when rendering an anchor (see IconButtonImpl),
+ * so the type level refuses it up front instead of silently dropping it.
+ */
+type AnchorTypeGuard<E extends React.ElementType> = E extends 'a' ? { type?: never } : unknown;
+
+/** Fully resolved IconButton props for a given element type (back-compat alias). */
+export type IconButtonProps<E extends React.ElementType = 'button'> = PolymorphicProps<
+  E,
+  IconButtonOwnProps
+> &
+  AnchorTypeGuard<E>;
+
+export interface IconButtonComponent {
+  <E extends React.ElementType = 'button'>(props: IconButtonProps<E>): React.ReactElement | null;
+  displayName?: string;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -138,7 +151,7 @@ const Skin = styled('button')<{
 /*───────────────────────────────────────────────────────────*/
 /* Component                                                 */
 const IconButtonImpl = <E extends React.ElementType = 'button'>(
-  props: PolymorphicProps<E, IconButtonProps>,
+  props: PolymorphicProps<E, IconButtonOwnProps>,
   ref: PolymorphicRef<E>,
 ) => {
   const {
@@ -150,9 +163,14 @@ const IconButtonImpl = <E extends React.ElementType = 'button'>(
     color,
     preset: p,
     className,
+    style,
     sx,
     ...rest
-  } = props as IconButtonProps & { as?: E } & Record<string, unknown>;
+  } = props as IconButtonOwnProps & {
+    as?: E;
+    className?: string;
+    style?: React.CSSProperties;
+  } & Record<string, unknown>;
   const { theme } = useTheme();
   const sizes = geom();
 
@@ -202,15 +220,17 @@ const IconButtonImpl = <E extends React.ElementType = 'button'>(
     borderRadius: '50%',
   };
 
-  // Intent CSS variables contract
-  const makeMix = (a: string, b: string, w: number) => toHex(mix(toRgb(a), toRgb(b), w));
-  const intentBg = bg;
+  // Intent CSS variables contract (shared helper, API-TYPES S13).
+  // IconButton's border is `bg` for every variant (borderMixColor omitted),
+  // and hover/active blend `bg` toward the button-text colour.
   const intentFg = variant === 'filled' ? btnText : bg;
-  const intentBorder = variant === 'outlined' ? bg : intentBg;
-  const intentFocus = theme.colors.primary;
-  const intentBgHover = variant === 'filled' ? makeMix(bg, btnText, 0.15) : 'transparent';
-  const intentBgActive = variant === 'filled' ? makeMix(bg, btnText, 0.25) : 'transparent';
-  const intentFgDisabled = makeMix(intentFg, theme.colors.background, 0.5);
+  const intentVars = computeIntentVars({
+    bg,
+    fg: intentFg,
+    focus: theme.colors.primary,
+    disabledMixColor: theme.colors.background,
+    variant,
+  });
 
   const asTag = (props as unknown as { as?: React.ElementType }).as as unknown as
     | string
@@ -273,16 +293,12 @@ const IconButtonImpl = <E extends React.ElementType = 'button'>(
       $btnText={btnText}
       $ripple={ripple}
       $strokeW={theme.stroke(1)}
+      /* precedence: caller style < geometry < intent vars < sx */
       style={
         {
+          ...style,
           ...geomStyle,
-          '--valet-intent-bg': intentBg,
-          '--valet-intent-fg': intentFg,
-          '--valet-intent-border': intentBorder,
-          '--valet-intent-focus': intentFocus,
-          '--valet-intent-bg-hover': intentBgHover,
-          '--valet-intent-bg-active': intentBgActive,
-          '--valet-intent-fg-disabled': intentFgDisabled,
+          ...intentVars,
           ...sx,
         } as React.CSSProperties
       }
@@ -299,6 +315,9 @@ const IconButtonImpl = <E extends React.ElementType = 'button'>(
   );
 };
 
-export const IconButton = createPolymorphicComponent<'button', IconButtonProps>(IconButtonImpl);
+export const IconButton: IconButtonComponent = createPolymorphicComponent<
+  'button',
+  IconButtonOwnProps
+>(IconButtonImpl);
 
 export default IconButton;

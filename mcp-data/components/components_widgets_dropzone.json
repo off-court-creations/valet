@@ -2,7 +2,7 @@
   "name": "Dropzone",
   "category": "widgets",
   "slug": "components/widgets/dropzone",
-  "summary": "Dropzone component",
+  "summary": "Keyboard-accessible drag-and-drop file uploader with previews and rejection handling; read selected files via `onFilesChange` and constrain input with `accept`/`maxFiles` — use it for in-page file intake.",
   "status": "stable",
   "aliases": [
     "dropzone",
@@ -87,6 +87,12 @@
       "default": "false"
     },
     {
+      "name": "labels",
+      "type": "DeepPartialStrings<ValetStrings['dropzone']>",
+      "required": false,
+      "description": "Instance-level overrides for this component's i18n strings (instructions,\nper-file remove affordance, rejection fallback). Wins over the\n`ValetLocaleProvider` value, which in turn wins over the built-in English\ndefaults (A11Y S8 resolution contract; see `src/system/locale.tsx`)."
+    },
+    {
       "name": "sx",
       "type": "Sx",
       "required": false,
@@ -122,7 +128,6 @@
       "payloadType": "DropzoneOptions['onDropRejected']"
     }
   ],
-  "actions": [],
   "slots": [],
   "bestPractices": [
     "Indicate accepted file types and size limits clearly before upload.",
@@ -130,7 +135,8 @@
     "Validate optimistically on drop and show per‑file status/errors with polite announcements.",
     "Avoid blocking the UI; use background uploads and concise feedback.",
     "Revoke object URLs for previews when files are removed or on unmount to avoid leaks.",
-    "Sanitize file names and never execute or render untrusted content."
+    "Sanitize file names and never execute or render untrusted content.",
+    "Internationalize the built-in labels with the `labels` prop (instance-level) or a `ValetLocaleProvider` (app-wide). Resolution is instance `labels` > provider strings > built-in English."
   ],
   "examples": [
     {
@@ -166,9 +172,11 @@
       "minimalProps": {}
     }
   ],
+  "docsUrl": "/dropzone-demo",
   "sourceFiles": [
-    "src/components/widgets/Dropzone.tsx"
+    "src/components/widgets/Dropzone.tsx",
+    "docs/src/pages/components/widgets/DropzoneDemo.tsx"
   ],
-  "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "version": "0.35.1",
+  "schemaVersion": "1.7"
 }

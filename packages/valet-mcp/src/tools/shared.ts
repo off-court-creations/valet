@@ -5,6 +5,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { z } from 'zod';
 
 export type ValetIndexItem = {
   name: string;
@@ -44,11 +45,20 @@ export type ValetComponentDoc = {
   cssVars?: string[];
   cssPresets?: string[];
   events?: Array<{ name: string; payloadType?: string }>;
-  actions?: Array<{ name: string; signature?: string }>;
+  // schema 1.7: `actions` removed (always-empty; its only heuristic detected
+  // useImperativeHandle, used by zero components). The server reads corpora
+  // tolerantly (plain JSON.parse, no strict field validation), so a pre-1.7
+  // corpus carrying `actions: []` still loads — the key is simply not typed.
   slots?: Array<{ name: string }>;
   bestPractices?: string[];
   bestPracticeSlugs?: string[];
-  examples?: Array<{ id: string; title?: string; code: string; lang?: string; source?: { file: string; line?: number } }>;
+  examples?: Array<{
+    id: string;
+    title?: string;
+    code: string;
+    lang?: string;
+    source?: { file: string; line?: number };
+  }>;
   docsUrl?: string;
   sourceFiles: string[];
   version: string;
@@ -62,7 +72,13 @@ export function normalizeStatusFilter(input?: string | string[]): Set<string> {
   return new Set(normalized);
 }
 
-export type GlossaryEntry = { term: string; definition: string; aliases?: string[]; seeAlso?: string[]; category?: string };
+export type GlossaryEntry = {
+  term: string;
+  definition: string;
+  aliases?: string[];
+  seeAlso?: string[];
+  category?: string;
+};
 
 type DataSource = 'env-dir' | 'bundled';
 
@@ -86,10 +102,12 @@ function resolveExplicitDir(): { dir: string; source: DataSource } | null {
 
 function resolveBundledDir(): { dir: string; source: DataSource } | null {
   try {
-    const fileDir = path.dirname(fileURLToPath(import.meta.url)); // ..../dist
-    const pkgRoot = path.resolve(fileDir, '..');
+    const fileDir = path.dirname(fileURLToPath(import.meta.url)); // <pkg>/dist/tools
+    const distRoot = path.resolve(fileDir, '..'); // <pkg>/dist
+    const pkgRoot = path.resolve(distRoot, '..'); // <pkg>
     const localCandidates = [
-      path.join(pkgRoot, 'mcp-data'),
+      path.join(pkgRoot, 'mcp-data'), // shipped copy (package.json files: ["mcp-data"])
+      path.join(distRoot, 'mcp-data'), // legacy bundle:data location
       path.join(fileDir, 'mcp-data'),
     ];
     for (const c of localCandidates) {
@@ -138,12 +156,27 @@ export function getComponentBySlug(slug: string): ValetComponentDoc | null {
   return readJSON<ValetComponentDoc>(file);
 }
 
-export function getMeta(): { valetVersion?: string; generatedAt?: string; schemaVersion?: string; buildHash?: string } | null {
+export function getMeta(): {
+  valetVersion?: string;
+  generatedAt?: string;
+  schemaVersion?: string;
+  buildHash?: string;
+} | null {
   try {
     const file = path.join(DATA_DIR, '_meta.json');
     if (!fs.existsSync(file)) return null;
-    const raw = readJSON<{ version?: string; builtAt?: string; schemaVersion?: string; buildHash?: string }>(file);
-    return { valetVersion: raw.version, generatedAt: raw.builtAt, schemaVersion: raw.schemaVersion, buildHash: raw.buildHash };
+    const raw = readJSON<{
+      version?: string;
+      builtAt?: string;
+      schemaVersion?: string;
+      buildHash?: string;
+    }>(file);
+    return {
+      valetVersion: raw.version,
+      generatedAt: raw.builtAt,
+      schemaVersion: raw.schemaVersion,
+      buildHash: raw.buildHash,
+    };
   } catch {
     return null;
   }
@@ -234,7 +267,9 @@ function normalizeSynonymEntries(source: SynonymsMap | undefined | null): Synony
   for (const [alias, rawTargets] of Object.entries(source)) {
     const key = alias.trim().toLowerCase();
     if (!key) continue;
-    const targets = Array.from(new Set((rawTargets ?? []).map((t) => t.trim()).filter((t) => t.length > 0)));
+    const targets = Array.from(
+      new Set((rawTargets ?? []).map((t) => t.trim()).filter((t) => t.length > 0)),
+    );
     if (targets.length) normalized[key] = targets;
   }
   return normalized;
@@ -272,7 +307,11 @@ export function loadSynonyms(): SynonymInfo {
   return synonymCache;
 }
 
-export function simpleSearch(query: string, items: ValetIndexItem[], opts?: { category?: string }): Array<{ item: ValetIndexItem; score: number }> {
+export function simpleSearch(
+  query: string,
+  items: ValetIndexItem[],
+  opts?: { category?: string },
+): Array<{ item: ValetIndexItem; score: number }> {
   const q = query.trim().toLowerCase();
   if (!q) return [];
   const { map: synonyms } = loadSynonyms();
@@ -304,4 +343,120 @@ export function simpleSearch(query: string, items: ValetIndexItem[], opts?: { ca
 
   scored.sort((a, b) => b.score - a.score || a.item.name.localeCompare(b.item.name));
   return scored;
+}
+
+// ─────────────────────────────────────────────────────────────
+// Structured output (MCP outputSchema / structuredContent)
+//
+// SDK ~1.29 validates a tool's `structuredContent` against the Zod shape
+// declared in `outputSchema` at call time and throws on mismatch — so these
+// shapes must match exactly what the tools return. They are derived from the
+// corpus types above (ValetIndexItem / ValetComponentDoc). The text content is
+// kept for back-compat; structuredContent is purely additive.
+// ─────────────────────────────────────────────────────────────
+
+/** Corpus deprecation flag: `true` or `{ reason?, replacement? }`. */
+export const DeprecatedFlagSchema = z.union([
+  z.literal(true),
+  z.object({ reason: z.string().optional(), replacement: z.string().optional() }),
+]);
+
+const StatusSchema = z.enum(['production', 'stable', 'experimental', 'unstable', 'deprecated']);
+
+/** One prop in a component doc, with an additive normalized `deprecation`. */
+export const PropSchema = z
+  .object({
+    name: z.string(),
+    type: z.string(),
+    required: z.boolean(),
+    default: z.string().optional(),
+    description: z.string().optional(),
+    deprecated: DeprecatedFlagSchema.optional(),
+    source: z.object({ file: z.string(), line: z.number().optional() }).optional(),
+    // Additive: a flattened, always-present-when-deprecated view so consumers
+    // do not have to branch on the `true | object` union of `deprecated`.
+    deprecation: z
+      .object({
+        deprecated: z.literal(true),
+        replacement: z.string().optional(),
+        reason: z.string().optional(),
+      })
+      .optional(),
+  })
+  .passthrough();
+
+/**
+ * Output shape for get_component. `.passthrough()` keeps the schema tolerant of
+ * extra/forward corpus fields (e.g. `enumValues`) without the SDK rejecting the
+ * structuredContent at call time.
+ */
+export const GetComponentOutputSchema = z
+  .object({
+    name: z.string(),
+    category: z.string(),
+    slug: z.string(),
+    summary: z.string(),
+    status: StatusSchema.optional(),
+    description: z.string().optional(),
+    props: z.array(PropSchema),
+    // Additive deprecation rollup so agents can see at a glance that a doc
+    // contains deprecated props and what replaces them.
+    deprecatedProps: z.array(
+      z.object({
+        name: z.string(),
+        replacement: z.string().optional(),
+        reason: z.string().optional(),
+      }),
+    ),
+    sourceFiles: z.array(z.string()),
+    version: z.string(),
+    schemaVersion: z.string().optional(),
+  })
+  .passthrough();
+
+export const ListComponentsOutputSchema = z.object({
+  components: z.array(
+    z
+      .object({
+        name: z.string(),
+        category: z.string(),
+        summary: z.string(),
+        slug: z.string(),
+        status: StatusSchema.optional(),
+      })
+      .passthrough(),
+  ),
+  count: z.number().int(),
+});
+
+export const SearchPropsOutputSchema = z.object({
+  results: z.array(
+    z.object({
+      name: z.string(),
+      slug: z.string(),
+      props: z.array(
+        z.object({
+          name: z.string(),
+          // True when this prop name is a deprecated alias on the component.
+          deprecated: z.boolean(),
+          // The canonical replacement, when the corpus declares one.
+          replacement: z.string().optional(),
+        }),
+      ),
+    }),
+  ),
+  count: z.number().int(),
+});
+
+/** Normalize the corpus `deprecated` union into a flat object (or null). */
+export function normalizeDeprecation(
+  deprecated: true | { reason?: string; replacement?: string } | undefined,
+): { deprecated: true; replacement?: string; reason?: string } | null {
+  if (!deprecated) return null;
+  if (deprecated === true) return { deprecated: true };
+  return {
+    deprecated: true,
+    ...(deprecated.replacement ? { replacement: deprecated.replacement } : {}),
+    ...(deprecated.reason ? { reason: deprecated.reason } : {}),
+  };
 }

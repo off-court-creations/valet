@@ -162,13 +162,15 @@ These shape how components express semantics, styles, and state. Reuse them.
 
 ---
 
-## 8) Web Action Graph & Semantics
+## 8) Semantics & Surface Introspection
 
-- Components register themselves via `createStyled`; surfaces track child dimensions.
+> Roadmap note: the Web Action Graph (interaction telemetry) is planned — not implemented. What ships today is the registration/sizing introspection below.
+
+- Per-element size tracking is opt-in (PERF S9, ruling Q9(a)): a `createStyled` element registers with its surface and exposes the child vars only when passed the `$trackSize` transient prop; by default styled elements do not register (the old universal registration was unconsumed observer churn).
 - CSS variables exposed:
-  - Surface: `--valet-screen-width`, `--valet-screen-height`.
-  - Child elements: `--valet-el-width`, `--valet-el-height`.
-- When authoring new components, ensure they auto‑register and expose sizing to preserve introspection.
+  - Surface: `--valet-screen-width`, `--valet-screen-height` (always).
+  - Child elements: `--valet-el-width`, `--valet-el-height` (only on `$trackSize` elements).
+- When authoring a component that needs its own metrics, register its root explicitly (`useSurface().registerChild`) or pass `$trackSize` on a styled element — never assume automatic registration.
 
 ---
 

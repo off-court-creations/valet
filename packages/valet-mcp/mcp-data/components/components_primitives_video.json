@@ -2,7 +2,7 @@
   "name": "Video",
   "category": "primitives",
   "slug": "components/primitives/video",
-  "summary": "Video component",
+  "summary": "Theme-aware video player with lazy loading and fullscreen support; use it for playable media clips, and `Image` for static pictures.",
   "status": "stable",
   "aliases": [
     "video",
@@ -57,15 +57,15 @@
     },
     {
       "name": "width",
-      "type": "string",
+      "type": "Space",
       "required": false,
-      "description": "CSS width value, e.g. `100%` or `640px`."
+      "description": "CSS width value, e.g. `100%` or `640px`. A bare number is treated as px."
     },
     {
       "name": "height",
-      "type": "string",
+      "type": "Space",
       "required": false,
-      "description": "CSS height value, e.g. `auto` or `360px`."
+      "description": "CSS height value, e.g. `auto` or `360px`. A bare number is treated as px."
     },
     {
       "name": "lazy",
@@ -144,7 +144,6 @@
       "payloadType": "ErrorEvent"
     }
   ],
-  "actions": [],
   "slots": [],
   "bestPractices": [
     "Provide controls and captions; prefer muted autoplay only when appropriate.",
@@ -155,9 +154,11 @@
     "Lazy‑load non‑critical media and prefetch only when beneficial."
   ],
   "examples": [],
+  "docsUrl": "/video-demo",
   "sourceFiles": [
-    "src/components/primitives/Video.tsx"
+    "src/components/primitives/Video.tsx",
+    "docs/src/pages/components/primitives/VideoDemo.tsx"
   ],
-  "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "version": "0.35.1",
+  "schemaVersion": "1.7"
 }

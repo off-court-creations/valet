@@ -2,7 +2,7 @@
   "name": "Surface",
   "category": "layout",
   "slug": "components/layout/surface",
-  "summary": "Surface component",
+  "summary": "Per-route root container that establishes the theme, density spacing, writing `dir`, and font-loading gate; wrap each top-level screen in exactly one Surface — most valet components require an ancestor Surface and will throw without it.",
   "status": "stable",
   "aliases": [
     "surface",
@@ -74,20 +74,22 @@
   ],
   "cssPresets": [],
   "events": [],
-  "actions": [],
   "slots": [],
   "bestPractices": [
     "Use exactly one surface per route. Mount it at the highest level and never nest surfaces so children can subscribe to a single store via useSurface.",
     "Prefer surface CSS variables over window APIs. Read --valet-screen-width and --valet-screen-height in styles (or query useSurface) instead of window.innerWidth to keep layout deterministic and testable.",
-    "Build on createStyled. Components made with styled register automatically and expose --valet-el-width and --valet-el-height, which the surface updates via ResizeObserver for responsive sizing without layout thrash.",
+    "Opt into per-element metrics with $trackSize. styled() elements register with the surface store and expose --valet-el-width and --valet-el-height (updated via ResizeObserver) only when passed the $trackSize transient prop. Tracking is off by default — most elements never need their own metrics, so the default path stays allocation-free.",
     "Keep portalled overlays out of the registry. Drawers and Modals rendered outside the surface root are intentionally not tracked to avoid unnecessary observers. Size them via tokens and breakpoints, not child metrics.",
     "Respect height constraints. Tables are height‑aware by default; let their content scroll inside the component. Only pass constrainHeight={false} when page context requires full‑document scroll.",
-    "Drive spacing and density with variables. Adjust --valet-space, --valet-radius, and --valet-stroke on the surface to shift an entire view without changing component code."
+    "Drive spacing and density with variables. Adjust --valet-space, --valet-radius, and --valet-stroke on the surface to shift an entire view without changing component code.",
+    "blockUntilFonts is fail-safe. It hides content until web fonts settle, but a 500ms never-block grace reveals the screen anyway if no font load ever starts, so a missing or skipped font pipeline can never wedge the UI hidden forever."
   ],
   "examples": [],
+  "docsUrl": "/surface",
   "sourceFiles": [
-    "src/components/layout/Surface.tsx"
+    "src/components/layout/Surface.tsx",
+    "docs/src/pages/components/layout/Surface.tsx"
   ],
-  "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "version": "0.35.1",
+  "schemaVersion": "1.7"
 }

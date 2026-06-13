@@ -2,7 +2,7 @@
   "name": "ParallaxBackground",
   "category": "widgets",
   "slug": "components/widgets/parallaxbackground",
-  "summary": "ParallaxBackground component",
+  "summary": "Full-bleed background layer that drifts on scroll for a depth effect; place it inside a `ParallaxScroll` as the backmost layer, and honor reduced-motion (the effect auto-disables) — experimental decorative widget.",
   "status": "experimental",
   "aliases": [
     "parallax",
@@ -91,13 +91,14 @@
   "cssVars": [],
   "cssPresets": [],
   "events": [],
-  "actions": [],
   "slots": [],
-  "bestPractices": [],
+  "bestPractices": [
+    "Parallax layers honor `prefers-reduced-motion: reduce`: the scroll-driven displacement collapses to zero, so layers track the page 1:1 (no relative movement) for motion-sensitive users. The media still renders; only the parallax effect is removed."
+  ],
   "examples": [],
   "sourceFiles": [
     "src/components/widgets/Parallax.tsx"
   ],
-  "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "version": "0.35.1",
+  "schemaVersion": "1.7"
 }

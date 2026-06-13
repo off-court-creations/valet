@@ -1,6 +1,40 @@
 // ─────────────────────────────────────────────────────────────
 // src/system/aiKeyStore.ts | valet
-// secure in-browser store for AI provider keys
+// in-browser store for AI provider keys — DEV-TOOL POSTURE
+// ─────────────────────────────────────────────────────────────
+//
+// THREAT MODEL — read before shipping this to production.
+//
+// aiKeyStore, `sendChat`, `useAIKey`, and the KeyModal/LLMChat widgets are a
+// convenience dev tool for prototyping browser-direct LLM calls. They are NOT
+// a secret-management solution. Treat every key handed to this module as
+// exposed to the page it runs on.
+//
+//   • Browser-direct transport. `sendChat` calls api.openai.com /
+//     api.anthropic.com straight from the page, sending the raw key in the
+//     request. Anthropic requires the explicit
+//     `anthropic-dangerous-direct-browser-access` opt-in for exactly this
+//     reason — the key is visible to anyone who can read the network tab or
+//     inject script into the origin. There is no backend proxy.
+//   • At-rest encryption is opt-in and only as strong as the passphrase.
+//     With a passphrase, the key is AES-GCM encrypted (PBKDF2, 120k
+//     iterations) and the ciphertext lives in localStorage. WITHOUT a
+//     passphrase the plaintext key is held in memory and persisted only as
+//     `provider`/`model` metadata (the key itself is not written to storage,
+//     but it is readable from the live store while the tab is open).
+//   • No XSS isolation. Any third-party script, browser extension, or
+//     supply-chain compromise on the page can read the decrypted key from the
+//     zustand store or intercept it in flight. Encryption-at-rest does not
+//     defend against a hostile runtime.
+//   • Secure-context requirement. crypto.subtle is unavailable on plain HTTP;
+//     encryption silently cannot run outside HTTPS/localhost (see getSubtle).
+//
+// SAFE USE: local prototyping, internal demos, and apps where the end user
+// supplies and owns the key for their own session. For multi-tenant or
+// production traffic, terminate keys on a server you control and proxy the
+// request — do not ship provider keys to the browser. A future AI-runtime
+// redesign (streaming/abort/tool-calling + a server contract) is the intended
+// home for production use; this module is deliberately scoped to dev tooling.
 // ─────────────────────────────────────────────────────────────
 import { createWithEqualityFn as create } from 'zustand/traditional';
 import { persist, StateStorage, createJSONStorage } from 'zustand/middleware';
@@ -10,17 +44,34 @@ export type AIProvider = 'openai' | 'anthropic';
 /* ---- 1. simple AES-GCM helpers ---------------------------------- */
 const algo = { name: 'AES-GCM', length: 256 } as const;
 
-// TS 5.8 typed arrays can be ArrayBufferLike; WebCrypto wants BufferSource (ArrayBuffer)
-async function deriveKey(passphrase: string, salt: ArrayBuffer) {
+// crypto.subtle only exists in secure contexts (HTTPS / localhost);
+// fail with a readable error instead of an opaque TypeError
+function getSubtle(): SubtleCrypto {
+  const subtle = globalThis.crypto?.subtle;
+  if (!subtle) {
+    throw new Error(
+      'valet: crypto.subtle is unavailable — AI key encryption requires a ' +
+        'secure context (HTTPS or localhost).',
+    );
+  }
+  return subtle;
+}
+
+// Pass TypedArray VIEWS (BufferSource) to WebCrypto, never `.buffer`: a raw
+// ArrayBuffer fails Node 20's cross-realm `isAnyArrayBuffer` check under jsdom
+// ("'salt' … is not instance of ArrayBuffer, Buffer, TypedArray, or DataView"),
+// whereas an ArrayBufferView passes via ArrayBuffer.isView's internal-slot test.
+async function deriveKey(passphrase: string, salt: BufferSource) {
+  const subtle = getSubtle();
   const enc = new TextEncoder();
-  const keyMaterial = await crypto.subtle.importKey(
+  const keyMaterial = await subtle.importKey(
     'raw',
     enc.encode(passphrase),
     { name: 'PBKDF2' },
     false,
     ['deriveKey'],
   );
-  return crypto.subtle.deriveKey(
+  return subtle.deriveKey(
     { name: 'PBKDF2', salt, iterations: 120_000, hash: 'SHA-256' },
     keyMaterial,
     algo,
@@ -35,12 +86,8 @@ export async function encrypt(plaintext: string, passphrase: string) {
   const enc = new TextEncoder();
   const salt = crypto.getRandomValues(new Uint8Array(16));
   const iv = crypto.getRandomValues(new Uint8Array(12));
-  const key = await deriveKey(passphrase, salt.buffer);
-  const data = await crypto.subtle.encrypt(
-    { name: 'AES-GCM', iv: iv.buffer },
-    key,
-    enc.encode(plaintext),
-  );
+  const key = await deriveKey(passphrase, salt);
+  const data = await getSubtle().encrypt({ name: 'AES-GCM', iv }, key, enc.encode(plaintext));
   return btoa(
     JSON.stringify({
       iv: [...iv],
@@ -52,11 +99,11 @@ export async function encrypt(plaintext: string, passphrase: string) {
 
 export async function decrypt(cipherB64: string, passphrase: string) {
   const { iv, salt, data } = JSON.parse(atob(cipherB64)) as CipherPayload;
-  const key = await deriveKey(passphrase, new Uint8Array(salt).buffer);
-  const dec = await crypto.subtle.decrypt(
-    { name: 'AES-GCM', iv: new Uint8Array(iv).buffer },
+  const key = await deriveKey(passphrase, new Uint8Array(salt));
+  const dec = await getSubtle().decrypt(
+    { name: 'AES-GCM', iv: new Uint8Array(iv) },
     key,
-    new Uint8Array(data).buffer,
+    new Uint8Array(data),
   );
   return new TextDecoder().decode(dec);
 }
@@ -84,6 +131,9 @@ const dynamicStorage: StateStorage = {
       // ignore invalid JSON; fall back to sessionStorage
       void 0;
     }
+    // Session records evict any stale localStorage cipher; otherwise getItem
+    // (which prefers localStorage) would resurrect a superseded credential
+    localStorage.removeItem(n);
     sessionStorage.setItem(n, v);
   },
   removeItem: (n) => {
@@ -98,7 +148,6 @@ type KeyState = {
   provider: AIProvider | null;
   model: string | null;
   cipher: string | null;
-  passphrase: string | null;
   setKey: (k: string, provider: AIProvider, pass?: string) => Promise<void>;
   setModel: (m: string) => void;
   applyPassphrase: (pass: string) => Promise<boolean>;
@@ -112,19 +161,12 @@ export const useAIKey = create<KeyState>()(
       provider: null,
       model: null,
       cipher: null,
-      passphrase: null,
       setKey: async (k, provider, pass) => {
         if (pass) {
           const cipher = await encrypt(k, pass);
-          set({ apiKey: k, provider, model: null, cipher, passphrase: pass });
+          set({ apiKey: k, provider, model: null, cipher });
         } else {
-          set({
-            apiKey: k,
-            provider,
-            model: null,
-            cipher: null,
-            passphrase: null,
-          });
+          set({ apiKey: k, provider, model: null, cipher: null });
         }
       },
       setModel: (m) => set({ model: m }),
@@ -133,7 +175,7 @@ export const useAIKey = create<KeyState>()(
         if (!cipher) return false;
         try {
           const key = await decrypt(cipher, pass);
-          set({ apiKey: key, passphrase: pass });
+          set({ apiKey: key });
           return true;
         } catch {
           return false;
@@ -146,7 +188,6 @@ export const useAIKey = create<KeyState>()(
           provider: null,
           model: null,
           cipher: null,
-          passphrase: null,
         });
       },
     }),

@@ -1,0 +1,47 @@
+# ─────────────────────────────────────────────────────────────
+# .github/workflows/validate-cva.yml  | valet
+# CVA end-to-end validation (TEST-CI S9).
+#
+# `cva:validate` scaffolds real apps from the templates and runs
+# `npm install` + lint/typecheck/build (+ preview) inside each. That
+# install pulls the PUBLISHED @archway/valet (+ valet-mcp) off npm —
+# it does NOT exercise the working tree — so it can never gate a PR
+# (a PR's source changes wouldn't be reflected, and a registry hiccup
+# would red a clean PR). It runs standalone on a weekly cron plus
+# manual dispatch instead. Per-PR packaging safety lives in the fast
+# pack assertion (scripts/pack.test.mjs), which the PR `CI` workflow
+# and CVA's own prepublishOnly both run.
+# ─────────────────────────────────────────────────────────────
+name: validate-cva
+
+on:
+  schedule:
+    # 07:00 UTC every Monday.
+    - cron: '0 7 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: npm
+      # Install only the CVA package's own deps; the templates' deps are
+      # installed per-scenario by the validate harness in a temp workspace.
+      - run: npm ci
+        working-directory: packages/create-valet-app
+      # Fast, hermetic packaging assertions first (no scaffolding) so a
+      # regression — e.g. a recurrence of the committed dangling bin/
+      # symlink — fails immediately and clearly.
+      - run: npm run pack:check
+        working-directory: packages/create-valet-app
+      # Full end-to-end: scaffold every template/flag combo, install the
+      # PUBLISHED valet packages, lint/typecheck/build/preview each.
+      - run: npm run validate
+        working-directory: packages/create-valet-app

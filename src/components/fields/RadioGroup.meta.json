@@ -1,0 +1,18 @@
+{
+  "name": "RadioGroup",
+  "summary": "Single-choice group of `Radio` options with keyboard roving focus; controlled via `value` + `onValueChange` or bound to a `FormControl` by `name`, with `gap` for option spacing (the old `spacing` prop is a deprecated alias).",
+  "status": "stable",
+  "aliases": ["radiogroup", "radio-group", "radio-buttons"],
+  "examples": [
+    {
+      "id": "radiogroup-row",
+      "title": "Inline single-choice group",
+      "code": "() => {\n  const [size, setSize] = React.useState('m');\n  return (<RadioGroup row gap={2} value={size} onValueChange={(next) => setSize(next)}>\n    <Radio value='s' label='S' />\n    <Radio value='m' label='M' />\n    <Radio value='l' label='L' />\n  </RadioGroup>);\n}"
+    },
+    {
+      "id": "radiogroup-form",
+      "title": "FormControl binding",
+      "code": "() => {\n  const useStore = Valet.createFormStore({ plan: 'pro' });\n  return (<FormControl useStore={useStore} onSubmitValues={(values) => void values}>\n    <RadioGroup name='plan'>\n      <Radio value='free' label='Free' />\n      <Radio value='pro' label='Pro' />\n    </RadioGroup>\n  </FormControl>);\n}"
+    }
+  ]
+}

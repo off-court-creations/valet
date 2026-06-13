@@ -1,6 +1,6 @@
 {
   "name": "@archway/valet-mcp",
-  "version": "0.34.1",
+  "version": "0.35.1",
   "description": "Model Context Protocol server exposing @archway/valet component metadata (props, css vars, examples).",
   "type": "module",
   "main": "dist/index.js",
@@ -35,16 +35,19 @@
     "start": "node dist/index.js",
     "dev": "ts-node src/index.ts",
     "selfcheck": "MCP_SELFCHECK=1 node dist/index.js",
-    "bundle:data": "rm -rf dist/mcp-data && mkdir -p dist/mcp-data && cp -R ../../mcp-data/* dist/mcp-data/",
-    "prepublishOnly": "npm run build && npm run bundle:data"
+    "prepublishOnly": "npm run build && npm run selfcheck"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.3.0",
-    "zod": "^3.23.8"
+    "@modelcontextprotocol/sdk": "~1.29.0",
+    "zod": "^3.25.76",
+    "typescript": "~5.8.3",
+    "@types/react": "^19.1.0"
+  },
+  "optionalDependencies": {
+    "@archway/valet": "^0.35.0"
   },
   "devDependencies": {
-    "ts-node": "^10.9.2",
-    "typescript": "~5.8.3"
+    "ts-node": "^10.9.2"
   },
   "license": "MIT",
   "repository": {

@@ -5,7 +5,7 @@
 import React, { useRef, useState, useEffect, KeyboardEvent } from 'react';
 import { styled } from '../../css/createStyled';
 import { preset } from '../../css/stylePresets';
-import type { Presettable, Sx } from '../../types';
+import type { Presettable, Space, Sx } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 /* Public types                                               */
@@ -42,10 +42,10 @@ export interface VideoProps
   muted?: boolean;
   /** Loop video. */
   loop?: boolean;
-  /** CSS width value, e.g. `100%` or `640px`. */
-  width?: string;
-  /** CSS height value, e.g. `auto` or `360px`. */
-  height?: string;
+  /** CSS width value, e.g. `100%` or `640px`. A bare number is treated as px. */
+  width?: Space;
+  /** CSS height value, e.g. `auto` or `360px`. A bare number is treated as px. */
+  height?: Space;
   /** Lazy load when in viewport. */
   lazy?: boolean;
   /** Custom CSS object-fit. Defaults to `contain`. */
@@ -74,7 +74,7 @@ const VideoWrapper = styled('div')<{
   height: ${({ $h }) => $h || 'auto'};
   overflow: hidden;
 
-  video {
+  & video {
     width: 100%;
     height: 100%;
     object-fit: ${({ $fit }) => $fit};
@@ -149,11 +149,15 @@ export const Video: React.FC<VideoProps> = ({
 
   const presetCls = p ? preset(p) : '';
 
+  // A bare number is a CSS pixel length; strings pass through unchanged.
+  const toLength = (v: Space | undefined): string | undefined =>
+    typeof v === 'number' ? `${v}px` : v;
+
   return (
     <VideoWrapper
       {...rest}
-      $w={width}
-      $h={height}
+      $w={toLength(width)}
+      $h={toLength(height)}
       $fit={objectFit}
       className={[presetCls, className].filter(Boolean).join(' ')}
       style={sx}

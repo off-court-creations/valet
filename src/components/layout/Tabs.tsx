@@ -14,6 +14,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useId,
   useMemo,
   useRef,
   useState,
@@ -23,24 +24,39 @@ import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { Tooltip } from '../widgets/Tooltip';
 import type { Presettable, SpacingProps, Sx } from '../../types';
+import type { ChangeInfo, InputSource, OnValueChange, OnValueCommit } from '../../system/events';
 import { Typography } from '../primitives/Typography';
 import { resolveSpace } from '../../utils/resolveSpace';
 import { withAlpha } from '../../helpers/color';
+import { valetError } from '../../system/devErrors';
+import { useControlledState } from '../../hooks/useControlledState';
 
 /*───────────────────────────────────────────────────────────*/
 /* Context                                                   */
 interface Ctx {
   activeIndex: number;
-  setActiveIndex: (i: number, phase?: 'input' | 'commit') => void;
+  /** `source` is the honest activation origin (ruling R10): a tab click is
+      `'pointer'` (synthetic detail-0 clicks from keyboard activation map to
+      `'keyboard'`), arrow-key navigation is `'keyboard'`. */
+  setActiveIndex: (i: number, source: InputSource, phase?: 'input' | 'commit') => void;
   orientation: 'horizontal' | 'vertical';
   registerTab: (i: number, el: HTMLButtonElement | null) => void;
   totalTabs: number;
   placement: 'top' | 'bottom' | 'left' | 'right';
+  /** `useId()`-derived prefix (A11Y S6): tab/panel DOM ids are namespaced
+      per <Tabs> instance so `id`/`aria-controls`/`aria-labelledby` never
+      collide when two Tabs render on the same page. */
+  idBase: string;
 }
 const TabsCtx = createContext<Ctx | null>(null);
 const useTabs = () => {
   const ctx = useContext(TabsCtx);
-  if (!ctx) throw new Error('Tabs.Tab / Tabs.Panel must be inside <Tabs>');
+  if (!ctx)
+    throw valetError(
+      'Tabs',
+      '<Tabs.Tab> / <Tabs.Panel> must be inside <Tabs> — they read the active index from its context. Move them under a <Tabs> parent.',
+      'tabs-demo',
+    );
   return ctx;
 };
 
@@ -128,7 +144,8 @@ const TabList = styled('div')<{
      push the indicator away from the container edge */
   ${({ $orientation, $place, $edgeGap }) =>
     $orientation === 'vertical' && $place === 'right' && $edgeGap
-      ? `padding-right: ${$edgeGap};`
+      ? /* rtl: physical-by-design — gap pushes the indicator off the physical $place='right' container edge */
+        `padding-right: ${$edgeGap};`
       : ''}
 
   /* Hide native scrollbars for a clean gradient-only affordance */
@@ -171,7 +188,7 @@ const TabStripWrap = styled('div')<{
     will-change: opacity, transform;
   }
   &::before {
-    left: 0;
+    left: 0; /* rtl: physical-by-design — horizontal-scroll overflow fade pinned to the physical scroll origin */
     opacity: ${({ $fadeLeft }) => ($fadeLeft ? 1 : 0)};
     transform: translateX(${({ $fadeLeft, $slide }) => ($fadeLeft ? '0' : `-${$slide ?? '8px'}`)});
     background: linear-gradient(
@@ -182,7 +199,7 @@ const TabStripWrap = styled('div')<{
     );
   }
   &::after {
-    right: 0;
+    right: 0; /* rtl: physical-by-design — horizontal-scroll overflow fade pinned to the physical scroll end */
     opacity: ${({ $fadeRight }) => ($fadeRight ? 1 : 0)};
     transform: translateX(${({ $fadeRight, $slide }) => ($fadeRight ? '0' : `${$slide ?? '8px'}`)});
     background: linear-gradient(
@@ -240,10 +257,11 @@ const TabBtn = styled('button')<{
     position: absolute;
     ${({ $orient, $place, $barW }) =>
       $orient === 'horizontal'
-        ? `left: 0; right: 0; bottom: calc(-0.5 * var(--valet-underline-width, ${$barW})); height: var(--valet-underline-width, ${$barW});`
-        : $place === 'left'
-          ? `top: 0; bottom: 0; left: calc(-0.5 * var(--valet-underline-width, ${$barW})); width: var(--valet-underline-width, ${$barW});`
-          : `top: 0; bottom: 0; right: calc(-0.5 * var(--valet-underline-width, ${$barW})); width: var(--valet-underline-width, ${$barW});`}
+        ? `inset-inline: 0; bottom: calc(-0.5 * var(--valet-underline-width, ${$barW})); height: var(--valet-underline-width, ${$barW});`
+        : // vertical strip indicator hugs the physical $place edge (left/right placement is physical, not inline)
+          $place === 'left'
+          ? /* rtl: physical-by-design */ `top: 0; bottom: 0; left: calc(-0.5 * var(--valet-underline-width, ${$barW})); width: var(--valet-underline-width, ${$barW});`
+          : /* rtl: physical-by-design */ `top: 0; bottom: 0; right: calc(-0.5 * var(--valet-underline-width, ${$barW})); width: var(--valet-underline-width, ${$barW});`}
     background: ${({ $primary, $active }) => ($active ? $primary : 'transparent')};
     transition: background 150ms ease;
   }
@@ -274,14 +292,12 @@ export interface TabsProps
     Pick<SpacingProps, 'gap' | 'pad' | 'compact' | 'density'> {
   value?: string | number;
   defaultValue?: string | number;
-  onValueChange?: (
-    value: string | number,
-    info: { previousValue?: string | number; phase: 'input' | 'commit' },
-  ) => void;
-  onValueCommit?: (
-    value: string | number,
-    info: { previousValue?: string | number; phase: 'commit' },
-  ) => void;
+  /** Canonical value trio (API-TYPES S4 / ruling R10): the inline lookalike
+      payloads were replaced with {@link OnValueChange}/{@link OnValueCommit},
+      so `info` is now the full {@link ChangeInfo} — including the honest
+      `source` (tab click ⇒ `'pointer'`, arrow-key nav ⇒ `'keyboard'`). */
+  onValueChange?: OnValueChange<string | number>;
+  onValueCommit?: OnValueCommit<string | number>;
   orientation?: 'horizontal' | 'vertical';
   placement?: 'top' | 'bottom' | 'left' | 'right';
   /** Horizontal alignment of the tab strip (horizontal orientation). */
@@ -328,51 +344,37 @@ const TabsBase = forwardRef<HTMLDivElement, TabsProps>(
   ) => {
     const { theme } = useTheme();
     const placement = placementProp ?? (orientation === 'horizontal' ? 'top' : 'left');
+    /* Per-instance id namespace (A11Y S6). `useId()` returns a stable,
+       SSR-safe, collision-free token; sanitise its `:` delimiters so the
+       resulting ids stay valid CSS selectors for downstream tooling. */
+    const rawId = useId();
+    const idBase = `valet-tabs-${rawId.replace(/:/g, '')}`;
 
-    const controlled = valueProp !== undefined;
-    // Controlled/uncontrolled guard (dev-only)
-    const initialCtl = React.useRef<boolean | undefined>(undefined);
-    useEffect(() => {
-      if (process.env.NODE_ENV === 'production') return;
-      if (initialCtl.current === undefined) initialCtl.current = controlled;
-      else if (initialCtl.current !== controlled) {
-        console.error(
-          'Tabs: component switched from %s to %s after mount. This is not supported.',
-          initialCtl.current ? 'controlled' : 'uncontrolled',
-          controlled ? 'controlled' : 'uncontrolled',
-        );
-      }
-    }, [controlled]);
-    const [selfValue, setSelfValue] = useState<string | number | undefined>(defaultValue);
+    /* Controlled/uncontrolled value tracking via the shared hook
+       (ruling R9/R13). Tabs is NOT a form field, so it uses
+       `useControlledState` rather than `useFieldState`. The hook owns
+       the single definition of "controlled" (value !== undefined,
+       latched at mount, dev-warn-once on a post-mount flip), replacing
+       the old hand-rolled `initialCtl` guard. Tabs layers its own
+       richer event semantics (previousValue + phase) on top in
+       `setActiveIndex`, so it does NOT hand its callbacks to the hook. */
+    const [currentValue, setCurrentValue] = useControlledState<string | number | undefined>(
+      valueProp,
+      defaultValue,
+      undefined,
+      'Tabs',
+    );
 
     const refs = useRef<Record<number, HTMLButtonElement | null>>({});
     const registerTab = useCallback((i: number, el: HTMLButtonElement | null) => {
       refs.current[i] = el;
     }, []);
-    const tabValuesRef = useRef<(string | number)[]>([]);
-    const activeIndexFromValue = useCallback((val: string | number | undefined) => {
-      const list = tabValuesRef.current;
-      if (val == null) return 0;
-      const idx = list.findIndex((v) => v === val);
-      return idx >= 0 ? idx : 0;
-    }, []);
-    const activeIndex = controlled
-      ? activeIndexFromValue(valueProp)
-      : activeIndexFromValue(selfValue);
-    const setActiveIndex = useCallback(
-      (i: number, phase: 'input' | 'commit' = 'commit') => {
-        const values = tabValuesRef.current;
-        const nextVal = values[i];
-        const prevVal = controlled ? valueProp : selfValue;
-        if (!controlled) setSelfValue(nextVal);
-        onValueChange?.(nextVal, { previousValue: prevVal, phase: 'input' });
-        if (phase === 'commit')
-          onValueCommit?.(nextVal, { previousValue: prevVal, phase: 'commit' });
-        refs.current[i]?.focus();
-      },
-      [controlled, onValueChange, onValueCommit, valueProp, selfValue],
-    );
 
+    /* Build tabs / panels / values BEFORE deriving activeIndex so
+       `value` / `defaultValue` resolve on the very first render.
+       (Previously the values lived in a ref populated later in the
+       render body; the first paint always showed tab 0 — masked in
+       dev by StrictMode's double render.) */
     const tabs: ReactElement[] = [];
     const panels: ReactElement[] = [];
     const values: (string | number)[] = [];
@@ -406,7 +408,46 @@ const TabsBase = forwardRef<HTMLDivElement, TabsProps>(
         );
       }
     });
-    tabValuesRef.current = values;
+
+    const activeIndexFromValue = (val: string | number | undefined) => {
+      if (val == null) return 0;
+      const idx = values.findIndex((v) => v === val);
+      return idx >= 0 ? idx : 0;
+    };
+    /* `currentValue` is the hook's resolved value: the latched-controlled
+       `value` prop, or internal state when uncontrolled. The first paint
+       sees the correct value because `values` is built above before this
+       line (Wave-0.3 first-render fix — tabValuesRef is never read here). */
+    const activeIndex = activeIndexFromValue(currentValue);
+
+    /* Event handlers need the latest values without re-memoising on
+       every render; sync the ref in an effect — it is never read or
+       mutated during render. */
+    const tabValuesRef = useRef<(string | number)[]>([]);
+    useEffect(() => {
+      tabValuesRef.current = values;
+    });
+    const setActiveIndex = useCallback(
+      (i: number, source: InputSource, phase: 'input' | 'commit' = 'commit') => {
+        const nextVal = tabValuesRef.current[i];
+        const prevVal = currentValue;
+        /* `setCurrentValue` is a state no-op while controlled (the hook
+           never mutates internal state in that mode), so this is safe to
+           call unconditionally — it mirrors the old `if (!controlled)`. */
+        setCurrentValue(nextVal);
+        /* Canonical ChangeInfo trio (API-TYPES S4 / ruling R10). `source` is
+           the honest activation origin supplied by each Tab handler. */
+        const info: ChangeInfo<string | number> = {
+          previousValue: prevVal,
+          phase: 'input',
+          source,
+        };
+        onValueChange?.(nextVal, info);
+        if (phase === 'commit') onValueCommit?.(nextVal, { ...info, phase: 'commit' });
+        refs.current[i]?.focus();
+      },
+      [setCurrentValue, onValueChange, onValueCommit, currentValue],
+    );
 
     const ctx = useMemo<Ctx>(
       () => ({
@@ -416,8 +457,9 @@ const TabsBase = forwardRef<HTMLDivElement, TabsProps>(
         registerTab,
         totalTabs: tabs.length,
         placement,
+        idBase,
       }),
-      [activeIndex, orientation, placement, setActiveIndex, registerTab, tabs.length],
+      [activeIndex, orientation, placement, setActiveIndex, registerTab, tabs.length, idBase],
     );
 
     const cls = [p ? preset(p) : '', className].filter(Boolean).join(' ');
@@ -612,6 +654,8 @@ const TabsBase = forwardRef<HTMLDivElement, TabsProps>(
             >
               <TabList
                 ref={listRef}
+                role='tablist'
+                aria-orientation={orientation}
                 $orientation={orientation}
                 $place={placement}
                 $edgeGap={edgeGap}
@@ -640,6 +684,8 @@ const TabsBase = forwardRef<HTMLDivElement, TabsProps>(
             >
               <TabList
                 ref={listRef}
+                role='tablist'
+                aria-orientation={orientation}
                 $orientation={orientation}
                 $place={placement}
                 $edgeGap={edgeGap}
@@ -671,7 +717,7 @@ export const Tabs = TabsBase as unknown as React.FC<TabsProps> & {
 const Tab: React.FC<TabProps> = forwardRef<HTMLButtonElement, TabProps>(
   ({ index = 0, label, tooltip, preset: p, className, onKeyDown, onClick, ...rest }, ref) => {
     const { theme } = useTheme();
-    const { activeIndex, setActiveIndex, orientation, registerTab, totalTabs, placement } =
+    const { activeIndex, setActiveIndex, orientation, registerTab, totalTabs, placement, idBase } =
       useTabs();
     const selected = activeIndex === index;
 
@@ -681,7 +727,10 @@ const Tab: React.FC<TabProps> = forwardRef<HTMLButtonElement, TabProps>(
       const next = horiz ? 'ArrowRight' : 'ArrowDown';
       if (e.key === prev || e.key === next) {
         e.preventDefault();
-        setActiveIndex((activeIndex + (e.key === next ? 1 : -1) + totalTabs) % totalTabs);
+        setActiveIndex(
+          (activeIndex + (e.key === next ? 1 : -1) + totalTabs) % totalTabs,
+          'keyboard',
+        );
       }
       onKeyDown?.(e);
     };
@@ -699,15 +748,18 @@ const Tab: React.FC<TabProps> = forwardRef<HTMLButtonElement, TabProps>(
           }
         }}
         role='tab'
-        id={`tab-${index}`}
+        id={`${idBase}-tab-${index}`}
         aria-selected={selected}
-        aria-controls={`panel-${index}`}
+        aria-controls={`${idBase}-panel-${index}`}
         tabIndex={selected ? 0 : -1}
         data-state={selected ? 'active' : 'inactive'}
         data-selected={selected ? 'true' : 'false'}
         data-disabled={(rest as Record<string, unknown>)['disabled'] ? 'true' : 'false'}
         onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-          setActiveIndex(index);
+          /* Honest source (ruling R10): a synthesized click from keyboard
+             activation (Space/Enter on the focused tab) carries detail 0;
+             a genuine pointer press carries detail >= 1. */
+          setActiveIndex(index, e.detail === 0 ? 'keyboard' : 'pointer');
           onClick?.(e);
         }}
         onKeyDown={nav}
@@ -747,15 +799,15 @@ const TabPanel: React.FC<TabPanelProps> = ({
   children,
   ...rest
 }) => {
-  const { activeIndex } = useTabs();
+  const { activeIndex, idBase } = useTabs();
   if (activeIndex !== index && !keepMounted) return null;
 
   return (
     <div
       {...rest}
       role='tabpanel'
-      id={`panel-${index}`}
-      aria-labelledby={`tab-${index}`}
+      id={`${idBase}-panel-${index}`}
+      aria-labelledby={`${idBase}-tab-${index}`}
       className={[p ? preset(p) : '', className].filter(Boolean).join(' ')}
     >
       {children}

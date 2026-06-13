@@ -2,7 +2,7 @@
   "name": "Grid",
   "category": "layout",
   "slug": "components/layout/grid",
-  "summary": "Grid component",
+  "summary": "CSS-grid container with `columns` and `gap` for two-dimensional layouts; use it for galleries, dashboards, and card grids — prefer `Stack` when you only need one-directional flow.",
   "status": "stable",
   "aliases": [
     "grid"
@@ -87,7 +87,6 @@
   ],
   "cssPresets": [],
   "events": [],
-  "actions": [],
   "slots": [],
   "bestPractices": [
     "Use Grid for two‑dimensional layouts like dashboards and galleries; keep rows and columns responsive.",
@@ -133,9 +132,11 @@
       "minimalProps": {}
     }
   ],
+  "docsUrl": "/grid-demo",
   "sourceFiles": [
-    "src/components/layout/Grid.tsx"
+    "src/components/layout/Grid.tsx",
+    "docs/src/pages/components/layout/GridDemo.tsx"
   ],
-  "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "version": "0.35.1",
+  "schemaVersion": "1.7"
 }

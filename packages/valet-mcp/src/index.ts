@@ -4,11 +4,18 @@
 // MCP server exposing Valet component data from mcp-data/
 // ─────────────────────────────────────────────────────────────
 import { createRequire } from 'node:module';
-import { Readable } from 'node:stream';
 import { McpServer, ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { PRIMER_TEXT } from './primer.js';
-import { DATA_DIR, DATA_INFO, getComponentBySlug, getGlossary, getIndex, getMeta } from './tools/shared.js';
+import { evaluateSelfcheck } from './selfcheck.js';
+import {
+  DATA_DIR,
+  DATA_INFO,
+  getComponentBySlug,
+  getGlossary,
+  getIndex,
+  getMeta,
+} from './tools/shared.js';
 import { registerListComponents } from './tools/listComponents.js';
 import { registerListCategories } from './tools/listCategories.js';
 import { registerListSynonyms } from './tools/listSynonyms.js';
@@ -23,6 +30,7 @@ import { registerCheckVersionParity } from './tools/checkVersionParity.js';
 import { registerSearchProps } from './tools/searchProps.js';
 import { registerSearchCssVars } from './tools/searchCssVars.js';
 import { registerSearchBestPractices } from './tools/searchBestPractices.js';
+import { registerValidateJsx } from './tools/validateJsx.js';
 const requireFromHere = createRequire(import.meta.url);
 const pkg = requireFromHere('../package.json') as { version?: string; name?: string };
 const MCP_VERSION = pkg.version ?? '0.0.0';
@@ -31,7 +39,7 @@ const MCP_VERSION = pkg.version ?? '0.0.0';
 
 // Tool parameter schemas moved into individual tool modules
 
-async function createServer() {
+export async function createServer() {
   const server = new McpServer({ name: '@archway/valet-mcp', version: MCP_VERSION });
 
   // tools
@@ -49,6 +57,7 @@ async function createServer() {
   registerGetPrimer(server);
   registerGetInfo(server);
   registerCheckVersionParity(server);
+  registerValidateJsx(server);
 
   // adjust_theme tool removed
 
@@ -58,8 +67,10 @@ async function createServer() {
     'mcp://valet/index',
     { title: 'Valet Components Index', mimeType: 'application/json' },
     async (uri) => ({
-      contents: [{ uri: uri.href, mimeType: 'application/json', text: JSON.stringify(getIndex(), null, 2) }],
-    })
+      contents: [
+        { uri: uri.href, mimeType: 'application/json', text: JSON.stringify(getIndex(), null, 2) },
+      ],
+    }),
   );
 
   // Expose each component JSON as a resource lazily
@@ -73,9 +84,13 @@ async function createServer() {
         { title: `${item.name} (${item.slug})`, mimeType: 'application/json' },
         async (url) => ({
           contents: [
-            { uri: url.href, mimeType: 'application/json', text: JSON.stringify(getComponentBySlug(item.slug), null, 2) },
+            {
+              uri: url.href,
+              mimeType: 'application/json',
+              text: JSON.stringify(getComponentBySlug(item.slug), null, 2),
+            },
           ],
-        })
+        }),
       );
     }
   } catch {
@@ -87,7 +102,9 @@ async function createServer() {
     'valet-primer',
     'mcp://valet/primer',
     { title: 'valet Primer', mimeType: 'text/markdown' },
-    async (uri) => ({ contents: [{ uri: uri.href, mimeType: 'text/markdown', text: PRIMER_TEXT }] })
+    async (uri) => ({
+      contents: [{ uri: uri.href, mimeType: 'text/markdown', text: PRIMER_TEXT }],
+    }),
   );
   server.registerResource(
     'valet-glossary',
@@ -101,7 +118,7 @@ async function createServer() {
           text: JSON.stringify(getGlossary() ?? { entries: [] }, null, 2),
         },
       ],
-    })
+    }),
   );
 
   // Add a dynamic resource template for components by slug with basic completion
@@ -128,8 +145,12 @@ async function createServer() {
       const slug = String((vars as any)?.slug || '').trim();
       const doc = slug ? getComponentBySlug(slug) : null;
       const payload = doc ?? { error: 'Component not found', slug };
-      return { contents: [{ uri: uri.href, mimeType: 'application/json', text: JSON.stringify(payload, null, 2) }] };
-    }
+      return {
+        contents: [
+          { uri: uri.href, mimeType: 'application/json', text: JSON.stringify(payload, null, 2) },
+        ],
+      };
+    },
   );
 
   return server;
@@ -137,34 +158,54 @@ async function createServer() {
 
 async function main() {
   if (process.env.MCP_SELFCHECK === '1') {
-    // Quick data sanity check and exit
+    // Data sanity gate (prepublishOnly): hardened per MCP-TRUTH S8 —
+    // asserts index >= MIN_COMPONENTS, glossary > 0, every component doc
+    // loads, and no placeholder '<Name> component' summaries anywhere.
     try {
       const index = getIndex();
       const box = index.find((i) => i.name === 'Box');
       const hasBox = !!(box && getComponentBySlug(box.slug));
       const meta = getMeta();
       const mcpMinor = MCP_VERSION.split('.').slice(0, 2).join('.');
-      const valetMinor = meta?.valetVersion ? meta.valetVersion.split('.').slice(0, 2).join('.') : undefined;
-      const parity = valetMinor ? (mcpMinor === valetMinor) : undefined;
+      const valetMinor = meta?.valetVersion
+        ? meta.valetVersion.split('.').slice(0, 2).join('.')
+        : undefined;
+      const parity = valetMinor ? mcpMinor === valetMinor : undefined;
+      const glossaryEntries = getGlossary()?.entries?.length ?? 0;
+      const docs = index.map((i) => ({
+        slug: i.slug,
+        name: i.name,
+        doc: getComponentBySlug(i.slug),
+      }));
+      const verdict = evaluateSelfcheck({ index, glossaryEntries, docs });
       // eslint-disable-next-line no-console
-      console.log(JSON.stringify({
-        ok: true,
-        components: index.length,
-        hasBox,
-        mcpVersion: MCP_VERSION,
-        dataSource: (DATA_INFO as any).source,
-        valetVersion: meta?.valetVersion,
-        generatedAt: meta?.generatedAt,
-        versionParity: parity,
-        schemaVersion: meta?.schemaVersion,
-        buildHash: meta?.buildHash,
-        glossaryEntries: (getGlossary()?.entries?.length) ?? 0,
-        hasPrimer: true,
-      }, null, 2));
-      process.exit(0);
+      console.log(
+        JSON.stringify(
+          {
+            ok: verdict.ok,
+            failures: verdict.ok ? undefined : verdict.failures,
+            components: index.length,
+            hasBox,
+            mcpVersion: MCP_VERSION,
+            dataSource: (DATA_INFO as any).source,
+            valetVersion: meta?.valetVersion,
+            generatedAt: meta?.generatedAt,
+            versionParity: parity,
+            schemaVersion: meta?.schemaVersion,
+            buildHash: meta?.buildHash,
+            glossaryEntries,
+            hasPrimer: true,
+          },
+          null,
+          2,
+        ),
+      );
+      process.exit(verdict.ok ? 0 : 1);
     } catch (err) {
       // eslint-disable-next-line no-console
-      console.error(JSON.stringify({ ok: false, error: (err as Error).message, mcpVersion: MCP_VERSION }));
+      console.error(
+        JSON.stringify({ ok: false, error: (err as Error).message, mcpVersion: MCP_VERSION }),
+      );
       process.exit(1);
     }
     return;
@@ -183,7 +224,7 @@ async function main() {
     console.error(
       `[valet-mcp ${MCP_VERSION}] Waiting for MCP client on stdio. ` +
         `Data source: ${(DATA_INFO as any).source}; dir: ${DATA_DIR}. ` +
-        `Press Ctrl+C to exit.`
+        `Press Ctrl+C to exit.`,
     );
   }
 
@@ -192,9 +233,13 @@ async function main() {
   await server.connect(transport);
 }
 
-// Run
-main().catch((err) => {
-  // eslint-disable-next-line no-console
-  console.error('Fatal:', err);
-  process.exit(1);
-});
+// Run — skipped when VALET_MCP_NO_AUTOSTART=1 so tests can import createServer
+// and drive an in-memory transport without spawning the stdio server. The bin
+// shim and normal startup never set this, so their behavior is unchanged.
+if (process.env.VALET_MCP_NO_AUTOSTART !== '1') {
+  main().catch((err) => {
+    // eslint-disable-next-line no-console
+    console.error('Fatal:', err);
+    process.exit(1);
+  });
+}

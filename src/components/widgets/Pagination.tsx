@@ -8,6 +8,9 @@ import { styled } from '../../css/createStyled';
 import Typography from '../primitives/Typography';
 import { preset } from '../../css/stylePresets';
 import { useTheme } from '../../system/themeStore';
+import { resolveDeprecatedProp } from '../../system/deprecate';
+import { useComponentStrings } from '../../system/locale';
+import type { DeepPartialStrings, ValetStrings } from '../../system/locale';
 import type { Presettable, Sx } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
@@ -19,7 +22,13 @@ export interface PaginationProps
   count: number;
   /** Currently-selected page (1-based). */
   page?: number;
-  /** Called with **new page** when user clicks. */
+  /** Called with the **new page** (1-based) when the user navigates. */
+  onPageChange?: (page: number) => void;
+  /**
+   * @deprecated Renamed to `onPageChange` (API-TYPES S10, Q12). The old name
+   * keeps working through 0.x with a one-time dev warning and is removed at
+   * 1.0. When both are supplied, `onPageChange` wins.
+   */
   onChange?: (page: number) => void;
   /**
    * Limit how many page buttons are visible at once. When set and less than `count`,
@@ -32,6 +41,13 @@ export interface PaginationProps
    * whenever `page` changes outside the current window. Defaults to true.
    */
   autoFollowActive?: boolean;
+  /**
+   * Instance-level overrides for this component's i18n strings (nav root label,
+   * scroll/step button labels, per-page labels). Wins over the
+   * `ValetLocaleProvider` value, which in turn wins over the built-in English
+   * defaults (A11Y S8 resolution contract; see `src/system/locale.tsx`).
+   */
+  labels?: DeepPartialStrings<ValetStrings['pagination']>;
   /** Inline styles (with CSS var support) */
   sx?: Sx;
 }
@@ -50,7 +66,7 @@ const Root = styled('nav')<{
   display: flex;
   gap: ${({ $gap }) => $gap};
 
-  button {
+  & button {
     -webkit-appearance: none;
     appearance: none;
     background: none;
@@ -66,7 +82,7 @@ const Root = styled('nav')<{
       opacity ${({ $durOpacity }) => $durOpacity} ${({ $ease }) => $ease}; /* smooth fades for disabled/enabled */
   }
 
-  button:disabled {
+  & button:disabled {
     opacity: 0.4;
     cursor: default;
   }
@@ -109,19 +125,27 @@ const PagesWrap = styled('div')`
   display: inline-flex;
 `;
 
-// Viewport that holds the sliding track. Width can be frozen during slide.
-const PagesViewport = styled('div')<{ $width?: number; $height?: number }>`
+/* Rule-lifecycle policy (ENGINE S9): styled rules are immortal — every
+   unique rule body mints a permanent CSSOM rule. Measured pixels (and any
+   other continuously-varying value) must therefore NEVER be interpolated
+   into rule text; they flow through CSS custom properties set on inline
+   style, so each component below injects exactly one rule per discrete
+   theme/prop variant no matter how the measurements change. */
+
+// Viewport that holds the sliding track. Width can be frozen during slide
+// (measured px arrive via --valet-pag-vp-w / --valet-pag-vp-h).
+const PagesViewport = styled('div')`
   overflow: hidden;
   display: inline-block;
   vertical-align: middle; /* align with surrounding inline controls */
   line-height: 1; /* normalize inline-block baseline height */
-  width: ${({ $width }) => ($width && $width > 0 ? `${Math.round($width)}px` : 'auto')};
-  height: ${({ $height }) => ($height && $height > 0 ? `${Math.round($height)}px` : 'auto')};
+  width: var(--valet-pag-vp-w, auto);
+  height: var(--valet-pag-vp-h, auto);
 `;
 
-// Track containing one or two page groups that translate horizontally.
+// Track containing one or two page groups that translate horizontally
+// (measured offset arrives via --valet-pag-track-x).
 const PagesTrack = styled('div')<{
-  $x: number;
   $dur: string;
   $ease: string;
 }>`
@@ -129,7 +153,7 @@ const PagesTrack = styled('div')<{
   flex-wrap: nowrap;
   white-space: nowrap;
   will-change: transform;
-  transform: ${({ $x }) => `translateX(${Math.round($x)}px)`};
+  transform: translateX(var(--valet-pag-track-x, 0px));
   transition: transform ${({ $dur }) => $dur} ${({ $ease }) => $ease};
 `;
 
@@ -138,18 +162,18 @@ const HiddenMeasure = styled('div')`
   position: absolute;
   visibility: hidden;
   pointer-events: none;
-  left: -99999px;
+  left: -99999px; /* rtl: physical-by-design — off-screen measurement parking, never painted */
   top: -99999px;
   display: inline-flex;
 `;
 
-/* Underline rail that slides under the active page */
+/* Underline rail that slides under the active page. Measured geometry
+   (--valet-pag-x / --valet-pag-w) and the distance-derived transition
+   durations (--valet-pag-trans-x / --valet-pag-trans-w) are continuous,
+   so they ride on inline-style CSS vars; only discrete theme tokens
+   (easing names, fade duration, 0/1 opacity) appear in rule text. */
 const Underline = styled('div')<{
   $height: string;
-  $x: number;
-  $w: number;
-  $transX: string;
-  $transW: string;
   $easeX: string;
   $easeW: string;
   $opacity: number;
@@ -157,14 +181,14 @@ const Underline = styled('div')<{
   $fadeEase: string;
 }>`
   position: absolute;
-  left: 0;
+  left: 0; /* rtl: physical-by-design — rail origin; slide offset is measured-pixel translateX math (bRect.left - wRect.left), a logged interactive-RTL deferral */
   bottom: calc(-0.5 * var(--valet-underline-width, 2px));
   height: ${({ $height }) => $height};
-  width: ${({ $w }) => `${Math.max(0, Math.round($w))}px`};
-  transform: ${({ $x }) => `translateX(${Math.round($x)}px)`};
+  width: var(--valet-pag-w, 0px);
+  transform: translateX(var(--valet-pag-x, 0px));
   transition:
-    transform ${({ $transX }) => $transX} ${({ $easeX }) => $easeX},
-    width ${({ $transW }) => $transW} ${({ $easeW }) => $easeW},
+    transform var(--valet-pag-trans-x, 0ms) ${({ $easeX }) => $easeX},
+    width var(--valet-pag-trans-w, 0ms) ${({ $easeW }) => $easeW},
     opacity ${({ $fadeDur }) => $fadeDur} ${({ $fadeEase }) => $fadeEase};
   will-change: transform, width;
   pointer-events: none;
@@ -174,10 +198,9 @@ const Underline = styled('div')<{
   background: transparent; /* actual colour on the fill */
 `;
 
+/* Fill scale is a measured-width ratio (continuous) → CSS vars too. */
 const UnderlineFill = styled('div')<{
   $color: string;
-  $scale: number;
-  $scaleTrans: string;
   $scaleEase: string;
   $origin: 'left' | 'right' | 'center';
 }>`
@@ -186,8 +209,8 @@ const UnderlineFill = styled('div')<{
   background: ${({ $color }) => $color};
   border-radius: 0; /* Always a right-angle rectangle */
   transform-origin: ${({ $origin }) => $origin} center;
-  transform: ${({ $scale }) => `scaleX(${Number.isFinite($scale) ? $scale : 1})`};
-  transition: transform ${({ $scaleTrans }) => $scaleTrans} ${({ $scaleEase }) => $scaleEase};
+  transform: scaleX(var(--valet-pag-scale, 1));
+  transition: transform var(--valet-pag-scale-trans, 0ms) ${({ $scaleEase }) => $scaleEase};
   will-change: transform;
   backface-visibility: hidden;
 `;
@@ -197,15 +220,31 @@ const UnderlineFill = styled('div')<{
 export const Pagination: React.FC<PaginationProps> = ({
   count,
   page = 1,
-  onChange,
+  onPageChange,
+  onChange: onChangeDeprecated,
   visibleWindow,
   autoFollowActive = true,
   preset: p,
   className,
+  labels,
   sx,
   ...rest
 }) => {
   const { theme } = useTheme();
+  const t = useComponentStrings('pagination', labels);
+
+  /* `onChange` was renamed to `onPageChange` (API-TYPES S10, Q12 / ruling
+     R30). Canonical wins; the deprecated alias keeps working through 0.x
+     with a single dev warning and is removed at 1.0. The rest of the body
+     consumes the resolved `onChange` below, so every internal call site is
+     unchanged. */
+  const onChange = resolveDeprecatedProp(
+    'Pagination',
+    'onPageChange',
+    onPageChange,
+    'onChange',
+    onChangeDeprecated,
+  );
   const pages = React.useMemo(() => Array.from({ length: count }, (_, i) => i + 1), [count]);
 
   /* preset → utility class merge */
@@ -278,17 +317,24 @@ export const Pagination: React.FC<PaginationProps> = ({
     after?: () => void;
   }>(null);
 
-  // stable click handler shared by all page buttons
+  // stable click handler shared by all page buttons.
+  // A click mid-animation must still commit its target page: the underline
+  // stretch-follow effect is re-entrant (every page change mints a fresh
+  // animationRunId that retires the prior run's queued frames/timers), so we
+  // never drop the click — we just hand the new page to onChange and let the
+  // effect restart from the underline's current geometry. We only ignore
+  // clicks during a window slide, where the rendered page buttons are
+  // aria-hidden, disabled duplicates inside the sliding track.
   const handlePageClick = React.useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
-      if (animatingRef.current || isAnimating) return; // prevent page changes mid-animation
+      if (isSliding) return; // sliding-track buttons are inert duplicates
       const target = e.currentTarget as HTMLButtonElement;
       const n = Number(target.dataset.page || 0);
       if (!Number.isFinite(n) || n < 1) return;
       if (n === page) return;
       onChange?.(n);
     },
-    [onChange, page, isAnimating],
+    [onChange, page, isSliding],
   );
 
   // windowing state
@@ -392,7 +438,13 @@ export const Pagination: React.FC<PaginationProps> = ({
     const wRect = wrap.getBoundingClientRect();
     const bRect = btn.getBoundingClientRect();
     const target = { x: bRect.left - wRect.left, w: bRect.width };
-    let prev = prevUxRef.current ?? { x: anim.x, w: anim.w };
+    // When a new page change interrupts an in-flight animation, prevUxRef still
+    // holds the *previous* run's start point (it is only committed at settle).
+    // Restart from the underline's current visual geometry (anim.x/anim.w) so
+    // the re-entrant click animates from where the underline actually is.
+    let prev = animatingRef.current
+      ? { x: anim.x, w: anim.w }
+      : (prevUxRef.current ?? { x: anim.x, w: anim.w });
 
     // If an edge-step slide just completed, snap underline to the new target without anim
     if (suppressNextUnderlineAnim.current) {
@@ -990,7 +1042,7 @@ export const Pagination: React.FC<PaginationProps> = ({
   return (
     <Root
       {...restProps}
-      aria-label='pagination'
+      aria-label={t.root}
       $text={theme.colors.text}
       $gap={theme.spacing(1)}
       $padV={theme.spacing(1)}
@@ -1014,7 +1066,7 @@ export const Pagination: React.FC<PaginationProps> = ({
       {hasWindow && (
         <button
           type='button'
-          aria-label='Scroll pages left'
+          aria-label={t.scrollPagesLeft}
           onClick={scrollLeft}
           disabled={winStart <= 1 || isAnimating}
         >
@@ -1025,10 +1077,10 @@ export const Pagination: React.FC<PaginationProps> = ({
       {/* Inside: single-step previous page (icon) */}
       <button
         type='button'
-        aria-label='Previous page'
+        aria-label={t.previousPage}
         onClick={handlePrev}
         disabled={page === 1 || isAnimating || isSliding}
-        title='Previous page'
+        title={t.previousPage}
       >
         ‹
       </button>
@@ -1068,14 +1120,25 @@ export const Pagination: React.FC<PaginationProps> = ({
         )}
 
         <PagesViewport
-          $width={viewportW}
-          $height={viewportH}
+          style={
+            {
+              /* measured px → CSS vars (rule-lifecycle policy, ENGINE S9) */
+              '--valet-pag-vp-w':
+                viewportW && viewportW > 0 ? `${Math.round(viewportW)}px` : undefined,
+              '--valet-pag-vp-h':
+                viewportH && viewportH > 0 ? `${Math.round(viewportH)}px` : undefined,
+            } as React.CSSProperties
+          }
         >
           <PagesTrack
             ref={trackRef}
-            $x={isSliding ? slideX : 0}
             $dur={isSliding ? `${slideDurMs}ms` : '0ms'}
             $ease={slideEase}
+            style={
+              {
+                '--valet-pag-track-x': `${Math.round(isSliding ? slideX : 0)}px`,
+              } as React.CSSProperties
+            }
           >
             {isSliding
               ? [
@@ -1138,16 +1201,19 @@ export const Pagination: React.FC<PaginationProps> = ({
                     ref={getBtnRef(n)}
                     data-page={n}
                     onClick={handlePageClick}
-                    disabled={isAnimating || isSliding}
+                    /* Page buttons stay clickable mid-underline-animation so a
+                       rapid second click is never dropped; only a window slide
+                       (which swaps in aria-hidden duplicates) disables them. */
+                    disabled={isSliding}
                     $active={n === page}
                     $primary={theme.colors.primary}
                     $text={theme.colors.text}
                     $durColor={theme.motion.duration.medium}
                     $durOpacity={theme.motion.duration.base}
                     $ease={theme.motion.easing.standard}
-                    aria-label={`Page ${n}${n === page ? ', current page' : ''}`}
+                    aria-label={t.pageLabel(n, n === page)}
                     aria-current={n === page ? 'page' : undefined}
-                    title={`Go to page ${n}`}
+                    title={t.goToPage(n)}
                   >
                     <Typography
                       variant='button'
@@ -1166,24 +1232,33 @@ export const Pagination: React.FC<PaginationProps> = ({
         {/* Underline slider – always mounted, visibility faded to avoid flicker */}
         <Underline
           aria-hidden
-          $x={anim.x}
-          $w={anim.w}
           $height={theme.stroke(4)}
-          $transX={anim.transX}
-          $transW={anim.transW}
           $easeX={anim.easeX}
           $easeW={anim.easeW}
           $opacity={underlineVisible ? 1 : 0}
           $fadeDur={underlineFadeInstant ? '0ms' : theme.motion.duration.medium}
           $fadeEase={theme.motion.easing.standard}
+          style={
+            {
+              /* continuous geometry/durations → CSS vars (ENGINE S9) */
+              '--valet-pag-x': `${Math.round(anim.x)}px`,
+              '--valet-pag-w': `${Math.max(0, Math.round(anim.w))}px`,
+              '--valet-pag-trans-x': anim.transX,
+              '--valet-pag-trans-w': anim.transW,
+            } as React.CSSProperties
+          }
         >
           <UnderlineFill
             key={`pulse-${page}`}
             $color={theme.colors.primary}
-            $scale={anim.scale}
-            $scaleTrans={anim.scaleTrans}
             $scaleEase={anim.scaleEase}
             $origin={anim.origin}
+            style={
+              {
+                '--valet-pag-scale': String(Number.isFinite(anim.scale) ? anim.scale : 1),
+                '--valet-pag-scale-trans': anim.scaleTrans,
+              } as React.CSSProperties
+            }
           />
         </Underline>
       </PagesWrap>
@@ -1191,10 +1266,10 @@ export const Pagination: React.FC<PaginationProps> = ({
       {/* Inside: single-step next page (icon) */}
       <button
         type='button'
-        aria-label='Next page'
+        aria-label={t.nextPage}
         onClick={handleNext}
         disabled={page === count || isAnimating || isSliding}
-        title='Next page'
+        title={t.nextPage}
       >
         ›
       </button>
@@ -1203,7 +1278,7 @@ export const Pagination: React.FC<PaginationProps> = ({
       {hasWindow && (
         <button
           type='button'
-          aria-label='Scroll pages right'
+          aria-label={t.scrollPagesRight}
           onClick={scrollRight}
           disabled={winEnd >= count || isAnimating || isSliding}
         >

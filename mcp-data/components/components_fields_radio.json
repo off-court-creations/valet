@@ -2,12 +2,10 @@
   "name": "Radio",
   "category": "fields",
   "slug": "components/fields/radio",
-  "summary": "Radio component",
+  "summary": "A single radio option rendered inside a `RadioGroup`; author it as a `RadioGroup` child rather than standalone — the group owns selection, keyboard roving focus, and form binding.",
   "status": "stable",
   "aliases": [
-    "radio",
-    "radiogroup",
-    "radio-group"
+    "radio"
   ],
   "props": [
     {
@@ -55,7 +53,6 @@
   "cssVars": [],
   "cssPresets": [],
   "events": [],
-  "actions": [],
   "slots": [
     {
       "name": "children"
@@ -63,16 +60,33 @@
   ],
   "bestPractices": [
     "Label the group clearly. Provide a visible prompt (e.g., a preceding `Typography` ) and ensure `name` is set so the group behaves as a single form field.",
-    "Choose controlled vs uncontrolled deliberately. Use `value` / `onChange` when the selection drives app state; otherwise, `defaultValue` is sufficient.",
+    "Choose controlled vs uncontrolled deliberately. Use `value` / `onValueChange` when the selection drives app state; otherwise, `defaultValue` is sufficient.",
+    "Binding precedence (prop > form > internal). An explicit `value` prop always wins; otherwise a `name` inside a `FormControl` binds to the store; otherwise the group is uncontrolled. The binding is latched at mount.",
+    "Form binding reads and writes. When bound by `name`, the group both reads the store (a seeded value drives the initial selection and `form.reset()` is reflected) and writes selections back. Seed the key in `createFormStore(initial)` so the initial selection and reset behave as expected.",
+    "Change source. `onValueChange`/`onValueCommit` report a truthful `info.source`: `'pointer'` for a mouse selection and `'keyboard'` for keyboard activation (arrow roving, Home/End, Space/Enter), not a blanket `'programmatic'`.",
+    "Set option spacing with `gap`. RadioGroup's `gap` controls the spacing between options (theme spacing units or a CSS length). The old `spacing` prop is a deprecated alias (Q12): it keeps working through 0.x with a one-time dev warning and is removed at 1.0 — migrate to `gap`, which wins when both are supplied.",
     "Align to available space. Use `row` for short option lists in wide layouts; prefer a column for long labels or narrow screens.",
     "Keep targets comfortable. Use token sizes ( `'sm'` .. `'xl'` ) or numeric values to maintain touch targets ≥ 40–48px depending on density.",
     "Avoid nesting interactive content inside labels. Keep each option’s label succinct and non-interactive so keyboard and screen reader navigation remain predictable.",
     "Use presets for visual variants. Capture chip/pill styles with `definePreset` and apply via `preset` so branding and states stay consistent."
   ],
-  "examples": [],
-  "sourceFiles": [
-    "src/components/fields/RadioGroup.tsx"
+  "examples": [
+    {
+      "id": "radio-controlled-group",
+      "title": "Radio options in a RadioGroup",
+      "code": "() => {\n  const [plan, setPlan] = React.useState('pro');\n  return (<Stack gap={1}>\n    <Typography>Choose a plan</Typography>\n    <RadioGroup value={plan} onValueChange={(next) => setPlan(next)}>\n      <Radio value='free' label='Free' />\n      <Radio value='pro' label='Pro' />\n      <Radio value='team' label='Team' />\n    </RadioGroup>\n  </Stack>);\n}",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {
+        "value": ""
+      }
+    }
   ],
-  "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "docsUrl": "/radio-demo",
+  "sourceFiles": [
+    "src/components/fields/RadioGroup.tsx",
+    "docs/src/pages/components/field/RadioGroupDemo.tsx"
+  ],
+  "version": "0.35.1",
+  "schemaVersion": "1.7"
 }

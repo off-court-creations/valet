@@ -22,7 +22,7 @@ export const LavaLampParams = {
   // Frame timing and device constraints used by the WebGL canvas wrapper.
   runtime: {
     // Scales world time to slow overall motion without changing character.
-    timeScale: 1,
+    timeScale: 0.8,
     // Clamp device pixel ratio to avoid excessive fill‑rate on hi‑DPI screens.
     dprMax: 2,
   },
@@ -43,65 +43,65 @@ export const LavaLampParams = {
       // Spawn properties
       baseRadius: { min: 0.1, jitter: 0.2 },
       areaExtent: 1.6, // initial x/y extent in square space
-      baseSpeed: { min: 0.03, jitter: 0.03 },
+      baseSpeed: { min: 0.02, jitter: 0.02 },
       jitterScale: 0.08,
     },
 
     // Background flow field composing gentle forces.
     flow: {
       // Inward edge pressure (pulls from edges back toward center)
-      edgePull: { start: 0.68, end: 0.98, radialIn: 0.04, xScale: 2.0, yScale: 1.0 },
+      edgePull: { start: 0.68, end: 0.98, radialIn: 0.03, xScale: 2.0, yScale: 1.0 },
       // Horizontal compression near vertical sides
       edgeCompression: {
         start: 0.55,
         end: 0.95,
         horizEaseX: 0.6,
         horizEaseY: 0.4,
-        strength: 0.045,
+        strength: 0.032,
       },
       // Moving drain/swirl attractor (position and strength vary over time)
       drain: {
         x: { amp: 0.14, freq: 0.12, bias: 0.06 },
         y: { base: -0.18, amp: 0.08, freq: 0.1, idPhase: 0.35 },
-        swirlEnvelope: { base: 0.02, gain: 0.03, start: 0.1, end: 0.9 },
-        swirlPulse: { base: 0.65, gain: 0.35, freq: 0.45, idPhase: 1.7 },
+        swirlEnvelope: { base: 0.016, gain: 0.022, start: 0.1, end: 0.9 },
+        swirlPulse: { base: 0.6, gain: 0.3, freq: 0.45, idPhase: 1.7 },
       },
       // Small eddies + slight rightward/up bias to avoid static equilibria
       eddies: {
         seedFreq: 1.8,
         xFreq: 3.1,
         yFreq: 2.6,
-        strength: 0.0065,
-        bias: { vx: 0.0015, vy: 0.001 },
+        strength: 0.0048,
+        bias: { vx: 0.0012, vy: 0.0008 },
       },
     },
 
     // Long‑range pulse that periodically declumps and pairs solos.
     pulses: {
       // For testing: immediate start, then every 15s with no jitter
-      initialDelay: { base: 5, jitter: 0 },
-      interval: { base: 15, jitter: 0 },
+      initialDelay: { base: 12, jitter: 6 },
+      interval: { base: 32, jitter: 12 },
       // Longer burst so separation completes (per‑frame force, smooth envelope)
       burst: {
-        duration: 3, // 2x longer main pulse
-        tailDuration: 1.0, // keep falloff timing
-        tailGain: 0.15, // keep taper strength
-        mainGain: 0.2, // half as much force during pulse
+        duration: 2.4,
+        tailDuration: 0.8,
+        tailGain: 0.1,
+        mainGain: 0.13,
         easeInPow: 2.0, // stronger ease-in (slower ramp-up)
-        speedMultiplier: 5, // keep slightly reduced cap
-        shoveScale: 1.2, // significantly reduced collision shove during burst
+        speedMultiplier: 3.5,
+        shoveScale: 0.95,
         gravityScale: 0.0, // disable collision gravity during burst
-        allowMerge: false, // prevent merges during burst so we separate instead
+        allowMerge: true,
       },
       // Clump busting (components of size ≥ 3)
       clump: {
         minSize: 3,
         touchFactor: 1.02, // consider touching if dist < (ri + rj) * touchFactor
-        repelStrength: 2.0, // significantly reduced centroid repulsion
-        sizeGain: 0.08, // gentler scaling with clump size
-        pairRepelStrength: 3.0, // significantly reduced pairwise repulsion
-        sepFactor: 1.12, // enforce this separation during burst: dist >= (ri+rj)*sepFactor
-        solverIters: 5, // per-frame PBD iterations during burst
+        repelStrength: 1.2,
+        sizeGain: 0.06,
+        pairRepelStrength: 1.8,
+        sepFactor: 1.05,
+        solverIters: 3,
         // Broader connectivity detection so "caterpillar" chains count as clumps
         connectNearFactor: 1.1, // tighter near-connect
         connectNearAdd: 0.02,
@@ -113,7 +113,7 @@ export const LavaLampParams = {
       solo: {
         pairFactor: 1.25, // near if dist < (ri + rj) * pairFactor + pairAdd
         pairAdd: 0.04,
-        pullStrength: 1.5, // reduced pull during main pulse
+        pullStrength: 1.1,
         avoidClumpRadius: 0.35, // skip if too close to a clump centroid
       },
     },
@@ -122,14 +122,14 @@ export const LavaLampParams = {
     bias: {
       targetX: 0.0,
       targetY: -0.34,
-      baseBias: 0.0045,
+      baseBias: 0.0035,
       distanceFalloff: 0.55,
       centerMix: { min: 0.6, max: 1.0 },
     },
 
     // Damping and limits
-    damping: { main: 0.965, extraX: 0.95 }, // per‑frame exponent base (raised to dt*60)
-    maxSpeed: 0.03,
+    damping: { main: 0.962, extraX: 0.95 }, // per‑frame exponent base (raised to dt*60)
+    maxSpeed: 0.024,
     boundaryElasticity: 0.92, // 1 = perfectly elastic, <1 loses energy
 
     // Offscreen force logic removed per request
@@ -225,9 +225,54 @@ export const LavaLampParams = {
       mix: 0.55,
     },
 
-    // Edge bloom and vignette
-    glow: { width: 0.25, gain: 0.7, color: [0.8, 0.2, 0.1] as const },
+    // Volumetric shaping -----------------------------------------------------
+    // These values work with the saturated Gaussian union in the fragment shader:
+    // - `thicknessGain` maps the unsaturated energy (sumK) into a stable 0..1 “thickness”.
+    // - `absorption` applies a Beer–Lambert-ish attenuation to warm and deepen cores.
+    volume: {
+      thicknessGain: 0.8,
+      absorption: 0.35,
+    },
+
+    // Soft “lamp” emission from the bottom (adds believable depth without harsh spec)
+    lamp: {
+      pos: [0.0, -0.84] as const,
+      radius: 1.05,
+      gain: 0.55,
+      color: [1.25, 0.62, 0.24] as const,
+    },
+
+    // Edge bloom + vignette --------------------------------------------------
+    // Bloom is computed from a pixel-space distance proxy (fwidth-based), so this
+    // is stable across DPIs and sizes.
+    glow: { sigmaPx: 18, alpha: 0.18, chromaticPx: 1.15, color: [0.9, 0.22, 0.11] as const },
+
+    // Thin shell highlight (glassy wax interface) ---------------------------
+    shell: {
+      sigmaPx: 1.75,
+      intensity: 0.12,
+      specular: { power: 72, intensity: 0.14 },
+      color: [0.28, 0.42, 0.78] as const,
+      iridescence: 0.14,
+    },
+
+    // Cool fill light (subtle cinematic depth) ------------------------------
+    fill: {
+      dir: [-0.55, 0.65, 0.75] as const,
+      color: [0.28, 0.42, 0.75] as const,
+      gain: 0.22,
+    },
+
     vignette: { k: 1.3 },
+
+    // Post -------------------------------------------------------------------
+    post: {
+      // Small, 8-bit-like dithering to reduce banding after compositing.
+      dither: 0.75,
+      // Body alpha cap (lets the hero background gradient show through subtly).
+      alphaMax: 0.95,
+      grade: { saturation: 1.08, contrast: 1.08 },
+    },
     // Field evaluation cutoff controlling far-blob culling accuracy
     cutThreshold: 11.512925464970229, // ≈ -ln(1e-5)
   },

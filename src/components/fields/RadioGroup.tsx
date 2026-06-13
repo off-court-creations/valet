@@ -3,18 +3,29 @@
 // Theme-aware radio groups with keyboard nav & refined spacing
 // • Disabled state now mirrors Accordion / Checkbox colour recipe
 // • Inner (radio–label) gap tight; vertical option gap = theme.spacing(1.5)
+//
+// FIELDS S8 (rulings R9/R10): value/form/internal resolution delegated to the
+// shared `useFieldState` hook (precedence prop > form > internal, latched at
+// mount, no mount-time store writes). THE AUTHORIZED FLIP (audit
+// RadioGroup.tsx:189–191): the form binding was previously WRITE-ONLY — it
+// called `form.setField` on change but never READ `form.values`, so a seeded
+// initial value and `form.reset()` did not affect the rendered selection,
+// unlike every other field. It now reads through the hook, so seeded keys drive
+// the initial selection and a store reset is reflected. ChangeInfo.source is
+// classified honestly: a real pointer click on a radio reports 'pointer';
+// keyboard activation (arrow roving, Home/End, Space/Enter — which fire a
+// synthetic click with `detail === 0`) reports 'keyboard', instead of the old
+// `instanceof KeyboardEvent` check (radio `change` events carry a MouseEvent,
+// never a KeyboardEvent, so the old check always fell through to 'programmatic').
 // ─────────────────────────────────────────────────────────────
 import React, {
   ReactNode,
   forwardRef,
   useCallback,
   useContext,
-  useEffect,
   useId,
   useMemo,
   useRef,
-  useState,
-  KeyboardEvent,
   createContext,
 } from 'react';
 import { styled } from '../../css/createStyled';
@@ -22,9 +33,11 @@ import { preset } from '../../css/stylePresets';
 import { useTheme } from '../../system/themeStore';
 import { toRgb, mix, toHex } from '../../helpers/color';
 import type { Theme } from '../../system/themeStore';
-import type { FieldBaseProps, Presettable, Sx } from '../../types';
-import type { ChangeInfo, OnValueChange, OnValueCommit } from '../../system/events';
-import { useOptionalForm } from './FormControl';
+import type { FieldBaseProps, Presettable, Space, Sx } from '../../types';
+import type { ChangeInfo, InputSource, OnValueChange, OnValueCommit } from '../../system/events';
+import { valetError } from '../../system/devErrors';
+import { resolveDeprecatedProp } from '../../system/deprecate';
+import { useFieldState } from '../../hooks/useControlledState';
 
 /*───────────────────────────────────────────────────────────*/
 /* Context                                                   */
@@ -40,9 +53,37 @@ interface RadioCtx {
 const RadioGroupCtx = createContext<RadioCtx | null>(null);
 const useRadioGroup = () => {
   const ctx = useContext(RadioGroupCtx);
-  if (!ctx) throw new Error('Radio must be used within a <RadioGroup>.');
+  if (!ctx)
+    throw valetError(
+      'RadioGroup',
+      '<Radio> must be used within a <RadioGroup> — it reads its name, value and size from group context. Wrap your radios in <RadioGroup>.',
+      'radio-demo',
+    );
   return ctx;
 };
+
+/*───────────────────────────────────────────────────────────*/
+/* ChangeInfo.source classification (ruling R10)             */
+
+/**
+ * Classify the real selection source of a radio `change` event.
+ *
+ * A radio's `change` is delivered through a synthesized `click`: a genuine
+ * pointer click reports `detail >= 1`, whereas keyboard activation — Space,
+ * Enter, and the roving arrow/Home/End navigation that calls `radio.click()`
+ * programmatically — produces a `click` with `detail === 0` (no associated
+ * mouse presses). The old code tested `e.nativeEvent instanceof KeyboardEvent`,
+ * but a radio `change` never carries a KeyboardEvent, so every user selection
+ * fell through to `'programmatic'`. We map a `MouseEvent` with `detail === 0`
+ * ⇒ `'keyboard'`, `detail >= 1` ⇒ `'pointer'`, and any non-`MouseEvent` native
+ * event ⇒ `'programmatic'`.
+ */
+function classifyChangeSource(native: Event | undefined): InputSource {
+  if (typeof MouseEvent !== 'undefined' && native instanceof MouseEvent) {
+    return native.detail === 0 ? 'keyboard' : 'pointer';
+  }
+  return 'programmatic';
+}
 
 /*───────────────────────────────────────────────────────────*/
 /* Size map helper                                           */
@@ -92,7 +133,7 @@ const OptionLabel = styled('label')<{
   touch-action: manipulation;
 
   /* Focus ring on the visual indicator when the hidden input is focused */
-  input[type='radio']:focus-visible + [data-indicator] {
+  & input[type='radio']:focus-visible + [data-indicator] {
     outline: ${({ theme }) => theme.stroke(2)} solid ${({ theme }) => theme.colors.primary};
     outline-offset: ${({ theme }) => theme.stroke(1)};
   }
@@ -115,8 +156,14 @@ export interface RadioGroupProps
   defaultValue?: string;
   row?: boolean;
   size?: RadioSize | number | string;
-  /** Gap between options */
-  spacing?: number | string;
+  /** Gap between options as spacing units or a CSS length. */
+  gap?: Space;
+  /**
+   * Gap between options.
+   * @deprecated Renamed to `gap` (Q12); `spacing` keeps working through 0.x
+   *   and is removed at 1.0. `gap` wins when both are supplied.
+   */
+  spacing?: Space;
   /** DOM-parity change event (raw input event). */
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   /** Canonical value change event (fires on selection). */
@@ -145,11 +192,17 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
   name: nameProp,
   row = false,
   size = 'md',
-  spacing,
+  gap: gapProp,
+  spacing: spacingProp,
   onChange,
   onValueChange,
   onValueCommit,
   error = false,
+  // API-TYPES S6 (stage A): destructure the remaining FieldBaseProps member
+  // BEFORE the rest-spread so `fullWidth` stops leaking onto the root <div>
+  // (role=radiogroup) as an invalid DOM attribute. FieldShell rendering of
+  // fullWidth is Phase 2 / Q10.
+  fullWidth: _fullWidth,
   preset: p,
   sx,
   className,
@@ -158,83 +211,87 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
   children,
   ...rest
 }) => {
+  void _fullWidth;
   const { theme } = useTheme();
   const id = useId();
   const name = nameProp ?? `radio-group-${id}`;
-  const controlled = valueProp !== undefined;
-  // Controlled/uncontrolled guard (dev-only)
-  const initialCtl = useRef<boolean | undefined>(undefined);
-  useEffect(() => {
-    if (process.env.NODE_ENV === 'production') return;
-    if (initialCtl.current === undefined) initialCtl.current = controlled;
-    else if (initialCtl.current !== controlled) {
-      console.error(
-        'RadioGroup: component switched from %s to %s after mount. This is not supported.',
-        initialCtl.current ? 'controlled' : 'uncontrolled',
-        controlled ? 'controlled' : 'uncontrolled',
-      );
-    }
-  }, [controlled]);
 
-  // Optional FormControl integration
-  const form = useOptionalForm<Record<string, unknown>>();
+  /* Controlled/uncontrolled + form wiring (ruling R9) ------------------- */
+  /**
+   * Single resolution of value/control/form binding. Precedence is
+   * prop > form > internal, latched at mount; an unseeded form key renders
+   * `defaultValue ?? ''` as controlled and never writes on mount.
+   *
+   * THE AUTHORIZED FLIP (audit :189–191): the form layer is now READ as well as
+   * written. Before this slice the binding was write-only — `form.setField` was
+   * called on change but `form.values` was never read — so a seeded initial
+   * value and `form.reset()` had no effect on the rendered selection. The hook
+   * reads through the store, restoring parity with every other field. The form
+   * key is `nameProp` only (an auto-generated `name` is never a store key), so a
+   * RadioGroup without an explicit `name` keeps its purely internal behaviour.
+   *
+   * `''` is the hook's empty value; the context exposes the historical
+   * `string | null` contract, mapping empty ⇒ `null` ("nothing selected").
+   * Option values are non-empty strings, so `checked = sel === value` is
+   * unaffected by the choice of empty sentinel.
+   */
+  const [rawVal, setFieldValue] = useFieldState<string>({
+    value: valueProp,
+    defaultValue,
+    fallback: '',
+    name: nameProp,
+    component: 'RadioGroup',
+  });
+  const selectedValue = rawVal === '' ? null : rawVal;
 
-  /* Controlled/uncontrolled wiring ------------------------------------- */
-  const [selfVal, setSelfVal] = useState<string | null>(defaultValue ?? null);
   const setValue = useCallback(
     (v: string, e?: React.ChangeEvent<HTMLInputElement>) => {
-      const previous = controlled ? (valueProp ?? null) : selfVal;
-      if (!controlled) setSelfVal(v);
-      // Form store binding
-      if (form && nameProp) {
-        form.setField(nameProp as keyof Record<string, unknown>, v);
-      }
+      const previous = selectedValue;
+      // Updates internal state (uncontrolled) and/or writes through to the form
+      // store (live-bound) per the hook's single precedence rule.
+      setFieldValue(v);
       // Fire DOM-parity event
       if (e) onChange?.(e);
       // Fire event trio (same moment for radios)
-      const src: ChangeInfo<string>['source'] = e
-        ? e.nativeEvent instanceof KeyboardEvent
-          ? 'keyboard'
-          : e.nativeEvent instanceof MouseEvent || e.nativeEvent instanceof PointerEvent
-            ? 'pointer'
-            : 'programmatic'
-        : 'programmatic';
       const base: ChangeInfo<string> = {
         previousValue: previous ?? undefined,
         phase: 'commit',
-        source: src,
+        source: classifyChangeSource(e?.nativeEvent),
         event: e,
         name: nameProp,
       };
       onValueChange?.(v, { ...base, phase: 'input' });
       onValueCommit?.(v, base);
     },
-    [controlled, form, nameProp, onChange, onValueChange, onValueCommit, selfVal, valueProp],
+    [selectedValue, setFieldValue, nameProp, onChange, onValueChange, onValueCommit],
   );
 
   const ctxVal = useMemo<RadioCtx>(
     () => ({
-      value: controlled ? (valueProp ?? null) : selfVal,
+      value: selectedValue,
       setValue,
       name,
       size,
     }),
-    [controlled, valueProp, selfVal, name, size, setValue],
+    [selectedValue, name, size, setValue],
   );
 
   /* Gap between radio items ------------------------------------------- */
+  // `gap` is canonical (Q12); `spacing` is the deprecated alias. `gap` wins
+  // when both are supplied; passing `spacing` dev-warns once.
+  const gap = resolveDeprecatedProp('RadioGroup', 'gap', gapProp, 'spacing', spacingProp);
   let gapCss: string;
-  if (spacing === undefined) {
+  if (gap === undefined) {
     gapCss = row ? theme.spacing(1) : theme.spacing(1.5);
-  } else if (typeof spacing === 'number') {
-    gapCss = theme.spacing(spacing);
+  } else if (typeof gap === 'number') {
+    gapCss = theme.spacing(gap);
   } else {
-    gapCss = String(spacing);
+    gapCss = String(gap);
   }
 
   /* Keyboard navigation (roving radio) -------------------------------- */
   const ref = useRef<HTMLDivElement>(null);
-  const onKey = (e: KeyboardEvent<HTMLDivElement>) => {
+  const onKey = (e: React.KeyboardEvent<HTMLDivElement>) => {
     const key = e.key;
     const isArrow =
       key === 'ArrowRight' || key === 'ArrowDown' || key === 'ArrowLeft' || key === 'ArrowUp';
@@ -292,6 +349,7 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
         data-valet-component='RadioGroup'
         data-state={error ? 'invalid' : 'valid'}
         role='radiogroup'
+        aria-invalid={error || undefined}
         aria-labelledby={labelId}
         aria-describedby={helpId}
         aria-orientation={row ? 'horizontal' : 'vertical'}
