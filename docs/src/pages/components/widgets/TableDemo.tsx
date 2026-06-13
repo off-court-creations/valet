@@ -105,7 +105,7 @@ export default function TableDemoPage() {
   );
 
   /* Derive table-selection mode ------------------------------------------ */
-  const selectable = selEnabled ? (multiSelect ? 'multi' : 'single') : undefined;
+  const selectionMode = selEnabled ? (multiSelect ? 'multiple' : 'single') : 'none';
 
   // Minimal usage example ---------------------------------------------------
   const smallData = useMemo(() => makePeople(6), []);
@@ -158,8 +158,9 @@ export default function TableDemoPage() {
       <Stack gap={0.5}>
         <Typography variant='h3'>3. Enable selection when actions depend on rows</Typography>
         <Typography>
-          Switch on <code>selectable</code> for row selection. The table maintains focus semantics
-          for screen readers, and <code>onSelectionChange</code> keeps external state in sync.
+          Switch on <code>selectionMode</code> for row selection. The table maintains focus
+          semantics for screen readers, and <code>onSelectionChange</code> keeps external state in
+          sync.
         </Typography>
         <Panel fullWidth>
           <Stack gap={0.5}>
@@ -168,7 +169,7 @@ export default function TableDemoPage() {
               columns={smallCols}
               striped
               hoverable
-              selectable='multi'
+              selectionMode='multiple'
               onSelectionChange={setSelectedUsageRows}
             />
             <Typography>
@@ -344,7 +345,7 @@ export default function TableDemoPage() {
           striped={striped}
           hoverable={hoverable}
           dividers={dividers}
-          selectable={selectable}
+          selectionMode={selectionMode}
           initialSort={{ index: 0 }}
           constrainHeight={constrainHeight}
           minConstrainedRows={minRows}

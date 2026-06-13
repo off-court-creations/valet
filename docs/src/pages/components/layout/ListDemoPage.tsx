@@ -137,7 +137,7 @@ export default function ListDemoPage() {
           getSubtitle={(i) => i.role}
           striped={striped}
           hoverable={hoverable}
-          selectable={selectable}
+          selectionMode={selectable ? 'single' : 'none'}
           focusMode={focusMode}
           reorderable={reorderable}
           selected={selected}

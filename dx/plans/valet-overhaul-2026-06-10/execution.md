@@ -597,7 +597,18 @@ manual checklist.
    proving them, but leaves DateSelector.tsx's three buggy call sites untouched
    until Q5 is ruled (rec: fix now → the swap is then a Phase-1 one-liner with
    tests already green).
-4. **2026-06-11 — R23 premise corrected (Wave 0.2 fixer).** R23/plan §3.9 S6
+4. **2026-06-12 — stale-dist incident during Ben's manual docs sweep.** The
+   hotfix-branch workflow ran `npm run build` while on `fix/0.34.2-hotfix`;
+   `dist/` is gitignored, so switching back left a 0.34.x dist in place. The
+   docs dev server then ran 0.35.0 pages against the old engine →
+   `theme.typography[variant] is undefined` crash in TypographyImpl (plus a
+   Node ESM import failure from the old KeyboardEvent value-import). Fix:
+   rebuild from the overhaul branch + clear `docs/node_modules/.vite`.
+   **Lesson (added rule): any branch-switching step must end with a rebuild
+   on the returned-to branch** — also relevant to RELEASING.md's hotfix path
+   (its §4 publish steps already rebuild via prepack, so published artifacts
+   were never at risk; only local dev was).
+5. **2026-06-11 — R23 premise corrected (Wave 0.2 fixer).** R23/plan §3.9 S6
    claimed "resolver order verified, shared.ts:87–93: pkgRoot/mcp-data wins" —
    false. shared.ts compiles to `dist/tools/shared.js`, so its `pkgRoot`
    resolved to `<pkg>/dist`; the bundled candidates were `dist/mcp-data` (only

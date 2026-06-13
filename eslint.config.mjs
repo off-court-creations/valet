@@ -12,12 +12,17 @@
 // blocks run the same TypeScript-recommended + prettier rules with Node
 // globals and no React rules (none of those files render JSX).
 
+import { fileURLToPath } from 'node:url';
+import { dirname } from 'node:path';
+
 import tsPlugin from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 import reactPlugin from 'eslint-plugin-react';
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import prettierPlugin from 'eslint-plugin-prettier';
 import globals from 'globals';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Shared rule set for the non-React Node tooling (scripts, configs, MCP
 // server, CLI): TypeScript-recommended where the parser is in play, plus
@@ -99,6 +104,37 @@ export default [
       'react-hooks/exhaustive-deps': 'warn',
       // Prettier integration
       ...(prettierPlugin.configs.recommended?.rules ?? {}),
+    },
+  },
+  /* 1b. Type-aware deprecation gate for the docs app (the durable gate).
+     The docs app consumes `@archway/valet` through the
+     `docs/node_modules/@archway/valet -> ../../..` symlink; the published
+     types (`dist/index.d.mts`) carry the `@deprecated` JSDoc tags emitted by
+     tsup's dts build. Layering `no-deprecated` here — with type information
+     from the docs tsconfig via `projectService` — fails the lint gate the
+     moment a doc page (or CVA template that lands under docs/src) reaches for a
+     deprecated 0.35.0 API, instead of only dev-warning at runtime in the
+     browser. Scoped to `docs/src/**` so the type-checker program stays small
+     and the non-type-aware src/** block above is untouched. */
+  {
+    files: ['docs/src/**/*.{ts,tsx}'],
+    languageOptions: {
+      parser: tsParser,
+      ecmaVersion: 2022,
+      sourceType: 'module',
+      parserOptions: {
+        projectService: {
+          allowDefaultProject: ['*.ts', '*.tsx'],
+          defaultProject: 'docs/tsconfig.app.json',
+        },
+        tsconfigRootDir: __dirname,
+      },
+    },
+    plugins: {
+      '@typescript-eslint': tsPlugin,
+    },
+    rules: {
+      '@typescript-eslint/no-deprecated': 'error',
     },
   },
   /* 2a. Build/release/MCP tooling scripts + the CLI (Node ESM, JS/MJS). */

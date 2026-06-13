@@ -16,7 +16,7 @@ export default function SecondPage() {
         <Stack style={{ gap: "1rem", width: "min(900px, 100%)" }}>
           <Typography variant="h2">Welcome to Valet again!</Typography>
 
-          <Accordion defaultOpen={0}>
+          <Accordion defaultExpanded={0}>
             <Accordion.Item header="Option A">
               Lorem ipsum dolor sit amet.
             </Accordion.Item>

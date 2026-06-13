@@ -175,7 +175,7 @@ args = []`}
   "props": [
     { "name": "data", "type": "T[]", "required": true },
     { "name": "columns", "type": "TableColumn<T>[]", "required": true },
-    { "name": "selectable", "type": "'single' | 'multi' | undefined", "required": true }
+    { "name": "selectionMode", "type": "'none' | 'single' | 'multiple' | undefined", "required": false }
   ],
   "cssVars": ["--valet-divider-stroke", "--valet-table-underline"],
   "events": [{ "name": "rowClick", "payloadType": "{ row: T }" }],
