@@ -59,6 +59,6 @@
     "src/components/widgets/ValetErrorBoundary.tsx",
     "docs/src/pages/components/widgets/ValetErrorBoundaryDemo.tsx"
   ],
-  "version": "0.35.0",
+  "version": "0.35.1",
   "schemaVersion": "1.7"
 }

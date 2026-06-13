@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.35.1] — 2026-06-13
+
+### Fixed
+
+- MCP corpus: prop `type` text no longer leaks an absolute, machine-specific `import("/…/src/types").Name` qualifier (ts-morph prints cross-module types this way) — stripped to the bare type name (e.g. `Space | undefined`), so the served corpus is reproducible across machines. A `validate.mjs` gate now rejects any `import("…")` qualifier in a served type. (The 0.35.0 `valet-mcp` corpus, published from a dev machine, carried such paths in ~10 prop types.)
+- `aiKeyStore`: pass `BufferSource` (TypedArray views) to WebCrypto instead of raw `.buffer` ArrayBuffers — Node 20's webcrypto rejects cross-realm ArrayBuffers under jsdom. Behaviour is unchanged in real browsers; this hardens the encrypt/decrypt path and its tests across runtimes.
+- `create-valet-app`: the `js` and `hybrid` templates' ESLint configs gained `parserOptions.ecmaFeatures.jsx`, so generated `.jsx` files lint cleanly (they previously failed with "Unexpected token <").
+
+### Changed
+
+- CI: the `core` job builds before testing (dist-dependent suites — `validate_jsx`, bundle-size — need `dist/`) and installs the `valet-mcp`/`create-valet-app` sub-package deps before typecheck; `check-fresh` no longer requires the gitignored `_ts-extract.json` intermediate. Full suite green on Node 20 and 22.
+
 ## [0.35.0] — 2026-06-12
 
 ### Added

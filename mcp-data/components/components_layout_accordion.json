@@ -169,6 +169,6 @@
     "src/components/layout/Accordion.tsx",
     "docs/src/pages/components/layout/AccordionDemo.tsx"
   ],
-  "version": "0.35.0",
+  "version": "0.35.1",
   "schemaVersion": "1.7"
 }

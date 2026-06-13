@@ -27,6 +27,12 @@ import { fileURLToPath } from 'node:url';
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const PKG_ROOT = path.resolve(HERE, '..', '..', 'packages', 'valet-mcp');
 const DIST_INDEX = path.join(PKG_ROOT, 'dist', 'index.js');
+// Track the served corpus version instead of hardcoding a literal — the tool
+// reports whatever the bundled snapshot carries, so this stays correct across
+// version bumps (0.35.0 → 0.35.1 → …) with no test churn.
+const EXPECTED_VALET_VERSION = JSON.parse(
+  fs.readFileSync(path.join(PKG_ROOT, 'mcp-data', '_meta.json'), 'utf8'),
+).version;
 const SDK = '@modelcontextprotocol/sdk';
 
 // Import from the package's own dist + node_modules so SDK/zod resolve there.
@@ -127,9 +133,9 @@ describe.skipIf(!distExists)('valet-mcp server output contract (D2–D5)', () =>
     expect(payload.status).toBe('ok');
     expect(payload.ok).toBe(true);
     // The valet version is resolved from the bundled snapshot, not the host cwd.
-    expect(payload.valetVersion).toBe('0.35.0');
+    expect(payload.valetVersion).toBe(EXPECTED_VALET_VERSION);
     expect(payload.valetSource).toBe('data');
-    expect(payload.dataValetVersion).toBe('0.35.0');
+    expect(payload.dataValetVersion).toBe(EXPECTED_VALET_VERSION);
     // The host cwd had no valet dependency — recorded as advisory-missing,
     // NOT fatal to the verdict.
     expect(payload.appValetSource).toBe('missing');
@@ -141,7 +147,7 @@ describe.skipIf(!distExists)('valet-mcp server output contract (D2–D5)', () =>
     const res = await client.callTool({ name: 'valet__check_version_parity', arguments: {} });
     const payload = JSON.parse(textOf(res));
     expect(payload.status).toBe('ok');
-    expect(payload.valetVersion).toBe('0.35.0');
+    expect(payload.valetVersion).toBe(EXPECTED_VALET_VERSION);
     expect(payload.valetSource).toBe('data');
   });
 

@@ -201,6 +201,6 @@
     "src/components/fields/Slider.tsx",
     "docs/src/pages/components/field/SliderDemo.tsx"
   ],
-  "version": "0.35.0",
+  "version": "0.35.1",
   "schemaVersion": "1.7"
 }
