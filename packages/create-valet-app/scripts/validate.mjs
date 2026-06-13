@@ -140,33 +140,59 @@ async function build(cwd) {
 
 async function preview(cwd) {
   const port = 5173 + Math.floor(Math.random() * 1000);
+  // `detached: true` makes the child a process-group leader so we can reap the
+  // WHOLE tree on cleanup. Killing only the `npx` wrapper (the old behaviour)
+  // orphaned the actual `vite preview` server, which kept holding its port —
+  // those orphans then collided with later runs' random `--strictPort` picks
+  // (PREVIEW:fail). This runs on every cva publish via prepublishOnly, so the
+  // leak compounded across runs.
   const p = spawn('npx', ['vite', 'preview', '--strictPort', '--port', String(port)], {
     cwd,
     env: process.env,
     stdio: 'pipe',
+    detached: true,
   });
-  let ready = false;
-  let out = '';
-  p.stdout.on('data', (d) => {
-    out += d.toString();
-    if (/Local:\s*http:\/\/localhost:/.test(out)) ready = true;
-  });
-  // Wait up to ~12s for server, then fetch /
-  const started = Date.now();
-  while (!ready && Date.now() - started < 12000) {
-    await new Promise((r) => setTimeout(r, 200));
-  }
-  let status = 0;
-  try {
-    const res = await fetch(`http://localhost:${port}/`);
-    status = res.status;
-  } catch {}
-  p.kill('SIGTERM');
-  return {
-    code: status === 200 ? 0 : 1,
-    out: `PREVIEW_STATUS:${status === 200 ? 'ok' : 'fail'}`,
-    err: '',
+  const reap = () => {
+    // Negative pid → the whole process group (npx + vite child). SIGKILL
+    // fallback in case SIGTERM is ignored. Best-effort; never throws.
+    try {
+      process.kill(-p.pid, 'SIGTERM');
+    } catch {
+      /* already gone */
+    }
+    setTimeout(() => {
+      try {
+        process.kill(-p.pid, 'SIGKILL');
+      } catch {
+        /* already gone */
+      }
+    }, 500);
   };
+  try {
+    let ready = false;
+    let out = '';
+    p.stdout.on('data', (d) => {
+      out += d.toString();
+      if (/Local:\s*http:\/\/localhost:/.test(out)) ready = true;
+    });
+    // Wait up to ~12s for server, then fetch /
+    const started = Date.now();
+    while (!ready && Date.now() - started < 12000) {
+      await new Promise((r) => setTimeout(r, 200));
+    }
+    let status = 0;
+    try {
+      const res = await fetch(`http://localhost:${port}/`);
+      status = res.status;
+    } catch {}
+    return {
+      code: status === 200 ? 0 : 1,
+      out: `PREVIEW_STATUS:${status === 200 ? 'ok' : 'fail'}`,
+      err: '',
+    };
+  } finally {
+    reap();
+  }
 }
 
 async function runScenario(baseDir, s) {
