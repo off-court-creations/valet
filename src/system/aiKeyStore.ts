@@ -57,8 +57,11 @@ function getSubtle(): SubtleCrypto {
   return subtle;
 }
 
-// TS 5.8 typed arrays can be ArrayBufferLike; WebCrypto wants BufferSource (ArrayBuffer)
-async function deriveKey(passphrase: string, salt: ArrayBuffer) {
+// Pass TypedArray VIEWS (BufferSource) to WebCrypto, never `.buffer`: a raw
+// ArrayBuffer fails Node 20's cross-realm `isAnyArrayBuffer` check under jsdom
+// ("'salt' … is not instance of ArrayBuffer, Buffer, TypedArray, or DataView"),
+// whereas an ArrayBufferView passes via ArrayBuffer.isView's internal-slot test.
+async function deriveKey(passphrase: string, salt: BufferSource) {
   const subtle = getSubtle();
   const enc = new TextEncoder();
   const keyMaterial = await subtle.importKey(
@@ -83,12 +86,8 @@ export async function encrypt(plaintext: string, passphrase: string) {
   const enc = new TextEncoder();
   const salt = crypto.getRandomValues(new Uint8Array(16));
   const iv = crypto.getRandomValues(new Uint8Array(12));
-  const key = await deriveKey(passphrase, salt.buffer);
-  const data = await getSubtle().encrypt(
-    { name: 'AES-GCM', iv: iv.buffer },
-    key,
-    enc.encode(plaintext),
-  );
+  const key = await deriveKey(passphrase, salt);
+  const data = await getSubtle().encrypt({ name: 'AES-GCM', iv }, key, enc.encode(plaintext));
   return btoa(
     JSON.stringify({
       iv: [...iv],
@@ -100,11 +99,11 @@ export async function encrypt(plaintext: string, passphrase: string) {
 
 export async function decrypt(cipherB64: string, passphrase: string) {
   const { iv, salt, data } = JSON.parse(atob(cipherB64)) as CipherPayload;
-  const key = await deriveKey(passphrase, new Uint8Array(salt).buffer);
+  const key = await deriveKey(passphrase, new Uint8Array(salt));
   const dec = await getSubtle().decrypt(
-    { name: 'AES-GCM', iv: new Uint8Array(iv).buffer },
+    { name: 'AES-GCM', iv: new Uint8Array(iv) },
     key,
-    new Uint8Array(data).buffer,
+    new Uint8Array(data),
   );
   return new TextDecoder().decode(dec);
 }

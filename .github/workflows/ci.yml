@@ -43,12 +43,18 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - run: npm run mcp:schema:check
-      - run: npm test
+      # Build BEFORE test: several suites resolve the built dist —
+      # validate-jsx type-checks snippets against dist/index.d.mts, and
+      # check-bundle inspects dist/index.mjs. On a clean checkout dist/ does
+      # not exist yet, so testing first would fail those (passed locally only
+      # because a dev tree already has dist/). ssr-import.test.ts now runs its
+      # real assertion inside `npm test` (no longer the skip path).
       - run: npm run build
-      # SSR dist-import regression (TEST-CI S10): inside `npm test` above
-      # it skips when dist/ is absent; this post-build run is the real
-      # assertion (ESM import of the dist barrel, deterministic classes —
-      # ESM-only since PACKAGING S4, ruling Q1(a)).
+      - run: npm test
+      # Explicit post-build SSR dist-import assertion (TEST-CI S10): ESM import
+      # of the dist barrel + deterministic classes (ESM-only, PACKAGING S4 /
+      # ruling Q1(a)). Redundant with `npm test` now that build precedes it,
+      # kept as a focused guard.
       - run: npx vitest run src/ssr-import.test.ts
       - run: npm run verify:pack
       - run: npm run check:engine

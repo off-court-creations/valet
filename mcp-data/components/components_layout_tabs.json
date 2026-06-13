@@ -85,7 +85,7 @@
     },
     {
       "name": "pad",
-      "type": "import(\"/home/xbenc/occ/valet/src/types\").Space | undefined",
+      "type": "Space | undefined",
       "required": false,
       "description": "Container padding as units or CSS length."
     },
@@ -97,7 +97,7 @@
     },
     {
       "name": "gap",
-      "type": "import(\"/home/xbenc/occ/valet/src/types\").Space | undefined",
+      "type": "Space | undefined",
       "required": false,
       "description": "Inter-child spacing as units or CSS length."
     },

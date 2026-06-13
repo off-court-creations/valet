@@ -31,7 +31,6 @@ export const MIRROR_FILES = [
   '_meta.json',
   'index.json',
   'glossary.json',
-  '_ts-extract.json',
   'component_synonyms.json',
 ];
 
@@ -74,7 +73,9 @@ export function expectedFilesFromCorpus(corpus) {
     expected[`components/${safeSlug}.json`] = doc;
   }
   expected['index.json'] = [...corpus.index].sort(bySlug);
-  expected['_ts-extract.json'] = corpus.tsMap;
+  // `_ts-extract.json` is a gitignored intermediate dump (not committed, not
+  // part of the shipped corpus), so a clean checkout never has it on disk —
+  // excluding it keeps freshness about the SERVED data, not build artifacts.
   expected['component_synonyms.json'] = sortSynonyms(corpus.synonyms);
   if (corpus.glossary) {
     expected['glossary.json'] = { entries: corpus.glossary, version: corpus.version };

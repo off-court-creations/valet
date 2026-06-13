@@ -471,7 +471,15 @@ export function extractFromTs(projectRoot) {
         if (!name) return;
         if (propSet.has(name)) return;
         propSet.add(name);
-        const cleanType = (typeText || 'any').replace(/\s+/g, ' ').trim();
+        // ts-morph prints a cross-module type the snippet can't name in scope
+        // as `import("<absolute path>").Name` — the absolute path is
+        // machine-specific (./home/xbenc vs CI /home/runner) and would make the
+        // corpus non-reproducible (check-fresh "stale"). Strip the import()
+        // qualifier to the bare type name (also more readable for an agent).
+        const cleanType = (typeText || 'any')
+          .replace(/import\((?:"[^"]*"|'[^']*')\)\./g, '')
+          .replace(/\s+/g, ' ')
+          .trim();
         const p = { name, type: cleanType, required, ...extra };
         props.push(p);
         // Heuristics from type string for events/slots

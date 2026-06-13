@@ -195,7 +195,10 @@ describe('Pagination rule lifecycle (ENGINE S9, jsdom)', () => {
     expect(registry.styleCache.size - cacheBefore).toBe(0);
     expect(registry.injected.size - injectedBefore).toBe(0);
     expect(registry.renderQueue.size).toBe(0);
-  });
+    // 55 mount+measure cycles in jsdom legitimately run ~2.5s in isolation but
+    // exceed the 5s default under CI parallel load (esp. Node 20); give it room
+    // so the gate isn't flaky. It asserts a hard invariant, not timing.
+  }, 30000);
 
   it('continuous geometry rides on --valet-pag-* inline vars; rule text reads var(...)', () => {
     const { container, render } = mount();

@@ -24,7 +24,7 @@
     },
     {
       "name": "sx",
-      "type": "import('../../types').Sx",
+      "type": "Sx",
       "required": false,
       "description": "Inline styles (with CSS var support)"
     },

@@ -387,6 +387,17 @@ export function validateCorpus(corpus) {
             `or allow-list it in UNKNOWN_TYPE_ALLOW with a justification`,
         );
       }
+      // (2b) machine-specific type leak: ts-morph prints cross-module types it
+      // can't name in scope as `import("<absolute path>").Name`. The absolute
+      // path is host-specific (dev /home/xbenc vs CI /home/runner), so it makes
+      // the corpus non-reproducible (check-fresh "stale" on another machine).
+      // The extractor must strip the import() qualifier to the bare type name.
+      if (typeof p.type === 'string' && /import\(\s*['"]/.test(p.type)) {
+        error(
+          `${item.name}.${p.name}: type contains an \`import("…")\` qualifier with an ` +
+            `absolute path — non-reproducible across machines; the extractor must strip it`,
+        );
+      }
       // record `deprecated`-carrying props for the consistency check
       if (p.deprecated != null) {
         (flaggedDeprecatedByComponent[item.name] ||= new Set()).add(p.name);
