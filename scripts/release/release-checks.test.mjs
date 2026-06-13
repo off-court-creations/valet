@@ -16,7 +16,14 @@ import {
   checkChangelog,
   main as changelogMain,
 } from './check-changelog.mjs';
-import { pinTargetVersion, collectPins, checkPins, main as pinsMain } from './check-pins.mjs';
+import {
+  pinTargetVersion,
+  collectPins,
+  checkPins,
+  lockedValetVersion,
+  checkLockfiles,
+  main as pinsMain,
+} from './check-pins.mjs';
 
 const REPO_ROOT = path.resolve(fileURLToPath(import.meta.url), '../../..');
 
@@ -196,6 +203,41 @@ describe('checkPins', () => {
     expect(problems[0]).toContain('not found');
     expect(problems[1]).toContain('no "@archway/valet" dependency');
     expect(problems[2]).toContain('unparsable');
+  });
+});
+
+// ── check-pins: lockfile-sync gate (the Amplify npm-ci failure) ──
+describe('lockedValetVersion', () => {
+  it('reads the resolved version from lockfileVersion 2/3 `packages`', () => {
+    const lock = { packages: { 'node_modules/@archway/valet': { version: '0.35.1' } } };
+    expect(lockedValetVersion(lock)).toBe('0.35.1');
+  });
+  it('falls back to lockfileVersion 1 `dependencies`', () => {
+    expect(lockedValetVersion({ dependencies: { '@archway/valet': { version: '0.35.1' } } })).toBe(
+      '0.35.1',
+    );
+  });
+  it('returns null when the lock lacks the package', () => {
+    expect(lockedValetVersion({ packages: {} })).toBeNull();
+    expect(lockedValetVersion(null)).toBeNull();
+  });
+});
+
+describe('checkLockfiles', () => {
+  it('passes when the lockfile resolves the root version', () => {
+    const lockfiles = [{ label: 'docs', file: 'docs/package-lock.json', locked: '0.35.1' }];
+    expect(checkLockfiles({ rootVersion: '0.35.1', lockfiles })).toEqual([]);
+  });
+  it('catches a stale lockfile (the 0.33.0-vs-0.35.1 Amplify break)', () => {
+    const lockfiles = [{ label: 'docs', file: 'docs/package-lock.json', locked: '0.33.0' }];
+    const problems = checkLockfiles({ rootVersion: '0.35.1', lockfiles });
+    expect(problems).toHaveLength(1);
+    expect(problems[0]).toContain('0.33.0');
+    expect(problems[0]).toContain('npm install');
+  });
+  it('flags a lockfile with no resolved valet entry', () => {
+    const lockfiles = [{ label: 'docs', file: 'docs/package-lock.json', locked: null }];
+    expect(checkLockfiles({ rootVersion: '0.35.1', lockfiles })[0]).toContain('no resolved');
   });
 });
 
