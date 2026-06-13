@@ -19,5 +19,22 @@
       "Change source. `onValueChange`/`onValueCommit` report a truthful `info.source`: `'pointer'` for a mouse selection and `'keyboard'` for keyboard activation (Enter/Space/arrow), not a blanket `'programmatic'`.",
       "Option props. `Select.Option` forwards its own `className`, `style`, `id`, `data-*` (and arbitrary `<li>` attributes), plus `sx`/`preset`, onto the rendered option element. A custom `id` wins over the generated one and keeps `aria-activedescendant` in sync. Internal listbox semantics (`role`, `aria-selected`) always take precedence on collision, and `sx` wins over a caller `style`."
     ]
-  }
+  },
+  "examples": [
+    {
+      "id": "select-controlled",
+      "title": "Controlled single Select",
+      "code": "() => {\n  const [fruit, setFruit] = React.useState('apple');\n  return (<Stack gap={1}>\n    <Select value={fruit} onValueChange={(next) => setFruit(String(next))} placeholder='Choose a fruit'>\n      <Select.Option value='apple'>Apple</Select.Option>\n      <Select.Option value='banana'>Banana</Select.Option>\n      <Select.Option value='cherry'>Cherry</Select.Option>\n    </Select>\n    <Typography>Selected: {fruit}</Typography>\n  </Stack>);\n}"
+    },
+    {
+      "id": "select-form",
+      "title": "FormControl binding",
+      "code": "() => {\n  const useStore = Valet.createFormStore({ size: 'md' });\n  return (<FormControl useStore={useStore} onSubmitValues={(values) => void values}>\n    <Stack gap={1}>\n      <Select name='size' placeholder='Pick a size'>\n        <Select.Option value='sm'>Small</Select.Option>\n        <Select.Option value='md'>Medium</Select.Option>\n        <Select.Option value='lg'>Large</Select.Option>\n      </Select>\n      <Button type='submit'>Save</Button>\n    </Stack>\n  </FormControl>);\n}"
+    },
+    {
+      "id": "select-multiple",
+      "title": "Multiple selection from many options",
+      "code": "() => {\n  const [picked, setPicked] = React.useState<(string | number)[]>(['react']);\n  const options = ['react', 'vue', 'svelte', 'angular', 'solid', 'qwik', 'preact'];\n  return (<Stack gap={1}>\n    <Select multiple value={picked} onValueChange={(next) => setPicked(Array.isArray(next) ? next : [next])} placeholder='Pick frameworks'>\n      {options.map((opt) => (<Select.Option key={opt} value={opt}>{opt}</Select.Option>))}\n    </Select>\n    <Typography>Picked {picked.length} of {options.length}</Typography>\n  </Stack>);\n}"
+    }
+  ]
 }

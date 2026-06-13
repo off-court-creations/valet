@@ -37,7 +37,7 @@ An MCP is a toolbox which AI chatbots and coding agents can use to learn things 
 
 Whether this is your first frontend or your 1000th, valet has a compelling X-factor. Valet has traditional docs, which experienced developers would benefit from reading, but the `@archway/valet-mcp` is better than any docs can be. 
 
-The MCP teaches AI valet's components and patterns from data generated out of this repo: fourteen tools covering component search, typed props and defaults, usage examples, best practices, and a glossary. From there, your agent can build beautiful and functional apps and experiences from your natural language requests. Deeper runtime integration — such as the planned Web Action Graph — is roadmap, not yet shipped.
+The MCP teaches AI valet's components and patterns from data generated out of this repo: fifteen tools covering component search, typed props and defaults, usage examples, best practices, and a glossary — plus `validate_jsx`, which type-checks a generated valet JSX snippet against the shipped `@archway/valet` types and reports structured diagnostics so an agent can catch invented props, wrong literal-union values, and deprecated aliases and self-correct before emitting code. From there, your agent can build beautiful and functional apps and experiences from your natural language requests. Deeper runtime integration — such as the planned Web Action Graph — is roadmap, not yet shipped.
 
 ## Tech Specs
 

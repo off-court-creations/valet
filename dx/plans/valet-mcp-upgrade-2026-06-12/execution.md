@@ -11,7 +11,7 @@
 | --- | --- | --- |
 | 1 | Lane A extractor correctness (A1 getComment normalizer · A2 phantom filter · A3 call-site deprecation) ‖ Lane C zod→SDK bump · then B gate hardening + corpus regen | ✅ |
 | 2 | D1 validate_jsx (headline) · D2 structuredContent/outputSchema · D3 isError · D4 deprecation-aware output · D5 cwd parity fix | ✅ |
-| 3 | E1 Select examples · E2 wording fixes · E3 docs/AGENTS/README/CHANGELOG + final regen | ⬜ |
+| 3 | E1 Select examples · E2 wording fixes · E3 docs/AGENTS/README/CHANGELOG + final regen | ✅ |
 
 ## Provisional rulings (assessment §Decisions, reversible)
 SDK minor tilde-bump (no major exists) · validate_jsx is the headline ·
@@ -99,6 +99,45 @@ selectable/rowKey deprecated→replacement AND validate_jsx rejects them.
 real valet only once `@archway/valet@0.35.0` is published (latest is 0.34.1).
 Until then it works in-repo (workspace) and degrades to a clean `isError` in a
 published install; the other 14 tools are fully functional regardless.
+
+### Wave 3 — curated gaps + docs — ✅ TIER 1+2 COMPLETE
+
+**E1 (examples):** the assessment flagged Select's zero examples; the audit
+found 36 zero-example components, and E1 added **15 examples across 10**
+(Select ×3 incl. the FormControl/createFormStore pattern, plus Checkbox,
+RadioGroup, Radio, Slider, IconButton, DateSelector, Stack, Icon, Divider) —
+**example coverage 22→32 components, 99 examples, all type-checked by
+check:examples**. Caught its own `IconButton variant='outline'`→`'outlined'`
+before the gate. **E2 (wording):** Button/IconButton `variant='contained'`
+(MUI-ism) → `filled`; surfaced Button `type='submit'`/`'reset'`; a repo-wide
+grep sweep confirmed no other variant/size literal was wrong. **E3 (docs):**
+CHANGELOG entry for the whole upgrade; AGENTS.md MCP section now tells agents
+to use validate_jsx to self-check; README + docs MCP.tsx document the 15 tools,
+structured output, and validate_jsx (with the optionalDependency caveat stated
+honestly).
+
+**Verification:** both reviewers **pass**; the exit-audit confirms every
+slice A1/A2/A3, B1, C1/C2, D1–D5, E1/E2/E3 landed. Final gate: lint ✅ tsc ✅
+**1268/1268** ✅ build ✅ check:engine ✅ check:examples (99) ✅
+mcp:schema:check ✅ mcp:check ✅ docs build ✅.
+
+---
+
+## DONE — Tier 1 + Tier 2 complete
+
+The maintainer's question answered in code: **the MCP no longer lies** (0
+`[object Object]`, 11 deprecated props serve their canonical replacement, and
+content gates make recurrence unshippable), it's **current** (SDK ~1.29, single
+zod 3.25), and it gained the **closed correctness loop** — `validate_jsx` lets
+an agent typecheck valet JSX against the real 0.35.0 types and self-correct.
+Acceptance test passes end-to-end. Branch `feat/valet-mcp-upgrade` stacks on
+the unpublished overhaul; publishing both (valet 0.35.0 → valet-mcp 0.35.0) is
+Ben's per dx/RELEASING.md — that publish is also what flips validate_jsx's
+optionalDependency to a real resolution in consumer installs.
+
+**Tier 3 (deliberately not done, per the assessment + ruling):** code-derived
+composition graph (subsumed by validate_jsx's type-level nesting enforcement)
+and scaffold prompts — available if Ben wants them later.
 
 ## Flags & issues
 1. Branch bases on `feat/valet-overhaul` (NOT development) — all referenced

@@ -186,7 +186,16 @@
     "Binding precedence (prop > form > internal). An explicit `value` prop always wins; otherwise a `name` inside a `FormControl` binds to the store (seed the key in `createFormStore(initial)` so the initial value is honoured); otherwise the Slider is uncontrolled. The binding is latched at mount — don't switch a Slider between controlled and uncontrolled.",
     "Change source. `onValueChange`/`onValueCommit` report a truthful `info.source`: `'pointer'` for a drag/click on the track and `'keyboard'` for the arrow/Page/Home/End keys, not a blanket `'programmatic'`."
   ],
-  "examples": [],
+  "examples": [
+    {
+      "id": "slider-controlled",
+      "title": "Controlled slider",
+      "code": "() => {\n  const [volume, setVolume] = React.useState(40);\n  return (<Stack gap={1}>\n    <Slider min={0} max={100} step={5} value={volume} onValueChange={(next) => setVolume(next)} showValue showMinMax />\n    <Typography>Volume: {volume}</Typography>\n  </Stack>);\n}",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    }
+  ],
   "docsUrl": "/slider-demo",
   "sourceFiles": [
     "src/components/fields/Slider.tsx",

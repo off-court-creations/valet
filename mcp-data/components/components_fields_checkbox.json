@@ -146,7 +146,24 @@
     "Disabled with context. If a checkbox is disabled, explain why nearby; avoid silently disabling without guidance.",
     "Tokens/presets. Style with theme tokens and `preset` rather than ad‑hoc CSS to keep density and branding consistent."
   ],
-  "examples": [],
+  "examples": [
+    {
+      "id": "checkbox-controlled",
+      "title": "Controlled checkbox",
+      "code": "() => {\n  const [agreed, setAgreed] = React.useState(false);\n  return (<Stack direction='row' gap={1}>\n    <Checkbox checked={agreed} onValueChange={(next) => setAgreed(next)} />\n    <Typography>I accept the terms</Typography>\n  </Stack>);\n}",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    },
+    {
+      "id": "checkbox-form",
+      "title": "FormControl binding",
+      "code": "() => {\n  const useStore = Valet.createFormStore({ newsletter: true });\n  return (<FormControl useStore={useStore} onSubmitValues={(values) => void values}>\n    <Stack direction='row' gap={1}>\n      <Checkbox name='newsletter' />\n      <Typography>Subscribe to the newsletter</Typography>\n    </Stack>\n  </FormControl>);\n}",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    }
+  ],
   "docsUrl": "/checkbox-demo",
   "sourceFiles": [
     "src/components/fields/Checkbox.tsx",

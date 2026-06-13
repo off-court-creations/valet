@@ -76,7 +76,16 @@
     "For a custom `svg` string, pass bare path `d`-data or `<path>`-only markup: it is parsed against an allowlist and rendered as real React elements, never via innerHTML. Untrusted or model-generated icon markup is safe here—anything outside that grammar renders nothing and dev-warns.",
     "Only use `dangerouslySetSvg` for markup you fully control. It injects raw SVG verbatim (innerHTML) and can execute scripts—never pass user input or AI output to it."
   ],
-  "examples": [],
+  "examples": [
+    {
+      "id": "icon-inline",
+      "title": "Iconify glyph inline with text",
+      "code": "<Stack direction='row' gap={1}>\n  <Icon icon='mdi:home' />\n  <Typography>Home</Typography>\n</Stack>",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    }
+  ],
   "docsUrl": "/icon-demo",
   "sourceFiles": [
     "src/components/primitives/Icon.tsx",

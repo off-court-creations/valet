@@ -30,6 +30,14 @@ Welcome to **@archway/valet**, a performant, AI-forward UI library designed as a
 
 You have access to the valet MCP. Use it whenever you are building UI with valet to search components, inspect typed props/defaults, and grab examples.
 
+**Self-check generated JSX.** Before you emit valet JSX, you SHOULD run it through
+`valet__validate_jsx` — it type-checks the snippet against the shipped
+`@archway/valet` types and returns structured diagnostics (line, col, TS code,
+message, severity, and a `deprecated` flag). It catches the things the corpus
+cannot express: invented props, the wrong member of a literal union, and
+deprecated aliases. A snippet with problems comes back as `ok: false` (not a
+tool error), so read the diagnostics and fix them before emitting code.
+
 See also the detailed MCP guide in docs at `docs/src/pages/getting-started/MCP.tsx`.
 
 ## Quality Gates (definition of done)
@@ -89,20 +97,43 @@ This repo ships a Model Context Protocol (MCP) data pipeline and server exposing
 
 What you get:
 
-- Tools: `valet__list_components`, `valet__search_components`, `valet__get_component`, `valet__get_examples`.
+- Tools (15): discovery (`valet__list_components`, `valet__search_components`,
+  `valet__list_categories`, `valet__list_synonyms`), inspection
+  (`valet__get_component`, `valet__get_examples`), search-by-shape
+  (`valet__search_props`, `valet__search_css_vars`,
+  `valet__search_best_practices`), glossary/context (`valet__get_glossary`,
+  `valet__define_term`, `valet__get_primer`), server/data metadata
+  (`valet__get_info`, `valet__check_version_parity`), and JSX validation
+  (`valet__validate_jsx`).
 - Data: generated into `mcp-data/` from TypeScript source and docs.
 - Server: optional MCP server at `packages/valet-mcp` for external LLM tools.
 
+Tool output is structured: `get_component`, `search_props`, and
+`list_components` return `structuredContent` (validated against a published
+`outputSchema`) alongside the human-readable text. Genuine failures (e.g. an
+unknown component) come back with `isError: true` and a directive message, not
+a success-shaped empty payload.
+
 Typical flows:
 
-- Discover: use `valet__list_components` to enumerate all components with `{ name, category, summary, slug }`.
+- Discover: use `valet__list_components` to enumerate all components with `{ name, category, status, summary, slug }`.
 - Search: use `valet__search_components { query }` for fuzzy search over names/summaries.
 - Inspect: use `valet__get_component { name? | slug? }` to retrieve full metadata:
   - `props[]`: name, type, required, default, description
   - `domPassthrough`: supported intrinsic element props (if any)
   - `cssVars[]`: exposed CSS variables
   - `bestPractices[]`, `examples[]`, `docsUrl`, `sourceFiles[]`, `version`
+  - **Deprecation-aware:** a renamed/deprecated prop carries a
+    `deprecation: { deprecated: true, replacement?, reason? }` view, the doc
+    grows a top-level `deprecatedProps` rollup, and the text content leads with
+    a "DEPRECATED PROPS" banner. Treat the replacement as authoritative — do
+    not emit the old name in new code.
 - Examples only: use `valet__get_examples { name | slug }` to fetch example snippets.
+- Validate: use `valet__validate_jsx { code, deps? }` to type-check generated
+  valet JSX against the shipped types before you emit it. `ok: true` means the
+  snippet is clean (no type errors and no deprecated aliases); otherwise read
+  the `diagnostics[]` and fix each one. This is the one capability the corpus
+  structurally cannot replace — it runs the real type system over your snippet.
 
 Codex usage examples:
 
@@ -110,6 +141,7 @@ Codex usage examples:
 - “Search components for ‘table zebra’” → calls `valet__search_components` with `{ query: "table zebra" }`.
 - “Show props for Panel” → calls `valet__get_component` with `{ name: "Panel" }`.
 - “Give example usage of Tooltip” → calls `valet__get_examples` with `{ name: "Tooltip" }`.
+- “Is this snippet valid?” → calls `valet__validate_jsx` with `{ code: "<Button variant=\"contained\">Go</Button>" }` and reports the diagnostics (here: `variant` has no `'contained'` member).
 
 Keeping the MCP data fresh:
 

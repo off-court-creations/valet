@@ -148,7 +148,16 @@
     "Localize the calendar DISPLAY (month names, weekday headers, day-number digits) with the `locale` prop (BCP-47, default 'en-US' which preserves the prior English/Sunday-start output). The committed VALUE is always ISO 'YYYY-MM-DD' with Latin digits regardless of locale — e.g. locale='ar-EG' shows Arabic-Indic day digits while onValueChange/onValueCommit still emit Latin ISO.",
     "By default the week starts on the locale's own first day (en-US → Sunday, de-DE → Monday). Override it explicitly with `firstDayOfWeek` (1 = Monday … 7 = Sunday) to force a fixed start regardless of locale."
   ],
-  "examples": [],
+  "examples": [
+    {
+      "id": "dateselector-controlled",
+      "title": "Controlled single date",
+      "code": "() => {\n  const [date, setDate] = React.useState('2026-06-12');\n  return (<Stack gap={1}>\n    <DateSelector value={date} minDate='2026-01-01' maxDate='2026-12-31' onValueChange={(next) => setDate(typeof next === 'string' ? next : next[0])} />\n    <Typography>Selected: {date}</Typography>\n  </Stack>);\n}",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    }
+  ],
   "docsUrl": "/dateselector-demo",
   "sourceFiles": [
     "src/components/fields/DateSelector.tsx",
