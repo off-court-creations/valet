@@ -159,31 +159,49 @@ The CHANGELOG is the source of truth for what each version shipped;
 
 ## 3. Version bumps + pin updates
 
+> ⚠️ **PRE-SYNC EVERYTHING ONCE, THEN PUBLISH PLAIN.** Bump **all four**
+> packages to the same `$NEW` here in §3. At publish time (§4) use the **plain**
+> commands — `npm publish` and `npm run mcp:server:publish` (no suffix). Do
+> **NOT** run `npm version` / `mcp:server:publish:patch|minor|major` during
+> §4: the packages are already at `$NEW`, so a second bump double-counts
+> (0.35.0 → 0.36.0). This bit both `valet-mcp` and `create-valet-app` during
+> the 0.35.x releases. The `:patch|:minor|:major` variants are only for a
+> package versioning **independently** of the synchronized set.
+
 Pin skew is a **hard** failure at release (`check-pins.mjs`): `docs/` and the
-three CVA templates (`hybrid`/`js`/`ts`) must pin `@archway/valet` at the new
-version before publish.
+three CVA templates (`hybrid`/`js`/`ts`) must pin `@archway/valet` at `$NEW`,
+**and `docs/package-lock.json` must RESOLVE it** (a matching pin with a stale
+lockfile passes the pin check but breaks `npm ci` — it failed the Amplify docs
+deploy after 0.35.x).
 
 ```sh
-# 3.1 Bump the library version (no tag yet — we tag once at the end).
+# 3.1 Bump ALL FOUR to the same version (no tag yet — we tag once at the end).
 npm version <patch|minor|major> --no-git-tag-version
 NEW=$(node -p "require('./package.json').version")
+( cd packages/valet-mcp        && npm version "$NEW" --no-git-tag-version --allow-same-version )
+( cd packages/create-valet-app && npm version "$NEW" --no-git-tag-version --allow-same-version )
 
 # 3.2 Update the docs pin and every CVA template pin to ^$NEW.
-#     (Edit these files; then re-run check-pins to confirm zero skew.)
 #       docs/package.json
-#       packages/create-valet-app/templates/hybrid/package.json
-#       packages/create-valet-app/templates/js/package.json
-#       packages/create-valet-app/templates/ts/package.json
-node scripts/release/check-pins.mjs   # MUST pass (no --warn) after editing
+#       packages/create-valet-app/templates/{hybrid,js,ts}/package.json
 
 # 3.3 Move the CHANGELOG Unreleased section to [$NEW] (see §2), then:
-npm run release:check                 # changelog + pins both green
+npm run release:check   # changelog + pins; the docs-lockfile half is checked too
 ```
+
+`release:check`'s lockfile gate will still flag `docs/package-lock.json` as
+stale here — that is expected and resolved in §4.1b, because the lockfile can
+only resolve `@archway/valet@$NEW` **after** valet is published. (On
+non-release branches CI runs `check-pins --warn`, so the stale lockfile only
+warns.)
 
 CVA templates also carry the `@fontsource` font deps and self-host theme config
 (`injectRemote:false`, `mode:'system'`, `persistMode:true`); bumping the valet
 pin is the moment to confirm the templates still install and `cva:validate`
-passes (§1.7).
+passes (§1.7). Note `cva:validate` is heavy (scaffolds + installs + builds +
+`vite preview` for 13 scenarios) and also runs inside `create-valet-app`'s
+`prepublishOnly`; if a `vite preview` step flakes, clear any stragglers with
+`pkill -f "cva-validate.*vite preview"` and retry.
 
 ---
 
@@ -199,21 +217,24 @@ data and the templates bake in, so it goes first; docs deploy last.
 #     by the release integrator) re-runs the §1 gate. Publish from the root.
 npm publish --access public
 
-# 4.2 valet-mcp. The wrapper rebuilds mcp-data (captures the just-published
-#     valet version), schema-checks, freshness-checks, then bumps + publishes.
-#     mcp:server:publish:* chains mcp:server:preflight (mcp:build + schema:check
-#     + check) first, so a stale corpus cannot ship.
-npm run mcp:server:publish:<patch|minor|major>
+# 4.1b RESYNC the docs lockfile now that valet@$NEW is on the registry, then
+#      the hard pin+lockfile gate passes (this step was the 0.35.x Amplify gap).
+npm --prefix docs install
+node scripts/release/check-pins.mjs   # MUST pass (no --warn): pins AND lockfile
+git add docs/package-lock.json        # commit with the release (§5)
 
-# 4.3 create-valet-app. Validate, bump, publish from the package dir.
-npm run cva:validate
-cd packages/create-valet-app
-npm version <patch|minor|major>
-npm publish --access public
-cd ../..
+# 4.2 valet-mcp — PLAIN (already at $NEW per §3.1). The wrapper rebuilds
+#     mcp-data (capturing the just-published valet version), schema-checks, and
+#     freshness-checks via mcp:server:preflight before publishing. NOT :minor.
+npm run mcp:server:publish
 
-# 4.4 docs. Bump is already done (§3.2); ensure regenerated mcp-data is staged,
-#     then build. Production docs deploy on merge to `main` (AWS Amplify).
+# 4.3 create-valet-app — PLAIN (already at $NEW). prepublishOnly runs
+#     pack.test + cva:validate. Do NOT `npm version` here.
+( cd packages/create-valet-app && npm publish --access public )
+
+# 4.4 docs. Pin + lockfile done (§3.2/§4.1b); ensure regenerated mcp-data is
+#     staged, then build. Production docs deploy on merge to `main` (Amplify),
+#     which runs `npm ci` in docs/ — hence the §4.1b lockfile resync is load-bearing.
 npm --prefix docs run build
 ```
 
