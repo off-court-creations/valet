@@ -39,6 +39,7 @@ export function registerDefineTerm(server: McpServer): void {
       const query = word.trim();
       if (!query) {
         return {
+          isError: true,
           content: [
             {
               type: 'text',
@@ -76,8 +77,14 @@ export function registerDefineTerm(server: McpServer): void {
         .filter((result) => result.score > 0)
         .sort((a, b) => b.score - a.score || a.entry.term.localeCompare(b.entry.term));
 
+      // A define miss is a genuine lookup failure ("define X" where X is not a
+      // known term/alias) → isError. The closest matches travel in the payload
+      // as a "did you mean" so the agent can still self-correct.
       const suggestions = scored.slice(0, limit).map((result) => result.entry);
-      return { content: [{ type: 'text', text: JSON.stringify({ found: false, suggestions }) }] };
+      return {
+        isError: true,
+        content: [{ type: 'text', text: JSON.stringify({ found: false, suggestions }) }],
+      };
     },
   );
 }

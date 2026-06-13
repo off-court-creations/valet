@@ -5,6 +5,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { z } from 'zod';
 
 export type ValetIndexItem = {
   name: string;
@@ -342,4 +343,120 @@ export function simpleSearch(
 
   scored.sort((a, b) => b.score - a.score || a.item.name.localeCompare(b.item.name));
   return scored;
+}
+
+// ─────────────────────────────────────────────────────────────
+// Structured output (MCP outputSchema / structuredContent)
+//
+// SDK ~1.29 validates a tool's `structuredContent` against the Zod shape
+// declared in `outputSchema` at call time and throws on mismatch — so these
+// shapes must match exactly what the tools return. They are derived from the
+// corpus types above (ValetIndexItem / ValetComponentDoc). The text content is
+// kept for back-compat; structuredContent is purely additive.
+// ─────────────────────────────────────────────────────────────
+
+/** Corpus deprecation flag: `true` or `{ reason?, replacement? }`. */
+export const DeprecatedFlagSchema = z.union([
+  z.literal(true),
+  z.object({ reason: z.string().optional(), replacement: z.string().optional() }),
+]);
+
+const StatusSchema = z.enum(['production', 'stable', 'experimental', 'unstable', 'deprecated']);
+
+/** One prop in a component doc, with an additive normalized `deprecation`. */
+export const PropSchema = z
+  .object({
+    name: z.string(),
+    type: z.string(),
+    required: z.boolean(),
+    default: z.string().optional(),
+    description: z.string().optional(),
+    deprecated: DeprecatedFlagSchema.optional(),
+    source: z.object({ file: z.string(), line: z.number().optional() }).optional(),
+    // Additive: a flattened, always-present-when-deprecated view so consumers
+    // do not have to branch on the `true | object` union of `deprecated`.
+    deprecation: z
+      .object({
+        deprecated: z.literal(true),
+        replacement: z.string().optional(),
+        reason: z.string().optional(),
+      })
+      .optional(),
+  })
+  .passthrough();
+
+/**
+ * Output shape for get_component. `.passthrough()` keeps the schema tolerant of
+ * extra/forward corpus fields (e.g. `enumValues`) without the SDK rejecting the
+ * structuredContent at call time.
+ */
+export const GetComponentOutputSchema = z
+  .object({
+    name: z.string(),
+    category: z.string(),
+    slug: z.string(),
+    summary: z.string(),
+    status: StatusSchema.optional(),
+    description: z.string().optional(),
+    props: z.array(PropSchema),
+    // Additive deprecation rollup so agents can see at a glance that a doc
+    // contains deprecated props and what replaces them.
+    deprecatedProps: z.array(
+      z.object({
+        name: z.string(),
+        replacement: z.string().optional(),
+        reason: z.string().optional(),
+      }),
+    ),
+    sourceFiles: z.array(z.string()),
+    version: z.string(),
+    schemaVersion: z.string().optional(),
+  })
+  .passthrough();
+
+export const ListComponentsOutputSchema = z.object({
+  components: z.array(
+    z
+      .object({
+        name: z.string(),
+        category: z.string(),
+        summary: z.string(),
+        slug: z.string(),
+        status: StatusSchema.optional(),
+      })
+      .passthrough(),
+  ),
+  count: z.number().int(),
+});
+
+export const SearchPropsOutputSchema = z.object({
+  results: z.array(
+    z.object({
+      name: z.string(),
+      slug: z.string(),
+      props: z.array(
+        z.object({
+          name: z.string(),
+          // True when this prop name is a deprecated alias on the component.
+          deprecated: z.boolean(),
+          // The canonical replacement, when the corpus declares one.
+          replacement: z.string().optional(),
+        }),
+      ),
+    }),
+  ),
+  count: z.number().int(),
+});
+
+/** Normalize the corpus `deprecated` union into a flat object (or null). */
+export function normalizeDeprecation(
+  deprecated: true | { reason?: string; replacement?: string } | undefined,
+): { deprecated: true; replacement?: string; reason?: string } | null {
+  if (!deprecated) return null;
+  if (deprecated === true) return { deprecated: true };
+  return {
+    deprecated: true,
+    ...(deprecated.replacement ? { replacement: deprecated.replacement } : {}),
+    ...(deprecated.reason ? { reason: deprecated.reason } : {}),
+  };
 }

@@ -3,14 +3,7 @@
 // Runtime TSX example renderer using @babel/standalone
 // ─────────────────────────────────────────────────────────────
 import * as React from 'react';
-import {
-  Box,
-  Stack,
-  Typography,
-  useTheme,
-  CodeBlock,
-  ValetErrorBoundary,
-} from '@archway/valet';
+import { Box, Stack, Typography, useTheme, CodeBlock, ValetErrorBoundary } from '@archway/valet';
 import * as Valet from '@archway/valet';
 import * as Babel from '@babel/standalone';
 

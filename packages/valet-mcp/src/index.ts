@@ -30,6 +30,7 @@ import { registerCheckVersionParity } from './tools/checkVersionParity.js';
 import { registerSearchProps } from './tools/searchProps.js';
 import { registerSearchCssVars } from './tools/searchCssVars.js';
 import { registerSearchBestPractices } from './tools/searchBestPractices.js';
+import { registerValidateJsx } from './tools/validateJsx.js';
 const requireFromHere = createRequire(import.meta.url);
 const pkg = requireFromHere('../package.json') as { version?: string; name?: string };
 const MCP_VERSION = pkg.version ?? '0.0.0';
@@ -38,7 +39,7 @@ const MCP_VERSION = pkg.version ?? '0.0.0';
 
 // Tool parameter schemas moved into individual tool modules
 
-async function createServer() {
+export async function createServer() {
   const server = new McpServer({ name: '@archway/valet-mcp', version: MCP_VERSION });
 
   // tools
@@ -56,6 +57,7 @@ async function createServer() {
   registerGetPrimer(server);
   registerGetInfo(server);
   registerCheckVersionParity(server);
+  registerValidateJsx(server);
 
   // adjust_theme tool removed
 
@@ -231,9 +233,13 @@ async function main() {
   await server.connect(transport);
 }
 
-// Run
-main().catch((err) => {
-  // eslint-disable-next-line no-console
-  console.error('Fatal:', err);
-  process.exit(1);
-});
+// Run — skipped when VALET_MCP_NO_AUTOSTART=1 so tests can import createServer
+// and drive an in-memory transport without spawning the stdio server. The bin
+// shim and normal startup never set this, so their behavior is unchanged.
+if (process.env.VALET_MCP_NO_AUTOSTART !== '1') {
+  main().catch((err) => {
+    // eslint-disable-next-line no-console
+    console.error('Fatal:', err);
+    process.exit(1);
+  });
+}

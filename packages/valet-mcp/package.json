@@ -39,11 +39,15 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "~1.29.0",
-    "zod": "^3.25.76"
+    "zod": "^3.25.76",
+    "typescript": "~5.8.3",
+    "@types/react": "^19.1.0"
+  },
+  "optionalDependencies": {
+    "@archway/valet": "^0.35.0"
   },
   "devDependencies": {
-    "ts-node": "^10.9.2",
-    "typescript": "~5.8.3"
+    "ts-node": "^10.9.2"
   },
   "license": "MIT",
   "repository": {
