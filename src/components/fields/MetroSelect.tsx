@@ -5,6 +5,15 @@
 // patch: support multiple selection via `multiple` prop – 2025‑08‑12
 // patch: sync --valet-text-color with Option color – 2025‑08‑19
 // patch: keyboard + ARIA listbox, FormControl binding, size tokens – 2025‑10‑29
+//
+// FIELDS S8 (rulings R9/R10): value/form/internal resolution delegated to the
+// shared `useFieldState` hook (precedence prop > form > internal, latched at
+// mount, no mount-time store writes). This replaces the old hand-rolled guard
+// whose `controlled = formVal !== undefined || valueProp !== undefined`
+// predicate let form-presence override an explicit `value` prop and recomputed
+// the mode every render. ChangeInfo.source is classified honestly: a tile
+// chosen by pointer click reports 'pointer', one chosen via keyboard
+// (Enter/Space) reports 'keyboard', instead of the old hardcoded 'programmatic'.
 // ─────────────────────────────────────────────────────────────
 /* eslint-disable react/prop-types */
 
@@ -24,16 +33,17 @@ import { Typography } from '../primitives/Typography';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { toHex, toRgb, mix } from '../../helpers/color';
-import type { FieldBaseProps, Presettable, Sx } from '../../types';
-import type { ChangeInfo, OnValueChange, OnValueCommit } from '../../system/events';
+import type { FieldBaseProps, Presettable, Space, Sx } from '../../types';
+import type { ChangeInfo, InputSource, OnValueChange, OnValueCommit } from '../../system/events';
 import { styled } from '../../css/createStyled';
-import { useOptionalForm } from './FormControl';
+import { valetError } from '../../system/devErrors';
+import { useFieldState } from '../../hooks/useControlledState';
 
 export type Primitive = string | number;
 
 interface MetroCtx {
   value: Primitive | Primitive[] | null;
-  setValue: (v: Primitive) => void;
+  setValue: (v: Primitive, src: InputSource) => void;
   multiple: boolean;
   disabled: boolean;
 }
@@ -41,7 +51,12 @@ interface MetroCtx {
 const MetroCtx = createContext<MetroCtx | null>(null);
 const useMetro = () => {
   const ctx = useContext(MetroCtx);
-  if (!ctx) throw new Error('MetroSelect.Option must be inside MetroSelect');
+  if (!ctx)
+    throw valetError(
+      'MetroSelect',
+      '<MetroSelect.Option> must be inside <MetroSelect> — options read selection state from its context. Move the option under a <MetroSelect> parent.',
+      'metroselect-demo',
+    );
   return ctx;
 };
 
@@ -53,7 +68,8 @@ export interface MetroSelectProps
     FieldBaseProps {
   value?: Primitive | Primitive[];
   defaultValue?: Primitive | Primitive[];
-  gap?: number | string;
+  /** Inter-tile spacing as units or CSS length. */
+  gap?: Space;
   multiple?: boolean;
   /** Visual size of the tiles; token or explicit CSS size. */
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string;
@@ -186,7 +202,7 @@ export const Option: React.FC<MetroOptionProps> = ({
         {...rest}
         variant='outlined'
         compact
-        onClick={() => !disabled && !allDisabled && setValue(value)}
+        onClick={() => !disabled && !allDisabled && setValue(value, 'pointer')}
         sx={{
           width: 'var(--valet-metro-tile-w, 6rem)',
           height: 'var(--valet-metro-tile-h, 6rem)',
@@ -257,60 +273,59 @@ export const MetroSelect: MetroSelectComponent = ({
   name,
   label,
   helperText,
+  // API-TYPES S6 (stage A): destructure the remaining FieldBaseProps members
+  // BEFORE the rest-spread so error/fullWidth stop leaking onto the root
+  // <div> (role=listbox) as invalid DOM attributes. `error` is wired to
+  // aria-invalid below; `fullWidth` rendering is Phase 2 / Q10.
+  error,
+  fullWidth: _fullWidth,
   preset: p,
   className,
   sx,
   children,
   ...rest
 }) => {
-  const form = useOptionalForm<Record<string, unknown>>();
-  const formVal =
-    form && name ? (form.values[name] as Primitive | Primitive[] | undefined) : undefined;
-  const controlled = formVal !== undefined || valueProp !== undefined;
-  // Controlled/uncontrolled guard (dev-only)
-  const initialCtl = React.useRef<boolean | undefined>(undefined);
-  React.useEffect(() => {
-    if (process.env.NODE_ENV === 'production') return;
-    if (initialCtl.current === undefined) initialCtl.current = controlled;
-    else if (initialCtl.current !== controlled) {
-      console.error(
-        'MetroSelect: component switched from %s to %s after mount. This is not supported.',
-        initialCtl.current ? 'controlled' : 'uncontrolled',
-        controlled ? 'controlled' : 'uncontrolled',
-      );
-    }
-  }, [controlled]);
-  const [self, setSelf] = useState<Primitive | Primitive[] | null>(defaultValue ?? null);
-
-  const val = controlled
-    ? ((formVal !== undefined ? formVal : (valueProp as Primitive | Primitive[] | null)) ?? null)
-    : self;
+  void _fullWidth;
+  /**
+   * Single resolution of value/control/form binding (ruling R9). Precedence is
+   * prop > form > internal, latched at mount; an unseeded form key renders
+   * `defaultValue ?? null` as controlled and never writes on mount. `null` is
+   * the empty value (nothing selected). The setter writes through to the store
+   * whenever live-bound. This replaces the old hand-rolled guard where
+   * form-presence could override an explicit `value` prop.
+   */
+  const [valRaw, setFieldValue] = useFieldState<Primitive | Primitive[] | null>({
+    value: valueProp,
+    defaultValue,
+    fallback: null,
+    name,
+    component: 'MetroSelect',
+  });
+  const val = valRaw;
 
   const setValue = useCallback(
-    (v: Primitive) => {
+    (v: Primitive, src: InputSource) => {
       if (disabled) return;
       const infoBase: ChangeInfo<Primitive | Primitive[]> = {
         previousValue: val ?? (multiple ? [] : null),
         phase: 'commit',
-        source: 'programmatic',
+        source: src,
         name,
       } as ChangeInfo<Primitive | Primitive[]>;
       if (multiple) {
         const current = Array.isArray(val) ? val : [];
         const idx = current.findIndex((x) => String(x) === String(v));
         const next = idx === -1 ? [...current, v] : current.filter((_, i) => i !== idx);
-        if (!controlled) setSelf(next);
-        if (form && name) form.setField(name as keyof Record<string, unknown>, next as unknown);
+        setFieldValue(next);
         onValueChange?.(next, { ...infoBase, phase: 'input' });
         onValueCommit?.(next, infoBase);
       } else {
-        if (!controlled) setSelf(v);
-        if (form && name) form.setField(name as keyof Record<string, unknown>, v as unknown);
+        setFieldValue(v);
         onValueChange?.(v, { ...infoBase, phase: 'input' });
         onValueCommit?.(v, infoBase);
       }
     },
-    [controlled, disabled, form, multiple, name, onValueChange, onValueCommit, val],
+    [disabled, multiple, name, onValueChange, onValueCommit, setFieldValue, val],
   );
 
   const presetCls = p ? preset(p) : '';
@@ -457,6 +472,7 @@ export const MetroSelect: MetroSelectComponent = ({
         data-state={disabled ? 'disabled' : 'enabled'}
         role='listbox'
         aria-multiselectable={multiple || undefined}
+        aria-invalid={error || undefined}
         aria-disabled={disabled || undefined}
         aria-activedescendant={optIds[active]}
         aria-labelledby={labelId}
@@ -498,7 +514,7 @@ export const MetroSelect: MetroSelectComponent = ({
             setShowActive(true);
             const opt = rawOpts[active];
             if (!opt || opt.props.disabled) return;
-            setValue(opt.props.value);
+            setValue(opt.props.value, 'keyboard');
           }
         }}
         onBlur={() => setShowActive(false)}

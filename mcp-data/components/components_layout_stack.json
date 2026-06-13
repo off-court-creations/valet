@@ -2,7 +2,7 @@
   "name": "Stack",
   "category": "layout",
   "slug": "components/layout/stack",
-  "summary": "Stack component",
+  "summary": "Flexbox container that lays children out in one `direction` (column/row) with consistent `gap`; the default choice for vertical or horizontal flow — use `Grid` for two-dimensional layouts.",
   "status": "stable",
   "aliases": [
     "stack",
@@ -52,13 +52,13 @@
     },
     {
       "name": "gap",
-      "type": "import(\"/home/xbenc/occ/valet/src/types\").Space | undefined",
+      "type": "Space | undefined",
       "required": false,
       "description": "Inter-child spacing as units or CSS length."
     },
     {
       "name": "pad",
-      "type": "import(\"/home/xbenc/occ/valet/src/types\").Space | undefined",
+      "type": "Space | undefined",
       "required": false,
       "description": "Container padding as units or CSS length."
     },
@@ -87,7 +87,6 @@
   ],
   "cssPresets": [],
   "events": [],
-  "actions": [],
   "slots": [],
   "bestPractices": [
     "Use for one‑dimensional layouts (rows/columns) with consistent gaps.",
@@ -95,10 +94,29 @@
     "Align items intentionally and avoid mixing diverse alignments within the same group.",
     "Prefer `Grid` for complex two‑dimensional layouts and `Table` for data."
   ],
-  "examples": [],
-  "sourceFiles": [
-    "src/components/layout/Stack.tsx"
+  "examples": [
+    {
+      "id": "stack-column",
+      "title": "Vertical stack with gap",
+      "code": "<Stack gap={1}>\n  <Typography variant='h4'>Profile</Typography>\n  <Typography>Name: Ada Lovelace</Typography>\n  <Typography>Role: Engineer</Typography>\n</Stack>",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    },
+    {
+      "id": "stack-row",
+      "title": "Horizontal row",
+      "code": "<Stack direction='row' gap={1}>\n  <Button>Save</Button>\n  <Button variant='outlined'>Cancel</Button>\n</Stack>",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    }
   ],
-  "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "docsUrl": "/stack-demo",
+  "sourceFiles": [
+    "src/components/layout/Stack.tsx",
+    "docs/src/pages/components/layout/StackDemo.tsx"
+  ],
+  "version": "0.35.1",
+  "schemaVersion": "1.7"
 }

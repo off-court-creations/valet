@@ -9,22 +9,14 @@
 import React from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
-import { preset, presetHas } from '../../css/stylePresets';
+import { preset } from '../../css/stylePresets';
 import { toRgb, mix, toHex } from '../../helpers/color';
 //
-import type { Presettable, SpacingProps, Sx } from '../../types';
+import type { Intent, Presettable, SpacingProps, Sx } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
+import { resolveDeprecatedProp } from '../../system/deprecate';
 
 export type PanelVariant = 'filled' | 'outlined';
-type Intent =
-  | 'default'
-  | 'primary'
-  | 'secondary'
-  | 'success'
-  | 'warning'
-  | 'error'
-  | 'info'
-  | (string & {});
 
 export interface PanelProps
   extends Omit<React.ComponentProps<'div'>, 'style'>,
@@ -44,6 +36,13 @@ export interface PanelProps
   /**
    * Opt out of row height normalization (when a parent Grid enables it).
    * Defaults to true (normalize). Set to false to keep intrinsic heights.
+   */
+  normalizeRowHeights?: boolean;
+  /**
+   * Opt out of row height normalization.
+   * @deprecated Renamed to `normalizeRowHeights` (canonical plural, Q12);
+   *   `normalizeRowHeight` keeps working through 0.x and is removed at 1.0.
+   *   `normalizeRowHeights` wins when both are supplied.
    */
   normalizeRowHeight?: boolean;
 }
@@ -73,9 +72,9 @@ const Base = styled('div')<{
   /* Panels cooperate with Grid via CSS var to equalize row heights */
   align-self: var(--valet-panel-align-self, ${({ $full }) => ($full ? 'stretch' : 'flex-start')});
   /* Anchor when not full width */
-  margin-left: ${({ $full, $alignX }) =>
+  margin-inline-start: ${({ $full, $alignX }) =>
     $full ? '0' : $alignX === 'right' ? 'auto' : $alignX === 'center' ? 'auto' : '0'};
-  margin-right: ${({ $full, $alignX }) =>
+  margin-inline-end: ${({ $full, $alignX }) =>
     $full ? '0' : $alignX === 'left' ? 'auto' : $alignX === 'center' ? 'auto' : '0'};
 
   /* Boundary guards */
@@ -91,9 +90,6 @@ const Base = styled('div')<{
   overflow-y: var(--valet-panel-ov-y, auto);
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE & Edge */
-  &::-webkit-scrollbar {
-    display: none;
-  }
 
   padding: ${({ $pad }) => $pad};
 
@@ -128,6 +124,15 @@ const Base = styled('div')<{
       : ''}
 
   ${({ $center }) => ($center !== undefined ? `--valet-centered: ${$center ? '1' : '0'};` : '')}
+
+  /* Nested rules LAST — declarations after a nested rule rely on
+     CSSNestedDeclarations re-ordering semantics that older parsers
+     (and jsdom's cascade) mishandle; keeping them last is the
+     spec-recommended form and lets the jsdom suite assert the real
+     cascade (ENGINE S11 Panel preset regression test). */
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 export const Panel: React.FC<PanelProps> = ({
@@ -135,7 +140,8 @@ export const Panel: React.FC<PanelProps> = ({
   fullWidth = false,
   centerContent,
   alignX,
-  normalizeRowHeight = true,
+  normalizeRowHeights: normalizeRowHeightsProp,
+  normalizeRowHeight: normalizeRowHeightProp,
   preset: p,
   className,
   sx,
@@ -147,7 +153,18 @@ export const Panel: React.FC<PanelProps> = ({
   ...rest
 }) => {
   const { theme } = useTheme();
-  const hasPresetBg = p ? presetHas(p, 'background') : false;
+
+  // `normalizeRowHeights` is canonical (plural, Q12); `normalizeRowHeight`
+  // is the deprecated alias. The plural wins when both are supplied; passing
+  // the singular dev-warns once. Defaults to true (normalize) when neither set.
+  const normalizeRowHeights =
+    resolveDeprecatedProp(
+      'Panel',
+      'normalizeRowHeights',
+      normalizeRowHeightsProp,
+      'normalizeRowHeight',
+      normalizeRowHeightProp,
+    ) ?? true;
 
   // Resolve color override / intent into a background or border color
   const resolveToken = (v?: string): string | undefined => {
@@ -161,10 +178,11 @@ export const Panel: React.FC<PanelProps> = ({
     return colors[String(i)];
   };
   const resolved = resolveToken(color) || fromIntent(intent);
+  /* The default background renders unconditionally — preset rules use
+     doubled-specificity selectors (ENGINE S11), so a preset-supplied
+     background wins in the cascade; the old `presetHas` probe is gone. */
   const bg: string | undefined =
-    variant === 'filled'
-      ? resolved || (!hasPresetBg ? theme.colors.backgroundAlt : undefined)
-      : undefined;
+    variant === 'filled' ? resolved || theme.colors.backgroundAlt : undefined;
   const borderColor: string | undefined =
     variant === 'outlined' ? resolved || theme.colors.divider : undefined;
   // Derive legible text colour for filled variant
@@ -203,7 +221,7 @@ export const Panel: React.FC<PanelProps> = ({
       $text={textColour}
       $border={borderColor}
       $pad={pad}
-      $noNormalize={!normalizeRowHeight}
+      $noNormalize={!normalizeRowHeights}
       style={
         {
           '--valet-intent-bg': bg ?? 'transparent',

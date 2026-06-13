@@ -2,7 +2,7 @@
   "name": "Switch",
   "category": "fields",
   "slug": "components/fields/switch",
-  "summary": "Switch component",
+  "summary": "Accessible toggle for a single boolean that takes effect immediately; controlled via `checked` + `onValueChange` (the old `onChange` is a deprecated alias) — prefer it over Checkbox for instant on/off settings rather than form submission.",
   "status": "stable",
   "aliases": [
     "switch",
@@ -25,7 +25,10 @@
       "name": "onChange",
       "type": "(event: React.MouseEvent<HTMLButtonElement>) => void",
       "required": false,
-      "description": "DOM click event parity (raw)."
+      "deprecated": {
+        "replacement": "onValueChange"
+      },
+      "description": "Raw DOM click passthrough."
     },
     {
       "name": "onValueChange",
@@ -77,7 +80,7 @@
     },
     {
       "name": "sx",
-      "type": "import(\"/home/xbenc/occ/valet/src/types\").Sx | undefined",
+      "type": "Sx | undefined",
       "required": false,
       "description": "Inline styles (with CSS var support)."
     },
@@ -116,7 +119,6 @@
       "payloadType": "OnValueCommit<boolean>"
     }
   ],
-  "actions": [],
   "slots": [
     {
       "name": "label"
@@ -127,6 +129,7 @@
   ],
   "bestPractices": [
     "Use Switch for immediate on/off settings that apply instantly; for form submissions, prefer `Checkbox`.",
+    "Read the new boolean from `onValueChange(next, info)`. The raw-event `onChange` is deprecated; it still fires through 0.x with a one-time dev warning and is removed at 1.0 — read `info.event` or attach a native `onClick` if you need the DOM event.",
     "Label state, not action (e.g., 'Wi‑Fi' rather than 'Enable'). Set a stable `name` when part of a form.",
     "Provide clear feedback on change (e.g., brief text confirmation, or reflect the new state in the UI).",
     "Respect platform conventions for motion and colours; avoid ambiguous palettes for on/off states.",
@@ -137,7 +140,7 @@
     {
       "id": "switch-controlled",
       "title": "Controlled switch",
-      "code": "() => {\n  const [on, setOn] = React.useState(false);\n  return (<Stack>\n    <Switch name='wifi' checked={on} onChange={setOn} />\n    <Typography>Wi‑Fi is {on ? 'on' : 'off'}</Typography>\n  </Stack>);\n}",
+      "code": "() => {\n  const [on, setOn] = React.useState(false);\n  return (<Stack>\n    <Switch name='wifi' checked={on} onValueChange={(next) => setOn(next)} />\n    <Typography>Wi‑Fi is {on ? 'on' : 'off'}</Typography>\n  </Stack>);\n}",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {}
@@ -151,9 +154,11 @@
       "minimalProps": {}
     }
   ],
+  "docsUrl": "/switch-demo",
   "sourceFiles": [
-    "src/components/fields/Switch.tsx"
+    "src/components/fields/Switch.tsx",
+    "docs/src/pages/components/field/SwitchDemo.tsx"
   ],
-  "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "version": "0.35.1",
+  "schemaVersion": "1.7"
 }

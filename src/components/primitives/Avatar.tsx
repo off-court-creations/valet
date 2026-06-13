@@ -8,6 +8,7 @@ import { preset } from '../../css/stylePresets';
 import { useTheme } from '../../system/themeStore';
 import type { Presettable, Sx } from '../../types';
 import { md5 } from '../../helpers/md5';
+import { gravatarUrl } from '../../helpers/gravatar';
 
 export type AvatarSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type AvatarVariant = 'plain' | 'outline';
@@ -25,9 +26,22 @@ export interface AvatarProps
   size?: AvatarSize;
   /** Visual style variant. */
   variant?: AvatarVariant;
-  /** Fallback style when no avatar exists. */
+  /**
+   * Opt in to a third-party Gravatar lookup from `email` when no `src`
+   * is given. Default `false`: src-less avatars render an offline
+   * initials/placeholder fallback and make **no network request**.
+   *
+   * Privacy: enabling this discloses a reversible md5 of the email plus
+   * the viewer's IP/UA to Automattic. Requires a non-empty `email`.
+   */
+  gravatar?: boolean;
+  /** Gravatar default-image style (`d` param) when `gravatar` is enabled. */
   gravatarDefault?: string;
-  /** When true and no `src` is provided, prefer offline fallback instead of Gravatar. */
+  /**
+   * Force the offline fallback even when `gravatar` + `email` would
+   * otherwise resolve a network avatar. Legacy escape hatch; with
+   * `gravatar` defaulting to `false` the fallback is already the default.
+   */
   preferFallback?: boolean;
   /** Offline fallback strategy when showing a non-network avatar. */
   fallback?: 'initials' | 'placeholder';
@@ -87,6 +101,7 @@ export const Avatar: React.FC<AvatarProps> = ({
   name,
   size = 'md',
   variant = 'plain',
+  gravatar = false,
   gravatarDefault = 'identicon',
   preferFallback = false,
   fallback = 'initials',
@@ -103,11 +118,13 @@ export const Avatar: React.FC<AvatarProps> = ({
 
   const finalSrc = useMemo(() => {
     if (src) return src;
-    if (preferFallback) return undefined;
-    // Compute a stable hash so Gravatar serves a default image instead of a 404.
-    const hash = md5((email ?? '').trim().toLowerCase());
-    return `https://www.gravatar.com/avatar/${hash}?s=${px}&d=${encodeURIComponent(gravatarDefault)}`;
-  }, [src, email, gravatarDefault, px, preferFallback]);
+    // Gravatar is strictly opt-in (SECURITY S6, Q7(a)): no third-party
+    // request without explicit consent AND a non-empty email. The helper
+    // returns undefined for an empty/whitespace address, so a src-less
+    // avatar falls through to the offline fallback by default.
+    if (!gravatar || preferFallback) return undefined;
+    return gravatarUrl(email, { size: px, defaultImage: gravatarDefault });
+  }, [src, email, gravatar, gravatarDefault, px, preferFallback]);
 
   const { theme } = useTheme();
   const stroke = theme.colors.backgroundAlt;

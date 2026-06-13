@@ -14,7 +14,7 @@ export const meta: DocMeta = {
     'Install, understand, and use the valet MCP for deep introspection: discover components, inspect typed props, search best practices, and keep data in sync for agent-assisted UI.',
   pageType: 'guide',
   prerequisites: ['overview', 'quickstart'],
-  tldr: 'Install @archway/valet-mcp. In your MCP host, use list/search tools to discover, get_component to verify props, get_examples to copy usage, search_best_practices to follow guidance, and get_primer to align context. Keep mcp-data fresh.',
+  tldr: 'Install @archway/valet-mcp (15 tools). In your MCP host, use list/search tools to discover, get_component to verify props (now deprecation-aware, with structured output), get_examples to copy usage, search_best_practices to follow guidance, and get_primer to align context. Before emitting valet JSX, type-check it with validate_jsx and self-correct. Keep mcp-data fresh.',
 };
 
 export default function MCPGuidePage() {
@@ -111,7 +111,8 @@ args = []`}
         />
         <Typography>
           With the server registered, your agent can discover components, verify props, fetch
-          examples, search props or CSS variables, and consult docs metadata and the glossary. Start
+          examples, search props or CSS variables, consult docs metadata and the glossary, and
+          type‑check generated JSX with <code>valet__validate_jsx</code> before emitting it. Start
           each session with <code>valet__get_primer</code> so the agent aligns to valet’s mental
           model and semantics.
         </Typography>
@@ -166,7 +167,12 @@ args = []`}
             </Typography>
             <Typography>
               <b>valet__get_component</b> <code>{`{ name? | slug? }`}</code> → full document (props,
-              cssVars, examples, events, bestPractices, sourceFiles, version)
+              cssVars, examples, events, bestPractices, sourceFiles, version). Returned as{' '}
+              <code>structuredContent</code> (validated against the tool&rsquo;s
+              <code> outputSchema</code>) alongside the text. <b>Deprecation-aware:</b> a
+              renamed/deprecated prop carries a <code>deprecation</code> view, the doc grows a
+              top-level <code>deprecatedProps</code> rollup, and the text leads with a
+              &ldquo;DEPRECATED PROPS&rdquo; banner — prefer the listed <code>replacement</code>.
             </Typography>
             <CodeBlock
               code={`{
@@ -175,8 +181,15 @@ args = []`}
   "props": [
     { "name": "data", "type": "T[]", "required": true },
     { "name": "columns", "type": "TableColumn<T>[]", "required": true },
-    { "name": "selectable", "type": "'single' | 'multi' | undefined", "required": true }
+    { "name": "selectionMode", "type": "'none' | 'single' | 'multiple' | undefined", "required": false },
+    {
+      "name": "selectable",
+      "type": "'single' | 'multi' | undefined",
+      "required": false,
+      "deprecation": { "deprecated": true, "replacement": "selectionMode" }
+    }
   ],
+  "deprecatedProps": [{ "name": "selectable", "replacement": "selectionMode" }],
   "cssVars": ["--valet-divider-stroke", "--valet-table-underline"],
   "events": [{ "name": "rowClick", "payloadType": "{ row: T }" }],
   "sourceFiles": ["src/components/widgets/Table.tsx"],
@@ -247,6 +260,76 @@ args = []`}
               ariaLabel='Copy search_best_practices example'
               language='json'
             />
+          </Stack>
+        </Panel>
+
+        <Typography
+          variant='h3'
+          bold
+        >
+          Validate generated JSX
+        </Typography>
+        <Typography>
+          <code>valet__validate_jsx</code> is the one capability the metadata corpus structurally
+          cannot provide: it runs the real TypeScript compiler over your snippet against the{' '}
+          <b>shipped</b> <code>@archway/valet</code> types and returns structured diagnostics. It
+          catches invented props, the wrong member of a literal union, and deprecated aliases — so
+          an agent can self‑correct <i>before</i> emitting code. Agents should validate generated
+          valet JSX as a final check.
+        </Typography>
+        <Panel fullWidth>
+          <Stack gap={1}>
+            <Typography>
+              <b>valet__validate_jsx</b> <code>{`{ code, deps? }`}</code> → type-check verdict +
+              diagnostics
+            </Typography>
+            <Typography>
+              <code>React</code>, the valet barrel, and <code>theme</code> are already in scope, and
+              every valet tag the snippet uses is auto-imported — pass a bare JSX literal, not
+              import statements. Supply <code>deps</code> only to force extra valet exports into
+              scope.
+            </Typography>
+            <CodeBlock
+              code={`// request
+{ "code": "<Table selectable='multi' rowKey='id' data={rows} columns={cols} />" }`}
+              ariaLabel='Copy validate_jsx request example'
+              language='json'
+            />
+            <CodeBlock
+              code={`// structuredContent
+{
+  "ok": false,
+  "diagnostics": [
+    {
+      "line": 1,
+      "col": 8,
+      "code": "TS6385",
+      "message": "'selectable' is deprecated.",
+      "severity": "suggestion",
+      "deprecated": true
+    }
+  ],
+  "errorCount": 0,
+  "warningCount": 0,
+  "deprecatedCount": 1,
+  "importedTags": ["Table"],
+  "valetSource": "package-exports",
+  "elapsedMs": 120
+}`}
+              ariaLabel='Copy validate_jsx response example'
+              language='json'
+            />
+            <Typography>
+              <code>ok: true</code> means the snippet is clean — no type errors <i>and</i> no
+              deprecated aliases. A snippet with problems returns <code>ok: false</code> (not a tool
+              error); <code>isError</code> is reserved for the tool itself failing to run (e.g.
+              valet types unresolvable). <code>valetSource</code> reports how the types were
+              resolved: <code>package-exports</code>/<code>package-entry</code> for a published
+              install, <code>repo-dist</code>/<code>repo-src</code> in the valet workspace. Requires{' '}
+              <code>@archway/valet</code> present (an optional dependency of the server, pinned to
+              the matching version); the first call pays the type-graph parse (~0.4–0.6s), warm
+              calls are ~0.1s.
+            </Typography>
           </Stack>
         </Panel>
 
@@ -365,12 +448,14 @@ VALET_MCP_DATA_DIR=/absolute/path/to/valet/mcp-data valet-mcp`}
             <br />• Search with intent: &ldquo;table zebra multi‑select&rdquo; beats
             &ldquo;table&rdquo;.
             <br />• Confirm prop shapes with <code>valet__get_component</code> before wiring
-            generics.
+            generics; heed its <code>deprecatedProps</code> and prefer the listed replacement.
             <br />• Prefer semantic props and theme tokens; bind colours via <code>cssVars</code>,
             not literals.
             <br />• Wrap each route in one <code>Surface</code>; do not nest surfaces.
             <br />• Keep tables height‑constrained (default); only opt out when the page controls
             scrolling.
+            <br />• Type‑check generated JSX with <code>valet__validate_jsx</code> and fix every
+            diagnostic before emitting code.
             <br />• When versions drift, run <code>valet__check_version_parity</code> and rebuild
             data.
           </Typography>

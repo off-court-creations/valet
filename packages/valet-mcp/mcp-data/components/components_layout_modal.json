@@ -2,7 +2,7 @@
   "name": "Modal",
   "category": "layout",
   "slug": "components/layout/modal",
-  "summary": "Modal component",
+  "summary": "Centered focus-trapping dialog rendered above a backdrop, controlled by `open`/`onClose`; use it for confirmations and focused tasks that must interrupt the page — reach for `Drawer` when the panel should slide from an edge.",
   "status": "stable",
   "aliases": [
     "modal",
@@ -59,7 +59,7 @@
     },
     {
       "name": "pad",
-      "type": "number | string",
+      "type": "Space",
       "required": false,
       "description": "Container padding override"
     },
@@ -121,8 +121,6 @@
     "--valet-backdrop-bg",
     "--valet-modal-duration",
     "--valet-modal-easing",
-    "--valet-zindex-modal-backdrop",
-    "--valet-zindex-modal",
     "--valet-modal-viewport-margin",
     "--valet-modal-radius"
   ],
@@ -132,7 +130,6 @@
       "name": "onClose"
     }
   ],
-  "actions": [],
   "slots": [
     {
       "name": "title"
@@ -153,9 +150,11 @@
     "Respect reduced motion and keep transitions subtle and consistent with theme tokens."
   ],
   "examples": [],
+  "docsUrl": "/modal-demo",
   "sourceFiles": [
-    "src/components/layout/Modal.tsx"
+    "src/components/layout/Modal.tsx",
+    "docs/src/pages/components/layout/ModalDemo.tsx"
   ],
-  "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "version": "0.35.1",
+  "schemaVersion": "1.7"
 }

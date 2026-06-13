@@ -4,6 +4,7 @@
 // ─────────────────────────────────────────────────────────────
 import React, { createContext, useContext } from 'react';
 import { preset } from '../../css/stylePresets';
+import { valetError } from '../../system/devErrors';
 import type { Presettable, Sx } from '../../types';
 import type { FormStore } from '../../system/createFormStore';
 import type { StoreApi, UseBoundStore } from 'zustand';
@@ -17,7 +18,11 @@ export const useForm = <
 >(): FormStore<T> => {
   const ctx = useContext(FormCtx);
   if (ctx === null) {
-    throw new Error('useForm must be used inside a <FormControl> component');
+    throw valetError(
+      'FormControl',
+      'useForm must be called inside a <FormControl> — wrap the field tree in <FormControl useStore={…}>, or use useOptionalForm for fields that work standalone.',
+      'form',
+    );
   }
   return ctx as FormStore<T>;
 };

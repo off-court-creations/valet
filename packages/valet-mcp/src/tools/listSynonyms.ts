@@ -12,7 +12,8 @@ export function registerListSynonyms(server: McpServer): void {
     'valet__list_synonyms',
     {
       title: 'List Synonyms',
-      description: 'Expose synonym mappings so agents can translate aliases (like “hero”) into canonical valet components.',
+      description:
+        'Expose synonym mappings so agents can translate aliases (like “hero”) into canonical valet components.',
       annotations: {
         readOnlyHint: true,
         idempotentHint: true,
@@ -23,14 +24,15 @@ export function registerListSynonyms(server: McpServer): void {
       const { map, source } = loadSynonyms();
       const pairs: SynonymPair[] = Object.entries(map)
         .map(([alias, rawTargets]) => {
-          const targets = Array.from(new Set((rawTargets ?? []).map((t) => t.trim()).filter((t) => t.length > 0)))
-            .sort((a, b) => a.localeCompare(b));
+          const targets = Array.from(
+            new Set((rawTargets ?? []).map((t) => t.trim()).filter((t) => t.length > 0)),
+          ).sort((a, b) => a.localeCompare(b));
           return { alias, targets };
         })
         .filter((pair) => pair.targets.length > 0)
         .sort((a, b) => a.alias.localeCompare(b.alias));
 
       return { content: [{ type: 'text', text: JSON.stringify({ source, pairs }) }] };
-    }
+    },
   );
 }

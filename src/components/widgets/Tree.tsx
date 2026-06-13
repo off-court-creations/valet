@@ -28,12 +28,27 @@ export interface TreeProps<T>
     Presettable {
   nodes: TreeNode<T>[];
   getLabel: (node: T) => React.ReactNode;
+  /**
+   * Unified expansion vocabulary (API-TYPES S11, Q11(a)) — already the
+   * canonical `expanded`/`defaultExpanded`/`onExpandedChange` trio (matching
+   * Accordion). Node ids that are expanded.
+   */
   defaultExpanded?: string[];
   expanded?: string[];
   onExpandedChange?: (expanded: string[]) => void;
-  /** Active selection (controlled). */
+  /**
+   * Selection mode (API-TYPES S11, Q11(a)). Tree is single-select by node id:
+   * `'single'` (default) selects the clicked node; `'none'` disables selection
+   * (rows still expand/collapse and remain keyboard-navigable, but never become
+   * `aria-selected` and `onNodeSelect` never fires). The cross-component
+   * vocabulary name; Tree's selection unit is the node `id` (`K = string`),
+   * whose identity is the structural `TreeNode.id` — so no `getItemKey` is
+   * needed.
+   */
+  selectionMode?: 'none' | 'single';
+  /** Active selection (controlled) — the selected node id. */
   selected?: string;
-  /** Default selection for uncontrolled usage. */
+  /** Default selection for uncontrolled usage — the initially-selected node id. */
   defaultSelected?: string;
   onNodeSelect?: (node: T) => void;
   variant?: 'chevron' | 'list' | 'files';
@@ -67,8 +82,8 @@ const ItemRow = styled('div')<{
   gap: 0.25rem;
   padding-top: ${({ $padV }) => $padV};
   padding-bottom: ${({ $padV }) => $padV};
-  padding-right: ${({ $padH }) => $padH};
-  padding-left: ${({ $level, $indent }) => `calc(${$indent} * ${$level})`};
+  padding-inline-end: ${({ $padH }) => $padH};
+  padding-inline-start: ${({ $level, $indent }) => `calc(${$indent} * ${$level})`};
   cursor: pointer;
   user-select: none;
   -webkit-user-drag: none;
@@ -95,7 +110,7 @@ const ExpandIcon = styled('span')<{ $open: boolean }>`
 const Branch = styled('ul')<{ $line: string; $root?: boolean; $indent: string }>`
   list-style: none;
   margin: 0;
-  padding-left: ${({ $root, $indent }) => ($root ? 0 : $indent)};
+  padding-inline-start: ${({ $root, $indent }) => ($root ? 0 : $indent)};
   position: relative;
   --indent: ${({ $indent }) => $indent};
 `;
@@ -112,7 +127,7 @@ const BranchItem = styled('li')<{ $line: string; $root?: boolean; $indent: strin
         content: '';
         position: absolute;
         top: 0.875rem; /* minor visual tweak left as rem */
-        left: calc(-1 * var(--indent, 1rem) + 0.75em);
+        inset-inline-start: calc(-1 * var(--indent, 1rem) + 0.75em);
         width: calc(var(--indent, 1rem) + 0.25rem - 0.75em);
         border-top: var(--valet-divider-stroke, 1px) solid ${$line};
       }
@@ -122,8 +137,8 @@ const BranchItem = styled('li')<{ $line: string; $root?: boolean; $indent: strin
     position: absolute;
     top: 0;
     bottom: 0;
-    left: calc(-1 * var(--indent, 1rem) + 0.75em);
-    border-left: var(--valet-divider-stroke, 1px) solid ${({ $line }) => $line};
+    inset-inline-start: calc(-1 * var(--indent, 1rem) + 0.75em);
+    border-inline-start: var(--valet-divider-stroke, 1px) solid ${({ $line }) => $line};
   }
 `;
 
@@ -160,7 +175,7 @@ const BoxIcon = styled('span')<{
   height: 0.75em;
   border: var(--valet-divider-stroke, 1px) solid ${({ $line }) => $line};
   background: ${({ $open, $fill }) => ($open ? $fill : 'transparent')};
-  margin-right: 0.25rem;
+  margin-inline-end: 0.25rem;
   box-sizing: border-box;
   user-select: none;
   -webkit-user-drag: none;
@@ -174,6 +189,7 @@ export function Tree<T>({
   defaultExpanded = [],
   expanded: expandedProp,
   onExpandedChange,
+  selectionMode = 'single',
   selected: selectedProp,
   defaultSelected,
   onNodeSelect,
@@ -210,6 +226,9 @@ export function Tree<T>({
   });
   const controlled = selectedProp !== undefined;
   const [selfSelected, setSelfSelected] = useState<string | null>(defaultSelected ?? null);
+  /* `selectionMode='none'` disables selection writes entirely — rows still
+     expand/collapse and navigate, but never become selected (API-TYPES S11). */
+  const selectable = selectionMode !== 'none';
   const selected = controlled ? selectedProp! : selfSelected;
 
   // Hover: subtly distort primary (mix with background, then nudge toward contrast color)
@@ -348,8 +367,10 @@ export function Tree<T>({
       case 'Enter':
       case ' ': // Space
         e.preventDefault();
-        if (!controlled) setSelfSelected(current.node.id);
-        onNodeSelect?.(current.node.data);
+        if (selectable) {
+          if (!controlled) setSelfSelected(current.node.id);
+          onNodeSelect?.(current.node.data);
+        }
         break;
     }
   };
@@ -407,8 +428,10 @@ export function Tree<T>({
             $padH={theme.spacing(1)}
             onClick={() => {
               focusItem(node.id);
-              if (!controlled) setSelfSelected(node.id);
-              onNodeSelect?.(node.data);
+              if (selectable) {
+                if (!controlled) setSelfSelected(node.id);
+                onNodeSelect?.(node.data);
+              }
               if (node.children && !iconToggleOnly) toggle(node.id);
             }}
             onDoubleClick={() => node.children && toggle(node.id)}
@@ -506,8 +529,10 @@ export function Tree<T>({
                 $indent={theme.spacing(2)}
                 onClick={() => {
                   focusItem(node.id);
-                  if (!controlled) setSelfSelected(node.id);
-                  onNodeSelect?.(node.data);
+                  if (selectable) {
+                    if (!controlled) setSelfSelected(node.id);
+                    onNodeSelect?.(node.data);
+                  }
                   if (node.children && !iconToggleOnly) toggle(node.id);
                 }}
                 onDoubleClick={() => node.children && toggle(node.id)}

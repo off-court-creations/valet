@@ -63,7 +63,8 @@ export * from './components/widgets/Tree';
 export * from './components/widgets/Markdown';
 export * from './components/widgets/CodeBlock';
 export * from './components/widgets/Chip';
-export { default as KeyModal } from './components/KeyModal';
+export { default as KeyModal } from './components/widgets/KeyModal';
+export * from './components/widgets/ValetErrorBoundary';
 
 // ─── AI Helpers ─────────────────────────────────────────────
 export * from './system/aiKeyStore';
@@ -75,7 +76,36 @@ export * from './system/createFormStore';
 export * from './system/themeStore';
 export * from './system/fontStore';
 export * from './system/createInitialTheme';
+export * from './system/locale';
+export { registerHighlightLanguage } from './system/highlight';
+export { VALET_ZINDEX, zVar, zIndexVarName } from './system/zIndex';
+export type { ZIndexLayer } from './system/zIndex';
+export { DEFAULT_MODELS } from './components/widgets/LLMChat';
 export * from './hooks/useGoogleFonts';
 export type { Font, CustomFont } from './helpers/fontLoader';
 export type { Variant as TypographyVariant, WeightAlias } from './types/typography';
 export { inheritSurfaceFontVars } from './system/inheritSurfaceFontVars';
+
+// ─── Public vocabulary types ────────────────────────────────
+export type {
+  Sx,
+  Presettable,
+  Space,
+  SpacingProps,
+  FieldBaseProps,
+  SelectionProps,
+  Intent,
+} from './types';
+export type {
+  ChangeInfo,
+  OnValueChange,
+  OnValueCommit,
+  InputPhase,
+  InputSource,
+} from './system/events';
+export type {
+  PolymorphicProps,
+  PolymorphicRef,
+  PolymorphicComponent,
+  PropsOf,
+} from './system/polymorphic';

@@ -2,7 +2,7 @@
   "name": "Tabs",
   "category": "layout",
   "slug": "components/layout/tabs",
-  "summary": "Tabs component",
+  "summary": "Tabbed interface with `Tabs.Tab` triggers and `Tabs.Panel` content and full `tablist` ARIA; controlled via `value`/`onValueChange` — use it to switch between sibling views in the same region.",
   "status": "stable",
   "aliases": [
     "tabs"
@@ -20,12 +20,13 @@
     },
     {
       "name": "onValueChange",
-      "type": "( value: string | number, info: { previousValue?: string | number; phase: 'input' | 'commit' }, ) => void",
-      "required": false
+      "type": "OnValueChange<string | number>",
+      "required": false,
+      "description": "Canonical value trio (API-TYPES S4 / ruling R10): the inline lookalike\npayloads were replaced with OnValueChange/OnValueCommit,\nso `info` is now the full ChangeInfo — including the honest\n`source` (tab click ⇒ `'pointer'`, arrow-key nav ⇒ `'keyboard'`)."
     },
     {
       "name": "onValueCommit",
-      "type": "( value: string | number, info: { previousValue?: string | number; phase: 'commit' }, ) => void",
+      "type": "OnValueCommit<string | number>",
       "required": false
     },
     {
@@ -84,7 +85,7 @@
     },
     {
       "name": "pad",
-      "type": "import(\"/home/xbenc/occ/valet/src/types\").Space | undefined",
+      "type": "Space | undefined",
       "required": false,
       "description": "Container padding as units or CSS length."
     },
@@ -96,7 +97,7 @@
     },
     {
       "name": "gap",
-      "type": "import(\"/home/xbenc/occ/valet/src/types\").Space | undefined",
+      "type": "Space | undefined",
       "required": false,
       "description": "Inter-child spacing as units or CSS length."
     },
@@ -124,14 +125,13 @@
   "events": [
     {
       "name": "onValueChange",
-      "payloadType": "string | number"
+      "payloadType": "OnValueChange<string | number>"
     },
     {
       "name": "onValueCommit",
-      "payloadType": "string | number"
+      "payloadType": "OnValueCommit<string | number>"
     }
   ],
-  "actions": [],
   "slots": [],
   "bestPractices": [
     "Use Tabs to switch peer views that don’t require navigation changes; use routes for deep navigation.",
@@ -142,12 +142,15 @@
     "Prefer tokenized spacing and motion for a cohesive feel.",
     "Avoid mixing tabs and inline navigation within the same strip.",
     "Use appropriate variants and placement to reflect app hierarchy.",
-    "Announce active tab for screen readers with `aria-selected` and `role=tablist`."
+    "Announce active tab for screen readers: the strip exposes `role=tablist` with `aria-orientation` tracking the `orientation` prop, each tab carries `aria-selected` and `aria-controls`, and tab/panel ids are namespaced per instance so multiple Tabs on a page never collide.",
+    "Prefer the canonical `onValueChange`/`onValueCommit` events: each fires with the full `ChangeInfo` payload (`previousValue`, `phase`, and an honest `info.source`) — a tab click reports `'pointer'` and Arrow-key navigation reports `'keyboard'`."
   ],
   "examples": [],
+  "docsUrl": "/tabs-demo",
   "sourceFiles": [
-    "src/components/layout/Tabs.tsx"
+    "src/components/layout/Tabs.tsx",
+    "docs/src/pages/components/layout/TabsDemo.tsx"
   ],
-  "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "version": "0.35.1",
+  "schemaVersion": "1.7"
 }

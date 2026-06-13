@@ -2,7 +2,7 @@
   "name": "Select.Option",
   "category": "fields",
   "slug": "components/fields/select.option",
-  "summary": "Select.Option component",
+  "summary": "A single option inside a `Select`, carrying its `value` and label children; author one per choice as a direct `Select` child — it forwards `className`/`style`/`id`/`data-*` onto the rendered `<li>`.",
   "status": "stable",
   "props": [
     {
@@ -14,6 +14,18 @@
       "name": "disabled",
       "type": "boolean",
       "required": false
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": false,
+      "description": "Inline styles (with CSS var support); merged over `style` (sx wins)."
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
     }
   ],
   "domPassthrough": {
@@ -24,18 +36,17 @@
     "--valet-border",
     "--valet-bg",
     "--valet-text-color",
-    "--valet-focus-ring-color",
-    "--valet-zindex-dropdown"
+    "--valet-focus-ring-color"
   ],
   "cssPresets": [],
   "events": [],
-  "actions": [],
   "slots": [],
   "bestPractices": [],
   "examples": [],
+  "docsUrl": "/select-demo",
   "sourceFiles": [
     "src/components/fields/Select.tsx"
   ],
-  "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "version": "0.35.1",
+  "schemaVersion": "1.7"
 }

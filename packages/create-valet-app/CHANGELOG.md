@@ -3,6 +3,7 @@ Changelog
 All notable changes to this project are documented here.
 
 Unreleased
+- Changed (consent): The global MCP server install (`npm i -g @archway/valet-mcp`) and the `~/.codex/config.toml` edit now require explicit consent. Interactive runs get a yes-default prompt before the install/config edit. Non-interactive runs (CI, no TTY, or `CVA_NONINTERACTIVE=1`) skip both by default and print a manual-setup tip. Opt back in with the new `--global-mcp` flag or `CVA_GLOBAL_MCP=1`; `--no-global-mcp` forces a skip; `CVA_SKIP_GLOBAL_MCP=1` remains a hard opt-out that wins over everything. (valet overhaul SECURITY S8)
 - Removed: Per-template “*:agent” scripts (lint/build/typecheck/format) have been eliminated. The validator now emits parseable status lines (`LINT_STATUS`, `TYPECHECK_STATUS`, `BUILD_STATUS`) while running the standard scripts instead. Legacy projects with “*:agent” scripts continue to validate via a fallback with a deprecation notice.
 
 0.31.0

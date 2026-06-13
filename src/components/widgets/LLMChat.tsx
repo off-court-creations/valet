@@ -1,8 +1,26 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/widgets/LLMChat.tsx  | valet
-// LLM style chat component with height constraint
+// LLM-style chat component with height constraint
+//
+// SCOPE: this is a PRESENTATIONAL shell. It renders the message list, a model
+// picker, and an input box, and emits typed messages via `onSend` — it does
+// NOT call the AI provider. There is no `sendChat` here; wiring the request
+// (and owning the key) is the consumer's job. The model picker is seeded from
+// the built-in `DEFAULT_MODELS` catalog below, which is a convenience default
+// kept loosely current — override it with the `models` prop to advertise the
+// exact set your integration supports (the catalog will drift from providers'
+// real availability between releases). See src/system/aiKeyStore.ts for the
+// dev-tool security posture of the key store this widget's KeyModal feeds.
 // ─────────────────────────────────────────────────────────────
-import React, { useState, useRef, useId, useEffect, useLayoutEffect, useCallback } from 'react';
+import React, {
+  useState,
+  useRef,
+  useId,
+  useEffect,
+  useLayoutEffect,
+  useCallback,
+  useMemo,
+} from 'react';
 import { styled, keyframes } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { useSurface } from '../../system/surfaceStore';
@@ -15,14 +33,22 @@ import Panel from '../layout/Panel';
 import Typography from '../primitives/Typography';
 import Markdown from './Markdown';
 import Avatar from '../primitives/Avatar';
-import KeyModal from '../KeyModal';
+import KeyModal from './KeyModal';
 import Select from '../fields/Select';
 import { useAIKey, AIProvider } from '../../system/aiKeyStore';
+import { useComponentStrings } from '../../system/locale';
+import type { DeepPartialStrings, ValetStrings } from '../../system/locale';
 import type { Presettable, Sx } from '../../types';
 
-const models: Record<AIProvider, string[]> = {
-  openai: ['gpt-4o', 'gpt-4-turbo', 'gpt-3.5-turbo'],
-  anthropic: ['claude-sonnet-4-20250514'],
+/**
+ * Built-in model catalog for the picker, keyed by provider. This is a
+ * convenience default that is kept loosely current and WILL drift from each
+ * provider's real availability between releases — pass the `models` prop to
+ * advertise the exact set your integration supports.
+ */
+export const DEFAULT_MODELS: Record<AIProvider, string[]> = {
+  openai: ['gpt-4o', 'gpt-4o-mini', 'gpt-4.1'],
+  anthropic: ['claude-opus-4-8', 'claude-sonnet-4-6', 'claude-haiku-4-5'],
 };
 
 /*───────────────────────────────────────────────────────────*/
@@ -53,6 +79,21 @@ export interface ChatProps
   provider?: AIProvider;
   model?: string;
   onModelChange?: (m: string) => void;
+  /**
+   * Override the model picker's options. When omitted, the built-in
+   * {@link DEFAULT_MODELS} catalog for the active provider is used. Supply
+   * this to advertise the exact models your integration supports — the
+   * built-in defaults are a convenience and drift from provider availability.
+   */
+  models?: string[];
+  /**
+   * Instance-level overrides for this component's i18n strings (the set-API-key
+   * and send button aria-labels). Wins over the `ValetLocaleProvider` value,
+   * which in turn wins over the built-in English defaults (A11Y S8 resolution
+   * contract; see `src/system/locale.tsx`). The Connected/Disconnected status
+   * text stays with the KeyModal flow (deferred pending Q8).
+   */
+  labels?: DeepPartialStrings<ValetStrings['llmChat']>;
   /** Inline styles (with CSS var support) */
   sx?: Sx;
 }
@@ -79,8 +120,8 @@ const Row = styled('div')<{
   display: flex;
   align-items: center;
   justify-content: ${({ $from }) => ($from === 'user' ? 'flex-end' : 'flex-start')};
-  padding-left: ${({ $left }) => $left};
-  padding-right: ${({ $right }) => $right};
+  padding-inline-start: ${({ $left }) => $left};
+  padding-inline-end: ${({ $right }) => $right};
 `;
 
 const Bar = styled('div')<{ $bg: string; $text: string; $gap: string; $pad: string }>`
@@ -120,6 +161,14 @@ const Typing = styled('div')<{ $color: string }>`
   & span:nth-child(3) {
     animation-delay: 0.4s;
   }
+  /* A11Y S5 — reduced motion: drop the bouncing dots but keep them
+     visible at full opacity so the typing indicator still shows. */
+  @media (prefers-reduced-motion: reduce) {
+    & span {
+      animation: none;
+      opacity: 1;
+    }
+  }
 `;
 
 /*───────────────────────────────────────────────────────────*/
@@ -136,12 +185,15 @@ export const LLMChat: React.FC<ChatProps> = ({
   provider: propProvider,
   model: propModel,
   onModelChange,
+  models: modelsProp,
   preset: p,
   className,
+  labels,
   sx,
   ...rest
 }) => {
   const { theme } = useTheme();
+  const t = useComponentStrings('llmChat', labels);
   const surface = useSurface(
     (s) => ({
       element: s.element,
@@ -164,9 +216,13 @@ export const LLMChat: React.FC<ChatProps> = ({
   const [showKeyModal, setShowKeyModal] = useState(false);
   const key = propKey ?? storeKey;
   const provider = (propProvider ?? storeProv) as AIProvider | null;
-  const [model, setModelLocal] = useState(
-    propModel ?? storeModel ?? (provider ? models[provider][0] : ''),
+  // Effective picker options: caller `models` prop wins; otherwise the
+  // provider's built-in DEFAULT_MODELS catalog (empty until a provider is set).
+  const modelOptions = useMemo(
+    () => modelsProp ?? (provider ? DEFAULT_MODELS[provider] : []),
+    [modelsProp, provider],
   );
+  const [model, setModelLocal] = useState(propModel ?? storeModel ?? modelOptions[0] ?? '');
 
   useEffect(() => {
     if (propModel) setModelLocal(propModel);
@@ -174,10 +230,10 @@ export const LLMChat: React.FC<ChatProps> = ({
 
   useEffect(() => {
     if (!propModel && provider) {
-      const m = storeModel ?? models[provider][0];
+      const m = storeModel ?? modelOptions[0] ?? '';
       setModelLocal(m);
     }
-  }, [provider, storeModel, propModel]);
+  }, [provider, storeModel, propModel, modelOptions]);
 
   const handleModelChange = (m: string) => {
     if (!propModel) {
@@ -259,6 +315,11 @@ export const LLMChat: React.FC<ChatProps> = ({
 
   const cls = [presetClasses, className].filter(Boolean).join(' ') || undefined;
 
+  // A11Y S2: the message list is a live log. While the assistant is composing
+  // (any rendered message carries `typing`), mark it busy so assistive tech
+  // holds announcements until the turn settles.
+  const isTyping = messages.some((m) => m.role !== 'system' && m.typing);
+
   return (
     <>
       {!propKey && (
@@ -287,7 +348,7 @@ export const LLMChat: React.FC<ChatProps> = ({
               value={model}
               onValueChange={(v) => handleModelChange(v as string)}
             >
-              {models[provider].map((m) => (
+              {modelOptions.map((m) => (
                 <Select.Option
                   key={m}
                   value={m}
@@ -311,7 +372,7 @@ export const LLMChat: React.FC<ChatProps> = ({
             <Typography variant='subtitle'>{key ? 'Connected' : 'Disconnected'}</Typography>
             <IconButton
               icon={key ? 'carbon:checkmark' : 'carbon:circle-dash'}
-              aria-label='Set API key'
+              aria-label={t.setApiKey}
             />
           </span>
         </Bar>
@@ -321,6 +382,9 @@ export const LLMChat: React.FC<ChatProps> = ({
           style={{ overflow: 'hidden' }}
         >
           <Messages
+            role='log'
+            aria-relevant='additions'
+            aria-busy={isTyping}
             $gap={theme.spacing(1.5)}
             style={shouldConstrain ? { overflowY: 'auto', maxHeight } : undefined}
           >
@@ -421,7 +485,7 @@ export const LLMChat: React.FC<ChatProps> = ({
                 <IconButton
                   icon='carbon:send'
                   type='submit'
-                  aria-label='Send'
+                  aria-label={t.send}
                 />
               </Stack>
             </form>

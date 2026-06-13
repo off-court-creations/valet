@@ -8,8 +8,8 @@ import { useTheme } from '../../system/themeStore';
 import type { Theme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { Typography } from '../primitives/Typography';
-import type { Presettable, Sx } from '../../types';
-import { toRgb, mix, toHex } from '../../helpers/color';
+import type { Intent, Presettable, Sx } from '../../types';
+import { computeIntentVars } from '../../system/intentVars';
 import {
   createPolymorphicComponent,
   type PolymorphicProps,
@@ -19,19 +19,14 @@ import {
 /*───────────────────────────────────────────────────────────*/
 export type ButtonVariant = 'filled' | 'outlined' | 'plain';
 export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-type Intent =
-  | 'default'
-  | 'primary'
-  | 'secondary'
-  | 'success'
-  | 'warning'
-  | 'error'
-  | 'info'
-  | (string & {});
 
-export interface ButtonOwnProps
-  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'style'>,
-    Presettable {
+/**
+ * Behavior-only props. Element attributes (onClick, disabled, type, …)
+ * deliberately do NOT live here — they flow from `PropsOf<E>` inside
+ * `PolymorphicProps`, so `<Button as='a'>` gets anchor attributes and
+ * anchor-typed handlers instead of button ones.
+ */
+export interface ButtonOwnProps extends Presettable {
   /** Semantic color intent (maps to theme tokens). */
   intent?: Intent;
   /** Visual variant: filled | outlined | plain. */
@@ -42,6 +37,24 @@ export interface ButtonOwnProps
   fullWidth?: boolean;
   /** Inline styles (with CSS var support) */
   sx?: Sx;
+}
+
+/**
+ * The runtime strips `type` when rendering an anchor (see ButtonImpl),
+ * so the type level refuses it up front instead of silently dropping it.
+ */
+type AnchorTypeGuard<E extends React.ElementType> = E extends 'a' ? { type?: never } : unknown;
+
+/** Fully resolved Button props for a given element type. */
+export type ButtonProps<E extends React.ElementType = 'button'> = PolymorphicProps<
+  E,
+  ButtonOwnProps
+> &
+  AnchorTypeGuard<E>;
+
+export interface ButtonComponent {
+  <E extends React.ElementType = 'button'>(props: ButtonProps<E>): React.ReactElement | null;
+  displayName?: string;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -180,10 +193,16 @@ const ButtonImpl = <E extends React.ElementType = 'button'>(
     fullWidth = false,
     preset: p,
     className,
+    style,
     children,
     sx,
     ...rest
-  } = props as ButtonOwnProps & { as?: E } & Record<string, unknown>;
+  } = props as ButtonOwnProps & {
+    as?: E;
+    className?: string;
+    style?: React.CSSProperties;
+    children?: React.ReactNode;
+  } & Record<string, unknown>;
   const { theme } = useTheme();
   const map = createSizeMap(theme);
   let geom: { padV: string; padH: string; font: string; height: string };
@@ -242,18 +261,18 @@ const ButtonImpl = <E extends React.ElementType = 'button'>(
 
   const presetClasses = p ? preset(p) : '';
 
-  // Intent CSS variables contract
-  const makeMix = (a: string, b: string, w: number) => toHex(mix(toRgb(a), toRgb(b), w));
-  const intentBg = resolvedBg;
-  const intentFg = labelColor;
-  const intentBorder =
-    variant === 'outlined' ? resolvedBg : makeMix(resolvedBg, theme.colors.text, 0.25);
-  const intentFocus = theme.colors.primary; // theme focus token
-  const intentBgHover =
-    variant === 'filled' ? makeMix(resolvedBg, labelColor, 0.15) : 'transparent';
-  const intentBgActive =
-    variant === 'filled' ? makeMix(resolvedBg, labelColor, 0.25) : 'transparent';
-  const intentFgDisabled = makeMix(labelColor, theme.colors.background, 0.5);
+  // Intent CSS variables contract (shared helper, API-TYPES S13).
+  // Button's border blends `bg` toward `text` at 0.25 for non-outlined
+  // variants; hover/active blend `bg` toward the label colour.
+  const intentVars = computeIntentVars({
+    bg: resolvedBg,
+    fg: labelColor,
+    focus: theme.colors.primary,
+    disabledMixColor: theme.colors.background,
+    variant,
+    borderMixColor: theme.colors.text,
+    borderMixWeight: 0.25,
+  });
 
   const childArray = React.Children.toArray(children);
   const grouped: React.ReactNode[] = [];
@@ -347,16 +366,12 @@ const ButtonImpl = <E extends React.ElementType = 'button'>(
       data-valet-component='Button'
       data-disabled={(rest as Record<string, unknown>)['disabled'] ? 'true' : 'false'}
       data-state={(rest as Record<string, unknown>)['disabled'] ? 'disabled' : 'enabled'}
+      /* precedence: caller style < intent vars < sx */
       style={
         {
+          ...style,
           '--valet-text-color': labelColor,
-          '--valet-intent-bg': intentBg,
-          '--valet-intent-fg': intentFg,
-          '--valet-intent-border': intentBorder,
-          '--valet-intent-focus': intentFocus,
-          '--valet-intent-bg-hover': intentBgHover,
-          '--valet-intent-bg-active': intentBgActive,
-          '--valet-intent-fg-disabled': intentFgDisabled,
+          ...intentVars,
           ...(sx as object),
         } as React.CSSProperties
       }
@@ -379,6 +394,8 @@ const ButtonImpl = <E extends React.ElementType = 'button'>(
   );
 };
 
-export const Button = createPolymorphicComponent<'button', ButtonOwnProps>(ButtonImpl);
+export const Button: ButtonComponent = createPolymorphicComponent<'button', ButtonOwnProps>(
+  ButtonImpl,
+);
 
 export default Button;

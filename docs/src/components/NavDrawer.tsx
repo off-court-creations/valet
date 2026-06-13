@@ -63,6 +63,7 @@ const widgets: [string, string][] = [
   ['Dropzone', '/dropzone-demo'],
   ['Tree', '/tree-demo'],
   ['Markdown', '/markdown-demo'],
+  ['Error Boundary', '/error-boundary-demo'],
 ];
 
 const examples: [string, string][] = [
@@ -99,11 +100,13 @@ const treeData: TreeNode<Item>[] = [
       { id: '/events', data: { label: 'Events & Commits', path: '/events' } },
       { id: '/glossary', data: { label: 'Glossary', path: '/glossary' } },
       { id: '/component-status', data: { label: 'Component Status', path: '/component-status' } },
+      { id: '/rtl-status', data: { label: 'RTL Status', path: '/rtl-status' } },
       {
         id: '/prop-patterns',
         data: { label: 'Prop Patterns', path: '/prop-patterns' },
       },
       { id: '/theme-engine', data: { label: 'Theme Engine', path: '/theme-engine' } },
+      { id: '/fonts-privacy', data: { label: 'Fonts & Privacy', path: '/fonts-privacy' } },
     ],
   },
   {

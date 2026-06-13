@@ -2,8 +2,8 @@
   "name": "Accordion.Item",
   "category": "layout",
   "slug": "components/layout/accordion.item",
-  "summary": "Accordion.Item component",
-  "status": "stable",
+  "summary": "One collapsible panel inside an `Accordion`, supplying its header and body content; author items as direct `Accordion` children — the parent owns open/closed state, focus, and ARIA wiring.",
+  "status": "experimental",
   "props": [
     {
       "name": "header",
@@ -52,7 +52,6 @@
   ],
   "cssPresets": [],
   "events": [],
-  "actions": [],
   "slots": [
     {
       "name": "header"
@@ -63,9 +62,10 @@
   ],
   "bestPractices": [],
   "examples": [],
+  "docsUrl": "/accordion-demo",
   "sourceFiles": [
     "src/components/layout/Accordion.tsx"
   ],
-  "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "version": "0.35.1",
+  "schemaVersion": "1.7"
 }

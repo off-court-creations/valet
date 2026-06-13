@@ -2,7 +2,7 @@
   "name": "LLMChat",
   "category": "widgets",
   "slug": "components/widgets/llmchat",
-  "summary": "LLMChat component",
+  "summary": "Height-constrained LLM chat surface (role='log', typing/aria-busy) that renders a message list and input; you own the request loop and pass available models via `models` — an experimental widget for prototyping assistant UIs.",
   "status": "experimental",
   "aliases": [
     "chat",
@@ -70,6 +70,18 @@
       "required": false
     },
     {
+      "name": "models",
+      "type": "string[]",
+      "required": false,
+      "description": "Override the model picker's options. When omitted, the built-in\nDEFAULT_MODELS catalog for the active provider is used. Supply\nthis to advertise the exact models your integration supports — the\nbuilt-in defaults are a convenience and drift from provider availability."
+    },
+    {
+      "name": "labels",
+      "type": "DeepPartialStrings<ValetStrings['llmChat']>",
+      "required": false,
+      "description": "Instance-level overrides for this component's i18n strings (the set-API-key\nand send button aria-labels). Wins over the `ValetLocaleProvider` value,\nwhich in turn wins over the built-in English defaults (A11Y S8 resolution\ncontract; see `src/system/locale.tsx`). The Connected/Disconnected status\ntext stays with the KeyModal flow (deferred pending Q8)."
+    },
+    {
       "name": "sx",
       "type": "Sx",
       "required": false,
@@ -101,13 +113,21 @@
       "payloadType": "string"
     }
   ],
-  "actions": [],
   "slots": [],
-  "bestPractices": [],
-  "examples": [],
-  "sourceFiles": [
-    "src/components/widgets/LLMChat.tsx"
+  "bestPractices": [
+    "LLMChat is a presentational shell: it renders the conversation, a model picker, and the input, and emits typed messages via onSend. It does not call any AI provider — wire the request (and own the API key) yourself.",
+    "The built-in model catalog (DEFAULT_MODELS) is a convenience default that drifts from real provider availability between releases. Pass the `models` prop to advertise the exact set your integration supports.",
+    "The optional KeyModal flow and aiKeyStore are a dev-tool convenience: keys are sent browser-direct to the provider and are readable by any script on the page. Use them only for local prototyping or apps where the end user supplies their own session key — never collect production or multi-tenant keys in the browser. See the aiKeyStore threat model.",
+    "The message list is a polite live region (role='log', aria-relevant='additions') so screen readers announce new turns as they arrive. While a turn is composing (a message with `typing: true`), the list reports aria-busy so announcements are held until the reply settles — set `typing` on the in-flight assistant message and clear it when the content is final.",
+    "The typing indicator honors `prefers-reduced-motion: reduce`: the bouncing dots stop animating and stay visible at full opacity, so the composing state still reads without motion.",
+    "Internationalize the built-in labels with the `labels` prop (instance-level) or a `ValetLocaleProvider` (app-wide). Resolution is instance `labels` > provider strings > built-in English."
   ],
-  "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "examples": [],
+  "docsUrl": "/chat-demo",
+  "sourceFiles": [
+    "src/components/widgets/LLMChat.tsx",
+    "docs/src/pages/components/widgets/LLMChatDemo.tsx"
+  ],
+  "version": "0.35.1",
+  "schemaVersion": "1.7"
 }

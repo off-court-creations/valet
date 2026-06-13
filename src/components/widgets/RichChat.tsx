@@ -15,6 +15,8 @@ import Panel from '../layout/Panel';
 import Typography from '../primitives/Typography';
 import Markdown from './Markdown';
 import Avatar from '../primitives/Avatar';
+import { useComponentStrings } from '../../system/locale';
+import type { DeepPartialStrings, ValetStrings } from '../../system/locale';
 import type { Presettable, Sx } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
@@ -33,7 +35,9 @@ export interface RichChatProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onSubmit' | 'style'>,
     Presettable {
   messages: RichMessage[];
-  /** Called when a form message collects a response */
+  /** Called when a form message collects a response; `index` is the
+   *  message's position in the caller's `messages` array (system
+   *  messages included), not its position in the rendered list. */
   onFormSubmit?: (value: string, index: number) => void;
   onSend?: (message: RichMessage) => void;
   userAvatar?: string;
@@ -43,6 +47,13 @@ export interface RichChatProps
   constrainHeight?: boolean;
   /** Override input font */
   fontFamily?: string;
+  /**
+   * Instance-level overrides for this component's i18n strings (the send button
+   * aria-label). Wins over the `ValetLocaleProvider` value, which in turn wins
+   * over the built-in English defaults (A11Y S8 resolution contract; see
+   * `src/system/locale.tsx`).
+   */
+  labels?: DeepPartialStrings<ValetStrings['richChat']>;
   /** Inline styles (with CSS var support) */
   sx?: Sx;
 }
@@ -91,8 +102,8 @@ const Row = styled('div')<{
   /* Default to vertical centering; individual cells may override via align-self */
   align-items: center;
   column-gap: ${({ $gap }) => $gap};
-  padding-left: ${({ $padL }) => $padL};
-  padding-right: ${({ $padR }) => $padR};
+  padding-inline-start: ${({ $padL }) => $padL};
+  padding-inline-end: ${({ $padR }) => $padR};
   /* Smooth vertical nudges when content reflows */
   > * {
     transition: margin-top ${({ $dur }) => $dur} ${({ $ease }) => $ease};
@@ -145,6 +156,14 @@ const Typing = styled('div')<{ $color: string }>`
   }
   & span:nth-child(3) {
     animation-delay: 0.4s;
+  }
+  /* A11Y S5 — reduced motion: drop the bouncing dots but keep them
+     visible at full opacity so the typing indicator still shows. */
+  @media (prefers-reduced-motion: reduce) {
+    & span {
+      animation: none;
+      opacity: 1;
+    }
   }
 `;
 
@@ -242,10 +261,12 @@ export const RichChat: React.FC<RichChatProps> = ({
   fontFamily,
   preset: p,
   className,
+  labels,
   sx,
   ...rest
 }) => {
   const { theme } = useTheme();
+  const t = useComponentStrings('richChat', labels);
   const surface = useSurface(
     (s) => ({
       element: s.element,
@@ -400,6 +421,11 @@ export const RichChat: React.FC<RichChatProps> = ({
   const presetClasses = p ? preset(p) : '';
   const cls = [presetClasses, className].filter(Boolean).join(' ') || undefined;
 
+  // A11Y S2: the message list is a live log. While a turn is composing (any
+  // rendered message carries `typing`), mark it busy so assistive tech holds
+  // announcements until the message settles.
+  const isTyping = messages.some((m) => m.role !== 'system' && m.typing);
+
   return (
     <Panel
       {...rest}
@@ -418,6 +444,9 @@ export const RichChat: React.FC<RichChatProps> = ({
       >
         <Messages
           ref={messagesRef}
+          role='log'
+          aria-relevant='additions'
+          aria-busy={isTyping}
           $gap={theme.spacing(1.25)}
           /* Tighter side padding to bring avatars closer to edge */
           $pad={portrait ? theme.spacing(0.25) : theme.spacing(0.5)}
@@ -431,8 +460,11 @@ export const RichChat: React.FC<RichChatProps> = ({
           }}
         >
           {messages
-            .filter((m) => m.role !== 'system')
-            .map((m, i) => {
+            /* Pair each message with its index in the caller's array BEFORE
+               filtering — onFormSubmit must report the original index. */
+            .map((m, i) => ({ m, i }))
+            .filter(({ m }) => m.role !== 'system')
+            .map(({ m, i }) => {
               /* Near-edge gutter (towards container edge) kept tiny; far edge roomy */
               const near = theme.spacing(0.25);
               const far = portrait ? theme.spacing(0.5) : theme.spacing(0.75);
@@ -549,7 +581,7 @@ export const RichChat: React.FC<RichChatProps> = ({
               <IconButton
                 icon='carbon:send'
                 type='submit'
-                aria-label='Send'
+                aria-label={t.send}
               />
             </InputRow>
           </form>

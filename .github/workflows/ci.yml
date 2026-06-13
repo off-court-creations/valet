@@ -1,0 +1,82 @@
+# ─────────────────────────────────────────────────────────────
+# .github/workflows/ci.yml  | valet
+# Phase-0 CI gate (TEST-CI S8) for development and main.
+# ubuntu-only, Node 20/22 (veto register). cva:validate is
+# excluded from this PR gate by design — it gets a weekly cron +
+# dispatch workflow in TEST-CI S9. check-pins runs --warn on
+# non-release branches; the release integrator flips it hard.
+# ─────────────────────────────────────────────────────────────
+name: CI
+
+on:
+  push:
+    branches: [development, main]
+  pull_request:
+    branches: [development, main]
+
+permissions:
+  contents: read
+
+jobs:
+  core:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [20.x, 22.x]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+      - run: npm ci
+      # typecheck:scripts (checkJs) covers the CVA CLI bin and follows the
+      # validate-jsx test's import into the MCP server src, so those two
+      # sub-packages' deps must be present or tsc reports TS2307 on their
+      # imports (zod / @modelcontextprotocol/sdk / enquirer / ora / …).
+      # Root `npm ci` does not install them (no workspaces), so install both.
+      - run: npm ci
+        working-directory: packages/valet-mcp
+      - run: npm ci
+        working-directory: packages/create-valet-app
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run mcp:schema:check
+      # Build BEFORE test: several suites resolve the built dist —
+      # validate-jsx type-checks snippets against dist/index.d.mts, and
+      # check-bundle inspects dist/index.mjs. On a clean checkout dist/ does
+      # not exist yet, so testing first would fail those (passed locally only
+      # because a dev tree already has dist/). ssr-import.test.ts now runs its
+      # real assertion inside `npm test` (no longer the skip path).
+      - run: npm run build
+      - run: npm test
+      # Explicit post-build SSR dist-import assertion (TEST-CI S10): ESM import
+      # of the dist barrel + deterministic classes (ESM-only, PACKAGING S4 /
+      # ruling Q1(a)). Redundant with `npm test` now that build precedes it,
+      # kept as a focused guard.
+      - run: npx vitest run src/ssr-import.test.ts
+      - run: npm run verify:pack
+      - run: npm run check:engine
+      # Pin skew is informational off the release branch (--warn never
+      # fails; release integration runs it hard).
+      - run: node scripts/release/check-pins.mjs --warn
+
+  mcp-server:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: npm
+      - run: npm ci
+      - run: npm ci
+        working-directory: packages/valet-mcp
+      - run: npm run build
+        working-directory: packages/valet-mcp
+      # Selfcheck resolves the committed <pkg>/mcp-data copy — the true
+      # package root is the FIRST bundled candidate (shared.ts
+      # resolveBundledDir; ruling R23 as corrected in execution.md Flags #4).
+      - run: MCP_SELFCHECK=1 node dist/index.js
+        working-directory: packages/valet-mcp

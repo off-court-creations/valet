@@ -27,7 +27,7 @@ Tip: Prefer exact component names. If unsure, try synonyms in \`search_component
 ## Core Mental Model
 
 - Surface: Each route renders a single \`<Surface>\` that owns screen state and CSS variables. Never nest surfaces.
-- styled engine: \`styled\` and \`keyframes\` register elements and expose \`--valet-el-*\` CSS vars for size and layout.
+- styled engine: \`styled\` and \`keyframes\` create atomic styled elements. Per-element size tracking is opt-in — a styled element registers with its \`<Surface>\` and exposes \`--valet-el-*\` CSS vars only when passed the \`$trackSize\` transient prop (off by default).
 - Presets: Define styles via \`definePreset()\` and use the \`preset\` prop for reuse and theme cohesion.
 - Theme: Initialize once with \`useInitialTheme({ fonts }, [fontList])\`. Read/write via \`useTheme()\`; avoid hard-coded colors.
 - Accessibility: Use provided components over raw HTML to get roles, labels, and keyboard behavior.

@@ -5,24 +5,17 @@
 import React from 'react';
 import { styled } from '../../css/createStyled';
 import { preset } from '../../css/stylePresets';
-import type { Presettable, Sx } from '../../types';
+import type { Intent, Presettable, Sx } from '../../types';
 import { useTheme } from '../../system/themeStore';
 import type { Theme } from '../../system/themeStore';
 import { Icon } from '../primitives/Icon';
-import { toRgb, mix, toHex } from '../../helpers/color';
+import { computeIntentVars } from '../../system/intentVars';
 import { Typography } from '../primitives/Typography';
+import { useComponentStrings } from '../../system/locale';
+import type { DeepPartialStrings, ValetStrings } from '../../system/locale';
 
 export type ChipSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type ChipVariant = 'filled' | 'outlined' | 'plain';
-type Intent =
-  | 'default'
-  | 'primary'
-  | 'secondary'
-  | 'success'
-  | 'warning'
-  | 'error'
-  | 'info'
-  | (string & {});
 
 export interface ChipProps
   extends Presettable,
@@ -41,6 +34,12 @@ export interface ChipProps
   avatar?: React.ReactNode; // custom leading element
   onDelete?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   disabled?: boolean;
+  /**
+   * Instance-level overrides for this component's i18n strings. Wins over the
+   * `ValetLocaleProvider` value, which in turn wins over the built-in English
+   * defaults (A11Y S8 resolution contract; see `src/system/locale.tsx`).
+   */
+  labels?: DeepPartialStrings<ValetStrings['chip']>;
   sx?: Sx;
 }
 
@@ -158,12 +157,26 @@ export const Chip: React.FC<ChipProps> = ({
   disabled,
   className,
   preset: p,
+  labels,
   sx,
   ...rest
 }) => {
   const { theme } = useTheme();
+  const t = useComponentStrings('chip', labels);
   const s = sizeMap[size];
   const { bg, fg, bd } = resolveColors(theme, intent, color);
+  // Intent CSS variables contract (shared helper, API-TYPES S13). Chip blends
+  // hover/active at its own slightly lighter weights; border is always `bd`.
+  const intentVars = computeIntentVars({
+    bg,
+    fg,
+    focus: theme.colors.primary,
+    disabledMixColor: theme.colors.background,
+    variant,
+    border: bd,
+    hoverWeight: 0.12,
+    activeWeight: 0.2,
+  });
   const presetCls = p ? preset(p) : '';
   const sizeScaleMap: Record<ChipSize, number> = {
     xs: 0.85,
@@ -205,15 +218,7 @@ export const Chip: React.FC<ChipProps> = ({
       $disabled={disabled}
       style={
         {
-          '--valet-intent-bg': bg,
-          '--valet-intent-fg': fg,
-          '--valet-intent-border': bd,
-          '--valet-intent-focus': theme.colors.primary,
-          '--valet-intent-bg-hover':
-            variant === 'filled' ? toHex(mix(toRgb(bg), toRgb(fg), 0.12)) : 'transparent',
-          '--valet-intent-bg-active':
-            variant === 'filled' ? toHex(mix(toRgb(bg), toRgb(fg), 0.2)) : 'transparent',
-          '--valet-intent-fg-disabled': toHex(mix(toRgb(fg), toRgb(theme.colors.background), 0.5)),
+          ...intentVars,
           ...(sx as object),
         } as React.CSSProperties
       }
@@ -238,8 +243,8 @@ export const Chip: React.FC<ChipProps> = ({
       </LabelWrap>
       {onDelete && !disabled ? (
         <DeleteBtn
-          aria-label='Remove'
-          title='Remove'
+          aria-label={t.remove}
+          title={t.remove}
           onClick={(e) => {
             e.stopPropagation();
             onDelete?.(e);

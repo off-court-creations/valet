@@ -247,9 +247,9 @@ export default function MainPage() {
               body: 'Zustand stores for theme, surfaces and forms keep state cohesive and simple.',
             },
             {
-              icon: 'mdi:chart-timeline-variant',
-              title: 'Web Action Graph',
-              body: 'An automatic map of what you can click and type, so agents know what they can do next.',
+              icon: 'mdi:toolbox-outline',
+              title: 'MCP Server Included',
+              body: '@archway/valet-mcp ships 14 tools — component search, typed props and defaults, usage examples, best practices, and a glossary — generated from this repo, so agents work from real data.',
             },
             {
               icon: 'mdi:vpn-key',
@@ -355,7 +355,7 @@ export default function MainPage() {
                       count={loremByPage.length}
                       visibleWindow={5}
                       page={demoPage}
-                      onChange={setDemoPage}
+                      onPageChange={setDemoPage}
                     />
                     <Typography>Current page: {demoPage}</Typography>
                   </Stack>

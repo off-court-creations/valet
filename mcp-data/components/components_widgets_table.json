@@ -2,7 +2,7 @@
   "name": "Table",
   "category": "widgets",
   "slug": "components/widgets/table",
-  "summary": "Table component",
+  "summary": "Data table with sortable columns, smart height/auto-pagination, and unified `selectionMode` (`'none'|'single'|'multiple'`) keyed by `getItemKey` for selection that survives data refreshes (the `selectable`/`rowKey` props are deprecated aliases); use it for tabular data with columns.",
   "status": "experimental",
   "aliases": [
     "table",
@@ -39,10 +39,21 @@
       "name": "selectable",
       "type": "'single' | 'multi' | undefined",
       "required": false,
+      "deprecated": {
+        "replacement": "selectionMode"
+      },
       "enumValues": [
         "single",
         "multi"
       ]
+    },
+    {
+      "name": "rowKey",
+      "type": "RowKey<T>",
+      "required": false,
+      "deprecated": {
+        "replacement": "getItemKey"
+      }
     },
     {
       "name": "initialSort",
@@ -57,7 +68,8 @@
     {
       "name": "onSelectionChange",
       "type": "(selected: T[]) => void",
-      "required": false
+      "required": false,
+      "description": "Fired only on user interaction (checkbox toggle) and when pruning drops\nrows — the unified SelectionProps.onSelectionChange, emitting the\nselected **rows** (Table's selection unit is `T`)."
     },
     {
       "name": "onRowClick",
@@ -117,6 +129,30 @@
       "type": "string | string[] | undefined",
       "required": false,
       "description": "One or many style-preset names registered via `definePreset()`"
+    },
+    {
+      "name": "selectionMode",
+      "type": "\"multiple\" | \"none\" | \"single\" | undefined",
+      "required": false,
+      "description": "How many items may be selected at once.\n- `'none'` — selection is disabled (the default for components that gate it).\n- `'single'` — at most one item is selected.\n- `'multiple'` — any number of items may be selected.\n\nCanonical replacement for the per-component flags (Table's `selectable`)."
+    },
+    {
+      "name": "selected",
+      "type": "T[] | undefined",
+      "required": false,
+      "description": "Controlled selection as an array of selection units (`K`)."
+    },
+    {
+      "name": "defaultSelected",
+      "type": "T[] | undefined",
+      "required": false,
+      "description": "Uncontrolled initial selection as an array of selection units (`K`)."
+    },
+    {
+      "name": "getItemKey",
+      "type": "keyof T | ((item: T, index: number) => string | number) | undefined",
+      "required": false,
+      "description": "Stable identity for each item — a property name or a function of the item\nand its index. Canonical, cross-component replacement for Table's `rowKey`\nand List's `getKey`. When omitted, components fall back to reference/index\nidentity exactly as before."
     }
   ],
   "domPassthrough": {
@@ -129,6 +165,8 @@
   "cssVars": [
     "--valet-divider-stroke",
     "--valet-underline-width",
+    "--valet-focus-width",
+    "--valet-focus-offset",
     "--valet-bg",
     "--valet-table-underline"
   ],
@@ -151,13 +189,13 @@
       "payloadType": "number"
     }
   ],
-  "actions": [],
   "slots": [],
   "bestPractices": [
     "Keep tables readable: enable `striped` and/or `hoverable` for large datasets, but avoid heavy styling that competes with content.",
     "Prefer smart height over tiny scrollbars: enable `constrainHeight` and set `minConstrainedRows` (default 4). If the viewport would show fewer rows, the table expands; when the dataset exceeds `maxExpandedRows` (default 30), it paginates instead of showing a tiny scroller.",
     "Provide an initial sort (`initialSort`), align numeric columns to the right, and format dates consistently.",
-    "Enable selection only when follow‑up actions operate on selected rows; choose `single` vs `multi` to match the action design.",
+    "Enable selection only when follow‑up actions operate on selected rows; use the unified `selectionMode` prop (`'none' | 'single' | 'multiple'`) to match the action design. The pre‑0.35 `selectable` prop (`'single' | 'multi'`) is a deprecated alias that still works but dev‑warns once and is removed at 1.0 — migrate `selectable='multi'` to `selectionMode='multiple'`.",
+    "When the table is selectable and the data is refreshed immutably (new row objects fetched or re‑mapped), set `getItemKey` (a property name like `getItemKey=\"id\"` or a function `getItemKey={(row) => row.id}`) so selection is tracked by a stable key and survives the refresh. Without it, selection falls back to object identity and is cleared whenever the row objects are replaced. The pre‑0.35 `rowKey` prop is a deprecated alias of `getItemKey` (same shape; removed at 1.0).",
     "Keep column count reasonable on narrow screens; prefer fewer, more meaningful columns over many cramped ones. Use succinct headers.",
     "Expose `onRowClick` when rows drive navigation or drill‑ins so the parent surface can react without wiring bespoke click handlers into each cell."
   ],
@@ -165,7 +203,7 @@
     {
       "id": "table-basic",
       "title": "Basic striped table",
-      "code": "(() => {\n  const columns = [\n    { header: 'ID', accessor: 'id', align: 'right' },\n    { header: 'Name', accessor: 'name' },\n    { header: 'City', accessor: 'city' },\n  ];\n  const data = [\n    { id: 1, name: 'Ada Lovelace', city: 'London' },\n    { id: 2, name: 'Alan Turing', city: 'Manchester' },\n    { id: 3, name: 'Grace Hopper', city: 'New York' },\n  ];\n  return (<Panel fullWidth><Table data={data} columns={columns} striped hoverable constrainHeight /></Panel>);\n})()",
+      "code": "(() => {\n  type Row = { id: number; name: string; city: string };\n  const columns: TableColumn<Row>[] = [\n    { header: 'ID', accessor: 'id', align: 'right' },\n    { header: 'Name', accessor: 'name' },\n    { header: 'City', accessor: 'city' },\n  ];\n  const data: Row[] = [\n    { id: 1, name: 'Ada Lovelace', city: 'London' },\n    { id: 2, name: 'Alan Turing', city: 'Manchester' },\n    { id: 3, name: 'Grace Hopper', city: 'New York' },\n  ];\n  return (<Panel fullWidth><Table data={data} columns={columns} striped hoverable constrainHeight /></Panel>);\n})()",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {
@@ -176,7 +214,29 @@
     {
       "id": "table-selectable",
       "title": "Single‑select with initial sort",
-      "code": "(() => {\n  const columns = [\n    { header: 'ID', accessor: 'id', align: 'right', sortable: true },\n    { header: 'Name', accessor: 'name', sortable: true },\n    { header: 'Age', accessor: 'age', align: 'right', sortable: true },\n  ];\n  const data = [\n    { id: 1, name: 'Katherine Johnson', age: 41 },\n    { id: 2, name: 'Tim Berners‑Lee', age: 35 },\n    { id: 3, name: 'Linus Torvalds', age: 29 },\n  ];\n  const Demo = () => {\n    const [selected, setSelected] = React.useState([]);\n    return (<Stack>\n      <Panel fullWidth>\n        <Table data={data} columns={columns} selectable='single' initialSort={{ index: 0 }} onSelectionChange={setSelected} />\n      </Panel>\n      <Typography variant='subtitle'>Selected: {selected.map((r) => r.id).join(', ') || '—'}</Typography>\n    </Stack>);\n  };\n  return <Demo />;\n})()",
+      "code": "(() => {\n  type Row = { id: number; name: string; age: number };\n  const columns: TableColumn<Row>[] = [\n    { header: 'ID', accessor: 'id', align: 'right', sortable: true },\n    { header: 'Name', accessor: 'name', sortable: true },\n    { header: 'Age', accessor: 'age', align: 'right', sortable: true },\n  ];\n  const data: Row[] = [\n    { id: 1, name: 'Katherine Johnson', age: 41 },\n    { id: 2, name: 'Tim Berners‑Lee', age: 35 },\n    { id: 3, name: 'Linus Torvalds', age: 29 },\n  ];\n  const Demo = () => {\n    const [selected, setSelected] = React.useState<Row[]>([]);\n    return (<Stack>\n      <Panel fullWidth>\n        <Table data={data} columns={columns} selectionMode='single' initialSort={{ index: 0 }} onSelectionChange={setSelected} />\n      </Panel>\n      <Typography variant='subtitle'>Selected: {selected.map((r) => r.id).join(', ') || '—'}</Typography>\n    </Stack>);\n  };\n  return <Demo />;\n})()",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {
+        "data": [],
+        "columns": []
+      }
+    },
+    {
+      "id": "table-rowkey-selection",
+      "title": "Selection that survives a data refresh (getItemKey)",
+      "code": "(() => {\n  type Row = { id: number; name: string };\n  const columns: TableColumn<Row>[] = [\n    { header: 'ID', accessor: 'id', align: 'right' },\n    { header: 'Name', accessor: 'name' },\n  ];\n  const seed: Row[] = [\n    { id: 1, name: 'Ada Lovelace' },\n    { id: 2, name: 'Alan Turing' },\n    { id: 3, name: 'Grace Hopper' },\n  ];\n  const Demo = () => {\n    const [data, setData] = React.useState<Row[]>(seed);\n    const [selected, setSelected] = React.useState<Row[]>([]);\n    // Immutable refresh: brand-new row objects, same ids. With getItemKey='id'\n    // the current selection is preserved across the refresh.\n    const refresh = () => setData((d) => d.map((r) => ({ ...r })));\n    return (\n      <Stack gap={2}>\n        <Panel fullWidth>\n          <Table data={data} columns={columns} selectionMode='multiple' getItemKey='id' onSelectionChange={setSelected} />\n        </Panel>\n        <Button onClick={refresh}>Refresh data</Button>\n        <Typography variant='subtitle'>Selected: {selected.map((r) => r.id).join(', ') || '—'}</Typography>\n      </Stack>\n    );\n  };\n  return <Demo />;\n})()",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {
+        "data": [],
+        "columns": []
+      }
+    },
+    {
+      "id": "table-selection-mode",
+      "title": "Unified selection vocabulary (selectionMode + getItemKey)",
+      "code": "(() => {\n  type Row = { id: number; name: string };\n  const columns: TableColumn<Row>[] = [\n    { header: 'ID', accessor: 'id', align: 'right' },\n    { header: 'Name', accessor: 'name' },\n  ];\n  const data: Row[] = [\n    { id: 1, name: 'Ada Lovelace' },\n    { id: 2, name: 'Alan Turing' },\n    { id: 3, name: 'Grace Hopper' },\n  ];\n  const Demo = () => {\n    const [selected, setSelected] = React.useState<Row[]>([]);\n    return (\n      <Stack gap={2}>\n        <Panel fullWidth>\n          <Table data={data} columns={columns} selectionMode='multiple' getItemKey='id' onSelectionChange={setSelected} />\n        </Panel>\n        <Typography variant='subtitle'>Selected: {selected.map((r) => r.id).join(', ') || '—'}</Typography>\n      </Stack>\n    );\n  };\n  return <Demo />;\n})()",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {
@@ -187,7 +247,7 @@
     {
       "id": "table-auto-pagination",
       "title": "Auto pagination via minConstrainedRows",
-      "code": "(() => {\n  type Row = { id: number; name: string; city: string };\n  const columns = [\n    { header: 'ID', accessor: 'id', align: 'right' },\n    { header: 'Name', accessor: 'name' },\n    { header: 'City', accessor: 'city' },\n  ];\n  const data = Array.from({ length: 60 }, (_, i) => ({ id: i + 1, name: 'User ' + (i + 1), city: 'City ' + (i % 8) }));\n  return (\n    <Panel fullWidth>\n      <Table\n        data={data}\n        columns={columns}\n        striped\n        hoverable\n        constrainHeight\n        minConstrainedRows={4}\n        maxExpandedRows={20}\n      />\n    </Panel>\n  );\n})()",
+      "code": "(() => {\n  type Row = { id: number; name: string; city: string };\n  const columns: TableColumn<Row>[] = [\n    { header: 'ID', accessor: 'id', align: 'right' },\n    { header: 'Name', accessor: 'name' },\n    { header: 'City', accessor: 'city' },\n  ];\n  const data: Row[] = Array.from({ length: 60 }, (_, i) => ({ id: i + 1, name: 'User ' + (i + 1), city: 'City ' + (i % 8) }));\n  return (\n    <Panel fullWidth>\n      <Table\n        data={data}\n        columns={columns}\n        striped\n        hoverable\n        constrainHeight\n        minConstrainedRows={4}\n        maxExpandedRows={20}\n      />\n    </Panel>\n  );\n})()",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {
@@ -198,7 +258,7 @@
     {
       "id": "table-force-pagination",
       "title": "Force pagination with page size",
-      "code": "(() => {\n  type Row = { id: number; name: string; city: string };\n  const columns = [\n    { header: 'ID', accessor: 'id', align: 'right' },\n    { header: 'Name', accessor: 'name' },\n    { header: 'City', accessor: 'city' },\n  ];\n  const data = Array.from({ length: 48 }, (_, i) => ({ id: i + 1, name: 'Row ' + (i + 1), city: 'Metro ' + (i % 5) }));\n  const Demo = () => {\n    const [page, setPage] = React.useState(1);\n    return (\n      <Panel fullWidth>\n        <Table\n          data={data}\n          columns={columns}\n          striped\n          paginate\n          maxExpandedRows={12}\n          page={page}\n          onPageChange={setPage}\n          paginationWindow={7}\n        />\n      </Panel>\n    );\n  };\n  return <Demo />;\n})()",
+      "code": "(() => {\n  type Row = { id: number; name: string; city: string };\n  const columns: TableColumn<Row>[] = [\n    { header: 'ID', accessor: 'id', align: 'right' },\n    { header: 'Name', accessor: 'name' },\n    { header: 'City', accessor: 'city' },\n  ];\n  const data: Row[] = Array.from({ length: 48 }, (_, i) => ({ id: i + 1, name: 'Row ' + (i + 1), city: 'Metro ' + (i % 5) }));\n  const Demo = () => {\n    const [page, setPage] = React.useState(1);\n    return (\n      <Panel fullWidth>\n        <Table\n          data={data}\n          columns={columns}\n          striped\n          paginate\n          maxExpandedRows={12}\n          page={page}\n          onPageChange={setPage}\n          paginationWindow={7}\n        />\n      </Panel>\n    );\n  };\n  return <Demo />;\n})()",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {
@@ -209,7 +269,7 @@
     {
       "id": "table-row-click",
       "title": "Row click actions",
-      "code": "(() => {\n  type Invoice = { id: number; customer: string; total: number };\n  const columns = [\n    { header: 'Invoice', accessor: 'id', align: 'right' },\n    { header: 'Customer', accessor: 'customer' },\n    {\n      header: 'Total',\n      accessor: (row: Invoice) => `$${row.total.toFixed(2)}`,\n      align: 'right',\n    },\n  ];\n  const data: Invoice[] = [\n    { id: 4821, customer: 'Juniper Labs', total: 8421.17 },\n    { id: 4822, customer: 'Halo Forge', total: 311.25 },\n    { id: 4823, customer: 'Even Tide', total: 1775.4 },\n  ];\n  const Demo = () => {\n    const [lastClick, setLastClick] = React.useState<Invoice | null>(null);\n    return (\n      <Stack gap={2}>\n        <Panel fullWidth>\n          <Table\n            data={data}\n            columns={columns}\n            hoverable\n            onRowClick={(row) => setLastClick(row)}\n          />\n        </Panel>\n        <Typography variant='body-sm'>\n          Last clicked: {lastClick ? `${lastClick.customer} (#${lastClick.id})` : '—'}\n        </Typography>\n      </Stack>\n    );\n  };\n  return <Demo />;\n})()",
+      "code": "(() => {\n  type Invoice = { id: number; customer: string; total: number };\n  const columns: TableColumn<Invoice>[] = [\n    { header: 'Invoice', accessor: 'id', align: 'right' },\n    { header: 'Customer', accessor: 'customer' },\n    {\n      header: 'Total',\n      accessor: (row: Invoice) => `$${row.total.toFixed(2)}`,\n      align: 'right',\n    },\n  ];\n  const data: Invoice[] = [\n    { id: 4821, customer: 'Juniper Labs', total: 8421.17 },\n    { id: 4822, customer: 'Halo Forge', total: 311.25 },\n    { id: 4823, customer: 'Even Tide', total: 1775.4 },\n  ];\n  const Demo = () => {\n    const [lastClick, setLastClick] = React.useState<Invoice | null>(null);\n    return (\n      <Stack gap={2}>\n        <Panel fullWidth>\n          <Table\n            data={data}\n            columns={columns}\n            hoverable\n            onRowClick={(row) => setLastClick(row)}\n          />\n        </Panel>\n        <Typography variant='subtitle'>\n          Last clicked: {lastClick ? `${lastClick.customer} (#${lastClick.id})` : '—'}\n        </Typography>\n      </Stack>\n    );\n  };\n  return <Demo />;\n})()",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {
@@ -218,9 +278,11 @@
       }
     }
   ],
+  "docsUrl": "/table-demo",
   "sourceFiles": [
-    "src/components/widgets/Table.tsx"
+    "src/components/widgets/Table.tsx",
+    "docs/src/pages/components/widgets/TableDemo.tsx"
   ],
-  "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "version": "0.35.1",
+  "schemaVersion": "1.7"
 }

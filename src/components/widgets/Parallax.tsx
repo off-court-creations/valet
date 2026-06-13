@@ -4,6 +4,7 @@
 // ─────────────────────────────────────────────────────────────
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { preset } from '../../css/stylePresets';
+import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion';
 import type { Presettable, Sx } from '../../types';
 
 /*───────────────────────────────────────────────────────────────*/
@@ -121,10 +122,15 @@ export const ParallaxLayer: React.FC<ParallaxLayerProps> = ({
   ...props
 }) => {
   const { scrollY, scrollX } = useParallax();
+  // A11Y S5 — reduced motion: the parallax displacement IS the motion, so we
+  // neutralize the offset (layers track the scroll 1:1, i.e. sit still
+  // relative to the page) rather than just disabling a transition.
+  const reduceMotion = usePrefersReducedMotion();
   const offset = useMemo(() => {
+    if (reduceMotion) return 0;
     const d = axis === 'y' ? scrollY : scrollX;
     return d * (speed - 1);
-  }, [scrollY, scrollX, speed, axis]);
+  }, [reduceMotion, scrollY, scrollX, speed, axis]);
 
   const transform =
     axis === 'y' ? `translate3d(0, ${offset}px, 0)` : `translate3d(${offset}px, 0, 0)`;

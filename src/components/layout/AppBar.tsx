@@ -10,21 +10,14 @@ import { useSurface } from '../../system/surfaceStore';
 import { shallow } from 'zustand/shallow';
 import { preset } from '../../css/stylePresets';
 import { inheritSurfaceFontVars } from '../../system/inheritSurfaceFontVars';
-import type { Presettable, Space, Sx } from '../../types';
+import type { Intent, Presettable, Space, Sx } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
 import { Button, type ButtonVariant } from '../fields/Button';
+import { computeIntentVars } from '../../system/intentVars';
+import { zVar } from '../../system/zIndex';
 
 /*───────────────────────────────────────────────────────────*/
 export type AppBarToken = 'primary' | 'secondary' | 'tertiary';
-type Intent =
-  | 'default'
-  | 'primary'
-  | 'secondary'
-  | 'success'
-  | 'warning'
-  | 'error'
-  | 'info'
-  | (string & {});
 
 export interface AppBarProps
   extends Omit<React.HTMLAttributes<HTMLElement>, 'style' | 'title'>,
@@ -90,9 +83,8 @@ const Bar = styled('header')<{
   padding: ${({ $pad }) => $pad};
   position: ${({ $pos }) => $pos};
   top: 0;
-  left: 0;
-  right: 0;
-  z-index: 10000;
+  inset-inline: 0;
+  z-index: ${zVar('appbar')};
   color: ${({ $text }) => $text};
 `;
 
@@ -122,7 +114,7 @@ const RightWrap = styled('div')<{ $gap: string; $push: boolean }>`
   display: flex;
   align-items: center;
   gap: ${({ $gap }) => $gap};
-  margin-left: ${({ $push }) => ($push ? 'auto' : '0')};
+  margin-inline-start: ${({ $push }) => ($push ? 'auto' : '0')};
   min-width: 0;
 `;
 
@@ -138,7 +130,7 @@ const NavWrap = styled('nav')<{
   gap: ${({ $gap }) => $gap};
   flex: ${({ $grow }) => ($grow ? '1 1 auto' : '0 0 auto')};
   min-width: 0;
-  margin-left: ${({ $push }) => ($push ? 'auto' : '0')};
+  margin-inline-start: ${({ $push }) => ($push ? 'auto' : '0')};
 `;
 
 /*───────────────────────────────────────────────────────────*/
@@ -200,6 +192,21 @@ export const AppBar: React.FC<AppBarProps> = ({
 
   const bg = base;
   const text = derivedText;
+
+  // Intent CSS variables contract (shared helper, API-TYPES S13). Replaces the
+  // old hex-concat hover math (`base + 'F0'`/`'E0'`, `text + '88'`) which
+  // produced invalid CSS for rgb()/hsl()/named theme colours. `makeMix` parses
+  // any colour format and blends `bg` toward `text` for hover/active.
+  const intentVars = computeIntentVars({
+    bg,
+    fg: text,
+    focus: theme.colors.primary,
+    // Disabled foreground fades the bar text toward the bar background
+    // (the old `text + '88'` was a ~53% alpha; this is the opaque analog).
+    disabledMixColor: bg,
+    variant: 'filled',
+  });
+
   const presetClass = p ? preset(p) : '';
   // Standardize numeric mapping via resolveSpace; retain two-value default
   const padSingle = resolveSpace(padProp, theme, false, 1);
@@ -282,13 +289,7 @@ export const AppBar: React.FC<AppBarProps> = ({
           '--valet-text-color': text,
           background: bg,
           color: text,
-          '--valet-intent-bg': base,
-          '--valet-intent-fg': text,
-          '--valet-intent-border': base,
-          '--valet-intent-focus': theme.colors.primary,
-          '--valet-intent-bg-hover': base + 'F0',
-          '--valet-intent-bg-active': base + 'E0',
-          '--valet-intent-fg-disabled': theme.colors.text + '88',
+          ...intentVars,
           ...sx,
         } as React.CSSProperties
       }
@@ -312,49 +313,67 @@ export const AppBar: React.FC<AppBarProps> = ({
             const buttonLabel =
               item.ariaLabel ?? (typeof item.label === 'string' ? item.label : undefined);
             const navSize = iconOnly ? 'md' : 'sm';
-            return (
-              <Button
-                key={key}
-                as={asTag}
-                href={item.href}
-                target={item.target}
-                rel={item.rel}
-                intent={item.intent}
-                color={colorForNav}
-                variant={navVariant}
-                size={navSize}
-                disabled={item.disabled}
-                onClick={item.onClick}
-                aria-label={buttonLabel}
-                title={buttonLabel}
-                sx={{
-                  '--valet-intent-bg': colorForNav,
-                  '--valet-intent-fg': navVariant === 'filled' ? text : colorForNav,
-                  '--valet-intent-border': colorForNav,
-                  borderRadius: theme.radius(999),
-                  whiteSpace: 'nowrap',
-                  boxShadow:
-                    navVariant === 'filled' ? `0 0 0 1px ${text}33` : `0 0 0 1px ${colorForNav}33`,
-                  ...(iconOnly
-                    ? {
-                        minWidth: theme.spacing(3.5),
-                        width: theme.spacing(3.5),
-                        padding: theme.spacing(0.5),
-                        justifyContent: 'center',
-                        fontSize: '1.25rem',
-                        lineHeight: 1.1,
-                      }
-                    : null),
-                  ...(item.active && navVariant !== 'filled'
-                    ? { background: `${colorForNav}16` }
-                    : null),
-                }}
-              >
+            const navSx: Sx = {
+              '--valet-intent-bg': colorForNav,
+              '--valet-intent-fg': navVariant === 'filled' ? text : colorForNav,
+              '--valet-intent-border': colorForNav,
+              borderRadius: theme.radius(999),
+              whiteSpace: 'nowrap',
+              boxShadow:
+                navVariant === 'filled' ? `0 0 0 1px ${text}33` : `0 0 0 1px ${colorForNav}33`,
+              ...(iconOnly
+                ? {
+                    minWidth: theme.spacing(3.5),
+                    width: theme.spacing(3.5),
+                    padding: theme.spacing(0.5),
+                    justifyContent: 'center',
+                    fontSize: '1.25rem',
+                    lineHeight: 1.1,
+                  }
+                : null),
+              ...(item.active && navVariant !== 'filled'
+                ? { background: `${colorForNav}16` }
+                : null),
+            };
+            const shared = {
+              intent: item.intent,
+              color: colorForNav,
+              variant: navVariant,
+              size: navSize,
+              onClick: item.onClick,
+              'aria-label': buttonLabel,
+              title: buttonLabel,
+              sx: navSx,
+            };
+            const content = (
+              <>
                 {item.icon}
                 {item.icon && item.label && !iconOnly ? (
                   <span style={{ display: 'inline-block', width: theme.spacing(0.5) }} />
                 ) : null}
                 {!iconOnly && item.label}
+              </>
+            );
+            /* Sound polymorphic Button: anchors take anchor attributes,
+               buttons take `disabled` — split per element type. */
+            return asTag === 'a' ? (
+              <Button
+                key={key}
+                as='a'
+                href={item.href}
+                target={item.target}
+                rel={item.rel}
+                {...shared}
+              >
+                {content}
+              </Button>
+            ) : (
+              <Button
+                key={key}
+                disabled={item.disabled}
+                {...shared}
+              >
+                {content}
               </Button>
             );
           })}

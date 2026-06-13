@@ -2,7 +2,7 @@
   "name": "Box",
   "category": "layout",
   "slug": "components/layout/box",
-  "summary": "Box component",
+  "summary": "Polymorphic (`as`) workhorse container with spacing, `sx`, and `alignX` content alignment; reach for it as the default building block when no more specialized layout primitive (Stack, Grid, Panel) fits.",
   "status": "stable",
   "aliases": [
     "box",
@@ -56,7 +56,7 @@
     },
     {
       "name": "pad",
-      "type": "import(\"/home/xbenc/occ/valet/src/types\").Space | undefined",
+      "type": "Space | undefined",
       "required": false,
       "description": "Container padding as units or CSS length."
     },
@@ -65,6 +65,13 @@
       "type": "boolean | undefined",
       "required": false,
       "description": "Compact mode zeros gap and pad where supported."
+    },
+    {
+      "name": "as",
+      "type": "React.ElementType",
+      "required": false,
+      "description": "Polymorphic element override (renders this element/component instead of the default).",
+      "default": "'div'"
     }
   ],
   "domPassthrough": {
@@ -79,7 +86,6 @@
   ],
   "cssPresets": [],
   "events": [],
-  "actions": [],
   "slots": [],
   "bestPractices": [
     "Treat as the neutral building block: backgrounds, padding, and simple width/height constraints.",
@@ -116,11 +122,11 @@
       "minimalProps": {}
     }
   ],
-  "docsUrl": "/components/layout/BoxDemo",
+  "docsUrl": "/box-demo",
   "sourceFiles": [
     "src/components/layout/Box.tsx",
     "docs/src/pages/components/layout/BoxDemo.tsx"
   ],
-  "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "version": "0.35.1",
+  "schemaVersion": "1.7"
 }

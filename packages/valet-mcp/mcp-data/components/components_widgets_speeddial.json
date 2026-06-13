@@ -2,7 +2,7 @@
   "name": "SpeedDial",
   "category": "widgets",
   "slug": "components/widgets/speeddial",
-  "summary": "SpeedDial component",
+  "summary": "Floating action button that expands a fan of secondary actions with disclosure ARIA; it closes on action/Escape/outside-click and restores focus — use it for a primary action plus a few related shortcuts.",
   "status": "stable",
   "aliases": [
     "speeddial",
@@ -37,6 +37,12 @@
       ]
     },
     {
+      "name": "labels",
+      "type": "DeepPartialStrings<ValetStrings['speedDial']>",
+      "required": false,
+      "description": "Instance-level overrides for this component's i18n strings (the main FAB\nand actions-group aria-labels). Wins over the `ValetLocaleProvider` value,\nwhich in turn wins over the built-in English defaults (A11Y S8 resolution\ncontract; see `src/system/locale.tsx`). Per-action accessible names come\nfrom each action's own `label`."
+    },
+    {
       "name": "sx",
       "type": "Sx",
       "required": false,
@@ -53,10 +59,12 @@
     "element": "div",
     "omitted": []
   },
-  "cssVars": [],
+  "cssVars": [
+    "--valet-focus-width",
+    "--valet-focus-offset"
+  ],
   "cssPresets": [],
   "events": [],
-  "actions": [],
   "slots": [
     {
       "name": "icon"
@@ -65,15 +73,18 @@
   "bestPractices": [
     "Use sparingly. SpeedDial is for a small cluster of high‑value actions (typically 2–5). If you have more, consider a toolbar or menu instead.",
     "Place with intent. Default bottom‑right works well; adjust offsets with spacing tokens to avoid overlapping content or platform UI (e.g., safe areas).",
-    "Label actions clearly. Provide short, specific labels; the component exposes them via `title` and keyboard focus when open.",
-    "Close on action. After invoking an action, collapse the dial so the UI returns to a stable state and prevents accidental re‑taps.",
+    "Label actions clearly. Provide short, specific labels; each action's `label` becomes its accessible name (`aria-label`) and hover `title`. The dial uses disclosure semantics (`aria-expanded`/`aria-controls` on the trigger, a `role='group'` actions container) and shows a visible keyboard focus ring.",
+    "Dismissal is automatic. The open dial registers on the shared overlay stack: pressing Escape closes it and returns focus to the FAB, clicking outside closes it, and invoking any action collapses the dial back to a stable state. You do not need to manage open/closed state yourself.",
     "Pick direction by context. Choose `up` / `left` when anchored to bottom/right edges to prevent overflow. Keep action order predictable.",
-    "Motion tokens. Animations use theme motion tokens; keep custom presets aligned for a cohesive feel with the rest of the app."
+    "Motion tokens. Animations use theme motion tokens; keep custom presets aligned for a cohesive feel with the rest of the app.",
+    "Internationalize the built-in labels with the `labels` prop (instance-level) or a `ValetLocaleProvider` (app-wide). Resolution is instance `labels` > provider strings > built-in English."
   ],
   "examples": [],
+  "docsUrl": "/speeddial-demo",
   "sourceFiles": [
-    "src/components/widgets/SpeedDial.tsx"
+    "src/components/widgets/SpeedDial.tsx",
+    "docs/src/pages/components/widgets/SpeedDialDemo.tsx"
   ],
-  "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "version": "0.35.1",
+  "schemaVersion": "1.7"
 }

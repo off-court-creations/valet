@@ -2,7 +2,7 @@
   "name": "AppBar",
   "category": "layout",
   "slug": "components/layout/appbar",
-  "summary": "AppBar component",
+  "summary": "Top application bar for branding, navigation, and page-level actions; it sits below modal overlays in the z-index scale and intent-tints its surface — use one per screen as the persistent header.",
   "status": "stable",
   "aliases": [
     "appbar",
@@ -138,7 +138,6 @@
   ],
   "cssPresets": [],
   "events": [],
-  "actions": [],
   "slots": [
     {
       "name": "left"
@@ -195,9 +194,11 @@
       "minimalProps": {}
     }
   ],
+  "docsUrl": "/appbar-demo",
   "sourceFiles": [
-    "src/components/layout/AppBar.tsx"
+    "src/components/layout/AppBar.tsx",
+    "docs/src/pages/components/layout/AppBarDemo.tsx"
   ],
-  "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "version": "0.35.1",
+  "schemaVersion": "1.7"
 }

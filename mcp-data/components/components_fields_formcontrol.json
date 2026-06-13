@@ -2,7 +2,7 @@
   "name": "FormControl",
   "category": "fields",
   "slug": "components/fields/formcontrol",
-  "summary": "FormControl component",
+  "summary": "Wraps a form to provide a typed store context that field components bind to by `name`; use it to collect and submit grouped field values without lifting every field into local state.",
   "status": "stable",
   "aliases": [
     "form",
@@ -50,7 +50,6 @@
       "payloadType": "T"
     }
   ],
-  "actions": [],
   "slots": [],
   "bestPractices": [
     "FormControl prevents native submit by default. Handle submission in `onSubmitValues(values, event)` and keep the flow inside your SPA.",
@@ -84,6 +83,6 @@
   "sourceFiles": [
     "src/components/fields/FormControl.tsx"
   ],
-  "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "version": "0.35.1",
+  "schemaVersion": "1.7"
 }

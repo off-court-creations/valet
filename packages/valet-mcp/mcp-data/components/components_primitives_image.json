@@ -2,7 +2,7 @@
   "name": "Image",
   "category": "primitives",
   "slug": "components/primitives/image",
-  "summary": "Image component",
+  "summary": "Theme-aware `<img>` wrapper with sizing and object-fit ergonomics for static raster/vector images; use it for content imagery, and `Avatar` for circular user pictures or `Video` for playable media.",
   "status": "stable",
   "aliases": [
     "image",
@@ -84,7 +84,6 @@
   "cssVars": [],
   "cssPresets": [],
   "events": [],
-  "actions": [],
   "slots": [],
   "bestPractices": [
     "Always set alt text; use empty alt for decorative images.",
@@ -96,9 +95,11 @@
     "Apply rounded corners via a wrapper (Panel/Box) with `overflow: hidden` or via sx; avoid per‑component shape props."
   ],
   "examples": [],
+  "docsUrl": "/image-demo",
   "sourceFiles": [
-    "src/components/primitives/Image.tsx"
+    "src/components/primitives/Image.tsx",
+    "docs/src/pages/components/primitives/ImageDemo.tsx"
   ],
-  "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "version": "0.35.1",
+  "schemaVersion": "1.7"
 }

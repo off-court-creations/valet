@@ -2,7 +2,7 @@
   "name": "Snackbar",
   "category": "widgets",
   "slug": "components/widgets/snackbar",
-  "summary": "Snackbar component",
+  "summary": "Transient toast notification (role='status') that fades in and auto-dismisses, pausing its timer on hover/focus; control with `open`/`message`/`autoHideDuration` — use it for brief, non-blocking feedback.",
   "status": "stable",
   "aliases": [
     "snackbar",
@@ -69,7 +69,6 @@
       "name": "onClose"
     }
   ],
-  "actions": [],
   "slots": [
     {
       "name": "message"
@@ -79,15 +78,18 @@
     "Keep messages short and specific. Snackbars confirm actions or provide brief status; avoid long instructions or multi‑step interactions.",
     "Place them consistently, typically bottom center/right depending on platform.",
     "Offer a single, clear action when needed; prefer undo when appropriate.",
-    "Respect motion and timing. Use `autoHideDuration` for transient messages (3–6s typical); longer durations should be deliberate.",
-    "Don’t stack excessively. Queue messages when necessary; ensure important ones aren’t missed.",
+    "Respect motion and timing. Use `autoHideDuration` for transient messages (3–6s typical); longer durations should be deliberate. The countdown pauses while the snackbar is hovered or focused and resumes with the remaining time. The slide/fade transition is automatically suppressed for users who request reduced motion.",
+    "For urgent errors, override the default live region with `role='alert'`/`aria-live='assertive'` so it is announced immediately.",
+    "Don’t rely on queueing — one Snackbar shows one message at a time; manage your own queue/state if several messages can overlap.",
     "Keep focus behavior intact. Snackbars shouldn’t steal focus; any action button must be keyboard reachable.",
     "Style via tokens/presets. Use theme colors for status (e.g., `primary` / `error`) and consolidate variants with `preset`."
   ],
   "examples": [],
+  "docsUrl": "/snackbar-demo",
   "sourceFiles": [
-    "src/components/widgets/Snackbar.tsx"
+    "src/components/widgets/Snackbar.tsx",
+    "docs/src/pages/components/widgets/SnackbarDemo.tsx"
   ],
-  "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "version": "0.35.1",
+  "schemaVersion": "1.7"
 }

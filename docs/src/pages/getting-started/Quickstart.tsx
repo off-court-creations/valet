@@ -199,8 +199,10 @@ npm run typecheck`; // only typecheck exists in TS/hybrid; still mention
               replace this folder—nothing in the template depends on it.
             </Typography>
             <Typography>
-              Forms and actions should live inside valet components whenever possible so the Surface
-              can capture telemetry via the Web Action Graph.
+              Forms and actions should live inside valet components whenever possible so state stays
+              in typed Zustand stores and the Surface can track every registered component. The Web
+              Action Graph — automatic interaction telemetry built on that tracking — is planned and
+              not implemented yet.
             </Typography>
           </Stack>
         </Panel>
@@ -209,9 +211,8 @@ npm run typecheck`; // only typecheck exists in TS/hybrid; still mention
           <Stack gap={1.5}>
             <Typography variant='h3'>Scripts and next moves</Typography>
             <Typography>
-              Generated apps include agent-friendly scripts. TypeScript and Hybrid templates also
-              add
-              <code>typecheck</code> variants.
+              Generated apps include the quality scripts below. TypeScript and Hybrid templates also
+              add <code>typecheck</code>.
             </Typography>
             <CodeBlock
               code={scriptsList}
@@ -219,7 +220,47 @@ npm run typecheck`; // only typecheck exists in TS/hybrid; still mention
             />
             <Typography>
               Use <code>npm run dev</code> for HMR, <code>npm run build</code> for production
-              bundles, and the <code>*:agent</code> scripts when automating checks with LLM tooling.
+              bundles, and <code>lint</code>/<code>format</code> (plus their <code>:fix</code>{' '}
+              variants) when automating checks with LLM tooling.
+            </Typography>
+          </Stack>
+        </Panel>
+
+        <Panel fullWidth>
+          <Stack gap={1.5}>
+            <Typography variant='h3'>Browser support</Typography>
+            <Typography>
+              valet targets modern evergreen browsers. The supported floor is{' '}
+              <strong>Chrome/Edge 112+</strong>, <strong>Safari 16.5+</strong>, and{' '}
+              <strong>Firefox 121+</strong>. Each floor is set by a platform feature the library
+              actually emits:
+            </Typography>
+            <Typography>
+              <strong>Chrome/Edge 112, Safari 16.5</strong> come from native CSS nesting — the
+              styling engine writes nested rules and prefixes every nested selector with{' '}
+              <code>&amp; </code> (so <code>&amp; th &#123;…&#125;</code>, never a bare{' '}
+              <code>th &#123;…&#125;</code>), which parses from those versions; the relaxed grammar
+              that would allow bare nested type selectors needs Chrome 120 / Safari 17.2 and is kept
+              out of the codebase by a source-level gate. <strong>Firefox 121</strong> is set by the{' '}
+              <code>:has()</code> selector a few components use: Firefox shipped CSS nesting in 117
+              but <code>:has()</code> only in 121. Also relied on, all below those floors:{' '}
+              <code>color-mix()</code> (Chrome 111 / Safari 16.2 / Firefox 113) and the{' '}
+              <code>dvh</code> viewport unit (Chrome 108 / Safari 15.5 / Firefox 101).
+            </Typography>
+            <Typography>
+              The build target is pinned to <strong>es2020</strong> and the package ships{' '}
+              <strong>ESM only</strong> — there is no CommonJS build, so{' '}
+              <code>{`require('@archway/valet')`}</code> will not resolve; use <code>import</code>.
+              The optional AI-key encryption helpers need a secure context (HTTPS or{' '}
+              <code>localhost</code>) because they use <code>crypto.subtle</code>.
+            </Typography>
+            <Typography>
+              <strong>SSR is not shipped yet.</strong> valet imports cleanly in Node and renders
+              deterministic, hash-derived class names under <code>renderToString</code>, so it will
+              not crash a server render — but there is no style-collection API (no{' '}
+              <code>getServerStyles</code>) to flush the generated CSS into the server-rendered
+              HTML, so first paint can flash unstyled until the client hydrates. A server-side style
+              collection API is on the roadmap.
             </Typography>
           </Stack>
         </Panel>

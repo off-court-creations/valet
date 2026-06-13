@@ -22,11 +22,13 @@ export default function SurfaceDocsPage() {
         fullWidth
       >
         <Typography>
-          The surface store tracks screen size and every registered child element. Components
-          created with <code>createStyled</code> update their dimensions via{' '}
-          <code>--valet-el-width</code>
-          and <code>--valet-el-height</code>. The surface exposes <code>--valet-screen-width</code>
-          and <code>--valet-screen-height</code> for responsive layouts.
+          The surface store tracks screen size and every registered child element. Size tracking is
+          opt-in: a <code>createStyled</code> element registers and exposes{' '}
+          <code>--valet-el-width</code> and <code>--valet-el-height</code> (updated via
+          ResizeObserver) only when you pass the <code>$trackSize</code> transient prop — by default
+          styled elements do not register. The surface itself always exposes{' '}
+          <code>--valet-screen-width</code> and <code>--valet-screen-height</code> for responsive
+          layouts.
         </Typography>
       </Panel>
       <Typography>

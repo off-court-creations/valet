@@ -2,7 +2,7 @@
   "name": "Drawer",
   "category": "layout",
   "slug": "components/layout/drawer",
-  "summary": "Drawer component",
+  "summary": "Panel that slides in from an `anchor` edge (`left`/`right`/`top`/`bottom`, or RTL-aware `start`/`end`); non-`persistent` drawers are true focus-trapping dialogs, so supply `aria-label`/`aria-labelledby` — use it for side navigation and contextual panels.",
   "status": "stable",
   "aliases": [
     "drawer",
@@ -28,7 +28,7 @@
       "name": "anchor",
       "type": "DrawerAnchor",
       "required": false,
-      "description": "Drawer side",
+      "description": "Drawer side. Physical 'left'/'right'/'top'/'bottom' are\ndirection-invariant; the additive logical 'start'/'end' resolve to\nleft/right per the active writing direction (RTL-aware — 'start' is the\nleading edge). Default 'left'.",
       "default": "'left'"
     },
     {
@@ -111,6 +111,24 @@
       "description": "sx convenience for inline styles with CSS var support"
     },
     {
+      "name": "aria-label",
+      "type": "string",
+      "required": false,
+      "description": "Accessible name for the dialog. Required (alongside `aria-labelledby`) for\nnon-persistent/overlay Drawers, which are real `role='dialog'` modals; a\ndev warning fires when neither is provided. Ignored by persistent Drawers,\nwhich are inline navigation regions, not dialogs."
+    },
+    {
+      "name": "aria-labelledby",
+      "type": "string",
+      "required": false,
+      "description": "Id of an element labelling the dialog (alternative to `aria-label`)."
+    },
+    {
+      "name": "labels",
+      "type": "DeepPartialStrings<ValetStrings['drawer']>",
+      "required": false,
+      "description": "Instance-level overrides for this component's i18n strings (the portrait\nopen/close toggle-button aria-labels). Wins over the `ValetLocaleProvider`\nvalue, which in turn wins over the built-in English defaults (A11Y S8\nresolution contract; see `src/system/locale.tsx`). Distinct from the\ndialog's accessible name, which comes from `aria-label`/`aria-labelledby`."
+    },
+    {
       "name": "preset",
       "type": "string | string[] | undefined",
       "required": false,
@@ -121,17 +139,13 @@
     "element": "div",
     "omitted": []
   },
-  "cssVars": [
-    "--valet-zindex-modal-backdrop",
-    "--valet-zindex-modal"
-  ],
+  "cssVars": [],
   "cssPresets": [],
   "events": [
     {
       "name": "onClose"
     }
   ],
-  "actions": [],
   "slots": [
     {
       "name": "children"
@@ -142,12 +156,18 @@
     "Coordinate with AppBar and Surface so the drawer doesn’t overlap or hide important content.",
     "Use persistent vs temporary modes appropriately; auto‑collapse on narrow screens.",
     "Keep content scannable and avoid deep nesting; provide headings for sections.",
-    "Prefer tokens for backdrop colour and motion; keep transitions aligned with theme."
+    "Prefer tokens for backdrop colour and motion; keep transitions aligned with theme.",
+    "Overlay (non-persistent) Drawers are modal dialogs: they expose `role='dialog'` + `aria-modal`, trap Tab focus, move focus into the panel on open, and restore it on close. Always give them an accessible name via `aria-label` or `aria-labelledby` (a dev warning fires when neither is set).",
+    "Persistent Drawers are inline navigation regions — they intentionally carry no dialog semantics, no focus trap, and need no `aria-label`.",
+    "Internationalize the built-in labels with the `labels` prop (instance-level) or a `ValetLocaleProvider` (app-wide). Resolution is instance `labels` > provider strings > built-in English.",
+    "For RTL-aware placement, prefer the logical `anchor='start'`/`anchor='end'` over physical `'left'`/`'right'`: they resolve to the leading/trailing edge for the active writing direction (set via `ValetLocaleProvider`). Physical anchors are direction-invariant and never flip under RTL."
   ],
   "examples": [],
+  "docsUrl": "/drawer-demo",
   "sourceFiles": [
-    "src/components/layout/Drawer.tsx"
+    "src/components/layout/Drawer.tsx",
+    "docs/src/pages/components/layout/DrawerDemo.tsx"
   ],
-  "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "version": "0.35.1",
+  "schemaVersion": "1.7"
 }

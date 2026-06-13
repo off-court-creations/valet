@@ -2,7 +2,7 @@
   "name": "Progress",
   "category": "primitives",
   "slug": "components/primitives/progress",
-  "summary": "Progress component",
+  "summary": "Back-compat progress indicator that switches between bar and ring via `variant`; prefer the dedicated `ProgressBar` or `ProgressRing` primitives directly for new code, and omit `value` for an indeterminate (unknown-duration) loading state.",
   "status": "stable",
   "aliases": [
     "progress",
@@ -89,7 +89,6 @@
   ],
   "cssPresets": [],
   "events": [],
-  "actions": [],
   "slots": [
     {
       "name": "children"
@@ -101,12 +100,15 @@
     "Avoid blocking the entire page—prefer inline or section‑level indicators when possible.",
     "Use theme colours to convey status (e.g., `error` for failures) and tokens for size.",
     "Don’t rely solely on colour; pair with text or icons for critical states.",
-    "Keep motion subtle and aligned with the theme’s motion tokens."
+    "Keep motion subtle and aligned with the theme’s motion tokens.",
+    "Honors `prefers-reduced-motion: reduce`: the indeterminate spinner and bar stop animating and degrade to a static, still-visible indicator (the ring shows a fixed arc, the bar a centered band) so the busy state is never lost. No prop is needed."
   ],
   "examples": [],
+  "docsUrl": "/progress-demo",
   "sourceFiles": [
-    "src/components/primitives/Progress.tsx"
+    "src/components/primitives/Progress.tsx",
+    "docs/src/pages/components/primitives/ProgressDemo.tsx"
   ],
-  "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "version": "0.35.1",
+  "schemaVersion": "1.7"
 }

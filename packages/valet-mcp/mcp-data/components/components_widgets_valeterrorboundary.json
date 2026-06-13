@@ -1,0 +1,64 @@
+{
+  "name": "ValetErrorBoundary",
+  "category": "widgets",
+  "slug": "components/widgets/valeterrorboundary",
+  "summary": "Opt-in React error boundary that catches render errors in its subtree and shows a role='alert' fallback with a `reset()` action; wrap risky regions to stop one component from white-screening the host app.",
+  "status": "stable",
+  "aliases": [
+    "error-boundary",
+    "errorboundary",
+    "boundary"
+  ],
+  "props": [
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "required": true,
+      "description": "The subtree to protect."
+    },
+    {
+      "name": "fallback",
+      "type": "ReactNode | ((props: ValetErrorFallbackProps) => ReactNode)",
+      "required": false,
+      "description": "Custom fallback. A render function receives the caught error and a\n`reset` callback; a static node is rendered as-is. When omitted, the\nbuilt-in role='alert' panel shows the (enriched) error message and a\nretry button."
+    },
+    {
+      "name": "onError",
+      "type": "(error: Error, info: ErrorInfo) => void",
+      "required": false,
+      "description": "Invoked once per caught error with the error and React's component\nstack. Fires from componentDidCatch — exactly once per failure, not on\nevery re-render. Use it to report to your telemetry pipeline."
+    }
+  ],
+  "cssVars": [],
+  "cssPresets": [],
+  "events": [
+    {
+      "name": "onError",
+      "payloadType": "Error"
+    }
+  ],
+  "slots": [
+    {
+      "name": "children"
+    },
+    {
+      "name": "fallback"
+    }
+  ],
+  "bestPractices": [
+    "Opt in deliberately. valet components throw enriched errors (component name + fix hint + docs link) on misuse — that hard throw is the intended failure signal, especially for agents. This boundary is the opt-in catcher: wrap it around a subtree only when you want a caught error to render a fallback instead of white-screening the host.",
+    "Place it where recovery makes sense. Wrap a route, a panel, or any independently-recoverable region — not the whole app as a blanket. The closer the boundary sits to the risky subtree, the more of the UI survives a failure and the more precise the fallback can be.",
+    "It works without a Surface by design. The boundary uses no createStyled, no theme tokens, and no useSurface, so it can catch the very errors that originate above or outside the surface tree. Do not expect it to read theme variables — its fallback is a plain role='alert' panel.",
+    "Wire reset() to a retry. The built-in fallback ships a retry button; a custom fallback function receives reset, which clears the caught error and re-renders children. Pair it with whatever state reset (refetch, key bump) makes the retry meaningful.",
+    "It does NOT catch everything. Like every React error boundary it only catches errors thrown during a child's render, lifecycle, or constructor. Errors in event handlers, async callbacks, timers, and SSR are not caught — handle those at the call site.",
+    "onError fires once per failure. It runs from componentDidCatch with the error and React's component stack — exactly once when the error is caught, not on every re-render. Use it to report to telemetry; keep it side-effect-only."
+  ],
+  "examples": [],
+  "docsUrl": "/error-boundary-demo",
+  "sourceFiles": [
+    "src/components/widgets/ValetErrorBoundary.tsx",
+    "docs/src/pages/components/widgets/ValetErrorBoundaryDemo.tsx"
+  ],
+  "version": "0.35.1",
+  "schemaVersion": "1.7"
+}

@@ -170,13 +170,41 @@ export default function ThemeEnginePage() {
   const themeStoreSnippet = `import { useTheme } from '@archway/valet';
 
 function Example() {
-  const { theme, setMode } = useTheme();
+  const { mode, toggleMode } = useTheme();
   return (
-    <button onClick={() => setMode(theme.mode === 'light' ? 'dark' : 'light')}>
-      Toggle {theme.mode}
+    <button onClick={toggleMode}>
+      Toggle {mode}
     </button>
   );
 }`;
+
+  const overlaySnippet = `import { useTheme } from '@archway/valet';
+
+// Your brand patch folds into a cumulative *overlay*, not the live theme:
+const { setTheme, setMode, toggleMode, resetTheme } = useTheme.getState();
+
+setTheme({ colors: { primary: '#7C3AED' } }); // brand violet (mode-agnostic)
+
+// Toggling mode recomposes base(mode) + overlay — the violet SURVIVES:
+toggleMode();          // dark → light, primary stays #7C3AED
+setMode('dark');       // back to dark, overlay still applied
+
+resetTheme();          // drop every setTheme customisation, keep the mode`;
+
+  const modeSnippet = `import { useInitialTheme } from '@archway/valet';
+
+useInitialTheme(
+  { fonts: { body: 'Inter' } },
+  [],
+  {
+    // 'system' reads prefers-color-scheme ONCE at boot (no live listener yet).
+    // Boot precedence: stored > requested > 'system' > fallback ('dark').
+    mode: 'system',
+    // Persist real user toggles to localStorage['valet-mode'] and restore them
+    // at boot. The boot apply itself is never recorded as a user choice.
+    persistMode: true,
+  },
+);`;
 
   const bestPractices = [
     'Initialize once. Call useInitialTheme in your root App to set tokens and preload fonts; avoid re-running it per route.',
@@ -184,7 +212,8 @@ function Example() {
     'Toggle mode through the store. Reach for useTheme().toggleMode() or setMode instead of branching palettes in components.',
     'Load only the fonts you ship. Pass overrides to useInitialTheme and use the extras array for secondary faces; the loader dedupes requests.',
     'Keep colours semantic. Map brand colours into primary/secondary/tertiary/error tokens to maintain contrast across light/dark themes.',
-    'Patch via setTheme. Update the store rather than sprinkling inline overrides so docs, MCP data, and components stay in sync.',
+    'Patch via setTheme. Update the store rather than sprinkling inline overrides so docs, MCP data, and components stay in sync; your patch folds into the overlay and survives mode toggles.',
+    'Mind privacy on fonts. The default Google-Fonts injection is a remote third-party request; self-host with injectRemote:false or go explicit-fonts-only (see Fonts & Privacy).',
   ];
 
   // token listing not needed for the current layout
@@ -571,6 +600,96 @@ function Example() {
             stays consistent across density changes. Radius and stroke helpers piggyback on the same
             base.
           </Typography>
+        </Panel>
+
+        {/* Overlay composition model */}
+        <Panel
+          fullWidth
+          pad={1}
+        >
+          <Typography
+            variant='h3'
+            bold
+          >
+            Overlay composition (your brand survives mode toggles)
+          </Typography>
+          <Divider
+            thickness={2}
+            pad={0.5}
+          />
+          <Typography>
+            The theme you read is <strong>composed</strong>, not stored flat:{' '}
+            <code>composeTheme(mode, overlay)</code> = <code>baseTheme(mode)</code> merged with the
+            cumulative <em>overlay</em> your <code>setTheme</code> patches build up. Because every{' '}
+            <code>setTheme</code> call folds into that overlay rather than overwriting the live
+            theme,{' '}
+            <strong>
+              switching mode recomposes the base for the new mode and re-applies your overlay on top
+            </strong>{' '}
+            — so a custom <code>primary</code> colour (or any branding) persists across{' '}
+            <code>toggleMode</code> / <code>setMode</code> instead of being wiped back to the
+            built-in palette. <code>resetTheme()</code> clears the overlay and returns to the
+            built-in theme without changing the current mode.
+          </Typography>
+          <CodeBlock
+            code={overlaySnippet}
+            ariaLabel='Theme overlay composition example'
+          />
+          <Typography>
+            This is why you should brand <em>through the store</em>: a <code>setTheme</code> patch
+            is mode-agnostic and survives toggles, whereas inline component overrides have to be
+            re-applied per mode by hand.
+          </Typography>
+        </Panel>
+
+        {/* mode:'system' + persistMode */}
+        <Panel
+          fullWidth
+          pad={1}
+        >
+          <Typography
+            variant='h3'
+            bold
+          >
+            System mode &amp; persistence
+          </Typography>
+          <Divider
+            thickness={2}
+            pad={0.5}
+          />
+          <Typography>
+            <code>useInitialTheme</code> accepts two opt-in mode options. valet’s boot default stays{' '}
+            <strong>dark</strong>; these only change behaviour when you ask for them:
+          </Typography>
+          <Stack sx={{ gap: theme.spacing(0.5) }}>
+            <Typography variant='body'>
+              •{' '}
+              <strong>
+                <code>{`mode: 'system'`}</code>
+              </strong>{' '}
+              reads <code>prefers-color-scheme</code> <em>once</em> at boot to pick the initial
+              mode. (A live OS-change listener is a logged deferral — it’s a one-shot read for now,
+              which keeps boot deterministic and agent-predictable.)
+            </Typography>
+            <Typography variant='body'>
+              •{' '}
+              <strong>
+                <code>persistMode: true</code>
+              </strong>{' '}
+              writes real user toggles (<code>setMode</code>/<code>toggleMode</code>) to{' '}
+              <code>{`localStorage['valet-mode']`}</code> and restores the stored choice at boot.
+              The boot apply itself is never recorded as a user choice.
+            </Typography>
+            <Typography variant='body'>
+              • <strong>Boot precedence:</strong> <code>stored</code> &gt; <code>requested</code>{' '}
+              &gt; <code>system</code> &gt; <code>{`fallback('dark')`}</code>. A remembered choice
+              always wins over the OS preference.
+            </Typography>
+          </Stack>
+          <CodeBlock
+            code={modeSnippet}
+            ariaLabel='System mode and persistMode example'
+          />
         </Panel>
 
         <Panel

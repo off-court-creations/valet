@@ -17,20 +17,40 @@ import { IconButton } from '../fields/IconButton';
 import { withAlpha } from '../../helpers/color';
 import { inheritSurfaceFontVars } from '../../system/inheritSurfaceFontVars';
 import { getOverlayRoot, useOverlay } from '../../system/overlay';
+import { warnOnce } from '../../system/devErrors';
+import { zVar } from '../../system/zIndex';
+import { useComponentStrings, useValetLocale } from '../../system/locale';
+import type { DeepPartialStrings, ValetStrings } from '../../system/locale';
+import { resolveAnchor } from './resolveAnchor';
+import type { DrawerAnchorInput, PhysicalDrawerAnchor } from './resolveAnchor';
 
 /* Allow strongly-typed CSS custom properties (e.g. --valet-*) */
 type CSSVarName = `--${string}`;
 type CSSVarStyles = React.CSSProperties & Record<CSSVarName, string | number>;
 
 /*───────────────────────────────────────────────────────────*/
-export type DrawerAnchor = 'left' | 'right' | 'top' | 'bottom';
+/**
+ * Public anchor values. The four physical sides ('left'/'right'/'top'/
+ * 'bottom') are direction-invariant; the additive logical 'start'/'end'
+ * (A11Y S12) resolve to left/right per the active writing direction via
+ * {@link resolveAnchor} — 'start' = leading edge, 'end' = trailing edge.
+ */
+export type DrawerAnchor = DrawerAnchorInput;
+
+/** Physical anchor the styled panel paints with (post-resolution). */
+type ResolvedAnchor = PhysicalDrawerAnchor;
 
 export interface DrawerProps extends Presettable {
   /** Controlled visibility */
   open?: boolean;
   /** Default for uncontrolled */
   defaultOpen?: boolean;
-  /** Drawer side */
+  /**
+   * Drawer side. Physical 'left'/'right'/'top'/'bottom' are
+   * direction-invariant; the additive logical 'start'/'end' resolve to
+   * left/right per the active writing direction (RTL-aware — 'start' is the
+   * leading edge). Default 'left'.
+   */
   anchor?: DrawerAnchor;
   /** Callback fired when user requests close */
   onClose?: () => void;
@@ -56,6 +76,23 @@ export interface DrawerProps extends Presettable {
   style?: React.CSSProperties;
   /** sx convenience for inline styles with CSS var support */
   sx?: Sx;
+  /**
+   * Accessible name for the dialog. Required (alongside `aria-labelledby`) for
+   * non-persistent/overlay Drawers, which are real `role='dialog'` modals; a
+   * dev warning fires when neither is provided. Ignored by persistent Drawers,
+   * which are inline navigation regions, not dialogs.
+   */
+  'aria-label'?: string;
+  /** Id of an element labelling the dialog (alternative to `aria-label`). */
+  'aria-labelledby'?: string;
+  /**
+   * Instance-level overrides for this component's i18n strings (the portrait
+   * open/close toggle-button aria-labels). Wins over the `ValetLocaleProvider`
+   * value, which in turn wins over the built-in English defaults (A11Y S8
+   * resolution contract; see `src/system/locale.tsx`). Distinct from the
+   * dialog's accessible name, which comes from `aria-label`/`aria-labelledby`.
+   */
+  labels?: DeepPartialStrings<ValetStrings['drawer']>;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -68,11 +105,11 @@ const Backdrop = styled('div')<{ $fade: boolean }>`
   backdrop-filter: blur(2px);
   opacity: ${({ $fade }) => ($fade ? 0 : 1)};
   transition: opacity 200ms ease;
-  z-index: var(--valet-zindex-modal-backdrop, 1390);
+  z-index: ${zVar('modalBackdrop')};
 `;
 
 const Panel = styled('div')<{
-  $anchor: DrawerAnchor;
+  $anchor: ResolvedAnchor;
   $fade: boolean;
   $size: string;
   $bg: string;
@@ -82,8 +119,7 @@ const Panel = styled('div')<{
   $adaptive: boolean;
 }>`
   position: fixed;
-  z-index: ${({ $persistent }) =>
-    $persistent ? 'calc(var(--valet-zindex-modal, 1400) - 1)' : 'var(--valet-zindex-modal, 1400)'};
+  z-index: ${({ $persistent }) => ($persistent ? `calc(${zVar('modal')} - 1)` : zVar('modal'))};
   display: flex;
   flex-direction: column;
   overflow-y: ${({ $anchor }) => ($anchor === 'left' || $anchor === 'right' ? 'auto' : 'visible')};
@@ -91,11 +127,16 @@ const Panel = styled('div')<{
   background: ${({ $bg }) => $bg};
   color: ${({ $text }) => $text};
   box-shadow: ${({ $adaptive }) => ($adaptive ? 'none' : '0 4px 16px rgba(0, 0, 0, 0.3)')};
+  /* rtl: physical-by-design — the accent border, edge-pinning and slide
+     transform are all driven by the physical $anchor prop (left/right/top/
+     bottom). A11Y S12 adds additive logical 'start'/'end' anchors that
+     resolve to physical at the component boundary; the painted side stays
+     physical so an explicit anchor='left' drawer never flips under RTL. */
   ${({ $anchor, $primary }) =>
     $anchor === 'left'
-      ? `border-right:0.25rem solid ${$primary};`
+      ? `border-right:0.25rem solid ${$primary};` /* rtl: physical-by-design */
       : $anchor === 'right'
-        ? `border-left:0.25rem solid ${$primary};`
+        ? `border-left:0.25rem solid ${$primary};` /* rtl: physical-by-design */
         : $anchor === 'top'
           ? `border-bottom:0.25rem solid ${$primary};`
           : `border-top:0.25rem solid ${$primary};`}
@@ -103,14 +144,16 @@ const Panel = styled('div')<{
     $anchor === 'left' || $anchor === 'right'
       ? `width:${$size}; height:100%;`
       : `height:${$size}; width:100%;`}
-  ${({ $anchor }) =>
-    $anchor === 'left'
-      ? 'top:0; left:0;'
-      : $anchor === 'right'
-        ? 'top:0; right:0;'
-        : $anchor === 'top'
-          ? 'top:0; left:0;'
-          : 'bottom:0; left:0;'}
+  ${
+    ({ $anchor }) =>
+      $anchor === 'left'
+        ? 'top:0; left:0;' /* rtl: physical-by-design */
+        : $anchor === 'right'
+          ? 'top:0; right:0;' /* rtl: physical-by-design */
+          : $anchor === 'top'
+            ? 'top:0; left:0;' /* rtl: physical-by-design */
+            : 'bottom:0; left:0;' /* rtl: physical-by-design */
+  }
   transform: ${({ $anchor, $fade, $persistent }) =>
     $persistent
       ? 'none'
@@ -130,7 +173,7 @@ const Panel = styled('div')<{
 export const Drawer: React.FC<DrawerProps> = ({
   open: controlledOpen,
   defaultOpen = false,
-  anchor = 'left',
+  anchor: anchorProp = 'left',
   onClose,
   size = '16rem',
   disableBackdropClick = false,
@@ -144,8 +187,19 @@ export const Drawer: React.FC<DrawerProps> = ({
   className,
   style,
   sx,
+  'aria-label': ariaLabel,
+  'aria-labelledby': ariaLabelledBy,
+  labels,
 }) => {
   const { theme } = useTheme();
+  const t = useComponentStrings('drawer', labels);
+  /* Resolve the (possibly logical) anchor to a physical side for the active
+     writing direction (A11Y S12). Everything downstream — the styled Panel's
+     physical $anchor math, the persistent-drawer margin offset, the portrait
+     toggle placement — consumes this PHYSICAL value, so 'start'/'end' follow
+     `dir` while explicit 'left'/'right'/'top'/'bottom' stay put. */
+  const { dir } = useValetLocale();
+  const anchor = resolveAnchor(anchorProp, dir);
   // Only subscribe to width/height when adaptive logic is enabled to
   // prevent unnecessary renders during horizontal window resize with
   // persistent drawers. Always read the surface element for offset.
@@ -300,25 +354,56 @@ export const Drawer: React.FC<DrawerProps> = ({
   // Ref to the portalled panel root; used to mirror Surface font vars
   const panelRef = React.useRef<HTMLDivElement>(null);
 
-  useOverlay(
-    open && !persistentEffective && panelRef.current
-      ? {
-          element: panelRef.current,
-          onRequestClose: () => requestClose(),
-          disableOutsideClick: disableBackdropClick,
-          disableEscapeKeyDown,
-          trapFocus: false,
-          restoreFocusOnClose: true,
-          inertBackground: true,
-          label: 'Drawer',
-        }
-      : null,
+  // Shared overlay wiring (registry v2): Escape/outside dismissal + inert
+  // background for overlay (non-persistent) mode. The ref-callback registers on
+  // the first open commit (panel attach) — Escape/inert land in the same render
+  // the panel mounts, not one render late (audit Modal.tsx:223, same shape).
+  // Options resolve live at event time, so a swapped onClose fires fresh.
+  const overlayActive = open && !persistentEffective;
+  const overlayRef = useOverlay(overlayActive, () => ({
+    onRequestClose: () => requestClose(),
+    disableOutsideClick: disableBackdropClick,
+    disableEscapeKeyDown,
+    // S5: an overlay Drawer is a real modal dialog — trap Tab focus and move
+    // focus into the panel on open (registerOverlayV2 focuses the first
+    // focusable / the tabIndex=-1 panel). Fixes the stranded-focus bug: the
+    // pre-S5 Drawer made the background inert but, with trapFocus:false, never
+    // moved focus in, leaving focus on the now-inert trigger. Persistent
+    // Drawers never reach here (overlayActive is false), so they keep their
+    // non-dialog, non-trapping inline-navigation semantics.
+    trapFocus: true,
+    restoreFocusOnClose: true,
+    inertBackground: true,
+    label: 'Drawer',
+  }));
+
+  // Merge the overlay registration ref with the local panelRef.
+  const setPanelRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      panelRef.current = node;
+      overlayRef(node);
+    },
+    [overlayRef],
   );
 
   // Mirror Surface font/typography vars into the portalled panel
   useLayoutEffect(() => {
     if (panelRef.current) inheritSurfaceFontVars(panelRef.current);
   });
+
+  // Dev-time a11y guard: an overlay Drawer is role='dialog'/aria-modal and so
+  // must carry an accessible name. Persistent Drawers are inline regions, not
+  // dialogs, and are exempt. warnOnce keeps it to a single message per name.
+  useLayoutEffect(() => {
+    if (!overlayActive) return;
+    if (process.env.NODE_ENV === 'production') return;
+    if (ariaLabel || ariaLabelledBy) return;
+    warnOnce(
+      'Drawer:accessible-name',
+      'valet Drawer: an overlay (non-persistent) Drawer is a modal dialog and ' +
+        'needs an accessible name. Provide `aria-label` or `aria-labelledby`.',
+    );
+  }, [overlayActive, ariaLabel, ariaLabelledBy]);
 
   if (!open && !persistentEffective) {
     if (adaptiveMode && portrait) {
@@ -331,11 +416,13 @@ export const Drawer: React.FC<DrawerProps> = ({
               position: 'fixed',
               top: `calc(${theme.spacing(1)} + ${offsetTop}px)`,
               [anchor]: theme.spacing(1),
-              zIndex: 9999,
+              /* Collapsed-drawer toggle sits at the app-bar chrome layer
+                 (OVERLAY S7) so it stays tappable above page content. */
+              zIndex: zVar('appbar'),
               background: toggleBg,
             } as unknown as import('../../types').Sx
           }
-          aria-label='Open drawer'
+          aria-label={t.openDrawer}
         />
       );
     }
@@ -351,7 +438,7 @@ export const Drawer: React.FC<DrawerProps> = ({
         />
       )}
       <Panel
-        ref={panelRef}
+        ref={setPanelRef}
         $anchor={anchor}
         $fade={fade}
         $size={typeof size === 'number' ? `${size}px` : size}
@@ -361,8 +448,21 @@ export const Drawer: React.FC<DrawerProps> = ({
         $persistent={persistentEffective}
         $adaptive={adaptiveMode}
         data-state='open'
+        // Dialog semantics for overlay (modal) Drawers only. Persistent
+        // Drawers are inline navigation regions and intentionally carry no
+        // dialog role / aria-modal / focusable container (R17, plan §3.4 S5).
+        {...(persistentEffective
+          ? null
+          : {
+              role: 'dialog' as const,
+              'aria-modal': true,
+              'aria-label': ariaLabel,
+              'aria-labelledby': ariaLabelledBy,
+              tabIndex: -1,
+            })}
         className={[presetClasses, className].filter(Boolean).join(' ')}
         data-valet-component='Drawer'
+        /* precedence: component-owned layout < caller style < sx (API-TYPES S8) */
         style={
           {
             // Preserve top offset when docked on sides/top
@@ -373,8 +473,8 @@ export const Drawer: React.FC<DrawerProps> = ({
             ...(persistentEffective && (anchor === 'left' || anchor === 'right')
               ? { height: `calc(100% - ${offsetTop}px)` }
               : null),
-            ...(sx || {}),
             ...(style as React.CSSProperties),
+            ...(sx || {}),
           } as CSSVarStyles
         }
       >
@@ -390,7 +490,7 @@ export const Drawer: React.FC<DrawerProps> = ({
               size='sm'
               variant='outlined'
               onClick={requestClose}
-              aria-label='Close drawer'
+              aria-label={t.closeDrawer}
             />
           </div>
         )}

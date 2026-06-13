@@ -3,7 +3,6 @@
 // Minimal ESM CLI to scaffold a Valet + React + Vite app.
 // Phase 1 + Phase 2: implement TS-only template.
 
-import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import fs from 'node:fs';
@@ -11,13 +10,18 @@ import os from 'node:os';
 import { spawn } from 'node:child_process';
 // readline not used with enquirer prompts
 import chalk from 'chalk';
-import enquirer from 'enquirer';
+import enquirerModule from 'enquirer';
 import ora from 'ora';
 import gradient from 'gradient-string';
 import figlet from 'figlet';
 import boxen from 'boxen';
 
-const require = createRequire(import.meta.url);
+// enquirer ships incomplete types: its static prompt constructors
+// (Input/Confirm/Select) exist at runtime but are absent from the
+// published `typeof Enquirer`. Cast once so checkJs sees them.
+/** @type {any} */
+const enquirer = enquirerModule;
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -106,11 +110,19 @@ function readJSONSafe(p) {
   }
 }
 
-function log(...args) { console.log(mark.info, ...args); }
-function err(...args) { console.error(mark.error, ...args); }
+function log(...args) {
+  console.log(mark.info, ...args);
+}
+function err(...args) {
+  console.error(mark.error, ...args);
+}
 
-function step(msg) { console.log(chalk.dim('•'), chalk.bold(msg)); }
-function done(msg) { console.log(mark.ok, msg); }
+function step(msg) {
+  console.log(chalk.dim('•'), chalk.bold(msg));
+}
+function done(msg) {
+  console.log(mark.ok, msg);
+}
 
 async function withSpinner(text, fn) {
   if (!isInteractive()) {
@@ -138,18 +150,64 @@ function usage() {
   console.log('  ', chalk.cyan('npm create @archway/valet-app'), chalk.gray('<dir> [options]'));
   console.log();
   console.log(chalk.bold('Options:'));
-  console.log('  ', chalk.green('--template'), chalk.gray('ts|js|hybrid   Choose template (default: ts)'));
-  console.log('  ', chalk.green('--no-install'), chalk.gray('Skip dependency install (default runs install)'));
-  console.log('  ', chalk.green('--pm'), chalk.gray('npm|pnpm|yarn|bun    Package manager (default: auto)'));
-  console.log('  ', chalk.green('--git|--no-git'), chalk.gray('Initialize git repo (default: --git)'));
+  console.log(
+    '  ',
+    chalk.green('--template'),
+    chalk.gray('ts|js|hybrid   Choose template (default: ts)'),
+  );
+  console.log(
+    '  ',
+    chalk.green('--no-install'),
+    chalk.gray('Skip dependency install (default runs install)'),
+  );
+  console.log(
+    '  ',
+    chalk.green('--pm'),
+    chalk.gray('npm|pnpm|yarn|bun    Package manager (default: auto)'),
+  );
+  console.log(
+    '  ',
+    chalk.green('--git|--no-git'),
+    chalk.gray('Initialize git repo (default: --git)'),
+  );
   console.log('  ', chalk.green('--mcp'), chalk.gray('Enable valet MCP guidance (default)'));
   console.log('  ', chalk.green('--no-mcp'), chalk.gray('Disable MCP guidance'));
-  console.log('  ', chalk.green('--router|--no-router'), chalk.gray('Include React Router (default: --router)'));
-  console.log('  ', chalk.green('--zustand|--no-zustand'), chalk.gray('Include Zustand store (default: --zustand)'));
-  console.log('  ', chalk.green('--three|--r3f'), chalk.gray('Enable 3D (React Three Fiber) experience (default: off)'));
+  console.log(
+    '  ',
+    chalk.green('--global-mcp'),
+    chalk.gray('Install @archway/valet-mcp globally + edit ~/.codex/config.toml'),
+  );
+  console.log(
+    '  ',
+    chalk.green('--no-global-mcp'),
+    chalk.gray('Skip the global MCP install/config edit (default in CI)'),
+  );
+  console.log(
+    '  ',
+    chalk.green('--router|--no-router'),
+    chalk.gray('Include React Router (default: --router)'),
+  );
+  console.log(
+    '  ',
+    chalk.green('--zustand|--no-zustand'),
+    chalk.gray('Include Zustand store (default: --zustand)'),
+  );
+  console.log(
+    '  ',
+    chalk.green('--three|--r3f'),
+    chalk.gray('Enable 3D (React Three Fiber) experience (default: off)'),
+  );
   console.log('  ', chalk.green('--no-three'), chalk.gray('Disable 3D experience'));
-  console.log('  ', chalk.green('--minimal'), chalk.gray('Minimal files (single page; trims extras)'));
-  console.log('  ', chalk.green('--path-alias'), chalk.gray('<token>     Import alias for src (default: @)'));
+  console.log(
+    '  ',
+    chalk.green('--minimal'),
+    chalk.gray('Minimal files (single page; trims extras)'),
+  );
+  console.log(
+    '  ',
+    chalk.green('--path-alias'),
+    chalk.gray('<token>     Import alias for src (default: @)'),
+  );
   console.log('  ', chalk.green('-h, --help'), chalk.gray('Show help'));
   console.log();
 }
@@ -169,31 +227,97 @@ function parseArgs(argv) {
     minimal: false,
     pathAlias: '@',
     help: false,
+    // Opt back into the global @archway/valet-mcp install + ~/.codex/config.toml
+    // edit during non-interactive runs (CI). undefined = not set on the CLI;
+    // CVA_GLOBAL_MCP=1 is the env equivalent. Interactive runs prompt regardless.
+    globalMcp: undefined,
     // true if any CLI flag (starts with '-') was supplied
     hadFlags: false,
   };
 
   for (let i = 0; i < args.length; i++) {
     const a = args[i];
-    if (!out.dir && !a.startsWith('-')) { out.dir = a; continue; }
+    if (!out.dir && !a.startsWith('-')) {
+      out.dir = a;
+      continue;
+    }
     if (a.startsWith('-')) out.hadFlags = true;
-    if (a === '--template') { out.template = args[++i]; continue; }
-    if (a === '--install') { out.install = true; continue; }
-    if (a === '--no-install') { out.install = false; continue; }
-    if (a === '--pm') { out.pm = args[++i]; continue; }
-    if (a === '--git') { out.git = true; continue; }
-    if (a === '--no-git') { out.git = false; continue; }
-    if (a === '--mcp') { out.mcp = true; continue; }
-    if (a === '--no-mcp') { out.mcp = false; continue; }
-    if (a === '--router') { out.router = true; continue; }
-    if (a === '--no-router') { out.router = false; continue; }
-    if (a === '--zustand') { out.zustand = true; continue; }
-    if (a === '--no-zustand') { out.zustand = false; continue; }
-    if (a === '--three' || a === '--r3f') { out.three = true; continue; }
-    if (a === '--no-three') { out.three = false; continue; }
-    if (a === '--minimal') { out.minimal = true; continue; }
-    if (a === '--path-alias') { out.pathAlias = args[++i]; continue; }
-    if (a === '-h' || a === '--help') { out.help = true; continue; }
+    if (a === '--template') {
+      out.template = args[++i];
+      continue;
+    }
+    if (a === '--install') {
+      out.install = true;
+      continue;
+    }
+    if (a === '--no-install') {
+      out.install = false;
+      continue;
+    }
+    if (a === '--pm') {
+      out.pm = args[++i];
+      continue;
+    }
+    if (a === '--git') {
+      out.git = true;
+      continue;
+    }
+    if (a === '--no-git') {
+      out.git = false;
+      continue;
+    }
+    if (a === '--mcp') {
+      out.mcp = true;
+      continue;
+    }
+    if (a === '--no-mcp') {
+      out.mcp = false;
+      continue;
+    }
+    if (a === '--global-mcp') {
+      out.globalMcp = true;
+      continue;
+    }
+    if (a === '--no-global-mcp') {
+      out.globalMcp = false;
+      continue;
+    }
+    if (a === '--router') {
+      out.router = true;
+      continue;
+    }
+    if (a === '--no-router') {
+      out.router = false;
+      continue;
+    }
+    if (a === '--zustand') {
+      out.zustand = true;
+      continue;
+    }
+    if (a === '--no-zustand') {
+      out.zustand = false;
+      continue;
+    }
+    if (a === '--three' || a === '--r3f') {
+      out.three = true;
+      continue;
+    }
+    if (a === '--no-three') {
+      out.three = false;
+      continue;
+    }
+    if (a === '--minimal') {
+      out.minimal = true;
+      continue;
+    }
+    if (a === '--path-alias') {
+      out.pathAlias = args[++i];
+      continue;
+    }
+    if (a === '-h' || a === '--help') {
+      out.help = true;
+      continue;
+    }
     err('Unknown option:', a);
     usage();
     process.exit(1);
@@ -246,7 +370,8 @@ function run(cmd, args, opts = {}) {
     child.on('close', (code) => {
       if (settled) return;
       settled = true;
-      code === 0 ? resolve() : reject(new Error(`${cmd} exited ${code}`));
+      if (code === 0) resolve();
+      else reject(new Error(`${cmd} exited ${code}`));
     });
   });
 }
@@ -269,7 +394,8 @@ function runQuiet(cmd, args, opts = {}) {
     child.on('close', (code) => {
       if (settled) return;
       settled = true;
-      code === 0 ? resolve() : reject(new Error(errOut.trim() || out.trim() || `${cmd} exited ${code}`));
+      if (code === 0) resolve();
+      else reject(new Error(errOut.trim() || out.trim() || `${cmd} exited ${code}`));
     });
   });
 }
@@ -277,14 +403,20 @@ function runQuiet(cmd, args, opts = {}) {
 async function main() {
   ensureNodeVersion();
   const opts = parseArgs(process.argv);
-  const interactive = process.stdin.isTTY && process.stdout.isTTY && process.env.CVA_NONINTERACTIVE !== '1';
+  const interactive =
+    process.stdin.isTTY && process.stdout.isTTY && process.env.CVA_NONINTERACTIVE !== '1';
 
-  if (opts.help) { usage(); process.exit(0); }
+  if (opts.help) {
+    usage();
+    process.exit(0);
+  }
 
   // Friendly banner for interactive sessions
   if (interactive) {
     // Clear the screen for a clean, modern feel
-    try { console.clear(); } catch {}
+    try {
+      console.clear();
+    } catch {}
     banner();
   }
 
@@ -293,7 +425,10 @@ async function main() {
   // guided wizard that helps decide flags. If "No", proceed with defaults
   // and only ask for a directory if missing.
   if (interactive && !opts.hadFlags) {
-    const change = await promptConfirm('Would you like to change any of the default settings?', false);
+    const change = await promptConfirm(
+      'Would you like to change any of the default settings?',
+      false,
+    );
     if (change) {
       const answers = await promptForFlagsExperience(opts);
       Object.assign(opts, answers);
@@ -308,7 +443,10 @@ async function main() {
     Object.assign(opts, answers);
   }
 
-  if (!opts.dir) { usage(); process.exit(1); }
+  if (!opts.dir) {
+    usage();
+    process.exit(1);
+  }
 
   if (!['ts', 'js', 'hybrid'].includes(opts.template)) {
     err(`Unknown template '${opts.template}'. Use: ts | js | hybrid`);
@@ -358,7 +496,15 @@ async function main() {
 
   // Apply feature toggles (router/zustand/minimal/path alias)
   await withSpinner('Applying options', async () => {
-    await applyFeatureToggles({ targetDir, template: opts.template, router: opts.router, zustand: opts.zustand, minimal: opts.minimal, pathAlias: opts.pathAlias, three: opts.three });
+    await applyFeatureToggles({
+      targetDir,
+      template: opts.template,
+      router: opts.router,
+      zustand: opts.zustand,
+      minimal: opts.minimal,
+      pathAlias: opts.pathAlias,
+      three: opts.three,
+    });
   });
 
   // Generate AGENTS.md from single source template unless --no-mcp
@@ -375,13 +521,25 @@ async function main() {
     });
   });
 
-  // If MCP is enabled, attempt to install the valet MCP server globally
+  // If MCP guidance is enabled, optionally install the valet MCP server
+  // globally and register it in ~/.codex/config.toml — but only with explicit
+  // consent. AGENTS.md/CLAUDE.md guidance (above) is always generated; the
+  // machine-mutating side effects below are gated.
+  //   • Interactive: a yes-default consent prompt.
+  //   • Non-interactive (CI): SKIP by default; opt back in with --global-mcp
+  //     or CVA_GLOBAL_MCP=1.
   if (opts.mcp) {
+    if (await consentGlobalMCP(opts, interactive)) {
       await withSpinner('Installing MCP', async () => {
-      await installGlobalMCP();
-    });
-    // Run potential interactive config outside spinner to avoid UI conflicts
-    await ensureMCPConfig();
+        await installGlobalMCP();
+      });
+      // Consent already granted upstream (the single yes-default gate) — write
+      // the ~/.codex/config.toml entry without a second prompt. Run outside the
+      // spinner to avoid UI conflicts.
+      await ensureMCPConfig(true);
+    } else {
+      mcpManualTip();
+    }
   }
 
   // Git init (default; opt-out with --no-git)
@@ -389,7 +547,9 @@ async function main() {
     try {
       await withSpinner('Initializing git', async () => {
         // verify git is available
-        try { await execCapture('git', ['--version']); } catch {
+        try {
+          await execCapture('git', ['--version']);
+        } catch {
           throw new Error('git is not installed or not in PATH');
         }
 
@@ -398,7 +558,9 @@ async function main() {
           await runQuiet('git', ['init', '-b', 'main'], { cwd: targetDir });
         } catch {
           await runQuiet('git', ['init'], { cwd: targetDir });
-          try { await runQuiet('git', ['branch', '-M', 'main'], { cwd: targetDir }); } catch {}
+          try {
+            await runQuiet('git', ['branch', '-M', 'main'], { cwd: targetDir });
+          } catch {}
         }
 
         // ensure identity, prompting locally if missing
@@ -407,12 +569,24 @@ async function main() {
         // stage and (optionally) commit
         await runQuiet('git', ['add', '.'], { cwd: targetDir });
         if (identityReady) {
-          await runQuiet('git', ['commit', '-m', 'init(create-valet-app): scaffold template'], { cwd: targetDir });
+          await runQuiet('git', ['commit', '-m', 'init(create-valet-app): scaffold template'], {
+            cwd: targetDir,
+          });
         } else {
           log('Skipping initial commit. Tip: configure git identity then run:');
           console.log('   ', chalk.gray('git'), 'config user.name', chalk.cyan('"Your Name"'));
-          console.log('   ', chalk.gray('git'), 'config user.email', chalk.cyan('"you@example.com"'));
-          console.log('   ', chalk.gray('git'), 'commit -m', chalk.cyan('"init(create-valet-app): scaffold template"'));
+          console.log(
+            '   ',
+            chalk.gray('git'),
+            'config user.email',
+            chalk.cyan('"you@example.com"'),
+          );
+          console.log(
+            '   ',
+            chalk.gray('git'),
+            'commit -m',
+            chalk.cyan('"init(create-valet-app): scaffold template"'),
+          );
         }
       });
     } catch (e) {
@@ -452,15 +626,14 @@ async function main() {
     if (openInCode) {
       try {
         const readme = path.join(targetDir, 'README.md');
-        const args = fs.existsSync(readme)
-          ? ['-n', targetDir, readme]
-          : ['-n', targetDir];
+        const args = fs.existsSync(readme) ? ['-n', targetDir, readme] : ['-n', targetDir];
         await run('code', args);
       } catch {}
     }
     if (startNow) {
       const pmNow = resolvePM(opts.pm);
-      const args = pmNow === 'npm' ? ['run', 'dev', '--', '--open'] : ['run', 'dev', '--', '--open'];
+      const args =
+        pmNow === 'npm' ? ['run', 'dev', '--', '--open'] : ['run', 'dev', '--', '--open'];
       try {
         await run(pmNow, args, { cwd: targetDir });
       } catch (e) {
@@ -475,7 +648,10 @@ async function main() {
 
 function normalizePkgName(input) {
   // turn into kebab, drop invalid chars
-  const base = path.basename(input).toLowerCase().replace(/[^a-z0-9-_.]/g, '-');
+  const base = path
+    .basename(input)
+    .toLowerCase()
+    .replace(/[^a-z0-9-_.]/g, '-');
   return base || 'valet-app';
 }
 
@@ -486,7 +662,15 @@ main().catch((e) => {
 
 // ─────────────────────────────────────────────────────────────
 // Feature toggles and file transformations
-async function applyFeatureToggles({ targetDir, template, router, zustand, minimal, pathAlias, three }) {
+async function applyFeatureToggles({
+  targetDir,
+  template,
+  router,
+  zustand,
+  minimal,
+  pathAlias,
+  three,
+}) {
   const isJS = template === 'js';
   const exts = {
     main: isJS ? 'jsx' : 'tsx',
@@ -514,7 +698,8 @@ async function applyFeatureToggles({ targetDir, template, router, zustand, minim
   // Router toggle
   if (!router) {
     safePkgMutate(files.pkg, (pkg) => {
-      if (pkg.dependencies && pkg.dependencies['react-router-dom']) delete pkg.dependencies['react-router-dom'];
+      if (pkg.dependencies && pkg.dependencies['react-router-dom'])
+        delete pkg.dependencies['react-router-dom'];
       return pkg;
     });
     // main.* without BrowserRouter
@@ -616,7 +801,8 @@ export default function QuickstartPage() {
     fs.writeFileSync(files.quickstart, qsNoNav);
 
     // Remove second page entirely
-    if (fs.existsSync(files.secondDir)) fs.rmSync(files.secondDir, { recursive: true, force: true });
+    if (fs.existsSync(files.secondDir))
+      fs.rmSync(files.secondDir, { recursive: true, force: true });
   } else {
     // Router is enabled; if minimal, keep only Quickstart route and remove SecondPage
     if (minimal) {
@@ -732,7 +918,8 @@ export default function QuickstartPage() {
 }
 `;
       fs.writeFileSync(files.quickstart, qsMinimal);
-      if (fs.existsSync(files.secondDir)) fs.rmSync(files.secondDir, { recursive: true, force: true });
+      if (fs.existsSync(files.secondDir))
+        fs.rmSync(files.secondDir, { recursive: true, force: true });
     }
   }
 
@@ -750,7 +937,10 @@ export default function QuickstartPage() {
     // Update Vite alias key
     if (fs.existsSync(files.viteConfig)) {
       const vc = fs.readFileSync(files.viteConfig, 'utf8');
-      const updated = vc.replace(/(['"])@(['"])\s*:\s*path\.resolve/g, `$1${pathAlias}$2: path.resolve`);
+      const updated = vc.replace(
+        /(['"])@(['"])\s*:\s*path\.resolve/g,
+        `$1${pathAlias}$2: path.resolve`,
+      );
       fs.writeFileSync(files.viteConfig, updated);
     }
     // Update tsconfig/jsconfig path mapping
@@ -799,7 +989,8 @@ export default function QuickstartPage() {
     safePkgMutate(files.pkg, (pkg) => {
       pkg.dependencies = pkg.dependencies || {};
       if (!pkg.dependencies['three']) pkg.dependencies['three'] = '^0.179.0';
-      if (!pkg.dependencies['@react-three/fiber']) pkg.dependencies['@react-three/fiber'] = '^9.3.0';
+      if (!pkg.dependencies['@react-three/fiber'])
+        pkg.dependencies['@react-three/fiber'] = '^9.3.0';
       if (!pkg.dependencies['@react-three/drei']) pkg.dependencies['@react-three/drei'] = '^10.7.0';
       return pkg;
     });
@@ -954,7 +1145,9 @@ export default function QuickstartPage() {
         fs.writeFileSync(jsxPath, quickstartContent);
         // Remove TSX version if present to align with R3F pages policy
         if (fs.existsSync(files.quickstart)) {
-          try { fs.rmSync(files.quickstart); } catch {}
+          try {
+            fs.rmSync(files.quickstart);
+          } catch {}
         }
       } else {
         fs.writeFileSync(files.quickstart, quickstartContent);
@@ -1029,13 +1222,16 @@ vite.config.ts.timestamp-*
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
 `;
-  try { fs.writeFileSync(p, contents); } catch {}
+  try {
+    fs.writeFileSync(p, contents);
+  } catch {}
 }
 
 async function ensureGitIdentity({ cwd }) {
   // Returns true if identity is configured (locally or globally). If missing
   // and interactive, prompts and sets local config for this repo.
-  const nonInteractive = process.env.CVA_NONINTERACTIVE === '1' || !process.stdin.isTTY || !process.stdout.isTTY;
+  const nonInteractive =
+    process.env.CVA_NONINTERACTIVE === '1' || !process.stdin.isTTY || !process.stdout.isTTY;
 
   async function get(key) {
     try {
@@ -1054,7 +1250,11 @@ async function ensureGitIdentity({ cwd }) {
 
   const { Input } = enquirer;
   if (!name) {
-    name = await new Input({ name: 'gitName', message: 'Git user.name', initial: os.userInfo().username || '' }).run();
+    name = await new Input({
+      name: 'gitName',
+      message: 'Git user.name',
+      initial: os.userInfo().username || '',
+    }).run();
   }
   if (!email) {
     email = await new Input({ name: 'gitEmail', message: 'Git user.email', initial: '' }).run();
@@ -1086,7 +1286,8 @@ function execCapture(cmd, args, opts = {}) {
     child.on('close', (code) => {
       if (settled) return;
       settled = true;
-      code === 0 ? resolve(out) : reject(new Error(err || `${cmd} exited ${code}`));
+      if (code === 0) resolve(out);
+      else reject(new Error(err || `${cmd} exited ${code}`));
     });
   });
 }
@@ -1098,7 +1299,10 @@ function showSuccessSummary({ targetDir, installed }) {
     chalk.cyan(`cd ${rel}`),
     !installed ? chalk.gray('npm install') : null,
     chalk.cyan('npm run dev'),
-  ].filter(Boolean).map((l) => `• ${l}`).join('\n');
+  ]
+    .filter(Boolean)
+    .map((l) => `• ${l}`)
+    .join('\n');
 
   const body = `${title}\n\n${steps}`;
   const box = boxen(body, {
@@ -1111,12 +1315,19 @@ function showSuccessSummary({ targetDir, installed }) {
 }
 
 async function hasBinary(cmd, testArgs = ['--version']) {
-  try { await execCapture(cmd, testArgs); return true; } catch { return false; }
+  try {
+    await execCapture(cmd, testArgs);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 async function openShellInProject(dir) {
   const isWin = process.platform === 'win32';
-  const shell = isWin ? (process.env.COMSPEC || process.env.ComSpec || 'cmd.exe') : (process.env.SHELL || 'bash');
+  const shell = isWin
+    ? process.env.COMSPEC || process.env.ComSpec || 'cmd.exe'
+    : process.env.SHELL || 'bash';
   const args = [];
   try {
     done(`Opening shell in ${chalk.cyan(dir)} (type 'exit' to return)`);
@@ -1128,7 +1339,16 @@ async function openShellInProject(dir) {
 
 // ─────────────────────────────────────────────────────────────
 // Render single-source AGENTS.md (and CLAUDE.md) tailored to template and flags
-async function generateAgentsDoc({ targetDir, include, template, router, zustand, minimal, pathAlias, three }) {
+async function generateAgentsDoc({
+  targetDir,
+  include,
+  template,
+  router,
+  zustand,
+  minimal,
+  pathAlias,
+  three,
+}) {
   const agentsPath = path.join(targetDir, 'AGENTS.md');
   const claudePath = path.join(targetDir, 'CLAUDE.md');
   if (!include) {
@@ -1162,7 +1382,9 @@ async function generateAgentsDoc({ targetDir, include, template, router, zustand
     '- Format check: `npm run -s format`',
     '- Format write: `npm run -s format:fix`',
     '- Build: `npm run -s build`',
-  ].filter(Boolean).join('\n');
+  ]
+    .filter(Boolean)
+    .join('\n');
 
   const FEATURES_LIST = [
     `- Router: ${router ? 'enabled' : 'disabled'}`,
@@ -1197,9 +1419,71 @@ async function generateAgentsDoc({ targetDir, include, template, router, zustand
   fs.writeFileSync(claudePath, renderedClaude);
 }
 
-// Attempt to install @archway/valet-mcp globally when MCP is enabled.
-// Uses the same minor line as the Valet dependency in templates.
-// Skips install if CVA_SKIP_GLOBAL_MCP=1 is set, or if install fails (non-fatal).
+// Pure decision: should the global @archway/valet-mcp install + ~/.codex
+// config edit run without any prompt? This covers only the cases that can be
+// decided up front (the non-interactive path, plus the CVA_SKIP_GLOBAL_MCP and
+// CVA_GLOBAL_MCP env overrides). Interactive runs with no override fall through
+// to a prompt (returns 'prompt'). Kept pure/side-effect-free so the consent
+// behavior is auditable in isolation (the sandbox test in scripts/consent.test.mjs
+// drives the whole bin as a subprocess rather than importing this function,
+// since the module runs main() on load).
+//   Returns: true (run), false (skip), or 'prompt' (ask the user).
+//   Precedence: CVA_SKIP_GLOBAL_MCP (hard opt-out) > explicit opt-in
+//   (--global-mcp / --no-global-mcp / CVA_GLOBAL_MCP) > interactivity default
+//   (interactive → prompt; non-interactive/CI → skip).
+/**
+ * @param {{ interactive?: boolean, globalMcp?: boolean|undefined, env?: Record<string, string|undefined> }} [opts]
+ */
+function decideGlobalMCP({ interactive, globalMcp, env } = {}) {
+  const e = env || process.env;
+  // Hard opt-out always wins (pre-existing escape hatch, kept for back-compat).
+  if (e.CVA_SKIP_GLOBAL_MCP === '1') return false;
+  // Explicit opt-in/out via flag or env removes all ambiguity.
+  if (globalMcp === true) return true;
+  if (globalMcp === false) return false;
+  if (e.CVA_GLOBAL_MCP === '1') return true;
+  // No explicit signal: interactive asks; non-interactive (CI) skips by default.
+  return interactive ? 'prompt' : false;
+}
+
+// Resolve decideGlobalMCP, prompting the user when interactive and undecided.
+// The prompt is yes-default so the historical happy path is one Enter away.
+async function consentGlobalMCP(opts, interactive) {
+  const decision = decideGlobalMCP({ interactive, globalMcp: opts.globalMcp });
+  if (decision === true) return true;
+  if (decision === false) return false;
+  // decision === 'prompt'
+  return await promptConfirm(
+    'Install the @archway/valet-mcp server globally (npm i -g) and register it in ~/.codex/config.toml?',
+    true,
+  );
+}
+
+// Printed when the global MCP install + config edit is skipped, so users always
+// know how to wire it up by hand (or opt back in for CI).
+function mcpManualTip() {
+  const minor = resolveValetMinor();
+  const range = valetMinorRange(minor);
+  log('Skipping global MCP install and ~/.codex/config.toml edit.');
+  console.log('    To enable MCP later:');
+  console.log('   ', chalk.gray('npm'), 'i -g', chalk.cyan(`@archway/valet-mcp@${range}`));
+  console.log('    then add to ~/.codex/config.toml:');
+  console.log(chalk.gray('    [mcp_servers.valet]'));
+  console.log(chalk.gray('    command = "valet-mcp"'));
+  console.log(chalk.gray('    args = []'));
+  console.log(
+    '    Non-interactive runs can opt in with',
+    chalk.cyan('--global-mcp'),
+    'or',
+    chalk.cyan('CVA_GLOBAL_MCP=1') + '.',
+  );
+}
+
+// Attempt to install @archway/valet-mcp globally. Only called after
+// consentGlobalMCP() has approved the operation (interactive prompt, or a
+// non-interactive --global-mcp / CVA_GLOBAL_MCP=1 opt-in). Uses the same minor
+// line as the Valet dependency in templates. Honors the hard CVA_SKIP_GLOBAL_MCP=1
+// opt-out as a final guard; failures are non-fatal.
 async function installGlobalMCP() {
   if (process.env.CVA_SKIP_GLOBAL_MCP === '1') return;
   try {
@@ -1215,9 +1499,15 @@ async function installGlobalMCP() {
     } catch {
       // Fallback to npm ls -g (best-effort)
       try {
-        const json = await execCapture('npm', ['ls', '-g', '@archway/valet-mcp', '--json', '--long']);
+        const json = await execCapture('npm', [
+          'ls',
+          '-g',
+          '@archway/valet-mcp',
+          '--json',
+          '--long',
+        ]);
         const info = JSON.parse(json);
-        const dep = (info && (info.dependencies && info.dependencies['@archway/valet-mcp'])) || info;
+        const dep = (info && info.dependencies && info.dependencies['@archway/valet-mcp']) || info;
         if (dep && dep.version) installedVersion = String(dep.version);
       } catch {}
     }
@@ -1241,9 +1531,11 @@ async function installGlobalMCP() {
 }
 
 // Ensure Codex CLI knows about the valet MCP server by checking ~/.codex/config.toml.
-// If the file is missing the valet entry, prompt the user to add it.
-async function ensureMCPConfig() {
-  const nonInteractive = process.env.CVA_NONINTERACTIVE === '1' || !process.stdin.isTTY || !process.stdout.isTTY;
+// Reached only after consentGlobalMCP() granted consent for the global MCP
+// side effects. `consented` is true when that grant was explicit (the interactive
+// prompt's yes, or a non-interactive --global-mcp / CVA_GLOBAL_MCP=1 opt-in), in
+// which case the edit proceeds without a second prompt.
+async function ensureMCPConfig(consented = false) {
   const configDir = path.join(os.homedir(), '.codex');
   const configPath = path.join(configDir, 'config.toml');
   let content = '';
@@ -1257,22 +1549,20 @@ async function ensureMCPConfig() {
 
   const block = `\n[mcp_servers.valet]\ncommand = "valet-mcp"\nargs = []\n`;
 
-  if (nonInteractive) {
+  // Without explicit upstream consent, never mutate the file: leave a
+  // copy-paste tip and touch nothing. (The main flow always passes
+  // consented=true; this guards any other/future caller and keeps the
+  // mutation strictly consent-gated.)
+  if (!consented) {
     log('MCP is enabled. Tip: add valet server to ~/.codex/config.toml:');
     console.log(block.trim());
     return;
   }
 
-  const question = exists
-    ? 'MCP enabled, but ~/.codex/config.toml lacks a valet entry. Add it now?'
-    : 'MCP enabled. Create ~/.codex/config.toml with a valet entry?';
-
-  const answer = await promptConfirm(question, true);
-  if (!answer) return;
-
   try {
     if (!fs.existsSync(configDir)) fs.mkdirSync(configDir, { recursive: true });
-    const prefix = exists && content.trim().length ? (content.endsWith('\n') ? '' : '\n') + '\n' : '';
+    const prefix =
+      exists && content.trim().length ? (content.endsWith('\n') ? '' : '\n') + '\n' : '';
     const next = (content || '') + prefix + block;
     fs.writeFileSync(configPath, next);
     done(`Updated ${chalk.cyan(configPath)} with valet MCP server`);
@@ -1392,12 +1682,17 @@ async function promptForFlagsExperience(defaults) {
   // No preset selection; jump straight to full-options refinement seeded with current defaults
 
   // Intro text
-  console.log(boxen(chalk.bold('Customize your Valet app') + '\n' + chalk.dim('Review and tweak any setting'), {
-    padding: 1,
-    margin: 0,
-    borderColor: 'cyan',
-    borderStyle: 'round',
-  }));
+  console.log(
+    boxen(
+      chalk.bold('Customize your Valet app') + '\n' + chalk.dim('Review and tweak any setting'),
+      {
+        padding: 1,
+        margin: 0,
+        borderColor: 'cyan',
+        borderStyle: 'round',
+      },
+    ),
+  );
   console.log();
   const base = {
     dir: defaults.dir || 'valet-app',

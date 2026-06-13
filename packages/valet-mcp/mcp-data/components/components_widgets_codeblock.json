@@ -2,7 +2,7 @@
   "name": "CodeBlock",
   "category": "widgets",
   "slug": "components/widgets/codeblock",
-  "summary": "CodeBlock component",
+  "summary": "Syntax-highlighted code block with a copy-to-clipboard button and snackbar feedback; use it to display source snippets — set `language` to match the curated highlight.js set (others fall back to plaintext).",
   "status": "stable",
   "aliases": [
     "codeblock",
@@ -53,7 +53,6 @@
   "cssVars": [],
   "cssPresets": [],
   "events": [],
-  "actions": [],
   "slots": [],
   "bestPractices": [
     "Use monospace fonts and high‑contrast theme colours for readability.",
@@ -63,9 +62,11 @@
     "Keep code immutable in this component; use an editor widget for editable code."
   ],
   "examples": [],
+  "docsUrl": "/codeblock-demo",
   "sourceFiles": [
-    "src/components/widgets/CodeBlock.tsx"
+    "src/components/widgets/CodeBlock.tsx",
+    "docs/src/pages/components/widgets/CodeBlockDemo.tsx"
   ],
-  "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "version": "0.35.1",
+  "schemaVersion": "1.7"
 }

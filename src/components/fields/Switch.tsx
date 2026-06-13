@@ -3,13 +3,30 @@
 // Theme-aware, accessible boolean <Switch /> component
 // – Un / controlled, FormControl-aware, preset-friendly
 // ─────────────────────────────────────────────────────────────
-import React, { forwardRef, useCallback, useId, useState, MouseEventHandler } from 'react';
+import React, { forwardRef, useCallback, useId, MouseEventHandler } from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
-import { useOptionalForm } from './FormControl';
+import { useFieldState } from '../../hooks/useControlledState';
+import { deprecateProp } from '../../system/deprecate';
 import type { FieldBaseProps } from '../../types';
-import type { ChangeInfo, OnValueChange, OnValueCommit } from '../../system/events';
+import type { ChangeInfo, InputSource, OnValueChange, OnValueCommit } from '../../system/events';
+
+/*───────────────────────────────────────────────────────────*/
+/* ChangeInfo.source classification (ruling R10)             */
+
+/**
+ * Classify the real activation source of a `<button role="switch">` click.
+ *
+ * Browsers synthesize a `click` event when a focused button is activated via
+ * the keyboard (Space or Enter); that synthetic click carries `detail === 0`
+ * (no associated mouse presses), whereas a genuine pointer click reports
+ * `detail >= 1`. The old code hardcoded `'pointer'` for every toggle. We map
+ * `detail === 0` ⇒ `'keyboard'` and `detail >= 1` ⇒ `'pointer'`.
+ */
+function classifyClickSource(e: React.MouseEvent<HTMLButtonElement>): InputSource {
+  return e.detail === 0 ? 'keyboard' : 'pointer';
+}
 
 /*───────────────────────────────────────────────────────────*/
 /* Size map helper                                           */
@@ -77,6 +94,9 @@ const Thumb = styled('span')<{
 }>`
   position: absolute;
   top: 50%;
+  /* rtl: physical-by-design — thumb off-position origin paired with the
+     positive-px translate slide below; mirroring the slide direction needs
+     a negated $offset (interactive-RTL drag/slide math is a logged deferral). */
   left: var(--valet-switch-pad, 2px); /* gutter */
   transform: translate(${({ $checked, $offset }) => ($checked ? `${$offset}px` : '0')}, -50%);
   width: ${({ $size }) => $size}px;
@@ -97,7 +117,15 @@ export interface SwitchProps
   checked?: boolean;
   /** Default state for uncontrolled usage. */
   defaultChecked?: boolean;
-  /** DOM click event parity (raw). */
+  /**
+   * Raw DOM click passthrough.
+   *
+   * @deprecated Deprecated in favour of `onValueChange` (API-TYPES S10, Q12).
+   * It still fires with the raw `MouseEvent` through 0.x but logs a one-time
+   * dev warning and is removed at 1.0. For the new boolean value (with the
+   * typed {@link ChangeInfo} payload), use `onValueChange`; for the raw DOM
+   * event, read `event` off that payload or attach a native `onClick`.
+   */
   onChange?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   /** Canonical value change event (fires on each toggle). */
   onValueChange?: OnValueChange<boolean>;
@@ -120,6 +148,14 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
       name,
       size = 'md',
       disabled = false,
+      // API-TYPES S6 (stage A): destructure the FieldBaseProps cluster BEFORE the
+      // rest-spread so label/helperText/error/fullWidth stop leaking onto the
+      // <button> Track as invalid DOM attributes. Only `error` is wired
+      // (aria-invalid below); FieldShell rendering of the rest is Phase 2 / Q10.
+      label: _label,
+      helperText: _helperText,
+      error,
+      fullWidth: _fullWidth,
       preset: p,
       className,
       sx,
@@ -127,32 +163,37 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
     },
     ref,
   ) => {
+    void _label;
+    void _helperText;
+    void _fullWidth;
     /* ----- theme + geometry -------------------------------- */
     const { theme } = useTheme();
     const geom = createSizeMap()[size];
 
-    /* ----- optional FormControl binding -------------------- */
-    const form = useOptionalForm();
+    /* ----- value resolution (shared hook, ruling R9) ------- */
+    /* Single resolution of checked/control/form binding via the shared hook:
+       precedence prop > form > internal, latched at mount; an unseeded form
+       key renders `defaultChecked` as controlled with a one-time dev warn and
+       never writes on mount. This replaces the old hand-rolled guard where
+       `Boolean(form.values[name])` coerced a missing key to `false`, ignoring
+       `defaultChecked` and rendering the switch unchecked. */
+    const [checked, setValue] = useFieldState<boolean>({
+      value: checkedProp,
+      defaultValue: defaultChecked ?? false,
+      fallback: false,
+      name,
+      component: 'Switch',
+    });
 
-    /* If we’re in a form and given `name`, prefer that as source of truth */
-    const formChecked = form && name ? Boolean(form.values[name]) : undefined;
-
-    const controlled = checkedProp !== undefined || formChecked !== undefined;
-    // Controlled/uncontrolled guard (dev-only)
-    const initialCtl = React.useRef<boolean | undefined>(undefined);
-    React.useEffect(() => {
-      if (process.env.NODE_ENV === 'production') return;
-      if (initialCtl.current === undefined) initialCtl.current = controlled;
-      else if (initialCtl.current !== controlled) {
-        console.error(
-          'Switch: component switched from %s to %s after mount. This is not supported.',
-          initialCtl.current ? 'controlled' : 'uncontrolled',
-          controlled ? 'controlled' : 'uncontrolled',
-        );
-      }
-    }, [controlled]);
-    const [self, setSelf] = useState(defaultChecked);
-    const checked = controlled ? (formChecked !== undefined ? formChecked : !!checkedProp) : self;
+    /* `onChange` (raw DOM passthrough) is deprecated in favour of the
+       canonical `onValueChange` (API-TYPES S10, Q12 / ruling R30). It keeps
+       firing through 0.x but warns once when supplied; removed at 1.0. Unlike
+       a renamed value prop the two are not mutually exclusive — the old code
+       always fired both — so we warn on presence rather than resolve one over
+       the other. */
+    if (onChange !== undefined) {
+      deprecateProp('Switch', 'onChange', 'onValueChange');
+    }
 
     /* ----- event handler ----------------------------------- */
     const handleToggle: MouseEventHandler<HTMLButtonElement> = useCallback(
@@ -160,16 +201,16 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
         if (disabled) return;
         const next = !checked;
 
-        /* update uncontrolled state */
-        if (!controlled) setSelf(next);
-        /* notify FormControl */
-        if (name && form) form.setField(name as keyof Record<string, unknown>, next as unknown);
+        /* update internal/form state via the hook's single precedence rule */
+        setValue(next);
         /* fire events */
         onChange?.(e);
         const info: ChangeInfo<boolean> = {
           previousValue: checked,
           phase: 'input',
-          source: e.detail != null ? 'pointer' : 'programmatic',
+          // Honest activation source (ruling R10): keyboard (synthetic
+          // detail-0 click) vs a genuine pointer press (detail >= 1).
+          source: classifyClickSource(e),
           event: e,
           name,
         };
@@ -178,7 +219,7 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
         /* propagate native click */
         btnProps.onClick?.(e);
       },
-      [checked, controlled, disabled, form, name, onChange, onValueChange, onValueCommit, btnProps],
+      [checked, disabled, name, onChange, onValueChange, onValueCommit, setValue, btnProps],
     );
 
     /* ----- preset → className ------------------------------ */
@@ -196,6 +237,7 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
         data-valet-component='Switch'
         id={switchId}
         aria-checked={checked}
+        aria-invalid={error || undefined}
         aria-disabled={disabled || undefined}
         data-state={checked ? 'checked' : 'unchecked'}
         data-disabled={disabled ? 'true' : 'false'}

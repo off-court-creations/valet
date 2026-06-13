@@ -2,24 +2,47 @@
 // src/components/fields/Checkbox.tsx | valet
 // Theme-aware, accessible Checkbox – consistent outline, no blue flash,
 // greyed-out disabled styling (Accordion-style).
+//
+// FIELDS S7 (rulings R9/R10): value/form/internal resolution delegated to the
+// shared `useFieldState` hook (precedence prop > form > internal, latched at
+// mount, no mount-time store writes). `bindForm` is KEPT (Fields veto register
+// — not propagated to the hook) and expressed by passing `name: undefined` to
+// the hook when `bindForm` is false, which skips the form layer entirely.
+// ChangeInfo.source is classified honestly: keyboard activation (Space/Enter)
+// of the checkbox vs a real pointer click, instead of the old
+// `instanceof MouseEvent ⇒ 'pointer'` check that mislabelled keyboard toggles.
 // ─────────────────────────────────────────────────────────────────────────────
-import React, {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useId,
-  useRef,
-  useState,
-  ChangeEvent,
-} from 'react';
+import React, { forwardRef, useCallback, useEffect, useId, useRef, ChangeEvent } from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
-import { useOptionalForm } from './FormControl';
+import { useFieldState } from '../../hooks/useControlledState';
 import { toRgb, mix, toHex } from '../../helpers/color';
 import type { Theme } from '../../system/themeStore';
 import type { FieldBaseProps } from '../../types';
-import type { ChangeInfo, OnValueChange, OnValueCommit } from '../../system/events';
+import type { ChangeInfo, InputSource, OnValueChange, OnValueCommit } from '../../system/events';
+
+/*───────────────────────────────────────────────────────────────────────────*/
+/* ChangeInfo.source classification (ruling R10)                            */
+
+/**
+ * Classify the real toggle source of a checkbox `change` event.
+ *
+ * Browsers fire a checkbox `change` through a synthesized `click`: activating
+ * the control via the keyboard (Space, and Enter where supported) produces a
+ * `click` with `detail === 0` (no associated mouse presses), whereas a genuine
+ * pointer click reports `detail >= 1`. The old code mapped any `MouseEvent` to
+ * `'pointer'`, which mislabelled keyboard toggles. We now map a `MouseEvent`
+ * with `detail === 0` ⇒ `'keyboard'`, `detail >= 1` ⇒ `'pointer'`, and any
+ * non-`MouseEvent` native event (programmatic `.checked` + dispatched change)
+ * ⇒ `'programmatic'`.
+ */
+function classifyChangeSource(native: Event): InputSource {
+  if (typeof MouseEvent !== 'undefined' && native instanceof MouseEvent) {
+    return native.detail === 0 ? 'keyboard' : 'pointer';
+  }
+  return 'programmatic';
+}
 
 /*───────────────────────────────────────────────────────────────────────────*/
 /* Public prop contracts                                                    */
@@ -82,7 +105,7 @@ const Wrapper = styled('label')<{
   touch-action: manipulation;
 
   /* Visible focus ring on the visual box when input is focused */
-  input[type='checkbox']:focus-visible + [data-indicator] {
+  & input[type='checkbox']:focus-visible + [data-indicator] {
     outline: ${({ theme }) => theme.stroke(2)} solid ${({ theme }) => theme.colors.primary};
     outline-offset: ${({ theme }) => theme.stroke(1)};
   }
@@ -179,6 +202,12 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
       size = 'md',
       disabled = false,
       error,
+      // API-TYPES S6 (stage A): destructure the remaining FieldBaseProps members
+      // BEFORE the rest-spread so they stop leaking onto the <input> as invalid
+      // DOM attributes. FieldShell rendering of these is Phase 2 / Q10; for now
+      // they are swallowed (void-referenced to satisfy no-unused-vars).
+      helperText: _helperText,
+      fullWidth: _fullWidth,
       onChange,
       onValueChange,
       onValueCommit,
@@ -191,6 +220,8 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
     },
     ref,
   ) => {
+    void _helperText;
+    void _fullWidth;
     /* Theme & sizing ---------------------------------------------------- */
     const { theme, mode } = useTheme();
     const map = createSizeMap(theme);
@@ -211,67 +242,45 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
       mix(toRgb(theme.colors.text), toRgb(mode === 'dark' ? '#000' : '#fff'), 0.4),
     );
 
-    /* Optional FormControl binding -------------------------------------- */
-    const form = useOptionalForm<Record<string, unknown>>();
-
-    /* Controlled vs uncontrolled logic ---------------------------------- */
-    const controlled = checkedProp !== undefined;
-    // Controlled/uncontrolled guard (dev-only)
-    const initialCtl = React.useRef<boolean | undefined>(undefined);
-    React.useEffect(() => {
-      if (process.env.NODE_ENV === 'production') return;
-      if (initialCtl.current === undefined) initialCtl.current = controlled;
-      else if (initialCtl.current !== controlled) {
-        console.error(
-          'Checkbox: component switched from %s to %s after mount. This is not supported.',
-          initialCtl.current ? 'controlled' : 'uncontrolled',
-          controlled ? 'controlled' : 'uncontrolled',
-        );
-      }
-    }, [controlled]);
-    const formBound = Boolean(form) && bindForm && Boolean(name);
-    const initialState = controlled
-      ? checkedProp!
-      : formBound
-        ? Boolean(form!.values[name as keyof Record<string, unknown>])
-        : Boolean(defaultChecked);
-
-    const [internal, setInternal] = useState(initialState);
-
-    const currentChecked = controlled
-      ? checkedProp!
-      : formBound
-        ? Boolean(form!.values[name as keyof Record<string, unknown>])
-        : internal;
+    /**
+     * Single resolution of value/control/form binding (ruling R9). Precedence
+     * is prop > form > internal, latched at mount; an unseeded form key renders
+     * `defaultChecked ?? false` as controlled and never writes on mount.
+     *
+     * `bindForm` is KEPT (Fields veto register — not propagated to the hook):
+     * when `bindForm` is false we pass `name: undefined`, which skips the form
+     * layer entirely, so the field is purely prop/internal even inside a
+     * `FormControl`. The DOM `name` attribute is still emitted below when both
+     * `bindForm` and `name` are present, preserving submission semantics.
+     */
+    const [currentChecked, setValue] = useFieldState<boolean>({
+      value: checkedProp,
+      defaultValue: defaultChecked ?? false,
+      fallback: false,
+      name: bindForm ? name : undefined,
+      component: 'Checkbox',
+    });
 
     /* Event handler – updates state, FormStore, and user callback -------- */
     const handleChange = useCallback(
       (e: ChangeEvent<HTMLInputElement>) => {
         const prev = currentChecked;
         const next = e.target.checked;
-        if (!controlled && !formBound) setInternal(next);
-        if (form && formBound && name)
-          form.setField(name as keyof Record<string, unknown>, next as unknown);
+        setValue(next);
 
         // Fire DOM-parity event
         onChange?.(e);
-        const src: ChangeInfo<boolean>['source'] =
-          e.nativeEvent instanceof KeyboardEvent
-            ? 'keyboard'
-            : e.nativeEvent instanceof MouseEvent || e.nativeEvent instanceof PointerEvent
-              ? 'pointer'
-              : 'programmatic';
         const info: ChangeInfo<boolean> = {
           previousValue: prev,
           phase: 'input',
-          source: src,
+          source: classifyChangeSource(e.nativeEvent),
           event: e,
           name,
         };
         onValueChange?.(next, info);
         onValueCommit?.(next, { ...info, phase: 'commit' });
       },
-      [controlled, formBound, form, name, onChange, onValueChange, onValueCommit, currentChecked],
+      [name, onChange, onValueChange, onValueCommit, currentChecked, setValue],
     );
 
     /* Manage native indeterminate property ------------------------------- */

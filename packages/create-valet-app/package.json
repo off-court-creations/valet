@@ -1,6 +1,6 @@
 {
   "name": "@archway/create-valet-app",
-  "version": "0.34.0",
+  "version": "0.35.1",
   "description": "Scaffold a valet app using React + Vite (TS by default)",
   "type": "module",
   "bin": {
@@ -34,6 +34,9 @@
   "scripts": {
     "dev": "node bin/create-valet-app.js --help",
     "validate": "node scripts/validate.mjs",
+    "pack:check": "node scripts/pack.test.mjs",
+    "consent:test": "node scripts/consent.test.mjs",
+    "prepublishOnly": "node scripts/pack.test.mjs && node scripts/validate.mjs",
     "bump:minor": "node scripts/bump.mjs minor",
     "bump:major": "node scripts/bump.mjs major"
   },

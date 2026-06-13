@@ -2,7 +2,7 @@
   "name": "WebGLCanvas",
   "category": "primitives",
   "slug": "components/primitives/webglcanvas",
-  "summary": "WebGLCanvas component",
+  "summary": "DPI-aware WebGL2 canvas that resizes to its parent and runs a render callback on a requestAnimationFrame loop; use it for custom GPU graphics, shaders, and visualizations rather than 2D drawing.",
   "status": "stable",
   "aliases": [
     "webgl",
@@ -42,7 +42,7 @@
       "type": "readonly [number, number, number, number]",
       "required": false,
       "description": "Optional clear color, defaults to transparent. Only sets clearColor, not clearing each frame.",
-      "default": "[0, 0, 0, 0]"
+      "default": "DEFAULT_CLEAR_COLOR"
     },
     {
       "name": "asBackground",
@@ -86,7 +86,6 @@
   "cssVars": [],
   "cssPresets": [],
   "events": [],
-  "actions": [],
   "slots": [],
   "bestPractices": [
     "Prefer low DPR on animated backgrounds to reduce fill-rate.",
@@ -94,9 +93,11 @@
     "Dispose GL resources on unmount to prevent leaks."
   ],
   "examples": [],
+  "docsUrl": "/webglcanvas-demo",
   "sourceFiles": [
-    "src/components/primitives/WebGLCanvas.tsx"
+    "src/components/primitives/WebGLCanvas.tsx",
+    "docs/src/pages/components/primitives/WebGLCanvasDemo.tsx"
   ],
-  "version": "0.34.1",
-  "schemaVersion": "1.6"
+  "version": "0.35.1",
+  "schemaVersion": "1.7"
 }
