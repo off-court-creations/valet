@@ -37,7 +37,7 @@
       "id": "chip-sizes",
       "title": "Sizes",
       "lang": "tsx",
-      "code": "<Stack direction='row' gap={0.5}>\n  <Chip label=\"Small\" size=\"s\" />\n  <Chip label=\"Medium\" size=\"m\" />\n  <Chip label=\"Large\" size=\"l\" />\n</Stack>"
+      "code": "<Stack direction='row' gap={0.5}>\n  <Chip label=\"Small\" size=\"sm\" />\n  <Chip label=\"Medium\" size=\"md\" />\n  <Chip label=\"Large\" size=\"lg\" />\n</Stack>"
     },
     {
       "id": "chip-with-legend",

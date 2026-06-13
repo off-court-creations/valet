@@ -189,7 +189,7 @@
     {
       "id": "list-select-reorder",
       "title": "Selectable & reorderable",
-      "code": "() => {\n  const [items, setItems] = React.useState([{name:'Ada',role:'Programmer'},{name:'Alan',role:'Mathematician'}]);\n  const [sel, setSel] = React.useState(null);\n  return (<Stack>\n    <List data={items} getTitle={(i)=>i.name} getSubtitle={(i)=>i.role} getItemKey={(i)=>i.name} selectionMode='single' reorderable selected={sel} onSelectionChange={setSel} onReorder={setItems} />\n    <Typography variant='subtitle'>Selected: {sel?.name || '—'}</Typography>\n  </Stack>);\n}",
+      "code": "() => {\n  type Person = { name: string; role: string };\n  const [items, setItems] = React.useState<Person[]>([{name:'Ada',role:'Programmer'},{name:'Alan',role:'Mathematician'}]);\n  const [sel, setSel] = React.useState<Person | null>(null);\n  return (<Stack>\n    <List data={items} getTitle={(i)=>i.name} getSubtitle={(i)=>i.role} getItemKey={(i)=>i.name} selectionMode='single' reorderable selected={sel} onSelectionChange={(i)=>setSel(i)} onReorder={setItems} />\n    <Typography variant='subtitle'>Selected: {sel?.name || '—'}</Typography>\n  </Stack>);\n}",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {

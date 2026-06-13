@@ -38,7 +38,7 @@
       "id": "panel-background",
       "title": "Background + padding",
       "lang": "tsx",
-      "code": "<Panel background={theme.colors['secondary']} sx={{ padding: theme.spacing(1) }}><Typography>Readable on themed background</Typography></Panel>"
+      "code": "<Panel color={theme.colors['secondary']} sx={{ padding: theme.spacing(1) }}><Typography>Readable on themed background</Typography></Panel>"
     },
     {
       "id": "panel-centered",

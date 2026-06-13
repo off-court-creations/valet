@@ -20,12 +20,12 @@
     {
       "id": "richchat-minimal",
       "title": "Minimal thread",
-      "code": "(() => {\n  const msgs = [\n    { role: 'assistant', content: 'How can I help you today?' }\n  ];\n  return <RichChat messages={msgs} />;\n})()"
+      "code": "(() => {\n  const msgs: RichMessage[] = [\n    { role: 'assistant', content: 'How can I help you today?' }\n  ];\n  return <RichChat messages={msgs} />;\n})()"
     },
     {
       "id": "richchat-form",
       "title": "Inline form question",
-      "code": "(() => {\n  const DateForm = ({ onSubmit }) => (\n    <Stack direction='row' gap={1}>\n      <DateSelector onChange={(v)=>void 0} value='' />\n      <IconButton icon='carbon:checkmark' aria-label='Confirm' onClick={()=>onSubmit('2025-01-01')} />\n    </Stack>\n  );\n  const [messages, setMessages] = React.useState([\n    { role: 'assistant', content: 'Pick a date', form: ({ onSubmit }) => <DateForm onSubmit={onSubmit} /> }\n  ]);\n  return <RichChat messages={messages} onFormSubmit={(val)=>console.log(val)} />;\n})()"
+      "code": "(() => {\n  const DateForm = ({ onSubmit }: { onSubmit: (value: string) => void }) => (\n    <Stack direction='row' gap={1}>\n      <DateSelector onValueChange={()=>void 0} value='' />\n      <IconButton icon='carbon:checkmark' aria-label='Confirm' onClick={()=>onSubmit('2025-01-01')} />\n    </Stack>\n  );\n  const [messages] = React.useState<RichMessage[]>([\n    { role: 'assistant', content: 'Pick a date', form: ({ onSubmit }) => <DateForm onSubmit={onSubmit} /> }\n  ]);\n  return <RichChat messages={messages} onFormSubmit={(val)=>console.log(val)} />;\n})()"
     }
   ]
 }

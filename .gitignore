@@ -32,6 +32,9 @@ mcp-data/_docs-extract.json
 mcp-data/_tmp-meta
 packages/valet-mcp/mcp-data/_ts-extract.json
 
+# check:examples scratch (synthesized .tsx modules; cleaned per run, never commit)
+scripts/checks/.examples-typecheck
+
 # VitePress artifacts
 **/.vitepress/dist
 **/.vitepress/cache

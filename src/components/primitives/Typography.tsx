@@ -11,6 +11,7 @@ import { useTheme } from '../../system/themeStore';
 import { useSurface } from '../../system/surfaceStore';
 import { shallow } from 'zustand/shallow';
 import { preset } from '../../css/stylePresets';
+import { warnOnce } from '../../system/devErrors';
 import type { Presettable, Sx } from '../../types';
 import type { Variant as VariantType, WeightAlias } from '../../types/typography';
 import {
@@ -56,6 +57,33 @@ const mapping: Record<Variant, keyof JSX.IntrinsicElements> = {
   subtitle: 'span',
   button: 'span',
 };
+
+/* ─── Unknown-variant guard ──────────────────────────────────────────────
+   `variant` is checked at compile time, but Typography is rendered live in
+   the docs from un-type-checked sidecar example code (Babel-transpiled JSON).
+   A typo like `variant='body-sm'` therefore reaches the runtime as a non-key
+   string and previously white-screened the page: `theme.typography[variant]`
+   is `undefined`, so the unguarded `.md` read threw a TypeError (and
+   `mapping[variant]` resolved to an `undefined` host tag).
+
+   This is an enum typo, NOT the missing-context/required-prop misuse that the
+   Q18 hard-throw policy governs — so the agent-DX answer here is to degrade
+   gracefully: dev-warn once (naming the component, the bad variant, and the
+   valid set) and fall back to 'body' rather than throw. Validation is keyed on
+   `theme.typography` (the source of truth for size tokens); `mapping` shares
+   the same key set, so the fallback fixes both the size lookup and the host
+   tag. */
+const VALID_VARIANTS = Object.keys(mapping) as Variant[];
+
+function resolveVariant(variant: Variant, themeTypography: Record<string, unknown>): Variant {
+  if (Object.prototype.hasOwnProperty.call(themeTypography, variant)) return variant;
+  warnOnce(
+    `Typography:variant:${String(variant)}`,
+    `valet: Typography: unknown variant ${JSON.stringify(variant)}. ` +
+      `Valid variants are: ${VALID_VARIANTS.join(', ')}. Falling back to 'body'.`,
+  );
+  return 'body';
+}
 
 // ─── PERF S7 — per-tag module-scope styled cache ──────────────────────
 // The styled component reads everything it needs from its `$`-prefixed
@@ -150,7 +178,7 @@ function getStyledTag(Tag: keyof JSX.IntrinsicElements) {
 
 const TypographyImpl = <E extends React.ElementType = 'span'>(
   {
-    variant = 'body',
+    variant: variantProp = 'body',
     bold = false,
     italic = false,
     weight,
@@ -175,8 +203,11 @@ const TypographyImpl = <E extends React.ElementType = 'span'>(
   }: PolymorphicProps<E, TypographyOwnProps>,
   forwardedRef: PolymorphicRef<E>,
 ) => {
-  const Tag = mapping[variant];
   const { theme } = useTheme();
+  // Resolve an unknown/typo variant to a valid key (dev-warns once) before any
+  // indexed lookup into `theme.typography` / `mapping` can throw on it.
+  const variant = resolveVariant(variantProp, theme.typography);
+  const Tag = mapping[variant];
   const breakpoint = useSurface((s) => s.breakpoint, shallow);
   const elRef = useRef<HTMLElement | null>(null);
   const [autoColor, setAutoColor] = useState<string | undefined>(undefined);

@@ -47,6 +47,7 @@
     "verify:pack": "node scripts/verify-pack.mjs",
     "check:engine": "node scripts/checks/engine-smoke.mjs",
     "check:rtl": "node scripts/checks/rtl-physical.mjs",
+    "check:examples": "node scripts/checks/example-types.mjs",
     "check:bench": "node scripts/checks/engine-bench.mjs",
     "check:package": "publint && attw --pack . --profile esm-only --exclude-entrypoints ./styles.css",
     "check:bundle": "node scripts/check-bundle.mjs",

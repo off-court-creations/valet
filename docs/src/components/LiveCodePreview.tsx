@@ -3,7 +3,14 @@
 // Runtime TSX example renderer using @babel/standalone
 // ─────────────────────────────────────────────────────────────
 import * as React from 'react';
-import { Box, Stack, Typography, useTheme, CodeBlock } from '@archway/valet';
+import {
+  Box,
+  Stack,
+  Typography,
+  useTheme,
+  CodeBlock,
+  ValetErrorBoundary,
+} from '@archway/valet';
 import * as Valet from '@archway/valet';
 import * as Babel from '@babel/standalone';
 
@@ -110,7 +117,34 @@ export default function LiveCodePreview({
                 Preview error: {error}
               </Typography>
             ) : (
-              rendered
+              // Compile errors land in `error` above (try/catch in `rendered`).
+              // The boundary catches RENDER-time throws (e.g. an example using
+              // an invalid Typography variant) so a broken sidecar example can
+              // never white-screen the docs page. Keyed on `code` so switching
+              // examples re-mounts and clears any previously-caught error.
+              <ValetErrorBoundary
+                key={code}
+                fallback={({ error: renderError }) => (
+                  <div
+                    role='alert'
+                    style={{
+                      padding: '8px 12px',
+                      border: '1px solid #b00020',
+                      borderRadius: '6px',
+                      background: '#fff5f5',
+                      color: '#5c0011',
+                      font: '13px/1.5 system-ui, -apple-system, Segoe UI, Roboto, sans-serif',
+                      whiteSpace: 'pre-wrap',
+                      wordBreak: 'break-word',
+                    }}
+                  >
+                    Preview error
+                    {title ? ` in “${title}”` : ''}: {renderError.message || String(renderError)}
+                  </div>
+                )}
+              >
+                {rendered}
+              </ValetErrorBoundary>
             )}
           </div>
           <Box sx={{ flex: '1 1 320px', minWidth: 0 }}>

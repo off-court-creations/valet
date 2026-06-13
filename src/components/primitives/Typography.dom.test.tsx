@@ -5,12 +5,13 @@
 // per-tag module-scope styled cache — one styled() per tag across all
 // instances, stable host identity, no subtree remount (PERF S7)
 // ─────────────────────────────────────────────────────────────
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import React, { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import * as createStyledModule from '../../css/createStyled';
 import { Typography } from './Typography';
 import { SurfaceCtx, createSurfaceStore } from '../../system/surfaceStore';
+import { resetWarnOnce } from '../../system/devErrors';
 
 /* react-dom warns unless act usage is announced ----------------------- */
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -251,5 +252,76 @@ describe('Typography per-tag styled cache (PERF S7, jsdom)', () => {
     const second = typoEl(container);
     expect(second.tagName).toBe('SPAN');
     expect(second).toBe(first);
+  });
+});
+
+/* ─────────────── Unknown-variant guard (jsdom) ─────────────────────────
+   Typography is rendered live in the docs from un-type-checked sidecar
+   example code, so a typo like `variant='body-sm'` reaches runtime as a
+   non-key string. Before the guard, `theme.typography[variant].md` read
+   `.md` off `undefined` and white-screened the page (TypeError), and
+   `mapping[variant]` resolved to an `undefined` host tag. The guard
+   dev-warns once and falls back to 'body' — both the size lookup and the
+   rendered tag must recover. */
+describe('Typography unknown-variant guard (jsdom)', () => {
+  beforeEach(() => {
+    resetWarnOnce();
+  });
+
+  it('renders a typo variant as the body fallback instead of crashing', () => {
+    /* The discriminating regression: rendering must not throw, and the host
+       tag must be the body tag (<p>), proving the mapping fallback fixed the
+       rendered tag (not an `undefined` host from `mapping['body-sm']`). */
+    const { container } = renderWithSurface(
+      // @ts-expect-error — intentionally invalid variant, mirrors un-typed docs example code
+      <Typography variant='body-sm'>oops</Typography>,
+    );
+    const el = typoEl(container);
+    expect(el).toBeTruthy();
+    expect(el.tagName).toBe('P'); // mapping fallback → 'body' → <p>
+    expect(el.textContent).toBe('oops');
+  });
+
+  it('dev-warns exactly once with the component, bad variant and valid set', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    try {
+      /* Two mounts of the same bad variant — warnOnce must coalesce to one. */
+      renderWithSurface(
+        // @ts-expect-error — intentionally invalid variant
+        <Typography variant='body-sm'>a</Typography>,
+      );
+      renderWithSurface(
+        // @ts-expect-error — intentionally invalid variant
+        <Typography variant='body-sm'>b</Typography>,
+      );
+
+      const variantWarnings = warn.mock.calls
+        .map((c) => String(c[0]))
+        .filter((m) => m.includes('Typography') && m.includes('body-sm'));
+      expect(variantWarnings).toHaveLength(1);
+
+      const [msg] = variantWarnings;
+      expect(msg).toContain('Typography');
+      expect(msg).toContain('body-sm');
+      expect(msg).toContain('body');
+      expect(msg).toContain('h1');
+      expect(msg).toContain("Falling back to 'body'");
+    } finally {
+      warn.mockRestore();
+    }
+  });
+
+  it('leaves valid variants unchanged (no warning, correct tag)', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    try {
+      const { container } = renderWithSurface(<Typography variant='h3'>title</Typography>);
+      expect(typoEl(container).tagName).toBe('H3');
+      const variantWarnings = warn.mock.calls
+        .map((c) => String(c[0]))
+        .filter((m) => m.includes('unknown variant'));
+      expect(variantWarnings).toHaveLength(0);
+    } finally {
+      warn.mockRestore();
+    }
   });
 });
