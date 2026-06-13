@@ -31,6 +31,15 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: npm
       - run: npm ci
+      # typecheck:scripts (checkJs) covers the CVA CLI bin and follows the
+      # validate-jsx test's import into the MCP server src, so those two
+      # sub-packages' deps must be present or tsc reports TS2307 on their
+      # imports (zod / @modelcontextprotocol/sdk / enquirer / ora / …).
+      # Root `npm ci` does not install them (no workspaces), so install both.
+      - run: npm ci
+        working-directory: packages/valet-mcp
+      - run: npm ci
+        working-directory: packages/create-valet-app
       - run: npm run lint
       - run: npm run typecheck
       - run: npm run mcp:schema:check
