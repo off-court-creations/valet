@@ -139,6 +139,39 @@ optionalDependency to a real resolution in consumer installs.
 composition graph (subsumed by validate_jsx's type-level nesting enforcement)
 and scaffold prompts — available if Ben wants them later.
 
+## CI hardening (first real Actions run, 2026-06-13)
+
+The first real GitHub Actions run surfaced failures the dev tree masked
+(commits `df2250c`, `4c7b66e`):
+- **typecheck:scripts TS2307** — root `npm ci` doesn't install valet-mcp /
+  create-valet-app deps (no workspaces), but typecheck:scripts covers the CVA
+  bin + (via validate-jsx.test) valet-mcp src. Fix: core job installs both
+  sub-packages before typecheck. (Reproduced: 7 TS2307 with deps hidden.)
+- **CVA js + hybrid templates LINT:fail** — eslint configs lacked
+  `parserOptions.ecmaFeatures.jsx`, so espree couldn't parse `.jsx`. Fix
+  applied to both templates; all 13 cva:validate scenarios pass.
+- **check-fresh "9 stale"** — ts-morph emitted `import("/home/xbenc/…").Space`
+  (absolute, host-specific) into 9 prop types. Fix: strip the import()
+  qualifier in extract-ts cleanType; new validate.mjs gate forbids it; corpus
+  regenerated. Also excluded the gitignored `_ts-extract.json` from
+  check-fresh (absent in clean checkouts).
+- **validate-jsx + check-bundle** — needed dist/, but `npm test` ran before
+  `npm run build`. Fix: build-before-test in ci.yml (reproduced: 10 fails
+  dist-hidden → 27/27 with dist).
+- **aiKeyStore on Node 20** — `.buffer` ArrayBuffer rejected cross-realm by
+  Node 20 webcrypto under jsdom. Fix: pass TypedArray views (BufferSource).
+  Verified under a real Node 20.20.2 install (8/8); full suite **1268/1268 on
+  both Node 20 and 22**.
+
+**Already-published caveat (minor, for a future patch):** valet-mcp@0.35.0 was
+published from the maintainer's machine BEFORE the import()-strip fix, so its
+served corpus carries `/home/xbenc/…` absolute paths in ~10 prop `type`
+fields. Cosmetic/path-leak only (types still readable; not functional); a
+valet-mcp 0.35.1 with the clean corpus would resolve it. The aiKeyStore
+BufferSource fix likewise isn't in published valet@0.35.0 — real browsers
+accept `.buffer`, so only the Node-20+jsdom test path was affected; ships in
+the next library patch.
+
 ## Flags & issues
 1. Branch bases on `feat/valet-overhaul` (NOT development) — all referenced
    assets (deprecate.ts, example-types.mjs, schema 1.7, 0.35.0 renames) exist
