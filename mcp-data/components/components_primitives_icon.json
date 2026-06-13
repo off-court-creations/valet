@@ -19,13 +19,13 @@
       "name": "svg",
       "type": "string | ReactElement<React.SVGProps<SVGSVGElement>>",
       "required": false,
-      "description": "[object Object],[object Object],[object Object],[object Object],[object Object]"
+      "description": "Custom SVG:\n• **string** – passed through the parseSvgString allowlist\n  parser. Accepted forms: bare path `d`-data (`\"M12 2L2 22h20z\"`,\n  wrapped in a 24×24 viewBox) or `<path>`-only markup, optionally\n  inside one `<svg>` wrapper. The result is rendered as real React\n  `<svg>`/`<path>` elements — never via `innerHTML`. Anything outside\n  that grammar renders nothing and dev-warns.\n• **ReactElement** – a full `<svg>` element you already trust.\n\n**BREAKING (Q6):** full-SVG strings (`<svg>…</svg>` containing anything\nother than `<path>`, or any string with entities/comments/scripts) no\nlonger render here — they are an XSS vector through the old\n`dangerouslySetInnerHTML` sink. For trusted full-SVG markup, pass a\nReactElement or use IconProps.dangerouslySetSvg."
     },
     {
       "name": "dangerouslySetSvg",
       "type": "string",
       "required": false,
-      "description": "[object Object],[object Object],[object Object]"
+      "description": "Escape hatch for **trusted** raw SVG markup. Reproduces the pre-0.35\n`svg` string behavior exactly: the markup is injected verbatim via\n`dangerouslySetInnerHTML`, so it can execute scripts/event handlers and\nload remote references. The name is the warning — only ever pass markup\nyou fully control (never model output or user input). For untrusted or\nagent-generated markup use IconProps.svg, which is parsed."
     },
     {
       "name": "size",

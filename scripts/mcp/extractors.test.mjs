@@ -136,6 +136,154 @@ export const ProbeHandle = (props: ProbeHandleProps) => {
 };
 `;
 
+// A1 regression (getComment normalizer): when a prop's JSDoc contains an
+// inline {@link}, ts-morph returns getComment()/tag.getComment() as a
+// (string|JSDocNode)[], not a string. The pre-A1 code did
+// \`.map(d => d.getComment() || '').join('\\n')\` → '[object Object]' in the
+// description, and \`(tag.getComment() || '').trim()\` → TypeError swallowed by a
+// bare catch{}, dropping the whole prop's @deprecated detection. This fixture
+// FAILS on the pre-A1 code: \`linked\`'s description would be '[object Object]'
+// and \`oldName\`'s deprecated flag would be lost.
+const PROBE_LINK_SUMMARY = 'Probe for inline {@link} JSDoc normalization';
+const FIXTURE_PROBE_LINK = `// ─────────────────────────────────────────────────────────────
+// src/components/widgets/ProbeLink.tsx | valet
+// ${PROBE_LINK_SUMMARY}
+// ─────────────────────────────────────────────────────────────
+export interface ProbeLinkProps {
+  /**
+   * Fired on change — the unified {@link ProbeLinkProps.newName}, emitting the
+   * selected value.
+   */
+  linked?: (value: string) => void;
+  /**
+   * @deprecated Renamed to {@link ProbeLinkProps.newName | \`newName\`} (Q1).
+   * The \`oldName\` alias keeps working through 0.x and is removed at 1.0.
+   */
+  oldName?: string;
+  newName?: string;
+}
+
+export const ProbeLink = (props: ProbeLinkProps) => <div>{props.newName}</div>;
+`;
+
+// A2 regression (phantom-prop filter): the destructured-param-with-default
+// path invented a public prop for ANY destructured binding that had a default,
+// even when the name wasn't a member of the public props type. That minted
+// phantom \`type:'unknown'\` props (Drawer.anchorProp, Avatar.loading) and, for
+// renamed bindings, attached the default to the wrong (phantom) name instead
+// of the real prop. A separate bug double-counted quoted keys: an interface
+// member declared as \`'aria-label'?: string\` was emitted once quoted (from the
+// member loop) and once unquoted (from the inherited-symbol loop, whose
+// propSet.has() check compared the two different spellings and missed).
+//
+// This fixture exercises all three behaviors and FAILS on the pre-A2 code:
+// • \`anchor: anchorProp = 'left'\` — renamed binding: pre-A2 emitted a phantom
+//   \`anchorProp\` (type:'unknown', default:'left') and left the real \`label\`-
+//   less \`anchor\` without its default. A2: default lands on \`anchor\`, no
+//   \`anchorProp\`.
+// • \`loading = 'lazy'\` — a DOM-passthrough attribute (from the extended
+//   ImgHTMLAttributes) that the extractor records via domPassthrough, NOT as an
+//   enumerated prop, so it's absent from the public-prop set. Pre-A2 invented
+//   \`loading\` (type:'unknown'); A2 drops it.
+// • \`'aria-label'\` — declared quoted on the interface; pre-A2 emitted both
+//   \`'aria-label'\` (quoted) and \`aria-label\` (unquoted). A2: exactly one,
+//   unquoted.
+const PROBE_PHANTOM_SUMMARY = 'Probe for the phantom-prop filter (destructured defaults)';
+const FIXTURE_PROBE_PHANTOM = `// ─────────────────────────────────────────────────────────────
+// src/components/widgets/ProbePhantom.tsx | valet
+// ${PROBE_PHANTOM_SUMMARY}
+// ─────────────────────────────────────────────────────────────
+import React from 'react';
+
+export type ProbeAnchor = 'left' | 'right' | 'start' | 'end';
+
+export interface ProbePhantomProps
+  extends Pick<React.ImgHTMLAttributes<HTMLImageElement>, 'loading'> {
+  /** Physical/logical side. */
+  anchor?: ProbeAnchor;
+  /** Accessible name for the dialog. */
+  'aria-label'?: string;
+  children?: React.ReactNode;
+}
+
+export const ProbePhantom: React.FC<ProbePhantomProps> = ({
+  anchor: anchorProp = 'left',
+  loading = 'lazy',
+  'aria-label': ariaLabel,
+  children,
+}) => <div aria-label={ariaLabel} data-anchor={anchorProp} data-loading={loading}>{children}</div>;
+`;
+
+// A3 regression (call-site deprecation derivation): the authoritative
+// alias→canonical map is parsed from the deprecate.ts call sites, NOT from
+// JSDoc. resolveDeprecatedProp(component, canonicalName, canonical,
+// deprecatedName, deprecated) is a string-literal argument tuple that cannot
+// array-coerce/throw the way an inline {@link} @deprecated comment can, so a
+// prop flagged at the call site is marked deprecated even when its JSDoc has
+// NO @deprecated tag at all. deprecateProp(component, oldName, newName) covers
+// the presence-warn shape (Switch.onChange → onValueChange).
+//
+// This fixture mirrors the 7 known real aliases (Table.selectable/rowKey,
+// Accordion.open/defaultOpen/onOpenChange, List.selectable/getKey) in
+// miniature and FAILS on pre-A3 code: `selectable`/`rowKey`/`open` carry no
+// @deprecated JSDoc, so without the call-site derivation they would be served
+// as first-class canonical API. The canonical replacement comes from arg1
+// (resolveDeprecatedProp) / arg2 (deprecateProp).
+const FIXTURE_PROBE_DEPRECATE_SHIM = `export function resolveDeprecatedProp<T>(
+  _component: string,
+  _canonicalName: string,
+  canonical: T | undefined,
+  _deprecatedName: string,
+  deprecated: T | undefined,
+): T | undefined {
+  return canonical !== undefined ? canonical : deprecated;
+}
+export function deprecateProp(_component: string, _oldName: string, _newName: string): void {}
+`;
+
+const PROBE_DEPRECATE_SUMMARY = 'Probe for call-site deprecation derivation';
+const FIXTURE_PROBE_DEPRECATE = `// ─────────────────────────────────────────────────────────────
+// src/components/widgets/ProbeDeprecate.tsx | valet
+// ${PROBE_DEPRECATE_SUMMARY}
+// ─────────────────────────────────────────────────────────────
+import { resolveDeprecatedProp, deprecateProp } from '../../deprecate-shim';
+
+export interface ProbeDeprecateProps {
+  /** Canonical selection vocabulary. */
+  selectionMode?: 'none' | 'single' | 'multiple';
+  /** NO @deprecated tag here — the call site is the only source of truth. */
+  selectable?: boolean;
+  getItemKey?: (row: unknown) => string;
+  /** Also no @deprecated tag. */
+  getKey?: (row: unknown) => string;
+  onValueChange?: (v: string) => void;
+  /** Deprecated alias resolved via deprecateProp (presence warn). */
+  onChange?: (v: string) => void;
+}
+
+export const ProbeDeprecate = ({
+  selectionMode,
+  selectable: selectableProp,
+  getItemKey,
+  getKey: getKeyProp,
+  onValueChange,
+  onChange,
+}: ProbeDeprecateProps) => {
+  const mode = resolveDeprecatedProp(
+    'ProbeDeprecate',
+    'selectionMode',
+    selectionMode,
+    'selectable',
+    selectableProp,
+  );
+  const key = resolveDeprecatedProp('ProbeDeprecate', 'getItemKey', getItemKey, 'getKey', getKeyProp);
+  if (onChange !== undefined) {
+    deprecateProp('ProbeDeprecate', 'onChange', 'onValueChange');
+  }
+  return <div data-mode={String(mode)} data-key={String(Boolean(key))} onClick={() => onValueChange?.('x')} />;
+};
+`;
+
 describe('extractFromTs', () => {
   let res;
 
@@ -146,6 +294,10 @@ describe('extractFromTs', () => {
     write(root, 'src/components/fields/ProbeField.tsx', FIXTURE_PROBE_FIELD);
     write(root, 'src/components/layout/ProbeBox.tsx', FIXTURE_PROBE_BOX);
     write(root, 'src/components/widgets/ProbeHandle.tsx', FIXTURE_PROBE_HANDLE);
+    write(root, 'src/components/widgets/ProbeLink.tsx', FIXTURE_PROBE_LINK);
+    write(root, 'src/components/widgets/ProbePhantom.tsx', FIXTURE_PROBE_PHANTOM);
+    write(root, 'src/deprecate-shim.ts', FIXTURE_PROBE_DEPRECATE_SHIM);
+    write(root, 'src/components/widgets/ProbeDeprecate.tsx', FIXTURE_PROBE_DEPRECATE);
     res = extractFromTs(root);
   });
 
@@ -187,6 +339,87 @@ describe('extractFromTs', () => {
     expect(res.ProbeHandle).toBeDefined();
     for (const entry of Object.values(res)) {
       expect(entry).not.toHaveProperty('actions');
+    }
+  });
+
+  it('A1: normalizes inline {@link} JSDoc — real description, no [object Object] (corrupt-desc regression)', () => {
+    const linked = res.ProbeLink.props.find((p) => p.name === 'linked');
+    expect(linked).toBeDefined();
+    // Pre-A1: '[object Object]' (the (string|JSDocNode)[] String-coerced).
+    expect(linked.description).not.toMatch(/\[object Object\]/);
+    expect(linked.description).toContain('Fired on change');
+    // the inline {@link} target is flattened into the prose, not dropped
+    expect(linked.description).toContain('ProbeLinkProps.newName');
+    expect(linked.description).toContain('emitting the');
+  });
+
+  it('A1: recovers @deprecated when its tag comment contains an inline {@link} (lost-flag regression)', () => {
+    const oldName = res.ProbeLink.props.find((p) => p.name === 'oldName');
+    expect(oldName).toBeDefined();
+    // Pre-A1: tag.getComment() is an array → (…).trim() threw into the bare
+    // catch{}, so deprecated was never set. It must be true now.
+    expect(oldName.deprecated).toBe(true);
+  });
+
+  it('A2: drops a destructured-default that is not a public-prop-type member (phantom regression)', () => {
+    const names = res.ProbePhantom.props.map((p) => p.name);
+    // `loading = 'lazy'` is a DOM-passthrough attribute, not an enumerated
+    // public prop — pre-A2 invented it as type:'unknown'. It must be absent.
+    expect(names).not.toContain('loading');
+    // and nothing in this component may be left as the type:'unknown' tell.
+    for (const p of res.ProbePhantom.props) {
+      expect(p.type).not.toBe('unknown');
+    }
+  });
+
+  it('A2: attaches a default to the real prop for a renamed binding (anchorProp regression)', () => {
+    const names = res.ProbePhantom.props.map((p) => p.name);
+    // `anchor: anchorProp = 'left'` destructures the public `anchor` prop —
+    // the local alias `anchorProp` must NOT become a phantom prop.
+    expect(names).not.toContain('anchorProp');
+    const anchor = res.ProbePhantom.props.find((p) => p.name === 'anchor');
+    expect(anchor).toBeDefined();
+    // the default lands on the real prop, with its declared type intact
+    expect(anchor.default).toBe("'left'");
+    expect(anchor.type).toBe('ProbeAnchor');
+  });
+
+  it('A2: de-dupes a quoted/unquoted prop key, emitting it once unquoted (aria-label regression)', () => {
+    const names = res.ProbePhantom.props.map((p) => p.name);
+    // pre-A2: both "'aria-label'" (quoted, from the member loop) and
+    // 'aria-label' (unquoted, from the inherited-symbol loop) appeared.
+    expect(names).not.toContain("'aria-label'");
+    expect(names.filter((n) => n === 'aria-label')).toHaveLength(1);
+  });
+
+  it('A3: flags a resolveDeprecatedProp alias as deprecated with the replacement, derived from the call site even when JSDoc is absent', () => {
+    const byName = new Map(res.ProbeDeprecate.props.map((p) => [p.name, p]));
+    // `selectable` carries NO @deprecated JSDoc — pre-A3 it was served as
+    // first-class API. The call site resolveDeprecatedProp('ProbeDeprecate',
+    // 'selectionMode', …, 'selectable', …) is the only source of truth.
+    expect(byName.get('selectable')?.deprecated).toEqual({ replacement: 'selectionMode' });
+    // arg1 (canonicalName) is the replacement, not arg3 (the deprecated name).
+    expect(byName.get('getKey')?.deprecated).toEqual({ replacement: 'getItemKey' });
+    // the canonical names themselves are never flagged.
+    expect(byName.get('selectionMode')?.deprecated).toBeUndefined();
+    expect(byName.get('getItemKey')?.deprecated).toBeUndefined();
+  });
+
+  it('A3: derives a deprecateProp(component, oldName, newName) alias with newName as the replacement', () => {
+    const byName = new Map(res.ProbeDeprecate.props.map((p) => [p.name, p]));
+    // deprecateProp('ProbeDeprecate', 'onChange', 'onValueChange')
+    expect(byName.get('onChange')?.deprecated).toEqual({ replacement: 'onValueChange' });
+    expect(byName.get('onValueChange')?.deprecated).toBeUndefined();
+  });
+
+  it('A3: emits the schema-1.7 deprecated shape (true | {replacement}), never a bare boolean when a replacement is known', () => {
+    for (const p of res.ProbeDeprecate.props) {
+      if (p.deprecated == null) continue;
+      // shared.ts:40 — `true | { reason?, replacement? }`
+      expect(p.deprecated === true || typeof p.deprecated === 'object').toBe(true);
+      if (typeof p.deprecated === 'object') {
+        expect(typeof p.deprecated.replacement).toBe('string');
+      }
     }
   });
 });

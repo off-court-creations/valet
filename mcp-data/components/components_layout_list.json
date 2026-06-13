@@ -60,7 +60,10 @@
     {
       "name": "selectable",
       "type": "boolean",
-      "required": false
+      "required": false,
+      "deprecated": {
+        "replacement": "selectionMode"
+      }
     },
     {
       "name": "focusMode",
@@ -100,7 +103,10 @@
     {
       "name": "getKey",
       "type": "(item: T, index: number) => React.Key",
-      "required": false
+      "required": false,
+      "deprecated": {
+        "replacement": "getItemKey"
+      }
     },
     {
       "name": "emptyPlaceholder",

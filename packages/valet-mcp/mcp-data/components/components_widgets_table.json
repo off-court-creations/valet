@@ -39,6 +39,9 @@
       "name": "selectable",
       "type": "'single' | 'multi' | undefined",
       "required": false,
+      "deprecated": {
+        "replacement": "selectionMode"
+      },
       "enumValues": [
         "single",
         "multi"
@@ -47,7 +50,10 @@
     {
       "name": "rowKey",
       "type": "RowKey<T>",
-      "required": false
+      "required": false,
+      "deprecated": {
+        "replacement": "getItemKey"
+      }
     },
     {
       "name": "initialSort",
@@ -63,7 +69,7 @@
       "name": "onSelectionChange",
       "type": "(selected: T[]) => void",
       "required": false,
-      "description": "[object Object],[object Object],[object Object]"
+      "description": "Fired only on user interaction (checkbox toggle) and when pruning drops\nrows — the unified SelectionProps.onSelectionChange, emitting the\nselected **rows** (Table's selection unit is `T`)."
     },
     {
       "name": "onRowClick",

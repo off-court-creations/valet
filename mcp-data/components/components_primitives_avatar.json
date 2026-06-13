@@ -86,12 +86,6 @@
       "type": "string | string[] | undefined",
       "required": false,
       "description": "One or many style-preset names registered via `definePreset()`"
-    },
-    {
-      "name": "loading",
-      "type": "unknown",
-      "required": false,
-      "default": "'lazy'"
     }
   ],
   "domPassthrough": {

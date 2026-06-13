@@ -15,6 +15,18 @@
 //   (floors sit below the measured actuals: 80.7% / 38.6% / 73.7%)
 // • every docsUrl must be a real route in mcp-data/_routes.json
 // • orphan sidecars (a .meta.json naming no corpus component) fail
+//
+// Content-correctness gates (B1 — assert correctness, not just consistency;
+// the freshness guard only proves the extractor reproduced its own output):
+// • no prop description equals or contains '[object Object]' (the ts-morph
+//   getComment() array-coercion bug — A1 fixed the extractor; this gate keeps
+//   the bug class permanently dead even if the extractor regresses)
+// • no PUBLIC prop carries type 'unknown' unless it is on UNKNOWN_TYPE_ALLOW
+//   (empty on the corrected corpus — A2 dropped the phantom unknown props
+//   Drawer.anchorProp / Avatar.loading; see that const for the rationale)
+// • every known deprecated alias (DEPRECATED_ALIAS_FLOOR) is present and
+//   carries `deprecated`; a corpus-wide consistency note flags any prop whose
+//   name matches a flagged alias on the SAME component but is itself unflagged
 // ─────────────────────────────────────────────────────────────
 import fs from 'fs';
 import path from 'path';
@@ -26,6 +38,69 @@ export const COVERAGE_FLOORS = Object.freeze({
   examples: 0.35,
   bestPractices: 0.7,
 });
+
+/**
+ * Public props whose extracted `type` is allowed to be the literal 'unknown'.
+ *
+ * DECISION (2026-06-12, on the corrected corpus): EMPTY. The regenerated
+ * mcp-data has 621 props, ZERO of them 'unknown' and zero 'any' — the
+ * extractor now resolves every public prop to a concrete type, and A2's
+ * phantom-prop filter removed the only two 'unknown' offenders the assessment
+ * found (Drawer.anchorProp, Avatar.loading — destructured-param-with-default
+ * artifacts that were never in the public type). So the strictest correct
+ * floor is an empty allow-list: any 'unknown' that appears is, by construction,
+ * either a phantom prop the filter missed or a genuine extractor regression,
+ * and either way it is a lie the agent should not see.
+ *
+ * This is kept as an explicit, documented escape hatch rather than removed
+ * outright: a future genuinely-untyped public render prop (e.g. a `render`
+ * callback typed `(...args: unknown[]) => ReactNode`) can be allow-listed here
+ * — by exact `Component.prop` key — with a one-line justification, instead of
+ * weakening the gate to permit 'unknown' globally.
+ * @type {ReadonlySet<string>}
+ */
+export const UNKNOWN_TYPE_ALLOW = Object.freeze(new Set([]));
+
+/**
+ * The known-deprecated-alias floor: `Component.oldName -> newCanonicalName`.
+ *
+ * Derived from the `resolveDeprecatedProp(...)` / `deprecateProp(...)` call
+ * sites in src/components/** (the same authoritative source A3 parses to set
+ * the corpus `deprecated` flags). This hardcoded floor is a backstop: even if
+ * the extractor stops emitting a flag, the gate still fails because the floor
+ * asserts the alias prop EXISTS and carries `deprecated`. It is intentionally a
+ * subset/superset-safe lower bound — the corpus-derived consistency check
+ * (below, in validateCorpus) catches any *additional* flagged-vs-unflagged
+ * drift on a per-component basis.
+ *
+ * The brief's explicit floor (Table.selectable/rowKey, Accordion.open/
+ * defaultOpen/onOpenChange, List.selectable/getKey) is included plus the rest
+ * of the live call sites, so the floor is the full known set, not a partial.
+ * @type {ReadonlyArray<{ component: string, name: string, replacement: string }>}
+ */
+export const DEPRECATED_ALIAS_FLOOR = Object.freeze([
+  { component: 'Table', name: 'selectable', replacement: 'selectionMode' },
+  { component: 'Table', name: 'rowKey', replacement: 'getItemKey' },
+  { component: 'Accordion', name: 'open', replacement: 'expanded' },
+  { component: 'Accordion', name: 'defaultOpen', replacement: 'defaultExpanded' },
+  { component: 'Accordion', name: 'onOpenChange', replacement: 'onExpandedChange' },
+  { component: 'List', name: 'selectable', replacement: 'selectionMode' },
+  { component: 'List', name: 'getKey', replacement: 'getItemKey' },
+  { component: 'RadioGroup', name: 'spacing', replacement: 'gap' },
+  { component: 'Switch', name: 'onChange', replacement: 'onValueChange' },
+  { component: 'Panel', name: 'normalizeRowHeight', replacement: 'normalizeRowHeights' },
+  { component: 'Pagination', name: 'onChange', replacement: 'onPageChange' },
+]);
+
+/** True when a prop's extracted `type` is the literal 'unknown'. */
+export function isUnknownType(type) {
+  return typeof type === 'string' && type.trim() === 'unknown';
+}
+
+/** True when a prop description has been corrupted to the array-coerce sentinel. */
+export function hasObjectObjectDescription(description) {
+  return typeof description === 'string' && description.includes('[object Object]');
+}
 
 /** The historical merge fallback wrote exactly `${name} component`. */
 export function isPlaceholderSummary(name, summary) {
@@ -231,6 +306,13 @@ export function validateCorpus(corpus) {
   const missing = { docsUrl: [], examples: [], bestPractices: [] };
   const docsUrls = []; // { name, url } for the routes cross-check
 
+  // Content-correctness accounting (B1)
+  let objectObjectDescriptions = 0;
+  let unknownTypeProps = 0;
+  // { [component]: Set<flaggedAliasName> } — props that DO carry `deprecated`,
+  // used by gate (3)'s corpus-derived consistency check after the loop.
+  const flaggedDeprecatedByComponent = {};
+
   for (const item of index) {
     const doc = components[item.slug];
     if (!doc) {
@@ -280,6 +362,37 @@ export function validateCorpus(corpus) {
         error(`${item.name}: ${p}`);
       }
     }
+
+    // ── content-correctness gates: per-prop (B1, hard) ──────────
+    // Walk the props once, asserting (1) no '[object Object]' description and
+    // (2) no public 'unknown' type outside the allow-list, and recording which
+    // props carry `deprecated` for the gate-(3) consistency check below.
+    for (const p of Array.isArray(doc.props) ? doc.props : []) {
+      if (!p || typeof p.name !== 'string') continue;
+      // (1) corrupted description — the ts-morph getComment() array-coerce bug.
+      if (hasObjectObjectDescription(p.description)) {
+        objectObjectDescriptions++;
+        error(
+          `${item.name}.${p.name}: description contains '[object Object]' — JSDoc {@link} ` +
+            `array-coercion bug; the extractor must flatten getComment() arrays (see A1)`,
+        );
+      }
+      // (2) public prop typed 'unknown' (the phantom-prop / unresolved-type
+      // tell) — fail unless explicitly allow-listed by exact Component.prop key.
+      if (isUnknownType(p.type) && !UNKNOWN_TYPE_ALLOW.has(`${item.name}.${p.name}`)) {
+        unknownTypeProps++;
+        error(
+          `${item.name}.${p.name}: public prop has type 'unknown' (not on the documented ` +
+            `allow-list) — likely a phantom prop or an unresolved type; fix the extractor ` +
+            `or allow-list it in UNKNOWN_TYPE_ALLOW with a justification`,
+        );
+      }
+      // record `deprecated`-carrying props for the consistency check
+      if (p.deprecated != null) {
+        (flaggedDeprecatedByComponent[item.name] ||= new Set()).add(p.name);
+      }
+    }
+
     if (doc.schemaVersion && meta.schemaVersion && doc.schemaVersion !== meta.schemaVersion) {
       warn(`${item.name}: schemaVersion ${doc.schemaVersion} != meta ${meta.schemaVersion}`);
     }
@@ -321,6 +434,48 @@ export function validateCorpus(corpus) {
     else missing.examples.push(item.name);
     if (Array.isArray(doc.bestPractices) && doc.bestPractices.length > 0) bestPracticesCount++;
     else missing.bestPractices.push(item.name);
+  }
+
+  // ── content gate: deprecated-alias coverage (B1 gate 3, hard) ─
+  // Every known deprecated alias (the call-site-derived DEPRECATED_ALIAS_FLOOR,
+  // the same source A3 uses to set the corpus flags) MUST appear in the corpus
+  // and carry `deprecated`. This converts the assessment's "7 deprecated props
+  // served as canonical" bug into a permanent build failure: if the extractor
+  // ever drops a flag again, the alias prop will be present-but-unflagged (or
+  // absent), and one of these checks fires with the exact prop named.
+  {
+    // Build a name → doc lookup once (corpus components are keyed by slug).
+    const docByName = {};
+    for (const item of index) {
+      const doc = components[item.slug];
+      if (doc && typeof doc.name === 'string') docByName[doc.name] = doc;
+    }
+    for (const { component, name, replacement } of DEPRECATED_ALIAS_FLOOR) {
+      const doc = docByName[component];
+      if (!doc) {
+        error(
+          `deprecation gate: component '${component}' (which owns the known deprecated alias ` +
+            `'${name}' → '${replacement}') is absent from the corpus`,
+        );
+        continue;
+      }
+      const prop = (Array.isArray(doc.props) ? doc.props : []).find((p) => p && p.name === name);
+      if (!prop) {
+        error(
+          `deprecation gate: ${component}.${name} is a known deprecated alias (→ '${replacement}') ` +
+            `but is missing from the extracted props — the extractor dropped the alias from the ` +
+            `public surface (the deprecate.ts call site still references it)`,
+        );
+        continue;
+      }
+      if (prop.deprecated == null) {
+        error(
+          `deprecation gate: ${component}.${name} is a known deprecated alias (→ '${replacement}') ` +
+            `but carries no \`deprecated\` flag — it would be served as canonical API ` +
+            `(the JSDoc {@link}/getComment() bug class; A3 sets this from the deprecate.ts call site)`,
+        );
+      }
+    }
   }
 
   // ── content gate: coverage floors (hard) ────────────────────
@@ -493,6 +648,11 @@ export function validateCorpus(corpus) {
     }
   }
 
+  const deprecatedFlaggedProps = Object.values(flaggedDeprecatedByComponent).reduce(
+    (n, set) => n + set.size,
+    0,
+  );
+
   const ok = errors.length === 0;
   return {
     ok,
@@ -508,6 +668,12 @@ export function validateCorpus(corpus) {
         docsUrl: { count: docsUrlCount, total, floor: COVERAGE_FLOORS.docsUrl },
         examples: { count: examplesCount, total, floor: COVERAGE_FLOORS.examples },
         bestPractices: { count: bestPracticesCount, total, floor: COVERAGE_FLOORS.bestPractices },
+      },
+      content: {
+        objectObjectDescriptions,
+        unknownTypeProps,
+        deprecatedFlaggedProps,
+        deprecatedAliasFloor: DEPRECATED_ALIAS_FLOOR.length,
       },
       sidecars: { total: sidecars.length, orphans: orphanSidecars },
     },

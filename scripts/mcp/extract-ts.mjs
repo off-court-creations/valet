@@ -11,6 +11,142 @@ import { Project, SyntaxKind } from 'ts-morph';
 import fs from 'fs';
 import path from 'path';
 
+// Normalize a ts-morph JSDoc comment into plain text.
+//
+// `JSDoc.getComment()` and `JSDocTag.getComment()` return `undefined`, a
+// `string`, OR a `(string | JSDocNode)[]` — the array form appears whenever
+// the comment contains an inline `{@link ...}`. The old code did
+// `.map(d => d.getComment() || '').join('\n')` (→ '[object Object]' once an
+// array landed in a String coercion) and `(tag.getComment() || '').trim()`
+// (→ TypeError on the array, which the bare `catch {}` swallowed, silently
+// abandoning @deprecated/@default detection for the whole prop). This flattens
+// every shape to clean text: JSDocText nodes carry their text in
+// `compilerNode.text`; JSDoc{Link,LinkCode,LinkPlain} nodes carry the link
+// target in `compilerNode.name` (an EntityName) plus any trailing display text
+// in `compilerNode.text` (e.g. `{@link Foo.bar | label}` → name `Foo.bar`,
+// text `| label`). Reconstruct the readable inline form so descriptions read
+// as real prose and tag reads never throw.
+function commentText(c) {
+  if (c == null) return '';
+  if (typeof c === 'string') return c;
+  if (Array.isArray(c)) {
+    return c
+      .map((part) => {
+        if (typeof part === 'string') return part;
+        const cn = part?.compilerNode ?? part;
+        const linkName = cn?.name
+          ? typeof cn.name.getText === 'function'
+            ? cn.name.getText()
+            : String(cn.name.escapedText ?? cn.name.text ?? '')
+          : '';
+        const txt = typeof cn?.text === 'string' ? cn.text : '';
+        return linkName && txt ? `${linkName} ${txt}` : linkName || txt;
+      })
+      .join('');
+  }
+  return String(c);
+}
+
+// Strip the surrounding quotes off a quoted object/property key.
+//
+// ts-morph's `nameNode.getText()` on a StringLiteral property key returns the
+// source text *including* its quotes (`'aria-label'`), whereas the type
+// checker's symbol name (`sym.getName()`) and JSX attribute spelling are the
+// bare key (`aria-label`). Without normalization the same prop is collected
+// under two different keys and emitted twice. Only single/double-quoted keys
+// are touched; identifiers pass through unchanged.
+function unquoteName(name) {
+  if (typeof name !== 'string') return name;
+  const m = name.match(/^(['"])(.*)\1$/);
+  return m ? m[2] : name;
+}
+
+// Read a string-literal argument's bare value, or undefined when the arg is
+// missing / not a plain string literal. ts-morph hands StringLiterals back with
+// their surrounding quotes via getText(); getLiteralText() (when present)
+// returns the unquoted value directly, so prefer it and fall back to stripping
+// quotes off the source text. A non-literal arg (an expression, a template, a
+// computed value) yields undefined — the call-site map only trusts literal
+// component/prop names.
+function stringLiteralArg(arg) {
+  if (!arg) return undefined;
+  if (arg.getKind?.() !== SyntaxKind.StringLiteral) return undefined;
+  if (typeof arg.getLiteralText === 'function') return arg.getLiteralText();
+  return unquoteName(arg.getText());
+}
+
+// Build the authoritative alias→canonical deprecation map from the
+// deprecate.ts call sites across the project, keyed by component then by the
+// deprecated prop name:
+//   { [component]: { [deprecatedProp]: { replacement } } }
+//
+// This is strictly more robust than the JSDoc `@deprecated` tag (A1): the two
+// helpers take the component/prop names as plain string-literal *arguments*,
+// which cannot array-coerce or throw the way an inline `{@link}` JSDoc comment
+// does. Two signatures are parsed (see src/system/deprecate.ts):
+//   • resolveDeprecatedProp(component, canonicalName, canonical,
+//                           deprecatedName, deprecated)
+//       → component = arg0, replacement = arg1 (canonicalName),
+//         deprecatedProp = arg3 (deprecatedName)
+//   • deprecateProp(component, oldName, newName)
+//       → component = arg0, deprecatedProp = arg1 (oldName),
+//         replacement = arg2 (newName)
+// There is no per-call reason string (the migration message is synthesized
+// inside deprecate.ts), so the map carries only `{ replacement }`. A bare
+// `deprecateProp(...)` whose newName is non-literal still records the alias
+// with no replacement (→ emitted as `deprecated: true`). Matching is by callee
+// text (mirrors the `preset(...)` scan below); both names are local imports
+// from '../../system/deprecate', never re-aliased, so the identifier text is
+// authoritative.
+function collectDeprecationMap(project) {
+  /** @type {Record<string, Record<string, { replacement?: string }>>} */
+  const map = {};
+  const record = (component, deprecatedProp, replacement) => {
+    if (!component || !deprecatedProp) return;
+    const forComponent = (map[component] ||= {});
+    const entry = (forComponent[deprecatedProp] ||= {});
+    // First literal replacement wins; never overwrite a known canonical name
+    // with a later non-literal call.
+    if (replacement && !entry.replacement) entry.replacement = replacement;
+  };
+
+  for (const sf of project.getSourceFiles()) {
+    const fp = sf.getFilePath();
+    // Only production component source is authoritative. The tsconfig pulls in
+    // the colocated *.test.tsx specs (e.g. Accordion.deprecate.dom.test.tsx),
+    // which call the helpers with the same names today — but a test must never
+    // be able to mint or contradict a public deprecation, so skip them and the
+    // shim's own definition site (`src/system/deprecate.ts`, where the internal
+    // deprecateProp call takes identifier args, not literals, so it is already
+    // a no-op — excluded here for clarity).
+    if (!fp.includes(`${path.sep}src${path.sep}components${path.sep}`)) continue;
+    if (/\.test\.[cm]?[jt]sx?$/.test(fp)) continue;
+    let callExprs;
+    try {
+      callExprs = sf.getDescendantsOfKind(SyntaxKind.CallExpression);
+    } catch {
+      continue;
+    }
+    for (const ce of callExprs) {
+      let callee;
+      try {
+        callee = ce.getExpression().getText();
+      } catch {
+        continue;
+      }
+      const args = ce.getArguments?.() || [];
+      if (callee === 'resolveDeprecatedProp') {
+        // (component, canonicalName, canonical, deprecatedName, deprecated)
+        record(stringLiteralArg(args[0]), stringLiteralArg(args[3]), stringLiteralArg(args[1]));
+      } else if (callee === 'deprecateProp') {
+        // (component, oldName, newName)
+        record(stringLiteralArg(args[0]), stringLiteralArg(args[1]), stringLiteralArg(args[2]));
+      }
+    }
+  }
+  return map;
+}
+
 // Map React HTML attribute/type names to intrinsic tag names
 function mapAttrPrefixToTag(prefix) {
   const p = String(prefix).toLowerCase();
@@ -187,6 +323,12 @@ function slugFor(name, category) {
 export function extractFromTs(projectRoot) {
   const project = new Project({ tsConfigFilePath: path.join(projectRoot, 'tsconfig.json') });
   project.addSourceFilesAtPaths(path.join(projectRoot, 'src/components/**/*.tsx'));
+
+  // Authoritative deprecation truth, derived from the deprecate.ts call sites
+  // (alias→canonical), keyed { component -> { deprecatedProp -> {replacement} } }.
+  // Merged into each component's props below: the robust complement to A1's
+  // JSDoc `@deprecated` flag. See collectDeprecationMap.
+  const deprecationMap = collectDeprecationMap(project);
 
   /** @type {Record<string, any>} */
   const result = {};
@@ -424,7 +566,14 @@ export function extractFromTs(projectRoot) {
         for (const m of iface.getMembers()) {
           if (m.getKind() !== SyntaxKind.PropertySignature) continue;
           const nameNode = m.getNameNode();
-          const name = nameNode.getText().replace(/\?$/, '');
+          // Quoted property keys (e.g. `'aria-label'?: string`) come back from
+          // nameNode.getText() with their surrounding quotes, but the inherited-
+          // symbol loop below (and JSX itself) uses the bare symbol name
+          // (`aria-label`). Normalizing here keeps a single canonical form in
+          // propSet so the same prop is not emitted twice (once quoted from this
+          // loop, once unquoted from the symbol loop — the Drawer aria-label
+          // double-count).
+          const name = unquoteName(nameNode.getText().replace(/\?$/, ''));
           const typeNode = m.getTypeNode();
           const typeText = typeNode ? typeNode.getText() : 'any';
           // Correct required detection: use hasQuestionToken()
@@ -436,24 +585,24 @@ export function extractFromTs(projectRoot) {
           let deprecated;
           let description;
           let defaultTag;
-          try {
+          {
             const jsdocs = m.getJsDocs?.();
             if (jsdocs?.length) {
               description =
                 jsdocs
-                  .map((d) => d.getComment?.() || '')
+                  .map((d) => commentText(d.getComment?.()))
                   .join('\n')
                   .trim() || undefined;
               for (const d of jsdocs) {
                 for (const tag of d.getTags?.() || []) {
                   const tagName = (tag.getTagName?.() || '').toLowerCase();
-                  const tagTxt = (tag.getComment?.() || '').trim();
+                  const tagTxt = commentText(tag.getComment?.()).trim();
                   if (tagName === 'deprecated') deprecated = true;
                   if (tagName === 'default' && tagTxt) defaultTag = tagTxt;
                 }
               }
             }
-          } catch {}
+          }
           const extra = {
             ...(deprecated ? { deprecated } : {}),
             ...(description ? { description } : {}),
@@ -512,7 +661,7 @@ export function extractFromTs(projectRoot) {
             let description;
             let deprecated;
             let defaultTag;
-            try {
+            {
               const propDecl = decls.find(
                 (d) => d.getKind && d.getKind() === SyntaxKind.PropertySignature,
               );
@@ -520,19 +669,19 @@ export function extractFromTs(projectRoot) {
               if (jsdocs.length) {
                 description =
                   jsdocs
-                    .map((d) => d.getComment?.() || '')
+                    .map((d) => commentText(d.getComment?.()))
                     .join('\n')
                     .trim() || undefined;
                 for (const d of jsdocs) {
                   for (const tag of d.getTags?.() || []) {
                     const tagName = (tag.getTagName?.() || '').toLowerCase();
-                    const tagTxt = (tag.getComment?.() || '').trim();
+                    const tagTxt = commentText(tag.getComment?.()).trim();
                     if (tagName === 'deprecated') deprecated = true;
                     if (tagName === 'default' && tagTxt) defaultTag = tagTxt;
                   }
                 }
               }
-            } catch {}
+            }
 
             const extra = {
               ...(description ? { description } : {}),
@@ -638,7 +787,7 @@ export function extractFromTs(projectRoot) {
                   const jsdocs = ps?.getJsDocs?.() || [];
                   if (jsdocs.length) {
                     const desc = jsdocs
-                      .map((d) => d.getComment?.() || '')
+                      .map((d) => commentText(d.getComment?.()))
                       .join('\n')
                       .trim();
                     if (desc) {
@@ -714,13 +863,32 @@ export function extractFromTs(projectRoot) {
             if (binding && binding.getKind() === SyntaxKind.ObjectBindingPattern) {
               const elements = binding.getElements();
               for (const el of elements) {
-                const name = el.getNameNode().getText();
                 const initializer = el.getInitializer();
-                if (initializer) {
+                if (!initializer) continue;
+                // Resolve the *public* prop name this binding refers to. A
+                // renamed binding (`anchor: anchorProp = 'left'`) destructures
+                // the public `anchor` prop into a local `anchorProp`; the public
+                // name is the property key, not the local alias. Quoted keys
+                // (`'aria-label': ariaLabel`) are unquoted to match the symbol
+                // spelling.
+                const propNameNode = el.getPropertyNameNode?.();
+                const name = unquoteName(
+                  (propNameNode ? propNameNode.getText() : el.getNameNode().getText()).replace(
+                    /\?$/,
+                    '',
+                  ),
+                );
+                // Only attach the default to a prop already resolved from the
+                // public props interface/type (or a DOM-passthrough key surfaced
+                // as a real prop). Inventing a prop for any destructured default
+                // produced phantom, type:'unknown' entries that aren't in the
+                // public API (Drawer.anchorProp, Avatar.loading — the latter a
+                // DOM-passthrough attribute the extractor records via
+                // domPassthrough, not as an enumerated prop).
+                const idx = props.findIndex((pp) => pp.name === name);
+                if (idx >= 0) {
                   const defText = initializer.getText();
-                  const idx = props.findIndex((pp) => pp.name === name);
-                  if (idx >= 0) props[idx].default = defText;
-                  else props.push({ name, type: 'unknown', required: false, default: defText });
+                  if (props[idx].default == null) props[idx].default = defText;
                 }
               }
             }
@@ -741,6 +909,46 @@ export function extractFromTs(projectRoot) {
             // @ts-expect-error - extend at runtime
             p.enumValues = vals;
           }
+        }
+      }
+
+      // Merge the authoritative call-site deprecation truth (A3) onto the
+      // collected props. For the parent component name (e.g. `Table`, not
+      // `Tabs.Tab`), any prop whose name is a known deprecated alias gets
+      // `deprecated` set from the deprecate.ts call site, regardless of whether
+      // its JSDoc carried `@deprecated`. This is the robust source that
+      // complements the JSDoc flag (A1): both should agree, and when they do
+      // not we prefer the call-site truth and warn. Emits the schema shape
+      // `deprecated: true | { replacement }` (shared.ts:40) — a literal
+      // replacement → `{ replacement }`, otherwise bare `true`.
+      const componentDeprecations = deprecationMap[componentName];
+      if (componentDeprecations) {
+        for (const p of props) {
+          const info = componentDeprecations[p.name];
+          if (!info) continue;
+          // Belt-and-suspenders: when the JSDoc said the prop was NOT deprecated
+          // but the call site says it is, prefer the call-site truth and warn.
+          // (The reverse — JSDoc-only — is left as the JSDoc `true`; the gate in
+          // B1 cross-checks that every call-site alias is flagged.)
+          if (p.deprecated == null) {
+            console.warn(
+              `[mcp][deprecation] ${componentName}.${p.name}: deprecated per deprecate.ts ` +
+                `call site but no @deprecated JSDoc tag — using call-site truth.`,
+            );
+          }
+          p.deprecated = info.replacement ? { replacement: info.replacement } : true;
+        }
+        // Surface, but do not invent: a call-site alias with no matching prop
+        // means the deprecated prop name was dropped from the public type
+        // surface (or renamed). Warn so it is visible rather than silently lost.
+        for (const [deprecatedProp, info] of Object.entries(componentDeprecations)) {
+          if (props.some((p) => p.name === deprecatedProp)) continue;
+          console.warn(
+            `[mcp][deprecation] ${componentName}.${deprecatedProp}: deprecate.ts call site ` +
+              `references a prop absent from the extracted props (replacement: ${
+                info.replacement ?? 'n/a'
+              }).`,
+          );
         }
       }
 

@@ -22,7 +22,7 @@
       "name": "onValueChange",
       "type": "OnValueChange<string | number>",
       "required": false,
-      "description": "[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      "description": "Canonical value trio (API-TYPES S4 / ruling R10): the inline lookalike\npayloads were replaced with OnValueChange/OnValueCommit,\nso `info` is now the full ChangeInfo — including the honest\n`source` (tab click ⇒ `'pointer'`, arrow-key nav ⇒ `'keyboard'`)."
     },
     {
       "name": "onValueCommit",

@@ -28,7 +28,8 @@
       "name": "anchor",
       "type": "DrawerAnchor",
       "required": false,
-      "description": "Drawer side. Physical 'left'/'right'/'top'/'bottom' are\ndirection-invariant; the additive logical 'start'/'end' resolve to\nleft/right per the active writing direction (RTL-aware — 'start' is the\nleading edge). Default 'left'."
+      "description": "Drawer side. Physical 'left'/'right'/'top'/'bottom' are\ndirection-invariant; the additive logical 'start'/'end' resolve to\nleft/right per the active writing direction (RTL-aware — 'start' is the\nleading edge). Default 'left'.",
+      "default": "'left'"
     },
     {
       "name": "onClose",
@@ -110,13 +111,13 @@
       "description": "sx convenience for inline styles with CSS var support"
     },
     {
-      "name": "'aria-label'",
+      "name": "aria-label",
       "type": "string",
       "required": false,
       "description": "Accessible name for the dialog. Required (alongside `aria-labelledby`) for\nnon-persistent/overlay Drawers, which are real `role='dialog'` modals; a\ndev warning fires when neither is provided. Ignored by persistent Drawers,\nwhich are inline navigation regions, not dialogs."
     },
     {
-      "name": "'aria-labelledby'",
+      "name": "aria-labelledby",
       "type": "string",
       "required": false,
       "description": "Id of an element labelling the dialog (alternative to `aria-label`)."
@@ -128,28 +129,10 @@
       "description": "Instance-level overrides for this component's i18n strings (the portrait\nopen/close toggle-button aria-labels). Wins over the `ValetLocaleProvider`\nvalue, which in turn wins over the built-in English defaults (A11Y S8\nresolution contract; see `src/system/locale.tsx`). Distinct from the\ndialog's accessible name, which comes from `aria-label`/`aria-labelledby`."
     },
     {
-      "name": "aria-label",
-      "type": "string | undefined",
-      "required": false,
-      "description": "Accessible name for the dialog. Required (alongside `aria-labelledby`) for\nnon-persistent/overlay Drawers, which are real `role='dialog'` modals; a\ndev warning fires when neither is provided. Ignored by persistent Drawers,\nwhich are inline navigation regions, not dialogs."
-    },
-    {
-      "name": "aria-labelledby",
-      "type": "string | undefined",
-      "required": false,
-      "description": "Id of an element labelling the dialog (alternative to `aria-label`)."
-    },
-    {
       "name": "preset",
       "type": "string | string[] | undefined",
       "required": false,
       "description": "One or many style-preset names registered via `definePreset()`"
-    },
-    {
-      "name": "anchorProp",
-      "type": "unknown",
-      "required": false,
-      "default": "'left'"
     }
   ],
   "domPassthrough": {

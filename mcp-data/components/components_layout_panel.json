@@ -62,7 +62,9 @@
       "name": "normalizeRowHeight",
       "type": "boolean",
       "required": false,
-      "deprecated": true,
+      "deprecated": {
+        "replacement": "normalizeRowHeights"
+      },
       "description": "Opt out of row height normalization."
     },
     {

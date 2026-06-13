@@ -36,17 +36,26 @@
     {
       "name": "defaultOpen",
       "type": "number | number[]",
-      "required": false
+      "required": false,
+      "deprecated": {
+        "replacement": "defaultExpanded"
+      }
     },
     {
       "name": "open",
       "type": "number | number[]",
-      "required": false
+      "required": false,
+      "deprecated": {
+        "replacement": "expanded"
+      }
     },
     {
       "name": "onOpenChange",
       "type": "(open: number[]) => void",
-      "required": false
+      "required": false,
+      "deprecated": {
+        "replacement": "onExpandedChange"
+      }
     },
     {
       "name": "headingLevel",

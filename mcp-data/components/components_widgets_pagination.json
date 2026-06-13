@@ -33,7 +33,9 @@
       "name": "onChange",
       "type": "(page: number) => void",
       "required": false,
-      "deprecated": true
+      "deprecated": {
+        "replacement": "onPageChange"
+      }
     },
     {
       "name": "visibleWindow",

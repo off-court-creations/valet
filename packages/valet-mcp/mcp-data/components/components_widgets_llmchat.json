@@ -73,7 +73,7 @@
       "name": "models",
       "type": "string[]",
       "required": false,
-      "description": "[object Object],[object Object],[object Object]"
+      "description": "Override the model picker's options. When omitted, the built-in\nDEFAULT_MODELS catalog for the active provider is used. Supply\nthis to advertise the exact models your integration supports — the\nbuilt-in defaults are a convenience and drift from provider availability."
     },
     {
       "name": "labels",

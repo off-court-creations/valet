@@ -25,6 +25,9 @@
       "name": "onChange",
       "type": "(event: React.MouseEvent<HTMLButtonElement>) => void",
       "required": false,
+      "deprecated": {
+        "replacement": "onValueChange"
+      },
       "description": "Raw DOM click passthrough."
     },
     {
