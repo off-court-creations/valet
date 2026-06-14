@@ -27,6 +27,7 @@ import { preset } from '../../css/stylePresets';
 import { toRgb, mix, toHex } from '../../helpers/color';
 import { useSurface } from '../../system/surfaceStore';
 import { valetError } from '../../system/devErrors';
+import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion';
 import { shallow } from 'zustand/shallow';
 import type { Presettable, SpacingProps, Sx } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
@@ -656,10 +657,12 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
     }
   };
 
-  const reducedMotion =
-    typeof window !== 'undefined' && window.matchMedia
-      ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
-      : false;
+  // SSR/hydration-safe reduced-motion read: usePrefersReducedMotion returns
+  // `false` on the server and on the first client render (useSyncExternalStore
+  // getServerSnapshot), so the initial $reduced class agrees across hydration
+  // and only flips after mount. A direct in-render matchMedia read caused a
+  // server/client class mismatch.
+  const reducedMotion = usePrefersReducedMotion();
 
   // Optionally unmount content when closed (internal prop injected by root)
   const shouldRenderContent =

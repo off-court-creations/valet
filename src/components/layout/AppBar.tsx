@@ -2,7 +2,7 @@
 // src/components/layout/AppBar.tsx  | valet
 // spacing refactor: controlled pad; remove child padding – 2025‑08‑12
 // ─────────────────────────────────────────────────────────────
-import React, { useLayoutEffect, useRef, useId } from 'react';
+import React, { useLayoutEffect, useRef, useId, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
@@ -157,6 +157,14 @@ export const AppBar: React.FC<AppBarProps> = ({
   ...rest
 }) => {
   const { theme } = useTheme();
+  // SSR/hydration-safe portal: render inline on the server AND on the first
+  // client render (mounted=false), then portal to document.body after mount.
+  // This avoids both the Node crash (`document` is undefined during SSR) and a
+  // hydration mismatch (server inline vs client portaled on the first render).
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const { element, registerChild, unregisterChild } = useSurface(
     (s) => ({
       element: s.element,
@@ -390,9 +398,12 @@ export const AppBar: React.FC<AppBarProps> = ({
     </Bar>
   );
 
-  /* Avoiding fixed-in-fixed bug on older Safari by portaling to body when fixed; inline otherwise */
+  /* Avoiding fixed-in-fixed bug on older Safari by portaling to body when fixed; inline otherwise.
+     Portal only after mount in a real DOM (see `mounted` above) so SSR renders
+     inline without crashing and the first client render matches it. */
   const shouldPortal = typeof portal === 'boolean' ? portal : fixed;
-  return shouldPortal ? createPortal(bar, document.body) : bar;
+  const canPortal = mounted && typeof document !== 'undefined';
+  return shouldPortal && canPortal ? createPortal(bar, document.body) : bar;
 };
 
 export default AppBar;
