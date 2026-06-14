@@ -3,7 +3,7 @@
   "category": "primitives",
   "slug": "components/primitives/video",
   "summary": "Theme-aware video player with lazy loading and fullscreen support; use it for playable media clips, and `Image` for static pictures.",
-  "status": "stable",
+  "status": "experimental",
   "aliases": [
     "video",
     "player"

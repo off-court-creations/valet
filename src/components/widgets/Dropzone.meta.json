@@ -1,7 +1,7 @@
 {
   "name": "Dropzone",
   "summary": "Keyboard-accessible drag-and-drop file uploader with previews and rejection handling; read selected files via `onFilesChange` and constrain input with `accept`/`maxFiles` — use it for in-page file intake.",
-  "status": "stable",
+  "status": "experimental",
   "aliases": ["dropzone", "uploader", "upload"],
   "a11y": {
     "roles": ["button"],

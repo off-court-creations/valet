@@ -3,7 +3,7 @@
   "category": "layout",
   "slug": "components/layout/list",
   "summary": "Accessible vertical list of items with optional `selectionMode='single'` (keyed by `getItemKey`) and drag `onReorder`; use it for simple selectable/reorderable item collections, and reach for `Table` when you need columns or `Tree` for hierarchy.",
-  "status": "stable",
+  "status": "experimental",
   "aliases": [
     "list",
     "ul",

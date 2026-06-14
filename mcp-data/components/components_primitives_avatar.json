@@ -3,7 +3,7 @@
   "category": "primitives",
   "slug": "components/primitives/avatar",
   "summary": "Circular user image from `src`, falling back to initials; Gravatar lookup is opt-in via `gravatar` (off by default — no email hash leaves the browser without it). Use it for profile pictures and identity chips.",
-  "status": "stable",
+  "status": "experimental",
   "aliases": [
     "avatar",
     "badge",

@@ -3,7 +3,7 @@
   "category": "layout",
   "slug": "components/layout/accordion.item",
   "summary": "One collapsible panel inside an `Accordion`, supplying its header and body content; author items as direct `Accordion` children — the parent owns open/closed state, focus, and ARIA wiring.",
-  "status": "stable",
+  "status": "experimental",
   "props": [
     {
       "name": "header",

@@ -68,16 +68,18 @@ the **1.0 invariant** that the surface currently carries *zero* deprecated props
 
 ## Not covered by the 1.0 guarantee (experimental surface)
 
-A small set of components is published but flagged **`experimental`** in their
-`status` (visible in the docs and the MCP corpus). These are **carved out of the
-SemVer guarantee**: their props/behavior may change in a **minor** release while
-they stabilize. They are safe to use, but pin a minor range if you depend on
-their exact shape.
+Components flagged **`experimental`** in their `status` (visible in the docs and
+the MCP corpus) are **carved out of the SemVer guarantee**: their props/behavior
+may change in a **minor** release while they stabilize. They are safe to use, but
+pin a minor range if you depend on their exact shape.
 
-As of 1.0 the experimental set is: `LLMChat`, `RichChat`, `KeyModal`,
-`ParallaxBackground`, `ParallaxLayer`, `ParallaxScroll`. Everything else exported
-from the barrel is `stable` and covered by the table above. Each release's
-CHANGELOG notes any promotion from `experimental` → `stable`.
+**Pre-1.0 verification pass:** because the 1.0 prep made broad, cross-cutting
+changes (the deprecation sweep, accessibility rewiring, SSR guards, type-surface
+curation, and the spacing/density retune), **every component is currently flagged
+`experimental`** while each is re-verified. Components are promoted back to
+`stable` as they pass that review, and each promotion is noted in the CHANGELOG.
+The set of `stable` components at the 1.0 cut is whatever has been verified by
+then; check a component's `status` (docs or MCP corpus) for its current standing.
 
 ## Peer dependencies
 

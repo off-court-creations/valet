@@ -1,7 +1,7 @@
 {
   "name": "Switch",
   "summary": "Accessible toggle for a single boolean that takes effect immediately; controlled via `checked` + `onValueChange` — prefer it over Checkbox for instant on/off settings rather than form submission.",
-  "status": "stable",
+  "status": "experimental",
   "aliases": ["switch", "toggle"],
   "docs": {
     "bestPractices": [

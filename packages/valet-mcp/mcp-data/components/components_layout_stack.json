@@ -3,7 +3,7 @@
   "category": "layout",
   "slug": "components/layout/stack",
   "summary": "Flexbox container that lays children out in one `direction` (column/row) with consistent `gap`; the default choice for vertical or horizontal flow — use `Grid` for two-dimensional layouts.",
-  "status": "stable",
+  "status": "experimental",
   "aliases": [
     "stack",
     "vstack",

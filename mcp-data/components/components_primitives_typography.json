@@ -3,7 +3,7 @@
   "category": "primitives",
   "slug": "components/primitives/typography",
   "summary": "Renders themed text at a semantic `variant` (h1–h6, subtitle, body, button, …) mapped to the correct HTML element; use it for all text so type scale, color, and wrapping stay consistent.",
-  "status": "stable",
+  "status": "experimental",
   "aliases": [
     "typography",
     "text",

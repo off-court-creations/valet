@@ -1,7 +1,7 @@
 {
   "name": "Markdown",
   "summary": "Renders a Markdown string into valet primitives (headings, lists, links, fenced code with highlighting); use it to display AI/CMS output as themed React, not raw HTML.",
-  "status": "stable",
+  "status": "experimental",
   "aliases": ["markdown", "md", "richtext"],
   "docs": {
     "bestPractices": [

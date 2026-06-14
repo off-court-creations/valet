@@ -4,294 +4,294 @@
     "category": "fields",
     "summary": "Theme-aware action button with `variant` (filled/outlined/plain), semantic `intent`, and `size`; reach for it for any primary or secondary click action, and use `IconButton` instead when the control is icon-only.",
     "slug": "components/fields/button",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Checkbox",
     "category": "fields",
     "summary": "Accessible boolean checkbox for a single on/off choice; controlled via `checked` + `onValueChange`, or auto-bound to a `FormControl` with `name` (keep `bindForm` to opt a form-bound box out of writing the store).",
     "slug": "components/fields/checkbox",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "DateSelector",
     "category": "fields",
     "summary": "Interactive month calendar for picking a single date or a `range`; emits/accepts timezone-safe ISO `YYYY-MM-DD` strings, with display localized via `locale` and `firstDayOfWeek` (the value contract stays ISO Latin digits).",
     "slug": "components/fields/dateselector",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "FormControl",
     "category": "fields",
     "summary": "Wraps a form to provide a typed store context that field components bind to by `name`; use it to collect and submit grouped field values without lifting every field into local state.",
     "slug": "components/fields/formcontrol",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "IconButton",
     "category": "fields",
     "summary": "Compact icon-only button (same `variant`/`intent`/`size` system as Button); use it for toolbar and inline actions, and always supply an `aria-label` since there is no visible text.",
     "slug": "components/fields/iconbutton",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Iterator",
     "category": "fields",
     "summary": "Numeric stepper with plus/minus buttons and scroll-wheel support for bounded integer/decimal input; use it for small quantity-style values (counts, steps) where a full slider or text field is overkill.",
     "slug": "components/fields/iterator",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Option",
     "category": "fields",
     "summary": "The `Select.Option` element (exported as `Option`): one selectable choice with a `value` and label children, authored as a direct child of `Select`.",
     "slug": "components/fields/option",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "MetroSelect",
     "category": "fields",
     "summary": "Grid of large tappable tiles (`MetroSelect.Option`) for single or `multiple` selection from a small visual set; controlled by `value` + `onValueChange` with `gap` for tile spacing — use it when options benefit from icons/imagery rather than a compact dropdown.",
     "slug": "components/fields/metroselect",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "MetroSelect.Option",
     "category": "fields",
     "summary": "A single tile inside a `MetroSelect`, identified by `value` with icon/label children; author one per choice as a direct `MetroSelect` child — the parent owns selection state.",
     "slug": "components/fields/metroselect.option",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "RadioGroup",
     "category": "fields",
     "summary": "Single-choice group of `Radio` options with keyboard roving focus; controlled via `value` + `onValueChange` or bound to a `FormControl` by `name`, with `gap` for option spacing.",
     "slug": "components/fields/radiogroup",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Radio",
     "category": "fields",
     "summary": "A single radio option rendered inside a `RadioGroup`; author it as a `RadioGroup` child rather than standalone — the group owns selection, keyboard roving focus, and form binding.",
     "slug": "components/fields/radio",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Select",
     "category": "fields",
     "summary": "Fully-typed dropdown for single or `multiple` choice from `Select.Option` children; controlled via `value` + `onValueChange` and FormControl-aware — use it for compact pick-one(-or-many) lists, and prefer `MetroSelect` when options need a visual tile grid.",
     "slug": "components/fields/select",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Select.Option",
     "category": "fields",
     "summary": "A single option inside a `Select`, carrying its `value` and label children; author one per choice as a direct `Select` child — it forwards `className`/`style`/`id`/`data-*` onto the rendered `<li>`.",
     "slug": "components/fields/select.option",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Slider",
     "category": "fields",
     "summary": "Theme-aware draggable slider for selecting a number within `min`/`max` (optionally snapped to `step`); use it for continuous or coarse-grained ranges where the approximate value matters more than an exact typed number.",
     "slug": "components/fields/slider",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Switch",
     "category": "fields",
     "summary": "Accessible toggle for a single boolean that takes effect immediately; controlled via `checked` + `onValueChange` — prefer it over Checkbox for instant on/off settings rather than form submission.",
     "slug": "components/fields/switch",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "TextField",
     "category": "fields",
     "summary": "Single- or multi-line text input with label/helperText/error support; controlled via `value` + `onChange` or auto-bound to a `FormControl` by `name` — the default for free-form text entry.",
     "slug": "components/fields/textfield",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Accordion",
     "category": "layout",
     "summary": "Vertical stack of collapsible `Accordion.Item` panels with single or `multiple` open behavior and roving-focus ARIA; control which panels are open with `expanded`/`defaultExpanded`/`onExpandedChange`.",
     "slug": "components/layout/accordion",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Accordion.Item",
     "category": "layout",
     "summary": "One collapsible panel inside an `Accordion`, supplying its header and body content; author items as direct `Accordion` children — the parent owns open/closed state, focus, and ARIA wiring.",
     "slug": "components/layout/accordion.item",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "AppBar",
     "category": "layout",
     "summary": "Top application bar for branding, navigation, and page-level actions; it sits below modal overlays in the z-index scale and intent-tints its surface — use one per screen as the persistent header.",
     "slug": "components/layout/appbar",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Box",
     "category": "layout",
     "summary": "Polymorphic (`as`) workhorse container with spacing, `sx`, and `alignX` content alignment; reach for it as the default building block when no more specialized layout primitive (Stack, Grid, Panel) fits.",
     "slug": "components/layout/box",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Drawer",
     "category": "layout",
     "summary": "Panel that slides in from an `anchor` edge (`left`/`right`/`top`/`bottom`, or RTL-aware `start`/`end`); non-`persistent` drawers are true focus-trapping dialogs, so supply `aria-label`/`aria-labelledby` — use it for side navigation and contextual panels.",
     "slug": "components/layout/drawer",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Grid",
     "category": "layout",
     "summary": "CSS-grid container with `columns` and `gap` for two-dimensional layouts; use it for galleries, dashboards, and card grids — prefer `Stack` when you only need one-directional flow.",
     "slug": "components/layout/grid",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "List",
     "category": "layout",
     "summary": "Accessible vertical list of items with optional `selectionMode='single'` (keyed by `getItemKey`) and drag `onReorder`; use it for simple selectable/reorderable item collections, and reach for `Table` when you need columns or `Tree` for hierarchy.",
     "slug": "components/layout/list",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Modal",
     "category": "layout",
     "summary": "Centered focus-trapping dialog rendered above a backdrop, controlled by `open`/`onClose`; use it for confirmations and focused tasks that must interrupt the page — reach for `Drawer` when the panel should slide from an edge.",
     "slug": "components/layout/modal",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Panel",
     "category": "layout",
     "summary": "Bordered, padded surface card for grouping related content into a visually distinct section; supports `normalizeRowHeights` for equal-height children — use it to frame a block, and `Box` for an unstyled container.",
     "slug": "components/layout/panel",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Stack",
     "category": "layout",
     "summary": "Flexbox container that lays children out in one `direction` (column/row) with consistent `gap`; the default choice for vertical or horizontal flow — use `Grid` for two-dimensional layouts.",
     "slug": "components/layout/stack",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Surface",
     "category": "layout",
     "summary": "Per-route root container that establishes the theme, density spacing, writing `dir`, and font-loading gate; wrap each top-level screen in exactly one Surface — most valet components require an ancestor Surface and will throw without it.",
     "slug": "components/layout/surface",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Tabs",
     "category": "layout",
     "summary": "Tabbed interface with `Tabs.Tab` triggers and `Tabs.Panel` content and full `tablist` ARIA; controlled via `value`/`onValueChange` — use it to switch between sibling views in the same region.",
     "slug": "components/layout/tabs",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Tabs.Tab",
     "category": "layout",
     "summary": "A clickable tab trigger inside `Tabs`, identified by `value`; pair each one with a matching `Tabs.Panel` of the same value — the parent `Tabs` owns the active selection and `tablist` ARIA.",
     "slug": "components/layout/tabs.tab",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Tabs.Panel",
     "category": "layout",
     "summary": "The content region for one tab inside `Tabs`, identified by the `value` of its matching `Tabs.Tab`; only the active panel is shown — author one per tab as a direct `Tabs` child.",
     "slug": "components/layout/tabs.panel",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Avatar",
     "category": "primitives",
     "summary": "Circular user image from `src`, falling back to initials; Gravatar lookup is opt-in via `gravatar` (off by default — no email hash leaves the browser without it). Use it for profile pictures and identity chips.",
     "slug": "components/primitives/avatar",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Divider",
     "category": "primitives",
     "summary": "Theme-aware horizontal or vertical rule with spacing ergonomics; use it to separate content sections or list items without drawing your own border.",
     "slug": "components/primitives/divider",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Icon",
     "category": "primitives",
     "summary": "Renders an Iconify icon by name (`icon`) or a safe inline SVG (`svg`); arbitrary SVG strings go through an allowlist parser, so use the explicit `dangerouslySetSvg` escape hatch only for trusted full-SVG markup. Size and color follow the surrounding text.",
     "slug": "components/primitives/icon",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Image",
     "category": "primitives",
     "summary": "Theme-aware `<img>` wrapper with sizing and object-fit ergonomics for static raster/vector images; use it for content imagery, and `Avatar` for circular user pictures or `Video` for playable media.",
     "slug": "components/primitives/image",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "ProgressBar",
     "category": "primitives",
     "summary": "Horizontal linear progress track; pass a 0–100 `value` for determinate progress or omit it for an indeterminate sweep — the preferred primitive for inline loading and completion bars.",
     "slug": "components/primitives/progressbar",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "ProgressRing",
     "category": "primitives",
     "summary": "Circular progress indicator; pass a 0–100 `value` for determinate progress or omit it for an indeterminate spinner, with an optional `label` in the center — the preferred primitive for compact, radial loading states.",
     "slug": "components/primitives/progressring",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Typography",
     "category": "primitives",
     "summary": "Renders themed text at a semantic `variant` (h1–h6, subtitle, body, button, …) mapped to the correct HTML element; use it for all text so type scale, color, and wrapping stay consistent.",
     "slug": "components/primitives/typography",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Video",
     "category": "primitives",
     "summary": "Theme-aware video player with lazy loading and fullscreen support; use it for playable media clips, and `Image` for static pictures.",
     "slug": "components/primitives/video",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "WebGLCanvas",
     "category": "primitives",
     "summary": "DPI-aware WebGL2 canvas that resizes to its parent and runs a render callback on a requestAnimationFrame loop; use it for custom GPU graphics, shaders, and visualizations rather than 2D drawing.",
     "slug": "components/primitives/webglcanvas",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Chip",
     "category": "widgets",
     "summary": "Compact pill showing a label with an optional icon/avatar and a removal action; use it for tags, filters, and selected tokens — provide `onDelete` to make it dismissible.",
     "slug": "components/widgets/chip",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "CodeBlock",
     "category": "widgets",
     "summary": "Syntax-highlighted code block with a copy-to-clipboard button and snackbar feedback; use it to display source snippets — set `language` to match the curated highlight.js set (others fall back to plaintext).",
     "slug": "components/widgets/codeblock",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Dropzone",
     "category": "widgets",
     "summary": "Keyboard-accessible drag-and-drop file uploader with previews and rejection handling; read selected files via `onFilesChange` and constrain input with `accept`/`maxFiles` — use it for in-page file intake.",
     "slug": "components/widgets/dropzone",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "KeyModal",
@@ -312,21 +312,21 @@
     "category": "widgets",
     "summary": "Full-area scrim with a centered spinner (`showSpinner`) that overlays content while it loads; render it conditionally to block interaction during an async operation, and toggle `fading` for the exit transition.",
     "slug": "components/widgets/loadingbackdrop",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Markdown",
     "category": "widgets",
     "summary": "Renders a Markdown string into valet primitives (headings, lists, links, fenced code with highlighting); use it to display AI/CMS output as themed React, not raw HTML.",
     "slug": "components/widgets/markdown",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Pagination",
     "category": "widgets",
     "summary": "Tab-style page navigator with an elastic active-page underline; controlled by `count` + `page` + `onPageChange` — use it to page through large lists or tables.",
     "slug": "components/widgets/pagination",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "ParallaxScroll",
@@ -361,41 +361,41 @@
     "category": "widgets",
     "summary": "Transient toast notification (role='status') that fades in and auto-dismisses, pausing its timer on hover/focus; control with `open`/`message`/`autoHideDuration` — use it for brief, non-blocking feedback.",
     "slug": "components/widgets/snackbar",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "SpeedDial",
     "category": "widgets",
     "summary": "Floating action button that expands a fan of secondary actions with disclosure ARIA; it closes on action/Escape/outside-click and restores focus — use it for a primary action plus a few related shortcuts.",
     "slug": "components/widgets/speeddial",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Table",
     "category": "widgets",
     "summary": "Data table with sortable columns, smart height/auto-pagination, and unified `selectionMode` (`'none'|'single'|'multiple'`) keyed by `getItemKey` for selection that survives data refreshes (the `selectable`/`rowKey` props are deprecated aliases); use it for tabular data with columns.",
     "slug": "components/widgets/table",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Tooltip",
     "category": "widgets",
     "summary": "CSS-driven hover/focus tooltip that wraps a single child and exposes `title` content via aria-describedby; use it for brief supplementary hints, not essential or interactive content.",
     "slug": "components/widgets/tooltip",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "Tree",
     "category": "widgets",
     "summary": "Accessible expand/collapse tree over a `nodes` hierarchy (label via `getLabel`), with `expanded`/`onExpandedChange` for disclosure and `selectionMode='single'` selecting by node id; use it for nested data like file trees and outlines — reach for `List` when items are flat.",
     "slug": "components/widgets/tree",
-    "status": "stable"
+    "status": "experimental"
   },
   {
     "name": "ValetErrorBoundary",
     "category": "widgets",
     "summary": "Opt-in React error boundary that catches render errors in its subtree and shows a role='alert' fallback with a `reset()` action; wrap risky regions to stop one component from white-screening the host app.",
     "slug": "components/widgets/valeterrorboundary",
-    "status": "stable"
+    "status": "experimental"
   }
 ]

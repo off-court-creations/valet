@@ -1,7 +1,7 @@
 {
   "name": "CodeBlock",
   "summary": "Syntax-highlighted code block with a copy-to-clipboard button and snackbar feedback; use it to display source snippets — set `language` to match the curated highlight.js set (others fall back to plaintext).",
-  "status": "stable",
+  "status": "experimental",
   "aliases": ["codeblock", "code", "snippet"],
   "docs": {
     "bestPractices": [

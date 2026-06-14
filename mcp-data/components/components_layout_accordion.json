@@ -3,7 +3,7 @@
   "category": "layout",
   "slug": "components/layout/accordion",
   "summary": "Vertical stack of collapsible `Accordion.Item` panels with single or `multiple` open behavior and roving-focus ARIA; control which panels are open with `expanded`/`defaultExpanded`/`onExpandedChange`.",
-  "status": "stable",
+  "status": "experimental",
   "aliases": [
     "accordion",
     "expander"

@@ -1,7 +1,7 @@
 {
   "name": "Pagination",
   "summary": "Tab-style page navigator with an elastic active-page underline; controlled by `count` + `page` + `onPageChange` — use it to page through large lists or tables.",
-  "status": "stable",
+  "status": "experimental",
   "aliases": ["pagination", "pager", "paginator"],
   "docs": {
     "bestPractices": [

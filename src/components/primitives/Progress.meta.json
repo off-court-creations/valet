@@ -1,7 +1,7 @@
 {
   "name": "Progress",
   "summary": "Progress indicators: use `ProgressBar` for linear progress and `ProgressRing` for circular; omit `value` for an indeterminate (unknown-duration) loading state.",
-  "status": "stable",
+  "status": "experimental",
   "aliases": ["progress", "spinner", "loader"],
   "docs": {
     "bestPractices": [

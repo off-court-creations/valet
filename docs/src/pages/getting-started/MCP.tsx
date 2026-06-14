@@ -134,7 +134,7 @@ args = []`}
             </Typography>
             <CodeBlock
               code={`[
-  { "name": "Table", "category": "widgets", "status": "stable", "summary": "Table component", "slug": "components/widgets/table" }
+  { "name": "Table", "category": "widgets", "status": "experimental", "summary": "Table component", "slug": "components/widgets/table" }
 ]`}
               ariaLabel='Copy list_components example'
               language='json'
@@ -245,7 +245,7 @@ args = []`}
     "name": "Modal",
     "slug": "components/widgets/modal",
     "category": "widgets",
-    "status": "stable",
+    "status": "experimental",
     "bestPractice": "Focus the first actionable element when the modal opens.",
     "matchScore": 12,
     "matchType": "text|token",

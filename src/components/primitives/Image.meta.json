@@ -1,7 +1,7 @@
 {
   "name": "Image",
   "summary": "Theme-aware `<img>` wrapper with sizing and object-fit ergonomics for static raster/vector images; use it for content imagery, and `Avatar` for circular user pictures or `Video` for playable media.",
-  "status": "stable",
+  "status": "experimental",
   "aliases": ["image", "img", "picture"],
   "docs": {
     "bestPractices": [

@@ -3,7 +3,7 @@
   "category": "widgets",
   "slug": "components/widgets/chip",
   "summary": "Compact pill showing a label with an optional icon/avatar and a removal action; use it for tags, filters, and selected tokens — provide `onDelete` to make it dismissible.",
-  "status": "stable",
+  "status": "experimental",
   "aliases": [
     "chip",
     "tag",

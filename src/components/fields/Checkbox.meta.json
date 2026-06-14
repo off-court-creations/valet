@@ -1,7 +1,7 @@
 {
   "name": "Checkbox",
   "summary": "Accessible boolean checkbox for a single on/off choice; controlled via `checked` + `onValueChange`, or auto-bound to a `FormControl` with `name` (keep `bindForm` to opt a form-bound box out of writing the store).",
-  "status": "stable",
+  "status": "experimental",
   "aliases": ["checkbox"],
   "docs": {
     "bestPractices": [

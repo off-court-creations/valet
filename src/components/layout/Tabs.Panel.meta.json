@@ -1,5 +1,5 @@
 {
   "name": "Tabs.Panel",
   "summary": "The content region for one tab inside `Tabs`, identified by the `value` of its matching `Tabs.Tab`; only the active panel is shown — author one per tab as a direct `Tabs` child.",
-  "status": "stable"
+  "status": "experimental"
 }

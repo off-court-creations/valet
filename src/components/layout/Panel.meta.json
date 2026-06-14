@@ -1,7 +1,7 @@
 {
   "name": "Panel",
   "summary": "Bordered, padded surface card for grouping related content into a visually distinct section; supports `normalizeRowHeights` for equal-height children — use it to frame a block, and `Box` for an unstyled container.",
-  "status": "stable",
+  "status": "experimental",
   "aliases": ["panel", "card", "section"],
   "docs": {
     "bestPractices": [

@@ -1,6 +1,6 @@
 {
   "name": "ProgressBar",
   "summary": "Horizontal linear progress track; pass a 0–100 `value` for determinate progress or omit it for an indeterminate sweep — the preferred primitive for inline loading and completion bars.",
-  "status": "stable",
+  "status": "experimental",
   "aliases": ["progressbar", "progress-bar", "linear-progress"]
 }

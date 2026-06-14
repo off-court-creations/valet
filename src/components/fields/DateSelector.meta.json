@@ -1,7 +1,7 @@
 {
   "name": "DateSelector",
   "summary": "Interactive month calendar for picking a single date or a `range`; emits/accepts timezone-safe ISO `YYYY-MM-DD` strings, with display localized via `locale` and `firstDayOfWeek` (the value contract stays ISO Latin digits).",
-  "status": "stable",
+  "status": "experimental",
   "aliases": ["date", "datepicker", "daterange"],
   "docs": {
     "bestPractices": [

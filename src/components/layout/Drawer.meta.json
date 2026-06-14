@@ -1,7 +1,7 @@
 {
   "name": "Drawer",
   "summary": "Panel that slides in from an `anchor` edge (`left`/`right`/`top`/`bottom`, or RTL-aware `start`/`end`); non-`persistent` drawers are true focus-trapping dialogs, so supply `aria-label`/`aria-labelledby` — use it for side navigation and contextual panels.",
-  "status": "stable",
+  "status": "experimental",
   "aliases": ["drawer", "sidenav", "side-nav", "sidebar"],
   "docs": {
     "bestPractices": [

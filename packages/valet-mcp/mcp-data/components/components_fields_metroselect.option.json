@@ -3,7 +3,7 @@
   "category": "fields",
   "slug": "components/fields/metroselect.option",
   "summary": "A single tile inside a `MetroSelect`, identified by `value` with icon/label children; author one per choice as a direct `MetroSelect` child — the parent owns selection state.",
-  "status": "stable",
+  "status": "experimental",
   "props": [
     {
       "name": "value",

@@ -3,7 +3,7 @@
   "category": "layout",
   "slug": "components/layout/grid",
   "summary": "CSS-grid container with `columns` and `gap` for two-dimensional layouts; use it for galleries, dashboards, and card grids — prefer `Stack` when you only need one-directional flow.",
-  "status": "stable",
+  "status": "experimental",
   "aliases": [
     "grid"
   ],

@@ -1,7 +1,7 @@
 {
   "name": "Tabs",
   "summary": "Tabbed interface with `Tabs.Tab` triggers and `Tabs.Panel` content and full `tablist` ARIA; controlled via `value`/`onValueChange` — use it to switch between sibling views in the same region.",
-  "status": "stable",
+  "status": "experimental",
   "aliases": ["tabs"],
   "docs": {
     "bestPractices": [

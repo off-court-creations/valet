@@ -1,7 +1,7 @@
 {
   "name": "RadioGroup",
   "summary": "Single-choice group of `Radio` options with keyboard roving focus; controlled via `value` + `onValueChange` or bound to a `FormControl` by `name`, with `gap` for option spacing.",
-  "status": "stable",
+  "status": "experimental",
   "aliases": ["radiogroup", "radio-group", "radio-buttons"],
   "examples": [
     {
