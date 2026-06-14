@@ -17,8 +17,9 @@
 //     reason — the key is visible to anyone who can read the network tab or
 //     inject script into the origin. There is no backend proxy.
 //   • At-rest encryption is opt-in and only as strong as the passphrase.
-//     With a passphrase, the key is AES-GCM encrypted (PBKDF2, 120k
-//     iterations) and the ciphertext lives in localStorage. WITHOUT a
+//     With a passphrase, the key is AES-GCM encrypted (PBKDF2, 600k
+//     iterations — OWASP 2023 floor for PBKDF2-SHA256) and the ciphertext
+//     lives in localStorage. WITHOUT a
 //     passphrase the plaintext key is held in memory and persisted only as
 //     `provider`/`model` metadata (the key itself is not written to storage,
 //     but it is readable from the live store while the tab is open).
@@ -72,7 +73,7 @@ async function deriveKey(passphrase: string, salt: BufferSource) {
     ['deriveKey'],
   );
   return subtle.deriveKey(
-    { name: 'PBKDF2', salt, iterations: 120_000, hash: 'SHA-256' },
+    { name: 'PBKDF2', salt, iterations: 600_000, hash: 'SHA-256' },
     keyMaterial,
     algo,
     false,

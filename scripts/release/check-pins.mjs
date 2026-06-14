@@ -48,10 +48,18 @@ export function collectPins(root) {
     const spec =
       pkg.dependencies?.[PKG_NAME] ??
       pkg.devDependencies?.[PKG_NAME] ??
-      pkg.peerDependencies?.[PKG_NAME];
+      pkg.peerDependencies?.[PKG_NAME] ??
+      pkg.optionalDependencies?.[PKG_NAME];
     pins.push({ label, file: rel, spec });
   };
   add('docs', 'docs/package.json');
+  // valet-mcp pins the corpus source in optionalDependencies; bring it under
+  // the same gate so its pin can't silently drift from the root version (the
+  // manual mcp-server lockfile resyncs were exactly this gap). Guarded like the
+  // templates below so a minimal repo/fixture without the sub-package is fine.
+  if (fs.existsSync(path.join(root, 'packages/valet-mcp/package.json'))) {
+    add('valet-mcp', 'packages/valet-mcp/package.json');
+  }
   const templatesDir = path.join(root, TEMPLATES_DIR);
   if (fs.existsSync(templatesDir)) {
     for (const name of fs.readdirSync(templatesDir).sort()) {

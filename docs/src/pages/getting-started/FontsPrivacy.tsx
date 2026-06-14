@@ -24,7 +24,7 @@ export const meta: DocMeta = {
   pageType: 'concept',
   prerequisites: ['quickstart', 'theme-engine'],
   components: ['useInitialTheme', 'useGoogleFonts'],
-  tldr: 'By default valet injects Google Fonts (a remote third-party request) with a once-per-session dev notice. Three ways to control it: keep remote injection on; pass injectRemote:false and self-host the same families via @fontsource (zero requests, identical look); or go explicit-fonts-only — useInitialTheme({}) names no font and makes zero network requests, falling back to installed system faces. Font waits resolve after 5s and never reject, so a hung CDN can never wedge your UI.',
+  tldr: 'As of 1.0 valet does NOT fetch Google Fonts by default — injectRemote defaults to false, so a named Google family is treated as a local family (zero network). Three strategies: opt into remote injection with injectRemote:true (a once-per-session dev notice fires); pass injectRemote:false (the default) and self-host the same families via @fontsource (zero requests, identical look); or go explicit-fonts-only — useInitialTheme({}) names no font at all. Font waits resolve after 5s and never reject, so a hung CDN can never wedge your UI.',
 };
 
 /*───────────────────────────────────────────────────────────*/
@@ -39,10 +39,10 @@ interface StrategyRow {
 
 const STRATEGIES: StrategyRow[] = [
   {
-    strategy: 'Remote Google injection (default)',
+    strategy: 'Remote Google injection (opt-in: injectRemote:true)',
     network: 'Requests to fonts.googleapis.com + fonts.gstatic.com',
     look: 'Brand fonts load over the network',
-    use: 'Prototypes and first-party apps where a Google Fonts request is acceptable. A once-per-session dev notice fires.',
+    use: 'Prototypes and first-party apps where a Google Fonts request is acceptable. Opt in with injectRemote:true; a once-per-session dev notice fires.',
   },
   {
     strategy: 'injectRemote:false + self-host (@fontsource)',
@@ -102,10 +102,10 @@ export default function FontsPrivacyPage() {
           Fonts &amp; Privacy
         </Typography>
         <Typography>
-          valet can load webfonts for you. Because the convenient default reaches out to a
-          third-party CDN (Google Fonts), this page is deliberately explicit about{' '}
-          <strong>what leaves the page, why, and how to turn it off</strong> — so you can pick the
-          loading strategy that fits your app and your jurisdiction.
+          valet can load webfonts for you. Because one opt-in strategy reaches out to a third-party
+          CDN (Google Fonts), this page is deliberately explicit about{' '}
+          <strong>what can leave the page, why, and how each strategy behaves</strong> — so you can
+          pick the loading strategy that fits your app and your jurisdiction.
         </Typography>
 
         <Panel
@@ -114,14 +114,15 @@ export default function FontsPrivacyPage() {
           pad={2}
         >
           <Typography>
-            <strong>TL;DR.</strong> By default valet injects Google Fonts (a remote third-party
-            request) and prints a once-per-session dev notice. Pass <code>injectRemote: false</code>{' '}
-            and self-host the same families with <code>@fontsource</code> for an identical look with{' '}
-            <strong>zero</strong> third-party requests, or go <em>explicit-fonts-only</em> —{' '}
-            <code>useInitialTheme({'{}'})</code> names no font and makes <strong>zero</strong>{' '}
-            network requests, falling back to installed system faces. Either way, a font wait{' '}
-            <strong>resolves after 5s and never rejects</strong>, so a slow or blocked CDN can never
-            wedge your UI.
+            <strong>TL;DR.</strong> As of 1.0 valet does <strong>not</strong> fetch Google Fonts by
+            default — <code>injectRemote</code> defaults to <code>false</code>, so a named Google
+            family is treated as a local family (<strong>zero</strong> requests). Opt into remote
+            injection with <code>injectRemote: true</code> (a once-per-session dev notice fires),
+            self-host the same families with <code>@fontsource</code> for an identical look, or go{' '}
+            <em>explicit-fonts-only</em> — <code>useInitialTheme({'{}'})</code> names no font and
+            makes <strong>zero</strong> network requests, falling back to installed system faces.
+            Either way, a font wait <strong>resolves after 5s and never rejects</strong>, so a slow
+            or blocked CDN can never wedge your UI.
           </Typography>
         </Panel>
 
@@ -150,8 +151,8 @@ export default function FontsPrivacyPage() {
           sx={{ paddingInlineStart: '1rem' }}
         >
           <Typography>
-            • <strong>What valet sends:</strong> only when remote injection is on (the default),
-            valet appends <code>preconnect</code> hints plus a{' '}
+            • <strong>What valet sends:</strong> only when you opt into remote injection (
+            <code>injectRemote: true</code>), valet appends <code>preconnect</code> hints plus a{' '}
             <code>fonts.googleapis.com/css2</code> stylesheet link. The browser then fetches the CSS
             and the font files — that is the request that carries the visitor IP to Google.
           </Typography>
@@ -164,8 +165,8 @@ export default function FontsPrivacyPage() {
           <Typography>
             • <strong>The honest default:</strong> as of 1.0 <code>injectRemote</code> defaults to{' '}
             <code>false</code> (privacy-by-default; it was <code>true</code> through 0.x), so a
-            named Google family is treated as a <em>local</em> family and no request leaves the
-            page unless you opt in with <code>injectRemote: true</code>. When you do, valet prints a{' '}
+            named Google family is treated as a <em>local</em> family and no request leaves the page
+            unless you opt in with <code>injectRemote: true</code>. When you do, valet prints a{' '}
             <em>once-per-session</em> dev-only console notice the first time it injects a Google
             font, naming the request and pointing here. Production builds stay silent.
           </Typography>
@@ -193,23 +194,27 @@ export default function FontsPrivacyPage() {
           variant='h4'
           weight='bold'
         >
-          1 · Remote Google injection (default)
+          1 · Remote Google injection (opt-in: injectRemote:true)
         </Typography>
         <Typography>
-          Name a font and let valet inject the Google Fonts stylesheet. This is the zero-setup path
-          — and the one that originates the third-party request. A once-per-session dev notice
-          reminds you it happened.
+          Name a font and opt in with <code>injectRemote: true</code> to let valet inject the Google
+          Fonts stylesheet. This is the one strategy that originates the third-party request; a
+          once-per-session dev notice reminds you it happened. (At 1.0 the default is{' '}
+          <code>false</code>, so without this opt-in the same families resolve locally.)
         </Typography>
         <CodeBlock
-          ariaLabel='Default remote Google Fonts injection'
+          ariaLabel='Opt-in remote Google Fonts injection'
           code={`import { useInitialTheme } from '@archway/valet';
 
+// injectRemote:true opts back into the remote fetch (default is false at 1.0).
 // Injects preconnect + a fonts.googleapis.com stylesheet for these families.
 // Dev console (once per session): "valet: loading Google Fonts from
 // fonts.googleapis.com (remote third-party request)…"
-useInitialTheme({
-  fonts: { heading: 'Kumbh Sans', body: 'Inter', mono: 'JetBrains Mono' },
-});`}
+useInitialTheme(
+  { fonts: { heading: 'Kumbh Sans', body: 'Inter', mono: 'JetBrains Mono' } },
+  [],
+  { injectRemote: true },
+);`}
         />
 
         {/* Strategy 2 */}

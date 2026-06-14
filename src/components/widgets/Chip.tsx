@@ -208,6 +208,7 @@ export const Chip: React.FC<ChipProps> = ({
   return (
     <Root
       {...(domProps as React.HTMLAttributes<HTMLDivElement>)}
+      data-valet-component='Chip'
       $bg={bg}
       $fg={fg}
       $bd={bd}

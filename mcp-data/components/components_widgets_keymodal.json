@@ -31,8 +31,10 @@
   "slots": [],
   "bestPractices": [],
   "examples": [],
+  "docsUrl": "/keymodal-demo",
   "sourceFiles": [
-    "src/components/widgets/KeyModal.tsx"
+    "src/components/widgets/KeyModal.tsx",
+    "docs/src/pages/components/widgets/KeyModalDemo.tsx"
   ],
   "version": "0.36.0",
   "schemaVersion": "1.7"

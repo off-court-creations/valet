@@ -61,6 +61,7 @@ const widgets: [string, string][] = [
   ['Tooltip', '/tooltip-demo'],
   ['Chip', '/chip-demo'],
   ['Dropzone', '/dropzone-demo'],
+  ['Key Modal', '/keymodal-demo'],
   ['Tree', '/tree-demo'],
   ['Markdown', '/markdown-demo'],
   ['Error Boundary', '/error-boundary-demo'],

@@ -153,3 +153,50 @@ describe('Markdown list-item token rendering (jsdom)', () => {
     expect(container.textContent).not.toContain('**');
   });
 });
+
+/* XSS defense (SECURITY — 1.0 regression guard) ------------------------- */
+// The renderer is lexer-only (no marked HTML serializer): raw HTML tokens fall
+// through to React-escaped text, and link/image URLs are scheme-allowlisted
+// (isSafeHref / isSafeImageSrc). These cases lock that in.
+describe('Markdown XSS defense (jsdom)', () => {
+  it('renders raw <script> HTML as inert escaped text — no script element', () => {
+    const container = renderMarkdown('hello <script>window.__pwned = 1</script> world');
+    expect(container.querySelector('script')).toBeNull();
+    // The angle-bracketed markup survives as visible text, not as a DOM node.
+    expect(container.textContent).toContain('<script>');
+    expect(
+      (globalThis as unknown as { __pwned?: number }).__pwned,
+      'inline script must never execute',
+    ).toBeUndefined();
+  });
+
+  it('does not create an <img onerror> handler from raw HTML', () => {
+    const container = renderMarkdown('<img src=x onerror="window.__pwned = 1">');
+    const img = container.querySelector('img');
+    // Raw HTML is escaped to text; no element (and thus no onerror) is created.
+    expect(img).toBeNull();
+    expect((globalThis as unknown as { __pwned?: number }).__pwned).toBeUndefined();
+  });
+
+  it('strips a javascript: link href (scheme not in the allowlist)', () => {
+    const container = renderMarkdown('[click me](javascript:window.__pwned=1)');
+    const a = container.querySelector('a');
+    // Either no anchor href, or a sanitized one — never a javascript: URL.
+    const href = a?.getAttribute('href') ?? '';
+    expect(href.toLowerCase()).not.toContain('javascript:');
+  });
+
+  it('preserves a normal https link href (positive control)', () => {
+    const container = renderMarkdown('[safe](https://example.com/path)');
+    const a = container.querySelector('a');
+    expect(a).not.toBeNull();
+    expect(a!.getAttribute('href')).toBe('https://example.com/path');
+  });
+
+  it('rejects a non-image data: URL on an image', () => {
+    const container = renderMarkdown('![x](data:text/html;base64,PHNjcmlwdD4=)');
+    const img = container.querySelector('img');
+    const src = img?.getAttribute('src') ?? '';
+    expect(src).not.toContain('data:text/html');
+  });
+});
