@@ -32,7 +32,7 @@ discipline) is 1.0-grade and is **not** reopened. Remaining work is W2–W5
 | **W2** | A11Y-NAMES — wire `label` into Switch/Slider/Select/Iterator | ✅ done + verified | Major cleared (+ the prop-consistency "FieldBaseProps does nothing" finding). All four render `label`+`helperText` visibly and associate them (aria-labelledby / native htmlFor); dev accessible-name guards added; new `fieldsAccessibleName.a11y.dom.test.tsx` (15 tests). Also fixed a pre-existing WCAG defect: `DateSelector`'s internal month/year Selects were unnamed → `aria-label`. Green: tsc, lint, 1262/1262 tests, build. |
 | **W3** | SSR — guard AppBar/Drawer crashes + Accordion hydration | ✅ done + verified | Major cleared. AppBar portal now mounted-gated (SSR-safe, no hydration mismatch); Drawer's `HTMLElement` useState init guarded; Accordion reduced-motion now via `usePrefersReducedMotion` (server snapshot false). New `src/ssr-render.test.ts` renderToString gate (CI runs post-build). Green: tsc, lint, 1265/1265, build. Note: an OPEN overlay Drawer/Modal portals to the overlay root — a client-only scenario by design. |
 | **W4** | TYPES — curate barrel, type `sendChat`, kill `export *` leaks | ✅ done + verified | Major cleared. `sendChat` → `Promise<ChatCompletion>` (new named type); aiKeyStore barrel curated (dropped `encrypt`/`decrypt` from the public surface; explicit `useAIKey`/`sendChat`/`AIProvider`/`ChatMessage`/`ChatCompletion`); bare `Variant` un-exported (only `TypographyVariant` public). Type-probes now **gated** (`typecheck:types`) and inverted to assert the 1.0 surface rejects removed aliases. Green: typecheck×4, check:package (publint+attw), 1265/1265, build. |
-| **W5** | RELEASE-POLICY — PVR, VERSIONING.md, experimental flags, injectRemote, PR-CI check:package | ⬜ not started | Major. PVR + experimental + injectRemote-timing need operator/Ben (§6/§7). |
+| **W5** | RELEASE-POLICY — PVR, VERSIONING.md, experimental flags, injectRemote, PR-CI check:package | 🟦 mostly done | `VERSIONING.md` written (+ README/CONTRIBUTING pointers); `injectRemote` flipped true→false (Q13, +tests/docs/CHANGELOG); experimental→stable for Accordion/Table/DateSelector, the rest (LLMChat/RichChat/KeyModal/Parallax×3) carved out in VERSIONING.md; `check:package` + `mcp:check` added to PR CI. Green: 1266/1266, docs tsc, mcp gates. **Remaining: [operator] enable GitHub Private Vulnerability Reporting** (§6 — agent cannot). |
 | **W6** | TAIL — minors (PBKDF2, MD-XSS test, untested components, coverage, mcp pins, bump.mjs) | ⬜ not started | **In 1.0 scope** (ruled 2026-06-14). On the critical path, not fast-follow. |
 
 State key: ⬜ not started · 🟦 in progress · ✅ done + verified · ⛔ blocked.
@@ -81,8 +81,8 @@ Things the agent cannot or should not do:
 | 3 | Progress.showLabel + back-compat wrapper | **Remove** (transitional shim) | ✅ ruled 2026-06-14 |
 | 4 | Tabs.tabAlign | **Collapse to `alignX`**, no alias | ✅ ruled 2026-06-14 |
 | 5 | SurfaceState.children veto carve-out | Hold (ships 1.0, leaves in a future major) | ✅ holds |
-| 6 | 10 experimental components | Promote mature; carve out chat/parallax/KeyModal in README | ⬜ at W5 |
-| 7 | injectRemote flip timing | Flip to false at the 1.0 cut (Q13) | ⬜ at W5 |
+| 6 | 10 experimental components | **Promoted Accordion/Table/DateSelector → stable; carved out LLMChat/RichChat/KeyModal/Parallax×3** in VERSIONING.md | ✅ done W5 (Ben can veto via meta `status`) |
+| 7 | injectRemote flip timing | **Flipped true→false** (Q13) on the epic branch (lands at the 1.0 cut) | ✅ done W5 |
 | 8 | Scope line | **1.0 = W1–W6 (everything); no 1.0.x fast-follow** | ✅ ruled 2026-06-14 |
 
 ## Flags & issues

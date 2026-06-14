@@ -213,7 +213,7 @@ useInitialTheme(
     'Load only the fonts you ship. Pass overrides to useInitialTheme and use the extras array for secondary faces; the loader dedupes requests.',
     'Keep colours semantic. Map brand colours into primary/secondary/tertiary/error tokens to maintain contrast across light/dark themes.',
     'Patch via setTheme. Update the store rather than sprinkling inline overrides so docs, MCP data, and components stay in sync; your patch folds into the overlay and survives mode toggles.',
-    'Mind privacy on fonts. The default Google-Fonts injection is a remote third-party request; self-host with injectRemote:false or go explicit-fonts-only (see Fonts & Privacy).',
+    'Mind privacy on fonts. As of 1.0 injectRemote defaults to false (named Google families are treated as local — no request); opt in with injectRemote:true to fetch from Google, or self-host (see Fonts & Privacy).',
   ];
 
   // token listing not needed for the current layout

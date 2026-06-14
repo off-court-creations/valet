@@ -176,10 +176,11 @@ describe('waitForFonts — never-rejects wrappers + rejected-inflight eviction (
 /* ───────────────────────────────────────────────────────────────────────
  * injectFontLinks — injectRemote option (THEMING S7, Q13)
  *
- * Default true (preconnect + googleapis stylesheet links, once-per-session
- * privacy notice). injectRemote:false skips ALL remote Google resources and
- * reinterprets Google-shaped entries as local families; self-hosted
- * CustomFont entries still construct a FontFace. Module-level state
+ * Default FALSE at 1.0 (Q13, privacy-by-default): the default skips ALL remote
+ * Google resources and reinterprets Google-shaped entries as local families.
+ * injectRemote:true opts back in (preconnect + googleapis stylesheet links,
+ * once-per-session privacy notice). Self-hosted CustomFont entries still
+ * construct a FontFace regardless. Module-level state
  * (activeLinks/loadedFonts/the preconnect node/the warnOnce memo) persists
  * across tests, so each test uses a unique family and scrubs <head>.
  * ─────────────────────────────────────────────────────────────────────── */
@@ -197,11 +198,22 @@ describe('injectFontLinks — injectRemote (S7)', () => {
     document.head.querySelectorAll('link').forEach((l) => l.remove());
   });
 
-  it('default (injectRemote omitted) appends preconnect + googleapis stylesheet links', () => {
-    const cleanup = injectFontLinks(['Remote Default Family']);
+  it('injectRemote:true appends preconnect + googleapis stylesheet links', () => {
+    const cleanup = injectFontLinks(['Remote Family'], { injectRemote: true });
     expect(document.getElementById('valet-fonts-preconnect')).not.toBeNull();
     expect(document.getElementById('valet-fonts-preconnect-gstatic')).not.toBeNull();
     expect(stylesheetTo('fonts.googleapis.com')).toHaveLength(1);
+    cleanup();
+  });
+
+  it('default (injectRemote omitted) appends NO remote links at 1.0 (privacy-by-default → local)', () => {
+    // Q13: the default flipped true→false at 1.0. A Google-shaped entry with no
+    // explicit injectRemote is now treated as a local family — zero network.
+    const cleanup = injectFontLinks(['Default Family']);
+    expect(document.getElementById('valet-fonts-preconnect')).toBeNull();
+    expect(document.getElementById('valet-fonts-preconnect-gstatic')).toBeNull();
+    expect(stylesheetTo('fonts.googleapis.com')).toHaveLength(0);
+    expect(headLinks()).toHaveLength(0);
     cleanup();
   });
 
@@ -260,8 +272,8 @@ describe('injectFontLinks — remote-injection privacy notice (S7)', () => {
   it('warns once per session, pointing at the privacy docs, when remote injection happens', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-    const c1 = injectFontLinks(['Notice Family One']);
-    const c2 = injectFontLinks(['Notice Family Two']); // second remote inject, same session
+    const c1 = injectFontLinks(['Notice Family One'], { injectRemote: true });
+    const c2 = injectFontLinks(['Notice Family Two'], { injectRemote: true }); // second remote inject, same session
 
     expect(warn).toHaveBeenCalledTimes(1); // warnOnce — not per call
     const message = String(warn.mock.calls[0]![0]);

@@ -158,12 +158,14 @@ export default function FontsPrivacyPage() {
           <Typography>
             • <strong>What valet never sends:</strong> valet itself makes no analytics, telemetry,
             or tracking calls. It transmits no email, no identifiers, and nothing to off-court
-            servers. The font fetch is the <em>only</em> third-party request the theming layer can
-            originate, and it is opt-out.
+            servers. A font fetch is the <em>only</em> third-party request the theming layer can
+            originate, and it is opt-in.
           </Typography>
           <Typography>
-            • <strong>The honest default:</strong> while <code>injectRemote</code> stays{' '}
-            <code>true</code> through 0.x (it flips to <code>false</code> at 1.0), valet prints a{' '}
+            • <strong>The honest default:</strong> as of 1.0 <code>injectRemote</code> defaults to{' '}
+            <code>false</code> (privacy-by-default; it was <code>true</code> through 0.x), so a
+            named Google family is treated as a <em>local</em> family and no request leaves the
+            page unless you opt in with <code>injectRemote: true</code>. When you do, valet prints a{' '}
             <em>once-per-session</em> dev-only console notice the first time it injects a Google
             font, naming the request and pointing here. Production builds stay silent.
           </Typography>

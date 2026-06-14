@@ -7,6 +7,14 @@ All notable changes to this project will be documented in this file. The format 
 > **1.0 prep (epic branch `feat/valet-1.0`).** These entries accumulate toward the
 > 1.0 cut; the `## Unreleased` heading becomes `## [1.0.0]` at release (Wave 4).
 
+### Added
+
+- Docs: [`VERSIONING.md`](./VERSIONING.md) — the post-1.0 stability policy. Defines the public API surface (the barrel; deep imports and generated class names are not API), what patch/minor/major mean, the post-1.0 deprecation lifecycle (alias + dev-warn for ≥1 minor, then removal in the next major), and the `experimental` carve-out.
+- Accessibility (WCAG 4.1.2): `Switch`/`Slider`/`Select`/`Iterator` now render the documented `FieldBaseProps.label` (and `helperText`) and wire it as the control's accessible name (`aria-labelledby`, or native `<label htmlFor>` for `Iterator`) — previously the prop was accepted and silently discarded. Each gained a dev-time accessible-name guard.
+- Types: `sendChat` now returns a named `ChatCompletion` type (was `Promise<any>`).
+- Testing: `src/ssr-render.test.ts` — a renderToString regression gate over the app-shell components (CI runs it post-build).
+- CI: PR CI now also runs `check:package` (publint + are-the-types-wrong) and `mcp:check` (corpus freshness).
+
 ### Removed
 
 - **BREAKING (deprecation sweep — all 0.x prop aliases removed, pre-1.0 policy `deprecate.ts`/Q12(a)):** every prop alias that was marked "removed at 1.0" is gone, along with `src/system/deprecate.ts` (`deprecateProp`/`resolveDeprecatedProp`) and its tests. The canonical names already existed and are unchanged. Migrations:
@@ -23,6 +31,10 @@ All notable changes to this project will be documented in this file. The format 
 ### Changed
 
 - **BREAKING (`Tabs.tabAlign` collapsed):** the `tabAlign` alias is removed; use `alignX` (one concept, one prop).
+- **BREAKING (fonts privacy-by-default, Q13/THEMING S7):** `injectRemote` now defaults to **`false`** (was `true` through 0.x). A named Google family with no explicit `injectRemote` is treated as a **local** family — zero network requests. To fetch named families from Google's servers, pass `injectRemote: true` (it then prints the once-per-session dev privacy notice). Self-hosted `CustomFont` entries are unaffected.
+- Positioning: promoted `Accordion` (+`Accordion.Item`), `Table`, and `DateSelector` from `experimental` to **`stable`**. `LLMChat`/`RichChat`/`KeyModal`/`ParallaxBackground`/`ParallaxLayer`/`ParallaxScroll` remain `experimental` and are explicitly carved out of the 1.0 SemVer guarantee (see `VERSIONING.md`).
+- Types: the public barrel is curated (no `export *` leaks) — `encrypt`/`decrypt` are no longer public (module-internal); the bare `Variant` is no longer exported (use `TypographyVariant`). The `dx/type-tests` probes are now gated in CI (`typecheck:types`).
+- SSR: `AppBar`/`Drawer` no longer crash `renderToString` (portal is mounted-gated; the `Drawer` `HTMLElement` guard); `Accordion` reduced-motion reads `usePrefersReducedMotion` (no hydration class mismatch).
 - MCP corpus / tooling: the served corpus now carries **zero** deprecated props. `validate.mjs`'s deprecated-alias gate is inverted to the 1.0 invariant (it fails if any prop ever carries a `deprecated` flag); `DEPRECATED_ALIAS_FLOOR` is now empty. The deprecation-banner/flag code in the MCP server remains but is dormant (no deprecated props on the surface).
 
 ## [0.36.0] — 2026-06-13

@@ -18,7 +18,7 @@
     "category": "fields",
     "summary": "Interactive month calendar for picking a single date or a `range`; emits/accepts timezone-safe ISO `YYYY-MM-DD` strings, with display localized via `locale` and `firstDayOfWeek` (the value contract stays ISO Latin digits).",
     "slug": "components/fields/dateselector",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "FormControl",
@@ -116,14 +116,14 @@
     "category": "layout",
     "summary": "Vertical stack of collapsible `Accordion.Item` panels with single or `multiple` open behavior and roving-focus ARIA; control which panels are open with `expanded`/`defaultExpanded`/`onExpandedChange`.",
     "slug": "components/layout/accordion",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Accordion.Item",
     "category": "layout",
     "summary": "One collapsible panel inside an `Accordion`, supplying its header and body content; author items as direct `Accordion` children — the parent owns open/closed state, focus, and ARIA wiring.",
     "slug": "components/layout/accordion.item",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "AppBar",
@@ -375,7 +375,7 @@
     "category": "widgets",
     "summary": "Data table with sortable columns, smart height/auto-pagination, and unified `selectionMode` (`'none'|'single'|'multiple'`) keyed by `getItemKey` for selection that survives data refreshes (the `selectable`/`rowKey` props are deprecated aliases); use it for tabular data with columns.",
     "slug": "components/widgets/table",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Tooltip",

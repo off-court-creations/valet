@@ -112,8 +112,10 @@ valet's failure mode is **loud and enriched, not silent**. A component used
 outside its required `<Surface>` throws a `valetError` (component name + fix
 hint + docs link) rather than rendering nothing — agents and developers need a
 crisp signal. When you add such an invariant, throw through `valetError` /
-`warnOnce` from `src/system/devErrors.ts` (never bare `throw`/`console.warn`),
-and deprecate renamed props through `src/system/deprecate.ts`. Consumers who
+`warnOnce` from `src/system/devErrors.ts` (never bare `throw`/`console.warn`).
+Pre-1.0 the project hard-renamed props with **no** back-compat aliases; the
+post-1.0 deprecation lifecycle (alias + dev-warn for ≥1 minor, then removal in
+the next major) is defined in [`VERSIONING.md`](./VERSIONING.md). Consumers who
 want to contain a failure opt in to the exported `<ValetErrorBoundary>` (it uses
 no `styled()`/theme machinery, so it survives failures originating in the engine
 or above the surface tree).
