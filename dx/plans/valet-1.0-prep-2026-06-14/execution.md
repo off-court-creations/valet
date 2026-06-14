@@ -6,6 +6,12 @@
 > 1345 tests, check:package (publint+attw), verify:pack, check:engine,
 > check:bundle, mcp:schema:check + mcp:check, docs tsc. Ready for Ben's 1.0.0
 > cut. Remaining is operator/human-elevation only (Wave 4 + PVR) — see hand-off.**
+>
+> **Pre-1.0 re-test pass (2026-06-14):** every component reset to `experimental`;
+> verify bottom-up and promote to `stable` per
+> [`verification-order.md`](verification-order.md) (topological order from the real
+> import graph). Plus spacing polish committed: role-aware Grid/Panel defaults,
+> Grid equal-width children, density scale tightened+centralized (0.8/0.9/1.0).
 
 ## Status at a glance
 
