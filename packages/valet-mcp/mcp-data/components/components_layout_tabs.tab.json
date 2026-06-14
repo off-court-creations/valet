@@ -40,7 +40,8 @@
     "--valet-focus-width",
     "--valet-focus-ring-color",
     "--valet-focus-offset",
-    "--valet-underline-width"
+    "--valet-underline-width",
+    "--valet-space"
   ],
   "cssPresets": [],
   "events": [],

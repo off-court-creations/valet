@@ -55,16 +55,16 @@
       "description": "One or many style-preset names registered via `definePreset()`"
     },
     {
+      "name": "compact",
+      "type": "boolean | undefined",
+      "required": false,
+      "description": "Zeros all layout spacing (pad, gap, and spacing-margins) where supported and\ncascades to spacing-aware descendants. Does not touch control insets,\nstructural geometry, border-radius, glyph sizes, or alignment. `compact={false}`\nopts a subtree back out of an inherited compact."
+    },
+    {
       "name": "pad",
       "type": "Space | undefined",
       "required": false,
       "description": "Container padding as units or CSS length."
-    },
-    {
-      "name": "compact",
-      "type": "boolean | undefined",
-      "required": false,
-      "description": "Compact mode zeros gap and pad where supported."
     },
     {
       "name": "as",

@@ -31,6 +31,7 @@ import { resolveDeprecatedProp } from '../../system/deprecate';
 import { shallow } from 'zustand/shallow';
 import type { Presettable, SpacingProps, Sx } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
+import { CompactCtx, useCompact } from '../../system/compactContext';
 import { Typography } from '../primitives/Typography';
 import { useControlledState } from '../../hooks/useControlledState';
 
@@ -269,7 +270,7 @@ export const Accordion: React.FC<AccordionProps> & {
   constrainHeight = true,
   unmountOnExit = false,
   pad: padProp,
-  compact = false,
+  compact,
   preset: p,
   className,
   sx,
@@ -277,6 +278,7 @@ export const Accordion: React.FC<AccordionProps> & {
   ...divProps
 }) => {
   const { theme } = useTheme();
+  const effCompact = useCompact(compact);
   const surface = useSurface(
     (s) => ({
       element: s.element,
@@ -508,21 +510,23 @@ export const Accordion: React.FC<AccordionProps> & {
             const mergedStyle = { ...(sx || {}), ...(styleProp as React.CSSProperties) };
             return { ...rest, style: mergedStyle } as typeof divProps;
           })()}
-          $pad={resolveSpace(padProp, theme, compact, 1)}
+          $pad={resolveSpace(padProp, theme, effCompact, 1)}
           className={[presetClasses, className].filter(Boolean).join(' ')}
           data-valet-component='Accordion'
         >
-          {React.Children.map(children, (child, idx) =>
-            React.isValidElement(child)
-              ? React.cloneElement(
-                  child as React.ReactElement<{ index?: number; unmountOnExit?: boolean }>,
-                  {
-                    index: idx,
-                    unmountOnExit,
-                  },
-                )
-              : child,
-          )}
+          <CompactCtx.Provider value={effCompact}>
+            {React.Children.map(children, (child, idx) =>
+              React.isValidElement(child)
+                ? React.cloneElement(
+                    child as React.ReactElement<{ index?: number; unmountOnExit?: boolean }>,
+                    {
+                      index: idx,
+                      unmountOnExit,
+                    },
+                  )
+                : child,
+            )}
+          </CompactCtx.Provider>
         </Root>
       </Wrapper>
     </AccordionCtx.Provider>

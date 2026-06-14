@@ -30,6 +30,7 @@ import { resolveSpace } from '../../utils/resolveSpace';
 import { withAlpha } from '../../helpers/color';
 import { valetError } from '../../system/devErrors';
 import { useControlledState } from '../../hooks/useControlledState';
+import { CompactCtx, useCompact } from '../../system/compactContext';
 
 /*───────────────────────────────────────────────────────────*/
 /* Context                                                   */
@@ -333,7 +334,8 @@ const TabsBase = forwardRef<HTMLDivElement, TabsProps>(
       tabAlign,
       gap: gapProp,
       pad: padProp,
-      compact = false,
+      compact,
+      density,
       preset: p,
       className,
       children,
@@ -463,10 +465,20 @@ const TabsBase = forwardRef<HTMLDivElement, TabsProps>(
     );
 
     const cls = [p ? preset(p) : '', className].filter(Boolean).join(' ');
-    const compactEffective =
-      compact || (divProps as unknown as { density?: string }).density === 'compact';
-    const gap = resolveSpace(gapProp, theme, compactEffective, 1);
-    const pad = resolveSpace(padProp, theme, compactEffective, 1);
+    const effectiveCompact = useCompact(compact);
+    const gap = resolveSpace(gapProp, theme, effectiveCompact, 1);
+    const pad = resolveSpace(padProp, theme, effectiveCompact, 1);
+    /* V1 density-scales-the-subtree: when density is explicitly provided,
+       set --valet-space locally so the strip/panel (and descendants)
+       scale. density never zeroes — that is compact's job. */
+    const densityScale =
+      density === 'comfortable'
+        ? 1.15
+        : density === 'tight'
+          ? 0.9
+          : density === 'standard'
+            ? 1.0
+            : undefined;
     const stripFirst =
       (orientation === 'horizontal' && placement === 'top') ||
       (orientation === 'vertical' && placement === 'left');
@@ -625,7 +637,11 @@ const TabsBase = forwardRef<HTMLDivElement, TabsProps>(
           $gap={gap}
           $pad={pad}
           className={cls}
-          style={sx}
+          style={
+            densityScale != null
+              ? { ...sx, '--valet-space': `calc(${theme.spacingUnit} * ${densityScale})` }
+              : sx
+          }
           onFocus={(e) => {
             // Only redirect focus when the root itself receives focus.
             // Do NOT hijack focus when a child within the tabs (e.g., inputs, buttons)
@@ -643,63 +659,65 @@ const TabsBase = forwardRef<HTMLDivElement, TabsProps>(
             }
           }}
         >
-          {stripFirst && (
-            <TabStripWrap
-              $fadeLeft={fadeL}
-              $fadeRight={fadeR}
-              $fadeCol={theme.colors.primary}
-              $dur={theme.motion.duration.xlong}
-              $ease={theme.motion.easing.emphasized}
-              $slide={theme.spacing(2)}
-            >
-              <TabList
-                ref={listRef}
-                role='tablist'
-                aria-orientation={orientation}
-                $orientation={orientation}
-                $place={placement}
-                $edgeGap={edgeGap}
-                $align={(tabAlign ?? alignX ?? 'left') as 'left' | 'right' | 'center'}
+          <CompactCtx.Provider value={effectiveCompact}>
+            {stripFirst && (
+              <TabStripWrap
                 $fadeLeft={fadeL}
                 $fadeRight={fadeR}
                 $fadeCol={theme.colors.primary}
-                $overflow={overflowing}
+                $dur={theme.motion.duration.xlong}
+                $ease={theme.motion.easing.emphasized}
+                $slide={theme.spacing(2)}
               >
-                {tabs}
-              </TabList>
-              {/* Custom scroll hint removed */}
-            </TabStripWrap>
-          )}
+                <TabList
+                  ref={listRef}
+                  role='tablist'
+                  aria-orientation={orientation}
+                  $orientation={orientation}
+                  $place={placement}
+                  $edgeGap={edgeGap}
+                  $align={(tabAlign ?? alignX ?? 'left') as 'left' | 'right' | 'center'}
+                  $fadeLeft={fadeL}
+                  $fadeRight={fadeR}
+                  $fadeCol={theme.colors.primary}
+                  $overflow={overflowing}
+                >
+                  {tabs}
+                </TabList>
+                {/* Custom scroll hint removed */}
+              </TabStripWrap>
+            )}
 
-          <Panel>{panels}</Panel>
+            <Panel>{panels}</Panel>
 
-          {!stripFirst && (
-            <TabStripWrap
-              $fadeLeft={fadeL}
-              $fadeRight={fadeR}
-              $fadeCol={theme.colors.primary}
-              $dur={theme.motion.duration.xlong}
-              $ease={theme.motion.easing.emphasized}
-              $slide={theme.spacing(2)}
-            >
-              <TabList
-                ref={listRef}
-                role='tablist'
-                aria-orientation={orientation}
-                $orientation={orientation}
-                $place={placement}
-                $edgeGap={edgeGap}
-                $align={(tabAlign ?? alignX ?? 'left') as 'left' | 'right' | 'center'}
+            {!stripFirst && (
+              <TabStripWrap
                 $fadeLeft={fadeL}
                 $fadeRight={fadeR}
                 $fadeCol={theme.colors.primary}
-                $overflow={overflowing}
+                $dur={theme.motion.duration.xlong}
+                $ease={theme.motion.easing.emphasized}
+                $slide={theme.spacing(2)}
               >
-                {tabs}
-              </TabList>
-              {/* Custom scroll hint removed */}
-            </TabStripWrap>
-          )}
+                <TabList
+                  ref={listRef}
+                  role='tablist'
+                  aria-orientation={orientation}
+                  $orientation={orientation}
+                  $place={placement}
+                  $edgeGap={edgeGap}
+                  $align={(tabAlign ?? alignX ?? 'left') as 'left' | 'right' | 'center'}
+                  $fadeLeft={fadeL}
+                  $fadeRight={fadeR}
+                  $fadeCol={theme.colors.primary}
+                  $overflow={overflowing}
+                >
+                  {tabs}
+                </TabList>
+                {/* Custom scroll hint removed */}
+              </TabStripWrap>
+            )}
+          </CompactCtx.Provider>
         </Root>
       </TabsCtx.Provider>
     );

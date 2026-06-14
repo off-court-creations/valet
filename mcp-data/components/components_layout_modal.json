@@ -67,8 +67,7 @@
       "name": "compact",
       "type": "boolean",
       "required": false,
-      "description": "Compact removes container + internal paddings",
-      "default": "false"
+      "description": "Compact removes container + internal paddings"
     },
     {
       "name": "disableBackdropClick",

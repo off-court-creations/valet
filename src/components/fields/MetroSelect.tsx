@@ -33,9 +33,10 @@ import { Typography } from '../primitives/Typography';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { toHex, toRgb, mix } from '../../helpers/color';
-import type { FieldBaseProps, Presettable, Space, Sx } from '../../types';
+import type { FieldBaseProps, Presettable, Space, SpacingProps, Sx } from '../../types';
 import type { ChangeInfo, InputSource, OnValueChange, OnValueCommit } from '../../system/events';
 import { styled } from '../../css/createStyled';
+import { CompactCtx, useCompact } from '../../system/compactContext';
 import { valetError } from '../../system/devErrors';
 import { useFieldState } from '../../hooks/useControlledState';
 
@@ -65,7 +66,8 @@ export interface MetroSelectProps
       React.HTMLAttributes<HTMLDivElement>,
       'onChange' | 'value' | 'defaultValue' | 'style'
     >,
-    FieldBaseProps {
+    FieldBaseProps,
+    Pick<SpacingProps, 'compact'> {
   value?: Primitive | Primitive[];
   defaultValue?: Primitive | Primitive[];
   /** Inter-tile spacing as units or CSS length. */
@@ -279,6 +281,7 @@ export const MetroSelect: MetroSelectComponent = ({
   // aria-invalid below; `fullWidth` rendering is Phase 2 / Q10.
   error,
   fullWidth: _fullWidth,
+  compact,
   preset: p,
   className,
   sx,
@@ -286,6 +289,7 @@ export const MetroSelect: MetroSelectComponent = ({
   ...rest
 }) => {
   void _fullWidth;
+  const effectiveCompact = useCompact(compact);
   /**
    * Single resolution of value/control/form binding (ruling R9). Precedence is
    * prop > form > internal, latched at mount; an unseeded form key renders
@@ -465,7 +469,7 @@ export const MetroSelect: MetroSelectComponent = ({
       <Stack
         direction='row'
         wrap
-        compact
+        compact={effectiveCompact}
         gap={gap}
         data-valet-component='MetroSelect'
         data-disabled={disabled ? 'true' : 'false'}
@@ -529,16 +533,18 @@ export const MetroSelect: MetroSelectComponent = ({
         }}
         className={[presetCls, className].filter(Boolean).join(' ')}
       >
-        {rawOpts.map((el, i) =>
-          React.cloneElement(el, {
-            id: optIds[i],
-            role: 'option',
-            'aria-selected': isSel(el.props.value),
-            'aria-disabled': el.props.disabled || disabled || undefined,
-            'data-active': (showActive && i === active) || undefined,
-            onMouseEnter: () => setActive(i),
-          } as Partial<MetroOptionProps> & { id: string }),
-        )}
+        <CompactCtx.Provider value={effectiveCompact}>
+          {rawOpts.map((el, i) =>
+            React.cloneElement(el, {
+              id: optIds[i],
+              role: 'option',
+              'aria-selected': isSel(el.props.value),
+              'aria-disabled': el.props.disabled || disabled || undefined,
+              'data-active': (showActive && i === active) || undefined,
+              onMouseEnter: () => setActive(i),
+            } as Partial<MetroOptionProps> & { id: string }),
+          )}
+        </CompactCtx.Provider>
       </Stack>
       {helperText && (
         <div

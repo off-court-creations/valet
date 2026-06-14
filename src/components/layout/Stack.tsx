@@ -11,6 +11,7 @@ import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import type { Presettable, SpacingProps, Sx } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
+import { CompactCtx, useCompact } from '../../system/compactContext';
 
 /*───────────────────────────────────────────────────────────*/
 export interface StackProps
@@ -90,14 +91,26 @@ export const Stack: React.FC<StackProps> = ({
 }) => {
   const { theme } = useTheme();
 
-  const compactEffective = compact || density === 'compact';
-  const gap = resolveSpace(gapProp, theme, compactEffective, 1);
+  const effectiveCompact = useCompact(compact);
+  const gap = resolveSpace(gapProp, theme, effectiveCompact, 1);
 
   /* Enable wrapping by default for rows */
   const shouldWrap = typeof wrap === 'boolean' ? wrap : direction === 'row';
 
   const presetClasses = p ? preset(p) : '';
-  const pad = resolveSpace(padProp, theme, compactEffective, 1);
+  const pad = resolveSpace(padProp, theme, effectiveCompact, 1);
+
+  /* V1: density scales the subtree via --valet-space */
+  const densityScale =
+    density === 'comfortable'
+      ? 1.15
+      : density === 'tight'
+        ? 0.9
+        : density === 'standard'
+          ? 1.0
+          : undefined;
+  const spaceVar =
+    densityScale != null ? `calc(${theme.spacingUnit} * ${densityScale})` : undefined;
 
   return (
     <StackContainer
@@ -109,9 +122,9 @@ export const Stack: React.FC<StackProps> = ({
       $pad={pad}
       $alignX={alignX}
       className={[presetClasses, className].filter(Boolean).join(' ')}
-      style={sx}
+      style={spaceVar ? { ...sx, '--valet-space': spaceVar } : sx}
     >
-      {children}
+      <CompactCtx.Provider value={effectiveCompact}>{children}</CompactCtx.Provider>
     </StackContainer>
   );
 };

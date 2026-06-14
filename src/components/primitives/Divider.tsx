@@ -8,6 +8,7 @@ import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import type { Presettable, SpacingProps, Space, Sx } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
+import { useCompact } from '../../system/compactContext';
 
 export type DividerOrientation = 'horizontal' | 'vertical';
 
@@ -67,6 +68,7 @@ export const Divider: React.FC<DividerProps> = ({
   ...rest
 }) => {
   const { theme } = useTheme();
+  const effectiveCompact = useCompact(compact);
 
   // Default color uses divider token via CSS var, with a theme fallback.
   const color =
@@ -83,7 +85,7 @@ export const Divider: React.FC<DividerProps> = ({
   const len =
     length === undefined ? undefined : typeof length === 'number' ? `${length}px` : String(length);
 
-  const pad = resolveSpace(padProp as Space | undefined, theme, compact, 0);
+  const pad = resolveSpace(padProp as Space | undefined, theme, effectiveCompact, 0);
   const presetClass = p ? preset(p) : '';
 
   return (

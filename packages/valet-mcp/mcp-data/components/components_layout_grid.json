@@ -23,11 +23,11 @@
     },
     {
       "name": "density",
-      "type": "'compact' | 'standard' | 'comfortable'",
+      "type": "'tight' | 'standard' | 'comfortable'",
       "required": false,
-      "description": "Density override; alias: `compact` maps to `density='compact'`",
+      "description": "Density override; an independent spacing scale (never zeros)",
       "enumValues": [
-        "compact",
+        "tight",
         "standard",
         "comfortable"
       ]
@@ -36,8 +36,7 @@
       "name": "compact",
       "type": "boolean",
       "required": false,
-      "description": "Compact zeros both pad and gap (alias for density='compact')",
-      "default": "false"
+      "description": "Hard-zeros layout pad + gap and cascades to descendants (independent of density)"
     },
     {
       "name": "normalizeRowHeights",
@@ -83,7 +82,8 @@
     "--valet-panel-max-h",
     "--valet-stack-ov-y",
     "--valet-stack-max-h",
-    "--valet-box-max-h"
+    "--valet-box-max-h",
+    "--valet-space"
   ],
   "cssPresets": [],
   "events": [],

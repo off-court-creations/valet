@@ -473,7 +473,7 @@ useInitialTheme(
               <Stack sx={{ gap: theme.spacing(0.75) }}>
                 <Typography bold>Date Selector</Typography>
                 <DateSelector
-                  density='compact'
+                  density='tight'
                   minDate='2020-01-01'
                   maxDate='2030-12-31'
                 />
