@@ -44,7 +44,7 @@
     "@types/react": "^19.1.0"
   },
   "optionalDependencies": {
-    "@archway/valet": "^0.35.0"
+    "@archway/valet": "^0.36.0"
   },
   "devDependencies": {
     "ts-node": "^10.9.2"
