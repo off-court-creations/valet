@@ -100,7 +100,7 @@ npm run typecheck`; // only typecheck exists in TS/hybrid; still mention
       <Stack>
         <Typography
           variant='h2'
-          bold
+          weight='bold'
         >
           Quickstart
         </Typography>

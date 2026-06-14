@@ -303,8 +303,6 @@ export interface TabsProps
   placement?: 'top' | 'bottom' | 'left' | 'right';
   /** Horizontal alignment of the tab strip (horizontal orientation). */
   alignX?: 'left' | 'right' | 'center';
-  /** Alias for alignX for clarity. */
-  tabAlign?: 'left' | 'right' | 'center';
   /** Inline styles (with CSS var support) */
   sx?: Sx;
 }
@@ -331,7 +329,6 @@ const TabsBase = forwardRef<HTMLDivElement, TabsProps>(
       onValueChange,
       onValueCommit,
       alignX,
-      tabAlign,
       gap: gapProp,
       pad: padProp,
       compact,
@@ -611,7 +608,7 @@ const TabsBase = forwardRef<HTMLDivElement, TabsProps>(
     }, [orientation]);
 
     // Normalize alignX with Box semantics.
-    // Note: alignment resolved inline when rendering TabList via (tabAlign ?? alignX ?? 'left')
+    // Note: alignment resolved inline when rendering TabList via (alignX ?? 'left')
 
     // Root ref + focusable contract: focusing Tabs focuses the active tab button.
     const rootRef = useRef<HTMLDivElement | null>(null);
@@ -676,7 +673,7 @@ const TabsBase = forwardRef<HTMLDivElement, TabsProps>(
                   $orientation={orientation}
                   $place={placement}
                   $edgeGap={edgeGap}
-                  $align={(tabAlign ?? alignX ?? 'left') as 'left' | 'right' | 'center'}
+                  $align={(alignX ?? 'left') as 'left' | 'right' | 'center'}
                   $fadeLeft={fadeL}
                   $fadeRight={fadeR}
                   $fadeCol={theme.colors.primary}
@@ -706,7 +703,7 @@ const TabsBase = forwardRef<HTMLDivElement, TabsProps>(
                   $orientation={orientation}
                   $place={placement}
                   $edgeGap={edgeGap}
-                  $align={(tabAlign ?? alignX ?? 'left') as 'left' | 'right' | 'center'}
+                  $align={(alignX ?? 'left') as 'left' | 'right' | 'center'}
                   $fadeLeft={fadeL}
                   $fadeRight={fadeR}
                   $fadeCol={theme.colors.primary}

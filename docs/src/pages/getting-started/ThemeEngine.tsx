@@ -14,7 +14,7 @@ import {
   Checkbox,
   Switch,
   Slider,
-  Progress,
+  ProgressRing,
   Table,
   Iterator,
   DateSelector,
@@ -249,7 +249,7 @@ useInitialTheme(
         >
           <Typography
             variant='h3'
-            bold
+            weight='bold'
           >
             Palette Names
           </Typography>
@@ -339,7 +339,7 @@ useInitialTheme(
         >
           <Typography
             variant='h3'
-            bold
+            weight='bold'
           >
             Examples
           </Typography>
@@ -355,7 +355,7 @@ useInitialTheme(
               sx={{ borderRadius: theme.radius(1) }}
             >
               <Stack sx={{ gap: theme.spacing(0.75) }}>
-                <Typography bold>Controls on backgroundAlt</Typography>
+                <Typography weight='bold'>Controls on backgroundAlt</Typography>
                 <Stack
                   direction='row'
                   sx={{ gap: theme.spacing(0.5), flexWrap: 'wrap' }}
@@ -400,7 +400,7 @@ useInitialTheme(
 
             <Panel pad={1}>
               <Stack sx={{ gap: theme.spacing(0.75) }}>
-                <Typography bold>Dividers and Lines</Typography>
+                <Typography weight='bold'>Dividers and Lines</Typography>
                 <Typography variant='subtitle'>Secondary divider</Typography>
                 <Divider
                   lineColor={t['secondary']}
@@ -421,7 +421,7 @@ useInitialTheme(
 
             <Panel pad={1}>
               <Stack sx={{ gap: theme.spacing(0.75) }}>
-                <Typography bold>Form Controls</Typography>
+                <Typography weight='bold'>Form Controls</Typography>
                 <Stack
                   direction='row'
                   sx={{ gap: theme.spacing(1), alignItems: 'center', flexWrap: 'wrap' }}
@@ -448,16 +448,12 @@ useInitialTheme(
 
             <Panel pad={1}>
               <Stack sx={{ gap: theme.spacing(0.75) }}>
-                <Typography bold>Slider & Progress</Typography>
+                <Typography weight='bold'>Slider & Progress</Typography>
                 <Stack
                   direction='row'
                   sx={{ gap: theme.spacing(1), alignItems: 'center', flexWrap: 'wrap' }}
                 >
-                  <Progress
-                    variant='circular'
-                    mode='indeterminate'
-                    sx={{ width: '10rem' }}
-                  />
+                  <ProgressRing sx={{ width: '10rem' }} />
 
                   <Slider
                     min={0}
@@ -471,7 +467,7 @@ useInitialTheme(
 
             <Panel pad={1}>
               <Stack sx={{ gap: theme.spacing(0.75) }}>
-                <Typography bold>Date Selector</Typography>
+                <Typography weight='bold'>Date Selector</Typography>
                 <DateSelector
                   density='tight'
                   minDate='2020-01-01'
@@ -482,7 +478,7 @@ useInitialTheme(
 
             <Panel pad={1}>
               <Stack sx={{ gap: theme.spacing(0.75) }}>
-                <Typography bold>Table</Typography>
+                <Typography weight='bold'>Table</Typography>
                 <Table
                   columns={[
                     { header: 'Name', accessor: 'name', sortable: true },
@@ -511,7 +507,7 @@ useInitialTheme(
         >
           <Typography
             variant='h3'
-            bold
+            weight='bold'
           >
             Typography on Surfaces
           </Typography>
@@ -524,7 +520,7 @@ useInitialTheme(
             <Panel pad={1}>
               <Typography
                 variant='h4'
-                bold
+                weight='bold'
               >
                 On background
               </Typography>
@@ -551,7 +547,7 @@ useInitialTheme(
               <Typography
                 variant='h4'
                 sx={{ color: t['primaryText'] }}
-                bold
+                weight='bold'
               >
                 On backgroundAlt
               </Typography>
@@ -577,7 +573,7 @@ useInitialTheme(
         >
           <Typography
             variant='h3'
-            bold
+            weight='bold'
           >
             Theme store fundamentals
           </Typography>
@@ -609,7 +605,7 @@ useInitialTheme(
         >
           <Typography
             variant='h3'
-            bold
+            weight='bold'
           >
             Overlay composition (your brand survives mode toggles)
           </Typography>
@@ -649,7 +645,7 @@ useInitialTheme(
         >
           <Typography
             variant='h3'
-            bold
+            weight='bold'
           >
             System mode &amp; persistence
           </Typography>
@@ -698,7 +694,7 @@ useInitialTheme(
         >
           <Typography
             variant='h3'
-            bold
+            weight='bold'
           >
             Best practices
           </Typography>

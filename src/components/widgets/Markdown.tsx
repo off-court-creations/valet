@@ -197,7 +197,7 @@ const renderTokens = (tokens: Token[], codeBg: string): React.ReactNode =>
           <Typography
             key={i}
             variant={variant}
-            bold
+            weight='bold'
           >
             {renderInline(heading.tokens)}
           </Typography>

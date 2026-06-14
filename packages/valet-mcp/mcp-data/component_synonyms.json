@@ -226,17 +226,10 @@
     "ProgressRing"
   ],
   "spinner": [
-    "ProgressRing",
-    "Progress"
+    "ProgressRing"
   ],
   "circular-progress": [
     "ProgressRing"
-  ],
-  "progress": [
-    "Progress"
-  ],
-  "loader": [
-    "Progress"
   ],
   "typography": [
     "Typography"

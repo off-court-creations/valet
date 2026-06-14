@@ -51,19 +51,11 @@
       "name": "selectionMode",
       "type": "'none' | 'single'",
       "required": false,
-      "description": "How selection behaves (API-TYPES S11, Q11(a)). List supports single\nselection: `'single'` enables it, `'none'` (default) disables it. The\nunified cross-component name; the boolean `selectable` is a deprecated\nalias (`selectable={true}` ≡ `selectionMode='single'`). When both are\nsupplied, `selectionMode` wins.",
+      "description": "How selection behaves (API-TYPES S11, Q11(a)). List supports single\nselection: `'single'` enables it, `'none'` (default) disables it. The\nunified cross-component selection name.",
       "enumValues": [
         "none",
         "single"
       ]
-    },
-    {
-      "name": "selectable",
-      "type": "boolean",
-      "required": false,
-      "deprecated": {
-        "replacement": "selectionMode"
-      }
     },
     {
       "name": "focusMode",
@@ -99,14 +91,6 @@
       "type": "keyof T | ((item: T, index: number) => React.Key)",
       "required": false,
       "description": "Stable identity for each item — the unified cross-component name\n(API-TYPES S11, Q11(a)). Used to key React rows and standardize reorder\nidentity. Defaults to the item's index when omitted. The cross-component\nshape is `keyof T | ((item, index) => key)`; List narrows the function form\nto a React.Key return."
-    },
-    {
-      "name": "getKey",
-      "type": "(item: T, index: number) => React.Key",
-      "required": false,
-      "deprecated": {
-        "replacement": "getItemKey"
-      }
     },
     {
       "name": "emptyPlaceholder",

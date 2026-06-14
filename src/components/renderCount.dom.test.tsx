@@ -131,7 +131,7 @@ describe('PERF S10 — Table inline-callback re-render behaviour (jsdom, StrictM
         <Table<Row>
           data={rows}
           columns={nameColumns}
-          selectable='multi'
+          selectionMode='multiple'
           constrainHeight={false}
           /* FRESH identity every render — this is the whole point. */
           onSelectionChange={(s) => selSpy(s)}
@@ -181,7 +181,7 @@ describe('PERF S10 — Table inline-callback re-render behaviour (jsdom, StrictM
         <Table<Row>
           data={rows}
           columns={nameColumns}
-          selectable='multi'
+          selectionMode='multiple'
           constrainHeight={false}
           onSelectionChange={(s) => selSpy(s)}
         />
@@ -236,7 +236,7 @@ describe('PERF S10 — Table inline-callback re-render behaviour (jsdom, StrictM
           /* new array identity every render */
           data={[...rows]}
           columns={nameColumns}
-          selectable='multi'
+          selectionMode='multiple'
           constrainHeight={false}
           /* fresh closure every render */
           onSelectionChange={(s) => {

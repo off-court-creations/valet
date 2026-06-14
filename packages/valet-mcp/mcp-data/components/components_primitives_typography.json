@@ -17,11 +17,6 @@
       "required": false
     },
     {
-      "name": "bold",
-      "type": "boolean",
-      "required": false
-    },
-    {
       "name": "italic",
       "type": "boolean",
       "required": false
@@ -175,7 +170,7 @@
     {
       "id": "typography-styling-props",
       "title": "Styling props",
-      "code": "<Stack>\n  <Typography bold>Bold body</Typography>\n  <Typography italic>Italic body</Typography>\n  <Typography bold italic>Bold italic</Typography>\n  <Typography centered>Centered line</Typography>\n</Stack>",
+      "code": "<Stack>\n  <Typography weight='bold'>Bold body</Typography>\n  <Typography italic>Italic body</Typography>\n  <Typography weight='bold' italic>Bold italic</Typography>\n  <Typography centered>Centered line</Typography>\n</Stack>",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {}

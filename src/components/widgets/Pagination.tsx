@@ -8,7 +8,6 @@ import { styled } from '../../css/createStyled';
 import Typography from '../primitives/Typography';
 import { preset } from '../../css/stylePresets';
 import { useTheme } from '../../system/themeStore';
-import { resolveDeprecatedProp } from '../../system/deprecate';
 import { useComponentStrings } from '../../system/locale';
 import type { DeepPartialStrings, ValetStrings } from '../../system/locale';
 import type { Presettable, Sx } from '../../types';
@@ -24,12 +23,6 @@ export interface PaginationProps
   page?: number;
   /** Called with the **new page** (1-based) when the user navigates. */
   onPageChange?: (page: number) => void;
-  /**
-   * @deprecated Renamed to `onPageChange` (API-TYPES S10, Q12). The old name
-   * keeps working through 0.x with a one-time dev warning and is removed at
-   * 1.0. When both are supplied, `onPageChange` wins.
-   */
-  onChange?: (page: number) => void;
   /**
    * Limit how many page buttons are visible at once. When set and less than `count`,
    * pagination renders a sliding window of page numbers plus window scroll controls.
@@ -221,7 +214,6 @@ export const Pagination: React.FC<PaginationProps> = ({
   count,
   page = 1,
   onPageChange,
-  onChange: onChangeDeprecated,
   visibleWindow,
   autoFollowActive = true,
   preset: p,
@@ -233,18 +225,9 @@ export const Pagination: React.FC<PaginationProps> = ({
   const { theme } = useTheme();
   const t = useComponentStrings('pagination', labels);
 
-  /* `onChange` was renamed to `onPageChange` (API-TYPES S10, Q12 / ruling
-     R30). Canonical wins; the deprecated alias keeps working through 0.x
-     with a single dev warning and is removed at 1.0. The rest of the body
-     consumes the resolved `onChange` below, so every internal call site is
-     unchanged. */
-  const onChange = resolveDeprecatedProp(
-    'Pagination',
-    'onPageChange',
-    onPageChange,
-    'onChange',
-    onChangeDeprecated,
-  );
+  /* Internal call sites consume `onChange`; alias the canonical prop so the
+     body below is unchanged. */
+  const onChange = onPageChange;
   const pages = React.useMemo(() => Array.from({ length: count }, (_, i) => i + 1), [count]);
 
   /* preset → utility class merge */
@@ -1110,7 +1093,7 @@ export const Pagination: React.FC<PaginationProps> = ({
                   family='mono'
                   whitespace='pre'
                   noSelect
-                  bold={n === page}
+                  weight={n === page ? 'bold' : 'regular'}
                 >
                   {n}
                 </Typography>
@@ -1162,7 +1145,7 @@ export const Pagination: React.FC<PaginationProps> = ({
                         family='mono'
                         whitespace='pre'
                         noSelect
-                        bold={n === page}
+                        weight={n === page ? 'bold' : 'regular'}
                       >
                         {n}
                       </Typography>
@@ -1188,7 +1171,7 @@ export const Pagination: React.FC<PaginationProps> = ({
                         family='mono'
                         whitespace='pre'
                         noSelect
-                        bold={n === page}
+                        weight={n === page ? 'bold' : 'regular'}
                       >
                         {n}
                       </Typography>
@@ -1220,7 +1203,7 @@ export const Pagination: React.FC<PaginationProps> = ({
                       family='mono'
                       whitespace='pre'
                       noSelect
-                      bold={n === page}
+                      weight={n === page ? 'bold' : 'regular'}
                     >
                       {n}
                     </Typography>

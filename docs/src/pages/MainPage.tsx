@@ -162,7 +162,7 @@ export default function MainPage() {
                 >
                   <Typography
                     variant='h1'
-                    bold
+                    weight='bold'
                     sx={{ textAlign: 'center' }}
                   >
                     One library. Everything UI.
@@ -269,7 +269,7 @@ export default function MainPage() {
                 />
                 <Typography
                   variant='h4'
-                  bold
+                  weight='bold'
                   sx={{ color: theme.colors['text'] }}
                 >
                   {f.title}
@@ -303,7 +303,7 @@ export default function MainPage() {
           <Box>
             <Typography
               variant='h3'
-              bold
+              weight='bold'
             >
               Component Demos
             </Typography>
@@ -418,7 +418,7 @@ export default function MainPage() {
           <Box fullWidth>
             <Typography
               variant='h3'
-              bold
+              weight='bold'
             >
               Theme playground
             </Typography>

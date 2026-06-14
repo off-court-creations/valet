@@ -20,7 +20,6 @@ import { preset } from '../../css/stylePresets';
 import { Checkbox } from '../fields/Checkbox';
 import { Pagination } from './Pagination';
 import { stripe, toRgb, mix, toHex } from '../../helpers/color';
-import { resolveDeprecatedProp } from '../../system/deprecate';
 import type { Presettable, SelectionProps, Sx } from '../../types';
 
 const INTERACTIVE_ROW_SELECTOR =
@@ -56,27 +55,6 @@ export interface TableProps<T>
   striped?: boolean;
   hoverable?: boolean;
   dividers?: boolean;
-  /**
-   * @deprecated Use {@link SelectionProps.selectionMode} (`'none' | 'single' | 'multiple'`)
-   * instead. `selectable` keeps working through 0.x and is removed at 1.0; its
-   * `'multi'` value maps to `selectionMode='multiple'`. When both are supplied,
-   * `selectionMode` wins.
-   */
-  selectable?: 'single' | 'multi' | undefined;
-  /**
-   * @deprecated Use {@link SelectionProps.getItemKey} instead — the same
-   * `keyof T | ((row, index) => key)` shape under the cross-component name.
-   * `rowKey` keeps working through 0.x and is removed at 1.0; when both are
-   * supplied, `getItemKey` wins.
-   *
-   * Identity for each row, used to key React rows and to track selection
-   * across data refreshes. Either a property name (`getItemKey="id"`) or a
-   * function (`getItemKey={(row) => row.id}`). When omitted, rows fall back to
-   * object identity — selection then behaves exactly as before and is lost
-   * when an immutable refresh replaces the row objects. Provide a key so
-   * selection survives such refreshes.
-   */
-  rowKey?: RowKey<T>;
   initialSort?: { index: number; desc?: boolean };
   onSortChange?: (index: number, desc: boolean) => void;
   /**
@@ -311,9 +289,7 @@ export function Table<T extends object>({
   hoverable = false,
   dividers = true,
   selectionMode,
-  selectable: selectableProp,
   getItemKey,
-  rowKey: rowKeyProp,
   selected: _selected,
   defaultSelected: _defaultSelected,
   initialSort,
@@ -333,25 +309,12 @@ export function Table<T extends object>({
   ...rest
 }: TableProps<T>) {
   /* Unified selection vocabulary (API-TYPES S11, Q11(a), ruling R12). The
-     canonical `selectionMode`/`getItemKey` win over the deprecated
-     `selectable`/`rowKey` aliases; the old names keep working through 0.x and
-     dev-warn once each (deprecate.ts). PERF S8's keyed internals are untouched
-     — we only resolve the alias names down to the existing internal shapes
-     (`selectable: 'single' | 'multi'` and `rowKey`). */
-  const resolvedMode = resolveDeprecatedProp(
-    'Table',
-    'selectionMode',
-    selectionMode,
-    'selectable',
-    /* map the legacy union to the canonical one so both can be compared */
-    selectableProp === 'multi' ? 'multiple' : selectableProp,
-  );
-  /* Internal Table machinery still speaks 'single' | 'multi' | undefined. */
+     canonical `selectionMode`/`getItemKey` map down to the internal shapes
+     Table's PERF S8 machinery speaks (`selectable: 'single' | 'multi'` and
+     `rowKey`); those internals are untouched. */
   const selectable: 'single' | 'multi' | undefined =
-    resolvedMode === 'multiple' ? 'multi' : resolvedMode === 'single' ? 'single' : undefined;
-  const rowKey = resolveDeprecatedProp('Table', 'getItemKey', getItemKey, 'rowKey', rowKeyProp) as
-    | RowKey<T>
-    | undefined;
+    selectionMode === 'multiple' ? 'multi' : selectionMode === 'single' ? 'single' : undefined;
+  const rowKey = getItemKey as RowKey<T> | undefined;
   /* `selected`/`defaultSelected` are part of the unified vocabulary but Table's
      selection is internally managed (PERF S8); a controlled-selection prop is a
      logged deferral. Observed here so the destructure stays exhaustive. */

@@ -26,7 +26,7 @@ export default function ModalDemoPage() {
     <Stack>
       <Typography
         variant='h2'
-        bold
+        weight='bold'
       >
         Modal Showcase
       </Typography>

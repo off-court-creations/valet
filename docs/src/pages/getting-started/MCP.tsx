@@ -27,7 +27,7 @@ export default function MCPGuidePage() {
       >
         <Typography
           variant='h2'
-          bold
+          weight='bold'
         >
           MCP & Introspection for valet
         </Typography>
@@ -52,7 +52,7 @@ export default function MCPGuidePage() {
 
         <Typography
           variant='h3'
-          bold
+          weight='bold'
         >
           Quick start
         </Typography>
@@ -79,7 +79,7 @@ MCP_SELFCHECK=1 valet-mcp
 
         <Typography
           variant='h3'
-          bold
+          weight='bold'
         >
           Keep MCP data fresh (valet dev)
         </Typography>
@@ -97,7 +97,7 @@ VALET_MCP_DATA_DIR="$(pwd)/mcp-data" npm run mcp:server:start`}
 
         <Typography
           variant='h3'
-          bold
+          weight='bold'
         >
           Use with @openai/codex (agents)
         </Typography>
@@ -119,7 +119,7 @@ args = []`}
 
         <Typography
           variant='h3'
-          bold
+          weight='bold'
         >
           Tools overview
         </Typography>
@@ -169,10 +169,11 @@ args = []`}
               <b>valet__get_component</b> <code>{`{ name? | slug? }`}</code> → full document (props,
               cssVars, examples, events, bestPractices, sourceFiles, version). Returned as{' '}
               <code>structuredContent</code> (validated against the tool&rsquo;s
-              <code> outputSchema</code>) alongside the text. <b>Deprecation-aware:</b> a
-              renamed/deprecated prop carries a <code>deprecation</code> view, the doc grows a
-              top-level <code>deprecatedProps</code> rollup, and the text leads with a
+              <code> outputSchema</code>) alongside the text. <b>Deprecation-aware:</b> if a prop is
+              ever renamed in a future release, its doc carries a <code>deprecation</code> view, the
+              doc grows a top-level <code>deprecatedProps</code> rollup, and the text leads with a
               &ldquo;DEPRECATED PROPS&rdquo; banner — prefer the listed <code>replacement</code>.
+              (As of 1.0 the surface carries no deprecated props.)
             </Typography>
             <CodeBlock
               code={`{
@@ -182,14 +183,8 @@ args = []`}
     { "name": "data", "type": "T[]", "required": true },
     { "name": "columns", "type": "TableColumn<T>[]", "required": true },
     { "name": "selectionMode", "type": "'none' | 'single' | 'multiple' | undefined", "required": false },
-    {
-      "name": "selectable",
-      "type": "'single' | 'multi' | undefined",
-      "required": false,
-      "deprecation": { "deprecated": true, "replacement": "selectionMode" }
-    }
+    { "name": "getItemKey", "type": "keyof T | ((row: T, index: number) => Key)", "required": false }
   ],
-  "deprecatedProps": [{ "name": "selectable", "replacement": "selectionMode" }],
   "cssVars": ["--valet-divider-stroke", "--valet-table-underline"],
   "events": [{ "name": "rowClick", "payloadType": "{ row: T }" }],
   "sourceFiles": ["src/components/widgets/Table.tsx"],
@@ -265,7 +260,7 @@ args = []`}
 
         <Typography
           variant='h3'
-          bold
+          weight='bold'
         >
           Validate generated JSX
         </Typography>
@@ -290,8 +285,8 @@ args = []`}
               scope.
             </Typography>
             <CodeBlock
-              code={`// request
-{ "code": "<Table selectable='multi' rowKey='id' data={rows} columns={cols} />" }`}
+              code={`// request — an agent reaches for a pre-1.0 prop name from stale memory
+{ "code": "<Table selectable='multi' data={rows} columns={cols} />" }`}
               ariaLabel='Copy validate_jsx request example'
               language='json'
             />
@@ -303,15 +298,15 @@ args = []`}
     {
       "line": 1,
       "col": 8,
-      "code": "TS6385",
-      "message": "'selectable' is deprecated.",
-      "severity": "suggestion",
-      "deprecated": true
+      "code": "TS2322",
+      "message": "Property 'selectable' does not exist on type 'TableProps<Row>'. (Use 'selectionMode'.)",
+      "severity": "error",
+      "deprecated": false
     }
   ],
-  "errorCount": 0,
+  "errorCount": 1,
   "warningCount": 0,
-  "deprecatedCount": 1,
+  "deprecatedCount": 0,
   "importedTags": ["Table"],
   "valetSource": "package-exports",
   "elapsedMs": 120
@@ -320,12 +315,12 @@ args = []`}
               language='json'
             />
             <Typography>
-              <code>ok: true</code> means the snippet is clean — no type errors <i>and</i> no
-              deprecated aliases. A snippet with problems returns <code>ok: false</code> (not a tool
-              error); <code>isError</code> is reserved for the tool itself failing to run (e.g.
-              valet types unresolvable). <code>valetSource</code> reports how the types were
-              resolved: <code>package-exports</code>/<code>package-entry</code> for a published
-              install, <code>repo-dist</code>/<code>repo-src</code> in the valet workspace. Requires{' '}
+              <code>ok: true</code> means the snippet is clean — no type errors. A snippet with
+              problems returns <code>ok: false</code> (not a tool error); <code>isError</code> is
+              reserved for the tool itself failing to run (e.g. valet types unresolvable).{' '}
+              <code>valetSource</code> reports how the types were resolved:{' '}
+              <code>package-exports</code>/<code>package-entry</code> for a published install,{' '}
+              <code>repo-dist</code>/<code>repo-src</code> in the valet workspace. Requires{' '}
               <code>@archway/valet</code> present (an optional dependency of the server, pinned to
               the matching version); the first call pays the type-graph parse (~0.4–0.6s), warm
               calls are ~0.1s.
@@ -335,7 +330,7 @@ args = []`}
 
         <Typography
           variant='h3'
-          bold
+          weight='bold'
         >
           More MCP tools
         </Typography>
@@ -395,7 +390,7 @@ args = []`}
 
         <Typography
           variant='h3'
-          bold
+          weight='bold'
         >
           Environment & data sources
         </Typography>
@@ -422,7 +417,7 @@ VALET_MCP_DATA_DIR=/absolute/path/to/valet/mcp-data valet-mcp`}
 
         <Typography
           variant='h3'
-          bold
+          weight='bold'
         >
           Create Valet App (CVA) integration
         </Typography>
@@ -438,7 +433,7 @@ VALET_MCP_DATA_DIR=/absolute/path/to/valet/mcp-data valet-mcp`}
 
         <Typography
           variant='h3'
-          bold
+          weight='bold'
         >
           Best practices (using MCP effectively)
         </Typography>
@@ -463,7 +458,7 @@ VALET_MCP_DATA_DIR=/absolute/path/to/valet/mcp-data valet-mcp`}
 
         <Typography
           variant='h3'
-          bold
+          weight='bold'
         >
           Requirements & security
         </Typography>

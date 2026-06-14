@@ -130,7 +130,7 @@ describe('Table (jsdom)', () => {
       <Table<Row>
         data={rows}
         columns={nameColumns}
-        selectable='multi'
+        selectionMode='multiple'
         constrainHeight={false}
         onSelectionChange={onSelectionChange}
       />,
@@ -168,7 +168,7 @@ describe('Table (jsdom)', () => {
           /* new array identity every render; row objects stay stable */
           data={[...rows]}
           columns={nameColumns}
-          selectable='multi'
+          selectionMode='multiple'
           constrainHeight={false}
           onSelectionChange={(s) => {
             spy(s);
@@ -197,7 +197,7 @@ describe('Table (jsdom)', () => {
       <Table<Row>
         data={data}
         columns={nameColumns}
-        selectable='multi'
+        selectionMode='multiple'
         constrainHeight={false}
         onSelectionChange={onSelectionChange}
       />
@@ -320,8 +320,8 @@ describe('Table (jsdom)', () => {
       <Table<Row>
         data={data}
         columns={cols}
-        selectable='multi'
-        rowKey='id'
+        selectionMode='multiple'
+        getItemKey='id'
         constrainHeight={false}
         onSelectionChange={onSelectionChange}
       />
@@ -361,7 +361,7 @@ describe('Table (jsdom)', () => {
       <Table<Row>
         data={data}
         columns={nameColumns}
-        selectable='multi'
+        selectionMode='multiple'
         constrainHeight={false}
         onSelectionChange={onSelectionChange}
       />
@@ -392,8 +392,8 @@ describe('Table (jsdom)', () => {
       <Table<Row>
         data={rows}
         columns={cols}
-        selectable='multi'
-        rowKey={(r) => r.id}
+        selectionMode='multiple'
+        getItemKey={(r) => r.id}
         constrainHeight={false}
       />,
     );

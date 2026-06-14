@@ -216,23 +216,39 @@ describe.skipIf(!distExists)('valet-mcp server output contract (D2–D5)', () =>
   });
 
   it('search_props returns SDK-validated structuredContent with deprecation flags', async () => {
+    // 1.0 reality: the corpus carries ZERO deprecated aliases, so we query the
+    // CANONICAL prop ('selectionMode' — the replacement that 'selectable' was
+    // renamed to) and assert it is returned UNflagged. The deprecation-flag
+    // code in searchProps.ts (normalizeDeprecation → { deprecated, replacement })
+    // still exists but is dormant: no prop on the surface carries `deprecated`.
     const { client } = await makeClient();
     const res = await client.callTool({
       name: 'valet__search_props',
-      arguments: { query: 'selectable' },
+      arguments: { query: 'selectionMode' },
     });
     expect(res.isError).toBeFalsy();
     expect(Array.isArray(res.structuredContent.results)).toBe(true);
     const table = res.structuredContent.results.find((r) => r.name === 'Table');
     expect(table).toBeTruthy();
-    const selectable = table.props.find((p) => p.name === 'selectable');
-    expect(selectable).toBeTruthy();
-    expect(selectable.deprecated).toBe(true);
-    expect(selectable.replacement).toBe('selectionMode');
+    const selectionMode = table.props.find((p) => p.name === 'selectionMode');
+    expect(selectionMode).toBeTruthy();
+    // Canonical prop → not deprecated, no replacement hint.
+    expect(selectionMode.deprecated).toBe(false);
+    expect(selectionMode.replacement).toBeUndefined();
+    // No matched prop anywhere in the result set is flagged deprecated at 1.0.
+    const anyDeprecated = res.structuredContent.results
+      .flatMap((r) => r.props)
+      .some((p) => p.deprecated === true);
+    expect(anyDeprecated).toBe(false);
   });
 
   // ── D4: deprecation-aware output in get_component ───────────────────
-  it('get_component marks a deprecated prop with its replacement (text + structured)', async () => {
+  it('get_component on Table at 1.0 has no deprecation banner or rollup (dormant feature)', async () => {
+    // 1.0 reality: every prop alias was removed at the cut, so Table (the
+    // former owner of `selectable`/`rowKey`) now exposes only canonical props.
+    // The deprecation views in getComponent.ts (the `deprecation` per-prop flag,
+    // the `deprecatedProps` rollup, and the "DEPRECATED PROPS" text banner) are
+    // still in the server but DORMANT — there is no deprecated prop to surface.
     const { client } = await makeClient();
     const res = await client.callTool({
       name: 'valet__get_component',
@@ -240,25 +256,24 @@ describe.skipIf(!distExists)('valet-mcp server output contract (D2–D5)', () =>
     });
     expect(res.isError).toBeFalsy();
 
-    // Structured: the prop carries a flat `deprecation` view and the doc
-    // carries a top-level rollup.
+    // Output contract still holds: structuredContent validates, name + props present.
     const sc = res.structuredContent;
-    const selectable = sc.props.find((p) => p.name === 'selectable');
-    expect(selectable.deprecation).toMatchObject({
-      deprecated: true,
-      replacement: 'selectionMode',
-    });
-    const rollup = sc.deprecatedProps.find((d) => d.name === 'selectable');
-    expect(rollup).toMatchObject({ name: 'selectable', replacement: 'selectionMode' });
-    expect(sc.deprecatedProps.find((d) => d.name === 'rowKey')).toMatchObject({
-      replacement: 'getItemKey',
-    });
+    expect(sc.name).toBe('Table');
+    expect(Array.isArray(sc.props)).toBe(true);
+    expect(sc.props.length).toBeGreaterThan(0);
+    // The canonical replacement prop is present…
+    expect(sc.props.some((p) => p.name === 'selectionMode')).toBe(true);
+    // …and the removed aliases are gone.
+    expect(sc.props.some((p) => p.name === 'selectable')).toBe(false);
+    expect(sc.props.some((p) => p.name === 'rowKey')).toBe(false);
 
-    // Text: a human-readable banner names the deprecated prop + replacement.
-    const text = textOf(res);
-    expect(text).toMatch(/DEPRECATED PROPS/);
-    expect(text).toMatch(/selectable/);
-    expect(text).toMatch(/selectionMode/);
+    // No prop carries a `deprecation` view and the rollup is empty.
+    expect(sc.props.every((p) => p.deprecation == null)).toBe(true);
+    expect(Array.isArray(sc.deprecatedProps)).toBe(true);
+    expect(sc.deprecatedProps.length).toBe(0);
+
+    // Text: no human-readable deprecation banner is emitted.
+    expect(textOf(res)).not.toMatch(/DEPRECATED PROPS/);
   });
 
   it('get_component on a non-deprecated component has an empty rollup', async () => {

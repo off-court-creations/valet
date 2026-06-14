@@ -47,7 +47,7 @@ export default function KeyModal({ open, onClose }: KeyModalProps) {
         <Stack>
           <Typography
             variant='h3'
-            bold
+            weight='bold'
           >
             {cipher
               ? `Unlock ${prov === 'anthropic' ? 'Anthropic' : 'OpenAI'} key`

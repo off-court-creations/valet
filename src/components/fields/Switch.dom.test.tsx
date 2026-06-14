@@ -57,11 +57,6 @@ const valetWarns = () =>
   (warnSpy.mock.calls as unknown[][])
     .map((c) => String(c[0]))
     .filter((m) => m.startsWith('valet:'));
-const deprecationWarns = () =>
-  (warnSpy.mock.calls as unknown[][])
-    .map((c) => String(c[0]))
-    .filter((m) => m.includes('is deprecated'));
-
 beforeEach(() => {
   resetWarnOnce();
   warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
@@ -186,60 +181,5 @@ describe('Switch — ChangeInfo.source classification (ruling R10)', () => {
     // previousValue tracks the prior rendered state (false → true → false).
     expect(infos[0].previousValue).toBe(false);
     expect(infos[1].previousValue).toBe(true);
-  });
-});
-
-/*───────────────────────────────────────────────────────────────*/
-/* onChange deprecation (API-TYPES S10, Q12 / ruling R30)         */
-//
-// `onChange` (raw DOM passthrough) is deprecated in favour of the canonical
-// `onValueChange`. Unlike a renamed value prop the two are not mutually
-// exclusive — the old code always fired both — so the alias keeps firing with
-// the raw MouseEvent through 0.x and warns once on presence (removed at 1.0).
-
-describe('Switch — onChange deprecation (ruling R30)', () => {
-  it('`onChange` still fires with the raw MouseEvent and warns once', () => {
-    const onChange = vi.fn();
-    const { container } = mount(<Switch onChange={onChange} />);
-
-    clickTrack(track(container), 1);
-    // StrictMode mounts twice but the warn is memoised once.
-    expect(onChange).toHaveBeenCalledTimes(1);
-    // `onChange` is the raw DOM passthrough: it receives React's synthetic
-    // click event wrapping the native MouseEvent (not the boolean value).
-    const arg = onChange.mock.calls[0][0] as React.SyntheticEvent;
-    expect(arg.type).toBe('click');
-    expect(arg.nativeEvent).toBeInstanceOf(MouseEvent);
-
-    const warns = deprecationWarns();
-    expect(warns).toHaveLength(1);
-    expect(warns[0]).toContain('`onChange`');
-    expect(warns[0]).toContain('`onValueChange`');
-  });
-
-  it('`onChange` and `onValueChange` both fire; only `onChange` warns', () => {
-    const onChange = vi.fn();
-    const onValueChange = vi.fn();
-    const { container } = mount(
-      <Switch
-        onChange={onChange}
-        onValueChange={onValueChange}
-      />,
-    );
-
-    clickTrack(track(container), 1);
-    expect(onChange).toHaveBeenCalledTimes(1);
-    expect(onValueChange).toHaveBeenCalledTimes(1);
-    expect(onValueChange.mock.calls[0][0]).toBe(true);
-    expect(deprecationWarns()).toHaveLength(1);
-  });
-
-  it('`onValueChange` alone emits no deprecation warning', () => {
-    const onValueChange = vi.fn();
-    const { container } = mount(<Switch onValueChange={onValueChange} />);
-
-    clickTrack(track(container), 1);
-    expect(onValueChange).toHaveBeenCalledTimes(1);
-    expect(deprecationWarns()).toEqual([]);
   });
 });

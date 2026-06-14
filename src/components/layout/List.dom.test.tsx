@@ -110,8 +110,8 @@ const fixture = (data: string[], onReorder: (items: string[]) => void, selectabl
   <List<string>
     data={data}
     getTitle={(s) => s}
-    getKey={(s) => s}
-    selectable={selectable}
+    getItemKey={(s) => s}
+    selectionMode={selectable ? 'single' : 'none'}
     onReorder={onReorder}
   />
 );

@@ -2,7 +2,7 @@
   "name": "RadioGroup",
   "category": "fields",
   "slug": "components/fields/radiogroup",
-  "summary": "Single-choice group of `Radio` options with keyboard roving focus; controlled via `value` + `onValueChange` or bound to a `FormControl` by `name`, with `gap` for option spacing (the old `spacing` prop is a deprecated alias).",
+  "summary": "Single-choice group of `Radio` options with keyboard roving focus; controlled via `value` + `onValueChange` or bound to a `FormControl` by `name`, with `gap` for option spacing.",
   "status": "stable",
   "aliases": [
     "radiogroup",
@@ -37,15 +37,6 @@
       "type": "Space",
       "required": false,
       "description": "Gap between options as spacing units or a CSS length."
-    },
-    {
-      "name": "spacing",
-      "type": "Space",
-      "required": false,
-      "deprecated": {
-        "replacement": "gap"
-      },
-      "description": "Gap between options."
     },
     {
       "name": "onChange",

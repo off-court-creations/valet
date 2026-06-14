@@ -97,7 +97,7 @@ export default function SpacingPage() {
             <Panel pad={1}>
               <Typography
                 variant='h4'
-                bold
+                weight='bold'
               >
                 density — <i>scale</i>
               </Typography>
@@ -109,7 +109,7 @@ export default function SpacingPage() {
             <Panel pad={1}>
               <Typography
                 variant='h4'
-                bold
+                weight='bold'
               >
                 compact — <i>zero</i>
               </Typography>
@@ -128,7 +128,7 @@ export default function SpacingPage() {
         >
           <Typography
             variant='h3'
-            bold
+            weight='bold'
           >
             Density — scale the spacing unit
           </Typography>
@@ -192,7 +192,7 @@ export default function SpacingPage() {
         >
           <Typography
             variant='h3'
-            bold
+            weight='bold'
           >
             Compact — zero the spacing, and cascade
           </Typography>
@@ -275,7 +275,7 @@ export default function SpacingPage() {
         >
           <Typography
             variant='h3'
-            bold
+            weight='bold'
           >
             They combine
           </Typography>

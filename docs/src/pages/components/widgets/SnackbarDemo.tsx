@@ -110,7 +110,7 @@ export default function SnackbarDemoPage() {
         <Typography
           variant='body'
           autoSize
-          bold
+          weight='bold'
         >
           Free-form layout – no internal flex
         </Typography>

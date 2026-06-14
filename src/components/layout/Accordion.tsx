@@ -27,7 +27,6 @@ import { preset } from '../../css/stylePresets';
 import { toRgb, mix, toHex } from '../../helpers/color';
 import { useSurface } from '../../system/surfaceStore';
 import { valetError } from '../../system/devErrors';
-import { resolveDeprecatedProp } from '../../system/deprecate';
 import { shallow } from 'zustand/shallow';
 import type { Presettable, SpacingProps, Sx } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
@@ -220,24 +219,6 @@ export interface AccordionProps
   multiple?: boolean;
   /** Fires with the next expanded indices whenever the user toggles a panel. */
   onExpandedChange?: (expanded: number[]) => void;
-  /**
-   * @deprecated Renamed to {@link AccordionProps.defaultExpanded | `defaultExpanded`}
-   * (Q12). The `defaultOpen` alias keeps working through 0.x with a one-time dev
-   * warning and is removed at 1.0.
-   */
-  defaultOpen?: number | number[];
-  /**
-   * @deprecated Renamed to {@link AccordionProps.expanded | `expanded`} (Q12).
-   * The `open` alias keeps working through 0.x with a one-time dev warning and
-   * is removed at 1.0.
-   */
-  open?: number | number[];
-  /**
-   * @deprecated Renamed to {@link AccordionProps.onExpandedChange | `onExpandedChange`}
-   * (Q12). The `onOpenChange` alias keeps working through 0.x with a one-time dev
-   * warning and is removed at 1.0.
-   */
-  onOpenChange?: (open: number[]) => void;
   headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
   constrainHeight?: boolean;
   unmountOnExit?: boolean;
@@ -262,9 +243,6 @@ export const Accordion: React.FC<AccordionProps> & {
   expanded: expandedProp,
   defaultExpanded,
   onExpandedChange,
-  open: openProp,
-  defaultOpen,
-  onOpenChange,
   multiple = false,
   headingLevel = 3,
   constrainHeight = true,
@@ -302,25 +280,10 @@ export const Accordion: React.FC<AccordionProps> & {
   const [activeIndex, setActiveIndex] = useState(0);
   const toArray = (v?: number | number[]) => (v === undefined ? [] : Array.isArray(v) ? v : [v]);
 
-  /* Canonical names win; deprecated `open*` aliases warn once each (Q12,
-     ruling R30). Resolution happens BEFORE the shared hook — the hook just
-     consumes the resolved props (rebases on FF S4/S10; the `!== undefined`
-     falsiness fix below is untouched). */
-  const expanded = resolveDeprecatedProp('Accordion', 'expanded', expandedProp, 'open', openProp);
-  const resolvedDefaultExpanded = resolveDeprecatedProp(
-    'Accordion',
-    'defaultExpanded',
-    defaultExpanded,
-    'defaultOpen',
-    defaultOpen,
-  );
-  const onExpanded = resolveDeprecatedProp(
-    'Accordion',
-    'onExpandedChange',
-    onExpandedChange,
-    'onOpenChange',
-    onOpenChange,
-  );
+  /* Alias the canonical props to the names the body below consumes. */
+  const expanded = expandedProp;
+  const resolvedDefaultExpanded = defaultExpanded;
+  const onExpanded = onExpandedChange;
 
   const [externalOpen, setExternalOpen] = useControlledState<number[]>(
     /* `expanded !== undefined` — a bare truthiness check made

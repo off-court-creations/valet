@@ -28,7 +28,7 @@ discipline) is 1.0-grade and is **not** reopened. Remaining work is W2–W5
 
 | WS | Title | State | Notes |
 | --- | --- | --- | --- |
-| **W1** | DEPREC — remove all alias props (7 components) | ⬜ not started | Blocker. Mechanical; canonical names exist + tested. Stragglers (Typography.bold / Progress.showLabel / Tabs.tabAlign) blocked on §7 rulings. **Tree excluded** (no aliases); `SurfaceState.children` excluded (veto carve-out). |
+| **W1** | DEPREC — remove all alias props (7 components) + 3 stragglers | ✅ done + verified | Blocker cleared. 11 alias props + `deprecate.ts` removed; `Typography.bold`→`weight`, `Progress` wrapper→`ProgressBar`/`ProgressRing`, `Tabs.tabAlign`→`alignX`. MCP alias-floor gate inverted to the 1.0 invariant (corpus carries 0 deprecated props). **Tree excluded** (no aliases); `SurfaceState.children` veto carve-out preserved. Green: lint 0 err, typecheck (src+scripts+mcp), 1247/1247 tests, check:engine/verify:pack/check:bundle/check:package, mcp:schema:check + mcp:check, docs tsc. |
 | **W2** | A11Y-NAMES — wire `label` into Switch/Slider/Select/Iterator | ⬜ not started | Major. Also fixes the prop-consistency "FieldBaseProps does nothing" finding. Mirror RadioGroup pattern; add guard + regression tests. |
 | **W3** | SSR — guard AppBar/Drawer crashes + Accordion hydration | ⬜ not started | Major. AppBar crashes by default, Drawer always; Accordion reduced-motion mismatch. Add a renderToString gate. |
 | **W4** | TYPES — curate barrel, type `sendChat`, kill `export *` leaks | ⬜ not started | Major. `Promise<any>`, bare `Variant`, `ChatMessage`/`encrypt`/`decrypt` leaks. |

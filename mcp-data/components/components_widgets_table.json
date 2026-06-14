@@ -36,26 +36,6 @@
       "required": false
     },
     {
-      "name": "selectable",
-      "type": "'single' | 'multi' | undefined",
-      "required": false,
-      "deprecated": {
-        "replacement": "selectionMode"
-      },
-      "enumValues": [
-        "single",
-        "multi"
-      ]
-    },
-    {
-      "name": "rowKey",
-      "type": "RowKey<T>",
-      "required": false,
-      "deprecated": {
-        "replacement": "getItemKey"
-      }
-    },
-    {
       "name": "initialSort",
       "type": "{ index: number; desc?: boolean }",
       "required": false

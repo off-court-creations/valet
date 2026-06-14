@@ -61,17 +61,6 @@
       ]
     },
     {
-      "name": "tabAlign",
-      "type": "'left' | 'right' | 'center'",
-      "required": false,
-      "description": "Alias for alignX for clarity.",
-      "enumValues": [
-        "left",
-        "right",
-        "center"
-      ]
-    },
-    {
       "name": "sx",
       "type": "Sx",
       "required": false,

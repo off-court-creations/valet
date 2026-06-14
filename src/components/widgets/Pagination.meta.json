@@ -1,11 +1,11 @@
 {
   "name": "Pagination",
-  "summary": "Tab-style page navigator with an elastic active-page underline; controlled by `count` + `page` + `onPageChange` (the old `onChange` is a deprecated alias) — use it to page through large lists or tables.",
+  "summary": "Tab-style page navigator with an elastic active-page underline; controlled by `count` + `page` + `onPageChange` — use it to page through large lists or tables.",
   "status": "stable",
   "aliases": ["pagination", "pager", "paginator"],
   "docs": {
     "bestPractices": [
-      "Use `onPageChange` to receive the new 1-based page. The legacy `onChange` prop is deprecated (use `onPageChange`); it keeps working through 0.x with a one-time dev warning and is removed at 1.0.",
+      "Use `onPageChange` to receive the new 1-based page.",
       "Keep visible pages small. For large `count`, set a reasonable `siblingCount` and rely on first/last controls.",
       "Sync state when relevant. Mirror page in the router (query or path) so refresh/back behaves predictably.",
       "Prefer server‑side slicing for large datasets; ensure Table or List reflects the current page cleanly.",

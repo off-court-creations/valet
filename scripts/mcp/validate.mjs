@@ -64,33 +64,17 @@ export const UNKNOWN_TYPE_ALLOW = Object.freeze(new Set([]));
 /**
  * The known-deprecated-alias floor: `Component.oldName -> newCanonicalName`.
  *
- * Derived from the `resolveDeprecatedProp(...)` / `deprecateProp(...)` call
- * sites in src/components/** (the same authoritative source A3 parses to set
- * the corpus `deprecated` flags). This hardcoded floor is a backstop: even if
- * the extractor stops emitting a flag, the gate still fails because the floor
- * asserts the alias prop EXISTS and carries `deprecated`. It is intentionally a
- * subset/superset-safe lower bound — the corpus-derived consistency check
- * (below, in validateCorpus) catches any *additional* flagged-vs-unflagged
- * drift on a per-component basis.
- *
- * The brief's explicit floor (Table.selectable/rowKey, Accordion.open/
- * defaultOpen/onOpenChange, List.selectable/getKey) is included plus the rest
- * of the live call sites, so the floor is the full known set, not a partial.
+ * **Intentionally EMPTY as of 1.0.** The pre-1.0 policy (deprecate.ts,
+ * CHANGELOG, AGENTS.md) removed every prop alias at the 1.0 cut, so there are
+ * no deprecated aliases left to assert present. The gate that consumed this
+ * list is now INVERTED (see validateCorpus): instead of asserting these aliases
+ * EXIST + carry `deprecated`, it asserts the corpus carries ZERO `deprecated`
+ * props. If a new alias is ever introduced before a future major, add it here
+ * AND restore the presence assertion; until then the 1.0 invariant is "no
+ * deprecated props on the public surface."
  * @type {ReadonlyArray<{ component: string, name: string, replacement: string }>}
  */
-export const DEPRECATED_ALIAS_FLOOR = Object.freeze([
-  { component: 'Table', name: 'selectable', replacement: 'selectionMode' },
-  { component: 'Table', name: 'rowKey', replacement: 'getItemKey' },
-  { component: 'Accordion', name: 'open', replacement: 'expanded' },
-  { component: 'Accordion', name: 'defaultOpen', replacement: 'defaultExpanded' },
-  { component: 'Accordion', name: 'onOpenChange', replacement: 'onExpandedChange' },
-  { component: 'List', name: 'selectable', replacement: 'selectionMode' },
-  { component: 'List', name: 'getKey', replacement: 'getItemKey' },
-  { component: 'RadioGroup', name: 'spacing', replacement: 'gap' },
-  { component: 'Switch', name: 'onChange', replacement: 'onValueChange' },
-  { component: 'Panel', name: 'normalizeRowHeight', replacement: 'normalizeRowHeights' },
-  { component: 'Pagination', name: 'onChange', replacement: 'onPageChange' },
-]);
+export const DEPRECATED_ALIAS_FLOOR = Object.freeze([]);
 
 /** True when a prop's extracted `type` is the literal 'unknown'. */
 export function isUnknownType(type) {
@@ -447,44 +431,26 @@ export function validateCorpus(corpus) {
     else missing.bestPractices.push(item.name);
   }
 
-  // ── content gate: deprecated-alias coverage (B1 gate 3, hard) ─
-  // Every known deprecated alias (the call-site-derived DEPRECATED_ALIAS_FLOOR,
-  // the same source A3 uses to set the corpus flags) MUST appear in the corpus
-  // and carry `deprecated`. This converts the assessment's "7 deprecated props
-  // served as canonical" bug into a permanent build failure: if the extractor
-  // ever drops a flag again, the alias prop will be present-but-unflagged (or
-  // absent), and one of these checks fires with the exact prop named.
+  // ── content gate: no deprecated prop aliases (1.0 invariant, hard) ─
+  // Pre-1.0 policy (deprecate.ts header, CHANGELOG, AGENTS.md): every prop alias
+  // is REMOVED at 1.0. The served corpus must therefore carry ZERO `deprecated`
+  // props. This is the inverse of the old 0.x gate (which asserted the known
+  // aliases were present + flagged): with DEPRECATED_ALIAS_FLOOR now empty, this
+  // fails the build if any deprecated alias ever reappears on the public surface
+  // (the extractor sets `deprecated` from a live deprecate.ts call site / JSDoc).
   {
-    // Build a name → doc lookup once (corpus components are keyed by slug).
-    const docByName = {};
     for (const item of index) {
       const doc = components[item.slug];
-      if (doc && typeof doc.name === 'string') docByName[doc.name] = doc;
-    }
-    for (const { component, name, replacement } of DEPRECATED_ALIAS_FLOOR) {
-      const doc = docByName[component];
-      if (!doc) {
-        error(
-          `deprecation gate: component '${component}' (which owns the known deprecated alias ` +
-            `'${name}' → '${replacement}') is absent from the corpus`,
-        );
-        continue;
-      }
-      const prop = (Array.isArray(doc.props) ? doc.props : []).find((p) => p && p.name === name);
-      if (!prop) {
-        error(
-          `deprecation gate: ${component}.${name} is a known deprecated alias (→ '${replacement}') ` +
-            `but is missing from the extracted props — the extractor dropped the alias from the ` +
-            `public surface (the deprecate.ts call site still references it)`,
-        );
-        continue;
-      }
-      if (prop.deprecated == null) {
-        error(
-          `deprecation gate: ${component}.${name} is a known deprecated alias (→ '${replacement}') ` +
-            `but carries no \`deprecated\` flag — it would be served as canonical API ` +
-            `(the JSDoc {@link}/getComment() bug class; A3 sets this from the deprecate.ts call site)`,
-        );
+      const props = doc && Array.isArray(doc.props) ? doc.props : [];
+      for (const p of props) {
+        if (p && p.deprecated != null) {
+          error(
+            `deprecation gate (1.0): ${doc.name}.${p.name} carries a \`deprecated\` flag — ` +
+              `all prop aliases must be removed before 1.0 (pre-1.0 policy). Remove the prop ` +
+              `and its deprecate.ts call site, or (for a post-1.0 alias) add it to ` +
+              `DEPRECATED_ALIAS_FLOOR and restore the presence assertion.`,
+          );
+        }
       }
     }
   }
@@ -643,6 +609,14 @@ export function validateCorpus(corpus) {
   }
 
   // ── content gate: orphan sidecars (hard) ────────────────────
+  // Doc-only family sidecars: a .meta.json that intentionally documents a
+  // component FAMILY (rendered as a docs overview page) rather than a single
+  // exported component. `Progress` is one such: the unified `Progress` wrapper
+  // was removed at 1.0 (the components are `ProgressBar`/`ProgressRing`), but
+  // the docs keep a "Progress" overview page. merge.mjs already ignores these
+  // for corpus generation; the orphan gate allows them so they don't read as a
+  // stale/typo sidecar. Every other unattached sidecar still hard-fails.
+  const DOC_ONLY_SIDECARS = new Set(['Progress']);
   let orphanSidecars = 0;
   for (const sc of sidecars) {
     if (!sc || typeof sc !== 'object') continue;
@@ -651,7 +625,7 @@ export function validateCorpus(corpus) {
       error(
         `orphan sidecar: ${sc.file} has no readable 'name' field — it can never attach to a component`,
       );
-    } else if (!compNames.has(sc.name)) {
+    } else if (!compNames.has(sc.name) && !DOC_ONLY_SIDECARS.has(sc.name)) {
       orphanSidecars++;
       error(
         `orphan sidecar: ${sc.file} names '${sc.name}' but no such component exists in the corpus`,

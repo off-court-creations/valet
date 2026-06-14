@@ -35,7 +35,7 @@ export default function DrawerDemoPage() {
         <Stack sx={{ padding: theme.spacing(1) }}>
           <Typography
             variant='h4'
-            bold
+            weight='bold'
           >
             Controlled Drawer
           </Typography>
@@ -55,7 +55,7 @@ export default function DrawerDemoPage() {
         <Stack sx={{ padding: theme.spacing(1) }}>
           <Typography
             variant='h4'
-            bold
+            weight='bold'
           >
             Can&apos;t close via backdrop or ESC
           </Typography>
@@ -72,7 +72,7 @@ export default function DrawerDemoPage() {
         <Stack sx={{ padding: theme.spacing(1) }}>
           <Typography
             variant='h4'
-            bold
+            weight='bold'
           >
             Adaptive Drawer
           </Typography>

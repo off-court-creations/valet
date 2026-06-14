@@ -28,10 +28,9 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..'
 // ── in-memory fixture corpus (passes every gate) ─────────────
 // 20 base components (Comp00..Comp19): docsUrl on 17 (85% ≥ 80%),
 // examples on 8 (40% ≥ 35%), bestPractices on 15 (75% ≥ 70%); glossary
-// exactly at the floor. Plus one component per DEPRECATED_ALIAS_FLOOR owner,
-// each carrying its alias prop correctly flagged, so the deprecation gate
-// passes on the control (these extra components have docsUrl + bestPractices
-// so they do not drag the coverage ratios below their floors).
+// exactly at the floor. No prop carries a `deprecated` flag — the 1.0
+// invariant is a zero-deprecated-alias corpus (DEPRECATED_ALIAS_FLOOR is
+// empty), so the inverted deprecation gate passes on this control.
 function makeFixtureCorpus() {
   const names = Array.from({ length: 20 }, (_, i) => `Comp${String(i).padStart(2, '0')}`);
   const components = {};
@@ -66,32 +65,6 @@ function makeFixtureCorpus() {
     if (i < 15) doc.bestPractices = [`Use ${name} sparingly.`];
     add(doc);
   });
-  // One component per deprecated-alias owner, each with the alias prop flagged.
-  const ownerProps = {};
-  for (const { component, name, replacement } of DEPRECATED_ALIAS_FLOOR) {
-    (ownerProps[component] ||= []).push({
-      name,
-      type: 'string',
-      deprecated: { replacement },
-    });
-  }
-  for (const [component, props] of Object.entries(ownerProps)) {
-    const slug = `components/widgets/${component.toLowerCase()}`;
-    const doc = {
-      name: component,
-      slug,
-      category: 'widgets',
-      status: 'stable',
-      summary: `${component} is a fixture component carrying deprecated aliases.`,
-      props: [{ name: 'value', type: 'string' }, ...props],
-      schemaVersion: '1.6',
-      docsUrl: `/${component.toLowerCase()}-demo`,
-      examples: [{ id: `${component.toLowerCase()}-basic`, code: `<${component} />` }],
-      bestPractices: [`Use ${component} sparingly.`],
-    };
-    routes[doc.docsUrl] = `docs/src/pages/${component}Demo.tsx`;
-    add(doc);
-  }
   return {
     index,
     meta: { schemaVersion: '1.6', buildHash: 'fixture-hash' },
@@ -112,11 +85,11 @@ function makeFixtureCorpus() {
 }
 
 const firstDoc = (corpus) => corpus.components[corpus.index[0].slug];
-const docByName = (corpus, name) =>
-  corpus.components[corpus.index.find((i) => i.name === name).slug];
 
-// The fixture adds one component per unique DEPRECATED_ALIAS_FLOOR owner, each
-// with docsUrl + bestPractices (so it lifts, not drags, the coverage ratios).
+// At 1.0 the deprecated-alias floor is intentionally EMPTY, so the fixture adds
+// no extra alias-owner components. ALIAS_OWNERS is therefore [] (length 0); the
+// `+ ALIAS_OWNERS.length` terms below evaluate to `+ 0` and keep the base
+// fixture's counts exact while documenting the now-empty floor.
 const ALIAS_OWNERS = [...new Set(DEPRECATED_ALIAS_FLOOR.map((a) => a.component))];
 
 describe('validateCorpus — green fixture control', () => {
@@ -130,7 +103,9 @@ describe('validateCorpus — green fixture control', () => {
     expect(res.stats.coverage.bestPractices.count).toBe(15 + ALIAS_OWNERS.length);
     expect(res.stats.glossaryEntries).toBe(GLOSSARY_FLOOR);
     expect(res.stats.sidecars).toEqual({ total: 2, orphans: 0 });
-    // every known alias is flagged on the control
+    // 1.0 invariant: zero deprecated props on the surface, and an empty floor —
+    // both counts are 0, and the `=== DEPRECATED_ALIAS_FLOOR.length` form keeps
+    // documenting that the floor itself is 0 (0 === 0).
     expect(res.stats.content.objectObjectDescriptions).toBe(0);
     expect(res.stats.content.unknownTypeProps).toBe(0);
     expect(res.stats.content.deprecatedFlaggedProps).toBe(DEPRECATED_ALIAS_FLOOR.length);
@@ -406,63 +381,54 @@ describe("validateCorpus — public 'unknown'-type prop gate (hard)", () => {
   });
 });
 
-// ── B1 gate 3: deprecated-alias coverage (hard) ───────────────
-describe('validateCorpus — deprecated-alias coverage gate (hard)', () => {
-  it('fails when a known alias prop is present but unflagged', () => {
-    const corpus = makeFixtureCorpus();
-    const table = docByName(corpus, 'Table');
-    delete table.props.find((p) => p.name === 'selectable').deprecated;
-    const res = validateCorpus(corpus);
-    expect(res.ok).toBe(false);
-    expect(res.errors).toContain(
-      "deprecation gate: Table.selectable is a known deprecated alias (→ 'selectionMode') but " +
-        'carries no `deprecated` flag — it would be served as canonical API (the JSDoc ' +
-        '{@link}/getComment() bug class; A3 sets this from the deprecate.ts call site)',
-    );
+// ── B1 gate 3: deprecation gate (1.0 invariant — INVERTED) ────
+// Pre-1.0 this gate asserted the known aliases EXIST + carry `deprecated`.
+// At 1.0 every prop alias is removed, so the gate is inverted: the corpus must
+// carry ZERO `deprecated` props. A clean corpus passes; ANY prop with a
+// `deprecated` field (shape `true | { replacement? }`, schema 1.7) fails with a
+// `deprecation gate (1.0):` error naming the offending `Component.prop`.
+describe('validateCorpus — deprecation gate (1.0 invariant, hard)', () => {
+  it('the deprecated-alias floor is intentionally empty at 1.0', () => {
+    // The floor was emptied at the 1.0 cut; the gate that consumed it is now
+    // inverted. Anchor that reality so a future re-population is deliberate.
+    expect(DEPRECATED_ALIAS_FLOOR.length).toBe(0);
   });
 
-  it('fails when a known alias prop is missing from the extracted props', () => {
-    const corpus = makeFixtureCorpus();
-    const accordion = docByName(corpus, 'Accordion');
-    accordion.props = accordion.props.filter((p) => p.name !== 'open');
-    const res = validateCorpus(corpus);
-    expect(res.ok).toBe(false);
-    expect(res.errors).toContain(
-      "deprecation gate: Accordion.open is a known deprecated alias (→ 'expanded') but is " +
-        'missing from the extracted props — the extractor dropped the alias from the public ' +
-        'surface (the deprecate.ts call site still references it)',
-    );
+  it('a clean corpus (no prop carries `deprecated`) passes the gate', () => {
+    const res = validateCorpus(makeFixtureCorpus());
+    expect(res.ok).toBe(true);
+    expect(res.errors.some((e) => e.startsWith('deprecation gate (1.0):'))).toBe(false);
+    expect(res.stats.content.deprecatedFlaggedProps).toBe(0);
   });
 
-  it('fails when a component owning a known alias is absent from the corpus', () => {
+  it('fails when ANY prop carries a `deprecated` flag, naming Component.prop', () => {
     const corpus = makeFixtureCorpus();
-    const slug = corpus.index.find((i) => i.name === 'List').slug;
-    corpus.index = corpus.index.filter((i) => i.name !== 'List');
-    delete corpus.components[slug];
+    // Inject a deprecated alias onto a real fixture component. The extractor's
+    // schema-1.7 shape is `deprecated: true | { reason?, replacement? }`; use
+    // the `{ replacement }` form (matches how A3 emits a known canonical name).
+    firstDoc(corpus).props.push({
+      name: 'somethingOld',
+      type: 'string',
+      deprecated: { deprecated: true, replacement: 'somethingNew' },
+    });
+    const res = validateCorpus(corpus);
+    expect(res.ok).toBe(false);
+    const msg = res.errors.find((e) => e.startsWith('deprecation gate (1.0):'));
+    expect(msg).toBeTruthy();
+    expect(msg).toContain('Comp00.somethingOld');
+    expect(res.stats.content.deprecatedFlaggedProps).toBe(1);
+  });
+
+  it('flags a `deprecated: true` (bare, no replacement) prop too', () => {
+    const corpus = makeFixtureCorpus();
+    firstDoc(corpus).props.push({ name: 'legacyFlag', type: 'boolean', deprecated: true });
     const res = validateCorpus(corpus);
     expect(res.ok).toBe(false);
     expect(
       res.errors.some(
-        (e) =>
-          e.startsWith("deprecation gate: component 'List'") &&
-          e.includes('absent from the corpus'),
+        (e) => e.startsWith('deprecation gate (1.0):') && e.includes('Comp00.legacyFlag'),
       ),
     ).toBe(true);
-  });
-
-  it('the alias floor covers the brief-mandated known aliases', () => {
-    const keys = new Set(DEPRECATED_ALIAS_FLOOR.map((a) => `${a.component}.${a.name}`));
-    for (const k of [
-      'Table.selectable',
-      'Table.rowKey',
-      'Accordion.open',
-      'Accordion.defaultOpen',
-      'Accordion.onOpenChange',
-      'List.selectable',
-      'List.getKey',
-    ]) {
-      expect(keys.has(k)).toBe(true);
-    }
   });
 });
 

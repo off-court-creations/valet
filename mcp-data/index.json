@@ -65,7 +65,7 @@
   {
     "name": "RadioGroup",
     "category": "fields",
-    "summary": "Single-choice group of `Radio` options with keyboard roving focus; controlled via `value` + `onValueChange` or bound to a `FormControl` by `name`, with `gap` for option spacing (the old `spacing` prop is a deprecated alias).",
+    "summary": "Single-choice group of `Radio` options with keyboard roving focus; controlled via `value` + `onValueChange` or bound to a `FormControl` by `name`, with `gap` for option spacing.",
     "slug": "components/fields/radiogroup",
     "status": "stable"
   },
@@ -100,7 +100,7 @@
   {
     "name": "Switch",
     "category": "fields",
-    "summary": "Accessible toggle for a single boolean that takes effect immediately; controlled via `checked` + `onValueChange` (the old `onChange` is a deprecated alias) — prefer it over Checkbox for instant on/off settings rather than form submission.",
+    "summary": "Accessible toggle for a single boolean that takes effect immediately; controlled via `checked` + `onValueChange` — prefer it over Checkbox for instant on/off settings rather than form submission.",
     "slug": "components/fields/switch",
     "status": "stable"
   },
@@ -114,7 +114,7 @@
   {
     "name": "Accordion",
     "category": "layout",
-    "summary": "Vertical stack of collapsible `Accordion.Item` panels with single or `multiple` open behavior and roving-focus ARIA; control which panels are open with `expanded`/`defaultExpanded`/`onExpandedChange` (the `open*` props are deprecated aliases).",
+    "summary": "Vertical stack of collapsible `Accordion.Item` panels with single or `multiple` open behavior and roving-focus ARIA; control which panels are open with `expanded`/`defaultExpanded`/`onExpandedChange`.",
     "slug": "components/layout/accordion",
     "status": "experimental"
   },
@@ -170,7 +170,7 @@
   {
     "name": "Panel",
     "category": "layout",
-    "summary": "Bordered, padded surface card for grouping related content into a visually distinct section; supports `normalizeRowHeights` (the old `normalizeRowHeight` is a deprecated alias) for equal-height children — use it to frame a block, and `Box` for an unstyled container.",
+    "summary": "Bordered, padded surface card for grouping related content into a visually distinct section; supports `normalizeRowHeights` for equal-height children — use it to frame a block, and `Box` for an unstyled container.",
     "slug": "components/layout/panel",
     "status": "stable"
   },
@@ -252,13 +252,6 @@
     "status": "stable"
   },
   {
-    "name": "Progress",
-    "category": "primitives",
-    "summary": "Back-compat progress indicator that switches between bar and ring via `variant`; prefer the dedicated `ProgressBar` or `ProgressRing` primitives directly for new code, and omit `value` for an indeterminate (unknown-duration) loading state.",
-    "slug": "components/primitives/progress",
-    "status": "stable"
-  },
-  {
     "name": "Typography",
     "category": "primitives",
     "summary": "Renders themed text at a semantic `variant` (h1–h6, subtitle, body, button, …) mapped to the correct HTML element; use it for all text so type scale, color, and wrapping stay consistent.",
@@ -331,7 +324,7 @@
   {
     "name": "Pagination",
     "category": "widgets",
-    "summary": "Tab-style page navigator with an elastic active-page underline; controlled by `count` + `page` + `onPageChange` (the old `onChange` is a deprecated alias) — use it to page through large lists or tables.",
+    "summary": "Tab-style page navigator with an elastic active-page underline; controlled by `count` + `page` + `onPageChange` — use it to page through large lists or tables.",
     "slug": "components/widgets/pagination",
     "status": "stable"
   },

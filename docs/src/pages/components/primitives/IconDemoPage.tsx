@@ -150,7 +150,7 @@ export default function IconDemoPage() {
         />
         <Typography
           variant='h4'
-          bold
+          weight='bold'
         >
           iconCard preset
         </Typography>

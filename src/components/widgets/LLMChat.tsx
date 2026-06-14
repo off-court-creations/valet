@@ -427,7 +427,7 @@ export const LLMChat: React.FC<ChatProps> = ({
                         {m.name && (
                           <Typography
                             variant='subtitle'
-                            bold
+                            weight='bold'
                           >
                             {m.name}
                           </Typography>

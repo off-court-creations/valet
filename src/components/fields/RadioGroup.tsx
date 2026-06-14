@@ -36,7 +36,6 @@ import type { Theme } from '../../system/themeStore';
 import type { FieldBaseProps, Presettable, Space, Sx } from '../../types';
 import type { ChangeInfo, InputSource, OnValueChange, OnValueCommit } from '../../system/events';
 import { valetError } from '../../system/devErrors';
-import { resolveDeprecatedProp } from '../../system/deprecate';
 import { useFieldState } from '../../hooks/useControlledState';
 
 /*───────────────────────────────────────────────────────────*/
@@ -158,12 +157,6 @@ export interface RadioGroupProps
   size?: RadioSize | number | string;
   /** Gap between options as spacing units or a CSS length. */
   gap?: Space;
-  /**
-   * Gap between options.
-   * @deprecated Renamed to `gap` (Q12); `spacing` keeps working through 0.x
-   *   and is removed at 1.0. `gap` wins when both are supplied.
-   */
-  spacing?: Space;
   /** DOM-parity change event (raw input event). */
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   /** Canonical value change event (fires on selection). */
@@ -193,7 +186,6 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
   row = false,
   size = 'md',
   gap: gapProp,
-  spacing: spacingProp,
   onChange,
   onValueChange,
   onValueCommit,
@@ -277,9 +269,7 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
   );
 
   /* Gap between radio items ------------------------------------------- */
-  // `gap` is canonical (Q12); `spacing` is the deprecated alias. `gap` wins
-  // when both are supplied; passing `spacing` dev-warns once.
-  const gap = resolveDeprecatedProp('RadioGroup', 'gap', gapProp, 'spacing', spacingProp);
+  const gap = gapProp;
   let gapCss: string;
   if (gap === undefined) {
     gapCss = row ? theme.spacing(1) : theme.spacing(1.5);

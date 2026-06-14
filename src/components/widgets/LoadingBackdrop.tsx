@@ -4,7 +4,7 @@
 // ─────────────────────────────────────────────────────────────
 import React from 'react';
 import { useTheme } from '../../system/themeStore';
-import { Progress } from '../primitives/Progress';
+import { ProgressRing } from '../primitives/Progress';
 import { preset } from '../../css/stylePresets';
 import { zVar } from '../../system/zIndex';
 import { useComponentStrings } from '../../system/locale';
@@ -69,11 +69,7 @@ export const LoadingBackdrop: React.FC<LoadingBackdropProps> = ({
           opacity: showSpinner ? 1 : 0,
         }}
       >
-        <Progress
-          variant='circular'
-          mode='indeterminate'
-          aria-label={t.loading}
-        />
+        <ProgressRing aria-label={t.loading} />
       </div>
     </div>
   );

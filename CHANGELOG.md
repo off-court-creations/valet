@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+> **1.0 prep (epic branch `feat/valet-1.0`).** These entries accumulate toward the
+> 1.0 cut; the `## Unreleased` heading becomes `## [1.0.0]` at release (Wave 4).
+
+### Removed
+
+- **BREAKING (deprecation sweep — all 0.x prop aliases removed, pre-1.0 policy `deprecate.ts`/Q12(a)):** every prop alias that was marked "removed at 1.0" is gone, along with `src/system/deprecate.ts` (`deprecateProp`/`resolveDeprecatedProp`) and its tests. The canonical names already existed and are unchanged. Migrations:
+  - `Accordion`: `open` → `expanded`, `defaultOpen` → `defaultExpanded`, `onOpenChange` → `onExpandedChange`.
+  - `Pagination`: `onChange` → `onPageChange`.
+  - `RadioGroup`: `spacing` → `gap`.
+  - `Panel`: `normalizeRowHeight` → `normalizeRowHeights`.
+  - `Table`: `selectable='single'|'multi'` → `selectionMode='single'|'multiple'`; `rowKey` → `getItemKey`.
+  - `List`: `selectable={true}` → `selectionMode='single'`; `getKey` → `getItemKey`.
+  - `Switch`: **`onChange` removed (not a rename).** It was a raw `MouseEvent` passthrough — read the boolean from `onValueChange(next, info)` and `info.event` for the DOM event, or attach a native `onClick`.
+- **BREAKING (`Typography.bold` removed):** the boolean `bold` prop is gone — use `weight='bold'` (or any `weight` alias / number). The kit and docs are migrated.
+- **BREAKING (`Progress` wrapper removed):** the back-compat `Progress` component (and its `variant`/`mode`/`showLabel` props, plus the `ProgressVariant`/`ProgressMode` types) is removed. Use the primitives directly: `ProgressBar` for linear, `ProgressRing` for circular (omit `value` for indeterminate).
+
+### Changed
+
+- **BREAKING (`Tabs.tabAlign` collapsed):** the `tabAlign` alias is removed; use `alignX` (one concept, one prop).
+- MCP corpus / tooling: the served corpus now carries **zero** deprecated props. `validate.mjs`'s deprecated-alias gate is inverted to the 1.0 invariant (it fails if any prop ever carries a `deprecated` flag); `DEPRECATED_ALIAS_FLOOR` is now empty. The deprecation-banner/flag code in the MCP server remains but is dormant (no deprecated props on the surface).
+
 ## [0.36.0] — 2026-06-13
 
 ### Added

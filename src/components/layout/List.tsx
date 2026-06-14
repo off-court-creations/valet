@@ -9,7 +9,6 @@ import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { Typography } from '../primitives/Typography';
 import { stripe, toRgb, mix, toHex } from '../../helpers/color';
-import { resolveDeprecatedProp } from '../../system/deprecate';
 import type { Presettable, Sx } from '../../types';
 
 /* Props */
@@ -28,19 +27,9 @@ export interface ListProps<T>
   /**
    * How selection behaves (API-TYPES S11, Q11(a)). List supports single
    * selection: `'single'` enables it, `'none'` (default) disables it. The
-   * unified cross-component name; the boolean `selectable` is a deprecated
-   * alias (`selectable={true}` ≡ `selectionMode='single'`). When both are
-   * supplied, `selectionMode` wins.
+   * unified cross-component selection name.
    */
   selectionMode?: 'none' | 'single';
-  /**
-   * @deprecated Use {@link selectionMode} (`'none' | 'single'`) instead.
-   * `selectable` keeps working through 0.x and is removed at 1.0;
-   * `selectable={true}` maps to `selectionMode='single'`.
-   *
-   * Enable single selection when true.
-   */
-  selectable?: boolean;
   /**
    * Focus behavior for rows.
    * - `auto` (default): non-selectable lists keep rows out of the tab order; selectable lists use roving focus (one row has `tabIndex=0`, rest `-1`).
@@ -62,14 +51,6 @@ export interface ListProps<T>
    * to a React.Key return.
    */
   getItemKey?: keyof T | ((item: T, index: number) => React.Key);
-  /**
-   * @deprecated Use {@link getItemKey} instead — the same per-item identity
-   * under the cross-component name. `getKey` keeps working through 0.x and is
-   * removed at 1.0; when both are supplied, `getItemKey` wins.
-   *
-   * Provide stable keys for items (defaults to index).
-   */
-  getKey?: (item: T, index: number) => React.Key;
   /** Rendered when `data.length === 0`. */
   emptyPlaceholder?: React.ReactNode;
   /** Inline styles (with CSS var support). */
@@ -201,32 +182,20 @@ export function List<T>({
   reorderable = true,
   onReorder,
   selectionMode,
-  selectable: selectableProp,
   focusMode = 'auto',
   selected: selectedProp,
   defaultSelected = null,
   onSelectionChange,
   getItemKey,
-  getKey: getKeyProp,
   emptyPlaceholder,
   preset: p,
   className,
   sx,
   ...rest
 }: ListProps<T>) {
-  /* Unified selection vocabulary (API-TYPES S11, Q11(a)). Canonical
-     `selectionMode`/`getItemKey` win over the deprecated `selectable`/`getKey`
-     aliases (warn once each via deprecate.ts; old names removed at 1.0). */
-  const resolvedMode = resolveDeprecatedProp(
-    'List',
-    'selectionMode',
-    selectionMode,
-    'selectable',
-    /* boolean alias → the canonical union so both can be compared */
-    selectableProp === undefined ? undefined : selectableProp ? 'single' : 'none',
-  );
-  const selectable = resolvedMode === 'single';
-  const getKey = resolveDeprecatedProp('List', 'getItemKey', getItemKey, 'getKey', getKeyProp);
+  /* Unified selection vocabulary (API-TYPES S11, Q11(a)). */
+  const selectable = selectionMode === 'single';
+  const getKey = getItemKey;
 
   const { theme } = useTheme();
   const stripeColor = stripe(theme.colors.background, theme.colors.text);
@@ -622,7 +591,7 @@ export function List<T>({
           >
             <Typography
               variant='body'
-              bold
+              weight='bold'
             >
               {getTitle(item)}
             </Typography>

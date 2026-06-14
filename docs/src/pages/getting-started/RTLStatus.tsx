@@ -102,7 +102,7 @@ export default function RTLStatusPage() {
       render: (row) => (
         <Typography
           variant='subtitle'
-          bold
+          weight='bold'
           sx={{ color: STATUS_COLOR[row.status] }}
         >
           {row.status}
@@ -121,7 +121,7 @@ export default function RTLStatusPage() {
       >
         <Typography
           variant='h2'
-          bold
+          weight='bold'
         >
           RTL & Bidirectional Status
         </Typography>
@@ -148,7 +148,7 @@ export default function RTLStatusPage() {
 
         <Typography
           variant='h3'
-          bold
+          weight='bold'
         >
           Turning RTL on
         </Typography>
@@ -178,7 +178,7 @@ export default function RTLStatusPage() {
 
         <Typography
           variant='h3'
-          bold
+          weight='bold'
         >
           Direction-aware Drawer anchors
         </Typography>
@@ -199,7 +199,7 @@ export default function RTLStatusPage() {
 
         <Typography
           variant='h3'
-          bold
+          weight='bold'
         >
           What works / what doesn’t
         </Typography>
@@ -215,7 +215,7 @@ export default function RTLStatusPage() {
 
         <Typography
           variant='h3'
-          bold
+          weight='bold'
         >
           Why some geometry stays physical
         </Typography>

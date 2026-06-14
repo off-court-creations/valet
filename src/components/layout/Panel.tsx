@@ -14,7 +14,6 @@ import { toRgb, mix, toHex } from '../../helpers/color';
 //
 import type { Intent, Presettable, SpacingProps, Sx } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
-import { resolveDeprecatedProp } from '../../system/deprecate';
 import { CompactCtx, useCompact } from '../../system/compactContext';
 
 export type PanelVariant = 'filled' | 'outlined';
@@ -39,13 +38,6 @@ export interface PanelProps
    * Defaults to true (normalize). Set to false to keep intrinsic heights.
    */
   normalizeRowHeights?: boolean;
-  /**
-   * Opt out of row height normalization.
-   * @deprecated Renamed to `normalizeRowHeights` (canonical plural, Q12);
-   *   `normalizeRowHeight` keeps working through 0.x and is removed at 1.0.
-   *   `normalizeRowHeights` wins when both are supplied.
-   */
-  normalizeRowHeight?: boolean;
 }
 
 /** Inline styles (with CSS var support) */
@@ -141,8 +133,7 @@ export const Panel: React.FC<PanelProps> = ({
   fullWidth = false,
   centerContent,
   alignX,
-  normalizeRowHeights: normalizeRowHeightsProp,
-  normalizeRowHeight: normalizeRowHeightProp,
+  normalizeRowHeights = true,
   preset: p,
   className,
   sx,
@@ -155,18 +146,6 @@ export const Panel: React.FC<PanelProps> = ({
   ...rest
 }) => {
   const { theme } = useTheme();
-
-  // `normalizeRowHeights` is canonical (plural, Q12); `normalizeRowHeight`
-  // is the deprecated alias. The plural wins when both are supplied; passing
-  // the singular dev-warns once. Defaults to true (normalize) when neither set.
-  const normalizeRowHeights =
-    resolveDeprecatedProp(
-      'Panel',
-      'normalizeRowHeights',
-      normalizeRowHeightsProp,
-      'normalizeRowHeight',
-      normalizeRowHeightProp,
-    ) ?? true;
 
   // Resolve color override / intent into a background or border color
   const resolveToken = (v?: string): string | undefined => {

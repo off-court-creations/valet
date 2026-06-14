@@ -74,7 +74,7 @@ export default function ComplicatedDashboard() {
       <Stack>
         <Typography
           variant='h2'
-          bold
+          weight='bold'
         >
           Complicated Dashboard
         </Typography>
@@ -89,7 +89,7 @@ export default function ComplicatedDashboard() {
           <Panel variant='outlined'>
             <Typography
               variant='h5'
-              bold
+              weight='bold'
             >
               KPIs
             </Typography>
@@ -111,7 +111,7 @@ export default function ComplicatedDashboard() {
                   <Typography variant='subtitle'>{label}</Typography>
                   <Typography
                     variant='h4'
-                    bold
+                    weight='bold'
                   >
                     {value}
                   </Typography>
@@ -138,7 +138,7 @@ export default function ComplicatedDashboard() {
               </Tabs.Panel>
               <Tabs.Panel>
                 <Stack>
-                  <Typography bold>Scratchpad</Typography>
+                  <Typography weight='bold'>Scratchpad</Typography>
                   <Markdown data={'- [ ] Design review\n- [x] Fix spacing\n- [ ] Prep release'} />
                   <Button variant='outlined'>Export</Button>
                 </Stack>
@@ -149,7 +149,7 @@ export default function ComplicatedDashboard() {
           <Panel variant='outlined'>
             <Typography
               variant='h5'
-              bold
+              weight='bold'
             >
               Info
             </Typography>
@@ -162,7 +162,7 @@ export default function ComplicatedDashboard() {
           <Panel>
             <Typography
               variant='h4'
-              bold
+              weight='bold'
             >
               Team Tasks
             </Typography>
@@ -179,7 +179,7 @@ export default function ComplicatedDashboard() {
           <Panel>
             <Typography
               variant='h4'
-              bold
+              weight='bold'
             >
               Release Notes
             </Typography>
@@ -189,7 +189,7 @@ export default function ComplicatedDashboard() {
           <Panel>
             <Typography
               variant='h4'
-              bold
+              weight='bold'
             >
               Recent Orders
             </Typography>

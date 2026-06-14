@@ -526,7 +526,7 @@ export const RichChat: React.FC<RichChatProps> = ({
                       {m.name && (
                         <Typography
                           variant='subtitle'
-                          bold
+                          weight='bold'
                         >
                           {m.name}
                         </Typography>

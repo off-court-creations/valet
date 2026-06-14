@@ -72,7 +72,7 @@ export default function FontsPrivacyPage() {
       render: (row) => (
         <Typography
           variant='subtitle'
-          bold
+          weight='bold'
           sx={{
             color: row.strategy.startsWith('Remote')
               ? STATUS_COLOR['remote']
@@ -97,7 +97,7 @@ export default function FontsPrivacyPage() {
       >
         <Typography
           variant='h2'
-          bold
+          weight='bold'
         >
           Fonts &amp; Privacy
         </Typography>
@@ -128,7 +128,7 @@ export default function FontsPrivacyPage() {
         {/* GDPR posture */}
         <Typography
           variant='h3'
-          bold
+          weight='bold'
         >
           The GDPR posture — why <code>injectRemote</code> exists
         </Typography>
@@ -172,7 +172,7 @@ export default function FontsPrivacyPage() {
         {/* Three strategies */}
         <Typography
           variant='h3'
-          bold
+          weight='bold'
         >
           Three loading strategies
         </Typography>
@@ -189,7 +189,7 @@ export default function FontsPrivacyPage() {
         {/* Strategy 1 */}
         <Typography
           variant='h4'
-          bold
+          weight='bold'
         >
           1 · Remote Google injection (default)
         </Typography>
@@ -213,7 +213,7 @@ useInitialTheme({
         {/* Strategy 2 */}
         <Typography
           variant='h4'
-          bold
+          weight='bold'
         >
           2 · <code>injectRemote:false</code> + self-hosted <code>@fontsource</code>
         </Typography>
@@ -251,7 +251,7 @@ useInitialTheme(
         {/* Strategy 3 */}
         <Typography
           variant='h4'
-          bold
+          weight='bold'
         >
           3 · Explicit-fonts-only (zero-config)
         </Typography>
@@ -280,7 +280,7 @@ useInitialTheme({ fonts: { body: 'Inter' } });`}
         {/* Timeout semantics */}
         <Typography
           variant='h3'
-          bold
+          weight='bold'
         >
           Never-block timeout semantics
         </Typography>
