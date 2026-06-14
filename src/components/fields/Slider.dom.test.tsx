@@ -138,6 +138,7 @@ describe('Slider — control modes (ruling R9)', () => {
           defaultValue={7}
           min={0}
           max={10}
+          aria-label='Volume'
         />
       </FormControl>,
     );

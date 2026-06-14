@@ -149,6 +149,7 @@ describe('Iterator — control modes (ruling R9)', () => {
         <Iterator
           name='qty'
           defaultValue={9}
+          aria-label='Quantity'
         />
       </FormControl>,
     );

@@ -9,12 +9,13 @@
 // the caller-supplied source, Page/Home/End/Enter keys ⇒ 'keyboard', typing
 // commit & blur ⇒ 'keyboard') instead of the old hardcoded 'programmatic'.
 // ─────────────────────────────────────────────────────────────
-import React, { forwardRef, useState, useEffect, useRef, useCallback } from 'react';
+import React, { forwardRef, useState, useEffect, useId, useRef, useCallback } from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { IconButton } from './IconButton';
 import { useFieldState } from '../../hooks/useControlledState';
+import { warnOnce } from '../../system/devErrors';
 import { useComponentStrings } from '../../system/locale';
 import type { DeepPartialStrings, ValetStrings } from '../../system/locale';
 import type { FieldBaseProps } from '../../types';
@@ -115,10 +116,12 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
       readOnly = false,
       // API-TYPES S6 (stage A): destructure the FieldBaseProps cluster BEFORE the
       // rest-spread so label/helperText/error/fullWidth stop leaking onto the
-      // <input> as invalid DOM attributes. Only `error` is wired (aria-invalid
-      // below); FieldShell rendering of the rest is Phase 2 / Q10.
-      label: _label,
-      helperText: _helperText,
+      // <input> as invalid DOM attributes. `error` drives aria-invalid; `label`
+      // /`helperText` are now rendered + wired as the input's accessible name
+      // (native <label htmlFor>) / description (aria-describedby). FieldShell
+      // rendering of fullWidth is Phase 2 / Q10.
+      label,
+      helperText,
       error,
       fullWidth: _fullWidth,
       preset: p,
@@ -129,11 +132,32 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
     },
     ref,
   ) => {
-    void _label;
-    void _helperText;
     void _fullWidth;
     const { theme } = useTheme();
     const t = useComponentStrings('iterator', labels);
+
+    // WCAG 4.1.2 (Name, Role, Value): a native <label htmlFor> provides the
+    // accessible name; helperText is associated via aria-describedby.
+    const reactId = useId();
+    const inputId = `${reactId}-input`;
+    const labelId = label != null ? `${reactId}-label` : undefined;
+    const helpId = helperText != null ? `${reactId}-help` : undefined;
+
+    // Dev-time accessible-name guard (mirrors IconButton.tsx): warn ONCE if the
+    // number input would render with no accessible name from ANY source.
+    // External labelling via aria-label/aria-labelledby is valid (silences it).
+    if (process.env.NODE_ENV !== 'production') {
+      const hasName =
+        label != null ||
+        Boolean((rest as Record<string, unknown>)['aria-label']) ||
+        Boolean((rest as Record<string, unknown>)['aria-labelledby']);
+      if (!hasName) {
+        warnOnce(
+          `Iterator:no-accessible-name:${reactId}`,
+          'valet: Iterator: provide an accessible name via the `label` prop, aria-label, or aria-labelledby (WCAG 4.1.2).',
+        );
+      }
+    }
 
     const localRef = useRef<HTMLInputElement | null>(null);
     const setRef = useCallback(
@@ -289,7 +313,7 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
     const decDisabled = disabled || readOnly || (min !== undefined && current <= min);
     const incDisabled = disabled || readOnly || (max !== undefined && current >= max);
 
-    return (
+    const controls = (
       <Wrapper
         theme={theme}
         data-valet-component='Iterator'
@@ -310,6 +334,7 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
         <Field
           {...rest}
           ref={setRef}
+          id={inputId}
           type='number'
           inputMode='numeric'
           theme={theme}
@@ -325,6 +350,7 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
           disabled={disabled}
           readOnly={readOnly}
           aria-invalid={error || undefined}
+          aria-describedby={helpId}
         />
         <IconButton
           size='xs'
@@ -335,6 +361,45 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
           aria-label={t.increment}
         />
       </Wrapper>
+    );
+
+    // When neither label nor helperText is supplied, render the bare inline-flex
+    // <Wrapper> exactly as before — no wrapper, no structural change.
+    if (label == null && helperText == null) return controls;
+
+    // The native <label htmlFor={inputId}> provides the input's accessible name;
+    // helperText is associated via aria-describedby. Both live in an outer column
+    // around the existing controls so layout/ref/spread stay untouched.
+    return (
+      <div style={{ display: 'inline-flex', flexDirection: 'column' }}>
+        {label != null && (
+          <label
+            id={labelId}
+            htmlFor={inputId}
+            style={{
+              fontSize: '0.875rem',
+              color: theme.colors.text,
+              marginBottom: theme.spacing(0.5),
+            }}
+          >
+            {label}
+          </label>
+        )}
+        {controls}
+        {helperText != null && (
+          <span
+            id={helpId}
+            style={{
+              fontSize: '0.75rem',
+              color: theme.colors.text + 'AA',
+              marginTop: theme.spacing(0.5),
+            }}
+            aria-live='polite'
+          >
+            {helperText}
+          </span>
+        )}
+      </div>
     );
   },
 );

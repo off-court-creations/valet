@@ -8,6 +8,7 @@ import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { useFieldState } from '../../hooks/useControlledState';
+import { warnOnce } from '../../system/devErrors';
 import type { FieldBaseProps } from '../../types';
 import type { ChangeInfo, InputSource, OnValueChange, OnValueCommit } from '../../system/events';
 
@@ -138,10 +139,11 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
       disabled = false,
       // API-TYPES S6 (stage A): destructure the FieldBaseProps cluster BEFORE the
       // rest-spread so label/helperText/error/fullWidth stop leaking onto the
-      // <button> Track as invalid DOM attributes. Only `error` is wired
-      // (aria-invalid below); FieldShell rendering of the rest is Phase 2 / Q10.
-      label: _label,
-      helperText: _helperText,
+      // <button> Track as invalid DOM attributes. `error` drives aria-invalid;
+      // `label`/`helperText` are now rendered + wired as the accessible name /
+      // description (WCAG 4.1.2). FieldShell rendering of fullWidth is Phase 2 / Q10.
+      label,
+      helperText,
       error,
       fullWidth: _fullWidth,
       preset: p,
@@ -151,8 +153,6 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
     },
     ref,
   ) => {
-    void _label;
-    void _helperText;
     void _fullWidth;
     /* ----- theme + geometry -------------------------------- */
     const { theme } = useTheme();
@@ -204,8 +204,29 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
 
     /* ----- accessibility attrs ----------------------------- */
     const switchId = useId();
+    // WCAG 4.1.2 (Name, Role, Value): wire the visible `label` as the button's
+    // accessible name and `helperText` as its description. RadioGroup uses the
+    // same id-association pattern.
+    const labelId = label != null ? `${switchId}-label` : undefined;
+    const helpId = helperText != null ? `${switchId}-help` : undefined;
 
-    return (
+    // Dev-time accessible-name guard (mirrors IconButton.tsx): warn ONCE if the
+    // switch would render with no accessible name from ANY source. External
+    // labelling via aria-label/aria-labelledby is valid and silences the warn.
+    if (process.env.NODE_ENV !== 'production') {
+      const hasName =
+        label != null ||
+        Boolean((btnProps as Record<string, unknown>)['aria-label']) ||
+        Boolean((btnProps as Record<string, unknown>)['aria-labelledby']);
+      if (!hasName) {
+        warnOnce(
+          `Switch:no-accessible-name:${switchId}`,
+          'valet: Switch: provide an accessible name via the `label` prop, aria-label, or aria-labelledby (WCAG 4.1.2).',
+        );
+      }
+    }
+
+    const track = (
       <Track
         {...btnProps}
         ref={ref}
@@ -216,6 +237,8 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
         aria-checked={checked}
         aria-invalid={error || undefined}
         aria-disabled={disabled || undefined}
+        aria-labelledby={labelId}
+        aria-describedby={helpId}
         data-state={checked ? 'checked' : 'unchecked'}
         data-disabled={disabled ? 'true' : 'false'}
         disabled={disabled}
@@ -244,6 +267,44 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
           $ease={theme.motion.easing.standard}
         />
       </Track>
+    );
+
+    // When neither label nor helperText is supplied, render the bare <Track>
+    // exactly as before — no wrapper, no structural change. The button keeps
+    // ref/btnProps/className/sx/style so existing consumers/tests are unaffected.
+    if (label == null && helperText == null) return track;
+
+    return (
+      <span
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: theme.spacing(0.5),
+        }}
+      >
+        {track}
+        {(label != null || helperText != null) && (
+          <span style={{ display: 'inline-flex', flexDirection: 'column' }}>
+            {label != null && (
+              <span
+                id={labelId}
+                style={{ fontSize: '0.875rem', color: theme.colors.text }}
+              >
+                {label}
+              </span>
+            )}
+            {helperText != null && (
+              <span
+                id={helpId}
+                style={{ fontSize: '0.75rem', color: theme.colors.text + 'AA' }}
+                aria-live='polite'
+              >
+                {helperText}
+              </span>
+            )}
+          </span>
+        )}
+      </span>
     );
   },
 );

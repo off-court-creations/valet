@@ -486,6 +486,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
               value={viewMonth}
               onValueChange={(v) => setViewMonth(Number(v))}
               sx={{ flex: 1, minWidth: 0 }}
+              aria-label='Month'
             >
               {months.map((idx) => (
                 <Select.Option
@@ -501,6 +502,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
             <Select
               size='xs'
               value={viewYear}
+              aria-label='Year'
               onValueChange={(v) => {
                 const yr = Number(v);
                 let m = viewMonth;

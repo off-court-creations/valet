@@ -33,6 +33,7 @@ import { getOverlayRoot, useOverlay } from '../../system/overlay';
 import { inheritSurfaceFontVars } from '../../system/inheritSurfaceFontVars';
 import { zVar } from '../../system/zIndex';
 import { useFieldState } from '../../hooks/useControlledState';
+import { warnOnce } from '../../system/devErrors';
 import type { FieldBaseProps, Presettable, Sx } from '../../types';
 import type { ChangeInfo, InputSource, OnValueChange, OnValueCommit } from '../../system/events';
 import type { Theme } from '../../system/themeStore';
@@ -218,19 +219,18 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
     sx,
     // API-TYPES S6 (stage A): destructure the FieldBaseProps cluster BEFORE the
     // rest-spread so label/helperText/error/fullWidth stop leaking onto the
-    // <Trigger> button as invalid DOM attributes. FieldShell rendering is
-    // Phase 2 / Q10 — only `error` is wired (aria-invalid below); the rest are
-    // swallowed for now. `label` is aliased to avoid shadowing the internal
-    // selected-option display text (const below); the swallowed members are
-    // void-referenced so they neither leak nor trip no-unused-vars.
-    label: _label,
-    helperText: _helperText,
+    // <Trigger> button as invalid DOM attributes. `error` drives aria-invalid;
+    // `label`/`helperText` are now rendered + wired as the combobox's accessible
+    // name (aria-labelledby) / description (aria-describedby) — WCAG 4.1.2.
+    // `label` is aliased to `fieldLabel` to avoid shadowing the internal
+    // selected-option display text (`const label` below). FieldShell rendering
+    // of fullWidth is Phase 2 / Q10.
+    label: fieldLabel,
+    helperText,
     error,
     fullWidth: _fullWidth,
     ...divRest
   } = props;
-  void _label;
-  void _helperText;
   void _fullWidth;
 
   /* theme + geometry --------------------------------------- */
@@ -410,6 +410,32 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
 
   /* aria linking ------------------------------------------ */
   const listId = useId();
+  // WCAG 4.1.2 (Name, Role, Value): wire the visible `label` as the combobox's
+  // accessible name and `helperText` as its description (mirrors RadioGroup).
+  const labelId = fieldLabel != null ? `${listId}-label` : undefined;
+  const helpId = helperText != null ? `${listId}-help` : undefined;
+  // aria-labelledby may list multiple ids: prepend our rendered label id to any
+  // caller-supplied aria-labelledby so external labelling is preserved/added to.
+  const callerLabelledBy = (divRest as Record<string, unknown>)['aria-labelledby'] as
+    | string
+    | undefined;
+  const labelledBy = [labelId, callerLabelledBy].filter(Boolean).join(' ') || undefined;
+
+  // Dev-time accessible-name guard (mirrors IconButton.tsx): warn ONCE if the
+  // combobox would render with no accessible name from ANY source. External
+  // labelling via aria-label/aria-labelledby is valid and silences the warn.
+  if (process.env.NODE_ENV !== 'production') {
+    const hasName =
+      fieldLabel != null ||
+      Boolean((divRest as Record<string, unknown>)['aria-label']) ||
+      Boolean(callerLabelledBy);
+    if (!hasName) {
+      warnOnce(
+        `Select:no-accessible-name:${listId}`,
+        'valet: Select: provide an accessible name via the `label` prop, aria-label, or aria-labelledby (WCAG 4.1.2).',
+      );
+    }
+  }
   /* Resolved <li> ids: a caller-supplied `id` on a <Select.Option> wins,
      otherwise a generated `${listId}-opt-${i}`. Used for the rendered id,
      `aria-activedescendant`, and scroll-into-view so all three agree even when
@@ -456,6 +482,20 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
   /*──────────────────────────────────────────────────────────*/
   return (
     <div style={{ position: 'relative', display: 'inline-block' }}>
+      {/* visible label — rendered above the trigger; associated to the combobox
+          via aria-labelledby for the accessible name. */}
+      {fieldLabel != null && (
+        <div
+          id={labelId}
+          style={{
+            fontSize: '0.875rem',
+            color: theme.colors.text,
+            marginBottom: theme.spacing(0.5),
+          }}
+        >
+          {fieldLabel}
+        </div>
+      )}
       {/* Trigger */}
       <Trigger
         ref={setTriggerRef}
@@ -479,6 +519,10 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
         aria-invalid={error || undefined}
         disabled={disabled}
         {...(divRest as React.ButtonHTMLAttributes<HTMLButtonElement>)}
+        // Placed AFTER the spread so the combined labelledby (rendered label id +
+        // any caller aria-labelledby) and the helper description win.
+        aria-labelledby={labelledBy}
+        aria-describedby={helpId}
         className={mergedCls}
         style={sx as React.CSSProperties}
         onClick={() => {
@@ -651,6 +695,22 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
           </Menu>,
           getOverlayRoot(),
         )}
+
+      {/* helper / validation text — associated to the combobox via
+          aria-describedby (mirrors RadioGroup). */}
+      {helperText != null && (
+        <div
+          id={helpId}
+          style={{
+            fontSize: '0.75rem',
+            color: theme.colors.text + 'AA',
+            marginTop: theme.spacing(0.5),
+          }}
+          aria-live='polite'
+        >
+          {helperText}
+        </div>
+      )}
     </div>
   );
 };

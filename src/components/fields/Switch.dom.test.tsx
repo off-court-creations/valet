@@ -101,6 +101,7 @@ describe('Switch — checked/defaultChecked under FormControl (ruling R9)', () =
         <Switch
           name='wifi'
           defaultChecked
+          aria-label='Wi-Fi'
         />
       </FormControl>,
     );

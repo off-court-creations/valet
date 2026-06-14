@@ -30,6 +30,7 @@ import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { useFieldState } from '../../hooks/useControlledState';
+import { warnOnce } from '../../system/devErrors';
 import { computeKeyStep } from './sliderMath';
 import type { FieldBaseProps } from '../../types';
 import type { ChangeInfo, InputSource, OnValueChange, OnValueCommit } from '../../system/events';
@@ -233,11 +234,12 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
       disabled = false,
       // API-TYPES S6 (stage A): destructure the FieldBaseProps cluster BEFORE the
       // rest-spread so label/helperText/error/fullWidth stop leaking onto the
-      // <Wrapper> div as invalid DOM attributes. Only `error` is wired
-      // (aria-invalid on the thumb below); FieldShell rendering of the rest is
-      // Phase 2 / Q10.
-      label: _label,
-      helperText: _helperText,
+      // <Wrapper> div as invalid DOM attributes. `error` drives aria-invalid on
+      // the thumb; `label`/`helperText` are now rendered + wired as the thumb's
+      // accessible name / description (WCAG 4.1.2). FieldShell rendering of
+      // fullWidth is Phase 2 / Q10.
+      label,
+      helperText,
       error,
       fullWidth: _fullWidth,
       preset: p,
@@ -247,8 +249,6 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
     },
     forwardedRef,
   ) => {
-    void _label;
-    void _helperText;
     void _fullWidth;
     /* theme + geom tokens ----------------------------------- */
     const { theme } = useTheme();
@@ -506,6 +506,27 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
     /* JSX                                                     */
     /*─────────────────────────────────────────────────────────*/
     const id = useId();
+    // WCAG 4.1.2 (Name, Role, Value): wire the visible `label` as the thumb's
+    // accessible name and `helperText` as its description, mirroring RadioGroup.
+    const labelId = label != null ? `${id}-label` : undefined;
+    const helpId = helperText != null ? `${id}-help` : undefined;
+
+    // Dev-time accessible-name guard (mirrors IconButton.tsx): warn ONCE if the
+    // slider would render with no accessible name from ANY source. External
+    // labelling via aria-label/aria-labelledby is valid and silences the warn.
+    if (process.env.NODE_ENV !== 'production') {
+      const hasName =
+        label != null ||
+        Boolean((rest as Record<string, unknown>)['aria-label']) ||
+        Boolean((rest as Record<string, unknown>)['aria-labelledby']);
+      if (!hasName) {
+        warnOnce(
+          `Slider:no-accessible-name:${id}`,
+          'valet: Slider: provide an accessible name via the `label` prop, aria-label, or aria-labelledby (WCAG 4.1.2).',
+        );
+      }
+    }
+
     const format = (v: number) => (precision ? v.toFixed(precision) : v);
 
     const baseTop = showValue ? theme.spacing(1) : theme.spacing(0.25);
@@ -515,7 +536,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
     const padBottom = `calc(${baseBottom} + ${thumbOverflow})`;
     const trackCenter = `calc(${padTop} + (${geom.trackH} / 2))`;
 
-    return (
+    const wrapper = (
       <Wrapper
         {...rest}
         ref={setWrapperRef}
@@ -553,6 +574,8 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
           aria-valuetext={String(format(current))}
           aria-invalid={error || undefined}
           aria-disabled={disabled || undefined}
+          aria-labelledby={labelId}
+          aria-describedby={helpId}
           tabIndex={disabled ? -1 : 0}
           disabled={disabled}
           $d={geom.thumb}
@@ -593,6 +616,46 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
             />
           ))}
       </Wrapper>
+    );
+
+    // When neither label nor helperText is supplied, render the bare <Wrapper>
+    // (the positioned track region) exactly as before — no wrapper, no
+    // structural change, so the absolutely-positioned thumb/ticks stay aligned.
+    if (label == null && helperText == null) return wrapper;
+
+    // The thumb/ticks are positioned relative to <Wrapper>'s padding box, so the
+    // visible label/helper must live OUTSIDE it (an outer flex column) to avoid
+    // shifting the track's positioning origin. The forwarded ref + `rest` stay
+    // on the inner <Wrapper> (the slider root), so consumers are unaffected.
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+        {label != null && (
+          <div
+            id={labelId}
+            style={{
+              fontSize: '0.875rem',
+              color: theme.colors.text,
+              marginBottom: theme.spacing(0.5),
+            }}
+          >
+            {label}
+          </div>
+        )}
+        {wrapper}
+        {helperText != null && (
+          <div
+            id={helpId}
+            style={{
+              fontSize: '0.75rem',
+              color: theme.colors.text + 'AA',
+              marginTop: theme.spacing(0.5),
+            }}
+            aria-live='polite'
+          >
+            {helperText}
+          </div>
+        )}
+      </div>
     );
   },
 );
