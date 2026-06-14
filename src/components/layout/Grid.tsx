@@ -54,13 +54,15 @@ const Root = styled('div')<{
   /* Make intent explicit (browser default is stretch) */
   align-items: stretch;
 
-  /* When normalizing row heights and in multi-column mode, ask
-     Panels to stretch themselves via CSS var. Panels respect
-     --valet-panel-align-self if provided. */
+  /* When normalizing and in multi-column mode, ask Panels to fill their cell
+     in BOTH axes via CSS vars: --valet-panel-width equalizes widths (fill the
+     1fr cell) and --valet-panel-align-self equalizes row heights. So a grid of
+     cards is uniform with no per-card fullWidth. Non-Panel children ignore the
+     vars; standalone Panels (no Grid) keep their content-width default. */
   ${({ $cols, $normalize }) =>
     $normalize && $cols > 1
       ? `
-    & > * { --valet-panel-align-self: stretch; }
+    & > * { --valet-panel-align-self: stretch; --valet-panel-width: 100%; }
   `
       : ''}
 

@@ -85,6 +85,14 @@ describe('Grid (jsdom)', () => {
     expect(ruleFor(el)).toMatch(/gap:\s*calc\(var\(--valet-space[^)]*\)\s*\*\s*1\)/);
   });
 
+  it('normalizes child WIDTHS in multi-column mode — equal-width cards by default (no per-card fullWidth)', () => {
+    // Grid drives Panel fill via --valet-panel-width so a grid of cards is
+    // uniform width without each card opting into fullWidth.
+    const el = gridEl(render(<Grid columns={3} />));
+    expect(ruleFor(el)).toContain('--valet-panel-width: 100%');
+    expect(ruleFor(el)).toContain('--valet-panel-align-self: stretch');
+  });
+
   it('renders its children', () => {
     const c = render(
       <Grid columns={3}>

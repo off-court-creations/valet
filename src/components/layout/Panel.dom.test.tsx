@@ -129,4 +129,12 @@ describe('Panel default padding (1.0, jsdom)', () => {
     const el = container.querySelector('[data-valet-component="Panel"]') as HTMLElement;
     expect(styledRule(el)).toMatch(/padding:\s*calc\(var\(--valet-space[^)]*\)\s*\*\s*1\)/);
   });
+
+  it('width respects --valet-panel-width so a Grid can equalize card widths', () => {
+    // Standalone fallback is the fullWidth-derived value (auto here); a Grid
+    // sets --valet-panel-width: 100% on its children to fill the cell.
+    const container = render(<Panel>x</Panel>);
+    const el = container.querySelector('[data-valet-component="Panel"]') as HTMLElement;
+    expect(styledRule(el)).toContain('width: var(--valet-panel-width');
+  });
 });

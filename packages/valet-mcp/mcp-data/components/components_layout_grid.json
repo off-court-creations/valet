@@ -77,6 +77,7 @@
     ]
   },
   "cssVars": [
+    "--valet-panel-width",
     "--valet-panel-align-self",
     "--valet-panel-ov-y",
     "--valet-panel-max-h",

@@ -61,8 +61,11 @@ const Base = styled('div')<{
   vertical-align: top;
 
   display: ${({ $center, $full }) => ($center ? 'flex' : $full ? 'block' : 'inline-block')};
-  width: ${({ $full }) => ($full ? '100%' : 'auto')};
-  /* Panels cooperate with Grid via CSS var to equalize row heights */
+  /* Panels cooperate with Grid via CSS vars: --valet-panel-width lets a Grid
+     equalize child WIDTHS (fill the 1fr cell) and --valet-panel-align-self
+     equalizes row HEIGHTS — both without a per-card fullWidth. Standalone
+     Panels fall back to the fullWidth-derived value. */
+  width: var(--valet-panel-width, ${({ $full }) => ($full ? '100%' : 'auto')});
   align-self: var(--valet-panel-align-self, ${({ $full }) => ($full ? 'stretch' : 'flex-start')});
   /* Anchor when not full width */
   margin-inline-start: ${({ $full, $alignX }) =>
