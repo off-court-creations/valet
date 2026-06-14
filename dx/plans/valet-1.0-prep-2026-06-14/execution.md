@@ -1,9 +1,11 @@
 # Valet 1.0 Prep — Execution Tracker
 
 > Live progress log for [`plan.md`](plan.md). **Last updated: 2026-06-14.
-> Status: IN PROGRESS — gating decisions ruled (Switch.onChange remove; the 3 soft
-> stragglers remove/collapse; scope = W1–W6, everything in 1.0). Epic branch
-> `feat/valet-1.0` cut off `development`. Executing W1.**
+> Status: W1–W6 CODE-COMPLETE & GREEN on `feat/valet-1.0` (7 commits off
+> `development`). Every CI-equivalent gate passes — lint, typecheck×4, build,
+> 1345 tests, check:package (publint+attw), verify:pack, check:engine,
+> check:bundle, mcp:schema:check + mcp:check, docs tsc. Ready for Ben's 1.0.0
+> cut. Remaining is operator/human-elevation only (Wave 4 + PVR) — see hand-off.**
 
 ## Status at a glance
 
@@ -97,10 +99,21 @@ Things the agent cannot or should not do:
   (green once `packages/valet-mcp` deps install, as CI does) — not a product bug,
   not a 1.0 task.
 
-## Next step
+## Next step — Ben's 1.0.0 cut (Wave 4, human-elevation only)
 
-Get the §7 rulings from Ben (especially the four stragglers + the scope line), then
-cut **`feat/valet-1.0`** off `development` and start landing **W1** on it — it
-unblocks five readiness dimensions at once and is the only thing standing between
-v0.36.0 and a defensible 1.0 by the project's own policy. No PR yet; the epic
-branch accumulates W1–W5 and integrates in Wave 4 near the 1.0.0 cut.
+W1–W6 are code-complete and green on `feat/valet-1.0`. Everything left is the
+release ceremony / operator actions the agent deliberately did **not** perform:
+
+1. **Review the epic branch** (7 commits; the CHANGELOG `## Unreleased` block holds
+   the full 1.0 entry set, ready to become `## [1.0.0]`).
+2. **Cut 1.0.0:** flip `## Unreleased` → `## [1.0.0] — <date>`, bump `package.json`
+   0.36.0 → 1.0.0 (+ the valet-mcp / docs / template pins per `dx/RELEASING.md`),
+   confirm `release:check` is green.
+3. **Integrate + publish:** open the PR(s) `feat/valet-1.0` → `development`/`main`
+   (the first/only PRs), tag, and `npm publish` per the runbook + PUBLISH_ORDER.
+4. **[operator] Enable GitHub Private Vulnerability Reporting** so `SECURITY.md`'s
+   reporting flow works (the one W5 item the agent cannot do).
+
+Deferred, non-blocking (need a committed baseline first, by design): a coverage-CI
+threshold gate and an engine-bench perf-threshold gate. Engine hash-collision-guard
+and insert-retry are accepted info-level tradeoffs.
