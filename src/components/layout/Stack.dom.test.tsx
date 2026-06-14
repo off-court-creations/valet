@@ -95,6 +95,6 @@ describe('Stack (jsdom)', () => {
 
   it('density sets the --valet-space inline custom property', () => {
     const el = stackEl(render(<Stack density='tight' />));
-    expect(el.style.getPropertyValue('--valet-space')).toContain('* 0.9');
+    expect(el.style.getPropertyValue('--valet-space')).toContain('* 0.8'); // tight (0.8)
   });
 });

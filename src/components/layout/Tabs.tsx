@@ -27,6 +27,7 @@ import type { Presettable, SpacingProps, Sx } from '../../types';
 import type { ChangeInfo, InputSource, OnValueChange, OnValueCommit } from '../../system/events';
 import { Typography } from '../primitives/Typography';
 import { resolveSpace } from '../../utils/resolveSpace';
+import { densityScale } from '../../system/densityScale';
 import { withAlpha } from '../../helpers/color';
 import { valetError } from '../../system/devErrors';
 import { useControlledState } from '../../hooks/useControlledState';
@@ -468,14 +469,7 @@ const TabsBase = forwardRef<HTMLDivElement, TabsProps>(
     /* V1 density-scales-the-subtree: when density is explicitly provided,
        set --valet-space locally so the strip/panel (and descendants)
        scale. density never zeroes — that is compact's job. */
-    const densityScale =
-      density === 'comfortable'
-        ? 1.15
-        : density === 'tight'
-          ? 0.9
-          : density === 'standard'
-            ? 1.0
-            : undefined;
+    const spaceScale = density != null ? densityScale(density) : undefined;
     const stripFirst =
       (orientation === 'horizontal' && placement === 'top') ||
       (orientation === 'vertical' && placement === 'left');
@@ -635,8 +629,8 @@ const TabsBase = forwardRef<HTMLDivElement, TabsProps>(
           $pad={pad}
           className={cls}
           style={
-            densityScale != null
-              ? { ...sx, '--valet-space': `calc(${theme.spacingUnit} * ${densityScale})` }
+            spaceScale != null
+              ? { ...sx, '--valet-space': `calc(${theme.spacingUnit} * ${spaceScale})` }
               : sx
           }
           onFocus={(e) => {

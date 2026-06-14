@@ -10,6 +10,7 @@ import { useSurface } from '../../system/surfaceStore';
 import { shallow } from 'zustand/shallow';
 import type { Presettable, SpacingProps, Space, Sx } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
+import { densityScale } from '../../system/densityScale';
 import { CompactCtx, useCompact } from '../../system/compactContext';
 
 /*───────────────────────────────────────────────────────────*/
@@ -113,14 +114,9 @@ export const Grid: React.FC<GridProps> = ({
   const g = resolveSpace(gapProp as Space, theme, effectiveCompact, 2);
   const pad = resolveSpace(padProp, theme, effectiveCompact, 1);
 
-  const densityScale =
-    density === 'comfortable'
-      ? 1.15
-      : density === 'tight'
-        ? 0.9
-        : density === 'standard'
-          ? 1.0
-          : undefined;
+  // Only override --valet-space when density is explicitly set; otherwise
+  // inherit the Surface's scale. Mapping centralized in densityScale.
+  const spaceScale = density != null ? densityScale(density) : undefined;
 
   const presetClass = p ? preset(p) : '';
 
@@ -133,8 +129,8 @@ export const Grid: React.FC<GridProps> = ({
       $pad={pad}
       $normalize={Boolean(normalizeRowHeights)}
       style={
-        densityScale != null
-          ? { ...sx, '--valet-space': `calc(${theme.spacingUnit} * ${densityScale})` }
+        spaceScale != null
+          ? { ...sx, '--valet-space': `calc(${theme.spacingUnit} * ${spaceScale})` }
           : sx
       }
       className={[presetClass, className].filter(Boolean).join(' ')}

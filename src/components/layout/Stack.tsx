@@ -11,6 +11,7 @@ import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import type { Presettable, SpacingProps, Sx } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
+import { densityScale } from '../../system/densityScale';
 import { CompactCtx, useCompact } from '../../system/compactContext';
 
 /*───────────────────────────────────────────────────────────*/
@@ -100,17 +101,9 @@ export const Stack: React.FC<StackProps> = ({
   const presetClasses = p ? preset(p) : '';
   const pad = resolveSpace(padProp, theme, effectiveCompact, 1);
 
-  /* V1: density scales the subtree via --valet-space */
-  const densityScale =
-    density === 'comfortable'
-      ? 1.15
-      : density === 'tight'
-        ? 0.9
-        : density === 'standard'
-          ? 1.0
-          : undefined;
-  const spaceVar =
-    densityScale != null ? `calc(${theme.spacingUnit} * ${densityScale})` : undefined;
+  /* V1: density scales the subtree via --valet-space (centralized mapping) */
+  const spaceScale = density != null ? densityScale(density) : undefined;
+  const spaceVar = spaceScale != null ? `calc(${theme.spacingUnit} * ${spaceScale})` : undefined;
 
   return (
     <StackContainer

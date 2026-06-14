@@ -14,6 +14,7 @@ import { toRgb, mix, toHex } from '../../helpers/color';
 //
 import type { Intent, Presettable, SpacingProps, Sx } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
+import { densityScale } from '../../system/densityScale';
 import { CompactCtx, useCompact } from '../../system/compactContext';
 
 export type PanelVariant = 'filled' | 'outlined';
@@ -189,15 +190,8 @@ export const Panel: React.FC<PanelProps> = ({
   const pad = resolveSpace(padProp, theme, compactEffective, 2);
 
   // V1: when density is explicitly provided, scale the subtree (and the
-  // panel's own pad/gap) via the local --valet-space var.
-  const densityScale =
-    density === 'comfortable'
-      ? 1.15
-      : density === 'tight'
-        ? 0.9
-        : density === 'standard'
-          ? 1.0
-          : undefined;
+  // panel's own pad/gap) via the local --valet-space var (centralized mapping).
+  const spaceScale = density != null ? densityScale(density) : undefined;
   const presetClasses = p ? preset(p) : '';
 
   // Normalize alignX with Box semantics
@@ -222,8 +216,8 @@ export const Panel: React.FC<PanelProps> = ({
       $noNormalize={!normalizeRowHeights}
       style={
         {
-          ...(densityScale != null
-            ? { '--valet-space': `calc(${theme.spacingUnit} * ${densityScale})` }
+          ...(spaceScale != null
+            ? { '--valet-space': `calc(${theme.spacingUnit} * ${spaceScale})` }
             : {}),
           '--valet-intent-bg': bg ?? 'transparent',
           '--valet-intent-fg': textColour ?? theme.colors.text,

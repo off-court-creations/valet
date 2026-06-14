@@ -136,6 +136,6 @@ describe('Grid (jsdom)', () => {
 
   it('density sets the --valet-space inline custom property', () => {
     const el = gridEl(render(<Grid density='comfortable' />));
-    expect(el.style.getPropertyValue('--valet-space')).toContain('* 1.15');
+    expect(el.style.getPropertyValue('--valet-space')).toContain('* 1)'); // comfortable (1.0)
   });
 });

@@ -6,6 +6,7 @@
 import React, { useContext, useEffect, useRef, useState, useCallback } from 'react';
 import { shallow } from 'zustand/shallow';
 import { Breakpoint, Density, useTheme } from '../../system/themeStore';
+import { densityScale } from '../../system/densityScale';
 import { useFonts } from '../../system/fontStore';
 import LoadingBackdrop from '../widgets/LoadingBackdrop';
 import {
@@ -250,10 +251,10 @@ export const Surface: React.FC<SurfaceProps> = ({
   /* Density → --valet-space ------------------------------------------- */
   // Public density tokens: 'tight' | 'standard' | 'comfortable'.
   const effectiveDensity: Density = (density as Density | undefined) ?? globalDensity;
-  // 'tight' is the 0.9 branch; --valet-space is the density SCALE and is never
-  // zeroed by compact (compact zeros layout spacing via effectiveCompact only).
-  const scale =
-    effectiveDensity === 'comfortable' ? 1.15 : effectiveDensity === 'standard' ? 1.0 : 0.9;
+  // --valet-space is the density SCALE and is never zeroed by compact (compact
+  // zeros layout spacing via effectiveCompact only). Mapping centralized in
+  // densityScale (tight 0.8 / standard 0.9 / comfortable 1.0).
+  const scale = densityScale(effectiveDensity);
   const spaceVar = `calc(${theme.spacingUnit} * ${scale})`;
 
   const containerStyle: CSSVarStyles = {
