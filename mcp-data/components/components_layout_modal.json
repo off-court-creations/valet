@@ -67,8 +67,7 @@
       "name": "compact",
       "type": "boolean",
       "required": false,
-      "description": "Compact removes container + internal paddings",
-      "default": "false"
+      "description": "Compact removes container + internal paddings"
     },
     {
       "name": "disableBackdropClick",
@@ -155,6 +154,6 @@
     "src/components/layout/Modal.tsx",
     "docs/src/pages/components/layout/ModalDemo.tsx"
   ],
-  "version": "0.35.1",
+  "version": "0.36.0",
   "schemaVersion": "1.7"
 }

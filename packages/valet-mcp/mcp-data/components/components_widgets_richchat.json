@@ -74,6 +74,12 @@
       "description": "Inline styles (with CSS var support)"
     },
     {
+      "name": "compact",
+      "type": "boolean | undefined",
+      "required": false,
+      "description": "Zeros all layout spacing (pad, gap, and spacing-margins) where supported and\ncascades to spacing-aware descendants. Does not touch control insets,\nstructural geometry, border-radius, glyph sizes, or alignment. `compact={false}`\nopts a subtree back out of an inherited compact."
+    },
+    {
       "name": "preset",
       "type": "string | string[] | undefined",
       "required": false,
@@ -138,6 +144,6 @@
     "src/components/widgets/RichChat.tsx",
     "docs/src/pages/components/widgets/RichChatDemo.tsx"
   ],
-  "version": "0.35.1",
+  "version": "0.36.0",
   "schemaVersion": "1.7"
 }

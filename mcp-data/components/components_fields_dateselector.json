@@ -66,11 +66,11 @@
     },
     {
       "name": "density",
-      "type": "'compact' | 'standard' | 'comfortable'",
+      "type": "'tight' | 'standard' | 'comfortable'",
       "required": false,
-      "description": "Density override; alias: `compact` maps to `density='compact'`",
+      "description": "Density scale for the calendar's own spacing and visual sizing. The small\n(formerly `compact`) visual mode is now `density='tight'`; density never\nzeroes layout.",
       "enumValues": [
-        "compact",
+        "tight",
         "standard",
         "comfortable"
       ]
@@ -79,7 +79,7 @@
       "name": "compact",
       "type": "boolean",
       "required": false,
-      "description": "Legacy alias for density='compact'."
+      "description": "Layout-compact relay: zeroes inherited layout spacing and cascades to\ndescendants via context. No longer a density alias."
     },
     {
       "name": "locale",
@@ -141,7 +141,7 @@
     "Constrain input with minDate/maxDate to prevent out-of-range selection.",
     "For ranges, keep [start, end] ordered and handle partial selection gracefully.",
     "Avoid timezone pitfalls: treat values as local dates to prevent off-by-one errors.",
-    "Prefer compactMode on small viewports; use default/adaptive on larger layouts.",
+    "Prefer density='tight' on small viewports for a denser calendar; use default/comfortable on larger layouts. (The standalone `compact` boolean only zeros layout spacing and no longer drives the calendar's visual size — that moved to the density tier.)",
     "Binding precedence (prop > form > internal). An explicit `value` prop always wins; otherwise, in single-date mode, a `name` inside a `FormControl` binds the ISO string to the store (seed the key in `createFormStore(initial)` so the initial selection is honoured); otherwise the picker is uncontrolled. The binding is latched at mount. Range mode binds the `[start, end]` tuple under the same `name`.",
     "Change source. `onValueChange`/`onValueCommit` report a truthful `info.source`: a day cell is selected by clicking, so the source is `'pointer'` rather than a blanket `'programmatic'`.",
     "Internationalize the built-in labels with the `labels` prop (instance-level) or a `ValetLocaleProvider` (app-wide). Resolution is instance `labels` > provider strings > built-in English.",
@@ -163,6 +163,6 @@
     "src/components/fields/DateSelector.tsx",
     "docs/src/pages/components/field/DateSelectorDemo.tsx"
   ],
-  "version": "0.35.1",
+  "version": "0.36.0",
   "schemaVersion": "1.7"
 }

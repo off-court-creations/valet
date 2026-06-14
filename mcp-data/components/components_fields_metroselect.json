@@ -112,6 +112,12 @@
       "type": "string | string[] | undefined",
       "required": false,
       "description": "One or many style-preset names registered via `definePreset()`"
+    },
+    {
+      "name": "compact",
+      "type": "boolean | undefined",
+      "required": false,
+      "description": "Zeros all layout spacing (pad, gap, and spacing-margins) where supported and\ncascades to spacing-aware descendants. Does not touch control insets,\nstructural geometry, border-radius, glyph sizes, or alignment. `compact={false}`\nopts a subtree back out of an inherited compact."
     }
   ],
   "domPassthrough": {
@@ -199,6 +205,6 @@
     "src/components/fields/MetroSelect.tsx",
     "docs/src/pages/components/field/MetroSelectDemo.tsx"
   ],
-  "version": "0.35.1",
+  "version": "0.36.0",
   "schemaVersion": "1.7"
 }

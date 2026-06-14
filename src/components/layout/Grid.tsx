@@ -10,6 +10,7 @@ import { useSurface } from '../../system/surfaceStore';
 import { shallow } from 'zustand/shallow';
 import type { Presettable, SpacingProps, Space, Sx } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
+import { CompactCtx, useCompact } from '../../system/compactContext';
 
 /*───────────────────────────────────────────────────────────*/
 export interface GridProps
@@ -19,9 +20,9 @@ export interface GridProps
   columns?: number;
   /** Auto switch to 1 column in portrait */
   adaptive?: boolean;
-  /** Density override; alias: `compact` maps to `density='compact'` */
-  density?: 'compact' | 'standard' | 'comfortable';
-  /** Compact zeros both pad and gap (alias for density='compact') */
+  /** Density override; an independent spacing scale (never zeros) */
+  density?: 'tight' | 'standard' | 'comfortable';
+  /** Hard-zeros layout pad + gap and cascades to descendants (independent of density) */
   compact?: boolean;
   /**
    * Normalize child heights per row by stretching items to match
@@ -85,7 +86,8 @@ export const Grid: React.FC<GridProps> = ({
   columns = 2,
   gap: gapProp,
   pad: padProp,
-  compact = false,
+  compact,
+  density,
   adaptive = false,
   normalizeRowHeights = true,
   preset: p,
@@ -100,10 +102,20 @@ export const Grid: React.FC<GridProps> = ({
   const portrait = height > width;
   const effectiveCols = adaptive && portrait ? 1 : columns;
 
+  const effectiveCompact = useCompact(compact);
+
   // Standardize default gap to 1 for consistency with Stack/Tabs
-  const compactEffective = compact || rest.density === 'compact';
-  const g = resolveSpace(gapProp as Space, theme, compactEffective, 1);
-  const pad = resolveSpace(padProp, theme, compactEffective, 1);
+  const g = resolveSpace(gapProp as Space, theme, effectiveCompact, 1);
+  const pad = resolveSpace(padProp, theme, effectiveCompact, 1);
+
+  const densityScale =
+    density === 'comfortable'
+      ? 1.15
+      : density === 'tight'
+        ? 0.9
+        : density === 'standard'
+          ? 1.0
+          : undefined;
 
   const presetClass = p ? preset(p) : '';
 
@@ -115,10 +127,14 @@ export const Grid: React.FC<GridProps> = ({
       $gap={g}
       $pad={pad}
       $normalize={Boolean(normalizeRowHeights)}
-      style={sx}
+      style={
+        densityScale != null
+          ? { ...sx, '--valet-space': `calc(${theme.spacingUnit} * ${densityScale})` }
+          : sx
+      }
       className={[presetClass, className].filter(Boolean).join(' ')}
     >
-      {children}
+      <CompactCtx.Provider value={effectiveCompact}>{children}</CompactCtx.Provider>
     </Root>
   );
 };

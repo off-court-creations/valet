@@ -17,6 +17,7 @@ import { preset } from '../../css/stylePresets';
 import { valetError } from '../../system/devErrors';
 import { useValetLocale } from '../../system/locale';
 import type { Presettable, Sx } from '../../types';
+import { CompactCtx, useCompact } from '../../system/compactContext';
 
 /* Allow strongly-typed CSS custom properties (e.g. --valet-*) */
 type CSSVarName = `--${string}`;
@@ -30,7 +31,10 @@ export interface SurfaceProps
   fullscreen?: boolean;
   /** Optional density override for spacing scale */
   density?: Density;
-  /** Alias: when true, maps to density='compact' (no override when false). */
+  /**
+   * Zeros all layout spacing and cascades to descendants; opt out with
+   * compact={false}. Independent of the density scale.
+   */
   compact?: boolean;
   /**
    * When true, block content visibility until fonts load (FOIT).
@@ -240,11 +244,14 @@ export const Surface: React.FC<SurfaceProps> = ({
 
   const gap = theme.spacing(1);
 
+  /* compact cascade seed (independent of density) ---------------------- */
+  const effectiveCompact = useCompact(compactAlias);
+
   /* Density → --valet-space ------------------------------------------- */
-  // Public density tokens: 'compact' | 'standard' | 'comfortable'.
-  // Alias: compact?: true ⇒ density='compact'.
-  const effectiveDensity: Density =
-    (density as Density | undefined) ?? (compactAlias ? 'compact' : globalDensity);
+  // Public density tokens: 'tight' | 'standard' | 'comfortable'.
+  const effectiveDensity: Density = (density as Density | undefined) ?? globalDensity;
+  // 'tight' is the 0.9 branch; --valet-space is the density SCALE and is never
+  // zeroed by compact (compact zeros layout spacing via effectiveCompact only).
   const scale =
     effectiveDensity === 'comfortable' ? 1.15 : effectiveDensity === 'standard' ? 1.0 : 0.9;
   const spaceVar = `calc(${theme.spacingUnit} * ${scale})`;
@@ -286,17 +293,19 @@ export const Surface: React.FC<SurfaceProps> = ({
         {/* Inner wrapper gains padding but NO scrollbars. `blocking` (not raw
             blockUntilFonts) drives visibility so the never-started grace can
             reveal content even when fonts never load. */}
-        <div
-          style={{
-            visibility: blocking ? 'hidden' : 'visible',
-            padding: gap,
-            maxWidth: '100%',
-            maxHeight: '100%',
-            boxSizing: 'border-box',
-          }}
-        >
-          {children}
-        </div>
+        <CompactCtx.Provider value={effectiveCompact}>
+          <div
+            style={{
+              visibility: blocking ? 'hidden' : 'visible',
+              padding: effectiveCompact ? '0' : gap,
+              maxWidth: '100%',
+              maxHeight: '100%',
+              boxSizing: 'border-box',
+            }}
+          >
+            {children}
+          </div>
+        </CompactCtx.Provider>
       </div>
     </SurfaceCtx.Provider>
   );

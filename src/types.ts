@@ -18,10 +18,15 @@ export interface SpacingProps {
   gap?: Space;
   /** Container padding as units or CSS length. */
   pad?: Space;
-  /** Compact mode zeros gap and pad where supported. */
+  /**
+   * Zeros all layout spacing (pad, gap, and spacing-margins) where supported and
+   * cascades to spacing-aware descendants. Does not touch control insets,
+   * structural geometry, border-radius, glyph sizes, or alignment. `compact={false}`
+   * opts a subtree back out of an inherited compact.
+   */
   compact?: boolean;
-  /** Density override for spacing scale; defaults from nearest Surface. */
-  density?: 'compact' | 'standard' | 'comfortable';
+  /** Density override for the spacing scale; defaults from nearest Surface. */
+  density?: 'tight' | 'standard' | 'comfortable';
 }
 
 /** Sx prop: inline CSS with support for CSS custom properties (e.g. --valet-*) */

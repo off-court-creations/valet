@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.36.0] — 2026-06-13
+
+### Added
+
+- Spacing (`compact` cascade): new `src/system/compactContext.ts` exporting `CompactCtx` and `useCompact(own?) → own ?? inherited`. A container with `compact` now zeros its own layout spacing **and** propagates the flag to every spacing-aware descendant via React context (it crosses portals by tree position, so `Modal`/`Select` menus inherit). `compact={false}` on any descendant opts its subtree back out. Seeded at `<Surface>`, provided by `Box`/`Stack`/`Panel`/`Grid`/`Tabs`/`Modal`/`Accordion`, consumed by `Divider`, and relayed by the field/widget containers (`MetroSelect`/`LLMChat`/`RichChat`/`DateSelector`).
+- Spacing (density scales a subtree): `density` on `Stack`/`Panel`/`Grid`/`Tabs` now sets `--valet-space` locally when explicitly provided, so `<Panel density="comfortable">` genuinely loosens its subtree and `density="tight"` tightens it (0.9 / 1.0 / 1.15 × the spacing unit) — mirroring `<Surface>`. Previously `density` on these components was inert apart from the (now removed) compact conflation.
+
+### Changed
+
+- Spacing (**BREAKING**, density value rename): the density tier `'compact'` is renamed to `'tight'` across the `Density` union (`themeStore.ts`) and `SpacingProps.density` (`types.ts`) — now `'tight' | 'standard' | 'comfortable'`. Hard rename, **no alias** (pre-1.0 policy). **Migration:** replace every `density="compact"` / `density: 'compact'` with `'tight'`. This frees the word `compact` for the boolean prop and removes its overlap with the density tier.
+- Spacing (**BREAKING**, `compact` semantics): the boolean `compact` is now a **hard zero of layout spacing that cascades**, fully decoupled from the density scale. It zeros container `pad`/`gap`/spacing-margins on the component and all spacing-aware descendants; it no longer shrinks the density scale to 0.9 (that is now `density="tight"`). It deliberately **preserves** control-internal padding, structural geometry (e.g. Tree indentation/connectors), border-radius, glyph sizes, alignment/centering margins, safe-area insets, and `sx`-supplied padding (the explicit author escape hatch). The `compact || density === 'compact'` conflation is removed from `Stack`/`Panel`/`Grid`/`Tabs`/`Surface`.
+- Spacing (DateSelector): its small/"compact" visual mode (icon sizes, cell height, single-letter weekday + 3-letter month labels, the block/inline layout switch) now follows `density="tight"` instead of `compact`, so the spacing and visual-scale axes are independent. `compact` on `<DateSelector>` is retained as a cascade relay (no visual effect of its own). **Migration:** use `density="tight"` for the compact-looking calendar.
+
+### Fixed
+
+- `Panel`/`Grid`/`Tabs`: `density` was spread onto the rendered DOM element as an invalid HTML attribute (it was never destructured) — now consumed and dropped.
+- `Tabs`/`Modal`/`Accordion`: a `compact = false` destructure default made these components silently opt **out** of an inherited compact, so the cascade from a compact ancestor never reached them; the default is dropped so an absent prop inherits (`undefined`), while an explicit `compact={false}` still opts out.
+- `MetroSelect`: the inner `<Stack compact>` was hardcoded, permanently dead-zeroing the public `gap` prop; it now reflects the field's effective compact, so `gap` takes effect when not compact.
+- `RichChat`: the outer `<Panel>` misused `compact={portrait}` as an orientation flag immediately before setting an explicit `pad`, silently zeroing the intended bottom padding in portrait; orientation now drives `pad` directly and `compact` is no longer abused.
+
 ## [0.35.1] — 2026-06-13
 
 ### Fixed

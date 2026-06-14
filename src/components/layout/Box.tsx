@@ -9,6 +9,7 @@ import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import type { Presettable, SpacingProps, Sx } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
+import { CompactCtx, useCompact } from '../../system/compactContext';
 import {
   createPolymorphicComponent,
   type PolymorphicProps,
@@ -87,11 +88,14 @@ const BoxImpl = <E extends React.ElementType = 'div'>(
     compact,
     pad: padProp,
     sx,
+    children,
     ...rest
   } = props as unknown as BoxOwnProps & { as?: E } & {
     style?: React.CSSProperties;
+    children?: React.ReactNode;
   } & Record<string, unknown>;
   const { theme } = useTheme();
+  const effectiveCompact = useCompact(compact);
   const presetClass = p ? preset(p) : '';
 
   let resolvedText = textColor;
@@ -106,7 +110,7 @@ const BoxImpl = <E extends React.ElementType = 'div'>(
             : undefined;
   }
 
-  const pad = resolveSpace(padProp, theme, compact, 1);
+  const pad = resolveSpace(padProp, theme, effectiveCompact, 1);
 
   const internalCenter = !!centerContent;
   const normalizedAlign: 'left' | 'right' | 'center' = (alignX ?? 'left') as
@@ -146,7 +150,9 @@ const BoxImpl = <E extends React.ElementType = 'div'>(
       $pad={pad}
       style={inlineStyle}
       className={[presetClass, className].filter(Boolean).join(' ')}
-    />
+    >
+      <CompactCtx.Provider value={effectiveCompact}>{children}</CompactCtx.Provider>
+    </Base>
   );
 };
 

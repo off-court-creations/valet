@@ -16,8 +16,9 @@ import Typography from '../primitives/Typography';
 import Markdown from './Markdown';
 import Avatar from '../primitives/Avatar';
 import { useComponentStrings } from '../../system/locale';
+import { CompactCtx, useCompact } from '../../system/compactContext';
 import type { DeepPartialStrings, ValetStrings } from '../../system/locale';
-import type { Presettable, Sx } from '../../types';
+import type { Presettable, Sx, SpacingProps } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 /* Types                                                      */
@@ -33,6 +34,7 @@ export interface RichMessage {
 
 export interface RichChatProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onSubmit' | 'style'>,
+    Pick<SpacingProps, 'compact'>,
     Presettable {
   messages: RichMessage[];
   /** Called when a form message collects a response; `index` is the
@@ -262,11 +264,13 @@ export const RichChat: React.FC<RichChatProps> = ({
   preset: p,
   className,
   labels,
+  compact: compactProp,
   sx,
   ...rest
 }) => {
   const { theme } = useTheme();
   const t = useComponentStrings('richChat', labels);
+  const effectiveCompact = useCompact(compactProp);
   const surface = useSurface(
     (s) => ({
       element: s.element,
@@ -432,161 +436,162 @@ export const RichChat: React.FC<RichChatProps> = ({
       fullWidth
       variant='outlined'
       /* Trim outer chrome to pull avatars/icons toward edges */
-      compact={portrait}
-      pad={'0 0 1rem 0'}
+      pad={portrait ? '0' : '0 0 1rem 0'}
       sx={{ overflowY: 'visible', overflowX: 'hidden', ...sx }}
       className={cls}
     >
-      <Wrapper
-        ref={wrapRef}
-        $gap={theme.spacing(3)}
-        style={{ overflow: 'hidden' }}
-      >
-        <Messages
-          ref={messagesRef}
-          role='log'
-          aria-relevant='additions'
-          aria-busy={isTyping}
-          $gap={theme.spacing(1.25)}
-          /* Tighter side padding to bring avatars closer to edge */
-          $pad={portrait ? theme.spacing(0.25) : theme.spacing(0.5)}
-          $dur={theme.motion.duration.short}
-          $ease={theme.motion.easing.standard}
-          style={{
-            overflowY: 'auto',
-            maxHeight,
-            scrollbarGutter: 'stable',
-            touchAction: 'auto',
-          }}
+      <CompactCtx.Provider value={effectiveCompact}>
+        <Wrapper
+          ref={wrapRef}
+          $gap={theme.spacing(3)}
+          style={{ overflow: 'hidden' }}
         >
-          {messages
-            /* Pair each message with its index in the caller's array BEFORE
-               filtering — onFormSubmit must report the original index. */
-            .map((m, i) => ({ m, i }))
-            .filter(({ m }) => m.role !== 'system')
-            .map(({ m, i }) => {
-              /* Near-edge gutter (towards container edge) kept tiny; far edge roomy */
-              const near = theme.spacing(0.25);
-              const far = portrait ? theme.spacing(0.5) : theme.spacing(0.75);
-              const laneGap = portrait ? theme.spacing(0.5) : theme.spacing(0.75);
-              const content =
-                typeof m.content === 'string' ? (
-                  m.role === 'assistant' ? (
-                    <Markdown
-                      data={m.content}
-                      codeBackground={theme.colors.background}
-                    />
-                  ) : (
-                    <Typography>{m.content}</Typography>
-                  )
-                ) : (
-                  m.content
-                );
-              const Form = m.form;
-              return (
-                <Row
-                  key={i}
-                  $from={m.role}
-                  $gap={laneGap}
-                  $padL={m.role !== 'user' ? near : far}
-                  $padR={m.role === 'user' ? near : far}
-                  $dur={theme.motion.duration.short}
-                  $ease={theme.motion.easing.standard}
-                >
-                  {/* Measure content height to decide vertical alignment */}
-                  {m.role !== 'user' && systemAvatar && (
-                    <MeasuredAvatar
-                      src={systemAvatar}
-                      size='sm'
-                      variant='outline'
-                    />
-                  )}
-                  <MeasuredBubble
-                    variant='filled'
-                    color={m.role === 'user' ? theme.colors.primary : undefined}
-                    alignX={m.role === 'user' ? 'right' : 'left'}
-                    sx={{
-                      /* Readable max width and clean right/left alignment */
-                      maxWidth: portrait ? '100%' : 'min(75%, 48rem)',
-                      width: 'fit-content',
-                      borderRadius: theme.spacing(1),
-                      /* Slightly reduce top/bottom padding while keeping sides the same */
-                      padding: `${portrait ? theme.spacing(1) : theme.spacing(1.75)} ${
-                        portrait ? theme.spacing(1.25) : theme.spacing(2)
-                      }`,
-                      animation: m.animate ? `${fadeIn} 0.2s ease-out` : undefined,
-                      position: 'relative',
-                      justifySelf: m.role === 'user' ? 'end' : 'start',
-                    }}
-                  >
-                    {m.name && (
-                      <Typography
-                        variant='subtitle'
-                        bold
-                      >
-                        {m.name}
-                      </Typography>
-                    )}
-                    {m.typing ? (
-                      <Typing
-                        $color={m.role === 'user' ? theme.colors.primaryText : theme.colors.text}
-                      >
-                        <span />
-                        <span />
-                        <span />
-                      </Typing>
-                    ) : (
-                      content
-                    )}
-                    {Form && <Form onSubmit={(v: string) => onFormSubmit?.(v, i)} />}
-                  </MeasuredBubble>
-                  {m.role === 'user' && userAvatar && (
-                    <MeasuredAvatar
-                      src={userAvatar}
-                      size='sm'
-                      variant='outline'
-                    />
-                  )}
-                </Row>
-              );
-            })}
-        </Messages>
-
-        {!inputDisabled && (
-          <form
-            ref={inputRef}
-            onSubmit={handleSubmit}
-            style={{ width: '100%' }}
+          <Messages
+            ref={messagesRef}
+            role='log'
+            aria-relevant='additions'
+            aria-busy={isTyping}
+            $gap={theme.spacing(1.25)}
+            /* Tighter side padding to bring avatars closer to edge */
+            $pad={portrait ? theme.spacing(0.25) : theme.spacing(0.5)}
+            $dur={theme.motion.duration.short}
+            $ease={theme.motion.easing.standard}
+            style={{
+              overflowY: 'auto',
+              maxHeight,
+              scrollbarGutter: 'stable',
+              touchAction: 'auto',
+            }}
           >
-            <InputRow
-              $gap={theme.spacing(1)}
-              $pad={theme.spacing(0.5)}
+            {messages
+              /* Pair each message with its index in the caller's array BEFORE
+               filtering — onFormSubmit must report the original index. */
+              .map((m, i) => ({ m, i }))
+              .filter(({ m }) => m.role !== 'system')
+              .map(({ m, i }) => {
+                /* Near-edge gutter (towards container edge) kept tiny; far edge roomy */
+                const near = theme.spacing(0.25);
+                const far = portrait ? theme.spacing(0.5) : theme.spacing(0.75);
+                const laneGap = portrait ? theme.spacing(0.5) : theme.spacing(0.75);
+                const content =
+                  typeof m.content === 'string' ? (
+                    m.role === 'assistant' ? (
+                      <Markdown
+                        data={m.content}
+                        codeBackground={theme.colors.background}
+                      />
+                    ) : (
+                      <Typography>{m.content}</Typography>
+                    )
+                  ) : (
+                    m.content
+                  );
+                const Form = m.form;
+                return (
+                  <Row
+                    key={i}
+                    $from={m.role}
+                    $gap={laneGap}
+                    $padL={m.role !== 'user' ? near : far}
+                    $padR={m.role === 'user' ? near : far}
+                    $dur={theme.motion.duration.short}
+                    $ease={theme.motion.easing.standard}
+                  >
+                    {/* Measure content height to decide vertical alignment */}
+                    {m.role !== 'user' && systemAvatar && (
+                      <MeasuredAvatar
+                        src={systemAvatar}
+                        size='sm'
+                        variant='outline'
+                      />
+                    )}
+                    <MeasuredBubble
+                      variant='filled'
+                      color={m.role === 'user' ? theme.colors.primary : undefined}
+                      alignX={m.role === 'user' ? 'right' : 'left'}
+                      sx={{
+                        /* Readable max width and clean right/left alignment */
+                        maxWidth: portrait ? '100%' : 'min(75%, 48rem)',
+                        width: 'fit-content',
+                        borderRadius: theme.spacing(1),
+                        /* Slightly reduce top/bottom padding while keeping sides the same */
+                        padding: `${portrait ? theme.spacing(1) : theme.spacing(1.75)} ${
+                          portrait ? theme.spacing(1.25) : theme.spacing(2)
+                        }`,
+                        animation: m.animate ? `${fadeIn} 0.2s ease-out` : undefined,
+                        position: 'relative',
+                        justifySelf: m.role === 'user' ? 'end' : 'start',
+                      }}
+                    >
+                      {m.name && (
+                        <Typography
+                          variant='subtitle'
+                          bold
+                        >
+                          {m.name}
+                        </Typography>
+                      )}
+                      {m.typing ? (
+                        <Typing
+                          $color={m.role === 'user' ? theme.colors.primaryText : theme.colors.text}
+                        >
+                          <span />
+                          <span />
+                          <span />
+                        </Typing>
+                      ) : (
+                        content
+                      )}
+                      {Form && <Form onSubmit={(v: string) => onFormSubmit?.(v, i)} />}
+                    </MeasuredBubble>
+                    {m.role === 'user' && userAvatar && (
+                      <MeasuredAvatar
+                        src={userAvatar}
+                        size='sm'
+                        variant='outline'
+                      />
+                    )}
+                  </Row>
+                );
+              })}
+          </Messages>
+
+          {!inputDisabled && (
+            <form
+              ref={inputRef}
+              onSubmit={handleSubmit}
+              style={{ width: '100%' }}
             >
-              <TextField
-                as='textarea'
-                name='chat-message'
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    doSubmit();
-                  }
-                }}
-                rows={1}
-                placeholder={placeholder}
-                sx={{ width: '100%', minWidth: 0, maxWidth: 'calc(100% - 1rem)' }}
-                fontFamily={fontFamily}
-              />
-              <IconButton
-                icon='carbon:send'
-                type='submit'
-                aria-label={t.send}
-              />
-            </InputRow>
-          </form>
-        )}
-      </Wrapper>
+              <InputRow
+                $gap={theme.spacing(1)}
+                $pad={theme.spacing(0.5)}
+              >
+                <TextField
+                  as='textarea'
+                  name='chat-message'
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      doSubmit();
+                    }
+                  }}
+                  rows={1}
+                  placeholder={placeholder}
+                  sx={{ width: '100%', minWidth: 0, maxWidth: 'calc(100% - 1rem)' }}
+                  fontFamily={fontFamily}
+                />
+                <IconButton
+                  icon='carbon:send'
+                  type='submit'
+                  aria-label={t.send}
+                />
+              </InputRow>
+            </form>
+          )}
+        </Wrapper>
+      </CompactCtx.Provider>
     </Panel>
   );
 };

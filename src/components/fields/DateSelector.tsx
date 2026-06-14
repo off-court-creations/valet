@@ -27,6 +27,7 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
+import { CompactCtx, useCompact } from '../../system/compactContext';
 import { preset } from '../../css/stylePresets';
 import { IconButton } from './IconButton';
 import { Select } from './Select';
@@ -69,9 +70,12 @@ export interface DateSelectorProps
   range?: boolean;
   /** Inline styles (with CSS var support) */
   sx?: Sx;
-  /** Density override; alias: `compact` maps to `density='compact'` */
-  density?: 'compact' | 'standard' | 'comfortable';
-  /** Legacy alias for density='compact'. */
+  /** Density scale for the calendar's own spacing and visual sizing. The small
+   * (formerly `compact`) visual mode is now `density='tight'`; density never
+   * zeroes layout. */
+  density?: 'tight' | 'standard' | 'comfortable';
+  /** Layout-compact relay: zeroes inherited layout spacing and cascades to
+   * descendants via context. No longer a density alias. */
   compact?: boolean;
   /**
    * BCP-47 locale for the DISPLAY of month names, weekday headers, and day
@@ -225,7 +229,8 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   const { theme } = useTheme();
   const t = useComponentStrings('dateSelector', labels);
   const wrapRef = useRef<HTMLDivElement>(null);
-  const compactEffective = compact || density === 'compact';
+  const effectiveCompact = useCompact(compact); // relay only (layout compaction)
+  const tight = density === 'tight'; // drives the visual scale (D6)
 
   /* Intl-derived localization (A11Y S10) ------------------------------------
    * Display-only: month names, weekday headers, the first day of the week, and
@@ -233,9 +238,9 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
    * (formatLocalISO → ISO Latin digits). Defaults to en-US / Sunday-start so
    * the prior English output is byte-identical. */
   const monthNames = useMemo(() => getMonthNames(locale, 'long'), [locale]);
-  /* Non-compact weekday headers reproduce the previous 2-letter English form
+  /* Non-tight weekday headers reproduce the previous 2-letter English form
    * (`Su`, `Mo`, …) via the locale's long names truncated to two characters;
-   * compact takes the first character (the previous `d[0]` behavior). The base
+   * tight takes the first character (the previous `d[0]` behavior). The base
    * array is Monday-first (helper contract), rotated to the resolved first day. */
   const weekdays = useMemo(() => {
     const base = getWeekdayNames(locale, 'long').map((d) => d.slice(0, 2));
@@ -441,163 +446,165 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
       data-valet-component='DateSelector'
       $bg={theme.colors.backgroundAlt}
       $text={`var(--valet-text-color, ${theme.colors.text})` as string}
-      $compact={!!compactEffective}
+      $compact={tight}
       className={cls}
       style={{ '--valet-date-radius': theme.radius(1), ...sx } as React.CSSProperties}
     >
-      <Header $gap={theme.spacing(1)}>
-        <div style={{ display: 'flex', gap: theme.spacing(0.5) }}>
-          {!compactEffective && (
+      <CompactCtx.Provider value={effectiveCompact}>
+        <Header $gap={theme.spacing(1)}>
+          <div style={{ display: 'flex', gap: theme.spacing(0.5) }}>
+            {!tight && (
+              <IconButton
+                size='sm'
+                variant='outlined'
+                color='primaryText'
+                icon='mdi:chevron-double-left'
+                aria-label={t.previousYear}
+                onClick={() => {
+                  const yr = viewYear - 1;
+                  let m = viewMonth;
+                  if (yr === minYear && m < minMonth) m = minMonth;
+                  setViewYear(yr);
+                  setViewMonth(m);
+                }}
+                disabled={new Date(viewYear - 1, 11, 31) < min}
+              />
+            )}
             <IconButton
-              size='sm'
+              size={tight ? 'xs' : 'sm'}
               variant='outlined'
               color='primaryText'
-              icon='mdi:chevron-double-left'
-              aria-label={t.previousYear}
-              onClick={() => {
-                const yr = viewYear - 1;
+              icon='mdi:chevron-left'
+              aria-label={t.previousMonth}
+              onClick={() => changeMonth(-1)}
+              disabled={new Date(viewYear, viewMonth, 0) < min}
+            />
+          </div>
+          <div style={{ display: 'flex', gap: theme.spacing(0.5), flex: 1, minWidth: 0 }}>
+            <Select
+              size='xs'
+              value={viewMonth}
+              onValueChange={(v) => setViewMonth(Number(v))}
+              sx={{ flex: 1, minWidth: 0 }}
+            >
+              {months.map((idx) => (
+                <Select.Option
+                  key={monthNames[idx]}
+                  value={idx}
+                >
+                  {tight ? monthNames[idx].slice(0, 3) : monthNames[idx]}
+                </Select.Option>
+              ))}
+              {/* monthNames is locale-derived (Intl); tight still shows the
+                first three characters, matching the previous 3-letter form. */}
+            </Select>
+            <Select
+              size='xs'
+              value={viewYear}
+              onValueChange={(v) => {
+                const yr = Number(v);
                 let m = viewMonth;
                 if (yr === minYear && m < minMonth) m = minMonth;
-                setViewYear(yr);
-                setViewMonth(m);
-              }}
-              disabled={new Date(viewYear - 1, 11, 31) < min}
-            />
-          )}
-          <IconButton
-            size={compactEffective ? 'xs' : 'sm'}
-            variant='outlined'
-            color='primaryText'
-            icon='mdi:chevron-left'
-            aria-label={t.previousMonth}
-            onClick={() => changeMonth(-1)}
-            disabled={new Date(viewYear, viewMonth, 0) < min}
-          />
-        </div>
-        <div style={{ display: 'flex', gap: theme.spacing(0.5), flex: 1, minWidth: 0 }}>
-          <Select
-            size='xs'
-            value={viewMonth}
-            onValueChange={(v) => setViewMonth(Number(v))}
-            sx={{ flex: 1, minWidth: 0 }}
-          >
-            {months.map((idx) => (
-              <Select.Option
-                key={monthNames[idx]}
-                value={idx}
-              >
-                {compactEffective ? monthNames[idx].slice(0, 3) : monthNames[idx]}
-              </Select.Option>
-            ))}
-            {/* monthNames is locale-derived (Intl); compact still shows the
-                first three characters, matching the previous 3-letter form. */}
-          </Select>
-          <Select
-            size='xs'
-            value={viewYear}
-            onValueChange={(v) => {
-              const yr = Number(v);
-              let m = viewMonth;
-              if (yr === minYear && m < minMonth) m = minMonth;
-              if (yr === maxYear && m > maxMonth) m = maxMonth;
-              setViewYear(yr);
-              setViewMonth(m);
-            }}
-            sx={{ flex: 1, minWidth: 0 }}
-          >
-            {years.map((y) => (
-              <Select.Option
-                key={y}
-                value={y}
-              >
-                {y}
-              </Select.Option>
-            ))}
-          </Select>
-        </div>
-        <div style={{ display: 'flex', gap: theme.spacing(0.5) }}>
-          <IconButton
-            size={compactEffective ? 'xs' : 'sm'}
-            variant='outlined'
-            color='primaryText'
-            icon='mdi:chevron-right'
-            aria-label={t.nextMonth}
-            onClick={() => changeMonth(1)}
-            disabled={new Date(viewYear, viewMonth + 1, 1) > max}
-          />
-          {!compactEffective && (
-            <IconButton
-              size='sm'
-              variant='outlined'
-              color='primaryText'
-              icon='mdi:chevron-double-right'
-              aria-label={t.nextYear}
-              onClick={() => {
-                const yr = viewYear + 1;
-                let m = viewMonth;
                 if (yr === maxYear && m > maxMonth) m = maxMonth;
                 setViewYear(yr);
                 setViewMonth(m);
               }}
-              disabled={new Date(viewYear + 1, 0, 1) > max}
-            />
-          )}
-        </div>
-      </Header>
-      <Grid $compact={compactEffective}>
-        {weekdays.map((d, i) => (
-          <DayLabel
-            key={`${d}-${i}`}
-            $compact={compactEffective}
-          >
-            {compactEffective ? d[0] : d}
-          </DayLabel>
-        ))}
-        {Array.from({ length: startDay }).map((_, i) => (
-          <span key={`blank-${i}`} />
-        ))}
-        {Array.from({ length: daysInMonth }).map((_, i) => {
-          const day = i + 1;
-          const date = new Date(viewYear, viewMonth, day);
-          const disabled = date < min || date > max;
-          const startSel =
-            startDate.getFullYear() === viewYear &&
-            startDate.getMonth() === viewMonth &&
-            startDate.getDate() === day;
-          const endSel =
-            range &&
-            endDate.getFullYear() === viewYear &&
-            endDate.getMonth() === viewMonth &&
-            endDate.getDate() === day;
-          const inRange = range && date > startDate && date < endDate;
-          return (
-            <Cell
-              key={day}
-              $start={startSel}
-              $end={!!endSel && !startSel}
-              $inRange={!!inRange}
-              $primary={theme.colors.primary}
-              $secondary={theme.colors.secondary}
-              $rangeBg={rangeBg}
-              $hoverStart={hoverStart}
-              $hoverEnd={hoverEnd}
-              $hoverRange={hoverRange}
-              $hoverDefault={hoverDefault}
-              $selText={theme.colors.primaryText}
-              $endText={theme.colors.secondaryText}
-              $rangeText={theme.colors.primaryText}
-              $compact={!!compactEffective}
-              style={{ '--valet-date-cell-radius': theme.radius(1) } as React.CSSProperties}
-              onClick={() => !disabled && (range ? commitRange(day) : commit(day))}
-              disabled={disabled}
+              sx={{ flex: 1, minWidth: 0 }}
             >
-              {/* DISPLAY-only locale digits; the committed VALUE stays ISO
+              {years.map((y) => (
+                <Select.Option
+                  key={y}
+                  value={y}
+                >
+                  {y}
+                </Select.Option>
+              ))}
+            </Select>
+          </div>
+          <div style={{ display: 'flex', gap: theme.spacing(0.5) }}>
+            <IconButton
+              size={tight ? 'xs' : 'sm'}
+              variant='outlined'
+              color='primaryText'
+              icon='mdi:chevron-right'
+              aria-label={t.nextMonth}
+              onClick={() => changeMonth(1)}
+              disabled={new Date(viewYear, viewMonth + 1, 1) > max}
+            />
+            {!tight && (
+              <IconButton
+                size='sm'
+                variant='outlined'
+                color='primaryText'
+                icon='mdi:chevron-double-right'
+                aria-label={t.nextYear}
+                onClick={() => {
+                  const yr = viewYear + 1;
+                  let m = viewMonth;
+                  if (yr === maxYear && m > maxMonth) m = maxMonth;
+                  setViewYear(yr);
+                  setViewMonth(m);
+                }}
+                disabled={new Date(viewYear + 1, 0, 1) > max}
+              />
+            )}
+          </div>
+        </Header>
+        <Grid $compact={tight}>
+          {weekdays.map((d, i) => (
+            <DayLabel
+              key={`${d}-${i}`}
+              $compact={tight}
+            >
+              {tight ? d[0] : d}
+            </DayLabel>
+          ))}
+          {Array.from({ length: startDay }).map((_, i) => (
+            <span key={`blank-${i}`} />
+          ))}
+          {Array.from({ length: daysInMonth }).map((_, i) => {
+            const day = i + 1;
+            const date = new Date(viewYear, viewMonth, day);
+            const disabled = date < min || date > max;
+            const startSel =
+              startDate.getFullYear() === viewYear &&
+              startDate.getMonth() === viewMonth &&
+              startDate.getDate() === day;
+            const endSel =
+              range &&
+              endDate.getFullYear() === viewYear &&
+              endDate.getMonth() === viewMonth &&
+              endDate.getDate() === day;
+            const inRange = range && date > startDate && date < endDate;
+            return (
+              <Cell
+                key={day}
+                $start={startSel}
+                $end={!!endSel && !startSel}
+                $inRange={!!inRange}
+                $primary={theme.colors.primary}
+                $secondary={theme.colors.secondary}
+                $rangeBg={rangeBg}
+                $hoverStart={hoverStart}
+                $hoverEnd={hoverEnd}
+                $hoverRange={hoverRange}
+                $hoverDefault={hoverDefault}
+                $selText={theme.colors.primaryText}
+                $endText={theme.colors.secondaryText}
+                $rangeText={theme.colors.primaryText}
+                $compact={tight}
+                style={{ '--valet-date-cell-radius': theme.radius(1) } as React.CSSProperties}
+                onClick={() => !disabled && (range ? commitRange(day) : commit(day))}
+                disabled={disabled}
+              >
+                {/* DISPLAY-only locale digits; the committed VALUE stays ISO
                   Latin via formatLocalISO (veto register / ruling R7/R8). */}
-              {formatDayNumber(day, locale)}
-            </Cell>
-          );
-        })}
-      </Grid>
+                {formatDayNumber(day, locale)}
+              </Cell>
+            );
+          })}
+        </Grid>
+      </CompactCtx.Provider>
     </Wrapper>
   );
 };

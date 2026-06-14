@@ -1,6 +1,21 @@
 {
   "entries": [
     {
+      "term": "--valet-space",
+      "definition": "The CSS custom property behind every valet spacing value: theme.spacing(n) resolves to calc(var(--valet-space) * n). density scales this variable (per-Surface or per-subtree); compact bypasses it, forcing spacing to 0. Setting it on a container re-rhythms that subtree without touching component code.",
+      "category": "css",
+      "aliases": [
+        "valet space",
+        "spacing unit",
+        "spacing token"
+      ],
+      "seeAlso": [
+        "density",
+        "compact",
+        "theme"
+      ]
+    },
+    {
       "term": "accessibility",
       "definition": "Mandatory accessibility in every component: proper roles, labels, keyboard support, and predictable focus behavior across the library.",
       "category": "a11y",
@@ -26,6 +41,21 @@
       ]
     },
     {
+      "term": "compact",
+      "definition": "The spacing-ZERO axis. A boolean that hard-zeros a container's LAYOUT spacing (pad, gap, spacing-margins) and CASCADES to every spacing-aware descendant via React context — so one <Panel compact> flattens its whole subtree. Reach for it where regions must sit flush: dense toolbars, embedded chrome, tight cards. compact={false} on a descendant opts that subtree back out. It deliberately PRESERVES what isn't whitespace: control-internal padding (field/Select/Chip insets), alignment and centering, structural geometry (e.g. Tree indentation and connector lines), border-radius, glyph/icon sizes, and any spacing set via sx. It removes spacing, never structure — and is independent of density (zero, not scale).",
+      "category": "css",
+      "aliases": [
+        "compact prop",
+        "zero spacing",
+        "cascade"
+      ],
+      "seeAlso": [
+        "density",
+        "--valet-space",
+        "Surface"
+      ]
+    },
+    {
       "term": "Context Bridge",
       "definition": "A typed, schema-driven bridge for state shared between app and agents, implemented with Zustand and JSON schemas.",
       "category": "ai",
@@ -35,6 +65,24 @@
       "seeAlso": [
         "theme",
         "MCP"
+      ]
+    },
+    {
+      "term": "density",
+      "definition": "The spacing SCALE axis. A tier — 'tight' (0.9×), 'standard' (1×), or 'comfortable' (1.15×) — that multiplies the spacing unit by setting the --valet-space CSS var. Set it on a <Surface> to re-rhythm a whole screen, or on any layout container (Stack/Panel/Grid/Tabs) to scale just that subtree; every theme.spacing(n) inside follows automatically. The former density tier 'compact' was renamed to 'tight' (hard rename, no alias) so the word 'compact' is free for the boolean. Orthogonal to compact: density scales spacing, it never zeros it.",
+      "category": "css",
+      "aliases": [
+        "density prop",
+        "tight",
+        "standard",
+        "comfortable",
+        "spacing scale"
+      ],
+      "seeAlso": [
+        "compact",
+        "--valet-space",
+        "Surface",
+        "theme"
       ]
     },
     {
@@ -166,6 +214,6 @@
       ]
     }
   ],
-  "version": "0.35.1",
-  "builtAt": "2026-06-13T05:36:48.476Z"
+  "version": "0.36.0",
+  "builtAt": "2026-06-14T04:23:05.618Z"
 }

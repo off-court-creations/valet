@@ -46,7 +46,7 @@ export default function MainPage() {
   // ── Theme Playground: density toggle
   const nextDensity = () =>
     setDensity(
-      density === 'comfortable' ? 'compact' : density === 'compact' ? 'standard' : 'comfortable',
+      density === 'comfortable' ? 'tight' : density === 'tight' ? 'standard' : 'comfortable',
     );
 
   // ── Live demo state

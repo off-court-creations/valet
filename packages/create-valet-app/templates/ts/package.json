@@ -15,7 +15,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@archway/valet": "^0.35.1",
+    "@archway/valet": "^0.36.0",
     "@fontsource/inter": "^5.0.0",
     "@fontsource/jetbrains-mono": "^5.0.0",
     "@fontsource/kumbh-sans": "^5.0.0",

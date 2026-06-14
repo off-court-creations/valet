@@ -78,8 +78,14 @@ export default function UsagePage() {
     },
     {
       prop: <code>compact</code>,
-      purpose: 'Remove container pad/gap; in Modal also zeros internal sections',
-      components: 'Stack, Grid, Tabs, Box, Panel, Accordion, Modal',
+      purpose: (
+        <>
+          Hard-zero of layout pad/gap that <b>cascades</b> to descendants;{' '}
+          <code>compact={'{false}'}</code> opts a subtree out. Preserves control insets &amp;
+          alignment. See the <b>Spacing</b> page.
+        </>
+      ),
+      components: 'Stack, Grid, Tabs, Box, Panel, Accordion, Modal, Surface (+ all descendants)',
     },
     {
       prop: <code>centerContent</code>,
@@ -95,12 +101,12 @@ export default function UsagePage() {
       prop: <code>density</code>,
       purpose: (
         <>
-          Controls <code>--valet-space</code> on <code>&lt;Surface&gt;</code> to scale numeric
-          spacing across the subtree: <code>comfortable</code>, <code>compact</code>,
-          <code> tight</code>, <code>zero</code>.
+          Scale spacing via <code>--valet-space</code>: <code>tight</code> (0.9×),{' '}
+          <code>standard</code> (1×), <code>comfortable</code> (1.15×). Set on{' '}
+          <code>&lt;Surface&gt;</code> or any layout container. See the <b>Spacing</b> page.
         </>
       ),
-      components: 'Surface (prop), all children (effect)',
+      components: 'Surface, Stack, Panel, Grid, Tabs (prop); all children (effect)',
     },
     {
       prop: <code>open</code>,
@@ -138,6 +144,12 @@ export default function UsagePage() {
           Many props repeat across components. Use this table as a quick reference for the most
           common patterns.
         </Typography>
+        <Button
+          variant='outlined'
+          onClick={() => navigate('/spacing')}
+        >
+          Spacing — Density &amp; Compact →
+        </Button>
         <Table
           data={data}
           columns={columns}
