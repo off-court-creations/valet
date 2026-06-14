@@ -87,6 +87,6 @@
     "src/components/fields/RadioGroup.tsx",
     "docs/src/pages/components/field/RadioGroupDemo.tsx"
   ],
-  "version": "0.35.1",
+  "version": "0.36.0",
   "schemaVersion": "1.7"
 }

@@ -179,6 +179,6 @@
     "src/components/layout/Panel.tsx",
     "docs/src/pages/components/layout/Panel.tsx"
   ],
-  "version": "0.35.1",
+  "version": "0.36.0",
   "schemaVersion": "1.7"
 }

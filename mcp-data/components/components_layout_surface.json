@@ -90,6 +90,6 @@
     "src/components/layout/Surface.tsx",
     "docs/src/pages/components/layout/Surface.tsx"
   ],
-  "version": "0.35.1",
+  "version": "0.36.0",
   "schemaVersion": "1.7"
 }

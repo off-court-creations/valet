@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.36.0] — 2026-06-13
+
 ### Added
 
 - Spacing (`compact` cascade): new `src/system/compactContext.ts` exporting `CompactCtx` and `useCompact(own?) → own ?? inherited`. A container with `compact` now zeros its own layout spacing **and** propagates the flag to every spacing-aware descendant via React context (it crosses portals by tree position, so `Modal`/`Select` menus inherit). `compact={false}` on any descendant opts its subtree back out. Seeded at `<Surface>`, provided by `Box`/`Stack`/`Panel`/`Grid`/`Tabs`/`Modal`/`Accordion`, consumed by `Divider`, and relayed by the field/widget containers (`MetroSelect`/`LLMChat`/`RichChat`/`DateSelector`).

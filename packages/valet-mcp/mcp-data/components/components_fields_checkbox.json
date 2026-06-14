@@ -169,6 +169,6 @@
     "src/components/fields/Checkbox.tsx",
     "docs/src/pages/components/field/CheckBoxDemo.tsx"
   ],
-  "version": "0.35.1",
+  "version": "0.36.0",
   "schemaVersion": "1.7"
 }

@@ -137,6 +137,6 @@
     "src/components/layout/Grid.tsx",
     "docs/src/pages/components/layout/GridDemo.tsx"
   ],
-  "version": "0.35.1",
+  "version": "0.36.0",
   "schemaVersion": "1.7"
 }
