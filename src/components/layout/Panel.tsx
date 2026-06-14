@@ -179,7 +179,11 @@ export const Panel: React.FC<PanelProps> = ({
   }
 
   const compactEffective = useCompact(compact);
-  const pad = resolveSpace(padProp, theme, compactEffective, 1);
+  // Role-aware default (1.0, "beautiful by default"): a Panel is a bordered
+  // card/surface, so its content gets 2 spacing units (~16px) of padding by
+  // default — the conventional card inset — not the 8px tight default. Tight
+  // panels opt down with `pad={1}` / `pad={0}` / `compact`.
+  const pad = resolveSpace(padProp, theme, compactEffective, 2);
 
   // V1: when density is explicitly provided, scale the subtree (and the
   // panel's own pad/gap) via the local --valet-space var.

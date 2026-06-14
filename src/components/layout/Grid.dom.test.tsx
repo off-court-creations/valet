@@ -73,6 +73,18 @@ describe('Grid (jsdom)', () => {
     expect(ruleFor(el)).toContain('repeat(4, minmax(0, 1fr))');
   });
 
+  it('defaults the gutter to 2 spacing units (~16px) — role-aware card-grid default (1.0)', () => {
+    // "Beautiful by default": a Grid lays out cards/regions, so its default gap
+    // is 2× the spacing unit (was 1×). Pinned so the default can't silently drift.
+    const el = gridEl(render(<Grid />));
+    expect(ruleFor(el)).toMatch(/gap:\s*calc\(var\(--valet-space[^)]*\)\s*\*\s*2\)/);
+  });
+
+  it('an explicit gap overrides the default (dense opt-down)', () => {
+    const el = gridEl(render(<Grid gap={1} />));
+    expect(ruleFor(el)).toMatch(/gap:\s*calc\(var\(--valet-space[^)]*\)\s*\*\s*1\)/);
+  });
+
   it('renders its children', () => {
     const c = render(
       <Grid columns={3}>

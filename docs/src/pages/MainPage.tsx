@@ -223,7 +223,6 @@ export default function MainPage() {
         <Grid
           columns={3}
           adaptive
-          gap={1}
         >
           {[
             {
@@ -260,7 +259,6 @@ export default function MainPage() {
             <Panel
               key={`f-${i}`}
               variant='outlined'
-              pad={2}
             >
               <Stack>
                 <Icon

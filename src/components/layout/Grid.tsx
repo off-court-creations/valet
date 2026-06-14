@@ -104,8 +104,11 @@ export const Grid: React.FC<GridProps> = ({
 
   const effectiveCompact = useCompact(compact);
 
-  // Standardize default gap to 1 for consistency with Stack/Tabs
-  const g = resolveSpace(gapProp as Space, theme, effectiveCompact, 1);
+  // Role-aware default (1.0, "beautiful by default"): a Grid lays out distinct
+  // cards/regions, so its default gutter is 2 spacing units (~16px) — the
+  // conventional card-grid gutter — not the 8px used for tight inline stacks.
+  // Dense grids opt down with `gap={1}` / `density='tight'` / `compact`.
+  const g = resolveSpace(gapProp as Space, theme, effectiveCompact, 2);
   const pad = resolveSpace(padProp, theme, effectiveCompact, 1);
 
   const densityScale =

@@ -108,3 +108,25 @@ describe('Panel preset background (ENGINE S11, jsdom)', () => {
     expect(getComputedStyle(el2).backgroundColor).toBe('rgb(80, 80, 80)');
   });
 });
+
+describe('Panel default padding (1.0, jsdom)', () => {
+  /** The styled rule cssText for the Panel element. */
+  const styledRule = (el: HTMLElement) =>
+    Array.from((document.querySelector('style')?.sheet?.cssRules ?? []) as Iterable<CSSRule>).find(
+      (r) => el.classList.contains((r as CSSStyleRule).selectorText?.slice(1) ?? ''),
+    )?.cssText ?? '';
+
+  it('defaults pad to 2 spacing units (~16px) — role-aware card-surface default', () => {
+    // "Beautiful by default": a Panel is a bordered card, so its content gets
+    // 2× the spacing unit of padding by default (was 1×). Pinned against drift.
+    const container = render(<Panel>x</Panel>);
+    const el = container.querySelector('[data-valet-component="Panel"]') as HTMLElement;
+    expect(styledRule(el)).toMatch(/padding:\s*calc\(var\(--valet-space[^)]*\)\s*\*\s*2\)/);
+  });
+
+  it('an explicit pad overrides the default (e.g. tight pad={1})', () => {
+    const container = render(<Panel pad={1}>x</Panel>);
+    const el = container.querySelector('[data-valet-component="Panel"]') as HTMLElement;
+    expect(styledRule(el)).toMatch(/padding:\s*calc\(var\(--valet-space[^)]*\)\s*\*\s*1\)/);
+  });
+});
