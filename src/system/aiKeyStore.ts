@@ -211,6 +211,16 @@ export type ChatMessage = {
   name?: string;
 };
 
+/**
+ * Normalized chat-completion result returned by {@link sendChat}. Both the
+ * OpenAI and Anthropic branches resolve to this shape (the OpenAI completion
+ * already carries `choices[].message`; the Anthropic response is mapped into
+ * it), so callers read `result.choices[0].message.content` uniformly.
+ */
+export type ChatCompletion = {
+  choices: Array<{ message: { role: string; content: string } }>;
+};
+
 type AnthropicResponse = {
   role: 'assistant' | 'user';
   content: string | Array<{ type: string; text?: string }>;
@@ -222,7 +232,7 @@ export async function sendChat(
   provider?: AIProvider,
   apiKey?: string,
   endpoint?: string,
-) {
+): Promise<ChatCompletion> {
   const state = useAIKey.getState();
   const key = apiKey ?? state.apiKey;
   const prov = provider ?? state.provider;
@@ -242,7 +252,7 @@ export async function sendChat(
       body: JSON.stringify({ model: mdl, messages }),
     });
     if (!res.ok) throw new Error(await res.text());
-    return res.json();
+    return (await res.json()) as ChatCompletion;
   }
 
   // Anthrop(ic)

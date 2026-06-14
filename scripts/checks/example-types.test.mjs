@@ -71,7 +71,7 @@ describe('barrelExports — value/type partition (alias-resolved)', () => {
     for (const n of ['Table', 'Typography', 'Panel', 'useTheme', 'createFormStore']) {
       expect(value.has(n), `${n} value`).toBe(true);
     }
-    for (const n of ['TableColumn', 'RichMessage', 'Variant', 'PanelProps']) {
+    for (const n of ['TableColumn', 'RichMessage', 'TypographyVariant', 'PanelProps']) {
       expect(type.has(n), `${n} type`).toBe(true);
     }
   });

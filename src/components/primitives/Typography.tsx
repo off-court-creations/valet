@@ -20,7 +20,11 @@ import {
   type PolymorphicRef,
 } from '../../system/polymorphic';
 
-export type Variant = VariantType;
+// Module-local alias. The PUBLIC name is `TypographyVariant` (barrel re-export
+// of `Variant` from ./types/typography); a bare `Variant` is not exported here
+// so `export *` from this file cannot leak an ungoverned generic name into the
+// 1.0 surface.
+type Variant = VariantType;
 
 export interface TypographyOwnProps extends Presettable {
   variant?: Variant;
