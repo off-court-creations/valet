@@ -14,6 +14,7 @@ import { preset } from '../../css/stylePresets';
 import { getOverlayRoot, useOverlay } from '../../system/overlay';
 import { inheritSurfaceFontVars } from '../../system/inheritSurfaceFontVars';
 import { zVar } from '../../system/zIndex';
+import { CompactCtx, useCompact } from '../../system/compactContext';
 import type { Presettable, Space, Sx } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
@@ -155,7 +156,7 @@ export const Modal: React.FC<ModalProps> = ({
   children,
   actions,
   pad: padProp,
-  compact = false,
+  compact,
   disableBackdropClick = false,
   disableEscapeKeyDown = false,
   maxWidth,
@@ -167,6 +168,8 @@ export const Modal: React.FC<ModalProps> = ({
 }) => {
   const { theme } = useTheme();
   const presetClasses = presetKey ? preset(presetKey) : '';
+  // Inherited compact also zeros the sections; own `compact` prop still wins.
+  const compactEff = useCompact(compact);
 
   /* ----- state ---------------------------------------------------------- */
   const uncontrolled = controlledOpen === undefined;
@@ -276,7 +279,7 @@ export const Modal: React.FC<ModalProps> = ({
         $maxW={maxWidth}
         $full={fullWidth}
         $pad={
-          compact
+          compactEff
             ? '0'
             : typeof padProp === 'number'
               ? theme.spacing(padProp)
@@ -293,32 +296,34 @@ export const Modal: React.FC<ModalProps> = ({
           } as Sx
         }
       >
-        {title && (
-          <Header
-            id={idTitle}
-            $pt={compact ? '0' : theme.spacing(2)}
-            $px={compact ? '0' : theme.spacing(3)}
-            $pb={compact ? '0' : theme.spacing(2)}
+        <CompactCtx.Provider value={compactEff}>
+          {title && (
+            <Header
+              id={idTitle}
+              $pt={compactEff ? '0' : theme.spacing(2)}
+              $px={compactEff ? '0' : theme.spacing(3)}
+              $pb={compactEff ? '0' : theme.spacing(2)}
+            >
+              {title}
+            </Header>
+          )}
+          <Content
+            $px={compactEff ? '0' : theme.spacing(3)}
+            $pb={compactEff ? '0' : theme.spacing(3)}
           >
-            {title}
-          </Header>
-        )}
-        <Content
-          $px={compact ? '0' : theme.spacing(3)}
-          $pb={compact ? '0' : theme.spacing(3)}
-        >
-          {children}
-        </Content>
-        {actions && (
-          <Actions
-            $pt={compact ? '0' : theme.spacing(2)}
-            $px={compact ? '0' : theme.spacing(3)}
-            $pb={compact ? '0' : theme.spacing(3)}
-            $gap={compact ? '0' : theme.spacing(1)}
-          >
-            {actions}
-          </Actions>
-        )}
+            {children}
+          </Content>
+          {actions && (
+            <Actions
+              $pt={compactEff ? '0' : theme.spacing(2)}
+              $px={compactEff ? '0' : theme.spacing(3)}
+              $pb={compactEff ? '0' : theme.spacing(3)}
+              $gap={compactEff ? '0' : theme.spacing(1)}
+            >
+              {actions}
+            </Actions>
+          )}
+        </CompactCtx.Provider>
       </Box>
     </>
   );

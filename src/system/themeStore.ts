@@ -10,7 +10,7 @@ import { baseTheme, composeTheme, mergeThemePatch } from './themeUtils';
 
 export type Breakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type ThemeMode = 'light' | 'dark';
-export type Density = 'compact' | 'standard' | 'comfortable';
+export type Density = 'tight' | 'standard' | 'comfortable';
 
 export interface Theme {
   colors: Record<string, string>;

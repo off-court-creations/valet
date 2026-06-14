@@ -10,7 +10,7 @@
       "Opt into per-element metrics with $trackSize. styled() elements register with the surface store and expose --valet-el-width and --valet-el-height (updated via ResizeObserver) only when passed the $trackSize transient prop. Tracking is off by default — most elements never need their own metrics, so the default path stays allocation-free.",
       "Keep portalled overlays out of the registry. Drawers and Modals rendered outside the surface root are intentionally not tracked to avoid unnecessary observers. Size them via tokens and breakpoints, not child metrics.",
       "Respect height constraints. Tables are height‑aware by default; let their content scroll inside the component. Only pass constrainHeight={false} when page context requires full‑document scroll.",
-      "Drive spacing and density with variables. Adjust --valet-space, --valet-radius, and --valet-stroke on the surface to shift an entire view without changing component code.",
+      "Drive spacing and density with variables. Set `density` ('tight' 0.9× | 'standard' 1× | 'comfortable' 1.15×) on the Surface to scale spacing for the whole screen (it sets --valet-space); set it on any layout container to scale just that subtree. Use the `compact` boolean to hard-zero a region's layout spacing — it cascades to descendants and `compact={false}` opts a subtree back out. Adjust --valet-space/--valet-radius/--valet-stroke directly for finer control.",
       "blockUntilFonts is fail-safe. It hides content until web fonts settle, but a 500ms never-block grace reveals the screen anyway if no font load ever starts, so a missing or skipped font pipeline can never wedge the UI hidden forever."
     ]
   }

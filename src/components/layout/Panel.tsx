@@ -15,6 +15,7 @@ import { toRgb, mix, toHex } from '../../helpers/color';
 import type { Intent, Presettable, SpacingProps, Sx } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
 import { resolveDeprecatedProp } from '../../system/deprecate';
+import { CompactCtx, useCompact } from '../../system/compactContext';
 
 export type PanelVariant = 'filled' | 'outlined';
 
@@ -148,6 +149,7 @@ export const Panel: React.FC<PanelProps> = ({
   color,
   intent,
   compact,
+  density,
   pad: padProp,
   children,
   ...rest
@@ -197,9 +199,19 @@ export const Panel: React.FC<PanelProps> = ({
     else textColour = theme.colors.text;
   }
 
-  const compactEffective =
-    compact || (rest as unknown as { density?: string }).density === 'compact';
+  const compactEffective = useCompact(compact);
   const pad = resolveSpace(padProp, theme, compactEffective, 1);
+
+  // V1: when density is explicitly provided, scale the subtree (and the
+  // panel's own pad/gap) via the local --valet-space var.
+  const densityScale =
+    density === 'comfortable'
+      ? 1.15
+      : density === 'tight'
+        ? 0.9
+        : density === 'standard'
+          ? 1.0
+          : undefined;
   const presetClasses = p ? preset(p) : '';
 
   // Normalize alignX with Box semantics
@@ -224,6 +236,9 @@ export const Panel: React.FC<PanelProps> = ({
       $noNormalize={!normalizeRowHeights}
       style={
         {
+          ...(densityScale != null
+            ? { '--valet-space': `calc(${theme.spacingUnit} * ${densityScale})` }
+            : {}),
           '--valet-intent-bg': bg ?? 'transparent',
           '--valet-intent-fg': textColour ?? theme.colors.text,
           '--valet-intent-border': borderColor ?? theme.colors.divider,
@@ -242,7 +257,7 @@ export const Panel: React.FC<PanelProps> = ({
       }
       className={[presetClasses, className].filter(Boolean).join(' ')}
     >
-      {children}
+      <CompactCtx.Provider value={compactEffective}>{children}</CompactCtx.Provider>
     </Base>
   );
 };

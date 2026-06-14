@@ -73,6 +73,7 @@ const ThemeEnginePage = page(() => import('./pages/getting-started/ThemeEngine')
 const MigrateFromMUIPage = page(() => import('./pages/getting-started/MigrateFromMUI'));
 const SurfaceExplainerPage = page(() => import('./pages/components/layout/Surface'));
 const PropPatternsPage = page(() => import('./pages/getting-started/PropPatterns'));
+const SpacingPage = page(() => import('./pages/getting-started/Spacing'));
 const ComplicatedDashboardPage = page(() => import('./pages/examples/ComplicatedDashboard'));
 const ComponentQCLabPage = page(() => import('./pages/examples/ComponentQCLab'));
 const MCPGuidePage = page(() => import('./pages/getting-started/MCP'));
@@ -163,6 +164,10 @@ export function App() {
         <Route
           path='/theme-engine'
           element={<ThemeEnginePage />}
+        />
+        <Route
+          path='/spacing'
+          element={<SpacingPage />}
         />
         <Route
           path='/surface'

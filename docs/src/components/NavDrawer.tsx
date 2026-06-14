@@ -106,6 +106,7 @@ const treeData: TreeNode<Item>[] = [
         data: { label: 'Prop Patterns', path: '/prop-patterns' },
       },
       { id: '/theme-engine', data: { label: 'Theme Engine', path: '/theme-engine' } },
+      { id: '/spacing', data: { label: 'Spacing (Density & Compact)', path: '/spacing' } },
       { id: '/fonts-privacy', data: { label: 'Fonts & Privacy', path: '/fonts-privacy' } },
     ],
   },

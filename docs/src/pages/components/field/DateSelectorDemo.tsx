@@ -62,9 +62,9 @@ export default function DateSelectorDemoPage() {
         gap={1}
       >
         <Stack>
-          <Typography variant='subtitle'>Compact</Typography>
+          <Typography variant='subtitle'>Tight</Typography>
           <DateSelector
-            density='compact'
+            density='tight'
             value={selected}
             onValueChange={(v) => setSelected(v as string)}
           />

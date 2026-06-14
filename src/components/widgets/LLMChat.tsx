@@ -38,7 +38,8 @@ import Select from '../fields/Select';
 import { useAIKey, AIProvider } from '../../system/aiKeyStore';
 import { useComponentStrings } from '../../system/locale';
 import type { DeepPartialStrings, ValetStrings } from '../../system/locale';
-import type { Presettable, Sx } from '../../types';
+import type { Presettable, Sx, SpacingProps } from '../../types';
+import { CompactCtx, useCompact } from '../../system/compactContext';
 
 /**
  * Built-in model catalog for the picker, keyed by provider. This is a
@@ -65,6 +66,7 @@ export interface ChatMessage {
 
 export interface ChatProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onSubmit' | 'style'>,
+    Pick<SpacingProps, 'compact'>,
     Presettable {
   messages: ChatMessage[];
   onSend?: (message: ChatMessage) => void;
@@ -189,10 +191,12 @@ export const LLMChat: React.FC<ChatProps> = ({
   preset: p,
   className,
   labels,
+  compact: compactProp,
   sx,
   ...rest
 }) => {
   const { theme } = useTheme();
+  const compact = useCompact(compactProp);
   const t = useComponentStrings('llmChat', labels);
   const surface = useSurface(
     (s) => ({
@@ -336,161 +340,165 @@ export const LLMChat: React.FC<ChatProps> = ({
         sx={sx}
         className={cls}
       >
-        <Bar
-          $bg={theme.colors.secondary}
-          $text={theme.colors.secondaryText}
-          $gap={theme.spacing(0.5)}
-          $pad={`${theme.spacing(1)} ${theme.spacing(2)}`}
-        >
-          {provider && key ? (
-            <Select
-              size='sm'
-              value={model}
-              onValueChange={(v) => handleModelChange(v as string)}
-            >
-              {modelOptions.map((m) => (
-                <Select.Option
-                  key={m}
-                  value={m}
-                >
-                  {m}
-                </Select.Option>
-              ))}
-            </Select>
-          ) : (
-            <span />
-          )}
-          <span
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              cursor: 'pointer',
-              gap: theme.spacing(0.5),
-            }}
-            onClick={() => !propKey && setShowKeyModal(true)}
+        <CompactCtx.Provider value={compact}>
+          <Bar
+            $bg={theme.colors.secondary}
+            $text={theme.colors.secondaryText}
+            $gap={theme.spacing(0.5)}
+            $pad={`${theme.spacing(1)} ${theme.spacing(2)}`}
           >
-            <Typography variant='subtitle'>{key ? 'Connected' : 'Disconnected'}</Typography>
-            <IconButton
-              icon={key ? 'carbon:checkmark' : 'carbon:circle-dash'}
-              aria-label={t.setApiKey}
-            />
-          </span>
-        </Bar>
-        <Wrapper
-          ref={wrapRef}
-          $gap={theme.spacing(3)}
-          style={{ overflow: 'hidden' }}
-        >
-          <Messages
-            role='log'
-            aria-relevant='additions'
-            aria-busy={isTyping}
-            $gap={theme.spacing(1.5)}
-            style={shouldConstrain ? { overflowY: 'auto', maxHeight } : undefined}
-          >
-            {messages
-              .filter((m) => m.role !== 'system')
-              .map((m, i) => {
-                const sidePad = portrait ? theme.spacing(8) : theme.spacing(24);
-                const avatarPad = theme.spacing(1);
-                return (
-                  <Row
-                    key={i}
-                    $from={m.role}
-                    $left={m.role === 'user' ? sidePad : avatarPad}
-                    $right={m.role === 'user' ? avatarPad : sidePad}
-                  >
-                    {m.role !== 'user' && systemAvatar && (
-                      <Avatar
-                        src={systemAvatar}
-                        size='sm'
-                        variant='outline'
-                        sx={{ marginRight: theme.spacing(1) }}
-                      />
-                    )}
-                    <Panel
-                      compact
-                      variant='filled'
-                      color={m.role === 'user' ? theme.colors.primary : undefined}
-                      sx={{
-                        maxWidth: '100%',
-                        width: 'fit-content',
-                        borderRadius: theme.spacing(0.5),
-                        animation: m.animate ? `${fadeIn} 0.2s ease-out` : undefined,
-                      }}
-                    >
-                      {m.name && (
-                        <Typography
-                          variant='subtitle'
-                          bold
-                        >
-                          {m.name}
-                        </Typography>
-                      )}
-                      {m.typing ? (
-                        <Typing
-                          $color={m.role === 'user' ? theme.colors.primaryText : theme.colors.text}
-                        >
-                          <span />
-                          <span />
-                          <span />
-                        </Typing>
-                      ) : m.role === 'assistant' ? (
-                        <Markdown
-                          data={m.content}
-                          codeBackground={theme.colors.background}
-                        />
-                      ) : (
-                        <Typography>{m.content}</Typography>
-                      )}
-                    </Panel>
-                    {m.role === 'user' && userAvatar && (
-                      <Avatar
-                        src={userAvatar}
-                        size='sm'
-                        variant='outline'
-                        sx={{ marginLeft: theme.spacing(1) }}
-                      />
-                    )}
-                  </Row>
-                );
-              })}
-          </Messages>
-
-          {!disableInput && (
-            <form
-              onSubmit={handleSubmit}
-              style={{ width: '100%' }}
-            >
-              <Stack
-                direction='row'
-                compact
+            {provider && key ? (
+              <Select
+                size='sm'
+                value={model}
+                onValueChange={(v) => handleModelChange(v as string)}
               >
-                <TextField
-                  as='textarea'
-                  name='chat-message'
-                  value={text}
-                  onChange={(e) => setText(e.target.value)}
-                  onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault();
-                      const form = e.currentTarget.form;
-                      form?.requestSubmit();
-                    }
-                  }}
-                  rows={1}
-                  placeholder={placeholder}
-                  fullWidth
-                />
-                <IconButton
-                  icon='carbon:send'
-                  type='submit'
-                  aria-label={t.send}
-                />
-              </Stack>
-            </form>
-          )}
-        </Wrapper>
+                {modelOptions.map((m) => (
+                  <Select.Option
+                    key={m}
+                    value={m}
+                  >
+                    {m}
+                  </Select.Option>
+                ))}
+              </Select>
+            ) : (
+              <span />
+            )}
+            <span
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                cursor: 'pointer',
+                gap: theme.spacing(0.5),
+              }}
+              onClick={() => !propKey && setShowKeyModal(true)}
+            >
+              <Typography variant='subtitle'>{key ? 'Connected' : 'Disconnected'}</Typography>
+              <IconButton
+                icon={key ? 'carbon:checkmark' : 'carbon:circle-dash'}
+                aria-label={t.setApiKey}
+              />
+            </span>
+          </Bar>
+          <Wrapper
+            ref={wrapRef}
+            $gap={theme.spacing(3)}
+            style={{ overflow: 'hidden' }}
+          >
+            <Messages
+              role='log'
+              aria-relevant='additions'
+              aria-busy={isTyping}
+              $gap={theme.spacing(1.5)}
+              style={shouldConstrain ? { overflowY: 'auto', maxHeight } : undefined}
+            >
+              {messages
+                .filter((m) => m.role !== 'system')
+                .map((m, i) => {
+                  const sidePad = portrait ? theme.spacing(8) : theme.spacing(24);
+                  const avatarPad = theme.spacing(1);
+                  return (
+                    <Row
+                      key={i}
+                      $from={m.role}
+                      $left={m.role === 'user' ? sidePad : avatarPad}
+                      $right={m.role === 'user' ? avatarPad : sidePad}
+                    >
+                      {m.role !== 'user' && systemAvatar && (
+                        <Avatar
+                          src={systemAvatar}
+                          size='sm'
+                          variant='outline'
+                          sx={{ marginRight: theme.spacing(1) }}
+                        />
+                      )}
+                      <Panel
+                        compact
+                        variant='filled'
+                        color={m.role === 'user' ? theme.colors.primary : undefined}
+                        sx={{
+                          maxWidth: '100%',
+                          width: 'fit-content',
+                          borderRadius: theme.spacing(0.5),
+                          animation: m.animate ? `${fadeIn} 0.2s ease-out` : undefined,
+                        }}
+                      >
+                        {m.name && (
+                          <Typography
+                            variant='subtitle'
+                            bold
+                          >
+                            {m.name}
+                          </Typography>
+                        )}
+                        {m.typing ? (
+                          <Typing
+                            $color={
+                              m.role === 'user' ? theme.colors.primaryText : theme.colors.text
+                            }
+                          >
+                            <span />
+                            <span />
+                            <span />
+                          </Typing>
+                        ) : m.role === 'assistant' ? (
+                          <Markdown
+                            data={m.content}
+                            codeBackground={theme.colors.background}
+                          />
+                        ) : (
+                          <Typography>{m.content}</Typography>
+                        )}
+                      </Panel>
+                      {m.role === 'user' && userAvatar && (
+                        <Avatar
+                          src={userAvatar}
+                          size='sm'
+                          variant='outline'
+                          sx={{ marginLeft: theme.spacing(1) }}
+                        />
+                      )}
+                    </Row>
+                  );
+                })}
+            </Messages>
+
+            {!disableInput && (
+              <form
+                onSubmit={handleSubmit}
+                style={{ width: '100%' }}
+              >
+                <Stack
+                  direction='row'
+                  compact
+                >
+                  <TextField
+                    as='textarea'
+                    name='chat-message'
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
+                    onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        const form = e.currentTarget.form;
+                        form?.requestSubmit();
+                      }
+                    }}
+                    rows={1}
+                    placeholder={placeholder}
+                    fullWidth
+                  />
+                  <IconButton
+                    icon='carbon:send'
+                    type='submit'
+                    aria-label={t.send}
+                  />
+                </Stack>
+              </form>
+            )}
+          </Wrapper>
+        </CompactCtx.Provider>
       </Panel>
     </>
   );

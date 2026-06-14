@@ -74,6 +74,12 @@
       "description": "Inline styles (with CSS var support)"
     },
     {
+      "name": "compact",
+      "type": "boolean | undefined",
+      "required": false,
+      "description": "Zeros all layout spacing (pad, gap, and spacing-margins) where supported and\ncascades to spacing-aware descendants. Does not touch control insets,\nstructural geometry, border-radius, glyph sizes, or alignment. `compact={false}`\nopts a subtree back out of an inherited compact."
+    },
+    {
       "name": "preset",
       "type": "string | string[] | undefined",
       "required": false,
