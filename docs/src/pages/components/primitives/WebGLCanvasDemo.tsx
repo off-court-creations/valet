@@ -41,7 +41,14 @@ export default function WebGLCanvasDemoPage() {
         black for now — neon edges, bloom, and the grid horizon come next.
       </Typography>
       <Panel fullWidth>
-        <div style={{ position: 'relative', height: 'min(72vh, 760px)' }}>
+        <div
+          style={{
+            position: 'relative',
+            width: 'min(1024px, 100%)',
+            aspectRatio: '1 / 1',
+            margin: '0 auto',
+          }}
+        >
           <WebGLCanvas
             // Inline `create` is safe — WebGLCanvas ref-latches it (called once).
             create={(gl, canvas) => createTronCityProgram(gl, canvas)}

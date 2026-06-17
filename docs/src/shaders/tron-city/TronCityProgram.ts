@@ -34,6 +34,12 @@ float hash21(vec2 p){
   return fract(p.x * p.y);
 }
 
+// The flyover alternates in z between dense CITY stretches and open "game grid"
+// ARENA stretches. zoneArena(z) → 1 in an arena stretch, 0 in a city stretch.
+const float ZONE = 70.0;
+float hash11(float n){ return fract(sin(n * 113.97) * 43758.5453); }
+float zoneArena(float z){ return step(0.58, hash11(floor(z / ZONE))); } // ~42% arena
+
 float sdBox(vec3 p, vec3 b){
   vec3 d = abs(p) - b;
   return length(max(d, 0.0)) + min(max(d.x, max(d.y, d.z)), 0.0);
@@ -63,6 +69,7 @@ float map(vec3 p){
   vec2 baseId = floor(p.xz / CELL);
   for (int j = -1; j <= 1; j++) for (int i = -1; i <= 1; i++){
     vec2 id = baseId + vec2(float(i), float(j));
+    if (zoneArena((id.y + 0.5) * CELL.y) > 0.5) continue; // arena stretch — open grid, no towers
     if (hash21(id + 31.7) < 0.22) continue;   // ~22% empty plots — no tower here
     vec2 c = (id + 0.5) * CELL;
     float h = 2.0 + hash21(id) * 10.0;
@@ -109,6 +116,7 @@ void main(){
     float dB = 1e9; vec2 hitId = baseId; float hitH = 0.0; vec3 hitQ = vec3(0.0);
     for (int j = -1; j <= 1; j++) for (int i = -1; i <= 1; i++){
       vec2 id = baseId + vec2(float(i), float(j));
+      if (zoneArena((id.y + 0.5) * CELL.y) > 0.5) continue; // arena stretch — no towers
       if (hash21(id + 31.7) < 0.22) continue;   // ~22% empty plots
       vec2 c = (id + 0.5) * CELL;
       float h = 2.0 + hash21(id) * 10.0;
@@ -140,7 +148,19 @@ void main(){
       float lit = smoothstep(reveal + 0.12, reveal - 0.12, hash21(hitId + 19.1));
       col = vec3(0.014, 0.017, 0.026) + neon * edge * lit * 2.4;
     } else {
-      col = vec3(0.012, 0.014, 0.022); // ground
+      // ground — a glowing game-grid in arena stretches, near-black in the city
+      if (zoneArena(p.z) > 0.5){
+        vec2 f = fract(p.xz / CELL);
+        vec2 dl = min(f, 1.0 - f) * CELL;                 // world dist to nearest grid line
+        float line = smoothstep(0.06, 0.0, min(dl.x, dl.y));
+        vec2 f2 = fract(p.xz / (CELL * 0.25));            // finer sub-grid
+        vec2 dl2 = min(f2, 1.0 - f2) * (CELL * 0.25);
+        float fine = smoothstep(0.03, 0.0, min(dl2.x, dl2.y)) * 0.35;
+        float g = max(line, fine);
+        col = vec3(0.10, 0.55, 1.0) * g * 1.4 + vec3(0.004, 0.008, 0.018);
+      } else {
+        col = vec3(0.012, 0.014, 0.022);                  // city ground, near-black
+      }
     }
     col *= exp(-t * 0.022); // distance fade into the void
   }
@@ -220,8 +240,12 @@ export function createTronCityProgram(
     b.seed = (Math.imul(b.seed, 1664525) + 1013904223) >>> 0;
     return b.seed / 4294967296;
   };
-  const bikeA = mkBike(0, 6, -2, 2, 0x9e3779b1);
-  const bikeB = mkBike(1, 5, -1, 3, 0x85ebca77);
+  // Tron rule: blue and orange can NEVER share a cell / overlap. Enforced by
+  // disjoint x-lanes with a one-block buffer (which the camera flies down):
+  // blue rides world x ∈ [-8, 0], orange x ∈ [4, 12]. Both only move +z, so
+  // their trails are monotone and can't cross — no derez.
+  const bikeA = mkBike(0, 6, -2, 0, 0x9e3779b1); // left lane (blue)
+  const bikeB = mkBike(1, 5, 1, 3, 0x85ebca77); // right lane (orange)
 
   const advance = (b: Bike, dt: number, camZ: number) => {
     const headZ = b.iz * CELL_JS + b.dz * b.prog;
