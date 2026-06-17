@@ -23,7 +23,7 @@
   {
     "name": "FormControl",
     "category": "fields",
-    "summary": "Wraps a form to provide a typed store context that field components bind to by `name`; use it to collect and submit grouped field values without lifting every field into local state.",
+    "summary": "Wraps a form to provide a typed store context that field components bind to by `name`; use it to collect and submit grouped field values without lifting every field into local state. Also carries form-wide config — `disabled`, name-keyed `errors`, and an async-submit busy state — shared with bound fields via `useFormConfig()`.",
     "slug": "components/fields/formcontrol",
     "status": "experimental"
   },

@@ -10,7 +10,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import React, { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import { FormControl, useForm } from './FormControl';
+import { FormControl, useForm, useFormConfig } from './FormControl';
 import { createFormStore } from '../../system/createFormStore';
 
 /* react-dom warns unless act usage is announced ----------------------- */
@@ -129,5 +129,80 @@ describe('FormControl (jsdom)', () => {
     }
     expect(() => render(<Orphan />)).toThrow(/FormControl/);
     err.mockRestore();
+  });
+});
+
+/*───────────────────────────────────────────────────────────────*/
+/* FormConfigCtx — form-wide disabled / errors / submit lifecycle */
+
+function ConfigReader() {
+  const cfg = useFormConfig();
+  return (
+    <span data-cfg>{`${cfg.disabled}|${JSON.stringify(cfg.errors)}|${cfg.isSubmitting}`}</span>
+  );
+}
+const cfgText = (c: HTMLElement) => c.querySelector('[data-cfg]')!.textContent;
+
+describe('FormControl — FormConfigCtx (additive)', () => {
+  it('useFormConfig returns inert defaults outside a FormControl', () => {
+    const c = render(<ConfigReader />);
+    expect(cfgText(c)).toBe('false|{}|false');
+  });
+
+  it('propagates form-wide disabled to bound fields', () => {
+    const useStore = createFormStore({ a: '' });
+    const c = render(
+      <FormControl
+        useStore={useStore}
+        disabled
+      >
+        <ConfigReader />
+      </FormControl>,
+    );
+    expect(cfgText(c)).toBe('true|{}|false');
+  });
+
+  it('propagates name-keyed errors', () => {
+    const useStore = createFormStore({ email: '' });
+    const c = render(
+      <FormControl
+        useStore={useStore}
+        errors={{ email: 'Invalid' }}
+      >
+        <ConfigReader />
+      </FormControl>,
+    );
+    expect(cfgText(c)).toBe('false|{"email":"Invalid"}|false');
+  });
+
+  it('an async onSubmitValues flips isSubmitting + aria-busy while pending', async () => {
+    const useStore = createFormStore({ a: '' });
+    let resolveSubmit!: () => void;
+    const pending = new Promise<void>((r) => {
+      resolveSubmit = r;
+    });
+    const onSubmitValues = vi.fn(() => pending);
+    const c = render(
+      <FormControl
+        useStore={useStore}
+        onSubmitValues={onSubmitValues}
+      >
+        <ConfigReader />
+        <button type='submit'>go</button>
+      </FormControl>,
+    );
+    act(() => {
+      formEl(c).dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+    });
+    // Pending: submitting flag + aria-busy on the form.
+    expect(cfgText(c)).toBe('false|{}|true');
+    expect(formEl(c).getAttribute('aria-busy')).toBe('true');
+    // Resolve: flag clears, aria-busy drops.
+    await act(async () => {
+      resolveSubmit();
+      await pending;
+    });
+    expect(cfgText(c)).toBe('false|{}|false');
+    expect(formEl(c).getAttribute('aria-busy')).toBe(null);
   });
 });

@@ -2,7 +2,7 @@
   "name": "FormControl",
   "category": "fields",
   "slug": "components/fields/formcontrol",
-  "summary": "Wraps a form to provide a typed store context that field components bind to by `name`; use it to collect and submit grouped field values without lifting every field into local state.",
+  "summary": "Wraps a form to provide a typed store context that field components bind to by `name`; use it to collect and submit grouped field values without lifting every field into local state. Also carries form-wide config — `disabled`, name-keyed `errors`, and an async-submit busy state — shared with bound fields via `useFormConfig()`.",
   "status": "experimental",
   "aliases": [
     "form",
@@ -18,9 +18,21 @@
     },
     {
       "name": "onSubmitValues",
-      "type": "(values: T, event: React.FormEvent<HTMLFormElement>) => void",
+      "type": "(values: T, event: React.FormEvent<HTMLFormElement>) => void | Promise<unknown>",
       "required": false,
-      "description": "Fires after native submit is intercepted – gives you typed values."
+      "description": "Fires after native submit is intercepted – gives you typed values. May\nreturn a Promise; while it is pending the form is `aria-busy` and every\nbound field sees `isSubmitting` via `useFormConfig()`."
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "required": false,
+      "description": "Disable every bound field in this form."
+    },
+    {
+      "name": "errors",
+      "type": "Record<string, React.ReactNode>",
+      "required": false,
+      "description": "Name-keyed error messages; a bound field whose `name` matches shows the error."
     },
     {
       "name": "sx",
@@ -50,12 +62,18 @@
       "payloadType": "T"
     }
   ],
-  "slots": [],
+  "slots": [
+    {
+      "name": "errors"
+    }
+  ],
   "bestPractices": [
     "FormControl prevents native submit by default. Handle submission in `onSubmitValues(values, event)` and keep the flow inside your SPA.",
     "Always provide `name` on fields within a FormControl so values bind to the store and appear in the typed payload.",
+    "Disable the whole form at once with `disabled` (e.g. while saving) — every bound field reads it and a field's own `disabled` still wins. Each field merges form config with its own props (own value wins, form config is the fallback).",
+    "Surface validation by passing a name-keyed `errors` map (`{ email: 'Invalid' }`); the matching bound field shows the error and is marked `aria-invalid`. After a submit, focus moves to the first invalid field.",
+    "Return a Promise from `onSubmitValues` for async submits: the form goes `aria-busy` and bound fields see `isSubmitting` (via `useFormConfig()`) until it settles.",
     "For files or non‑valet inputs, merge `new FormData(event.currentTarget)` with your typed `values` in `onSubmitValues`.",
-    "Choose validation mode explicitly: rely on native constraints (default) or pass `noValidate` and surface errors with `error` + `helperText` on fields.",
     "If you depend on browser autofill, verify final values at submit time by reading `FormData` to avoid stale store state when no change events fired."
   ],
   "examples": [
