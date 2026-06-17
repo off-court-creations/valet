@@ -65,8 +65,8 @@ retuned spacing/density numbers."
 > rewrite (W2, pending). These supersede a plain "verify as-is" for those two.
 
 - [x] **Box** _(stable 2026-06-17 — both gates)_ · [x] **Stack** _(stable 2026-06-17 — W1 improve + HStack/VStack/Center/Cluster/Spacer; both gates)_ · [x] **Grid** + **GridItem** _(stable 2026-06-17 — W2 rewrite; both gates)_ — Grid is now Surface-decoupled (the old surfaceStore read is gone)
-- [ ] **LoadingBackdrop** — hoisted out of widgets; renders Progress; must precede the Surface component
-- [ ] List (→ Typography)
+- [ ] **LoadingBackdrop** _(agent-verified 2026-06-17; awaiting Ben's visual pass)_ — hoisted out of widgets; renders Progress; must precede the Surface component
+- [ ] **List** _(agent-verified 2026-06-17; awaiting Ben's visual pass)_ (→ Typography)
 
 ## Tier 3 — Surface component + overlay composites
 

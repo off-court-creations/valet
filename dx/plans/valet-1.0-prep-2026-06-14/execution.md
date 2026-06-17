@@ -179,8 +179,20 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
     `/grid-demo`.** Panel keeps its own `normalizeRowHeights` (separate stable
     component — untouched).
   - **Stack & Grid first-class: COMPLETE.** All 9 layout primitives stable (Box,
-    Stack + HStack/VStack/Center/Cluster/Spacer, Grid + GridItem). **Next:** Tier 2
-    tail (LoadingBackdrop, List) and onward per the verification order.
+    Stack + HStack/VStack/Center/Cluster/Spacer, Grid + GridItem).
+- **Tier 2 tail — LoadingBackdrop + List: AGENT-VERIFIED, awaiting Ben's visual pass
+  (2026-06-17).** Tests green (LoadingBackdrop.dom + List.dom + List.selection.dom =
+  12). LoadingBackdrop: clean fixed-scrim overlay that renders the stable ProgressRing;
+  fade/`aria-hidden`/`pointer-events`/`data-state` track `fading`; i18n via
+  `labels`/`useComponentStrings`; SSR-safe; marker present. List: single-selection
+  listbox (`selectionMode`) with pointer/touch reorder + FLIP, roving focus, reduced-
+  motion guard, correct list/listbox + option roles; SSR-safe (window listeners only
+  in handlers/effects); marker present; the W1-removed `selectable`/`getKey` aliases
+  are gone from source. **Meta fix:** List's bestPractices still described
+  `selectable`/`getKey` as "deprecated aliases that still work / removed at 1.0" —
+  stale post-W1; reworded to the current `selectionMode`/`getItemKey` (same class as
+  the Box `centered` fix). Both left `experimental` pending Ben's visual pass. **Next:**
+  Tier 3 (Surface, Modal, Tooltip, SpeedDial) per the verification order.
 - **Box — DONE (stable 2026-06-17 — both gates).** Ben's visual pass cleared it;
   the `centered`→`centerContent` meta fix shipped.
 - **Pre-existing repo debt (not from this work):** `eslint .` reports 51 prettier
