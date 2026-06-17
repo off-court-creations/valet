@@ -154,6 +154,7 @@
     ]
   },
   "cssVars": [
+    "--valet-slider-hit",
     "--valet-bg",
     "--valet-text-color"
   ],
@@ -181,7 +182,7 @@
     "Snap deliberately. Provide step increments that match the domain; avoid overly fine steps that make keyboard or touch fiddly.",
     "Label min/max or current value. Show ticks or helper text for context; keep labels short and avoid clutter.",
     "Keyboard support. Ensure Left/Right (or Up/Down) adjust values by one step, and Page/Home/End jump predictably.",
-    "Size for touch. Pick token sizes or numeric height to keep the thumb easy to grab on mobile.",
+    "Pick `size` for the visual thumb/track — the thumb's grab area is already ≥44px on coarse pointers automatically (relaxed under `compact`), and tapping anywhere on the track jumps to that value, so you don't need to size up for mobile.",
     "Use presets/tokens for colour and shape. Keep theme‑aligned styling rather than per‑instance CSS.",
     "Binding precedence (prop > form > internal). An explicit `value` prop always wins; otherwise a `name` inside a `FormControl` binds to the store (seed the key in `createFormStore(initial)` so the initial value is honoured); otherwise the Slider is uncontrolled. The binding is latched at mount — don't switch a Slider between controlled and uncontrolled.",
     "Change source. `onValueChange`/`onValueCommit` report a truthful `info.source`: `'pointer'` for a drag/click on the track and `'keyboard'` for the arrow/Page/Home/End keys, not a blanket `'programmatic'`."

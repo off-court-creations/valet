@@ -274,6 +274,20 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   Meta tap-target advice updated. Green: typecheck×4, lint, 1422 tests (2 new mobile
   cases), build, RTL, mcp, check:examples, docs tsc. Stays `experimental` pending Ben's
   confirmation on a touch device / coarse-pointer emulation.
+- **Tier 4 Slider — AGENT-VERIFIED + mobile hardened, awaiting Ben's visual pass
+  (2026-06-17).** Source review clean: solid a11y (role=slider, full keyboard
+  Home/End/Page/Arrows, aria-value*), pointer-capture drag with `pointercancel`
+  cleanup, controlled+FormControl contract, label/helperText wired + name-guard.
+  **Mobile gaps found + fixed** (same pattern as Switch): the thumb (14–34px) lacked a
+  ≥44px grab target and the chrome kit, and neither Track nor Thumb set `touch-action`
+  (only the Wrapper did, and it's not inherited) so a touch-drag could pan the page.
+  Added: thumb chrome kit (`tap-highlight`/`touch-callout`/`user-select` + `onContextMenu`),
+  `touch-action: none` on Track + Thumb, and a `@media (pointer: coarse)` `::before`
+  ≥44px grab-expander (`--valet-slider-hit`, 24px under compact, logical
+  `inset:0;margin:auto` → RTL gate green). Tapping the track to jump still works. Meta
+  tap-target advice updated. No API change. Green: typecheck×4, lint, 1424 tests (2 new
+  mobile cases), build, RTL, mcp, check:examples, docs tsc. Stays `experimental` pending
+  Ben's visual pass (look + the touch grab target).
 - **Box — DONE (stable 2026-06-17 — both gates).** Ben's visual pass cleared it;
   the `centered`→`centerContent` meta fix shipped.
 - **Pre-existing repo debt (not from this work):** `eslint .` reports 51 prettier

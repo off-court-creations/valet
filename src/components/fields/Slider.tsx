@@ -30,6 +30,7 @@ import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { useFieldState } from '../../hooks/useControlledState';
+import { useCompact } from '../../system/compactContext';
 import { warnOnce } from '../../system/devErrors';
 import { computeKeyStep } from './sliderMath';
 import type { FieldBaseProps } from '../../types';
@@ -69,6 +70,10 @@ const Track = styled('div')<{ $h: string }>`
   background: #0003;
   border-radius: 9999px;
   overflow: hidden;
+  /* A touch-drag starting on the track must not pan the page (touch-action is
+     not inherited from <Wrapper>). */
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
 `;
 
 const Fill = styled('div')<{ $primary: string }>`
@@ -100,6 +105,28 @@ const Thumb = styled('button')<{
   align-items: center;
   justify-content: center;
   transition: box-shadow 0.15s;
+
+  /* Mobile chrome kit — no blue tap flash, no iOS callout/selection, and the
+     drag must not pan the page (touch-action is not inherited from <Wrapper>). */
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+
+  /* Coarse-pointer (touch) grab target — expand to >=44px (24px under compact)
+     WITHOUT changing the visual thumb; fine-pointer (desktop) is untouched.
+     Logical centering (inset:0; margin:auto) keeps the RTL gate green. */
+  @media (pointer: coarse) {
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      width: max(100%, var(--valet-slider-hit, 44px));
+      height: max(100%, var(--valet-slider-hit, 44px));
+    }
+  }
 
   &:focus-visible {
     box-shadow: 0 0 0 3px currentColor;
@@ -253,6 +280,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
     /* theme + geom tokens ----------------------------------- */
     const { theme } = useTheme();
     const map = createSizeMap();
+    const effectiveCompact = useCompact();
 
     let geom: SizeTokens;
 
@@ -582,7 +610,13 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
           $primary={theme.colors.primary}
           onKeyDown={onKeyDown}
           onPointerDown={onPointerDown}
-          style={{ top: trackCenter }}
+          onContextMenu={(e: React.MouseEvent) => e.preventDefault()}
+          style={
+            {
+              top: trackCenter,
+              '--valet-slider-hit': effectiveCompact ? '24px' : '44px',
+            } as React.CSSProperties
+          }
         >
           {showValue && <ValueBubble $font={geom.font}>{format(current)}</ValueBubble>}
         </Thumb>
