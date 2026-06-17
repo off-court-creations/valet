@@ -25,6 +25,8 @@ export type GLProgram = {
   update: (dt: number, t: number) => void;
   render: () => void;
   dispose: () => void;
+  /** Upload the absolute time `t` (seconds) — matches WebGLProgramLike.setTime. */
+  setTime?: (t: number) => void;
 };
 
 export function createLavaLampProgram(
@@ -1208,10 +1210,9 @@ export function createLavaLampProgram(
     gl.useProgram(null);
   };
 
-  // Monkey-patch a tiny helper property on the object for the wrapper
-  // Typescript: augmenting object with a symbol-less property is fine in JS usage.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (api as any)._setTime = setTime;
+  // Expose the just-in-time uTime setter via the typed optional `setTime` hook
+  // that WebGLCanvas calls each frame (no longer a stringly-typed backchannel).
+  api.setTime = setTime;
 
   // Apply static shader parameters once -------------------------------------
   const sp = LavaLampParams;

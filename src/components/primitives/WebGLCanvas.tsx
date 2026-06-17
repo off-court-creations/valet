@@ -2,7 +2,7 @@
 // src/components/primitives/WebGLCanvas.tsx  | valet
 // WebGL2 canvas wrapper: DPI-aware, resizes to parent, RAF loop
 // ─────────────────────────────────────────────────────────────
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { preset } from '../../css/stylePresets';
 import type { Presettable, Sx } from '../../types';
 
@@ -16,14 +16,26 @@ export type WebGLProgramLike = {
   render: () => void;
   /** Free any GL resources and event handlers. */
   dispose: () => void;
+  /**
+   * Optional: receive the absolute time `t` (seconds) each frame, in addition
+   * to `update(dt, t)`. Convenience for programs that upload a `uTime` uniform
+   * outside their physics step.
+   */
+  setTime?: (t: number) => void;
 };
 
 export interface WebGLCanvasProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style' | 'children'>,
     Presettable {
-  /** Create a program bound to the provided WebGL2 context and canvas. */
+  /**
+   * Create a program bound to the provided WebGL2 context and canvas. Called
+   * ONCE when the context is acquired; its identity is ref-latched, so an inline
+   * arrow does NOT rebuild the program on parent re-render. To force a rebuild,
+   * change the element `key`. Return `null` to signal a build failure (routes to
+   * `onError` / `fallback`).
+   */
   create: (gl: WebGL2RenderingContext, canvas: HTMLCanvasElement) => WebGLProgramLike | null;
-  /** WebGL context attributes. */
+  /** WebGL context attributes. Read ONCE at context creation (ref-latched). */
   contextAttributes?: WebGLContextAttributes;
   /** Clamp devicePixelRatio to avoid excessive fill-rate on hi-DPI screens. */
   dprMax?: number;
@@ -33,6 +45,13 @@ export interface WebGLCanvasProps
   clearColor?: readonly [number, number, number, number];
   /** If true, wrapper is absolutely positioned and fills its parent. */
   asBackground?: boolean;
+  /**
+   * Called if the WebGL2 context cannot be created (unsupported) or `create()`
+   * returns null. The canvas otherwise dead-ends blank with no signal.
+   */
+  onError?: (err: unknown) => void;
+  /** Rendered in place of the canvas when initialization fails (see `onError`). */
+  fallback?: React.ReactNode;
   /** Inline styles for the wrapper (supports CSS variables via Sx). */
   sx?: Sx;
   /** Optional className for the inner canvas element. */
@@ -57,7 +76,7 @@ const DEFAULT_CLEAR_COLOR: readonly [number, number, number, number] = [0, 0, 0,
  * - Creates a WebGL2 context with provided attributes.
  * - Resizes the canvas to its parent using DPR-aware physical pixels.
  * - Drives a supplied program via requestAnimationFrame.
- * - Disposes cleanly on unmount.
+ * - Disposes cleanly on unmount (including an explicit context release).
  */
 export const WebGLCanvas: React.FC<WebGLCanvasProps> = ({
   create,
@@ -66,6 +85,8 @@ export const WebGLCanvas: React.FC<WebGLCanvasProps> = ({
   timeScale = 1,
   clearColor = DEFAULT_CLEAR_COLOR,
   asBackground = false,
+  onError,
+  fallback,
   preset: p,
   sx,
   className,
@@ -75,15 +96,24 @@ export const WebGLCanvas: React.FC<WebGLCanvasProps> = ({
 }) => {
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [failed, setFailed] = useState(false);
 
-  // Keep latest timeScale without re-subscribing effect.
+  // Ref-latch the props the main effect must NOT re-subscribe on. `create` and
+  // `contextAttributes` are read ONCE at context creation; an inline arrow/object
+  // (a fresh identity every render) must not tear down + rebuild the GL pipeline
+  // — the same identity-stability treatment already applied to timeScale/clearColor.
+  const createRef = useRef(create);
+  const ctxAttrsRef = useRef(contextAttributes);
+  const onErrorRef = useRef(onError);
   const timeScaleRef = useRef(timeScale);
   useEffect(() => {
+    createRef.current = create;
+    ctxAttrsRef.current = contextAttributes;
+    onErrorRef.current = onError;
     timeScaleRef.current = timeScale;
-  }, [timeScale]);
+  });
 
-  // Keep latest clearColor without re-subscribing the main effect; the
-  // live context is held in a ref so colour changes apply in place.
+  // The live context is held in a ref so colour changes apply in place.
   const glRef = useRef<WebGL2RenderingContext | null>(null);
   const [clearR, clearG, clearB, clearA] = clearColor;
   const clearColorRef = useRef<readonly [number, number, number, number]>(clearColor);
@@ -93,16 +123,30 @@ export const WebGLCanvas: React.FC<WebGLCanvasProps> = ({
     const canvas = canvasRef.current;
     if (!wrap || !canvas) return;
 
-    const attrs = { ...DEFAULT_CTX_ATTRS, ...(contextAttributes ?? {}) };
+    const attrs = { ...DEFAULT_CTX_ATTRS, ...(ctxAttrsRef.current ?? {}) };
     const gl = canvas.getContext('webgl2', attrs);
-    if (!gl) return;
-    glRef.current = gl;
+    if (!gl) {
+      setFailed(true);
+      onErrorRef.current?.(new Error('WebGLCanvas: WebGL2 is not supported in this browser.'));
+      return;
+    }
 
     const [r, g, b, a] = clearColorRef.current;
     gl.clearColor(r, g, b, a);
 
-    const program = create(gl, canvas);
-    if (!program) return;
+    const program = createRef.current(gl, canvas);
+    if (!program) {
+      // Surface the failure instead of dead-ending blank. We deliberately do NOT
+      // loseContext() here (see the teardown note): getContext() on this canvas
+      // returns the SAME context, so force-losing it would poison a remount/retry.
+      setFailed(true);
+      onErrorRef.current?.(new Error('WebGLCanvas: create() returned null (program build failed).'));
+      return;
+    }
+    // Publish the context only after a successful program build, so a failed
+    // init never leaves glRef pointing at a live, undisposed context.
+    glRef.current = gl;
+    setFailed(false);
 
     const getDpr = () =>
       Math.min(typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1, dprMax);
@@ -131,6 +175,8 @@ export const WebGLCanvas: React.FC<WebGLCanvasProps> = ({
     const t0 = lastT;
 
     const loop = () => {
+      // Stop driving the program against a dead context (driver reset / GPU loss).
+      if (gl.isContextLost()) return;
       raf = requestAnimationFrame(loop);
       const now = performance.now();
       const scale = timeScaleRef.current;
@@ -138,19 +184,34 @@ export const WebGLCanvas: React.FC<WebGLCanvasProps> = ({
       lastT = now;
       const t = ((now - t0) / 1000) * scale;
       program.update(dt, t);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (program as any)._setTime?.(t);
+      program.setTime?.(t);
       program.render();
     };
+
+    // Minimal context-loss handling: cancel the default (which would otherwise
+    // make the context unrecoverable) and stop the loop. Full rebuild-on-restore
+    // is deferred — the loop's isContextLost guard already prevents dead draws.
+    const onContextLost = (e: Event) => {
+      e.preventDefault();
+      cancelAnimationFrame(raf);
+    };
+    canvas.addEventListener('webglcontextlost', onContextLost);
     raf = requestAnimationFrame(loop);
 
     return () => {
       cancelAnimationFrame(raf);
+      canvas.removeEventListener('webglcontextlost', onContextLost);
       ro.disconnect();
       program.dispose();
+      // NOTE: intentionally NO WEBGL_lose_context.loseContext() here. React reuses
+      // the same <canvas> DOM node across StrictMode's dev double-invoke (and any
+      // effect re-run), and getContext() returns the SAME context — force-losing
+      // it poisons the next mount (shaders then compile against a dead context).
+      // program.dispose() frees the program-owned GPU resources; the context
+      // itself is reclaimed when the <canvas> is removed and GC'd.
       glRef.current = null;
     };
-  }, [create, dprMax, contextAttributes]);
+  }, [dprMax]);
 
   /* Apply clearColor changes in place (component scalars as deps), so a
      fresh array identity never rebuilds the GL program. Declared after
@@ -177,11 +238,15 @@ export const WebGLCanvas: React.FC<WebGLCanvasProps> = ({
       {...divProps}
       data-valet-component='WebGLCanvas'
     >
-      <canvas
-        ref={canvasRef}
-        className={canvasClassName}
-        style={{ display: 'block', width: '100%', height: '100%', ...canvasStyle }}
-      />
+      {failed && fallback != null ? (
+        fallback
+      ) : (
+        <canvas
+          ref={canvasRef}
+          className={canvasClassName}
+          style={{ display: 'block', width: '100%', height: '100%', ...canvasStyle }}
+        />
+      )}
     </div>
   );
 };
