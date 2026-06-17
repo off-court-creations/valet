@@ -93,6 +93,7 @@ export const Divider: React.FC<DividerProps> = ({
       $pad={pad}
       $orient={orientation}
       $len={len}
+      data-valet-component='Divider'
       className={[presetClass, className].filter(Boolean).join(' ')}
       style={sx}
     >

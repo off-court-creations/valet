@@ -83,4 +83,9 @@ describe('Divider (jsdom)', () => {
     const el = line(render(<Divider data-testid='sep' />));
     expect(el.getAttribute('data-testid')).toBe('sep');
   });
+
+  it('carries the data-valet-component marker on the root wrapper (AI-proxy hook)', () => {
+    const c = render(<Divider />);
+    expect(c.querySelector('[data-valet-component="Divider"]')).not.toBeNull();
+  });
 });
