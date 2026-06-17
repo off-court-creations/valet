@@ -186,7 +186,7 @@ export default function MainPage() {
                 >
                   <Button
                     size='lg'
-                    variant='outlined'
+                    variant='filled'
                     onClick={go('/quickstart')}
                   >
                     <Icon icon='mdi:flash-outline' />
@@ -194,7 +194,7 @@ export default function MainPage() {
                   </Button>
                   <Button
                     size='lg'
-                    variant='outlined'
+                    variant='filled'
                     onClick={go('/component-status')}
                   >
                     <Icon icon='mdi:view-grid-outline' />
@@ -202,7 +202,7 @@ export default function MainPage() {
                   </Button>
                   <Button
                     size='lg'
-                    variant='outlined'
+                    variant='filled'
                     onClick={go('/mcp')}
                   >
                     <Icon icon='mdi:database-search' />
