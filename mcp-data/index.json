@@ -270,7 +270,7 @@
     "category": "primitives",
     "summary": "DPI-aware WebGL2 canvas that resizes to its parent and runs a render callback on a requestAnimationFrame loop; use it for custom GPU graphics, shaders, and visualizations rather than 2D drawing.",
     "slug": "components/primitives/webglcanvas",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Chip",
