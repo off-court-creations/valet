@@ -11,7 +11,7 @@
     "category": "fields",
     "summary": "Accessible boolean checkbox for a single on/off choice, with an optional `label` + `helperText` and an `indeterminate` (mixed) state; controlled via `checked` + `onValueChange`, or auto-bound to a `FormControl` with `name` (keep `bindForm` to opt a form-bound box out of writing the store). A real hidden native input backs it for forms/AT.",
     "slug": "components/fields/checkbox",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "DateSelector",

@@ -242,7 +242,8 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   globals at render). Metas clean — no fixes needed. Both left `experimental` pending
   Ben's visual pass. **Next:** Checkbox (before Select/Table) · Switch · Slider ·
   TextField · Radio+RadioGroup · Pagination.
-- **Tier 4 Checkbox — REDONE + AGENT-VERIFIED, awaiting Ben's visual pass (2026-06-17).**
+- **Tier 4 Checkbox — REDONE + DONE (stable 2026-06-17 — both gates).** Ben's visual
+  pass: "seems great." Promoted Checkbox.
   Ben: "checkbox needs to be redone — inconsistent colors, mobile, sizing." Ran a
   12-agent redo workflow (diagnose → 3 specs red-teamed → 2 judges → one spec) and
   implemented it; full record in
