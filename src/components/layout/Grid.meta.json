@@ -1,44 +1,43 @@
 {
   "name": "Grid",
-  "summary": "CSS-grid container with `columns` and `gap` for two-dimensional layouts; use it for galleries, dashboards, and card grids — prefer `Stack` when you only need one-directional flow.",
+  "summary": "Two-dimensional CSS-grid container. Lay out equal columns (`columns`, responsive), or an auto-fit/fill card grid with no breakpoints (`minColWidth`), with token-aware `gap`/`gapX`/`gapY`, `align`/`justifyItems`, and `equalize` to fill children to their cell. Responsive props compile to CSS @media (no <Surface>); use `GridItem` for per-cell `span`/`rowSpan`/`colStart`. Prefer `Stack` for one-directional flow and `Table` for data.",
   "status": "experimental",
   "aliases": ["grid"],
   "docs": {
     "bestPractices": [
-      "Use Grid for two‑dimensional layouts like dashboards and galleries; keep rows and columns responsive.",
-      "Constrain item overflow and prefer consistent gaps; avoid nested scroll regions unless intentional.",
-      "Treat tabular data with `Table`; reserve Grid for cards and visual groups.",
-      "Use tokens and presets for spacing and breakpoints; avoid hard‑coding pixel values.",
-      "Keep density readable: don’t cram too many items per row on narrow screens.",
-      "Use `Stack` for simple one‑dimensional layouts; Grid for when both axes matter.",
-      "Mind a11y ordering: visual reflow should not break logical reading order.",
-      "Test at common breakpoints to ensure content doesn’t clip or overlap."
+      "Reach for `minColWidth` for fluid card grids: `minColWidth={240}` lays out as many ≥240px columns as fit with zero breakpoints declared — beats both MUI's per-child size object and Tailwind's arbitrary-value grid-cols string. `autoFlow='fill'` (default) keeps a stable column count; `'fit'` stretches a partial last row.",
+      "Use responsive `columns` (`{ xs: 1, sm: 2, lg: 4 }`) when you need explicit per-breakpoint counts; it compiles to CSS @media in the styled rule, so it is correct on the server's first paint and needs no <Surface>.",
+      "Keep `equalize` on (default) for uniform cards — children fill their cell in both axes via CSS vars, so you don't need `fullWidth` on each card; set `equalize={false}` to keep intrinsic sizes.",
+      "Place items with `GridItem` (`span`/`rowSpan`/`colStart`, each responsive) on a `columns={12}`-style track; bare children remain valid 1×1 cells.",
+      "Keep spacing tokenized (numeric `gap`/`pad`) so a `compact`/`density` ancestor rescales the whole grid; reach for `gapX`/`gapY` only when the axes genuinely differ.",
+      "Mind a11y ordering: visual reflow (responsive columns, GridItem placement) should not break the logical reading order.",
+      "Use `Stack` for one-dimensional flow and `Table` for tabular data; reserve Grid for cards, galleries, and dashboards."
     ]
   },
   "examples": [
     {
-      "id": "grid-2col",
-      "title": "Two columns",
+      "id": "grid-columns",
+      "title": "Equal columns",
       "lang": "tsx",
-      "code": "<Grid columns={2} gap={1}>\n  <Box fullWidth centerContent preset='glassHolder'><Typography>A</Typography></Box>\n  <Box fullWidth centerContent preset='glassHolder'><Typography>B</Typography></Box>\n</Grid>"
+      "code": "<Grid columns={4} gap={1}>\n  {Array.from({ length: 8 }, (_, i) => (\n    <Box key={i} fullWidth centerContent>{i + 1}</Box>\n  ))}\n</Grid>"
     },
     {
-      "id": "grid-4col",
-      "title": "Four columns",
+      "id": "grid-minColWidth",
+      "title": "Auto-fit card grid (no breakpoints)",
       "lang": "tsx",
-      "code": "<Grid columns={4} gap={1}>\n  {Array.from({ length: 8 }, (_, i) => i + 1).map(n => (\n    <Box key={n} fullWidth centerContent preset='fancyHolder'><Typography>{n}</Typography></Box>\n  ))}\n</Grid>"
+      "code": "<Grid minColWidth={240} gap={2}>\n  {Array.from({ length: 6 }, (_, i) => (\n    <Panel key={i}>Card {i + 1}</Panel>\n  ))}\n</Grid>"
     },
     {
-      "id": "grid-adaptive",
-      "title": "Adaptive (portrait collapses)",
+      "id": "grid-responsive",
+      "title": "Responsive columns (compiles to @media)",
       "lang": "tsx",
-      "code": "<Grid columns={4} gap={1} adaptive>\n  {Array.from({ length: 8 }, (_, i) => i + 1).map(n => (\n    <Box key={n} fullWidth centerContent preset='gradientHolder'><Typography>{n}</Typography></Box>\n  ))}\n</Grid>"
+      "code": "<Grid columns={{ xs: 1, sm: 2, lg: 4 }} gap={2}>\n  {Array.from({ length: 8 }, (_, i) => (\n    <Box key={i} fullWidth centerContent>{i + 1}</Box>\n  ))}\n</Grid>"
     },
     {
-      "id": "grid-nested",
-      "title": "Nested grids",
+      "id": "grid-item",
+      "title": "Per-item placement with GridItem",
       "lang": "tsx",
-      "code": "<Grid columns={2} gap={1}>\n  <Grid columns={2} gap={1}>\n    <Box fullWidth centerContent><Typography>A1</Typography></Box>\n    <Box fullWidth centerContent><Typography>A2</Typography></Box>\n    <Box fullWidth centerContent><Typography>A3</Typography></Box>\n    <Box fullWidth centerContent><Typography>A4</Typography></Box>\n  </Grid>\n  <Grid columns={3} gap={0.5}>\n    {['B1','B2','B3','B4','B5','B6'].map(n => (\n      <Box key={n} fullWidth centerContent><Typography>{n}</Typography></Box>\n    ))}\n  </Grid>\n</Grid>"
+      "code": "<Grid columns={12} gap={1}>\n  <GridItem span={{ xs: 12, md: 8 }}>\n    <Box fullWidth centerContent>main</Box>\n  </GridItem>\n  <GridItem span={{ xs: 12, md: 4 }}>\n    <Box fullWidth centerContent>aside</Box>\n  </GridItem>\n</Grid>"
     }
   ]
 }

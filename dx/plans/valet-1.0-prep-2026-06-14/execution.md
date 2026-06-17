@@ -160,9 +160,25 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
     SSR render+import, engine smoke, mcp gates (62 components, coverage floors held
     by the 5 sugar metas), docs tsc. Stack demo page extended to exercise every new
     feature for the visual pass. **Stack stays `experimental` pending Ben's visual pass.**
-  - **Next:** Ben's visual pass on the Stack demo (`/stack-demo`) → promote Stack;
-    then **W2 — Grid rewrite** (real `display:grid`, `minColWidth` auto-fit,
-    responsive `columns`, `GridItem`, Surface-decouple).
+  - **W2 — Grid rewrite + GridItem: AGENT-VERIFIED, awaiting Ben's visual pass.**
+    Real `display:grid` (was equal-columns-only). New: `minColWidth` auto-fit/fill
+    (via the `--valet-grid-min` inline var, immortal-rule-safe; `autoFlow` default
+    **`fill`** per Ben), responsive `columns`/`gap`/`gapX`/`gapY`/`pad`/`align`/
+    `justifyItems` via `@media`, `equalize` (renamed from `normalizeRowHeights`,
+    default true, broadened via `--valet-cell-stretch`), polymorphic `as`, and
+    `GridItem` (`span`/`rowSpan`/`colStart`, responsive). **Removed `adaptive`** (it
+    keyed off the Surface aspect-ratio — wrong signal) and **`useSurface`**: Grid is
+    now Surface-decoupled and unit-testable in isolation. Single-column relax kept
+    for an explicit static `columns={1}`. Codemodded 14 `<Grid adaptive>` docs sites
+    → `columns={{ xs: 1, md: N }}`; Grid demo rebuilt (minColWidth/responsive/
+    GridItem + a minColWidth/equalize/autoFit playground). Green: typecheck×4, lint
+    (changed files), **1413 tests** (18 new Grid/GridItem), build, SSR render+import,
+    engine smoke, check:examples (101), mcp gates (63 components + GridItem meta),
+    docs tsc. **Grid + GridItem stay `experimental` pending Ben's visual pass on
+    `/grid-demo`.** Panel keeps its own `normalizeRowHeights` (separate stable
+    component — untouched).
+  - **Next:** Ben's visual pass on `/grid-demo` → promote Grid + GridItem. Then the
+    Tier 2 tail (LoadingBackdrop, List) and onward per the verification order.
 - **Box — DONE (stable 2026-06-17 — both gates).** Ben's visual pass cleared it;
   the `centered`→`centerContent` meta fix shipped.
 - **Pre-existing repo debt (not from this work):** `eslint .` reports 51 prettier

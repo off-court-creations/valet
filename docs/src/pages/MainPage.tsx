@@ -220,10 +220,7 @@ export default function MainPage() {
         fullWidth
         sx={{ backgroundColor: theme.colors['background'] }}
       >
-        <Grid
-          columns={3}
-          adaptive
-        >
+        <Grid columns={{ xs: 1, md: 3 }}>
           {[
             {
               icon: 'mdi:rocket-launch',
@@ -293,8 +290,7 @@ export default function MainPage() {
       {/* Experience: Live demos + Theme playground */}
       <Box fullWidth>
         <Grid
-          columns={2}
-          adaptive
+          columns={{ xs: 1, md: 2 }}
           gap={2}
         >
           {/* Live demos sub-area */}

@@ -82,10 +82,7 @@ export default function ComplicatedDashboard() {
           Mixed content assembled with default spacing — no custom CSS.
         </Typography>
 
-        <Grid
-          columns={3}
-          adaptive
-        >
+        <Grid columns={{ xs: 1, md: 3 }}>
           <Panel variant='outlined'>
             <Typography
               variant='h5'

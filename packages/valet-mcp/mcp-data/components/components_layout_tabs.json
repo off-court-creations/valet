@@ -85,16 +85,16 @@
       "description": "Container padding as units or CSS length."
     },
     {
-      "name": "gap",
-      "type": "Space | undefined",
-      "required": false,
-      "description": "Inter-child spacing as units or CSS length."
-    },
-    {
       "name": "density",
       "type": "\"tight\" | \"standard\" | \"comfortable\" | undefined",
       "required": false,
       "description": "Density override for the spacing scale; defaults from nearest Surface."
+    },
+    {
+      "name": "gap",
+      "type": "Space | undefined",
+      "required": false,
+      "description": "Inter-child spacing as units or CSS length."
     }
   ],
   "domPassthrough": {

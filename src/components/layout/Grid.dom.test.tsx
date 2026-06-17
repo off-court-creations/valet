@@ -1,141 +1,222 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/layout/Grid.dom.test.tsx | valet
-// Grid — the column count drives grid-template-columns, `adaptive`
-// collapses to a single column in portrait, and `density` rides on the
-// --valet-space inline var. The track count lives in the injected CSS
-// rule (styled prop), so we read it from the global stylesheet.
+// Grid (W2 rewrite): real display:grid. columns drives the track count,
+// minColWidth switches to auto-fit/fill (via the --valet-grid-min var),
+// responsive columns compile to @media, equalize stretches children,
+// density rides --valet-space, and single-column grids relax overflow.
+// GridItem carries per-cell placement. NO <Surface> needed (decoupled).
 // ─────────────────────────────────────────────────────────────
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import React, { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import { Grid } from './Grid';
-import { SurfaceCtx, createSurfaceStore, type SurfaceStore } from '../../system/surfaceStore';
+import { Grid, GridItem } from './Grid';
 import * as sheet from '../../css/sheet';
 
-/* react-dom warns unless act usage is announced ----------------------- */
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
-/* jsdom ships no ResizeObserver; createSurfaceStore constructs one ----- */
-class ResizeObserverStub {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
-}
-
-/* Helpers -------------------------------------------------------------- */
 const roots: Array<{ root: Root; container: HTMLDivElement }> = [];
-
-function render(node: React.ReactNode, store: SurfaceStore = createSurfaceStore()) {
+/** Rendered with NO SurfaceCtx — the rewrite removed Grid's useSurface. */
+function render(node: React.ReactNode) {
   const container = document.createElement('div');
   document.body.appendChild(container);
   const root = createRoot(container);
   roots.push({ root, container });
   act(() => {
-    root.render(
-      <React.StrictMode>
-        <SurfaceCtx.Provider value={store}>{node}</SurfaceCtx.Provider>
-      </React.StrictMode>,
-    );
+    root.render(<React.StrictMode>{node}</React.StrictMode>);
   });
   return container;
 }
 
-const gridEl = (c: HTMLElement) => c.querySelector('[data-valet-component="Grid"]') as HTMLElement;
+const elFor = (c: HTMLElement, name = 'Grid') =>
+  c.querySelector(`[data-valet-component="${name}"]`) as HTMLElement;
 
-/** The CSS rule text for the element's first (styled) class. */
 const ruleFor = (el: Element) => {
   const cls = el.className.split(' ').find(Boolean) ?? '';
   const rules = Array.from(sheet.getGlobalSheet()?.cssRules ?? [], (r) => r.cssText);
   return rules.find((t) => t.startsWith(`.${cls}`)) ?? '';
 };
 
-beforeEach(() => {
-  vi.stubGlobal('ResizeObserver', ResizeObserverStub);
-});
-
 afterEach(() => {
   for (const { root, container } of roots.splice(0)) {
     act(() => root.unmount());
     container.remove();
   }
-  vi.unstubAllGlobals();
 });
 
-/* Suite ----------------------------------------------------------------- */
-describe('Grid (jsdom)', () => {
-  it('defaults to two columns', () => {
-    const el = gridEl(render(<Grid />));
-    expect(ruleFor(el)).toContain('repeat(2, minmax(0, 1fr))');
+/*───────────────────────────────────────────────────────────*/
+describe('Grid — columns', () => {
+  it('defaults to two equal columns and never throws without a Surface', () => {
+    expect(ruleFor(elFor(render(<Grid />)))).toContain('repeat(2, minmax(0, 1fr))');
   });
 
-  it('applies the columns prop to grid-template-columns', () => {
-    const el = gridEl(render(<Grid columns={4} />));
-    expect(ruleFor(el)).toContain('repeat(4, minmax(0, 1fr))');
+  it('applies the columns prop', () => {
+    expect(ruleFor(elFor(render(<Grid columns={4} />)))).toContain('repeat(4, minmax(0, 1fr))');
   });
 
-  it('defaults the gutter to 2 spacing units (~16px) — role-aware card-grid default (1.0)', () => {
-    // "Beautiful by default": a Grid lays out cards/regions, so its default gap
-    // is 2× the spacing unit (was 1×). Pinned so the default can't silently drift.
-    const el = gridEl(render(<Grid />));
-    expect(ruleFor(el)).toMatch(/gap:\s*calc\(var\(--valet-space[^)]*\)\s*\*\s*2\)/);
+  it('defaults the gutter to 2 spacing units (card-grid default)', () => {
+    expect(ruleFor(elFor(render(<Grid />)))).toMatch(
+      /gap:\s*calc\(var\(--valet-space[^)]*\)\s*\*\s*2\)/,
+    );
   });
 
-  it('an explicit gap overrides the default (dense opt-down)', () => {
-    const el = gridEl(render(<Grid gap={1} />));
-    expect(ruleFor(el)).toMatch(/gap:\s*calc\(var\(--valet-space[^)]*\)\s*\*\s*1\)/);
+  it('responsive columns compile to @media (no Surface)', () => {
+    const rule = ruleFor(elFor(render(<Grid columns={{ xs: 1, md: 3 }} />)));
+    expect(rule).toContain('repeat(1, minmax(0, 1fr))');
+    expect(rule).toMatch(/min-width:\s*960px/);
+    expect(rule).toContain('repeat(3, minmax(0, 1fr))');
+  });
+});
+
+describe('Grid — minColWidth auto-fit/fill', () => {
+  it('switches to repeat(auto-fill, …) and sets --valet-grid-min (default fill)', () => {
+    const el = elFor(render(<Grid minColWidth={200} />));
+    expect(ruleFor(el)).toContain('repeat(auto-fill');
+    expect(ruleFor(el)).toContain('minmax(min(var(--valet-grid-min');
+    expect(el.style.getPropertyValue('--valet-grid-min')).toBe('200px');
   });
 
-  it('normalizes child WIDTHS in multi-column mode — equal-width cards by default (no per-card fullWidth)', () => {
-    // Grid drives Panel fill via --valet-panel-width so a grid of cards is
-    // uniform width without each card opting into fullWidth.
-    const el = gridEl(render(<Grid columns={3} />));
-    expect(ruleFor(el)).toContain('--valet-panel-width: 100%');
-    expect(ruleFor(el)).toContain('--valet-panel-align-self: stretch');
+  it('autoFlow=fit uses repeat(auto-fit, …)', () => {
+    expect(
+      ruleFor(
+        elFor(
+          render(
+            <Grid
+              minColWidth={200}
+              autoFlow='fit'
+            />,
+          ),
+        ),
+      ),
+    ).toContain('repeat(auto-fit');
   });
 
-  it('renders its children', () => {
+  it('accepts a string minColWidth verbatim', () => {
+    expect(
+      (elFor(render(<Grid minColWidth='16rem' />)) as HTMLElement).style.getPropertyValue(
+        '--valet-grid-min',
+      ),
+    ).toBe('16rem');
+  });
+
+  it('minColWidth overrides columns (no fixed-track template)', () => {
+    expect(
+      ruleFor(
+        elFor(
+          render(
+            <Grid
+              columns={5}
+              minColWidth={200}
+            />,
+          ),
+        ),
+      ),
+    ).not.toContain('repeat(5,');
+  });
+});
+
+describe('Grid — alignment / gap / equalize', () => {
+  it('maps align / justifyItems (grid box-alignment keywords)', () => {
+    const rule = ruleFor(
+      elFor(
+        render(
+          <Grid
+            align='center'
+            justifyItems='start'
+          />,
+        ),
+      ),
+    );
+    expect(rule).toContain('align-items: center');
+    expect(rule).toContain('justify-items: start');
+  });
+
+  it('defaults to stretch on both axes', () => {
+    const rule = ruleFor(elFor(render(<Grid />)));
+    expect(rule).toContain('align-items: stretch');
+    expect(rule).toContain('justify-items: stretch');
+  });
+
+  it('per-axis gapX / gapY', () => {
+    const rule = ruleFor(
+      elFor(
+        render(
+          <Grid
+            gapX={2}
+            gapY={1}
+          />,
+        ),
+      ),
+    );
+    expect(rule).toContain('column-gap');
+    expect(rule).toContain('row-gap');
+  });
+
+  it('equalize (default true) asks children to fill their cell; off opts out', () => {
+    expect(ruleFor(elFor(render(<Grid />)))).toContain('--valet-panel-width: 100%');
+    expect(ruleFor(elFor(render(<Grid equalize={false} />)))).not.toContain(
+      '--valet-panel-width: 100%',
+    );
+  });
+});
+
+describe('Grid — single-column relax + density + polymorphic', () => {
+  it('relaxes child overflow only for an explicit single column', () => {
+    expect(ruleFor(elFor(render(<Grid columns={1} />)))).toContain('--valet-stack-ov-y: visible');
+    expect(ruleFor(elFor(render(<Grid columns={2} />)))).not.toContain(
+      '--valet-stack-ov-y: visible',
+    );
+  });
+
+  it('density sets the --valet-space inline custom property', () => {
+    expect(
+      (elFor(render(<Grid density='comfortable' />)) as HTMLElement).style.getPropertyValue(
+        '--valet-space',
+      ),
+    ).toContain('* 1)');
+  });
+
+  it('renders its children and supports polymorphic as', () => {
     const c = render(
-      <Grid columns={3}>
+      <Grid
+        as='section'
+        columns={3}
+      >
         <span data-cell>a</span>
         <span data-cell>b</span>
       </Grid>,
     );
+    expect(c.querySelector('section[data-valet-component="Grid"]')).not.toBeNull();
     expect(c.querySelectorAll('[data-cell]')).toHaveLength(2);
   });
+});
 
-  it('adaptive: collapses to a single column when the surface is portrait', () => {
-    const store = createSurfaceStore();
-    // Portrait: height > width.
-    act(() => store.setState({ width: 400, height: 900 }));
-    const el = gridEl(
-      render(
-        <Grid
-          columns={3}
-          adaptive
-        />,
-        store,
-      ),
+/*───────────────────────────────────────────────────────────*/
+describe('GridItem', () => {
+  it('maps span / rowSpan / colStart', () => {
+    expect(ruleFor(elFor(render(<GridItem span={2} />), 'GridItem'))).toContain(
+      'grid-column: span 2',
     );
-    expect(ruleFor(el)).toContain('repeat(1, minmax(0, 1fr))');
+    expect(ruleFor(elFor(render(<GridItem rowSpan={3} />), 'GridItem'))).toContain(
+      'grid-row: span 3',
+    );
+    expect(ruleFor(elFor(render(<GridItem colStart={2} />), 'GridItem'))).toContain(
+      'grid-column-start: 2',
+    );
   });
 
-  it('adaptive: keeps the requested columns in landscape', () => {
-    const store = createSurfaceStore();
-    act(() => store.setState({ width: 900, height: 400 }));
-    const el = gridEl(
-      render(
-        <Grid
-          columns={3}
-          adaptive
-        />,
-        store,
-      ),
-    );
-    expect(ruleFor(el)).toContain('repeat(3, minmax(0, 1fr))');
+  it('responsive span compiles to @media', () => {
+    const rule = ruleFor(elFor(render(<GridItem span={{ xs: 12, md: 8 }} />), 'GridItem'));
+    expect(rule).toContain('grid-column: span 12');
+    expect(rule).toMatch(/min-width:\s*960px/);
+    expect(rule).toContain('grid-column: span 8');
   });
 
-  it('density sets the --valet-space inline custom property', () => {
-    const el = gridEl(render(<Grid density='comfortable' />));
-    expect(el.style.getPropertyValue('--valet-space')).toContain('* 1)'); // comfortable (1.0)
+  it('a bare GridItem renders its child (valid 1x1 cell)', () => {
+    const c = render(
+      <GridItem>
+        <span data-x>x</span>
+      </GridItem>,
+    );
+    expect(c.querySelector('[data-valet-component="GridItem"] [data-x]')).not.toBeNull();
   });
 });

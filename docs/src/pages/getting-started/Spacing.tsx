@@ -90,9 +90,8 @@ export default function SpacingPage() {
           </Typography>
           <Divider thickness={2} />
           <Grid
-            columns={2}
+            columns={{ xs: 1, md: 2 }}
             gap={1}
-            adaptive
           >
             <Panel pad={1}>
               <Typography

@@ -132,6 +132,15 @@
   "grid": [
     "Grid"
   ],
+  "grid-item": [
+    "GridItem"
+  ],
+  "griditem": [
+    "GridItem"
+  ],
+  "cell": [
+    "GridItem"
+  ],
   "list": [
     "List"
   ],

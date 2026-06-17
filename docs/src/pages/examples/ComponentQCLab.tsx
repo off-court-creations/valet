@@ -110,18 +110,12 @@ export default function ComponentQCLab() {
         </Typography>
 
         {/* Top row: Hero slot spans full width */}
-        <Grid
-          columns={1}
-          adaptive
-        >
+        <Grid columns={1}>
           <HeroSlot />
         </Grid>
 
         {/* Surrounding layout – intentionally varied to exercise spacing + density */}
-        <Grid
-          columns={3}
-          adaptive
-        >
+        <Grid columns={{ xs: 1, md: 3 }}>
           <Panel>
             <Tabs>
               <Tabs.Tab>Gallery</Tabs.Tab>

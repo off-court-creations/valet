@@ -1,0 +1,15 @@
+{
+  "name": "GridItem",
+  "summary": "Per-cell placement inside a `Grid` — `span` (column span), `rowSpan`, and `colStart`, each responsive (a breakpoint map compiles to CSS @media). Wrap a child in GridItem to make it occupy multiple tracks; bare Grid children remain valid 1×1 cells. Polymorphic via `as`.",
+  "status": "experimental",
+  "aliases": ["grid-item", "griditem", "cell"],
+  "docs": {
+    "docsUrl": "/grid-demo",
+    "bestPractices": [
+      "Use GridItem on an explicit track (e.g. `columns={12}`) for editor/preview or content/sidebar splits; make `span` responsive (`{ xs: 12, md: 8 }`) so it stacks on narrow screens.",
+      "Only wrap the children that need to span; leave 1×1 children bare — they place themselves.",
+      "`span`/`rowSpan` are spans (counts), `colStart` is a 1-based line index; combine `colStart` + `span` for precise placement.",
+      "GridItem is transparent to spacing — `gap`, `compact`, and `density` come from the parent Grid."
+    ]
+  }
+}

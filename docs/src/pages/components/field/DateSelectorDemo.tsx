@@ -28,10 +28,7 @@ export default function DateSelectorDemoPage() {
       <Typography>commit: {selCommit}</Typography>
 
       <Typography variant='h3'>2. Custom width</Typography>
-      <Grid
-        columns={3}
-        adaptive
-      >
+      <Grid columns={{ xs: 1, md: 3 }}>
         <DateSelector
           value={selected}
           onValueChange={(v) => setSelected(v as string)}

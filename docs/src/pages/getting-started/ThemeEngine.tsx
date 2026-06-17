@@ -255,9 +255,8 @@ useInitialTheme(
           </Typography>
           <Divider thickness={2} />
           <Grid
-            columns={3}
+            columns={{ xs: 1, md: 3 }}
             gap={1}
-            adaptive
           >
             <Swatch
               title='Text on BackgroundAlt'
@@ -296,9 +295,8 @@ useInitialTheme(
           </Grid>
 
           <Grid
-            columns={4}
+            columns={{ xs: 1, md: 4 }}
             gap={1}
-            adaptive
           >
             {/* Accent colors as buttons */}
             <ButtonSwatch
@@ -345,9 +343,8 @@ useInitialTheme(
           </Typography>
           <Divider thickness={2} />
           <Grid
-            columns={2}
+            columns={{ xs: 1, md: 2 }}
             gap={1}
-            adaptive
           >
             <Panel
               pad={1}
@@ -513,9 +510,8 @@ useInitialTheme(
           </Typography>
           <Divider pad={0.5} />
           <Grid
-            columns={2}
+            columns={{ xs: 1, md: 2 }}
             gap={1}
-            adaptive
           >
             <Panel pad={1}>
               <Typography

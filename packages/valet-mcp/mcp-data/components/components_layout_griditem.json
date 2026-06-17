@@ -1,0 +1,89 @@
+{
+  "name": "GridItem",
+  "category": "layout",
+  "slug": "components/layout/griditem",
+  "summary": "Per-cell placement inside a `Grid` — `span` (column span), `rowSpan`, and `colStart`, each responsive (a breakpoint map compiles to CSS @media). Wrap a child in GridItem to make it occupy multiple tracks; bare Grid children remain valid 1×1 cells. Polymorphic via `as`.",
+  "status": "experimental",
+  "aliases": [
+    "grid-item",
+    "griditem",
+    "cell"
+  ],
+  "props": [
+    {
+      "name": "span",
+      "type": "Responsive<number>",
+      "required": false,
+      "description": "Column span — `grid-column: span N`. Responsive."
+    },
+    {
+      "name": "rowSpan",
+      "type": "Responsive<number>",
+      "required": false,
+      "description": "Row span — `grid-row: span N`. Responsive."
+    },
+    {
+      "name": "colStart",
+      "type": "Responsive<number>",
+      "required": false,
+      "description": "1-based column line to start at — `grid-column-start`. Responsive."
+    },
+    {
+      "name": "sx",
+      "type": "Sx",
+      "required": false,
+      "description": "Inline styles (with CSS var support)."
+    },
+    {
+      "name": "data-valet-component",
+      "type": "string",
+      "required": false,
+      "description": "Override the machine-readable component marker."
+    },
+    {
+      "name": "preset",
+      "type": "string | string[] | undefined",
+      "required": false,
+      "description": "One or many style-preset names registered via `definePreset()`"
+    },
+    {
+      "name": "as",
+      "type": "React.ElementType",
+      "required": false,
+      "description": "Polymorphic element override (renders this element/component instead of the default).",
+      "default": "'div'"
+    }
+  ],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": []
+  },
+  "cssVars": [
+    "--valet-grid-min",
+    "--valet-panel-width",
+    "--valet-panel-align-self",
+    "--valet-cell-stretch",
+    "--valet-panel-ov-y",
+    "--valet-panel-max-h",
+    "--valet-stack-ov-y",
+    "--valet-stack-max-h",
+    "--valet-box-max-h",
+    "--valet-space"
+  ],
+  "cssPresets": [],
+  "events": [],
+  "slots": [],
+  "bestPractices": [
+    "Use GridItem on an explicit track (e.g. `columns={12}`) for editor/preview or content/sidebar splits; make `span` responsive (`{ xs: 12, md: 8 }`) so it stacks on narrow screens.",
+    "Only wrap the children that need to span; leave 1×1 children bare — they place themselves.",
+    "`span`/`rowSpan` are spans (counts), `colStart` is a 1-based line index; combine `colStart` + `span` for precise placement.",
+    "GridItem is transparent to spacing — `gap`, `compact`, and `density` come from the parent Grid."
+  ],
+  "examples": [],
+  "docsUrl": "/grid-demo",
+  "sourceFiles": [
+    "src/components/layout/Grid.tsx"
+  ],
+  "version": "0.36.0",
+  "schemaVersion": "1.7"
+}

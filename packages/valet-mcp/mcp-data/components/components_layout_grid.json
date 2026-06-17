@@ -2,7 +2,7 @@
   "name": "Grid",
   "category": "layout",
   "slug": "components/layout/grid",
-  "summary": "CSS-grid container with `columns` and `gap` for two-dimensional layouts; use it for galleries, dashboards, and card grids — prefer `Stack` when you only need one-directional flow.",
+  "summary": "Two-dimensional CSS-grid container. Lay out equal columns (`columns`, responsive), or an auto-fit/fill card grid with no breakpoints (`minColWidth`), with token-aware `gap`/`gapX`/`gapY`, `align`/`justifyItems`, and `equalize` to fill children to their cell. Responsive props compile to CSS @media (no <Surface>); use `GridItem` for per-cell `span`/`rowSpan`/`colStart`. Prefer `Stack` for one-directional flow and `Table` for data.",
   "status": "experimental",
   "aliases": [
     "grid"
@@ -10,46 +10,79 @@
   "props": [
     {
       "name": "columns",
-      "type": "number",
+      "type": "Responsive<number>",
       "required": false,
-      "default": "2"
+      "description": "Equal-width column count → `repeat(N, minmax(0,1fr))`. Default 2. Responsive.\nIgnored when `minColWidth` is set."
     },
     {
-      "name": "adaptive",
-      "type": "boolean",
+      "name": "gap",
+      "type": "Responsive<Space>",
       "required": false,
-      "description": "Auto switch to 1 column in portrait",
-      "default": "false"
+      "description": "Inter-cell gap as units or CSS length. Default 2 units (card-grid gutter). Responsive."
     },
     {
-      "name": "density",
-      "type": "'tight' | 'standard' | 'comfortable'",
+      "name": "gapX",
+      "type": "Responsive<Space>",
       "required": false,
-      "description": "Density override; an independent spacing scale (never zeros)",
+      "description": "Column-axis gap; overrides `gap` horizontally. Responsive."
+    },
+    {
+      "name": "gapY",
+      "type": "Responsive<Space>",
+      "required": false,
+      "description": "Row-axis gap; overrides `gap` vertically. Responsive."
+    },
+    {
+      "name": "pad",
+      "type": "Responsive<Space>",
+      "required": false,
+      "description": "Container padding as units or CSS length. Default 1 unit. Responsive."
+    },
+    {
+      "name": "minColWidth",
+      "type": "number | string",
+      "required": false,
+      "description": "Auto-responsive track width: lay out as many equal columns as fit, each at\nleast this wide — `repeat(auto-{fit|fill}, minmax(min(<minColWidth>,100%),1fr))`.\nPure CSS, no breakpoints, no Surface. **Overrides `columns`.** A number is px."
+    },
+    {
+      "name": "autoFlow",
+      "type": "'fit' | 'fill'",
+      "required": false,
+      "description": "With `minColWidth`: `'fill'` (default) keeps a stable column count (empty\ntrailing tracks); `'fit'` collapses empty tracks so the last row stretches.",
       "enumValues": [
-        "tight",
-        "standard",
-        "comfortable"
+        "fit",
+        "fill"
       ]
     },
     {
-      "name": "compact",
-      "type": "boolean",
+      "name": "align",
+      "type": "Responsive<GridAlign>",
       "required": false,
-      "description": "Hard-zeros layout pad + gap and cascades to descendants (independent of density)"
+      "description": "Cross-axis (block) alignment of items in their cell (`align-items`). Default `stretch`. Responsive."
     },
     {
-      "name": "normalizeRowHeights",
+      "name": "justifyItems",
+      "type": "Responsive<GridAlign>",
+      "required": false,
+      "description": "Inline-axis alignment of items in their cell (`justify-items`). Default `stretch`. Responsive."
+    },
+    {
+      "name": "equalize",
       "type": "boolean",
       "required": false,
-      "description": "Normalize child heights per row by stretching items to match\nthe tallest in that row. Effective only when 2+ columns are active\n(i.e., adaptive is off, or on but not collapsed to 1 column).\nDefaults to true; set false to opt out.",
-      "default": "true"
+      "description": "Stretch children to fill their cell (width + height) so a grid of cards is\nuniform without per-card `fullWidth`. Default `true`. (Renamed from\n`normalizeRowHeights`.)"
     },
     {
       "name": "sx",
       "type": "Sx",
       "required": false,
-      "description": "Inline styles (with CSS var support)"
+      "description": "Inline styles (with CSS var support)."
+    },
+    {
+      "name": "data-valet-component",
+      "type": "string",
+      "required": false,
+      "description": "Override the machine-readable component marker (composites self-identify)."
     },
     {
       "name": "preset",
@@ -58,27 +91,34 @@
       "description": "One or many style-preset names registered via `definePreset()`"
     },
     {
-      "name": "pad",
-      "type": "Space | undefined",
+      "name": "compact",
+      "type": "boolean | undefined",
       "required": false,
-      "description": "Container padding as units or CSS length."
+      "description": "Zeros all layout spacing (pad, gap, and spacing-margins) where supported and\ncascades to spacing-aware descendants. Does not touch control insets,\nstructural geometry, border-radius, glyph sizes, or alignment. `compact={false}`\nopts a subtree back out of an inherited compact."
     },
     {
-      "name": "gap",
-      "type": "Space | undefined",
+      "name": "density",
+      "type": "\"tight\" | \"standard\" | \"comfortable\" | undefined",
       "required": false,
-      "description": "Inter-child spacing as units or CSS length."
+      "description": "Density override for the spacing scale; defaults from nearest Surface."
+    },
+    {
+      "name": "as",
+      "type": "React.ElementType",
+      "required": false,
+      "description": "Polymorphic element override (renders this element/component instead of the default).",
+      "default": "'div'"
     }
   ],
   "domPassthrough": {
     "element": "div",
-    "omitted": [
-      "style"
-    ]
+    "omitted": []
   },
   "cssVars": [
+    "--valet-grid-min",
     "--valet-panel-width",
     "--valet-panel-align-self",
+    "--valet-cell-stretch",
     "--valet-panel-ov-y",
     "--valet-panel-max-h",
     "--valet-stack-ov-y",
@@ -90,44 +130,43 @@
   "events": [],
   "slots": [],
   "bestPractices": [
-    "Use Grid for two‑dimensional layouts like dashboards and galleries; keep rows and columns responsive.",
-    "Constrain item overflow and prefer consistent gaps; avoid nested scroll regions unless intentional.",
-    "Treat tabular data with `Table`; reserve Grid for cards and visual groups.",
-    "Use tokens and presets for spacing and breakpoints; avoid hard‑coding pixel values.",
-    "Keep density readable: don’t cram too many items per row on narrow screens.",
-    "Use `Stack` for simple one‑dimensional layouts; Grid for when both axes matter.",
-    "Mind a11y ordering: visual reflow should not break logical reading order.",
-    "Test at common breakpoints to ensure content doesn’t clip or overlap."
+    "Reach for `minColWidth` for fluid card grids: `minColWidth={240}` lays out as many ≥240px columns as fit with zero breakpoints declared — beats both MUI's per-child size object and Tailwind's arbitrary-value grid-cols string. `autoFlow='fill'` (default) keeps a stable column count; `'fit'` stretches a partial last row.",
+    "Use responsive `columns` (`{ xs: 1, sm: 2, lg: 4 }`) when you need explicit per-breakpoint counts; it compiles to CSS @media in the styled rule, so it is correct on the server's first paint and needs no <Surface>.",
+    "Keep `equalize` on (default) for uniform cards — children fill their cell in both axes via CSS vars, so you don't need `fullWidth` on each card; set `equalize={false}` to keep intrinsic sizes.",
+    "Place items with `GridItem` (`span`/`rowSpan`/`colStart`, each responsive) on a `columns={12}`-style track; bare children remain valid 1×1 cells.",
+    "Keep spacing tokenized (numeric `gap`/`pad`) so a `compact`/`density` ancestor rescales the whole grid; reach for `gapX`/`gapY` only when the axes genuinely differ.",
+    "Mind a11y ordering: visual reflow (responsive columns, GridItem placement) should not break the logical reading order.",
+    "Use `Stack` for one-dimensional flow and `Table` for tabular data; reserve Grid for cards, galleries, and dashboards."
   ],
   "examples": [
     {
-      "id": "grid-2col",
-      "title": "Two columns",
-      "code": "<Grid columns={2} gap={1}>\n  <Box fullWidth centerContent preset='glassHolder'><Typography>A</Typography></Box>\n  <Box fullWidth centerContent preset='glassHolder'><Typography>B</Typography></Box>\n</Grid>",
+      "id": "grid-columns",
+      "title": "Equal columns",
+      "code": "<Grid columns={4} gap={1}>\n  {Array.from({ length: 8 }, (_, i) => (\n    <Box key={i} fullWidth centerContent>{i + 1}</Box>\n  ))}\n</Grid>",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {}
     },
     {
-      "id": "grid-4col",
-      "title": "Four columns",
-      "code": "<Grid columns={4} gap={1}>\n  {Array.from({ length: 8 }, (_, i) => i + 1).map(n => (\n    <Box key={n} fullWidth centerContent preset='fancyHolder'><Typography>{n}</Typography></Box>\n  ))}\n</Grid>",
+      "id": "grid-minColWidth",
+      "title": "Auto-fit card grid (no breakpoints)",
+      "code": "<Grid minColWidth={240} gap={2}>\n  {Array.from({ length: 6 }, (_, i) => (\n    <Panel key={i}>Card {i + 1}</Panel>\n  ))}\n</Grid>",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {}
     },
     {
-      "id": "grid-adaptive",
-      "title": "Adaptive (portrait collapses)",
-      "code": "<Grid columns={4} gap={1} adaptive>\n  {Array.from({ length: 8 }, (_, i) => i + 1).map(n => (\n    <Box key={n} fullWidth centerContent preset='gradientHolder'><Typography>{n}</Typography></Box>\n  ))}\n</Grid>",
+      "id": "grid-responsive",
+      "title": "Responsive columns (compiles to @media)",
+      "code": "<Grid columns={{ xs: 1, sm: 2, lg: 4 }} gap={2}>\n  {Array.from({ length: 8 }, (_, i) => (\n    <Box key={i} fullWidth centerContent>{i + 1}</Box>\n  ))}\n</Grid>",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {}
     },
     {
-      "id": "grid-nested",
-      "title": "Nested grids",
-      "code": "<Grid columns={2} gap={1}>\n  <Grid columns={2} gap={1}>\n    <Box fullWidth centerContent><Typography>A1</Typography></Box>\n    <Box fullWidth centerContent><Typography>A2</Typography></Box>\n    <Box fullWidth centerContent><Typography>A3</Typography></Box>\n    <Box fullWidth centerContent><Typography>A4</Typography></Box>\n  </Grid>\n  <Grid columns={3} gap={0.5}>\n    {['B1','B2','B3','B4','B5','B6'].map(n => (\n      <Box key={n} fullWidth centerContent><Typography>{n}</Typography></Box>\n    ))}\n  </Grid>\n</Grid>",
+      "id": "grid-item",
+      "title": "Per-item placement with GridItem",
+      "code": "<Grid columns={12} gap={1}>\n  <GridItem span={{ xs: 12, md: 8 }}>\n    <Box fullWidth centerContent>main</Box>\n  </GridItem>\n  <GridItem span={{ xs: 12, md: 4 }}>\n    <Box fullWidth centerContent>aside</Box>\n  </GridItem>\n</Grid>",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {}

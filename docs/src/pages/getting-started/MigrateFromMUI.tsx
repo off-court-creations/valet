@@ -339,9 +339,8 @@ export default function MigrateFromMUIPage() {
             <code>useTheme</code>.
           </Typography>
           <Grid
-            columns={2}
+            columns={{ xs: 1, md: 2 }}
             gap={1}
-            adaptive
           >
             <Panel pad={1}>
               <Typography
@@ -392,9 +391,8 @@ export default function MigrateFromMUIPage() {
             <code>useInitialTheme</code> (on startup) or <code>useTheme().setTheme</code> (later).
           </Typography>
           <Grid
-            columns={2}
+            columns={{ xs: 1, md: 2 }}
             gap={1}
-            adaptive
           >
             <Panel pad={1}>
               <Typography
@@ -477,9 +475,8 @@ export default function MigrateFromMUIPage() {
             <code>definePreset</code> and apply it via the <code>preset</code> prop.
           </Typography>
           <Grid
-            columns={2}
+            columns={{ xs: 1, md: 2 }}
             gap={1}
-            adaptive
           >
             <Panel pad={1}>
               <Typography

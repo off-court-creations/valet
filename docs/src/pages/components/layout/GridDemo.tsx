@@ -1,11 +1,13 @@
 // ─────────────────────────────────────────────────────────────
 // docs/src/pages/components/layout/GridDemo.tsx  | valet-docs
-// Grid docs using ComponentMetaPage (Usage, Best Practices, Playground, Examples, Reference)
+// Grid docs (W2 rewrite): responsive columns, minColWidth auto-fit/fill,
+// GridItem placement, equalize — via ComponentMetaPage.
 // ─────────────────────────────────────────────────────────────
 import {
   Stack,
   Typography,
   Grid,
+  GridItem,
   Box,
   useTheme,
   Iterator,
@@ -20,83 +22,72 @@ import GridMeta from '../../../../../src/components/layout/Grid.meta.json';
 export default function GridDemoPage() {
   const { theme } = useTheme();
 
+  const cell = (label: string, bg = 'primary', fg = 'primaryText') => (
+    <Box
+      fullWidth
+      key={label}
+      sx={{
+        background: theme.colors[bg] as string,
+        color: theme.colors[fg] as string,
+        padding: theme.spacing(1),
+      }}
+      centerContent
+    >
+      <Typography>{label}</Typography>
+    </Box>
+  );
+
   const usageContent = (
     <Stack>
-      <Typography variant='h3'>Two columns</Typography>
-      <Grid
-        columns={2}
-        gap={1}
-      >
-        <Box
-          fullWidth
-          sx={{
-            background: theme.colors['primary'] as string,
-            color: theme.colors['primaryText'] as string,
-            padding: theme.spacing(1),
-          }}
-          centerContent
-        >
-          <Typography>A</Typography>
-        </Box>
-        <Box
-          fullWidth
-          sx={{
-            background: theme.colors['secondary'] as string,
-            color: theme.colors['secondaryText'] as string,
-            padding: theme.spacing(1),
-          }}
-          centerContent
-        >
-          <Typography>B</Typography>
-        </Box>
-      </Grid>
-
-      <Divider />
-
-      <Typography variant='h3'>Four columns</Typography>
+      <Typography variant='h3'>Equal columns</Typography>
       <Grid
         columns={4}
         gap={1}
       >
-        {Array.from({ length: 8 }, (_, i) => String(i + 1)).map((n) => (
-          <Box
-            fullWidth
-            key={n}
-            sx={{
-              background: theme.colors['primary'] as string,
-              color: theme.colors['primaryText'] as string,
-              padding: theme.spacing(1),
-            }}
-            centerContent
-          >
-            <Typography>{n}</Typography>
-          </Box>
-        ))}
+        {Array.from({ length: 8 }, (_, i) => cell(String(i + 1)))}
       </Grid>
 
       <Divider />
 
-      <Typography variant='h3'>Adaptive grid</Typography>
-      <Typography variant='subtitle'>Switches to one column in portrait orientation.</Typography>
+      <Typography variant='h3'>Responsive columns</Typography>
+      <Typography variant='subtitle'>
+        <code>columns={'{{ xs: 1, sm: 2, lg: 4 }}'}</code> — compiles to CSS
+        <code> @media</code> (no Surface). Resize the window.
+      </Typography>
       <Grid
-        columns={4}
+        columns={{ xs: 1, sm: 2, lg: 4 }}
         gap={1}
-        adaptive
       >
-        {Array.from({ length: 8 }, (_, i) => String(i + 1)).map((n) => (
-          <Box
-            fullWidth
-            key={n}
-            sx={{
-              background: theme.colors['secondary'] as string,
-              color: theme.colors['secondaryText'] as string,
-              padding: theme.spacing(1),
-            }}
-            centerContent
-          >
-            <Typography>{n}</Typography>
-          </Box>
-        ))}
+        {Array.from({ length: 8 }, (_, i) => cell(String(i + 1), 'secondary', 'secondaryText'))}
+      </Grid>
+
+      <Divider />
+
+      <Typography variant='h3'>Auto-fit card grid — minColWidth</Typography>
+      <Typography variant='subtitle'>
+        <code>minColWidth={'{180}'}</code> — as many ≥180px columns as fit, zero breakpoints.
+      </Typography>
+      <Grid
+        minColWidth={180}
+        gap={1}
+      >
+        {Array.from({ length: 7 }, (_, i) => cell(`card ${i + 1}`, 'tertiary', 'tertiaryText'))}
+      </Grid>
+
+      <Divider />
+
+      <Typography variant='h3'>Per-item placement — GridItem</Typography>
+      <Typography variant='subtitle'>
+        <code>span</code> is responsive too: stacked on narrow, 8/4 split from <code>md</code> up.
+      </Typography>
+      <Grid
+        columns={12}
+        gap={1}
+      >
+        <GridItem span={{ xs: 12, md: 8 }}>{cell('main · span 8')}</GridItem>
+        <GridItem span={{ xs: 12, md: 4 }}>
+          {cell('aside · span 4', 'secondary', 'secondaryText')}
+        </GridItem>
       </Grid>
 
       <Divider />
@@ -110,49 +101,13 @@ export default function GridDemoPage() {
           columns={2}
           gap={1}
         >
-          <Box
-            fullWidth
-            sx={{ padding: theme.spacing(1) }}
-            centerContent
-          >
-            <Typography>A1</Typography>
-          </Box>
-          <Box
-            fullWidth
-            sx={{ padding: theme.spacing(1) }}
-            centerContent
-          >
-            <Typography>A2</Typography>
-          </Box>
-          <Box
-            fullWidth
-            sx={{ padding: theme.spacing(1) }}
-            centerContent
-          >
-            <Typography>A3</Typography>
-          </Box>
-          <Box
-            fullWidth
-            sx={{ padding: theme.spacing(1) }}
-            centerContent
-          >
-            <Typography>A4</Typography>
-          </Box>
+          {['A1', 'A2', 'A3', 'A4'].map((n) => cell(n))}
         </Grid>
         <Grid
           columns={3}
           gap={0.5}
         >
-          {['B1', 'B2', 'B3', 'B4', 'B5', 'B6'].map((n) => (
-            <Box
-              fullWidth
-              key={n}
-              sx={{ padding: theme.spacing(1) }}
-              centerContent
-            >
-              <Typography>{n}</Typography>
-            </Box>
-          ))}
+          {['B1', 'B2', 'B3', 'B4', 'B5', 'B6'].map((n) => cell(n, 'secondary', 'secondaryText'))}
         </Grid>
       </Grid>
     </Stack>
@@ -163,7 +118,7 @@ export default function GridDemoPage() {
   return (
     <ComponentMetaPage
       title='Grid'
-      subtitle='Flexible two‑dimensional layout for dashboards, galleries, and cards.'
+      subtitle='Two-dimensional CSS-grid layout — responsive columns, minColWidth auto-fit, and GridItem placement.'
       slug='components/layout/grid'
       meta={GridMeta}
       usage={usageContent}
@@ -177,20 +132,23 @@ function GridPlayground() {
   const [columns, setColumns] = useState<number>(4);
   const [gap, setGap] = useState<number>(1);
   const [pad, setPad] = useState<number>(1);
-  const [adaptive, setAdaptive] = useState<boolean>(false);
+  const [minColWidth, setMinColWidth] = useState<number>(0); // 0 = off (use columns)
+  const [autoFit, setAutoFit] = useState<boolean>(false); // false = fill (default)
+  const [equalize, setEqualize] = useState<boolean>(true);
 
   const items = useMemo(() => Array.from({ length: 8 }, (_, i) => String(i + 1)), []);
+  const auto = minColWidth > 0;
 
   return (
     <Stack gap={1}>
       <Stack
         direction='row'
-        wrap={false}
+        wrap
         gap={1}
         sx={{ alignItems: 'center' }}
       >
         <Stack gap={0.25}>
-          <Typography variant='subtitle'>columns</Typography>
+          <Typography variant='subtitle'>columns (when auto-fit off)</Typography>
           <Iterator
             width={160}
             min={1}
@@ -199,6 +157,18 @@ function GridPlayground() {
             value={columns}
             onValueChange={(n) => setColumns(Math.round(n))}
             aria-label='Columns'
+          />
+        </Stack>
+        <Stack gap={0.25}>
+          <Typography variant='subtitle'>minColWidth px (0 = off)</Typography>
+          <Iterator
+            width={160}
+            min={0}
+            max={320}
+            step={20}
+            value={minColWidth}
+            onValueChange={(n) => setMinColWidth(Math.round(n))}
+            aria-label='Min column width'
           />
         </Stack>
         <Stack gap={0.25}>
@@ -231,11 +201,24 @@ function GridPlayground() {
           gap={1}
           sx={{ alignItems: 'center' }}
         >
-          <Typography variant='subtitle'>adaptive</Typography>
+          <Typography variant='subtitle'>auto-fit</Typography>
           <Switch
-            checked={adaptive}
-            onValueChange={(v) => setAdaptive(!!v)}
-            aria-label='Toggle adaptive'
+            checked={autoFit}
+            onValueChange={(v) => setAutoFit(!!v)}
+            aria-label='Toggle auto-fit (vs fill)'
+          />
+        </Stack>
+        <Stack
+          direction='row'
+          wrap={false}
+          gap={1}
+          sx={{ alignItems: 'center' }}
+        >
+          <Typography variant='subtitle'>equalize</Typography>
+          <Switch
+            checked={equalize}
+            onValueChange={(v) => setEqualize(!!v)}
+            aria-label='Toggle equalize'
           />
         </Stack>
       </Stack>
@@ -244,7 +227,8 @@ function GridPlayground() {
           columns={columns}
           gap={gap}
           pad={pad}
-          adaptive={adaptive}
+          equalize={equalize}
+          {...(auto ? { minColWidth, autoFlow: autoFit ? 'fit' : 'fill' } : {})}
         >
           {items.map((n) => (
             <Box
