@@ -1,7 +1,7 @@
 {
   "name": "Tooltip",
   "summary": "CSS-driven hover/focus tooltip that wraps a single child and exposes `title` content via aria-describedby; use it for brief supplementary hints, not essential or interactive content.",
-  "status": "experimental",
+  "status": "stable",
   "aliases": ["tooltip", "hint"],
   "docs": {
     "bestPractices": [

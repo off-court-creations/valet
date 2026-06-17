@@ -172,7 +172,7 @@
     "category": "layout",
     "summary": "Centered focus-trapping dialog rendered above a backdrop, controlled by `open`/`onClose`; use it for confirmations and focused tasks that must interrupt the page — reach for `Drawer` when the panel should slide from an edge.",
     "slug": "components/layout/modal",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Panel",
@@ -410,7 +410,7 @@
     "category": "widgets",
     "summary": "Floating action button that expands a fan of secondary actions with disclosure ARIA; it closes on action/Escape/outside-click and restores focus — use it for a primary action plus a few related shortcuts.",
     "slug": "components/widgets/speeddial",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Table",
@@ -424,7 +424,7 @@
     "category": "widgets",
     "summary": "CSS-driven hover/focus tooltip that wraps a single child and exposes `title` content via aria-describedby; use it for brief supplementary hints, not essential or interactive content.",
     "slug": "components/widgets/tooltip",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Tree",

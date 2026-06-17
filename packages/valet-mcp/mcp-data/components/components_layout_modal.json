@@ -3,7 +3,7 @@
   "category": "layout",
   "slug": "components/layout/modal",
   "summary": "Centered focus-trapping dialog rendered above a backdrop, controlled by `open`/`onClose`; use it for confirmations and focused tasks that must interrupt the page — reach for `Drawer` when the panel should slide from an edge.",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "modal",
     "dialog"

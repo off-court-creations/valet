@@ -207,8 +207,14 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   bestPractice still quoted the legacy scale ('tight' 0.9× / 'standard' 1× /
   'comfortable' 1.15×); corrected to the retuned 0.8× / 0.9× / 1× (`densityScale`).
   Left `experimental` pending Ben's visual pass. **Next:** Modal · Tooltip · SpeedDial.
-- **Tier 3 overlay trio — Modal + Tooltip + SpeedDial: AGENT-VERIFIED, awaiting Ben's
-  visual pass (2026-06-17).** 25 tests green (Modal.overlay + Tooltip.a11y +
+- **Tier 3 overlay trio — Modal + Tooltip + SpeedDial: DONE (stable 2026-06-17 — both
+  gates).** Ben's visual pass: "those all work great" + asked for the SSR hardening.
+  Extending the `ssr-render.test.ts` gate to the trio **caught a real Tooltip SSR
+  crash** (it always called `createPortal(bubble, getOverlayRoot())`; the server stub
+  container made createPortal throw "Target container is not a DOM element"). Fixed via
+  AppBar's mounted-gate pattern (portal only when `mounted && document`); Modal/SpeedDial
+  were already SSR-safe. Promoted all three; the fix is SSR/first-render-only so it
+  didn't change the client behavior Ben saw. 25 tests green (Modal.overlay + Tooltip.a11y +
   Tooltip.overlay + SpeedDial.dom + SpeedDial.overlay). All three build on the Tier-0
   overlay engine + `zIndex`; source clean: **Modal** — focus-trap/ESC/outside/inert/
   restore via `useOverlay`, dialog/alertdialog a11y + dev name-guard, reduced-motion

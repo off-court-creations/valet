@@ -3,7 +3,7 @@
   "category": "widgets",
   "slug": "components/widgets/speeddial",
   "summary": "Floating action button that expands a fan of secondary actions with disclosure ARIA; it closes on action/Escape/outside-click and restores focus — use it for a primary action plus a few related shortcuts.",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "speeddial",
     "speed-dial",

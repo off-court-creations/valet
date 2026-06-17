@@ -71,7 +71,7 @@ retuned spacing/density numbers."
 ## Tier 3 — Surface component + overlay composites
 
 - [x] **Surface** _(stable 2026-06-17 — both gates)_ — now safe (Progress + LoadingBackdrop locked); the DOM bridge that writes `--valet-space`/density
-- [x] **Modal** _(agent-verified 2026-06-17; awaiting Ben's visual pass)_ · [x] **Tooltip** _(agent-verified 2026-06-17; awaiting Ben's visual pass)_ (hoisted early to unblock Tabs) · [x] **SpeedDial** _(agent-verified 2026-06-17; awaiting Ben's visual pass)_
+- [x] **Modal** _(stable 2026-06-17 — both gates)_ · [x] **Tooltip** _(stable 2026-06-17 — both gates; SSR portal fix landed)_ (hoisted early to unblock Tabs) · [x] **SpeedDial** _(stable 2026-06-17 — both gates)_
 
 ## Tier 4 — Field foundations + standalone fields
 
