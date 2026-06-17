@@ -242,14 +242,14 @@
     "category": "primitives",
     "summary": "Horizontal linear progress track; pass a 0–100 `value` for determinate progress or omit it for an indeterminate sweep — the preferred primitive for inline loading and completion bars.",
     "slug": "components/primitives/progressbar",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "ProgressRing",
     "category": "primitives",
     "summary": "Circular progress indicator; pass a 0–100 `value` for determinate progress or omit it for an indeterminate spinner, with an optional `label` in the center — the preferred primitive for compact, radial loading states.",
     "slug": "components/primitives/progressring",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Typography",
