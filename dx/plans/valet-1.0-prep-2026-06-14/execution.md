@@ -1,6 +1,6 @@
 # Valet 1.0 Prep — Execution Tracker
 
-> Live progress log for [`plan.md`](plan.md). **Last updated: 2026-06-14.
+> Live progress log for [`plan.md`](plan.md). **Last updated: 2026-06-16.
 > Status: W1–W6 CODE-COMPLETE & GREEN on `feat/valet-1.0` (7 commits off
 > `development`). Every CI-equivalent gate passes — lint, typecheck×4, build,
 > 1345 tests, check:package (publint+attw), verify:pack, check:engine,
@@ -92,6 +92,22 @@ Things the agent cannot or should not do:
 | 6 | 10 experimental components | **Promoted Accordion/Table/DateSelector → stable; carved out LLMChat/RichChat/KeyModal/Parallax×3** in VERSIONING.md | ✅ done W5 (Ben can veto via meta `status`) |
 | 7 | injectRemote flip timing | **Flipped true→false** (Q13) on the epic branch (lands at the 1.0 cut) | ✅ done W5 |
 | 8 | Scope line | **1.0 = W1–W6 (everything); no 1.0.x fast-follow** | ✅ ruled 2026-06-14 |
+
+## Re-test pass — deferred findings
+
+Defects noticed while verifying one component that actually belong to a
+*different* (usually not-yet-verified) component. Logged here so they resurface
+at the right tier; not blockers for the component in hand.
+
+- **[→ Select, Tier 5] Open `Select` dropdown overlaps the neighbouring field.**
+  Observed 2026-06-16 while verifying Icon, in the Icon demo Playground (the
+  `size` control — `docs/src/pages/components/primitives/IconDemoPage.tsx:206`).
+  With the `<Select>` open, its trigger/overlay overlaps the adjacent `icon`
+  `TextField` to its left instead of staying in its own column, and the open
+  option panel compounds it. Root cause unconfirmed — likely the Select overlay
+  panel's width/anchor **or** the docs Playground row layout. Before fixing,
+  reproduce with a plain `<Select>` sat between two fields *outside* the docs
+  Playground to isolate component vs. demo layout. Icon itself is unaffected.
 
 ## Flags & issues
 
