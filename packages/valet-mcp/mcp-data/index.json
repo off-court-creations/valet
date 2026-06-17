@@ -102,7 +102,7 @@
     "category": "fields",
     "summary": "Accessible toggle for a single boolean that takes effect immediately; controlled via `checked` + `onValueChange` — prefer it over Checkbox for instant on/off settings rather than form submission.",
     "slug": "components/fields/switch",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "TextField",

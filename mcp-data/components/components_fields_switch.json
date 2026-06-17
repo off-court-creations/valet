@@ -3,7 +3,7 @@
   "category": "fields",
   "slug": "components/fields/switch",
   "summary": "Accessible toggle for a single boolean that takes effect immediately; controlled via `checked` + `onValueChange` — prefer it over Checkbox for instant on/off settings rather than form submission.",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "switch",
     "toggle"

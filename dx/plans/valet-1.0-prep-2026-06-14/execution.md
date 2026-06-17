@@ -261,8 +261,9 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   check:examples (102), docs tsc. Contract tests gained `aria-label` on bare checkboxes
   (the name-guard now exists, mirroring Switch). Stays `experimental` pending Ben's
   visual pass — contrast/glyph-crispness/44px-feel are unverifiable in jsdom.
-- **Tier 4 Switch — mobile hardened + AGENT-VERIFIED, awaiting Ben's mobile pass
-  (2026-06-17).** Ben approved look/feel ("I like the way switch looks and works") and
+- **Tier 4 Switch — DONE (stable 2026-06-17 — both gates).** Ben's mobile pass: "this
+  one's good." Promoted Switch.
+  Ben approved look/feel ("I like the way switch looks and works") and
   asked to "make sure it's good to go on mobile." It was NOT: every size's track was
   under the 44px WCAG floor vertically (xs 16 → xl 38) and it lacked the chrome kit.
   Applied the Checkbox-redo mobile pattern (no look/feel change): chrome kit
