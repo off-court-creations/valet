@@ -1,20 +1,23 @@
 // ─────────────────────────────────────────────────────────────
 // docs/src/pages/components/primitives/WebGLCanvasDemo.tsx  | valet-docs
-// Demo page for the WebGLCanvas component with a minimal animated program
+// Demo page for the WebGLCanvas component — the "Hyperspace" fractal scene.
 // ─────────────────────────────────────────────────────────────
 import { useMemo, useRef } from 'react';
 import { Stack, Panel, Typography, Slider, Switch, WebGLCanvas } from '@archway/valet';
 import ComponentMetaPage from '../../../components/ComponentMetaPage';
 import WebGLCanvasMeta from '../../../../../src/components/primitives/WebGLCanvas.meta.json';
-import { createLavaLampProgram } from '../../../shaders/lava-lamp/LavaLampProgram';
-import { LavaLampParams } from '../../../shaders/lava-lamp/lavaLampParams';
+import { createTronCityProgram } from '../../../shaders/tron-city/TronCityProgram';
 
 export default function WebGLCanvasDemoPage() {
   const pausedRef = useRef(false);
   const timeScaleRef = useRef(1);
-  const create = useMemo(
+
+  // Playground wrapper: routes the demo's pause/speed controls through the
+  // program's update step. (Refs are stable, so memoizing is optional now that
+  // WebGLCanvas ref-latches `create` — but it keeps the wrapper identity steady.)
+  const playgroundCreate = useMemo(
     () => (gl: WebGL2RenderingContext, canvas: HTMLCanvasElement) => {
-      const program = createLavaLampProgram(gl, canvas);
+      const program = createTronCityProgram(gl, canvas);
       if (!program) return null;
       return {
         resize: program.resize,
@@ -31,17 +34,20 @@ export default function WebGLCanvasDemoPage() {
 
   const usage = (
     <Stack gap={1}>
-      <Typography variant='h3'>WebGLCanvas Lava Lamp</Typography>
+      <Typography variant='h3'>Tron City (WIP) — raymarched skyscraper flyover</Typography>
+      <Typography variant='subtitle'>
+        Step 1: geometry + camera. A procedural city of box skyscrapers (each block's height from a
+        cell hash) raymarched as the camera glides forward over the rooftops. Plain grey shapes on
+        black for now — neon edges, bloom, and the grid horizon come next.
+      </Typography>
       <Panel fullWidth>
-        <div style={{ position: 'relative', height: 220 }}>
+        <div style={{ position: 'relative', height: 'min(72vh, 760px)' }}>
           <WebGLCanvas
-            // Use the exact parameters from the hero background
-            create={(gl: WebGL2RenderingContext, canvas: HTMLCanvasElement) =>
-              createLavaLampProgram(gl, canvas)
-            }
+            // Inline `create` is safe — WebGLCanvas ref-latches it (called once).
+            create={(gl, canvas) => createTronCityProgram(gl, canvas)}
             asBackground
-            dprMax={LavaLampParams.runtime.dprMax}
-            timeScale={LavaLampParams.runtime.timeScale}
+            dprMax={1}
+            timeScale={1}
             clearColor={[0, 0, 0, 0]}
             sx={{ borderRadius: '0.5rem', overflow: 'hidden' }}
           />
@@ -70,11 +76,11 @@ export default function WebGLCanvasDemoPage() {
             onValueChange={(v) => (timeScaleRef.current = Array.isArray(v) ? v[0] : v)}
           />
         </Stack>
-        <div style={{ position: 'relative', height: 220 }}>
+        <div style={{ position: 'relative', height: 'min(52vh, 520px)' }}>
           <WebGLCanvas
-            create={create}
+            create={playgroundCreate}
             asBackground
-            dprMax={LavaLampParams.runtime.dprMax}
+            dprMax={1}
             timeScale={1}
             clearColor={[0, 0, 0, 0]}
             sx={{ borderRadius: '0.5rem', overflow: 'hidden' }}
