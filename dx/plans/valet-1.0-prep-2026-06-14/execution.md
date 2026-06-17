@@ -289,6 +289,30 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   tap-target advice updated. No API change. Green: typecheck×4, lint, 1424 tests (2 new
   mobile cases), build, RTL, mcp, check:examples, docs tsc. Stays `experimental` pending
   Ben's visual pass (look + the touch grab target).
+- **Tier 4 TextField + FormControl epic (decided 2026-06-17).** Ben asked for a full
+  workflow critique of TextField and to consider FormControl; ran a 13-agent critique
+  (verdict + spec in [textfield-critique-2026-06-17.md](textfield-critique-2026-06-17.md)).
+  Verdict: **TextField = rewrite the styled layer (keep plumbing); FormControl = none
+  for 1.0** — but Ben chose to also do the FormControl epic now (`FormConfigCtx`), with a
+  new `errorText` prop and the full size/variant surface. Sequenced in waves:
+  - **Wave A — FormConfigCtx foundation: DONE & committed (`65d39a0`).** A SECOND context
+    alongside the untouched FormCtx store snapshot: `useFormConfig()` → `{ disabled,
+    errors, isSubmitting }` (inert default outside a form); FormControl gains `disabled`,
+    name-keyed `errors`, async `onSubmitValues` → `isSubmitting`/`aria-busy`, and
+    focus-first-invalid. Additive; zero blast radius (nothing consumed it yet).
+  - **Wave B — TextField rewrite: DONE & committed (`3eac0b4`); agent-verified, awaiting
+    Ben's visual pass.** Plumbing kept byte-for-byte (controlledContract + source-grep
+    gate green unedited). Rewrote the styled layer: width model (100% + min-inline-size:0
+    + `width` prop; fullWidth→flex:1), intent-var colors (neutral border, border+ring
+    recolor on error), backgroundAlt surface, `size` scale, helperText/errorText split
+    (role=alert, no aria-live on neutral), composed caller handlers, coarse ≥44px (input
+    arm), autofill fix, name-guard. **Consumes FormConfigCtx** (form-wide disabled +
+    name-keyed error) — the first field to, proving the infra end-to-end. 1437 tests
+    (9 new). Demo extended. Stays `experimental` pending Ben's visual pass.
+  - **Wave C — roll FormConfigCtx into the other bound fields: PENDING.** Checkbox/Switch/
+    Slider/Select/RadioGroup/MetroSelect/Iterator/DateSelector each read `useFormConfig()`
+    for effective disabled/error, re-running the controlledContract matrix per field. The
+    store-snapshot binding stays untouched.
 - **Box — DONE (stable 2026-06-17 — both gates).** Ben's visual pass cleared it;
   the `centered`→`centerContent` meta fix shipped.
 - **Pre-existing repo debt (not from this work):** `eslint .` reports 51 prettier
