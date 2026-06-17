@@ -59,11 +59,11 @@ mat2 rot(float a){ float s = sin(a), c = cos(a); return mat2(c, -s, s, c); }
 // x-lanes (no overlap), each leaving a trail BEHIND a shared moving head.
 float beamHeadZ(){ return uTime * 5.0 + 26.0; }   // current spot (tracks the camera)
 float beamX(float z, float k){ float center = mix(-6.0, 7.0, k); return center + sin(z * 0.06 + k * 2.5) * 3.0 + sin(z * 0.025 + k * 4.0) * 1.5; }
-float beamY(float z, float k){ return surfaceH(vec3(beamX(z, k), 0.0, z)) + 4.0; }
-float beamDist(vec3 p, float k){
+float beamY(float z, float k, int zt){ return ((zt == 3) ? terrainH(vec2(beamX(z, k), z)) : seaH(vec2(beamX(z, k), z))) + 4.0; }
+float beamDist(vec3 p, float k, int zt){
   float hz = beamHeadZ();
   if (p.z > hz || p.z < hz - 60.0) return 1e9;     // only the trail behind the head
-  return length(vec2(p.x - beamX(p.z, k), p.y - beamY(p.z, k))) - 0.22;
+  return length(vec2(p.x - beamX(p.z, k), p.y - beamY(p.z, k, zt))) - 0.22;
 }
 
 float sdBox(vec3 p, vec3 b){ vec3 d = abs(p) - b; return length(max(d, 0.0)) + min(max(d.x, max(d.y, d.z)), 0.0); }
@@ -76,32 +76,34 @@ float trailDist(vec2 pxz, float py, vec2 path[12], int len){
 }
 
 float map(vec3 p){
-  float d = p.y - surfaceH(p);
+  int zp = zoneType(p.z);                          // CSE: surfaceH's zone, reused below
+  float d = p.y - ((zp == 2) ? seaH(p.xz) : (zp == 3) ? terrainH(p.xz) : 0.0);
   vec2 baseId = floor(p.xz / CELL);
-  for (int j = -1; j <= 1; j++) for (int i = -1; i <= 1; i++){
-    vec2 id = baseId + vec2(float(i), float(j));
-    int zt = zoneType((id.y + 0.5) * CELL.y);
-    if (zt != 0 && zt != 4) continue;            // towers only in city & derez
-    if (hash21(id + 31.7) < 0.22) continue;
-    vec2 c = (id + 0.5) * CELL;
-    float h = towerH(id, zt);
-    vec3 lp = p - vec3(c.x, h * 0.5, c.y);
-    if (zt == 4) lp.xy = rot((hash21(id + 8.0) - 0.5) * 0.55) * lp.xy;   // derez: collapsing lean
-    d = min(d, sdBox(lp, vec3(1.2, h * 0.5, 1.2)));
-    if (zt == 4){
-      // derez: fragment blocks torn loose, lifting off and dissolving upward
-      for (int fI = 0; fI < 2; fI++){
-        float fk = float(fI);
-        float yl = mod(hash21(id + 3.3 + fk) * 12.0 + uTime * (0.5 + fk * 0.35), 15.0);
-        vec3 fc = vec3(c.x + (hash21(id + 1.1 + fk) - 0.5) * 2.6, h + 0.5 + yl, c.y + (hash21(id + 2.2 + fk) - 0.5) * 2.6);
-        d = min(d, sdBox(p - fc, vec3(0.32 + hash21(id + fk) * 0.22)));
+  for (int j = -1; j <= 1; j++){
+    int zt = zoneType((baseId.y + float(j) + 0.5) * CELL.y);   // row-invariant: hoisted out of i
+    if (zt != 0 && zt != 4) continue;            // whole row: towers only in city & derez
+    for (int i = -1; i <= 1; i++){
+      vec2 id = baseId + vec2(float(i), float(j));
+      if (hash21(id + 31.7) < 0.22) continue;
+      vec2 c = (id + 0.5) * CELL;
+      float h = towerH(id, zt);
+      vec3 lp = p - vec3(c.x, h * 0.5, c.y);
+      if (zt == 4) lp.xy = rot((hash21(id + 8.0) - 0.5) * 0.55) * lp.xy;   // derez: collapsing lean
+      d = min(d, sdBox(lp, vec3(1.2, h * 0.5, 1.2)));
+      if (zt == 4){
+        // derez: fragment blocks torn loose, lifting off and dissolving upward
+        for (int fI = 0; fI < 2; fI++){
+          float fk = float(fI);
+          float yl = mod(hash21(id + 3.3 + fk) * 12.0 + uTime * (0.5 + fk * 0.35), 15.0);
+          vec3 fc = vec3(c.x + (hash21(id + 1.1 + fk) - 0.5) * 2.6, h + 0.5 + yl, c.y + (hash21(id + 2.2 + fk) - 0.5) * 2.6);
+          d = min(d, sdBox(p - fc, vec3(0.32 + hash21(id + fk) * 0.22)));
+        }
       }
     }
   }
-  int zp = zoneType(p.z);
   if (zp == 2 || zp == 3){                         // sea & outlands → monorail beams, not bikes
-    d = min(d, beamDist(p, 0.0));
-    d = min(d, beamDist(p, 1.0));
+    d = min(d, beamDist(p, 0.0, zp));
+    d = min(d, beamDist(p, 1.0, zp));
   } else {
     d = min(d, trailDist(p.xz, p.y, uPathA, uLenA));
     d = min(d, trailDist(p.xz, p.y, uPathB, uLenB));
@@ -128,7 +130,8 @@ void main(){
     vec3 p = ro + rd * t;
     float d = map(p);
     if (d < 0.002){ hit = true; break; }
-    t += d * 0.8;                                  // step factor (height-field terrain)
+    int sz = zoneType(p.z);                        // understep ONLY over the high-gradient terrain;
+    t += d * ((sz == 3) ? 0.8 : (sz == 2) ? 0.99 : 1.0);   // 1.0 is exact for SDFs & flat ground
     if (t > 95.0) break;
   }
 
@@ -136,34 +139,36 @@ void main(){
   if (hit){
     vec3 p = ro + rd * t;
     int zt = zoneType(p.z);
-    float dG = p.y - surfaceH(p);
+    float dG = p.y - ((zt == 2) ? seaH(p.xz) : (zt == 3) ? terrainH(p.xz) : 0.0);   // CSE: reuse zt
     bool beamZone = (zt == 2 || zt == 3);
     float dTA = beamZone ? 1e9 : trailDist(p.xz, p.y, uPathA, uLenA);
     float dTB = beamZone ? 1e9 : trailDist(p.xz, p.y, uPathB, uLenB);
-    float dE0 = beamZone ? beamDist(p, 0.0) : 1e9;
-    float dE1 = beamZone ? beamDist(p, 1.0) : 1e9;
+    float dE0 = beamZone ? beamDist(p, 0.0, zt) : 1e9;
+    float dE1 = beamZone ? beamDist(p, 1.0, zt) : 1e9;
 
     vec2 baseId = floor(p.xz / CELL);
-    float dB = 1e9; vec2 hitId = baseId; vec3 hitQ = vec3(0.0), hitB = vec3(1.2);
-    for (int j = -1; j <= 1; j++) for (int i = -1; i <= 1; i++){
-      vec2 id = baseId + vec2(float(i), float(j));
-      int zc = zoneType((id.y + 0.5) * CELL.y);
+    float dB = 1e9; vec2 hitId = baseId; vec3 hitQ = vec3(0.0), hitB = vec3(1.2); int hitZc = 0;
+    for (int j = -1; j <= 1; j++){
+      int zc = zoneType((baseId.y + float(j) + 0.5) * CELL.y);   // row-invariant: hoisted out of i
       if (zc != 0 && zc != 4) continue;
-      if (hash21(id + 31.7) < 0.22) continue;
-      vec2 c = (id + 0.5) * CELL;
-      float h = towerH(id, zc);
-      vec3 lp = p - vec3(c.x, h * 0.5, c.y);
-      if (zc == 4) lp.xy = rot((hash21(id + 8.0) - 0.5) * 0.55) * lp.xy;
-      float bd = sdBox(lp, vec3(1.2, h * 0.5, 1.2));
-      if (bd < dB){ dB = bd; hitId = id; hitQ = lp; hitB = vec3(1.2, h * 0.5, 1.2); }
-      if (zc == 4){
-        for (int fI = 0; fI < 2; fI++){
-          float fk = float(fI);
-          float yl = mod(hash21(id + 3.3 + fk) * 12.0 + uTime * (0.5 + fk * 0.35), 15.0);
-          vec3 fc = vec3(c.x + (hash21(id + 1.1 + fk) - 0.5) * 2.6, h + 0.5 + yl, c.y + (hash21(id + 2.2 + fk) - 0.5) * 2.6);
-          float fr = 0.32 + hash21(id + fk) * 0.22;
-          float fd = sdBox(p - fc, vec3(fr));
-          if (fd < dB){ dB = fd; hitId = id; hitQ = p - fc; hitB = vec3(fr); }
+      for (int i = -1; i <= 1; i++){
+        vec2 id = baseId + vec2(float(i), float(j));
+        if (hash21(id + 31.7) < 0.22) continue;
+        vec2 c = (id + 0.5) * CELL;
+        float h = towerH(id, zc);
+        vec3 lp = p - vec3(c.x, h * 0.5, c.y);
+        if (zc == 4) lp.xy = rot((hash21(id + 8.0) - 0.5) * 0.55) * lp.xy;
+        float bd = sdBox(lp, vec3(1.2, h * 0.5, 1.2));
+        if (bd < dB){ dB = bd; hitId = id; hitQ = lp; hitB = vec3(1.2, h * 0.5, 1.2); hitZc = zc; }
+        if (zc == 4){
+          for (int fI = 0; fI < 2; fI++){
+            float fk = float(fI);
+            float yl = mod(hash21(id + 3.3 + fk) * 12.0 + uTime * (0.5 + fk * 0.35), 15.0);
+            vec3 fc = vec3(c.x + (hash21(id + 1.1 + fk) - 0.5) * 2.6, h + 0.5 + yl, c.y + (hash21(id + 2.2 + fk) - 0.5) * 2.6);
+            float fr = 0.32 + hash21(id + fk) * 0.22;
+            float fd = sdBox(p - fc, vec3(fr));
+            if (fd < dB){ dB = fd; hitId = id; hitQ = p - fc; hitB = vec3(fr); hitZc = zc; }
+          }
         }
       }
     }
@@ -192,7 +197,7 @@ void main(){
       float m2 = e.x + e.y + e.z - m1 - m3;
       float edge = smoothstep(0.11, 0.0, -m2);
       vec3 neon; float lit;
-      if (zoneType((hitId.y + 0.5) * CELL.y) == 4){
+      if (hitZc == 4){                             // captured at the winning assignment (CSE)
         // derez ruins: steady mixed-colour neon (no flicker)
         neon = hash21(hitId + 2.1) > 0.5 ? vec3(1.0, 0.40, 0.08) : vec3(0.20, 0.70, 1.0);
         lit = 1.0;
@@ -244,7 +249,7 @@ void main(){
 `;
 
 const BRIGHT_FRAG = `#version 300 es
-precision highp float;
+precision mediump float;
 in vec2 vUv;
 out vec4 frag;
 uniform sampler2D uTex;
@@ -258,7 +263,7 @@ void main(){
 `;
 
 const BLUR_FRAG = `#version 300 es
-precision highp float;
+precision mediump float;
 in vec2 vUv;
 out vec4 frag;
 uniform sampler2D uTex;
