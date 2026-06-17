@@ -31,6 +31,8 @@ const useContactForm = createFormStore<ContactValues>({
   message: '',
 });
 
+const useConfigForm = createFormStore({ name: '', email: '' });
+
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Demo page                                                                  */
 export default function TextFieldDemoPage() {
@@ -40,6 +42,7 @@ export default function TextFieldDemoPage() {
   const [username, setUsername] = useState('');
   const [usernameCommit, setUsernameCommit] = useState('');
   const [age, setAge] = useState<number | ''>('');
+  const [formDisabled, setFormDisabled] = useState(false);
 
   const usageContent = (
     <Stack gap={1}>
@@ -96,22 +99,41 @@ export default function TextFieldDemoPage() {
         />
       </Stack>
 
-      {/* 3. Full width, sizing, disabled, error */}
-      <Typography variant='h3'>3. Layout and states</Typography>
-      <Stack direction='row'>
+      {/* 3. Width model + sizes + states */}
+      <Typography variant='h3'>3. Width, sizes, and states</Typography>
+      <Typography variant='subtitle'>
+        Fills its container by default; constrain with the <code>width</code> prop, or
+        <code> fullWidth</code> to grow in a row.
+      </Typography>
+      <Stack
+        direction='row'
+        align='end'
+      >
         <TextField
           name='full'
           fullWidth
-          label='Full width'
-          placeholder='Stretches to parent'
+          label='fullWidth (grows)'
+          placeholder='Stretches to fill the row'
         />
         <TextField
           name='fixed'
-          label='Fixed width'
-          placeholder='width via sx'
-          sx={{ width: 260 }}
+          label="width='12ch'"
+          width='12ch'
+          placeholder='fixed'
         />
       </Stack>
+
+      <Typography variant='subtitle'>Size scale (md aligns with Button height)</Typography>
+      {(['xs', 'sm', 'md', 'lg', 'xl'] as const).map((s) => (
+        <TextField
+          key={s}
+          name={`size-${s}`}
+          size={s}
+          label={`size='${s}'`}
+          defaultValue='Sample'
+        />
+      ))}
+
       <Stack direction='row'>
         <TextField
           name='disabled'
@@ -123,7 +145,8 @@ export default function TextFieldDemoPage() {
           name='with-error'
           label='With error'
           error
-          helperText='Something went wrong'
+          helperText='We never share it.'
+          errorText='Enter a valid value.'
           placeholder='…'
         />
       </Stack>
@@ -179,6 +202,42 @@ export default function TextFieldDemoPage() {
           >
             Submit
           </Button>
+        </FormControl>
+      </Panel>
+
+      {/* 5b. Form-wide disabled + errors (FormConfigCtx) */}
+      <Typography variant='h3'>5b. Form-wide disabled &amp; errors</Typography>
+      <Typography variant='subtitle'>
+        A <code>FormControl</code> can disable every field at once and surface name-keyed
+        <code> errors</code> (each field&apos;s own props still win). The errored field shows a
+        <code> role=&quot;alert&quot;</code> message and is focused after submit.
+      </Typography>
+      <Button
+        variant='outlined'
+        onClick={() => setFormDisabled((d) => !d)}
+      >
+        {formDisabled ? 'Enable form' : 'Disable form'}
+      </Button>
+      <Panel
+        variant='outlined'
+        sx={{ padding: theme.spacing(1) }}
+      >
+        <FormControl
+          useStore={useConfigForm}
+          disabled={formDisabled}
+          errors={{ email: 'That email is already taken.' }}
+          sx={{ display: 'flex', flexDirection: 'column', gap: theme.spacing(1) }}
+        >
+          <TextField
+            name='name'
+            label='Name'
+          />
+          <TextField
+            name='email'
+            label='Email'
+            type='email'
+          />
+          <Button type='submit'>Save</Button>
         </FormControl>
       </Panel>
 

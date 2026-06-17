@@ -1,19 +1,19 @@
 {
   "name": "TextField",
-  "summary": "Single- or multi-line text input with label/helperText/error support; controlled via `value` + `onChange` or auto-bound to a `FormControl` by `name` — the default for free-form text entry.",
+  "summary": "Single- or multi-line text input with `label`/`helperText`/`error`+`errorText`, `size`, and a `width` model; controlled via `value` + `onChange` or auto-bound to a `FormControl` by `name`. Colours follow the theme intent contract (consistent with Button/Checkbox) and it fills its container's width by default. The default for free-form text entry.",
   "status": "experimental",
   "aliases": ["textfield", "textinput", "input", "textbox"],
   "docs": {
     "bestPractices": [
-      "Always provide a clear `label`. Avoid placeholder‑only fields; labels remain visible and accessible.",
+      "Always provide a clear `label` (rendered visibly and associated to the input); with no `label`/aria-label/aria-labelledby it dev-warns. Avoid placeholder-only fields.",
+      "It fills its container's width by default (no more ~20ch UA default) and shrinks correctly in a flex/grid row. Set an explicit `width` (number → px, or any CSS length e.g. `'40ch'`) to constrain it; `fullWidth` makes it grow to consume slack in a row.",
       "Choose the correct `type` (e.g., `email`, `password`, `number`) and set `autoComplete` to improve UX and a11y.",
-      "Pick a control model deliberately: use `value` for app‑state control; use `defaultValue` for simple local inputs. Resolution precedence is explicit `value` prop > FormControl binding > internal state, latched at mount — passing both a `value` prop and a form `name` dev‑warns (the prop wins for rendering; edits still write through to the store).",
-      "In forms, set a stable `name` so values submit predictably, and seed every bound key in `createFormStore(initial)`. An unseeded `name` renders `defaultValue ?? ''` as a controlled value with a one‑time dev warning and never writes to the store on mount, so it stays absent from submit/reset until the first edit.",
-      "Use `as='textarea'` with `rows` for multi‑line input; keep width comfortable and avoid forcing long single‑line fields.",
-      "Prefer the canonical `onValueChange`/`onValueCommit` events over raw `onChange`: each `ChangeInfo.source` is classified honestly — typing reports `keyboard`, paste/drop reports `clipboard`, programmatic value writes report `programmatic`; Enter commits as `keyboard` and blur commits as `programmatic`.",
-      "Convey issues via `error` + `helperText`. Keep helper text succinct; reserve errors for actionable feedback.",
-      "Use `fullWidth` in narrow or linear layouts; otherwise size with `sx` or parent layout for consistency.",
-      "Prefer theme tokens and `preset` over ad‑hoc CSS to keep density and colours consistent."
+      "Pick a control model deliberately: `value` for app-state control, `defaultValue` for simple local inputs. Precedence is explicit `value` prop > FormControl binding > internal state, latched at mount — passing both a `value` prop and a form `name` dev-warns (the prop wins for rendering; edits still write through).",
+      "In forms, set a stable `name` and seed every bound key in `createFormStore(initial)`. A `<FormControl disabled>` disables the field, and a name-keyed `errors` map on the FormControl shows the error here (the field's own `error`/`errorText` still win).",
+      "Convey validation with `error` + `errorText` (or `helperText` as the fallback message): the message renders in a `role='alert'` region and the field is marked `aria-invalid`. Neutral `helperText` is NOT announced (no aria-live); reserve announcement for actual errors.",
+      "Prefer the canonical `onValueChange`/`onValueCommit` over raw `onChange`: each `ChangeInfo.source` is honest — typing `keyboard`, paste/drop `clipboard`, programmatic writes `programmatic`; Enter commits `keyboard`, blur commits `programmatic`. Caller `onBlur`/`onKeyDown` are composed (no longer dropped).",
+      "Pick `size` (`xs`–`md`–`xl`) for the field height/text — md matches the Button height so an input and a Button line up in a row. On coarse pointers the input height floors at ≥44px automatically.",
+      "Use `as='textarea'` with `rows` for multi-line input. Prefer theme tokens and `preset` over ad-hoc CSS. (`variant` accepts `outlined`/`filled`/`underline`; only `outlined` is implemented for 1.0.)"
     ]
   },
   "examples": [
@@ -26,6 +26,16 @@
       "id": "textfield-textarea",
       "title": "Multiline with helper",
       "code": "<Stack gap={1}>\n  <TextField name='bio' as='textarea' rows={4} label='Bio' placeholder='Tell us about yourself' helperText='Use 2–3 sentences.' />\n</Stack>"
+    },
+    {
+      "id": "textfield-validation",
+      "title": "Validation: error + errorText (role=alert)",
+      "code": "() => {\n  const [v, setV] = React.useState('');\n  const bad = v.length > 0 && !v.includes('@');\n  return (<TextField name='email' label='Email' value={v} onValueChange={setV} error={bad} helperText='We never share it.' errorText='Enter a valid email.' />);\n}"
+    },
+    {
+      "id": "textfield-width",
+      "title": "Explicit width in a row",
+      "code": "<Stack direction='row' gap={1} align='end'>\n  <TextField name='code' label='Code' width='8ch' />\n  <Button>Apply</Button>\n</Stack>"
     }
   ]
 }

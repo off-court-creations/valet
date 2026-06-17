@@ -324,6 +324,7 @@ const ADAPTERS: Array<Adapter<any>> = [
         name={key}
         value={v as string}
         onValueChange={onChange}
+        aria-label='Field'
       />
     ),
     // `name` is required by TextFieldProps; with no enclosing FormControl the
@@ -333,12 +334,14 @@ const ADAPTERS: Array<Adapter<any>> = [
       <TextField
         name='field'
         defaultValue={v as string}
+        aria-label='Field'
       />
     ),
     formChild: ({ value, key }) => (
       <TextField
         name={key}
         value={value as string}
+        aria-label='Field'
       />
     ),
     read: (c) => textInput(c).value,
