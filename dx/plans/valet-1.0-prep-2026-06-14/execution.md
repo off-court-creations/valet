@@ -180,8 +180,9 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
     component — untouched).
   - **Stack & Grid first-class: COMPLETE.** All 9 layout primitives stable (Box,
     Stack + HStack/VStack/Center/Cluster/Spacer, Grid + GridItem).
-- **Tier 2 tail — LoadingBackdrop + List: AGENT-VERIFIED, awaiting Ben's visual pass
-  (2026-06-17).** Tests green (LoadingBackdrop.dom + List.dom + List.selection.dom =
+- **Tier 2 tail — LoadingBackdrop + List: DONE (stable 2026-06-17 — both gates).**
+  Ben's visual pass: "both seem fine." Promoted both. (Details below.)
+  Tests green (LoadingBackdrop.dom + List.dom + List.selection.dom =
   12). LoadingBackdrop: clean fixed-scrim overlay that renders the stable ProgressRing;
   fade/`aria-hidden`/`pointer-events`/`data-state` track `fading`; i18n via
   `labels`/`useComponentStrings`; SSR-safe; marker present. List: single-selection

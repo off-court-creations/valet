@@ -1,7 +1,7 @@
 {
   "name": "LoadingBackdrop",
   "summary": "Full-area scrim with a centered spinner (`showSpinner`) that overlays content while it loads; render it conditionally to block interaction during an async operation, and toggle `fading` for the exit transition.",
-  "status": "experimental",
+  "status": "stable",
   "aliases": ["loadingbackdrop", "backdrop", "scrim"],
   "docs": {
     "bestPractices": [

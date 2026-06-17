@@ -165,7 +165,7 @@
     "category": "layout",
     "summary": "Accessible vertical list of items with optional `selectionMode='single'` (keyed by `getItemKey`) and drag `onReorder`; use it for simple selectable/reorderable item collections, and reach for `Table` when you need columns or `Tree` for hierarchy.",
     "slug": "components/layout/list",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Modal",
@@ -354,7 +354,7 @@
     "category": "widgets",
     "summary": "Full-area scrim with a centered spinner (`showSpinner`) that overlays content while it loads; render it conditionally to block interaction during an async operation, and toggle `fading` for the exit transition.",
     "slug": "components/widgets/loadingbackdrop",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Markdown",

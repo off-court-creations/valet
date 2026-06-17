@@ -1,7 +1,7 @@
 {
   "name": "List",
   "summary": "Accessible vertical list of items with optional `selectionMode='single'` (keyed by `getItemKey`) and drag `onReorder`; use it for simple selectable/reorderable item collections, and reach for `Table` when you need columns or `Tree` for hierarchy.",
-  "status": "experimental",
+  "status": "stable",
   "aliases": ["list", "ul", "ol"],
   "docs": {
     "bestPractices": [
