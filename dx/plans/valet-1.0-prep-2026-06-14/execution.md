@@ -95,9 +95,12 @@ Things the agent cannot or should not do:
 
 ## Re-test pass — verification log
 
-Bottom-up promotions per [`verification-order.md`](verification-order.md). Each
-flips `*.meta.json` → `stable` only after tests + a source review, then
-`mcp:build && mcp:check && mcp:schema:check`.
+Bottom-up promotions per [`verification-order.md`](verification-order.md).
+**`stable` gates on BOTH the agent pass (tests + source review) AND Ben's visual
+pass** — green tests are necessary, not sufficient. The agent verifies and leaves
+the component `experimental`, logged as _agent-verified, awaiting Ben's visual
+pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
+(then `mcp:build && mcp:check && mcp:schema:check`).
 
 - **Tier 1 leaves — DONE (stable):** Icon, Typography, Progress
   (ProgressBar/ProgressRing), Avatar, Image, Divider, Video, WebGLCanvas.
@@ -112,17 +115,30 @@ flips `*.meta.json` → `stable` only after tests + a source review, then
   source clean (SSR-safe, `data-valet-component` marker, intentional store-type
   erasure with casts localized to `useForm`/`useOptionalForm`). Left `experimental`
   pending Ben's manual pass.
-- **ValetErrorBoundary — DONE (stable, promoted 2026-06-17).** Last Tier 1 leaf.
-  Tests green (6 in `ValetErrorBoundary.dom`: pass-through, catch→role='alert'
+- **ValetErrorBoundary — AGENT-VERIFIED, NOT promoted (2026-06-17).** Last Tier 1
+  leaf. Tests green (6 in `ValetErrorBoundary.dom`: pass-through, catch→role='alert'
   panel, onError-once, reset()→re-render, static + render-fn fallback, no-Surface/
   no-theme-vars). Source clean: deliberately self-contained class boundary — no
   `styled()`/theme/`useSurface`, so it survives failures in the surface tree
   itself; SSR-safe (no browser globals). No `data-valet-component` marker by
   design — children pass-through with no consistent owned root; documented in the
   marker-gate ALLOWLIST (`dataValetComponentMarker.repo.test.ts`). Docs demo
-  (`ValetErrorBoundaryDemo.tsx`) exercises a custom fallback + reset.
-- **Next:** Tier 2 — Box / Stack / Grid (the spacing/density retune center;
-  reads only the surfaceStore *contract*), then LoadingBackdrop + List.
+  (`ValetErrorBoundaryDemo.tsx`) exercises a custom fallback + reset. **Left
+  `experimental` pending Ben's visual pass.** _(An earlier commit flipped it to
+  `stable` prematurely on the agent pass alone; reverted — see the gate rule above.)_
+- **Tier 2 — Box / Stack / Grid: AGENT-VERIFIED, NOT promoted (2026-06-17).** The
+  spacing/density retune center; each reads only the surfaceStore *contract*. Tests
+  green (20 in `Box.dom`/`Stack.dom`/`Grid.dom`; 126 across the whole layout dir +
+  `compactContext`). Source clean and the retuned numbers are pinned by tests: Grid
+  default gap 2× (card-grid gutter) + equal-width children via `--valet-panel-width:100%`;
+  Stack default gap 1×; density 0.8/0.9/1.0 written inline as `--valet-space`; `compact`→0.
+  Box/Stack are SSR-safe (`useTheme`+`useCompact`); Grid requires a `<Surface>` by
+  design (`useSurface` hard-throws otherwise) and is SSR-exercised inside one
+  (`ssr-render.test.ts`). Also fixed Box's meta: dropped a stale best-practice
+  reference to the removed `centered` prop (→ `centerContent`). **All three left
+  `experimental` pending Ben's visual pass — Ben testing now.**
+- **Next:** after Ben's visual pass on Box/Stack/Grid → promote those that clear,
+  then Tier 2 tail (LoadingBackdrop, List).
 
 ## Re-test pass — deferred findings
 

@@ -17,9 +17,15 @@ see [Gotchas](#gotchas-the-back-edges).
 ## How to use
 
 - Work top-to-bottom. Don't start a tier until the tiers above it are green.
-- When a component passes your review, flip its `*.meta.json` `status` → `stable`,
-  then `npm run mcp:build && npm run mcp:check`. (Or hand me the batch and I'll do
-  the flip + corpus rebuild + gates.)
+- **`stable` requires BOTH gates — never flip on the agent's say-so alone:**
+  1. **Agent pass** — tests green + source review (the agent does this and records it
+     in the log as _"agent-verified, awaiting Ben's visual pass"_; status stays
+     `experimental`).
+  2. **Ben's visual pass** — Ben runs the component in the docs/app and confirms it
+     looks/behaves right.
+  Only after **both** does the `*.meta.json` `status` flip to `stable`, then
+  `npm run mcp:build && npm run mcp:check`. The agent must not pre-promote on the
+  strength of the test suite — green tests are necessary, not sufficient.
 - A component still `experimental` at the 1.0 cut is simply carved out of the SemVer
   guarantee (see [`VERSIONING.md`](../../../VERSIONING.md)).
 
@@ -49,7 +55,7 @@ retuned spacing/density numbers."
 - [x] **Typography** — highest fan-in; lock first
 - [x] **Progress** (ProgressBar/ProgressRing) — bottom of the `Surface→LoadingBackdrop→Progress` chain
 - [x] Avatar · [x] Image · [x] Divider · [x] Video · [x] WebGLCanvas
-- [ ] **FormControl** (form-store provider; before any bound field) — _reviewed 2026-06-17, tests green, awaiting Ben's manual pass_ · [x] **ValetErrorBoundary** (promoted 2026-06-17)
+- [ ] **FormControl** (form-store provider; before any bound field) — _agent-verified 2026-06-17, tests green, awaiting Ben's visual pass_ · [ ] **ValetErrorBoundary** — _agent-verified 2026-06-17, tests green, awaiting Ben's visual pass_
 
 ## Tier 2 — Box-family layout + the hoists
 
@@ -107,9 +113,12 @@ The real import graph has "low imports high" inversions; naive "layout first" br
 
 ## Promotion workflow (per batch)
 
-1. Verify a tier's components (top-down).
-2. For each passing component: set `status: "stable"` in its `src/components/**/<Name>.meta.json`.
-3. `npm run mcp:build && npm run mcp:check && npm run mcp:schema:check` (corpus stays fresh + valid).
-4. Commit (`chore(1.0): promote <components> to stable after verification`).
+1. **Agent pass:** verify a tier's components (top-down) — tests + source review.
+   Leave each `experimental`; log it as _agent-verified, awaiting Ben's visual pass_.
+2. **Ben's visual pass:** Ben runs each in the docs/app and confirms it.
+3. Only for components that cleared **both** gates: set `status: "stable"` in its
+   `src/components/**/<Name>.meta.json`.
+4. `npm run mcp:build && npm run mcp:check && npm run mcp:schema:check` (corpus stays fresh + valid).
+5. Commit (`chore(1.0): promote <components> to stable after verification`).
 
 Derived via `.claude/wf-verify-order.js` (re-runnable if the import graph changes).

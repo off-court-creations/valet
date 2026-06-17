@@ -9,7 +9,7 @@
       "Prefer theme tokens to inherit correct contrast automatically; if you set `background`, ensure text remains accessible.",
       "Reach for `Panel` when you need separation (borders/elevation); keep visually semantic elements distinct.",
       "Use spacing tokens; prefer numeric values over hard‑coded CSS so density scales with the theme.",
-      "Align purposefully: use `alignX` and `fullWidth` for placement; avoid deprecated `centered`.",
+      "Align purposefully: use `alignX` and `fullWidth` for placement; center inner content with `centerContent`.",
       "Reuse styles via `preset` (`definePreset()`) instead of duplicating `sx`.",
       "When Box represents a semantic region, add appropriate roles/labels (e.g., `role=\"region\"`, `aria-label`) via DOM passthrough."
     ]
