@@ -168,6 +168,48 @@ describe('Icon dangerouslySetSvg — trusted raw innerHTML escape hatch', () => 
   });
 });
 
+/*──────────── dangerouslySetSvg — full SVG documents (sizing fix) ────────────*/
+describe('Icon dangerouslySetSvg — full <svg> documents render un-wrapped', () => {
+  /* A complete document with its own viewBox AND fixed px dimensions — the
+     real-world brand-asset shape that the old 24×24 wrapper clipped to a
+     sliver. */
+  const FULL = `<svg width="712px" height="860px" viewBox="0 0 712 860"><path d="${TRIANGLE}"/></svg>`;
+
+  it('injects the asset as the span’s direct child with its own viewBox (no 24×24 re-wrap)', () => {
+    const c = render(
+      <Icon
+        dangerouslySetSvg={FULL}
+        size={40}
+        aria-label='brand'
+      />,
+    );
+    /* THE discriminator: the old path nested the asset inside a wrapper <svg>
+       (two svgs, asset clipped by viewBox 0 0 24 24). The fix injects it
+       straight into the span — exactly ONE svg, the asset's own viewBox. */
+    expect(c.querySelectorAll('svg')).toHaveLength(1);
+    const svg = c.querySelector('svg')!;
+    expect(svg.parentElement).toBe(iconSpan(c)); // direct child of the Icon span
+    expect(svg.getAttribute('viewBox')).toBe('0 0 712 860'); // asset viewBox preserved
+    expect(svg.querySelector('path')!.getAttribute('d')).toBe(TRIANGLE);
+    expect(warnSpy).not.toHaveBeenCalled();
+  });
+
+  it('tolerates a leading <?xml?> prolog (real .svg files) and still treats it as a full document', () => {
+    const c = render(<Icon dangerouslySetSvg={`<?xml version="1.0"?>\n${FULL}`} />);
+    expect(c.querySelectorAll('svg')).toHaveLength(1);
+    expect(c.querySelector('svg')!.getAttribute('viewBox')).toBe('0 0 712 860');
+  });
+
+  it('still wraps PARTIAL markup (no <svg> root) in the 24×24 icon svg', () => {
+    /* Path-only markup needs the wrapper for svg context + icon viewBox —
+       this branch is unchanged, so the escape hatch stays backward-compatible. */
+    const c = render(<Icon dangerouslySetSvg={`<circle cx="12" cy="12" r="10"/>`} />);
+    const svg = c.querySelector('svg')!;
+    expect(svg.getAttribute('viewBox')).toBe('0 0 24 24');
+    expect(svg.querySelector('circle')).not.toBeNull();
+  });
+});
+
 /*──────────── prop precedence ────────────*/
 describe('Icon prop precedence', () => {
   it('svg string is parsed even when dangerouslySetSvg is also present (svg wins)', () => {

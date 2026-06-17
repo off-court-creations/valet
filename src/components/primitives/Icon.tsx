@@ -100,6 +100,10 @@ export const Icon: React.FC<PropsWithChildren<IconProps>> = ({
   const colourStyle = color ? { color } : undefined;
 
   let content: ReactElement | null = null;
+  /* Full-SVG markup injected directly into the Wrapper <span> (see the
+     dangerouslySetSvg branch). Kept separate from `content` because a full
+     document must NOT be re-wrapped in another <svg>. */
+  let dangerousHTML: string | null = null;
 
   if (icon) {
     content = (
@@ -164,15 +168,30 @@ export const Icon: React.FC<PropsWithChildren<IconProps>> = ({
     /* Explicit, named escape hatch (Q6): reproduces the pre-0.35 raw
        innerHTML behavior for caller-trusted markup. The prop name is the
        warning — this can execute scripts; never pass untrusted input. */
-    content = (
-      <svg
-        width='100%'
-        height='100%'
-        viewBox='0 0 24 24'
-        fill='currentColor'
-        dangerouslySetInnerHTML={{ __html: dangerouslySetSvg.trim() }}
-      />
-    );
+    const trimmed = dangerouslySetSvg.trim();
+    if (/<svg[\s>]/i.test(trimmed)) {
+      /* A full SVG document carries its own viewBox (and often fixed
+         width/height). Wrapping it in our 24×24 <svg> maps its coordinate
+         system into 24 user units and clips it to a sliver. Instead inject it
+         straight into the Wrapper <span>: the asset's own viewBox drives
+         scaling and the Wrapper's `& > svg { width/height: 100% }` rule
+         neutralizes any fixed width/height, so it fills `size` exactly. The
+         test matches an <svg> anywhere, so a leading <?xml?>/doctype/comment
+         prolog (real .svg files have one) is tolerated. */
+      dangerousHTML = trimmed;
+    } else {
+      /* Partial markup (bare <path>/`d`-data, no <svg> root) still needs an
+         svg context, the 24×24 icon viewBox, and currentColor inheritance. */
+      content = (
+        <svg
+          width='100%'
+          height='100%'
+          viewBox='0 0 24 24'
+          fill='currentColor'
+          dangerouslySetInnerHTML={{ __html: trimmed }}
+        />
+      );
+    }
   } else if (isValidElement(children)) {
     const child = children as ReactElement<React.SVGProps<SVGSVGElement>>;
     content = React.cloneElement(child, {
@@ -197,8 +216,11 @@ export const Icon: React.FC<PropsWithChildren<IconProps>> = ({
       style={{ ...colourStyle, ...sx }}
       draggable={false}
       {...spanRest}
+      {...(dangerousHTML != null
+        ? { dangerouslySetInnerHTML: { __html: dangerousHTML } }
+        : {})}
     >
-      {content}
+      {dangerousHTML != null ? null : content}
     </Wrapper>
   );
 };
