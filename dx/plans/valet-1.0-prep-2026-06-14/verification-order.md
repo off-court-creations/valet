@@ -59,7 +59,12 @@ retuned spacing/density numbers."
 
 ## Tier 2 — Box-family layout + the hoists
 
-- [ ] **Box** · [ ] **Stack** · [ ] **Grid** — center of the spacing/density retune; reads only the surfaceStore *contract*
+> **Stack/Grid are on a first-class redesign track** (Ben, 2026-06-17) — see
+> [`stack-grid-evaluation-2026-06-17.md`](stack-grid-evaluation-2026-06-17.md).
+> Verdict: Stack = improve (W0 infra + W1 done, awaiting visual pass), Grid =
+> rewrite (W2, pending). These supersede a plain "verify as-is" for those two.
+
+- [ ] **Box** _(agent-verified; awaiting Ben's visual pass)_ · [ ] **Stack** _(W1 improve + sugar done; agent-verified; awaiting Ben's visual pass)_ · [ ] **Grid** _(W2 rewrite pending)_ — center of the spacing/density retune; reads only the surfaceStore *contract*
 - [ ] **LoadingBackdrop** — hoisted out of widgets; renders Progress; must precede the Surface component
 - [ ] List (→ Typography)
 

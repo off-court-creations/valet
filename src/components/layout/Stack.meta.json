@@ -1,14 +1,16 @@
 {
   "name": "Stack",
-  "summary": "Flexbox container that lays children out in one `direction` (column/row) with consistent `gap`; the default choice for vertical or horizontal flow — use `Grid` for two-dimensional layouts.",
+  "summary": "Flexbox container that lays children out in one `direction` (column/row) with consistent `gap`, token-aware `align`/`justify`, per-axis `gapX`/`gapY`, a `divider`, and responsive (breakpoint-map) props that compile to CSS @media — no <Surface> needed. The default choice for one-dimensional flow; use `Grid` for two-dimensional layouts. Sugar: `HStack`, `VStack`, `Center`, `Cluster`, `Spacer`.",
   "status": "experimental",
-  "aliases": ["stack", "vstack", "hstack"],
+  "aliases": ["stack"],
   "docs": {
     "bestPractices": [
-      "Use for one‑dimensional layouts (rows/columns) with consistent gaps.",
-      "Switch direction responsively and keep spacing tokenized; avoid fixed pixel gaps.",
-      "Align items intentionally and avoid mixing diverse alignments within the same group.",
-      "Prefer `Grid` for complex two‑dimensional layouts and `Table` for data."
+      "Use for one-dimensional layouts (rows/columns) with consistent gaps; reach for `Grid` for two-dimensional layouts and `Table` for data.",
+      "Prefer `align`/`justify` tokens (start/center/end/stretch/baseline · start/center/end/between/around/evenly) over `sx={{ alignItems, justifyContent }}` — they are typed and density-aware.",
+      "Make any of `direction`/`gap`/`pad`/`align`/`justify`/`gapX`/`gapY` responsive by passing a breakpoint map (`{ xs, sm, md, lg, xl }`); it compiles to CSS @media in the styled rule, so it is correct on the server's first paint and needs no <Surface>. Keep maps to enumerable values — don't bind one to continuously-varying state.",
+      "Keep spacing tokenized (numeric `gap`/`pad` units) so a `compact` or `density` ancestor rescales the whole subtree; avoid fixed pixel gaps.",
+      "Reach for the sugar when it reads better: `HStack`/`VStack` for directional rows/columns (HStack centers cross-axis by default), `Center` to center on both axes, `Cluster` for a wrapping row of chips/tags/buttons, and `<Spacer/>` inside a row to push siblings apart.",
+      "Use `divider` to interleave a separator between children (pass a vertically-oriented `<Divider/>` for a row); children must be flat (a Fragment counts as one node)."
     ]
   },
   "examples": [
@@ -18,9 +20,19 @@
       "code": "<Stack gap={1}>\n  <Typography variant='h4'>Profile</Typography>\n  <Typography>Name: Ada Lovelace</Typography>\n  <Typography>Role: Engineer</Typography>\n</Stack>"
     },
     {
-      "id": "stack-row",
-      "title": "Horizontal row",
-      "code": "<Stack direction='row' gap={1}>\n  <Button>Save</Button>\n  <Button variant='outlined'>Cancel</Button>\n</Stack>"
+      "id": "stack-hstack",
+      "title": "Centered row (HStack)",
+      "code": "<HStack gap={1}>\n  <Avatar email='ada@example.com' />\n  <Typography>Ada Lovelace</Typography>\n</HStack>"
+    },
+    {
+      "id": "stack-toolbar",
+      "title": "Toolbar — align + justify + Spacer",
+      "code": "<HStack gap={1}>\n  <Button>Back</Button>\n  <Typography variant='h4'>Title</Typography>\n  <Spacer />\n  <Button>Save</Button>\n</HStack>"
+    },
+    {
+      "id": "stack-responsive",
+      "title": "Responsive direction (compiles to @media, no Surface)",
+      "code": "<Stack direction={{ xs: 'column', md: 'row' }} gap={{ xs: 1, md: 2 }} align='center'>\n  <Box>Sidebar</Box>\n  <Box fullWidth>Main</Box>\n</Stack>"
     }
   ]
 }

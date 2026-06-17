@@ -137,8 +137,36 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   (`ssr-render.test.ts`). Also fixed Box's meta: dropped a stale best-practice
   reference to the removed `centered` prop (→ `centerContent`). **All three left
   `experimental` pending Ben's visual pass — Ben testing now.**
-- **Next:** after Ben's visual pass on Box/Stack/Grid → promote those that clear,
-  then Tier 2 tail (LoadingBackdrop, List).
+- **Stack & Grid — first-class redesign (decided 2026-06-17).** Ben: "Grid and
+  Stack need to be first class … better than MUI, shadcn." Ran an adversarial
+  16-agent evaluation (4 recon → 4 design stances → red-team → 3 judges →
+  synthesis); verdict + concrete APIs + phased plan in
+  [`stack-grid-evaluation-2026-06-17.md`](stack-grid-evaluation-2026-06-17.md).
+  **Verdict: Stack = improve, Grid = rewrite**, both on ONE responsive mechanism —
+  breakpoint maps compile to CSS `@media` inside the styled rule (no JS, no
+  Surface, SSR-stable), the engine path 13 components already use.
+  - **W0 — DONE & committed (`227c677`).** `Responsive<T>` in `types.ts` +
+    `utils/responsive.ts` compile helper (+ 9 tests). Non-breaking infra.
+  - **W1 — Stack improve + full sugar: AGENT-VERIFIED, awaiting Ben's visual pass.**
+    Additive: `align`/`justify` tokens, `gapX`/`gapY`, `divider`, `grow`, public
+    `scroll`, responsive widening of `direction`/`gap`/`pad`/`align`/`justify`/
+    `gapX`/`gapY`, polymorphic `as`; plus sugar `HStack`/`VStack`/`Center`/
+    `Cluster`/`Spacer` (each its own override-able marker + meta). Kept ALL current
+    defaults + `alignX`; no wrap/overflow/pad flips. `forwardRef` contract change
+    (React.FC → polymorphic) is the one deliberate break. Green: typecheck×4, my
+    files lint-clean, **1404 tests** (7 legacy Stack + 18 new W1 + 9 W0), build,
+    SSR render+import, engine smoke, mcp gates (62 components, coverage floors held
+    by the 5 sugar metas), docs tsc. Stack demo page extended to exercise every new
+    feature for the visual pass. **Stack stays `experimental` pending Ben's visual pass.**
+  - **Next:** Ben's visual pass on the Stack demo (`/stack-demo`) → promote Stack;
+    then **W2 — Grid rewrite** (real `display:grid`, `minColWidth` auto-fit,
+    responsive `columns`, `GridItem`, Surface-decouple).
+- **Box — AGENT-VERIFIED, awaiting Ben's visual pass** (unchanged from above; the
+  `centered`→`centerContent` meta fix landed). Promote after the visual pass.
+- **Pre-existing repo debt (not from this work):** `eslint .` reports 51 prettier
+  errors on clean HEAD, all in `WebGLCanvas.tsx`/`Progress.dom.test.tsx` etc. from
+  the Tron City commits; `check-pins` WARNs on docs/template `@archway/valet`
+  version pins. Flagged for a separate cleanup; untouched here (WebGLCanvas is WIP).
 
 ## Re-test pass — deferred findings
 

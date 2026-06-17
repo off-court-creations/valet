@@ -1,0 +1,15 @@
+{
+  "name": "VStack",
+  "summary": "Vertical `Stack` (`direction='column'`) — an explicit, readable alias for the most common column flow. Accepts every Stack prop except `direction`; children stretch on the cross axis by default.",
+  "status": "experimental",
+  "aliases": ["vstack", "column", "vertical-stack"],
+  "docs": {
+    "docsUrl": "/stack-demo",
+    "bestPractices": [
+      "Use VStack when an explicit name reads better than `<Stack>`; behavior is identical to a default Stack.",
+      "Keep `gap` tokenized so density/compact rescales the column; pass a breakpoint map for responsive spacing.",
+      "Override cross-axis alignment with `align` (start/center/end) when stretch is not what you want.",
+      "Use `as` for semantics (e.g. `as='section'`)."
+    ]
+  }
+}

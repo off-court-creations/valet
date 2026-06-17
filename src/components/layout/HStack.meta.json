@@ -1,0 +1,15 @@
+{
+  "name": "HStack",
+  "summary": "Horizontal `Stack` (`direction='row'`) that centers its children on the cross axis by default — the zero-config shape for rows of avatars, buttons, icons, and labels. Accepts every Stack prop except `direction`; use `<Spacer/>` or `justify` to distribute, `gap` for spacing.",
+  "status": "experimental",
+  "aliases": ["hstack", "row", "horizontal-stack"],
+  "docs": {
+    "docsUrl": "/stack-demo",
+    "bestPractices": [
+      "Reach for HStack instead of `<Stack direction='row' align='center'>` — the row + cross-axis centering is the dominant case and HStack makes it zero-prop.",
+      "Distribute children with `justify` (between/around/evenly) or drop a `<Spacer/>` between groups to push them apart; avoid `sx={{ flexGrow }}` escapes.",
+      "Keep `gap` tokenized so a `compact`/`density` ancestor rescales the row; pass a breakpoint map (e.g. `gap={{ xs: 1, md: 2 }}`) for responsive spacing.",
+      "Use `as` for semantics (e.g. `as='nav'`); pass a vertically-oriented `<Divider/>` via `divider` to separate items."
+    ]
+  }
+}

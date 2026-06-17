@@ -1,0 +1,55 @@
+{
+  "name": "Spacer",
+  "category": "layout",
+  "slug": "components/layout/spacer",
+  "summary": "A flexible, `aria-hidden` filler that absorbs free space inside a `Stack` (any direction), pushing siblings apart — the typed replacement for `sx={{ flexGrow: 1 }}` / margin-auto hacks in toolbars and bars. `grow` sets how much space it takes (default 1).",
+  "status": "experimental",
+  "aliases": [
+    "spacer",
+    "flex-spacer",
+    "push"
+  ],
+  "props": [
+    {
+      "name": "grow",
+      "type": "number",
+      "required": false,
+      "description": "Grow factor; how much free space this filler absorbs. Default 1.",
+      "default": "1"
+    },
+    {
+      "name": "className",
+      "type": "string",
+      "required": false
+    },
+    {
+      "name": "style",
+      "type": "React.CSSProperties",
+      "required": false
+    }
+  ],
+  "domPassthrough": {
+    "element": "div",
+    "omitted": []
+  },
+  "cssVars": [
+    "--valet-stack-ov-y",
+    "--valet-stack-max-h",
+    "--valet-space"
+  ],
+  "cssPresets": [],
+  "events": [],
+  "slots": [],
+  "bestPractices": [
+    "Drop a `<Spacer/>` between groups in an HStack to push them to opposite ends (e.g. title on the left, actions on the right).",
+    "Use multiple Spacers with different `grow` values to distribute free space proportionally.",
+    "Prefer `justify='between'` when you simply want two groups at the edges; reach for Spacer when the split is uneven or there are 3+ groups."
+  ],
+  "examples": [],
+  "docsUrl": "/stack-demo",
+  "sourceFiles": [
+    "src/components/layout/Stack.tsx"
+  ],
+  "version": "0.36.0",
+  "schemaVersion": "1.7"
+}

@@ -159,11 +159,50 @@
   "stack": [
     "Stack"
   ],
-  "vstack": [
-    "Stack"
-  ],
   "hstack": [
-    "Stack"
+    "HStack"
+  ],
+  "row": [
+    "HStack"
+  ],
+  "horizontal-stack": [
+    "HStack"
+  ],
+  "vstack": [
+    "VStack"
+  ],
+  "column": [
+    "VStack"
+  ],
+  "vertical-stack": [
+    "VStack"
+  ],
+  "center": [
+    "Center"
+  ],
+  "centered": [
+    "Center"
+  ],
+  "cluster": [
+    "Cluster"
+  ],
+  "tags": [
+    "Cluster"
+  ],
+  "chip-group": [
+    "Cluster"
+  ],
+  "pill-group": [
+    "Cluster"
+  ],
+  "spacer": [
+    "Spacer"
+  ],
+  "flex-spacer": [
+    "Spacer"
+  ],
+  "push": [
+    "Spacer"
   ],
   "surface": [
     "Surface"

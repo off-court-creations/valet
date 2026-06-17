@@ -1,0 +1,34 @@
+{
+  "name": "Cluster",
+  "category": "layout",
+  "slug": "components/layout/cluster",
+  "summary": "A wrapping horizontal `Stack` (`direction='row'`, `wrap`, cross-axis centered) for variable-length groups that should flow onto multiple lines — tag lists, chip sets, filter pills, button bars. Accepts every Stack prop except `direction`.",
+  "status": "experimental",
+  "aliases": [
+    "cluster",
+    "tags",
+    "chip-group",
+    "pill-group"
+  ],
+  "props": [],
+  "cssVars": [
+    "--valet-stack-ov-y",
+    "--valet-stack-max-h",
+    "--valet-space"
+  ],
+  "cssPresets": [],
+  "events": [],
+  "slots": [],
+  "bestPractices": [
+    "Use Cluster for collections of unknown count/width (tags, chips, buttons) so they wrap gracefully instead of overflowing or clipping.",
+    "Keep `gap` tokenized; the same gap applies between rows and within a row.",
+    "Set `wrap={false}` to opt back into a single non-wrapping row when needed."
+  ],
+  "examples": [],
+  "docsUrl": "/stack-demo",
+  "sourceFiles": [
+    "src/components/layout/Stack.tsx"
+  ],
+  "version": "0.36.0",
+  "schemaVersion": "1.7"
+}

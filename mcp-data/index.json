@@ -177,8 +177,43 @@
   {
     "name": "Stack",
     "category": "layout",
-    "summary": "Flexbox container that lays children out in one `direction` (column/row) with consistent `gap`; the default choice for vertical or horizontal flow — use `Grid` for two-dimensional layouts.",
+    "summary": "Flexbox container that lays children out in one `direction` (column/row) with consistent `gap`, token-aware `align`/`justify`, per-axis `gapX`/`gapY`, a `divider`, and responsive (breakpoint-map) props that compile to CSS @media — no <Surface> needed. The default choice for one-dimensional flow; use `Grid` for two-dimensional layouts. Sugar: `HStack`, `VStack`, `Center`, `Cluster`, `Spacer`.",
     "slug": "components/layout/stack",
+    "status": "experimental"
+  },
+  {
+    "name": "HStack",
+    "category": "layout",
+    "summary": "Horizontal `Stack` (`direction='row'`) that centers its children on the cross axis by default — the zero-config shape for rows of avatars, buttons, icons, and labels. Accepts every Stack prop except `direction`; use `<Spacer/>` or `justify` to distribute, `gap` for spacing.",
+    "slug": "components/layout/hstack",
+    "status": "experimental"
+  },
+  {
+    "name": "VStack",
+    "category": "layout",
+    "summary": "Vertical `Stack` (`direction='column'`) — an explicit, readable alias for the most common column flow. Accepts every Stack prop except `direction`; children stretch on the cross axis by default.",
+    "slug": "components/layout/vstack",
+    "status": "experimental"
+  },
+  {
+    "name": "Center",
+    "category": "layout",
+    "summary": "A `Stack` that centers its children on BOTH axes (`align='center'` + `justify='center'`) — the one-shot answer to \"center this in its space\". Both defaults are overridable; set `direction='row'` to center a row instead of a column.",
+    "slug": "components/layout/center",
+    "status": "experimental"
+  },
+  {
+    "name": "Cluster",
+    "category": "layout",
+    "summary": "A wrapping horizontal `Stack` (`direction='row'`, `wrap`, cross-axis centered) for variable-length groups that should flow onto multiple lines — tag lists, chip sets, filter pills, button bars. Accepts every Stack prop except `direction`.",
+    "slug": "components/layout/cluster",
+    "status": "experimental"
+  },
+  {
+    "name": "Spacer",
+    "category": "layout",
+    "summary": "A flexible, `aria-hidden` filler that absorbs free space inside a `Stack` (any direction), pushing siblings apart — the typed replacement for `sx={{ flexGrow: 1 }}` / margin-auto hacks in toolbars and bars. `grow` sets how much space it takes (default 1).",
+    "slug": "components/layout/spacer",
     "status": "experimental"
   },
   {

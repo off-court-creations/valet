@@ -1,0 +1,14 @@
+{
+  "name": "Center",
+  "summary": "A `Stack` that centers its children on BOTH axes (`align='center'` + `justify='center'`) — the one-shot answer to \"center this in its space\". Both defaults are overridable; set `direction='row'` to center a row instead of a column.",
+  "status": "experimental",
+  "aliases": ["center", "centered"],
+  "docs": {
+    "docsUrl": "/stack-demo",
+    "bestPractices": [
+      "Use for hero blocks, empty states, spinners, and any \"center the content\" case instead of hand-rolling align/justify.",
+      "Give Center a height (or `fullWidth`/`grow`) so there is space to center within; on its own it is content-sized.",
+      "Override `align`/`justify` to center on a single axis when needed."
+    ]
+  }
+}
