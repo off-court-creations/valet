@@ -3,6 +3,7 @@
 // shared types: presets, spacing ergonomics, and field base props
 // ─────────────────────────────────────────────────────────────
 import type React from 'react';
+import type { Breakpoint } from './system/themeStore';
 
 export interface Presettable {
   /** One or many style-preset names registered via `definePreset()` */
@@ -11,6 +12,20 @@ export interface Presettable {
 
 /** Numeric values are mapped via theme.spacing(n); strings pass through. */
 export type Space = number | string;
+
+/**
+ * A value that can vary by breakpoint. Either a single value applied at all
+ * widths, or a partial breakpoint map (`{ xs, sm, md, lg, xl }`) whose entries
+ * each apply from that breakpoint's `min-width` upward (mobile-first).
+ *
+ * Breakpoint maps compile to CSS `@media (min-width: …)` rules **inside the
+ * `styled()` template** (via `utils/responsive`) — there is no JS resolution,
+ * no `<Surface>` dependency, and no first-paint reflow, so a responsive layout
+ * is correct on the server's first paint. Keep breakpoint maps to enumerable
+ * values; binding one to continuously-varying state (e.g. a slider) mints a
+ * permanent CSS rule per value (see the engine's rule-cardinality tripwire).
+ */
+export type Responsive<T> = T | Partial<Record<Breakpoint, T>>;
 
 /** Common spacing props shared across layout components. */
 export interface SpacingProps {
