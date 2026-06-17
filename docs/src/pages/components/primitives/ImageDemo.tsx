@@ -11,9 +11,9 @@ export default function ImageDemoPage() {
   const { theme } = useTheme();
 
   // Playground controls
-  const [pgSrc, setPgSrc] = useState('https://picsum.photos/600/400');
-  const [pgWidth, setPgWidth] = useState<string>('100%');
-  const [pgHeight, setPgHeight] = useState<string>('300px');
+  const [pgSrc, setPgSrc] = useState('https://picsum.photos/seed/valet-play/800/600');
+  const [pgWidth, setPgWidth] = useState<string>('400px');
+  const [pgHeight, setPgHeight] = useState<string>('260px');
   const [pgFit, setPgFit] = useState<'cover' | 'contain' | 'fill' | 'none' | 'scale-down'>('cover');
   const [pgLoading, setPgLoading] = useState<'lazy' | 'eager'>('lazy');
   const [pgObjectPos, setPgObjectPos] = useState<string>('center');
@@ -21,45 +21,80 @@ export default function ImageDemoPage() {
 
   const usageContent = (
     <Stack>
-      <Typography variant='h3'>1. Basic usage</Typography>
-      <Panel
-        fullWidth
-        sx={{ borderRadius: theme.radius(2), overflow: 'hidden' }}
-      >
-        <Image
-          src='https://picsum.photos/400/300'
-          alt='Kitten'
-          width='100%'
-          height='auto'
-        />
-      </Panel>
-
-      <Typography variant='h3'>2. Eager loaded (hero)</Typography>
+      <Typography variant='h3'>1. Rounded corners (no wrapper)</Typography>
+      <Typography variant='subtitle'>
+        <code>radius</code> rounds the image itself — number → <code>theme.radius(n)</code> (scales with
+        density), string → verbatim. No Panel/overflow wrapper needed.
+      </Typography>
       <Image
-        src='https://picsum.photos/400/300'
-        alt='Eager kitten'
-        width='100%'
-        height='300px'
-        loading='eager'
+        src='https://picsum.photos/seed/valet-meadow/800/600'
+        alt='Meadow'
+        width={400}
+        height='auto'
+        radius={2}
+      />
+
+      <Typography variant='h3'>2. Priority (LCP hero)</Typography>
+      <Typography variant='subtitle'>
+        <code>priority</code> sets <code>loading=eager</code> + <code>fetchPriority=high</code> for the
+        above-the-fold hero. Everything else stays lazy by default.
+      </Typography>
+      <Image
+        src='https://picsum.photos/id/1015/800/600'
+        alt='River canyon hero'
+        width={400}
+        height={300}
+        radius={2}
+        priority
       />
 
       <Typography variant='h3'>3. Contain fit</Typography>
       <Image
-        src='https://picsum.photos/400/300'
-        alt='Contained kitten'
-        width='100%'
-        height='300px'
+        src='https://picsum.photos/id/1025/800/600'
+        alt='Pug in a blanket, contained'
+        width={400}
+        height={260}
         fit='contain'
+        radius={2}
       />
 
       <Typography variant='h3'>4. Aspect ratio + top focus</Typography>
       <Image
-        src='https://picsum.photos/800/600'
-        alt='Aspect ratio demo'
-        width='100%'
-        aspectRatio='16 / 9'
+        src='https://picsum.photos/seed/valet-canyon/1200/800'
+        alt='Canyon, 16:9 from the top'
+        width={400}
+        aspectRatio={16 / 9}
         fit='cover'
         objectPosition='top'
+        radius={2}
+      />
+
+      <Typography variant='h3'>5. Error fallback (opt-in)</Typography>
+      <Typography variant='subtitle'>
+        Pass <code>fallback</code> to render a node when the image fails to load. Without it, a broken
+        image behaves like a native <code>&lt;img&gt;</code>. You size/theme the fallback.
+      </Typography>
+      <Image
+        src='https://example.invalid/does-not-exist.png'
+        alt='A photo that fails to load'
+        width={400}
+        height={200}
+        radius={2}
+        fallback={
+          <Stack
+            sx={{
+              width: 400,
+              maxWidth: '100%',
+              height: 200,
+              background: theme.colors['backgroundAlt'],
+              borderRadius: theme.radius(2),
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Typography variant='subtitle'>Image unavailable</Typography>
+          </Stack>
+        }
       />
     </Stack>
   );
@@ -154,7 +189,7 @@ export default function ImageDemoPage() {
   return (
     <ComponentMetaPage
       title='Image'
-      subtitle='Responsive image with native lazy-loading, fit/object-position, and optional aspect-ratio. Apply rounded corners via sx or a wrapper.'
+      subtitle='SSR-safe image: theme-aware radius, fit/object-position, aspect-ratio, lazy-by-default with a priority opt-in for LCP, and an optional onError fallback.'
       slug='components/primitives/image'
       meta={ImageMeta}
       usage={usageContent}
