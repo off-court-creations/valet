@@ -132,4 +132,35 @@ describe('ssr renderToString (skips without dist/ — run `npm run build`)', () 
       expect(b).toBe(a);
     },
   );
+
+  it.skipIf(!hasDist)(
+    'the overlay trio (closed Modal, Tooltip, SpeedDial) SSRs without crashing',
+    async () => {
+      const v = await loadBarrel();
+      const { Surface, Modal, Tooltip, SpeedDial, Typography } = v;
+      // Modal: closed → returns null before the portal (open overlays are
+      // client-only). Tooltip: mounted-gates its bubble portal — no createPortal
+      // on the server or first client render, so the server-stub getOverlayRoot()
+      // is never handed to createPortal (which would throw "Target container is
+      // not a DOM element"); the wrapper + trigger child still render inline.
+      // SpeedDial: fixed in place (not portalled). The trigger child ('Hover')
+      // proves Tooltip's inline half renders and SSR did not throw.
+      let html = '';
+      expect(() => {
+        html = renderToString(
+          h(
+            Surface,
+            null,
+            h(Modal, { open: false } as Record<string, unknown>, h(Typography, null, 'Dialog')),
+            h(Tooltip, { title: 'Tip' } as Record<string, unknown>, h('button', null, 'Hover')),
+            h(SpeedDial, {
+              icon: '+',
+              actions: [{ icon: '+', label: 'Add', onClick: () => {} }],
+            } as Record<string, unknown>),
+          ),
+        );
+      }).not.toThrow();
+      expect(html).toContain('Hover');
+    },
+  );
 });
