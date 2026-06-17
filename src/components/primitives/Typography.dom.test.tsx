@@ -325,3 +325,34 @@ describe('Typography unknown-variant guard (jsdom)', () => {
     }
   });
 });
+
+/* ─────────────── noSelect (jsdom) ──────────────────────────────────────
+   `noSelect` is the source of truth for the kit-wide non-selectable pattern
+   (Markdown/KeyModal/LLMChat/RichChat forward it; Snackbar/Tooltip/etc. force
+   the same `user-select:none` directly). It compiles into the styled() class
+   rule (not inline style), so we read the element's own generated rule off the
+   live sheet. Each assertion is anchored on `max-width` (a stable Typography
+   declaration) to prove the right rule was matched — otherwise a missed match
+   would return '' and false-pass the negative case. */
+describe('Typography noSelect (jsdom)', () => {
+  /** cssText of the single-class styled rule applied to `el`. */
+  const styledRuleText = (el: HTMLElement) =>
+    Array.from(document.querySelectorAll('style'))
+      .flatMap((s) => Array.from((s.sheet?.cssRules ?? []) as Iterable<CSSRule>))
+      .find((r) => el.classList.contains((r as CSSStyleRule).selectorText?.slice(1) ?? ''))
+      ?.cssText ?? '';
+
+  it('emits user-select:none in its styled rule when noSelect is set', () => {
+    const { container } = renderWithSurface(<Typography noSelect>locked</Typography>);
+    const css = styledRuleText(typoEl(container));
+    expect(css).toContain('max-width'); // matched the real Typography rule
+    expect(css).toMatch(/user-select:\s*none/);
+  });
+
+  it('leaves text selectable by default (no user-select in the rule)', () => {
+    const { container } = renderWithSurface(<Typography>free</Typography>);
+    const css = styledRuleText(typoEl(container));
+    expect(css).toContain('max-width'); // matched the real Typography rule
+    expect(css).not.toMatch(/user-select/);
+  });
+});
