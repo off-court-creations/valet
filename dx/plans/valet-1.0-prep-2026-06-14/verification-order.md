@@ -45,11 +45,11 @@ retuned spacing/density numbers."
 
 ## Tier 1 — Pure leaves (no sibling-component imports)
 
-- [ ] **Icon** — highest fan-in; lock first
-- [ ] **Typography** — highest fan-in; lock first
-- [ ] **Progress** (ProgressBar/ProgressRing) — bottom of the `Surface→LoadingBackdrop→Progress` chain
-- [ ] Avatar · [ ] Image · [ ] Divider · [ ] Video · [ ] WebGLCanvas
-- [ ] **FormControl** (form-store provider; before any bound field) · [ ] ValetErrorBoundary
+- [x] **Icon** — highest fan-in; lock first
+- [x] **Typography** — highest fan-in; lock first
+- [x] **Progress** (ProgressBar/ProgressRing) — bottom of the `Surface→LoadingBackdrop→Progress` chain
+- [x] Avatar · [x] Image · [x] Divider · [x] Video · [x] WebGLCanvas
+- [ ] **FormControl** (form-store provider; before any bound field) — _reviewed 2026-06-17, tests green, awaiting Ben's manual pass_ · [ ] ValetErrorBoundary
 
 ## Tier 2 — Box-family layout + the hoists
 

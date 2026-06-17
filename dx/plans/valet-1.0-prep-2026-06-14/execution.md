@@ -1,6 +1,6 @@
 # Valet 1.0 Prep — Execution Tracker
 
-> Live progress log for [`plan.md`](plan.md). **Last updated: 2026-06-16.
+> Live progress log for [`plan.md`](plan.md). **Last updated: 2026-06-17.
 > Status: W1–W6 CODE-COMPLETE & GREEN on `feat/valet-1.0` (7 commits off
 > `development`). Every CI-equivalent gate passes — lint, typecheck×4, build,
 > 1345 tests, check:package (publint+attw), verify:pack, check:engine,
@@ -92,6 +92,28 @@ Things the agent cannot or should not do:
 | 6 | 10 experimental components | **Promoted Accordion/Table/DateSelector → stable; carved out LLMChat/RichChat/KeyModal/Parallax×3** in VERSIONING.md | ✅ done W5 (Ben can veto via meta `status`) |
 | 7 | injectRemote flip timing | **Flipped true→false** (Q13) on the epic branch (lands at the 1.0 cut) | ✅ done W5 |
 | 8 | Scope line | **1.0 = W1–W6 (everything); no 1.0.x fast-follow** | ✅ ruled 2026-06-14 |
+
+## Re-test pass — verification log
+
+Bottom-up promotions per [`verification-order.md`](verification-order.md). Each
+flips `*.meta.json` → `stable` only after tests + a source review, then
+`mcp:build && mcp:check && mcp:schema:check`.
+
+- **Tier 1 leaves — DONE (stable):** Icon, Typography, Progress
+  (ProgressBar/ProgressRing), Avatar, Image, Divider, Video, WebGLCanvas.
+  - *WebGLCanvas* (promoted 2026-06-17) also gained a docs scene — a raymarched
+    "Tron City" flyover shader — plus a fan-out pass of **look-preserving** perf
+    optimizations (terrain-gated raymarch step factor, per-row `zoneType` hoist +
+    whole-row skip, zone/CSE reuse, `mediump` bloom passes; 28 analyzed → 16
+    verified pixel-safe). Docs page de-WIP'd to a generic component explainer
+    (Pause/Speed playground removed).
+- **FormControl — REVIEWED, NOT promoted (2026-06-17).** Tests green (74 across
+  `FormControl.dom` + `controlledContract` + `createFormStore` + `useControlledState`);
+  source clean (SSR-safe, `data-valet-component` marker, intentional store-type
+  erasure with casts localized to `useForm`/`useOptionalForm`). Left `experimental`
+  pending Ben's manual pass.
+- **Next:** ValetErrorBoundary (last Tier 1 leaf) → Tier 2 (Box/Stack/Grid — the
+  spacing/density retune center).
 
 ## Re-test pass — deferred findings
 
