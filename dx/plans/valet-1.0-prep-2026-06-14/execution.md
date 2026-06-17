@@ -229,8 +229,9 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   `ssr-render.test.ts` gate covers AppBar/Drawer/Accordion but not the overlay trio;
   a closed-Modal / Tooltip / SpeedDial renderToString case could lock their SSR-safety.
   **Next:** Tier 4 (Button, IconButton → fields) per the verification order.
-- **Tier 4 foundations — Button + IconButton: AGENT-VERIFIED, awaiting Ben's visual
-  pass (2026-06-17).** 7 tests green (Button.dom + IconButton.dom). Both source-clean
+- **Tier 4 foundations — Button + IconButton: DONE (stable 2026-06-17 — both gates).**
+  Ben's visual pass: "both great!" Promoted both.
+  7 tests green (Button.dom + IconButton.dom). Both source-clean
   and consistent: polymorphic (`as`) with shared a11y (role/tabIndex/Enter-Space
   keydown fallback for non-button roots, anchor-href + role-contradiction dev-warns,
   `type='button'` default stripped for anchors); intent/variant/color/size via the
