@@ -229,6 +229,18 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   `ssr-render.test.ts` gate covers AppBar/Drawer/Accordion but not the overlay trio;
   a closed-Modal / Tooltip / SpeedDial renderToString case could lock their SSR-safety.
   **Next:** Tier 4 (Button, IconButton → fields) per the verification order.
+- **Tier 4 foundations — Button + IconButton: AGENT-VERIFIED, awaiting Ben's visual
+  pass (2026-06-17).** 7 tests green (Button.dom + IconButton.dom). Both source-clean
+  and consistent: polymorphic (`as`) with shared a11y (role/tabIndex/Enter-Space
+  keydown fallback for non-button roots, anchor-href + role-contradiction dev-warns,
+  `type='button'` default stripped for anchors); intent/variant/color/size via the
+  shared `computeIntentVars`; style precedence caller < (geometry <) intent-vars < sx;
+  markers + data-state. **Button** auto-wraps string children in Typography (stable);
+  **IconButton** renders the stable Icon, adds the icon-only accessible-name dev-guard
+  and `aria-hidden`s the glyph when the control is labelled. SSR-safe (no browser
+  globals at render). Metas clean — no fixes needed. Both left `experimental` pending
+  Ben's visual pass. **Next:** Checkbox (before Select/Table) · Switch · Slider ·
+  TextField · Radio+RadioGroup · Pagination.
 - **Box — DONE (stable 2026-06-17 — both gates).** Ben's visual pass cleared it;
   the `centered`→`centerContent` meta fix shipped.
 - **Pre-existing repo debt (not from this work):** `eslint .` reports 51 prettier
