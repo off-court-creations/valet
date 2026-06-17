@@ -17,7 +17,7 @@ import {
 } from '@archway/valet';
 import ComponentMetaPage from '../../../components/ComponentMetaPage';
 import IconMeta from '../../../../../src/components/primitives/Icon.meta.json';
-import mymoSVG from '../../../assets/mygymlogo.svg?raw';
+import tuxSVG from '../../../assets/TuxFlat.svg?raw';
 
 /*─────────────────────────────────────────────────────────────────────────────*/
 /* Style preset – demonstrate Icon inside a themed container                    */
@@ -137,9 +137,9 @@ export default function IconDemoPage() {
         or model output to it.
       </Typography>
       <Icon
-        dangerouslySetSvg={mymoSVG}
+        dangerouslySetSvg={tuxSVG}
         size={40}
-        aria-label='custom-svg'
+        aria-label='tux-logo'
       />
 
       <Typography variant='h3'>5. Presets</Typography>
