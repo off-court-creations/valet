@@ -124,6 +124,11 @@ describe('Video (jsdom)', () => {
     expect(v.getAttribute('tabindex')).toBe('0');
   });
 
+  it('carries the data-valet-component marker on the wrapper (AI-proxy hook)', () => {
+    const c = render(<Video sources={SRC} />);
+    expect(c.querySelector('[data-valet-component="Video"]')).not.toBeNull();
+  });
+
   it('lazy: withholds <source>s until the element scrolls into view', () => {
     const c = render(
       <Video
