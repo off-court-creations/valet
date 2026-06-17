@@ -32,6 +32,13 @@
       "description": "Inline styles (with CSS var support)"
     },
     {
+      "name": "data-valet-component",
+      "type": "string",
+      "required": false,
+      "description": "Override the root component-identity marker (defaults to `'ParallaxLayer'`).\nParallaxBackground passes its own name so the DOM node identifies as it.",
+      "default": "'ParallaxLayer'"
+    },
+    {
       "name": "preset",
       "type": "string | string[] | undefined",
       "required": false,

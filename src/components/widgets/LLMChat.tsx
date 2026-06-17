@@ -339,6 +339,7 @@ export const LLMChat: React.FC<ChatProps> = ({
       )}
       <Panel
         {...rest}
+        data-valet-component='LLMChat'
         compact
         fullWidth
         variant='outlined'

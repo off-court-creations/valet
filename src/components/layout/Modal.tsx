@@ -142,6 +142,12 @@ export interface ModalProps
   fullWidth?: boolean;
   /** Inline styles (with CSS var support). */
   sx?: Sx;
+  /**
+   * Override the root component-identity marker (defaults to `'Modal'`). A
+   * composite that roots on a Modal passes its own name so the DOM node
+   * identifies as that component — the AI-proxy hook.
+   */
+  'data-valet-component'?: string;
 }
 
 /*───────────────────────────────────────────────────────────*/
@@ -164,6 +170,7 @@ export const Modal: React.FC<ModalProps> = ({
   preset: presetKey,
   className,
   sx,
+  'data-valet-component': dataValetComponent = 'Modal',
   ...rest
 }) => {
   const { theme } = useTheme();
@@ -264,7 +271,7 @@ export const Modal: React.FC<ModalProps> = ({
       <Box
         {...rest}
         ref={setDialogRef}
-        data-valet-component='Modal'
+        data-valet-component={dataValetComponent}
         data-state='open'
         role={variant === 'alert' ? 'alertdialog' : 'dialog'}
         aria-modal='true'

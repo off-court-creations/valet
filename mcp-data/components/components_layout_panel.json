@@ -60,6 +60,13 @@
       "default": "true"
     },
     {
+      "name": "data-valet-component",
+      "type": "string",
+      "required": false,
+      "description": "Override the root component-identity marker (defaults to `'Panel'`). A\ncomposite component that roots on a Panel passes its own name so the DOM\nnode identifies as that component — the \"AI proxies as first-class users\"\nhook. Omit it and the Panel marks itself.",
+      "default": "'Panel'"
+    },
+    {
       "name": "sx",
       "type": "Sx | undefined",
       "required": false

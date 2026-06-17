@@ -438,6 +438,7 @@ export const RichChat: React.FC<RichChatProps> = ({
   return (
     <Panel
       {...rest}
+      data-valet-component='RichChat'
       fullWidth
       variant='outlined'
       /* Trim outer chrome to pull avatars/icons toward edges */

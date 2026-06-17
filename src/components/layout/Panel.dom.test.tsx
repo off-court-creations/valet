@@ -137,4 +137,15 @@ describe('Panel default padding (1.0, jsdom)', () => {
     const el = container.querySelector('[data-valet-component="Panel"]') as HTMLElement;
     expect(styledRule(el)).toContain('width: var(--valet-panel-width');
   });
+
+  it('marks the root data-valet-component (default Panel; override-able for composites)', () => {
+    // Default: the Panel marks itself.
+    const dflt = render(<Panel>x</Panel>);
+    expect(dflt.querySelector('[data-valet-component="Panel"]')).not.toBeNull();
+    // A composite that roots on a Panel passes its own name → the root reports
+    // that, not 'Panel' (lets Dropzone/LLMChat/RichChat stay identifiable).
+    const over = render(<Panel data-valet-component='Dropzone'>x</Panel>);
+    expect(over.querySelector('[data-valet-component="Dropzone"]')).not.toBeNull();
+    expect(over.querySelector('[data-valet-component="Panel"]')).toBeNull();
+  });
 });

@@ -111,6 +111,11 @@ export interface ParallaxLayerProps
   axis?: 'y' | 'x';
   /** Inline styles (with CSS var support) */
   sx?: Sx;
+  /**
+   * Override the root component-identity marker (defaults to `'ParallaxLayer'`).
+   * ParallaxBackground passes its own name so the DOM node identifies as it.
+   */
+  'data-valet-component'?: string;
 }
 
 export const ParallaxLayer: React.FC<ParallaxLayerProps> = ({
@@ -120,6 +125,7 @@ export const ParallaxLayer: React.FC<ParallaxLayerProps> = ({
   preset: p,
   sx,
   className,
+  'data-valet-component': dataValetComponent = 'ParallaxLayer',
   ...props
 }) => {
   const { scrollY, scrollX } = useParallax();
@@ -148,7 +154,7 @@ export const ParallaxLayer: React.FC<ParallaxLayerProps> = ({
         ...sx,
       }}
       {...props}
-      data-valet-component='ParallaxLayer'
+      data-valet-component={dataValetComponent}
     >
       {children}
     </div>
@@ -257,6 +263,7 @@ export const ParallaxBackground: React.FC<ParallaxBackgroundProps> = ({
         ...sx,
       }}
       {...props}
+      data-valet-component='ParallaxBackground'
     >
       {mediaEl}
     </ParallaxLayer>

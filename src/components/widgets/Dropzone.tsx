@@ -387,6 +387,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
     <Panel
       {...rest}
       {...rootProps}
+      data-valet-component='Dropzone'
       ref={setPanelRef}
       variant='outlined'
       fullWidth={fullWidth}

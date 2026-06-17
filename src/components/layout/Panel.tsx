@@ -39,6 +39,13 @@ export interface PanelProps
    * Defaults to true (normalize). Set to false to keep intrinsic heights.
    */
   normalizeRowHeights?: boolean;
+  /**
+   * Override the root component-identity marker (defaults to `'Panel'`). A
+   * composite component that roots on a Panel passes its own name so the DOM
+   * node identifies as that component — the "AI proxies as first-class users"
+   * hook. Omit it and the Panel marks itself.
+   */
+  'data-valet-component'?: string;
 }
 
 /** Inline styles (with CSS var support) */
@@ -147,6 +154,7 @@ export const Panel: React.FC<PanelProps> = ({
   density,
   pad: padProp,
   children,
+  'data-valet-component': dataValetComponent = 'Panel',
   ...rest
 }) => {
   const { theme } = useTheme();
@@ -203,7 +211,7 @@ export const Panel: React.FC<PanelProps> = ({
   return (
     <Base
       {...rest}
-      data-valet-component='Panel'
+      data-valet-component={dataValetComponent}
       $variant={variant}
       $full={fullWidth}
       $center={centerContent}

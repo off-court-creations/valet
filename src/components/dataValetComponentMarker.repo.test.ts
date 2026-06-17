@@ -59,23 +59,10 @@ const ALLOWLIST: Record<string, string> = {
   // <div role='alert'>, which renders only on caught error and is not a
   // consistent root. Children pass-through w/ no owned wrapper → RULES 4 & 5.
   'widgets/ValetErrorBoundary.tsx': 'class error boundary — children pass-through, no consistent owned root',
-  // Root rendered element is <Panel>, which hardcodes its own
-  // data-valet-component='Panel' AFTER its {...rest} spread, so a forwarded
-  // marker would be clobbered; Dropzone owns no plain DOM root of its own
-  // (input/Icon/instructions are children INSIDE Panel). Adding a wrapper
-  // is forbidden (RULE 4).
-  'widgets/Dropzone.tsx': 'root is <Panel> (already marked); owns no plain root node — RULE 4',
-  // Returns <Modal><Panel><Stack>…; Modal/Panel/Stack each already carry
-  // their own markers and KeyModal owns no plain root wrapper. Must not
-  // clobber the child Modal marker nor add a wrapper — RULE 4.
-  'widgets/KeyModal.tsx': 'root is <Modal> (already marked); owns no plain root node — RULE 4',
-  // Returns a Fragment whose outermost DOM node is <Panel> (already marked);
-  // the toolbar/messages/input are siblings inside it, so LLMChat owns no single
-  // plain root wrapper to mark without misidentifying an inner element — RULE 4.
-  'widgets/LLMChat.tsx': 'root is <Panel> (already marked); owns no single plain root — RULE 4',
-  // Returns <Panel> (already marked) wrapping its content; owns no plain root of
-  // its own without clobbering Panel's marker or adding a wrapper — RULE 4.
-  'widgets/RichChat.tsx': 'root is <Panel> (already marked); owns no plain root node — RULE 4',
+  // NOTE: Dropzone, KeyModal, LLMChat, RichChat, and ParallaxBackground root on
+  // another valet component (Panel/Modal/ParallaxLayer) whose marker is now
+  // OVERRIDE-ABLE — they pass their own `data-valet-component` to that root, so
+  // they carry the literal and need no exemption.
 };
 
 /*───────────────────────────────────────────────────────────*/

@@ -41,6 +41,7 @@ export default function KeyModal({ open, onClose, noSelect = false }: KeyModalPr
     <Modal
       open={open}
       onClose={onClose}
+      data-valet-component='KeyModal'
     >
       <Panel
         centerContent
