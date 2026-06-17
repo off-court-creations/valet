@@ -194,7 +194,8 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   stale post-W1; reworded to the current `selectionMode`/`getItemKey` (same class as
   the Box `centered` fix). Both left `experimental` pending Ben's visual pass. **Next:**
   Tier 3 (Surface, Modal, Tooltip, SpeedDial) per the verification order.
-- **Tier 3 — Surface: AGENT-VERIFIED, awaiting Ben's visual pass (2026-06-17).** The
+- **Tier 3 — Surface: DONE (stable 2026-06-17 — both gates).** Ben's visual pass:
+  "approved." Promoted Surface. The
   keystone (the `useSurface` provider + DOM bridge). 15 tests green
   (`Surface.dom`). Source clean: nested-surface guard (enriched throw), per-instance
   `createSurfaceStore`, rAF-coalesced ResizeObserver+MutationObserver measure with a

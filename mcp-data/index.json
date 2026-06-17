@@ -228,7 +228,7 @@
     "category": "layout",
     "summary": "Per-route root container that establishes the theme, density spacing, writing `dir`, and font-loading gate; wrap each top-level screen in exactly one Surface — most valet components require an ancestor Surface and will throw without it.",
     "slug": "components/layout/surface",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Tabs",
