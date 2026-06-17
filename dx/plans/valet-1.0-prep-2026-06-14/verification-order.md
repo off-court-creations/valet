@@ -64,7 +64,7 @@ retuned spacing/density numbers."
 > Verdict: Stack = improve (W0 infra + W1 done, awaiting visual pass), Grid =
 > rewrite (W2, pending). These supersede a plain "verify as-is" for those two.
 
-- [x] **Box** _(stable 2026-06-17 — both gates)_ · [x] **Stack** _(stable 2026-06-17 — W1 improve + HStack/VStack/Center/Cluster/Spacer; both gates)_ · [ ] **Grid** + **GridItem** _(W2 rewrite done; agent-verified; awaiting Ben's visual pass on /grid-demo)_ — Grid is now Surface-decoupled (the old surfaceStore read is gone)
+- [x] **Box** _(stable 2026-06-17 — both gates)_ · [x] **Stack** _(stable 2026-06-17 — W1 improve + HStack/VStack/Center/Cluster/Spacer; both gates)_ · [x] **Grid** + **GridItem** _(stable 2026-06-17 — W2 rewrite; both gates)_ — Grid is now Surface-decoupled (the old surfaceStore read is gone)
 - [ ] **LoadingBackdrop** — hoisted out of widgets; renders Progress; must precede the Surface component
 - [ ] List (→ Typography)
 

@@ -151,14 +151,14 @@
     "category": "layout",
     "summary": "Two-dimensional CSS-grid container. Lay out equal columns (`columns`, responsive), or an auto-fit/fill card grid with no breakpoints (`minColWidth`), with token-aware `gap`/`gapX`/`gapY`, `align`/`justifyItems`, and `equalize` to fill children to their cell. Responsive props compile to CSS @media (no <Surface>); use `GridItem` for per-cell `span`/`rowSpan`/`colStart`. Prefer `Stack` for one-directional flow and `Table` for data.",
     "slug": "components/layout/grid",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "GridItem",
     "category": "layout",
     "summary": "Per-cell placement inside a `Grid` — `span` (column span), `rowSpan`, and `colStart`, each responsive (a breakpoint map compiles to CSS @media). Wrap a child in GridItem to make it occupy multiple tracks; bare Grid children remain valid 1×1 cells. Polymorphic via `as`.",
     "slug": "components/layout/griditem",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "List",

@@ -1,7 +1,7 @@
 {
   "name": "Grid",
   "summary": "Two-dimensional CSS-grid container. Lay out equal columns (`columns`, responsive), or an auto-fit/fill card grid with no breakpoints (`minColWidth`), with token-aware `gap`/`gapX`/`gapY`, `align`/`justifyItems`, and `equalize` to fill children to their cell. Responsive props compile to CSS @media (no <Surface>); use `GridItem` for per-cell `span`/`rowSpan`/`colStart`. Prefer `Stack` for one-directional flow and `Table` for data.",
-  "status": "experimental",
+  "status": "stable",
   "aliases": ["grid"],
   "docs": {
     "bestPractices": [

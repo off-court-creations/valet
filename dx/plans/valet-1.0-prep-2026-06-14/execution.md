@@ -160,7 +160,8 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
     SSR render+import, engine smoke, mcp gates (62 components, coverage floors held
     by the 5 sugar metas), docs tsc. Stack demo page extended to exercise every new
     feature for the visual pass. **Stack stays `experimental` pending Ben's visual pass.**
-  - **W2 — Grid rewrite + GridItem: AGENT-VERIFIED, awaiting Ben's visual pass.**
+  - **W2 — Grid rewrite + GridItem: DONE (stable 2026-06-17 — both gates).**
+    Ben's visual pass on `/grid-demo`: "grid looks great." Promoted Grid + GridItem.
     Real `display:grid` (was equal-columns-only). New: `minColWidth` auto-fit/fill
     (via the `--valet-grid-min` inline var, immortal-rule-safe; `autoFlow` default
     **`fill`** per Ben), responsive `columns`/`gap`/`gapX`/`gapY`/`pad`/`align`/
@@ -177,8 +178,9 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
     docs tsc. **Grid + GridItem stay `experimental` pending Ben's visual pass on
     `/grid-demo`.** Panel keeps its own `normalizeRowHeights` (separate stable
     component — untouched).
-  - **Next:** Ben's visual pass on `/grid-demo` → promote Grid + GridItem. Then the
-    Tier 2 tail (LoadingBackdrop, List) and onward per the verification order.
+  - **Stack & Grid first-class: COMPLETE.** All 9 layout primitives stable (Box,
+    Stack + HStack/VStack/Center/Cluster/Spacer, Grid + GridItem). **Next:** Tier 2
+    tail (LoadingBackdrop, List) and onward per the verification order.
 - **Box — DONE (stable 2026-06-17 — both gates).** Ben's visual pass cleared it;
   the `centered`→`centerContent` meta fix shipped.
 - **Pre-existing repo debt (not from this work):** `eslint .` reports 51 prettier
