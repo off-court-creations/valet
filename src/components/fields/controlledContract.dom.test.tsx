@@ -383,13 +383,20 @@ const ADAPTERS: Array<Adapter<any>> = [
         name={key}
         checked={v}
         onValueChange={onChange}
+        aria-label='Field'
       />
     ),
-    uncontrolled: (v) => <Checkbox defaultChecked={v} />,
+    uncontrolled: (v) => (
+      <Checkbox
+        defaultChecked={v}
+        aria-label='Field'
+      />
+    ),
     formChild: ({ value, key }) => (
       <Checkbox
         name={key}
         checked={value}
+        aria-label='Field'
       />
     ),
     read: (c) => checkboxInput(c).checked,

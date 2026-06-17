@@ -242,6 +242,24 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   globals at render). Metas clean — no fixes needed. Both left `experimental` pending
   Ben's visual pass. **Next:** Checkbox (before Select/Table) · Switch · Slider ·
   TextField · Radio+RadioGroup · Pagination.
+- **Tier 4 Checkbox — REDONE + AGENT-VERIFIED, awaiting Ben's visual pass (2026-06-17).**
+  Ben: "checkbox needs to be redone — inconsistent colors, mobile, sizing." Ran a
+  12-agent redo workflow (diagnose → 3 specs red-teamed → 2 judges → one spec) and
+  implemented it; full record in
+  [`checkbox-redo-2026-06-17.md`](checkbox-redo-2026-06-17.md). Root causes fixed:
+  colors now from ONE `computeIntentVars` call (neutral `makeMix` border, glyph =
+  `primaryButtonText` not hard-white) consistent with Button/Switch in light+dark;
+  disabled = colors + `opacity:0.5` (not the invisible-in-light `fg-disabled`); mobile
+  = chrome kit + a coarse-pointer `::before` ≥44px hit-expander (24px compact, logical
+  `inset:0;margin:auto` so the RTL gate passes) that leaves the desktop box unchanged;
+  sizing = proportional inline-SVG `currentColor` tick (no fixed inset/mask). Also:
+  `helperText` now rendered OUTSIDE the label + `aria-describedby`, a `warnOnce`
+  name-guard, dropped the conflicting `aria-checked="mixed"` (native IDL covers it),
+  reduced-motion guard. **No public API change**; control layer kept verbatim. Green:
+  typecheck×4, lint, 1420 tests (6 new redo cases), build, SSR, engine, RTL, mcp,
+  check:examples (102), docs tsc. Contract tests gained `aria-label` on bare checkboxes
+  (the name-guard now exists, mirroring Switch). Stays `experimental` pending Ben's
+  visual pass — contrast/glyph-crispness/44px-feel are unverifiable in jsdom.
 - **Box — DONE (stable 2026-06-17 — both gates).** Ben's visual pass cleared it;
   the `centered`→`centerContent` meta fix shipped.
 - **Pre-existing repo debt (not from this work):** `eslint .` reports 51 prettier

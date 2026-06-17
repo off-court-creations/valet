@@ -62,6 +62,7 @@ export default function CheckboxDemoPage() {
         checked={newsletter}
         onValueChange={(next) => setNewsletter(!!next)}
         label={`Receive newsletter – ${newsletter ? 'yes' : 'no'}`}
+        helperText='helperText renders outside the label and is wired via aria-describedby.'
       />
 
       {/* 3. Sizes */}
