@@ -1025,6 +1025,7 @@ export const Pagination: React.FC<PaginationProps> = ({
   return (
     <Root
       {...restProps}
+      data-valet-component='Pagination'
       aria-label={t.root}
       $text={theme.colors.text}
       $gap={theme.spacing(1)}

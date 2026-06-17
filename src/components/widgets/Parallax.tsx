@@ -93,6 +93,7 @@ export const ParallaxScroll: React.FC<ParallaxScrollProps> = ({
         className={[presetClasses, className].filter(Boolean).join(' ')}
         style={{ position: 'relative', overflow: 'hidden', ...sx }}
         {...props}
+        data-valet-component='ParallaxScroll'
       >
         {children}
       </div>
@@ -147,6 +148,7 @@ export const ParallaxLayer: React.FC<ParallaxLayerProps> = ({
         ...sx,
       }}
       {...props}
+      data-valet-component='ParallaxLayer'
     >
       {children}
     </div>

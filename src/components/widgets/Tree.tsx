@@ -490,6 +490,7 @@ export function Tree<T>({
   return (
     <Root
       {...rest}
+      data-valet-component='Tree'
       role='tree'
       onKeyDown={keyNav}
       $border={theme.colors.backgroundAlt}

@@ -334,6 +334,7 @@ export const Snackbar: React.FC<SnackbarProps> = ({
         role='status'
         aria-live='polite'
         {...rest}
+        data-valet-component='Snackbar'
         onPointerEnter={onPointerEnter}
         onPointerLeave={onPointerLeave}
         onFocusCapture={onFocusCapture}

@@ -175,6 +175,7 @@ export const WebGLCanvas: React.FC<WebGLCanvasProps> = ({
         ...sx,
       }}
       {...divProps}
+      data-valet-component='WebGLCanvas'
     >
       <canvas
         ref={canvasRef}
