@@ -274,8 +274,9 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   Meta tap-target advice updated. Green: typecheck×4, lint, 1422 tests (2 new mobile
   cases), build, RTL, mcp, check:examples, docs tsc. Stays `experimental` pending Ben's
   confirmation on a touch device / coarse-pointer emulation.
-- **Tier 4 Slider — AGENT-VERIFIED + mobile hardened, awaiting Ben's visual pass
-  (2026-06-17).** Source review clean: solid a11y (role=slider, full keyboard
+- **Tier 4 Slider — DONE (stable 2026-06-17 — both gates).** Ben: "slider is approved."
+  Promoted Slider.
+  Source review clean: solid a11y (role=slider, full keyboard
   Home/End/Page/Arrows, aria-value*), pointer-capture drag with `pointercancel`
   cleanup, controlled+FormControl contract, label/helperText wired + name-guard.
   **Mobile gaps found + fixed** (same pattern as Switch): the thumb (14–34px) lacked a
