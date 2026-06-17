@@ -15,9 +15,15 @@ export default function VideoDemoPage() {
     <Stack sx={{ padding: theme.spacing(1), maxWidth: 1024, margin: '0 auto' }}>
       <Video
         sources={[
+          // Public, lightweight (≈1 MB / 10 s) Big Buck Bunny (CC-BY, Blender) —
+          // browser picks the first it supports; mp4 covers webm-less fallbacks.
           {
-            src: 'https://z-public-occ.s3.us-east-2.amazonaws.com/video/webm/Big_Buck_Bunny_1080p.webm',
+            src: 'https://test-videos.co.uk/vids/bigbuckbunny/webm/vp9/360/Big_Buck_Bunny_360_10s_1MB.webm',
             type: 'video/webm',
+          },
+          {
+            src: 'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4',
+            type: 'video/mp4',
           },
         ]}
         controls
