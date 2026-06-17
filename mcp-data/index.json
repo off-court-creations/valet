@@ -221,7 +221,7 @@
     "category": "primitives",
     "summary": "Theme-aware horizontal or vertical rule with spacing ergonomics; use it to separate content sections or list items without drawing your own border.",
     "slug": "components/primitives/divider",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Icon",
