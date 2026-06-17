@@ -1,17 +1,18 @@
 {
   "name": "Image",
   "summary": "Theme-aware `<img>` wrapper with sizing and object-fit ergonomics for static raster/vector images; use it for content imagery, and `Avatar` for circular user pictures or `Video` for playable media.",
-  "status": "experimental",
+  "status": "stable",
   "aliases": ["image", "img", "picture"],
   "docs": {
     "bestPractices": [
       "Always set alt text; use empty alt for decorative images.",
-      "Specify dimensions via width/height or aspectRatio to avoid layout shift.",
+      "Avoid layout shift: a NUMERIC width AND height emit the native size attributes so the browser reserves space, or set `aspectRatio` (a number is the literal ratio — pass `16 / 9`, not `16`).",
       "Choose fit (`cover`/`contain`) and objectPosition deliberately to control cropping/focus.",
-      "Use srcSet/sizes for responsive sources; avoid full‑resolution assets in small spaces.",
-      "Default lazy loading is enabled; use loading='eager' and optionally fetchPriority='high' for LCP heroes.",
-      "Avoid background images for content; prefer `<Image>` so a11y tools can interpret it.",
-      "Apply rounded corners via a wrapper (Panel/Box) with `overflow: hidden` or via sx; avoid per‑component shape props."
+      "Use srcSet/sizes (native `<img>` passthrough) for responsive sources — valet has no build-step optimizer, so caller-provided sources are the responsive story.",
+      "Lazy-loads + async-decodes by default; set `priority` for an above-the-fold/LCP hero (eager + fetchPriority=high). An explicit loading/fetchPriority still wins.",
+      "Round corners with the `radius` prop (number → theme.radius(n), scales with density); reach for a parent `overflow: hidden` wrapper only to clip overflowing/child content.",
+      "Pass `fallback` to degrade a broken image gracefully (rendered onError); without it a failed load behaves like a native <img>.",
+      "Avoid background images for content; prefer `<Image>` so a11y tools and AI proxies can interpret it."
     ]
   }
 }
