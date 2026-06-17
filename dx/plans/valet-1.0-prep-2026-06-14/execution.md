@@ -194,6 +194,18 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   stale post-W1; reworded to the current `selectionMode`/`getItemKey` (same class as
   the Box `centered` fix). Both left `experimental` pending Ben's visual pass. **Next:**
   Tier 3 (Surface, Modal, Tooltip, SpeedDial) per the verification order.
+- **Tier 3 — Surface: AGENT-VERIFIED, awaiting Ben's visual pass (2026-06-17).** The
+  keystone (the `useSurface` provider + DOM bridge). 15 tests green
+  (`Surface.dom`). Source clean: nested-surface guard (enriched throw), per-instance
+  `createSurfaceStore`, rAF-coalesced ResizeObserver+MutationObserver measure with a
+  change-bail, the full `--valet-*` var contract (space/radius/stroke/divider/focus/
+  screen-size/fonts), font-blocking backdrop (renders the now-stable LoadingBackdrop)
+  with the 500ms never-block grace, RTL `dir` stamping (SSR-safe context read), and
+  the compact cascade seed. Render path touches no browser globals (observers live in
+  effects); already SSR-exercised by `ssr-render.test.ts`. **Meta fix:** density
+  bestPractice still quoted the legacy scale ('tight' 0.9× / 'standard' 1× /
+  'comfortable' 1.15×); corrected to the retuned 0.8× / 0.9× / 1× (`densityScale`).
+  Left `experimental` pending Ben's visual pass. **Next:** Modal · Tooltip · SpeedDial.
 - **Box — DONE (stable 2026-06-17 — both gates).** Ben's visual pass cleared it;
   the `centered`→`centerContent` meta fix shipped.
 - **Pre-existing repo debt (not from this work):** `eslint .` reports 51 prettier
