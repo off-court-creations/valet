@@ -19,6 +19,7 @@ import { Switch } from './Switch';
 import { FormControl } from './FormControl';
 import { createFormStore } from '../../system/createFormStore';
 import { resetWarnOnce } from '../../system/devErrors';
+import * as sheet from '../../css/sheet';
 import type { ChangeInfo } from '../../system/events';
 
 /* react-dom warns unless act usage is announced ----------------------- */
@@ -44,6 +45,13 @@ function mount(node: React.ReactElement) {
 }
 
 const track = (c: HTMLElement) => c.querySelector('button[role="switch"]')!;
+
+/** The CSS rule text (incl. nested @media) for the element's styled class. */
+const ruleFor = (el: Element) => {
+  const cls = (el as HTMLElement).className.split(' ').find(Boolean) ?? '';
+  const rules = Array.from(sheet.getGlobalSheet()?.cssRules ?? [], (r) => r.cssText);
+  return rules.find((t) => t.startsWith(`.${cls}`)) ?? '';
+};
 
 /** Click the track with a given `detail`: 1 ⇒ pointer, 0 ⇒ keyboard activation. */
 function clickTrack(el: Element, detail: number) {
@@ -182,5 +190,25 @@ describe('Switch — ChangeInfo.source classification (ruling R10)', () => {
     // previousValue tracks the prior rendered state (false → true → false).
     expect(infos[0].previousValue).toBe(false);
     expect(infos[1].previousValue).toBe(true);
+  });
+});
+
+/*───────────────────────────────────────────────────────────────*/
+/* Mobile hardening — touch target + chrome kit                   */
+
+describe('Switch — mobile hardening', () => {
+  it('exposes a >=44px coarse-pointer hit-size var (default 44px)', () => {
+    const { container } = mount(<Switch aria-label='x' />);
+    expect((track(container) as HTMLElement).style.getPropertyValue('--valet-switch-hit')).toBe(
+      '44px',
+    );
+  });
+
+  it('ships the chrome kit + a coarse-pointer ≥44px hit expander in the styled rule', () => {
+    const { container } = mount(<Switch aria-label='x' />);
+    const rule = ruleFor(track(container));
+    expect(rule).toContain('touch-action: manipulation');
+    expect(rule).toContain('@media (pointer: coarse)');
+    expect(rule).toContain('--valet-switch-hit'); // the expander reads the hit var
   });
 });

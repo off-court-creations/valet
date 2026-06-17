@@ -261,6 +261,18 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   check:examples (102), docs tsc. Contract tests gained `aria-label` on bare checkboxes
   (the name-guard now exists, mirroring Switch). Stays `experimental` pending Ben's
   visual pass — contrast/glyph-crispness/44px-feel are unverifiable in jsdom.
+- **Tier 4 Switch — mobile hardened + AGENT-VERIFIED, awaiting Ben's mobile pass
+  (2026-06-17).** Ben approved look/feel ("I like the way switch looks and works") and
+  asked to "make sure it's good to go on mobile." It was NOT: every size's track was
+  under the 44px WCAG floor vertically (xs 16 → xl 38) and it lacked the chrome kit.
+  Applied the Checkbox-redo mobile pattern (no look/feel change): chrome kit
+  (`-webkit-tap-highlight-color`/`-webkit-touch-callout`/`user-select`/`touch-action`
+  + `onContextMenu`) and a `@media (pointer: coarse)` `::before` ≥44px hit-expander
+  (`--valet-switch-hit`, 24px under `compact`, logical `inset:0;margin:auto` → RTL gate
+  green) that grows the tap target without changing the visual track or desktop rhythm.
+  Meta tap-target advice updated. Green: typecheck×4, lint, 1422 tests (2 new mobile
+  cases), build, RTL, mcp, check:examples, docs tsc. Stays `experimental` pending Ben's
+  confirmation on a touch device / coarse-pointer emulation.
 - **Box — DONE (stable 2026-06-17 — both gates).** Ben's visual pass cleared it;
   the `centered`→`centerContent` meta fix shipped.
 - **Pre-existing repo debt (not from this work):** `eslint .` reports 51 prettier

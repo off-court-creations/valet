@@ -76,7 +76,7 @@ retuned spacing/density numbers."
 ## Tier 4 — Field foundations + standalone fields
 
 - [x] **Button** _(stable 2026-06-17 — both gates)_ (→ Typography) · [x] **IconButton** _(stable 2026-06-17 — both gates)_ (→ Icon) — foundations for AppBar/Drawer/Iterator/CodeBlock
-- [x] **Checkbox** _(stable 2026-06-17 — REDONE colors/mobile/sizing per [checkbox-redo](checkbox-redo-2026-06-17.md); both gates)_ (before Select/Table) · [ ] Switch · [ ] Slider · [ ] TextField
+- [x] **Checkbox** _(stable 2026-06-17 — REDONE colors/mobile/sizing per [checkbox-redo](checkbox-redo-2026-06-17.md); both gates)_ (before Select/Table) · [ ] **Switch** _(look/feel approved by Ben; mobile hardened 2026-06-17 — chrome kit + ≥44px coarse-pointer hit target; agent-verified, awaiting Ben's mobile pass)_ · [ ] Slider · [ ] TextField
 - [ ] **Radio + RadioGroup** — verify as ONE unit (Radio lives inside RadioGroup with a context guard; not splittable)
 - [ ] **Pagination** (→ Typography; hoisted — foundation for Table)
 

@@ -8,6 +8,7 @@ import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { useFieldState } from '../../hooks/useControlledState';
+import { useCompact } from '../../system/compactContext';
 import { warnOnce } from '../../system/devErrors';
 import type { FieldBaseProps } from '../../types';
 import type { ChangeInfo, InputSource, OnValueChange, OnValueCommit } from '../../system/events';
@@ -74,6 +75,27 @@ const Track = styled('button')<{
   background: ${({ $checked, $primary }) => ($checked ? $primary : '#0003')};
   cursor: pointer;
   transition: background ${({ $dur }) => $dur} ${({ $ease }) => $ease};
+
+  /* Mobile chrome kit — no blue tap flash, no iOS callout, no text selection */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+
+  /* Coarse-pointer (touch) hit target — expand to >=44px (24px under compact)
+     WITHOUT changing the visual track; fine-pointer (desktop) is untouched.
+     Logical centering (inset:0; margin:auto) keeps the RTL gate green. */
+  @media (pointer: coarse) {
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      width: max(100%, var(--valet-switch-hit, 44px));
+      height: max(100%, var(--valet-switch-hit, 44px));
+    }
+  }
 
   &:focus-visible {
     outline: var(--valet-switch-outline, 2px) solid ${({ $primary }) => $primary};
@@ -157,6 +179,7 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
     /* ----- theme + geometry -------------------------------- */
     const { theme } = useTheme();
     const geom = createSizeMap()[size];
+    const effectiveCompact = useCompact();
 
     /* ----- value resolution (shared hook, ruling R9) ------- */
     /* Single resolution of checked/control/form binding via the shared hook:
@@ -243,6 +266,7 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
         data-disabled={disabled ? 'true' : 'false'}
         disabled={disabled}
         onClick={handleToggle}
+        onContextMenu={(e: React.MouseEvent) => e.preventDefault()}
         $checked={checked}
         $w={geom.trackW}
         $h={geom.trackH}
@@ -255,6 +279,7 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
             '--valet-switch-outline': theme.stroke(2),
             '--valet-switch-offset': theme.stroke(2),
             '--valet-switch-pad': theme.stroke(2),
+            '--valet-switch-hit': effectiveCompact ? '24px' : '44px',
             ...sx,
           } as React.CSSProperties
         }
