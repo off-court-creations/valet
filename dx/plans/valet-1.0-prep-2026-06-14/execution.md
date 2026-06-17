@@ -112,8 +112,17 @@ flips `*.meta.json` → `stable` only after tests + a source review, then
   source clean (SSR-safe, `data-valet-component` marker, intentional store-type
   erasure with casts localized to `useForm`/`useOptionalForm`). Left `experimental`
   pending Ben's manual pass.
-- **Next:** ValetErrorBoundary (last Tier 1 leaf) → Tier 2 (Box/Stack/Grid — the
-  spacing/density retune center).
+- **ValetErrorBoundary — DONE (stable, promoted 2026-06-17).** Last Tier 1 leaf.
+  Tests green (6 in `ValetErrorBoundary.dom`: pass-through, catch→role='alert'
+  panel, onError-once, reset()→re-render, static + render-fn fallback, no-Surface/
+  no-theme-vars). Source clean: deliberately self-contained class boundary — no
+  `styled()`/theme/`useSurface`, so it survives failures in the surface tree
+  itself; SSR-safe (no browser globals). No `data-valet-component` marker by
+  design — children pass-through with no consistent owned root; documented in the
+  marker-gate ALLOWLIST (`dataValetComponentMarker.repo.test.ts`). Docs demo
+  (`ValetErrorBoundaryDemo.tsx`) exercises a custom fallback + reset.
+- **Next:** Tier 2 — Box / Stack / Grid (the spacing/density retune center;
+  reads only the surfaceStore *contract*), then LoadingBackdrop + List.
 
 ## Re-test pass — deferred findings
 
