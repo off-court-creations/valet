@@ -46,8 +46,8 @@ export default function VideoDemoPage() {
 
       <Typography variant='h3'>2. Autoplay background loop</Typography>
       <Typography variant='subtitle'>
-        <code>autoPlay</code> + <code>muted</code> + <code>loop</code> with no controls — a decorative
-        background clip. Muted is required for autoplay to be allowed.
+        <code>autoPlay</code> + <code>muted</code> + <code>loop</code> with no controls — a
+        decorative background clip. Muted is required for autoplay to be allowed.
       </Typography>
       <Video
         sources={BBB}
@@ -81,8 +81,8 @@ export default function VideoDemoPage() {
 
       <Typography variant='h3'>4. object-fit: cover vs contain</Typography>
       <Typography variant='subtitle'>
-        In a fixed box, <code>cover</code> fills and crops; <code>contain</code> letterboxes the whole
-        frame.
+        In a fixed box, <code>cover</code> fills and crops; <code>contain</code> letterboxes the
+        whole frame.
       </Typography>
       <Stack
         direction='row'

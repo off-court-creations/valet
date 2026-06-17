@@ -114,7 +114,14 @@ describe('ProgressRing (jsdom)', () => {
        → 0), so we assert the *mechanism* that drives the sizing: an aria-hidden,
        visibility:hidden "100%" reserver sits in the same grid cell as the
        visible value, fixing the box to the widest width. */
-    const el = ringEl(renderStrict(<ProgressRing value={5} label />));
+    const el = ringEl(
+      renderStrict(
+        <ProgressRing
+          value={5}
+          label
+        />,
+      ),
+    );
     expect(el.textContent).toContain('5%'); // visible current value
     const reserver = Array.from(el.querySelectorAll('span')).find(
       (s) => s.textContent === '100%' && s.getAttribute('aria-hidden') === 'true',

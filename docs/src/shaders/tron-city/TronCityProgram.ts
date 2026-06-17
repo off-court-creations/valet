@@ -346,8 +346,10 @@ export function createTronCityProgram(
   gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 8, 0);
   gl.bindVertexArray(null);
 
-  gl.useProgram(brightProg); gl.uniform1i(gl.getUniformLocation(brightProg, 'uTex'), 0);
-  gl.useProgram(blurProg); gl.uniform1i(gl.getUniformLocation(blurProg, 'uTex'), 0);
+  gl.useProgram(brightProg);
+  gl.uniform1i(gl.getUniformLocation(brightProg, 'uTex'), 0);
+  gl.useProgram(blurProg);
+  gl.uniform1i(gl.getUniformLocation(blurProg, 'uTex'), 0);
   gl.useProgram(compProg);
   gl.uniform1i(gl.getUniformLocation(compProg, 'uScene'), 0);
   gl.uniform1i(gl.getUniformLocation(compProg, 'uBloom'), 1);
@@ -387,7 +389,9 @@ export function createTronCityProgram(
   let bloomA: Target | null = null;
   let bloomB: Target | null = null;
   const setupTargets = (tw: number, th: number) => {
-    delTarget(scene); delTarget(bloomA); delTarget(bloomB);
+    delTarget(scene);
+    delTarget(bloomA);
+    delTarget(bloomB);
     const bw = Math.max(1, tw >> 1);
     const bh = Math.max(1, th >> 1);
     scene = mkTarget(tw, th);
@@ -406,13 +410,28 @@ export function createTronCityProgram(
   const CAM_SPEED = 5.0;
   const NPTS = 12;
   type Bike = {
-    ix: number; iz: number; dx: number; dz: number; prog: number;
-    xmin: number; xmax: number; seed: number;
-    corners: Array<[number, number]>; head: [number, number];
+    ix: number;
+    iz: number;
+    dx: number;
+    dz: number;
+    prog: number;
+    xmin: number;
+    xmax: number;
+    seed: number;
+    corners: Array<[number, number]>;
+    head: [number, number];
   };
   const mkBike = (ix: number, iz: number, xmin: number, xmax: number, seed: number): Bike => ({
-    ix, iz, dx: 0, dz: 1, prog: 0, xmin, xmax, seed: seed >>> 0,
-    corners: [[ix * CELL_JS, iz * CELL_JS]], head: [ix * CELL_JS, iz * CELL_JS],
+    ix,
+    iz,
+    dx: 0,
+    dz: 1,
+    prog: 0,
+    xmin,
+    xmax,
+    seed: seed >>> 0,
+    corners: [[ix * CELL_JS, iz * CELL_JS]],
+    head: [ix * CELL_JS, iz * CELL_JS],
   });
   const rndStep = (b: Bike): number => {
     b.seed = (Math.imul(b.seed, 1664525) + 1013904223) >>> 0;
@@ -438,9 +457,15 @@ export function createTronCityProgram(
           let dir = rndStep(b) < 0.5 ? 1 : -1;
           if (b.ix + dir < b.xmin) dir = 1;
           else if (b.ix + dir > b.xmax) dir = -1;
-          if (b.ix + dir >= b.xmin && b.ix + dir <= b.xmax) { b.dx = dir; b.dz = 0; }
+          if (b.ix + dir >= b.xmin && b.ix + dir <= b.xmax) {
+            b.dx = dir;
+            b.dz = 0;
+          }
         }
-      } else { b.dx = 0; b.dz = 1; }
+      } else {
+        b.dx = 0;
+        b.dz = 1;
+      }
     }
     b.head[0] = b.ix * CELL_JS + b.dx * b.prog;
     b.head[1] = b.iz * CELL_JS + b.dz * b.prog;
@@ -452,10 +477,17 @@ export function createTronCityProgram(
   let lenB = 1;
   const fillPath = (b: Bike, arr: Float32Array): number => {
     let k = 0;
-    for (const c of b.corners) { arr[k++] = c[0]; arr[k++] = c[1]; }
-    arr[k++] = b.head[0]; arr[k++] = b.head[1];
+    for (const c of b.corners) {
+      arr[k++] = c[0];
+      arr[k++] = c[1];
+    }
+    arr[k++] = b.head[0];
+    arr[k++] = b.head[1];
     const len = b.corners.length + 1;
-    while (k < NPTS * 2) { arr[k++] = b.head[0]; arr[k++] = b.head[1]; }
+    while (k < NPTS * 2) {
+      arr[k++] = b.head[0];
+      arr[k++] = b.head[1];
+    }
     return len;
   };
 
@@ -484,15 +516,20 @@ export function createTronCityProgram(
       gl.useProgram(sceneProg);
       gl.uniform2f(uResolution, w, h);
       gl.uniform1f(uTime, time);
-      gl.uniform2fv(uPathA, pathA); gl.uniform1i(uLenA, lenA); gl.uniform2f(uHeadA, bikeA.head[0], bikeA.head[1]);
-      gl.uniform2fv(uPathB, pathB); gl.uniform1i(uLenB, lenB); gl.uniform2f(uHeadB, bikeB.head[0], bikeB.head[1]);
+      gl.uniform2fv(uPathA, pathA);
+      gl.uniform1i(uLenA, lenA);
+      gl.uniform2f(uHeadA, bikeA.head[0], bikeA.head[1]);
+      gl.uniform2fv(uPathB, pathB);
+      gl.uniform1i(uLenB, lenB);
+      gl.uniform2f(uHeadB, bikeB.head[0], bikeB.head[1]);
       draw();
 
       gl.bindFramebuffer(gl.FRAMEBUFFER, bloomA.fbo);
       gl.viewport(0, 0, bloomA.w, bloomA.h);
       gl.useProgram(brightProg);
       gl.uniform1f(uThreshold, 0.65);
-      gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, scene.tex);
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, scene.tex);
       draw();
 
       gl.useProgram(blurProg);
@@ -502,12 +539,14 @@ export function createTronCityProgram(
         gl.bindFramebuffer(gl.FRAMEBUFFER, bloomB.fbo);
         gl.viewport(0, 0, bloomB.w, bloomB.h);
         gl.uniform2f(uDir, tx, 0);
-        gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, bloomA.tex);
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, bloomA.tex);
         draw();
         gl.bindFramebuffer(gl.FRAMEBUFFER, bloomA.fbo);
         gl.viewport(0, 0, bloomA.w, bloomA.h);
         gl.uniform2f(uDir, 0, ty);
-        gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, bloomB.tex);
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, bloomB.tex);
         draw();
       }
 
@@ -515,14 +554,18 @@ export function createTronCityProgram(
       gl.viewport(0, 0, w, h);
       gl.useProgram(compProg);
       gl.uniform1f(uBloomStr, 1.1);
-      gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, scene.tex);
-      gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, bloomA.tex);
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, scene.tex);
+      gl.activeTexture(gl.TEXTURE1);
+      gl.bindTexture(gl.TEXTURE_2D, bloomA.tex);
       draw();
 
       gl.bindVertexArray(null);
     },
     dispose() {
-      delTarget(scene); delTarget(bloomA); delTarget(bloomB);
+      delTarget(scene);
+      delTarget(bloomA);
+      delTarget(bloomB);
       gl.deleteBuffer(vbo);
       gl.deleteVertexArray(vao);
       gl.deleteProgram(sceneProg);

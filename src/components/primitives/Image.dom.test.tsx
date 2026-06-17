@@ -151,19 +151,49 @@ describe('Image (jsdom)', () => {
 /* ── 1.0 additions: radius, agent marker, CLS attrs, priority, aspect-ratio, fallback ── */
 describe('Image — 1.0 additions (jsdom)', () => {
   it('carries the data-valet-component marker (AI-proxy hook)', () => {
-    const el = img(render(<Image src='/x.png' alt='x' />));
+    const el = img(
+      render(
+        <Image
+          src='/x.png'
+          alt='x'
+        />,
+      ),
+    );
     expect(el.getAttribute('data-valet-component')).toBe('Image');
   });
 
   it('radius: number → theme.radius() calc, string → verbatim', () => {
-    const num = img(render(<Image src='/x.png' alt='x' radius={2} />));
+    const num = img(
+      render(
+        <Image
+          src='/x.png'
+          alt='x'
+          radius={2}
+        />,
+      ),
+    );
     expect(ruleFor(num)).toContain('border-radius: calc(var(--valet-radius');
-    const str = img(render(<Image src='/x.png' alt='x' radius='10px' />));
+    const str = img(
+      render(
+        <Image
+          src='/x.png'
+          alt='x'
+          radius='10px'
+        />,
+      ),
+    );
     expect(ruleFor(str)).toContain('border-radius: 10px');
   });
 
   it('no radius → no border-radius declaration (unchanged from today)', () => {
-    const el = img(render(<Image src='/x.png' alt='x' />));
+    const el = img(
+      render(
+        <Image
+          src='/x.png'
+          alt='x'
+        />,
+      ),
+    );
     expect(ruleFor(el)).not.toContain('border-radius');
   });
 
@@ -171,37 +201,93 @@ describe('Image — 1.0 additions (jsdom)', () => {
     // Note: CSSOM serializes `aspect-ratio: 1.5` back to `1.5 / 1` (same ratio),
     // so the runtime `/1`-drop is invisible — the real fix is the JSDoc steering
     // callers to pass a real ratio like 16/9. This pins the VALUE is correct.
-    const el = img(render(<Image src='/x.png' alt='x' aspectRatio={1.5} />));
+    const el = img(
+      render(
+        <Image
+          src='/x.png'
+          alt='x'
+          aspectRatio={1.5}
+        />,
+      ),
+    );
     expect(ruleFor(el)).toContain('aspect-ratio: 1.5');
   });
 
   it('emits native width/height attrs ONLY when both are numeric (CLS hint)', () => {
-    const both = img(render(<Image src='/x.png' alt='x' width={200} height={100} />));
+    const both = img(
+      render(
+        <Image
+          src='/x.png'
+          alt='x'
+          width={200}
+          height={100}
+        />,
+      ),
+    );
     expect(both.getAttribute('width')).toBe('200');
     expect(both.getAttribute('height')).toBe('100');
 
-    const oneStr = img(render(<Image src='/x.png' alt='x' width={200} height='50%' />));
+    const oneStr = img(
+      render(
+        <Image
+          src='/x.png'
+          alt='x'
+          width={200}
+          height='50%'
+        />,
+      ),
+    );
     expect(oneStr.hasAttribute('width')).toBe(false);
     expect(oneStr.hasAttribute('height')).toBe(false);
 
-    const noneNum = img(render(<Image src='/x.png' alt='x' width='100%' />));
+    const noneNum = img(
+      render(
+        <Image
+          src='/x.png'
+          alt='x'
+          width='100%'
+        />,
+      ),
+    );
     expect(noneNum.hasAttribute('width')).toBe(false);
   });
 
   it('priority co-sets eager + fetchpriority=high; explicit values still win', () => {
-    const pri = img(render(<Image src='/x.png' alt='x' priority />));
+    const pri = img(
+      render(
+        <Image
+          src='/x.png'
+          alt='x'
+          priority
+        />,
+      ),
+    );
     expect(pri.getAttribute('loading')).toBe('eager');
     expect(pri.getAttribute('fetchpriority')).toBe('high');
 
     const override = img(
-      render(<Image src='/x.png' alt='x' priority loading='lazy' fetchPriority='low' />),
+      render(
+        <Image
+          src='/x.png'
+          alt='x'
+          priority
+          loading='lazy'
+          fetchPriority='low'
+        />,
+      ),
     );
     expect(override.getAttribute('loading')).toBe('lazy');
     expect(override.getAttribute('fetchpriority')).toBe('low');
   });
 
   it('fallback renders on error; without it the bare <img> survives an error (byte-for-byte path)', () => {
-    const c = render(<Image src='/bad.png' alt='x' fallback={<span data-fb='1'>broken</span>} />);
+    const c = render(
+      <Image
+        src='/bad.png'
+        alt='x'
+        fallback={<span data-fb='1'>broken</span>}
+      />,
+    );
     expect(img(c)).not.toBeNull();
     act(() => {
       img(c).dispatchEvent(new Event('error'));
@@ -210,7 +296,12 @@ describe('Image — 1.0 additions (jsdom)', () => {
     expect(img(c)).toBeNull();
 
     // No fallback → the img is unaffected by an error (no internal swap/handler).
-    const c2 = render(<Image src='/bad.png' alt='x' />);
+    const c2 = render(
+      <Image
+        src='/bad.png'
+        alt='x'
+      />,
+    );
     act(() => {
       img(c2).dispatchEvent(new Event('error'));
     });

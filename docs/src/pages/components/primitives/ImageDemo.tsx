@@ -23,8 +23,8 @@ export default function ImageDemoPage() {
     <Stack>
       <Typography variant='h3'>1. Rounded corners (no wrapper)</Typography>
       <Typography variant='subtitle'>
-        <code>radius</code> rounds the image itself — number → <code>theme.radius(n)</code> (scales with
-        density), string → verbatim. No Panel/overflow wrapper needed.
+        <code>radius</code> rounds the image itself — number → <code>theme.radius(n)</code> (scales
+        with density), string → verbatim. No Panel/overflow wrapper needed.
       </Typography>
       <Image
         src='https://picsum.photos/seed/valet-meadow/800/600'
@@ -36,8 +36,8 @@ export default function ImageDemoPage() {
 
       <Typography variant='h3'>2. Priority (LCP hero)</Typography>
       <Typography variant='subtitle'>
-        <code>priority</code> sets <code>loading=eager</code> + <code>fetchPriority=high</code> for the
-        above-the-fold hero. Everything else stays lazy by default.
+        <code>priority</code> sets <code>loading=eager</code> + <code>fetchPriority=high</code> for
+        the above-the-fold hero. Everything else stays lazy by default.
       </Typography>
       <Image
         src='https://picsum.photos/id/1015/800/600'
@@ -71,8 +71,8 @@ export default function ImageDemoPage() {
 
       <Typography variant='h3'>5. Error fallback (opt-in)</Typography>
       <Typography variant='subtitle'>
-        Pass <code>fallback</code> to render a node when the image fails to load. Without it, a broken
-        image behaves like a native <code>&lt;img&gt;</code>. You size/theme the fallback.
+        Pass <code>fallback</code> to render a node when the image fails to load. Without it, a
+        broken image behaves like a native <code>&lt;img&gt;</code>. You size/theme the fallback.
       </Typography>
       <Image
         src='https://example.invalid/does-not-exist.png'

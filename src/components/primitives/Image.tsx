@@ -119,8 +119,13 @@ export const Image = React.forwardRef<HTMLImageElement, ImageProps>(
     const w = typeof width === 'number' ? `${width}px` : width;
     const h = typeof height === 'number' ? `${height}px` : height;
     const ratio =
-      aspectRatio == null ? undefined : typeof aspectRatio === 'number' ? `${aspectRatio}` : aspectRatio;
-    const r = radius == null ? undefined : typeof radius === 'number' ? theme.radius(radius) : radius;
+      aspectRatio == null
+        ? undefined
+        : typeof aspectRatio === 'number'
+          ? `${aspectRatio}`
+          : aspectRatio;
+    const r =
+      radius == null ? undefined : typeof radius === 'number' ? theme.radius(radius) : radius;
 
     // CLS: only when BOTH dimensions are numeric can we emit the native
     // intrinsic-size attribute PAIR (the browser derives the ratio from both).

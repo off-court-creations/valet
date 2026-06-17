@@ -140,7 +140,9 @@ export const WebGLCanvas: React.FC<WebGLCanvasProps> = ({
       // loseContext() here (see the teardown note): getContext() on this canvas
       // returns the SAME context, so force-losing it would poison a remount/retry.
       setFailed(true);
-      onErrorRef.current?.(new Error('WebGLCanvas: create() returned null (program build failed).'));
+      onErrorRef.current?.(
+        new Error('WebGLCanvas: create() returned null (program build failed).'),
+      );
       return;
     }
     // Publish the context only after a successful program build, so a failed

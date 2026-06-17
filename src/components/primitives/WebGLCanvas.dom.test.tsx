@@ -199,7 +199,14 @@ describe('WebGLCanvas (jsdom)', () => {
   it('create() → null fires onError (and does not set a live glRef)', () => {
     const onError = vi.fn();
     const root = makeRoot();
-    act(() => root.render(<WebGLCanvas create={() => null} onError={onError} />));
+    act(() =>
+      root.render(
+        <WebGLCanvas
+          create={() => null}
+          onError={onError}
+        />,
+      ),
+    );
     expect(onError).toHaveBeenCalledTimes(1);
   });
 });

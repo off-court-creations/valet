@@ -216,9 +216,7 @@ export const Icon: React.FC<PropsWithChildren<IconProps>> = ({
       style={{ ...colourStyle, ...sx }}
       draggable={false}
       {...spanRest}
-      {...(dangerousHTML != null
-        ? { dangerouslySetInnerHTML: { __html: dangerousHTML } }
-        : {})}
+      {...(dangerousHTML != null ? { dangerouslySetInnerHTML: { __html: dangerousHTML } } : {})}
     >
       {dangerousHTML != null ? null : content}
     </Wrapper>

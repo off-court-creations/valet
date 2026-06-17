@@ -15,9 +15,10 @@ export default function WebGLCanvasDemoPage() {
         WebGLCanvas is a lightweight host for a WebGL2 scene. It creates the context, keeps the
         drawing buffer sized to its parent (device-pixel-ratio aware, clamped by dprMax), and drives
         a program through a requestAnimationFrame loop — advancing it each frame, pausing on context
-        loss, and disposing cleanly on unmount. You supply a create callback that builds your program
-        (compile shaders, set up buffers) and returns an object with resize, update, render, and
-        dispose methods. The scene below is one such program, rendered as a full-bleed background.
+        loss, and disposing cleanly on unmount. You supply a create callback that builds your
+        program (compile shaders, set up buffers) and returns an object with resize, update, render,
+        and dispose methods. The scene below is one such program, rendered as a full-bleed
+        background.
       </Typography>
       <Panel fullWidth>
         <div

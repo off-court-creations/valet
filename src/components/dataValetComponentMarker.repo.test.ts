@@ -58,7 +58,8 @@ const ALLOWLIST: Record<string, string> = {
   // its only owned DOM node is the conditional default-fallback
   // <div role='alert'>, which renders only on caught error and is not a
   // consistent root. Children pass-through w/ no owned wrapper → RULES 4 & 5.
-  'widgets/ValetErrorBoundary.tsx': 'class error boundary — children pass-through, no consistent owned root',
+  'widgets/ValetErrorBoundary.tsx':
+    'class error boundary — children pass-through, no consistent owned root',
   // NOTE: Dropzone, KeyModal, LLMChat, RichChat, and ParallaxBackground root on
   // another valet component (Panel/Modal/ParallaxLayer) whose marker is now
   // OVERRIDE-ABLE — they pass their own `data-valet-component` to that root, so
