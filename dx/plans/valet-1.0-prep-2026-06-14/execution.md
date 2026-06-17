@@ -300,8 +300,8 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
     errors, isSubmitting }` (inert default outside a form); FormControl gains `disabled`,
     name-keyed `errors`, async `onSubmitValues` → `isSubmitting`/`aria-busy`, and
     focus-first-invalid. Additive; zero blast radius (nothing consumed it yet).
-  - **Wave B — TextField rewrite: DONE & committed (`3eac0b4`); agent-verified, awaiting
-    Ben's visual pass.** Plumbing kept byte-for-byte (controlledContract + source-grep
+  - **Wave B — TextField rewrite: DONE (stable 2026-06-17 — both gates; `3eac0b4`).**
+    Ben's visual pass: "seems great!" Promoted TextField. Plumbing kept byte-for-byte (controlledContract + source-grep
     gate green unedited). Rewrote the styled layer: width model (100% + min-inline-size:0
     + `width` prop; fullWidth→flex:1), intent-var colors (neutral border, border+ring
     recolor on error), backgroundAlt surface, `size` scale, helperText/errorText split

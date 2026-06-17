@@ -3,7 +3,7 @@
   "category": "fields",
   "slug": "components/fields/textfield",
   "summary": "Single- or multi-line text input with `label`/`helperText`/`error`+`errorText`, `size`, and a `width` model; controlled via `value` + `onChange` or auto-bound to a `FormControl` by `name`. Colours follow the theme intent contract (consistent with Button/Checkbox) and it fills its container's width by default. The default for free-form text entry.",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "textfield",
     "textinput",
