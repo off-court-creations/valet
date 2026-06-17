@@ -3,7 +3,7 @@
   "category": "layout",
   "slug": "components/layout/stack",
   "summary": "Flexbox container that lays children out in one `direction` (column/row) with consistent `gap`, token-aware `align`/`justify`, per-axis `gapX`/`gapY`, a `divider`, and responsive (breakpoint-map) props that compile to CSS @media — no <Surface> needed. The default choice for one-dimensional flow; use `Grid` for two-dimensional layouts. Sugar: `HStack`, `VStack`, `Center`, `Cluster`, `Spacer`.",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "stack"
   ],

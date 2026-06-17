@@ -64,7 +64,7 @@ retuned spacing/density numbers."
 > Verdict: Stack = improve (W0 infra + W1 done, awaiting visual pass), Grid =
 > rewrite (W2, pending). These supersede a plain "verify as-is" for those two.
 
-- [ ] **Box** _(agent-verified; awaiting Ben's visual pass)_ · [ ] **Stack** _(W1 improve + sugar done; agent-verified; awaiting Ben's visual pass)_ · [ ] **Grid** _(W2 rewrite pending)_ — center of the spacing/density retune; reads only the surfaceStore *contract*
+- [x] **Box** _(stable 2026-06-17 — both gates)_ · [x] **Stack** _(stable 2026-06-17 — W1 improve + HStack/VStack/Center/Cluster/Spacer; both gates)_ · [ ] **Grid** _(W2 rewrite pending)_ — center of the spacing/density retune; reads only the surfaceStore *contract*
 - [ ] **LoadingBackdrop** — hoisted out of widgets; renders Progress; must precede the Surface component
 - [ ] List (→ Typography)
 

@@ -3,7 +3,7 @@
   "category": "layout",
   "slug": "components/layout/vstack",
   "summary": "Vertical `Stack` (`direction='column'`) — an explicit, readable alias for the most common column flow. Accepts every Stack prop except `direction`; children stretch on the cross axis by default.",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "vstack",
     "column",

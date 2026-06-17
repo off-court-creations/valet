@@ -147,7 +147,9 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   Surface, SSR-stable), the engine path 13 components already use.
   - **W0 — DONE & committed (`227c677`).** `Responsive<T>` in `types.ts` +
     `utils/responsive.ts` compile helper (+ 9 tests). Non-breaking infra.
-  - **W1 — Stack improve + full sugar: AGENT-VERIFIED, awaiting Ben's visual pass.**
+  - **W1 — Stack improve + full sugar: DONE (stable 2026-06-17 — both gates).**
+    Ben's visual pass on `/stack-demo`: "both seem really great." Promoted Stack +
+    HStack/VStack/Center/Cluster/Spacer to `stable`.
     Additive: `align`/`justify` tokens, `gapX`/`gapY`, `divider`, `grow`, public
     `scroll`, responsive widening of `direction`/`gap`/`pad`/`align`/`justify`/
     `gapX`/`gapY`, polymorphic `as`; plus sugar `HStack`/`VStack`/`Center`/
@@ -161,8 +163,8 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   - **Next:** Ben's visual pass on the Stack demo (`/stack-demo`) → promote Stack;
     then **W2 — Grid rewrite** (real `display:grid`, `minColWidth` auto-fit,
     responsive `columns`, `GridItem`, Surface-decouple).
-- **Box — AGENT-VERIFIED, awaiting Ben's visual pass** (unchanged from above; the
-  `centered`→`centerContent` meta fix landed). Promote after the visual pass.
+- **Box — DONE (stable 2026-06-17 — both gates).** Ben's visual pass cleared it;
+  the `centered`→`centerContent` meta fix shipped.
 - **Pre-existing repo debt (not from this work):** `eslint .` reports 51 prettier
   errors on clean HEAD, all in `WebGLCanvas.tsx`/`Progress.dom.test.tsx` etc. from
   the Tron City commits; `check-pins` WARNs on docs/template `@archway/valet`

@@ -1,7 +1,7 @@
 {
   "name": "Spacer",
   "summary": "A flexible, `aria-hidden` filler that absorbs free space inside a `Stack` (any direction), pushing siblings apart — the typed replacement for `sx={{ flexGrow: 1 }}` / margin-auto hacks in toolbars and bars. `grow` sets how much space it takes (default 1).",
-  "status": "experimental",
+  "status": "stable",
   "aliases": ["spacer", "flex-spacer", "push"],
   "docs": {
     "docsUrl": "/stack-demo",

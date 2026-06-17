@@ -3,7 +3,7 @@
   "category": "layout",
   "slug": "components/layout/cluster",
   "summary": "A wrapping horizontal `Stack` (`direction='row'`, `wrap`, cross-axis centered) for variable-length groups that should flow onto multiple lines — tag lists, chip sets, filter pills, button bars. Accepts every Stack prop except `direction`.",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "cluster",
     "tags",

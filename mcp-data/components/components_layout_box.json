@@ -3,7 +3,7 @@
   "category": "layout",
   "slug": "components/layout/box",
   "summary": "Polymorphic (`as`) workhorse container with spacing, `sx`, and `alignX` content alignment; reach for it as the default building block when no more specialized layout primitive (Stack, Grid, Panel) fits.",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "box",
     "container"
