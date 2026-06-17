@@ -84,15 +84,52 @@ void main(){
     if (t > tmax) break;
   }
 
-  vec3 col = vec3(0.0); // black sky
+  vec3 col = vec3(0.0); // black void
   if (hit){
     vec3 p = ro + rd * t;
-    vec3 n = calcNormal(p);
-    vec3 ld = normalize(vec3(0.5, 0.9, -0.35));
-    float diff = max(dot(n, ld), 0.0);
-    col = vec3(0.20, 0.22, 0.27) * (0.25 + 0.9 * diff); // plain grey shapes
-    float fog = exp(-t * 0.028);                         // fade into the dark
-    col = mix(vec3(0.0), col, fog);
+    if (p.y < 0.03){
+      // ground — near-black for now (the glowing grid floor comes later)
+      col = vec3(0.012, 0.014, 0.022);
+    } else {
+      // Identify the hit tower (nearest box in the 3×3) for its edges + id.
+      vec2 baseId = floor(p.xz / CELL);
+      float best = 1e9;
+      vec2 hitId = baseId; float hitH = 0.0; vec3 hitQ = vec3(0.0);
+      for (int j = -1; j <= 1; j++) for (int i = -1; i <= 1; i++){
+        vec2 id = baseId + vec2(float(i), float(j));
+        vec2 c = (id + 0.5) * CELL;
+        float h = 2.0 + hash21(id) * 10.0;
+        vec3 q = p - vec3(c.x, h * 0.5, c.y);
+        float bd = abs(sdBox(q, vec3(1.2, h * 0.5, 1.2)));
+        if (bd < best){ best = bd; hitId = id; hitH = h; hitQ = q; }
+      }
+      // Edge proximity: on the surface the LARGEST of (|q|-b) is ~0 (the face we
+      // hit); the MIDDLE component reaches 0 exactly along an edge of that face.
+      vec3 e = abs(hitQ) - vec3(1.2, hitH * 0.5, 1.2);
+      float m1 = max(e.x, max(e.y, e.z));
+      float m3 = min(e.x, min(e.y, e.z));
+      float m2 = e.x + e.y + e.z - m1 - m3;       // middle value
+      float edge = smoothstep(0.11, 0.0, -m2);    // thin glowing line along the edge
+
+      // Tron palette split: mostly electric blue, the odd orange tower.
+      vec3 neon = hash21(hitId + 7.3) > 0.80
+        ? vec3(1.00, 0.42, 0.07)
+        : vec3(0.15, 0.62, 1.00);
+
+      // Reveal density: a wave sweeping forward through the city, gated by a
+      // per-tower threshold. Biased to LINGER sparse (a bare scatter of edges)
+      // and only briefly swell to ~current density — never denser.
+      float s = 0.5 + 0.5 * sin(time * 0.5 - p.z * 0.07);
+      // Flat-top/flat-bottom shaping: dwell sparse, then HOLD a broad dense swell
+      // (a plateau, not a fleeting spike), then recede back to sparse.
+      float w = smoothstep(0.40, 0.68, s);
+      float reveal = mix(-0.08, 0.78, w);                 // trough ≈ empty · peak ≈ current
+      float lit = smoothstep(reveal + 0.12, reveal - 0.12, hash21(hitId + 19.1));
+
+      vec3 base = vec3(0.014, 0.017, 0.026);      // the "invisible" city, barely there
+      col = base + neon * edge * lit * 2.4;       // bright neon edges (HDR core clips hot)
+    }
+    col *= exp(-t * 0.022);                       // distance fade into the void
   }
 
   frag = vec4(col, 1.0);
