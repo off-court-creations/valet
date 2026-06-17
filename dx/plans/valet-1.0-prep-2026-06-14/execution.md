@@ -207,6 +207,22 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   bestPractice still quoted the legacy scale ('tight' 0.9× / 'standard' 1× /
   'comfortable' 1.15×); corrected to the retuned 0.8× / 0.9× / 1× (`densityScale`).
   Left `experimental` pending Ben's visual pass. **Next:** Modal · Tooltip · SpeedDial.
+- **Tier 3 overlay trio — Modal + Tooltip + SpeedDial: AGENT-VERIFIED, awaiting Ben's
+  visual pass (2026-06-17).** 25 tests green (Modal.overlay + Tooltip.a11y +
+  Tooltip.overlay + SpeedDial.dom + SpeedDial.overlay). All three build on the Tier-0
+  overlay engine + `zIndex`; source clean: **Modal** — focus-trap/ESC/outside/inert/
+  restore via `useOverlay`, dialog/alertdialog a11y + dev name-guard, reduced-motion
+  guards, override-able marker, SSR-safe (closed → `null` before the portal).
+  **Tooltip** — placement/arrow/delays/long-press/controlled, outside-click dismissal,
+  `aria-describedby` cloned onto the *focusable* child, single-active-tooltip registry;
+  SSR-safe (always portals, but `getOverlayRoot` is `document`-guarded → server no-op).
+  **SpeedDial** — FAB + slide-out actions, Escape refocuses the FAB while outside-click
+  doesn't, roving tabindex + aria-expanded/controls, reduced-motion guards; not
+  portalled (fixed in place) → SSR-safe. No meta fixes needed. All three left
+  `experimental` pending Ben's visual pass. _Optional hardening (not a blocker):_ the
+  `ssr-render.test.ts` gate covers AppBar/Drawer/Accordion but not the overlay trio;
+  a closed-Modal / Tooltip / SpeedDial renderToString case could lock their SSR-safety.
+  **Next:** Tier 4 (Button, IconButton → fields) per the verification order.
 - **Box — DONE (stable 2026-06-17 — both gates).** Ben's visual pass cleared it;
   the `centered`→`centerContent` meta fix shipped.
 - **Pre-existing repo debt (not from this work):** `eslint .` reports 51 prettier
