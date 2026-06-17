@@ -108,6 +108,17 @@ at the right tier; not blockers for the component in hand.
   panel's width/anchor **or** the docs Playground row layout. Before fixing,
   reproduce with a plain `<Select>` sat between two fields *outside* the docs
   Playground to isolate component vs. demo layout. Icon itself is unaffected.
+- **[→ TextField, Tier 4] Bare `<TextField>` sits at the UA default width (~20ch),
+  not content/row-aware.** Observed 2026-06-16 while verifying Avatar, in the
+  "Try your Gravatar" demo: a `<TextField>` inside a `<Stack direction='row'>`
+  renders at the browser's intrinsic `<input>` width regardless of content, so a
+  short value leaves dead space between the text and the next control (read as an
+  uneven gap by the "Show" button). **Not a spacing-engine bug** — Stack's `gap`
+  is uniform; the wrapper has no width unless `fullWidth` (`TextField.tsx:197`)
+  and the `<input>` is `width:100%` (`:103`) of a content-sized wrapper, so it
+  falls back to the UA default. Decision for TextField's verification: is UA-default
+  inline width the intended default (docs just pass `fullWidth`), or should the
+  field be more row-aware by default? Docs workaround: `fullWidth` on the field.
 
 ## Flags & issues
 
