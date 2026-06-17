@@ -96,6 +96,10 @@ export interface ChatProps
    * text stays with the KeyModal flow (deferred pending Q8).
    */
   labels?: DeepPartialStrings<ValetStrings['llmChat']>;
+  /** Render message text non-selectable. Applies to message bubbles (sender name,
+   *  user text, assistant Markdown); the composer input stays selectable.
+   *  Default: selectable. */
+  noSelect?: boolean;
   /** Inline styles (with CSS var support) */
   sx?: Sx;
 }
@@ -192,6 +196,7 @@ export const LLMChat: React.FC<ChatProps> = ({
   className,
   labels,
   compact: compactProp,
+  noSelect = false,
   sx,
   ...rest
 }) => {
@@ -428,6 +433,7 @@ export const LLMChat: React.FC<ChatProps> = ({
                           <Typography
                             variant='subtitle'
                             weight='bold'
+                            noSelect={noSelect}
                           >
                             {m.name}
                           </Typography>
@@ -446,9 +452,10 @@ export const LLMChat: React.FC<ChatProps> = ({
                           <Markdown
                             data={m.content}
                             codeBackground={theme.colors.background}
+                            noSelect={noSelect}
                           />
                         ) : (
-                          <Typography>{m.content}</Typography>
+                          <Typography noSelect={noSelect}>{m.content}</Typography>
                         )}
                       </Panel>
                       {m.role === 'user' && userAvatar && (

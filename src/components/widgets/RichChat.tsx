@@ -56,6 +56,10 @@ export interface RichChatProps
    * `src/system/locale.tsx`).
    */
   labels?: DeepPartialStrings<ValetStrings['richChat']>;
+  /** Render message text non-selectable. Applies to message bubbles (sender name,
+   *  user text, assistant Markdown); the composer input stays selectable.
+   *  Default: selectable. */
+  noSelect?: boolean;
   /** Inline styles (with CSS var support) */
   sx?: Sx;
 }
@@ -265,6 +269,7 @@ export const RichChat: React.FC<RichChatProps> = ({
   className,
   labels,
   compact: compactProp,
+  noSelect = false,
   sx,
   ...rest
 }) => {
@@ -479,9 +484,10 @@ export const RichChat: React.FC<RichChatProps> = ({
                       <Markdown
                         data={m.content}
                         codeBackground={theme.colors.background}
+                        noSelect={noSelect}
                       />
                     ) : (
-                      <Typography>{m.content}</Typography>
+                      <Typography noSelect={noSelect}>{m.content}</Typography>
                     )
                   ) : (
                     m.content
@@ -527,6 +533,7 @@ export const RichChat: React.FC<RichChatProps> = ({
                         <Typography
                           variant='subtitle'
                           weight='bold'
+                          noSelect={noSelect}
                         >
                           {m.name}
                         </Typography>

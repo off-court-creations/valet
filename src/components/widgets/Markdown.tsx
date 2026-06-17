@@ -28,6 +28,9 @@ export interface MarkdownProps
   data: string;
   /** Optional override for code block background */
   codeBackground?: string;
+  /** Render the rendered prose non-selectable (`user-select: none`, cascades to
+   *  all child elements). Default: text is selectable. */
+  noSelect?: boolean;
   /** Inline styles (with CSS var support) */
   sx?: import('../../types').Sx;
 }
@@ -349,6 +352,7 @@ const renderTokens = (tokens: Token[], codeBg: string): React.ReactNode =>
 export const Markdown: React.FC<MarkdownProps> = ({
   data,
   codeBackground,
+  noSelect = false,
   className,
   preset: p,
   sx,
@@ -375,7 +379,7 @@ export const Markdown: React.FC<MarkdownProps> = ({
       {...rest}
       data-valet-component='Markdown'
       className={[presetCls, className].filter(Boolean).join(' ')}
-      sx={sx}
+      sx={noSelect ? { userSelect: 'none', WebkitUserSelect: 'none', ...sx } : sx}
     >
       {renderTokens(tokens, resolvedBg)}
     </Stack>

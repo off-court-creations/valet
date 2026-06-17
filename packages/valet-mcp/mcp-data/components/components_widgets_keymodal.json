@@ -19,6 +19,12 @@
       "name": "onClose",
       "type": "() => void",
       "required": false
+    },
+    {
+      "name": "noSelect",
+      "type": "boolean",
+      "required": false,
+      "description": "Render the modal's label/instruction text non-selectable. The key/passphrase\ninputs stay selectable. Default: selectable."
     }
   ],
   "cssVars": [],

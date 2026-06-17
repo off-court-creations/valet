@@ -110,6 +110,10 @@ const Root = styled('div')<{
   flex-direction: row;
   align-items: center;
   gap: ${({ $flex, $spacing }) => ($flex ? $spacing : '0')};
+
+  /* A toast is transient (it auto-hides), so its text is never selectable. */
+  user-select: none;
+  -webkit-user-select: none;
 `;
 
 /*───────────────────────────────────────────────────────────*/

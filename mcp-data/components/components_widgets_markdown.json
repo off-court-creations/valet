@@ -23,6 +23,13 @@
       "description": "Optional override for code block background"
     },
     {
+      "name": "noSelect",
+      "type": "boolean",
+      "required": false,
+      "description": "Render the rendered prose non-selectable (`user-select: none`, cascades to\nall child elements). Default: text is selectable.",
+      "default": "false"
+    },
+    {
       "name": "sx",
       "type": "Sx",
       "required": false,

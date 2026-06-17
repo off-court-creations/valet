@@ -21,9 +21,12 @@ import { useTheme } from '../../system/themeStore';
 export interface KeyModalProps {
   open: boolean;
   onClose?: () => void;
+  /** Render the modal's label/instruction text non-selectable. The key/passphrase
+   *  inputs stay selectable. Default: selectable. */
+  noSelect?: boolean;
 }
 
-export default function KeyModal({ open, onClose }: KeyModalProps) {
+export default function KeyModal({ open, onClose, noSelect = false }: KeyModalProps) {
   const { apiKey, provider, cipher, setKey, applyPassphrase, clearKey } = useAIKey();
   const [value, setValue] = useState('');
   const [remember, setRemember] = useState(false);
@@ -48,13 +51,17 @@ export default function KeyModal({ open, onClose }: KeyModalProps) {
           <Typography
             variant='h3'
             weight='bold'
+            noSelect={noSelect}
           >
             {cipher
               ? `Unlock ${prov === 'anthropic' ? 'Anthropic' : 'OpenAI'} key`
               : 'Paste your API key'}
           </Typography>
 
-          <Typography variant='subtitle'>
+          <Typography
+            variant='subtitle'
+            noSelect={noSelect}
+          >
             Dev tool: your key is sent browser-direct to the provider and is readable by any script
             on this page. Use a key you own for your own session — not a production key. A
             passphrase encrypts it at rest only.
@@ -101,7 +108,14 @@ export default function KeyModal({ open, onClose }: KeyModalProps) {
             </select>
           )}
 
-          {error && <Typography color={theme.colors.error}>{error}</Typography>}
+          {error && (
+            <Typography
+              color={theme.colors.error}
+              noSelect={noSelect}
+            >
+              {error}
+            </Typography>
+          )}
 
           {!cipher && (
             <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -110,7 +124,7 @@ export default function KeyModal({ open, onClose }: KeyModalProps) {
                 checked={remember}
                 onChange={(e) => setRemember(e.target.checked)}
               />
-              <Typography>remember this key (encrypted)</Typography>
+              <Typography noSelect={noSelect}>remember this key (encrypted)</Typography>
             </label>
           )}
 

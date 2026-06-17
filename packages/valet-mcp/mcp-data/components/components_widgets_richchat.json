@@ -68,6 +68,13 @@
       "description": "Instance-level overrides for this component's i18n strings (the send button\naria-label). Wins over the `ValetLocaleProvider` value, which in turn wins\nover the built-in English defaults (A11Y S8 resolution contract; see\n`src/system/locale.tsx`)."
     },
     {
+      "name": "noSelect",
+      "type": "boolean",
+      "required": false,
+      "description": "Render message text non-selectable. Applies to message bubbles (sender name,\nuser text, assistant Markdown); the composer input stays selectable.\nDefault: selectable.",
+      "default": "false"
+    },
+    {
       "name": "sx",
       "type": "Sx",
       "required": false,
