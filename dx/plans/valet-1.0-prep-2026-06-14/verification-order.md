@@ -55,7 +55,7 @@ retuned spacing/density numbers."
 - [x] **Typography** — highest fan-in; lock first
 - [x] **Progress** (ProgressBar/ProgressRing) — bottom of the `Surface→LoadingBackdrop→Progress` chain
 - [x] Avatar · [x] Image · [x] Divider · [x] Video · [x] WebGLCanvas
-- [ ] **FormControl** (form-store provider; before any bound field) — _agent-verified 2026-06-17, tests green, awaiting Ben's visual pass_ · [ ] **ValetErrorBoundary** — _agent-verified 2026-06-17, tests green, awaiting Ben's visual pass_
+- [x] **FormControl** _(stable 2026-06-18 — both gates; form-store provider + FormConfigCtx)_ · [x] **ValetErrorBoundary** _(stable 2026-06-18 — both gates)_
 
 ## Tier 2 — Box-family layout + the hoists
 
