@@ -114,19 +114,24 @@ void listNoGetKey;
 const listBadMode: Partial<ListProps<Person>> = { selectionMode: 'multiple' };
 void listBadMode;
 
-/* ─── Tree: selectionMode + the canonical expansion trio ────── */
+/* ─── Tree: canonical SelectionProps<string> + the expansion trio ────── */
 const treeCanonical: Partial<TreeProps<Person>> = {
-  selectionMode: 'none',
+  selectionMode: 'multiple', // Tree now implements none | single | multiple
   expanded: ['a', 'b'],
   defaultExpanded: ['a'],
   onExpandedChange: (ids) => {
     const id: string | undefined = ids[0];
     void id;
   },
-  selected: 'node-1', // Tree's single-id selection
+  selected: ['node-1'], // id arrays per SelectionProps<string>
+  defaultSelected: ['node-1'],
+  onSelectionChange: (ids) => {
+    const id: string | undefined = ids[0];
+    void id;
+  },
 };
 void treeCanonical;
 
-/* @ts-expect-error — Tree is single-select; 'multiple' is not in its mode union */
-const treeBadMode: Partial<TreeProps<Person>> = { selectionMode: 'multiple' };
-void treeBadMode;
+/* @ts-expect-error — selection is keyed by node id (string), not a scalar id */
+const treeBadSelected: Partial<TreeProps<Person>> = { selected: 'node-1' };
+void treeBadSelected;

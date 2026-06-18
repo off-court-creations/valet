@@ -159,6 +159,18 @@ const treeData: TreeNode<Item>[] = [
   },
 ];
 
+/* Tree selection is keyed by node id (canonical SelectionProps<string>); leaf
+   ids are the route paths, so map id → path for navigation on select. */
+const idToPath = new Map<string, string | undefined>();
+{
+  const walk = (items: TreeNode<Item>[]) =>
+    items.forEach((it) => {
+      idToPath.set(it.id, it.data.path);
+      if (it.children) walk(it.children);
+    });
+  walk(treeData);
+}
+
 export default function NavDrawer() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -190,10 +202,14 @@ export default function NavDrawer() {
         nodes={treeData}
         getLabel={(n) => n.label}
         variant='list'
-        selected={location.pathname}
+        selected={[location.pathname]}
         expanded={expanded}
         onExpandedChange={handleExpandedChange}
-        onNodeSelect={(n) => n.path && navigate(n.path)}
+        onSelectionChange={(ids) => {
+          const id = ids[ids.length - 1];
+          const path = id ? idToPath.get(id) : undefined;
+          if (path) navigate(path);
+        }}
         aria-label='Documentation Navigation'
         sx={{ padding: theme.spacing(1) }}
       />

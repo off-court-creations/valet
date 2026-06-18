@@ -1,148 +1,112 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/widgets/Tree.tsx | valet
-// Basic accessible tree view component
+// Accessible tree view — one unified recursive render path (WAI-ARIA tree
+// with nested role=group across every variant), shared controlled-state hook,
+// intent-contract colours, mobile chrome kit + ≥44px coarse hit floor,
+// roving focus that never steals on mount, typeahead, and disabled nodes.
+// 1.0 rewrite per dx/plans/valet-1.0-prep-2026-06-14/tree-analysis-2026-06-18.md
 // ─────────────────────────────────────────────────────────────
-// ─────────────────────────────────────────────────────────────
-// src/components/widgets/Tree.tsx | valet
-// Basic accessible tree view component
-// Patched: robust keyboard control + ARIA metadata
-// ─────────────────────────────────────────────────────────────
-import React, { useMemo, useState, useRef, KeyboardEvent, useEffect } from 'react';
+import React, {
+  useMemo,
+  useState,
+  useRef,
+  useCallback,
+  useEffect,
+  type KeyboardEvent,
+} from 'react';
 import Icon from '../primitives/Icon';
 import Typography from '../primitives/Typography';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
-import { toRgb, mix, toHex } from '../../helpers/color';
-import type { Presettable, Sx } from '../../types';
+import { computeIntentVars, makeMix } from '../../system/intentVars';
+import { useCompact } from '../../system/compactContext';
+import { useControlledState } from '../../hooks/useControlledState';
+import type { Presettable, SelectionProps, Sx } from '../../types';
 
 /*───────────────────────────────────────────────────────────*/
 export interface TreeNode<T> {
   id: string;
   data: T;
   children?: TreeNode<T>[];
+  /** Disabled nodes are still navigable (arrows land on them) but never
+   *  select/toggle and are announced `aria-disabled`. */
+  disabled?: boolean;
 }
 
 export interface TreeProps<T>
-  extends Omit<React.HTMLAttributes<HTMLUListElement>, 'children' | 'style'>,
-    Presettable {
+  extends Omit<React.HTMLAttributes<HTMLUListElement>, 'children' | 'style' | 'role' | 'onKeyDown'>,
+    Presettable,
+    /* Selection follows the canonical SelectionProps contract with K = the node
+       id (string). `selected`/`defaultSelected` are arrays; single-select keeps
+       only the last entry. `'multiple'` toggles ids in/out. */
+    Pick<
+      SelectionProps<string>,
+      'selectionMode' | 'selected' | 'defaultSelected' | 'onSelectionChange'
+    > {
   nodes: TreeNode<T>[];
   getLabel: (node: T) => React.ReactNode;
-  /**
-   * Unified expansion vocabulary (API-TYPES S11, Q11(a)) — already the
-   * canonical `expanded`/`defaultExpanded`/`onExpandedChange` trio (matching
-   * Accordion). Node ids that are expanded.
-   */
+  /** Plain-text accessor for typeahead (since `getLabel` may return a node).
+   *  Falls back to `getLabel` when it returns a string/number. */
+  getTextValue?: (node: T) => string;
+  /** Node ids that are expanded (canonical expansion trio, matches Accordion). */
   defaultExpanded?: string[];
   expanded?: string[];
   onExpandedChange?: (expanded: string[]) => void;
-  /**
-   * Selection mode (API-TYPES S11, Q11(a)). Tree is single-select by node id:
-   * `'single'` (default) selects the clicked node; `'none'` disables selection
-   * (rows still expand/collapse and remain keyboard-navigable, but never become
-   * `aria-selected` and `onNodeSelect` never fires). The cross-component
-   * vocabulary name; Tree's selection unit is the node `id` (`K = string`),
-   * whose identity is the structural `TreeNode.id` — so no `getItemKey` is
-   * needed.
-   */
-  selectionMode?: 'none' | 'single';
-  /** Active selection (controlled) — the selected node id. */
-  selected?: string;
-  /** Default selection for uncontrolled usage — the initially-selected node id. */
-  defaultSelected?: string;
-  onNodeSelect?: (node: T) => void;
   variant?: 'chevron' | 'list' | 'files';
-  /**
-   * If true, expanding/collapsing is only triggered by clicking the icon.
-   * Defaults to false: clicking anywhere on the row toggles when the node has children.
-   */
+  /** When true, only the disclosure glyph toggles expansion (not the whole row). */
   iconToggleOnly?: boolean;
   /** Inline styles (with CSS var support) */
   sx?: Sx;
 }
 
 /*───────────────────────────────────────────────────────────*/
-const Root = styled('ul')<{ $border: string }>`
+/* Styled primitives                                          */
+const Root = styled('ul')`
   list-style: none;
   margin: 0;
   padding: 0;
 `;
 
-const ItemRow = styled('div')<{
-  $level: number;
-  $hoverBg: string;
-  $selectedBg: string;
-  $selected: boolean;
-  $padV: string;
-  $padH: string;
-  $indent: string;
-}>`
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  padding-top: ${({ $padV }) => $padV};
-  padding-bottom: ${({ $padV }) => $padV};
-  padding-inline-end: ${({ $padH }) => $padH};
-  padding-inline-start: ${({ $level, $indent }) => `calc(${$indent} * ${$level})`};
-  cursor: pointer;
-  user-select: none;
-  -webkit-user-drag: none;
-  user-drag: none;
-  ${({ $hoverBg }) => `@media(hover:hover){&:hover{background:${$hoverBg};}}`}
-  ${({ $selected, $selectedBg }) => ($selected ? `background:${$selectedBg};` : '')}
-  &:focus-visible {
-    outline: var(--valet-focus-width, 2px) solid currentColor;
-    outline-offset: var(--valet-focus-offset, 2px);
-  }
-`;
-
-const ExpandIcon = styled('span')<{ $open: boolean }>`
-  display: inline-block;
-  width: 1em;
-  height: 1em;
-  transform: rotate(${({ $open }) => ($open ? 90 : 0)}deg);
-  transition: transform 150ms ease;
-  user-select: none;
-  -webkit-user-drag: none;
-  user-drag: none;
-`;
-
-const Branch = styled('ul')<{ $line: string; $root?: boolean; $indent: string }>`
+const Branch = styled('ul')<{ $root: boolean; $indent: string }>`
   list-style: none;
   margin: 0;
-  padding-inline-start: ${({ $root, $indent }) => ($root ? 0 : $indent)};
+  padding-inline-start: ${({ $root, $indent }) => ($root ? '0' : $indent)};
   position: relative;
-  --indent: ${({ $indent }) => $indent};
+  --valet-tree-indent: ${({ $indent }) => $indent};
 `;
 
-const BranchItem = styled('li')<{ $line: string; $root?: boolean; $indent: string }>`
+const BranchItem = styled('li')<{ $root: boolean; $lines: boolean; $line: string }>`
   position: relative;
   margin: 0;
   padding: 0;
-  --indent: ${({ $indent }) => $indent};
-  ${({ $root, $line }) =>
-    !$root &&
-    `
+  ${({ $lines, $root, $line }) =>
+    $lines && !$root
+      ? `
       &::before {
         content: '';
         position: absolute;
-        top: 0.875rem; /* minor visual tweak left as rem */
-        inset-inline-start: calc(-1 * var(--indent, 1rem) + 0.75em);
-        width: calc(var(--indent, 1rem) + 0.25rem - 0.75em);
+        top: 0.875rem;
+        inset-inline-start: calc(-1 * var(--valet-tree-indent, 1rem) + 0.75em);
+        width: calc(var(--valet-tree-indent, 1rem) + 0.25rem - 0.75em);
         border-top: var(--valet-divider-stroke, 1px) solid ${$line};
-      }
-    `}
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    inset-inline-start: calc(-1 * var(--indent, 1rem) + 0.75em);
-    border-inline-start: var(--valet-divider-stroke, 1px) solid ${({ $line }) => $line};
-  }
+      }`
+      : ''}
+  ${({ $lines, $root, $line }) =>
+    $lines && !$root
+      ? `
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        inset-inline-start: calc(-1 * var(--valet-tree-indent, 1rem) + 0.75em);
+        border-inline-start: var(--valet-divider-stroke, 1px) solid ${$line};
+      }`
+      : ''}
 `;
 
-const ListRow = styled('div')<{
+const Row = styled('div')<{
   $hoverBg: string;
   $selectedBg: string;
   $selected: boolean;
@@ -153,46 +117,85 @@ const ListRow = styled('div')<{
   align-items: center;
   gap: 0.25rem;
   padding: ${({ $padV, $padH }) => `${$padV} ${$padH}`};
+  border-radius: var(--valet-radius-sm, 4px);
   cursor: pointer;
   user-select: none;
+  -webkit-user-select: none;
   -webkit-user-drag: none;
   user-drag: none;
-  ${({ $hoverBg }) => `@media(hover:hover){&:hover{background:${$hoverBg};}}`}
+
+  /* Mobile chrome kit + coarse-pointer ≥44px tap row. */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  @media (pointer: coarse) {
+    min-height: var(--valet-tree-hit, 44px);
+  }
+
+  ${({ $hoverBg }) =>
+    `@media(hover:hover){&:hover:not([aria-disabled='true']){background:${$hoverBg};}}`}
   ${({ $selected, $selectedBg }) => ($selected ? `background:${$selectedBg};` : '')}
+
+  &[aria-disabled='true'] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
   &:focus-visible {
-    outline: var(--valet-focus-width, 2px) solid currentColor;
-    outline-offset: var(--valet-focus-offset, 2px);
+    outline: var(--valet-tree-outline, 2px) solid var(--valet-focus-ring-color, currentColor);
+    outline-offset: var(--valet-tree-offset, 2px);
   }
 `;
 
-const BoxIcon = styled('span')<{
-  $open: boolean;
-  $line: string;
-  $fill: string;
-}>`
+/* Toggle affordance — wraps the variant glyph, gives it a coarse ≥44px hit
+   target (invisible ::before, like Chip's delete) so `iconToggleOnly` is usable
+   on touch, and rotates the chevron with a reduced-motion guard. */
+const Disclosure = styled('span')<{ $open: boolean; $rotate: boolean }>`
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 1em;
+  height: 1em;
+  user-select: none;
+  -webkit-user-drag: none;
+  ${({ $rotate, $open }) => ($rotate ? `transform: rotate(${$open ? 90 : 0}deg);` : '')}
+  transition: transform 150ms ease;
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+  @media (pointer: coarse) {
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      width: var(--valet-tree-hit, 44px);
+      height: var(--valet-tree-hit, 44px);
+    }
+  }
+`;
+
+const BoxGlyph = styled('span')<{ $open: boolean; $line: string; $fill: string }>`
   display: inline-block;
   width: 0.75em;
   height: 0.75em;
   border: var(--valet-divider-stroke, 1px) solid ${({ $line }) => $line};
   background: ${({ $open, $fill }) => ($open ? $fill : 'transparent')};
-  margin-inline-end: 0.25rem;
   box-sizing: border-box;
-  user-select: none;
-  -webkit-user-drag: none;
-  user-drag: none;
 `;
 
 /*───────────────────────────────────────────────────────────*/
 export function Tree<T>({
   nodes,
   getLabel,
+  getTextValue,
   defaultExpanded = [],
   expanded: expandedProp,
   onExpandedChange,
   selectionMode = 'single',
   selected: selectedProp,
-  defaultSelected,
-  onNodeSelect,
+  defaultSelected = [],
+  onSelectionChange,
   variant = 'chevron',
   iconToggleOnly = false,
   preset: p,
@@ -200,119 +203,158 @@ export function Tree<T>({
   sx,
   ...rest
 }: TreeProps<T>) {
-  const { theme, mode } = useTheme();
-  const controlledExpand = expandedProp !== undefined;
-  const [selfExpanded, setSelfExpanded] = useState(() => new Set(defaultExpanded));
+  const { theme } = useTheme();
+  const effCompact = useCompact();
 
-  // Ensure a stable Set for `expanded` so hooks depending on it can list it safely
-  const expanded = useMemo<Set<string>>(
-    () => (controlledExpand ? new Set(expandedProp ?? []) : selfExpanded),
-    [controlledExpand, expandedProp, selfExpanded],
+  /* Controlled/uncontrolled via the shared hook (no hand-rolled guards, no
+     side-effects inside a setState updater). Both are id-arrays. */
+  const [expandedArr, setExpandedArr] = useControlledState<string[]>(
+    expandedProp,
+    defaultExpanded,
+    onExpandedChange,
+    'Tree',
   );
+  const [selectedArr, setSelectedArr] = useControlledState<string[]>(
+    selectedProp,
+    defaultSelected,
+    onSelectionChange,
+    'Tree',
+  );
+  const expanded = useMemo(() => new Set(expandedArr), [expandedArr]);
+  const selectedSet = useMemo(() => new Set(selectedArr), [selectedArr]);
 
-  // Establish an initial roving tab stop so users can Tab into the tree.
-  const [focused, setFocused] = useState<string | null>(() => {
-    const initExpanded = new Set(expandedProp ?? defaultExpanded);
-    const visible: string[] = [];
-    const walkIds = (items: TreeNode<T>[]) => {
-      for (const it of items) {
-        visible.push(it.id);
-        if (it.children && initExpanded.has(it.id)) walkIds(it.children);
-      }
-    };
-    walkIds(nodes);
-    const candidate = selectedProp && visible.includes(selectedProp) ? selectedProp : visible[0];
-    return candidate ?? null;
-  });
-  const controlled = selectedProp !== undefined;
-  const [selfSelected, setSelfSelected] = useState<string | null>(defaultSelected ?? null);
-  /* `selectionMode='none'` disables selection writes entirely — rows still
-     expand/collapse and navigate, but never become selected (API-TYPES S11). */
   const selectable = selectionMode !== 'none';
-  const selected = controlled ? selectedProp! : selfSelected;
+  const multiple = selectionMode === 'multiple';
 
-  // Hover: subtly distort primary (mix with background, then nudge toward contrast color)
-  const hoverBase = mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.22);
-  const hoverDistorted = mix(hoverBase, toRgb(mode === 'dark' ? '#ffffff' : '#000000'), 0.22);
-  const hoverBg = toHex(hoverDistorted);
-  // Selected: primary-tinted
-  const selectedBg = toHex(mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.2));
+  /* Colours — shared intent contract (matches the stable siblings). Selected is
+     a subtle primary tint of the surface; hover is strictly lighter so its
+     prominence stays below selected, and body text keeps AA contrast on both. */
+  const intentVars = computeIntentVars({
+    bg: theme.colors.primary,
+    fg: theme.colors.text,
+    focus: theme.colors.primary,
+    disabledMixColor: theme.colors.background,
+    variant: 'filled',
+    border: makeMix(theme.colors.background, theme.colors.text, 0.4),
+  });
+  const selectedBg = makeMix(theme.colors.background, theme.colors.primary, 0.18);
+  const hoverBg = makeMix(theme.colors.background, theme.colors.primary, 0.09);
+  const line = theme.colors.backgroundAlt;
+  const indent = theme.spacing(2);
+  const padV = theme.spacing(0.5);
+  const padH = theme.spacing(1);
 
-  type FlatNode = {
-    node: TreeNode<T>;
-    level: number; // 0-based for internal; aria-level will be level+1
-    parentId: string | null;
-    posinset: number; // 1-based
-    setsize: number;
-  };
-
-  const { flat, idToNode, idToParent } = useMemo(() => {
-    const res: FlatNode[] = [];
-    const idToNode = new Map<string, TreeNode<T>>();
+  /* Flat (visible-order) projection — keyboard nav + parent lookups only; the
+     render is recursive (below). aria-level/setsize/posinset come from the
+     recursion's own index, so there is one O(1) source per metric. */
+  const { flat, idToParent, idToNode } = useMemo(() => {
+    const res: { node: TreeNode<T>; level: number }[] = [];
     const idToParent = new Map<string, string | null>();
-
+    const idToNode = new Map<string, TreeNode<T>>();
     const walk = (items: TreeNode<T>[], level: number, parentId: string | null) => {
-      const setsize = items.length;
-      for (let i = 0; i < items.length; i++) {
-        const it = items[i];
-        idToNode.set(it.id, it);
+      for (const it of items) {
         idToParent.set(it.id, parentId);
-        res.push({ node: it, level, parentId, posinset: i + 1, setsize });
+        idToNode.set(it.id, it);
+        res.push({ node: it, level });
         if (it.children && expanded.has(it.id)) walk(it.children, level + 1, it.id);
       }
     };
     walk(nodes, 0, null);
-    return { flat: res, idToNode, idToParent };
+    return { flat: res, idToParent, idToNode };
   }, [nodes, expanded]);
 
-  const refs = useRef<Record<string, HTMLDivElement | null>>({});
-
-  const focusItem = (id: string) => {
-    setFocused(id);
-    refs.current[id]?.focus();
-  };
-
-  const setExpandedSet = (next: Set<string>) => {
-    if (controlledExpand) onExpandedChange?.([...next]);
-    else
-      setSelfExpanded(() => {
-        onExpandedChange?.([...next]);
-        return next;
-      });
-  };
-
-  const toggle = (id: string) => {
-    const apply = (prev: Set<string>) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    };
-    const next = apply(expanded);
-    setExpandedSet(next);
-  };
-
-  const line = theme.colors.backgroundAlt;
-
-  const visibleIds = flat.map((f) => f.node.id);
+  const visibleIds = useMemo(() => flat.map((f) => f.node.id), [flat]);
   const visibleSet = useMemo(() => new Set(visibleIds), [visibleIds]);
   const firstVisible = visibleIds[0] ?? null;
 
-  // Ensure that when the focused id changes, we programmatically focus the element
+  /* Roving focus. Seed to a selected-and-visible id (or the first visible) so the
+     tree is Tab-reachable via tabIndex=0 — but NEVER programmatically focus on
+     mount. `.focus()` only runs after a real user move (userMovedRef). */
+  const [focused, setFocused] = useState<string | null>(() => {
+    const init = new Set(expandedProp ?? defaultExpanded);
+    const vis: string[] = [];
+    const walk = (items: TreeNode<T>[]) => {
+      for (const it of items) {
+        vis.push(it.id);
+        if (it.children && init.has(it.id)) walk(it.children);
+      }
+    };
+    walk(nodes);
+    const seed = (selectedProp ?? defaultSelected).filter((id) => vis.includes(id)).slice(-1)[0];
+    return seed ?? vis[0] ?? null;
+  });
+  const userMovedRef = useRef(false);
+  const refs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  const focusItem = useCallback((id: string) => {
+    userMovedRef.current = true;
+    setFocused(id);
+  }, []);
+
+  // Programmatic focus ONLY after a user move — no mount focus-steal.
   useEffect(() => {
-    if (focused) refs.current[focused]?.focus();
+    if (userMovedRef.current && focused) refs.current[focused]?.focus();
   }, [focused]);
 
-  const keyNav = (e: KeyboardEvent<HTMLUListElement>) => {
-    // Lazy-initialize focus to selected or first visible node
-    if (!focused) {
-      const initial = selected ?? firstVisible ?? undefined;
-      if (initial) setFocused(initial);
+  // If the focused node becomes hidden (ancestor collapsed), retarget the
+  // nearest visible ancestor (or first visible). setFocused only — the effect
+  // above performs the actual .focus() when appropriate.
+  const visibleKey = useMemo(() => visibleIds.join(' '), [visibleIds]);
+  useEffect(() => {
+    if (!focused || visibleSet.has(focused)) return;
+    let pId: string | null | undefined = focused;
+    while (pId) {
+      pId = idToParent.get(pId);
+      if (!pId) break;
+      if (visibleSet.has(pId)) {
+        setFocused(pId);
+        return;
+      }
     }
-    if (!focused) return;
-    const idx = visibleIds.indexOf(focused);
+    if (firstVisible) setFocused(firstVisible);
+  }, [visibleKey, focused, idToParent, visibleSet, firstVisible]);
+
+  const setExpandedNext = (id: string, open?: boolean) => {
+    const has = expanded.has(id);
+    const want = open ?? !has;
+    if (want === has) return;
+    const next = want ? [...expandedArr, id] : expandedArr.filter((x) => x !== id);
+    setExpandedArr(next);
+  };
+
+  const selectNode = (node: TreeNode<T>) => {
+    if (!selectable || node.disabled) return;
+    const id = node.id;
+    let next: string[];
+    if (multiple)
+      next = selectedSet.has(id) ? selectedArr.filter((x) => x !== id) : [...selectedArr, id];
+    else next = [id];
+    setSelectedArr(next);
+  };
+
+  const textOf = useCallback(
+    (node: TreeNode<T>): string => {
+      if (getTextValue) return getTextValue(node.data) ?? '';
+      const lbl = getLabel(node.data);
+      return typeof lbl === 'string' || typeof lbl === 'number' ? String(lbl) : '';
+    },
+    [getLabel, getTextValue],
+  );
+
+  const typeahead = useRef({ buffer: '', at: 0 });
+
+  const keyNav = (e: KeyboardEvent<HTMLUListElement>) => {
+    let active = focused;
+    if (!active) {
+      active =
+        (selectedArr.filter((id) => visibleSet.has(id)).slice(-1)[0] ?? firstVisible) || null;
+      if (active) setFocused(active);
+    }
+    if (!active) return;
+    const idx = visibleIds.indexOf(active);
     if (idx === -1) return;
     const current = flat[idx];
+    const hasChildren = !!current.node.children?.length;
 
     switch (e.key) {
       case 'ArrowDown':
@@ -325,19 +367,18 @@ export function Tree<T>({
         break;
       case 'ArrowRight':
         e.preventDefault();
-        if (current.node.children) {
-          if (!expanded.has(current.node.id)) toggle(current.node.id);
-          else if (current.node.children.length) focusItem(current.node.children[0].id);
+        if (hasChildren) {
+          if (!expanded.has(current.node.id)) setExpandedNext(current.node.id, true);
+          else focusItem(current.node.children![0].id);
         }
         break;
       case 'ArrowLeft':
         e.preventDefault();
-        if (expanded.has(current.node.id)) toggle(current.node.id);
+        if (hasChildren && expanded.has(current.node.id)) setExpandedNext(current.node.id, false);
         else {
           for (let i = idx - 1; i >= 0; i--) {
-            const candidate = flat[i];
-            if (candidate.level < current.level) {
-              focusItem(candidate.node.id);
+            if (flat[i].level < current.level) {
+              focusItem(flat[i].node.id);
               break;
             }
           }
@@ -351,139 +392,160 @@ export function Tree<T>({
         e.preventDefault();
         if (visibleIds.length) focusItem(visibleIds[visibleIds.length - 1]);
         break;
-      case '*':
-        // Expand all siblings of the current node
+      case '*': {
         e.preventDefault();
-        {
-          const parentId = idToParent.get(current.node.id) ?? null;
-          const siblings = parentId ? (idToNode.get(parentId)?.children ?? []) : nodes;
-          const next = new Set(expanded);
-          siblings?.forEach((sib) => {
-            if (sib.children && sib.children.length) next.add(sib.id);
-          });
-          setExpandedSet(next);
-        }
+        const parentId = idToParent.get(current.node.id) ?? null;
+        const siblings = parentId ? (idToNode.get(parentId)?.children ?? []) : nodes;
+        const next = new Set(expandedArr);
+        siblings.forEach((sib) => {
+          if (sib.children?.length) next.add(sib.id);
+        });
+        setExpandedArr([...next]);
         break;
+      }
       case 'Enter':
-      case ' ': // Space
+      case ' ':
         e.preventDefault();
-        if (selectable) {
-          if (!controlled) setSelfSelected(current.node.id);
-          onNodeSelect?.(current.node.data);
+        selectNode(current.node);
+        break;
+      default:
+        // Typeahead — a single printable char (no modifiers) jumps to the next
+        // visible node whose label starts with the typed buffer (500ms window).
+        if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+          const now = Date.now();
+          const ta = typeahead.current;
+          ta.buffer = now - ta.at > 500 ? e.key.toLowerCase() : ta.buffer + e.key.toLowerCase();
+          ta.at = now;
+          const n = visibleIds.length;
+          for (let off = 1; off <= n; off++) {
+            const cand = flat[(idx + off) % n];
+            if (cand.node.disabled) continue;
+            if (textOf(cand.node).toLowerCase().startsWith(ta.buffer)) {
+              focusItem(cand.node.id);
+              break;
+            }
+          }
         }
         break;
     }
   };
 
-  // If focused node becomes hidden (e.g., parent collapsed), move focus to the
-  // nearest visible ancestor; if none, to the first visible node.
-  const visibleKey = useMemo(() => visibleIds.join('\u0000'), [visibleIds]);
+  /*───────────────────────────────────────────────────────────*/
+  const lines = variant !== 'chevron';
 
-  useEffect(() => {
-    if (!focused) return;
-    if (visibleSet.has(focused)) return;
-    // Find closest visible ancestor
-    let p: string | null | undefined = focused;
-    while (p) {
-      p = idToParent.get(p);
-      if (!p) break;
-      if (visibleSet.has(p)) {
-        setFocused(p);
-        return;
-      }
+  const renderGlyph = (node: TreeNode<T>, open: boolean, hasChildren: boolean) => {
+    const onToggle = (e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (!node.disabled && hasChildren) setExpandedNext(node.id);
+    };
+    if (variant === 'files') {
+      return (
+        <Disclosure
+          $open={open}
+          $rotate={false}
+          aria-hidden
+          draggable={false}
+          onClick={hasChildren ? onToggle : undefined}
+        >
+          <Icon
+            icon={hasChildren ? (open ? 'carbon:folder-open' : 'carbon:folder') : 'carbon:document'}
+            size={16}
+          />
+        </Disclosure>
+      );
     }
-    if (firstVisible) setFocused(firstVisible);
-  }, [visibleKey, focused, idToParent, visibleSet, firstVisible]);
+    if (!hasChildren) return null;
+    if (variant === 'list') {
+      return (
+        <Disclosure
+          $open={open}
+          $rotate={false}
+          aria-hidden
+          draggable={false}
+          onClick={onToggle}
+        >
+          <BoxGlyph
+            $open={open}
+            $line={line}
+            $fill={theme.colors.tertiary}
+          />
+        </Disclosure>
+      );
+    }
+    // chevron
+    return (
+      <Disclosure
+        $open={open}
+        $rotate
+        aria-hidden
+        draggable={false}
+        onClick={onToggle}
+      >
+        <Icon
+          icon='carbon:chevron-right'
+          size={16}
+        />
+      </Disclosure>
+    );
+  };
 
   const renderBranch = (items: TreeNode<T>[], level: number): React.ReactNode => (
     <Branch
       role={level ? 'group' : undefined}
-      $line={line}
       $root={level === 0}
-      $indent={theme.spacing(2)}
+      $indent={indent}
     >
-      {items.map((node) => (
-        <BranchItem
-          key={node.id}
-          $line={line}
-          $root={level === 0}
-          $indent={theme.spacing(2)}
-          role='none'
-        >
-          <ListRow
-            ref={(el: HTMLDivElement | null) => {
-              refs.current[node.id] = el;
-            }}
-            role='treeitem'
-            aria-level={level + 1}
-            aria-setsize={items.length}
-            aria-posinset={items.findIndex((n) => n.id === node.id) + 1}
-            aria-expanded={node.children ? expanded.has(node.id) : undefined}
-            aria-selected={selected === node.id}
-            tabIndex={focused === node.id ? 0 : -1}
-            $hoverBg={hoverBg}
-            $selectedBg={selectedBg}
-            $selected={selected === node.id}
-            $padV={theme.spacing(0.5)}
-            $padH={theme.spacing(1)}
-            onClick={() => {
-              focusItem(node.id);
-              if (selectable) {
-                if (!controlled) setSelfSelected(node.id);
-                onNodeSelect?.(node.data);
-              }
-              if (node.children && !iconToggleOnly) toggle(node.id);
-            }}
-            onDoubleClick={() => node.children && toggle(node.id)}
+      {items.map((node, i) => {
+        const hasChildren = !!node.children?.length;
+        const open = expanded.has(node.id);
+        const isSelected = selectable && selectedSet.has(node.id);
+        return (
+          <BranchItem
+            key={node.id}
+            role='none'
+            $root={level === 0}
+            $lines={lines}
+            $line={line}
           >
-            {variant === 'list' && node.children && (
-              <BoxIcon
-                draggable={false}
-                aria-hidden
-                $open={expanded.has(node.id)}
-                $line={line}
-                $fill={theme.colors.tertiary}
-                onClick={(e: React.MouseEvent) => {
-                  e.stopPropagation();
-                  toggle(node.id);
-                }}
-              />
-            )}
-            {variant === 'files' && (
-              <Icon
-                draggable={false}
-                icon={
-                  node.children
-                    ? expanded.has(node.id)
-                      ? 'carbon:folder-open'
-                      : 'carbon:folder'
-                    : 'carbon:document'
-                }
-                size={16}
-                sx={{ marginRight: '0.25rem' }}
-                aria-hidden
-                onClick={
-                  node.children
-                    ? (e: React.MouseEvent) => {
-                        e.stopPropagation();
-                        toggle(node.id);
-                      }
-                    : undefined
-                }
-              />
-            )}
-            <Typography
-              variant='body'
-              family='mono'
-              noSelect
-              sx={{ display: 'inline' }}
+            <Row
+              ref={(el: HTMLDivElement | null) => {
+                if (el) refs.current[node.id] = el;
+                else delete refs.current[node.id];
+              }}
+              role='treeitem'
+              aria-level={level + 1}
+              aria-setsize={items.length}
+              aria-posinset={i + 1}
+              aria-expanded={hasChildren ? open : undefined}
+              aria-selected={selectable ? isSelected : undefined}
+              aria-disabled={node.disabled || undefined}
+              tabIndex={focused === node.id ? 0 : -1}
+              $hoverBg={hoverBg}
+              $selectedBg={selectedBg}
+              $selected={isSelected}
+              $padV={padV}
+              $padH={padH}
+              onClick={() => {
+                if (node.disabled) return;
+                focusItem(node.id);
+                selectNode(node);
+                if (hasChildren && !iconToggleOnly) setExpandedNext(node.id);
+              }}
             >
-              {getLabel(node.data)}
-            </Typography>
-          </ListRow>
-          {node.children && expanded.has(node.id) && renderBranch(node.children, level + 1)}
-        </BranchItem>
-      ))}
+              {renderGlyph(node, open, hasChildren)}
+              <Typography
+                variant='body'
+                family='mono'
+                noSelect
+                sx={{ display: 'inline' }}
+              >
+                {getLabel(node.data)}
+              </Typography>
+            </Row>
+            {hasChildren && open && renderBranch(node.children!, level + 1)}
+          </BranchItem>
+        );
+      })}
     </Branch>
   );
 
@@ -492,77 +554,20 @@ export function Tree<T>({
       {...rest}
       data-valet-component='Tree'
       role='tree'
+      aria-multiselectable={multiple || undefined}
       onKeyDown={keyNav}
-      $border={theme.colors.backgroundAlt}
       className={[p ? preset(p) : '', className].filter(Boolean).join(' ')}
       style={
         {
-          '--valet-tree-stroke': theme.stroke(1),
+          ...intentVars,
+          '--valet-tree-hit': effCompact ? '40px' : '44px',
           '--valet-tree-outline': theme.stroke(2),
           '--valet-tree-offset': theme.stroke(2),
           ...(sx as object),
         } as React.CSSProperties
       }
     >
-      {variant === 'chevron'
-        ? flat.map(({ node, level, posinset, setsize }) => (
-            <li
-              key={node.id}
-              role='none'
-            >
-              <ItemRow
-                ref={(el: HTMLDivElement | null) => {
-                  refs.current[node.id] = el;
-                }}
-                role='treeitem'
-                aria-level={level + 1}
-                aria-setsize={setsize}
-                aria-posinset={posinset}
-                aria-expanded={node.children ? expanded.has(node.id) : undefined}
-                aria-selected={selected === node.id}
-                tabIndex={focused === node.id ? 0 : -1}
-                $level={level}
-                $hoverBg={hoverBg}
-                $selectedBg={selectedBg}
-                $selected={selected === node.id}
-                $padV={theme.spacing(0.5)}
-                $padH={theme.spacing(1)}
-                $indent={theme.spacing(2)}
-                onClick={() => {
-                  focusItem(node.id);
-                  if (selectable) {
-                    if (!controlled) setSelfSelected(node.id);
-                    onNodeSelect?.(node.data);
-                  }
-                  if (node.children && !iconToggleOnly) toggle(node.id);
-                }}
-                onDoubleClick={() => node.children && toggle(node.id)}
-              >
-                {node.children && (
-                  <ExpandIcon
-                    draggable={false}
-                    aria-hidden
-                    $open={expanded.has(node.id)}
-                    onClick={(e: React.MouseEvent) => {
-                      e.stopPropagation();
-                      toggle(node.id);
-                    }}
-                  >
-                    ▶
-                  </ExpandIcon>
-                )}
-                <Typography
-                  variant='body'
-                  family='mono'
-                  noSelect
-                  sx={{ display: 'inline' }}
-                >
-                  {getLabel(node.data)}
-                </Typography>
-              </ItemRow>
-            </li>
-          ))
-        : renderBranch(nodes, 0)}
+      {renderBranch(nodes, 0)}
     </Root>
   );
 }

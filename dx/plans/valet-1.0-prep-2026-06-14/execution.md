@@ -439,6 +439,35 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   Green: typecheck×4, lint, 1459 tests (1 new), RTL, mcp, check:examples. Stays
   `experimental` pending Ben's visual pass (the env() offset shows only on a notched
   device/emulator; desktop position is unchanged).
+- **Tier 5 Tree — REWRITTEN, agent-verified, awaiting Ben's visual pass (2026-06-18).**
+  Ben: "full rewrite... we got this." Executed the [tree-analysis](tree-analysis-2026-06-18.md)
+  rewrite verdict in one pass — all 7 blockers + the spec:
+  (1) ONE unified recursive render path for all three variants → every expanded parent
+  owns a nested `ul[role=group]` (the flat chevron path is gone); aria-level/setsize/
+  posinset from the recursion index (no O(n²) findIndex).
+  (2) `useControlledState` for both `expanded` and `selected` — kills the
+  side-effect-in-setState (StrictMode double-fire) and adds the controlled-flip warning.
+  (3) Canonical `SelectionProps<string>`: `selectionMode` none/single/**multiple** (all
+  implemented), `selected`/`defaultSelected` as id arrays, `onSelectionChange(ids)`;
+  `aria-multiselectable` in multiple; `aria-selected` omitted (not false) under none.
+  Dropped the old scalar `selected`/`onNodeSelect` (experimental + pre-1.0 deprecation
+  sweep — no aliases). NavDrawer + the demo migrated to the array API.
+  (4) Gated focus via `userMovedRef` — NO focus-steal on mount; one `.focus()` per move.
+  (5) Intent colours (`computeIntentVars`/`makeMix`): selected = subtle primary tint,
+  hover strictly lighter, AA text contrast; dropped the bespoke toRgb/mix/toHex distort.
+  (6) Mobile: chrome kit + `@media(pointer:coarse)` ≥44px row floor (`--valet-tree-hit`
+  via useCompact, 40px compact) + a ≥44px hit-expander on the disclosure glyph for
+  `iconToggleOnly`.
+  (7) Removed `onDoubleClick` (no triple-fire); `▶` → `<Icon carbon:chevron-right>` with
+  reduced-motion guard; typeahead (printable-key jump, `getTextValue` for node labels);
+  `disabled` nodes (aria-disabled, inert, still navigable); pulled role/onKeyDown out of
+  the rest-spread; dropped the dead `$border` prop + duplicate header + dead CSS vars.
+  Rewrote the test suite (19 tests: selection matrix, per-variant role=group, ARIA meta,
+  keyboard + typeahead, mount-focus-steal regression, StrictMode single-fire, disabled,
+  mobile). Green: typecheck×4, lint, 1475 tests, build, docs tsc + docs vite build, RTL,
+  mcp, check:examples (107). Deferred post-1.0 (not implemented, names free to add later
+  non-breaking): lazy/async children, virtualization, drag-drop, imperative ref, custom
+  renderNode. Stays `experimental` pending Ben's visual pass.
 - **Box — DONE (stable 2026-06-17 — both gates).** Ben's visual pass cleared it;
   the `centered`→`centerContent` meta fix shipped.
 - **Pre-existing repo debt (not from this work):** `eslint .` reports 51 prettier

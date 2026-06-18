@@ -429,7 +429,7 @@
   {
     "name": "Tree",
     "category": "widgets",
-    "summary": "Accessible expand/collapse tree over a `nodes` hierarchy (label via `getLabel`), with `expanded`/`onExpandedChange` for disclosure and `selectionMode='single'` selecting by node id; use it for nested data like file trees and outlines — reach for `List` when items are flat.",
+    "summary": "Accessible WAI-ARIA tree over a `nodes` hierarchy (label via `getLabel`): `expanded`/`onExpandedChange` for disclosure and the canonical `selectionMode` + `selected`/`onSelectionChange` (id arrays) for `none`/`single`/`multiple` selection. Use it for nested data like file trees and outlines — reach for `List` when items are flat.",
     "slug": "components/widgets/tree",
     "status": "experimental"
   },
