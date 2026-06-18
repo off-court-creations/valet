@@ -401,7 +401,7 @@
   {
     "name": "Snackbar",
     "category": "widgets",
-    "summary": "Transient toast notification (role='status') that fades in and auto-dismisses, pausing its timer on hover/focus; control with `open`/`message`/`autoHideDuration` — use it for brief, non-blocking feedback.",
+    "summary": "Transient toast notification (role='status') that fades in and auto-dismisses, pausing its timer on hover/focus; control with `open`/`message`/`autoHideDuration`, and pick a `variant` (`outline` default or solid `filled`) — use it for brief, non-blocking feedback.",
     "slug": "components/widgets/snackbar",
     "status": "experimental"
   },

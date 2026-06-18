@@ -538,3 +538,49 @@ describe('Snackbar — mobile', () => {
     expect(rule).toContain('env(safe-area-inset-bottom');
   });
 });
+
+/*───────────────────────────────────────────────────────────────*/
+/* Variant — outline (default) vs filled                          */
+
+describe('Snackbar — variant', () => {
+  const ruleFor = (el: Element) => {
+    const cls = el.className.split(' ')[0];
+    return (
+      Array.from(sheet.getGlobalSheet()?.cssRules ?? [], (r) => r.cssText).find((t) =>
+        t.startsWith(`.${cls}`),
+      ) ?? ''
+    );
+  };
+
+  const mount = (variant?: 'outline' | 'filled') => {
+    const root = makeRoot();
+    const store = createSurfaceStore();
+    act(() => {
+      root.render(
+        <React.StrictMode>
+          <SurfaceCtx.Provider value={store}>
+            <Snackbar
+              id={`snack-${variant ?? 'default'}`}
+              autoHideDuration={null}
+              variant={variant}
+              message='m'
+            />
+          </SurfaceCtx.Provider>
+        </React.StrictMode>,
+      );
+    });
+    return document.getElementById(`snack-${variant ?? 'default'}`)!;
+  };
+
+  it('defaults to the outline style — a solid keyline, no elevation shadow', () => {
+    const rule = ruleFor(mount());
+    expect(rule).toMatch(/outline:\s*[^;]*solid/);
+    expect(rule).not.toContain('box-shadow');
+  });
+
+  it('filled drops the outline for a solid surface + elevation shadow', () => {
+    const rule = ruleFor(mount('filled'));
+    expect(rule).toContain('outline: none');
+    expect(rule).toContain('box-shadow');
+  });
+});

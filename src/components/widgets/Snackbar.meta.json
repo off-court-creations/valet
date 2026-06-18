@@ -1,6 +1,6 @@
 {
   "name": "Snackbar",
-  "summary": "Transient toast notification (role='status') that fades in and auto-dismisses, pausing its timer on hover/focus; control with `open`/`message`/`autoHideDuration` — use it for brief, non-blocking feedback.",
+  "summary": "Transient toast notification (role='status') that fades in and auto-dismisses, pausing its timer on hover/focus; control with `open`/`message`/`autoHideDuration`, and pick a `variant` (`outline` default or solid `filled`) — use it for brief, non-blocking feedback.",
   "status": "experimental",
   "aliases": ["snackbar", "toast", "notification", "alert"],
   "a11y": {
@@ -16,6 +16,7 @@
     "bestPractices": [
       "Keep messages short and specific. Snackbars confirm actions or provide brief status; avoid long instructions or multi‑step interactions.",
       "Place them consistently, typically bottom center/right depending on platform. On mobile the bottom offset automatically clears the home indicator / gesture bar (`env(safe-area-inset-bottom)`), and any action button you nest should be a real touch target (a valet `Button`/`IconButton`, which floor at ≥44px on touch).",
+      "Pick a `variant`: `outline` (default) reads as a quiet card with a primary keyline; `filled` is a solid primary surface with contrasting text + a soft shadow for more emphasis. Reserve `filled` for messages that should stand out.",
       "Offer a single, clear action when needed; prefer undo when appropriate.",
       "Respect motion and timing. Use `autoHideDuration` for transient messages (3–6s typical); longer durations should be deliberate. The countdown pauses while the snackbar is hovered or focused and resumes with the remaining time. The slide/fade transition is automatically suppressed for users who request reduced motion.",
       "For urgent errors, override the default live region with `role='alert'`/`aria-live='assertive'` so it is announced immediately.",
