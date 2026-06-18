@@ -212,3 +212,24 @@ describe('Switch — mobile hardening', () => {
     expect(rule).toContain('--valet-switch-hit'); // the expander reads the hit var
   });
 });
+
+describe('Switch — FormConfigCtx (form-wide disabled / errors)', () => {
+  it('respects form-wide disabled and a name-keyed error', () => {
+    const useStore = createFormStore({ wifi: false });
+    const { container } = mount(
+      <FormControl
+        useStore={useStore}
+        disabled
+        errors={{ wifi: 'nope' }}
+      >
+        <Switch
+          name='wifi'
+          aria-label='Wi-Fi'
+        />
+      </FormControl>,
+    );
+    const t = track(container) as HTMLButtonElement;
+    expect(t.disabled).toBe(true);
+    expect(t.getAttribute('aria-invalid')).toBe('true');
+  });
+});

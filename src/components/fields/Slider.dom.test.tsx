@@ -259,3 +259,24 @@ describe('Slider — mobile hardening', () => {
     expect(rule).toContain('--valet-slider-hit');
   });
 });
+
+describe('Slider — FormConfigCtx (form-wide disabled / errors)', () => {
+  it('respects form-wide disabled and a name-keyed error', () => {
+    const useStore = createFormStore({ vol: 5 });
+    const { container } = mount(
+      <FormControl
+        useStore={useStore}
+        disabled
+        errors={{ vol: 'bad' }}
+      >
+        <Slider
+          name='vol'
+          aria-label='Volume'
+        />
+      </FormControl>,
+    );
+    const t = thumb(container) as HTMLButtonElement;
+    expect(t.disabled).toBe(true);
+    expect(t.getAttribute('aria-invalid')).toBe('true');
+  });
+});

@@ -29,6 +29,7 @@ import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { useFieldState } from '../../hooks/useControlledState';
 import { useCompact } from '../../system/compactContext';
+import { useFormConfig } from './FormControl';
 import { computeIntentVars, makeMix } from '../../system/intentVars';
 import { warnOnce } from '../../system/devErrors';
 import type { Theme } from '../../system/themeStore';
@@ -247,6 +248,11 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
     const map = createSizeMap(theme);
     const effectiveCompact = useCompact();
 
+    /* Form-wide config (own props win; the form config is the fallback). */
+    const formConfig = useFormConfig();
+    const effectiveDisabled = disabled || formConfig.disabled;
+    const effectiveError = Boolean(error) || (name != null && formConfig.errors[name] != null);
+
     let SZ: { box: string; tick: string; gap: string };
     if (typeof size === 'number') {
       const box = `${size}px`;
@@ -351,10 +357,10 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
         htmlFor={id}
         data-valet-component='Checkbox'
         data-state={indeterminate ? 'indeterminate' : currentChecked ? 'checked' : 'unchecked'}
-        data-disabled={disabled ? 'true' : 'false'}
+        data-disabled={effectiveDisabled ? 'true' : 'false'}
         style={{ '--checkbox-gap': SZ.gap, ...sx } as React.CSSProperties}
         className={mergedCls}
-        $disabled={disabled}
+        $disabled={effectiveDisabled}
         onContextMenu={(e: React.MouseEvent) => e.preventDefault()}
       >
         <HiddenInput
@@ -363,10 +369,10 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           ref={setRefs}
           {...(bindForm && name ? { name } : {})}
           type='checkbox'
-          disabled={disabled}
+          disabled={effectiveDisabled}
           checked={currentChecked}
           onChange={handleChange}
-          aria-invalid={error || undefined}
+          aria-invalid={effectiveError || undefined}
           aria-describedby={describedBy}
         />
         <Box
@@ -375,7 +381,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           $tick={SZ.tick}
           $checked={currentChecked}
           $indeterminate={!!indeterminate}
-          $disabled={disabled}
+          $disabled={effectiveDisabled}
           style={
             {
               '--valet-checkbox-radius': theme.radius(1),
@@ -425,7 +431,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           aria-live='polite'
           style={{
             fontSize: '0.75rem',
-            color: error ? theme.colors.error : theme.colors.text + 'AA',
+            color: effectiveError ? theme.colors.error : theme.colors.text + 'AA',
             marginInlineStart: `calc(${SZ.box} + var(--checkbox-gap, ${SZ.gap}))`,
           }}
         >

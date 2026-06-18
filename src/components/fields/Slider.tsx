@@ -31,6 +31,7 @@ import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { useFieldState } from '../../hooks/useControlledState';
 import { useCompact } from '../../system/compactContext';
+import { useFormConfig } from './FormControl';
 import { warnOnce } from '../../system/devErrors';
 import { computeKeyStep } from './sliderMath';
 import type { FieldBaseProps } from '../../types';
@@ -282,6 +283,11 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
     const map = createSizeMap();
     const effectiveCompact = useCompact();
 
+    /* Form-wide config (own props win; the form config is the fallback). */
+    const formConfig = useFormConfig();
+    const effectiveDisabled = disabled || formConfig.disabled;
+    const effectiveError = Boolean(error) || (name != null && formConfig.errors[name] != null);
+
     let geom: SizeTokens;
 
     if (map[size as SliderSize]) {
@@ -421,7 +427,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
 
     const onPointerDown = useCallback(
       (e: PE<HTMLElement>) => {
-        if (disabled) return;
+        if (effectiveDisabled) return;
         e.preventDefault();
         updateFromClientX(e.clientX);
 
@@ -478,7 +484,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
         document.addEventListener('pointerup', up as EventListener);
         document.addEventListener('pointercancel', cancel as EventListener);
       },
-      [disabled, updateFromClientX, commitValue, valFor, renderVisual, current],
+      [effectiveDisabled, updateFromClientX, commitValue, valFor, renderVisual, current],
     );
 
     /* keyboard handling ------------------------------------- */
@@ -486,7 +492,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
     const keyStep = computeKeyStep({ min, max, step, snap, precision });
     const pageStep = Math.max(step, Math.round((max - min) / 10));
     const onKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
-      if (disabled) return;
+      if (effectiveDisabled) return;
       const k = e.key;
       if (k === 'Home') {
         e.preventDefault();
@@ -570,8 +576,8 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
         ref={setWrapperRef}
         tabIndex={-1}
         data-valet-component='Slider'
-        data-state={disabled ? 'disabled' : 'enabled'}
-        data-disabled={disabled ? 'true' : 'false'}
+        data-state={effectiveDisabled ? 'disabled' : 'enabled'}
+        data-disabled={effectiveDisabled ? 'true' : 'false'}
         className={mergedCls}
         style={{ paddingTop: padTop, paddingBottom: padBottom, ...sx }}
         onFocus={() => {
@@ -600,12 +606,12 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
           aria-valuemax={max}
           aria-valuenow={current}
           aria-valuetext={String(format(current))}
-          aria-invalid={error || undefined}
-          aria-disabled={disabled || undefined}
+          aria-invalid={effectiveError || undefined}
+          aria-disabled={effectiveDisabled || undefined}
           aria-labelledby={labelId}
           aria-describedby={helpId}
-          tabIndex={disabled ? -1 : 0}
-          disabled={disabled}
+          tabIndex={effectiveDisabled ? -1 : 0}
+          disabled={effectiveDisabled}
           $d={geom.thumb}
           $primary={theme.colors.primary}
           onKeyDown={onKeyDown}

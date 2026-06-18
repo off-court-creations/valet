@@ -309,10 +309,17 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
     arm), autofill fix, name-guard. **Consumes FormConfigCtx** (form-wide disabled +
     name-keyed error) — the first field to, proving the infra end-to-end. 1437 tests
     (9 new). Demo extended. Stays `experimental` pending Ben's visual pass.
-  - **Wave C — roll FormConfigCtx into the other bound fields: PENDING.** Checkbox/Switch/
-    Slider/Select/RadioGroup/MetroSelect/Iterator/DateSelector each read `useFormConfig()`
-    for effective disabled/error, re-running the controlledContract matrix per field. The
-    store-snapshot binding stays untouched.
+  - **Wave C — FormConfigCtx rollout: verified field set DONE; rest at their verification.**
+    Wired the already-stable siblings — **Checkbox, Switch, Slider** — to `useFormConfig()`:
+    `effectiveDisabled = own || form.disabled`, `effectiveError = own || form.errors[name]`,
+    swapped into the disabled/error usages (incl. the toggle/drag guards). Plus TextField
+    (Wave B). So `<FormControl disabled>` / `errors` now reach the core form fields
+    (text/checkbox/switch/slider). Each gained a form-config regression test; 1440 tests.
+    **Deliberately deferred** the 5 remaining bound fields (Select, RadioGroup, MetroSelect,
+    Iterator, DateSelector) — they're unverified + complex (DateSelector/Select especially),
+    so they get the identical `useFormConfig()` wiring during THEIR verification pass (the
+    pattern is locked by TextField/Checkbox/Switch/Slider), rather than blind now. The
+    store-snapshot binding stays untouched throughout.
 - **Box — DONE (stable 2026-06-17 — both gates).** Ben's visual pass cleared it;
   the `centered`→`centerContent` meta fix shipped.
 - **Pre-existing repo debt (not from this work):** `eslint .` reports 51 prettier

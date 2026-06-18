@@ -9,6 +9,7 @@ import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { useFieldState } from '../../hooks/useControlledState';
 import { useCompact } from '../../system/compactContext';
+import { useFormConfig } from './FormControl';
 import { warnOnce } from '../../system/devErrors';
 import type { FieldBaseProps } from '../../types';
 import type { ChangeInfo, InputSource, OnValueChange, OnValueCommit } from '../../system/events';
@@ -181,6 +182,11 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
     const geom = createSizeMap()[size];
     const effectiveCompact = useCompact();
 
+    /* Form-wide config (own props win; the form config is the fallback). */
+    const formConfig = useFormConfig();
+    const effectiveDisabled = disabled || formConfig.disabled;
+    const effectiveError = Boolean(error) || (name != null && formConfig.errors[name] != null);
+
     /* ----- value resolution (shared hook, ruling R9) ------- */
     /* Single resolution of checked/control/form binding via the shared hook:
        precedence prop > form > internal, latched at mount; an unseeded form
@@ -199,7 +205,7 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
     /* ----- event handler ----------------------------------- */
     const handleToggle: MouseEventHandler<HTMLButtonElement> = useCallback(
       (e) => {
-        if (disabled) return;
+        if (effectiveDisabled) return;
         const next = !checked;
 
         /* update internal/form state via the hook's single precedence rule */
@@ -219,7 +225,7 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
         /* propagate native click */
         btnProps.onClick?.(e);
       },
-      [checked, disabled, name, onValueChange, onValueCommit, setValue, btnProps],
+      [checked, effectiveDisabled, name, onValueChange, onValueCommit, setValue, btnProps],
     );
 
     /* ----- preset → className ------------------------------ */
@@ -258,13 +264,13 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
         data-valet-component='Switch'
         id={switchId}
         aria-checked={checked}
-        aria-invalid={error || undefined}
-        aria-disabled={disabled || undefined}
+        aria-invalid={effectiveError || undefined}
+        aria-disabled={effectiveDisabled || undefined}
         aria-labelledby={labelId}
         aria-describedby={helpId}
         data-state={checked ? 'checked' : 'unchecked'}
-        data-disabled={disabled ? 'true' : 'false'}
-        disabled={disabled}
+        data-disabled={effectiveDisabled ? 'true' : 'false'}
+        disabled={effectiveDisabled}
         onClick={handleToggle}
         onContextMenu={(e: React.MouseEvent) => e.preventDefault()}
         $checked={checked}

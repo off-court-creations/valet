@@ -271,3 +271,23 @@ describe('Checkbox — 1.0 redo', () => {
     expect(valetWarns().some((m) => m.includes('accessible name'))).toBe(true);
   });
 });
+
+describe('Checkbox — FormConfigCtx (form-wide disabled / errors)', () => {
+  it('respects form-wide disabled and a name-keyed error', () => {
+    const useStore = createFormStore({ agree: false });
+    const { container } = mount(
+      <FormControl
+        useStore={useStore}
+        disabled
+        errors={{ agree: 'Required' }}
+      >
+        <Checkbox
+          name='agree'
+          label='Agree'
+        />
+      </FormControl>,
+    );
+    expect(input(container).disabled).toBe(true);
+    expect(input(container).getAttribute('aria-invalid')).toBe('true');
+  });
+});
