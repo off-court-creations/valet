@@ -34,6 +34,7 @@ import { inheritSurfaceFontVars } from '../../system/inheritSurfaceFontVars';
 import { zVar } from '../../system/zIndex';
 import { useFieldState } from '../../hooks/useControlledState';
 import { useCompact } from '../../system/compactContext';
+import { makeMix } from '../../system/intentVars';
 import { useFormConfig } from './FormControl';
 import { warnOnce } from '../../system/devErrors';
 import type { FieldBaseProps, Presettable, Sx } from '../../types';
@@ -115,12 +116,17 @@ const Trigger = styled('button')<{
   justify-content: space-between;
   gap: 6px;
 
-  border: 1px solid var(--valet-border, ${({ $border }) => $border});
+  /* Deterministic control surface (matches TextField) — NOT the inherited
+     --valet-bg/--valet-text-color/--valet-border, which would paint the trigger
+     in the page background + divider and let it blend into the surface. */
+  border: 1px solid ${({ $border }) => $border};
   border-radius: ${({ $radius }) => $radius};
-  background: var(--valet-bg, ${({ $bg }) => $bg});
-  color: var(--valet-text-color, ${({ $text }) => $text});
+  background: ${({ $bg }) => $bg};
+  color: ${({ $text }) => $text};
   cursor: pointer;
-  transition: border-color 0.15s;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
 
   /* Mobile chrome kit — no blue tap flash, fast taps. */
   -webkit-tap-highlight-color: transparent;
@@ -132,11 +138,10 @@ const Trigger = styled('button')<{
   }
 
   &:hover:not([disabled]) {
-    border-color: var(--valet-border-hover, ${({ $primary }) => $primary});
+    border-color: ${({ $primary }) => $primary};
   }
   &:focus-visible {
-    outline: ${({ $outlineW }) => $outlineW} solid
-      var(--valet-focus-ring-color, ${({ $primary }) => $primary});
+    outline: ${({ $outlineW }) => $outlineW} solid ${({ $primary }) => $primary};
     outline-offset: ${({ $outlineOffset }) => $outlineOffset};
   }
   &[disabled] {
@@ -192,13 +197,16 @@ const Item = styled('li')<{
   $padY: string;
   $active?: boolean;
   $disabled?: boolean;
-  $primary: string;
+  $activeBg: string;
+  $hoverBg: string;
 }>`
   padding: ${({ $padY, $pad }) => `${$padY} ${$pad}`};
   cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
   opacity: ${({ $disabled }) => ($disabled ? 0.45 : 1)};
-  background: ${({ $active, $primary }) => ($active ? $primary + '22' : 'transparent')};
+  /* Opaque primary-mix highlight (not alpha-hex, which read muddy on dark). */
+  background: ${({ $active, $activeBg }) => ($active ? $activeBg : 'transparent')};
   -webkit-tap-highlight-color: transparent;
+  transition: background 0.12s;
 
   /* Coarse-pointer comfort: option rows floor at >=44px tall. */
   @media (pointer: coarse) {
@@ -208,7 +216,7 @@ const Item = styled('li')<{
   }
 
   &:hover:not([data-disabled='true']) {
-    background: ${({ $primary }) => $primary + '33'};
+    background: ${({ $hoverBg }) => $hoverBg};
   }
 `;
 
@@ -272,19 +280,27 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
     g = { h, pad: `calc(${size} * 0.26)`, font: `calc(${size} * 0.35)` };
   }
 
-  // Text on backgroundAlt should be off-white for contrast in all modes.
-  const textCol = theme.colors.primaryText;
-  // Use backgroundAlt for control backgrounds; avoid non-existent `surface` tokens
+  /* Colours — shared intent contract, deterministic (matches TextField). The
+     control surface is backgroundAlt; text is the body text token; the resting
+     keyline is the neutral intent border (text↔background mix), recoloured to
+     `error` when invalid. Menu option highlights are opaque primary mixes (not
+     the old `primary + "22"` alpha-hex, which read muddy on a dark surface). */
+  const textCol = theme.colors.text;
   const bg = theme.colors.backgroundAlt;
   const bgElev = theme.colors.backgroundAlt;
   const primary = theme.colors.primary;
-  const border = theme.colors.divider ?? 'rgba(255, 255, 255, 0.25)';
 
   /* Form-wide config (own props win; the form config is the fallback). */
   const formConfig = useFormConfig();
   const effectiveDisabled = disabled || formConfig.disabled;
   const effectiveError = Boolean(error) || (name != null && formConfig.errors[name] != null);
   const hitVar = effectiveCompact ? '24px' : '44px';
+
+  const neutralBorder = makeMix(theme.colors.background, theme.colors.text, 0.4);
+  const borderCol = effectiveError ? theme.colors.error : neutralBorder;
+  const accent = effectiveError ? theme.colors.error : primary;
+  const itemActiveBg = makeMix(bgElev, primary, 0.28);
+  const itemHoverBg = makeMix(bgElev, primary, 0.16);
 
   /* value management --------------------------------------- */
   /**
@@ -552,11 +568,11 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
         $pad={g.pad}
         $bg={bg}
         $text={textCol}
-        $primary={primary}
+        $primary={accent}
         $radius={theme.radius(1)}
         $outlineW={theme.stroke(2)}
         $outlineOffset={theme.stroke(2)}
-        $border={border}
+        $border={borderCol}
         type='button'
         role='combobox'
         aria-haspopup='listbox'
@@ -574,12 +590,6 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
         style={
           {
             '--valet-select-hit': hitVar,
-            ...(effectiveError
-              ? {
-                  '--valet-border': theme.colors.error,
-                  '--valet-focus-ring-color': theme.colors.error,
-                }
-              : {}),
             ...(sx as object),
           } as React.CSSProperties
         }
@@ -625,7 +635,14 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
             $radius={theme.radius(1)}
             $padY={theme.spacing(0.5)}
             data-valet-component='SelectMenu'
-            style={{ '--valet-select-hit': hitVar } as React.CSSProperties}
+            style={
+              {
+                '--valet-select-hit': hitVar,
+                // Portalled out of the Surface tree → set text + keyline explicitly.
+                color: textCol,
+                border: `1px solid ${neutralBorder}`,
+              } as React.CSSProperties
+            }
             role='listbox'
             id={listId}
             aria-multiselectable={multiple || undefined}
@@ -730,7 +747,8 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
                   $padY={theme.spacing(0.75)}
                   $active={i === active}
                   $disabled={optDisabled}
-                  $primary={primary}
+                  $activeBg={itemActiveBg}
+                  $hoverBg={itemHoverBg}
                   onMouseEnter={() => setActive(i)}
                   onClick={() => !optDisabled && toggle(o.props.value, 'pointer')}
                 >

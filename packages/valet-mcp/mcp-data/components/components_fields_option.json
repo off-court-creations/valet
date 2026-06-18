@@ -33,12 +33,10 @@
     "omitted": []
   },
   "cssVars": [
-    "--valet-border",
     "--valet-bg",
     "--valet-text-color",
-    "--valet-select-hit",
-    "--valet-border-hover",
-    "--valet-focus-ring-color"
+    "--valet-border",
+    "--valet-select-hit"
   ],
   "cssPresets": [],
   "events": [],

@@ -320,6 +320,17 @@ describe('Select — 1.0 verify (width / mobile / FormConfig)', () => {
     const trig = triggerEl(container) as HTMLButtonElement;
     expect(trig.disabled).toBe(true);
     expect(trig.getAttribute('aria-invalid')).toBe('true');
-    expect(trig.style.getPropertyValue('--valet-border')).not.toBe('');
+  });
+
+  it('paints a deterministic control surface — no inherited --valet-bg/-text-color/-border vars', () => {
+    const { container } = renderStrict(<Select aria-label='s'>{vOpts}</Select>);
+    const cls = triggerEl(container).className.split(/\s+/).find(Boolean)!;
+    const rule = Array.from(sheet.getGlobalSheet()!.cssRules, (r) => r.cssText).find((t) =>
+      t.startsWith(`.${cls}`),
+    )!;
+    // The pre-fix trigger blended into the page via inherited Surface vars.
+    expect(rule).not.toMatch(/var\(--valet-bg/);
+    expect(rule).not.toMatch(/var\(--valet-text-color/);
+    expect(rule).not.toMatch(/var\(--valet-border[,)]/);
   });
 });
