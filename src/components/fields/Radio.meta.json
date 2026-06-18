@@ -1,7 +1,7 @@
 {
   "name": "Radio",
   "summary": "A single radio option rendered inside a `RadioGroup`; author it as a `RadioGroup` child rather than standalone — the group owns selection, keyboard roving focus, and form binding.",
-  "status": "experimental",
+  "status": "stable",
   "aliases": ["radio"],
   "docs": {
     "bestPractices": [

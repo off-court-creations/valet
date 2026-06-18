@@ -67,14 +67,14 @@
     "category": "fields",
     "summary": "Single-choice group of `Radio` options with keyboard roving focus; controlled via `value` + `onValueChange` or bound to a `FormControl` by `name`, with `gap` for option spacing. Disable the whole group with `disabled` (a FormControl's form-wide `disabled` / name-keyed `errors` also reach it); option colours follow the theme intent contract (consistent with Checkbox).",
     "slug": "components/fields/radiogroup",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Radio",
     "category": "fields",
     "summary": "A single radio option rendered inside a `RadioGroup`; author it as a `RadioGroup` child rather than standalone — the group owns selection, keyboard roving focus, and form binding.",
     "slug": "components/fields/radio",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Select",

@@ -320,8 +320,8 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
     so they get the identical `useFormConfig()` wiring during THEIR verification pass (the
     pattern is locked by TextField/Checkbox/Switch/Slider), rather than blind now. The
     store-snapshot binding stays untouched throughout.
-- **Tier 4 Radio + RadioGroup — AGENT-VERIFIED, awaiting Ben's visual pass
-  (2026-06-17).** Verified as one unit. Source review found the same issues the field
+- **Tier 4 Radio + RadioGroup — DONE (stable 2026-06-17 — both gates).** Ben's visual
+  pass: "this one is good." Promoted Radio + RadioGroup. Verified as one unit. Source review found the same issues the field
   cluster has been fixing, so brought it to parity with the redone Checkbox (verify +
   the established patterns, not a workflow redo): **colours → the shared intent
   contract** (`computeIntentVars`/`makeMix`) — the unchecked ring is a neutral border,
