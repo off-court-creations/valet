@@ -5,8 +5,9 @@
   "aliases": ["pagination", "pager", "paginator"],
   "docs": {
     "bestPractices": [
-      "Use `onPageChange` to receive the new 1-based page.",
-      "Keep visible pages small. For large `count`, set a reasonable `siblingCount` and rely on first/last controls.",
+      "Use `onPageChange` to receive the new 1-based page (`page` is controlled).",
+      "Keep visible pages small. For large `count`, set `visibleWindow` (with `autoFollowActive`, default true) so only a window of page buttons shows plus window-scroll controls; rely on the prev/next controls for stepping.",
+      "Targets are touch-friendly automatically — on coarse pointers each nav button floors at ≥44px tall (24px under `compact`); pick spacing/density rather than hand-sizing for mobile.",
       "Sync state when relevant. Mirror page in the router (query or path) so refresh/back behaves predictably.",
       "Prefer server‑side slicing for large datasets; ensure Table or List reflects the current page cleanly.",
       "Use accessible labels and titles for buttons (Prev/Next) and indicate current page to assistive tech.",

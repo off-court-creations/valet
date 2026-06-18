@@ -274,3 +274,12 @@ describe('Pagination mid-animation click-drop (PERF S11, jsdom)', () => {
     expect(page()).toBe(4);
   });
 });
+
+describe('Pagination — mobile hit target', () => {
+  it('exposes a >=44px coarse-pointer hit-size var on the nav (default 44px)', () => {
+    const { container, render } = mount();
+    render(1);
+    const nav = container.querySelector('[data-valet-component="Pagination"]') as HTMLElement;
+    expect(nav.style.getPropertyValue('--valet-pag-hit')).toBe('44px');
+  });
+});

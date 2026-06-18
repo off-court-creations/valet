@@ -8,6 +8,7 @@ import { styled } from '../../css/createStyled';
 import Typography from '../primitives/Typography';
 import { preset } from '../../css/stylePresets';
 import { useTheme } from '../../system/themeStore';
+import { useCompact } from '../../system/compactContext';
 import { useComponentStrings } from '../../system/locale';
 import type { DeepPartialStrings, ValetStrings } from '../../system/locale';
 import type { Presettable, Sx } from '../../types';
@@ -73,6 +74,21 @@ const Root = styled('nav')<{
     transition:
       color ${({ $durColor }) => $durColor} ${({ $ease }) => $ease},
       opacity ${({ $durOpacity }) => $durOpacity} ${({ $ease }) => $ease}; /* smooth fades for disabled/enabled */
+  }
+
+  & button {
+    /* Mobile chrome kit — no blue tap flash, fast taps. */
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  /* Coarse-pointer comfort: nav buttons floor at >=44px tall (24px under
+     compact). Height only — widths feed the underline/window measurement, so
+     they are left to content. Desktop (fine pointer) is untouched. */
+  @media (pointer: coarse) {
+    & button {
+      min-height: var(--valet-pag-hit, 44px);
+    }
   }
 
   & button:disabled {
@@ -223,6 +239,7 @@ export const Pagination: React.FC<PaginationProps> = ({
   ...rest
 }) => {
   const { theme } = useTheme();
+  const effectiveCompact = useCompact();
   const t = useComponentStrings('pagination', labels);
 
   /* Internal call sites consume `onChange`; alias the canonical prop so the
@@ -1042,6 +1059,7 @@ export const Pagination: React.FC<PaginationProps> = ({
       style={
         {
           '--valet-underline-width': theme.stroke(4),
+          '--valet-pag-hit': effectiveCompact ? '24px' : '44px',
           ...(sx as object),
         } as React.CSSProperties
       }

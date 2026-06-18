@@ -335,6 +335,20 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   `--valet-intent-focus`). Metas updated (stale ≥40–48px tap advice → automatic).
   Green: typecheck×4, lint, 1444 tests (4 new), build, RTL, mcp, check:examples, docs
   tsc. Stays `experimental` pending Ben's visual pass.
+- **Tier 4 Pagination — AGENT-VERIFIED, awaiting Ben's visual pass (2026-06-17).**
+  Last Tier 4 item; not a bound field (no FormConfig). Source review clean: solid a11y
+  (nav `aria-label`, `aria-current='page'`, labelled prev/next/scroll buttons),
+  `page`-controlled + `onPageChange` (the W1 rename; `onChange` is just an internal
+  alias), the rule-lifecycle-safe measured-px→CSS-var underline/window animation.
+  **Mobile**: nav buttons were ~30px tall — added the chrome kit (`tap-highlight`/
+  `touch-action`) + a `@media (pointer:coarse)` ≥44px **min-height** on the buttons
+  (24px under compact, `--valet-pag-hit`). Height-only by design — widths feed the
+  elastic-underline/sliding-window measurement, so they're left to content (the
+  viewport measurement absorbs the height). **Meta fix**: a bestPractice referenced a
+  non-existent `siblingCount` prop (MUI's name) → corrected to `visibleWindow`. Green:
+  typecheck×4, lint, 1445 tests (1 new), build, RTL, mcp, check:examples, docs tsc.
+  Stays `experimental` pending Ben's visual pass (the underline animation + the mobile
+  tap heights are jsdom-unverifiable). **Tier 4 complete after this promotes.**
 - **Box — DONE (stable 2026-06-17 — both gates).** Ben's visual pass cleared it;
   the `centered`→`centerContent` meta fix shipped.
 - **Pre-existing repo debt (not from this work):** `eslint .` reports 51 prettier
