@@ -319,7 +319,7 @@
     "category": "widgets",
     "summary": "Compact pill showing a label with an optional icon/avatar and a removal action; use it for tags, filters, and selected tokens — provide `onDelete` to make it dismissible.",
     "slug": "components/widgets/chip",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "CodeBlock",

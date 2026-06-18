@@ -414,8 +414,8 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   backdrop so a drag never scrolls the page behind the open drawer (tap-to-close still
   fires). Metas verified accurate (no stale prop refs). Green: typecheck×4, lint, 1456
   tests (2 new), RTL, mcp, docs tsc. Both stay `experimental` pending Ben's visual pass.
-- **Tier 5 Chip — AGENT-VERIFIED, awaiting Ben's visual pass (2026-06-18).** Modern
-  already — `computeIntentVars` colours, and a deliberate inert static-descriptor
+- **Tier 5 Chip — DONE (stable 2026-06-18 — both gates).** Ben: "approved." Promoted
+  Chip. Modern already — `computeIntentVars` colours, and a deliberate inert static-descriptor
   contract (it strips `onClick`/`role`/`tabIndex` with dev warnings; the chip is never
   a button). The only interactive part is the optional `onDelete` button, whose visual
   size was `icon+6` ≈ 18–26px — well under the touch floor. Added the invisible coarse
