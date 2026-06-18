@@ -48,10 +48,7 @@ export default function MetroSelectDemoPage() {
   const usage = (
     <Stack>
       <Typography variant='h3'>1. Uncontrolled</Typography>
-      <MetroSelect
-        defaultValue='home'
-        gap={4}
-      >
+      <MetroSelect defaultValue='home'>
         {basic.map((o) => (
           <MetroSelect.Option
             key={o.value}
@@ -64,7 +61,6 @@ export default function MetroSelectDemoPage() {
       <MetroSelect
         value={transport}
         onValueChange={(v) => setTransport(v as string)}
-        gap={4}
       >
         {controlled.map((o) => (
           <MetroSelect.Option
@@ -82,7 +78,6 @@ export default function MetroSelectDemoPage() {
         value={transportLive ?? 'car'}
         onValueChange={(v) => setTransportLive(v as string)}
         onValueCommit={(v) => setTransportCommit(v as string)}
-        gap={4}
       >
         {controlled.map((o) => (
           <MetroSelect.Option
@@ -95,7 +90,7 @@ export default function MetroSelectDemoPage() {
       <Typography>commit: {transportCommit ?? '—'}</Typography>
 
       <Typography variant='h3'>3. Many options</Typography>
-      <MetroSelect gap={4}>
+      <MetroSelect>
         {many.map((o) => (
           <MetroSelect.Option
             key={o.value}
@@ -109,7 +104,6 @@ export default function MetroSelectDemoPage() {
       <MetroSelect
         multiple
         defaultValue={['home', 'travel']}
-        gap={4}
       >
         {basic.map((o) => (
           <MetroSelect.Option

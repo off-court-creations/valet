@@ -296,7 +296,7 @@ export interface MetroSelectComponent extends React.FC<MetroSelectProps> {
 export const MetroSelect: MetroSelectComponent = ({
   value: valueProp,
   defaultValue,
-  gap = 0,
+  gap,
   onValueChange,
   onValueCommit,
   multiple = false,
@@ -320,6 +320,9 @@ export const MetroSelect: MetroSelectComponent = ({
 }) => {
   void _fullWidth;
   const effectiveCompact = useCompact(compact);
+  /* Metro tiles sit in a TIGHT snapped grid — a small uniform gutter, not the
+     loose default. Author `gap` still overrides; omitted → 8px (4px compact). */
+  const effectiveGap = gap ?? (effectiveCompact ? 0.5 : 1);
 
   /* Form-wide config (own props win; the form config is the fallback). The
      FormConfig layer is additive + separate from the useFieldState store
@@ -528,7 +531,7 @@ export const MetroSelect: MetroSelectComponent = ({
         direction='row'
         wrap
         compact={effectiveCompact}
-        gap={gap}
+        gap={effectiveGap}
         data-valet-component='MetroSelect'
         data-disabled={effectiveDisabled ? 'true' : 'false'}
         data-state={effectiveDisabled ? 'disabled' : 'enabled'}
