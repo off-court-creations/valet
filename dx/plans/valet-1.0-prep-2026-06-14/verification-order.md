@@ -87,7 +87,7 @@ retuned spacing/density numbers."
 
 ## Tier 6 — Composite fields
 
-- [x] **Iterator** _(stable 2026-06-18 — both gates; FormConfigCtx + mobile ≥44px input floor; + `buttonVariant` (filled/outlined/plain) for the −/+ steppers per Ben)_ · [ ] **MetroSelect** _(agent-verified 2026-06-18 — FormConfigCtx + coarse ≥44px; then RESTYLED to authentic Win-8 Metro per [metroselect-upgrade](metroselect-upgrade-2026-06-18.md): tight snapped CSS grid, flat sharp filled tiles, bottom-left light label, 3D press-tilt, per-option `color` + `wide` 2×1; awaiting Ben's visual pass)_ · [x] **DateSelector** _(stable 2026-06-18 — both gates; FormConfigCtx + coarse ≥44px day cells + month names now SHORT ("Jun") per Ben)_ — _(fanned out via the `bound-fields-harden` workflow, each agent-reviewed)_
+- [x] **Iterator** _(stable 2026-06-18 — both gates; FormConfigCtx + mobile ≥44px input floor; + `buttonVariant` (filled/outlined/plain) for the −/+ steppers per Ben)_ · [x] **MetroSelect** _(stable 2026-06-18 — both gates; FormConfigCtx + coarse ≥44px; RESTYLED to authentic Win-8 Metro per [metroselect-upgrade](metroselect-upgrade-2026-06-18.md): tight snapped CSS grid, flat sharp filled tiles, bottom-left light label, 3D press-tilt, per-option `color` + `wide` 2×1. MetroSelect.Option promoted too.)_ · [x] **DateSelector** _(stable 2026-06-18 — both gates; FormConfigCtx + coarse ≥44px day cells + month names now SHORT ("Jun") per Ben)_ — _(fanned out via the `bound-fields-harden` workflow, each agent-reviewed)_
 
 ## Tier 7 — Table / Markdown subtree
 

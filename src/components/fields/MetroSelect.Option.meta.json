@@ -1,5 +1,5 @@
 {
   "name": "MetroSelect.Option",
-  "summary": "A single tile inside a `MetroSelect`, identified by `value` with icon/label children; author one per choice as a direct `MetroSelect` child — the parent owns selection state.",
-  "status": "experimental"
+  "summary": "A single flat Metro tile inside a `MetroSelect`, identified by `value` with icon/label children; author one per choice as a direct `MetroSelect` child — the parent owns selection state. Accepts a flat `color` fill and `wide` (2×1) module.",
+  "status": "stable"
 }

@@ -497,8 +497,8 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   match the deliberate change). Promoted both. **MetroSelect stays `experimental`** —
   Ben has notes coming. Green: typecheck×4, lint, 1489 tests, build, RTL, mcp,
   check:examples, docs tsc.
-- **Tier 6 MetroSelect — RESTYLED to Metro, agent-verified, awaiting Ben's visual pass
-  (2026-06-18).** Ben: tiles too far apart, "windows 8 launch day vibes." Fan-out
+- **Tier 6 MetroSelect — DONE (stable 2026-06-18 — both gates). TIER 6 COMPLETE.**
+  Ben: "confirmed." Promoted MetroSelect + MetroSelect.Option. Ben: tiles too far apart, "windows 8 launch day vibes." Fan-out
   (`metroselect-upgrade`, 5 lenses → synth) returned **restyle**; Ben chose the full
   restyle. Landed (preserving FormConfigCtx, listbox a11y, roving focus, useFieldState
   binding, honest ChangeInfo.source):

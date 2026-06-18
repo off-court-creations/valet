@@ -3,7 +3,7 @@
   "category": "fields",
   "slug": "components/fields/metroselect",
   "summary": "Windows-8-Metro-style grid of flat, sharp-cornered tiles (`MetroSelect.Option`) for single or `multiple` selection; controlled by `value` + `onValueChange`. Tiles snap into a tight grid with a small default gutter, tilt in 3D on press, and accept a per-option `color` + `wide` 2×1 module — use it when options benefit from icons/imagery rather than a compact dropdown.",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "metroselect",
     "chip",
