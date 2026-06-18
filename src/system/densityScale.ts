@@ -14,8 +14,11 @@ import type { Density } from './themeStore';
  *   tight 0.8 · standard 0.9 · comfortable 1.0
  * — so every density reads a touch tighter than the legacy 0.9 / 1.0 / 1.15
  * scale while staying visibly distinct and evenly spaced.
+ *
+ * Only `tight` maps to 0.8; any unexpected value degrades to the `standard`
+ * default (0.9), never silently to the tightest tier.
  */
 export const densityScale = (d: Density): number =>
-  d === 'comfortable' ? 1.0 : d === 'standard' ? 0.9 : 0.8;
+  d === 'comfortable' ? 1.0 : d === 'tight' ? 0.8 : 0.9;
 
 export default densityScale;

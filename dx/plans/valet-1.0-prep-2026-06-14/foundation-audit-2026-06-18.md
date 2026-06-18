@@ -19,7 +19,18 @@ polish, not gates.
 | Form store + controlled hook | ✅ verified | Values-only store (no errors/touched leak); `useControlledState` latches at mount, never writes on mount, prop>form>internal, SSR-safe (26 tests). |
 | events vocabulary | ✅ verified | Pure type module; `InputSource`/`InputPhase`/`ChangeInfo` well-designed, consumed by all 10 value components, gated by a real-DOM contract test. |
 
-## Pre-tag polish (non-blocking) — priority order
+## Pre-tag polish — **ALL DONE 2026-06-18** (Ben: "pre-freeze + all hardening")
+
+Landed: removed dead `ChangeInfo.index`/`.id`; added the `keyframes()` cardinality
+tripwire + `as?: ElementType` on `StyledProps` (+ dom test); `densityScale.test.ts`
+pins 0.8/0.9/1.0 + the catch-all now degrades to standard `0.9`; `styles.css`
+`--valet-space` fallback reconciled to `0.45rem` (standard default); surfaceStore
+rounds all metrics + releases the old node on id-rebind; overlay guards restore-focus
+with `isConnected` + documents the post-lock inert limitation + a key-passthrough test.
+Green: typecheck×4, lint, 1497 tests, build, RTL, mcp, check:examples, check:engine,
+docs tsc. (Form-store items were type-only — no change needed.) Original list below.
+
+### Pre-tag polish (non-blocking) — priority order
 
 **1. events — settle `index`/`id` before the type freezes (the one public-surface call).**
 `ChangeInfo.index` + `.id` (events.ts:114-115) are documented but emitted by **zero**

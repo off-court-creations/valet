@@ -503,3 +503,23 @@ describe('createStyled (jsdom)', () => {
     expect(ruleTexts.some((t) => t.startsWith(`.${cls}`))).toBe(true);
   });
 });
+
+describe('styled() polymorphic `as`', () => {
+  it('renders the override element, keeps the styled class, and strips `as` from the DOM', () => {
+    const Box = styled('div')`
+      color: red;
+    `;
+    const { container } = renderStrict(
+      <Box
+        as='section'
+        data-testid='poly'
+      >
+        hi
+      </Box>,
+    );
+    const el = container.querySelector('[data-testid="poly"]') as HTMLElement;
+    expect(el.tagName).toBe('SECTION'); // override honored
+    expect(el.hasAttribute('as')).toBe(false); // transient — never reaches the DOM
+    expect(el.className).toBeTruthy(); // still carries its generated class
+  });
+});
