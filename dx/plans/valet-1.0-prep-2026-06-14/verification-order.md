@@ -83,7 +83,7 @@ retuned spacing/density numbers."
 ## Tier 5 — Surface-consuming layout + Select
 
 - [ ] AppBar (→ Button) · [ ] Drawer (→ IconButton) · [ ] Accordion · [ ] **Tabs** (→ Tooltip, now locked)
-- [ ] **Select** (→ Checkbox + overlay; foundation for DateSelector) · [ ] Snackbar · [ ] Chip · [ ] Tree
+- [x] **Select** _(agent-verified 2026-06-17 — FIXED the flagged dropdown-overlap (inline-block → width:100% column model) + `width` prop + FormConfigCtx + mobile ≥44px trigger/options + error recolor; awaiting Ben's visual pass)_ (→ Checkbox + overlay; foundation for DateSelector) · [ ] Snackbar · [ ] Chip · [ ] Tree
 
 ## Tier 6 — Composite fields
 

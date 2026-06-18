@@ -23,6 +23,8 @@ import React, { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { Select } from './Select';
 import { Modal } from '../layout/Modal';
+import { FormControl } from './FormControl';
+import { createFormStore } from '../../system/createFormStore';
 import { overlayStackSize } from '../../system/overlay';
 import * as sheet from '../../css/sheet';
 
@@ -249,5 +251,75 @@ describe('Select inside Modal — Escape closes the menu ONLY (audit Select.tsx:
     pressEscape();
     expect(overlayStackSize()).toBe(0);
     expect(overlayRoot()!.querySelector('[data-valet-component="Modal"]')).toBeNull();
+  });
+});
+
+/*───────────────────────────────────────────────────────────────*/
+/* 1.0 verify — width model / mobile / FormConfig                 */
+
+const triggerEl = (c: HTMLElement) =>
+  c.querySelector('[data-valet-component="Select"]') as HTMLElement;
+const selectRoot = (c: HTMLElement) => triggerEl(c).parentElement as HTMLElement;
+const vOpts = (
+  <>
+    <Select.Option value='a'>A</Select.Option>
+    <Select.Option value='b'>B</Select.Option>
+  </>
+);
+
+describe('Select — 1.0 verify (width / mobile / FormConfig)', () => {
+  it('fills its container by default (width:100% flex column, not inline-block)', () => {
+    const { container } = renderStrict(<Select aria-label='s'>{vOpts}</Select>);
+    const root = selectRoot(container);
+    expect(root.style.width).toBe('100%');
+    expect(root.style.display).toBe('flex');
+  });
+
+  it('width prop sets an explicit root width; fullWidth sets flex', () => {
+    const { container } = renderStrict(
+      <Select
+        aria-label='s'
+        width='12rem'
+      >
+        {vOpts}
+      </Select>,
+    );
+    expect(selectRoot(container).style.width).toBe('12rem');
+    const { container: c2 } = renderStrict(
+      <Select
+        aria-label='s'
+        fullWidth
+      >
+        {vOpts}
+      </Select>,
+    );
+    expect(selectRoot(c2).style.flexGrow).toBe('1');
+  });
+
+  it('exposes a >=44px coarse-pointer hit-size var on the trigger', () => {
+    const { container } = renderStrict(<Select aria-label='s'>{vOpts}</Select>);
+    expect(triggerEl(container).style.getPropertyValue('--valet-select-hit')).toBe('44px');
+  });
+
+  it('respects FormControl form-wide disabled + a name-keyed error', () => {
+    const useStore = createFormStore({ pick: '' });
+    const { container } = renderStrict(
+      <FormControl
+        useStore={useStore}
+        disabled
+        errors={{ pick: 'Required' }}
+      >
+        <Select
+          name='pick'
+          aria-label='s'
+        >
+          {vOpts}
+        </Select>
+      </FormControl>,
+    );
+    const trig = triggerEl(container) as HTMLButtonElement;
+    expect(trig.disabled).toBe(true);
+    expect(trig.getAttribute('aria-invalid')).toBe('true');
+    expect(trig.style.getPropertyValue('--valet-border')).not.toBe('');
   });
 });

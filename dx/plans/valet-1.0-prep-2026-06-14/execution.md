@@ -349,6 +349,21 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   typecheck×4, lint, 1445 tests (1 new), build, RTL, mcp, check:examples, docs tsc.
   Stays `experimental` pending Ben's visual pass (the underline animation + the mobile
   tap heights are jsdom-unverifiable). **Tier 4 complete after this promotes.**
+- **Tier 5 Select — AGENT-VERIFIED, awaiting Ben's visual pass (2026-06-17).** First
+  Tier 5 component; Ben asked to start here and address the flagged dropdown-overlap.
+  **Fixed the flagged finding** (see deferred-findings, now RESOLVED): the root was
+  `inline-block` content-width → now the TextField width model (block flex-column,
+  `width:100%` default + `min-inline-size:0` + `width` prop + `fullWidth`), so the
+  Select stays in its own column. **FormConfigCtx** wired (its Wave C deferral):
+  `effectiveDisabled`/`effectiveError` from the form config (own props win); a
+  form-wide `disabled`/name-keyed `errors` reach the trigger. **Mobile**: chrome kit +
+  coarse ≥44px on the trigger AND the option rows (`--valet-select-hit`, 24px compact).
+  **Error recolor**: on error the trigger border + focus ring go to `theme.colors.error`
+  via local CSS-var overrides (`--valet-border`/`--valet-focus-ring-color`). The
+  portalled menu still anchors to the trigger's measured rect (overlay logic untouched).
+  Source-grep + controlledContract gates green unedited. Green: typecheck×4, lint, 1449
+  tests (4 new), build, RTL, mcp, check:examples, docs tsc. Stays `experimental`
+  pending Ben's visual pass.
 - **Box — DONE (stable 2026-06-17 — both gates).** Ben's visual pass cleared it;
   the `centered`→`centerContent` meta fix shipped.
 - **Pre-existing repo debt (not from this work):** `eslint .` reports 51 prettier
@@ -362,15 +377,18 @@ Defects noticed while verifying one component that actually belong to a
 *different* (usually not-yet-verified) component. Logged here so they resurface
 at the right tier; not blockers for the component in hand.
 
-- **[→ Select, Tier 5] Open `Select` dropdown overlaps the neighbouring field.**
-  Observed 2026-06-16 while verifying Icon, in the Icon demo Playground (the
-  `size` control — `docs/src/pages/components/primitives/IconDemoPage.tsx:206`).
-  With the `<Select>` open, its trigger/overlay overlaps the adjacent `icon`
-  `TextField` to its left instead of staying in its own column, and the open
-  option panel compounds it. Root cause unconfirmed — likely the Select overlay
-  panel's width/anchor **or** the docs Playground row layout. Before fixing,
-  reproduce with a plain `<Select>` sat between two fields *outside* the docs
-  Playground to isolate component vs. demo layout. Icon itself is unaffected.
+- **[RESOLVED 2026-06-17 — Select verification] Open `Select` dropdown overlaps the
+  neighbouring field.** Observed 2026-06-16 while verifying Icon (the `size` control
+  in `IconDemoPage.tsx:206`): with the `<Select>` open, its trigger/overlay overlapped
+  the adjacent `icon` `TextField` instead of staying in its own column. **Root cause
+  (confirmed in source):** the Select root was `display: inline-block` with no width
+  while its trigger was `width:100%` — so the whole Select was content-width (shrunk to
+  the value), unlike every sibling field. In a flex row it didn't establish its own
+  column. **Fix:** gave Select the TextField width model — the root is now a block
+  flex-column at `width:100%` by default + `min-inline-size:0` (shrinks in a row) + a
+  `width` prop + `fullWidth`. The portalled menu still anchors to the trigger's measured
+  rect (unchanged). Confirmed by a new DOM test (`root.style.width === '100%'`) and
+  Ben's visual pass.
 - **[→ TextField, Tier 4] Bare `<TextField>` sits at the UA default width (~20ch),
   not content/row-aware.** Observed 2026-06-16 while verifying Avatar, in the
   "Try your Gravatar" demo: a `<TextField>` inside a `<Stack direction='row'>`

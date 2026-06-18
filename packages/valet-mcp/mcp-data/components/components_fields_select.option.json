@@ -36,6 +36,8 @@
     "--valet-border",
     "--valet-bg",
     "--valet-text-color",
+    "--valet-select-hit",
+    "--valet-border-hover",
     "--valet-focus-ring-color"
   ],
   "cssPresets": [],

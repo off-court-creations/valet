@@ -33,6 +33,8 @@ import { getOverlayRoot, useOverlay } from '../../system/overlay';
 import { inheritSurfaceFontVars } from '../../system/inheritSurfaceFontVars';
 import { zVar } from '../../system/zIndex';
 import { useFieldState } from '../../hooks/useControlledState';
+import { useCompact } from '../../system/compactContext';
+import { useFormConfig } from './FormControl';
 import { warnOnce } from '../../system/devErrors';
 import type { FieldBaseProps, Presettable, Sx } from '../../types';
 import type { ChangeInfo, InputSource, OnValueChange, OnValueCommit } from '../../system/events';
@@ -64,6 +66,9 @@ export interface SelectProps
   placeholder?: string;
   /** Size token or custom measurement */
   size?: SelectSize | number | string;
+  /** Explicit field width — number → px, or any CSS length. Overrides the
+   *  default `width:100%`. */
+  width?: number | string;
   disabled?: boolean;
   /** Option nodes (see Select.Option). */
   children: React.ReactNode;
@@ -117,8 +122,17 @@ const Trigger = styled('button')<{
   cursor: pointer;
   transition: border-color 0.15s;
 
+  /* Mobile chrome kit — no blue tap flash, fast taps. */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+
+  /* Coarse-pointer comfort: floor the tap height at >=44px (24px under compact). */
+  @media (pointer: coarse) {
+    min-height: var(--valet-select-hit, 44px);
+  }
+
   &:hover:not([disabled]) {
-    border-color: ${({ $primary }) => $primary};
+    border-color: var(--valet-border-hover, ${({ $primary }) => $primary});
   }
   &:focus-visible {
     outline: ${({ $outlineW }) => $outlineW} solid
@@ -184,6 +198,14 @@ const Item = styled('li')<{
   cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
   opacity: ${({ $disabled }) => ($disabled ? 0.45 : 1)};
   background: ${({ $active, $primary }) => ($active ? $primary + '22' : 'transparent')};
+  -webkit-tap-highlight-color: transparent;
+
+  /* Coarse-pointer comfort: option rows floor at >=44px tall. */
+  @media (pointer: coarse) {
+    display: flex;
+    align-items: center;
+    min-height: var(--valet-select-hit, 44px);
+  }
 
   &:hover:not([data-disabled='true']) {
     background: ${({ $primary }) => $primary + '33'};
@@ -211,6 +233,7 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
     multiple = false,
     placeholder = 'Select…',
     size = 'md',
+    width,
     disabled = false,
     name,
     children,
@@ -228,13 +251,13 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
     label: fieldLabel,
     helperText,
     error,
-    fullWidth: _fullWidth,
+    fullWidth = false,
     ...divRest
   } = props;
-  void _fullWidth;
 
   /* theme + geometry --------------------------------------- */
   const { theme } = useTheme();
+  const effectiveCompact = useCompact();
   const map = geom(theme);
 
   let g: { h: string; pad: string; font: string };
@@ -256,6 +279,12 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
   const bgElev = theme.colors.backgroundAlt;
   const primary = theme.colors.primary;
   const border = theme.colors.divider ?? 'rgba(255, 255, 255, 0.25)';
+
+  /* Form-wide config (own props win; the form config is the fallback). */
+  const formConfig = useFormConfig();
+  const effectiveDisabled = disabled || formConfig.disabled;
+  const effectiveError = Boolean(error) || (name != null && formConfig.errors[name] != null);
+  const hitVar = effectiveCompact ? '24px' : '44px';
 
   /* value management --------------------------------------- */
   /**
@@ -480,8 +509,25 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
   const mergedCls = [presetCls, className].filter(Boolean).join(' ') || undefined;
 
   /*──────────────────────────────────────────────────────────*/
+  const widthCss = width != null ? (typeof width === 'number' ? `${width}px` : width) : undefined;
+
   return (
-    <div style={{ position: 'relative', display: 'inline-block' }}>
+    <div
+      style={{
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: theme.spacing(0.5),
+        // Fill the container's inline axis by default (like TextField), and
+        // shrink below content in a flex/grid row. `width` overrides; `fullWidth`
+        // grows to consume row slack. Fixes the inline-block content-width that
+        // let an open Select drift out of its column.
+        width: widthCss ?? '100%',
+        minInlineSize: 0,
+        minWidth: 0,
+        ...(fullWidth ? { flex: 1 } : {}),
+      }}
+    >
       {/* visible label — rendered above the trigger; associated to the combobox
           via aria-labelledby for the accessible name. */}
       {fieldLabel != null && (
@@ -501,7 +547,7 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
         ref={setTriggerRef}
         data-valet-component='Select'
         data-state={open ? 'open' : 'closed'}
-        data-disabled={disabled ? 'true' : 'false'}
+        data-disabled={effectiveDisabled ? 'true' : 'false'}
         $h={g.h}
         $pad={g.pad}
         $bg={bg}
@@ -516,22 +562,34 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
         aria-haspopup='listbox'
         aria-controls={listId}
         aria-expanded={open}
-        aria-invalid={error || undefined}
-        disabled={disabled}
+        aria-invalid={effectiveError || undefined}
+        disabled={effectiveDisabled}
         {...(divRest as React.ButtonHTMLAttributes<HTMLButtonElement>)}
         // Placed AFTER the spread so the combined labelledby (rendered label id +
         // any caller aria-labelledby) and the helper description win.
         aria-labelledby={labelledBy}
         aria-describedby={helpId}
         className={mergedCls}
-        style={sx as React.CSSProperties}
+        onContextMenu={(e: React.MouseEvent) => e.preventDefault()}
+        style={
+          {
+            '--valet-select-hit': hitVar,
+            ...(effectiveError
+              ? {
+                  '--valet-border': theme.colors.error,
+                  '--valet-focus-ring-color': theme.colors.error,
+                }
+              : {}),
+            ...(sx as object),
+          } as React.CSSProperties
+        }
         onClick={() => {
-          if (disabled) return;
+          if (effectiveDisabled) return;
           setOpen((o) => !o);
           calcPos();
         }}
         onKeyDown={(e: React.KeyboardEvent<HTMLButtonElement>) => {
-          if (disabled) return;
+          if (effectiveDisabled) return;
           if (e.key === 'ArrowDown') {
             e.preventDefault();
             setOpen(true);
@@ -567,6 +625,7 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
             $radius={theme.radius(1)}
             $padY={theme.spacing(0.5)}
             data-valet-component='SelectMenu'
+            style={{ '--valet-select-hit': hitVar } as React.CSSProperties}
             role='listbox'
             id={listId}
             aria-multiselectable={multiple || undefined}

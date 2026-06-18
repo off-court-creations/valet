@@ -53,6 +53,12 @@
       "description": "Size token or custom measurement"
     },
     {
+      "name": "width",
+      "type": "number | string",
+      "required": false,
+      "description": "Explicit field width — number → px, or any CSS length. Overrides the\ndefault `width:100%`."
+    },
+    {
       "name": "disabled",
       "type": "boolean",
       "required": false
@@ -114,6 +120,8 @@
     "--valet-border",
     "--valet-bg",
     "--valet-text-color",
+    "--valet-select-hit",
+    "--valet-border-hover",
     "--valet-focus-ring-color"
   ],
   "cssPresets": [],
@@ -140,6 +148,8 @@
   ],
   "bestPractices": [
     "Choose controlled vs uncontrolled deliberately: use `value` + `onValueChange` for controlled state; use `defaultValue` for uncontrolled, and handle commit-time actions in `onValueCommit`.",
+    "It fills its container's width by default (like TextField) and stays in its own column in a row; set an explicit `width` (number → px, or any CSS length) to constrain it, or `fullWidth` to grow in a row. (Pre-1.0 it was content-width, which let an open menu drift over a neighbouring field.)",
+    "Inside a `FormControl`, a form-wide `disabled` disables the trigger and a name-keyed `errors` entry marks it invalid (the Select's own `disabled`/`error` still win). On coarse pointers the trigger and option rows floor at ≥44px (24px under `compact`).",
     "Keep option labels short, distinct, and ordered predictably (alphabetical or by frequency). Avoid duplicating values with different labels.",
     "Use clear placeholders. Show a short prompt when no value is selected (e.g., ‘Choose one’). Don’t use real values as placeholders.",
     "Keyboard & typeahead. Ensure focus and Arrow keys navigate options; enable first‑letter search for long lists.",
