@@ -3,7 +3,7 @@
   "category": "layout",
   "slug": "components/layout/panel",
   "summary": "Bordered, padded surface card for grouping related content into a visually distinct section; supports `normalizeRowHeights` for equal-height children — use it to frame a block, and `Box` for an unstyled container.",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "panel",
     "card",

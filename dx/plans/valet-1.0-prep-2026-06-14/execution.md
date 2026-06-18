@@ -524,7 +524,7 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   Fan-out review (70 agents, 9 widgets): 48/60 confirmed; 8 `improve` + 1 `rewrite`
   (KeyModal). Order: Panel → Parallax → CodeBlock → Markdown → Table → Dropzone →
   RichChat → KeyModal → LLMChat. Each: agent fix + tests, then Ben's visual pass → stable.
-  - **#1 Panel — AGENT-VERIFIED, awaiting Ben's visual pass (2026-06-18).** Replaced the
+  - **#1 Panel — DONE (stable 2026-06-18 — both gates; Ben: "promote").** Replaced the
     bespoke `toRgb/mix/toHex` intent-var block with `computeIntentVars`/`makeMix` — fixes
     the non-hex defensive-black bug (an `rgb()`/`hsl()`/theme-token `color`/`intent` was
     misparsing hover/active/disabled to `#000000`; the rest of the library already

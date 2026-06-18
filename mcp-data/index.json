@@ -179,7 +179,7 @@
     "category": "layout",
     "summary": "Bordered, padded surface card for grouping related content into a visually distinct section; supports `normalizeRowHeights` for equal-height children — use it to frame a block, and `Box` for an unstyled container.",
     "slug": "components/layout/panel",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Stack",
