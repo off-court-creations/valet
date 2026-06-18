@@ -439,7 +439,8 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   Green: typecheck×4, lint, 1459 tests (1 new), RTL, mcp, check:examples. Stays
   `experimental` pending Ben's visual pass (the env() offset shows only on a notched
   device/emulator; desktop position is unchanged).
-- **Tier 5 Tree — REWRITTEN, agent-verified, awaiting Ben's visual pass (2026-06-18).**
+- **Tier 5 Tree — DONE (stable 2026-06-18 — both gates). TIER 5 COMPLETE.** Ben:
+  "tree approved!" Promoted Tree.
   Ben: "full rewrite... we got this." Executed the [tree-analysis](tree-analysis-2026-06-18.md)
   rewrite verdict in one pass — all 7 blockers + the spec:
   (1) ONE unified recursive render path for all three variants → every expanded parent

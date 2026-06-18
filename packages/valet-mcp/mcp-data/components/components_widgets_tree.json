@@ -3,7 +3,7 @@
   "category": "widgets",
   "slug": "components/widgets/tree",
   "summary": "Accessible WAI-ARIA tree over a `nodes` hierarchy (label via `getLabel`): `expanded`/`onExpandedChange` for disclosure and the canonical `selectionMode` + `selected`/`onSelectionChange` (id arrays) for `none`/`single`/`multiple` selection. Use it for nested data like file trees and outlines — reach for `List` when items are flat.",
-  "status": "experimental",
+  "status": "stable",
   "props": [
     {
       "name": "nodes",

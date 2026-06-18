@@ -1,7 +1,7 @@
 {
   "name": "Tree",
   "summary": "Accessible WAI-ARIA tree over a `nodes` hierarchy (label via `getLabel`): `expanded`/`onExpandedChange` for disclosure and the canonical `selectionMode` + `selected`/`onSelectionChange` (id arrays) for `none`/`single`/`multiple` selection. Use it for nested data like file trees and outlines — reach for `List` when items are flat.",
-  "status": "experimental",
+  "status": "stable",
   "docs": {
     "bestPractices": [
       "Use stable, unique node `id`s — they are the selection/expansion unit (`expanded`, `selected`, and `onSelectionChange` all speak ids), so they must survive re-renders.",
