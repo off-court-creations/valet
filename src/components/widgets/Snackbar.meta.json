@@ -1,7 +1,7 @@
 {
   "name": "Snackbar",
   "summary": "Transient toast notification (role='status') that fades in and auto-dismisses, pausing its timer on hover/focus; control with `open`/`message`/`autoHideDuration`, and pick a `variant` (`outline` default or solid `filled`) — use it for brief, non-blocking feedback.",
-  "status": "experimental",
+  "status": "stable",
   "aliases": ["snackbar", "toast", "notification", "alert"],
   "a11y": {
     "roles": ["status"],

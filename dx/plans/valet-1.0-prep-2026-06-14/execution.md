@@ -425,8 +425,10 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   `:focus-visible` ring on the delete button. The chip body itself stays correctly
   non-interactive. Meta accurate; touch note added. Green: typecheck×4, lint, 1458 tests
   (2 new), RTL, mcp, check:examples. Stays `experimental` pending Ben's visual pass.
-- **Tier 5 Snackbar — AGENT-VERIFIED, awaiting Ben's visual pass (2026-06-18).**
-  Already excellent: WCAG 2.2.1 auto-hide that pauses on hover AND focus with
+- **Tier 5 Snackbar — DONE (stable 2026-06-18 — both gates).** Ben: "promote." Plus,
+  on his request, added a new `filled` variant (solid primary surface + shadow; `outline`
+  stays the default) and fixed the playground trigger (uncontrolled toasts now remount
+  via a nonce key instead of relying on a dead `open`). Already excellent: WCAG 2.2.1 auto-hide that pauses on hover AND focus with
   remaining-time banking, `role='status'`/`aria-live='polite'` live region (overridable
   to alert/assertive), reduced-motion-aware, controlled-exit fade, surface z-ordering,
   orphan-timer cleanup. Only real mobile gap: it was pinned `bottom: spacing(1)` with no
