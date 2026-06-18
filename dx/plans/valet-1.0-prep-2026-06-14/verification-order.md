@@ -87,7 +87,7 @@ retuned spacing/density numbers."
 
 ## Tier 6 — Composite fields
 
-- [x] **Iterator** _(agent-verified 2026-06-18 — FormConfigCtx + mobile chrome kit + coarse ≥44px input floor (`--valet-iter-hit`); awaiting Ben's visual pass)_ · [x] **MetroSelect** _(agent-verified 2026-06-18 — FormConfigCtx + intent-contract tile colours + coarse ≥44px tile (HoverWrap owns size, Panel fills); awaiting Ben's visual pass)_ · [x] **DateSelector** _(agent-verified 2026-06-18 — FormConfigCtx + coarse ≥44px day-cell hit-expander + chrome kit; awaiting Ben's visual pass)_ — _(fanned out via the `bound-fields-harden` workflow, each agent-reviewed; integrator fixed the MetroSelect hit-node + Iterator compact parity)_
+- [x] **Iterator** _(stable 2026-06-18 — both gates; FormConfigCtx + mobile ≥44px input floor; + `buttonVariant` (filled/outlined/plain) for the −/+ steppers per Ben)_ · [ ] **MetroSelect** _(agent-verified 2026-06-18 — FormConfigCtx + intent-contract tile colours + coarse ≥44px tile (HoverWrap owns size, Panel fills); **Ben has notes** — not yet promoted)_ · [x] **DateSelector** _(stable 2026-06-18 — both gates; FormConfigCtx + coarse ≥44px day cells + month names now SHORT ("Jun") per Ben)_ — _(fanned out via the `bound-fields-harden` workflow, each agent-reviewed)_
 
 ## Tier 7 — Table / Markdown subtree
 

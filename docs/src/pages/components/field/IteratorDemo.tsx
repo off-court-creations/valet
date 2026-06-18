@@ -36,7 +36,24 @@ export default function IteratorDemoPage() {
       </Typography>
 
       <Typography variant='h3'>1. Uncontrolled</Typography>
-      <Iterator defaultValue={3} />
+      <Stack
+        direction='row'
+        sx={{ alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}
+      >
+        <Iterator
+          aria-label='Outlined stepper'
+          defaultValue={3}
+        />
+        <Iterator
+          aria-label='Filled stepper'
+          defaultValue={3}
+          buttonVariant='filled'
+        />
+      </Stack>
+      <Typography variant='subtitle'>
+        The −/+ buttons default to <code>outlined</code>; set{' '}
+        <code>buttonVariant=&quot;filled&quot;</code> for a solid pair.
+      </Typography>
 
       <Typography variant='h3'>2. Controlled (live vs commit)</Typography>
       <Stack

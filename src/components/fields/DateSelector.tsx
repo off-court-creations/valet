@@ -273,9 +273,10 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   /* Intl-derived localization (A11Y S10) ------------------------------------
    * Display-only: month names, weekday headers, the first day of the week, and
    * the day-number digits all follow `locale`. The committed VALUE is untouched
-   * (formatLocalISO → ISO Latin digits). Defaults to en-US / Sunday-start so
-   * the prior English output is byte-identical. */
-  const monthNames = useMemo(() => getMonthNames(locale, 'long'), [locale]);
+   * (formatLocalISO → ISO Latin digits). Defaults to en-US / Sunday-start. Month
+   * names use the locale's SHORT form ("Jan", "Feb", …) so the compact month
+   * picker reads cleanly. */
+  const monthNames = useMemo(() => getMonthNames(locale, 'short'), [locale]);
   /* Non-tight weekday headers reproduce the previous 2-letter English form
    * (`Su`, `Mo`, …) via the locale's long names truncated to two characters;
    * tight takes the first character (the previous `d[0]` behavior). The base
@@ -540,11 +541,11 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
                   key={monthNames[idx]}
                   value={idx}
                 >
-                  {tight ? monthNames[idx].slice(0, 3) : monthNames[idx]}
+                  {monthNames[idx]}
                 </Select.Option>
               ))}
-              {/* monthNames is locale-derived (Intl); tight still shows the
-                first three characters, matching the previous 3-letter form. */}
+              {/* monthNames is the locale SHORT form (Intl) — "Jan", "Feb", … —
+                so both tight and standard layouts show the abbreviated month. */}
             </Select>
             <Select
               size='xs'

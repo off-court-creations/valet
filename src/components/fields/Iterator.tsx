@@ -13,7 +13,7 @@ import React, { forwardRef, useState, useEffect, useId, useRef, useCallback } fr
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
-import { IconButton } from './IconButton';
+import { IconButton, type IconButtonVariant } from './IconButton';
 import { useFieldState } from '../../hooks/useControlledState';
 import { useCompact } from '../../system/compactContext';
 import { useFormConfig } from './FormControl';
@@ -55,6 +55,8 @@ export interface IteratorProps
   wheelBehavior?: 'off' | 'focus' | 'hover';
   /** Control width of the numeric field (token or CSS length). */
   width?: number | string;
+  /** Visual style for the −/+ stepper buttons. Defaults to `'outlined'`. */
+  buttonVariant?: IconButtonVariant;
   /**
    * Instance-level overrides for this component's i18n strings. Wins over the
    * `ValetLocaleProvider` value, which in turn wins over the built-in English
@@ -125,6 +127,7 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
       roundToStep = false,
       wheelBehavior = 'focus',
       width = '3.5rem',
+      buttonVariant = 'outlined',
       disabled: ownDisabled = false,
       readOnly = false,
       // API-TYPES S6 (stage A): destructure the FieldBaseProps cluster BEFORE the
@@ -347,7 +350,7 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
       >
         <IconButton
           size='xs'
-          variant='outlined'
+          variant={buttonVariant}
           icon='mdi:minus-thick'
           onClick={() => stepBy(-1)}
           disabled={decDisabled}
@@ -376,7 +379,7 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
         />
         <IconButton
           size='xs'
-          variant='outlined'
+          variant={buttonVariant}
           icon='mdi:plus-thick'
           onClick={() => stepBy(1)}
           disabled={incDisabled}

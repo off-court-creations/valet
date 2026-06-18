@@ -488,8 +488,15 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   tile size onto HoverWrap (which carries the floor) and made the clickable Panel fill
   it (width/height:100%), so the floored box IS the tap target. Also aligned Iterator's
   compact hit value to the cohort (24px/44px). Green: typecheck×4, lint, 1488 tests,
-  build, RTL, mcp, check:examples (107), docs tsc. All three stay `experimental` pending
-  Ben's visual pass.
+  build, RTL, mcp, check:examples (107), docs tsc. All three started `experimental`.
+- **Tier 6 Iterator + DateSelector — DONE (stable 2026-06-18 — both gates).** Ben's
+  visual pass + two requested tweaks: Iterator gained a `buttonVariant`
+  (`outlined` default / `filled` / `plain`) for the −/+ steppers; DateSelector's month
+  picker now shows the locale SHORT month ("Jun", not "June") via
+  `getMonthNames(locale, 'short')` (the intl + fields characterization tests updated to
+  match the deliberate change). Promoted both. **MetroSelect stays `experimental`** —
+  Ben has notes coming. Green: typecheck×4, lint, 1489 tests, build, RTL, mcp,
+  check:examples, docs tsc.
 - **Box — DONE (stable 2026-06-17 — both gates).** Ben's visual pass cleared it;
   the `centered`→`centerContent` meta fix shipped.
 - **Pre-existing repo debt (not from this work):** `eslint .` reports 51 prettier

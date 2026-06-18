@@ -3,7 +3,7 @@
   "category": "fields",
   "slug": "components/fields/iterator",
   "summary": "Numeric stepper with plus/minus buttons and scroll-wheel support for bounded integer/decimal input; use it for small quantity-style values (counts, steps) where a full slider or text field is overkill.",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "iterator"
   ],
@@ -73,6 +73,12 @@
       "type": "number | string",
       "required": false,
       "description": "Control width of the numeric field (token or CSS length)."
+    },
+    {
+      "name": "buttonVariant",
+      "type": "IconButtonVariant",
+      "required": false,
+      "description": "Visual style for the −/+ stepper buttons. Defaults to `'outlined'`."
     },
     {
       "name": "labels",
@@ -164,6 +170,7 @@
     "Respect readOnly vs disabled. Use readOnly to keep the field focusable and readable while blocking changes (buttons, wheel, and keyboard are ignored). Use disabled when the control should be entirely inert.",
     "Keep keyboard affordances intact. Users expect ArrowUp/Down to step, PageUp/Down for larger deltas, and Home/End to jump to min/max. Ensure an accessible name via aria-label or a surrounding FormControl label.",
     "Choose an appropriate width. The default width suits small integers. For larger ranges, negatives, or decimals, set width to avoid layout shift while typing.",
+    "Style the steppers with `buttonVariant`: the −/+ buttons default to `'outlined'`; pass `'filled'` for a solid pair (or `'plain'`) to match the surrounding emphasis.",
     "Form integration. Provide a name when used inside FormControl. The value will clamp to min/max and appear in the store on commit.",
     "Guard precision for decimals. When stepping in fractional increments (e.g., 0.1), use roundToStep to reduce floating‑point drift in committed values.",
     "Disable wheel interactions when undesirable. Set wheelBehavior='off' in scroll‑heavy views or when accidental stepping is likely.",

@@ -259,3 +259,34 @@ describe('Iterator — coarse hit target + chrome kit', () => {
     expect(rule).toContain('--valet-iter-hit');
   });
 });
+
+describe('Iterator — buttonVariant', () => {
+  const ruleOf = (el: Element) => {
+    const cls = el.className.split(/\s+/).find(Boolean)!;
+    return (
+      Array.from(sheet.getGlobalSheet()!.cssRules, (r) => r.cssText).find((t) =>
+        t.startsWith(`.${cls}`),
+      ) ?? ''
+    );
+  };
+
+  it('defaults to outlined (-/+ buttons are transparent); buttonVariant="filled" paints them', () => {
+    const { container: out } = mount(
+      <Iterator
+        aria-label='Qty'
+        defaultValue={1}
+      />,
+    );
+    expect(ruleOf(decBtn(out))).toContain('background: transparent');
+
+    const { container: fill } = mount(
+      <Iterator
+        aria-label='Qty'
+        defaultValue={1}
+        buttonVariant='filled'
+      />,
+    );
+    expect(ruleOf(decBtn(fill))).not.toContain('background: transparent');
+    expect(ruleOf(incBtn(fill))).not.toContain('background: transparent');
+  });
+});

@@ -18,7 +18,7 @@
     "category": "fields",
     "summary": "Interactive month calendar for picking a single date or a `range`; emits/accepts timezone-safe ISO `YYYY-MM-DD` strings, with display localized via `locale` and `firstDayOfWeek` (the value contract stays ISO Latin digits).",
     "slug": "components/fields/dateselector",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "FormControl",
@@ -39,7 +39,7 @@
     "category": "fields",
     "summary": "Numeric stepper with plus/minus buttons and scroll-wheel support for bounded integer/decimal input; use it for small quantity-style values (counts, steps) where a full slider or text field is overkill.",
     "slug": "components/fields/iterator",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Option",
