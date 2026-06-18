@@ -401,8 +401,8 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   (basic + controlled-vertical; both pass check:examples). Green: typecheck×4, lint, 1454
   tests (2 new), build, RTL, mcp, check:examples (106), docs tsc. Stays `experimental`
   pending Ben's visual pass.
-- **Tier 5 AppBar + Drawer — AGENT-VERIFIED, awaiting Ben's visual pass (2026-06-18).**
-  The mobile-nav chrome pair. Both already mature: **AppBar** uses `computeIntentVars`
+- **Tier 5 AppBar + Drawer — DONE (stable 2026-06-18 — both gates).** Ben: "both are
+  great." Promoted AppBar + Drawer. The mobile-nav chrome pair. Both already mature: **AppBar** uses `computeIntentVars`
   + an SSR-safe portal (mounted-gate) + Surface margin offset; **Drawer** is a real
   focus-trapping dialog in overlay mode (useOverlay trapFocus/inert/restoreFocus),
   inline region when persistent, with adaptive orientation (portrait toggle), RTL-aware

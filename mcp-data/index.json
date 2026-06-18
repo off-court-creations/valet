@@ -130,7 +130,7 @@
     "category": "layout",
     "summary": "Top application bar for branding, navigation, and page-level actions; it sits below modal overlays in the z-index scale and intent-tints its surface — use one per screen as the persistent header.",
     "slug": "components/layout/appbar",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Box",
@@ -144,7 +144,7 @@
     "category": "layout",
     "summary": "Panel that slides in from an `anchor` edge (`left`/`right`/`top`/`bottom`, or RTL-aware `start`/`end`); non-`persistent` drawers are true focus-trapping dialogs, so supply `aria-label`/`aria-labelledby` — use it for side navigation and contextual panels.",
     "slug": "components/layout/drawer",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Grid",
