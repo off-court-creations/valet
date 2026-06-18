@@ -22,6 +22,7 @@ import { FormControl } from './FormControl';
 import { createFormStore } from '../../system/createFormStore';
 import { resetWarnOnce } from '../../system/devErrors';
 import { SurfaceCtx, createSurfaceStore } from '../../system/surfaceStore';
+import * as sheet from '../../css/sheet';
 import type { ChangeInfo } from '../../system/events';
 
 /* react-dom warns unless act usage is announced ----------------------- */
@@ -239,5 +240,78 @@ describe('MetroSelect — ChangeInfo.source classification (ruling R10)', () => 
     pressKey(lb, 'Enter');
     expect(last(infos)?.source).toBe('keyboard');
     expect(isSelected(tileFor(container, 1))).toBe(true);
+  });
+});
+
+/*───────────────────────────────────────────────────────────────*/
+/* FormControl form-wide config merge (Wave C deferral)           */
+
+describe('MetroSelect — FormControl form-wide config (1.0)', () => {
+  it('a form-wide `disabled` disables the field and blocks tile interaction', () => {
+    const useStore = createFormStore<{ place: string }>({ place: 'home' });
+    const onValueChange = vi.fn();
+    const { container } = mount(
+      <FormControl
+        useStore={useStore}
+        disabled
+      >
+        <MetroSelect
+          name='place'
+          onValueChange={onValueChange}
+        >
+          {opts()}
+        </MetroSelect>
+      </FormControl>,
+    );
+    const lb = listbox(container);
+    expect(lb.getAttribute('aria-disabled')).toBe('true');
+    expect(lb.getAttribute('data-disabled')).toBe('true');
+    // Form-wide disable must block interaction, not merely styling.
+    click(tileFor(container, 2)); // attempt to select 'travel'
+    expect(useStore.getState().values.place).toBe('home');
+    expect(onValueChange).not.toHaveBeenCalled();
+  });
+
+  it('a name-keyed `errors` entry marks the field aria-invalid', () => {
+    const useStore = createFormStore<{ place: string }>({ place: 'home' });
+    const { container } = mount(
+      <FormControl
+        useStore={useStore}
+        errors={{ place: 'Pick a destination' }}
+      >
+        <MetroSelect name='place'>{opts()}</MetroSelect>
+      </FormControl>,
+    );
+    expect(listbox(container).getAttribute('aria-invalid')).toBe('true');
+  });
+});
+
+/*───────────────────────────────────────────────────────────────*/
+/* Mobile: coarse-pointer hit floor + chrome kit                  */
+
+describe('MetroSelect — touch target + chrome kit (1.0)', () => {
+  it('wires a >=44px coarse-pointer hit var on the listbox root', () => {
+    const { container } = mount(<MetroSelect defaultValue='home'>{opts()}</MetroSelect>);
+    expect(listbox(container).style.getPropertyValue('--valet-metro-hit')).toBe('44px');
+  });
+
+  it('compact tightens the coarse-pointer hit var to 40px', () => {
+    const { container } = mount(
+      <MetroSelect
+        compact
+        defaultValue='home'
+      >
+        {opts()}
+      </MetroSelect>,
+    );
+    expect(listbox(container).style.getPropertyValue('--valet-metro-hit')).toBe('40px');
+  });
+
+  it('emits the chrome kit + coarse-pointer floor in the tile rule', () => {
+    mount(<MetroSelect defaultValue='home'>{opts()}</MetroSelect>);
+    const rules = Array.from(sheet.getGlobalSheet()!.cssRules, (r) => r.cssText).join('\n');
+    expect(rules).toMatch(/touch-action:\s*manipulation/);
+    expect(rules).toMatch(/pointer:\s*coarse/);
+    expect(rules).toMatch(/var\(--valet-metro-hit/);
   });
 });

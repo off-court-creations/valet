@@ -132,6 +132,7 @@
     ]
   },
   "cssVars": [
+    "--valet-iter-hit",
     "--valet-focus-width",
     "--valet-focus-ring-color",
     "--valet-focus-offset"
@@ -168,7 +169,8 @@
     "Disable wheel interactions when undesirable. Set wheelBehavior='off' in scroll‑heavy views or when accidental stepping is likely.",
     "Binding precedence (prop > form > internal). An explicit `value` prop always wins; otherwise a `name` inside a `FormControl` binds to the store (seed the key in `createFormStore(initial)` so the initial value is honoured); otherwise the Iterator is uncontrolled. The binding is latched at mount.",
     "Change source. `onValueChange`/`onValueCommit` report a truthful `info.source`: the +/- buttons report `'pointer'`, the Arrow/Page/Home/End/Enter keys and blur report `'keyboard'`, and wheel stepping reports `'wheel'`, not a blanket `'programmatic'`.",
-    "Internationalize the built-in labels with the `labels` prop (instance-level) or a `ValetLocaleProvider` (app-wide). Resolution is instance `labels` > provider strings > built-in English."
+    "Internationalize the built-in labels with the `labels` prop (instance-level) or a `ValetLocaleProvider` (app-wide). Resolution is instance `labels` > provider strings > built-in English.",
+    "Touch target & FormControl config. The numeric box grows to a >=44px coarse-pointer hit floor (40px under `compact`) with the mobile chrome kit (no tap-highlight, `touch-action: manipulation`); the +/- buttons are already >=44px-hardened. A surrounding `FormControl`'s form-wide `disabled` blocks the input, buttons, wheel, and keyboard stepping (not just styling), and a name-keyed `errors` entry sets `aria-invalid` — your own `disabled`/`error` props still win."
   ],
   "examples": [
     {

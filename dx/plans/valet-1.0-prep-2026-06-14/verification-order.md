@@ -87,7 +87,7 @@ retuned spacing/density numbers."
 
 ## Tier 6 — Composite fields
 
-- [ ] Iterator (→ IconButton) · [ ] MetroSelect (→ Icon/Panel/Stack/Typography) · [ ] **DateSelector** (→ IconButton + Select; field-tier sink)
+- [x] **Iterator** _(agent-verified 2026-06-18 — FormConfigCtx + mobile chrome kit + coarse ≥44px input floor (`--valet-iter-hit`); awaiting Ben's visual pass)_ · [x] **MetroSelect** _(agent-verified 2026-06-18 — FormConfigCtx + intent-contract tile colours + coarse ≥44px tile (HoverWrap owns size, Panel fills); awaiting Ben's visual pass)_ · [x] **DateSelector** _(agent-verified 2026-06-18 — FormConfigCtx + coarse ≥44px day-cell hit-expander + chrome kit; awaiting Ben's visual pass)_ — _(fanned out via the `bound-fields-harden` workflow, each agent-reviewed; integrator fixed the MetroSelect hit-node + Iterator compact parity)_
 
 ## Tier 7 — Table / Markdown subtree
 

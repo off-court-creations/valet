@@ -469,6 +469,27 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   mcp, check:examples (107). Deferred post-1.0 (not implemented, names free to add later
   non-breaking): lazy/async children, virtualization, drag-drop, imperative ref, custom
   renderNode. Stays `experimental` pending Ben's visual pass.
+- **Tier 6 bound fields (Iterator + MetroSelect + DateSelector) — AGENT-VERIFIED via
+  a fan-out workflow, awaiting Ben's visual pass (2026-06-18).** Ben: "fan out workflow
+  all bound fields. I'll visual check all at once." Ran `bound-fields-harden` (3 impl
+  agents + 3 reviewers): each wired FormConfigCtx (effectiveDisabled/effectiveError in
+  render AND interaction guards; per-item disabled left separate; useFieldState store
+  binding untouched — controlledContract green), added the mobile chrome kit + a
+  coarse-pointer ≥44px target, reviewed colours, and added tests.
+  - **Iterator**: input-box coarse min-height floor (`--valet-iter-hit`); colours
+    unchanged (neutral bordered number box, no intent fill).
+  - **MetroSelect**: tile colours migrated off bespoke toRgb/mix/toHex to the intent
+    contract (makeMix, hover < selected); coarse ≥44px tile.
+  - **DateSelector**: day-cell `::before` ≥44px hit-expander + chrome kit; selected-day
+    error recolour; per-DATE disabled kept separate from the field disabled.
+  Reviewers passed Iterator + DateSelector clean and FLAGGED MetroSelect — the ≥44px
+  floor sat on the non-interactive `HoverWrap` while the click handler was on the inner
+  `Panel`, so the tap target wasn't actually enlarged. **Integrator fix:** moved the
+  tile size onto HoverWrap (which carries the floor) and made the clickable Panel fill
+  it (width/height:100%), so the floored box IS the tap target. Also aligned Iterator's
+  compact hit value to the cohort (24px/44px). Green: typecheck×4, lint, 1488 tests,
+  build, RTL, mcp, check:examples (107), docs tsc. All three stay `experimental` pending
+  Ben's visual pass.
 - **Box — DONE (stable 2026-06-17 — both gates).** Ben's visual pass cleared it;
   the `centered`→`centerContent` meta fix shipped.
 - **Pre-existing repo debt (not from this work):** `eslint .` reports 51 prettier

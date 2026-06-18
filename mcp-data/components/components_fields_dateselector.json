@@ -40,6 +40,20 @@
       "description": "FormControl field name (single-date mode only)."
     },
     {
+      "name": "disabled",
+      "type": "boolean",
+      "required": false,
+      "description": "Disable the whole calendar (field-level). Merges with a FormControl-wide\n`disabled`; distinct from the per-DATE out-of-range disable.",
+      "default": "false"
+    },
+    {
+      "name": "error",
+      "type": "boolean",
+      "required": false,
+      "description": "Mark the field invalid (field-level). Merges with a name-keyed\nFormControl `errors` entry; drives `aria-invalid` and the error recolour.",
+      "default": "false"
+    },
+    {
       "name": "minDate",
       "type": "string",
       "required": false,
@@ -121,6 +135,7 @@
     "--valet-font-leading",
     "--valet-date-radius",
     "--valet-date-cell-radius",
+    "--valet-date-hit",
     "--valet-text-color"
   ],
   "cssPresets": [],
@@ -146,7 +161,8 @@
     "Change source. `onValueChange`/`onValueCommit` report a truthful `info.source`: a day cell is selected by clicking, so the source is `'pointer'` rather than a blanket `'programmatic'`.",
     "Internationalize the built-in labels with the `labels` prop (instance-level) or a `ValetLocaleProvider` (app-wide). Resolution is instance `labels` > provider strings > built-in English.",
     "Localize the calendar DISPLAY (month names, weekday headers, day-number digits) with the `locale` prop (BCP-47, default 'en-US' which preserves the prior English/Sunday-start output). The committed VALUE is always ISO 'YYYY-MM-DD' with Latin digits regardless of locale — e.g. locale='ar-EG' shows Arabic-Indic day digits while onValueChange/onValueCommit still emit Latin ISO.",
-    "By default the week starts on the locale's own first day (en-US → Sunday, de-DE → Monday). Override it explicitly with `firstDayOfWeek` (1 = Monday … 7 = Sunday) to force a fixed start regardless of locale."
+    "By default the week starts on the locale's own first day (en-US → Sunday, de-DE → Monday). Override it explicitly with `firstDayOfWeek` (1 = Monday … 7 = Sunday) to force a fixed start regardless of locale.",
+    "Touch + FormControl config: day cells expand to a >=44px coarse-pointer hit target (40px under `compact`) without changing their visual size, and ship the mobile chrome kit (no tap-highlight, touch-action: manipulation). The field-level `disabled`/`error` props merge with a FormControl-wide `disabled` and a name-keyed `errors` entry — a form-wide disable blocks selection (not just styling), `error` recolours the selected day to the error token and sets aria-invalid. The per-DATE out-of-range disable (minDate/maxDate) is separate and is not affected by the form config."
   ],
   "examples": [
     {

@@ -32,11 +32,12 @@ import { Icon } from '../primitives/Icon';
 import { Typography } from '../primitives/Typography';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
-import { toHex, toRgb, mix } from '../../helpers/color';
+import { makeMix } from '../../system/intentVars';
 import type { FieldBaseProps, Presettable, Space, SpacingProps, Sx } from '../../types';
 import type { ChangeInfo, InputSource, OnValueChange, OnValueCommit } from '../../system/events';
 import { styled } from '../../css/createStyled';
 import { CompactCtx, useCompact } from '../../system/compactContext';
+import { useFormConfig } from './FormControl';
 import { valetError } from '../../system/devErrors';
 import { useFieldState } from '../../hooks/useControlledState';
 
@@ -46,7 +47,21 @@ interface MetroCtx {
   value: Primitive | Primitive[] | null;
   setValue: (v: Primitive, src: InputSource) => void;
   multiple: boolean;
+  /** Field-level disable (own prop merged with FormControl config). */
   disabled: boolean;
+  /** Shared intent-contract tile colours (resolved once on the field root). */
+  colors: {
+    /** Selected tile fill + border (intent bg). */
+    selectedBg: string;
+    /** Text/icon on a selected tile (intent fg, never a hard white). */
+    selectedFg: string;
+    /** Hover tint for an UNselected tile (subtle primary mix). */
+    hoverBg: string;
+    /** Hover tint for a SELECTED tile (darker primary mix). */
+    hoverSelBg: string;
+    /** Disabled text/border tone. */
+    disabled: string;
+  };
 }
 
 const MetroCtx = createContext<MetroCtx | null>(null);
@@ -106,6 +121,25 @@ const HoverWrap = styled('div')<{
   display: inline-block;
   /* Ensure the wrapper does not interfere with layout sizing */
   vertical-align: top;
+  box-sizing: border-box;
+  /* The wrapper owns the tile size and the inner clickable Panel fills it
+     (width/height:100%), so the coarse floor below enlarges the ACTUAL tap
+     target — not just an inert box around a smaller Panel. */
+  width: var(--valet-metro-tile-w, 6rem);
+  height: var(--valet-metro-tile-h, 6rem);
+
+  /* Mobile chrome kit — suppress the blue tap flash + keep taps fast on the
+     tile target. */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+
+  /* Coarse-pointer (touch) comfort: each tile is a tap target — floor it at
+     >=44px (40px under compact) via the root-provided --valet-metro-hit. Tiles
+     are usually >=4rem already, but small/numeric sizes can drop below 44px. */
+  @media (pointer: coarse) {
+    min-width: var(--valet-metro-hit, 44px);
+    min-height: var(--valet-metro-hit, 44px);
+  }
 
   .valet-hover-bg {
     position: absolute;
@@ -141,8 +175,8 @@ export const Option: React.FC<MetroOptionProps> = ({
   className,
   ...rest
 }) => {
-  const { theme, mode } = useTheme();
-  const { value: sel, setValue, disabled: allDisabled } = useMetro();
+  const { theme } = useTheme();
+  const { value: sel, setValue, disabled: allDisabled, colors } = useMetro();
 
   const selected = Array.isArray(sel)
     ? sel.findIndex((x) => String(x) === String(value)) !== -1
@@ -150,21 +184,11 @@ export const Option: React.FC<MetroOptionProps> = ({
 
   const presetCls = p ? preset(p) : '';
 
-  const disabledColor = useMemo(
-    () => toHex(mix(toRgb(theme.colors.text), toRgb(mode === 'dark' ? '#000' : '#fff'), 0.4)),
-    [theme, mode],
-  );
-
-  /* Shared valet hover tone: primary mixed into background */
-  const hoverBg = useMemo(
-    () => toHex(mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.25)),
-    [theme],
-  );
-  // For selected tiles, nudge primary toward text similarly to DateSelector
-  const hoverSelBg = useMemo(
-    () => toHex(mix(toRgb(theme.colors.primary), toRgb(theme.colors.text), 0.3)),
-    [theme],
-  );
+  // Colours come from the field root's single intent-contract resolution
+  // (computeIntentVars/makeMix) — no bespoke per-tile colour maths.
+  const disabledColor = colors.disabled;
+  const hoverBg = colors.hoverBg;
+  const hoverSelBg = colors.hoverSelBg;
 
   const innerStyle: React.CSSProperties = {
     paddingTop: theme.spacing(3),
@@ -206,8 +230,15 @@ export const Option: React.FC<MetroOptionProps> = ({
         compact
         onClick={() => !disabled && !allDisabled && setValue(value, 'pointer')}
         sx={{
-          width: 'var(--valet-metro-tile-w, 6rem)',
-          height: 'var(--valet-metro-tile-h, 6rem)',
+          // Fill the HoverWrap (which now owns the tile size + the coarse hit
+          // floor) so the clickable surface is the floored ≥44px box on touch.
+          width: '100%',
+          height: '100%',
+          // Coarse-pointer hit floor + chrome kit live on <HoverWrap> (a styled
+          // component → real CSS rule); `sx` is inline-only and cannot carry a
+          // @media block. The flat tap-highlight suppression is safe inline too.
+          WebkitTapHighlightColor: 'transparent',
+          touchAction: 'manipulation',
           overflow: 'hidden',
           position: 'relative', // anchor hover layer
           cursor: disabled || allDisabled ? 'not-allowed' : 'pointer',
@@ -215,13 +246,12 @@ export const Option: React.FC<MetroOptionProps> = ({
           alignItems: 'center',
           justifyContent: 'center',
           borderColor:
-            selected && !disabled ? theme.colors.primary : disabled ? disabledColor : undefined,
-          background: selected && !disabled ? theme.colors.primary : undefined,
+            selected && !disabled ? colors.selectedBg : disabled ? disabledColor : undefined,
+          background: selected && !disabled ? colors.selectedBg : undefined,
           // Compute text color for icons and labels; keep Typography in sync via CSS var.
-          color: disabled ? disabledColor : selected ? theme.colors.primaryText : undefined,
+          color: disabled ? disabledColor : selected ? colors.selectedFg : undefined,
           ['--valet-text-color' as const]:
-            (disabled ? disabledColor : selected ? theme.colors.primaryText : undefined) ??
-            'currentColor',
+            (disabled ? disabledColor : selected ? colors.selectedFg : undefined) ?? 'currentColor',
           opacity: disabled || allDisabled ? 0.45 : 1,
           transition: 'background 120ms ease, border-color 120ms ease, color 120ms ease',
           // Visible keyboard focus ring on the active tile (set by parent via data-active)
@@ -290,6 +320,13 @@ export const MetroSelect: MetroSelectComponent = ({
 }) => {
   void _fullWidth;
   const effectiveCompact = useCompact(compact);
+
+  /* Form-wide config (own props win; the form config is the fallback). The
+     FormConfig layer is additive + separate from the useFieldState store
+     binding below. */
+  const formConfig = useFormConfig();
+  const effectiveDisabled = disabled || formConfig.disabled;
+  const effectiveError = Boolean(error) || (name != null && formConfig.errors[name] != null);
   /**
    * Single resolution of value/control/form binding (ruling R9). Precedence is
    * prop > form > internal, latched at mount; an unseeded form key renders
@@ -309,7 +346,7 @@ export const MetroSelect: MetroSelectComponent = ({
 
   const setValue = useCallback(
     (v: Primitive, src: InputSource) => {
-      if (disabled) return;
+      if (effectiveDisabled) return;
       const infoBase: ChangeInfo<Primitive | Primitive[]> = {
         previousValue: val ?? (multiple ? [] : null),
         phase: 'commit',
@@ -329,15 +366,10 @@ export const MetroSelect: MetroSelectComponent = ({
         onValueCommit?.(v, infoBase);
       }
     },
-    [disabled, multiple, name, onValueChange, onValueCommit, setFieldValue, val],
+    [effectiveDisabled, multiple, name, onValueChange, onValueCommit, setFieldValue, val],
   );
 
   const presetCls = p ? preset(p) : '';
-
-  const ctx = useMemo<MetroCtx>(
-    () => ({ value: val ?? null, setValue, multiple, disabled }),
-    [val, setValue, multiple, disabled],
-  );
 
   // ----- Geometry: tokens → CSS variables ---------------------------------
   const sizeMap = useMemo(
@@ -353,6 +385,32 @@ export const MetroSelect: MetroSelectComponent = ({
 
   const { theme } = useTheme();
   const tokens = sizeMap();
+
+  /* Colours — shared intent contract (matches Select/Checkbox). Selected tiles
+     paint with the intent bg (primary) and the text-on-primary token
+     (primaryText, never a hard white); hover tints are subtle primary mixes via
+     makeMix (unselected hover is lighter than the selected fill). Disabled tone
+     mixes text toward the page background. The `error` state recolours the
+     selected fill (and its keyline) to the error token. */
+  const accent = effectiveError ? theme.colors.error : theme.colors.primary;
+  const colors = useMemo(
+    () => ({
+      selectedBg: accent,
+      selectedFg: theme.colors.primaryText,
+      // Unselected hover: subtle primary tint over the background (light wash).
+      hoverBg: makeMix(theme.colors.background, accent, 0.16),
+      // Selected hover: a touch darker than the selected fill (toward text).
+      hoverSelBg: makeMix(accent, theme.colors.text, 0.3),
+      // Disabled tone: text mixed toward the page background.
+      disabled: makeMix(theme.colors.text, theme.colors.background, 0.4),
+    }),
+    [accent, theme.colors.primaryText, theme.colors.background, theme.colors.text],
+  );
+
+  const ctx = useMemo<MetroCtx>(
+    () => ({ value: val ?? null, setValue, multiple, disabled: effectiveDisabled, colors }),
+    [val, setValue, multiple, effectiveDisabled, colors],
+  );
 
   let tileW: string;
   let tileH: string;
@@ -472,18 +530,18 @@ export const MetroSelect: MetroSelectComponent = ({
         compact={effectiveCompact}
         gap={gap}
         data-valet-component='MetroSelect'
-        data-disabled={disabled ? 'true' : 'false'}
-        data-state={disabled ? 'disabled' : 'enabled'}
+        data-disabled={effectiveDisabled ? 'true' : 'false'}
+        data-state={effectiveDisabled ? 'disabled' : 'enabled'}
         role='listbox'
         aria-multiselectable={multiple || undefined}
-        aria-invalid={error || undefined}
-        aria-disabled={disabled || undefined}
+        aria-invalid={effectiveError || undefined}
+        aria-disabled={effectiveDisabled || undefined}
         aria-activedescendant={optIds[active]}
         aria-labelledby={labelId}
         aria-describedby={helpId}
-        tabIndex={disabled ? -1 : 0}
+        tabIndex={effectiveDisabled ? -1 : 0}
         onKeyDown={(e) => {
-          if (disabled) return;
+          if (effectiveDisabled) return;
           const { key } = e as React.KeyboardEvent<HTMLDivElement>;
           // Mark that the user is navigating via keyboard so the outline can appear
           if (
@@ -529,6 +587,8 @@ export const MetroSelect: MetroSelectComponent = ({
           ['--valet-metro-tile-h' as const]: tileH,
           ['--valet-metro-icon-size' as const]: iconSz,
           ['--valet-metro-font-size' as const]: fontSz,
+          // Coarse-pointer tap-target floor for each tile (40px under compact).
+          ['--valet-metro-hit' as const]: effectiveCompact ? '40px' : '44px',
           ...sx,
         }}
         className={[presetCls, className].filter(Boolean).join(' ')}
@@ -539,7 +599,7 @@ export const MetroSelect: MetroSelectComponent = ({
               id: optIds[i],
               role: 'option',
               'aria-selected': isSel(el.props.value),
-              'aria-disabled': el.props.disabled || disabled || undefined,
+              'aria-disabled': el.props.disabled || effectiveDisabled || undefined,
               'data-active': (showActive && i === active) || undefined,
               onMouseEnter: () => setActive(i),
             } as Partial<MetroOptionProps> & { id: string }),

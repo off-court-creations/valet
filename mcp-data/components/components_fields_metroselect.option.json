@@ -48,6 +48,7 @@
     "--valet-text-color",
     "--valet-metro-tile-w",
     "--valet-metro-tile-h",
+    "--valet-metro-hit",
     "--valet-metro-icon-size",
     "--valet-metro-font-size"
   ],

@@ -15,6 +15,8 @@ import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { IconButton } from './IconButton';
 import { useFieldState } from '../../hooks/useControlledState';
+import { useCompact } from '../../system/compactContext';
+import { useFormConfig } from './FormControl';
 import { warnOnce } from '../../system/devErrors';
 import { useComponentStrings } from '../../system/locale';
 import type { DeepPartialStrings, ValetStrings } from '../../system/locale';
@@ -79,10 +81,21 @@ const Field = styled('input')<{ theme: Theme; $w: string }>`
   width: ${({ $w }) => $w};
   overscroll-behavior: contain;
   -moz-appearance: textfield;
+
+  /* Mobile chrome kit — no blue tap flash, treat as a tap target. */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+
   &::-webkit-inner-spin-button,
   &::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
+  }
+
+  /* Coarse-pointer (touch) hit floor — the numeric box is the touch surface;
+     grow it to >=44px tall (40px under compact) without touching desktop. */
+  @media (pointer: coarse) {
+    min-height: var(--valet-iter-hit, 44px);
   }
   &:focus-visible {
     outline: var(--valet-focus-width, 2px) solid
@@ -112,7 +125,7 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
       roundToStep = false,
       wheelBehavior = 'focus',
       width = '3.5rem',
-      disabled = false,
+      disabled: ownDisabled = false,
       readOnly = false,
       // API-TYPES S6 (stage A): destructure the FieldBaseProps cluster BEFORE the
       // rest-spread so label/helperText/error/fullWidth stop leaking onto the
@@ -122,7 +135,7 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
       // rendering of fullWidth is Phase 2 / Q10.
       label,
       helperText,
-      error,
+      error: ownError,
       fullWidth: _fullWidth,
       preset: p,
       className,
@@ -135,6 +148,13 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
     void _fullWidth;
     const { theme } = useTheme();
     const t = useComponentStrings('iterator', labels);
+    const effectiveCompact = useCompact();
+
+    /* Form-wide config (own props win; the form config is the fallback). The
+       FormConfig layer is additive and separate from the value binding below. */
+    const formConfig = useFormConfig();
+    const effectiveDisabled = ownDisabled || formConfig.disabled;
+    const effectiveError = Boolean(ownError) || (name != null && formConfig.errors[name] != null);
 
     // WCAG 4.1.2 (Name, Role, Value): a native <label htmlFor> provides the
     // accessible name; helperText is associated via aria-describedby.
@@ -258,14 +278,14 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
 
     const handleWheel = useCallback(
       (e: WheelEvent) => {
-        if (disabled || readOnly) return;
+        if (effectiveDisabled || readOnly) return;
         if (wheelBehavior === 'off') return;
         if (wheelBehavior === 'focus' && localRef.current !== document.activeElement) return;
         e.preventDefault();
         e.stopPropagation();
         stepBy(e.deltaY < 0 ? 1 : -1, 'wheel');
       },
-      [disabled, readOnly, stepBy, wheelBehavior],
+      [effectiveDisabled, readOnly, stepBy, wheelBehavior],
     );
 
     useEffect(() => {
@@ -280,7 +300,7 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
     const w = typeof width === 'number' ? `${width}px` : width;
 
     const handleKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
-      if (disabled || readOnly) return;
+      if (effectiveDisabled || readOnly) return;
       const key = e.key;
       const big = Math.max(step * 10, step);
       if (key === 'ArrowUp') {
@@ -310,18 +330,20 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
       }
     };
 
-    const decDisabled = disabled || readOnly || (min !== undefined && current <= min);
-    const incDisabled = disabled || readOnly || (max !== undefined && current >= max);
+    const decDisabled = effectiveDisabled || readOnly || (min !== undefined && current <= min);
+    const incDisabled = effectiveDisabled || readOnly || (max !== undefined && current >= max);
 
     const controls = (
       <Wrapper
         theme={theme}
         data-valet-component='Iterator'
-        data-disabled={disabled ? 'true' : 'false'}
+        data-disabled={effectiveDisabled ? 'true' : 'false'}
         data-readonly={readOnly ? 'true' : 'false'}
-        data-state={disabled ? 'disabled' : readOnly ? 'readonly' : 'enabled'}
+        data-state={effectiveDisabled ? 'disabled' : readOnly ? 'readonly' : 'enabled'}
         className={cls}
-        style={sx}
+        style={
+          { '--valet-iter-hit': effectiveCompact ? '24px' : '44px', ...sx } as React.CSSProperties
+        }
       >
         <IconButton
           size='xs'
@@ -347,9 +369,9 @@ export const Iterator = forwardRef<HTMLInputElement, IteratorProps>(
           onChange={handleInput}
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
-          disabled={disabled}
+          disabled={effectiveDisabled}
           readOnly={readOnly}
-          aria-invalid={error || undefined}
+          aria-invalid={effectiveError || undefined}
           aria-describedby={helpId}
         />
         <IconButton

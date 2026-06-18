@@ -133,6 +133,7 @@
     "--valet-text-color",
     "--valet-metro-tile-w",
     "--valet-metro-tile-h",
+    "--valet-metro-hit",
     "--valet-metro-icon-size",
     "--valet-metro-font-size"
   ],
@@ -166,7 +167,8 @@
     "Control spacing with `gap` using theme spacing tokens or numbers to match density.",
     "Keyboard: ensure arrow keys move focus predictably and Space toggles selection.",
     "Binding precedence (prop > form > internal). An explicit `value` prop always wins; otherwise a `name` inside a `FormControl` binds to the store (seed the key in `createFormStore(initial)` so the initial selection is honoured); otherwise the control is uncontrolled. The binding is latched at mount.",
-    "Change source. `onValueChange`/`onValueCommit` report a truthful `info.source`: `'pointer'` for a tile click and `'keyboard'` for keyboard activation (Enter/Space), not a blanket `'programmatic'`."
+    "Change source. `onValueChange`/`onValueCommit` report a truthful `info.source`: `'pointer'` for a tile click and `'keyboard'` for keyboard activation (Enter/Space), not a blanket `'programmatic'`.",
+    "Touch + form config. Each tile is a tap target floored at >=44px on coarse pointers (40px under `compact`) with the mobile chrome kit (no blue tap-flash); inside a `FormControl`, the field-level `disabled`/`error` merge with the form-wide config (own props win) while a per-tile `disabled` stays independent."
   ],
   "examples": [
     {

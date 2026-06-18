@@ -31,7 +31,7 @@ import { CompactCtx, useCompact } from '../../system/compactContext';
 import { preset } from '../../css/stylePresets';
 import { IconButton } from './IconButton';
 import { Select } from './Select';
-import { useOptionalForm } from './FormControl';
+import { useOptionalForm, useFormConfig } from './FormControl';
 import { useFieldState } from '../../hooks/useControlledState';
 import { formatLocalISO } from './dateUtils';
 import {
@@ -41,7 +41,7 @@ import {
   orderWeekdays,
   formatDayNumber,
 } from '../../helpers/dateLocale';
-import { toRgb, mix, toHex } from '../../helpers/color';
+import { makeMix } from '../../system/intentVars';
 import { useComponentStrings } from '../../system/locale';
 import type { DeepPartialStrings, ValetStrings } from '../../system/locale';
 import type { Presettable, Sx } from '../../types';
@@ -62,6 +62,12 @@ export interface DateSelectorProps
   onValueCommit?: OnValueCommit<string | [string, string]>;
   /** FormControl field name (single-date mode only). */
   name?: string;
+  /** Disable the whole calendar (field-level). Merges with a FormControl-wide
+   *  `disabled`; distinct from the per-DATE out-of-range disable. */
+  disabled?: boolean;
+  /** Mark the field invalid (field-level). Merges with a name-keyed
+   *  FormControl `errors` entry; drives `aria-invalid` and the error recolour. */
+  error?: boolean;
   /** Earliest selectable ISO date (YYYY-MM-DD). */
   minDate?: string;
   /** Latest selectable ISO date (YYYY-MM-DD). */
@@ -169,12 +175,18 @@ const Cell = styled('button')<{
   $rangeText: string;
   $compact?: boolean;
 }>`
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 100%;
   padding: 0;
   border: none;
+  /* Mobile chrome kit — no blue tap flash, no iOS callout/selection. */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
   background: ${({ $start, $end, $inRange, $primary, $secondary, $rangeBg }) =>
     $start ? $primary : $end ? $secondary : $inRange ? $rangeBg : 'transparent'};
   color: ${({ $start, $end, $inRange, $selText, $endText, $rangeText }) =>
@@ -200,6 +212,20 @@ const Cell = styled('button')<{
       $hoverDefault,
     }) => ($start ? $hoverStart : $end ? $hoverEnd : $inRange ? $hoverRange : $hoverDefault)};
   }
+  /* Coarse-pointer (touch) hit target — expand the small day cell to >=44px
+     (40px under compact) WITHOUT changing the visual size; fine-pointer
+     (desktop) is untouched. Logical absolute-centering (inset:0; margin:auto)
+     centers the expander even when larger than the cell, RTL-safe. */
+  @media (pointer: coarse) {
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      width: max(100%, var(--valet-date-hit, 44px));
+      height: max(100%, var(--valet-date-hit, 44px));
+    }
+  }
   &:disabled {
     opacity: 0.4;
     cursor: default;
@@ -214,6 +240,8 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   onValueCommit,
   range = false,
   name,
+  disabled: ownDisabled = false,
+  error: ownError = false,
   minDate: minDateProp,
   maxDate: maxDateProp,
   preset: p,
@@ -231,6 +259,16 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   const wrapRef = useRef<HTMLDivElement>(null);
   const effectiveCompact = useCompact(compact); // relay only (layout compaction)
   const tight = density === 'tight'; // drives the visual scale (D6)
+
+  /* Form-wide config (own props win; the form config is the fallback). The
+     FIELD-level disabled/error merge here; the per-DATE out-of-range disable
+     (date < min || date > max) is a separate concern and is NOT merged. */
+  const formConfig = useFormConfig();
+  const effectiveDisabled = ownDisabled || formConfig.disabled;
+  const effectiveError = Boolean(ownError) || (name != null && formConfig.errors[name] != null);
+  /* Coarse-pointer hit floor for the small day-cell targets (40px under
+     compact, else 44px) — wired onto the root and read by the Cell @media. */
+  const hitVar = effectiveCompact ? '40px' : '44px';
 
   /* Intl-derived localization (A11Y S10) ------------------------------------
    * Display-only: month names, weekday headers, the first day of the week, and
@@ -430,20 +468,28 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   const presetCls = p ? preset(p) : '';
   const cls = [presetCls, className].filter(Boolean).join(' ') || undefined;
 
-  const rangeBg = toHex(mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.25));
+  /* Colours — aligned to the shared intent maths (`makeMix`, the same blend
+     used by Select/Checkbox) instead of the bespoke toRgb/mix/toHex calls.
+     The selected-day accent recolours to the error token when the field is
+     invalid (mirrors Select's error treatment); hover is always a lighter
+     blend than the selected fill. The in-range tint is a subtle ~25% wash. */
+  const startAccent = effectiveError ? theme.colors.error : theme.colors.primary;
+  const startText = effectiveError ? theme.colors.errorText : theme.colors.primaryText;
+  const rangeBg = makeMix(theme.colors.primary, theme.colors.background, 0.25);
   // Use the wrapper's background (backgroundAlt) and nudge ~4% toward text
-  const hoverDefault = toHex(
-    mix(toRgb(theme.colors.backgroundAlt), toRgb(theme.colors.text), 0.04),
-  );
-  const hoverStart = toHex(mix(toRgb(theme.colors.primary), toRgb(theme.colors.text), 0.3));
-  const hoverEnd = toHex(mix(toRgb(theme.colors.secondary), toRgb(theme.colors.text), 0.3));
-  const hoverRange = toHex(mix(toRgb(rangeBg), toRgb(theme.colors.text), 0.2));
+  const hoverDefault = makeMix(theme.colors.backgroundAlt, theme.colors.text, 0.04);
+  const hoverStart = makeMix(startAccent, theme.colors.text, 0.3);
+  const hoverEnd = makeMix(theme.colors.secondary, theme.colors.text, 0.3);
+  const hoverRange = makeMix(rangeBg, theme.colors.text, 0.2);
 
   return (
     <Wrapper
       {...rest}
       ref={wrapRef}
       data-valet-component='DateSelector'
+      data-disabled={effectiveDisabled ? 'true' : 'false'}
+      aria-disabled={effectiveDisabled || undefined}
+      aria-invalid={effectiveError || undefined}
       $bg={theme.colors.backgroundAlt}
       $text={`var(--valet-text-color, ${theme.colors.text})` as string}
       $compact={tight}
@@ -467,7 +513,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
                   setViewYear(yr);
                   setViewMonth(m);
                 }}
-                disabled={new Date(viewYear - 1, 11, 31) < min}
+                disabled={effectiveDisabled || new Date(viewYear - 1, 11, 31) < min}
               />
             )}
             <IconButton
@@ -477,13 +523,14 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
               icon='mdi:chevron-left'
               aria-label={t.previousMonth}
               onClick={() => changeMonth(-1)}
-              disabled={new Date(viewYear, viewMonth, 0) < min}
+              disabled={effectiveDisabled || new Date(viewYear, viewMonth, 0) < min}
             />
           </div>
           <div style={{ display: 'flex', gap: theme.spacing(0.5), flex: 1, minWidth: 0 }}>
             <Select
               size='xs'
               value={viewMonth}
+              disabled={effectiveDisabled}
               onValueChange={(v) => setViewMonth(Number(v))}
               sx={{ flex: 1, minWidth: 0 }}
               aria-label='Month'
@@ -502,6 +549,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
             <Select
               size='xs'
               value={viewYear}
+              disabled={effectiveDisabled}
               aria-label='Year'
               onValueChange={(v) => {
                 const yr = Number(v);
@@ -531,7 +579,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
               icon='mdi:chevron-right'
               aria-label={t.nextMonth}
               onClick={() => changeMonth(1)}
-              disabled={new Date(viewYear, viewMonth + 1, 1) > max}
+              disabled={effectiveDisabled || new Date(viewYear, viewMonth + 1, 1) > max}
             />
             {!tight && (
               <IconButton
@@ -547,7 +595,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
                   setViewYear(yr);
                   setViewMonth(m);
                 }}
-                disabled={new Date(viewYear + 1, 0, 1) > max}
+                disabled={effectiveDisabled || new Date(viewYear + 1, 0, 1) > max}
               />
             )}
           </div>
@@ -584,20 +632,27 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
                 $start={startSel}
                 $end={!!endSel && !startSel}
                 $inRange={!!inRange}
-                $primary={theme.colors.primary}
+                $primary={startAccent}
                 $secondary={theme.colors.secondary}
                 $rangeBg={rangeBg}
                 $hoverStart={hoverStart}
                 $hoverEnd={hoverEnd}
                 $hoverRange={hoverRange}
                 $hoverDefault={hoverDefault}
-                $selText={theme.colors.primaryText}
+                $selText={startText}
                 $endText={theme.colors.secondaryText}
                 $rangeText={theme.colors.primaryText}
                 $compact={tight}
-                style={{ '--valet-date-cell-radius': theme.radius(1) } as React.CSSProperties}
-                onClick={() => !disabled && (range ? commitRange(day) : commit(day))}
-                disabled={disabled}
+                style={
+                  {
+                    '--valet-date-cell-radius': theme.radius(1),
+                    '--valet-date-hit': hitVar,
+                  } as React.CSSProperties
+                }
+                onClick={() =>
+                  !disabled && !effectiveDisabled && (range ? commitRange(day) : commit(day))
+                }
+                disabled={disabled || effectiveDisabled}
               >
                 {/* DISPLAY-only locale digits; the committed VALUE stays ISO
                   Latin via formatLocalISO (veto register / ruling R7/R8). */}
