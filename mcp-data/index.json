@@ -375,21 +375,21 @@
     "category": "widgets",
     "summary": "Scroll-tracking container that provides parallax context to its `ParallaxLayer`/`ParallaxBackground` children; wrap a section in it (optionally `trackX` for horizontal) to drive depth effects — the motion auto-disables under reduced-motion.",
     "slug": "components/widgets/parallaxscroll",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "ParallaxLayer",
     "category": "widgets",
     "summary": "A child layer inside a `ParallaxScroll` that moves at a fractional `speed` (1 = native, <1 slower, >1 faster) along `axis`; stack several at different speeds for depth — displacement neutralizes under reduced-motion.",
     "slug": "components/widgets/parallaxlayer",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "ParallaxBackground",
     "category": "widgets",
     "summary": "Full-bleed background layer that drifts on scroll for a depth effect; place it inside a `ParallaxScroll` as the backmost layer, and honor reduced-motion (the effect auto-disables) — experimental decorative widget.",
     "slug": "components/widgets/parallaxbackground",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "RichChat",

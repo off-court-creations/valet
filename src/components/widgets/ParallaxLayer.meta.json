@@ -1,6 +1,6 @@
 {
   "name": "ParallaxLayer",
   "summary": "A child layer inside a `ParallaxScroll` that moves at a fractional `speed` (1 = native, <1 slower, >1 faster) along `axis`; stack several at different speeds for depth — displacement neutralizes under reduced-motion.",
-  "status": "experimental",
+  "status": "stable",
   "aliases": ["parallaxlayer", "parallax-layer"]
 }

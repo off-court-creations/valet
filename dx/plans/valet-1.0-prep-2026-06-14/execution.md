@@ -524,7 +524,7 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   Fan-out review (70 agents, 9 widgets): 48/60 confirmed; 8 `improve` + 1 `rewrite`
   (KeyModal). Order: Panel → Parallax → CodeBlock → Markdown → Table → Dropzone →
   RichChat → KeyModal → LLMChat. Each: agent fix + tests, then Ben's visual pass → stable.
-  - **#2 Parallax (trio) — AGENT-VERIFIED, awaiting Ben's visual pass (2026-06-18).**
+  - **#2 Parallax (trio) — DONE (stable 2026-06-18 — both gates; Ben: "okay next").**
     Fixed the `ParallaxBackground` preset DOUBLE-APPLY (it passed `preset={p}` to
     `ParallaxLayer` AND a `preset(p)`-derived className — now forwards `preset` once).
     A11Y: a video background now drops autoplay under `prefers-reduced-motion` (autoplay

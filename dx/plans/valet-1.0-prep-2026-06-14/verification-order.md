@@ -97,7 +97,7 @@ retuned spacing/density numbers."
 
 - [ ] CodeBlock (→ IconButton/Markdown/Snackbar) · [ ] RichChat (→ …/Markdown)
 - [ ] **LLMChat** — dead last (transitively pulls in nearly the whole graph: …/Select/TextField/Markdown/KeyModal + aiKeyStore)
-- [ ] Parallax cluster — isolated; `ParallaxScroll` → `ParallaxLayer` → `ParallaxBackground` (any time after foundations)
+- [x] **Parallax cluster** _(stable 2026-06-18 — both gates; fixed preset double-apply + reduced-motion video-autoplay gate + `alt` prop; demo de-ZeroUI'd)_ — `ParallaxScroll`/`ParallaxLayer`/`ParallaxBackground`
 
 ## Gotchas (the back-edges)
 
