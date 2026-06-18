@@ -1,6 +1,6 @@
 {
   "name": "RadioGroup",
-  "summary": "Single-choice group of `Radio` options with keyboard roving focus; controlled via `value` + `onValueChange` or bound to a `FormControl` by `name`, with `gap` for option spacing.",
+  "summary": "Single-choice group of `Radio` options with keyboard roving focus; controlled via `value` + `onValueChange` or bound to a `FormControl` by `name`, with `gap` for option spacing. Disable the whole group with `disabled` (a FormControl's form-wide `disabled` / name-keyed `errors` also reach it); option colours follow the theme intent contract (consistent with Checkbox).",
   "status": "experimental",
   "aliases": ["radiogroup", "radio-group", "radio-buttons"],
   "examples": [

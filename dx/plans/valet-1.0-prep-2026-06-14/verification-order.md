@@ -77,7 +77,7 @@ retuned spacing/density numbers."
 
 - [x] **Button** _(stable 2026-06-17 — both gates)_ (→ Typography) · [x] **IconButton** _(stable 2026-06-17 — both gates)_ (→ Icon) — foundations for AppBar/Drawer/Iterator/CodeBlock
 - [x] **Checkbox** _(stable 2026-06-17 — REDONE colors/mobile/sizing per [checkbox-redo](checkbox-redo-2026-06-17.md); both gates)_ (before Select/Table) · [x] **Switch** _(stable 2026-06-17 — both gates; mobile hardened: chrome kit + ≥44px coarse-pointer hit target)_ · [x] **Slider** _(stable 2026-06-17 — both gates; mobile hardened: thumb chrome kit + ≥44px coarse-pointer grab target + track/thumb touch-action)_ · [x] **TextField** _(stable 2026-06-17 — REWRITTEN styled layer per [textfield-critique](textfield-critique-2026-06-17.md) + FormConfigCtx; both gates)_
-- [ ] **Radio + RadioGroup** — verify as ONE unit (Radio lives inside RadioGroup with a context guard; not splittable)
+- [x] **Radio + RadioGroup** _(agent-verified 2026-06-17 — intent-color alignment (fixes the white-dot-on-pale bug) + mobile (≥44px tap rows + chrome kit) + group `disabled` + FormConfigCtx; awaiting Ben's visual pass)_ — verified as ONE unit (Radio lives inside RadioGroup with a context guard; not splittable)
 - [ ] **Pagination** (→ Typography; hoisted — foundation for Table)
 
 ## Tier 5 — Surface-consuming layout + Select

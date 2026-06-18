@@ -250,3 +250,66 @@ describe('RadioGroup — ChangeInfo.source classification (ruling R10)', () => {
     expect(last(infos)?.source).toBe('keyboard');
   });
 });
+
+/*───────────────────────────────────────────────────────────────*/
+/* 1.0 verify — intent colours / mobile / FormConfig              */
+
+const group = (c: HTMLElement) =>
+  c.querySelector('[data-valet-component="RadioGroup"]') as HTMLElement;
+const firstRadioLabel = (c: HTMLElement) =>
+  c.querySelector('[data-valet-component="Radio"]') as HTMLElement;
+
+describe('RadioGroup — 1.0 verify (intent / mobile / FormConfig)', () => {
+  const opts = (
+    <>
+      <Radio
+        value='a'
+        label='A'
+      />
+      <Radio
+        value='b'
+        label='B'
+      />
+    </>
+  );
+
+  it('drives the indicator colours from the shared intent contract', () => {
+    const { container } = mount(<RadioGroup aria-label='g'>{opts}</RadioGroup>);
+    const lbl = firstRadioLabel(container);
+    expect(lbl.style.getPropertyValue('--valet-intent-border')).not.toBe('');
+    expect(lbl.style.getPropertyValue('--valet-intent-bg')).not.toBe('');
+    expect(lbl.style.getPropertyValue('--valet-intent-fg')).not.toBe('');
+  });
+
+  it('exposes a >=44px coarse-pointer hit-size var on the group (default 44px)', () => {
+    const { container } = mount(<RadioGroup aria-label='g'>{opts}</RadioGroup>);
+    expect(group(container).style.getPropertyValue('--valet-radio-hit')).toBe('44px');
+  });
+
+  it('group-level disabled disables every radio', () => {
+    const { container } = mount(
+      <RadioGroup
+        aria-label='g'
+        disabled
+      >
+        {opts}
+      </RadioGroup>,
+    );
+    expect(radios(container).every((r) => r.disabled)).toBe(true);
+  });
+
+  it('respects FormControl form-wide disabled + a name-keyed error', () => {
+    const useStore = createFormStore({ choice: '' });
+    const { container } = mount(
+      <FormControl
+        useStore={useStore}
+        disabled
+        errors={{ choice: 'Pick one' }}
+      >
+        <RadioGroup name='choice'>{opts}</RadioGroup>
+      </FormControl>,
+    );
+    expect(radios(container).every((r) => r.disabled)).toBe(true);
+    expect(group(container).getAttribute('aria-invalid')).toBe('true');
+  });
+});

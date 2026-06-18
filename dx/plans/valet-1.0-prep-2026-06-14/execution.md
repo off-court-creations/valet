@@ -320,6 +320,21 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
     so they get the identical `useFormConfig()` wiring during THEIR verification pass (the
     pattern is locked by TextField/Checkbox/Switch/Slider), rather than blind now. The
     store-snapshot binding stays untouched throughout.
+- **Tier 4 Radio + RadioGroup — AGENT-VERIFIED, awaiting Ben's visual pass
+  (2026-06-17).** Verified as one unit. Source review found the same issues the field
+  cluster has been fixing, so brought it to parity with the redone Checkbox (verify +
+  the established patterns, not a workflow redo): **colours → the shared intent
+  contract** (`computeIntentVars`/`makeMix`) — the unchecked ring is a neutral border,
+  the checked dot is `intent-fg` not a hard `#fff` (fixes the white-dot-on-pale bug,
+  same class as Checkbox's checkmark), disabled dims via `opacity:0.5` (dropped the
+  bespoke Accordion mix recipe); **mobile** — chrome kit completion (`touch-callout`/
+  `user-select`/`onContextMenu`) + a `@media (pointer:coarse)` ≥44px tap row per option
+  (`--valet-radio-hit`, 24px under compact); **FormConfigCtx** (the Wave C deferral) —
+  new group-level `disabled` prop + `effectiveDisabled`/`effectiveError` from the form
+  config, propagated to every radio via context (the focus ring now reads
+  `--valet-intent-focus`). Metas updated (stale ≥40–48px tap advice → automatic).
+  Green: typecheck×4, lint, 1444 tests (4 new), build, RTL, mcp, check:examples, docs
+  tsc. Stays `experimental` pending Ben's visual pass.
 - **Box — DONE (stable 2026-06-17 — both gates).** Ben's visual pass cleared it;
   the `centered`→`centerContent` meta fix shipped.
 - **Pre-existing repo debt (not from this work):** `eslint .` reports 51 prettier

@@ -2,7 +2,7 @@
   "name": "RadioGroup",
   "category": "fields",
   "slug": "components/fields/radiogroup",
-  "summary": "Single-choice group of `Radio` options with keyboard roving focus; controlled via `value` + `onValueChange` or bound to a `FormControl` by `name`, with `gap` for option spacing.",
+  "summary": "Single-choice group of `Radio` options with keyboard roving focus; controlled via `value` + `onValueChange` or bound to a `FormControl` by `name`, with `gap` for option spacing. Disable the whole group with `disabled` (a FormControl's form-wide `disabled` / name-keyed `errors` also reach it); option colours follow the theme intent contract (consistent with Checkbox).",
   "status": "experimental",
   "aliases": [
     "radiogroup",
@@ -31,6 +31,13 @@
       "type": "RadioSize | number | string",
       "required": false,
       "default": "'md'"
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "required": false,
+      "description": "Disable every radio in the group (a radio's own `disabled` still wins).",
+      "default": "false"
     },
     {
       "name": "gap",
@@ -112,7 +119,13 @@
       "style"
     ]
   },
-  "cssVars": [],
+  "cssVars": [
+    "--valet-radio-hit",
+    "--valet-intent-focus",
+    "--valet-intent-bg",
+    "--valet-intent-border",
+    "--valet-intent-fg"
+  ],
   "cssPresets": [],
   "events": [
     {
