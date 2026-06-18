@@ -11,6 +11,7 @@ import React, { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { Chip } from './Chip';
 import { SurfaceCtx, createSurfaceStore } from '../../system/surfaceStore';
+import { getGlobalSheet } from '../../css/sheet';
 
 /* react-dom warns unless act usage is announced ----------------------- */
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -147,5 +148,38 @@ describe('Chip (jsdom)', () => {
       el.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     });
     expect(onClick).not.toHaveBeenCalled();
+  });
+});
+
+/*───────────────────────────────────────────────────────────────*/
+/* Mobile — delete-button touch target                            */
+
+describe('Chip — mobile delete target', () => {
+  it('sets a coarse-pointer hit-size var on the chip (44px default)', () => {
+    const c = render(
+      <Chip
+        label='Tag'
+        onDelete={() => {}}
+      />,
+    );
+    expect(chipEl(c).style.getPropertyValue('--valet-chip-del-hit')).toBe('44px');
+  });
+
+  it('the delete button ships the chrome kit + a coarse >=44px hit-expander', () => {
+    const c = render(
+      <Chip
+        label='Tag'
+        onDelete={() => {}}
+      />,
+    );
+    const btn = deleteBtn(c)!;
+    const cls = btn.className.split(/\s+/).find(Boolean)!;
+    const rule =
+      Array.from(getGlobalSheet()!.cssRules, (r) => r.cssText).find((t) =>
+        t.startsWith(`.${cls}`),
+      ) ?? '';
+    expect(rule).toContain('touch-action: manipulation');
+    expect(rule).toContain('@media (pointer: coarse)');
+    expect(rule).toContain('--valet-chip-del-hit'); // the expander reads the hit var
   });
 });

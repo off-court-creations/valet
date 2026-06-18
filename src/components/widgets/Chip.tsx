@@ -11,6 +11,7 @@ import type { Theme } from '../../system/themeStore';
 import { Icon } from '../primitives/Icon';
 import { computeIntentVars } from '../../system/intentVars';
 import { Typography } from '../primitives/Typography';
+import { useCompact } from '../../system/compactContext';
 import { useComponentStrings } from '../../system/locale';
 import type { DeepPartialStrings, ValetStrings } from '../../system/locale';
 
@@ -113,14 +114,40 @@ const DeleteBtn = styled('button')<{ $fz: number }>`
   justify-content: center;
   padding: 0;
   margin: 0 0 0 0.125rem;
+  position: relative;
   width: ${({ $fz }) => `${Math.round($fz + 6)}px`};
   height: ${({ $fz }) => `${Math.round($fz + 6)}px`};
   border-radius: 50%;
   cursor: pointer;
   color: currentColor;
   opacity: 0.9;
+
+  /* Mobile chrome kit — no blue tap flash, immediate taps. */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+
   &:hover {
     opacity: 1;
+  }
+  &:focus-visible {
+    outline: 2px solid var(--valet-focus-ring-color, currentColor);
+    outline-offset: 1px;
+    opacity: 1;
+  }
+
+  /* Coarse-pointer comfort: an invisible >=44px hit-expander centered on the
+     small delete glyph, so removing a chip is reliably tappable without
+     enlarging the visual button. Logical centering (inset:0; margin:auto) is
+     RTL-safe and never shifts layout (the ::before is absolutely positioned). */
+  @media (pointer: coarse) {
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      width: var(--valet-chip-del-hit, 44px);
+      height: var(--valet-chip-del-hit, 44px);
+    }
   }
 `;
 
@@ -162,6 +189,7 @@ export const Chip: React.FC<ChipProps> = ({
   ...rest
 }) => {
   const { theme } = useTheme();
+  const effectiveCompact = useCompact();
   const t = useComponentStrings('chip', labels);
   const s = sizeMap[size];
   const { bg, fg, bd } = resolveColors(theme, intent, color);
@@ -220,6 +248,7 @@ export const Chip: React.FC<ChipProps> = ({
       style={
         {
           ...intentVars,
+          '--valet-chip-del-hit': effectiveCompact ? '32px' : '44px',
           ...(sx as object),
         } as React.CSSProperties
       }

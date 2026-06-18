@@ -90,6 +90,8 @@
   },
   "cssVars": [
     "--valet-focus-ring",
+    "--valet-focus-ring-color",
+    "--valet-chip-del-hit",
     "--valet-intent-bg",
     "--valet-intent-fg",
     "--valet-intent-border",
@@ -118,7 +120,7 @@
     "Never rely on Chip for selection, toggles, or navigation. Pair it with an adjacent Button or Menu action if interaction is required.",
     "Keep labels short; truncate is automatic. Use Tooltip if critical text may be hidden.",
     "Use the built-in variant/size/color props or presets instead of custom inline styles for consistency.",
-    "Only expose removal via the dedicated `onDelete` affordance so keyboard and pointer users can target a clear control.",
+    "Only expose removal via the dedicated `onDelete` affordance so keyboard and pointer users can target a clear control. The delete button stays visually compact but gets an invisible ≥44px hit-expander on coarse pointers (32px under `compact`), so it's reliably tappable on touch without bloating the chip.",
     "Tie Chip colours to theme tokens so meaning remains clear across light and dark modes.",
     "Internationalize the built-in labels with the `labels` prop (instance-level) or a `ValetLocaleProvider` (app-wide). Resolution is instance `labels` > provider strings > built-in English."
   ],
