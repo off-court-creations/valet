@@ -315,3 +315,110 @@ describe('MetroSelect — touch target + chrome kit (1.0)', () => {
     expect(rules).toMatch(/var\(--valet-metro-hit/);
   });
 });
+
+/*───────────────────────────────────────────────────────────────*/
+/* Metro restyle — grid, flat sharp tiles, press tilt, color/wide  */
+
+describe('MetroSelect — Metro restyle', () => {
+  const ruleFor = (el: Element) => {
+    const cls = el.className.split(/\s+/).find(Boolean)!;
+    return (
+      Array.from(sheet.getGlobalSheet()!.cssRules, (r) => r.cssText).find((t) =>
+        t.startsWith(`.${cls}`),
+      ) ?? ''
+    );
+  };
+
+  it('lays tiles out in a snapped CSS grid with a tight gutter var', () => {
+    const { container } = mount(
+      <MetroSelect aria-label='g'>
+        <MetroSelect.Option
+          value='a'
+          icon='mdi:home'
+          label='A'
+        />
+        <MetroSelect.Option
+          value='b'
+          icon='mdi:cog'
+          label='B'
+        />
+      </MetroSelect>,
+    );
+    const lb = listbox(container);
+    expect(ruleFor(lb)).toContain('display: grid');
+    expect(lb.style.getPropertyValue('--valet-metro-gap')).not.toBe('');
+  });
+
+  it('renders flat sharp tiles (radius 0) with the press-tilt rule', () => {
+    const { container } = mount(
+      <MetroSelect aria-label='g'>
+        <MetroSelect.Option
+          value='a'
+          icon='mdi:home'
+          label='A'
+        />
+      </MetroSelect>,
+    );
+    const rule = ruleFor(tiles(container)[0]);
+    expect(rule).toMatch(/border-radius:\s*0/);
+    expect(rule).toContain('@media (prefers-reduced-motion: no-preference)');
+    expect(rule).toContain('--valet-metro-tilt-x'); // tilt transform reads the inline var
+  });
+
+  it('press tilts the tile (data-pressed + tilt var); release clears', () => {
+    const { container } = mount(
+      <MetroSelect aria-label='g'>
+        <MetroSelect.Option
+          value='a'
+          icon='mdi:home'
+          label='A'
+        />
+      </MetroSelect>,
+    );
+    const tile = tiles(container)[0];
+    // jsdom has zero-rects; provide one so the press point can be normalized.
+    tile.getBoundingClientRect = () =>
+      ({
+        left: 0,
+        top: 0,
+        width: 100,
+        height: 100,
+        right: 100,
+        bottom: 100,
+        x: 0,
+        y: 0,
+      }) as DOMRect;
+    act(() =>
+      tile.dispatchEvent(
+        new PointerEvent('pointerdown', { bubbles: true, clientX: 75, clientY: 25 }),
+      ),
+    );
+    expect(tile.hasAttribute('data-pressed')).toBe(true);
+    expect(tile.style.getPropertyValue('--valet-metro-tilt-x')).toBe('0.25');
+    act(() => tile.dispatchEvent(new PointerEvent('pointerup', { bubbles: true })));
+    expect(tile.hasAttribute('data-pressed')).toBe(false);
+  });
+
+  it('per-option color yields a distinct fill; wide spans two columns', () => {
+    const { container } = mount(
+      <MetroSelect aria-label='g'>
+        <MetroSelect.Option
+          value='a'
+          icon='mdi:home'
+          label='A'
+        />
+        <MetroSelect.Option
+          value='b'
+          icon='mdi:cog'
+          label='B'
+          color='#e91e63'
+          wide
+        />
+      </MetroSelect>,
+    );
+    const [neutral, colored] = tiles(container);
+    const cls = (el: Element) => el.className.split(/\s+/).find(Boolean);
+    expect(cls(neutral)).not.toBe(cls(colored)); // different $fill → different styled class
+    expect(colored.style.gridColumn).toBe('span 2');
+  });
+});

@@ -113,6 +113,46 @@ export default function MetroSelectDemoPage() {
         ))}
       </MetroSelect>
 
+      <Typography variant='h3'>5. Metro mosaic (per-tile color + wide)</Typography>
+      <Typography variant='subtitle'>
+        Flat saturated tiles in a snapped grid — <code>color</code> per option, <code>wide</code>{' '}
+        for a 2×1 module. Press a tile to feel the tilt.
+      </Typography>
+      <MetroSelect defaultValue='mail'>
+        <MetroSelect.Option
+          value='mail'
+          icon='mdi:email'
+          label='Mail'
+          color='#0078d7'
+          wide
+        />
+        <MetroSelect.Option
+          value='photos'
+          icon='mdi:image'
+          label='Photos'
+          color='#107c10'
+        />
+        <MetroSelect.Option
+          value='music'
+          icon='mdi:music'
+          label='Music'
+          color='#e3008c'
+        />
+        <MetroSelect.Option
+          value='store'
+          icon='mdi:store'
+          label='Store'
+          color='#5c2d91'
+        />
+        <MetroSelect.Option
+          value='games'
+          icon='mdi:gamepad-variant'
+          label='Games'
+          color='#d83b01'
+          wide
+        />
+      </MetroSelect>
+
       <Button
         variant='outlined'
         onClick={toggleMode}

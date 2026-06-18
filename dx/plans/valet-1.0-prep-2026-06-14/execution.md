@@ -497,6 +497,29 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   match the deliberate change). Promoted both. **MetroSelect stays `experimental`** —
   Ben has notes coming. Green: typecheck×4, lint, 1489 tests, build, RTL, mcp,
   check:examples, docs tsc.
+- **Tier 6 MetroSelect — RESTYLED to Metro, agent-verified, awaiting Ben's visual pass
+  (2026-06-18).** Ben: tiles too far apart, "windows 8 launch day vibes." Fan-out
+  (`metroselect-upgrade`, 5 lenses → synth) returned **restyle**; Ben chose the full
+  restyle. Landed (preserving FormConfigCtx, listbox a11y, roving focus, useFieldState
+  binding, honest ChangeInfo.source):
+  (1) Gutter — the "too far apart" was the demo's `gap={4}` (32px); `gap` now defaults
+  to a tight density-aware **8px / 4px-compact** gutter; stripped from demos/examples.
+  (2) Layout — `<Stack wrap>` → a bespoke `styled('div')` **CSS grid** (`repeat(auto-fill,
+  tile)` + grid-auto-rows + the gutter var, `justify-content:start`, `perspective`),
+  with the coarse ≥44px floor on the **track**.
+  (3) Tiles — dropped `<Panel variant='outlined'>` for a flat `Tile` styled div: solid
+  fill at rest (per-option `color` else neutral `backgroundAlt`), **border:none,
+  border-radius:0**, no shadow/gradient; selected = intent accent + an inset keyline
+  (non-colour cue); bottom-left light-weight (300) label, centred glyph.
+  (4) Motion — the signature **3D press-tilt** (pointer-down writes normalized
+  `--valet-metro-tilt-x/y` inline vars → a perspective rotateX/Y+scale transform),
+  reduced-motion-gated (brightness fallback), tokened timing. Cardinality-safe: the
+  continuous tilt values are inline vars, never rule text.
+  (5) API (additive, experimental) — `MetroOptionProps.color` (flat tile fill) +
+  `wide` (2×1 `grid-column: span 2`). 4 new tests (grid, flat-sharp+tilt rule, press
+  interaction with a mocked rect, color/wide). Green: typecheck×4, lint, 1493 tests,
+  build, RTL, mcp, check:examples (108), docs tsc. Stays `experimental` pending Ben's
+  visual pass.
 - **Box — DONE (stable 2026-06-17 — both gates).** Ben's visual pass cleared it;
   the `centered`→`centerContent` meta fix shipped.
 - **Pre-existing repo debt (not from this work):** `eslint .` reports 51 prettier

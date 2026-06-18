@@ -26,6 +26,18 @@
       "required": false
     },
     {
+      "name": "color",
+      "type": "string",
+      "required": false,
+      "description": "Flat resting fill for this tile (theme token name or CSS colour). Enables\nthe multi-colour Metro mosaic; omitted → a neutral tile."
+    },
+    {
+      "name": "wide",
+      "type": "boolean",
+      "required": false,
+      "description": "Render a wide 2×1 tile (spans two columns + the gutter, same height)."
+    },
+    {
       "name": "sx",
       "type": "Sx",
       "required": false,
@@ -48,7 +60,13 @@
     "--valet-text-color",
     "--valet-metro-tile-w",
     "--valet-metro-tile-h",
+    "--valet-metro-gap",
     "--valet-metro-hit",
+    "--valet-metro-press-dur",
+    "--valet-metro-press-ease",
+    "--valet-focus-ring-color",
+    "--valet-metro-tilt-x",
+    "--valet-metro-tilt-y",
     "--valet-metro-icon-size",
     "--valet-metro-font-size"
   ],

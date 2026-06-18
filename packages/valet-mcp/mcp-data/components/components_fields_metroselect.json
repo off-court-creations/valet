@@ -2,7 +2,7 @@
   "name": "MetroSelect",
   "category": "fields",
   "slug": "components/fields/metroselect",
-  "summary": "Grid of large tappable tiles (`MetroSelect.Option`) for single or `multiple` selection from a small visual set; controlled by `value` + `onValueChange` with `gap` for tile spacing — use it when options benefit from icons/imagery rather than a compact dropdown.",
+  "summary": "Windows-8-Metro-style grid of flat, sharp-cornered tiles (`MetroSelect.Option`) for single or `multiple` selection; controlled by `value` + `onValueChange`. Tiles snap into a tight grid with a small default gutter, tilt in 3D on press, and accept a per-option `color` + `wide` 2×1 module — use it when options benefit from icons/imagery rather than a compact dropdown.",
   "status": "experimental",
   "aliases": [
     "metroselect",
@@ -132,7 +132,13 @@
     "--valet-text-color",
     "--valet-metro-tile-w",
     "--valet-metro-tile-h",
+    "--valet-metro-gap",
     "--valet-metro-hit",
+    "--valet-metro-press-dur",
+    "--valet-metro-press-ease",
+    "--valet-focus-ring-color",
+    "--valet-metro-tilt-x",
+    "--valet-metro-tilt-y",
     "--valet-metro-icon-size",
     "--valet-metro-font-size"
   ],
@@ -163,7 +169,7 @@
     "Choose `multiple` when users should select more than one; otherwise keep single‑select.",
     "Keep options short and distinct; avoid long labels that wrap unpredictably.",
     "Expose clear values via `value` so form binding and analytics stay consistent.",
-    "Control spacing with `gap` using theme spacing tokens or numbers to match density.",
+    "Tiles snap into a tight Metro grid by default (≈8px gutter, 4px compact); pass `gap` only to override. They render as flat sharp-cornered filled blocks — give a tile a per-option `color` for the saturated Start-screen mosaic, and `wide` for a 2×1 module. A subtle 3D press-tilt (reduced-motion-gated) reinforces the Metro feel; selection adds an inset keyline so it isn't colour-only.",
     "Keyboard: ensure arrow keys move focus predictably and Space toggles selection.",
     "Binding precedence (prop > form > internal). An explicit `value` prop always wins; otherwise a `name` inside a `FormControl` binds to the store (seed the key in `createFormStore(initial)` so the initial selection is honoured); otherwise the control is uncontrolled. The binding is latched at mount.",
     "Change source. `onValueChange`/`onValueCommit` report a truthful `info.source`: `'pointer'` for a tile click and `'keyboard'` for keyboard activation (Enter/Space), not a blanket `'programmatic'`.",
@@ -194,6 +200,16 @@
       "id": "metroselect-multiple",
       "title": "Multiple selection",
       "code": "<MetroSelect multiple defaultValue={['home','travel']}>\n  <MetroSelect.Option icon='mdi:home' value='home' label='Home' />\n  <MetroSelect.Option icon='mdi:airplane' value='travel' label='Travel' />\n  <MetroSelect.Option icon='mdi:briefcase' value='work' label='Work' disabled />\n</MetroSelect>",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {
+        "children": null
+      }
+    },
+    {
+      "id": "metroselect-mosaic",
+      "title": "Metro mosaic (color + wide)",
+      "code": "<MetroSelect defaultValue='mail'>\n  <MetroSelect.Option icon='mdi:email' value='mail' label='Mail' color='#0078d7' wide />\n  <MetroSelect.Option icon='mdi:image' value='photos' label='Photos' color='#107c10' />\n  <MetroSelect.Option icon='mdi:music' value='music' label='Music' color='#e3008c' />\n  <MetroSelect.Option icon='mdi:store' value='store' label='Store' color='#5c2d91' />\n</MetroSelect>",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {

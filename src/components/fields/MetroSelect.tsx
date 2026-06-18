@@ -26,8 +26,6 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import Stack from '../layout/Stack';
-import Panel from '../layout/Panel';
 import { Icon } from '../primitives/Icon';
 import { Typography } from '../primitives/Typography';
 import { useTheme } from '../../system/themeStore';
@@ -51,14 +49,16 @@ interface MetroCtx {
   disabled: boolean;
   /** Shared intent-contract tile colours (resolved once on the field root). */
   colors: {
-    /** Selected tile fill + border (intent bg). */
-    selectedBg: string;
-    /** Text/icon on a selected tile (intent fg, never a hard white). */
+    /** Selected tile fill (intent accent, error-recoloured). */
+    accent: string;
+    /** Text/icon on a selected (or coloured) tile — the on-accent fg. */
     selectedFg: string;
-    /** Hover tint for an UNselected tile (subtle primary mix). */
-    hoverBg: string;
-    /** Hover tint for a SELECTED tile (darker primary mix). */
-    hoverSelBg: string;
+    /** Resting fill for a tile with NO per-option `color` (solid neutral block). */
+    neutralBg: string;
+    /** Resting fg on a neutral tile. */
+    neutralFg: string;
+    /** Resting fg on a per-option-coloured tile (on-colour text). */
+    coloredFg: string;
     /** Disabled text/border tone. */
     disabled: string;
   };
@@ -106,63 +106,101 @@ export interface MetroOptionProps
   icon: string | React.ReactElement;
   label: React.ReactNode;
   disabled?: boolean;
+  /** Flat resting fill for this tile (theme token name or CSS colour). Enables
+   *  the multi-colour Metro mosaic; omitted → a neutral tile. */
+  color?: string;
+  /** Render a wide 2×1 tile (spans two columns + the gutter, same height). */
+  wide?: boolean;
   /** Inline styles (with CSS var support) */
   sx?: Sx;
 }
 
-const HoverWrap = styled('div')<{
-  $hoverBg: string;
-  $hoverSelBg: string;
-  $disabled: boolean;
+/* The snapped Metro grid: fixed tile modules packed from the start with ONE
+   small uniform gutter, never stretched. `perspective` enables the per-tile
+   3D press tilt. The coarse floor is on the TRACK (not just the child) so a
+   small tile size still yields a >=44px module. */
+const Grid = styled('div')`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, var(--valet-metro-tile-w, 6rem));
+  grid-auto-rows: var(--valet-metro-tile-h, 6rem);
+  gap: var(--valet-metro-gap, 0.5rem);
+  justify-content: start;
+  perspective: 800px;
+
+  @media (pointer: coarse) {
+    grid-template-columns: repeat(
+      auto-fill,
+      max(var(--valet-metro-tile-w, 6rem), var(--valet-metro-hit, 44px))
+    );
+    grid-auto-rows: max(var(--valet-metro-tile-h, 6rem), var(--valet-metro-hit, 44px));
+  }
+`;
+
+/* One flat, sharp-cornered Metro tile — the grid cell AND the clickable surface.
+   Solid fill at rest, no border/shadow/gradient, square corners. Selection adds
+   an inset keyline (non-colour cue). Press tilts toward the pressed point. */
+const Tile = styled('div')<{
+  $fill: string;
+  $fg: string;
   $selected: boolean;
-  $kbdActive?: boolean;
+  $disabled: boolean;
+  $kbdActive: boolean;
+  $pad: string;
 }>`
   position: relative;
-  display: inline-block;
-  /* Ensure the wrapper does not interfere with layout sizing */
-  vertical-align: top;
   box-sizing: border-box;
-  /* The wrapper owns the tile size and the inner clickable Panel fills it
-     (width/height:100%), so the coarse floor below enlarges the ACTUAL tap
-     target — not just an inert box around a smaller Panel. */
-  width: var(--valet-metro-tile-w, 6rem);
-  height: var(--valet-metro-tile-h, 6rem);
-
-  /* Mobile chrome kit — suppress the blue tap flash + keep taps fast on the
-     tile target. */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: ${({ $pad }) => $pad};
+  border: none;
+  border-radius: 0;
+  background: ${({ $fill }) => $fill};
+  color: ${({ $fg }) => $fg};
+  --valet-text-color: ${({ $fg }) => $fg};
+  overflow: hidden;
+  cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
+  opacity: ${({ $disabled }) => ($disabled ? 0.45 : 1)};
+  user-select: none;
+  -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+  backface-visibility: hidden;
+  transition:
+    filter 120ms ease,
+    box-shadow 120ms ease,
+    transform var(--valet-metro-press-dur, 120ms) var(--valet-metro-press-ease, ease);
 
-  /* Coarse-pointer (touch) comfort: each tile is a tap target — floor it at
-     >=44px (40px under compact) via the root-provided --valet-metro-hit. Tiles
-     are usually >=4rem already, but small/numeric sizes can drop below 44px. */
-  @media (pointer: coarse) {
-    min-width: var(--valet-metro-hit, 44px);
-    min-height: var(--valet-metro-hit, 44px);
-  }
+  /* Selected: inset accent keyline so selection is not colour-only (a11y). */
+  ${({ $selected, $fg }) => ($selected ? `box-shadow: inset 0 0 0 2px ${$fg}66;` : '')}
 
-  .valet-hover-bg {
-    position: absolute;
-    inset: 0;
-    background: transparent;
-    pointer-events: none;
-    transition: background 120ms ease;
-    z-index: 0;
-  }
-
-  /* Only apply hover on devices that actually support it */
   @media (hover: hover) {
-    &:hover .valet-hover-bg {
-      ${({ $disabled, $selected, $hoverBg, $hoverSelBg }) =>
-        $disabled ? '' : `background: ${$selected ? $hoverSelBg : $hoverBg};`}
+    &:hover {
+      filter: brightness(1.08);
     }
   }
+  ${({ $kbdActive }) => ($kbdActive ? 'filter: brightness(1.08);' : '')}
 
-  /* Keyboard navigation should mirror hover tint on the active tile */
-  ${({ $kbdActive, $disabled, $selected, $hoverBg, $hoverSelBg }) =>
-    $kbdActive && !$disabled
-      ? `.valet-hover-bg { background: ${$selected ? $hoverSelBg : $hoverBg}; }`
-      : ''}
+  &[data-active] {
+    outline: 2px solid var(--valet-focus-ring-color, currentColor);
+    outline-offset: 2px;
+    z-index: 1;
+  }
+
+  /* Signature Metro press tilt — leans toward the pressed point, springs back.
+     Continuous tilt values ride on inline vars (createStyled cardinality rule). */
+  @media (prefers-reduced-motion: no-preference) {
+    &[data-pressed] {
+      transform: perspective(800px) rotateY(calc(var(--valet-metro-tilt-x, 0) * 8deg))
+        rotateX(calc(var(--valet-metro-tilt-y, 0) * -8deg)) scale(0.965);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    &[data-pressed] {
+      filter: brightness(0.9);
+    }
+  }
 `;
 
 export const Option: React.FC<MetroOptionProps> = ({
@@ -170,6 +208,8 @@ export const Option: React.FC<MetroOptionProps> = ({
   icon,
   label,
   disabled = false,
+  color,
+  wide = false,
   preset: p,
   sx,
   className,
@@ -182,109 +222,83 @@ export const Option: React.FC<MetroOptionProps> = ({
     ? sel.findIndex((x) => String(x) === String(value)) !== -1
     : sel !== null && String(sel) === String(value);
 
+  const effDisabled = !!disabled || allDisabled;
   const presetCls = p ? preset(p) : '';
 
-  // Colours come from the field root's single intent-contract resolution
-  // (computeIntentVars/makeMix) — no bespoke per-tile colour maths.
-  const disabledColor = colors.disabled;
-  const hoverBg = colors.hoverBg;
-  const hoverSelBg = colors.hoverSelBg;
+  /* Flat fills: a per-option `color` (or a neutral block) at REST; the intent
+     accent + on-accent fg when selected; disabled keeps the resting fill + dims. */
+  const restFill = color ?? colors.neutralBg;
+  const restFg = color ? colors.coloredFg : colors.neutralFg;
+  const fill = selected && !effDisabled ? colors.accent : restFill;
+  const fg = effDisabled ? colors.disabled : selected ? colors.selectedFg : restFg;
 
-  const innerStyle: React.CSSProperties = {
-    paddingTop: theme.spacing(3),
-    paddingBottom: theme.spacing(3),
-    paddingLeft: theme.spacing(1),
-    paddingRight: theme.spacing(1),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: theme.spacing(1),
-    height: '100%',
-    width: '100%',
-    position: 'relative',
-    zIndex: 1, // keep content above hover layer
+  // Keyboard-active mirror (the parent injects data-active via cloneElement).
+  const kbdActive = Boolean((rest as { ['data-active']?: unknown })['data-active']);
+
+  /* Press tilt — computed ONCE on pointer-down from the press point (Metro
+     tilts on press and settles on release; it does not follow the finger). */
+  const [press, setPress] = useState<{ x: number; y: number } | null>(null);
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (effDisabled) return;
+    const r = e.currentTarget.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+    setPress({ x: (e.clientX - r.left) / r.width - 0.5, y: (e.clientY - r.top) / r.height - 0.5 });
   };
-
-  // Whether this option is the keyboard-active one (for hover tint mirroring)
-  const kbdActive = Boolean(
-    (rest as unknown as { ['data-active']?: boolean | string })['data-active'],
-  );
+  const clearPress = () => setPress(null);
 
   return (
-    <HoverWrap
-      $hoverBg={hoverBg}
-      $hoverSelBg={hoverSelBg}
-      $disabled={!!disabled || allDisabled}
-      $selected={selected && !disabled}
+    <Tile
+      {...rest}
+      $fill={fill}
+      $fg={fg}
+      $selected={selected && !effDisabled}
+      $disabled={effDisabled}
       $kbdActive={kbdActive}
+      $pad={theme.spacing(1)}
+      data-pressed={press ? '' : undefined}
+      onClick={() => !effDisabled && setValue(value, 'pointer')}
+      onPointerDown={onPointerDown}
+      onPointerUp={clearPress}
+      onPointerLeave={clearPress}
+      onPointerCancel={clearPress}
       className={[presetCls, className].filter(Boolean).join(' ')}
+      style={
+        {
+          gridColumn: wide ? 'span 2' : undefined,
+          ['--valet-metro-tilt-x' as const]: press?.x ?? 0,
+          ['--valet-metro-tilt-y' as const]: press?.y ?? 0,
+          ...(sx as object),
+        } as React.CSSProperties
+      }
     >
-      {/**
-       * Ensure Typography inside the option tracks the same color as icons.
-       * We do this by setting --valet-text-color in lockstep with the computed color.
-       */}
-      <Panel
-        {...rest}
-        variant='outlined'
-        compact
-        onClick={() => !disabled && !allDisabled && setValue(value, 'pointer')}
-        sx={{
-          // Fill the HoverWrap (which now owns the tile size + the coarse hit
-          // floor) so the clickable surface is the floored ≥44px box on touch.
-          width: '100%',
-          height: '100%',
-          // Coarse-pointer hit floor + chrome kit live on <HoverWrap> (a styled
-          // component → real CSS rule); `sx` is inline-only and cannot carry a
-          // @media block. The flat tap-highlight suppression is safe inline too.
-          WebkitTapHighlightColor: 'transparent',
-          touchAction: 'manipulation',
-          overflow: 'hidden',
-          position: 'relative', // anchor hover layer
-          cursor: disabled || allDisabled ? 'not-allowed' : 'pointer',
+      <span
+        style={{
+          flex: 1,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          borderColor:
-            selected && !disabled ? colors.selectedBg : disabled ? disabledColor : undefined,
-          background: selected && !disabled ? colors.selectedBg : undefined,
-          // Compute text color for icons and labels; keep Typography in sync via CSS var.
-          color: disabled ? disabledColor : selected ? colors.selectedFg : undefined,
-          ['--valet-text-color' as const]:
-            (disabled ? disabledColor : selected ? colors.selectedFg : undefined) ?? 'currentColor',
-          opacity: disabled || allDisabled ? 0.45 : 1,
-          transition: 'background 120ms ease, border-color 120ms ease, color 120ms ease',
-          // Visible keyboard focus ring on the active tile (set by parent via data-active)
-          outline: ((rest as unknown as { ['data-active']?: boolean | string })['data-active']
-            ? `${theme.stroke(2)} solid ${theme.colors.primary}`
-            : undefined) as unknown as string,
-          outlineOffset: ((rest as unknown as { ['data-active']?: boolean | string })['data-active']
-            ? theme.stroke(2)
-            : undefined) as unknown as string,
-          ...sx,
+          width: '100%',
+          minHeight: 0,
         }}
       >
-        <div className='valet-hover-bg' />
-        <div style={innerStyle}>
-          {typeof icon === 'string' ? (
-            <Icon
-              icon={icon}
-              size={'var(--valet-metro-icon-size, 1.75rem)'}
-            />
-          ) : (
-            <Icon size={'var(--valet-metro-icon-size, 1.75rem)'}>{icon}</Icon>
-          )}
-          <Typography
-            variant='h6'
-            centered
-            noSelect
-            fontSize={'var(--valet-metro-font-size, 0.875rem)'}
-          >
-            {label}
-          </Typography>
-        </div>
-      </Panel>
-    </HoverWrap>
+        {typeof icon === 'string' ? (
+          <Icon
+            icon={icon}
+            size={'var(--valet-metro-icon-size, 1.75rem)'}
+          />
+        ) : (
+          <Icon size={'var(--valet-metro-icon-size, 1.75rem)'}>{icon}</Icon>
+        )}
+      </span>
+      <Typography
+        variant='body'
+        noSelect
+        fontSize={'var(--valet-metro-font-size, 0.875rem)'}
+        sx={{ width: '100%', textAlign: 'left', fontWeight: 300 }}
+      >
+        {label}
+      </Typography>
+    </Tile>
   );
 };
 Option.displayName = 'MetroSelect.Option';
@@ -398,16 +412,25 @@ export const MetroSelect: MetroSelectComponent = ({
   const accent = effectiveError ? theme.colors.error : theme.colors.primary;
   const colors = useMemo(
     () => ({
-      selectedBg: accent,
+      // Selected tile = the intent accent + on-accent text.
+      accent,
       selectedFg: theme.colors.primaryText,
-      // Unselected hover: subtle primary tint over the background (light wash).
-      hoverBg: makeMix(theme.colors.background, accent, 0.16),
-      // Selected hover: a touch darker than the selected fill (toward text).
-      hoverSelBg: makeMix(accent, theme.colors.text, 0.3),
+      // Resting tiles are SOLID blocks: a neutral surface when no per-option
+      // colour is given (every tile filled at rest — Metro, not hollow cards).
+      neutralBg: theme.colors.backgroundAlt,
+      neutralFg: theme.colors.text,
+      // On a per-option coloured (saturated) tile, use the on-accent text token.
+      coloredFg: theme.colors.primaryText,
       // Disabled tone: text mixed toward the page background.
       disabled: makeMix(theme.colors.text, theme.colors.background, 0.4),
     }),
-    [accent, theme.colors.primaryText, theme.colors.background, theme.colors.text],
+    [
+      accent,
+      theme.colors.primaryText,
+      theme.colors.backgroundAlt,
+      theme.colors.background,
+      theme.colors.text,
+    ],
   );
 
   const ctx = useMemo<MetroCtx>(
@@ -512,6 +535,10 @@ export const MetroSelect: MetroSelectComponent = ({
   const labelId = label ? `${listId}-label` : undefined;
   const helpId = helperText ? `${listId}-help` : undefined;
 
+  // Tight Metro gutter as a CSS length for the grid `gap` var.
+  const gapCss =
+    typeof effectiveGap === 'number' ? theme.spacing(effectiveGap) : String(effectiveGap);
+
   return (
     <MetroCtx.Provider value={ctx}>
       {/* Optional visible label above */}
@@ -527,11 +554,7 @@ export const MetroSelect: MetroSelectComponent = ({
           {label}
         </div>
       )}
-      <Stack
-        direction='row'
-        wrap
-        compact={effectiveCompact}
-        gap={effectiveGap}
+      <Grid
         data-valet-component='MetroSelect'
         data-disabled={effectiveDisabled ? 'true' : 'false'}
         data-state={effectiveDisabled ? 'disabled' : 'enabled'}
@@ -583,17 +606,23 @@ export const MetroSelect: MetroSelectComponent = ({
           }
         }}
         onBlur={() => setShowActive(false)}
-        {...rest}
-        sx={{
-          // Provide geometry via CSS vars for children
-          ['--valet-metro-tile-w' as const]: tileW,
-          ['--valet-metro-tile-h' as const]: tileH,
-          ['--valet-metro-icon-size' as const]: iconSz,
-          ['--valet-metro-font-size' as const]: fontSz,
-          // Coarse-pointer tap-target floor for each tile (40px under compact).
-          ['--valet-metro-hit' as const]: effectiveCompact ? '40px' : '44px',
-          ...sx,
-        }}
+        {...(rest as React.HTMLAttributes<HTMLDivElement>)}
+        style={
+          {
+            // Provide geometry via CSS vars for children
+            ['--valet-metro-tile-w' as const]: tileW,
+            ['--valet-metro-tile-h' as const]: tileH,
+            ['--valet-metro-icon-size' as const]: iconSz,
+            ['--valet-metro-font-size' as const]: fontSz,
+            // Coarse-pointer tap-target floor for each tile (40px under compact).
+            ['--valet-metro-hit' as const]: effectiveCompact ? '40px' : '44px',
+            // Tight Metro gutter + press-tilt timing tokens.
+            ['--valet-metro-gap' as const]: gapCss,
+            ['--valet-metro-press-dur' as const]: theme.motion.duration.base,
+            ['--valet-metro-press-ease' as const]: theme.motion.easing.standard,
+            ...(sx as object),
+          } as React.CSSProperties
+        }
         className={[presetCls, className].filter(Boolean).join(' ')}
       >
         <CompactCtx.Provider value={effectiveCompact}>
@@ -608,7 +637,7 @@ export const MetroSelect: MetroSelectComponent = ({
             } as Partial<MetroOptionProps> & { id: string }),
           )}
         </CompactCtx.Provider>
-      </Stack>
+      </Grid>
       {helperText && (
         <div
           id={helpId}
