@@ -239,10 +239,25 @@ const TabBtn = styled('button')<{
   cursor: pointer;
   appearance: none;
 
+  /* Mobile chrome kit — no blue tap flash, fast taps, no text selection on a
+     double-tap of the tab label. */
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+
+  /* Center the label so the coarse-pointer min-height floor reads cleanly. */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
   ${({ $orient }) => ($orient === 'vertical' ? 'width: 100%;' : 'min-width: 4rem;')}
+
+  /* Coarse-pointer comfort: floor the tab at >=44px (the generous padding
+     usually clears this; the floor guards compact / short labels). */
+  @media (pointer: coarse) {
+    min-height: var(--valet-tab-hit, 44px);
+  }
 
   position: relative;
   text-align: center;
@@ -629,9 +644,13 @@ const TabsBase = forwardRef<HTMLDivElement, TabsProps>(
           $pad={pad}
           className={cls}
           style={
-            spaceScale != null
-              ? { ...sx, '--valet-space': `calc(${theme.spacingUnit} * ${spaceScale})` }
-              : sx
+            {
+              '--valet-tab-hit': effectiveCompact ? '40px' : '44px',
+              ...sx,
+              ...(spaceScale != null
+                ? { '--valet-space': `calc(${theme.spacingUnit} * ${spaceScale})` }
+                : {}),
+            } as React.CSSProperties
           }
           onFocus={(e) => {
             // Only redirect focus when the root itself receives focus.

@@ -37,6 +37,7 @@
     "omitted": []
   },
   "cssVars": [
+    "--valet-tab-hit",
     "--valet-focus-width",
     "--valet-focus-ring-color",
     "--valet-focus-offset",

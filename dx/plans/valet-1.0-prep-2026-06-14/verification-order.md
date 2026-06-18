@@ -82,7 +82,7 @@ retuned spacing/density numbers."
 
 ## Tier 5 — Surface-consuming layout + Select
 
-- [ ] AppBar (→ Button) · [ ] Drawer (→ IconButton) · [x] **Accordion** _(stable 2026-06-18 — both gates; mobile chrome kit + coarse ≥44px header floor (`--valet-acc-hit`, 40px compact). Accordion.Item promoted too.)_ · [ ] **Tabs** (→ Tooltip, now locked)
+- [ ] AppBar (→ Button) · [ ] Drawer (→ IconButton) · [x] **Accordion** _(stable 2026-06-18 — both gates; mobile chrome kit + coarse ≥44px header floor (`--valet-acc-hit`, 40px compact). Accordion.Item promoted too.)_ · [x] **Tabs** _(agent-verified 2026-06-18 — chrome kit completion (`user-select`) + coarse ≥44px tab floor (`--valet-tab-hit`, 40px compact); meta fixed (`variant`→orientation/placement, added examples); awaiting Ben's visual pass)_ (→ Tooltip, now locked)
 - [x] **Select** _(stable 2026-06-18 — both gates; FIXED the flagged dropdown-overlap (inline-block → width:100% column model) + `width` prop + FormConfigCtx + mobile ≥44px trigger/options + deterministic intent-aligned colours matching TextField. Select.Option promoted too.)_ (→ Checkbox + overlay; foundation for DateSelector) · [ ] Snackbar · [ ] Chip · [ ] Tree
 
 ## Tier 6 — Composite fields

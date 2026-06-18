@@ -387,6 +387,19 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   cases. Metas accurate (`headingLevel` verified real; added a touch-target bestPractice).
   Promoted Accordion + Accordion.Item. Green: typecheck×4, lint, full suite (2 new mobile
   tests), RTL, mcp, docs tsc.
+- **Tier 5 Tabs — AGENT-VERIFIED, awaiting Ben's visual pass (2026-06-18).** The other
+  roving-focus widget; pairs with Accordion. Source review clean and already mobile-aware
+  (the tab button shipped the chrome kit + `min-width:4rem` + overflow drag/swipe-scroll
+  with edge fades; headless controlled/uncontrolled via the shared `useControlledState`;
+  honest `ChangeInfo.source`; per-instance id namespacing; orientation/placement). Closed
+  the small gaps: added `user-select:none` (a double-tap no longer selects the tab label),
+  switched the button to `inline-flex` centering, and added a `@media(pointer:coarse)`
+  ≥44px `min-height` floor (`--valet-tab-hit` on the Root, 40px compact) for compact/short
+  labels. **Meta fixes**: a bestPractice referenced a non-existent `variant` prop →
+  corrected to `orientation`/`placement`/`alignX`; the meta had NO examples → added two
+  (basic + controlled-vertical; both pass check:examples). Green: typecheck×4, lint, 1454
+  tests (2 new), build, RTL, mcp, check:examples (106), docs tsc. Stays `experimental`
+  pending Ben's visual pass.
 - **Box — DONE (stable 2026-06-17 — both gates).** Ben's visual pass cleared it;
   the `centered`→`centerContent` meta fix shipped.
 - **Pre-existing repo debt (not from this work):** `eslint .` reports 51 prettier

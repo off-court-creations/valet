@@ -12,9 +12,22 @@
       "Ensure keyboard navigation: Arrow keys move focus, Enter/Space activates.",
       "Prefer tokenized spacing and motion for a cohesive feel.",
       "Avoid mixing tabs and inline navigation within the same strip.",
-      "Use appropriate variants and placement to reflect app hierarchy.",
+      "Use `orientation` (`horizontal`/`vertical`) and `placement` (`top`/`bottom`/`left`/`right`) to reflect app hierarchy; align a horizontal strip with `alignX`.",
+      "Tabs are touch-friendly automatically — each tab floors at ≥44px on coarse pointers (40px under `compact`) with the mobile chrome kit (no tap-flash, no accidental text selection); the strip drag/swipe-scrolls when it overflows.",
       "Announce active tab for screen readers: the strip exposes `role=tablist` with `aria-orientation` tracking the `orientation` prop, each tab carries `aria-selected` and `aria-controls`, and tab/panel ids are namespaced per instance so multiple Tabs on a page never collide.",
       "Prefer the canonical `onValueChange`/`onValueCommit` events: each fires with the full `ChangeInfo` payload (`previousValue`, `phase`, and an honest `info.source`) — a tab click reports `'pointer'` and Arrow-key navigation reports `'keyboard'`."
     ]
-  }
+  },
+  "examples": [
+    {
+      "id": "tabs-basic",
+      "title": "Basic tabs (uncontrolled)",
+      "code": "<Tabs defaultValue='overview'>\n  <Tabs.Tab value='overview' label='Overview' />\n  <Tabs.Tab value='specs' label='Specs' />\n  <Tabs.Panel>Overview content</Tabs.Panel>\n  <Tabs.Panel>Specs content</Tabs.Panel>\n</Tabs>"
+    },
+    {
+      "id": "tabs-controlled-vertical",
+      "title": "Controlled, vertical placement",
+      "code": "() => {\n  const [tab, setTab] = React.useState('account');\n  return (\n    <Tabs value={tab} onValueChange={(v) => setTab(String(v))} orientation='vertical' placement='left'>\n      <Tabs.Tab value='account' label='Account' />\n      <Tabs.Tab value='security' label='Security' />\n      <Tabs.Panel>Account settings</Tabs.Panel>\n      <Tabs.Panel>Security settings</Tabs.Panel>\n    </Tabs>\n  );\n}"
+    }
+  ]
 }
