@@ -368,7 +368,7 @@
     "category": "widgets",
     "summary": "Tab-style page navigator with an elastic active-page underline; controlled by `count` + `page` + `onPageChange` — use it to page through large lists or tables.",
     "slug": "components/widgets/pagination",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "ParallaxScroll",

@@ -335,8 +335,8 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   `--valet-intent-focus`). Metas updated (stale ≥40–48px tap advice → automatic).
   Green: typecheck×4, lint, 1444 tests (4 new), build, RTL, mcp, check:examples, docs
   tsc. Stays `experimental` pending Ben's visual pass.
-- **Tier 4 Pagination — AGENT-VERIFIED, awaiting Ben's visual pass (2026-06-17).**
-  Last Tier 4 item; not a bound field (no FormConfig). Source review clean: solid a11y
+- **Tier 4 Pagination — DONE (stable 2026-06-17 — both gates).** Ben: "approved."
+  Promoted Pagination — **Tier 4 complete.** Not a bound field (no FormConfig). Source review clean: solid a11y
   (nav `aria-label`, `aria-current='page'`, labelled prev/next/scroll buttons),
   `page`-controlled + `onPageChange` (the W1 rename; `onChange` is just an internal
   alias), the rule-lifecycle-safe measured-px→CSS-var underline/window animation.
