@@ -83,7 +83,9 @@ const Root = styled('div')<{
 }>`
   position: fixed;
   inset-inline-end: ${({ $spacing }) => $spacing};
-  bottom: ${({ $spacing }) => $spacing};
+  /* Mobile: clear the home indicator / gesture bar on notched phones. env()
+     falls back to 0 everywhere else, so desktop positioning is unchanged. */
+  bottom: calc(${({ $spacing }) => $spacing} + env(safe-area-inset-bottom, 0px));
   transform: translateY(${({ $visible, $offset }) => ($visible ? '0' : $offset)});
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};
   pointer-events: ${({ $visible }) => ($visible ? 'auto' : 'none')};
@@ -114,6 +116,8 @@ const Root = styled('div')<{
   /* A toast is transient (it auto-hides), so its text is never selectable. */
   user-select: none;
   -webkit-user-select: none;
+  /* No blue tap-flash if the toast (or its action) is tapped on mobile. */
+  -webkit-tap-highlight-color: transparent;
 `;
 
 /*───────────────────────────────────────────────────────────*/

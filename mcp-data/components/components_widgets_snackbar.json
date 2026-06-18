@@ -76,7 +76,7 @@
   ],
   "bestPractices": [
     "Keep messages short and specific. Snackbars confirm actions or provide brief status; avoid long instructions or multi‑step interactions.",
-    "Place them consistently, typically bottom center/right depending on platform.",
+    "Place them consistently, typically bottom center/right depending on platform. On mobile the bottom offset automatically clears the home indicator / gesture bar (`env(safe-area-inset-bottom)`), and any action button you nest should be a real touch target (a valet `Button`/`IconButton`, which floor at ≥44px on touch).",
     "Offer a single, clear action when needed; prefer undo when appropriate.",
     "Respect motion and timing. Use `autoHideDuration` for transient messages (3–6s typical); longer durations should be deliberate. The countdown pauses while the snackbar is hovered or focused and resumes with the remaining time. The slide/fade transition is automatically suppressed for users who request reduced motion.",
     "For urgent errors, override the default live region with `role='alert'`/`aria-live='assertive'` so it is announced immediately.",

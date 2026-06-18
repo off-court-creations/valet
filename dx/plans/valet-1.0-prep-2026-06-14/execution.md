@@ -425,6 +425,18 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   `:focus-visible` ring on the delete button. The chip body itself stays correctly
   non-interactive. Meta accurate; touch note added. Green: typecheck×4, lint, 1458 tests
   (2 new), RTL, mcp, check:examples. Stays `experimental` pending Ben's visual pass.
+- **Tier 5 Snackbar — AGENT-VERIFIED, awaiting Ben's visual pass (2026-06-18).**
+  Already excellent: WCAG 2.2.1 auto-hide that pauses on hover AND focus with
+  remaining-time banking, `role='status'`/`aria-live='polite'` live region (overridable
+  to alert/assertive), reduced-motion-aware, controlled-exit fade, surface z-ordering,
+  orphan-timer cleanup. Only real mobile gap: it was pinned `bottom: spacing(1)` with no
+  safe-area inset, so on notched/gesture phones it sat under the home indicator. Fix:
+  `bottom: calc(spacing(1) + env(safe-area-inset-bottom, 0px))` (falls back to 0 → desktop
+  unchanged) + a `-webkit-tap-highlight-color: transparent`. Behaviour/timing/a11y
+  untouched. Meta accurate (has an a11y block); added a safe-area + action-touch note.
+  Green: typecheck×4, lint, 1459 tests (1 new), RTL, mcp, check:examples. Stays
+  `experimental` pending Ben's visual pass (the env() offset shows only on a notched
+  device/emulator; desktop position is unchanged).
 - **Box — DONE (stable 2026-06-17 — both gates).** Ben's visual pass cleared it;
   the `centered`→`centerContent` meta fix shipped.
 - **Pre-existing repo debt (not from this work):** `eslint .` reports 51 prettier

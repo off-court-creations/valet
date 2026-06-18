@@ -508,3 +508,33 @@ describe('Snackbar a11y (live region + pausable auto-hide)', () => {
     }
   });
 });
+
+/*───────────────────────────────────────────────────────────────*/
+/* Mobile — safe-area positioning + no tap-flash                  */
+
+describe('Snackbar — mobile', () => {
+  it('offsets above the home indicator via safe-area-inset-bottom', () => {
+    const root = makeRoot();
+    const store = createSurfaceStore();
+    act(() => {
+      root.render(
+        <React.StrictMode>
+          <SurfaceCtx.Provider value={store}>
+            <Snackbar
+              id='snack-mobile'
+              autoHideDuration={null}
+              message='m'
+            />
+          </SurfaceCtx.Provider>
+        </React.StrictMode>,
+      );
+    });
+    const el = document.getElementById('snack-mobile')!;
+    const cls = el.className.split(' ')[0];
+    const rule =
+      Array.from(sheet.getGlobalSheet()?.cssRules ?? [], (r) => r.cssText).find((t) =>
+        t.startsWith(`.${cls}`),
+      ) ?? '';
+    expect(rule).toContain('env(safe-area-inset-bottom');
+  });
+});
