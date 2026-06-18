@@ -81,14 +81,14 @@
     "category": "fields",
     "summary": "Fully-typed dropdown for single or `multiple` choice from `Select.Option` children; controlled via `value` + `onValueChange` and FormControl-aware — use it for compact pick-one(-or-many) lists, and prefer `MetroSelect` when options need a visual tile grid.",
     "slug": "components/fields/select",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Select.Option",
     "category": "fields",
     "summary": "A single option inside a `Select`, carrying its `value` and label children; author one per choice as a direct `Select` child — it forwards `className`/`style`/`id`/`data-*` onto the rendered `<li>`.",
     "slug": "components/fields/select.option",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Slider",

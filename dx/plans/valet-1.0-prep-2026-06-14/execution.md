@@ -349,8 +349,19 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   typecheck×4, lint, 1445 tests (1 new), build, RTL, mcp, check:examples, docs tsc.
   Stays `experimental` pending Ben's visual pass (the underline animation + the mobile
   tap heights are jsdom-unverifiable). **Tier 4 complete after this promotes.**
-- **Tier 5 Select — AGENT-VERIFIED, awaiting Ben's visual pass (2026-06-17).** First
-  Tier 5 component; Ben asked to start here and address the flagged dropdown-overlap.
+- **Tier 5 Select — DONE (stable 2026-06-18 — both gates).** Ben: "select is now
+  approved." The visual pass took two extra rounds after the initial verify: (a) Ben
+  flagged the open Select still looked bad in dark mode — root cause was the trigger
+  inheriting Surface vars (`var(--valet-bg…)` resolved to the PAGE background, `divider`
+  border) + a muddy `primary+'22'` menu highlight; migrated to the deterministic intent
+  palette TextField uses (explicit backgroundAlt surface, `theme.colors.text`, neutral
+  `makeMix` border + `error` recolour, opaque primary-mix option highlights, explicit
+  menu text/keyline; new regression test pins no inherited `--valet-bg/-text-color/
+  -border`). (b) The demo then looked awkward (every Select full-width by the new
+  default) → gave the SelectDemo examples explicit `width`s (also showcasing the prop).
+  Promoted Select + Select.Option. Verification detail below.
+- **Tier 5 Select — verification detail (2026-06-17).** First Tier 5 component; Ben
+  asked to start here and address the flagged dropdown-overlap.
   **Fixed the flagged finding** (see deferred-findings, now RESOLVED): the root was
   `inline-block` content-width → now the TextField width model (block flex-column,
   `width:100%` default + `min-inline-size:0` + `width` prop + `fullWidth`), so the
