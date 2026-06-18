@@ -3,7 +3,7 @@
   "category": "layout",
   "slug": "components/layout/tabs.tab",
   "summary": "A clickable tab trigger inside `Tabs`, identified by `value`; pair each one with a matching `Tabs.Panel` of the same value — the parent `Tabs` owns the active selection and `tablist` ARIA.",
-  "status": "experimental",
+  "status": "stable",
   "props": [
     {
       "name": "index",

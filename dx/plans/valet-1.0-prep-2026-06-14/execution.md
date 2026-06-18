@@ -387,8 +387,9 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   cases. Metas accurate (`headingLevel` verified real; added a touch-target bestPractice).
   Promoted Accordion + Accordion.Item. Green: typecheck×4, lint, full suite (2 new mobile
   tests), RTL, mcp, docs tsc.
-- **Tier 5 Tabs — AGENT-VERIFIED, awaiting Ben's visual pass (2026-06-18).** The other
-  roving-focus widget; pairs with Accordion. Source review clean and already mobile-aware
+- **Tier 5 Tabs — DONE (stable 2026-06-18 — both gates).** Ben: "tabs is great!"
+  Promoted Tabs + Tabs.Tab + Tabs.Panel. The other roving-focus widget; pairs with
+  Accordion. Source review clean and already mobile-aware
   (the tab button shipped the chrome kit + `min-width:4rem` + overflow drag/swipe-scroll
   with edge fades; headless controlled/uncontrolled via the shared `useControlledState`;
   honest `ChangeInfo.source`; per-instance id namespacing; orientation/placement). Closed

@@ -235,21 +235,21 @@
     "category": "layout",
     "summary": "Tabbed interface with `Tabs.Tab` triggers and `Tabs.Panel` content and full `tablist` ARIA; controlled via `value`/`onValueChange` — use it to switch between sibling views in the same region.",
     "slug": "components/layout/tabs",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Tabs.Tab",
     "category": "layout",
     "summary": "A clickable tab trigger inside `Tabs`, identified by `value`; pair each one with a matching `Tabs.Panel` of the same value — the parent `Tabs` owns the active selection and `tablist` ARIA.",
     "slug": "components/layout/tabs.tab",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Tabs.Panel",
     "category": "layout",
     "summary": "The content region for one tab inside `Tabs`, identified by the `value` of its matching `Tabs.Tab`; only the active panel is shown — author one per tab as a direct `Tabs` child.",
     "slug": "components/layout/tabs.panel",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Avatar",
