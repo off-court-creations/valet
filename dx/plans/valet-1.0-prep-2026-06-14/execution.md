@@ -524,6 +524,14 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   Fan-out review (70 agents, 9 widgets): 48/60 confirmed; 8 `improve` + 1 `rewrite`
   (KeyModal). Order: Panel → Parallax → CodeBlock → Markdown → Table → Dropzone →
   RichChat → KeyModal → LLMChat. Each: agent fix + tests, then Ben's visual pass → stable.
+  - **#2 Parallax (trio) — AGENT-VERIFIED, awaiting Ben's visual pass (2026-06-18).**
+    Fixed the `ParallaxBackground` preset DOUBLE-APPLY (it passed `preset={p}` to
+    `ParallaxLayer` AND a `preset(p)`-derived className — now forwards `preset` once).
+    A11Y: a video background now drops autoplay under `prefers-reduced-motion` (autoplay
+    is itself motion; the IntersectionObserver play() is also gated) — the parallax
+    offset was already neutralized. Added an `alt` prop for image backgrounds. Demo
+    de-ZeroUI'd (copy + header path). +2 reduced-motion tests; meta note. Green:
+    typecheck×4, lint, 1500 tests, build, mcp, check:examples (109), docs tsc.
   - **#1 Panel — DONE (stable 2026-06-18 — both gates; Ben: "promote").** Replaced the
     bespoke `toRgb/mix/toHex` intent-var block with `computeIntentVars`/`makeMix` — fixes
     the non-hex defensive-black bug (an `rgb()`/`hsl()`/theme-token `color`/`intent` was

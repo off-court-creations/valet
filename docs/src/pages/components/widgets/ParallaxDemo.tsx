@@ -1,4 +1,4 @@
-// src/pages/ParallaxDemo.tsx
+// docs/src/pages/components/widgets/ParallaxDemo.tsx | valet-docs
 import React from 'react';
 import { Surface, Typography, Button } from '@archway/valet';
 
@@ -9,7 +9,7 @@ import prettyScroll from '../../../assets/pretty-scroll.jpg';
 /**
  * ParallaxDemo
  * ------------
- * A full-viewport demo of ZeroUI’s parallax utilities.
+ * A full-viewport demo of valet’s parallax utilities.
  *
  * - Background: pretty-scroll.jpg
  * - Mid-layer: translucent overlay copy
@@ -44,7 +44,7 @@ export const ParallaxDemo: React.FC = () => {
               variant='h1'
               sx={{ color: '#fff' }}
             >
-              zeroui
+              valet
               <br />
               Parallax
             </Typography>

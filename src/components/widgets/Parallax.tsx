@@ -179,6 +179,8 @@ export interface ParallaxBackgroundProps extends Omit<ParallaxLayerProps, 'child
   muted?: boolean;
   autoPlay?: boolean;
   preload?: 'none' | 'metadata' | 'auto';
+  /** Alt text for an image background. Default `''` (decorative). */
+  alt?: string;
 }
 
 export const ParallaxBackground: React.FC<ParallaxBackgroundProps> = ({
@@ -194,6 +196,7 @@ export const ParallaxBackground: React.FC<ParallaxBackgroundProps> = ({
   muted = true,
   autoPlay = true,
   preload = 'auto',
+  alt = '',
   ...props
 }) => {
   /* ----- detect media type by extension if not provided ----- */
@@ -202,10 +205,15 @@ export const ParallaxBackground: React.FC<ParallaxBackgroundProps> = ({
     return /\.(webm|mp4|mov)$/i.test(src) ? 'video' : 'image';
   }, [mediaType, src]);
 
+  /* A11Y S5 — an autoplaying video is motion; under reduced-motion we neither
+     set the autoPlay attribute nor .play() on intersection (the user can still
+     start it via native controls if the consumer exposes them). */
+  const reduceMotion = usePrefersReducedMotion();
+
   /* ----- video play / pause when in viewport (perf) ---------- */
   const mediaRef = useRef<HTMLVideoElement | HTMLImageElement>(null);
   useEffect(() => {
-    if (guessedType !== 'video' || !('IntersectionObserver' in window)) return;
+    if (guessedType !== 'video' || reduceMotion || !('IntersectionObserver' in window)) return;
     const vid = mediaRef.current as HTMLVideoElement | null;
     if (!vid) return;
 
@@ -221,9 +229,7 @@ export const ParallaxBackground: React.FC<ParallaxBackgroundProps> = ({
     );
     io.observe(vid);
     return () => io.disconnect();
-  }, [guessedType]);
-
-  const presetClasses = p ? preset(p) : '';
+  }, [guessedType, reduceMotion]);
 
   /* ----- inner media element -------------------------------- */
   const mediaEl =
@@ -235,7 +241,7 @@ export const ParallaxBackground: React.FC<ParallaxBackgroundProps> = ({
         loop={loop}
         muted={muted}
         playsInline
-        autoPlay={autoPlay}
+        autoPlay={autoPlay && !reduceMotion}
         preload={preload}
         /*👇 object-fit keeps coverage regardless of transform */
         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
@@ -245,7 +251,7 @@ export const ParallaxBackground: React.FC<ParallaxBackgroundProps> = ({
         ref={mediaRef as React.RefObject<HTMLImageElement>}
         src={src}
         loading='lazy'
-        alt=''
+        alt={alt}
         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
       />
     );
@@ -255,7 +261,7 @@ export const ParallaxBackground: React.FC<ParallaxBackgroundProps> = ({
       speed={speed}
       axis={axis}
       preset={p}
-      className={[presetClasses, className].filter(Boolean).join(' ')}
+      className={className}
       sx={{
         position: 'absolute',
         inset: 0,

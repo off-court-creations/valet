@@ -203,3 +203,40 @@ describe('ParallaxBackground (jsdom)', () => {
     expect(pause).toHaveBeenCalled();
   });
 });
+
+/* ── ParallaxBackground — reduced motion (A11Y) ──────────────────────── */
+describe('ParallaxBackground reduced motion (jsdom)', () => {
+  const stubReduce = (reduce: boolean) =>
+    vi.stubGlobal('matchMedia', (q: string) => ({
+      matches: reduce && /reduce/.test(q),
+      media: q,
+      onchange: null,
+      addEventListener() {},
+      removeEventListener() {},
+      addListener() {},
+      removeListener() {},
+      dispatchEvent() {
+        return false;
+      },
+    }));
+
+  it('drops video autoplay when prefers-reduced-motion is set', () => {
+    stubReduce(true);
+    const c = render(
+      <ParallaxScroll>
+        <ParallaxBackground src='/clip.webm' />
+      </ParallaxScroll>,
+    );
+    expect((c.querySelector('video') as HTMLVideoElement).autoplay).toBe(false);
+  });
+
+  it('keeps video autoplay when motion is allowed', () => {
+    stubReduce(false);
+    const c = render(
+      <ParallaxScroll>
+        <ParallaxBackground src='/clip.webm' />
+      </ParallaxScroll>,
+    );
+    expect((c.querySelector('video') as HTMLVideoElement).autoplay).toBe(true);
+  });
+});
