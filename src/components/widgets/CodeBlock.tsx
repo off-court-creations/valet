@@ -15,8 +15,10 @@ export interface CodeBlockProps
     Presettable {
   code: string;
   language?: string;
+  /** Accessible name for the (scrollable, focusable) code region. */
   ariaLabel?: string;
-  title?: string;
+  /** Tooltip/title for the copy button (default "Copy"). */
+  copyLabel?: string;
   /** Inline styles (with CSS var support) */
   sx?: Sx;
 }
@@ -25,13 +27,13 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
   code,
   language = 'typescript',
   ariaLabel,
-  title,
+  copyLabel,
   className,
   preset: p,
   sx,
   ...rest
 }) => {
-  const [copied, setCopied] = useState(false);
+  const [copyState, setCopyState] = useState<'idle' | 'copied' | 'failed'>('idle');
   const { mode, theme } = useTheme();
   const isMultiline = code.includes('\n');
   const displayCode = isMultiline ? code.replace(/\n+$/, '') : code;
@@ -75,9 +77,17 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
   }, [code, language, mode]);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(code).then(
-      () => setCopied(true),
-      () => setCopied(true),
+    // navigator.clipboard is undefined on insecure (HTTP) origins / older
+    // browsers — calling .writeText on it throws. Guard, and report failure
+    // honestly instead of claiming success on the reject path.
+    const clip = navigator.clipboard;
+    if (!clip?.writeText) {
+      setCopyState('failed');
+      return;
+    }
+    clip.writeText(code).then(
+      () => setCopyState('copied'),
+      () => setCopyState('failed'),
     );
   };
 
@@ -96,29 +106,39 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
         ...(sx || {}),
       }}
     >
-      <div style={{ flex: 1, minWidth: 0 }}>
+      {/* The code is a scrollable region: give it a real accessible name and
+          make it keyboard-focusable so non-pointer users can scroll long lines.
+          The copy button carries its OWN label (not the region's). */}
+      <div
+        role='region'
+        aria-label={ariaLabel ?? 'Code'}
+        tabIndex={0}
+        style={{ flex: 1, minWidth: 0 }}
+      >
         <Markdown
           data={markdown}
-          codeBackground={mode === 'dark' ? '#0d1117' : '#f6f8fa'}
           sx={{ margin: 0, width: '100%' }}
         />
       </div>
       <IconButton
         variant='outlined'
-        size='sm'
+        size='md'
         icon='mdi:content-copy'
-        aria-label={ariaLabel ?? 'Copy code snippet'}
-        title={title ?? 'Copy'}
+        aria-label='Copy code snippet'
+        title={copyLabel ?? 'Copy'}
         onClick={handleCopy}
         sx={{
           marginLeft: stackControls ? 0 : theme.spacing(0.5),
           marginTop: stackControls ? theme.spacing(0.5) : theme.spacing(2),
         }}
       />
-      {copied && (
+      {copyState !== 'idle' && (
         <Snackbar
-          message='copied'
-          onClose={() => setCopied(false)}
+          message={copyState === 'copied' ? 'Copied' : 'Copy failed'}
+          {...(copyState === 'failed'
+            ? { role: 'alert' as const, 'aria-live': 'assertive' as const }
+            : {})}
+          onClose={() => setCopyState('idle')}
         />
       )}
     </div>

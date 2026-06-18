@@ -93,26 +93,49 @@ describe('CodeBlock (jsdom)', () => {
     expect(btn!.getAttribute('aria-label')).toBe('Copy code snippet');
   });
 
-  it('honours a custom ariaLabel + title on the copy button', () => {
+  it('routes ariaLabel to the focusable code region and copyLabel to the copy button', () => {
     const c = render(
       <CodeBlock
         code='hi'
-        ariaLabel='Copy sample'
-        title='Copy it'
+        ariaLabel='Sample snippet'
+        copyLabel='Copy it'
       />,
     );
+    const region = c.querySelector('[role="region"]') as HTMLElement;
+    expect(region.getAttribute('aria-label')).toBe('Sample snippet');
+    expect(region.getAttribute('tabindex')).toBe('0'); // keyboard-scrollable
     const btn = copyBtn(c)!;
-    expect(btn.getAttribute('aria-label')).toBe('Copy sample');
+    expect(btn.getAttribute('aria-label')).toBe('Copy code snippet'); // its own, fixed
     expect(btn.getAttribute('title')).toBe('Copy it');
   });
 
-  it('writes the code to the clipboard when the copy button is clicked', async () => {
+  it('writes the code to the clipboard and reports "Copied" on success', async () => {
     const c = render(<CodeBlock code={'copy-me()'} />);
-    const btn = copyBtn(c)!;
     await act(async () => {
-      btn.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      copyBtn(c)!.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     });
-    expect(writeText).toHaveBeenCalledTimes(1);
     expect(writeText).toHaveBeenCalledWith('copy-me()');
+    expect(c.textContent).toContain('Copied');
+    expect(c.querySelector('[role="alert"]')).toBeNull(); // success is not an alert
+  });
+
+  it('reports failure via a role=alert toast when the clipboard write rejects', async () => {
+    writeText.mockImplementationOnce(() => Promise.reject(new Error('denied')));
+    const c = render(<CodeBlock code={'x()'} />);
+    await act(async () => {
+      copyBtn(c)!.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+    const alert = c.querySelector('[role="alert"]');
+    expect(alert).not.toBeNull();
+    expect(alert!.textContent).toContain('Copy failed');
+  });
+
+  it('reports failure when navigator.clipboard is unavailable (insecure origin) — no throw', async () => {
+    Object.defineProperty(navigator, 'clipboard', { configurable: true, value: undefined });
+    const c = render(<CodeBlock code={'x()'} />);
+    await act(async () => {
+      copyBtn(c)!.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+    expect(c.textContent).toContain('Copy failed');
   });
 });

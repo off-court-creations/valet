@@ -524,6 +524,16 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   Fan-out review (70 agents, 9 widgets): 48/60 confirmed; 8 `improve` + 1 `rewrite`
   (KeyModal). Order: Panel → Parallax → CodeBlock → Markdown → Table → Dropzone →
   RichChat → KeyModal → LLMChat. Each: agent fix + tests, then Ben's visual pass → stable.
+  - **#3 CodeBlock — AGENT-VERIFIED, awaiting Ben's visual pass (2026-06-18).** Honest
+    copy: guard `navigator.clipboard?.writeText` (undefined on HTTP/old browsers threw)
+    + distinguish success ('Copied') from failure ('Copy failed', `role='alert'`) — the
+    old code claimed success on the reject path. Copy button `sm`→`md` (32→48px, clears
+    the touch floor; IconButton has no coarse floor of its own). Code region now
+    `role='region'` + `aria-label` (from `ariaLabel`) + `tabIndex=0` (keyboard-scrollable);
+    the button keeps its own fixed label. Hard-renamed `title`→`copyLabel` (no alias).
+    Dropped the redundant `codeBackground` hex override (Markdown owns the default).
+    Rewrote the contract test + added success/reject/missing-clipboard tests. Green:
+    typecheck×4, lint, 1502 tests, build, mcp, check:examples (109), docs tsc.
   - **#2 Parallax (trio) — DONE (stable 2026-06-18 — both gates; Ben: "okay next").**
     Fixed the `ParallaxBackground` preset DOUBLE-APPLY (it passed `preset={p}` to
     `ParallaxLayer` AND a `preset(p)`-derived className — now forwards `preset` once).
