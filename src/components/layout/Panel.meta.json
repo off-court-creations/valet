@@ -23,6 +23,12 @@
       "code": "<Panel><Typography>Default surface (backgroundAlt)</Typography></Panel>"
     },
     {
+      "id": "panel-intent",
+      "title": "Semantic intent fill",
+      "lang": "tsx",
+      "code": "<Panel intent=\"primary\"><Typography>Primary-tinted surface (text auto-contrasts)</Typography></Panel>"
+    },
+    {
       "id": "panel-alt-on-alt",
       "title": "Outlined on backgroundAlt surface",
       "lang": "tsx",

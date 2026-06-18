@@ -149,3 +149,23 @@ describe('Panel default padding (1.0, jsdom)', () => {
     expect(over.querySelector('[data-valet-component="Panel"]')).toBeNull();
   });
 });
+
+describe('Panel intent vars — non-hex colour fix (1.0)', () => {
+  it('derives hover/active from a non-hex (rgb) fill without the black fallback', () => {
+    const c = render(
+      <Panel
+        variant='filled'
+        color='rgb(50, 60, 70)'
+      >
+        <span>x</span>
+      </Panel>,
+    );
+    const el = c.querySelector('[data-valet-component="Panel"]') as HTMLElement;
+    const hover = el.style.getPropertyValue('--valet-intent-bg-hover').toLowerCase();
+    const active = el.style.getPropertyValue('--valet-intent-bg-active').toLowerCase();
+    // The old toRgb-only path collapsed any non-hex input to #000000.
+    expect(hover).not.toBe('');
+    expect(hover).not.toBe('#000000');
+    expect(active).not.toBe('#000000');
+  });
+});

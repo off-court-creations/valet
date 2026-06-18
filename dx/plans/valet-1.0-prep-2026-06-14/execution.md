@@ -520,6 +520,18 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   interaction with a mocked rect, color/wide). Green: typecheck×4, lint, 1493 tests,
   build, RTL, mcp, check:examples (108), docs tsc. Stays `experimental` pending Ben's
   visual pass.
+- **Widget sweep (one-by-one, per [widget-review-2026-06-18.md](widget-review-2026-06-18.md)).**
+  Fan-out review (70 agents, 9 widgets): 48/60 confirmed; 8 `improve` + 1 `rewrite`
+  (KeyModal). Order: Panel → Parallax → CodeBlock → Markdown → Table → Dropzone →
+  RichChat → KeyModal → LLMChat. Each: agent fix + tests, then Ben's visual pass → stable.
+  - **#1 Panel — AGENT-VERIFIED, awaiting Ben's visual pass (2026-06-18).** Replaced the
+    bespoke `toRgb/mix/toHex` intent-var block with `computeIntentVars`/`makeMix` — fixes
+    the non-hex defensive-black bug (an `rgb()`/`hsl()`/theme-token `color`/`intent` was
+    misparsing hover/active/disabled to `#000000`; the rest of the library already
+    migrated). Filled panels resolve the full set from their fill; outlined/no-colour
+    stay transparent with a parse-safe disabled-fg mix. Added an `intent='primary'` meta
+    example + a regression test (non-hex fill → non-black hover/active). Green:
+    typecheck×4, lint, 1498 tests (+1), build, RTL, mcp, check:examples (109), docs tsc.
 - **Foundations (all 6) — VERIFIED 2026-06-18 (agent-only; contract/infra, no visual
   pass).** Ben: "fan out and do all of those at once." Ran `foundation-audit` (29 agents:
   6 parallel audits → adversarial verification → synthesis), captured in
