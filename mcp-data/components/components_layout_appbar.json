@@ -126,6 +126,7 @@
     ]
   },
   "cssVars": [
+    "--valet-appbar-navbtn",
     "--valet-bg",
     "--valet-text-color",
     "--valet-intent-bg",

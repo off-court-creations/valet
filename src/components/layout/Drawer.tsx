@@ -106,6 +106,9 @@ const Backdrop = styled('div')<{ $fade: boolean }>`
   opacity: ${({ $fade }) => ($fade ? 0 : 1)};
   transition: opacity 200ms ease;
   z-index: ${zVar('modalBackdrop')};
+  /* Mobile: a drag on the backdrop must not scroll the page behind the open
+     drawer (tap-to-close still fires — touch-action only suppresses gestures). */
+  touch-action: none;
 `;
 
 const Panel = styled('div')<{

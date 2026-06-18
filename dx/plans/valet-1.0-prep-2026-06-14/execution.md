@@ -401,6 +401,19 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   (basic + controlled-vertical; both pass check:examples). Green: typecheck×4, lint, 1454
   tests (2 new), build, RTL, mcp, check:examples (106), docs tsc. Stays `experimental`
   pending Ben's visual pass.
+- **Tier 5 AppBar + Drawer — AGENT-VERIFIED, awaiting Ben's visual pass (2026-06-18).**
+  The mobile-nav chrome pair. Both already mature: **AppBar** uses `computeIntentVars`
+  + an SSR-safe portal (mounted-gate) + Surface margin offset; **Drawer** is a real
+  focus-trapping dialog in overlay mode (useOverlay trapFocus/inert/restoreFocus),
+  inline region when persistent, with adaptive orientation (portrait toggle), RTL-aware
+  logical anchors, and SSR guards. Mobile touches added: **AppBar** — icon-only
+  `navigation` buttons were forced to ~28px; they now size from `--valet-appbar-navbtn`
+  (28px desktop) which `NavWrap` floors to 44px under `@media(pointer:coarse)` (set on
+  the children via the stylesheet, not inline, so the media override wins over the
+  inline width). Desktop look unchanged. **Drawer** — added `touch-action:none` on the
+  backdrop so a drag never scrolls the page behind the open drawer (tap-to-close still
+  fires). Metas verified accurate (no stale prop refs). Green: typecheck×4, lint, 1456
+  tests (2 new), RTL, mcp, docs tsc. Both stay `experimental` pending Ben's visual pass.
 - **Box — DONE (stable 2026-06-17 — both gates).** Ben's visual pass cleared it;
   the `centered`→`centerContent` meta fix shipped.
 - **Pre-existing repo debt (not from this work):** `eslint .` reports 51 prettier
