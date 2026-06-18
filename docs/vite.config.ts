@@ -19,6 +19,16 @@ export default defineConfig(({ mode }) => {
     // This pairs with BrowserRouter basename={import.meta.env.BASE_URL}
     base: process.env.DOCS_BASE || '/',
     plugins: [react()],
+    // `@archway/valet` is a locally-linked workspace package (node_modules symlink
+    // → repo root, served from its built ESM `dist/`). Excluding it from Vite's
+    // dep pre-bundler keeps it from caching a stale copy: whenever `dist/` is
+    // rebuilt (e.g. running the package's gate checks while `vite dev` is up), the
+    // pre-bundle would otherwise desync and named exports like `createFormStore`
+    // resolve to `undefined`, crashing pages with a misleading "lazy element type
+    // … resolves to undefined" error. Serving it un-bundled is always fresh.
+    optimizeDeps: {
+      exclude: ['@archway/valet'],
+    },
     server: {
       host: true, // or '0.0.0.0' to listen on all interfaces
 
