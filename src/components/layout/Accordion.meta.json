@@ -1,7 +1,7 @@
 {
   "name": "Accordion",
   "summary": "Vertical stack of collapsible `Accordion.Item` panels with single or `multiple` open behavior and roving-focus ARIA; control which panels are open with `expanded`/`defaultExpanded`/`onExpandedChange`.",
-  "status": "experimental",
+  "status": "stable",
   "aliases": ["accordion", "expander"],
   "docs": {
     "bestPractices": [
@@ -12,6 +12,7 @@
       "Constrain height in dense pages so the thread scrolls locally rather than the document.",
       "Prefer keeping content mounted unless heavy: use `unmountOnExit` to remove expensive trees when closed.",
       "Ensure keyboard support: Space/Enter toggles, Arrow keys move focus, and focus styles are visible.",
+      "Headers are touch-friendly automatically — the full-width header row floors at ≥44px tall on coarse pointers (40px under `compact`), with the mobile chrome kit (no tap-flash, no accidental text selection). Keep header text concise so the row stays a clean tap target.",
       "Each header is wired to its panel via `aria-controls`/`aria-labelledby` with ids namespaced per instance, so multiple Accordions on one page never produce colliding ARIA references."
     ]
   },

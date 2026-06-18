@@ -375,6 +375,18 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   Source-grep + controlledContract gates green unedited. Green: typecheck×4, lint, 1449
   tests (4 new), build, RTL, mcp, check:examples, docs tsc. Stays `experimental`
   pending Ben's visual pass.
+- **Tier 5 Accordion — DONE (stable 2026-06-18 — both gates).** Ben: "seems great."
+  Verify + mobile-harden (his ask: "mobile ready, excellent, and stable"). Source review
+  clean — already sophisticated (headless controlled/uncontrolled core via the shared
+  `useControlledState`, roving-focus ARIA with per-instance id namespacing, reduced-
+  motion-aware height animation, `headingLevel`/`multiple`/`unmountOnExit`/`constrainHeight`).
+  The header was already ~50px (generous padding) but the chrome kit was incomplete and
+  there was no guaranteed touch floor: completed it (`touch-action: manipulation` +
+  `user-select:none`) and added a `@media (pointer:coarse)` ≥44px `min-height` floor on
+  the header (`--valet-acc-hit` on the Root, 40px under compact) for compact/short-title
+  cases. Metas accurate (`headingLevel` verified real; added a touch-target bestPractice).
+  Promoted Accordion + Accordion.Item. Green: typecheck×4, lint, full suite (2 new mobile
+  tests), RTL, mcp, docs tsc.
 - **Box — DONE (stable 2026-06-17 — both gates).** Ben's visual pass cleared it;
   the `centered`→`centerContent` meta fix shipped.
 - **Pre-existing repo debt (not from this work):** `eslint .` reports 51 prettier

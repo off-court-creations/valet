@@ -116,14 +116,14 @@
     "category": "layout",
     "summary": "Vertical stack of collapsible `Accordion.Item` panels with single or `multiple` open behavior and roving-focus ARIA; control which panels are open with `expanded`/`defaultExpanded`/`onExpandedChange`.",
     "slug": "components/layout/accordion",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Accordion.Item",
     "category": "layout",
     "summary": "One collapsible panel inside an `Accordion`, supplying its header and body content; author items as direct `Accordion` children — the parent owns open/closed state, focus, and ARIA wiring.",
     "slug": "components/layout/accordion.item",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "AppBar",

@@ -163,8 +163,18 @@ const HeaderBtn = styled('button')<{
   margin-inline-start: -${({ $shift }) => $shift};
   margin-inline-end: -${({ $shift }) => $shift};
 
-  /* Disable blue tap-highlight on mobile */
+  /* Mobile chrome kit — no blue tap flash, fast taps, no text selection on
+     a double-tap of the header. */
   -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+
+  /* Coarse-pointer comfort: the header is always a >=44px tap row (the generous
+     padding usually clears this; the floor guards compact/short-title cases). */
+  @media (pointer: coarse) {
+    min-height: var(--valet-acc-hit, 44px);
+  }
 
   transition: background 200ms ease;
 
@@ -471,7 +481,11 @@ export const Accordion: React.FC<AccordionProps> & {
         <Root
           {...(() => {
             const { style: styleProp, ...rest } = divProps;
-            const mergedStyle = { ...(sx || {}), ...(styleProp as React.CSSProperties) };
+            const mergedStyle = {
+              '--valet-acc-hit': effCompact ? '40px' : '44px',
+              ...(sx || {}),
+              ...(styleProp as React.CSSProperties),
+            } as React.CSSProperties;
             return { ...rest, style: mergedStyle } as typeof divProps;
           })()}
           $pad={resolveSpace(padProp, theme, effCompact, 1)}
