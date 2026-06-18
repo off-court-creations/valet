@@ -520,6 +520,20 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   interaction with a mocked rect, color/wide). Green: typecheck×4, lint, 1493 tests,
   build, RTL, mcp, check:examples (108), docs tsc. Stays `experimental` pending Ben's
   visual pass.
+- **Foundations (all 6) — VERIFIED 2026-06-18 (agent-only; contract/infra, no visual
+  pass).** Ben: "fan out and do all of those at once." Ran `foundation-audit` (29 agents:
+  6 parallel audits → adversarial verification → synthesis), captured in
+  [foundation-audit-2026-06-18.md](foundation-audit-2026-06-18.md). 18/22 findings
+  confirmed — **all minor/nit, ZERO blockers/majors** — so all six boxes checked: CSS
+  engine, theme+spacing/density, surfaceStore, overlay+z-index, Form store+controlled
+  hook, events. The CSS engine's 256-cardinality tripwire, the controlled-state mount
+  latch, the values-only form store, the LIFO overlay stack + inert/restore-focus, and
+  the ChangeInfo vocabulary are all enforced + tested. Confirmed minors are cheap pre-tag
+  polish (non-blocking): events `index`/`id` are dead (decide before the type freezes);
+  `keyframes()` lacks the cardinality guard `styled()` has; `densityScale` (0.8/0.9/1.0)
+  has no direct test + its catch-all maps bad values to tight; surfaceStore id-rebind
+  leak + height-only rounding (no current consumer hits them); overlay post-lock inert +
+  detached restore-focus guards. None gate 1.0.
 - **Box — DONE (stable 2026-06-17 — both gates).** Ben's visual pass cleared it;
   the `centered`→`centerContent` meta fix shipped.
 - **Pre-existing repo debt (not from this work):** `eslint .` reports 51 prettier

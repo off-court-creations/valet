@@ -35,18 +35,18 @@ Everything renders through these; lock them before any component. Most are alrea
 covered by the suite — this is "confirm the gates are green + eyeball the freshly
 retuned spacing/density numbers."
 
-- [ ] **CSS engine** (`src/css`) — the graph root; all `styled()`/`keyframes()` flow through it.
+- [x] **CSS engine** (`src/css`) — the graph root; all `styled()`/`keyframes()` flow through it.
   `npm run build && npm run check:engine` · `npx vitest run src/css`
-- [ ] **Theme + spacing/density** (`themeStore`, `themeUtils.spacing`, `densityScale`, `resolveSpace`, `compactContext`, `styles.css`) — **freshest, riskiest change.**
+- [x] **Theme + spacing/density** (`themeStore`, `themeUtils.spacing`, `densityScale`, `resolveSpace`, `compactContext`, `styles.css`) — **freshest, riskiest change.**
   `npx vitest run src/utils/resolveSpace.test.ts src/system/themeUtils.test.ts src/system/createInitialTheme.test.ts src/system/intentVars.test.ts`
   Canary for the retune: `npx vitest run src/components/layout/Grid.dom.test.tsx src/components/layout/Panel.dom.test.tsx` (gap/pad default ×2; density writes inline `--valet-space`; `--valet-panel-width:100%`). Inspect `densityScale.ts` (0.8/0.9/1.0) + `styles.css` root `--valet-space`.
-- [ ] **surfaceStore *contract*** (store/breakpoint/child-registry — *not* the Surface component yet).
+- [x] **surfaceStore *contract*** (store/breakpoint/child-registry — *not* the Surface component yet).
   `npx vitest run src/system/surfaceStore.dom.test.ts`
-- [ ] **Overlay engine** (`src/system/overlay` + `zIndex`).
+- [x] **Overlay engine** (`src/system/overlay` + `zIndex`).
   `npx vitest run src/system/overlay.dom.test.ts src/system/overlay.registry.dom.test.tsx src/system/resolveOutsideClick.test.ts src/system/resolveTabAction.test.ts src/system/zIndex.repo.test.ts`
-- [ ] **Form store** (`createFormStore` + `FormControl`/`useControlledState`).
+- [x] **Form store** (`createFormStore` + `FormControl`/`useControlledState`).
   `npx vitest run src/system/createFormStore.test.ts src/components/fields/controlledContract.dom.test.tsx`
-- [ ] **Events vocabulary** (`src/system/events.ts` — `ChangeInfo`/source/phase table).
+- [x] **Events vocabulary** (`src/system/events.ts` — `ChangeInfo`/source/phase table).
   `npx vitest run src/system/events.contract.dom.test.tsx`
 
 ## Tier 1 — Pure leaves (no sibling-component imports)
