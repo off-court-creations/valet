@@ -168,6 +168,6 @@
     "src/components/layout/Drawer.tsx",
     "docs/src/pages/components/layout/DrawerDemo.tsx"
   ],
-  "version": "0.36.0",
+  "version": "0.37.0",
   "schemaVersion": "1.7"
 }

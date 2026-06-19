@@ -4,8 +4,12 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
-> **1.0 prep (epic branch `feat/valet-1.0`).** These entries accumulate toward the
-> 1.0 cut; the `## Unreleased` heading becomes `## [1.0.0]` at release (Wave 4).
+## [0.37.0] - 2026-06-19
+
+> **Pre-1.0 dogfood minor (epic branch `feat/valet-1.0`).** Ships the full 1.0-prep
+> work for real-world validation through the MCP server and create-valet-app; `1.0.0`
+> follows as the stability declaration once it is proven in use. 0.x semantics still
+> apply — a minor may break, and `^0.37.0` locks to 0.37.x.
 
 ### Added
 

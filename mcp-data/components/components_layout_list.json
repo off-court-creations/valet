@@ -193,6 +193,6 @@
     "src/components/layout/List.tsx",
     "docs/src/pages/components/layout/ListDemoPage.tsx"
   ],
-  "version": "0.36.0",
+  "version": "0.37.0",
   "schemaVersion": "1.7"
 }

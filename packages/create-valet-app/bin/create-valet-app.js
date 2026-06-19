@@ -36,7 +36,7 @@ function resolveValetMinor() {
   // Config override in package.json
   if (PKG && PKG.cva && PKG.cva.valetMinor) return String(PKG.cva.valetMinor);
   // Derive from this package version (use MAJOR.MINOR)
-  const ver = String(PKG.version || '0.31.0');
+  const ver = String(PKG.version || '0.37.0');
   const parts = ver.split('.');
   const major = parts[0] || '0';
   const minor = parts[1] || '30';

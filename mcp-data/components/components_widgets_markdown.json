@@ -147,6 +147,6 @@
     "src/components/widgets/Markdown.tsx",
     "docs/src/pages/components/widgets/MarkdownDemo.tsx"
   ],
-  "version": "0.36.0",
+  "version": "0.37.0",
   "schemaVersion": "1.7"
 }

@@ -86,6 +86,6 @@
   "sourceFiles": [
     "src/components/fields/MetroSelect.tsx"
   ],
-  "version": "0.36.0",
+  "version": "0.37.0",
   "schemaVersion": "1.7"
 }

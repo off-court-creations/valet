@@ -213,6 +213,6 @@
     "src/components/primitives/Typography.tsx",
     "docs/src/pages/components/primitives/TypographyDemoPage.tsx"
   ],
-  "version": "0.36.0",
+  "version": "0.37.0",
   "schemaVersion": "1.7"
 }
