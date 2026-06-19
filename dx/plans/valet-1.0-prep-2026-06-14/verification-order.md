@@ -91,7 +91,7 @@ retuned spacing/density numbers."
 
 ## Tier 7 — Table / Markdown subtree
 
-- [ ] **Table** (→ Checkbox + Pagination) · [ ] **Markdown** (→ Stack/Panel/Typography/Image/Divider/**Table**) · [ ] KeyModal (→ Button/Modal/Panel/Stack/Typography + aiKeyStore)
+- [ ] **Table** (→ Checkbox + Pagination) · [x] **Markdown** _(stable 2026-06-18 — both gates; fixed codePanel-preset white-screen blocker + URL-sanitiser obfuscation bypass + start=0/blockquote-token/keys + external-link rel + single-source code surface)_ (→ Stack/Panel/Typography/Image/Divider/**Table**) · [ ] KeyModal (→ Button/Modal/Panel/Stack/Typography + aiKeyStore)
 
 ## Tier 8 — Final composites
 

@@ -361,7 +361,7 @@
     "category": "widgets",
     "summary": "Renders a Markdown string into valet primitives (headings, lists, links, fenced code with highlighting); use it to display AI/CMS output as themed React, not raw HTML.",
     "slug": "components/widgets/markdown",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Pagination",

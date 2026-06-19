@@ -3,7 +3,7 @@
   "category": "widgets",
   "slug": "components/widgets/markdown",
   "summary": "Renders a Markdown string into valet primitives (headings, lists, links, fenced code with highlighting); use it to display AI/CMS output as themed React, not raw HTML.",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "markdown",
     "md",

@@ -524,7 +524,7 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   Fan-out review (70 agents, 9 widgets): 48/60 confirmed; 8 `improve` + 1 `rewrite`
   (KeyModal). Order: Panel → Parallax → CodeBlock → Markdown → Table → Dropzone →
   RichChat → KeyModal → LLMChat. Each: agent fix + tests, then Ben's visual pass → stable.
-  - **#4 Markdown — AGENT-VERIFIED, awaiting Ben's visual pass (2026-06-18).** Dynamic
+  - **#4 Markdown — DONE (stable 2026-06-18 — both gates; Ben: "markdown approved").** Dynamic
     fan-out analysis (40 agents, 5 lenses → adversarial verify → synth; 29 confirmed) in
     [markdown-1.0-analysis]. Fixes Ben approved ("fix blocker, then all recs"):
     (BLOCKER) fenced code hard-crashed any bare consumer — `Markdown.tsx` set
