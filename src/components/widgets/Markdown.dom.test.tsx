@@ -8,13 +8,14 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import React, { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import Markdown from './Markdown';
+import Markdown, { isSafeHref, isSafeImageSrc, isExternalHref } from './Markdown';
 import { SurfaceCtx, createSurfaceStore } from '../../system/surfaceStore';
-import { definePreset } from '../../css/stylePresets';
 
-/* Markdown's fenced-code Panel references the app-defined `codePanel`
-   preset (the docs app registers it in globalPresets.ts) ------------- */
-definePreset('codePanel', (t) => `padding: ${t.spacing(1)};`);
+/* NOTE: intentionally NO `definePreset('codePanel')` here. The library must
+   render fenced code with ZERO app-level preset registration — Markdown uses
+   Panel's own `pad` API, not an app preset. If a fence ever throws "Unknown
+   style preset codePanel" again, this suite (it renders fences) catches the
+   1.0 blocker regression. */
 
 /* react-dom warns unless act usage is announced ----------------------- */
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -198,5 +199,70 @@ describe('Markdown XSS defense (jsdom)', () => {
     const img = container.querySelector('img');
     const src = img?.getAttribute('src') ?? '';
     expect(src).not.toContain('data:text/html');
+  });
+});
+
+/* URL sanitiser — obfuscation defence (SECURITY, 1.0 major) ------------- */
+// Direct unit tests: browsers strip control chars + whitespace before resolving
+// a scheme, so the allow-list must too. These exercise the stripped-probe path
+// regardless of how the upstream lexer happens to tokenize the destination.
+describe('isSafeHref / isSafeImageSrc obfuscation defence', () => {
+  it('rejects a leading-control-char javascript: href', () => {
+    expect(isSafeHref('javascript:alert(1)')).toBeNull();
+  });
+  it('rejects an internal-whitespace java\\tscript: href', () => {
+    expect(isSafeHref('java\tscript:alert(1)')).toBeNull();
+    expect(isSafeHref('java\nscript:alert(1)')).toBeNull();
+  });
+  it('rejects a control-char-obfuscated data:text/html href and image src', () => {
+    expect(isSafeHref('data:text/html,<script>1</script>')).toBeNull();
+    expect(isSafeImageSrc('data:text/html;base64,PHN2Zz4=')).toBeNull();
+    expect(isSafeImageSrc('da\tta:text/html;base64,PHN2Zz4=')).toBeNull();
+  });
+  it('still passes legitimate hrefs/srcs verbatim', () => {
+    expect(isSafeHref('https://example.com/p?q=1')).toBe('https://example.com/p?q=1');
+    expect(isSafeHref('#anchor')).toBe('#anchor');
+    expect(isSafeHref('/rel/path')).toBe('/rel/path');
+    expect(isSafeHref('mailto:a@b.com')).toBe('mailto:a@b.com');
+    expect(isSafeImageSrc('data:image/png;base64,iVBORw0KGgo=')).toBe(
+      'data:image/png;base64,iVBORw0KGgo=',
+    );
+    expect(isSafeImageSrc('https://cdn.example.com/x.png')).toBe('https://cdn.example.com/x.png');
+  });
+  it('classifies external vs in-document hrefs for rel hardening', () => {
+    expect(isExternalHref('https://example.com')).toBe(true);
+    expect(isExternalHref('//cdn.example.com')).toBe(true);
+    expect(isExternalHref('#anchor')).toBe(false);
+    expect(isExternalHref('/rel/path')).toBe(false);
+    expect(isExternalHref('mailto:a@b.com')).toBe(false);
+  });
+});
+
+/* Link hardening (Q1 — rel + focusable) -------------------------------- */
+describe('Markdown link hardening (jsdom)', () => {
+  it('adds rel="noopener noreferrer" to external links only', () => {
+    const container = renderMarkdown(
+      ['[ext](https://example.com)', '', '[rel](/local/path)', '', '[anchor](#h)'].join('\n'),
+    );
+    const links = Array.from(container.querySelectorAll('a')) as HTMLAnchorElement[];
+    const byText = (t: string) => links.find((a) => a.textContent === t)!;
+    expect(byText('ext').getAttribute('rel')).toBe('noopener noreferrer');
+    expect(byText('rel').getAttribute('rel')).toBeNull();
+    expect(byText('anchor').getAttribute('rel')).toBeNull();
+  });
+});
+
+/* Ordered lists (minor — start=0) -------------------------------------- */
+describe('Markdown ordered-list start', () => {
+  it('keeps start=0 instead of defaulting to 1', () => {
+    const container = renderMarkdown(['0. zero', '1. one'].join('\n'));
+    const ol = container.querySelector('ol');
+    expect(ol).not.toBeNull();
+    expect(ol!.getAttribute('start')).toBe('0');
+  });
+  it('preserves an explicit non-zero start', () => {
+    const container = renderMarkdown(['5. five', '6. six'].join('\n'));
+    const ol = container.querySelector('ol');
+    expect(ol!.getAttribute('start')).toBe('5');
   });
 });

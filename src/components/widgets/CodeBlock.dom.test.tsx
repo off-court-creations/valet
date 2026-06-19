@@ -5,21 +5,20 @@
 //
 // CodeBlock embeds Markdown (→ Typography/Panel, needs a Surface) and
 // Snackbar, so the tree lives inside a Surface context with a
-// ResizeObserver stub, the docs-app `codePanel` preset registered, and
-// a stubbed navigator.clipboard. highlight.js runs synchronously and is
-// fine in jsdom; the overflow ResizeObserver/MutationObserver wiring is
-// exercised but not asserted (jsdom reports zero geometry).
+// ResizeObserver stub and a stubbed navigator.clipboard. No `codePanel`
+// preset is registered — Markdown ships its own fenced-code chrome now, so
+// this suite also guards the 1.0 preset-crash blocker. highlight.js runs
+// synchronously and is fine in jsdom.
 // ─────────────────────────────────────────────────────────────
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import React, { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { CodeBlock } from './CodeBlock';
 import { SurfaceCtx, createSurfaceStore } from '../../system/surfaceStore';
-import { definePreset } from '../../css/stylePresets';
 
-/* Markdown's fenced-code Panel references the app-defined `codePanel`
-   preset (the docs app registers it in globalPresets.ts). --------------- */
-definePreset('codePanel', (t) => `padding: ${t.spacing(1)};`);
+/* NOTE: no `definePreset('codePanel')` — CodeBlock renders via Markdown, which
+   now ships its own fenced-code chrome (Panel `pad`), so this suite also guards
+   the "Unknown style preset codePanel" 1.0 blocker against regressing. */
 
 /* react-dom warns unless act usage is announced ----------------------- */
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;

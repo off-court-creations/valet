@@ -524,6 +524,33 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   Fan-out review (70 agents, 9 widgets): 48/60 confirmed; 8 `improve` + 1 `rewrite`
   (KeyModal). Order: Panel → Parallax → CodeBlock → Markdown → Table → Dropzone →
   RichChat → KeyModal → LLMChat. Each: agent fix + tests, then Ben's visual pass → stable.
+  - **#4 Markdown — AGENT-VERIFIED, awaiting Ben's visual pass (2026-06-18).** Dynamic
+    fan-out analysis (40 agents, 5 lenses → adversarial verify → synth; 29 confirmed) in
+    [markdown-1.0-analysis]. Fixes Ben approved ("fix blocker, then all recs"):
+    (BLOCKER) fenced code hard-crashed any bare consumer — `Markdown.tsx` set
+    `preset='codePanel'` on the code Panel, but the library ships ZERO presets (only the
+    docs app + 3 test files registered it), so `preset()` threw "Unknown style preset" →
+    white screen. This reached through **CodeBlock** (already stable) + RichChat/LLMChat.
+    Both gates shared the blind spot (tests + docs both register codePanel). Fix: swapped
+    to Panel's own `pad={1}` (= spacing(1), no app preset). Regression guard: removed the
+    `definePreset('codePanel')` from all 3 test files so the suites now render fences on
+    the real shipped surface.
+    (MAJOR) URL-sanitiser bypass — `isSafeHref`/`isSafeImageSrc` only `trim()`ed, so
+    control-char/whitespace-obfuscated schemes (`\x01javascript:`, `java\tscript:`,
+    `\x01data:text/html`) slipped into the "relative" branch verbatim. Fix: decide on a
+    `[ -\s]`-stripped probe, return the original only if the cleaned scheme is
+    allow-listed. Exported the helpers (NOT barrelled) + unit fixtures.
+    (MINORS) ordered-list `start=0` dropped by a truthiness guard → `start !== undefined`;
+    blockquote accent border hardcoded `rgba(0,0,0,0.12)` → `theme.colors.divider` token
+    (threaded a RenderCtx); index keys → `${t.type}:${i}` for clean streaming remounts.
+    (Q1, cheap subset) external links (http/https/ftp/`//`) get `rel="noopener noreferrer"`
+    + a styled `MdLink` adds the tap-highlight/`touch-action` reset + `:focus-visible` ring
+    (NO 44px floor — breaks inline prose). (Q2 task-list a11y: SKIPPED per Ben.)
+    (Q3, my call) single source of truth for the code surface: stripped the redundant
+    `background` from the `.hljs` rules so the Panel `codeBg` owns the whole surface (was:
+    hljs painted #fff inside an #f6f8fa panel) — `codeBackground` now controls all of it;
+    documented the GitHub coupling + raw-HTML-is-inert-text in meta. Green: typecheck×4,
+    lint, engine, RTL, 1510 tests, build, mcp (+schema), check:examples (109), docs tsc.
   - **#3 CodeBlock — DONE (stable 2026-06-18 — both gates; Ben: "promote").** Honest
     copy: guard `navigator.clipboard?.writeText` (undefined on HTTP/old browsers threw)
     + distinguish success ('Copied') from failure ('Copy failed', `role='alert'`) — the
