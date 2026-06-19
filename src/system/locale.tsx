@@ -89,6 +89,8 @@ export interface ValetStrings {
     instructionsIdle: string;
     /** rejection live-region fallback message. */
     fileRejected: string;
+    /** rejection message for files dropped past the cumulative `maxFiles` limit. */
+    tooManyFiles: string;
   };
   /** LoadingBackdrop.tsx:64 — spinner aria-label. */
   loadingBackdrop: {
@@ -171,6 +173,7 @@ export const enStrings: ValetStrings = deepFreeze({
     instructionsActive: 'Drop files here…',
     instructionsIdle: 'Drag files or click to browse',
     fileRejected: 'File rejected',
+    tooManyFiles: 'Too many files',
   },
   loadingBackdrop: {
     loading: 'Loading',

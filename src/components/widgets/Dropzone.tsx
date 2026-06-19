@@ -187,50 +187,89 @@ export const Dropzone: React.FC<DropzoneProps> = ({
   const { theme } = useTheme();
   const effCompact = useCompact();
   const t = useComponentStrings('dropzone', labels);
-  const previewsRef = useRef<Map<File, string>>(new Map());
+  const [previewUrls, setPreviewUrls] = useState<Map<File, string>>(() => new Map());
+  // Mirror of the latest URL map so the unmount effect can revoke without a
+  // stale closure (state is a fresh Map each change; a ref tracks the current).
+  const previewUrlsRef = useRef(previewUrls);
+  previewUrlsRef.current = previewUrls;
   const [loaded, setLoaded] = useState<Set<File>>(() => new Set());
 
   const toCssSize = (v: number | string | undefined, fallback: string) =>
     v == null ? fallback : typeof v === 'number' ? `${v}px` : String(v);
 
-  // Create/revoke object URLs as files change (image files only)
+  // Create/revoke object URLs as files change (image files only). The URLs live
+  // in STATE (not a ref) so a freshly minted URL re-renders the <img> that
+  // consumes it — minting into a ref leaves the first render's `src` undefined
+  // and the tile stuck on its spinner forever. createObjectURL/revoke run in the
+  // effect BODY (once per files change), never inside a setState updater — which
+  // StrictMode double-invokes, double-minting and leaking a URL.
   useEffect(() => {
-    const map = previewsRef.current;
+    const prev = previewUrlsRef.current;
+    let changed = false;
+    const next = new Map(prev);
     // add new URLs
     files.forEach((f) => {
-      if (isImageFile(f) && !map.has(f)) map.set(f, URL.createObjectURL(f));
+      if (isImageFile(f) && !next.has(f)) {
+        next.set(f, URL.createObjectURL(f));
+        changed = true;
+      }
     });
     // revoke removed URLs
-    for (const [f, url] of Array.from(map.entries())) {
+    for (const [f, url] of Array.from(next.entries())) {
       if (!files.includes(f)) {
         URL.revokeObjectURL(url);
-        map.delete(f);
+        next.delete(f);
+        changed = true;
       }
     }
+    if (changed) {
+      previewUrlsRef.current = next;
+      setPreviewUrls(next);
+    }
+    // Prune load-state for files that are gone, so removed files don't retain
+    // their File reference for the component's lifetime (pure → StrictMode-safe).
+    setLoaded((prevLoaded) => {
+      if (!prevLoaded.size) return prevLoaded;
+      let dropped = false;
+      const nextLoaded = new Set<File>();
+      for (const f of prevLoaded) {
+        if (files.includes(f)) nextLoaded.add(f);
+        else dropped = true;
+      }
+      return dropped ? nextLoaded : prevLoaded;
+    });
   }, [files]);
 
-  // Revoke everything on unmount
-  useEffect(() => {
-    const map = previewsRef.current;
-    return () => {
-      for (const [, url] of Array.from(map.entries())) URL.revokeObjectURL(url);
-      map.clear();
-    };
-  }, []);
+  // Revoke every outstanding URL on unmount (reads the live ref, not a closure).
+  useEffect(
+    () => () => {
+      for (const [, url] of previewUrlsRef.current) URL.revokeObjectURL(url);
+    },
+    [],
+  );
 
   const handleDrop = useCallback(
     (accepted: File[], rej: FileRejection[], evt: DropEvent) => {
       const next = multiple ? [...files, ...accepted] : accepted.slice(0, 1);
       const limited = maxFiles ? next.slice(0, maxFiles) : next;
       setFiles(limited);
-      /* react-dropzone fires onDrop on every drop (accepted and/or
-         rejected), so syncing here both surfaces fresh rejections and
-         clears stale ones after a later successful drop. */
-      setRejections(rej);
+      /* react-dropzone enforces `maxFiles` per-drop only, so an append that
+         crosses the cumulative limit would silently discard the overflow.
+         Surface those files through the same rejection region as type/size
+         errors instead of dropping them without feedback. */
+      const overflow = maxFiles ? next.slice(maxFiles) : [];
+      const overflowRej: FileRejection[] = overflow.map((file) => ({
+        file,
+        errors: [{ code: 'too-many-files', message: t.tooManyFiles }],
+      }));
+      /* react-dropzone fires onDrop on every drop (accepted and/or rejected),
+         so syncing here both surfaces fresh rejections and clears stale ones
+         after a later successful drop. */
+      setRejections([...rej, ...overflowRej]);
       onFilesChange?.(limited);
       onDropCb?.(accepted, rej, evt);
     },
-    [files, multiple, maxFiles, onFilesChange, onDropCb],
+    [files, multiple, maxFiles, onFilesChange, onDropCb, t],
   );
 
   const handleRejected = useCallback(
@@ -285,7 +324,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
           {isImageFile(f) ? (
             <>
               <img
-                src={previewsRef.current.get(f)}
+                src={previewUrls.get(f)}
                 alt={f.name}
                 style={{
                   width: '100%',
@@ -514,7 +553,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
       {rejections.length > 0 && (
         <div
           id={errorsId}
-          aria-live='polite'
+          role='alert'
           style={{ marginTop: theme.spacing(0.5) }}
         >
           {rejections.map((r, i) => (

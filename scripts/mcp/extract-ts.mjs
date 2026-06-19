@@ -351,6 +351,20 @@ export function extractFromTs(projectRoot) {
     // PascalCase with at least one lowercase letter (KeyModal yes;
     // DEFAULT_MODELS / SCREAMING_SNAKE constants no).
     const looksLikeComponentName = (name) => /^[A-Z][A-Za-z0-9]*$/.test(name) && /[a-z]/.test(name);
+    // Local names that are really dotted subcomponents, e.g.
+    // `Option.displayName = 'Select.Option'`. These are exported bare only for
+    // internal composition (`Forward.Option = Option`); their canonical MCP
+    // identity is the dotted name, minted by the displayName pass below. Skip
+    // the bare alias here so it doesn't shadow that — and, since BOTH Select
+    // and MetroSelect export a const `Option`, so the two don't collide into a
+    // single ambiguous `components_fields_option` entry.
+    const dottedAliasLocals = new Set();
+    {
+      const aliasRe = /(\w+)\.displayName\s*=\s*'[^']+\.[^']+'/g;
+      let am;
+      const txt = sf.getFullText();
+      while ((am = aliasRe.exec(txt))) dottedAliasLocals.add(am[1]);
+    }
     const defaultExportDecs = [];
     for (const [name, decs] of exports) {
       for (const d of decs) {
@@ -364,7 +378,11 @@ export function extractFromTs(projectRoot) {
         }
         // PascalCase only: an uppercase start alone also matches constant
         // exports like DEFAULT_MODELS, which are not components.
-        if (looksLikeComponentName(name) && !componentNames.includes(name))
+        if (
+          looksLikeComponentName(name) &&
+          !componentNames.includes(name) &&
+          !dottedAliasLocals.has(name)
+        )
           componentNames.push(name);
       }
     }

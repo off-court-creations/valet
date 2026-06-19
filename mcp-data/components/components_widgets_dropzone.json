@@ -112,7 +112,18 @@
       "style"
     ]
   },
-  "cssVars": [],
+  "cssVars": [
+    "--valet-dz-",
+    "--valet-dz-stroke",
+    "--valet-dz-border-style",
+    "--valet-dz-border",
+    "--valet-dz-radius",
+    "--valet-dz-bg",
+    "--valet-dz-pad",
+    "--valet-focus-width",
+    "--valet-dz-focus",
+    "--valet-dz-rm-hit"
+  ],
   "cssPresets": [],
   "events": [
     {
@@ -133,6 +144,7 @@
     "Indicate accepted file types and size limits clearly before upload.",
     "Provide both drag‑and‑drop and a clickable target for accessibility. Ensure the zone is keyboard operable.",
     "Validate optimistically on drop and show per‑file status/errors with polite announcements.",
+    "With `multiple`, files dropped past the cumulative `maxFiles` limit across successive drops are surfaced as rejections (not silently discarded).",
     "Avoid blocking the UI; use background uploads and concise feedback.",
     "Revoke object URLs for previews when files are removed or on unmount to avoid leaks.",
     "Sanitize file names and never execute or render untrusted content.",
