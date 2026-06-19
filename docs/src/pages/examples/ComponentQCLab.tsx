@@ -69,7 +69,7 @@ function HeroSlot() {
       <Stack>
         <Typography
           variant='h4'
-          bold
+          weight='bold'
         >
           Component Under Test
         </Typography>
@@ -101,7 +101,7 @@ export default function ComponentQCLab() {
       <Stack>
         <Typography
           variant='h2'
-          bold
+          weight='bold'
         >
           Component QC Playground
         </Typography>
@@ -110,18 +110,12 @@ export default function ComponentQCLab() {
         </Typography>
 
         {/* Top row: Hero slot spans full width */}
-        <Grid
-          columns={1}
-          adaptive
-        >
+        <Grid columns={1}>
           <HeroSlot />
         </Grid>
 
         {/* Surrounding layout – intentionally varied to exercise spacing + density */}
-        <Grid
-          columns={3}
-          adaptive
-        >
+        <Grid columns={{ xs: 1, md: 3 }}>
           <Panel>
             <Tabs>
               <Tabs.Tab>Gallery</Tabs.Tab>
@@ -140,7 +134,7 @@ export default function ComponentQCLab() {
               </Tabs.Panel>
               <Tabs.Panel>
                 <Stack>
-                  <Typography bold>Scratchpad</Typography>
+                  <Typography weight='bold'>Scratchpad</Typography>
                   <Markdown data={'- [ ] Edge cases\n- [x] Focus order\n- [ ] Density sweep'} />
                   <Button variant='outlined'>Export</Button>
                 </Stack>
@@ -151,7 +145,7 @@ export default function ComponentQCLab() {
           <Panel variant='outlined'>
             <Typography
               variant='h5'
-              bold
+              weight='bold'
             >
               KPIs
             </Typography>
@@ -173,7 +167,7 @@ export default function ComponentQCLab() {
                   <Typography variant='subtitle'>{label}</Typography>
                   <Typography
                     variant='h4'
-                    bold
+                    weight='bold'
                   >
                     {value}
                   </Typography>
@@ -185,7 +179,7 @@ export default function ComponentQCLab() {
           <Panel>
             <Typography
               variant='h4'
-              bold
+              weight='bold'
             >
               Release Notes
             </Typography>
@@ -195,7 +189,7 @@ export default function ComponentQCLab() {
           <Panel>
             <Typography
               variant='h4'
-              bold
+              weight='bold'
             >
               Team Tasks
             </Typography>
@@ -212,7 +206,7 @@ export default function ComponentQCLab() {
           <Panel>
             <Typography
               variant='h4'
-              bold
+              weight='bold'
             >
               Recent Orders
             </Typography>
@@ -230,7 +224,7 @@ export default function ComponentQCLab() {
           <Panel variant='outlined'>
             <Typography
               variant='h5'
-              bold
+              weight='bold'
             >
               Info
             </Typography>

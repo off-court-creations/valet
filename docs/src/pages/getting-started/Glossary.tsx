@@ -438,7 +438,7 @@ export default function GlossaryPage() {
         >
           <Typography
             variant='h4'
-            bold
+            weight='bold'
           >
             {highlight(e.term)}
           </Typography>
@@ -487,7 +487,7 @@ export default function GlossaryPage() {
       >
         <Typography
           variant='h2'
-          bold
+          weight='bold'
         >
           valet Glossary
         </Typography>
@@ -508,7 +508,7 @@ export default function GlossaryPage() {
                   <Typography
                     id={`letter-${g.key}`}
                     variant='h3'
-                    bold
+                    weight='bold'
                     sx={{ marginTop: '0.5rem' }}
                   >
                     {categoryLabel[g.key]}
@@ -530,7 +530,7 @@ export default function GlossaryPage() {
                   <Typography
                     id={`letter-${g.key}`}
                     variant='h3'
-                    bold
+                    weight='bold'
                     sx={{ marginTop: '0.5rem' }}
                   >
                     {g.key}

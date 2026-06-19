@@ -324,6 +324,7 @@ const ADAPTERS: Array<Adapter<any>> = [
         name={key}
         value={v as string}
         onValueChange={onChange}
+        aria-label='Field'
       />
     ),
     // `name` is required by TextFieldProps; with no enclosing FormControl the
@@ -333,12 +334,14 @@ const ADAPTERS: Array<Adapter<any>> = [
       <TextField
         name='field'
         defaultValue={v as string}
+        aria-label='Field'
       />
     ),
     formChild: ({ value, key }) => (
       <TextField
         name={key}
         value={value as string}
+        aria-label='Field'
       />
     ),
     read: (c) => textInput(c).value,
@@ -354,13 +357,20 @@ const ADAPTERS: Array<Adapter<any>> = [
         name={key}
         checked={v}
         onValueChange={onChange}
+        aria-label='Field'
       />
     ),
-    uncontrolled: (v) => <Switch defaultChecked={v} />,
+    uncontrolled: (v) => (
+      <Switch
+        defaultChecked={v}
+        aria-label='Field'
+      />
+    ),
     formChild: ({ value, key }) => (
       <Switch
         name={key}
         checked={value}
+        aria-label='Field'
       />
     ),
     read: (c) => switchTrack(c).getAttribute('aria-checked') === 'true',
@@ -376,13 +386,20 @@ const ADAPTERS: Array<Adapter<any>> = [
         name={key}
         checked={v}
         onValueChange={onChange}
+        aria-label='Field'
       />
     ),
-    uncontrolled: (v) => <Checkbox defaultChecked={v} />,
+    uncontrolled: (v) => (
+      <Checkbox
+        defaultChecked={v}
+        aria-label='Field'
+      />
+    ),
     formChild: ({ value, key }) => (
       <Checkbox
         name={key}
         checked={value}
+        aria-label='Field'
       />
     ),
     read: (c) => checkboxInput(c).checked,
@@ -398,15 +415,24 @@ const ADAPTERS: Array<Adapter<any>> = [
         name={key}
         value={v}
         onValueChange={onChange}
+        aria-label='Field'
       >
         {selectOpts()}
       </Select>
     ),
-    uncontrolled: (v) => <Select defaultValue={v}>{selectOpts()}</Select>,
+    uncontrolled: (v) => (
+      <Select
+        defaultValue={v}
+        aria-label='Field'
+      >
+        {selectOpts()}
+      </Select>
+    ),
     formChild: ({ value, key }) => (
       <Select
         name={key}
         value={value}
+        aria-label='Field'
       >
         {selectOpts()}
       </Select>
@@ -492,6 +518,7 @@ const ADAPTERS: Array<Adapter<any>> = [
         snap='step'
         step={40}
         onValueChange={onChange}
+        aria-label='Field'
       />
     ),
     uncontrolled: (v) => (
@@ -501,6 +528,7 @@ const ADAPTERS: Array<Adapter<any>> = [
         max={120}
         snap='step'
         step={40}
+        aria-label='Field'
       />
     ),
     formChild: ({ value, key }) => (
@@ -511,6 +539,7 @@ const ADAPTERS: Array<Adapter<any>> = [
         max={120}
         snap='step'
         step={40}
+        aria-label='Field'
       />
     ),
     read: (c) => Number(sliderThumb(c).getAttribute('aria-valuenow')),
@@ -526,13 +555,20 @@ const ADAPTERS: Array<Adapter<any>> = [
         name={key}
         value={v}
         onValueChange={onChange}
+        aria-label='Field'
       />
     ),
-    uncontrolled: (v) => <Iterator defaultValue={v} />,
+    uncontrolled: (v) => (
+      <Iterator
+        defaultValue={v}
+        aria-label='Field'
+      />
+    ),
     formChild: ({ value, key }) => (
       <Iterator
         name={key}
         value={value}
+        aria-label='Field'
       />
     ),
     read: (c) => Number(numberInput(c).value),

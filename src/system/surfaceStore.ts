@@ -95,11 +95,13 @@ export const createSurfaceStore = () =>
           const meta = byNode.get(target);
           if (!meta) continue;
           const rect = target.getBoundingClientRect();
+          // Round ALL four (not just height) so subpixel RO jitter can't defeat
+          // the `===` dirty-check in queueFlush and force redundant notifies.
           const metrics: ChildMetrics = {
-            width: rect.width,
+            width: Math.round(rect.width),
             height: Math.round(rect.height),
-            top: rect.top - sRect.top + scrollTop,
-            left: rect.left - sRect.left + scrollLeft,
+            top: Math.round(rect.top - sRect.top + scrollTop),
+            left: Math.round(rect.left - sRect.left + scrollLeft),
           };
           pendingSet.set(meta.id, metrics);
           meta.cb?.(metrics);
@@ -118,6 +120,14 @@ export const createSurfaceStore = () =>
       element: null,
       children: new Map(),
       registerChild: (id, node, cb) => {
+        // If `id` was already bound to a DIFFERENT node, release the old one
+        // first — otherwise its ResizeObserver subscription + byNode mapping
+        // leak forever (unregisterChild only ever unobserves the current node).
+        const prev = nodes.get(id);
+        if (prev && prev.node !== node) {
+          ro?.unobserve(prev.node);
+          byNode.delete(prev.node);
+        }
         nodes.set(id, { node, cb });
         byNode.set(node, { id, cb });
         // Re-registration in the same tick (e.g. StrictMode remount)

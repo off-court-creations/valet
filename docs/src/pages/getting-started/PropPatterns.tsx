@@ -136,7 +136,7 @@ export default function UsagePage() {
       <Stack>
         <Typography
           variant='h2'
-          bold
+          weight='bold'
         >
           Property Patterns
         </Typography>

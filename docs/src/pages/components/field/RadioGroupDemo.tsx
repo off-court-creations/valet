@@ -289,7 +289,7 @@ export default function RadioGroupDemoPage() {
         onSubmitValues={(vals) => handleSubmit(vals)}
         sx={{ display: 'flex', flexDirection: 'column', gap: theme.spacing(1) }}
       >
-        <Typography bold>Favourite colour?</Typography>
+        <Typography weight='bold'>Favourite colour?</Typography>
         <RadioGroup
           name='color'
           row
@@ -311,7 +311,7 @@ export default function RadioGroupDemoPage() {
           />
         </RadioGroup>
 
-        <Typography bold>Spirit animal?</Typography>
+        <Typography weight='bold'>Spirit animal?</Typography>
         <RadioGroup name='pet'>
           <Radio
             value='cat'

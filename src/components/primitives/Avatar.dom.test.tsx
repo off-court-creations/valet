@@ -148,3 +148,44 @@ describe('Avatar explicit src', () => {
     expect(img(c)!.getAttribute('src')).toBe(url);
   });
 });
+
+/*──────────── initials scale with the size token ────────────*/
+describe('Avatar fallback initials sizing', () => {
+  /** cssText of the single-class styled rule applied to `el`. */
+  const styledRuleText = (el: HTMLElement) =>
+    Array.from(document.querySelectorAll('style'))
+      .flatMap((s) => Array.from((s.sheet?.cssRules ?? []) as Iterable<CSSRule>))
+      .find((r) => el.classList.contains((r as CSSStyleRule).selectorText?.slice(1) ?? ''))
+      ?.cssText ?? '';
+
+  it('anchors the fallback font-size to the avatar diameter so 0.45em initials scale (not a fixed ~7px)', () => {
+    /* The bug: Initials is 0.45em but the container had no font-size, so the
+       em resolved against the inherited body font — initials never scaled with
+       `size`. The fix sets the Fallback font-size to the avatar diameter. */
+    const lg = fallback(
+      render(
+        <Avatar
+          name='Ada Lovelace'
+          preferFallback
+          size='lg'
+        />,
+      ),
+    ) as HTMLElement;
+    const css = styledRuleText(lg);
+    expect(css).toMatch(/width:\s*4rem/); // matched the real Fallback rule (lg = 4rem)
+    expect(css).toMatch(/font-size:\s*4rem/); // em now resolves against the avatar
+  });
+
+  it('the fallback font-size tracks the size token (xs ≠ lg)', () => {
+    const xs = fallback(
+      render(
+        <Avatar
+          name='Ada Lovelace'
+          preferFallback
+          size='xs'
+        />,
+      ),
+    ) as HTMLElement;
+    expect(styledRuleText(xs)).toMatch(/font-size:\s*1.5rem/); // xs = 1.5rem
+  });
+});

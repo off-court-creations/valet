@@ -14,11 +14,10 @@ import type { LanguageFn } from 'highlight.js';
 import hljs, { registerHighlightLanguage } from './highlight';
 import Markdown from '../components/widgets/Markdown';
 import { SurfaceCtx, createSurfaceStore } from './surfaceStore';
-import { definePreset } from '../css/stylePresets';
 
-/* Markdown's fenced-code Panel references the app-defined `codePanel`
-   preset (the docs app registers it in globalPresets.ts) ------------- */
-definePreset('codePanel', (t) => `padding: ${t.spacing(1)};`);
+/* NOTE: no `definePreset('codePanel')` — Markdown renders fenced code with zero
+   app-level preset registration (Panel `pad` API), so these renders also guard
+   against the "Unknown style preset codePanel" 1.0 blocker regressing. */
 
 /* react-dom warns unless act usage is announced ----------------------- */
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;

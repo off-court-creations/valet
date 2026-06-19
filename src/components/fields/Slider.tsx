@@ -30,6 +30,9 @@ import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { useFieldState } from '../../hooks/useControlledState';
+import { useCompact } from '../../system/compactContext';
+import { useFormConfig } from './FormControl';
+import { warnOnce } from '../../system/devErrors';
 import { computeKeyStep } from './sliderMath';
 import type { FieldBaseProps } from '../../types';
 import type { ChangeInfo, InputSource, OnValueChange, OnValueCommit } from '../../system/events';
@@ -68,6 +71,10 @@ const Track = styled('div')<{ $h: string }>`
   background: #0003;
   border-radius: 9999px;
   overflow: hidden;
+  /* A touch-drag starting on the track must not pan the page (touch-action is
+     not inherited from <Wrapper>). */
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
 `;
 
 const Fill = styled('div')<{ $primary: string }>`
@@ -99,6 +106,28 @@ const Thumb = styled('button')<{
   align-items: center;
   justify-content: center;
   transition: box-shadow 0.15s;
+
+  /* Mobile chrome kit — no blue tap flash, no iOS callout/selection, and the
+     drag must not pan the page (touch-action is not inherited from <Wrapper>). */
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+
+  /* Coarse-pointer (touch) grab target — expand to >=44px (24px under compact)
+     WITHOUT changing the visual thumb; fine-pointer (desktop) is untouched.
+     Logical centering (inset:0; margin:auto) keeps the RTL gate green. */
+  @media (pointer: coarse) {
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      width: max(100%, var(--valet-slider-hit, 44px));
+      height: max(100%, var(--valet-slider-hit, 44px));
+    }
+  }
 
   &:focus-visible {
     box-shadow: 0 0 0 3px currentColor;
@@ -233,11 +262,12 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
       disabled = false,
       // API-TYPES S6 (stage A): destructure the FieldBaseProps cluster BEFORE the
       // rest-spread so label/helperText/error/fullWidth stop leaking onto the
-      // <Wrapper> div as invalid DOM attributes. Only `error` is wired
-      // (aria-invalid on the thumb below); FieldShell rendering of the rest is
-      // Phase 2 / Q10.
-      label: _label,
-      helperText: _helperText,
+      // <Wrapper> div as invalid DOM attributes. `error` drives aria-invalid on
+      // the thumb; `label`/`helperText` are now rendered + wired as the thumb's
+      // accessible name / description (WCAG 4.1.2). FieldShell rendering of
+      // fullWidth is Phase 2 / Q10.
+      label,
+      helperText,
       error,
       fullWidth: _fullWidth,
       preset: p,
@@ -247,12 +277,16 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
     },
     forwardedRef,
   ) => {
-    void _label;
-    void _helperText;
     void _fullWidth;
     /* theme + geom tokens ----------------------------------- */
     const { theme } = useTheme();
     const map = createSizeMap();
+    const effectiveCompact = useCompact();
+
+    /* Form-wide config (own props win; the form config is the fallback). */
+    const formConfig = useFormConfig();
+    const effectiveDisabled = disabled || formConfig.disabled;
+    const effectiveError = Boolean(error) || (name != null && formConfig.errors[name] != null);
 
     let geom: SizeTokens;
 
@@ -393,7 +427,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
 
     const onPointerDown = useCallback(
       (e: PE<HTMLElement>) => {
-        if (disabled) return;
+        if (effectiveDisabled) return;
         e.preventDefault();
         updateFromClientX(e.clientX);
 
@@ -450,7 +484,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
         document.addEventListener('pointerup', up as EventListener);
         document.addEventListener('pointercancel', cancel as EventListener);
       },
-      [disabled, updateFromClientX, commitValue, valFor, renderVisual, current],
+      [effectiveDisabled, updateFromClientX, commitValue, valFor, renderVisual, current],
     );
 
     /* keyboard handling ------------------------------------- */
@@ -458,7 +492,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
     const keyStep = computeKeyStep({ min, max, step, snap, precision });
     const pageStep = Math.max(step, Math.round((max - min) / 10));
     const onKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
-      if (disabled) return;
+      if (effectiveDisabled) return;
       const k = e.key;
       if (k === 'Home') {
         e.preventDefault();
@@ -506,6 +540,27 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
     /* JSX                                                     */
     /*─────────────────────────────────────────────────────────*/
     const id = useId();
+    // WCAG 4.1.2 (Name, Role, Value): wire the visible `label` as the thumb's
+    // accessible name and `helperText` as its description, mirroring RadioGroup.
+    const labelId = label != null ? `${id}-label` : undefined;
+    const helpId = helperText != null ? `${id}-help` : undefined;
+
+    // Dev-time accessible-name guard (mirrors IconButton.tsx): warn ONCE if the
+    // slider would render with no accessible name from ANY source. External
+    // labelling via aria-label/aria-labelledby is valid and silences the warn.
+    if (process.env.NODE_ENV !== 'production') {
+      const hasName =
+        label != null ||
+        Boolean((rest as Record<string, unknown>)['aria-label']) ||
+        Boolean((rest as Record<string, unknown>)['aria-labelledby']);
+      if (!hasName) {
+        warnOnce(
+          `Slider:no-accessible-name:${id}`,
+          'valet: Slider: provide an accessible name via the `label` prop, aria-label, or aria-labelledby (WCAG 4.1.2).',
+        );
+      }
+    }
+
     const format = (v: number) => (precision ? v.toFixed(precision) : v);
 
     const baseTop = showValue ? theme.spacing(1) : theme.spacing(0.25);
@@ -515,14 +570,14 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
     const padBottom = `calc(${baseBottom} + ${thumbOverflow})`;
     const trackCenter = `calc(${padTop} + (${geom.trackH} / 2))`;
 
-    return (
+    const wrapper = (
       <Wrapper
         {...rest}
         ref={setWrapperRef}
         tabIndex={-1}
         data-valet-component='Slider'
-        data-state={disabled ? 'disabled' : 'enabled'}
-        data-disabled={disabled ? 'true' : 'false'}
+        data-state={effectiveDisabled ? 'disabled' : 'enabled'}
+        data-disabled={effectiveDisabled ? 'true' : 'false'}
         className={mergedCls}
         style={{ paddingTop: padTop, paddingBottom: padBottom, ...sx }}
         onFocus={() => {
@@ -551,15 +606,23 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
           aria-valuemax={max}
           aria-valuenow={current}
           aria-valuetext={String(format(current))}
-          aria-invalid={error || undefined}
-          aria-disabled={disabled || undefined}
-          tabIndex={disabled ? -1 : 0}
-          disabled={disabled}
+          aria-invalid={effectiveError || undefined}
+          aria-disabled={effectiveDisabled || undefined}
+          aria-labelledby={labelId}
+          aria-describedby={helpId}
+          tabIndex={effectiveDisabled ? -1 : 0}
+          disabled={effectiveDisabled}
           $d={geom.thumb}
           $primary={theme.colors.primary}
           onKeyDown={onKeyDown}
           onPointerDown={onPointerDown}
-          style={{ top: trackCenter }}
+          onContextMenu={(e: React.MouseEvent) => e.preventDefault()}
+          style={
+            {
+              top: trackCenter,
+              '--valet-slider-hit': effectiveCompact ? '24px' : '44px',
+            } as React.CSSProperties
+          }
         >
           {showValue && <ValueBubble $font={geom.font}>{format(current)}</ValueBubble>}
         </Thumb>
@@ -593,6 +656,46 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
             />
           ))}
       </Wrapper>
+    );
+
+    // When neither label nor helperText is supplied, render the bare <Wrapper>
+    // (the positioned track region) exactly as before — no wrapper, no
+    // structural change, so the absolutely-positioned thumb/ticks stay aligned.
+    if (label == null && helperText == null) return wrapper;
+
+    // The thumb/ticks are positioned relative to <Wrapper>'s padding box, so the
+    // visible label/helper must live OUTSIDE it (an outer flex column) to avoid
+    // shifting the track's positioning origin. The forwarded ref + `rest` stay
+    // on the inner <Wrapper> (the slider root), so consumers are unaffected.
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+        {label != null && (
+          <div
+            id={labelId}
+            style={{
+              fontSize: '0.875rem',
+              color: theme.colors.text,
+              marginBottom: theme.spacing(0.5),
+            }}
+          >
+            {label}
+          </div>
+        )}
+        {wrapper}
+        {helperText != null && (
+          <div
+            id={helpId}
+            style={{
+              fontSize: '0.75rem',
+              color: theme.colors.text + 'AA',
+              marginTop: theme.spacing(0.5),
+            }}
+            aria-live='polite'
+          >
+            {helperText}
+          </div>
+        )}
+      </div>
     );
   },
 );

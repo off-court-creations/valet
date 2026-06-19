@@ -2,7 +2,7 @@
   "name": "MetroSelect.Option",
   "category": "fields",
   "slug": "components/fields/metroselect.option",
-  "summary": "A single tile inside a `MetroSelect`, identified by `value` with icon/label children; author one per choice as a direct `MetroSelect` child — the parent owns selection state.",
+  "summary": "A single flat Metro tile inside a `MetroSelect`, identified by `value` with icon/label children; author one per choice as a direct `MetroSelect` child — the parent owns selection state. Accepts a flat `color` fill and `wide` (2×1) module.",
   "status": "stable",
   "props": [
     {
@@ -24,6 +24,18 @@
       "name": "disabled",
       "type": "boolean",
       "required": false
+    },
+    {
+      "name": "color",
+      "type": "string",
+      "required": false,
+      "description": "Flat resting fill for this tile (theme token name or CSS colour). Enables\nthe multi-colour Metro mosaic; omitted → a neutral tile."
+    },
+    {
+      "name": "wide",
+      "type": "boolean",
+      "required": false,
+      "description": "Render a wide 2×1 tile (spans two columns + the gutter, same height)."
     },
     {
       "name": "sx",
@@ -48,6 +60,13 @@
     "--valet-text-color",
     "--valet-metro-tile-w",
     "--valet-metro-tile-h",
+    "--valet-metro-gap",
+    "--valet-metro-hit",
+    "--valet-metro-press-dur",
+    "--valet-metro-press-ease",
+    "--valet-focus-ring-color",
+    "--valet-metro-tilt-x",
+    "--valet-metro-tilt-y",
     "--valet-metro-icon-size",
     "--valet-metro-font-size"
   ],
@@ -67,6 +86,6 @@
   "sourceFiles": [
     "src/components/fields/MetroSelect.tsx"
   ],
-  "version": "0.36.0",
+  "version": "0.37.0",
   "schemaVersion": "1.7"
 }

@@ -20,7 +20,14 @@
       "name": "codeBackground",
       "type": "string",
       "required": false,
-      "description": "Optional override for code block background"
+      "description": "Optional override for the code block surface (the whole code area, not just\nits padding ring). Defaults to a GitHub-paired surface (LIGHT_BG/DARK_BG)."
+    },
+    {
+      "name": "noSelect",
+      "type": "boolean",
+      "required": false,
+      "description": "Render the rendered prose non-selectable (`user-select: none`, cascades to\nall child elements). Default: text is selectable.",
+      "default": "false"
     },
     {
       "name": "sx",
@@ -42,6 +49,7 @@
     ]
   },
   "cssVars": [
+    "--valet-focus-ring-color",
     "--valet-divider"
   ],
   "cssPresets": [],
@@ -51,9 +59,9 @@
     "Keep input trusted or sanitized. Do not feed untrusted Markdown unless you sanitize it first.",
     "Prefer concise content. Split very long documents into sections with clear headings.",
     "Use fenced code blocks with a language hint for syntax highlighting.",
-    "Avoid relying on raw HTML inside Markdown; prefer pure Markdown for predictability.",
-    "Choose `codeBackground` to ensure code blocks maintain sufficient contrast across themes.",
-    "Use descriptive link text. For internal navigation in SPAs, prefer router links or intercept anchors to avoid full page reloads.",
+    "Raw HTML in the source is NOT rendered — it shows as inert escaped text (e.g. `<b>` appears literally). There is no dangerouslySetInnerHTML for content; this is the core XSS guarantee. Use valet components for rich layout instead of embedding HTML.",
+    "`codeBackground` overrides the entire code-block surface (not just its padding ring). The default is a GitHub-paired surface — light `#f6f8fa` / dark `#0d1117` — chosen to match the bundled highlight.js GitHub syntax theme (which supplies the token colours); override it (e.g. to a chat bubble's colour) so code blends into its container.",
+    "Use descriptive link text. External links (absolute http/https/ftp) automatically get `rel=\"noopener noreferrer\"`; link and image URLs are scheme-allowlisted and control-char/whitespace-obfuscated schemes are rejected. For internal SPA navigation, prefer router links or intercept anchors to avoid full page reloads.",
     "Maintain a proper heading hierarchy (h1 → h2 → h3). Keep one top-level title per page and use lower levels within Markdown.",
     "Always include meaningful alt text on images; keep images responsive and reasonably sized.",
     "Keep tables concise, include a header row, and use column alignment markers (:-, :-:, -:) for clarity.",
@@ -139,6 +147,6 @@
     "src/components/widgets/Markdown.tsx",
     "docs/src/pages/components/widgets/MarkdownDemo.tsx"
   ],
-  "version": "0.36.0",
+  "version": "0.37.0",
   "schemaVersion": "1.7"
 }

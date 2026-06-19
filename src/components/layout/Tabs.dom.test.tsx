@@ -15,6 +15,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { Surface } from './Surface';
 import { Tabs } from './Tabs';
 import { resetWarnOnce } from '../../system/devErrors';
+import { getGlobalSheet } from '../../css/sheet';
 
 /* react-dom warns unless act usage is announced ----------------------- */
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -242,5 +243,47 @@ describe('Tabs controlled-state hook integration (jsdom)', () => {
     act(() => root.render(ui({ value: 'b' })));
     expect(selectedOf(container)).toEqual(['false', 'true']);
     expect(valetWarns()).toEqual([]);
+  });
+});
+
+/*───────────────────────────────────────────────────────────────*/
+/* Mobile hardening — touch target + chrome kit                   */
+
+describe('Tabs — mobile hardening', () => {
+  const tree = (
+    <Surface>
+      <Tabs>
+        <Tabs.Tab
+          value='a'
+          label='Alpha'
+        />
+        <Tabs.Tab
+          value='b'
+          label='Beta'
+        />
+        <Tabs.Panel>a</Tabs.Panel>
+        <Tabs.Panel>b</Tabs.Panel>
+      </Tabs>
+    </Surface>
+  );
+
+  it('sets a coarse-pointer hit-size var on the root (44px default)', () => {
+    const { container } = renderPlain(tree);
+    const root = container.querySelector('[data-valet-component="Tabs"]') as HTMLElement;
+    expect(root.style.getPropertyValue('--valet-tab-hit')).toBe('44px');
+  });
+
+  it('tab buttons ship the chrome kit + a coarse >=44px floor in the styled rule', () => {
+    const { container } = renderPlain(tree);
+    const tab = tabsOf(container)[0];
+    const cls = tab.className.split(/\s+/).find(Boolean)!;
+    const rule =
+      Array.from(getGlobalSheet()!.cssRules, (r) => r.cssText).find((t) =>
+        t.startsWith(`.${cls}`),
+      ) ?? '';
+    expect(rule).toContain('touch-action: manipulation');
+    expect(rule).toContain('user-select: none');
+    expect(rule).toContain('@media (pointer: coarse)');
+    expect(rule).toContain('--valet-tab-hit'); // the floor reads the hit var
   });
 });

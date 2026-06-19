@@ -1,5 +1,0 @@
-{
-  "name": "Option",
-  "summary": "The `Select.Option` element (exported as `Option`): one selectable choice with a `value` and label children, authored as a direct child of `Select`.",
-  "status": "stable"
-}

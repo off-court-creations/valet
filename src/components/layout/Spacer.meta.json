@@ -1,0 +1,14 @@
+{
+  "name": "Spacer",
+  "summary": "A flexible, `aria-hidden` filler that absorbs free space inside a `Stack` (any direction), pushing siblings apart — the typed replacement for `sx={{ flexGrow: 1 }}` / margin-auto hacks in toolbars and bars. `grow` sets how much space it takes (default 1).",
+  "status": "stable",
+  "aliases": ["spacer", "flex-spacer", "push"],
+  "docs": {
+    "docsUrl": "/stack-demo",
+    "bestPractices": [
+      "Drop a `<Spacer/>` between groups in an HStack to push them to opposite ends (e.g. title on the left, actions on the right).",
+      "Use multiple Spacers with different `grow` values to distribute free space proportionally.",
+      "Prefer `justify='between'` when you simply want two groups at the edges; reach for Spacer when the split is uneven or there are 3+ groups."
+    ]
+  }
+}

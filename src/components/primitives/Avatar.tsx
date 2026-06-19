@@ -81,6 +81,10 @@ const Fallback = styled('div')<{
   justify-content: center;
   width: ${({ $size }) => $size};
   height: ${({ $size }) => $size};
+  /* Anchor the em for the initials to the avatar diameter — Initials is
+     0.45em, so without this it would resolve against the inherited body
+     font-size and never scale with the avatar's size token. */
+  font-size: ${({ $size }) => $size};
   border-radius: 50%;
   ${({ $variant, $stroke }) =>
     $variant === 'outline' ? `box-shadow: 0 0 0 0.25rem ${$stroke};` : ''}

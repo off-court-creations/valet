@@ -58,7 +58,7 @@ Human developers and AI proxies may wish to learn what specific areas of a moder
 
 ## Privacy
 
-valet sends no analytics or telemetry. The only third-party request it can originate is loading Google Fonts (`fonts.googleapis.com`), which carries the visitor's IP to Google — a GDPR concern (cf. *LG München I*, 3 O 17493/20). That request is opt-out: pass `injectRemote: false` and self-host the same families with `@fontsource` for an identical look with zero third-party requests, or go explicit-fonts-only (`useInitialTheme({})` makes zero network requests and falls back to installed system faces). See the [Fonts & Privacy docs](https://main.db2j7e5kim3gg.amplifyapp.com/fonts-privacy) for the three loading strategies and the never-block 5s timeout semantics.
+valet sends no analytics or telemetry. The only third-party request it can originate is loading Google Fonts (`fonts.googleapis.com`), which carries the visitor's IP to Google — a GDPR concern (cf. *LG München I*, 3 O 17493/20). As of 1.0 that request is **opt-in**: `injectRemote` defaults to `false`, so a named Google family is treated as a local family (zero third-party requests) unless you pass `injectRemote: true`. Self-host the same families with `@fontsource` for an identical look, or go explicit-fonts-only (`useInitialTheme({})` makes zero network requests and falls back to installed system faces). See the [Fonts & Privacy docs](https://main.db2j7e5kim3gg.amplifyapp.com/fonts-privacy) for the three loading strategies and the never-block 5s timeout semantics.
 
 ## Browser support
 
@@ -136,7 +136,7 @@ args = []
 
 ## Contributing
 
-We welcome issues and PRs. See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for dev setup, the repo map, the branch model, and the quality gates, and [valet issues](https://github.com/off-court-creations/valet/issues) for open work. If you’re an agent/AI, read `AGENTS.md`.
+We welcome issues and PRs. See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for dev setup, the repo map, the branch model, and the quality gates, and [valet issues](https://github.com/off-court-creations/valet/issues) for open work. If you’re an agent/AI, read `AGENTS.md`. The stability contract — public surface, SemVer policy, the post-1.0 deprecation window, and the `experimental` carve-out — is in [`VERSIONING.md`](./VERSIONING.md).
 
 Works with React `^18 || ^19` (peer dependency).
 

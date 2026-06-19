@@ -20,11 +20,14 @@ import {
   type PolymorphicRef,
 } from '../../system/polymorphic';
 
-export type Variant = VariantType;
+// Module-local alias. The PUBLIC name is `TypographyVariant` (barrel re-export
+// of `Variant` from ./types/typography); a bare `Variant` is not exported here
+// so `export *` from this file cannot leak an ungoverned generic name into the
+// 1.0 surface.
+type Variant = VariantType;
 
 export interface TypographyOwnProps extends Presettable {
   variant?: Variant;
-  bold?: boolean; // deprecated in favor of `weight`
   italic?: boolean;
   weight?: number | WeightAlias;
   tracking?: number | 'tight' | 'normal' | 'loose';
@@ -101,7 +104,6 @@ type TypographyStyleProps = {
   $fontFamily?: string;
   $family?: 'heading' | 'body' | 'mono' | 'button';
   $size: string;
-  $bold: boolean; // retained for backwards compat in styles
   $italic: boolean;
   $center?: boolean;
   $noSelect: boolean;
@@ -120,7 +122,7 @@ function makeStyledTag(Tag: keyof JSX.IntrinsicElements) {
     color: ${({ $color }) => $color || 'var(--valet-text-color, inherit)'};
     font-size: ${({ $size }) => $size};
     /* Prefer CSS var to maximize style cache hits */
-    --valet-font-weight: ${({ $weight, $bold }) => ($bold ? 700 : $weight)};
+    --valet-font-weight: ${({ $weight }) => $weight};
     --valet-font-tracking: ${({ $tracking }) => $tracking};
     --valet-font-leading: ${({ $leading }) => $leading};
     font-weight: var(--valet-font-weight);
@@ -179,7 +181,6 @@ function getStyledTag(Tag: keyof JSX.IntrinsicElements) {
 const TypographyImpl = <E extends React.ElementType = 'span'>(
   {
     variant: variantProp = 'body',
-    bold = false,
     italic = false,
     weight,
     tracking,
@@ -248,7 +249,7 @@ const TypographyImpl = <E extends React.ElementType = 'span'>(
   const resolvedWeight = (() => {
     if (typeof weight === 'number') return Math.max(100, Math.min(900, Math.round(weight)));
     if (weight) return aliasMap[weight as WeightAlias] ?? 400;
-    return bold ? 700 : 400;
+    return 400;
   })();
 
   // Resolve letter-spacing (tracking)
@@ -381,7 +382,6 @@ const TypographyImpl = <E extends React.ElementType = 'span'>(
       $family={family}
       $variant={variant}
       $size={size}
-      $bold={bold}
       $italic={italic}
       $center={centered}
       $noSelect={noSelect}

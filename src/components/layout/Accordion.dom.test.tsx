@@ -14,6 +14,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { Surface } from './Surface';
 import { Accordion } from './Accordion';
 import { resetWarnOnce } from '../../system/devErrors';
+import { getGlobalSheet } from '../../css/sheet';
 
 /* react-dom warns unless act usage is announced ----------------------- */
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -177,5 +178,37 @@ describe('Accordion controlled-state hook integration (jsdom)', () => {
     /* warnOnce — a second uncontrolled render does not warn again. */
     act(() => root.render(ui({})));
     expect(valetWarns()).toHaveLength(1);
+  });
+});
+
+/*───────────────────────────────────────────────────────────────*/
+/* Mobile hardening — touch target + chrome kit                   */
+
+describe('Accordion — mobile hardening', () => {
+  const tree = (
+    <Surface>
+      <Accordion>
+        <Accordion.Item header='First'>one</Accordion.Item>
+      </Accordion>
+    </Surface>
+  );
+
+  it('sets a coarse-pointer hit-size var on the root (44px default)', () => {
+    const { container } = render(tree);
+    const root = container.querySelector('[data-valet-component="Accordion"]') as HTMLElement;
+    expect(root.style.getPropertyValue('--valet-acc-hit')).toBe('44px');
+  });
+
+  it('header ships the chrome kit + a coarse >=44px floor in its styled rule', () => {
+    const { container } = render(tree);
+    const header = headersOf(container)[0];
+    const cls = header.className.split(/\s+/).find(Boolean)!;
+    const rule =
+      Array.from(getGlobalSheet()!.cssRules, (r) => r.cssText).find((t) =>
+        t.startsWith(`.${cls}`),
+      ) ?? '';
+    expect(rule).toContain('touch-action: manipulation');
+    expect(rule).toContain('@media (pointer: coarse)');
+    expect(rule).toContain('--valet-acc-hit'); // the floor reads the hit var
   });
 });

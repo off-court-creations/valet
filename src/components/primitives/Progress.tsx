@@ -103,6 +103,17 @@ const CenterLabel = styled('span')<{ $font: string }>`
   font: ${({ $font }) => $font};
   color: var(--valet-text-color, currentColor);
 `;
+// Stacks the visible value over an invisible widest-value reserver in one grid
+// cell, so the label box is always the width of "100%". The ring then auto-sizes
+// to the widest label and shorter values stay centered — no jitter as the value
+// climbs, and "100%" is never clipped.
+const PercentSizer = styled('span')`
+  display: grid;
+  place-items: center;
+  & > * {
+    grid-area: 1 / 1;
+  }
+`;
 
 /*───────────────────────────────────────────────────────────*/
 /* Helpers                                                   */
@@ -261,15 +272,26 @@ export const ProgressRing = forwardRef<HTMLDivElement, ProgressRingProps>(
     const [autoDPx, setAutoDPx] = useState<number | null>(null);
     const contentRef = useRef<HTMLDivElement | null>(null);
 
-    // Auto-size to child content when present and no explicit size
+    // Auto-size the ring to fit its center content — a child node OR a text
+    // label. The percent label reserves the width of "100%" (see PercentSizer),
+    // so the ring grows to the widest value and never clips it.
+    const hasCenter = children != null || Boolean(label);
     useLayoutEffect(() => {
-      if (!children) return;
+      if (!hasCenter) return;
       if (!fitChild) return;
       if (size != null) return; // respect explicit size
       const el = contentRef.current;
       if (!el) return;
       const rect = el.getBoundingClientRect();
-      const childD = Math.max(rect.width, rect.height);
+      // To fit a box inside a circle the circle must clear the box's DIAGONAL
+      // (its corners), not just its longest side. A text label has ink in the
+      // corners (the "1"/"%" of "100%"), so size it from the diagonal; a child
+      // node is usually an icon with empty corners, so the tighter longest-side
+      // fit keeps its ring from looking oversized.
+      const isLabel = children == null; // reached only when hasCenter ⇒ a label
+      const childD = isLabel
+        ? Math.hypot(rect.width, rect.height)
+        : Math.max(rect.width, rect.height);
       const clearance = childClearance ?? 2; // px
       if (Number.isNaN(childD) || childD <= 0) return;
       if (thickness != null) {
@@ -281,7 +303,7 @@ export const ProgressRing = forwardRef<HTMLDivElement, ProgressRingProps>(
         const dPxLocal = Math.ceil((inner * 8) / 7); // since s = d/8
         setAutoDPx((prev) => (prev === dPxLocal ? prev : dPxLocal));
       }
-    }, [children, fitChild, size, thickness, childClearance]);
+    }, [hasCenter, children, value, label, fitChild, size, thickness, childClearance]);
 
     const dPx = autoDPx ?? toPx(typeof size === 'number' ? `${size}px` : dDefault);
     const stroke = toCssSize(thickness, `${Math.max(2, Math.round(dPx / 8))}px`);
@@ -311,7 +333,19 @@ export const ProgressRing = forwardRef<HTMLDivElement, ProgressRingProps>(
     if (children == null && label) {
       if (typeof label === 'function') centerNode = label(pct);
       else if (label === true)
-        centerNode = <CenterLabel $font={theme.typography.body.md}>{pct}%</CenterLabel>;
+        centerNode = (
+          <PercentSizer>
+            {/* invisible reserver pins the box to the widest value's width */}
+            <CenterLabel
+              $font={theme.typography.body.md}
+              aria-hidden='true'
+              style={{ visibility: 'hidden' }}
+            >
+              100%
+            </CenterLabel>
+            <CenterLabel $font={theme.typography.body.md}>{pct}%</CenterLabel>
+          </PercentSizer>
+        );
       else centerNode = label;
     }
 
@@ -382,7 +416,7 @@ export const ProgressRing = forwardRef<HTMLDivElement, ProgressRingProps>(
             </Center>
           ) : centerNode ? (
             <Center>
-              <ContentSizer>{centerNode}</ContentSizer>
+              <ContentSizer ref={contentRef}>{centerNode}</ContentSizer>
             </Center>
           ) : null}
         </RingWrap>
@@ -391,93 +425,3 @@ export const ProgressRing = forwardRef<HTMLDivElement, ProgressRingProps>(
   },
 );
 ProgressRing.displayName = 'ProgressRing';
-
-/*───────────────────────────────────────────────────────────*/
-/* Back-compat wrapper                                       */
-export type ProgressVariant = 'linear' | 'circular';
-export type ProgressMode = 'determinate' | 'indeterminate' | 'buffer';
-
-export interface ProgressProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'>,
-    Presettable {
-  /** Prefer ProgressBar/ProgressRing. kept for back‑compat. */
-  variant?: ProgressVariant; // linear | circular
-  /** Prefer `value` unset to indicate indeterminate. */
-  mode?: ProgressMode; // determinate | indeterminate | buffer (linear only)
-  /** 0–100 */
-  value?: number;
-  /** 0–100 buffer for linear */
-  buffer?: number;
-  /** Ring diameter (or legacy token). */
-  size?: number | string;
-  /** Bar height or ring thickness. */
-  thickness?: number | string;
-  /** Deprecated: use `label` on ProgressRing or provide children. */
-  showLabel?: boolean;
-  /** Override primary color. */
-  color?: string;
-  /** Center content for ring. */
-  children?: React.ReactNode;
-  /** Inline styles (supports CSS vars). */
-  sx?: Sx;
-}
-
-export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
-  (
-    {
-      variant = 'linear',
-      mode = 'determinate',
-      value,
-      buffer,
-      size,
-      thickness,
-      showLabel,
-      color,
-      preset: p,
-      className,
-      sx,
-      children,
-      ...rest
-    },
-    ref,
-  ) => {
-    // Map legacy props to the new primitives
-    const isRing = variant === 'circular';
-    const isIndeterminate = mode === 'indeterminate' || value == null;
-    if (isRing) {
-      return (
-        <ProgressRing
-          ref={ref}
-          value={isIndeterminate ? undefined : value}
-          size={size}
-          thickness={thickness}
-          color={color}
-          preset={p}
-          className={className}
-          sx={sx}
-          {...rest}
-          label={showLabel}
-        >
-          {children}
-        </ProgressRing>
-      );
-    }
-    // linear
-    return (
-      <ProgressBar
-        ref={ref}
-        value={isIndeterminate ? undefined : value}
-        buffer={mode === 'buffer' ? buffer : undefined}
-        height={thickness}
-        color={color}
-        preset={p}
-        className={className}
-        sx={sx}
-        {...rest}
-      />
-    );
-  },
-);
-
-Progress.displayName = 'Progress';
-export default Progress;

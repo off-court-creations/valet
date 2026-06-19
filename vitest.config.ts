@@ -22,6 +22,15 @@ export default defineConfig({
   oxc: { jsx: { runtime: 'automatic' } },
   test: {
     pool: 'forks',
+    // Coverage is measurement-only at 1.0 (no hard threshold gate yet — a
+    // baseline must land first to avoid blocking CI on legitimate dips). Run
+    // `npm run test:coverage`. provider v8 (devDep @vitest/coverage-v8).
+    coverage: {
+      provider: 'v8',
+      reporter: ['text-summary', 'html'],
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: ['src/**/*.test.{ts,tsx}', 'src/**/*.d.ts', 'src/test-utils/**'],
+    },
     projects: [
       {
         extends: true,

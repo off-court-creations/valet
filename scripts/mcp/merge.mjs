@@ -448,14 +448,10 @@ async function main() {
     const serverDataDir = path.join(root, 'packages', 'valet-mcp', 'mcp-data');
     fs.rmSync(serverDataDir, { recursive: true, force: true });
     fs.mkdirSync(serverDataDir, { recursive: true });
-    // shallow copy files and components subdir
-    for (const fn of [
-      '_meta.json',
-      'index.json',
-      'glossary.json',
-      '_ts-extract.json',
-      'component_synonyms.json',
-    ]) {
+    // shallow copy files and components subdir.
+    // NB: _ts-extract.json is a build intermediate (never read at runtime) — keep
+    // it OUT of the shipped mirror so it doesn't bloat the published tarball.
+    for (const fn of ['_meta.json', 'index.json', 'glossary.json', 'component_synonyms.json']) {
       const src = path.join(outDir, fn);
       if (fs.existsSync(src)) fs.copyFileSync(src, path.join(serverDataDir, fn));
     }

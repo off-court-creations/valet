@@ -117,7 +117,7 @@ describe('DateSelector — single-date FormControl binding (ruling R9)', () => {
       </FormControl>,
     );
     // The seeded ISO date drove the rendered month/year and the selected day.
-    expect(headerText(container)).toEqual(['June', '2025']);
+    expect(headerText(container)).toEqual(['Jun', '2025']);
     expect(selectedDay(container)).toBe(10);
     // Clicking another day writes the new ISO string through to the store …
     clickDay(container, 18);
@@ -138,7 +138,7 @@ describe('DateSelector — single-date FormControl binding (ruling R9)', () => {
     );
     // defaultValue still drives the view; what changed under the unified hook is
     // the controlled treatment + the one-time unseeded-key dev warn.
-    expect(headerText(container)).toEqual(['June', '2025']);
+    expect(headerText(container)).toEqual(['Jun', '2025']);
     expect(selectedDay(container)).toBe(7);
     expect(valetWarns()).toEqual([expect.stringContaining("form key 'when' is not seeded")]);
   });

@@ -203,6 +203,18 @@ export const Tooltip: React.FC<TooltipProps> = ({
   const [internalShow, setInternalShow] = useState(defaultOpen);
   const show = controlled ?? internalShow;
 
+  /* SSR/hydration-safe portal: the bubble is portalled to the overlay root,
+     but `getOverlayRoot()` returns a non-DOM stub on the server, which
+     `createPortal` rejects ("Target container is not a DOM element"). Render NO
+     bubble on the server AND on the first client render, then portal after mount.
+     The bubble only shows on hover/focus (post-mount), so nothing is lost; this
+     also avoids a hydration mismatch (server: no portal == first client render). */
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  const canPortal = mounted && typeof document !== 'undefined';
+
   /* timers */
   const inT = useRef<ReturnType<typeof setTimeout> | null>(null);
   const outT = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -380,42 +392,43 @@ export const Tooltip: React.FC<TooltipProps> = ({
       style={{ ...(style as React.CSSProperties), ...(sx || {}) }}
     >
       {describedChild}
-      {createPortal(
-        <Bubble
-          ref={setBubbleRef}
-          $show={show}
-          $placement={placement}
-          $padV={theme.spacing(1)}
-          $padH={theme.spacing(1.5)}
-          $radius={theme.radius(1)}
-          $animDist={theme.spacing(0.5)}
-          role='tooltip'
-          id={bubbleId}
-          className={presetClasses}
-          style={
-            {
-              top: pos.top,
-              left: pos.left,
-              '--valet-tooltip-arrow-size': theme.spacing(1),
-              ...(hasPreset
-                ? undefined
-                : {
-                    '--tt-bg': theme.colors.text,
-                    '--tt-fg': theme.colors.background,
-                  }),
-            } as CSSPropertiesWithVars
-          }
-        >
-          {title}
-          {arrow && (
-            <Arrow
-              $placement={placement}
-              $size={theme.spacing(1)}
-            />
-          )}
-        </Bubble>,
-        getOverlayRoot(),
-      )}
+      {canPortal &&
+        createPortal(
+          <Bubble
+            ref={setBubbleRef}
+            $show={show}
+            $placement={placement}
+            $padV={theme.spacing(1)}
+            $padH={theme.spacing(1.5)}
+            $radius={theme.radius(1)}
+            $animDist={theme.spacing(0.5)}
+            role='tooltip'
+            id={bubbleId}
+            className={presetClasses}
+            style={
+              {
+                top: pos.top,
+                left: pos.left,
+                '--valet-tooltip-arrow-size': theme.spacing(1),
+                ...(hasPreset
+                  ? undefined
+                  : {
+                      '--tt-bg': theme.colors.text,
+                      '--tt-fg': theme.colors.background,
+                    }),
+              } as CSSPropertiesWithVars
+            }
+          >
+            {title}
+            {arrow && (
+              <Arrow
+                $placement={placement}
+                $size={theme.spacing(1)}
+              />
+            )}
+          </Bubble>,
+          getOverlayRoot(),
+        )}
     </Wrapper>
   );
 };

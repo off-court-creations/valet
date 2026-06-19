@@ -3,6 +3,7 @@
 // shared types: presets, spacing ergonomics, and field base props
 // ─────────────────────────────────────────────────────────────
 import type React from 'react';
+import type { Breakpoint } from './system/themeStore';
 
 export interface Presettable {
   /** One or many style-preset names registered via `definePreset()` */
@@ -11,6 +12,20 @@ export interface Presettable {
 
 /** Numeric values are mapped via theme.spacing(n); strings pass through. */
 export type Space = number | string;
+
+/**
+ * A value that can vary by breakpoint. Either a single value applied at all
+ * widths, or a partial breakpoint map (`{ xs, sm, md, lg, xl }`) whose entries
+ * each apply from that breakpoint's `min-width` upward (mobile-first).
+ *
+ * Breakpoint maps compile to CSS `@media (min-width: …)` rules **inside the
+ * `styled()` template** (via `utils/responsive`) — there is no JS resolution,
+ * no `<Surface>` dependency, and no first-paint reflow, so a responsive layout
+ * is correct on the server's first paint. Keep breakpoint maps to enumerable
+ * values; binding one to continuously-varying state (e.g. a slider) mints a
+ * permanent CSS rule per value (see the engine's rule-cardinality tripwire).
+ */
+export type Responsive<T> = T | Partial<Record<Breakpoint, T>>;
 
 /** Common spacing props shared across layout components. */
 export interface SpacingProps {
@@ -62,15 +77,16 @@ export type Intent =
  * one keyed vocabulary so the same name means the same thing everywhere.
  *
  * `K` is the **selection unit** each component exposes:
- * - Table — `K = T` (the row type; identity is keyed internally by `getItemKey`/`rowKey`).
+ * - Table — `K = T` (the row type; identity is keyed internally by `getItemKey`).
  * - List  — `K = T` (the item type; selection is by reference, `getItemKey` standardizes reorder identity).
  * - Tree  — `K = string` (the node id).
  *
  * Components adopt the subset they support and re-document the generic in their
  * own prop types. `selected`/`defaultSelected` are always **arrays** so the
  * single- and multiple-selection shapes share one type; a single-selection
- * component simply ignores all but the last entry. Each component carries the
- * pre-S11 names as one-minor deprecated aliases (`deprecate.ts`), removed at 1.0.
+ * component simply ignores all but the last entry. The pre-S11 per-component
+ * names (Table's `selectable`/`rowKey`, etc.) were removed at 1.0; only this
+ * canonical vocabulary remains.
  */
 export interface SelectionProps<K> {
   /**
@@ -79,7 +95,8 @@ export interface SelectionProps<K> {
    * - `'single'` — at most one item is selected.
    * - `'multiple'` — any number of items may be selected.
    *
-   * Canonical replacement for the per-component flags (Table's `selectable`).
+   * Canonical replacement for the former per-component flags (e.g. Table's
+   * removed `selectable`).
    */
   selectionMode?: 'none' | 'single' | 'multiple';
 

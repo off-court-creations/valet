@@ -86,7 +86,12 @@ function applyBackgroundLock() {
   const sbw = computeScrollbarWidth();
   if (sbw > 0) body.style.paddingRight = `${currentPad + sbw}px`;
   body.style.overflow = 'hidden';
-  // Mark all body children except overlayRoot inert + aria-hidden
+  // Mark all body children except overlayRoot inert + aria-hidden.
+  // KNOWN LIMITATION (documented, not a 1.0 blocker): this snapshots the body
+  // children AT lock time — a top-level node appended to <body> AFTER an overlay
+  // opens is not inerted. In practice overlays own the foreground briefly and
+  // app content rarely appends to <body> mid-overlay; a body MutationObserver
+  // is the eventual fix if this becomes real.
   const children = Array.from(body.children) as HTMLElement[];
   for (const el of children) {
     if (el === overlayRoot) continue;
@@ -341,10 +346,14 @@ export function unregisterOverlay(id: number) {
   if (idx === -1) return;
   const [entry] = stack.splice(idx, 1);
 
-  // Restore focus if requested (live read — close-time intent wins)
-  if (entry.getOptions().restoreFocusOnClose && entry.previouslyFocused) {
+  // Restore focus if requested (live read — close-time intent wins). Skip a
+  // trigger that has since left the DOM: focusing a detached node silently
+  // dumps focus to <body> (and would scroll), so only restore if it is still
+  // connected (the try/catch remains as a last-resort guard).
+  const restoreTarget = entry.previouslyFocused as HTMLElement | null;
+  if (entry.getOptions().restoreFocusOnClose && restoreTarget?.isConnected) {
     try {
-      (entry.previouslyFocused as HTMLElement).focus();
+      restoreTarget.focus();
     } catch {
       /* no-op */
     }

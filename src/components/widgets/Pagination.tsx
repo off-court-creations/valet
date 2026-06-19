@@ -8,7 +8,7 @@ import { styled } from '../../css/createStyled';
 import Typography from '../primitives/Typography';
 import { preset } from '../../css/stylePresets';
 import { useTheme } from '../../system/themeStore';
-import { resolveDeprecatedProp } from '../../system/deprecate';
+import { useCompact } from '../../system/compactContext';
 import { useComponentStrings } from '../../system/locale';
 import type { DeepPartialStrings, ValetStrings } from '../../system/locale';
 import type { Presettable, Sx } from '../../types';
@@ -24,12 +24,6 @@ export interface PaginationProps
   page?: number;
   /** Called with the **new page** (1-based) when the user navigates. */
   onPageChange?: (page: number) => void;
-  /**
-   * @deprecated Renamed to `onPageChange` (API-TYPES S10, Q12). The old name
-   * keeps working through 0.x with a one-time dev warning and is removed at
-   * 1.0. When both are supplied, `onPageChange` wins.
-   */
-  onChange?: (page: number) => void;
   /**
    * Limit how many page buttons are visible at once. When set and less than `count`,
    * pagination renders a sliding window of page numbers plus window scroll controls.
@@ -80,6 +74,21 @@ const Root = styled('nav')<{
     transition:
       color ${({ $durColor }) => $durColor} ${({ $ease }) => $ease},
       opacity ${({ $durOpacity }) => $durOpacity} ${({ $ease }) => $ease}; /* smooth fades for disabled/enabled */
+  }
+
+  & button {
+    /* Mobile chrome kit — no blue tap flash, fast taps. */
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  /* Coarse-pointer comfort: nav buttons floor at >=44px tall (24px under
+     compact). Height only — widths feed the underline/window measurement, so
+     they are left to content. Desktop (fine pointer) is untouched. */
+  @media (pointer: coarse) {
+    & button {
+      min-height: var(--valet-pag-hit, 44px);
+    }
   }
 
   & button:disabled {
@@ -221,7 +230,6 @@ export const Pagination: React.FC<PaginationProps> = ({
   count,
   page = 1,
   onPageChange,
-  onChange: onChangeDeprecated,
   visibleWindow,
   autoFollowActive = true,
   preset: p,
@@ -231,20 +239,12 @@ export const Pagination: React.FC<PaginationProps> = ({
   ...rest
 }) => {
   const { theme } = useTheme();
+  const effectiveCompact = useCompact();
   const t = useComponentStrings('pagination', labels);
 
-  /* `onChange` was renamed to `onPageChange` (API-TYPES S10, Q12 / ruling
-     R30). Canonical wins; the deprecated alias keeps working through 0.x
-     with a single dev warning and is removed at 1.0. The rest of the body
-     consumes the resolved `onChange` below, so every internal call site is
-     unchanged. */
-  const onChange = resolveDeprecatedProp(
-    'Pagination',
-    'onPageChange',
-    onPageChange,
-    'onChange',
-    onChangeDeprecated,
-  );
+  /* Internal call sites consume `onChange`; alias the canonical prop so the
+     body below is unchanged. */
+  const onChange = onPageChange;
   const pages = React.useMemo(() => Array.from({ length: count }, (_, i) => i + 1), [count]);
 
   /* preset → utility class merge */
@@ -1042,6 +1042,7 @@ export const Pagination: React.FC<PaginationProps> = ({
   return (
     <Root
       {...restProps}
+      data-valet-component='Pagination'
       aria-label={t.root}
       $text={theme.colors.text}
       $gap={theme.spacing(1)}
@@ -1058,6 +1059,7 @@ export const Pagination: React.FC<PaginationProps> = ({
       style={
         {
           '--valet-underline-width': theme.stroke(4),
+          '--valet-pag-hit': effectiveCompact ? '24px' : '44px',
           ...(sx as object),
         } as React.CSSProperties
       }
@@ -1110,7 +1112,7 @@ export const Pagination: React.FC<PaginationProps> = ({
                   family='mono'
                   whitespace='pre'
                   noSelect
-                  bold={n === page}
+                  weight={n === page ? 'bold' : 'regular'}
                 >
                   {n}
                 </Typography>
@@ -1162,7 +1164,7 @@ export const Pagination: React.FC<PaginationProps> = ({
                         family='mono'
                         whitespace='pre'
                         noSelect
-                        bold={n === page}
+                        weight={n === page ? 'bold' : 'regular'}
                       >
                         {n}
                       </Typography>
@@ -1188,7 +1190,7 @@ export const Pagination: React.FC<PaginationProps> = ({
                         family='mono'
                         whitespace='pre'
                         noSelect
-                        bold={n === page}
+                        weight={n === page ? 'bold' : 'regular'}
                       >
                         {n}
                       </Typography>
@@ -1220,7 +1222,7 @@ export const Pagination: React.FC<PaginationProps> = ({
                       family='mono'
                       whitespace='pre'
                       noSelect
-                      bold={n === page}
+                      weight={n === page ? 'bold' : 'regular'}
                     >
                       {n}
                     </Typography>

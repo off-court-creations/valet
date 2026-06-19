@@ -27,7 +27,7 @@ import { preset } from '../../css/stylePresets';
 import { toRgb, mix, toHex } from '../../helpers/color';
 import { useSurface } from '../../system/surfaceStore';
 import { valetError } from '../../system/devErrors';
-import { resolveDeprecatedProp } from '../../system/deprecate';
+import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion';
 import { shallow } from 'zustand/shallow';
 import type { Presettable, SpacingProps, Sx } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
@@ -163,8 +163,18 @@ const HeaderBtn = styled('button')<{
   margin-inline-start: -${({ $shift }) => $shift};
   margin-inline-end: -${({ $shift }) => $shift};
 
-  /* Disable blue tap-highlight on mobile */
+  /* Mobile chrome kit — no blue tap flash, fast taps, no text selection on
+     a double-tap of the header. */
   -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+
+  /* Coarse-pointer comfort: the header is always a >=44px tap row (the generous
+     padding usually clears this; the floor guards compact/short-title cases). */
+  @media (pointer: coarse) {
+    min-height: var(--valet-acc-hit, 44px);
+  }
 
   transition: background 200ms ease;
 
@@ -220,24 +230,6 @@ export interface AccordionProps
   multiple?: boolean;
   /** Fires with the next expanded indices whenever the user toggles a panel. */
   onExpandedChange?: (expanded: number[]) => void;
-  /**
-   * @deprecated Renamed to {@link AccordionProps.defaultExpanded | `defaultExpanded`}
-   * (Q12). The `defaultOpen` alias keeps working through 0.x with a one-time dev
-   * warning and is removed at 1.0.
-   */
-  defaultOpen?: number | number[];
-  /**
-   * @deprecated Renamed to {@link AccordionProps.expanded | `expanded`} (Q12).
-   * The `open` alias keeps working through 0.x with a one-time dev warning and
-   * is removed at 1.0.
-   */
-  open?: number | number[];
-  /**
-   * @deprecated Renamed to {@link AccordionProps.onExpandedChange | `onExpandedChange`}
-   * (Q12). The `onOpenChange` alias keeps working through 0.x with a one-time dev
-   * warning and is removed at 1.0.
-   */
-  onOpenChange?: (open: number[]) => void;
   headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
   constrainHeight?: boolean;
   unmountOnExit?: boolean;
@@ -262,9 +254,6 @@ export const Accordion: React.FC<AccordionProps> & {
   expanded: expandedProp,
   defaultExpanded,
   onExpandedChange,
-  open: openProp,
-  defaultOpen,
-  onOpenChange,
   multiple = false,
   headingLevel = 3,
   constrainHeight = true,
@@ -302,25 +291,10 @@ export const Accordion: React.FC<AccordionProps> & {
   const [activeIndex, setActiveIndex] = useState(0);
   const toArray = (v?: number | number[]) => (v === undefined ? [] : Array.isArray(v) ? v : [v]);
 
-  /* Canonical names win; deprecated `open*` aliases warn once each (Q12,
-     ruling R30). Resolution happens BEFORE the shared hook — the hook just
-     consumes the resolved props (rebases on FF S4/S10; the `!== undefined`
-     falsiness fix below is untouched). */
-  const expanded = resolveDeprecatedProp('Accordion', 'expanded', expandedProp, 'open', openProp);
-  const resolvedDefaultExpanded = resolveDeprecatedProp(
-    'Accordion',
-    'defaultExpanded',
-    defaultExpanded,
-    'defaultOpen',
-    defaultOpen,
-  );
-  const onExpanded = resolveDeprecatedProp(
-    'Accordion',
-    'onExpandedChange',
-    onExpandedChange,
-    'onOpenChange',
-    onOpenChange,
-  );
+  /* Alias the canonical props to the names the body below consumes. */
+  const expanded = expandedProp;
+  const resolvedDefaultExpanded = defaultExpanded;
+  const onExpanded = onExpandedChange;
 
   const [externalOpen, setExternalOpen] = useControlledState<number[]>(
     /* `expanded !== undefined` — a bare truthiness check made
@@ -507,7 +481,11 @@ export const Accordion: React.FC<AccordionProps> & {
         <Root
           {...(() => {
             const { style: styleProp, ...rest } = divProps;
-            const mergedStyle = { ...(sx || {}), ...(styleProp as React.CSSProperties) };
+            const mergedStyle = {
+              '--valet-acc-hit': effCompact ? '40px' : '44px',
+              ...(sx || {}),
+              ...(styleProp as React.CSSProperties),
+            } as React.CSSProperties;
             return { ...rest, style: mergedStyle } as typeof divProps;
           })()}
           $pad={resolveSpace(padProp, theme, effCompact, 1)}
@@ -693,10 +671,12 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
     }
   };
 
-  const reducedMotion =
-    typeof window !== 'undefined' && window.matchMedia
-      ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
-      : false;
+  // SSR/hydration-safe reduced-motion read: usePrefersReducedMotion returns
+  // `false` on the server and on the first client render (useSyncExternalStore
+  // getServerSnapshot), so the initial $reduced class agrees across hydration
+  // and only flips after mount. A direct in-render matchMedia read caused a
+  // server/client class mismatch.
+  const reducedMotion = usePrefersReducedMotion();
 
   // Optionally unmount content when closed (internal prop injected by root)
   const shouldRenderContent =

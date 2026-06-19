@@ -67,7 +67,11 @@ export { default as KeyModal } from './components/widgets/KeyModal';
 export * from './components/widgets/ValetErrorBoundary';
 
 // ─── AI Helpers ─────────────────────────────────────────────
-export * from './system/aiKeyStore';
+// Curated (not `export *`): the at-rest crypto primitives `encrypt`/`decrypt`
+// stay module-internal — they are an implementation detail of the key store, not
+// public API, and freezing them at 1.0 would be a footgun.
+export { useAIKey, sendChat } from './system/aiKeyStore';
+export type { AIProvider, ChatMessage, ChatCompletion } from './system/aiKeyStore';
 
 // ─── Core ────────────────────────────────────────────────────
 export * from './css/createStyled';

@@ -55,7 +55,6 @@ async function main() {
     path.join(ROOT, 'templates', 'js', 'package.json'),
     path.join(ROOT, 'templates', 'hybrid', 'package.json'),
   ];
-  const docsPkgPath = path.join(ROOT, 'docs', 'package.json');
 
   const pkg = readJSON(pkgPath);
   const current = pkg.version;
@@ -111,26 +110,10 @@ async function main() {
     }
   }
 
-  // Update docs package example if present
-  if (fs.existsSync(docsPkgPath)) {
-    try {
-      const d = readJSON(docsPkgPath);
-      const before = d.dependencies?.['@archway/valet'];
-      if (before !== targetMinorRange) {
-        if (!dry) {
-          d.dependencies = d.dependencies || {};
-          d.dependencies['@archway/valet'] = targetMinorRange;
-          writeJSON(docsPkgPath, d);
-        }
-        changes.push({
-          file: docsPkgPath,
-          change: `@archway/valet: ${before} -> ${targetMinorRange}`,
-        });
-      }
-    } catch (e) {
-      console.warn(`[warn] Skipping ${path.relative(ROOT, docsPkgPath)}: ${e.message}`);
-    }
-  }
+  // NOTE: the repo-root docs/ valet pin is owned by the root release flow
+  // (scripts/release/check-pins.mjs), not this CVA-scoped bump. The old
+  // `docsPkgPath` here resolved under packages/create-valet-app/docs (which
+  // does not exist), so it was dead — removed.
 
   // Update CLI fallback minor in bin/create-valet-app.js
   if (fs.existsSync(binPath)) {

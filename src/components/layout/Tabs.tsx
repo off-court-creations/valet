@@ -27,6 +27,7 @@ import type { Presettable, SpacingProps, Sx } from '../../types';
 import type { ChangeInfo, InputSource, OnValueChange, OnValueCommit } from '../../system/events';
 import { Typography } from '../primitives/Typography';
 import { resolveSpace } from '../../utils/resolveSpace';
+import { densityScale } from '../../system/densityScale';
 import { withAlpha } from '../../helpers/color';
 import { valetError } from '../../system/devErrors';
 import { useControlledState } from '../../hooks/useControlledState';
@@ -238,10 +239,25 @@ const TabBtn = styled('button')<{
   cursor: pointer;
   appearance: none;
 
+  /* Mobile chrome kit — no blue tap flash, fast taps, no text selection on a
+     double-tap of the tab label. */
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+
+  /* Center the label so the coarse-pointer min-height floor reads cleanly. */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
   ${({ $orient }) => ($orient === 'vertical' ? 'width: 100%;' : 'min-width: 4rem;')}
+
+  /* Coarse-pointer comfort: floor the tab at >=44px (the generous padding
+     usually clears this; the floor guards compact / short labels). */
+  @media (pointer: coarse) {
+    min-height: var(--valet-tab-hit, 44px);
+  }
 
   position: relative;
   text-align: center;
@@ -303,8 +319,6 @@ export interface TabsProps
   placement?: 'top' | 'bottom' | 'left' | 'right';
   /** Horizontal alignment of the tab strip (horizontal orientation). */
   alignX?: 'left' | 'right' | 'center';
-  /** Alias for alignX for clarity. */
-  tabAlign?: 'left' | 'right' | 'center';
   /** Inline styles (with CSS var support) */
   sx?: Sx;
 }
@@ -331,7 +345,6 @@ const TabsBase = forwardRef<HTMLDivElement, TabsProps>(
       onValueChange,
       onValueCommit,
       alignX,
-      tabAlign,
       gap: gapProp,
       pad: padProp,
       compact,
@@ -471,14 +484,7 @@ const TabsBase = forwardRef<HTMLDivElement, TabsProps>(
     /* V1 density-scales-the-subtree: when density is explicitly provided,
        set --valet-space locally so the strip/panel (and descendants)
        scale. density never zeroes — that is compact's job. */
-    const densityScale =
-      density === 'comfortable'
-        ? 1.15
-        : density === 'tight'
-          ? 0.9
-          : density === 'standard'
-            ? 1.0
-            : undefined;
+    const spaceScale = density != null ? densityScale(density) : undefined;
     const stripFirst =
       (orientation === 'horizontal' && placement === 'top') ||
       (orientation === 'vertical' && placement === 'left');
@@ -611,7 +617,7 @@ const TabsBase = forwardRef<HTMLDivElement, TabsProps>(
     }, [orientation]);
 
     // Normalize alignX with Box semantics.
-    // Note: alignment resolved inline when rendering TabList via (tabAlign ?? alignX ?? 'left')
+    // Note: alignment resolved inline when rendering TabList via (alignX ?? 'left')
 
     // Root ref + focusable contract: focusing Tabs focuses the active tab button.
     const rootRef = useRef<HTMLDivElement | null>(null);
@@ -638,9 +644,13 @@ const TabsBase = forwardRef<HTMLDivElement, TabsProps>(
           $pad={pad}
           className={cls}
           style={
-            densityScale != null
-              ? { ...sx, '--valet-space': `calc(${theme.spacingUnit} * ${densityScale})` }
-              : sx
+            {
+              '--valet-tab-hit': effectiveCompact ? '40px' : '44px',
+              ...sx,
+              ...(spaceScale != null
+                ? { '--valet-space': `calc(${theme.spacingUnit} * ${spaceScale})` }
+                : {}),
+            } as React.CSSProperties
           }
           onFocus={(e) => {
             // Only redirect focus when the root itself receives focus.
@@ -676,7 +686,7 @@ const TabsBase = forwardRef<HTMLDivElement, TabsProps>(
                   $orientation={orientation}
                   $place={placement}
                   $edgeGap={edgeGap}
-                  $align={(tabAlign ?? alignX ?? 'left') as 'left' | 'right' | 'center'}
+                  $align={(alignX ?? 'left') as 'left' | 'right' | 'center'}
                   $fadeLeft={fadeL}
                   $fadeRight={fadeR}
                   $fadeCol={theme.colors.primary}
@@ -706,7 +716,7 @@ const TabsBase = forwardRef<HTMLDivElement, TabsProps>(
                   $orientation={orientation}
                   $place={placement}
                   $edgeGap={edgeGap}
-                  $align={(tabAlign ?? alignX ?? 'left') as 'left' | 'right' | 'center'}
+                  $align={(alignX ?? 'left') as 'left' | 'right' | 'center'}
                   $fadeLeft={fadeL}
                   $fadeRight={fadeR}
                   $fadeCol={theme.colors.primary}

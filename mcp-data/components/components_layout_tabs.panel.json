@@ -32,6 +32,7 @@
     "omitted": []
   },
   "cssVars": [
+    "--valet-tab-hit",
     "--valet-focus-width",
     "--valet-focus-ring-color",
     "--valet-focus-offset",
@@ -47,6 +48,6 @@
   "sourceFiles": [
     "src/components/layout/Tabs.tsx"
   ],
-  "version": "0.36.0",
+  "version": "0.37.0",
   "schemaVersion": "1.7"
 }

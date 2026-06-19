@@ -26,13 +26,13 @@
       "name": "width",
       "type": "number | string",
       "required": false,
-      "description": "CSS width value (number ⇒ px)"
+      "description": "CSS width (number ⇒ px). When BOTH `width` and `height` are numeric they are\nALSO emitted as the native HTML width/height attributes, so the browser can\nreserve layout space and avoid CLS. A string value (e.g. '50%', '20rem') is\nCSS-only and does NOT set the intrinsic-size attributes."
     },
     {
       "name": "height",
       "type": "number | string",
       "required": false,
-      "description": "CSS height value (number ⇒ px)"
+      "description": "CSS height (number ⇒ px). See ImageProps.width re: native attrs."
     },
     {
       "name": "fit",
@@ -57,7 +57,25 @@
       "name": "aspectRatio",
       "type": "number | string",
       "required": false,
-      "description": "CSS aspect-ratio value (number ⇒ n/1)"
+      "description": "CSS aspect-ratio. A number is the literal width/height ratio — pass a real\nratio like `16 / 9` or `4 / 3` (NOT `16`, which is 16:1). Strings pass\nthrough verbatim (e.g. '16 / 9')."
+    },
+    {
+      "name": "radius",
+      "type": "number | string",
+      "required": false,
+      "description": "Corner radius. Number ⇒ `theme.radius(n)` (scales with density); string ⇒\nverbatim CSS. Rounds the image itself — no wrapper needed. (A parent with\n`overflow: hidden` is still the way to CLIP overflowing/child content.)"
+    },
+    {
+      "name": "priority",
+      "type": "boolean",
+      "required": false,
+      "description": "Mark as a high-priority (above-the-fold / LCP) image: sets `loading='eager'`\nand `fetchPriority='high'`. An explicit `loading`/`fetchPriority` still wins.\nDefault false (images load lazy + decode async)."
+    },
+    {
+      "name": "fallback",
+      "type": "React.ReactNode",
+      "required": false,
+      "description": "Opt-in node rendered if the image fails to load (onError). When unset, a\nfailed image behaves exactly like a native `<img>` — no wrapper, no state.\nThe caller sizes the fallback node."
     },
     {
       "name": "sx",
@@ -84,15 +102,20 @@
   "cssVars": [],
   "cssPresets": [],
   "events": [],
-  "slots": [],
+  "slots": [
+    {
+      "name": "fallback"
+    }
+  ],
   "bestPractices": [
     "Always set alt text; use empty alt for decorative images.",
-    "Specify dimensions via width/height or aspectRatio to avoid layout shift.",
+    "Avoid layout shift: a NUMERIC width AND height emit the native size attributes so the browser reserves space, or set `aspectRatio` (a number is the literal ratio — pass `16 / 9`, not `16`).",
     "Choose fit (`cover`/`contain`) and objectPosition deliberately to control cropping/focus.",
-    "Use srcSet/sizes for responsive sources; avoid full‑resolution assets in small spaces.",
-    "Default lazy loading is enabled; use loading='eager' and optionally fetchPriority='high' for LCP heroes.",
-    "Avoid background images for content; prefer `<Image>` so a11y tools can interpret it.",
-    "Apply rounded corners via a wrapper (Panel/Box) with `overflow: hidden` or via sx; avoid per‑component shape props."
+    "Use srcSet/sizes (native `<img>` passthrough) for responsive sources — valet has no build-step optimizer, so caller-provided sources are the responsive story.",
+    "Lazy-loads + async-decodes by default; set `priority` for an above-the-fold/LCP hero (eager + fetchPriority=high). An explicit loading/fetchPriority still wins.",
+    "Round corners with the `radius` prop (number → theme.radius(n), scales with density); reach for a parent `overflow: hidden` wrapper only to clip overflowing/child content.",
+    "Pass `fallback` to degrade a broken image gracefully (rendered onError); without it a failed load behaves like a native <img>.",
+    "Avoid background images for content; prefer `<Image>` so a11y tools and AI proxies can interpret it."
   ],
   "examples": [],
   "docsUrl": "/image-demo",
@@ -100,6 +123,6 @@
     "src/components/primitives/Image.tsx",
     "docs/src/pages/components/primitives/ImageDemo.tsx"
   ],
-  "version": "0.36.0",
+  "version": "0.37.0",
   "schemaVersion": "1.7"
 }

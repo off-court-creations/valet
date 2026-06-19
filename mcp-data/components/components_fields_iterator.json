@@ -75,6 +75,12 @@
       "description": "Control width of the numeric field (token or CSS length)."
     },
     {
+      "name": "buttonVariant",
+      "type": "IconButtonVariant",
+      "required": false,
+      "description": "Visual style for the −/+ stepper buttons. Defaults to `'outlined'`."
+    },
+    {
       "name": "labels",
       "type": "DeepPartialStrings<ValetStrings['iterator']>",
       "required": false,
@@ -132,6 +138,7 @@
     ]
   },
   "cssVars": [
+    "--valet-iter-hit",
     "--valet-focus-width",
     "--valet-focus-ring-color",
     "--valet-focus-offset"
@@ -163,12 +170,14 @@
     "Respect readOnly vs disabled. Use readOnly to keep the field focusable and readable while blocking changes (buttons, wheel, and keyboard are ignored). Use disabled when the control should be entirely inert.",
     "Keep keyboard affordances intact. Users expect ArrowUp/Down to step, PageUp/Down for larger deltas, and Home/End to jump to min/max. Ensure an accessible name via aria-label or a surrounding FormControl label.",
     "Choose an appropriate width. The default width suits small integers. For larger ranges, negatives, or decimals, set width to avoid layout shift while typing.",
+    "Style the steppers with `buttonVariant`: the −/+ buttons default to `'outlined'`; pass `'filled'` for a solid pair (or `'plain'`) to match the surrounding emphasis.",
     "Form integration. Provide a name when used inside FormControl. The value will clamp to min/max and appear in the store on commit.",
     "Guard precision for decimals. When stepping in fractional increments (e.g., 0.1), use roundToStep to reduce floating‑point drift in committed values.",
     "Disable wheel interactions when undesirable. Set wheelBehavior='off' in scroll‑heavy views or when accidental stepping is likely.",
     "Binding precedence (prop > form > internal). An explicit `value` prop always wins; otherwise a `name` inside a `FormControl` binds to the store (seed the key in `createFormStore(initial)` so the initial value is honoured); otherwise the Iterator is uncontrolled. The binding is latched at mount.",
     "Change source. `onValueChange`/`onValueCommit` report a truthful `info.source`: the +/- buttons report `'pointer'`, the Arrow/Page/Home/End/Enter keys and blur report `'keyboard'`, and wheel stepping reports `'wheel'`, not a blanket `'programmatic'`.",
-    "Internationalize the built-in labels with the `labels` prop (instance-level) or a `ValetLocaleProvider` (app-wide). Resolution is instance `labels` > provider strings > built-in English."
+    "Internationalize the built-in labels with the `labels` prop (instance-level) or a `ValetLocaleProvider` (app-wide). Resolution is instance `labels` > provider strings > built-in English.",
+    "Touch target & FormControl config. The numeric box grows to a >=44px coarse-pointer hit floor (40px under `compact`) with the mobile chrome kit (no tap-highlight, `touch-action: manipulation`); the +/- buttons are already >=44px-hardened. A surrounding `FormControl`'s form-wide `disabled` blocks the input, buttons, wheel, and keyboard stepping (not just styling), and a name-keyed `errors` entry sets `aria-invalid` — your own `disabled`/`error` props still win."
   ],
   "examples": [
     {
@@ -217,6 +226,6 @@
     "src/components/fields/Iterator.tsx",
     "docs/src/pages/components/field/IteratorDemo.tsx"
   ],
-  "version": "0.36.0",
+  "version": "0.37.0",
   "schemaVersion": "1.7"
 }

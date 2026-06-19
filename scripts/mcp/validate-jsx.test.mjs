@@ -73,16 +73,20 @@ describe('typeCheckSnippet — the four plan cases', () => {
     expect(err.line).toBe(1);
   });
 
-  it('(c) Table with the deprecated `selectable` → ok:false, flags selectable', () => {
+  it('(c) Table with the removed `selectable`/`rowKey` aliases → ok:false, flagged as errors', () => {
     const r = typeCheckSnippet(`<Table data={[]} columns={[]} selectable='multi' rowKey='id' />`);
     expect(r.ok).toBe(false);
-    const dep = r.diagnostics.filter((d) => d.deprecated);
-    // Both deprecated aliases in the acceptance snippet are flagged.
-    const names = dep.map((d) => d.message);
-    expect(names.some((m) => m.includes('selectable'))).toBe(true);
-    expect(names.some((m) => m.includes('rowKey'))).toBe(true);
-    // Deprecation is reported as a suggestion severity but still flips ok.
-    expect(dep.every((d) => d.severity === 'suggestion')).toBe(true);
+    // The 1.0 deprecation sweep REMOVED these aliases (selectable→selectionMode,
+    // rowKey→getItemKey), so they are now hard type errors (unknown props), not
+    // suggestion-severity deprecations.
+    const messages = r.diagnostics
+      .filter((d) => d.severity === 'error')
+      .map((d) => d.message)
+      .join('\n');
+    expect(messages).toContain('selectable');
+    expect(messages).toContain('rowKey');
+    // No type-valid deprecated aliases survive in the 1.0 surface.
+    expect(r.diagnostics.some((d) => d.deprecated)).toBe(false);
   });
 
   it('(d) a wholly invented prop → ok:false, reported as not existing', () => {
@@ -101,10 +105,12 @@ describe('typeCheckSnippet — auxiliary behavior', () => {
     expect(r.ok).toBe(false);
   });
 
-  it('a deprecated-but-type-valid alias is a suggestion, not an error', () => {
+  it('a removed alias (selectable/rowKey) is a hard error post-1.0, not a deprecation suggestion', () => {
     const r = typeCheckSnippet(`<Table data={[]} columns={[]} selectable='multi' rowKey='id' />`);
-    expect(r.diagnostics.some((d) => d.severity === 'error')).toBe(false);
-    expect(r.diagnostics.some((d) => d.deprecated)).toBe(true);
+    // Post-sweep there are no type-valid deprecated valet aliases left; the
+    // removed props surface as errors instead of suggestion-severity deprecations.
+    expect(r.diagnostics.some((d) => d.severity === 'error')).toBe(true);
+    expect(r.diagnostics.some((d) => d.deprecated)).toBe(false);
   });
 
   it('maps diagnostics to the correct in-snippet line for a multi-line snippet', () => {
@@ -159,13 +165,14 @@ describe('registerValidateJsx — tool wrapper contract', () => {
     expect(res.content[0].text).toMatch(/^OK/);
   });
 
-  it('surfaces the deprecation count in structuredContent for the deprecated alias', async () => {
+  it('surfaces removed aliases as errors (no deprecated aliases remain post-1.0)', async () => {
     const res = await callTool({
       code: `<Table data={[]} columns={[]} selectable='multi' rowKey='id' />`,
     });
     expect(res.isError).toBeFalsy();
     expect(res.structuredContent.ok).toBe(false);
-    expect(res.structuredContent.deprecatedCount).toBeGreaterThanOrEqual(2);
+    expect(res.structuredContent.errorCount).toBeGreaterThanOrEqual(1);
+    expect(res.structuredContent.deprecatedCount).toBe(0);
   });
 });
 

@@ -21,15 +21,15 @@ applications:
             # Verify Node version from mise
             - ~/.local/bin/mise exec -- node -v
 
-            # Build local @archway/valet and link it globally so docs use the fresh code
-            # Use subshells so working directory remains at appRoot (docs) between commands
+            # Build the in-repo @archway/valet so the docs `file:..` link resolves a
+            # fresh dist. Subshells keep the working directory at appRoot (docs).
             - (cd .. && ~/.local/bin/mise exec -- npm ci)
             - (cd .. && ~/.local/bin/mise exec -- npm run build)
-            - (cd .. && ~/.local/bin/mise exec -- npm link)
 
-            # Install docs deps, then link local @archway/valet into docs
+            # Install docs deps. `@archway/valet` is `file:..`, so npm links the
+            # in-repo package automatically — no global `npm link` dance, and no
+            # registry fetch that would break on an unpublished version.
             - ~/.local/bin/mise exec -- npm ci
-            - ~/.local/bin/mise exec -- npm link @archway/valet
 
         build:
           commands:

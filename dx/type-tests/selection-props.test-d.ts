@@ -75,47 +75,63 @@ const tableCanonical: Partial<TableProps<Person>> = {
 };
 void tableCanonical;
 
-const tableDeprecated: Partial<TableProps<Person>> = {
-  /* legacy aliases still accepted (removed at 1.0) */
+/* Deprecated aliases were REMOVED at 1.0 (pre-1.0 policy) — the surface must
+   now reject them. These probes fail the build if an alias is ever re-added. */
+const tableNoSelectable: Partial<TableProps<Person>> = {
+  // @ts-expect-error — `selectable` removed at 1.0; use `selectionMode`
   selectable: 'multi',
-  rowKey: (row) => row.id,
 };
-void tableDeprecated;
+void tableNoSelectable;
+const tableNoRowKey: Partial<TableProps<Person>> = {
+  // @ts-expect-error — `rowKey` removed at 1.0; use `getItemKey`
+  rowKey: (row: Person) => row.id,
+};
+void tableNoRowKey;
 
 /* @ts-expect-error — Table's selectionMode does not accept the legacy 'multi' */
 const tableBadMode: Partial<TableProps<Person>> = { selectionMode: 'multi' };
 void tableBadMode;
 
-/* ─── List: canonical vocabulary + deprecated aliases ───────── */
+/* ─── List: canonical vocabulary; deprecated aliases removed at 1.0 ── */
 const listCanonical: Partial<ListProps<Person>> = {
   selectionMode: 'single',
   getItemKey: (item, i) => `${item.id}-${i}`,
 };
 void listCanonical;
 
-const listDeprecated: Partial<ListProps<Person>> = {
-  selectable: true, // boolean alias of selectionMode
-  getKey: (item) => item.id,
+const listNoSelectable: Partial<ListProps<Person>> = {
+  // @ts-expect-error — `selectable` removed at 1.0; use `selectionMode`
+  selectable: true,
 };
-void listDeprecated;
+void listNoSelectable;
+const listNoGetKey: Partial<ListProps<Person>> = {
+  // @ts-expect-error — `getKey` removed at 1.0; use `getItemKey`
+  getKey: (item: Person) => item.id,
+};
+void listNoGetKey;
 
 /* @ts-expect-error — List is single-select; 'multiple' is not in its mode union */
 const listBadMode: Partial<ListProps<Person>> = { selectionMode: 'multiple' };
 void listBadMode;
 
-/* ─── Tree: selectionMode + the canonical expansion trio ────── */
+/* ─── Tree: canonical SelectionProps<string> + the expansion trio ────── */
 const treeCanonical: Partial<TreeProps<Person>> = {
-  selectionMode: 'none',
+  selectionMode: 'multiple', // Tree now implements none | single | multiple
   expanded: ['a', 'b'],
   defaultExpanded: ['a'],
   onExpandedChange: (ids) => {
     const id: string | undefined = ids[0];
     void id;
   },
-  selected: 'node-1', // Tree's single-id selection
+  selected: ['node-1'], // id arrays per SelectionProps<string>
+  defaultSelected: ['node-1'],
+  onSelectionChange: (ids) => {
+    const id: string | undefined = ids[0];
+    void id;
+  },
 };
 void treeCanonical;
 
-/* @ts-expect-error — Tree is single-select; 'multiple' is not in its mode union */
-const treeBadMode: Partial<TreeProps<Person>> = { selectionMode: 'multiple' };
-void treeBadMode;
+/* @ts-expect-error — selection is keyed by node id (string), not a scalar id */
+const treeBadSelected: Partial<TreeProps<Person>> = { selected: 'node-1' };
+void treeBadSelected;

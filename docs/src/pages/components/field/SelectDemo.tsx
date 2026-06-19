@@ -42,9 +42,14 @@ export default function SelectDemoPage() {
     <>
       {/* Uncontrolled */}
       <Typography variant='h3'>1. Uncontrolled (defaultValue)</Typography>
+      <Typography variant='subtitle'>
+        Selects fill their container by default; set <code>width</code> (or <code>fullWidth</code>)
+        to size them.
+      </Typography>
       <Select
         defaultValue='tea'
         placeholder='Choose drink'
+        width={260}
       >
         <Select.Option value='coffee'>Coffee</Select.Option>
         <Select.Option value='tea'>Tea</Select.Option>
@@ -60,6 +65,7 @@ export default function SelectDemoPage() {
         <Select
           value={pet}
           onValueChange={(v) => setPet(v as string)}
+          width={220}
         >
           <Select.Option value='cat'>Cat</Select.Option>
           <Select.Option value='dog'>Dog</Select.Option>
@@ -82,7 +88,7 @@ export default function SelectDemoPage() {
           onValueChange={(v) => setLangs(v as string[])}
           placeholder='Languages'
           size='lg'
-          sx={{ minWidth: 260 }}
+          width={260}
         >
           <Select.Option value='js'>JavaScript</Select.Option>
           <Select.Option value='ts'>TypeScript</Select.Option>
@@ -103,7 +109,7 @@ export default function SelectDemoPage() {
           placeholder='Choose pet'
           onValueChange={(v) => setPetLive(v as string)}
           onValueCommit={(v) => setPetCommit(v as string)}
-          sx={{ minWidth: 220 }}
+          width={240}
         >
           <Select.Option value='cat'>Cat</Select.Option>
           <Select.Option value='dog'>Dog</Select.Option>
@@ -115,12 +121,16 @@ export default function SelectDemoPage() {
 
       {/* Sizes */}
       <Typography variant='h3'>4. Size variants</Typography>
-      <Stack direction='row'>
+      <Stack
+        direction='row'
+        wrap
+      >
         {(['xs', 'sm', 'md', 'lg', 'xl'] as const).map((s) => (
           <Select
             key={s}
             size={s}
             placeholder={s.toUpperCase()}
+            width={150}
           >
             <Select.Option value='a'>A</Select.Option>
             <Select.Option value='b'>B</Select.Option>
@@ -134,12 +144,14 @@ export default function SelectDemoPage() {
         <Select
           size='3rem'
           placeholder='3rem'
+          width={160}
         >
           <Select.Option value='x'>X</Select.Option>
         </Select>
         <Select
           size={56}
           placeholder='56px'
+          width={160}
         >
           <Select.Option value='y'>Y</Select.Option>
         </Select>
@@ -151,11 +163,15 @@ export default function SelectDemoPage() {
         <Select
           disabled
           placeholder='Disabled'
+          width={200}
         >
           <Select.Option value='x'>X</Select.Option>
         </Select>
 
-        <Select defaultValue='warn'>
+        <Select
+          defaultValue='warn'
+          width={200}
+        >
           <Select.Option value='warn'>Danger preset</Select.Option>
           <Select.Option value='safe'>Safe</Select.Option>
         </Select>
@@ -176,7 +192,7 @@ export default function SelectDemoPage() {
             name='country'
             placeholder='Country'
             size='md'
-            sx={{ maxWidth: 260 }}
+            width={260}
           >
             <Select.Option value='us'>United States</Select.Option>
             <Select.Option value='ca'>Canada</Select.Option>
@@ -188,7 +204,7 @@ export default function SelectDemoPage() {
             multiple
             placeholder='Hobbies'
             size='sm'
-            sx={{ maxWidth: 300 }}
+            width={300}
           >
             <Select.Option value='coding'>Coding</Select.Option>
             <Select.Option value='music'>Music</Select.Option>

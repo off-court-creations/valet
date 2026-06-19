@@ -1,15 +1,12 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/widgets/Table.selection.dom.test.tsx | valet
-// API-TYPES S11 (Q11(a), ruling R12) — the unified selection
-// vocabulary. Table's pre-S11 selection props are renamed:
-//   selectable → selectionMode ('single' | 'multi' → 'single' | 'multiple')
-//   rowKey     → getItemKey
-// The old names ship as additive aliases through 0.x: they keep
-// working but dev-warn once each, and the canonical name wins when
-// both are supplied. PERF S8's keyed internals are untouched — this
-// suite proves the alias wiring + the unified vocabulary, including
-// keyed single/multiple selection round-trips through `selectionMode`
-// + `getItemKey`. Removed at 1.0.
+// The unified selection vocabulary (canonical only — the pre-S11
+// `selectable`/`rowKey` aliases were removed at 1.0; the `deprecationWarns()
+// === []` assertions stand as a regression guard that the canonical props emit
+// no warnings). Covers keyed single/multiple/none round-trips through
+// `selectionMode` + `getItemKey`, CONTROLLED + uncontrolled selection
+// (`selected`/`defaultSelected`/`onSelectionChange`, row arrays), the
+// multiple-mode select-all header checkbox, and sort→page-1 reset.
 // ─────────────────────────────────────────────────────────────
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import React, { act } from 'react';
@@ -62,12 +59,17 @@ function renderStrict(node: React.ReactNode) {
   return { root, container, rerender: (next: React.ReactNode) => act(() => root.render(ui(next))) };
 }
 
+/* Row checkboxes only — scoped to tbody so the multiple-mode select-all header
+   checkbox (a tbody-external input) never shifts the index. */
 const clickCheckbox = (container: HTMLElement, rowIdx: number) => {
-  const boxes = container.querySelectorAll<HTMLInputElement>('input[type="checkbox"]');
+  const boxes = container.querySelectorAll<HTMLInputElement>('tbody input[type="checkbox"]');
   act(() => {
     boxes[rowIdx].click();
   });
 };
+
+const headerSelectAll = (container: HTMLElement) =>
+  container.querySelector<HTMLInputElement>('thead input[type="checkbox"]');
 
 const selectedCount = (container: HTMLElement) =>
   container.querySelectorAll('tbody tr[data-selected="true"]').length;
@@ -201,115 +203,130 @@ describe('Table canonical selection vocabulary (jsdom)', () => {
 });
 
 /* ─────────────────────────────────────────────────────────────
-   Deprecated aliases — work, but warn once each
+   Controlled + uncontrolled selection (1.0 contract)
    ───────────────────────────────────────────────────────────── */
-describe('Table deprecated selection aliases (jsdom)', () => {
-  it('`selectable="multi"` still enables multi-select and warns once across re-renders', () => {
+describe('Table controlled/uncontrolled selection', () => {
+  it('`defaultSelected` seeds the uncontrolled selection', () => {
     const rows = makeRows();
-    const onSelectionChange = vi.fn();
-    const table = () => (
+    const { container } = renderStrict(
       <Table<Row>
         data={rows}
         columns={nameColumns}
-        selectable='multi'
+        selectionMode='multiple'
+        getItemKey='id'
+        defaultSelected={[rows[1]]}
         constrainHeight={false}
-        onSelectionChange={onSelectionChange}
-      />
+      />,
     );
-    const { container, rerender } = renderStrict(table());
-    clickCheckbox(container, 0);
-    clickCheckbox(container, 1);
-    expect(selectedCount(container)).toBe(2);
-
-    rerender(table()); /* a second render must not re-warn */
-
-    const warns = deprecationWarns();
-    expect(warns).toHaveLength(1);
-    expect(warns[0]).toContain('`selectable`');
-    expect(warns[0]).toContain('`selectionMode`');
+    expect(selectedCount(container)).toBe(1);
+    const sel = container.querySelector('tbody tr[data-selected="true"]')!;
+    expect(sel.querySelectorAll('td')[1].textContent?.trim()).toBe('beta');
   });
 
-  it('`rowKey` still keys selection and warns once', () => {
+  it('`selected` is controlled — clicks request via onSelectionChange but the prop drives the view', () => {
     const rows = makeRows();
-    const table = (data: Row[]) => (
+    const onSelectionChange = vi.fn();
+    const table = (selected: Row[]) => (
       <Table<Row>
-        data={data}
+        data={rows}
         columns={nameColumns}
         selectionMode='multiple'
-        rowKey='id'
+        getItemKey='id'
+        selected={selected}
+        onSelectionChange={onSelectionChange}
         constrainHeight={false}
       />
     );
-    const { container, rerender } = renderStrict(table(rows));
-    clickCheckbox(container, 0);
+    const { container, rerender } = renderStrict(table([rows[0]]));
+    expect(selectedCount(container)).toBe(1);
+
+    /* Clicking an unselected row does NOT self-update (controlled); it requests
+       the next selection through onSelectionChange. */
     clickCheckbox(container, 1);
+    expect(onSelectionChange).toHaveBeenLastCalledWith([rows[0], rows[1]]);
+    expect(selectedCount(container)).toBe(1); // view still reflects the prop
+
+    /* Parent applies the request → view updates. */
+    rerender(table([rows[0], rows[1]]));
     expect(selectedCount(container)).toBe(2);
-
-    const refreshed = rows.map((r) => ({ ...r }));
-    rerender(table(refreshed));
-    expect(selectedCount(container)).toBe(2); /* rowKey preserved selection */
-
-    const warns = deprecationWarns();
-    expect(warns).toHaveLength(1);
-    expect(warns[0]).toContain('`rowKey`');
-    expect(warns[0]).toContain('`getItemKey`');
+    expect(deprecationWarns()).toEqual([]);
   });
-});
 
-/* ─────────────────────────────────────────────────────────────
-   Both given — canonical wins, alias still warns
-   ───────────────────────────────────────────────────────────── */
-describe('Table canonical + deprecated together (jsdom)', () => {
-  it('`selectionMode` wins over `selectable`, and `selectable` still warns once', () => {
+  it('select-all header checkbox toggles the whole dataset, with an indeterminate partial state', () => {
     const rows = makeRows();
     const onSelectionChange = vi.fn();
     const { container } = renderStrict(
       <Table<Row>
         data={rows}
         columns={nameColumns}
-        /* canonical says single; the stale alias says multi — single wins */
-        selectionMode='single'
-        selectable='multi'
+        selectionMode='multiple'
+        getItemKey='id'
         constrainHeight={false}
         onSelectionChange={onSelectionChange}
       />,
     );
-    clickCheckbox(container, 0);
-    clickCheckbox(container, 1);
-    /* single-select: only one row selected, prior cleared */
-    expect(selectedCount(container)).toBe(1);
-    expect(onSelectionChange.mock.calls).toEqual([[[rows[0]]], [[rows[1]]]]);
+    const all = headerSelectAll(container)!;
+    expect(all).not.toBeNull();
 
-    const warns = deprecationWarns();
-    expect(warns).toHaveLength(1);
-    expect(warns[0]).toContain('`selectable`');
+    /* Partial selection → indeterminate, not checked. */
+    clickCheckbox(container, 0);
+    expect(all.indeterminate).toBe(true);
+    expect(all.checked).toBe(false);
+
+    /* Click select-all → every row selected. */
+    act(() => all.click());
+    expect(selectedCount(container)).toBe(3);
+    expect(onSelectionChange).toHaveBeenLastCalledWith(rows);
+    expect(all.checked).toBe(true);
+    expect(all.indeterminate).toBe(false);
+
+    /* Click again → cleared. */
+    act(() => all.click());
+    expect(selectedCount(container)).toBe(0);
+    expect(onSelectionChange).toHaveBeenLastCalledWith([]);
   });
 
-  it('`getItemKey` wins over `rowKey`, and `rowKey` still warns once', () => {
-    const rows = makeRows();
-    const table = (data: Row[]) => (
+  it('single-select renders no select-all header checkbox', () => {
+    const { container } = renderStrict(
       <Table<Row>
-        data={data}
+        data={makeRows()}
         columns={nameColumns}
-        selectionMode='multiple'
-        /* canonical key wins; the deprecated alias is ignored but warns */
-        getItemKey='id'
-        rowKey={(r) => r.name}
+        selectionMode='single'
         constrainHeight={false}
-      />
+      />,
     );
-    const { container, rerender } = renderStrict(table(rows));
-    clickCheckbox(container, 0);
-    expect(selectedCount(container)).toBe(1);
+    expect(headerSelectAll(container)).toBeNull();
+  });
+});
 
-    /* refresh keeping ids stable (the winning key) — selection survives */
-    const refreshed = rows.map((r) => ({ ...r }));
-    rerender(table(refreshed));
-    expect(selectedCount(container)).toBe(1);
+/* ─────────────────────────────────────────────────────────────
+   Sort resets pagination to page 1
+   ───────────────────────────────────────────────────────────── */
+describe('Table sort resets page', () => {
+  it('re-sorting returns to page 1', () => {
+    /* 6 rows, 2 per page → 3 pages. */
+    const rows: Row[] = Array.from({ length: 6 }, (_, i) => ({ id: i + 1, name: `r${i + 1}` }));
+    const onPageChange = vi.fn();
+    const { container } = renderStrict(
+      <Table<Row>
+        data={rows}
+        columns={nameColumns}
+        paginate
+        maxExpandedRows={2}
+        constrainHeight={false}
+        onPageChange={onPageChange}
+      />,
+    );
+    /* Go to page 2 via the Pagination control. */
+    const pageButtons = Array.from(container.querySelectorAll<HTMLButtonElement>('button')).filter(
+      (b) => b.textContent?.trim() === '2',
+    );
+    act(() => pageButtons[0]?.click());
+    expect(onPageChange).toHaveBeenLastCalledWith(2);
 
-    const warns = deprecationWarns();
-    expect(warns).toHaveLength(1);
-    expect(warns[0]).toContain('`rowKey`');
-    expect(warns[0]).toContain('`getItemKey`');
+    /* Sort the Name column → page resets to 1. */
+    const sortBtn = container.querySelector('thead th button')!;
+    act(() => (sortBtn as HTMLButtonElement).click());
+    expect(onPageChange).toHaveBeenLastCalledWith(1);
   });
 });

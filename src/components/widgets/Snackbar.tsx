@@ -48,6 +48,14 @@ const EXIT_FADE_MS = 200;
 
 /*───────────────────────────────────────────────────────────*/
 /* Props                                                     */
+/**
+ * Visual style. `outline` (default) paints the toast on the page background with
+ * a thick primary accent outline; `filled` is a solid primary surface with
+ * contrasting text and a soft elevation shadow (matches valet's `filled`
+ * convention elsewhere, e.g. Button).
+ */
+export type SnackbarVariant = 'outline' | 'filled';
+
 export interface SnackbarProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'>,
     Presettable {
@@ -61,6 +69,8 @@ export interface SnackbarProps
   message?: React.ReactNode;
   /** Disable the internal flex stack (children render 1:1)    */
   noStack?: boolean;
+  /** Visual style — `outline` (default) or solid `filled`. */
+  variant?: SnackbarVariant;
   /** Inline styles (with CSS var support) */
   sx?: Sx;
 }
@@ -73,6 +83,8 @@ const Root = styled('div')<{
   $outline: string;
   $outlineW: string;
   $bg: string;
+  $fg: string;
+  $filled: boolean;
   $flex: boolean;
   $padV: string;
   $padH: string;
@@ -83,7 +95,9 @@ const Root = styled('div')<{
 }>`
   position: fixed;
   inset-inline-end: ${({ $spacing }) => $spacing};
-  bottom: ${({ $spacing }) => $spacing};
+  /* Mobile: clear the home indicator / gesture bar on notched phones. env()
+     falls back to 0 everywhere else, so desktop positioning is unchanged. */
+  bottom: calc(${({ $spacing }) => $spacing} + env(safe-area-inset-bottom, 0px));
   transform: translateY(${({ $visible, $offset }) => ($visible ? '0' : $offset)});
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};
   pointer-events: ${({ $visible }) => ($visible ? 'auto' : 'none')};
@@ -99,7 +113,13 @@ const Root = styled('div')<{
   }
 
   background: ${({ $bg }) => $bg};
-  outline: ${({ $outlineW }) => $outlineW} solid ${({ $outline }) => $outline};
+  color: ${({ $fg }) => $fg};
+  /* filled carries its emphasis through the solid surface + a soft shadow;
+     outline keeps the page-background fill with a thick primary keyline. */
+  ${({ $filled, $outlineW, $outline }) =>
+    $filled
+      ? `outline: none; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);`
+      : `outline: ${$outlineW} solid ${$outline};`}
   border-radius: ${({ $radius }) => $radius};
   padding: ${({ $padV, $padH }) => `${$padV} ${$padH}`};
   max-width: 95vw;
@@ -110,6 +130,12 @@ const Root = styled('div')<{
   flex-direction: row;
   align-items: center;
   gap: ${({ $flex, $spacing }) => ($flex ? $spacing : '0')};
+
+  /* A toast is transient (it auto-hides), so its text is never selectable. */
+  user-select: none;
+  -webkit-user-select: none;
+  /* No blue tap-flash if the toast (or its action) is tapped on mobile. */
+  -webkit-tap-highlight-color: transparent;
 `;
 
 /*───────────────────────────────────────────────────────────*/
@@ -126,12 +152,18 @@ export const Snackbar: React.FC<SnackbarProps> = ({
   children,
 
   /* Styling + passthrough ---------------------------------*/
+  variant = 'outline',
   preset: p,
   className,
   sx,
   ...rest
 }) => {
   const { theme } = useTheme();
+  const filled = variant === 'filled';
+  /* outline → page background + primary keyline; filled → solid primary fill
+     with the on-primary text token for contrast. */
+  const surfaceBg = filled ? theme.colors.primary : theme.colors.background;
+  const surfaceFg = filled ? theme.colors.primaryText : theme.colors.text;
 
   // Select stable register/unregister fns from surface store
   const { registerChild, unregisterChild } = useSurface(
@@ -330,6 +362,7 @@ export const Snackbar: React.FC<SnackbarProps> = ({
         role='status'
         aria-live='polite'
         {...rest}
+        data-valet-component='Snackbar'
         onPointerEnter={onPointerEnter}
         onPointerLeave={onPointerLeave}
         onFocusCapture={onFocusCapture}
@@ -339,7 +372,9 @@ export const Snackbar: React.FC<SnackbarProps> = ({
         $spacing={theme.spacing(1)}
         $outline={theme.colors.primary}
         $outlineW={theme.stroke(4)}
-        $bg={theme.colors.background}
+        $bg={surfaceBg}
+        $fg={surfaceFg}
+        $filled={filled}
         $padV={theme.spacing(1)}
         $padH={theme.spacing(2)}
         $offset={theme.spacing(1.5)}

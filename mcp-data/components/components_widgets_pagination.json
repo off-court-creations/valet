@@ -2,7 +2,7 @@
   "name": "Pagination",
   "category": "widgets",
   "slug": "components/widgets/pagination",
-  "summary": "Tab-style page navigator with an elastic active-page underline; controlled by `count` + `page` + `onPageChange` (the old `onChange` is a deprecated alias) — use it to page through large lists or tables.",
+  "summary": "Tab-style page navigator with an elastic active-page underline; controlled by `count` + `page` + `onPageChange` — use it to page through large lists or tables.",
   "status": "stable",
   "aliases": [
     "pagination",
@@ -28,14 +28,6 @@
       "type": "(page: number) => void",
       "required": false,
       "description": "Called with the **new page** (1-based) when the user navigates."
-    },
-    {
-      "name": "onChange",
-      "type": "(page: number) => void",
-      "required": false,
-      "deprecated": {
-        "replacement": "onPageChange"
-      }
     },
     {
       "name": "visibleWindow",
@@ -77,6 +69,7 @@
     ]
   },
   "cssVars": [
+    "--valet-pag-hit",
     "--valet-pag-vp-w",
     "--valet-pag-vp-h",
     "--valet-pag-track-x",
@@ -93,16 +86,13 @@
     {
       "name": "onPageChange",
       "payloadType": "number"
-    },
-    {
-      "name": "onChange",
-      "payloadType": "number"
     }
   ],
   "slots": [],
   "bestPractices": [
-    "Use `onPageChange` to receive the new 1-based page. The legacy `onChange` prop is deprecated (use `onPageChange`); it keeps working through 0.x with a one-time dev warning and is removed at 1.0.",
-    "Keep visible pages small. For large `count`, set a reasonable `siblingCount` and rely on first/last controls.",
+    "Use `onPageChange` to receive the new 1-based page (`page` is controlled).",
+    "Keep visible pages small. For large `count`, set `visibleWindow` (with `autoFollowActive`, default true) so only a window of page buttons shows plus window-scroll controls; rely on the prev/next controls for stepping.",
+    "Targets are touch-friendly automatically — on coarse pointers each nav button floors at ≥44px tall (24px under `compact`); pick spacing/density rather than hand-sizing for mobile.",
     "Sync state when relevant. Mirror page in the router (query or path) so refresh/back behaves predictably.",
     "Prefer server‑side slicing for large datasets; ensure Table or List reflects the current page cleanly.",
     "Use accessible labels and titles for buttons (Prev/Next) and indicate current page to assistive tech.",
@@ -137,6 +127,6 @@
     "src/components/widgets/Pagination.tsx",
     "docs/src/pages/components/widgets/PaginationDemo.tsx"
   ],
-  "version": "0.36.0",
+  "version": "0.37.0",
   "schemaVersion": "1.7"
 }

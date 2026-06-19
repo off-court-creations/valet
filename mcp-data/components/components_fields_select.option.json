@@ -33,10 +33,10 @@
     "omitted": []
   },
   "cssVars": [
-    "--valet-border",
     "--valet-bg",
     "--valet-text-color",
-    "--valet-focus-ring-color"
+    "--valet-border",
+    "--valet-select-hit"
   ],
   "cssPresets": [],
   "events": [],
@@ -47,6 +47,6 @@
   "sourceFiles": [
     "src/components/fields/Select.tsx"
   ],
-  "version": "0.36.0",
+  "version": "0.37.0",
   "schemaVersion": "1.7"
 }

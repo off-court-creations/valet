@@ -18,6 +18,9 @@ import React, { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { withTZ } from '../../test-utils/withTZ';
 import { DateSelector } from './DateSelector';
+import { FormControl } from './FormControl';
+import { createFormStore } from '../../system/createFormStore';
+import * as sheet from '../../css/sheet';
 
 /* react-dom warns unless act usage is announced ----------------------- */
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -115,5 +118,80 @@ withTZ('Asia/Tokyo', () => {
       expect(onValueCommit).toHaveBeenCalledTimes(1);
       expect(onValueCommit.mock.calls[0][0]).toEqual(['2025-06-15', '2025-06-20']);
     });
+  });
+});
+
+/* ── 1.0 verification: FormControl config + mobile chrome kit ─────────────
+ * Matches the Checkbox/Slider/Select harness: a form-wide `disabled` disables
+ * the field (every day cell carries the native disabled attr), a name-keyed
+ * `errors` entry marks it aria-invalid, and the coarse-pointer hit floor /
+ * chrome kit ship on the day-cell rule. */
+describe('DateSelector — FormControl config + touch target', () => {
+  it('a form-wide `disabled` disables every day cell (and the field-level prop too)', () => {
+    const useStore = createFormStore<Record<string, unknown>>({ when: '2025-06-15' });
+    const { container } = render(
+      <FormControl
+        useStore={useStore}
+        disabled
+      >
+        <DateSelector name='when' />
+      </FormControl>,
+    );
+    const cells = dayCell(container, 11);
+    expect(cells.disabled).toBe(true);
+    // The clicked day is blocked: no store write occurs.
+    clickDay(container, 11);
+    expect(useStore.getState().values.when).toBe('2025-06-15');
+  });
+
+  it('the field-level `disabled` prop alone disables the day cells', () => {
+    const { container } = render(
+      <DateSelector
+        defaultValue='2025-06-15'
+        disabled
+      />,
+    );
+    expect(dayCell(container, 11).disabled).toBe(true);
+  });
+
+  it('a name-keyed FormControl `errors` entry marks the root aria-invalid', () => {
+    const useStore = createFormStore<Record<string, unknown>>({ when: '2025-06-15' });
+    const { container } = render(
+      <FormControl
+        useStore={useStore}
+        errors={{ when: 'Pick a weekday' }}
+      >
+        <DateSelector name='when' />
+      </FormControl>,
+    );
+    const root = container.querySelector('[data-valet-component="DateSelector"]')!;
+    expect(root.getAttribute('aria-invalid')).toBe('true');
+  });
+
+  it('the field-level `error` prop alone marks the root aria-invalid', () => {
+    const { container } = render(
+      <DateSelector
+        defaultValue='2025-06-15'
+        error
+      />,
+    );
+    const root = container.querySelector('[data-valet-component="DateSelector"]')!;
+    expect(root.getAttribute('aria-invalid')).toBe('true');
+  });
+
+  it('day cells carry the coarse hit var and the chrome-kit + @media rule', () => {
+    const { container } = render(<DateSelector defaultValue='2025-06-15' />);
+    const cell = dayCell(container, 11);
+    // Inline coarse-pointer hit floor (44px at default density).
+    expect(cell.style.getPropertyValue('--valet-date-hit')).toBe('44px');
+    // The styled rule carries the chrome kit + the coarse-pointer expander.
+    const cls = cell.className.split(' ').find(Boolean) ?? '';
+    const rule =
+      Array.from(sheet.getGlobalSheet()?.cssRules ?? [], (r) => r.cssText).find((t) =>
+        t.startsWith(`.${cls}`),
+      ) ?? '';
+    expect(rule).toContain('touch-action: manipulation');
+    expect(rule).toContain('@media (pointer: coarse)');
+    expect(rule).toContain('--valet-date-hit');
   });
 });

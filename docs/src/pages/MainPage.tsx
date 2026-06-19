@@ -162,7 +162,7 @@ export default function MainPage() {
                 >
                   <Typography
                     variant='h1'
-                    bold
+                    weight='bold'
                     sx={{ textAlign: 'center' }}
                   >
                     One library. Everything UI.
@@ -186,7 +186,7 @@ export default function MainPage() {
                 >
                   <Button
                     size='lg'
-                    variant='outlined'
+                    variant='filled'
                     onClick={go('/quickstart')}
                   >
                     <Icon icon='mdi:flash-outline' />
@@ -194,7 +194,7 @@ export default function MainPage() {
                   </Button>
                   <Button
                     size='lg'
-                    variant='outlined'
+                    variant='filled'
                     onClick={go('/component-status')}
                   >
                     <Icon icon='mdi:view-grid-outline' />
@@ -202,7 +202,7 @@ export default function MainPage() {
                   </Button>
                   <Button
                     size='lg'
-                    variant='outlined'
+                    variant='filled'
                     onClick={go('/mcp')}
                   >
                     <Icon icon='mdi:database-search' />
@@ -220,11 +220,7 @@ export default function MainPage() {
         fullWidth
         sx={{ backgroundColor: theme.colors['background'] }}
       >
-        <Grid
-          columns={3}
-          adaptive
-          gap={1}
-        >
+        <Grid columns={{ xs: 1, md: 3 }}>
           {[
             {
               icon: 'mdi:rocket-launch',
@@ -260,7 +256,6 @@ export default function MainPage() {
             <Panel
               key={`f-${i}`}
               variant='outlined'
-              pad={2}
             >
               <Stack>
                 <Icon
@@ -269,7 +264,7 @@ export default function MainPage() {
                 />
                 <Typography
                   variant='h4'
-                  bold
+                  weight='bold'
                   sx={{ color: theme.colors['text'] }}
                 >
                   {f.title}
@@ -295,15 +290,14 @@ export default function MainPage() {
       {/* Experience: Live demos + Theme playground */}
       <Box fullWidth>
         <Grid
-          columns={2}
-          adaptive
+          columns={{ xs: 1, md: 2 }}
           gap={2}
         >
           {/* Live demos sub-area */}
           <Box>
             <Typography
               variant='h3'
-              bold
+              weight='bold'
             >
               Component Demos
             </Typography>
@@ -418,7 +412,7 @@ export default function MainPage() {
           <Box fullWidth>
             <Typography
               variant='h3'
-              bold
+              weight='bold'
             >
               Theme playground
             </Typography>

@@ -109,12 +109,12 @@ function clickCell(cell: HTMLButtonElement) {
 /* en-US default — characterization (must be UNCHANGED)           */
 
 describe('DateSelector — en-US default is unchanged (A11Y S10 characterization)', () => {
-  it('Sunday-first 2-letter weekday headers, full English month name, Latin digits', () => {
+  it('Sunday-first 2-letter weekday headers, short English month name, Latin digits', () => {
     const { container } = render(<DateSelector defaultValue='2025-06-15' />);
     // The previous hardcoded `days` array, Sunday-first.
     expect(weekdayHeaders(container)).toEqual(['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']);
-    // Full English month + year in the header selects.
-    expect(headerSelects(container)).toEqual(['June', '2025']);
+    // Short English month + year in the header selects (1.0: "Jun", not "June").
+    expect(headerSelects(container)).toEqual(['Jun', '2025']);
     // Day cells render Latin digits (display === String(day)).
     expect(dayCellByText(container, '15').textContent).toBe('15');
   });
@@ -151,8 +151,8 @@ describe('DateSelector — de-DE locale (German names, Monday-start)', () => {
     );
     // de-DE first day is Monday (1); headers rotate to Monday-first.
     expect(weekdayHeaders(container)).toEqual(['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So']);
-    // German month name (Juni) drives the header select.
-    expect(headerSelects(container)).toEqual(['Juni', '2025']);
+    // German short month name (Jun) drives the header select.
+    expect(headerSelects(container)).toEqual(['Jun', '2025']);
   });
 
   it('Monday-start shifts the leading blanks: June 1 2025 (Sunday) → 6 blanks', () => {

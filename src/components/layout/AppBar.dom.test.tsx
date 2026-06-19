@@ -13,6 +13,7 @@ import React, { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { Surface } from './Surface';
 import { AppBar } from './AppBar';
+import { getGlobalSheet } from '../../css/sheet';
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -87,5 +88,35 @@ describe('AppBar intent vars (API-TYPES S13)', () => {
     expect(s.getPropertyValue('--valet-intent-bg-hover')).toMatch(HEX6);
     expect(s.getPropertyValue('--valet-intent-bg-active')).toMatch(HEX6);
     expect(s.getPropertyValue('--valet-intent-fg-disabled')).toMatch(HEX6);
+  });
+});
+
+/*───────────────────────────────────────────────────────────────*/
+/* Mobile touch targets — icon-only navigation buttons            */
+
+describe('AppBar — mobile touch targets', () => {
+  it('icon-only nav buttons size from --valet-appbar-navbtn with a coarse >=44px floor', () => {
+    const { container } = render(
+      <Surface>
+        <AppBar
+          fixed={false}
+          portal={false}
+          navigation={[{ id: 'home', icon: <span>H</span>, ariaLabel: 'Home', iconOnly: true }]}
+          navigationLabel='nav'
+        />
+      </Surface>,
+    );
+    const nav = container.querySelector('nav[aria-label="nav"]') as HTMLElement;
+    const btn = nav.querySelector('button') as HTMLButtonElement;
+    // Square size rides on the inherited var (not a hardcoded 28px).
+    expect(btn.getAttribute('style')).toContain('var(--valet-appbar-navbtn)');
+    // The NavWrap rule floors that var at 44px on coarse pointers.
+    const cls = nav.className.split(/\s+/).find(Boolean)!;
+    const rule =
+      Array.from(getGlobalSheet()!.cssRules, (r) => r.cssText).find((t) =>
+        t.startsWith(`.${cls}`),
+      ) ?? '';
+    expect(rule).toContain('@media (pointer: coarse)');
+    expect(rule).toContain('--valet-appbar-navbtn: 44px');
   });
 });

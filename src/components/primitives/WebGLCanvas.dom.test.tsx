@@ -22,9 +22,12 @@ class ResizeObserverStub {
 let rafSeq = 0;
 
 /* Minimal fake WebGL2 context ------------------------------------------- */
+const loseContextExt = { loseContext: vi.fn() };
 const fakeGl = {
   clearColor: vi.fn(),
   viewport: vi.fn(),
+  getExtension: vi.fn((name: string) => (name === 'WEBGL_lose_context' ? loseContextExt : null)),
+  isContextLost: vi.fn(() => false),
 };
 
 /* Helpers -------------------------------------------------------------- */
@@ -62,6 +65,9 @@ afterEach(() => {
   vi.unstubAllGlobals();
   fakeGl.clearColor.mockClear();
   fakeGl.viewport.mockClear();
+  fakeGl.getExtension.mockClear();
+  fakeGl.isContextLost.mockClear();
+  loseContextExt.loseContext.mockClear();
 });
 
 /* Suite ----------------------------------------------------------------- */
@@ -124,5 +130,83 @@ describe('WebGLCanvas (jsdom)', () => {
     render([0.4, 0.5, 0.6, 1]);
     expect(fakeGl.clearColor).toHaveBeenCalledWith(0.4, 0.5, 0.6, 1);
     expect(create.mock.calls.length).toBe(createsAfterMount);
+  });
+
+  it('inline create / contextAttributes (fresh identity each render) do NOT rebuild the program', () => {
+    // THE headline trap: a brand-new function + object identity every render must
+    // not tear down + rebuild the GL pipeline (ref-latched, deps are [dprMax]).
+    const program = makeProgram();
+    let createCalls = 0;
+    const root = makeRoot();
+    const render = (tick: number) =>
+      act(() => {
+        root.render(
+          <WebGLCanvas
+            create={() => {
+              createCalls++;
+              return program;
+            }}
+            contextAttributes={{ alpha: true }}
+            className={`tick-${tick}`}
+          />,
+        );
+      });
+
+    render(1);
+    expect(createCalls).toBe(1);
+    render(2);
+    render(3);
+    expect(createCalls).toBe(1); // built once, never rebuilt
+    expect((program.dispose as ReturnType<typeof vi.fn>).mock.calls.length).toBe(0);
+  });
+
+  it('unmount disposes the program (and does NOT loseContext — the canvas/context may be reused)', () => {
+    const program = makeProgram();
+    const root = makeRoot();
+    const entry = roots[roots.length - 1];
+    act(() => root.render(<WebGLCanvas create={() => program} />));
+    act(() => root.unmount());
+    roots.pop(); // already unmounted — keep afterEach from double-unmounting
+    entry.container.remove();
+
+    expect((program.dispose as ReturnType<typeof vi.fn>).mock.calls.length).toBe(1);
+    // Must NOT force-lose the context: getContext returns the same context on a
+    // StrictMode/remount of the reused <canvas>, and losing it breaks the remount.
+    expect(loseContextExt.loseContext).not.toHaveBeenCalled();
+  });
+
+  it('unsupported WebGL2 (getContext → null) fires onError and renders the fallback', () => {
+    (HTMLCanvasElement.prototype.getContext as ReturnType<typeof vi.fn>).mockImplementation(
+      () => null,
+    );
+    const onError = vi.fn();
+    const root = makeRoot();
+    const container = roots[roots.length - 1].container;
+    act(() => {
+      root.render(
+        <WebGLCanvas
+          create={() => makeProgram()}
+          onError={onError}
+          fallback={<div data-fb='1'>no webgl</div>}
+        />,
+      );
+    });
+    expect(onError).toHaveBeenCalledTimes(1);
+    expect(container.querySelector('[data-fb]')).not.toBeNull();
+    expect(container.querySelector('canvas')).toBeNull();
+  });
+
+  it('create() → null fires onError (and does not set a live glRef)', () => {
+    const onError = vi.fn();
+    const root = makeRoot();
+    act(() =>
+      root.render(
+        <WebGLCanvas
+          create={() => null}
+          onError={onError}
+        />,
+      ),
+    );
+    expect(onError).toHaveBeenCalledTimes(1);
   });
 });

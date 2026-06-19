@@ -1,7 +1,10 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/fields/RadioGroup.tsx | valet
 // Theme-aware radio groups with keyboard nav & refined spacing
-// • Disabled state now mirrors Accordion / Checkbox colour recipe
+// • Colours via the shared intent contract (computeIntentVars), consistent with
+//   Checkbox; disabled dims via opacity (no bespoke colour recipe).
+// • Mobile: chrome kit + a coarse-pointer >=44px tap row per option.
+// • Form-wide disabled / name-keyed errors flow in via FormConfigCtx.
 // • Inner (radio–label) gap tight; vertical option gap = theme.spacing(1.5)
 //
 // FIELDS S8 (rulings R9/R10): value/form/internal resolution delegated to the
@@ -31,12 +34,13 @@ import React, {
 import { styled } from '../../css/createStyled';
 import { preset } from '../../css/stylePresets';
 import { useTheme } from '../../system/themeStore';
-import { toRgb, mix, toHex } from '../../helpers/color';
+import { computeIntentVars, makeMix } from '../../system/intentVars';
+import { useCompact } from '../../system/compactContext';
+import { useFormConfig } from './FormControl';
 import type { Theme } from '../../system/themeStore';
 import type { FieldBaseProps, Presettable, Space, Sx } from '../../types';
 import type { ChangeInfo, InputSource, OnValueChange, OnValueCommit } from '../../system/events';
 import { valetError } from '../../system/devErrors';
-import { resolveDeprecatedProp } from '../../system/deprecate';
 import { useFieldState } from '../../hooks/useControlledState';
 
 /*───────────────────────────────────────────────────────────*/
@@ -48,6 +52,8 @@ interface RadioCtx {
   setValue: (v: string, e?: React.ChangeEvent<HTMLInputElement>) => void;
   name: string;
   size: RadioSize | number | string;
+  /** Form-wide disable from the group (own per-radio disabled still wins). */
+  disabled: boolean;
 }
 
 const RadioGroupCtx = createContext<RadioCtx | null>(null);
@@ -120,21 +126,29 @@ const RootBase = styled('div')`
 const OptionLabel = styled('label')<{
   theme: Theme;
   $disabled: boolean;
-  $disabledColor: string;
 }>`
   display: inline-flex;
   align-items: center;
   cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
-  user-select: none;
-  color: ${({ $disabled, $disabledColor }) => ($disabled ? $disabledColor : 'inherit')};
+  /* Disabled keeps its colours and just dims (intent contract, matches Checkbox). */
+  opacity: ${({ $disabled }) => ($disabled ? 0.5 : 1)};
 
-  /* Mobile tap highlight suppression */
+  /* Mobile chrome kit — no tap flash, no iOS callout, no text selection */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
 
+  /* Coarse-pointer comfort: each option is a >=44px tap row (24px under
+     compact); desktop (fine pointer) is untouched. */
+  @media (pointer: coarse) {
+    min-height: var(--valet-radio-hit, 44px);
+  }
+
   /* Focus ring on the visual indicator when the hidden input is focused */
   & input[type='radio']:focus-visible + [data-indicator] {
-    outline: ${({ theme }) => theme.stroke(2)} solid ${({ theme }) => theme.colors.primary};
+    outline: ${({ theme }) => theme.stroke(2)} solid var(--valet-intent-focus);
     outline-offset: ${({ theme }) => theme.stroke(1)};
   }
 `;
@@ -156,14 +170,10 @@ export interface RadioGroupProps
   defaultValue?: string;
   row?: boolean;
   size?: RadioSize | number | string;
+  /** Disable every radio in the group (a radio's own `disabled` still wins). */
+  disabled?: boolean;
   /** Gap between options as spacing units or a CSS length. */
   gap?: Space;
-  /**
-   * Gap between options.
-   * @deprecated Renamed to `gap` (Q12); `spacing` keeps working through 0.x
-   *   and is removed at 1.0. `gap` wins when both are supplied.
-   */
-  spacing?: Space;
   /** DOM-parity change event (raw input event). */
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   /** Canonical value change event (fires on selection). */
@@ -193,11 +203,11 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
   row = false,
   size = 'md',
   gap: gapProp,
-  spacing: spacingProp,
   onChange,
   onValueChange,
   onValueCommit,
   error = false,
+  disabled = false,
   // API-TYPES S6 (stage A): destructure the remaining FieldBaseProps member
   // BEFORE the rest-spread so `fullWidth` stops leaking onto the root <div>
   // (role=radiogroup) as an invalid DOM attribute. FieldShell rendering of
@@ -215,6 +225,13 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
   const { theme } = useTheme();
   const id = useId();
   const name = nameProp ?? `radio-group-${id}`;
+  const effectiveCompact = useCompact();
+
+  /* Form-wide config (own props win; the form config is the fallback). */
+  const formConfig = useFormConfig();
+  const effectiveDisabled = disabled || formConfig.disabled;
+  const effectiveError =
+    Boolean(error) || (nameProp != null && formConfig.errors[nameProp] != null);
 
   /* Controlled/uncontrolled + form wiring (ruling R9) ------------------- */
   /**
@@ -272,14 +289,13 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
       setValue,
       name,
       size,
+      disabled: effectiveDisabled,
     }),
-    [selectedValue, name, size, setValue],
+    [selectedValue, name, size, setValue, effectiveDisabled],
   );
 
   /* Gap between radio items ------------------------------------------- */
-  // `gap` is canonical (Q12); `spacing` is the deprecated alias. `gap` wins
-  // when both are supplied; passing `spacing` dev-warns once.
-  const gap = resolveDeprecatedProp('RadioGroup', 'gap', gapProp, 'spacing', spacingProp);
+  const gap = gapProp;
   let gapCss: string;
   if (gap === undefined) {
     gapCss = row ? theme.spacing(1) : theme.spacing(1.5);
@@ -347,20 +363,23 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
         {...rest}
         ref={ref}
         data-valet-component='RadioGroup'
-        data-state={error ? 'invalid' : 'valid'}
+        data-state={effectiveError ? 'invalid' : 'valid'}
         role='radiogroup'
-        aria-invalid={error || undefined}
+        aria-invalid={effectiveError || undefined}
         aria-labelledby={labelId}
         aria-describedby={helpId}
         aria-orientation={row ? 'horizontal' : 'vertical'}
         onKeyDown={onKey}
         className={mergedCls}
-        style={{
-          flexDirection: row ? 'row' : 'column',
-          alignItems: row ? 'center' : 'flex-start',
-          gap: gapCss,
-          ...sx,
-        }}
+        style={
+          {
+            flexDirection: row ? 'row' : 'column',
+            alignItems: row ? 'center' : 'flex-start',
+            gap: gapCss,
+            '--valet-radio-hit': effectiveCompact ? '24px' : '44px',
+            ...sx,
+          } as React.CSSProperties
+        }
       >
         {children}
       </RootBase>
@@ -387,54 +406,42 @@ interface IndicatorProps extends React.HTMLAttributes<HTMLSpanElement> {
   checked: boolean;
   outerSize: string;
   dotSize: string;
-  primary: string;
-  disabled: boolean;
-  disabledColor: string;
 }
 
-const Indicator: React.FC<IndicatorProps> = ({
-  checked,
-  outerSize,
-  dotSize,
-  primary,
-  disabled,
-  disabledColor,
-  ...rest
-}) => {
-  const ring = disabled ? disabledColor : primary;
-
-  return (
-    <span
-      {...rest}
-      data-indicator
-      aria-hidden
-      style={{
-        width: outerSize,
-        height: outerSize,
-        minWidth: outerSize,
-        borderRadius: '50%',
-        border: `2px solid ${ring}`,
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        transition: 'outline 120ms',
-        backgroundColor: checked ? ring : undefined,
-      }}
-    >
-      {checked && (
-        <span
-          style={{
-            width: dotSize,
-            height: dotSize,
-            borderRadius: '50%',
-            backgroundColor: '#fff',
-            filter: disabled ? 'grayscale(1)' : 'none',
-          }}
-        />
-      )}
-    </span>
-  );
-};
+/* Colours come from the shared intent contract (vars set on the OptionLabel and
+   inherited here): unchecked → neutral border; checked → intent fill + an
+   intent-fg dot (readable on the fill, never a hard white). Disabled is the
+   label's opacity, not a recolour. */
+const Indicator: React.FC<IndicatorProps> = ({ checked, outerSize, dotSize, ...rest }) => (
+  <span
+    {...rest}
+    data-indicator
+    aria-hidden
+    style={{
+      width: outerSize,
+      height: outerSize,
+      minWidth: outerSize,
+      borderRadius: '50%',
+      border: `2px solid ${checked ? 'var(--valet-intent-bg)' : 'var(--valet-intent-border)'}`,
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      transition: 'outline 120ms, border-color 120ms, background 120ms',
+      backgroundColor: checked ? 'var(--valet-intent-bg)' : undefined,
+    }}
+  >
+    {checked && (
+      <span
+        style={{
+          width: dotSize,
+          height: dotSize,
+          borderRadius: '50%',
+          backgroundColor: 'var(--valet-intent-fg)',
+        }}
+      />
+    )}
+  </span>
+);
 
 /*───────────────────────────────────────────────────────────*/
 /* <Radio />                                                 */
@@ -454,8 +461,15 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
     ref,
   ) => {
     /* Theme + sizing ---------------------------------------------------- */
-    const { theme, mode } = useTheme();
-    const { value: sel, setValue, name, size: groupSize } = useRadioGroup();
+    const { theme } = useTheme();
+    const {
+      value: sel,
+      setValue,
+      name,
+      size: groupSize,
+      disabled: groupDisabled,
+    } = useRadioGroup();
+    const effectiveDisabled = disabled || groupDisabled;
 
     const token = sizeProp ?? groupSize;
     const map = createSizeMap(theme);
@@ -481,12 +495,19 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
     }
     const checked = sel === value;
 
-    /* Disabled colour (Accordion recipe) ------------------------------- */
-    const disabledColor = toHex(
-      mix(toRgb(theme.colors.text), toRgb(mode === 'dark' ? '#000' : '#fff'), 0.4),
-    );
+    /* Colours — one shared intent contract (matches Checkbox). Unchecked ring
+       is a neutral border; checked fill + dot use the intent accent / fg. */
+    const intentVars = computeIntentVars({
+      bg: theme.colors.primary,
+      fg: theme.colors.primaryButtonText,
+      focus: theme.colors.primary,
+      disabledMixColor: theme.colors.background,
+      variant: 'filled',
+      border: makeMix(theme.colors.background, theme.colors.text, 0.4),
+    });
 
-    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => !disabled && setValue(value, e);
+    const onChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+      !effectiveDisabled && setValue(value, e);
 
     /* preset → className ---------------------------------------------- */
     const presetCls = p ? preset(p) : '';
@@ -497,13 +518,13 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
       <OptionLabel
         theme={theme}
         className={mergedCls}
-        style={{ gap: SZ.gapInner, ...sx }}
-        $disabled={disabled}
-        $disabledColor={disabledColor}
+        style={{ gap: SZ.gapInner, ...intentVars, ...sx } as React.CSSProperties}
+        $disabled={effectiveDisabled}
         data-valet-component='Radio'
         data-state={checked ? 'selected' : 'unselected'}
-        data-disabled={disabled ? 'true' : 'false'}
+        data-disabled={effectiveDisabled ? 'true' : 'false'}
         data-checked={checked ? 'true' : 'false'}
+        onContextMenu={(e: React.MouseEvent) => e.preventDefault()}
       >
         <HiddenInput
           {...inputRest}
@@ -512,16 +533,13 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
           name={name}
           value={value}
           checked={checked}
-          disabled={disabled}
+          disabled={effectiveDisabled}
           onChange={onChange}
         />
         <Indicator
           checked={checked}
           outerSize={SZ.indicator}
           dotSize={SZ.dot}
-          primary={theme.colors.primary}
-          disabled={disabled}
-          disabledColor={disabledColor}
         />
         {label ?? children}
       </OptionLabel>

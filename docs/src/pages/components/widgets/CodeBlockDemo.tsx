@@ -38,7 +38,7 @@ export function BigExampleComponent() {
         code={wideLongCode}
         language='typescript'
         ariaLabel='Large wide-lines code sample'
-        title='Copy large sample'
+        copyLabel='Copy large sample'
       />
     </Stack>
   );

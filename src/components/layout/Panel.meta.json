@@ -1,6 +1,6 @@
 {
   "name": "Panel",
-  "summary": "Bordered, padded surface card for grouping related content into a visually distinct section; supports `normalizeRowHeights` (the old `normalizeRowHeight` is a deprecated alias) for equal-height children — use it to frame a block, and `Box` for an unstyled container.",
+  "summary": "Bordered, padded surface card for grouping related content into a visually distinct section; supports `normalizeRowHeights` for equal-height children — use it to frame a block, and `Box` for an unstyled container.",
   "status": "stable",
   "aliases": ["panel", "card", "section"],
   "docs": {
@@ -10,7 +10,7 @@
       "Prefer theme tokens for backgrounds; if you set a custom background ensure text maintains contrast.",
       "Use presets to standardize repeating styles; avoid duplicating sx across pages.",
       "Reserve fullWidth for sections that should span the container; otherwise, anchor with alignX.",
-      "Control row-height normalization with `normalizeRowHeights` (plural). Inside a Grid that normalizes row heights, set `normalizeRowHeights={false}` to keep intrinsic heights. The old singular `normalizeRowHeight` is a deprecated alias (Q12): it keeps working through 0.x with a one-time dev warning and is removed at 1.0 — migrate to `normalizeRowHeights`, which wins when both are supplied.",
+      "Control row-height normalization with `normalizeRowHeights` (plural). Inside a Grid that normalizes row heights, set `normalizeRowHeights={false}` to keep intrinsic heights.",
       "Center content with centerContent for compact UI elements, not long-form text blocks.",
       "Nest Panels judiciously to create hierarchy; keep padding consistent using spacing tokens."
     ]
@@ -21,6 +21,12 @@
       "title": "Default Panel",
       "lang": "tsx",
       "code": "<Panel><Typography>Default surface (backgroundAlt)</Typography></Panel>"
+    },
+    {
+      "id": "panel-intent",
+      "title": "Semantic intent fill",
+      "lang": "tsx",
+      "code": "<Panel intent=\"primary\"><Typography>Primary-tinted surface (text auto-contrasts)</Typography></Panel>"
     },
     {
       "id": "panel-alt-on-alt",

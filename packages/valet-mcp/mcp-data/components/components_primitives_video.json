@@ -147,6 +147,7 @@
   "slots": [],
   "bestPractices": [
     "Provide controls and captions; prefer muted autoplay only when appropriate.",
+    "The player is keyboard-operable (focusable): Space/Enter toggles play, `c` toggles the first caption track.",
     "Use poster images for better perceived performance.",
     "Constrain size and avoid layout shift; select fit modes deliberately.",
     "Avoid background video for critical content; ensure text contrast remains accessible.",
@@ -159,6 +160,6 @@
     "src/components/primitives/Video.tsx",
     "docs/src/pages/components/primitives/VideoDemo.tsx"
   ],
-  "version": "0.36.0",
+  "version": "0.37.0",
   "schemaVersion": "1.7"
 }

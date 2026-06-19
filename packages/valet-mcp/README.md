@@ -33,10 +33,10 @@ args = []
 
 Data source (dev): set `VALET_MCP_DATA_DIR` to an absolute path to your `mcp-data/`; otherwise the server uses the bundled snapshot. See the docs for details.
 
-Docs: MCP & Introspection guide lives in `docs/src/pages/concepts/MCP.tsx` and the live docs site. It covers tools, examples, best practices, and advanced flows.
+Docs: MCP & Introspection guide lives in `docs/src/pages/getting-started/MCP.tsx` and the live docs site. It covers tools, examples, best practices, and advanced flows.
 
 Requirements: Node 18+ (20+ recommended). Communicates over stdio.
 
-Troubleshooting: regenerate data (`npm run mcp:build`) and re‑run the selfcheck.
+Troubleshooting: re‑run the selfcheck with `MCP_SELFCHECK=1 valet-mcp` — the component data ships bundled with the package, so there is no regeneration step. Note: the `validate_jsx` tool additionally needs `@archway/valet` installed alongside the server (it type‑checks snippets against valet's shipped types); every other tool works from the bundled snapshot.
 
 License: MIT © Off Court Creations

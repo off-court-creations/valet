@@ -2,7 +2,7 @@
 // src/components/layout/AppBar.tsx  | valet
 // spacing refactor: controlled pad; remove child padding – 2025‑08‑12
 // ─────────────────────────────────────────────────────────────
-import React, { useLayoutEffect, useRef, useId } from 'react';
+import React, { useLayoutEffect, useRef, useId, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
@@ -123,6 +123,7 @@ const NavWrap = styled('nav')<{
   $gap: string;
   $push: boolean;
   $grow: boolean;
+  $navBtn: string;
 }>`
   display: flex;
   align-items: center;
@@ -131,6 +132,21 @@ const NavWrap = styled('nav')<{
   flex: ${({ $grow }) => ($grow ? '1 1 auto' : '0 0 auto')};
   min-width: 0;
   margin-inline-start: ${({ $push }) => ($push ? 'auto' : '0')};
+
+  /* Icon-only nav buttons read --valet-appbar-navbtn for their square size.
+     On coarse pointers it floors at 44px so the compact desktop icons become
+     proper touch targets; the var is set on the children via the stylesheet
+     (not inline) so this media override actually wins. */
+  & button,
+  & a {
+    --valet-appbar-navbtn: ${({ $navBtn }) => $navBtn};
+  }
+  @media (pointer: coarse) {
+    & button,
+    & a {
+      --valet-appbar-navbtn: 44px;
+    }
+  }
 `;
 
 /*───────────────────────────────────────────────────────────*/
@@ -157,6 +173,14 @@ export const AppBar: React.FC<AppBarProps> = ({
   ...rest
 }) => {
   const { theme } = useTheme();
+  // SSR/hydration-safe portal: render inline on the server AND on the first
+  // client render (mounted=false), then portal to document.body after mount.
+  // This avoids both the Node crash (`document` is undefined during SSR) and a
+  // hydration mismatch (server inline vs client portaled on the first render).
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const { element, registerChild, unregisterChild } = useSurface(
     (s) => ({
       element: s.element,
@@ -302,6 +326,7 @@ export const AppBar: React.FC<AppBarProps> = ({
           $gap={navGap}
           $push={navPush}
           $grow={navGrow}
+          $navBtn={theme.spacing(3.5)}
           aria-label={navigationLabel}
         >
           {navigation!.map((item, idx) => {
@@ -323,8 +348,11 @@ export const AppBar: React.FC<AppBarProps> = ({
                 navVariant === 'filled' ? `0 0 0 1px ${text}33` : `0 0 0 1px ${colorForNav}33`,
               ...(iconOnly
                 ? {
-                    minWidth: theme.spacing(3.5),
-                    width: theme.spacing(3.5),
+                    // Square size rides on the inherited var (28px desktop →
+                    // 44px coarse, set by NavWrap) so touch targets clear 44px.
+                    minWidth: 'var(--valet-appbar-navbtn)',
+                    width: 'var(--valet-appbar-navbtn)',
+                    minHeight: 'var(--valet-appbar-navbtn)',
                     padding: theme.spacing(0.5),
                     justifyContent: 'center',
                     fontSize: '1.25rem',
@@ -390,9 +418,12 @@ export const AppBar: React.FC<AppBarProps> = ({
     </Bar>
   );
 
-  /* Avoiding fixed-in-fixed bug on older Safari by portaling to body when fixed; inline otherwise */
+  /* Avoiding fixed-in-fixed bug on older Safari by portaling to body when fixed; inline otherwise.
+     Portal only after mount in a real DOM (see `mounted` above) so SSR renders
+     inline without crashing and the first client render matches it. */
   const shouldPortal = typeof portal === 'boolean' ? portal : fixed;
-  return shouldPortal ? createPortal(bar, document.body) : bar;
+  const canPortal = mounted && typeof document !== 'undefined';
+  return shouldPortal && canPortal ? createPortal(bar, document.body) : bar;
 };
 
 export default AppBar;

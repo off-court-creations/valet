@@ -22,6 +22,7 @@ import { FormControl } from './FormControl';
 import { createFormStore } from '../../system/createFormStore';
 import { resetWarnOnce } from '../../system/devErrors';
 import { SurfaceCtx, createSurfaceStore } from '../../system/surfaceStore';
+import * as sheet from '../../css/sheet';
 import type { ChangeInfo } from '../../system/events';
 
 /* react-dom warns unless act usage is announced ----------------------- */
@@ -239,5 +240,185 @@ describe('MetroSelect — ChangeInfo.source classification (ruling R10)', () => 
     pressKey(lb, 'Enter');
     expect(last(infos)?.source).toBe('keyboard');
     expect(isSelected(tileFor(container, 1))).toBe(true);
+  });
+});
+
+/*───────────────────────────────────────────────────────────────*/
+/* FormControl form-wide config merge (Wave C deferral)           */
+
+describe('MetroSelect — FormControl form-wide config (1.0)', () => {
+  it('a form-wide `disabled` disables the field and blocks tile interaction', () => {
+    const useStore = createFormStore<{ place: string }>({ place: 'home' });
+    const onValueChange = vi.fn();
+    const { container } = mount(
+      <FormControl
+        useStore={useStore}
+        disabled
+      >
+        <MetroSelect
+          name='place'
+          onValueChange={onValueChange}
+        >
+          {opts()}
+        </MetroSelect>
+      </FormControl>,
+    );
+    const lb = listbox(container);
+    expect(lb.getAttribute('aria-disabled')).toBe('true');
+    expect(lb.getAttribute('data-disabled')).toBe('true');
+    // Form-wide disable must block interaction, not merely styling.
+    click(tileFor(container, 2)); // attempt to select 'travel'
+    expect(useStore.getState().values.place).toBe('home');
+    expect(onValueChange).not.toHaveBeenCalled();
+  });
+
+  it('a name-keyed `errors` entry marks the field aria-invalid', () => {
+    const useStore = createFormStore<{ place: string }>({ place: 'home' });
+    const { container } = mount(
+      <FormControl
+        useStore={useStore}
+        errors={{ place: 'Pick a destination' }}
+      >
+        <MetroSelect name='place'>{opts()}</MetroSelect>
+      </FormControl>,
+    );
+    expect(listbox(container).getAttribute('aria-invalid')).toBe('true');
+  });
+});
+
+/*───────────────────────────────────────────────────────────────*/
+/* Mobile: coarse-pointer hit floor + chrome kit                  */
+
+describe('MetroSelect — touch target + chrome kit (1.0)', () => {
+  it('wires a >=44px coarse-pointer hit var on the listbox root', () => {
+    const { container } = mount(<MetroSelect defaultValue='home'>{opts()}</MetroSelect>);
+    expect(listbox(container).style.getPropertyValue('--valet-metro-hit')).toBe('44px');
+  });
+
+  it('compact tightens the coarse-pointer hit var to 40px', () => {
+    const { container } = mount(
+      <MetroSelect
+        compact
+        defaultValue='home'
+      >
+        {opts()}
+      </MetroSelect>,
+    );
+    expect(listbox(container).style.getPropertyValue('--valet-metro-hit')).toBe('40px');
+  });
+
+  it('emits the chrome kit + coarse-pointer floor in the tile rule', () => {
+    mount(<MetroSelect defaultValue='home'>{opts()}</MetroSelect>);
+    const rules = Array.from(sheet.getGlobalSheet()!.cssRules, (r) => r.cssText).join('\n');
+    expect(rules).toMatch(/touch-action:\s*manipulation/);
+    expect(rules).toMatch(/pointer:\s*coarse/);
+    expect(rules).toMatch(/var\(--valet-metro-hit/);
+  });
+});
+
+/*───────────────────────────────────────────────────────────────*/
+/* Metro restyle — grid, flat sharp tiles, press tilt, color/wide  */
+
+describe('MetroSelect — Metro restyle', () => {
+  const ruleFor = (el: Element) => {
+    const cls = el.className.split(/\s+/).find(Boolean)!;
+    return (
+      Array.from(sheet.getGlobalSheet()!.cssRules, (r) => r.cssText).find((t) =>
+        t.startsWith(`.${cls}`),
+      ) ?? ''
+    );
+  };
+
+  it('lays tiles out in a snapped CSS grid with a tight gutter var', () => {
+    const { container } = mount(
+      <MetroSelect aria-label='g'>
+        <MetroSelect.Option
+          value='a'
+          icon='mdi:home'
+          label='A'
+        />
+        <MetroSelect.Option
+          value='b'
+          icon='mdi:cog'
+          label='B'
+        />
+      </MetroSelect>,
+    );
+    const lb = listbox(container);
+    expect(ruleFor(lb)).toContain('display: grid');
+    expect(lb.style.getPropertyValue('--valet-metro-gap')).not.toBe('');
+  });
+
+  it('renders flat sharp tiles (radius 0) with the press-tilt rule', () => {
+    const { container } = mount(
+      <MetroSelect aria-label='g'>
+        <MetroSelect.Option
+          value='a'
+          icon='mdi:home'
+          label='A'
+        />
+      </MetroSelect>,
+    );
+    const rule = ruleFor(tiles(container)[0]);
+    expect(rule).toMatch(/border-radius:\s*0/);
+    expect(rule).toContain('@media (prefers-reduced-motion: no-preference)');
+    expect(rule).toContain('--valet-metro-tilt-x'); // tilt transform reads the inline var
+  });
+
+  it('press tilts the tile (data-pressed + tilt var); release clears', () => {
+    const { container } = mount(
+      <MetroSelect aria-label='g'>
+        <MetroSelect.Option
+          value='a'
+          icon='mdi:home'
+          label='A'
+        />
+      </MetroSelect>,
+    );
+    const tile = tiles(container)[0];
+    // jsdom has zero-rects; provide one so the press point can be normalized.
+    tile.getBoundingClientRect = () =>
+      ({
+        left: 0,
+        top: 0,
+        width: 100,
+        height: 100,
+        right: 100,
+        bottom: 100,
+        x: 0,
+        y: 0,
+      }) as DOMRect;
+    act(() =>
+      tile.dispatchEvent(
+        new PointerEvent('pointerdown', { bubbles: true, clientX: 75, clientY: 25 }),
+      ),
+    );
+    expect(tile.hasAttribute('data-pressed')).toBe(true);
+    expect(tile.style.getPropertyValue('--valet-metro-tilt-x')).toBe('0.25');
+    act(() => tile.dispatchEvent(new PointerEvent('pointerup', { bubbles: true })));
+    expect(tile.hasAttribute('data-pressed')).toBe(false);
+  });
+
+  it('per-option color yields a distinct fill; wide spans two columns', () => {
+    const { container } = mount(
+      <MetroSelect aria-label='g'>
+        <MetroSelect.Option
+          value='a'
+          icon='mdi:home'
+          label='A'
+        />
+        <MetroSelect.Option
+          value='b'
+          icon='mdi:cog'
+          label='B'
+          color='#e91e63'
+          wide
+        />
+      </MetroSelect>,
+    );
+    const [neutral, colored] = tiles(container);
+    const cls = (el: Element) => el.className.split(/\s+/).find(Boolean);
+    expect(cls(neutral)).not.toBe(cls(colored)); // different $fill → different styled class
+    expect(colored.style.gridColumn).toBe('span 2');
   });
 });

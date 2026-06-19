@@ -1,7 +1,7 @@
 # @archway/create-valet-app
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-181817.svg?logo=book&logoColor=white)](https://opensource.org/licenses/MIT)
-[![GitHub](https://img.shields.io/badge/GitHub-create--valet--app-181717?logo=github&logoColor=white)](https://github.com/off-court-creations/create-valet-app)
+[![GitHub](https://img.shields.io/badge/GitHub-create--valet--app-181717?logo=github&logoColor=white)](https://github.com/off-court-creations/valet/tree/main/packages/create-valet-app)
 [![npm](https://img.shields.io/badge/npm-%40archway%2Fcreate--valet--app-CB3837?logo=npm&logoColor=white)](https://www.npmjs.com/package/@archway/create-valet-app)
 [![npm version](https://img.shields.io/npm/v/@archway/create-valet-app.svg?color=181817&label=npm)](https://www.npmjs.com/package/@archway/create-valet-app)
 
@@ -50,7 +50,7 @@ Choose with `--template ts|js|hybrid`.
 ## Flags
 
 - `--template ts|js|hybrid` set the template (default `ts`).
-- `--install` run dependency installation automatically.
+- `--no-install` skip automatic dependency installation (install runs by default).
 - `--pm npm|pnpm|yarn|bun` choose the package manager (default: auto/npm).
 - `--git` / `--no-git` initialize a git repo (default: `--git`). The CLI writes a sensible `.gitignore`, checks for your git identity (`user.name`/`user.email`) and, if missing, prompts to set it locally for the new repo (non‑interactive runs will skip the initial commit if identity is missing).
 - `--mcp` / `--no-mcp` include or skip AGENTS.md and CLAUDE.md (Valet MCP guidance). Default: include.
@@ -75,7 +75,7 @@ Enabling MCP guidance (`--mcp`, the default) always generates `AGENTS.md` / `CLA
 Manual setup, if you skip it:
 
 ```bash
-npm i -g @archway/valet-mcp@^0.34.0
+npm i -g @archway/valet-mcp@latest
 ```
 
 ```toml

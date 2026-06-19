@@ -106,6 +106,9 @@ const Backdrop = styled('div')<{ $fade: boolean }>`
   opacity: ${({ $fade }) => ($fade ? 0 : 1)};
   transition: opacity 200ms ease;
   z-index: ${zVar('modalBackdrop')};
+  /* Mobile: a drag on the backdrop must not scroll the page behind the open
+     drawer (tap-to-close still fires — touch-action only suppresses gestures). */
+  touch-action: none;
 `;
 
 const Panel = styled('div')<{
@@ -249,7 +252,9 @@ export const Drawer: React.FC<DrawerProps> = ({
   }, [adaptive]);
   // Track Surface's marginTop set by AppBar so persistent drawers sit below it
   const [offsetTop, setOffsetTop] = useState<number>(() => {
-    if (!(element instanceof HTMLElement)) return 0;
+    // Runs during render (incl. SSR): `HTMLElement` is undefined in Node, so
+    // guard the bare global before `instanceof` to avoid a ReferenceError.
+    if (typeof HTMLElement === 'undefined' || !(element instanceof HTMLElement)) return 0;
     const mt = window.getComputedStyle(element).marginTop || '0';
     const n = parseFloat(mt);
     return Number.isFinite(n) ? n : 0;
