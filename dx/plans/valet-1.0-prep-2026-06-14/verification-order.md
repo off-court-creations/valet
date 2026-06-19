@@ -95,7 +95,7 @@ retuned spacing/density numbers."
 
 ## Tier 8 — Final composites
 
-- [ ] CodeBlock (→ IconButton/Markdown/Snackbar) · [ ] RichChat (→ …/Markdown)
+- [x] **CodeBlock** _(stable 2026-06-18 — both gates; honest copy feedback + labelled/focusable code region + copy button floated inside the block corner; dropped overflow-stacking machinery)_ (→ IconButton/Markdown/Snackbar) · [ ] RichChat (→ …/Markdown)
 - [ ] **LLMChat** — dead last (transitively pulls in nearly the whole graph: …/Select/TextField/Markdown/KeyModal + aiKeyStore)
 - [x] **Parallax cluster** _(stable 2026-06-18 — both gates; fixed preset double-apply + reduced-motion video-autoplay gate + `alt` prop; demo de-ZeroUI'd)_ — `ParallaxScroll`/`ParallaxLayer`/`ParallaxBackground`
 

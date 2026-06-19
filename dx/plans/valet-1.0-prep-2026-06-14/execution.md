@@ -524,7 +524,7 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   Fan-out review (70 agents, 9 widgets): 48/60 confirmed; 8 `improve` + 1 `rewrite`
   (KeyModal). Order: Panel → Parallax → CodeBlock → Markdown → Table → Dropzone →
   RichChat → KeyModal → LLMChat. Each: agent fix + tests, then Ben's visual pass → stable.
-  - **#3 CodeBlock — AGENT-VERIFIED, awaiting Ben's visual pass (2026-06-18).** Honest
+  - **#3 CodeBlock — DONE (stable 2026-06-18 — both gates; Ben: "promote").** Honest
     copy: guard `navigator.clipboard?.writeText` (undefined on HTTP/old browsers threw)
     + distinguish success ('Copied') from failure ('Copy failed', `role='alert'`) — the
     old code claimed success on the reject path. Copy button moved INSIDE the block (Ben
