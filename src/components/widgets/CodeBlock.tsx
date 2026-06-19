@@ -2,7 +2,7 @@
 // src/components/widgets/CodeBlock.tsx  | valet
 // Reusable code block with Markdown highlighting, copy button, and snackbar feedback
 // ─────────────────────────────────────────────────────────────
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import IconButton from '../fields/IconButton';
 import { Markdown } from './Markdown';
 import Snackbar from './Snackbar';
@@ -34,47 +34,10 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
   ...rest
 }) => {
   const [copyState, setCopyState] = useState<'idle' | 'copied' | 'failed'>('idle');
-  const { mode, theme } = useTheme();
+  const { theme } = useTheme();
   const isMultiline = code.includes('\n');
   const displayCode = isMultiline ? code.replace(/\n+$/, '') : code;
   const markdown = `\`\`\`${language}\n${displayCode}\n\`\`\``;
-
-  // Width awareness: detect horizontal overflow inside the rendered <pre>
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const [stackControls, setStackControls] = useState(false);
-
-  useEffect(() => {
-    const checkOverflow = () => {
-      const root = containerRef.current;
-      if (!root) return;
-      const pre = root.querySelector('pre');
-      if (!pre) return;
-      const el = pre as HTMLElement;
-      // Compare scrollable width vs visible width
-      const overflow = el.scrollWidth - el.clientWidth > 1;
-      setStackControls(overflow);
-    };
-
-    // Initial check after paint
-    const id = window.requestAnimationFrame(checkOverflow);
-
-    // React to size/content changes
-    const ro = new ResizeObserver(checkOverflow);
-    const mo = new MutationObserver(checkOverflow);
-    const pre = containerRef.current?.querySelector('pre');
-    if (pre) {
-      ro.observe(pre);
-      mo.observe(pre, { childList: true, subtree: true, characterData: true });
-    }
-    const onResize = () => checkOverflow();
-    window.addEventListener('resize', onResize);
-    return () => {
-      window.cancelAnimationFrame(id);
-      window.removeEventListener('resize', onResize);
-      ro.disconnect();
-      mo.disconnect();
-    };
-  }, [code, language, mode]);
 
   const handleCopy = () => {
     // navigator.clipboard is undefined on insecure (HTTP) origins / older
@@ -95,16 +58,11 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
   return (
     <div
       {...rest}
-      ref={containerRef}
       className={[presetCls, className].filter(Boolean).join(' ')}
       data-valet-component='CodeBlock'
-      style={{
-        display: 'flex',
-        flexDirection: stackControls ? ('column' as const) : ('row' as const),
-        alignItems: 'flex-start',
-        width: '100%',
-        ...(sx || {}),
-      }}
+      /* Relative so the copy button floats in the block's top-inline-end corner
+         (inside its border) — long lines scroll under the pinned button. */
+      style={{ position: 'relative', width: '100%', ...(sx || {}) }}
     >
       {/* The code is a scrollable region: give it a real accessible name and
           make it keyboard-focusable so non-pointer users can scroll long lines.
@@ -113,7 +71,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
         role='region'
         aria-label={ariaLabel ?? 'Code'}
         tabIndex={0}
-        style={{ flex: 1, minWidth: 0 }}
+        style={{ width: '100%', minWidth: 0 }}
       >
         <Markdown
           data={markdown}
@@ -122,14 +80,19 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
       </div>
       <IconButton
         variant='outlined'
-        size='md'
+        size='sm'
         icon='mdi:content-copy'
         aria-label='Copy code snippet'
         title={copyLabel ?? 'Copy'}
         onClick={handleCopy}
         sx={{
-          marginLeft: stackControls ? 0 : theme.spacing(0.5),
-          marginTop: stackControls ? theme.spacing(0.5) : theme.spacing(2),
+          // Pinned inside the block, top-inline-end; a solid backdrop keeps it
+          // legible over the code, and zIndex lifts it above the scroll layer.
+          position: 'absolute',
+          top: theme.spacing(0.5),
+          insetInlineEnd: theme.spacing(0.5),
+          zIndex: 1,
+          background: theme.colors.backgroundAlt,
         }}
       />
       {copyState !== 'idle' && (

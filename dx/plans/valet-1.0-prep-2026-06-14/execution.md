@@ -527,9 +527,13 @@ pass_; only after Ben's visual confirmation does `*.meta.json` flip to `stable`
   - **#3 CodeBlock — AGENT-VERIFIED, awaiting Ben's visual pass (2026-06-18).** Honest
     copy: guard `navigator.clipboard?.writeText` (undefined on HTTP/old browsers threw)
     + distinguish success ('Copied') from failure ('Copy failed', `role='alert'`) — the
-    old code claimed success on the reject path. Copy button `sm`→`md` (32→48px, clears
-    the touch floor; IconButton has no coarse floor of its own). Code region now
-    `role='region'` + `aria-label` (from `ariaLabel`) + `tabIndex=0` (keyboard-scrollable);
+    old code claimed success on the reject path. Copy button moved INSIDE the block (Ben
+    nitpick): container `position:relative`, button floats absolute in the top-inline-end
+    corner with a backgroundAlt backdrop — dropped the whole overflow-stacking machinery
+    (RO/MO + row/column flip) since an absolute button doesn't reflow. Kept compact `sm`
+    (32px clears WCAG 2.5.8 AA's 24px min; the 44px enhanced target is deferred —
+    IconButton's `overflow:hidden` ripple blocks an invisible hit-expander). Code region
+    now `role='region'` + `aria-label` (from `ariaLabel`) + `tabIndex=0` (keyboard-scrollable);
     the button keeps its own fixed label. Hard-renamed `title`→`copyLabel` (no alias).
     Dropped the redundant `codeBackground` hex override (Markdown owns the default).
     Rewrote the contract test + added success/reject/missing-clipboard tests. Green:
