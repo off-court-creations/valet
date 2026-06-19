@@ -19,7 +19,9 @@ import { shallow } from 'zustand/shallow';
 import { preset } from '../../css/stylePresets';
 import { Checkbox } from '../fields/Checkbox';
 import { Pagination } from './Pagination';
-import { stripe, toRgb, mix, toHex } from '../../helpers/color';
+import { makeMix } from '../../system/intentVars';
+import { useControlledState } from '../../hooks/useControlledState';
+import { useCompact } from '../../system/compactContext';
 import type { Presettable, SelectionProps, Sx } from '../../types';
 
 const INTERACTIVE_ROW_SELECTOR =
@@ -46,9 +48,8 @@ export interface TableProps<T>
     /* Unified selection vocabulary (API-TYPES S11, Q11(a)). Table's selection
        unit is the row type `T`: `onSelectionChange` emits the selected rows,
        and `getItemKey` (the cross-component name for `rowKey`) keys identity.
-       `selected`/`defaultSelected` are accepted for vocabulary parity; Table's
-       selection is internally managed (PERF S8) and does not yet read them — a
-       controlled-selection prop is a logged deferral, not part of this slice. */
+       `selected`/`defaultSelected` are fully wired (controlled + uncontrolled)
+       via useControlledState, keyed by `getItemKey`. */
     SelectionProps<T> {
   data: T[];
   columns: TableColumn<T>[];
@@ -121,14 +122,10 @@ const Root = styled('table')<{
   $hover: boolean;
   $lines: boolean;
   $clickable: boolean;
-  $border: string;
   $strokeW: string;
-  $stripe: string;
-  $hoverBg: string;
   $gutter: string;
   $padV: string;
   $padH: string;
-  $textColor: string;
 }>`
   /* leave a subtle gutter so right border never clips */
   width: calc(100% - ${({ $gutter }) => $gutter} * 2);
@@ -137,19 +134,20 @@ const Root = styled('table')<{
 
   border-collapse: collapse;
   box-sizing: border-box;
-  border: var(--valet-divider-stroke, ${({ $strokeW }) => $strokeW}) solid
-    ${({ $border }) => $border};
+  /* Colours arrive as inline CSS vars on this element (--valet-table-*) so the
+     styled rule text stays static — no per-value class minting (cardinality). */
+  border: var(--valet-divider-stroke, ${({ $strokeW }) => $strokeW}) solid var(--valet-table-border);
   table-layout: fixed; /* prevents cells pushing past width */
 
   /* Ensure text color adapts to the surrounding surface */
-  color: ${({ $textColor }) => $textColor};
+  color: var(--valet-table-text);
 
   & th,
   & td {
     padding: ${({ $padV, $padH }) => `${$padV} ${$padH}`};
     text-align: start;
     border-bottom: var(--valet-divider-stroke, ${({ $strokeW }) => $strokeW}) solid
-      ${({ $border }) => $border};
+      var(--valet-table-border);
     transition: background 120ms ease;
     word-break: break-word;
     overflow-wrap: anywhere;
@@ -161,34 +159,45 @@ const Root = styled('table')<{
   }
 
   /* Zebra stripes */
-  ${({ $striped, $stripe }) =>
-    $striped
-      ? `
-    & tbody tr:nth-of-type(odd) td { background: ${$stripe}; }
-  `
-      : ''}
+  ${({ $striped }) =>
+    $striped ? `& tbody tr:nth-of-type(odd) td { background: var(--valet-table-stripe); }` : ''}
 
   /* Row hover */
-  ${({ $hover, $hoverBg }) =>
+  ${({ $hover }) =>
     $hover
-      ? `
-    & tbody tr:hover,
-    & tbody tr:hover > td { background: ${$hoverBg}; }
-  `
+      ? `& tbody tr:hover, & tbody tr:hover > td { background: var(--valet-table-hover); }`
       : ''}
+
+  /* Selected rows — intent-tinted; placed after stripe + hover so it wins on
+     equal specificity and selection stays visible (even while hovered). */
+  & tbody tr[data-selected='true'] > td {
+    background: var(--valet-table-selected-bg);
+  }
 
   /* Column dividers */
-  ${({ $lines, $border, $strokeW }) =>
+  ${({ $lines, $strokeW }) =>
     $lines
-      ? `
-    & th:not(:last-child), & td:not(:last-child) { border-inline-end: var(--valet-divider-stroke, ${$strokeW}) solid ${$border}; }
-  `
+      ? `& th:not(:last-child), & td:not(:last-child) { border-inline-end: var(--valet-divider-stroke, ${$strokeW}) solid var(--valet-table-border); }`
       : ''}
 
+  /* Clickable rows (onRowClick): pointer + mobile chrome kit + a keyboard
+     focus ring (rows take tabIndex when clickable) + a coarse >=44px row
+     floor so the whole-row affordance is reachable by touch + keyboard. */
   ${({ $clickable }) =>
     $clickable
       ? `
-    & tbody tr { cursor: pointer; }
+    & tbody tr {
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    & tbody tr:focus-visible {
+      outline: var(--valet-focus-width, 2px) solid var(--valet-table-primary);
+      outline-offset: calc(-1 * var(--valet-focus-offset, 2px));
+    }
+    @media (pointer: coarse) {
+      & tbody tr { height: var(--valet-table-hit, 44px); }
+    }
   `
       : ''}
 `;
@@ -197,7 +206,6 @@ const Th = styled('th')<{
   $align: 'left' | 'center' | 'right';
   $sortable: boolean;
   $active: boolean;
-  $primary: string;
 }>`
   text-align: ${({ $align }) => $align};
   ${({ $sortable }) => ($sortable ? 'user-select: none;' : '')}
@@ -208,7 +216,7 @@ const Th = styled('th')<{
     inset-inline: 0;
     bottom: calc(-0.5 * var(--valet-underline-width, 1px));
     height: var(--valet-underline-width, 1px);
-    background: ${({ $primary, $active }) => ($active ? $primary : 'transparent')};
+    background: ${({ $active }) => ($active ? 'var(--valet-table-primary)' : 'transparent')};
     transition: background 150ms ease;
   }
 `;
@@ -223,7 +231,6 @@ const SortButton = styled('button')<{
   $align: 'left' | 'center' | 'right';
   $padV: string;
   $padH: string;
-  $primary: string;
 }>`
   /* appearance reset */
   appearance: none;
@@ -249,7 +256,14 @@ const SortButton = styled('button')<{
   cursor: pointer;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
   outline: none;
+
+  /* Coarse-pointer >=44px floor (24px under compact) so the sort control stays
+     tappable even when tight density shrinks the padding-driven height. */
+  @media (pointer: coarse) {
+    min-height: var(--valet-table-hit, 44px);
+  }
 
   &:hover {
     filter: brightness(0.9);
@@ -260,7 +274,7 @@ const SortButton = styled('button')<{
      mouse-only th onClick gave keyboard users nothing — WCAG 2.4.7. The
      offset is pulled inside so the ring never clips at the cell edges. */
   &:focus-visible {
-    outline: var(--valet-focus-width, 2px) solid ${({ $primary }) => $primary};
+    outline: var(--valet-focus-width, 2px) solid var(--valet-table-primary);
     outline-offset: calc(-1 * var(--valet-focus-offset, 2px));
   }
 `;
@@ -290,8 +304,8 @@ export function Table<T extends object>({
   dividers = true,
   selectionMode,
   getItemKey,
-  selected: _selected,
-  defaultSelected: _defaultSelected,
+  selected,
+  defaultSelected,
   initialSort,
   onSortChange,
   onSelectionChange,
@@ -315,13 +329,9 @@ export function Table<T extends object>({
   const selectable: 'single' | 'multi' | undefined =
     selectionMode === 'multiple' ? 'multi' : selectionMode === 'single' ? 'single' : undefined;
   const rowKey = getItemKey as RowKey<T> | undefined;
-  /* `selected`/`defaultSelected` are part of the unified vocabulary but Table's
-     selection is internally managed (PERF S8); a controlled-selection prop is a
-     logged deferral. Observed here so the destructure stays exhaustive. */
-  void _selected;
-  void _defaultSelected;
 
   const { theme } = useTheme();
+  const effCompact = useCompact();
   const surface = useSurface(
     (s) => ({
       element: s.element,
@@ -480,9 +490,14 @@ export function Table<T extends object>({
   }, [constrainHeight, surface, update]);
 
   /* sort + selection state */
-  const [sort, setSort] = useState<{ index: number; desc: boolean } | null>(
-    initialSort ? { index: initialSort.index, desc: !!initialSort.desc } : null,
-  );
+  const [sort, setSort] = useState<{ index: number; desc: boolean } | null>(() => {
+    /* Ignore an initialSort that targets a non-sortable / out-of-range column,
+       otherwise the <th> would announce aria-sort for a sort that never runs. */
+    if (!initialSort) return null;
+    const col = columns[initialSort.index];
+    if (!col || !col.sortable) return null;
+    return { index: initialSort.index, desc: !!initialSort.desc };
+  });
 
   /* Selection is keyed by `rowKey` (PERF S8). When no rowKey is given the
      key IS the row object, so the Set degrades to object identity and the
@@ -496,8 +511,6 @@ export function Table<T extends object>({
     },
     [rowKey],
   );
-
-  const [selected, setSelected] = useState<Set<unknown>>(new Set());
 
   /* Map of the current dataset's keys → row (latest object for each key), so
      pruning and the user→selection→rows mapping always see fresh rows. The
@@ -523,23 +536,58 @@ export function Table<T extends object>({
     [rowToKey, keyOf],
   );
 
-  /* Prune selected keys that left the dataset. Bail out when nothing was
-     pruned — the previous unconditional fresh-Set + in-updater callback
-     re-rendered on every `data` identity change and looped forever with
-     parents that store the selection in state (PERF S3). With keyed
-     selection, identity-only refreshes keep the same keys, so the common
-     immutable-refresh case is now a pure no-op. Callback fires after
-     setState, only when the selection actually shrank. */
-  useEffect(() => {
-    const keptKeys = Array.from(selected).filter((k) => keyToRow.has(k));
-    if (keptKeys.length === selected.size) return;
-    setSelected(new Set(keptKeys));
-    onSelectionChange?.(keptKeys.map((k) => keyToRow.get(k) as T));
-  }, [selected, keyToRow, onSelectionChange]);
+  /* Controlled/uncontrolled selection via the shared hook. The unit is the row
+     `T`: `selected`/`defaultSelected` are row arrays, `onSelectionChange` emits
+     rows. Identity is by `getItemKey` so an immutable refresh (new objects,
+     same keys) preserves selection. */
+  const [selectedRows, setSelectedRows, isSelectionControlled] = useControlledState<T[]>(
+    selected,
+    defaultSelected ?? [],
+    onSelectionChange,
+    'Table',
+  );
 
-  /* colours */
-  const stripeColor = stripe(theme.colors.background, theme.colors.text);
-  const hoverBg = toHex(mix(toRgb(theme.colors.primary), toRgb(theme.colors.background), 0.25));
+  /* Key for an arbitrary selected row: prefer object identity against the
+     current dataset, else compute from getItemKey (index-independent for the
+     common property/function accessors). */
+  const selKeyOf = useCallback(
+    (row: T): unknown => (rowToKey.has(row) ? rowToKey.get(row) : keyOf(row, 0)),
+    [rowToKey, keyOf],
+  );
+
+  /* Selected keys for O(1) row lookups in render. */
+  const selectedKeys = useMemo(
+    () => new Set(selectedRows.map((r) => selKeyOf(r))),
+    [selectedRows, selKeyOf],
+  );
+
+  /* Prune rows whose key left the dataset (uncontrolled only — a controlled
+     parent owns its `selected` array). Fires onSelectionChange only when the
+     selection actually shrank; kept rows are refreshed to the latest objects
+     in the same write. Identity-only refreshes that keep all keys are a no-op,
+     so storing stale objects is harmless — toggleSelect re-freshes lazily. */
+  useEffect(() => {
+    if (isSelectionControlled) return;
+    const kept = selectedRows.filter((r) => keyToRow.has(selKeyOf(r)));
+    if (kept.length === selectedRows.length) return;
+    setSelectedRows(kept.map((r) => keyToRow.get(selKeyOf(r)) as T));
+  }, [selectedRows, keyToRow, isSelectionControlled, selKeyOf, setSelectedRows]);
+
+  /* Select-all (multiple mode) summary over the full dataset. */
+  const allSelected = data.length > 0 && data.every((r, i) => selectedKeys.has(keyOf(r, i)));
+  const someSelected = !allSelected && data.some((r, i) => selectedKeys.has(keyOf(r, i)));
+  const toggleSelectAll = (checked: boolean) => {
+    setSelectedRows(checked ? [...data] : []);
+  };
+
+  /* colours — via makeMix (parseColor-safe: hex/rgb/hsl/named, no defensive
+     black) and the dedicated divider token; delivered to the styled rules as
+     inline CSS vars so the rule text stays static (cardinality). */
+  const stripeColor = makeMix(theme.colors.background, theme.colors.text, 0.1);
+  const hoverBg = makeMix(theme.colors.primary, theme.colors.background, 0.25);
+  const selectedBg = makeMix(theme.colors.primary, theme.colors.background, 0.18);
+  const borderColor = theme.colors.divider ?? theme.colors.backgroundAlt;
+  const hitTarget = effCompact ? '24px' : '44px';
   const [textColor, setTextColor] = useState<string>(theme.colors.text);
 
   // Auto-resolve legible text colour from the surface background.
@@ -591,20 +639,21 @@ export function Table<T extends object>({
     /* Resolve by object identity against `data` first so a function rowKey
        gets its true data-index, not the sorted/paginated display index. */
     const key = displayKeyOf(row, displayIndex);
-    const next = new Set(selected);
-    if (selectable === 'single') next.clear();
-
-    if (checked) {
-      next.add(key);
+    /* Refresh already-selected rows to their latest objects so callers always
+       receive fresh rows (selectedRows may hold stale objects after an
+       immutable refresh — see the prune note). */
+    const fresh = selectedRows.map((r) => {
+      const k = selKeyOf(r);
+      return keyToRow.has(k) ? (keyToRow.get(k) as T) : r;
+    });
+    let next: T[];
+    if (selectable === 'single') {
+      next = checked ? [row] : [];
     } else {
-      next.delete(key);
+      const without = fresh.filter((r) => selKeyOf(r) !== key);
+      next = checked ? [...without, row] : without;
     }
-
-    setSelected(next);
-    /* Map keys back to the current row objects (so callers always get fresh
-       rows); fall back to the just-toggled row when a key isn't in the
-       current dataset map (single-select clear keeps no stale keys). */
-    onSelectionChange?.(Array.from(next).map((k) => (k === key ? row : (keyToRow.get(k) as T))));
+    setSelectedRows(next);
   };
 
   /* sorted data */
@@ -654,30 +703,37 @@ export function Table<T extends object>({
     ? Math.max(1, Math.ceil((Array.isArray(data) ? data.length : 0) / pageSize))
     : 1;
 
-  const [pageInternal, setPageInternal] = useState(1);
-  const isControlledPage = typeof pageProp === 'number';
-  const effectivePageRaw = isControlledPage && pageProp ? pageProp : pageInternal;
-  const effectivePage = Math.min(pageCount, Math.max(1, effectivePageRaw));
+  /* Page via the shared hook (controlled when `page` is a number). The render
+     always clamps into range; the clamp effect below fires onPageChange so a
+     controlled parent hears a shrink correction (the old code wrote dead
+     internal state and never notified). */
+  const [pageRaw, setPage] = useControlledState<number>(pageProp, 1, onPageChange, 'Table.page');
+  const effectivePage = Math.min(pageCount, Math.max(1, pageRaw));
 
   useEffect(() => {
-    // Reset/clamp when pagination toggles or dataset changes
+    // Clamp into range when pagination toggles or the dataset shrinks.
     if (!doPaginate) {
-      if (pageInternal !== 1) setPageInternal(1);
-      return;
-    }
-    if (effectivePageRaw !== effectivePage) {
-      setPageInternal(effectivePage);
+      if (pageRaw !== 1) setPage(1);
+    } else if (pageRaw !== effectivePage) {
+      setPage(effectivePage);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [doPaginate, pageCount, data.length]);
 
+  /* Reset to page 1 when the sort changes so the user lands on the top of the
+     new ordering (skipped on mount via the ref). */
+  const sortKey = sort ? `${sort.index}:${sort.desc ? 'd' : 'a'}` : 'none';
+  const prevSortKeyRef = useRef(sortKey);
+  useEffect(() => {
+    if (prevSortKeyRef.current === sortKey) return;
+    prevSortKeyRef.current = sortKey;
+    if (effectivePage !== 1) setPage(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sortKey]);
+
   const handlePageChange = useCallback(
-    (p: number) => {
-      const next = Math.min(pageCount, Math.max(1, p));
-      if (!isControlledPage) setPageInternal(next);
-      onPageChange?.(next);
-    },
-    [isControlledPage, pageCount, onPageChange],
+    (p: number) => setPage(Math.min(pageCount, Math.max(1, p))),
+    [pageCount, setPage],
   );
 
   const displayRows = useMemo(() => {
@@ -715,18 +771,21 @@ export function Table<T extends object>({
         $hover={hoverable}
         $lines={dividers}
         $clickable={rowClickEnabled}
-        $border={theme.colors.backgroundAlt}
         $strokeW={theme.stroke(1)}
-        $stripe={stripeColor}
-        $hoverBg={hoverBg}
         $gutter={pad}
         $padV={theme.spacing(2)}
         $padH={theme.spacing(3)}
-        $textColor={textColor}
         className={cls}
         style={
           {
             '--valet-table-underline': theme.stroke(4),
+            '--valet-table-border': borderColor,
+            '--valet-table-stripe': stripeColor,
+            '--valet-table-hover': hoverBg,
+            '--valet-table-selected-bg': selectedBg,
+            '--valet-table-text': textColor,
+            '--valet-table-primary': theme.colors.primary,
+            '--valet-table-hit': hitTarget,
             ...(sx as object),
           } as React.CSSProperties
         }
@@ -738,13 +797,26 @@ export function Table<T extends object>({
                 $align='center'
                 $sortable={false}
                 $active={false}
-                $primary={theme.colors.primary}
+                scope='col'
                 style={{ width: theme.spacing(6) }}
-              />
+              >
+                {selectable === 'multi' ? (
+                  <Checkbox
+                    name='select-all'
+                    size='sm'
+                    checked={allSelected}
+                    indeterminate={someSelected}
+                    onValueChange={(chk) => toggleSelectAll(!!chk)}
+                    aria-label='Select all rows'
+                  />
+                ) : null}
+              </Th>
             ) : null}
             {columns.map((c, i) => {
               const isSortable = !!c.sortable;
-              const isActive = !!sort && sort.index === i;
+              /* Gate active/aria-sort on sortability so a stray initialSort or
+                 state can't announce a sort the column can't perform. */
+              const isActive = !!sort && sort.index === i && isSortable;
               const isHovering = hoverCol != null && hoverCol === i;
 
               // Opacity logic: show active triangle unless previewing another column
@@ -809,7 +881,7 @@ export function Table<T extends object>({
                   $align={align}
                   $sortable={isSortable}
                   $active={isActive}
-                  $primary={theme.colors.primary}
+                  scope='col'
                   aria-sort={ariaSort as React.AriaAttributes['aria-sort']}
                 >
                   {isSortable ? (
@@ -818,7 +890,6 @@ export function Table<T extends object>({
                       $align={align}
                       $padV={theme.spacing(2)}
                       $padH={theme.spacing(3)}
-                      $primary={theme.colors.primary}
                       onClick={() => toggleSort(i)}
                       onMouseEnter={() => setHoverCol(i)}
                       onMouseLeave={() => setHoverCol((h) => (h === i ? null : h))}
@@ -837,7 +908,10 @@ export function Table<T extends object>({
         <tbody>
           {displayRows.map((row, rIdx) => {
             const rowK = displayKeyOf(row, rIdx);
-            const isSelected = selected.has(rowK);
+            const isSelected = selectedKeys.has(rowK);
+            /* Stable selection label: the getItemKey value when keyed (tracks
+               row identity across sort/page); else the display position. */
+            const rowLabel = getItemKey !== undefined ? String(rowK) : String(rIdx + 1);
             return (
               <tr
                 /* React row key: the rowKey-derived value (stringified) when
@@ -847,15 +921,29 @@ export function Table<T extends object>({
                 data-selected={isSelected ? 'true' : 'false'}
                 data-state={isSelected ? 'selected' : 'unselected'}
                 onClick={rowClickEnabled ? (event) => handleRowClick(row, rIdx, event) : undefined}
+                {...(rowClickEnabled
+                  ? {
+                      /* Make the whole-row affordance keyboard-operable (WCAG
+                         2.1.1): focusable + Enter/Space → the existing click
+                         path (so the interactive-child guard still applies). */
+                      tabIndex: 0,
+                      onKeyDown: (e: React.KeyboardEvent<HTMLTableRowElement>) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          e.currentTarget.click();
+                        }
+                      },
+                    }
+                  : {})}
               >
                 {selectable ? (
                   <Td $align='center'>
                     <Checkbox
-                      name={`sel-${rIdx}`}
+                      name={`sel-${rowLabel}`}
                       size='sm'
                       checked={isSelected}
                       onValueChange={(chk) => toggleSelect(row, rIdx, !!chk)}
-                      aria-label={`Select row ${rIdx + 1}`}
+                      aria-label={`Select row ${rowLabel}`}
                     />
                   </Td>
                 ) : null}

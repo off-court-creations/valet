@@ -1,15 +1,12 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/widgets/Table.selection.dom.test.tsx | valet
-// API-TYPES S11 (Q11(a), ruling R12) — the unified selection
-// vocabulary. Table's pre-S11 selection props are renamed:
-//   selectable → selectionMode ('single' | 'multi' → 'single' | 'multiple')
-//   rowKey     → getItemKey
-// The old names ship as additive aliases through 0.x: they keep
-// working but dev-warn once each, and the canonical name wins when
-// both are supplied. PERF S8's keyed internals are untouched — this
-// suite proves the alias wiring + the unified vocabulary, including
-// keyed single/multiple selection round-trips through `selectionMode`
-// + `getItemKey`. Removed at 1.0.
+// The unified selection vocabulary (canonical only — the pre-S11
+// `selectable`/`rowKey` aliases were removed at 1.0; the `deprecationWarns()
+// === []` assertions stand as a regression guard that the canonical props emit
+// no warnings). Covers keyed single/multiple/none round-trips through
+// `selectionMode` + `getItemKey`, CONTROLLED + uncontrolled selection
+// (`selected`/`defaultSelected`/`onSelectionChange`, row arrays), the
+// multiple-mode select-all header checkbox, and sort→page-1 reset.
 // ─────────────────────────────────────────────────────────────
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import React, { act } from 'react';
@@ -62,12 +59,17 @@ function renderStrict(node: React.ReactNode) {
   return { root, container, rerender: (next: React.ReactNode) => act(() => root.render(ui(next))) };
 }
 
+/* Row checkboxes only — scoped to tbody so the multiple-mode select-all header
+   checkbox (a tbody-external input) never shifts the index. */
 const clickCheckbox = (container: HTMLElement, rowIdx: number) => {
-  const boxes = container.querySelectorAll<HTMLInputElement>('input[type="checkbox"]');
+  const boxes = container.querySelectorAll<HTMLInputElement>('tbody input[type="checkbox"]');
   act(() => {
     boxes[rowIdx].click();
   });
 };
+
+const headerSelectAll = (container: HTMLElement) =>
+  container.querySelector<HTMLInputElement>('thead input[type="checkbox"]');
 
 const selectedCount = (container: HTMLElement) =>
   container.querySelectorAll('tbody tr[data-selected="true"]').length;
@@ -197,5 +199,134 @@ describe('Table canonical selection vocabulary (jsdom)', () => {
     const selectedRow = container.querySelector('tbody tr[data-selected="true"]')!;
     expect(selectedRow.querySelectorAll('td')[1].textContent?.trim()).toBe('alpha');
     expect(deprecationWarns()).toEqual([]);
+  });
+});
+
+/* ─────────────────────────────────────────────────────────────
+   Controlled + uncontrolled selection (1.0 contract)
+   ───────────────────────────────────────────────────────────── */
+describe('Table controlled/uncontrolled selection', () => {
+  it('`defaultSelected` seeds the uncontrolled selection', () => {
+    const rows = makeRows();
+    const { container } = renderStrict(
+      <Table<Row>
+        data={rows}
+        columns={nameColumns}
+        selectionMode='multiple'
+        getItemKey='id'
+        defaultSelected={[rows[1]]}
+        constrainHeight={false}
+      />,
+    );
+    expect(selectedCount(container)).toBe(1);
+    const sel = container.querySelector('tbody tr[data-selected="true"]')!;
+    expect(sel.querySelectorAll('td')[1].textContent?.trim()).toBe('beta');
+  });
+
+  it('`selected` is controlled — clicks request via onSelectionChange but the prop drives the view', () => {
+    const rows = makeRows();
+    const onSelectionChange = vi.fn();
+    const table = (selected: Row[]) => (
+      <Table<Row>
+        data={rows}
+        columns={nameColumns}
+        selectionMode='multiple'
+        getItemKey='id'
+        selected={selected}
+        onSelectionChange={onSelectionChange}
+        constrainHeight={false}
+      />
+    );
+    const { container, rerender } = renderStrict(table([rows[0]]));
+    expect(selectedCount(container)).toBe(1);
+
+    /* Clicking an unselected row does NOT self-update (controlled); it requests
+       the next selection through onSelectionChange. */
+    clickCheckbox(container, 1);
+    expect(onSelectionChange).toHaveBeenLastCalledWith([rows[0], rows[1]]);
+    expect(selectedCount(container)).toBe(1); // view still reflects the prop
+
+    /* Parent applies the request → view updates. */
+    rerender(table([rows[0], rows[1]]));
+    expect(selectedCount(container)).toBe(2);
+    expect(deprecationWarns()).toEqual([]);
+  });
+
+  it('select-all header checkbox toggles the whole dataset, with an indeterminate partial state', () => {
+    const rows = makeRows();
+    const onSelectionChange = vi.fn();
+    const { container } = renderStrict(
+      <Table<Row>
+        data={rows}
+        columns={nameColumns}
+        selectionMode='multiple'
+        getItemKey='id'
+        constrainHeight={false}
+        onSelectionChange={onSelectionChange}
+      />,
+    );
+    const all = headerSelectAll(container)!;
+    expect(all).not.toBeNull();
+
+    /* Partial selection → indeterminate, not checked. */
+    clickCheckbox(container, 0);
+    expect(all.indeterminate).toBe(true);
+    expect(all.checked).toBe(false);
+
+    /* Click select-all → every row selected. */
+    act(() => all.click());
+    expect(selectedCount(container)).toBe(3);
+    expect(onSelectionChange).toHaveBeenLastCalledWith(rows);
+    expect(all.checked).toBe(true);
+    expect(all.indeterminate).toBe(false);
+
+    /* Click again → cleared. */
+    act(() => all.click());
+    expect(selectedCount(container)).toBe(0);
+    expect(onSelectionChange).toHaveBeenLastCalledWith([]);
+  });
+
+  it('single-select renders no select-all header checkbox', () => {
+    const { container } = renderStrict(
+      <Table<Row>
+        data={makeRows()}
+        columns={nameColumns}
+        selectionMode='single'
+        constrainHeight={false}
+      />,
+    );
+    expect(headerSelectAll(container)).toBeNull();
+  });
+});
+
+/* ─────────────────────────────────────────────────────────────
+   Sort resets pagination to page 1
+   ───────────────────────────────────────────────────────────── */
+describe('Table sort resets page', () => {
+  it('re-sorting returns to page 1', () => {
+    /* 6 rows, 2 per page → 3 pages. */
+    const rows: Row[] = Array.from({ length: 6 }, (_, i) => ({ id: i + 1, name: `r${i + 1}` }));
+    const onPageChange = vi.fn();
+    const { container } = renderStrict(
+      <Table<Row>
+        data={rows}
+        columns={nameColumns}
+        paginate
+        maxExpandedRows={2}
+        constrainHeight={false}
+        onPageChange={onPageChange}
+      />,
+    );
+    /* Go to page 2 via the Pagination control. */
+    const pageButtons = Array.from(container.querySelectorAll<HTMLButtonElement>('button')).filter(
+      (b) => b.textContent?.trim() === '2',
+    );
+    act(() => pageButtons[0]?.click());
+    expect(onPageChange).toHaveBeenLastCalledWith(2);
+
+    /* Sort the Name column → page resets to 1. */
+    const sortBtn = container.querySelector('thead th button')!;
+    act(() => (sortBtn as HTMLButtonElement).click());
+    expect(onPageChange).toHaveBeenLastCalledWith(1);
   });
 });

@@ -69,7 +69,7 @@
       "name": "selectionMode",
       "type": "\"multiple\" | \"none\" | \"single\" | undefined",
       "required": false,
-      "description": "How many items may be selected at once.\n- `'none'` — selection is disabled (the default for components that gate it).\n- `'single'` — at most one item is selected.\n- `'multiple'` — any number of items may be selected.\n\nCanonical replacement for the per-component flags (Table's `selectable`)."
+      "description": "How many items may be selected at once.\n- `'none'` — selection is disabled (the default for components that gate it).\n- `'single'` — at most one item is selected.\n- `'multiple'` — any number of items may be selected.\n\nCanonical replacement for the former per-component flags (e.g. Table's\nremoved `selectable`)."
     },
     {
       "name": "selected",

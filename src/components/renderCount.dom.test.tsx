@@ -82,7 +82,9 @@ function renderStrict(node: React.ReactNode) {
 }
 
 const clickCheckbox = (container: HTMLElement, rowIdx: number) => {
-  const boxes = container.querySelectorAll<HTMLInputElement>('input[type="checkbox"]');
+  // Scope to tbody so the multiple-mode select-all header checkbox never shifts
+  // the row index.
+  const boxes = container.querySelectorAll<HTMLInputElement>('tbody input[type="checkbox"]');
   act(() => {
     boxes[rowIdx].click();
   });

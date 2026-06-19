@@ -415,7 +415,7 @@
   {
     "name": "Table",
     "category": "widgets",
-    "summary": "Data table with sortable columns, smart height/auto-pagination, and unified `selectionMode` (`'none'|'single'|'multiple'`) keyed by `getItemKey` for selection that survives data refreshes (the `selectable`/`rowKey` props are deprecated aliases); use it for tabular data with columns.",
+    "summary": "Data table with sortable columns, smart height/auto-pagination, and unified `selectionMode` (`'none'|'single'|'multiple'`) keyed by `getItemKey` for selection that survives data refreshes; supports controlled or uncontrolled selection (`selected`/`defaultSelected`/`onSelectionChange`, row arrays). Use it for tabular data with columns.",
     "slug": "components/widgets/table",
     "status": "experimental"
   },

@@ -77,15 +77,16 @@ export type Intent =
  * one keyed vocabulary so the same name means the same thing everywhere.
  *
  * `K` is the **selection unit** each component exposes:
- * - Table — `K = T` (the row type; identity is keyed internally by `getItemKey`/`rowKey`).
+ * - Table — `K = T` (the row type; identity is keyed internally by `getItemKey`).
  * - List  — `K = T` (the item type; selection is by reference, `getItemKey` standardizes reorder identity).
  * - Tree  — `K = string` (the node id).
  *
  * Components adopt the subset they support and re-document the generic in their
  * own prop types. `selected`/`defaultSelected` are always **arrays** so the
  * single- and multiple-selection shapes share one type; a single-selection
- * component simply ignores all but the last entry. Each component carries the
- * pre-S11 names as one-minor deprecated aliases (`deprecate.ts`), removed at 1.0.
+ * component simply ignores all but the last entry. The pre-S11 per-component
+ * names (Table's `selectable`/`rowKey`, etc.) were removed at 1.0; only this
+ * canonical vocabulary remains.
  */
 export interface SelectionProps<K> {
   /**
@@ -94,7 +95,8 @@ export interface SelectionProps<K> {
    * - `'single'` — at most one item is selected.
    * - `'multiple'` — any number of items may be selected.
    *
-   * Canonical replacement for the per-component flags (Table's `selectable`).
+   * Canonical replacement for the former per-component flags (e.g. Table's
+   * removed `selectable`).
    */
   selectionMode?: 'none' | 'single' | 'multiple';
 
