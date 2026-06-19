@@ -43,8 +43,13 @@
     "typescript": "~5.8.3",
     "@types/react": "^19.1.0"
   },
-  "optionalDependencies": {
+  "peerDependencies": {
     "@archway/valet": "^0.37.0"
+  },
+  "peerDependenciesMeta": {
+    "@archway/valet": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "ts-node": "^10.9.2"

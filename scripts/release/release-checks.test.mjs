@@ -196,13 +196,22 @@ describe('checkPins', () => {
     const pins = [
       { label: 'docs', file: 'docs/package.json', spec: undefined, missingFile: true },
       { label: 'template:js', file: 't/js/package.json', spec: undefined },
-      { label: 'template:ts', file: 't/ts/package.json', spec: 'workspace:*' },
+      { label: 'template:ts', file: 't/ts/package.json', spec: 'latest' },
     ];
     const problems = checkPins({ rootVersion: '0.34.1', pins });
     expect(problems).toHaveLength(3);
     expect(problems[0]).toContain('not found');
     expect(problems[1]).toContain('no "@archway/valet" dependency');
     expect(problems[2]).toContain('unparsable');
+  });
+
+  it('skips intentional in-repo specs (file:/link:/workspace:) — docs consume the local build', () => {
+    const pins = [
+      { label: 'docs', file: 'docs/package.json', spec: 'file:..' },
+      { label: 'docs2', file: 'd2/package.json', spec: 'link:../..' },
+      { label: 'pkg', file: 'p/package.json', spec: 'workspace:*' },
+    ];
+    expect(checkPins({ rootVersion: '0.37.0', pins })).toEqual([]);
   });
 });
 

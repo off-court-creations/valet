@@ -92,10 +92,14 @@ export function collectLockfiles(root) {
   const add = (label, rel) => {
     const file = path.join(root, rel);
     if (!fs.existsSync(file)) return; // no lockfile beside this pin → nothing to verify
+    const lock = JSON.parse(fs.readFileSync(file, 'utf8'));
     out.push({
       label,
       file: rel,
-      locked: lockedValetVersion(JSON.parse(fs.readFileSync(file, 'utf8'))),
+      locked: lockedValetVersion(lock),
+      // An in-repo `file:`/`link:` dep resolves to a local link (no published
+      // version in the lock) — flagged so the version check is skipped.
+      isLink: !!lock.packages?.[`node_modules/${PKG_NAME}`]?.link,
     });
   };
   add('docs', 'docs/package-lock.json');
@@ -109,6 +113,8 @@ export function collectLockfiles(root) {
 export function checkLockfiles({ rootVersion, lockfiles }) {
   const problems = [];
   for (const lf of lockfiles) {
+    // An in-repo link (docs `file:..`) has no published version to verify.
+    if (lf.isLink) continue;
     if (lf.locked === null) {
       problems.push(`${lf.label}: ${lf.file} has no resolved "${PKG_NAME}" entry`);
       continue;
@@ -135,6 +141,10 @@ export function checkPins({ rootVersion, pins }) {
       problems.push(`${pin.label}: no "${PKG_NAME}" dependency in ${pin.file}`);
       continue;
     }
+    // A file:/link:/workspace: spec is an intentional in-repo link (docs consume
+    // the local build) — not a published-version pin, so there is nothing to keep
+    // in sync with the root version. Skip it.
+    if (/^(?:file:|link:|workspace:)/.test(pin.spec.trim())) continue;
     const target = pinTargetVersion(pin.spec);
     if (target === null) {
       problems.push(`${pin.label}: unparsable "${PKG_NAME}" pin "${pin.spec}" in ${pin.file}`);
