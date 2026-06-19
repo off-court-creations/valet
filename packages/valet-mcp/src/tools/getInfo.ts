@@ -33,7 +33,7 @@ export function registerGetInfo(server: McpServer): void {
         const valetVersion = meta?.valetVersion;
         const schemaVersion = meta?.schemaVersion;
         const buildHash = meta?.buildHash;
-        const dataSource = (DATA_INFO as any).source;
+        const dataSource = DATA_INFO.source;
         const dataDir = DATA_DIR;
         const mcpMinor = String(mcpVersion).split('.').slice(0, 2).join('.');
         const valetMinor = valetVersion

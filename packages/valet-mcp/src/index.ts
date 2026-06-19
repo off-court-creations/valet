@@ -142,7 +142,7 @@ export async function createServer() {
     componentTemplate,
     { title: 'Valet Component (by slug)', mimeType: 'application/json' },
     async (uri, vars) => {
-      const slug = String((vars as any)?.slug || '').trim();
+      const slug = String((vars as Record<string, unknown> | undefined)?.slug || '').trim();
       const doc = slug ? getComponentBySlug(slug) : null;
       const payload = doc ?? { error: 'Component not found', slug };
       return {
@@ -187,7 +187,7 @@ async function main() {
             components: index.length,
             hasBox,
             mcpVersion: MCP_VERSION,
-            dataSource: (DATA_INFO as any).source,
+            dataSource: DATA_INFO.source,
             valetVersion: meta?.valetVersion,
             generatedAt: meta?.generatedAt,
             versionParity: parity,
@@ -223,7 +223,7 @@ async function main() {
     // eslint-disable-next-line no-console
     console.error(
       `[valet-mcp ${MCP_VERSION}] Waiting for MCP client on stdio. ` +
-        `Data source: ${(DATA_INFO as any).source}; dir: ${DATA_DIR}. ` +
+        `Data source: ${DATA_INFO.source}; dir: ${DATA_DIR}. ` +
         `Press Ctrl+C to exit.`,
     );
   }

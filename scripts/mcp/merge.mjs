@@ -451,12 +451,7 @@ async function main() {
     // shallow copy files and components subdir.
     // NB: _ts-extract.json is a build intermediate (never read at runtime) — keep
     // it OUT of the shipped mirror so it doesn't bloat the published tarball.
-    for (const fn of [
-      '_meta.json',
-      'index.json',
-      'glossary.json',
-      'component_synonyms.json',
-    ]) {
+    for (const fn of ['_meta.json', 'index.json', 'glossary.json', 'component_synonyms.json']) {
       const src = path.join(outDir, fn);
       if (fs.existsSync(src)) fs.copyFileSync(src, path.join(serverDataDir, fn));
     }

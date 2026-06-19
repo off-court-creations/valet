@@ -95,7 +95,7 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.3",
-    "@babel/core": "^7.27.1",
+    "@babel/core": "^7.29.7",
     "@babel/parser": "^7.27.2",
     "@babel/preset-env": "^7.27.2",
     "@babel/preset-typescript": "^7.27.1",
@@ -122,6 +122,10 @@
     "typescript": "^5.8.3",
     "vitest": "^4.1.8",
     "zustand": "^4.5.7"
+  },
+  "overrides": {
+    "undici": "^7.28.0",
+    "esbuild": "^0.28.1"
   },
   "repository": {
     "type": "git",

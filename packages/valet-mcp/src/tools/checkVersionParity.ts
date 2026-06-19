@@ -52,12 +52,12 @@ function locatePackageJson(): { path: string; dir: string } | null {
   return null;
 }
 
-function locateValetRange(pkg: Record<string, any>): string | undefined {
+function locateValetRange(pkg: Record<string, unknown>): string | undefined {
   const fields = ['dependencies', 'devDependencies', 'optionalDependencies', 'peerDependencies'];
   for (const field of fields) {
     const block = pkg[field];
-    if (block && typeof block === 'object' && block['@archway/valet']) {
-      const raw = block['@archway/valet'];
+    if (block && typeof block === 'object') {
+      const raw = (block as Record<string, unknown>)['@archway/valet'];
       if (typeof raw === 'string' && raw.trim()) return raw.trim();
     }
   }
@@ -100,7 +100,7 @@ function resolveAppValetVersion(): {
     return { source: 'missing' };
   }
 
-  const pkg = JSON.parse(fs.readFileSync(located.path, 'utf8')) as Record<string, any>;
+  const pkg = JSON.parse(fs.readFileSync(located.path, 'utf8')) as Record<string, unknown>;
   const range = locateValetRange(pkg);
 
   let version: string | undefined;
@@ -163,7 +163,7 @@ export function registerCheckVersionParity(server: McpServer): void {
     async () => {
       try {
         const mcpMinor = extractMinor(mcpVersion) ?? '0.0';
-        const dataSource = (DATA_INFO as any).source ?? 'unknown';
+        const dataSource = DATA_INFO.source ?? 'unknown';
         const dataDir = DATA_DIR;
 
         // ── Authoritative valet version (cwd-INDEPENDENT) ──────────────
@@ -277,7 +277,7 @@ export function registerCheckVersionParity(server: McpServer): void {
           mcpMinor: extractMinor(mcpVersion) ?? '0.0',
           valetSource: 'missing',
           appValetSource: 'missing',
-          dataSource: (DATA_INFO as any).source ?? 'unknown',
+          dataSource: DATA_INFO.source ?? 'unknown',
           dataDir: DATA_DIR,
           message: error,
         };

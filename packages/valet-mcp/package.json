@@ -49,6 +49,9 @@
   "devDependencies": {
     "ts-node": "^10.9.2"
   },
+  "overrides": {
+    "diff": "^4.0.4"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
