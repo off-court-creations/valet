@@ -71,6 +71,7 @@ export default [
       'packages/**/dist/**',
       'packages/**/node_modules/**',
       'packages/create-valet-app/templates/**',
+      '.claude/**',
       '**/*.tsbuildinfo',
     ],
   },

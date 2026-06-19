@@ -33,6 +33,10 @@ import { getOverlayRoot, useOverlay } from '../../system/overlay';
 import { inheritSurfaceFontVars } from '../../system/inheritSurfaceFontVars';
 import { zVar } from '../../system/zIndex';
 import { useFieldState } from '../../hooks/useControlledState';
+import { useCompact } from '../../system/compactContext';
+import { makeMix } from '../../system/intentVars';
+import { useFormConfig } from './FormControl';
+import { warnOnce } from '../../system/devErrors';
 import type { FieldBaseProps, Presettable, Sx } from '../../types';
 import type { ChangeInfo, InputSource, OnValueChange, OnValueCommit } from '../../system/events';
 import type { Theme } from '../../system/themeStore';
@@ -63,6 +67,9 @@ export interface SelectProps
   placeholder?: string;
   /** Size token or custom measurement */
   size?: SelectSize | number | string;
+  /** Explicit field width — number → px, or any CSS length. Overrides the
+   *  default `width:100%`. */
+  width?: number | string;
   disabled?: boolean;
   /** Option nodes (see Select.Option). */
   children: React.ReactNode;
@@ -109,19 +116,32 @@ const Trigger = styled('button')<{
   justify-content: space-between;
   gap: 6px;
 
-  border: 1px solid var(--valet-border, ${({ $border }) => $border});
+  /* Deterministic control surface (matches TextField) — NOT the inherited
+     --valet-bg/--valet-text-color/--valet-border, which would paint the trigger
+     in the page background + divider and let it blend into the surface. */
+  border: 1px solid ${({ $border }) => $border};
   border-radius: ${({ $radius }) => $radius};
-  background: var(--valet-bg, ${({ $bg }) => $bg});
-  color: var(--valet-text-color, ${({ $text }) => $text});
+  background: ${({ $bg }) => $bg};
+  color: ${({ $text }) => $text};
   cursor: pointer;
-  transition: border-color 0.15s;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+
+  /* Mobile chrome kit — no blue tap flash, fast taps. */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+
+  /* Coarse-pointer comfort: floor the tap height at >=44px (24px under compact). */
+  @media (pointer: coarse) {
+    min-height: var(--valet-select-hit, 44px);
+  }
 
   &:hover:not([disabled]) {
     border-color: ${({ $primary }) => $primary};
   }
   &:focus-visible {
-    outline: ${({ $outlineW }) => $outlineW} solid
-      var(--valet-focus-ring-color, ${({ $primary }) => $primary});
+    outline: ${({ $outlineW }) => $outlineW} solid ${({ $primary }) => $primary};
     outline-offset: ${({ $outlineOffset }) => $outlineOffset};
   }
   &[disabled] {
@@ -177,15 +197,26 @@ const Item = styled('li')<{
   $padY: string;
   $active?: boolean;
   $disabled?: boolean;
-  $primary: string;
+  $activeBg: string;
+  $hoverBg: string;
 }>`
   padding: ${({ $padY, $pad }) => `${$padY} ${$pad}`};
   cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
   opacity: ${({ $disabled }) => ($disabled ? 0.45 : 1)};
-  background: ${({ $active, $primary }) => ($active ? $primary + '22' : 'transparent')};
+  /* Opaque primary-mix highlight (not alpha-hex, which read muddy on dark). */
+  background: ${({ $active, $activeBg }) => ($active ? $activeBg : 'transparent')};
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.12s;
+
+  /* Coarse-pointer comfort: option rows floor at >=44px tall. */
+  @media (pointer: coarse) {
+    display: flex;
+    align-items: center;
+    min-height: var(--valet-select-hit, 44px);
+  }
 
   &:hover:not([data-disabled='true']) {
-    background: ${({ $primary }) => $primary + '33'};
+    background: ${({ $hoverBg }) => $hoverBg};
   }
 `;
 
@@ -210,6 +241,7 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
     multiple = false,
     placeholder = 'Select…',
     size = 'md',
+    width,
     disabled = false,
     name,
     children,
@@ -218,23 +250,22 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
     sx,
     // API-TYPES S6 (stage A): destructure the FieldBaseProps cluster BEFORE the
     // rest-spread so label/helperText/error/fullWidth stop leaking onto the
-    // <Trigger> button as invalid DOM attributes. FieldShell rendering is
-    // Phase 2 / Q10 — only `error` is wired (aria-invalid below); the rest are
-    // swallowed for now. `label` is aliased to avoid shadowing the internal
-    // selected-option display text (const below); the swallowed members are
-    // void-referenced so they neither leak nor trip no-unused-vars.
-    label: _label,
-    helperText: _helperText,
+    // <Trigger> button as invalid DOM attributes. `error` drives aria-invalid;
+    // `label`/`helperText` are now rendered + wired as the combobox's accessible
+    // name (aria-labelledby) / description (aria-describedby) — WCAG 4.1.2.
+    // `label` is aliased to `fieldLabel` to avoid shadowing the internal
+    // selected-option display text (`const label` below). FieldShell rendering
+    // of fullWidth is Phase 2 / Q10.
+    label: fieldLabel,
+    helperText,
     error,
-    fullWidth: _fullWidth,
+    fullWidth = false,
     ...divRest
   } = props;
-  void _label;
-  void _helperText;
-  void _fullWidth;
 
   /* theme + geometry --------------------------------------- */
   const { theme } = useTheme();
+  const effectiveCompact = useCompact();
   const map = geom(theme);
 
   let g: { h: string; pad: string; font: string };
@@ -249,13 +280,27 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
     g = { h, pad: `calc(${size} * 0.26)`, font: `calc(${size} * 0.35)` };
   }
 
-  // Text on backgroundAlt should be off-white for contrast in all modes.
-  const textCol = theme.colors.primaryText;
-  // Use backgroundAlt for control backgrounds; avoid non-existent `surface` tokens
+  /* Colours — shared intent contract, deterministic (matches TextField). The
+     control surface is backgroundAlt; text is the body text token; the resting
+     keyline is the neutral intent border (text↔background mix), recoloured to
+     `error` when invalid. Menu option highlights are opaque primary mixes (not
+     the old `primary + "22"` alpha-hex, which read muddy on a dark surface). */
+  const textCol = theme.colors.text;
   const bg = theme.colors.backgroundAlt;
   const bgElev = theme.colors.backgroundAlt;
   const primary = theme.colors.primary;
-  const border = theme.colors.divider ?? 'rgba(255, 255, 255, 0.25)';
+
+  /* Form-wide config (own props win; the form config is the fallback). */
+  const formConfig = useFormConfig();
+  const effectiveDisabled = disabled || formConfig.disabled;
+  const effectiveError = Boolean(error) || (name != null && formConfig.errors[name] != null);
+  const hitVar = effectiveCompact ? '24px' : '44px';
+
+  const neutralBorder = makeMix(theme.colors.background, theme.colors.text, 0.4);
+  const borderCol = effectiveError ? theme.colors.error : neutralBorder;
+  const accent = effectiveError ? theme.colors.error : primary;
+  const itemActiveBg = makeMix(bgElev, primary, 0.28);
+  const itemHoverBg = makeMix(bgElev, primary, 0.16);
 
   /* value management --------------------------------------- */
   /**
@@ -410,6 +455,32 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
 
   /* aria linking ------------------------------------------ */
   const listId = useId();
+  // WCAG 4.1.2 (Name, Role, Value): wire the visible `label` as the combobox's
+  // accessible name and `helperText` as its description (mirrors RadioGroup).
+  const labelId = fieldLabel != null ? `${listId}-label` : undefined;
+  const helpId = helperText != null ? `${listId}-help` : undefined;
+  // aria-labelledby may list multiple ids: prepend our rendered label id to any
+  // caller-supplied aria-labelledby so external labelling is preserved/added to.
+  const callerLabelledBy = (divRest as Record<string, unknown>)['aria-labelledby'] as
+    | string
+    | undefined;
+  const labelledBy = [labelId, callerLabelledBy].filter(Boolean).join(' ') || undefined;
+
+  // Dev-time accessible-name guard (mirrors IconButton.tsx): warn ONCE if the
+  // combobox would render with no accessible name from ANY source. External
+  // labelling via aria-label/aria-labelledby is valid and silences the warn.
+  if (process.env.NODE_ENV !== 'production') {
+    const hasName =
+      fieldLabel != null ||
+      Boolean((divRest as Record<string, unknown>)['aria-label']) ||
+      Boolean(callerLabelledBy);
+    if (!hasName) {
+      warnOnce(
+        `Select:no-accessible-name:${listId}`,
+        'valet: Select: provide an accessible name via the `label` prop, aria-label, or aria-labelledby (WCAG 4.1.2).',
+      );
+    }
+  }
   /* Resolved <li> ids: a caller-supplied `id` on a <Select.Option> wins,
      otherwise a generated `${listId}-opt-${i}`. Used for the rendered id,
      `aria-activedescendant`, and scroll-into-view so all three agree even when
@@ -454,40 +525,81 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
   const mergedCls = [presetCls, className].filter(Boolean).join(' ') || undefined;
 
   /*──────────────────────────────────────────────────────────*/
+  const widthCss = width != null ? (typeof width === 'number' ? `${width}px` : width) : undefined;
+
   return (
-    <div style={{ position: 'relative', display: 'inline-block' }}>
+    <div
+      style={{
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: theme.spacing(0.5),
+        // Fill the container's inline axis by default (like TextField), and
+        // shrink below content in a flex/grid row. `width` overrides; `fullWidth`
+        // grows to consume row slack. Fixes the inline-block content-width that
+        // let an open Select drift out of its column.
+        width: widthCss ?? '100%',
+        minInlineSize: 0,
+        minWidth: 0,
+        ...(fullWidth ? { flex: 1 } : {}),
+      }}
+    >
+      {/* visible label — rendered above the trigger; associated to the combobox
+          via aria-labelledby for the accessible name. */}
+      {fieldLabel != null && (
+        <div
+          id={labelId}
+          style={{
+            fontSize: '0.875rem',
+            color: theme.colors.text,
+            marginBottom: theme.spacing(0.5),
+          }}
+        >
+          {fieldLabel}
+        </div>
+      )}
       {/* Trigger */}
       <Trigger
         ref={setTriggerRef}
         data-valet-component='Select'
         data-state={open ? 'open' : 'closed'}
-        data-disabled={disabled ? 'true' : 'false'}
+        data-disabled={effectiveDisabled ? 'true' : 'false'}
         $h={g.h}
         $pad={g.pad}
         $bg={bg}
         $text={textCol}
-        $primary={primary}
+        $primary={accent}
         $radius={theme.radius(1)}
         $outlineW={theme.stroke(2)}
         $outlineOffset={theme.stroke(2)}
-        $border={border}
+        $border={borderCol}
         type='button'
         role='combobox'
         aria-haspopup='listbox'
         aria-controls={listId}
         aria-expanded={open}
-        aria-invalid={error || undefined}
-        disabled={disabled}
+        aria-invalid={effectiveError || undefined}
+        disabled={effectiveDisabled}
         {...(divRest as React.ButtonHTMLAttributes<HTMLButtonElement>)}
+        // Placed AFTER the spread so the combined labelledby (rendered label id +
+        // any caller aria-labelledby) and the helper description win.
+        aria-labelledby={labelledBy}
+        aria-describedby={helpId}
         className={mergedCls}
-        style={sx as React.CSSProperties}
+        onContextMenu={(e: React.MouseEvent) => e.preventDefault()}
+        style={
+          {
+            '--valet-select-hit': hitVar,
+            ...(sx as object),
+          } as React.CSSProperties
+        }
         onClick={() => {
-          if (disabled) return;
+          if (effectiveDisabled) return;
           setOpen((o) => !o);
           calcPos();
         }}
         onKeyDown={(e: React.KeyboardEvent<HTMLButtonElement>) => {
-          if (disabled) return;
+          if (effectiveDisabled) return;
           if (e.key === 'ArrowDown') {
             e.preventDefault();
             setOpen(true);
@@ -523,6 +635,14 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
             $radius={theme.radius(1)}
             $padY={theme.spacing(0.5)}
             data-valet-component='SelectMenu'
+            style={
+              {
+                '--valet-select-hit': hitVar,
+                // Portalled out of the Surface tree → set text + keyline explicitly.
+                color: textCol,
+                border: `1px solid ${neutralBorder}`,
+              } as React.CSSProperties
+            }
             role='listbox'
             id={listId}
             aria-multiselectable={multiple || undefined}
@@ -627,7 +747,8 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
                   $padY={theme.spacing(0.75)}
                   $active={i === active}
                   $disabled={optDisabled}
-                  $primary={primary}
+                  $activeBg={itemActiveBg}
+                  $hoverBg={itemHoverBg}
                   onMouseEnter={() => setActive(i)}
                   onClick={() => !optDisabled && toggle(o.props.value, 'pointer')}
                 >
@@ -651,6 +772,22 @@ const Inner = (props: SelectProps, ref: React.Ref<HTMLButtonElement>) => {
           </Menu>,
           getOverlayRoot(),
         )}
+
+      {/* helper / validation text — associated to the combobox via
+          aria-describedby (mirrors RadioGroup). */}
+      {helperText != null && (
+        <div
+          id={helpId}
+          style={{
+            fontSize: '0.75rem',
+            color: theme.colors.text + 'AA',
+            marginTop: theme.spacing(0.5),
+          }}
+          aria-live='polite'
+        >
+          {helperText}
+        </div>
+      )}
     </div>
   );
 };

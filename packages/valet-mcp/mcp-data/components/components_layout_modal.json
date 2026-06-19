@@ -103,6 +103,13 @@
       "description": "Inline styles (with CSS var support)."
     },
     {
+      "name": "data-valet-component",
+      "type": "string",
+      "required": false,
+      "description": "Override the root component-identity marker (defaults to `'Modal'`). A\ncomposite that roots on a Modal passes its own name so the DOM node\nidentifies as that component — the AI-proxy hook.",
+      "default": "'Modal'"
+    },
+    {
       "name": "preset",
       "type": "string | string[] | undefined",
       "required": false,
@@ -154,6 +161,6 @@
     "src/components/layout/Modal.tsx",
     "docs/src/pages/components/layout/ModalDemo.tsx"
   ],
-  "version": "0.36.0",
+  "version": "0.37.0",
   "schemaVersion": "1.7"
 }

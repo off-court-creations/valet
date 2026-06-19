@@ -117,7 +117,7 @@ export default function TypographyDemoPage() {
         <Typography variant='body'>(regular body text)</Typography>
         <Typography
           variant='body'
-          bold
+          weight='bold'
         >
           bold
         </Typography>
@@ -129,7 +129,7 @@ export default function TypographyDemoPage() {
         </Typography>
         <Typography
           variant='body'
-          bold
+          weight='bold'
           italic
         >
           bold italic
@@ -618,7 +618,7 @@ setTheme({
           variant={variant}
           autoSize={autoSize}
           scale={scale}
-          bold={bold}
+          weight={bold ? 'bold' : 'regular'}
           italic={italic}
           centered={centered}
         >

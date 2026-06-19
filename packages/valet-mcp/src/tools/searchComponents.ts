@@ -58,9 +58,8 @@ export function registerSearchComponents(server: McpServer): void {
       const wantStatus = statusSet.size > 0;
       const filtered = wantStatus
         ? scoredAll.filter((s) => {
-            const stFromIndex = (s.item as any).status
-              ? String((s.item as any).status).toLowerCase()
-              : '';
+            const rawStatus = (s.item as { status?: string }).status;
+            const stFromIndex = rawStatus ? String(rawStatus).toLowerCase() : '';
             if (stFromIndex) return statusSet.has(stFromIndex);
             // Fallback to full component doc if index lacks status (older snapshots)
             const comp = getComponentBySlug(s.item.slug);

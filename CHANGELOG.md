@@ -4,6 +4,46 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.37.0] - 2026-06-19
+
+> **Pre-1.0 dogfood minor (epic branch `feat/valet-1.0`).** Ships the full 1.0-prep
+> work for real-world validation through the MCP server and create-valet-app; `1.0.0`
+> follows as the stability declaration once it is proven in use. 0.x semantics still
+> apply — a minor may break, and `^0.37.0` locks to 0.37.x.
+
+### Added
+
+- Docs: [`VERSIONING.md`](./VERSIONING.md) — the post-1.0 stability policy. Defines the public API surface (the barrel; deep imports and generated class names are not API), what patch/minor/major mean, the post-1.0 deprecation lifecycle (alias + dev-warn for ≥1 minor, then removal in the next major), and the `experimental` carve-out.
+- Accessibility (WCAG 4.1.2): `Switch`/`Slider`/`Select`/`Iterator` now render the documented `FieldBaseProps.label` (and `helperText`) and wire it as the control's accessible name (`aria-labelledby`, or native `<label htmlFor>` for `Iterator`) — previously the prop was accepted and silently discarded. Each gained a dev-time accessible-name guard.
+- Types: `sendChat` now returns a named `ChatCompletion` type (was `Promise<any>`).
+- Testing: `src/ssr-render.test.ts` — a renderToString regression gate over the app-shell components (CI runs it post-build).
+- CI: PR CI now also runs `check:package` (publint + are-the-types-wrong) and `mcp:check` (corpus freshness).
+
+### Removed
+
+- **BREAKING (deprecation sweep — all 0.x prop aliases removed, pre-1.0 policy `deprecate.ts`/Q12(a)):** every prop alias that was marked "removed at 1.0" is gone, along with `src/system/deprecate.ts` (`deprecateProp`/`resolveDeprecatedProp`) and its tests. The canonical names already existed and are unchanged. Migrations:
+  - `Accordion`: `open` → `expanded`, `defaultOpen` → `defaultExpanded`, `onOpenChange` → `onExpandedChange`.
+  - `Pagination`: `onChange` → `onPageChange`.
+  - `RadioGroup`: `spacing` → `gap`.
+  - `Panel`: `normalizeRowHeight` → `normalizeRowHeights`.
+  - `Table`: `selectable='single'|'multi'` → `selectionMode='single'|'multiple'`; `rowKey` → `getItemKey`.
+  - `List`: `selectable={true}` → `selectionMode='single'`; `getKey` → `getItemKey`.
+  - `Switch`: **`onChange` removed (not a rename).** It was a raw `MouseEvent` passthrough — read the boolean from `onValueChange(next, info)` and `info.event` for the DOM event, or attach a native `onClick`.
+- **BREAKING (`Typography.bold` removed):** the boolean `bold` prop is gone — use `weight='bold'` (or any `weight` alias / number). The kit and docs are migrated.
+- **BREAKING (`Progress` wrapper removed):** the back-compat `Progress` component (and its `variant`/`mode`/`showLabel` props, plus the `ProgressVariant`/`ProgressMode` types) is removed. Use the primitives directly: `ProgressBar` for linear, `ProgressRing` for circular (omit `value` for indeterminate).
+
+### Changed
+
+- **Spacing (density scale tightened + centralized):** the density → `--valet-space` multiplier is now **tight 0.8 / standard 0.9 / comfortable 1.0** (was 0.9 / 1.0 / 1.15) — every tier reads a touch tighter while staying evenly stepped (0.1) and visibly distinct, with `comfortable` sitting at the design unit and the tiers stepping down from there. The mapping is now a single `densityScale()` helper (`src/system/densityScale.ts`) instead of being copy-pasted across `Surface`/`Grid`/`Panel`/`Stack`/`Tabs`. Class hashes for density-bearing components change (internal-only).
+- **Spacing (`Grid` equalizes child widths):** a normalizing `Grid` now drives child `--valet-panel-width: 100%` (alongside the existing row-height stretch), so a grid of `Panel` cards is uniform in **both** axes with no per-card `fullWidth`. Standalone `Panel`s keep their content-width default.
+- **Spacing (role-aware "beautiful by default" defaults):** `Grid`'s default `gap` and `Panel`'s default `pad` are now **2 spacing units (~16px)**, up from 1 (~8px). A Grid lays out cards/regions and a Panel is a bordered card surface, so their content-layout defaults now match the conventional card-grid gutter / card inset instead of the tight 8px baseline — a card grid looks intentional with **zero** spacing props. Tight layouts opt down with `gap={1}` / `pad={1}` / `pad={0}` / `density='tight'` / `compact`; `Stack`/`Tabs` defaults are unchanged (1). Generated class hashes for default `Grid`/`Panel` change (internal-only). Migration: pass an explicit `gap`/`pad` anywhere you relied on the old 8px default.
+- **BREAKING (`Tabs.tabAlign` collapsed):** the `tabAlign` alias is removed; use `alignX` (one concept, one prop).
+- **BREAKING (fonts privacy-by-default, Q13/THEMING S7):** `injectRemote` now defaults to **`false`** (was `true` through 0.x). A named Google family with no explicit `injectRemote` is treated as a **local** family — zero network requests. To fetch named families from Google's servers, pass `injectRemote: true` (it then prints the once-per-session dev privacy notice). Self-hosted `CustomFont` entries are unaffected.
+- Positioning: **every component is flagged `experimental` for a pre-1.0 verification pass.** Given the breadth of the 1.0 changes (deprecation sweep, accessibility rewiring, SSR guards, type-surface curation, spacing/density retune), each component's `status` is reset to `experimental` and is promoted back to `stable` as it is re-verified before the cut. The `stable` set at 1.0 is whatever has passed review by then; see `VERSIONING.md` and check a component's `status` (docs / MCP corpus) for its current standing.
+- Types: the public barrel is curated (no `export *` leaks) — `encrypt`/`decrypt` are no longer public (module-internal); the bare `Variant` is no longer exported (use `TypographyVariant`). The `dx/type-tests` probes are now gated in CI (`typecheck:types`).
+- SSR: `AppBar`/`Drawer` no longer crash `renderToString` (portal is mounted-gated; the `Drawer` `HTMLElement` guard); `Accordion` reduced-motion reads `usePrefersReducedMotion` (no hydration class mismatch).
+- MCP corpus / tooling: the served corpus now carries **zero** deprecated props. `validate.mjs`'s deprecated-alias gate is inverted to the 1.0 invariant (it fails if any prop ever carries a `deprecated` flag); `DEPRECATED_ALIAS_FLOOR` is now empty. The deprecation-banner/flag code in the MCP server remains but is dormant (no deprecated props on the surface).
+
 ## [0.36.0] — 2026-06-13
 
 ### Added

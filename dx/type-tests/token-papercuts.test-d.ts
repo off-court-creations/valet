@@ -38,15 +38,18 @@ const videoWidthStr: VideoProps['width'] = '100%';
 const videoHeightNum: VideoProps['height'] = 360;
 const videoHeightStr: VideoProps['height'] = 'auto';
 
-/* ─── RadioGroup: canonical `gap` (Space) + deprecated `spacing` ── */
+/* ─── RadioGroup: canonical `gap` (Space); `spacing` removed at 1.0 ── */
 const radioGap: RadioGroupProps['gap'] = 1.5;
 const radioGapStr: RadioGroupProps['gap'] = '12px';
-// `spacing` survives as a deprecated alias, also Space.
-const radioSpacing: RadioGroupProps['spacing'] = 1.5;
+// @ts-expect-error — `spacing` removed at 1.0; use `gap`
+const radioNoSpacing: RadioGroupProps['spacing'] = 1.5;
+void radioNoSpacing;
 
-/* ─── Panel: canonical plural + deprecated singular both boolean ── */
+/* ─── Panel: canonical plural; singular `normalizeRowHeight` removed ── */
 const panelPlural: PanelProps['normalizeRowHeights'] = false;
-const panelSingular: PanelProps['normalizeRowHeight'] = false;
+// @ts-expect-error — `normalizeRowHeight` removed at 1.0; use `normalizeRowHeights`
+const panelNoSingular: PanelProps['normalizeRowHeight'] = false;
+void panelNoSingular;
 
 /* ─── Intent reaches consumers through intent-driven components.
    The shared union accepts the seven named tokens AND any open string,
@@ -65,8 +68,6 @@ void videoHeightNum;
 void videoHeightStr;
 void radioGap;
 void radioGapStr;
-void radioSpacing;
 void panelPlural;
-void panelSingular;
 void intentNamed;
 void intentArbitrary;

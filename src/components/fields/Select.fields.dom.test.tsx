@@ -166,6 +166,7 @@ describe('Select — control modes (ruling R9)', () => {
         <Select
           name='pick'
           value='c'
+          aria-label='Pick'
         >
           {opts()}
         </Select>

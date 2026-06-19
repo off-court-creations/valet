@@ -28,6 +28,7 @@
     "/icon-demo": "docs/src/pages/components/primitives/IconDemoPage.tsx",
     "/image-demo": "docs/src/pages/components/primitives/ImageDemo.tsx",
     "/iterator-demo": "docs/src/pages/components/field/IteratorDemo.tsx",
+    "/keymodal-demo": "docs/src/pages/components/widgets/KeyModalDemo.tsx",
     "/list-demo": "docs/src/pages/components/layout/ListDemoPage.tsx",
     "/llmchat": "docs/src/pages/components/widgets/LLMChat.tsx",
     "/markdown-demo": "docs/src/pages/components/widgets/MarkdownDemo.tsx",

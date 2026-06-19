@@ -300,7 +300,7 @@ export default function ComponentStatusPage() {
       <Stack>
         <Typography
           variant='h2'
-          bold
+          weight='bold'
         >
           Component Status
         </Typography>

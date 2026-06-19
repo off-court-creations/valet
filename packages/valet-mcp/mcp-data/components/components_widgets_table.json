@@ -2,8 +2,8 @@
   "name": "Table",
   "category": "widgets",
   "slug": "components/widgets/table",
-  "summary": "Data table with sortable columns, smart height/auto-pagination, and unified `selectionMode` (`'none'|'single'|'multiple'`) keyed by `getItemKey` for selection that survives data refreshes (the `selectable`/`rowKey` props are deprecated aliases); use it for tabular data with columns.",
-  "status": "experimental",
+  "summary": "Data table with sortable columns, smart height/auto-pagination, and unified `selectionMode` (`'none'|'single'|'multiple'`) keyed by `getItemKey` for selection that survives data refreshes; supports controlled or uncontrolled selection (`selected`/`defaultSelected`/`onSelectionChange`, row arrays). Use it for tabular data with columns.",
+  "status": "stable",
   "aliases": [
     "table",
     "datagrid",
@@ -34,26 +34,6 @@
       "name": "dividers",
       "type": "boolean",
       "required": false
-    },
-    {
-      "name": "selectable",
-      "type": "'single' | 'multi' | undefined",
-      "required": false,
-      "deprecated": {
-        "replacement": "selectionMode"
-      },
-      "enumValues": [
-        "single",
-        "multi"
-      ]
-    },
-    {
-      "name": "rowKey",
-      "type": "RowKey<T>",
-      "required": false,
-      "deprecated": {
-        "replacement": "getItemKey"
-      }
     },
     {
       "name": "initialSort",
@@ -134,7 +114,7 @@
       "name": "selectionMode",
       "type": "\"multiple\" | \"none\" | \"single\" | undefined",
       "required": false,
-      "description": "How many items may be selected at once.\n- `'none'` — selection is disabled (the default for components that gate it).\n- `'single'` — at most one item is selected.\n- `'multiple'` — any number of items may be selected.\n\nCanonical replacement for the per-component flags (Table's `selectable`)."
+      "description": "How many items may be selected at once.\n- `'none'` — selection is disabled (the default for components that gate it).\n- `'single'` — at most one item is selected.\n- `'multiple'` — any number of items may be selected.\n\nCanonical replacement for the former per-component flags (e.g. Table's\nremoved `selectable`)."
     },
     {
       "name": "selected",
@@ -163,10 +143,18 @@
     ]
   },
   "cssVars": [
+    "--valet-table-",
     "--valet-divider-stroke",
-    "--valet-underline-width",
+    "--valet-table-border",
+    "--valet-table-text",
+    "--valet-table-stripe",
+    "--valet-table-hover",
+    "--valet-table-selected-bg",
     "--valet-focus-width",
+    "--valet-table-primary",
     "--valet-focus-offset",
+    "--valet-table-hit",
+    "--valet-underline-width",
     "--valet-bg",
     "--valet-table-underline"
   ],
@@ -194,8 +182,9 @@
     "Keep tables readable: enable `striped` and/or `hoverable` for large datasets, but avoid heavy styling that competes with content.",
     "Prefer smart height over tiny scrollbars: enable `constrainHeight` and set `minConstrainedRows` (default 4). If the viewport would show fewer rows, the table expands; when the dataset exceeds `maxExpandedRows` (default 30), it paginates instead of showing a tiny scroller.",
     "Provide an initial sort (`initialSort`), align numeric columns to the right, and format dates consistently.",
-    "Enable selection only when follow‑up actions operate on selected rows; use the unified `selectionMode` prop (`'none' | 'single' | 'multiple'`) to match the action design. The pre‑0.35 `selectable` prop (`'single' | 'multi'`) is a deprecated alias that still works but dev‑warns once and is removed at 1.0 — migrate `selectable='multi'` to `selectionMode='multiple'`.",
-    "When the table is selectable and the data is refreshed immutably (new row objects fetched or re‑mapped), set `getItemKey` (a property name like `getItemKey=\"id\"` or a function `getItemKey={(row) => row.id}`) so selection is tracked by a stable key and survives the refresh. Without it, selection falls back to object identity and is cleared whenever the row objects are replaced. The pre‑0.35 `rowKey` prop is a deprecated alias of `getItemKey` (same shape; removed at 1.0).",
+    "Enable selection only when follow‑up actions operate on selected rows; use `selectionMode` (`'none' | 'single' | 'multiple'`) to match the action design. Selection can be controlled (`selected` + `onSelectionChange`) or uncontrolled (`defaultSelected`); both are row arrays of `T`. In `'multiple'` mode the header shows a select-all checkbox (with an indeterminate partial state).",
+    "When the table is selectable and the data is refreshed immutably (new row objects fetched or re‑mapped), set `getItemKey` (a property name like `getItemKey=\"id\"` or a function `getItemKey={(row) => row.id}`) so selection is tracked by a stable key and survives the refresh. Without it, selection falls back to object identity and is cleared whenever the row objects are replaced.",
+    "When `onRowClick` is set, rows become keyboard-operable (focusable, Enter/Space activate) with a focus ring and a ≥44px coarse-pointer height; clicks originating from interactive cell content (links/buttons/inputs) are ignored so nested controls keep working.",
     "Keep column count reasonable on narrow screens; prefer fewer, more meaningful columns over many cramped ones. Use succinct headers.",
     "Expose `onRowClick` when rows drive navigation or drill‑ins so the parent surface can react without wiring bespoke click handlers into each cell."
   ],
@@ -245,6 +234,17 @@
       }
     },
     {
+      "id": "table-controlled-selection",
+      "title": "Controlled selection (selected + onSelectionChange)",
+      "code": "(() => {\n  type Row = { id: number; name: string };\n  const columns: TableColumn<Row>[] = [\n    { header: 'ID', accessor: 'id', align: 'right' },\n    { header: 'Name', accessor: 'name' },\n  ];\n  const data: Row[] = [\n    { id: 1, name: 'Ada Lovelace' },\n    { id: 2, name: 'Alan Turing' },\n    { id: 3, name: 'Grace Hopper' },\n  ];\n  const Demo = () => {\n    const [selected, setSelected] = React.useState<Row[]>([data[0]]);\n    return (\n      <Stack gap={2}>\n        <Panel fullWidth>\n          <Table data={data} columns={columns} selectionMode='multiple' getItemKey='id' selected={selected} onSelectionChange={setSelected} />\n        </Panel>\n        <Stack direction='row' gap={1}>\n          <Button onClick={() => setSelected(data)}>Select all</Button>\n          <Button onClick={() => setSelected([])}>Clear</Button>\n        </Stack>\n        <Typography variant='subtitle'>Selected: {selected.map((r) => r.id).join(', ') || '—'}</Typography>\n      </Stack>\n    );\n  };\n  return <Demo />;\n})()",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {
+        "data": [],
+        "columns": []
+      }
+    },
+    {
       "id": "table-auto-pagination",
       "title": "Auto pagination via minConstrainedRows",
       "code": "(() => {\n  type Row = { id: number; name: string; city: string };\n  const columns: TableColumn<Row>[] = [\n    { header: 'ID', accessor: 'id', align: 'right' },\n    { header: 'Name', accessor: 'name' },\n    { header: 'City', accessor: 'city' },\n  ];\n  const data: Row[] = Array.from({ length: 60 }, (_, i) => ({ id: i + 1, name: 'User ' + (i + 1), city: 'City ' + (i % 8) }));\n  return (\n    <Panel fullWidth>\n      <Table\n        data={data}\n        columns={columns}\n        striped\n        hoverable\n        constrainHeight\n        minConstrainedRows={4}\n        maxExpandedRows={20}\n      />\n    </Panel>\n  );\n})()",
@@ -283,6 +283,6 @@
     "src/components/widgets/Table.tsx",
     "docs/src/pages/components/widgets/TableDemo.tsx"
   ],
-  "version": "0.36.0",
+  "version": "0.37.0",
   "schemaVersion": "1.7"
 }

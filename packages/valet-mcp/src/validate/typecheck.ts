@@ -29,9 +29,10 @@
 //      build) rather than spawning `tsc`. A LanguageService is used over a
 //      one-shot Program for two reasons: it exposes typed SUGGESTION
 //      diagnostics — TS6385 `'x' is deprecated` — which a still-type-valid
-//      deprecated alias (Table's `selectable`, `rowKey`) only ever produces as
-//      a suggestion, never an error; and it incrementally reuses the parsed
-//      valet type graph across calls, so only the first call pays the parse.
+//      `@deprecated` symbol only ever produces as a suggestion, never an error
+//      (the 1.0 sweep removed valet's last such aliases, but the path stays for
+//      any future deprecation); and it incrementally reuses the parsed valet
+//      type graph across calls, so only the first call pays the parse.
 //
 // Latency: the valet `.d.mts` + react/zustand/etc. type graph dominates the
 // FIRST call (~0.4–0.6s cold); the service caches it, so subsequent (warm)
@@ -53,9 +54,29 @@ const ts = requireFromHere('typescript') as typeof TS;
 export type ValetResolution = {
   /** Absolute path to the valet `.d.mts` (or `.d.ts` / `src/index.ts`). */
   typesPath: string;
+  /**
+   * The directory whose `package.json` declares `@archway/valet`. tsc resolves
+   * the bare specifier through this dir's `exports` exactly like a published
+   * consumer — load-bearing for the repo fallback, where there is no
+   * `node_modules/@archway/valet` for node resolution to walk to (a bare-file
+   * `paths` target alone does not resolve a `.d.mts`).
+   */
+  pkgDir: string;
   /** How it was found — for diagnostics / the tool's text summary. */
   source: 'package-exports' | 'package-entry' | 'repo-dist' | 'repo-src';
 };
+
+/** Walk up from a file to the nearest ancestor directory holding a package.json. */
+function nearestPackageDir(fromFile: string): string {
+  let dir = path.dirname(fromFile);
+  for (let i = 0; i < 12; i++) {
+    if (fs.existsSync(path.join(dir, 'package.json'))) return dir;
+    const up = path.dirname(dir);
+    if (up === dir) break;
+    dir = up;
+  }
+  return path.dirname(fromFile);
+}
 
 /**
  * Resolve the valet types to type-check against. Layered, most-published first:
@@ -79,8 +100,9 @@ export function resolveValetTypes(): ValetResolution {
     };
     const typesRel = pkg.exports?.['.']?.types ?? pkg.types;
     if (typesRel) {
-      const abs = path.resolve(path.dirname(pjPath), typesRel);
-      if (fs.existsSync(abs)) return { typesPath: abs, source: 'package-exports' };
+      const pkgDir = path.dirname(pjPath);
+      const abs = path.resolve(pkgDir, typesRel);
+      if (fs.existsSync(abs)) return { typesPath: abs, pkgDir, source: 'package-exports' };
     }
   } catch {
     // not installed as a real package here; fall through
@@ -95,7 +117,7 @@ export function resolveValetTypes(): ValetResolution {
       entry.replace(/\.cjs$/, '.d.cts'),
     ]) {
       if (cand !== entry && fs.existsSync(cand)) {
-        return { typesPath: cand, source: 'package-entry' };
+        return { typesPath: cand, pkgDir: nearestPackageDir(entry), source: 'package-entry' };
       }
     }
   } catch {
@@ -105,11 +127,13 @@ export function resolveValetTypes(): ValetResolution {
   // (3)/(4) workspace fallbacks, relative to this file (dist/validate or src/validate).
   const here = path.dirname(fileURLToPath(import.meta.url));
   // <repoRoot>/packages/valet-mcp/{dist,src}/validate → up 4 to <repoRoot>.
+  // The repo root's own package.json IS the @archway/valet manifest, so tsc can
+  // resolve the bare specifier through its `exports` (pkgDir = repoRoot).
   const repoRoot = path.resolve(here, '..', '..', '..', '..');
   const distDts = path.join(repoRoot, 'dist', 'index.d.mts');
-  if (fs.existsSync(distDts)) return { typesPath: distDts, source: 'repo-dist' };
+  if (fs.existsSync(distDts)) return { typesPath: distDts, pkgDir: repoRoot, source: 'repo-dist' };
   const srcIndex = path.join(repoRoot, 'src', 'index.ts');
-  if (fs.existsSync(srcIndex)) return { typesPath: srcIndex, source: 'repo-src' };
+  if (fs.existsSync(srcIndex)) return { typesPath: srcIndex, pkgDir: repoRoot, source: 'repo-src' };
 
   throw new Error(
     'Unable to resolve @archway/valet types for validation. Install @archway/valet ' +
@@ -333,10 +357,15 @@ function reactPathPins(): Record<string, string[]> {
   }
 }
 
-function compilerOptions(typesPath: string): TS.CompilerOptions {
-  // Map the bare `@archway/valet` specifier to the resolved declaration file so
-  // the published bare import in the synthesized module type-checks against the
-  // exact shipped types. baseUrl anchors the (extension-less) paths target.
+function compilerOptions(resolution: ValetResolution): TS.CompilerOptions {
+  // Map the bare `@archway/valet` specifier so the synthesized module's import
+  // type-checks against the exact shipped types. We map to the package DIRECTORY
+  // first — tsc reads its package.json `exports` exactly like a published
+  // consumer, which is the only thing that resolves the repo-fallback `.d.mts`
+  // when there is no node_modules/@archway/valet to walk to — then fall back to
+  // the bare types file (covers repo-src before a dist is built). baseUrl anchors
+  // the (extension-less) paths targets.
+  const { typesPath, pkgDir } = resolution;
   const typesNoExt = typesPath.replace(/\.d\.mts$|\.d\.ts$|\.ts$|\.mts$/, '');
   return {
     target: ts.ScriptTarget.ES2020,
@@ -356,7 +385,7 @@ function compilerOptions(typesPath: string): TS.CompilerOptions {
     // The valet specifier pin + the react identity pin (see reactPathPins): the
     // latter is what makes the check honest in a published install where valet's
     // transitive React would otherwise resolve to a different (untyped) copy.
-    paths: { '@archway/valet': [typesNoExt], ...reactPathPins() },
+    paths: { '@archway/valet': [pkgDir, typesNoExt], ...reactPathPins() },
   };
 }
 
@@ -377,7 +406,7 @@ let currentVersion = 0;
 function getService(): ServiceState {
   if (serviceState) return serviceState;
   const resolution = getResolution();
-  const options = compilerOptions(resolution.typesPath);
+  const options = compilerOptions(resolution);
   const host: TS.LanguageServiceHost = {
     getScriptFileNames: () => [VIRTUAL_FILE],
     getScriptVersion: (fileName) => (fileName === VIRTUAL_FILE ? String(currentVersion) : '1'),

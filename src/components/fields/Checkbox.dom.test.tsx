@@ -140,6 +140,7 @@ describe('Checkbox — control modes (ruling R9)', () => {
         <Checkbox
           name='agree'
           checked
+          aria-label='Agree'
         />
       </FormControl>,
     );
@@ -185,5 +186,108 @@ describe('Checkbox — ChangeInfo.source classification (ruling R10)', () => {
     expect(infos[0].phase).toBe('input');
     expect(infos[0].previousValue).toBe(false);
     expect(infos[1].previousValue).toBe(true);
+  });
+});
+
+/*───────────────────────────────────────────────────────────────*/
+/* 1.0 redo — colors / glyph / indeterminate / mobile / a11y      */
+
+const box = (c: HTMLElement) => c.querySelector('[data-indicator]') as HTMLElement;
+const cbRoot = (c: HTMLElement) =>
+  c.querySelector('[data-valet-component="Checkbox"]') as HTMLElement;
+
+describe('Checkbox — 1.0 redo', () => {
+  it('drives every state colour from the shared intent contract (computeIntentVars)', () => {
+    const { container } = mount(<Checkbox aria-label='x' />);
+    const b = box(container);
+    for (const v of [
+      '--valet-intent-bg',
+      '--valet-intent-border',
+      '--valet-intent-fg',
+      '--valet-intent-focus',
+    ]) {
+      expect(b.style.getPropertyValue(v)).not.toBe('');
+    }
+    // the neutral unchecked border is distinct from the checked fill
+    expect(b.style.getPropertyValue('--valet-intent-border')).not.toBe(
+      b.style.getPropertyValue('--valet-intent-bg'),
+    );
+  });
+
+  it('renders the tick as an inline svg using currentColor (never a hard white)', () => {
+    const { container } = mount(
+      <Checkbox
+        aria-label='x'
+        checked
+      />,
+    );
+    const svg = box(container).querySelector('svg');
+    expect(svg).not.toBeNull();
+    expect(svg!.getAttribute('stroke')).toBe('currentColor');
+    expect(svg!.querySelector('polyline')).not.toBeNull(); // checkmark
+  });
+
+  it('indeterminate: dash glyph, native IDL flag set, NO conflicting aria-checked', () => {
+    const { container } = mount(
+      <Checkbox
+        aria-label='x'
+        indeterminate
+      />,
+    );
+    const svg = box(container).querySelector('svg')!;
+    expect(svg.querySelector('line')).not.toBeNull(); // dash, not checkmark
+    expect(svg.querySelector('polyline')).toBeNull();
+    expect(input(container).indeterminate).toBe(true); // IDL exposes "mixed"
+    expect(input(container).hasAttribute('aria-checked')).toBe(false);
+    expect(cbRoot(container).getAttribute('data-state')).toBe('indeterminate');
+  });
+
+  it('exposes a coarse-pointer hit-size var (44px by default)', () => {
+    const { container } = mount(<Checkbox aria-label='x' />);
+    expect(box(container).style.getPropertyValue('--valet-cb-hit')).toBe('44px');
+  });
+
+  it('renders helperText OUTSIDE the label and wires aria-describedby', () => {
+    const { container } = mount(
+      <Checkbox
+        label='Agree'
+        helperText='Required to continue'
+      />,
+    );
+    const root = cbRoot(container); // the <label>
+    // helperText must NOT be inside the label (it would leak into the name)
+    expect(root.textContent).toContain('Agree');
+    expect(root.textContent).not.toContain('Required to continue');
+    const descId = input(container).getAttribute('aria-describedby');
+    expect(descId).toBeTruthy();
+    const help = container.querySelector(`[id="${descId}"]`) as HTMLElement;
+    expect(help).not.toBeNull();
+    expect(help.textContent).toBe('Required to continue');
+    expect(root.contains(help)).toBe(false); // sibling, not descendant
+  });
+
+  it('warns once when it has no accessible name', () => {
+    mount(<Checkbox />);
+    expect(valetWarns().some((m) => m.includes('accessible name'))).toBe(true);
+  });
+});
+
+describe('Checkbox — FormConfigCtx (form-wide disabled / errors)', () => {
+  it('respects form-wide disabled and a name-keyed error', () => {
+    const useStore = createFormStore({ agree: false });
+    const { container } = mount(
+      <FormControl
+        useStore={useStore}
+        disabled
+        errors={{ agree: 'Required' }}
+      >
+        <Checkbox
+          name='agree'
+          label='Agree'
+        />
+      </FormControl>,
+    );
+    expect(input(container).disabled).toBe(true);
+    expect(input(container).getAttribute('aria-invalid')).toBe('true');
   });
 });

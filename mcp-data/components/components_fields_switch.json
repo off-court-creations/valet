@@ -2,7 +2,7 @@
   "name": "Switch",
   "category": "fields",
   "slug": "components/fields/switch",
-  "summary": "Accessible toggle for a single boolean that takes effect immediately; controlled via `checked` + `onValueChange` (the old `onChange` is a deprecated alias) — prefer it over Checkbox for instant on/off settings rather than form submission.",
+  "summary": "Accessible toggle for a single boolean that takes effect immediately; controlled via `checked` + `onValueChange` — prefer it over Checkbox for instant on/off settings rather than form submission.",
   "status": "stable",
   "aliases": [
     "switch",
@@ -20,15 +20,6 @@
       "type": "boolean",
       "required": false,
       "description": "Default state for uncontrolled usage."
-    },
-    {
-      "name": "onChange",
-      "type": "(event: React.MouseEvent<HTMLButtonElement>) => void",
-      "required": false,
-      "deprecated": {
-        "replacement": "onValueChange"
-      },
-      "description": "Raw DOM click passthrough."
     },
     {
       "name": "onValueChange",
@@ -100,16 +91,13 @@
     ]
   },
   "cssVars": [
+    "--valet-switch-hit",
     "--valet-switch-outline",
     "--valet-switch-offset",
     "--valet-switch-pad"
   ],
   "cssPresets": [],
   "events": [
-    {
-      "name": "onChange",
-      "payloadType": "React.MouseEvent<HTMLButtonElement>"
-    },
     {
       "name": "onValueChange",
       "payloadType": "OnValueChange<boolean>"
@@ -129,12 +117,12 @@
   ],
   "bestPractices": [
     "Use Switch for immediate on/off settings that apply instantly; for form submissions, prefer `Checkbox`.",
-    "Read the new boolean from `onValueChange(next, info)`. The raw-event `onChange` is deprecated; it still fires through 0.x with a one-time dev warning and is removed at 1.0 — read `info.event` or attach a native `onClick` if you need the DOM event.",
+    "Read the boolean from `onValueChange(next, info)`. If you need the raw DOM event, read `info.event` from the payload or attach a native `onClick`.",
     "Label state, not action (e.g., 'Wi‑Fi' rather than 'Enable'). Set a stable `name` when part of a form.",
     "Provide clear feedback on change (e.g., brief text confirmation, or reflect the new state in the UI).",
     "Respect platform conventions for motion and colours; avoid ambiguous palettes for on/off states.",
     "Ensure keyboard operability (Space toggles). Maintain accessible naming regardless of visual labels.",
-    "Prefer presets/tokens for size and colour; keep thumb/track large enough for comfortable touch targets."
+    "Pick `size` for the visual track — the touch hit area is already ≥44px on coarse pointers automatically (relaxed under `compact`), so you don't need to size up for tappability. Prefer presets/tokens for size and colour."
   ],
   "examples": [
     {
@@ -159,6 +147,6 @@
     "src/components/fields/Switch.tsx",
     "docs/src/pages/components/field/SwitchDemo.tsx"
   ],
-  "version": "0.36.0",
+  "version": "0.37.0",
   "schemaVersion": "1.7"
 }

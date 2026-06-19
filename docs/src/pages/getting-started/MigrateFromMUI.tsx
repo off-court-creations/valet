@@ -301,7 +301,7 @@ export default function MigrateFromMUIPage() {
         >
           <Typography
             variant='h3'
-            bold
+            weight='bold'
           >
             How to think about this migration
           </Typography>
@@ -326,7 +326,7 @@ export default function MigrateFromMUIPage() {
         >
           <Typography
             variant='h3'
-            bold
+            weight='bold'
           >
             Step 1 – Replace ThemeProvider with useInitialTheme
           </Typography>
@@ -339,14 +339,13 @@ export default function MigrateFromMUIPage() {
             <code>useTheme</code>.
           </Typography>
           <Grid
-            columns={2}
+            columns={{ xs: 1, md: 2 }}
             gap={1}
-            adaptive
           >
             <Panel pad={1}>
               <Typography
                 variant='subtitle'
-                bold
+                weight='bold'
               >
                 Before: MUI shell
               </Typography>
@@ -358,7 +357,7 @@ export default function MigrateFromMUIPage() {
             <Panel pad={1}>
               <Typography
                 variant='subtitle'
-                bold
+                weight='bold'
               >
                 After: valet shell
               </Typography>
@@ -381,7 +380,7 @@ export default function MigrateFromMUIPage() {
         >
           <Typography
             variant='h3'
-            bold
+            weight='bold'
           >
             Step 2 – Port your theme: palette, typography, and shape
           </Typography>
@@ -392,14 +391,13 @@ export default function MigrateFromMUIPage() {
             <code>useInitialTheme</code> (on startup) or <code>useTheme().setTheme</code> (later).
           </Typography>
           <Grid
-            columns={2}
+            columns={{ xs: 1, md: 2 }}
             gap={1}
-            adaptive
           >
             <Panel pad={1}>
               <Typography
                 variant='subtitle'
-                bold
+                weight='bold'
               >
                 Before: MUI theme
               </Typography>
@@ -411,7 +409,7 @@ export default function MigrateFromMUIPage() {
             <Panel pad={1}>
               <Typography
                 variant='subtitle'
-                bold
+                weight='bold'
               >
                 After: valet theme patch
               </Typography>
@@ -435,7 +433,7 @@ export default function MigrateFromMUIPage() {
         >
           <Typography
             variant='h3'
-            bold
+            weight='bold'
           >
             Step 3 – Move to Surface-based layouts
           </Typography>
@@ -466,7 +464,7 @@ export default function MigrateFromMUIPage() {
         >
           <Typography
             variant='h3'
-            bold
+            weight='bold'
           >
             Step 4 – Translate components and sx into presets
           </Typography>
@@ -477,14 +475,13 @@ export default function MigrateFromMUIPage() {
             <code>definePreset</code> and apply it via the <code>preset</code> prop.
           </Typography>
           <Grid
-            columns={2}
+            columns={{ xs: 1, md: 2 }}
             gap={1}
-            adaptive
           >
             <Panel pad={1}>
               <Typography
                 variant='subtitle'
-                bold
+                weight='bold'
               >
                 From scattered sx to presets
               </Typography>
@@ -496,7 +493,7 @@ export default function MigrateFromMUIPage() {
             <Panel pad={1}>
               <Typography
                 variant='subtitle'
-                bold
+                weight='bold'
               >
                 Component mapping (high level)
               </Typography>
@@ -520,7 +517,7 @@ export default function MigrateFromMUIPage() {
         >
           <Typography
             variant='h3'
-            bold
+            weight='bold'
           >
             Suggested migration order
           </Typography>
@@ -556,7 +553,7 @@ export default function MigrateFromMUIPage() {
         >
           <Typography
             variant='h3'
-            bold
+            weight='bold'
           >
             Common pitfalls when moving from MUI
           </Typography>

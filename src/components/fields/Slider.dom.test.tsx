@@ -24,6 +24,7 @@ import { Slider } from './Slider';
 import { FormControl } from './FormControl';
 import { createFormStore } from '../../system/createFormStore';
 import { resetWarnOnce } from '../../system/devErrors';
+import * as sheet from '../../css/sheet';
 import type { ChangeInfo } from '../../system/events';
 
 /* react-dom warns unless act usage is announced ----------------------- */
@@ -49,6 +50,13 @@ function mount(node: React.ReactElement) {
 
 const thumb = (c: HTMLElement) => c.querySelector('[role="slider"]') as HTMLElement;
 const now = (c: HTMLElement) => Number(thumb(c).getAttribute('aria-valuenow'));
+
+/** The CSS rule text (incl. nested @media) for the element's styled class. */
+const ruleFor = (el: Element) => {
+  const cls = (el as HTMLElement).className.split(' ').find(Boolean) ?? '';
+  const rules = Array.from(sheet.getGlobalSheet()?.cssRules ?? [], (r) => r.cssText);
+  return rules.find((t) => t.startsWith(`.${cls}`)) ?? '';
+};
 
 /** Press a key on the thumb (the slider's keyboard target). */
 function pressKey(c: HTMLElement, key: string) {
@@ -138,6 +146,7 @@ describe('Slider — control modes (ruling R9)', () => {
           defaultValue={7}
           min={0}
           max={10}
+          aria-label='Volume'
         />
       </FormControl>,
     );
@@ -230,5 +239,44 @@ describe('Slider — pointercancel tears down the document drag listeners', () =
 
     addSpy.mockRestore();
     removeSpy.mockRestore();
+  });
+});
+
+/*───────────────────────────────────────────────────────────────*/
+/* Mobile hardening — touch target + chrome kit                   */
+
+describe('Slider — mobile hardening', () => {
+  it('exposes a >=44px coarse-pointer grab-size var on the thumb (default 44px)', () => {
+    const { container } = mount(<Slider aria-label='x' />);
+    expect(thumb(container).style.getPropertyValue('--valet-slider-hit')).toBe('44px');
+  });
+
+  it('thumb ships the chrome kit + a coarse-pointer hit expander in its styled rule', () => {
+    const { container } = mount(<Slider aria-label='x' />);
+    const rule = ruleFor(thumb(container));
+    expect(rule).toContain('touch-action: none');
+    expect(rule).toContain('@media (pointer: coarse)');
+    expect(rule).toContain('--valet-slider-hit');
+  });
+});
+
+describe('Slider — FormConfigCtx (form-wide disabled / errors)', () => {
+  it('respects form-wide disabled and a name-keyed error', () => {
+    const useStore = createFormStore({ vol: 5 });
+    const { container } = mount(
+      <FormControl
+        useStore={useStore}
+        disabled
+        errors={{ vol: 'bad' }}
+      >
+        <Slider
+          name='vol'
+          aria-label='Volume'
+        />
+      </FormControl>,
+    );
+    const t = thumb(container) as HTMLButtonElement;
+    expect(t.disabled).toBe(true);
+    expect(t.getAttribute('aria-invalid')).toBe('true');
   });
 });

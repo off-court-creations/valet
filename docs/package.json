@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@archway/valet": "^0.36.0",
+    "@archway/valet": "^0.37.0",
     "@babel/standalone": "^7.26.0",
     "@fontsource/inter": "^5.2.8",
     "@fontsource/jetbrains-mono": "^5.2.8",

@@ -19,6 +19,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { Surface } from './Surface';
 import { Drawer } from './Drawer';
 import { overlayStackSize } from '../../system/overlay';
+import { getGlobalSheet } from '../../css/sheet';
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -197,5 +198,32 @@ describe('Drawer registry-v2 migration (jsdom)', () => {
     expect(DRAWER_SRC).not.toMatch(/!persistentEffective\s*&&\s*panelRef\.current\s*\?/);
     expect(DRAWER_SRC).toMatch(/useOverlay\(\s*overlayActive\s*,/); // v2 shape
     expect(DRAWER_SRC).toMatch(/ref=\{setPanelRef\}/); // ref-callback on the panel
+  });
+});
+
+/*───────────────────────────────────────────────────────────────*/
+/* Mobile — backdrop suppresses scroll-through                    */
+
+describe('Drawer — mobile backdrop (jsdom)', () => {
+  it('the overlay backdrop sets touch-action:none so a drag never scrolls the page behind', () => {
+    render(
+      <Surface>
+        <Drawer
+          open
+          aria-label='Nav'
+        >
+          contents
+        </Drawer>
+      </Surface>,
+    );
+    const panel = document.querySelector('[data-valet-component="Drawer"]') as HTMLElement;
+    const backdrop = panel.previousElementSibling as HTMLElement;
+    expect(backdrop).not.toBeNull();
+    const cls = backdrop.className.split(/\s+/).find(Boolean)!;
+    const rule =
+      Array.from(getGlobalSheet()!.cssRules, (r) => r.cssText).find((t) =>
+        t.startsWith(`.${cls}`),
+      ) ?? '';
+    expect(rule).toContain('touch-action: none');
   });
 });

@@ -4,8 +4,9 @@
 // - Google Fonts v2 URL builder with axes (wght/ital/opsz)
 // - Normalized request keys, in-flight coalescing, refcount cleanup
 // - Backward compatible with simple string family names
-// - injectRemote:false privacy opt-out (THEMING S7, Q13): skip remote
-//   Google links + treat Google-shaped entries as local families
+// - injectRemote defaults FALSE at 1.0 (privacy-by-default, THEMING S7/Q13):
+//   no remote Google links, Google-shaped entries treated as local families;
+//   pass injectRemote:true to opt back into fetching from Google's servers
 // ─────────────────────────────────────────────────────────────
 
 import { warnOnce, VALET_DOCS_BASE } from '../system/devErrors';
@@ -20,16 +21,16 @@ export interface GoogleFontOptions {
   /**
    * Whether to inject remote Google Fonts resources (THEMING S7, Q13).
    *
-   * Default `true` through 0.x (flips to `false` at 1.0). When `false`:
-   * no `preconnect`/`fonts.googleapis.com` links are appended and
+   * **Default `false` as of 1.0** (privacy-by-default; was `true` through 0.x).
+   * When `false`: no `preconnect`/`fonts.googleapis.com` links are appended and
    * Google-shaped entries (string family names or `{ family }` requests)
    * are treated as **local families** — they emit zero network requests
    * and resolve only via FontFace observation of an already-installed
-   * face. Self-hosted `CustomFont` entries are unaffected. Use this to
-   * keep a third-party app off Google's servers (GDPR; the privacy docs
-   * cover the three loading strategies).
+   * face. Self-hosted `CustomFont` entries are unaffected. Set `true`
+   * to opt back into fetching named Google families from Google's servers
+   * (the privacy docs cover the three loading strategies; GDPR).
    *
-   * @default true
+   * @default false
    */
   injectRemote?: boolean;
 }
@@ -174,7 +175,7 @@ function toGoogleRequest(
 }
 
 export function injectFontLinks(fonts: Font[], options: GoogleFontOptions = {}): () => void {
-  const { preload = true, injectRemote = true } = options;
+  const { preload = true, injectRemote = false } = options;
   const added: HTMLLinkElement[] = [];
 
   const isGoogleReq = (v: unknown): v is { family: string } => {

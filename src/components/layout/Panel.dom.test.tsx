@@ -108,3 +108,64 @@ describe('Panel preset background (ENGINE S11, jsdom)', () => {
     expect(getComputedStyle(el2).backgroundColor).toBe('rgb(80, 80, 80)');
   });
 });
+
+describe('Panel default padding (1.0, jsdom)', () => {
+  /** The styled rule cssText for the Panel element. */
+  const styledRule = (el: HTMLElement) =>
+    Array.from((document.querySelector('style')?.sheet?.cssRules ?? []) as Iterable<CSSRule>).find(
+      (r) => el.classList.contains((r as CSSStyleRule).selectorText?.slice(1) ?? ''),
+    )?.cssText ?? '';
+
+  it('defaults pad to 2 spacing units (~16px) — role-aware card-surface default', () => {
+    // "Beautiful by default": a Panel is a bordered card, so its content gets
+    // 2× the spacing unit of padding by default (was 1×). Pinned against drift.
+    const container = render(<Panel>x</Panel>);
+    const el = container.querySelector('[data-valet-component="Panel"]') as HTMLElement;
+    expect(styledRule(el)).toMatch(/padding:\s*calc\(var\(--valet-space[^)]*\)\s*\*\s*2\)/);
+  });
+
+  it('an explicit pad overrides the default (e.g. tight pad={1})', () => {
+    const container = render(<Panel pad={1}>x</Panel>);
+    const el = container.querySelector('[data-valet-component="Panel"]') as HTMLElement;
+    expect(styledRule(el)).toMatch(/padding:\s*calc\(var\(--valet-space[^)]*\)\s*\*\s*1\)/);
+  });
+
+  it('width respects --valet-panel-width so a Grid can equalize card widths', () => {
+    // Standalone fallback is the fullWidth-derived value (auto here); a Grid
+    // sets --valet-panel-width: 100% on its children to fill the cell.
+    const container = render(<Panel>x</Panel>);
+    const el = container.querySelector('[data-valet-component="Panel"]') as HTMLElement;
+    expect(styledRule(el)).toContain('width: var(--valet-panel-width');
+  });
+
+  it('marks the root data-valet-component (default Panel; override-able for composites)', () => {
+    // Default: the Panel marks itself.
+    const dflt = render(<Panel>x</Panel>);
+    expect(dflt.querySelector('[data-valet-component="Panel"]')).not.toBeNull();
+    // A composite that roots on a Panel passes its own name → the root reports
+    // that, not 'Panel' (lets Dropzone/LLMChat/RichChat stay identifiable).
+    const over = render(<Panel data-valet-component='Dropzone'>x</Panel>);
+    expect(over.querySelector('[data-valet-component="Dropzone"]')).not.toBeNull();
+    expect(over.querySelector('[data-valet-component="Panel"]')).toBeNull();
+  });
+});
+
+describe('Panel intent vars — non-hex colour fix (1.0)', () => {
+  it('derives hover/active from a non-hex (rgb) fill without the black fallback', () => {
+    const c = render(
+      <Panel
+        variant='filled'
+        color='rgb(50, 60, 70)'
+      >
+        <span>x</span>
+      </Panel>,
+    );
+    const el = c.querySelector('[data-valet-component="Panel"]') as HTMLElement;
+    const hover = el.style.getPropertyValue('--valet-intent-bg-hover').toLowerCase();
+    const active = el.style.getPropertyValue('--valet-intent-bg-active').toLowerCase();
+    // The old toRgb-only path collapsed any non-hex input to #000000.
+    expect(hover).not.toBe('');
+    expect(hover).not.toBe('#000000');
+    expect(active).not.toBe('#000000');
+  });
+});

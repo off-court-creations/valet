@@ -3,7 +3,7 @@
   "category": "widgets",
   "slug": "components/widgets/parallaxbackground",
   "summary": "Full-bleed background layer that drifts on scroll for a depth effect; place it inside a `ParallaxScroll` as the backmost layer, and honor reduced-motion (the effect auto-disables) — experimental decorative widget.",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "parallax",
     "parallaxbackground"
@@ -58,6 +58,13 @@
       ]
     },
     {
+      "name": "alt",
+      "type": "string",
+      "required": false,
+      "description": "Alt text for an image background. Default `''` (decorative).",
+      "default": "''"
+    },
+    {
       "name": "speed",
       "type": "number | undefined",
       "required": false,
@@ -74,6 +81,12 @@
       "type": "Sx | undefined",
       "required": false,
       "description": "Inline styles (with CSS var support)"
+    },
+    {
+      "name": "data-valet-component",
+      "type": "string | undefined",
+      "required": false,
+      "description": "Override the root component-identity marker (defaults to `'ParallaxLayer'`).\nParallaxBackground passes its own name so the DOM node identifies as it."
     },
     {
       "name": "preset",
@@ -93,12 +106,13 @@
   "events": [],
   "slots": [],
   "bestPractices": [
-    "Parallax layers honor `prefers-reduced-motion: reduce`: the scroll-driven displacement collapses to zero, so layers track the page 1:1 (no relative movement) for motion-sensitive users. The media still renders; only the parallax effect is removed."
+    "Parallax layers honor `prefers-reduced-motion: reduce`: the scroll-driven displacement collapses to zero, so layers track the page 1:1 (no relative movement) for motion-sensitive users. A video background also drops autoplay under reduced-motion (autoplay is itself motion); the media still renders, only the parallax/autoplay motion is removed.",
+    "Give a meaningful image background an `alt`; leave it omitted (default `''`) for purely decorative media."
   ],
   "examples": [],
   "sourceFiles": [
     "src/components/widgets/Parallax.tsx"
   ],
-  "version": "0.36.0",
+  "version": "0.37.0",
   "schemaVersion": "1.7"
 }

@@ -784,3 +784,18 @@ describe('useOverlay(active, config) ref-callback attach/detach lifecycle', () =
     expect(overlayStackSize()).toBe(0);
   });
 });
+
+describe('non-Escape / non-Tab keys pass through untouched', () => {
+  it('does not preventDefault or close on an arbitrary printable / arrow key', () => {
+    const close = vi.fn();
+    track(registerOverlayV2(el(), () => ({ onRequestClose: close })));
+
+    const a = pressKey('a');
+    expect(close).not.toHaveBeenCalled();
+    expect(a.defaultPrevented).toBe(false);
+
+    const down = pressKey('ArrowDown');
+    expect(close).not.toHaveBeenCalled();
+    expect(down.defaultPrevented).toBe(false);
+  });
+});

@@ -7,8 +7,11 @@
   --valet-bg: #242424;
   --valet-text-color: #f7f7f7;
 
-  /* Spacing / radii / stroke (fallbacks; scaled by Surface density) */
-  --valet-space: 0.5rem;
+  /* Spacing / radii / stroke (fallbacks; scaled by Surface density).
+     0.45rem = the 0.5rem design unit at the STANDARD default density (×0.9),
+     so content before/outside a <Surface> matches the in-Surface default
+     instead of resettling from a comfortable baseline on first paint. */
+  --valet-space: 0.45rem;
   --valet-radius: calc(var(--valet-space) * 0.75);
   --valet-stroke: calc(var(--valet-space) * 0.125);
 

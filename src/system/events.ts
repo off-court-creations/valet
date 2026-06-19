@@ -102,8 +102,6 @@ export type InputSource = 'keyboard' | 'pointer' | 'programmatic' | 'clipboard' 
  * @property source        {@link InputSource} — the honest origin of the change.
  * @property event         The originating React synthetic event, when one exists
  *                          (absent for programmatic and pointer-drag paths).
- * @property index         The option/item index, for collection components.
- * @property id            A stable id for the changed element, when available.
  */
 export interface ChangeInfo<T> {
   name?: string;
@@ -111,8 +109,6 @@ export interface ChangeInfo<T> {
   phase: InputPhase;
   source: InputSource;
   event?: React.SyntheticEvent;
-  index?: number;
-  id?: string;
 }
 
 /**

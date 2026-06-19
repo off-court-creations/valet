@@ -71,6 +71,14 @@ const STYLED_RULE_CARDINALITY_LIMIT = 256;
    key even though many share a displayName like `styled(div)`. */
 let styledSeq = 0;
 
+/* Dev-only `keyframes()` cardinality guard (mirrors the styled() tripwire on
+   the OTHER immortal-rule minting path): a keyframes`…${perInstanceValue}…`
+   call inside render mints one permanent @keyframes per unique value. A real
+   app has a handful of module-scope keyframes; blowing past the limit means a
+   continuous value leaked into a keyframes body. Bounded set, warns once. */
+const mintedKeyframes: Set<string> | null =
+  process.env.NODE_ENV === 'production' ? null : new Set();
+
 /*───────────────────────────────────────────────────────────*/
 /* Internal caches — ALL singleton state lives in the shared registry
    (ENGINE S10). The collections are created once per process and never
@@ -175,6 +183,13 @@ export function styled<Tag extends keyof JSX.IntrinsicElements>(tag: Tag) {
          * old universal registration was unconsumed observer churn.
          */
         $trackSize?: boolean;
+        /**
+         * Polymorphic element override — render a different tag/component than
+         * the styled base while keeping its generated class. Runtime-honored and
+         * stripped before the DOM. (Higher-level components layer richer
+         * `PolymorphicProps` typing on top; this is the primitive's own surface.)
+         */
+        as?: React.ElementType;
       };
 
     type PropsArg = React.PropsWithoutRef<StyledProps>;
@@ -321,6 +336,25 @@ export function keyframes(
 
   const normalized = normalizeCSS(rawCSS);
   const animName = `z-kf-${hashStr(normalized)}`;
+
+  /* Dev cardinality tripwire — keyframes() mints immortal @keyframes rules just
+     like styled() mints immortal class rules; a continuous value in the body
+     leaks one rule per value. (Call keyframes() at module scope with a constant
+     body, or route the continuous value through a CSS custom property.) */
+  if (mintedKeyframes && mintedKeyframes.size <= STYLED_RULE_CARDINALITY_LIMIT) {
+    mintedKeyframes.add(animName);
+    if (mintedKeyframes.size > STYLED_RULE_CARDINALITY_LIMIT) {
+      const preview = strings.join(' ${…} ').replace(/\s+/g, ' ').trim().slice(0, 64);
+      warnOnce(
+        'valet-keyframes-cardinality',
+        `valet: keyframes() [template "${preview}…"] has minted more than ` +
+          `${STYLED_RULE_CARDINALITY_LIMIT} distinct @keyframes rules. @keyframes rules are ` +
+          'immortal, so a continuously-varying value in a keyframes body leaks one permanent ' +
+          'rule per unique value. Call keyframes() at module scope with a constant body, or ' +
+          'route the continuous value through a CSS custom property (AGENTS.md: "Rule lifecycle policy").',
+      );
+    }
+  }
 
   /* Dev hash-collision guard (ENGINE S10) — checked BEFORE the injected
      bail so a colliding second body is reported, not silently aliased. */

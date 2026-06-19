@@ -2,7 +2,7 @@
   "name": "Checkbox",
   "category": "fields",
   "slug": "components/fields/checkbox",
-  "summary": "Accessible boolean checkbox for a single on/off choice; controlled via `checked` + `onValueChange`, or auto-bound to a `FormControl` with `name` (keep `bindForm` to opt a form-bound box out of writing the store).",
+  "summary": "Accessible boolean checkbox for a single on/off choice, with an optional `label` + `helperText` and an `indeterminate` (mixed) state; controlled via `checked` + `onValueChange`, or auto-bound to a `FormControl` with `name` (keep `bindForm` to opt a form-bound box out of writing the store). A real hidden native input backs it for forms/AT.",
   "status": "stable",
   "aliases": [
     "checkbox"
@@ -110,9 +110,16 @@
     ]
   },
   "cssVars": [
+    "--valet-checkbox-focus-w",
+    "--valet-intent-focus",
+    "--valet-checkbox-focus-off",
     "--valet-checkbox-radius",
     "--valet-checkbox-stroke",
-    "--valet-checkbox-inset"
+    "--valet-intent-bg",
+    "--valet-intent-border",
+    "--valet-intent-fg",
+    "--valet-intent-bg-active",
+    "--valet-cb-hit"
   ],
   "cssPresets": [],
   "events": [
@@ -138,19 +145,27 @@
     }
   ],
   "bestPractices": [
-    "Use Checkbox for independent booleans. For mutually exclusive choices, prefer `RadioGroup` .",
-    "Always provide a clear label. The entire label should be clickable. In forms, set a stable `name` so values submit predictably.",
-    "Choose control model deliberately. Use `checked` / `onChange` when the value participates in app state; otherwise `defaultChecked` is fine for local forms.",
-    "Keep targets comfortable. Pick `size` tokens or numeric sizes that keep tap areas ≥ 40–48px in dense UIs.",
-    "Group with a visible question or caption when multiple checkboxes relate to one concept; don’t rely on proximity alone.",
-    "Disabled with context. If a checkbox is disabled, explain why nearby; avoid silently disabling without guidance.",
-    "Tokens/presets. Style with theme tokens and `preset` rather than ad‑hoc CSS to keep density and branding consistent."
+    "Use Checkbox for independent booleans. For mutually exclusive choices, prefer `RadioGroup`.",
+    "Give it an accessible name via the `label` prop (rendered visibly and associated to the native input); the whole row is clickable. With no `label`/children/`aria-label` it dev-warns. Use `helperText` for supplementary guidance — it renders OUTSIDE the label (so it never leaks into the accessible name) and is wired via `aria-describedby`.",
+    "Choose control model deliberately. Use `checked` / `onValueChange` when the value participates in app state; `defaultChecked` is fine for local forms; in a form, set a stable `name` so values submit predictably.",
+    "Use `indeterminate` for a parent that summarizes a mixed set of children; it shows a dash and exposes the native mixed state to assistive tech.",
+    "Pick `size` for the VISUAL box — the touch hit area is already ≥44px on coarse pointers automatically (relaxed under `compact`), so you don't need to size up for tappability.",
+    "Colours follow the theme intent contract (the same one Button/IconButton use), so checked fill, the checkmark, the neutral border, and the focus ring stay consistent in light and dark — avoid ad-hoc colour overrides.",
+    "Disabled with context. If a checkbox is disabled, explain why nearby; avoid silently disabling without guidance."
   ],
   "examples": [
     {
       "id": "checkbox-controlled",
       "title": "Controlled checkbox",
-      "code": "() => {\n  const [agreed, setAgreed] = React.useState(false);\n  return (<Stack direction='row' gap={1}>\n    <Checkbox checked={agreed} onValueChange={(next) => setAgreed(next)} />\n    <Typography>I accept the terms</Typography>\n  </Stack>);\n}",
+      "code": "() => {\n  const [agreed, setAgreed] = React.useState(false);\n  return (<Checkbox label='I accept the terms' checked={agreed} onValueChange={(next) => setAgreed(next)} />);\n}",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    },
+    {
+      "id": "checkbox-helper",
+      "title": "Label + helperText",
+      "code": "<Checkbox label='Email me updates' helperText='No more than once a week.' defaultChecked />",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {}
@@ -158,7 +173,7 @@
     {
       "id": "checkbox-form",
       "title": "FormControl binding",
-      "code": "() => {\n  const useStore = Valet.createFormStore({ newsletter: true });\n  return (<FormControl useStore={useStore} onSubmitValues={(values) => void values}>\n    <Stack direction='row' gap={1}>\n      <Checkbox name='newsletter' />\n      <Typography>Subscribe to the newsletter</Typography>\n    </Stack>\n  </FormControl>);\n}",
+      "code": "() => {\n  const useStore = Valet.createFormStore({ newsletter: true });\n  return (<FormControl useStore={useStore} onSubmitValues={(values) => void values}>\n    <Checkbox name='newsletter' label='Subscribe to the newsletter' />\n  </FormControl>);\n}",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {}
@@ -169,6 +184,6 @@
     "src/components/fields/Checkbox.tsx",
     "docs/src/pages/components/field/CheckBoxDemo.tsx"
   ],
-  "version": "0.36.0",
+  "version": "0.37.0",
   "schemaVersion": "1.7"
 }

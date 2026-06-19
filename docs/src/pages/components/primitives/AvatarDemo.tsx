@@ -33,7 +33,11 @@ export default function AvatarDemoPage() {
 
   const usageContent = (
     <Stack>
-      <Typography variant='subtitle'>Gravatar wrapper with custom photo support</Typography>
+      <Typography variant='subtitle'>
+        Gravatar wrapper with custom photo support. Gravatar lookup is opt-in via the{' '}
+        <code>gravatar</code> prop — without it, a src-less Avatar makes no network request and
+        renders an offline fallback (initials/placeholder).
+      </Typography>
 
       <Typography variant='h3'>1. Try your Gravatar</Typography>
       <Typography variant='subtitle'>
@@ -45,7 +49,10 @@ export default function AvatarDemoPage() {
         onSubmitValues={(vals) => setEmail(vals.email as string)}
       >
         <Stack direction='row'>
-          <Avatar email={email} />
+          <Avatar
+            email={email}
+            gravatar
+          />
           <TextField
             name='email'
             type='email'
@@ -58,6 +65,7 @@ export default function AvatarDemoPage() {
       <Typography variant='h3'>2. Default example</Typography>
       <Avatar
         email='support@gravatar.com'
+        gravatar
         size='lg'
       />
 
@@ -78,6 +86,7 @@ export default function AvatarDemoPage() {
           >
             <Avatar
               email='support@gravatar.com'
+              gravatar
               size={s}
             />
             <Typography variant='body'>{s}</Typography>
@@ -88,23 +97,35 @@ export default function AvatarDemoPage() {
       <Typography variant='h3'>5. Outline</Typography>
       <Avatar
         email='support@gravatar.com'
+        gravatar
         size='lg'
         variant='outline'
       />
 
       <Typography variant='h3'>6. Offline fallback (initials)</Typography>
+      <Typography variant='body'>
+        Prefer offline fallback; derives initials from name. Initials scale with the size token.
+      </Typography>
       <Stack
         direction='row'
         gap={1}
         sx={{ alignItems: 'center' }}
       >
-        <Avatar
-          name='Ada Lovelace'
-          preferFallback
-          size='lg'
-          alt='Ada Lovelace'
-        />
-        <Typography variant='body'>Prefer offline fallback; derives initials from name</Typography>
+        {(['sm', 'md', 'lg'] as const).map((s) => (
+          <Stack
+            key={s}
+            gap={0.5}
+            sx={{ alignItems: 'center' }}
+          >
+            <Avatar
+              name='Ada Lovelace'
+              preferFallback
+              size={s}
+              alt='Ada Lovelace'
+            />
+            <Typography variant='body'>{s}</Typography>
+          </Stack>
+        ))}
       </Stack>
 
       <Typography variant='h3'>7. Offline fallback (placeholder)</Typography>
@@ -163,6 +184,7 @@ export default function AvatarDemoPage() {
       >
         <Avatar
           email={email}
+          gravatar
           size={pgSize}
           variant={pgVariant}
         />

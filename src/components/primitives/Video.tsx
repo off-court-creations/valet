@@ -156,6 +156,7 @@ export const Video: React.FC<VideoProps> = ({
   return (
     <VideoWrapper
       {...rest}
+      data-valet-component='Video'
       $w={toLength(width)}
       $h={toLength(height)}
       $fit={objectFit}

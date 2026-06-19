@@ -16,6 +16,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import React, { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
+import * as sheet from '../../css/sheet';
 import { Iterator } from './Iterator';
 import { FormControl } from './FormControl';
 import { createFormStore } from '../../system/createFormStore';
@@ -149,6 +150,7 @@ describe('Iterator — control modes (ruling R9)', () => {
         <Iterator
           name='qty'
           defaultValue={9}
+          aria-label='Quantity'
         />
       </FormControl>,
     );
@@ -197,5 +199,94 @@ describe('Iterator — ChangeInfo.source classification (ruling R10)', () => {
     });
     pressKey(input, 'Enter');
     expect(infos[infos.length - 1].source).toBe('keyboard');
+  });
+});
+
+/*───────────────────────────────────────────────────────────────*/
+/* FormControl form-wide config (additive layer)                  */
+
+describe('Iterator — FormControl config', () => {
+  it('a form-wide `disabled` disables the input and blocks interaction', () => {
+    const useStore = createFormStore<{ qty: number }>({ qty: 2 });
+    const onValueCommit = vi.fn();
+    const { container } = mount(
+      <FormControl
+        useStore={useStore}
+        disabled
+      >
+        <Iterator
+          name='qty'
+          onValueCommit={onValueCommit}
+        />
+      </FormControl>,
+    );
+    expect(field(container).disabled).toBe(true);
+    // Keyboard stepping is guarded by effectiveDisabled, not styling alone.
+    pressKey(field(container), 'ArrowUp');
+    expect(onValueCommit).not.toHaveBeenCalled();
+    expect(useStore.getState().values.qty).toBe(2);
+  });
+
+  it('a name-keyed `errors` entry marks the input aria-invalid', () => {
+    const useStore = createFormStore<{ qty: number }>({ qty: 2 });
+    const { container } = mount(
+      <FormControl
+        useStore={useStore}
+        errors={{ qty: 'Too low' }}
+      >
+        <Iterator name='qty' />
+      </FormControl>,
+    );
+    expect(field(container).getAttribute('aria-invalid')).toBe('true');
+  });
+});
+
+/*───────────────────────────────────────────────────────────────*/
+/* Mobile touch target / chrome kit                               */
+
+describe('Iterator — coarse hit target + chrome kit', () => {
+  it('wires the coarse hit var on the root and the chrome kit on the input rule', () => {
+    const { container } = mount(<Iterator defaultValue={1} />);
+    const root = container.querySelector('[data-valet-component="Iterator"]') as HTMLElement;
+    // Root carries the --valet-iter-hit var (44px default, non-compact).
+    expect(root.style.getPropertyValue('--valet-iter-hit')).toBe('44px');
+    // The styled <input> rule carries the chrome kit + the coarse hit floor.
+    const cls = field(container).className.split(' ').find(Boolean) ?? '';
+    const rules = Array.from(sheet.getGlobalSheet()?.cssRules ?? [], (r) => r.cssText);
+    const rule = rules.find((t) => t.startsWith(`.${cls}`)) ?? '';
+    expect(rule).toContain('touch-action: manipulation');
+    expect(rule).toContain('@media (pointer: coarse)');
+    expect(rule).toContain('--valet-iter-hit');
+  });
+});
+
+describe('Iterator — buttonVariant', () => {
+  const ruleOf = (el: Element) => {
+    const cls = el.className.split(/\s+/).find(Boolean)!;
+    return (
+      Array.from(sheet.getGlobalSheet()!.cssRules, (r) => r.cssText).find((t) =>
+        t.startsWith(`.${cls}`),
+      ) ?? ''
+    );
+  };
+
+  it('defaults to outlined (-/+ buttons are transparent); buttonVariant="filled" paints them', () => {
+    const { container: out } = mount(
+      <Iterator
+        aria-label='Qty'
+        defaultValue={1}
+      />,
+    );
+    expect(ruleOf(decBtn(out))).toContain('background: transparent');
+
+    const { container: fill } = mount(
+      <Iterator
+        aria-label='Qty'
+        defaultValue={1}
+        buttonVariant='filled'
+      />,
+    );
+    expect(ruleOf(decBtn(fill))).not.toContain('background: transparent');
+    expect(ruleOf(incBtn(fill))).not.toContain('background: transparent');
   });
 });

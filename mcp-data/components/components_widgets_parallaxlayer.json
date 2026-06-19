@@ -3,7 +3,7 @@
   "category": "widgets",
   "slug": "components/widgets/parallaxlayer",
   "summary": "A child layer inside a `ParallaxScroll` that moves at a fractional `speed` (1 = native, <1 slower, >1 faster) along `axis`; stack several at different speeds for depth — displacement neutralizes under reduced-motion.",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "parallaxlayer",
     "parallax-layer"
@@ -32,6 +32,13 @@
       "description": "Inline styles (with CSS var support)"
     },
     {
+      "name": "data-valet-component",
+      "type": "string",
+      "required": false,
+      "description": "Override the root component-identity marker (defaults to `'ParallaxLayer'`).\nParallaxBackground passes its own name so the DOM node identifies as it.",
+      "default": "'ParallaxLayer'"
+    },
+    {
       "name": "preset",
       "type": "string | string[] | undefined",
       "required": false,
@@ -53,6 +60,6 @@
   "sourceFiles": [
     "src/components/widgets/Parallax.tsx"
   ],
-  "version": "0.36.0",
+  "version": "0.37.0",
   "schemaVersion": "1.7"
 }

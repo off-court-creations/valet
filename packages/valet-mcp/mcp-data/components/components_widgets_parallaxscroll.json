@@ -3,7 +3,7 @@
   "category": "widgets",
   "slug": "components/widgets/parallaxscroll",
   "summary": "Scroll-tracking container that provides parallax context to its `ParallaxLayer`/`ParallaxBackground` children; wrap a section in it (optionally `trackX` for horizontal) to drive depth effects — the motion auto-disables under reduced-motion.",
-  "status": "experimental",
+  "status": "stable",
   "aliases": [
     "parallax",
     "parallaxscroll",
@@ -45,6 +45,6 @@
   "sourceFiles": [
     "src/components/widgets/Parallax.tsx"
   ],
-  "version": "0.36.0",
+  "version": "0.37.0",
   "schemaVersion": "1.7"
 }

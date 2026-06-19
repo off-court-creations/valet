@@ -2,36 +2,65 @@
   "name": "Stack",
   "category": "layout",
   "slug": "components/layout/stack",
-  "summary": "Flexbox container that lays children out in one `direction` (column/row) with consistent `gap`; the default choice for vertical or horizontal flow — use `Grid` for two-dimensional layouts.",
+  "summary": "Flexbox container that lays children out in one `direction` (column/row) with consistent `gap`, token-aware `align`/`justify`, per-axis `gapX`/`gapY`, a `divider`, and responsive (breakpoint-map) props that compile to CSS @media — no <Surface> needed. The default choice for one-dimensional flow; use `Grid` for two-dimensional layouts. Sugar: `HStack`, `VStack`, `Center`, `Cluster`, `Spacer`.",
   "status": "stable",
   "aliases": [
-    "stack",
-    "vstack",
-    "hstack"
+    "stack"
   ],
   "props": [
     {
       "name": "direction",
-      "type": "'row' | 'column'",
+      "type": "Responsive<StackDirection>",
       "required": false,
-      "default": "'column'",
-      "enumValues": [
-        "row",
-        "column"
-      ]
+      "description": "Flex axis. Default `'column'`. Responsive."
     },
     {
       "name": "wrap",
       "type": "boolean",
       "required": false,
-      "description": "If `true`, children wrap when they run out of space. Defaults to\n`true` for `row`, `false` for `column`."
+      "description": "Wrap children when they overflow the main axis. Default: `true` for rows,\n`false` for columns. Scalar (not responsive)."
+    },
+    {
+      "name": "gap",
+      "type": "Responsive<Space>",
+      "required": false,
+      "description": "Inter-child gap as units or CSS length. Default 1 unit. Responsive."
+    },
+    {
+      "name": "gapX",
+      "type": "Responsive<Space>",
+      "required": false,
+      "description": "Column-axis gap; overrides `gap` horizontally. Responsive."
+    },
+    {
+      "name": "gapY",
+      "type": "Responsive<Space>",
+      "required": false,
+      "description": "Row-axis gap; overrides `gap` vertically. Responsive."
+    },
+    {
+      "name": "pad",
+      "type": "Responsive<Space>",
+      "required": false,
+      "description": "Container padding as units or CSS length. Default 1 unit. Responsive."
+    },
+    {
+      "name": "align",
+      "type": "Responsive<StackAlign>",
+      "required": false,
+      "description": "Cross-axis item alignment (`align-items`). Defaults to the direction's\nnatural alignment: row → `center`, column → `stretch`. Responsive."
+    },
+    {
+      "name": "justify",
+      "type": "Responsive<StackJustify>",
+      "required": false,
+      "description": "Main-axis distribution (`justify-content`). Unset by default. Responsive."
     },
     {
       "name": "alignX",
       "type": "'left' | 'center' | 'right'",
       "required": false,
-      "description": "Horizontal placement of the stack when not full width.",
-      "default": "'left'",
+      "description": "Horizontal placement of the whole stack when it is not full width\n(auto-margin anchor — distinct from `align`, which positions children).",
       "enumValues": [
         "left",
         "center",
@@ -39,28 +68,40 @@
       ]
     },
     {
+      "name": "divider",
+      "type": "React.ReactNode",
+      "required": false,
+      "description": "Node interleaved BETWEEN children (e.g. a `<Divider/>`). For a row stack,\npass a vertically-oriented divider."
+    },
+    {
+      "name": "scroll",
+      "type": "StackScroll",
+      "required": false,
+      "description": "Overflow behavior. `'auto-y'` (default) keeps the legacy vertical-scroll."
+    },
+    {
+      "name": "grow",
+      "type": "boolean | number",
+      "required": false,
+      "description": "Grow factor when the stack is itself a flex child. `true` → 1."
+    },
+    {
       "name": "sx",
       "type": "Sx",
       "required": false,
-      "description": "Inline styles (with CSS var support)"
+      "description": "Inline styles (with CSS var support)."
+    },
+    {
+      "name": "data-valet-component",
+      "type": "string",
+      "required": false,
+      "description": "Override the machine-readable component marker (sugar/composites self-identify)."
     },
     {
       "name": "preset",
       "type": "string | string[] | undefined",
       "required": false,
       "description": "One or many style-preset names registered via `definePreset()`"
-    },
-    {
-      "name": "gap",
-      "type": "Space | undefined",
-      "required": false,
-      "description": "Inter-child spacing as units or CSS length."
-    },
-    {
-      "name": "pad",
-      "type": "Space | undefined",
-      "required": false,
-      "description": "Container padding as units or CSS length."
     },
     {
       "name": "compact",
@@ -73,27 +114,38 @@
       "type": "\"tight\" | \"standard\" | \"comfortable\" | undefined",
       "required": false,
       "description": "Density override for the spacing scale; defaults from nearest Surface."
+    },
+    {
+      "name": "as",
+      "type": "React.ElementType",
+      "required": false,
+      "description": "Polymorphic element override (renders this element/component instead of the default).",
+      "default": "'div'"
     }
   ],
   "domPassthrough": {
     "element": "div",
-    "omitted": [
-      "style"
-    ]
+    "omitted": []
   },
   "cssVars": [
-    "--valet-stack-max-h",
     "--valet-stack-ov-y",
+    "--valet-stack-max-h",
     "--valet-space"
   ],
   "cssPresets": [],
   "events": [],
-  "slots": [],
+  "slots": [
+    {
+      "name": "divider"
+    }
+  ],
   "bestPractices": [
-    "Use for one‑dimensional layouts (rows/columns) with consistent gaps.",
-    "Switch direction responsively and keep spacing tokenized; avoid fixed pixel gaps.",
-    "Align items intentionally and avoid mixing diverse alignments within the same group.",
-    "Prefer `Grid` for complex two‑dimensional layouts and `Table` for data."
+    "Use for one-dimensional layouts (rows/columns) with consistent gaps; reach for `Grid` for two-dimensional layouts and `Table` for data.",
+    "Prefer `align`/`justify` tokens (start/center/end/stretch/baseline · start/center/end/between/around/evenly) over `sx={{ alignItems, justifyContent }}` — they are typed and density-aware.",
+    "Make any of `direction`/`gap`/`pad`/`align`/`justify`/`gapX`/`gapY` responsive by passing a breakpoint map (`{ xs, sm, md, lg, xl }`); it compiles to CSS @media in the styled rule, so it is correct on the server's first paint and needs no <Surface>. Keep maps to enumerable values — don't bind one to continuously-varying state.",
+    "Keep spacing tokenized (numeric `gap`/`pad` units) so a `compact` or `density` ancestor rescales the whole subtree; avoid fixed pixel gaps.",
+    "Reach for the sugar when it reads better: `HStack`/`VStack` for directional rows/columns (HStack centers cross-axis by default), `Center` to center on both axes, `Cluster` for a wrapping row of chips/tags/buttons, and `<Spacer/>` inside a row to push siblings apart.",
+    "Use `divider` to interleave a separator between children (pass a vertically-oriented `<Divider/>` for a row); children must be flat (a Fragment counts as one node)."
   ],
   "examples": [
     {
@@ -105,9 +157,25 @@
       "minimalProps": {}
     },
     {
-      "id": "stack-row",
-      "title": "Horizontal row",
-      "code": "<Stack direction='row' gap={1}>\n  <Button>Save</Button>\n  <Button variant='outlined'>Cancel</Button>\n</Stack>",
+      "id": "stack-hstack",
+      "title": "Centered row (HStack)",
+      "code": "<HStack gap={1}>\n  <Avatar email='ada@example.com' />\n  <Typography>Ada Lovelace</Typography>\n</HStack>",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    },
+    {
+      "id": "stack-toolbar",
+      "title": "Toolbar — align + justify + Spacer",
+      "code": "<HStack gap={1}>\n  <Button>Back</Button>\n  <Typography variant='h4'>Title</Typography>\n  <Spacer />\n  <Button>Save</Button>\n</HStack>",
+      "lang": "tsx",
+      "runnable": true,
+      "minimalProps": {}
+    },
+    {
+      "id": "stack-responsive",
+      "title": "Responsive direction (compiles to @media, no Surface)",
+      "code": "<Stack direction={{ xs: 'column', md: 'row' }} gap={{ xs: 1, md: 2 }} align='center'>\n  <Box>Sidebar</Box>\n  <Box fullWidth>Main</Box>\n</Stack>",
       "lang": "tsx",
       "runnable": true,
       "minimalProps": {}
@@ -118,6 +186,6 @@
     "src/components/layout/Stack.tsx",
     "docs/src/pages/components/layout/StackDemo.tsx"
   ],
-  "version": "0.36.0",
+  "version": "0.37.0",
   "schemaVersion": "1.7"
 }

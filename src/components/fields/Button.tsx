@@ -287,7 +287,7 @@ const ButtonImpl = <E extends React.ElementType = 'button'>(
           <Typography
             key={`text-${i}`}
             variant='button'
-            bold
+            weight='bold'
             fontSize={font}
             noSelect
           >
@@ -305,7 +305,7 @@ const ButtonImpl = <E extends React.ElementType = 'button'>(
       <Typography
         key='text-final'
         variant='button'
-        bold
+        weight='bold'
         fontSize={font}
         noSelect
       >

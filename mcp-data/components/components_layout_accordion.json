@@ -2,8 +2,8 @@
   "name": "Accordion",
   "category": "layout",
   "slug": "components/layout/accordion",
-  "summary": "Vertical stack of collapsible `Accordion.Item` panels with single or `multiple` open behavior and roving-focus ARIA; control which panels are open with `expanded`/`defaultExpanded`/`onExpandedChange` (the `open*` props are deprecated aliases).",
-  "status": "experimental",
+  "summary": "Vertical stack of collapsible `Accordion.Item` panels with single or `multiple` open behavior and roving-focus ARIA; control which panels are open with `expanded`/`defaultExpanded`/`onExpandedChange`.",
+  "status": "stable",
   "aliases": [
     "accordion",
     "expander"
@@ -32,30 +32,6 @@
       "type": "(expanded: number[]) => void",
       "required": false,
       "description": "Fires with the next expanded indices whenever the user toggles a panel."
-    },
-    {
-      "name": "defaultOpen",
-      "type": "number | number[]",
-      "required": false,
-      "deprecated": {
-        "replacement": "defaultExpanded"
-      }
-    },
-    {
-      "name": "open",
-      "type": "number | number[]",
-      "required": false,
-      "deprecated": {
-        "replacement": "expanded"
-      }
-    },
-    {
-      "name": "onOpenChange",
-      "type": "(open: number[]) => void",
-      "required": false,
-      "deprecated": {
-        "replacement": "onExpandedChange"
-      }
     },
     {
       "name": "headingLevel",
@@ -110,6 +86,7 @@
     "--valet-acc-duration",
     "--valet-acc-ease",
     "--valet-divider-stroke",
+    "--valet-acc-hit",
     "--valet-focus-width",
     "--valet-focus-ring-color",
     "--valet-focus-offset"
@@ -119,10 +96,6 @@
     {
       "name": "onExpandedChange",
       "payloadType": "number[]"
-    },
-    {
-      "name": "onOpenChange",
-      "payloadType": "number[]"
     }
   ],
   "slots": [],
@@ -130,11 +103,11 @@
     "Use for short, scannable sections. Keep headers concise and content lightweight.",
     "Choose single vs multiple expansion by context; avoid opening many sections by default.",
     "Control model deliberately: use `expanded` + `onExpandedChange` for app‑driven state, or `defaultExpanded` for uncontrolled.",
-    "The old `open`/`defaultOpen`/`onOpenChange` names are deprecated aliases (Q12): they keep working through 0.x with a one-time dev warning and are removed at 1.0 — migrate to `expanded`/`defaultExpanded`/`onExpandedChange`.",
     "Respect heading levels. Set `headingLevel` so the outline remains semantic within the page.",
     "Constrain height in dense pages so the thread scrolls locally rather than the document.",
     "Prefer keeping content mounted unless heavy: use `unmountOnExit` to remove expensive trees when closed.",
     "Ensure keyboard support: Space/Enter toggles, Arrow keys move focus, and focus styles are visible.",
+    "Headers are touch-friendly automatically — the full-width header row floors at ≥44px tall on coarse pointers (40px under `compact`), with the mobile chrome kit (no tap-flash, no accidental text selection). Keep header text concise so the row stays a clean tap target.",
     "Each header is wired to its panel via `aria-controls`/`aria-labelledby` with ids namespaced per instance, so multiple Accordions on one page never produce colliding ARIA references."
   ],
   "examples": [
@@ -168,6 +141,6 @@
     "src/components/layout/Accordion.tsx",
     "docs/src/pages/components/layout/AccordionDemo.tsx"
   ],
-  "version": "0.36.0",
+  "version": "0.37.0",
   "schemaVersion": "1.7"
 }

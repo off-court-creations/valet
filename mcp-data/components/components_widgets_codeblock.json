@@ -24,12 +24,14 @@
     {
       "name": "ariaLabel",
       "type": "string",
-      "required": false
+      "required": false,
+      "description": "Accessible name for the (scrollable, focusable) code region."
     },
     {
-      "name": "title",
+      "name": "copyLabel",
       "type": "string",
-      "required": false
+      "required": false,
+      "description": "Tooltip/title for the copy button (default \"Copy\")."
     },
     {
       "name": "sx",
@@ -59,7 +61,8 @@
     "Prefer short snippets inline; extract long examples into files and link out to keep pages readable and fast.",
     "Indicate language for syntax highlighting and assistive tech.",
     "Avoid excessive horizontal scrolling; wrap long lines where possible or offer a copy action.",
-    "Keep code immutable in this component; use an editor widget for editable code."
+    "Keep code immutable in this component; use an editor widget for editable code.",
+    "Name the regions: `ariaLabel` labels the (keyboard-focusable, scrollable) code region; the copy button carries its own fixed label and a `copyLabel` tooltip. Copy feedback is honest — a successful copy shows a 'Copied' toast, a clipboard failure (or an insecure-origin/unsupported `navigator.clipboard`) shows a 'Copy failed' `role='alert'` toast rather than a false success."
   ],
   "examples": [],
   "docsUrl": "/codeblock-demo",
@@ -67,6 +70,6 @@
     "src/components/widgets/CodeBlock.tsx",
     "docs/src/pages/components/widgets/CodeBlockDemo.tsx"
   ],
-  "version": "0.36.0",
+  "version": "0.37.0",
   "schemaVersion": "1.7"
 }

@@ -97,6 +97,7 @@ describe('TextField — value prop under FormControl (ruling R9)', () => {
           name='email'
           value='fromProp'
           onValueChange={onValueChange}
+          aria-label='Email'
         />
       </FormControl>,
     );
@@ -129,6 +130,7 @@ describe('TextField — unseeded form name (ruling R9)', () => {
         <TextField
           name='email'
           defaultValue='seed'
+          aria-label='Email'
         />
       </FormControl>,
     );
@@ -207,5 +209,183 @@ describe('TextField — ChangeInfo.source classification (ruling R10)', () => {
       { phase: 'commit', source: 'keyboard' },
       { phase: 'commit', source: 'programmatic' },
     ]);
+  });
+});
+
+/*───────────────────────────────────────────────────────────────*/
+/* 1.0 redo — a11y / error region / width / intent vars / handlers */
+
+const tfWrap = (c: HTMLElement) =>
+  c.querySelector('[data-valet-component="TextField"]') as HTMLElement;
+
+describe('TextField — 1.0 redo', () => {
+  it('label associates via htmlFor and names the input', () => {
+    const { container } = mount(
+      <TextField
+        name='email'
+        label='Email'
+      />,
+    );
+    const lbl = container.querySelector('label')!;
+    expect(lbl.getAttribute('for')).toBe(input(container).id);
+    expect(lbl.textContent).toContain('Email');
+  });
+
+  it('neutral helperText has NO aria-live / role and is wired via aria-describedby', () => {
+    const { container } = mount(
+      <TextField
+        name='x'
+        label='X'
+        helperText='Hint'
+      />,
+    );
+    const desc = input(container).getAttribute('aria-describedby');
+    expect(desc).toBeTruthy();
+    const help = container.querySelector(`[id="${desc}"]`) as HTMLElement;
+    expect(help.textContent).toBe('Hint');
+    expect(help.getAttribute('aria-live')).toBe(null);
+    expect(help.getAttribute('role')).toBe(null);
+  });
+
+  it('error renders a role=alert region; aria-invalid + aria-errormessage point at it', () => {
+    const { container } = mount(
+      <TextField
+        name='x'
+        label='X'
+        error
+        helperText='hint'
+        errorText='Required'
+      />,
+    );
+    const inp = input(container);
+    expect(inp.getAttribute('aria-invalid')).toBe('true');
+    const errId = inp.getAttribute('aria-errormessage')!;
+    expect(errId).toBeTruthy();
+    const err = container.querySelector(`[id="${errId}"]`) as HTMLElement;
+    expect(err.getAttribute('role')).toBe('alert');
+    expect(err.textContent).toBe('Required');
+    expect(inp.getAttribute('aria-describedby')).toContain(errId);
+  });
+
+  it('errorText falls back to helperText when omitted', () => {
+    const { container } = mount(
+      <TextField
+        name='x'
+        label='X'
+        error
+        helperText='Bad value'
+      />,
+    );
+    const errId = input(container).getAttribute('aria-errormessage')!;
+    const err = container.querySelector(`[id="${errId}"]`) as HTMLElement;
+    expect(err.getAttribute('role')).toBe('alert');
+    expect(err.textContent).toBe('Bad value');
+  });
+
+  it('intent vars: neutral border != focus by default; both = error colour on error', () => {
+    const { container } = mount(
+      <TextField
+        name='x'
+        label='X'
+      />,
+    );
+    const inp = input(container);
+    expect(inp.style.getPropertyValue('--valet-intent-border')).not.toBe('');
+    expect(inp.style.getPropertyValue('--valet-intent-border')).not.toBe(
+      inp.style.getPropertyValue('--valet-intent-focus'),
+    );
+    const { container: c2 } = mount(
+      <TextField
+        name='x'
+        label='X'
+        error
+        errorText='e'
+      />,
+    );
+    const inp2 = input(c2);
+    expect(inp2.style.getPropertyValue('--valet-intent-border')).toBe(
+      inp2.style.getPropertyValue('--valet-intent-focus'),
+    );
+  });
+
+  it('width prop sets the wrapper width var; fullWidth sets flex', () => {
+    const { container } = mount(
+      <TextField
+        name='x'
+        label='X'
+        width='40ch'
+      />,
+    );
+    expect(tfWrap(container).style.getPropertyValue('--valet-tf-width')).toBe('40ch');
+    const { container: c2 } = mount(
+      <TextField
+        name='x'
+        label='X'
+        fullWidth
+      />,
+    );
+    expect(tfWrap(c2).style.flexGrow).toBe('1');
+  });
+
+  it('warns once when no accessible name; silent with a label', () => {
+    mount(<TextField name='x' />);
+    expect(valetWarns().some((m) => m.includes('accessible name'))).toBe(true);
+    resetWarnOnce();
+    warnSpy.mockClear();
+    mount(
+      <TextField
+        name='y'
+        label='Y'
+      />,
+    );
+    expect(valetWarns().some((m) => m.includes('accessible name'))).toBe(false);
+  });
+
+  it('composes caller onBlur AND onKeyDown with the commit emit (input arm)', () => {
+    const onBlur = vi.fn();
+    const onKeyDown = vi.fn();
+    const commits: ChangeInfo<string>[] = [];
+    const { container } = mount(
+      <TextField
+        name='x'
+        label='X'
+        onBlur={onBlur}
+        onKeyDown={onKeyDown}
+        onValueCommit={(_v, i) => commits.push(i)}
+      />,
+    );
+    const el = input(container);
+    act(() => {
+      el.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+    });
+    act(() => {
+      el.dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
+    });
+    expect(onKeyDown).toHaveBeenCalledTimes(1);
+    expect(onBlur).toHaveBeenCalledTimes(1);
+    expect(commits.map((c) => c.source)).toEqual(['keyboard', 'programmatic']);
+  });
+
+  it('FormControl form-wide disabled + name-keyed error reach the field', () => {
+    const useStore = createFormStore({ email: '' });
+    const { container } = mount(
+      <FormControl
+        useStore={useStore}
+        disabled
+        errors={{ email: 'Form says no' }}
+      >
+        <TextField
+          name='email'
+          label='Email'
+        />
+      </FormControl>,
+    );
+    const inp = input(container);
+    expect(inp.disabled).toBe(true);
+    expect(inp.getAttribute('aria-invalid')).toBe('true');
+    const errId = inp.getAttribute('aria-errormessage')!;
+    expect((container.querySelector(`[id="${errId}"]`) as HTMLElement).textContent).toBe(
+      'Form says no',
+    );
   });
 });

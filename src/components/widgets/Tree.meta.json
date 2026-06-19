@@ -1,23 +1,29 @@
 {
   "name": "Tree",
-  "summary": "Accessible expand/collapse tree over a `nodes` hierarchy (label via `getLabel`), with `expanded`/`onExpandedChange` for disclosure and `selectionMode='single'` selecting by node id; use it for nested data like file trees and outlines — reach for `List` when items are flat.",
+  "summary": "Accessible WAI-ARIA tree over a `nodes` hierarchy (label via `getLabel`): `expanded`/`onExpandedChange` for disclosure and the canonical `selectionMode` + `selected`/`onSelectionChange` (id arrays) for `none`/`single`/`multiple` selection. Use it for nested data like file trees and outlines — reach for `List` when items are flat.",
   "status": "stable",
   "docs": {
     "bestPractices": [
-      "Use stable ids. Provide deterministic `id`s for nodes so expanded/selected state can be controlled and persisted across renders.",
-      "Keep labels compact. Tree rows should be glanceable; favor short labels and use variants (`list` or `files`) to convey structure.",
-      "Align behavior with expectations. Support Arrow keys, Enter/Space for selection, and Left/Right to collapse/expand; let double‑click toggle when appropriate.",
-      "Choose control model. Use `expanded` / `onExpandedChange` and `selected` / `onNodeSelect` when external state or routing must drive the tree; otherwise use defaults. The expansion trio is the unified vocabulary shared with Accordion.",
-      "Control selection with the unified `selectionMode` prop: `'single'` (default) selects the clicked node by id; `'none'` disables selection entirely (rows still expand/collapse and stay keyboard‑navigable, but never become `aria-selected` and `onNodeSelect` never fires).",
-      "Avoid over‑nesting. Deep hierarchies are hard to scan; flatten where possible and consider search/filter affordances for large trees.",
-      "Tokenized spacing. Use theme spacing for indentation so density and breakpoints scale predictably."
+      "Use stable, unique node `id`s — they are the selection/expansion unit (`expanded`, `selected`, and `onSelectionChange` all speak ids), so they must survive re-renders.",
+      "Control disclosure with the canonical trio `expanded`/`defaultExpanded`/`onExpandedChange` (string[] of expanded ids, shared with Accordion). Omit for uncontrolled.",
+      "Control selection with `selectionMode` + `selected`/`defaultSelected` (string[]) + `onSelectionChange(ids)`: `'single'` (default) keeps one id, `'multiple'` toggles ids in/out (the tree advertises `aria-multiselectable`), `'none'` disables selection — rows still expand/collapse and stay keyboard-navigable but never get `aria-selected`.",
+      "Keyboard + typeahead come built in: Up/Down move, Right expands then descends, Left collapses then climbs to the parent, Home/End jump, `*` expands all siblings, Enter/Space selects, and typing a letter jumps to the next matching label. Provide `getTextValue` when `getLabel` returns a node (not a string) so typeahead has text to match.",
+      "All three `variant`s (`chevron`/`list`/`files`) render one structure — each expanded parent owns a nested `role=group`, with correct `aria-level`/`aria-setsize`/`aria-posinset`. Rows never steal focus on mount (roving `tabIndex` makes the tree Tab-reachable).",
+      "Mark non-actionable nodes `disabled` on the `TreeNode` — they render `aria-disabled`, never select or toggle, but remain navigable so users can move past them.",
+      "Touch-friendly automatically: each row floors at ≥44px on coarse pointers (40px under `compact`) with the mobile chrome kit, and the disclosure glyph carries an invisible ≥44px hit area for `iconToggleOnly` mode. Colours follow the theme intent contract (hover strictly subtler than selected; AA text contrast in both modes).",
+      "Avoid over-nesting; flatten deep hierarchies and add search/filter for large trees. (Tree is not virtualized — keep visible node counts reasonable.) Use `iconToggleOnly` when row clicks should select without toggling."
     ]
   },
   "examples": [
     {
       "id": "tree-chevrons",
-      "title": "Chevron variant",
-      "code": "(() => {\n  const data = [\n    { id: 'fruit', data: { label: 'Fruit' }, children: [\n      { id: 'apple', data: { label: 'Apple' } },\n      { id: 'banana', data: { label: 'Banana' } }\n    ]}\n  ];\n  return (<Tree nodes={data} getLabel={(n) => n.label} defaultExpanded={['fruit']} variant='chevron' />);\n})()"
+      "title": "Chevron variant (single-select)",
+      "code": "(() => {\n  const data = [\n    { id: 'fruit', data: { label: 'Fruit' }, children: [\n      { id: 'apple', data: { label: 'Apple' } },\n      { id: 'banana', data: { label: 'Banana' } }\n    ]}\n  ];\n  const [sel, setSel] = React.useState<string[]>([]);\n  return (<Tree nodes={data} getLabel={(n) => n.label} defaultExpanded={['fruit']} selected={sel} onSelectionChange={setSel} variant='chevron' />);\n})()"
+    },
+    {
+      "id": "tree-multiple",
+      "title": "Multiple selection",
+      "code": "(() => {\n  const data = [\n    { id: 'a', data: { label: 'Alpha' } },\n    { id: 'b', data: { label: 'Bravo' } },\n    { id: 'c', data: { label: 'Charlie' } }\n  ];\n  const [sel, setSel] = React.useState(['a']);\n  return (<Tree nodes={data} getLabel={(n) => n.label} selectionMode='multiple' selected={sel} onSelectionChange={setSel} variant='list' />);\n})()"
     },
     {
       "id": "tree-files",

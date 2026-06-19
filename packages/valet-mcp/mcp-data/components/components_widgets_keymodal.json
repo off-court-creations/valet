@@ -19,6 +19,12 @@
       "name": "onClose",
       "type": "() => void",
       "required": false
+    },
+    {
+      "name": "noSelect",
+      "type": "boolean",
+      "required": false,
+      "description": "Render the modal's label/instruction text non-selectable. The key/passphrase\ninputs stay selectable. Default: selectable."
     }
   ],
   "cssVars": [],
@@ -31,9 +37,11 @@
   "slots": [],
   "bestPractices": [],
   "examples": [],
+  "docsUrl": "/keymodal-demo",
   "sourceFiles": [
-    "src/components/widgets/KeyModal.tsx"
+    "src/components/widgets/KeyModal.tsx",
+    "docs/src/pages/components/widgets/KeyModalDemo.tsx"
   ],
-  "version": "0.36.0",
+  "version": "0.37.0",
   "schemaVersion": "1.7"
 }

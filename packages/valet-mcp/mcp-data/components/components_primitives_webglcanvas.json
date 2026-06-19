@@ -15,13 +15,13 @@
       "name": "create",
       "type": "(gl: WebGL2RenderingContext, canvas: HTMLCanvasElement) => WebGLProgramLike | null",
       "required": true,
-      "description": "Create a program bound to the provided WebGL2 context and canvas."
+      "description": "Create a program bound to the provided WebGL2 context and canvas. Called\nONCE when the context is acquired; its identity is ref-latched, so an inline\narrow does NOT rebuild the program on parent re-render. To force a rebuild,\nchange the element `key`. Return `null` to signal a build failure (routes to\n`onError` / `fallback`)."
     },
     {
       "name": "contextAttributes",
       "type": "WebGLContextAttributes",
       "required": false,
-      "description": "WebGL context attributes."
+      "description": "WebGL context attributes. Read ONCE at context creation (ref-latched)."
     },
     {
       "name": "dprMax",
@@ -50,6 +50,18 @@
       "required": false,
       "description": "If true, wrapper is absolutely positioned and fills its parent.",
       "default": "false"
+    },
+    {
+      "name": "onError",
+      "type": "(err: unknown) => void",
+      "required": false,
+      "description": "Called if the WebGL2 context cannot be created (unsupported) or `create()`\nreturns null. The canvas otherwise dead-ends blank with no signal."
+    },
+    {
+      "name": "fallback",
+      "type": "React.ReactNode",
+      "required": false,
+      "description": "Rendered in place of the canvas when initialization fails (see `onError`)."
     },
     {
       "name": "sx",
@@ -85,8 +97,17 @@
   },
   "cssVars": [],
   "cssPresets": [],
-  "events": [],
-  "slots": [],
+  "events": [
+    {
+      "name": "onError",
+      "payloadType": "unknown"
+    }
+  ],
+  "slots": [
+    {
+      "name": "fallback"
+    }
+  ],
   "bestPractices": [
     "Prefer low DPR on animated backgrounds to reduce fill-rate.",
     "Avoid heavy per-frame allocations in program.update().",
@@ -98,6 +119,6 @@
     "src/components/primitives/WebGLCanvas.tsx",
     "docs/src/pages/components/primitives/WebGLCanvasDemo.tsx"
   ],
-  "version": "0.36.0",
+  "version": "0.37.0",
   "schemaVersion": "1.7"
 }

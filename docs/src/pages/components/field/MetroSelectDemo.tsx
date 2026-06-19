@@ -48,10 +48,7 @@ export default function MetroSelectDemoPage() {
   const usage = (
     <Stack>
       <Typography variant='h3'>1. Uncontrolled</Typography>
-      <MetroSelect
-        defaultValue='home'
-        gap={4}
-      >
+      <MetroSelect defaultValue='home'>
         {basic.map((o) => (
           <MetroSelect.Option
             key={o.value}
@@ -64,7 +61,6 @@ export default function MetroSelectDemoPage() {
       <MetroSelect
         value={transport}
         onValueChange={(v) => setTransport(v as string)}
-        gap={4}
       >
         {controlled.map((o) => (
           <MetroSelect.Option
@@ -82,7 +78,6 @@ export default function MetroSelectDemoPage() {
         value={transportLive ?? 'car'}
         onValueChange={(v) => setTransportLive(v as string)}
         onValueCommit={(v) => setTransportCommit(v as string)}
-        gap={4}
       >
         {controlled.map((o) => (
           <MetroSelect.Option
@@ -95,7 +90,7 @@ export default function MetroSelectDemoPage() {
       <Typography>commit: {transportCommit ?? '—'}</Typography>
 
       <Typography variant='h3'>3. Many options</Typography>
-      <MetroSelect gap={4}>
+      <MetroSelect>
         {many.map((o) => (
           <MetroSelect.Option
             key={o.value}
@@ -109,7 +104,6 @@ export default function MetroSelectDemoPage() {
       <MetroSelect
         multiple
         defaultValue={['home', 'travel']}
-        gap={4}
       >
         {basic.map((o) => (
           <MetroSelect.Option
@@ -117,6 +111,46 @@ export default function MetroSelectDemoPage() {
             {...o}
           />
         ))}
+      </MetroSelect>
+
+      <Typography variant='h3'>5. Metro mosaic (per-tile color + wide)</Typography>
+      <Typography variant='subtitle'>
+        Flat saturated tiles in a snapped grid — <code>color</code> per option, <code>wide</code>{' '}
+        for a 2×1 module. Press a tile to feel the tilt.
+      </Typography>
+      <MetroSelect defaultValue='mail'>
+        <MetroSelect.Option
+          value='mail'
+          icon='mdi:email'
+          label='Mail'
+          color='#0078d7'
+          wide
+        />
+        <MetroSelect.Option
+          value='photos'
+          icon='mdi:image'
+          label='Photos'
+          color='#107c10'
+        />
+        <MetroSelect.Option
+          value='music'
+          icon='mdi:music'
+          label='Music'
+          color='#e3008c'
+        />
+        <MetroSelect.Option
+          value='store'
+          icon='mdi:store'
+          label='Store'
+          color='#5c2d91'
+        />
+        <MetroSelect.Option
+          value='games'
+          icon='mdi:gamepad-variant'
+          label='Games'
+          color='#d83b01'
+          wide
+        />
       </MetroSelect>
 
       <Button

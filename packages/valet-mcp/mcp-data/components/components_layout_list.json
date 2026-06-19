@@ -51,19 +51,11 @@
       "name": "selectionMode",
       "type": "'none' | 'single'",
       "required": false,
-      "description": "How selection behaves (API-TYPES S11, Q11(a)). List supports single\nselection: `'single'` enables it, `'none'` (default) disables it. The\nunified cross-component name; the boolean `selectable` is a deprecated\nalias (`selectable={true}` ≡ `selectionMode='single'`). When both are\nsupplied, `selectionMode` wins.",
+      "description": "How selection behaves (API-TYPES S11, Q11(a)). List supports single\nselection: `'single'` enables it, `'none'` (default) disables it. The\nunified cross-component selection name.",
       "enumValues": [
         "none",
         "single"
       ]
-    },
-    {
-      "name": "selectable",
-      "type": "boolean",
-      "required": false,
-      "deprecated": {
-        "replacement": "selectionMode"
-      }
     },
     {
       "name": "focusMode",
@@ -99,14 +91,6 @@
       "type": "keyof T | ((item: T, index: number) => React.Key)",
       "required": false,
       "description": "Stable identity for each item — the unified cross-component name\n(API-TYPES S11, Q11(a)). Used to key React rows and standardize reorder\nidentity. Defaults to the item's index when omitted. The cross-component\nshape is `keyof T | ((item, index) => key)`; List narrows the function form\nto a React.Key return."
-    },
-    {
-      "name": "getKey",
-      "type": "(item: T, index: number) => React.Key",
-      "required": false,
-      "deprecated": {
-        "replacement": "getItemKey"
-      }
     },
     {
       "name": "emptyPlaceholder",
@@ -163,8 +147,8 @@
   "bestPractices": [
     "Use for simple rows such as menus, settings, or short feeds; keep each row self‑contained.",
     "Prefer succinct labels with optional secondary text; avoid deep nested interactivity inside rows.",
-    "Use selection or navigation patterns consistently (radio/checkbox icons vs chevrons). Enable single selection with the unified `selectionMode='single'` prop; the pre‑0.35 boolean `selectable` is a deprecated alias (`selectable` ≡ `selectionMode='single'`) that still works but dev‑warns once and is removed at 1.0.",
-    "Provide stable per‑item identity with `getItemKey` (a property name or `(item, index) => key`) so rows keep identity across reorders and refreshes. The pre‑0.35 `getKey` prop is a deprecated alias of `getItemKey` (removed at 1.0).",
+    "Use selection or navigation patterns consistently (radio/checkbox icons vs chevrons). Enable single selection with the unified `selectionMode='single'` prop (`'none'`, the default, disables it).",
+    "Provide stable per‑item identity with `getItemKey` (a property name or `(item, index) => key`) so rows keep identity across reorders and refreshes; it defaults to the item's index when omitted.",
     "Keep item height comfortable for touch; use tokenized spacing for density.",
     "Defer dense tabular data to `Table` and two‑dimensional layouts to `Grid`.",
     "Non‑selectable lists keep rows out of the tab order by default for accessibility; opt into `focusMode=\"row\"` only when you truly need every row tabbable."
@@ -209,6 +193,6 @@
     "src/components/layout/List.tsx",
     "docs/src/pages/components/layout/ListDemoPage.tsx"
   ],
-  "version": "0.36.0",
+  "version": "0.37.0",
   "schemaVersion": "1.7"
 }

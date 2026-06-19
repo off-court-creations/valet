@@ -7,8 +7,8 @@
     "bestPractices": [
       "Use for simple rows such as menus, settings, or short feeds; keep each row self‑contained.",
       "Prefer succinct labels with optional secondary text; avoid deep nested interactivity inside rows.",
-      "Use selection or navigation patterns consistently (radio/checkbox icons vs chevrons). Enable single selection with the unified `selectionMode='single'` prop; the pre‑0.35 boolean `selectable` is a deprecated alias (`selectable` ≡ `selectionMode='single'`) that still works but dev‑warns once and is removed at 1.0.",
-      "Provide stable per‑item identity with `getItemKey` (a property name or `(item, index) => key`) so rows keep identity across reorders and refreshes. The pre‑0.35 `getKey` prop is a deprecated alias of `getItemKey` (removed at 1.0).",
+      "Use selection or navigation patterns consistently (radio/checkbox icons vs chevrons). Enable single selection with the unified `selectionMode='single'` prop (`'none'`, the default, disables it).",
+      "Provide stable per‑item identity with `getItemKey` (a property name or `(item, index) => key`) so rows keep identity across reorders and refreshes; it defaults to the item's index when omitted.",
       "Keep item height comfortable for touch; use tokenized spacing for density.",
       "Defer dense tabular data to `Table` and two‑dimensional layouts to `Grid`.",
       "Non‑selectable lists keep rows out of the tab order by default for accessibility; opt into `focusMode=\"row\"` only when you truly need every row tabbable."

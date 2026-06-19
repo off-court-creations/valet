@@ -9,12 +9,14 @@ import {
   type FileRejection,
   type DropEvent,
 } from 'react-dropzone';
-import Panel from '../layout/Panel';
 import Grid from '../layout/Grid';
 import Stack from '../layout/Stack';
 import Icon from '../primitives/Icon';
 import { ProgressRing } from '../primitives/Progress';
+import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
+import { makeMix } from '../../system/intentVars';
+import { useCompact } from '../../system/compactContext';
 import { preset } from '../../css/stylePresets';
 import { useComponentStrings } from '../../system/locale';
 import type { DeepPartialStrings, ValetStrings } from '../../system/locale';
@@ -58,6 +60,70 @@ export interface DropzoneProps
   /** Inline styles (with CSS var support) */
   sx?: Sx;
 }
+
+/*───────────────────────────────────────────────────────────*/
+/* Styled primitives                                          */
+
+/* The interactive drop target. Colours arrive as inline --valet-dz-* CSS vars
+   (so the rule text stays static — no per-value class minting) and flip on
+   drag-over: a dashed idle outline becomes a solid, intent-tinted "drop-armed"
+   surface. Keyboard focus gets a themed ring; the mobile chrome kit suppresses
+   the tap-highlight / long-press callout. Previews/errors render OUTSIDE this
+   element so the whole-area click target only ever opens the picker. */
+const DropArea = styled('div')`
+  box-sizing: border-box;
+  width: 100%;
+  text-align: center;
+  cursor: pointer;
+  border-width: var(--valet-dz-stroke, 2px);
+  border-style: var(--valet-dz-border-style, dashed);
+  border-color: var(--valet-dz-border);
+  border-radius: var(--valet-dz-radius, 10px);
+  background: var(--valet-dz-bg);
+  padding: var(--valet-dz-pad, 1rem);
+  transition:
+    border-color 150ms ease,
+    background 150ms ease;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  &:focus-visible {
+    outline: var(--valet-focus-width, 2px) solid var(--valet-dz-focus, currentColor);
+    outline-offset: 2px;
+  }
+`;
+
+/* Per-file remove control. Appearance (position/background) is supplied inline
+   per usage; the shared chrome here is the focus ring, the tap-highlight reset,
+   and a coarse-pointer >=44px invisible hit-expander (24px under compact) so the
+   small glyph is comfortably tappable on touch. */
+const RemoveButton = styled('button')`
+  position: relative;
+  appearance: none;
+  -webkit-appearance: none;
+  font: inherit;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 4px;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  &:focus-visible {
+    outline: var(--valet-focus-width, 2px) solid var(--valet-dz-focus, currentColor);
+    outline-offset: 2px;
+  }
+  @media (pointer: coarse) {
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      width: var(--valet-dz-rm-hit, 44px);
+      height: var(--valet-dz-rm-hit, 44px);
+    }
+  }
+`;
 
 /*───────────────────────────────────────────────────────────*/
 const iconMap: Record<string, string> = {
@@ -119,51 +185,91 @@ export const Dropzone: React.FC<DropzoneProps> = ({
   const [files, setFiles] = useState<File[]>([]);
   const [rejections, setRejections] = useState<FileRejection[]>([]);
   const { theme } = useTheme();
+  const effCompact = useCompact();
   const t = useComponentStrings('dropzone', labels);
-  const previewsRef = useRef<Map<File, string>>(new Map());
+  const [previewUrls, setPreviewUrls] = useState<Map<File, string>>(() => new Map());
+  // Mirror of the latest URL map so the unmount effect can revoke without a
+  // stale closure (state is a fresh Map each change; a ref tracks the current).
+  const previewUrlsRef = useRef(previewUrls);
+  previewUrlsRef.current = previewUrls;
   const [loaded, setLoaded] = useState<Set<File>>(() => new Set());
 
   const toCssSize = (v: number | string | undefined, fallback: string) =>
     v == null ? fallback : typeof v === 'number' ? `${v}px` : String(v);
 
-  // Create/revoke object URLs as files change (image files only)
+  // Create/revoke object URLs as files change (image files only). The URLs live
+  // in STATE (not a ref) so a freshly minted URL re-renders the <img> that
+  // consumes it — minting into a ref leaves the first render's `src` undefined
+  // and the tile stuck on its spinner forever. createObjectURL/revoke run in the
+  // effect BODY (once per files change), never inside a setState updater — which
+  // StrictMode double-invokes, double-minting and leaking a URL.
   useEffect(() => {
-    const map = previewsRef.current;
+    const prev = previewUrlsRef.current;
+    let changed = false;
+    const next = new Map(prev);
     // add new URLs
     files.forEach((f) => {
-      if (isImageFile(f) && !map.has(f)) map.set(f, URL.createObjectURL(f));
+      if (isImageFile(f) && !next.has(f)) {
+        next.set(f, URL.createObjectURL(f));
+        changed = true;
+      }
     });
     // revoke removed URLs
-    for (const [f, url] of Array.from(map.entries())) {
+    for (const [f, url] of Array.from(next.entries())) {
       if (!files.includes(f)) {
         URL.revokeObjectURL(url);
-        map.delete(f);
+        next.delete(f);
+        changed = true;
       }
     }
+    if (changed) {
+      previewUrlsRef.current = next;
+      setPreviewUrls(next);
+    }
+    // Prune load-state for files that are gone, so removed files don't retain
+    // their File reference for the component's lifetime (pure → StrictMode-safe).
+    setLoaded((prevLoaded) => {
+      if (!prevLoaded.size) return prevLoaded;
+      let dropped = false;
+      const nextLoaded = new Set<File>();
+      for (const f of prevLoaded) {
+        if (files.includes(f)) nextLoaded.add(f);
+        else dropped = true;
+      }
+      return dropped ? nextLoaded : prevLoaded;
+    });
   }, [files]);
 
-  // Revoke everything on unmount
-  useEffect(() => {
-    const map = previewsRef.current;
-    return () => {
-      for (const [, url] of Array.from(map.entries())) URL.revokeObjectURL(url);
-      map.clear();
-    };
-  }, []);
+  // Revoke every outstanding URL on unmount (reads the live ref, not a closure).
+  useEffect(
+    () => () => {
+      for (const [, url] of previewUrlsRef.current) URL.revokeObjectURL(url);
+    },
+    [],
+  );
 
   const handleDrop = useCallback(
     (accepted: File[], rej: FileRejection[], evt: DropEvent) => {
       const next = multiple ? [...files, ...accepted] : accepted.slice(0, 1);
       const limited = maxFiles ? next.slice(0, maxFiles) : next;
       setFiles(limited);
-      /* react-dropzone fires onDrop on every drop (accepted and/or
-         rejected), so syncing here both surfaces fresh rejections and
-         clears stale ones after a later successful drop. */
-      setRejections(rej);
+      /* react-dropzone enforces `maxFiles` per-drop only, so an append that
+         crosses the cumulative limit would silently discard the overflow.
+         Surface those files through the same rejection region as type/size
+         errors instead of dropping them without feedback. */
+      const overflow = maxFiles ? next.slice(maxFiles) : [];
+      const overflowRej: FileRejection[] = overflow.map((file) => ({
+        file,
+        errors: [{ code: 'too-many-files', message: t.tooManyFiles }],
+      }));
+      /* react-dropzone fires onDrop on every drop (accepted and/or rejected),
+         so syncing here both surfaces fresh rejections and clears stale ones
+         after a later successful drop. */
+      setRejections([...rej, ...overflowRej]);
       onFilesChange?.(limited);
       onDropCb?.(accepted, rej, evt);
     },
-    [files, multiple, maxFiles, onFilesChange, onDropCb],
+    [files, multiple, maxFiles, onFilesChange, onDropCb, t],
   );
 
   const handleRejected = useCallback(
@@ -184,6 +290,18 @@ export const Dropzone: React.FC<DropzoneProps> = ({
     onDropRejected: handleRejected,
   });
   const presetCls = p ? preset(p) : '';
+
+  // Remove helper — pure: no callbacks or side effects inside the state
+  // updater (StrictMode double-invokes updaters); URL revocation is owned
+  // by the object-URL effect above, keyed on `files`.
+  const removeAt = useCallback(
+    (idx: number) => {
+      const next = files.filter((_, i) => i !== idx);
+      setFiles(next);
+      onFilesChange?.(next);
+    },
+    [files, onFilesChange],
+  );
 
   const previews = showPreviews && files.length > 0 && (
     <Grid
@@ -206,7 +324,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
           {isImageFile(f) ? (
             <>
               <img
-                src={previewsRef.current.get(f)}
+                src={previewUrls.get(f)}
                 alt={f.name}
                 style={{
                   width: '100%',
@@ -220,6 +338,8 @@ export const Dropzone: React.FC<DropzoneProps> = ({
                 onError={() => setLoaded((prev) => (prev.has(f) ? prev : new Set(prev).add(f)))}
               />
               {!loaded.has(f) && (
+                /* Spinner-centering overlay; the loading tint comes from the
+                   tile's own backgroundAlt fill (no hardcoded gradient). */
                 <div
                   aria-hidden
                   style={{
@@ -227,7 +347,6 @@ export const Dropzone: React.FC<DropzoneProps> = ({
                     inset: 0,
                     display: 'grid',
                     placeItems: 'center',
-                    background: 'linear-gradient(180deg, #00000010, #00000022)',
                   }}
                 >
                   <ProgressRing size={40} />
@@ -264,7 +383,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
               </Stack>
             </div>
           )}
-          <button
+          <RemoveButton
             type='button'
             onClick={(e) => {
               e.preventDefault();
@@ -279,15 +398,13 @@ export const Dropzone: React.FC<DropzoneProps> = ({
               insetInlineEnd: 4,
               background: theme.colors.backgroundAlt,
               color: theme.colors.text,
-              border: `${theme.stroke(1)} solid ${theme.colors.text}33`,
-              borderRadius: 4,
-              cursor: 'pointer',
+              border: `${theme.stroke(1)} solid ${theme.colors.divider}`,
               padding: '2px 6px',
               fontSize: '0.75rem',
             }}
           >
             ×
-          </button>
+          </RemoveButton>
         </div>
       ))}
     </Grid>
@@ -312,7 +429,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
           >
             {f.name}
           </span>
-          <button
+          <RemoveButton
             type='button'
             onClick={(e) => {
               e.preventDefault();
@@ -325,27 +442,14 @@ export const Dropzone: React.FC<DropzoneProps> = ({
               background: 'transparent',
               color: theme.colors.text,
               border: 'none',
-              cursor: 'pointer',
               padding: '2px 4px',
             }}
           >
             {t.remove}
-          </button>
+          </RemoveButton>
         </Stack>
       ))}
     </Stack>
-  );
-
-  // Remove helper — pure: no callbacks or side effects inside the state
-  // updater (StrictMode double-invokes updaters); URL revocation is owned
-  // by the object-URL effect above, keyed on `files`.
-  const removeAt = useCallback(
-    (idx: number) => {
-      const next = files.filter((_, i) => i !== idx);
-      setFiles(next);
-      onFilesChange?.(next);
-    },
-    [files, onFilesChange],
   );
 
   // Helpers for instructions / a11y
@@ -369,7 +473,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
   // Pull out dropzone's ref so we can forward a typed ref without `any`
   const { ref: dropzoneRef, ...rootProps } = getRootProps();
 
-  const setPanelRef: React.RefCallback<HTMLDivElement> = (node) => {
+  const setRootRef: React.RefCallback<HTMLDivElement> = (node) => {
     if (!dropzoneRef) return;
     if (typeof dropzoneRef === 'function') {
       // react-dropzone expects to receive the root element
@@ -383,46 +487,73 @@ export const Dropzone: React.FC<DropzoneProps> = ({
   const instructionId = React.useId();
   const errorsId = React.useId();
 
+  // Drop-armed vs idle chrome, delivered as inline CSS vars (cardinality-safe,
+  // makeMix is parse-safe for non-hex theme colours).
+  const dropAreaVars: Record<string, string> = {
+    '--valet-dz-border': isDragActive
+      ? theme.colors.primary
+      : (theme.colors.divider ?? theme.colors.backgroundAlt),
+    '--valet-dz-bg': isDragActive
+      ? makeMix(theme.colors.primary, theme.colors.background, 0.1)
+      : 'transparent',
+    '--valet-dz-border-style': isDragActive ? 'solid' : 'dashed',
+    '--valet-dz-stroke': theme.stroke(2),
+    '--valet-dz-pad': theme.spacing(2),
+  };
+
   return (
-    <Panel
+    <div
       {...rest}
-      {...rootProps}
-      ref={setPanelRef}
-      variant='outlined'
-      fullWidth={fullWidth}
-      role='button'
-      aria-labelledby={instructionId}
-      aria-describedby={rejections.length ? errorsId : undefined}
-      sx={{
-        width: fullWidth ? `calc(100% - ${theme.spacing(1)} * 2)` : undefined,
-        textAlign: 'center',
-        cursor: 'pointer',
-        ...sx,
-      }}
-      className={[presetCls, className, isDragActive ? 'drag-active' : '']
-        .filter(Boolean)
-        .join(' ')}
+      data-valet-component='Dropzone'
+      className={[presetCls, className].filter(Boolean).join(' ') || undefined}
+      style={
+        {
+          display: fullWidth ? 'block' : 'inline-block',
+          width: fullWidth ? '100%' : undefined,
+          // Shared hooks for the drop target + remove buttons.
+          '--valet-dz-focus': theme.colors.primary,
+          '--valet-dz-rm-hit': effCompact ? '24px' : '44px',
+          ...(sx as object),
+        } as React.CSSProperties
+      }
     >
-      <input {...getInputProps()} />
-      <Icon
-        icon='mdi:cloud-upload'
-        size='lg'
-      />
-      <div id={instructionId}>
-        {instr}
-        {(acceptHint || sizeHint) && (
-          <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>
-            {acceptHint && <span>Accepted: {acceptHint}</span>}
-            {acceptHint && sizeHint && <span> • </span>}
-            {sizeHint && <span>{sizeHint}</span>}
-          </div>
-        )}
-      </div>
+      {/* Interactive drop target — only the picker affordance lives here. */}
+      <DropArea
+        {...rootProps}
+        ref={setRootRef}
+        role='button'
+        aria-labelledby={instructionId}
+        aria-describedby={rejections.length ? errorsId : undefined}
+        /* `drag-active` stays a documented styling hook; the visible drag
+           feedback itself comes from the --valet-dz-* vars below. */
+        className={isDragActive ? 'drag-active' : undefined}
+        style={dropAreaVars as React.CSSProperties}
+      >
+        <input {...getInputProps()} />
+        <Icon
+          icon='mdi:cloud-upload'
+          size='lg'
+        />
+        <div id={instructionId}>
+          {instr}
+          {(acceptHint || sizeHint) && (
+            <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>
+              {acceptHint && <span>Accepted: {acceptHint}</span>}
+              {acceptHint && sizeHint && <span> • </span>}
+              {sizeHint && <span>{sizeHint}</span>}
+            </div>
+          )}
+        </div>
+      </DropArea>
+
+      {/* Previews / file list render OUTSIDE the drop target so clicking a
+          thumbnail (or its remove button) never re-opens the file picker. */}
       {previews || fileList}
+
       {rejections.length > 0 && (
         <div
           id={errorsId}
-          aria-live='polite'
+          role='alert'
           style={{ marginTop: theme.spacing(0.5) }}
         >
           {rejections.map((r, i) => (
@@ -435,7 +566,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
           ))}
         </div>
       )}
-    </Panel>
+    </div>
   );
 };
 

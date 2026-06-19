@@ -82,6 +82,13 @@
       "description": "Instance-level overrides for this component's i18n strings (the set-API-key\nand send button aria-labels). Wins over the `ValetLocaleProvider` value,\nwhich in turn wins over the built-in English defaults (A11Y S8 resolution\ncontract; see `src/system/locale.tsx`). The Connected/Disconnected status\ntext stays with the KeyModal flow (deferred pending Q8)."
     },
     {
+      "name": "noSelect",
+      "type": "boolean",
+      "required": false,
+      "description": "Render message text non-selectable. Applies to message bubbles (sender name,\nuser text, assistant Markdown); the composer input stays selectable.\nDefault: selectable.",
+      "default": "false"
+    },
+    {
       "name": "sx",
       "type": "Sx",
       "required": false,
@@ -134,6 +141,6 @@
     "src/components/widgets/LLMChat.tsx",
     "docs/src/pages/components/widgets/LLMChatDemo.tsx"
   ],
-  "version": "0.36.0",
+  "version": "0.37.0",
   "schemaVersion": "1.7"
 }

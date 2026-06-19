@@ -43,6 +43,9 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - run: npm run mcp:schema:check
+      # Corpus freshness: fail if the committed mcp-data/ drifts from a rebuild
+      # (the served agent corpus must match source). Does not need dist.
+      - run: npm run mcp:check
       # Build BEFORE test: several suites resolve the built dist —
       # validate-jsx type-checks snippets against dist/index.d.mts, and
       # check-bundle inspects dist/index.mjs. On a clean checkout dist/ does
@@ -57,6 +60,10 @@ jobs:
       # kept as a focused guard.
       - run: npx vitest run src/ssr-import.test.ts
       - run: npm run verify:pack
+      # Packaging correctness on every PR (was release-runbook only): publint +
+      # are-the-types-wrong (ESM-only profile) — guards the exports map, the
+      # .d.mts type conditions, and ESM resolution that 1.0 freezes.
+      - run: npm run check:package
       - run: npm run check:engine
       # Pin skew is informational off the release branch (--warn never
       # fails; release integration runs it hard).

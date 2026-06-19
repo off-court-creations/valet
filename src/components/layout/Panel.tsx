@@ -10,11 +10,11 @@ import React from 'react';
 import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
-import { toRgb, mix, toHex } from '../../helpers/color';
+import { computeIntentVars, makeMix } from '../../system/intentVars';
 //
 import type { Intent, Presettable, SpacingProps, Sx } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
-import { resolveDeprecatedProp } from '../../system/deprecate';
+import { densityScale } from '../../system/densityScale';
 import { CompactCtx, useCompact } from '../../system/compactContext';
 
 export type PanelVariant = 'filled' | 'outlined';
@@ -40,12 +40,12 @@ export interface PanelProps
    */
   normalizeRowHeights?: boolean;
   /**
-   * Opt out of row height normalization.
-   * @deprecated Renamed to `normalizeRowHeights` (canonical plural, Q12);
-   *   `normalizeRowHeight` keeps working through 0.x and is removed at 1.0.
-   *   `normalizeRowHeights` wins when both are supplied.
+   * Override the root component-identity marker (defaults to `'Panel'`). A
+   * composite component that roots on a Panel passes its own name so the DOM
+   * node identifies as that component — the "AI proxies as first-class users"
+   * hook. Omit it and the Panel marks itself.
    */
-  normalizeRowHeight?: boolean;
+  'data-valet-component'?: string;
 }
 
 /** Inline styles (with CSS var support) */
@@ -69,8 +69,11 @@ const Base = styled('div')<{
   vertical-align: top;
 
   display: ${({ $center, $full }) => ($center ? 'flex' : $full ? 'block' : 'inline-block')};
-  width: ${({ $full }) => ($full ? '100%' : 'auto')};
-  /* Panels cooperate with Grid via CSS var to equalize row heights */
+  /* Panels cooperate with Grid via CSS vars: --valet-panel-width lets a Grid
+     equalize child WIDTHS (fill the 1fr cell) and --valet-panel-align-self
+     equalizes row HEIGHTS — both without a per-card fullWidth. Standalone
+     Panels fall back to the fullWidth-derived value. */
+  width: var(--valet-panel-width, ${({ $full }) => ($full ? '100%' : 'auto')});
   align-self: var(--valet-panel-align-self, ${({ $full }) => ($full ? 'stretch' : 'flex-start')});
   /* Anchor when not full width */
   margin-inline-start: ${({ $full, $alignX }) =>
@@ -141,8 +144,7 @@ export const Panel: React.FC<PanelProps> = ({
   fullWidth = false,
   centerContent,
   alignX,
-  normalizeRowHeights: normalizeRowHeightsProp,
-  normalizeRowHeight: normalizeRowHeightProp,
+  normalizeRowHeights = true,
   preset: p,
   className,
   sx,
@@ -152,21 +154,10 @@ export const Panel: React.FC<PanelProps> = ({
   density,
   pad: padProp,
   children,
+  'data-valet-component': dataValetComponent = 'Panel',
   ...rest
 }) => {
   const { theme } = useTheme();
-
-  // `normalizeRowHeights` is canonical (plural, Q12); `normalizeRowHeight`
-  // is the deprecated alias. The plural wins when both are supplied; passing
-  // the singular dev-warns once. Defaults to true (normalize) when neither set.
-  const normalizeRowHeights =
-    resolveDeprecatedProp(
-      'Panel',
-      'normalizeRowHeights',
-      normalizeRowHeightsProp,
-      'normalizeRowHeight',
-      normalizeRowHeightProp,
-    ) ?? true;
 
   // Resolve color override / intent into a background or border color
   const resolveToken = (v?: string): string | undefined => {
@@ -200,18 +191,15 @@ export const Panel: React.FC<PanelProps> = ({
   }
 
   const compactEffective = useCompact(compact);
-  const pad = resolveSpace(padProp, theme, compactEffective, 1);
+  // Role-aware default (1.0, "beautiful by default"): a Panel is a bordered
+  // card/surface, so its content gets 2 spacing units (~16px) of padding by
+  // default — the conventional card inset — not the 8px tight default. Tight
+  // panels opt down with `pad={1}` / `pad={0}` / `compact`.
+  const pad = resolveSpace(padProp, theme, compactEffective, 2);
 
   // V1: when density is explicitly provided, scale the subtree (and the
-  // panel's own pad/gap) via the local --valet-space var.
-  const densityScale =
-    density === 'comfortable'
-      ? 1.15
-      : density === 'tight'
-        ? 0.9
-        : density === 'standard'
-          ? 1.0
-          : undefined;
+  // panel's own pad/gap) via the local --valet-space var (centralized mapping).
+  const spaceScale = density != null ? densityScale(density) : undefined;
   const presetClasses = p ? preset(p) : '';
 
   // Normalize alignX with Box semantics
@@ -223,7 +211,7 @@ export const Panel: React.FC<PanelProps> = ({
   return (
     <Base
       {...rest}
-      data-valet-component='Panel'
+      data-valet-component={dataValetComponent}
       $variant={variant}
       $full={fullWidth}
       $center={centerContent}
@@ -236,22 +224,39 @@ export const Panel: React.FC<PanelProps> = ({
       $noNormalize={!normalizeRowHeights}
       style={
         {
-          ...(densityScale != null
-            ? { '--valet-space': `calc(${theme.spacingUnit} * ${densityScale})` }
+          ...(spaceScale != null
+            ? { '--valet-space': `calc(${theme.spacingUnit} * ${spaceScale})` }
             : {}),
-          '--valet-intent-bg': bg ?? 'transparent',
-          '--valet-intent-fg': textColour ?? theme.colors.text,
-          '--valet-intent-border': borderColor ?? theme.colors.divider,
-          '--valet-intent-focus': theme.colors.primary,
-          '--valet-intent-bg-hover': bg
-            ? toHex(mix(toRgb(bg), toRgb(textColour ?? theme.colors.text), 0.12))
-            : 'transparent',
-          '--valet-intent-bg-active': bg
-            ? toHex(mix(toRgb(bg), toRgb(textColour ?? theme.colors.text), 0.2))
-            : 'transparent',
-          '--valet-intent-fg-disabled': toHex(
-            mix(toRgb(textColour ?? theme.colors.text), toRgb(theme.colors.background), 0.5),
-          ),
+          /* Intent colour contract (shared helper) — `makeMix`/`parseColor`
+             handle hex, rgb(), hsl() and named/theme-token colours, so a
+             non-hex `color`/`intent` no longer misparses to the defensive-black
+             fallback the old toRgb path produced. Filled panels resolve the full
+             set from their fill; outlined/no-colour panels stay transparent with
+             a parse-safe disabled-fg mix. */
+          ...(bg
+            ? computeIntentVars({
+                bg,
+                fg: textColour ?? theme.colors.text,
+                focus: theme.colors.primary,
+                disabledMixColor: theme.colors.background,
+                variant,
+                border: borderColor ?? theme.colors.divider,
+                hoverWeight: 0.12,
+                activeWeight: 0.2,
+              })
+            : {
+                '--valet-intent-bg': 'transparent',
+                '--valet-intent-fg': textColour ?? theme.colors.text,
+                '--valet-intent-border': borderColor ?? theme.colors.divider,
+                '--valet-intent-focus': theme.colors.primary,
+                '--valet-intent-bg-hover': 'transparent',
+                '--valet-intent-bg-active': 'transparent',
+                '--valet-intent-fg-disabled': makeMix(
+                  textColour ?? theme.colors.text,
+                  theme.colors.background,
+                  0.5,
+                ),
+              }),
           ...(sx as object),
         } as React.CSSProperties
       }

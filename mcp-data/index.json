@@ -9,7 +9,7 @@
   {
     "name": "Checkbox",
     "category": "fields",
-    "summary": "Accessible boolean checkbox for a single on/off choice; controlled via `checked` + `onValueChange`, or auto-bound to a `FormControl` with `name` (keep `bindForm` to opt a form-bound box out of writing the store).",
+    "summary": "Accessible boolean checkbox for a single on/off choice, with an optional `label` + `helperText` and an `indeterminate` (mixed) state; controlled via `checked` + `onValueChange`, or auto-bound to a `FormControl` with `name` (keep `bindForm` to opt a form-bound box out of writing the store). A real hidden native input backs it for forms/AT.",
     "slug": "components/fields/checkbox",
     "status": "stable"
   },
@@ -18,12 +18,12 @@
     "category": "fields",
     "summary": "Interactive month calendar for picking a single date or a `range`; emits/accepts timezone-safe ISO `YYYY-MM-DD` strings, with display localized via `locale` and `firstDayOfWeek` (the value contract stays ISO Latin digits).",
     "slug": "components/fields/dateselector",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "FormControl",
     "category": "fields",
-    "summary": "Wraps a form to provide a typed store context that field components bind to by `name`; use it to collect and submit grouped field values without lifting every field into local state.",
+    "summary": "Wraps a form to provide a typed store context that field components bind to by `name`; use it to collect and submit grouped field values without lifting every field into local state. Also carries form-wide config — `disabled`, name-keyed `errors`, and an async-submit busy state — shared with bound fields via `useFormConfig()`.",
     "slug": "components/fields/formcontrol",
     "status": "stable"
   },
@@ -42,30 +42,23 @@
     "status": "stable"
   },
   {
-    "name": "Option",
-    "category": "fields",
-    "summary": "The `Select.Option` element (exported as `Option`): one selectable choice with a `value` and label children, authored as a direct child of `Select`.",
-    "slug": "components/fields/option",
-    "status": "stable"
-  },
-  {
     "name": "MetroSelect",
     "category": "fields",
-    "summary": "Grid of large tappable tiles (`MetroSelect.Option`) for single or `multiple` selection from a small visual set; controlled by `value` + `onValueChange` with `gap` for tile spacing — use it when options benefit from icons/imagery rather than a compact dropdown.",
+    "summary": "Windows-8-Metro-style grid of flat, sharp-cornered tiles (`MetroSelect.Option`) for single or `multiple` selection; controlled by `value` + `onValueChange`. Tiles snap into a tight grid with a small default gutter, tilt in 3D on press, and accept a per-option `color` + `wide` 2×1 module — use it when options benefit from icons/imagery rather than a compact dropdown.",
     "slug": "components/fields/metroselect",
     "status": "stable"
   },
   {
     "name": "MetroSelect.Option",
     "category": "fields",
-    "summary": "A single tile inside a `MetroSelect`, identified by `value` with icon/label children; author one per choice as a direct `MetroSelect` child — the parent owns selection state.",
+    "summary": "A single flat Metro tile inside a `MetroSelect`, identified by `value` with icon/label children; author one per choice as a direct `MetroSelect` child — the parent owns selection state. Accepts a flat `color` fill and `wide` (2×1) module.",
     "slug": "components/fields/metroselect.option",
     "status": "stable"
   },
   {
     "name": "RadioGroup",
     "category": "fields",
-    "summary": "Single-choice group of `Radio` options with keyboard roving focus; controlled via `value` + `onValueChange` or bound to a `FormControl` by `name`, with `gap` for option spacing (the old `spacing` prop is a deprecated alias).",
+    "summary": "Single-choice group of `Radio` options with keyboard roving focus; controlled via `value` + `onValueChange` or bound to a `FormControl` by `name`, with `gap` for option spacing. Disable the whole group with `disabled` (a FormControl's form-wide `disabled` / name-keyed `errors` also reach it); option colours follow the theme intent contract (consistent with Checkbox).",
     "slug": "components/fields/radiogroup",
     "status": "stable"
   },
@@ -100,30 +93,30 @@
   {
     "name": "Switch",
     "category": "fields",
-    "summary": "Accessible toggle for a single boolean that takes effect immediately; controlled via `checked` + `onValueChange` (the old `onChange` is a deprecated alias) — prefer it over Checkbox for instant on/off settings rather than form submission.",
+    "summary": "Accessible toggle for a single boolean that takes effect immediately; controlled via `checked` + `onValueChange` — prefer it over Checkbox for instant on/off settings rather than form submission.",
     "slug": "components/fields/switch",
     "status": "stable"
   },
   {
     "name": "TextField",
     "category": "fields",
-    "summary": "Single- or multi-line text input with label/helperText/error support; controlled via `value` + `onChange` or auto-bound to a `FormControl` by `name` — the default for free-form text entry.",
+    "summary": "Single- or multi-line text input with `label`/`helperText`/`error`+`errorText`, `size`, and a `width` model; controlled via `value` + `onChange` or auto-bound to a `FormControl` by `name`. Colours follow the theme intent contract (consistent with Button/Checkbox) and it fills its container's width by default. The default for free-form text entry.",
     "slug": "components/fields/textfield",
     "status": "stable"
   },
   {
     "name": "Accordion",
     "category": "layout",
-    "summary": "Vertical stack of collapsible `Accordion.Item` panels with single or `multiple` open behavior and roving-focus ARIA; control which panels are open with `expanded`/`defaultExpanded`/`onExpandedChange` (the `open*` props are deprecated aliases).",
+    "summary": "Vertical stack of collapsible `Accordion.Item` panels with single or `multiple` open behavior and roving-focus ARIA; control which panels are open with `expanded`/`defaultExpanded`/`onExpandedChange`.",
     "slug": "components/layout/accordion",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Accordion.Item",
     "category": "layout",
     "summary": "One collapsible panel inside an `Accordion`, supplying its header and body content; author items as direct `Accordion` children — the parent owns open/closed state, focus, and ARIA wiring.",
     "slug": "components/layout/accordion.item",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "AppBar",
@@ -149,8 +142,15 @@
   {
     "name": "Grid",
     "category": "layout",
-    "summary": "CSS-grid container with `columns` and `gap` for two-dimensional layouts; use it for galleries, dashboards, and card grids — prefer `Stack` when you only need one-directional flow.",
+    "summary": "Two-dimensional CSS-grid container. Lay out equal columns (`columns`, responsive), or an auto-fit/fill card grid with no breakpoints (`minColWidth`), with token-aware `gap`/`gapX`/`gapY`, `align`/`justifyItems`, and `equalize` to fill children to their cell. Responsive props compile to CSS @media (no <Surface>); use `GridItem` for per-cell `span`/`rowSpan`/`colStart`. Prefer `Stack` for one-directional flow and `Table` for data.",
     "slug": "components/layout/grid",
+    "status": "stable"
+  },
+  {
+    "name": "GridItem",
+    "category": "layout",
+    "summary": "Per-cell placement inside a `Grid` — `span` (column span), `rowSpan`, and `colStart`, each responsive (a breakpoint map compiles to CSS @media). Wrap a child in GridItem to make it occupy multiple tracks; bare Grid children remain valid 1×1 cells. Polymorphic via `as`.",
+    "slug": "components/layout/griditem",
     "status": "stable"
   },
   {
@@ -170,15 +170,50 @@
   {
     "name": "Panel",
     "category": "layout",
-    "summary": "Bordered, padded surface card for grouping related content into a visually distinct section; supports `normalizeRowHeights` (the old `normalizeRowHeight` is a deprecated alias) for equal-height children — use it to frame a block, and `Box` for an unstyled container.",
+    "summary": "Bordered, padded surface card for grouping related content into a visually distinct section; supports `normalizeRowHeights` for equal-height children — use it to frame a block, and `Box` for an unstyled container.",
     "slug": "components/layout/panel",
     "status": "stable"
   },
   {
     "name": "Stack",
     "category": "layout",
-    "summary": "Flexbox container that lays children out in one `direction` (column/row) with consistent `gap`; the default choice for vertical or horizontal flow — use `Grid` for two-dimensional layouts.",
+    "summary": "Flexbox container that lays children out in one `direction` (column/row) with consistent `gap`, token-aware `align`/`justify`, per-axis `gapX`/`gapY`, a `divider`, and responsive (breakpoint-map) props that compile to CSS @media — no <Surface> needed. The default choice for one-dimensional flow; use `Grid` for two-dimensional layouts. Sugar: `HStack`, `VStack`, `Center`, `Cluster`, `Spacer`.",
     "slug": "components/layout/stack",
+    "status": "stable"
+  },
+  {
+    "name": "HStack",
+    "category": "layout",
+    "summary": "Horizontal `Stack` (`direction='row'`) that centers its children on the cross axis by default — the zero-config shape for rows of avatars, buttons, icons, and labels. Accepts every Stack prop except `direction`; use `<Spacer/>` or `justify` to distribute, `gap` for spacing.",
+    "slug": "components/layout/hstack",
+    "status": "stable"
+  },
+  {
+    "name": "VStack",
+    "category": "layout",
+    "summary": "Vertical `Stack` (`direction='column'`) — an explicit, readable alias for the most common column flow. Accepts every Stack prop except `direction`; children stretch on the cross axis by default.",
+    "slug": "components/layout/vstack",
+    "status": "stable"
+  },
+  {
+    "name": "Center",
+    "category": "layout",
+    "summary": "A `Stack` that centers its children on BOTH axes (`align='center'` + `justify='center'`) — the one-shot answer to \"center this in its space\". Both defaults are overridable; set `direction='row'` to center a row instead of a column.",
+    "slug": "components/layout/center",
+    "status": "stable"
+  },
+  {
+    "name": "Cluster",
+    "category": "layout",
+    "summary": "A wrapping horizontal `Stack` (`direction='row'`, `wrap`, cross-axis centered) for variable-length groups that should flow onto multiple lines — tag lists, chip sets, filter pills, button bars. Accepts every Stack prop except `direction`.",
+    "slug": "components/layout/cluster",
+    "status": "stable"
+  },
+  {
+    "name": "Spacer",
+    "category": "layout",
+    "summary": "A flexible, `aria-hidden` filler that absorbs free space inside a `Stack` (any direction), pushing siblings apart — the typed replacement for `sx={{ flexGrow: 1 }}` / margin-auto hacks in toolbars and bars. `grow` sets how much space it takes (default 1).",
+    "slug": "components/layout/spacer",
     "status": "stable"
   },
   {
@@ -249,13 +284,6 @@
     "category": "primitives",
     "summary": "Circular progress indicator; pass a 0–100 `value` for determinate progress or omit it for an indeterminate spinner, with an optional `label` in the center — the preferred primitive for compact, radial loading states.",
     "slug": "components/primitives/progressring",
-    "status": "stable"
-  },
-  {
-    "name": "Progress",
-    "category": "primitives",
-    "summary": "Back-compat progress indicator that switches between bar and ring via `variant`; prefer the dedicated `ProgressBar` or `ProgressRing` primitives directly for new code, and omit `value` for an indeterminate (unknown-duration) loading state.",
-    "slug": "components/primitives/progress",
     "status": "stable"
   },
   {
@@ -331,7 +359,7 @@
   {
     "name": "Pagination",
     "category": "widgets",
-    "summary": "Tab-style page navigator with an elastic active-page underline; controlled by `count` + `page` + `onPageChange` (the old `onChange` is a deprecated alias) — use it to page through large lists or tables.",
+    "summary": "Tab-style page navigator with an elastic active-page underline; controlled by `count` + `page` + `onPageChange` — use it to page through large lists or tables.",
     "slug": "components/widgets/pagination",
     "status": "stable"
   },
@@ -340,21 +368,21 @@
     "category": "widgets",
     "summary": "Scroll-tracking container that provides parallax context to its `ParallaxLayer`/`ParallaxBackground` children; wrap a section in it (optionally `trackX` for horizontal) to drive depth effects — the motion auto-disables under reduced-motion.",
     "slug": "components/widgets/parallaxscroll",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "ParallaxLayer",
     "category": "widgets",
     "summary": "A child layer inside a `ParallaxScroll` that moves at a fractional `speed` (1 = native, <1 slower, >1 faster) along `axis`; stack several at different speeds for depth — displacement neutralizes under reduced-motion.",
     "slug": "components/widgets/parallaxlayer",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "ParallaxBackground",
     "category": "widgets",
     "summary": "Full-bleed background layer that drifts on scroll for a depth effect; place it inside a `ParallaxScroll` as the backmost layer, and honor reduced-motion (the effect auto-disables) — experimental decorative widget.",
     "slug": "components/widgets/parallaxbackground",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "RichChat",
@@ -366,7 +394,7 @@
   {
     "name": "Snackbar",
     "category": "widgets",
-    "summary": "Transient toast notification (role='status') that fades in and auto-dismisses, pausing its timer on hover/focus; control with `open`/`message`/`autoHideDuration` — use it for brief, non-blocking feedback.",
+    "summary": "Transient toast notification (role='status') that fades in and auto-dismisses, pausing its timer on hover/focus; control with `open`/`message`/`autoHideDuration`, and pick a `variant` (`outline` default or solid `filled`) — use it for brief, non-blocking feedback.",
     "slug": "components/widgets/snackbar",
     "status": "stable"
   },
@@ -380,9 +408,9 @@
   {
     "name": "Table",
     "category": "widgets",
-    "summary": "Data table with sortable columns, smart height/auto-pagination, and unified `selectionMode` (`'none'|'single'|'multiple'`) keyed by `getItemKey` for selection that survives data refreshes (the `selectable`/`rowKey` props are deprecated aliases); use it for tabular data with columns.",
+    "summary": "Data table with sortable columns, smart height/auto-pagination, and unified `selectionMode` (`'none'|'single'|'multiple'`) keyed by `getItemKey` for selection that survives data refreshes; supports controlled or uncontrolled selection (`selected`/`defaultSelected`/`onSelectionChange`, row arrays). Use it for tabular data with columns.",
     "slug": "components/widgets/table",
-    "status": "experimental"
+    "status": "stable"
   },
   {
     "name": "Tooltip",
@@ -394,7 +422,7 @@
   {
     "name": "Tree",
     "category": "widgets",
-    "summary": "Accessible expand/collapse tree over a `nodes` hierarchy (label via `getLabel`), with `expanded`/`onExpandedChange` for disclosure and `selectionMode='single'` selecting by node id; use it for nested data like file trees and outlines — reach for `List` when items are flat.",
+    "summary": "Accessible WAI-ARIA tree over a `nodes` hierarchy (label via `getLabel`): `expanded`/`onExpandedChange` for disclosure and the canonical `selectionMode` + `selected`/`onSelectionChange` (id arrays) for `none`/`single`/`multiple` selection. Use it for nested data like file trees and outlines — reach for `List` when items are flat.",
     "slug": "components/widgets/tree",
     "status": "stable"
   },
