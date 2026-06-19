@@ -7,7 +7,7 @@
     "roles": ["button"],
     "aria": ["aria-labelledby", "aria-describedby", "aria-live"],
     "keyboard": ["Tab focuses the zone", "Enter/Space opens the file picker"],
-    "notes": "Announces drag state and rejection errors via polite live region; visible instructions are referenced by aria-labelledby."
+    "notes": "Drag state updates the visible instructions (referenced by aria-labelledby) and the drop target's chrome (a dashed outline turns solid/intent-tinted); it is NOT announced via a live region. Rejection errors ARE announced via a polite live region (mounted while rejections exist). Accepted file add/remove is not yet announced to screen readers. The focusable drop target shows a themed focus-visible ring; `drag-active` is also exposed as a public className styling hook."
   },
   "docs": {
     "bestPractices": [

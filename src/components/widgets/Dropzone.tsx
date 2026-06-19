@@ -9,12 +9,14 @@ import {
   type FileRejection,
   type DropEvent,
 } from 'react-dropzone';
-import Panel from '../layout/Panel';
 import Grid from '../layout/Grid';
 import Stack from '../layout/Stack';
 import Icon from '../primitives/Icon';
 import { ProgressRing } from '../primitives/Progress';
+import { styled } from '../../css/createStyled';
 import { useTheme } from '../../system/themeStore';
+import { makeMix } from '../../system/intentVars';
+import { useCompact } from '../../system/compactContext';
 import { preset } from '../../css/stylePresets';
 import { useComponentStrings } from '../../system/locale';
 import type { DeepPartialStrings, ValetStrings } from '../../system/locale';
@@ -58,6 +60,70 @@ export interface DropzoneProps
   /** Inline styles (with CSS var support) */
   sx?: Sx;
 }
+
+/*───────────────────────────────────────────────────────────*/
+/* Styled primitives                                          */
+
+/* The interactive drop target. Colours arrive as inline --valet-dz-* CSS vars
+   (so the rule text stays static — no per-value class minting) and flip on
+   drag-over: a dashed idle outline becomes a solid, intent-tinted "drop-armed"
+   surface. Keyboard focus gets a themed ring; the mobile chrome kit suppresses
+   the tap-highlight / long-press callout. Previews/errors render OUTSIDE this
+   element so the whole-area click target only ever opens the picker. */
+const DropArea = styled('div')`
+  box-sizing: border-box;
+  width: 100%;
+  text-align: center;
+  cursor: pointer;
+  border-width: var(--valet-dz-stroke, 2px);
+  border-style: var(--valet-dz-border-style, dashed);
+  border-color: var(--valet-dz-border);
+  border-radius: var(--valet-dz-radius, 10px);
+  background: var(--valet-dz-bg);
+  padding: var(--valet-dz-pad, 1rem);
+  transition:
+    border-color 150ms ease,
+    background 150ms ease;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  &:focus-visible {
+    outline: var(--valet-focus-width, 2px) solid var(--valet-dz-focus, currentColor);
+    outline-offset: 2px;
+  }
+`;
+
+/* Per-file remove control. Appearance (position/background) is supplied inline
+   per usage; the shared chrome here is the focus ring, the tap-highlight reset,
+   and a coarse-pointer >=44px invisible hit-expander (24px under compact) so the
+   small glyph is comfortably tappable on touch. */
+const RemoveButton = styled('button')`
+  position: relative;
+  appearance: none;
+  -webkit-appearance: none;
+  font: inherit;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 4px;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  &:focus-visible {
+    outline: var(--valet-focus-width, 2px) solid var(--valet-dz-focus, currentColor);
+    outline-offset: 2px;
+  }
+  @media (pointer: coarse) {
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      width: var(--valet-dz-rm-hit, 44px);
+      height: var(--valet-dz-rm-hit, 44px);
+    }
+  }
+`;
 
 /*───────────────────────────────────────────────────────────*/
 const iconMap: Record<string, string> = {
@@ -119,6 +185,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
   const [files, setFiles] = useState<File[]>([]);
   const [rejections, setRejections] = useState<FileRejection[]>([]);
   const { theme } = useTheme();
+  const effCompact = useCompact();
   const t = useComponentStrings('dropzone', labels);
   const previewsRef = useRef<Map<File, string>>(new Map());
   const [loaded, setLoaded] = useState<Set<File>>(() => new Set());
@@ -185,6 +252,18 @@ export const Dropzone: React.FC<DropzoneProps> = ({
   });
   const presetCls = p ? preset(p) : '';
 
+  // Remove helper — pure: no callbacks or side effects inside the state
+  // updater (StrictMode double-invokes updaters); URL revocation is owned
+  // by the object-URL effect above, keyed on `files`.
+  const removeAt = useCallback(
+    (idx: number) => {
+      const next = files.filter((_, i) => i !== idx);
+      setFiles(next);
+      onFilesChange?.(next);
+    },
+    [files, onFilesChange],
+  );
+
   const previews = showPreviews && files.length > 0 && (
     <Grid
       columns={4}
@@ -220,6 +299,8 @@ export const Dropzone: React.FC<DropzoneProps> = ({
                 onError={() => setLoaded((prev) => (prev.has(f) ? prev : new Set(prev).add(f)))}
               />
               {!loaded.has(f) && (
+                /* Spinner-centering overlay; the loading tint comes from the
+                   tile's own backgroundAlt fill (no hardcoded gradient). */
                 <div
                   aria-hidden
                   style={{
@@ -227,7 +308,6 @@ export const Dropzone: React.FC<DropzoneProps> = ({
                     inset: 0,
                     display: 'grid',
                     placeItems: 'center',
-                    background: 'linear-gradient(180deg, #00000010, #00000022)',
                   }}
                 >
                   <ProgressRing size={40} />
@@ -264,7 +344,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
               </Stack>
             </div>
           )}
-          <button
+          <RemoveButton
             type='button'
             onClick={(e) => {
               e.preventDefault();
@@ -279,15 +359,13 @@ export const Dropzone: React.FC<DropzoneProps> = ({
               insetInlineEnd: 4,
               background: theme.colors.backgroundAlt,
               color: theme.colors.text,
-              border: `${theme.stroke(1)} solid ${theme.colors.text}33`,
-              borderRadius: 4,
-              cursor: 'pointer',
+              border: `${theme.stroke(1)} solid ${theme.colors.divider}`,
               padding: '2px 6px',
               fontSize: '0.75rem',
             }}
           >
             ×
-          </button>
+          </RemoveButton>
         </div>
       ))}
     </Grid>
@@ -312,7 +390,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
           >
             {f.name}
           </span>
-          <button
+          <RemoveButton
             type='button'
             onClick={(e) => {
               e.preventDefault();
@@ -325,27 +403,14 @@ export const Dropzone: React.FC<DropzoneProps> = ({
               background: 'transparent',
               color: theme.colors.text,
               border: 'none',
-              cursor: 'pointer',
               padding: '2px 4px',
             }}
           >
             {t.remove}
-          </button>
+          </RemoveButton>
         </Stack>
       ))}
     </Stack>
-  );
-
-  // Remove helper — pure: no callbacks or side effects inside the state
-  // updater (StrictMode double-invokes updaters); URL revocation is owned
-  // by the object-URL effect above, keyed on `files`.
-  const removeAt = useCallback(
-    (idx: number) => {
-      const next = files.filter((_, i) => i !== idx);
-      setFiles(next);
-      onFilesChange?.(next);
-    },
-    [files, onFilesChange],
   );
 
   // Helpers for instructions / a11y
@@ -369,7 +434,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
   // Pull out dropzone's ref so we can forward a typed ref without `any`
   const { ref: dropzoneRef, ...rootProps } = getRootProps();
 
-  const setPanelRef: React.RefCallback<HTMLDivElement> = (node) => {
+  const setRootRef: React.RefCallback<HTMLDivElement> = (node) => {
     if (!dropzoneRef) return;
     if (typeof dropzoneRef === 'function') {
       // react-dropzone expects to receive the root element
@@ -383,43 +448,69 @@ export const Dropzone: React.FC<DropzoneProps> = ({
   const instructionId = React.useId();
   const errorsId = React.useId();
 
+  // Drop-armed vs idle chrome, delivered as inline CSS vars (cardinality-safe,
+  // makeMix is parse-safe for non-hex theme colours).
+  const dropAreaVars: Record<string, string> = {
+    '--valet-dz-border': isDragActive
+      ? theme.colors.primary
+      : (theme.colors.divider ?? theme.colors.backgroundAlt),
+    '--valet-dz-bg': isDragActive
+      ? makeMix(theme.colors.primary, theme.colors.background, 0.1)
+      : 'transparent',
+    '--valet-dz-border-style': isDragActive ? 'solid' : 'dashed',
+    '--valet-dz-stroke': theme.stroke(2),
+    '--valet-dz-pad': theme.spacing(2),
+  };
+
   return (
-    <Panel
+    <div
       {...rest}
-      {...rootProps}
       data-valet-component='Dropzone'
-      ref={setPanelRef}
-      variant='outlined'
-      fullWidth={fullWidth}
-      role='button'
-      aria-labelledby={instructionId}
-      aria-describedby={rejections.length ? errorsId : undefined}
-      sx={{
-        width: fullWidth ? `calc(100% - ${theme.spacing(1)} * 2)` : undefined,
-        textAlign: 'center',
-        cursor: 'pointer',
-        ...sx,
-      }}
-      className={[presetCls, className, isDragActive ? 'drag-active' : '']
-        .filter(Boolean)
-        .join(' ')}
+      className={[presetCls, className].filter(Boolean).join(' ') || undefined}
+      style={
+        {
+          display: fullWidth ? 'block' : 'inline-block',
+          width: fullWidth ? '100%' : undefined,
+          // Shared hooks for the drop target + remove buttons.
+          '--valet-dz-focus': theme.colors.primary,
+          '--valet-dz-rm-hit': effCompact ? '24px' : '44px',
+          ...(sx as object),
+        } as React.CSSProperties
+      }
     >
-      <input {...getInputProps()} />
-      <Icon
-        icon='mdi:cloud-upload'
-        size='lg'
-      />
-      <div id={instructionId}>
-        {instr}
-        {(acceptHint || sizeHint) && (
-          <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>
-            {acceptHint && <span>Accepted: {acceptHint}</span>}
-            {acceptHint && sizeHint && <span> • </span>}
-            {sizeHint && <span>{sizeHint}</span>}
-          </div>
-        )}
-      </div>
+      {/* Interactive drop target — only the picker affordance lives here. */}
+      <DropArea
+        {...rootProps}
+        ref={setRootRef}
+        role='button'
+        aria-labelledby={instructionId}
+        aria-describedby={rejections.length ? errorsId : undefined}
+        /* `drag-active` stays a documented styling hook; the visible drag
+           feedback itself comes from the --valet-dz-* vars below. */
+        className={isDragActive ? 'drag-active' : undefined}
+        style={dropAreaVars as React.CSSProperties}
+      >
+        <input {...getInputProps()} />
+        <Icon
+          icon='mdi:cloud-upload'
+          size='lg'
+        />
+        <div id={instructionId}>
+          {instr}
+          {(acceptHint || sizeHint) && (
+            <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>
+              {acceptHint && <span>Accepted: {acceptHint}</span>}
+              {acceptHint && sizeHint && <span> • </span>}
+              {sizeHint && <span>{sizeHint}</span>}
+            </div>
+          )}
+        </div>
+      </DropArea>
+
+      {/* Previews / file list render OUTSIDE the drop target so clicking a
+          thumbnail (or its remove button) never re-opens the file picker. */}
       {previews || fileList}
+
       {rejections.length > 0 && (
         <div
           id={errorsId}
@@ -436,7 +527,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
           ))}
         </div>
       )}
-    </Panel>
+    </div>
   );
 };
 
