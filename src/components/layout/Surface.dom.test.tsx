@@ -18,6 +18,7 @@ import { styled } from '../../css/createStyled';
 import { SurfaceCtx, type SurfaceStore } from '../../system/surfaceStore';
 import { useFonts } from '../../system/fontStore';
 import { ValetLocaleProvider } from '../../system/locale';
+import { useCompact } from '../../system/compactContext';
 
 /* react-dom warns unless act usage is announced ----------------------- */
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -433,5 +434,60 @@ describe('Surface dir attribute (A11Y S12)', () => {
       </ValetLocaleProvider>,
     );
     expect(surfaceRoot(container).getAttribute('dir')).toBe('ltr');
+  });
+});
+
+/* ROUTE PADDING — Surface no longer insets route content -----------------
+   The inner child wrapper uses `padding: 0` regardless of `compact`, so a
+   route with a full-bleed background reaches the viewport edges instead of
+   sitting inside a theme.spacing(1) gutter. `compact` is unchanged: it still
+   cascades a zeroed-spacing context to descendants via CompactCtx; it simply
+   no longer governs the Surface's own (now always-zero) wrapper padding.
+   `innerWrapper` (defined above) resolves the wrapper via
+   '[data-valet-surface-root] > div:last-child'. */
+const CompactProbe: React.FC = () => {
+  const compact = useCompact();
+  return (
+    <span
+      data-testid='compact-probe'
+      data-compact={compact ? '1' : '0'}
+    />
+  );
+};
+const readCompact = (c: HTMLElement) =>
+  c.querySelector('[data-testid="compact-probe"]')?.getAttribute('data-compact');
+
+describe('Surface route padding (no default gutter)', () => {
+  it('does not inset children in the default (non-compact) mode', () => {
+    const { container } = renderStrict(<Surface>hi</Surface>);
+    const pad = innerWrapper(container).style.padding;
+    /* Pre-change this was `calc(var(--valet-space,…) * 1)`; the gutter is gone. */
+    expect(pad).not.toMatch(/calc/);
+    expect(['0px', '0', '']).toContain(pad);
+  });
+
+  it('uses the same zero wrapper padding in compact mode (no gutter either way)', () => {
+    const { container } = renderStrict(<Surface compact>hi</Surface>);
+    const pad = innerWrapper(container).style.padding;
+    expect(pad).not.toMatch(/calc/);
+    expect(['0px', '0', '']).toContain(pad);
+  });
+
+  it('still cascades compact to descendants', () => {
+    const { container } = renderStrict(
+      <Surface compact>
+        <CompactProbe />
+      </Surface>,
+    );
+    expect(readCompact(container)).toBe('1');
+  });
+
+  it('leaves descendants non-compact by default', () => {
+    const { container } = renderStrict(
+      <Surface>
+        <CompactProbe />
+      </Surface>,
+    );
+    expect(readCompact(container)).toBe('0');
   });
 });

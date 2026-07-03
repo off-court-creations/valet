@@ -243,8 +243,6 @@ export const Surface: React.FC<SurfaceProps> = ({
         overflow: 'auto',
       };
 
-  const gap = theme.spacing(1);
-
   /* compact cascade seed (independent of density) ---------------------- */
   const effectiveCompact = useCompact(compactAlias);
 
@@ -291,14 +289,19 @@ export const Surface: React.FC<SurfaceProps> = ({
             showSpinner={showSpinner}
           />
         )}
-        {/* Inner wrapper gains padding but NO scrollbars. `blocking` (not raw
-            blockUntilFonts) drives visibility so the never-started grace can
-            reveal content even when fonts never load. */}
+        {/* Inner wrapper: NO padding and NO scrollbars. Surface establishes
+            route context (theme, density, dir, sizing) but never insets its own
+            content, so a full-bleed background reaches the viewport edges. Route
+            spacing is the page's job (Box/Panel/Stack/sx), not the Surface's.
+            `blocking` (not raw blockUntilFonts) drives visibility so the
+            never-started grace can reveal content even when fonts never load.
+            `compact` still cascades to descendants via CompactCtx below — it
+            just no longer gutters the route itself. */}
         <CompactCtx.Provider value={effectiveCompact}>
           <div
             style={{
               visibility: blocking ? 'hidden' : 'visible',
-              padding: effectiveCompact ? '0' : gap,
+              padding: 0,
               maxWidth: '100%',
               maxHeight: '100%',
               boxSizing: 'border-box',

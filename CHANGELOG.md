@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.38.0] — 2026-07-02
+
+### Changed
+
+- **Surface (route padding removed):** `<Surface>` no longer wraps route content in a default `theme.spacing(1)` gutter — the inner content wrapper now uses `padding: 0` in every mode. Routes reach the viewport edges by default, so a full-bleed background no longer needs the `Surface compact` + `Box compact={false}` workaround. Page-level insets are now the page's responsibility (`Box`/`Panel`/`Stack`/`sx`). The `compact` prop is **unchanged** — it still cascades a zeroed-spacing context to descendants (and `compact={false}` opts a subtree back out); it simply no longer governs the Surface's own (now always-zero) wrapper padding. **Migration:** if a route relied on the implicit gutter, wrap its content in `<Box pad={1}>` (or set `sx={{ padding: … }}`).
+
 ## [0.37.0] - 2026-06-19
 
 > **Pre-1.0 dogfood minor (epic branch `feat/valet-1.0`).** Ships the full 1.0-prep
