@@ -1,10 +1,5 @@
 export type DocPageType =
-  | "landing"
-  | "guide"
-  | "concept"
-  | "tutorial"
-  | "reference"
-  | "recipe";
+  "landing" | "guide" | "concept" | "tutorial" | "reference" | "recipe";
 
 export interface DocMeta {
   id: string;

@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 Unreleased
 
+0.38.0
+- Align: target Valet and MCP 0.38.x; generated apps depend on `@archway/valet@^0.38.0`.
+- Fixed: reformatted the `DocPageType` union in the `ts` and `hybrid` template `src/types.ts` so freshly scaffolded apps pass their own Prettier lint out of the box (Prettier 3.9.x collapsed the multi-line union; the templates were left multi-line and failed `cva:validate`).
+
 0.37.0
 - Align: target Valet and MCP 0.37.x; generated apps depend on `@archway/valet@^0.37.0`.
 - Changed (consent): The global MCP server install (`npm i -g @archway/valet-mcp`) and the `~/.codex/config.toml` edit now require explicit consent. Interactive runs get a yes-default prompt before the install/config edit. Non-interactive runs (CI, no TTY, or `CVA_NONINTERACTIVE=1`) skip both by default and print a manual-setup tip. Opt back in with the new `--global-mcp` flag or `CVA_GLOBAL_MCP=1`; `--no-global-mcp` forces a skip; `CVA_SKIP_GLOBAL_MCP=1` remains a hard opt-out that wins over everything. (valet overhaul SECURITY S8)
