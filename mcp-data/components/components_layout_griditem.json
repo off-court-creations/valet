@@ -84,6 +84,6 @@
   "sourceFiles": [
     "src/components/layout/Grid.tsx"
   ],
-  "version": "0.38.0",
+  "version": "0.39.0",
   "schemaVersion": "1.7"
 }

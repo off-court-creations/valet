@@ -1,12 +1,12 @@
 // ─────────────────────────────────────────────────────────────
 // src/system/inheritSurfaceFontVars.ts  | valet
-// mirror Surface font/typography CSS variables into a portal root
+// mirror Surface presentation CSS variables into a portal root
 // ─────────────────────────────────────────────────────────────
 
 /**
- * Copies typography-related CSS variables from a source element (typically a
- * Surface root) onto a target root (e.g., a portal container) to ensure
- * portalled content inherits matching font stacks and text metrics.
+ * Copies inherited presentation CSS variables from a source element (typically
+ * a Surface root) onto a target root (e.g., a portal container) so portalled
+ * content keeps matching typography, layout, and focus-ring tokens.
  */
 export function inheritSurfaceFontVars(target: HTMLElement, source?: HTMLElement | null) {
   const src = source ?? document.querySelector('[data-valet-surface-root]') ?? document.body;
@@ -23,6 +23,9 @@ export function inheritSurfaceFontVars(target: HTMLElement, source?: HTMLElement
     '--valet-space',
     '--valet-radius',
     '--valet-stroke',
+    '--valet-focus-width',
+    '--valet-focus-offset',
+    '--valet-focus-ring-color',
     '--valet-font-weight',
     '--valet-font-tracking',
     '--valet-font-leading',

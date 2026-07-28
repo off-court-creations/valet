@@ -4,6 +4,11 @@ All notable changes to this project are documented here.
 
 Unreleased
 
+0.39.0
+- Align: target Valet and MCP 0.39.x; generated apps depend on `@archway/valet@^0.39.0`.
+- Security: generated browser-router apps use React Router 7.18.x, including all current client-router fixes; the reported remaining advisory is limited to unstable RSC APIs that these templates do not use.
+- Runtime: require Node 20+, matching the generated React Router/Vite toolchain and valet's supported development floor.
+
 0.38.0
 - Align: target Valet and MCP 0.38.x; generated apps depend on `@archway/valet@^0.38.0`.
 - Fixed: reformatted the `DocPageType` union in the `ts` and `hybrid` template `src/types.ts` so freshly scaffolded apps pass their own Prettier lint out of the box (Prettier 3.9.x collapsed the multi-line union; the templates were left multi-line and failed `cva:validate`).

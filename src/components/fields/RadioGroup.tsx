@@ -42,6 +42,7 @@ import type { FieldBaseProps, Presettable, Space, Sx } from '../../types';
 import type { ChangeInfo, InputSource, OnValueChange, OnValueCommit } from '../../system/events';
 import { valetError } from '../../system/devErrors';
 import { useFieldState } from '../../hooks/useControlledState';
+import { NAVIGATION_FOCUS_MATCH } from '../../system/navigationFocus';
 
 /*───────────────────────────────────────────────────────────*/
 /* Context                                                   */
@@ -147,7 +148,8 @@ const OptionLabel = styled('label')<{
   }
 
   /* Focus ring on the visual indicator when the hidden input is focused */
-  & input[type='radio']:focus-visible + [data-indicator] {
+  & input[type='radio']:focus-visible + [data-indicator],
+  & input[type='radio']${NAVIGATION_FOCUS_MATCH} + [data-indicator] {
     outline: ${({ theme }) => theme.stroke(2)} solid var(--valet-intent-focus);
     outline-offset: ${({ theme }) => theme.stroke(1)};
   }

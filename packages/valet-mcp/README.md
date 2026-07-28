@@ -10,9 +10,10 @@
 
 </div>
 
-MCP server for valet. It serves machine‑readable metadata for every valet component (props, types, CSS vars, examples, best practices) so agents and tools can search, inspect, and generate correct UI code.
+MCP server for valet. It serves machine‑readable metadata for every valet component (props, types, CSS vars, examples, best practices) so agents and tools can search, inspect, and generate correct UI code. It also exposes a packaged directional-navigation workflow.
 
 - Bundled data by default. Override to use fresh local `mcp-data/`.
+- 15 introspection tools plus the `valet__build_directional_navigation` MCP prompt.
 
 ---
 
@@ -33,9 +34,15 @@ args = []
 
 Data source (dev): set `VALET_MCP_DATA_DIR` to an absolute path to your `mcp-data/`; otherwise the server uses the bundled snapshot. See the docs for details.
 
-Docs: MCP & Introspection guide lives in `docs/src/pages/getting-started/MCP.tsx` and the live docs site. It covers tools, examples, best practices, and advanced flows.
+### Directional-navigation workflow
 
-Requirements: Node 18+ (20+ recommended). Communicates over stdio.
+MCP clients that support prompts can invoke `valet__build_directional_navigation`. The same canonical guidance is readable at `mcp://valet/skill/valet-directional-navigation`, and ships in the package at `skills/valet-directional-navigation/SKILL.md`.
+
+Registering the MCP server does not by itself install that file into a host's skill search path. The prompt and resource are the portable MCP surfaces; copy or install the packaged skill explicitly when a host supports filesystem skills.
+
+Docs: MCP & Introspection guide lives in `docs/src/pages/getting-started/MCP.tsx` and the live docs site. It covers tools, the workflow prompt, examples, best practices, and advanced flows.
+
+Requirements: Node 20+. Communicates over stdio.
 
 Troubleshooting: re‑run the selfcheck with `MCP_SELFCHECK=1 valet-mcp` — the component data ships bundled with the package, so there is no regeneration step. Note: the `validate_jsx` tool additionally needs `@archway/valet` installed alongside the server (it type‑checks snippets against valet's shipped types); every other tool works from the bundled snapshot.
 

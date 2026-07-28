@@ -99,6 +99,10 @@ const treeData: TreeNode<Item>[] = [
       },
       { id: '/mcp', data: { label: 'MCP & Introspection', path: '/mcp' } },
       { id: '/events', data: { label: 'Events & Commits', path: '/events' } },
+      {
+        id: '/directional-navigation',
+        data: { label: 'Directional Navigation', path: '/directional-navigation' },
+      },
       { id: '/glossary', data: { label: 'Glossary', path: '/glossary' } },
       { id: '/component-status', data: { label: 'Component Status', path: '/component-status' } },
       { id: '/rtl-status', data: { label: 'RTL Status', path: '/rtl-status' } },

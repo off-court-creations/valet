@@ -40,6 +40,7 @@ import { warnOnce } from '../../system/devErrors';
 import type { FieldBaseProps, Presettable, Sx } from '../../types';
 import type { ChangeInfo, InputSource, OnValueChange, OnValueCommit } from '../../system/events';
 import type { Theme } from '../../system/themeStore';
+import { NAVIGATION_FOCUS_SELECTOR } from '../../system/navigationFocus';
 
 type Primitive = string | number;
 
@@ -140,7 +141,8 @@ const Trigger = styled('button')<{
   &:hover:not([disabled]) {
     border-color: ${({ $primary }) => $primary};
   }
-  &:focus-visible {
+  &:focus-visible,
+  ${NAVIGATION_FOCUS_SELECTOR} {
     outline: ${({ $outlineW }) => $outlineW} solid ${({ $primary }) => $primary};
     outline-offset: ${({ $outlineOffset }) => $outlineOffset};
   }

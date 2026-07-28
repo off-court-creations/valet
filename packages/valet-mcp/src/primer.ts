@@ -31,6 +31,7 @@ Tip: Prefer exact component names. If unsure, try synonyms in \`search_component
 - Presets: Define styles via \`definePreset()\` and use the \`preset\` prop for reuse and theme cohesion.
 - Theme: Initialize once with \`useInitialTheme({ fonts }, [fontList])\`. Read/write via \`useTheme()\`; avoid hard-coded colors.
 - Accessibility: Use provided components over raw HTML to get roles, labels, and keyboard behavior.
+- Directional navigation: Map hardware in application adapters, then call \`useDirectionalNavigation\` with an explicit DOM scope. valet moves real focus and activates eligible controls; gamepad, remote, and rotary mappings stay outside the library.
 - Height-first tables: Tables constrain content height by default; set \`constrainHeight={false}\` to opt out.
 
 ## Agent Strategy for Excellence

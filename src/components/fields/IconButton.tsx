@@ -14,6 +14,7 @@ import {
   type PolymorphicRef,
 } from '../../system/polymorphic';
 import { computeIntentVars } from '../../system/intentVars';
+import { NAVIGATION_FOCUS_SELECTOR } from '../../system/navigationFocus';
 
 /*───────────────────────────────────────────────────────────*/
 /* Public API                                                */
@@ -113,7 +114,11 @@ const Skin = styled('button')<{
   }
 
   /* Keyboard focus should mirror hover visuals for discoverability */
-  &:focus-visible:not(:disabled) {
+  &:focus-visible:not(:disabled),
+  ${NAVIGATION_FOCUS_SELECTOR}:not(:disabled) {
+    outline: var(--valet-focus-width, 2px) solid
+      var(--valet-focus-ring-color, var(--valet-intent-focus, currentColor));
+    outline-offset: var(--valet-focus-offset, 2px);
     ${({ $variant, $bg, $btnText }) =>
       $variant === 'filled'
         ? 'filter: brightness(1.25);'

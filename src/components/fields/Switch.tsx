@@ -13,6 +13,7 @@ import { useFormConfig } from './FormControl';
 import { warnOnce } from '../../system/devErrors';
 import type { FieldBaseProps } from '../../types';
 import type { ChangeInfo, InputSource, OnValueChange, OnValueCommit } from '../../system/events';
+import { NAVIGATION_FOCUS_SELECTOR } from '../../system/navigationFocus';
 
 /*───────────────────────────────────────────────────────────*/
 /* ChangeInfo.source classification (ruling R10)             */
@@ -98,7 +99,8 @@ const Track = styled('button')<{
     }
   }
 
-  &:focus-visible {
+  &:focus-visible,
+  ${NAVIGATION_FOCUS_SELECTOR} {
     outline: var(--valet-switch-outline, 2px) solid ${({ $primary }) => $primary};
     outline-offset: var(--valet-switch-offset, 2px);
   }

@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+## [0.39.0] — 2026-07-27
+
+### Added
+
+- Directional navigation: `useDirectionalNavigation` and the framework-neutral `createDirectionalNavigation` controller move real DOM focus within an explicit scope for `up`, `down`, `left`, `right`, `next`, and `previous` intents, expose boolean handled results for application fallbacks, and activate the focused eligible control through its native `.click()` behavior. Physical-device polling, mappings, thresholds, and repeat timing remain application-owned.
+- MCP guidance: `@archway/valet-mcp` now ships the canonical `valet-directional-navigation` skill and exposes it through the `valet__build_directional_navigation` MCP prompt and `mcp://valet/skill/valet-directional-navigation` resource. MCP registration alone does not imply host filesystem-skill installation.
+
+### Fixed
+
+- Accessibility: `Button` and `IconButton` now render a consistent `:focus-visible` outline using the shared `--valet-focus-width`, `--valet-focus-offset`, and `--valet-focus-ring-color` tokens, with the component intent focus colour as the standalone fallback.
+- Accessibility: valet focusable controls now mirror their existing keyboard focus visuals for device-neutral directional navigation, including visual input proxies and portalled content, while marker ownership and modality cleanup leave legitimate browser focus intact.
+- Release tooling: synchronized create-valet-app releases now validate all scaffolds against the local packed valet tarball before that version exists on npm, fail immediately on dependency-install errors, and verify the file-linked docs lockfile snapshot matches the release version.
+- Dependency security: the MCP SDK baseline now includes the patched Hono adapter range, PostCSS and js-yaml tooling locks include their current security fixes, and browser-only docs/scaffolds use React Router 7.18.x with all current client-router fixes. The remaining upstream router advisory applies only to unstable RSC APIs that valet's docs and templates do not use. The MCP server and scaffolder now require Node 20+, matching their effective dependency floor.
+
 ## [0.38.0] — 2026-07-02
 
 ### Changed

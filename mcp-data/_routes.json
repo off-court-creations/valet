@@ -15,6 +15,7 @@
     "/component-status": "docs/src/pages/getting-started/ComponentStatus.tsx",
     "/dashboard-demo": "docs/src/pages/examples/ComplicatedDashboard.tsx",
     "/dateselector-demo": "docs/src/pages/components/field/DateSelectorDemo.tsx",
+    "/directional-navigation": "docs/src/pages/concepts/DirectionalNavigation.tsx",
     "/divider-demo": "docs/src/pages/components/primitives/DividerDemo.tsx",
     "/drawer-demo": "docs/src/pages/components/layout/DrawerDemo.tsx",
     "/dropzone-demo": "docs/src/pages/components/widgets/DropzoneDemo.tsx",

@@ -26,6 +26,7 @@ import { FormControl } from './FormControl';
 import { createFormStore } from '../../system/createFormStore';
 import { resetWarnOnce } from '../../system/devErrors';
 import type { ChangeInfo } from '../../system/events';
+import { getGlobalSheet } from '../../css/sheet';
 
 /* react-dom warns unless act usage is announced ----------------------- */
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -52,6 +53,19 @@ const radios = (c: HTMLElement) =>
   Array.from(c.querySelectorAll<HTMLInputElement>('input[type="radio"]'));
 const radioFor = (c: HTMLElement, value: string) =>
   radios(c).find((r) => r.value === value) as HTMLInputElement;
+
+const allRuleTexts = () => {
+  const out: string[] = [];
+  const walk = (rules: CSSRuleList | undefined) => {
+    if (!rules) return;
+    for (const rule of Array.from(rules)) {
+      out.push(rule.cssText);
+      walk((rule as CSSRule & { cssRules?: CSSRuleList }).cssRules);
+    }
+  };
+  walk(getGlobalSheet()?.cssRules);
+  return out;
+};
 
 /**
  * Select a radio the way the browser does: dispatch a `click` carrying the
@@ -272,6 +286,19 @@ describe('RadioGroup — 1.0 verify (intent / mobile / FormConfig)', () => {
       />
     </>
   );
+
+  it('mirrors navigation focus onto the hidden radio visual indicator', () => {
+    mount(<RadioGroup defaultValue='a'>{opts}</RadioGroup>);
+    const focusRule = allRuleTexts().find(
+      (text) =>
+        text.includes('data-valet-navigation-focus') &&
+        text.includes('radio') &&
+        text.includes('data-indicator'),
+    );
+
+    expect(focusRule).toContain('outline:');
+    expect(focusRule).toContain('var(--valet-intent-focus)');
+  });
 
   it('drives the indicator colours from the shared intent contract', () => {
     const { container } = mount(<RadioGroup aria-label='g'>{opts}</RadioGroup>);

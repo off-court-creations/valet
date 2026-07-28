@@ -1,0 +1,10 @@
+interface:
+  display_name: "Valet Directional Navigation"
+  short_description: "Build accessible directional navigation with valet"
+  default_prompt: "Use $valet-directional-navigation to design or review a device-neutral valet navigation flow."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "valet"
+      description: "valet component introspection and JSX validation"

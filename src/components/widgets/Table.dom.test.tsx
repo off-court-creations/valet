@@ -15,7 +15,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import React, { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import { Table, type TableColumn } from './Table';
+import { Table, type TableColumn, type TableProps } from './Table';
 import { SurfaceCtx, createSurfaceStore } from '../../system/surfaceStore';
 
 /* react-dom warns unless act usage is announced ----------------------- */
@@ -252,6 +252,28 @@ describe('Table (jsdom)', () => {
 
     /* aria-sort is owned by the th, never the button */
     expect(sortBtn!.hasAttribute('aria-sort')).toBe(false);
+  });
+
+  it('marks only clickable body rows as directional activation targets', () => {
+    const table = (onRowClick?: TableProps<Row>['onRowClick']) => (
+      <Table<Row>
+        data={makeRows()}
+        columns={nameColumns}
+        constrainHeight={false}
+        onRowClick={onRowClick}
+      />
+    );
+    const { container, rerender } = renderStrict(table(vi.fn()));
+
+    let rows = Array.from(container.querySelectorAll('tbody tr'));
+    expect(rows).toHaveLength(3);
+    expect(rows.every((row) => row.getAttribute('data-valet-navigation-activate') === 'true')).toBe(
+      true,
+    );
+
+    rerender(table());
+    rows = Array.from(container.querySelectorAll('tbody tr'));
+    expect(rows.every((row) => !row.hasAttribute('data-valet-navigation-activate'))).toBe(true);
   });
 
   it('keyboard activation (Enter/Space) of the header button sorts and updates aria-sort on the th', () => {

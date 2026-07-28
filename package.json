@@ -1,6 +1,6 @@
 {
   "name": "@archway/valet",
-  "version": "0.38.0",
+  "version": "0.39.0",
   "description": "valet is a CSS-in-JS engine, a UI component kit, and an accessibility layer that treats all humans and their AI proxies as first-class users.",
   "keywords": [
     "react",
@@ -75,6 +75,7 @@
     "mcp:server:publish:major": "npm run mcp:server:preflight && cd packages/valet-mcp && npm version major --no-git-tag-version && npm publish --access public",
     "cva:install": "npm --prefix packages/create-valet-app install",
     "cva:validate": "npm --prefix packages/create-valet-app run validate",
+    "cva:validate:release": "node scripts/release/validate-cva-local.mjs",
     "release:check": "node scripts/release/check-changelog.mjs && node scripts/release/check-pins.mjs"
   },
   "dependencies": {

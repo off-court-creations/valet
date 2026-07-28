@@ -64,10 +64,13 @@
   "cssVars": [
     "--valet-bg",
     "--valet-text-color",
+    "--valet-focus-width",
+    "--valet-focus-ring-color",
+    "--valet-intent-focus",
+    "--valet-focus-offset",
     "--valet-intent-bg",
     "--valet-intent-fg",
     "--valet-intent-border",
-    "--valet-intent-focus",
     "--valet-intent-bg-hover",
     "--valet-intent-bg-active",
     "--valet-intent-fg-disabled"
@@ -110,6 +113,6 @@
     "src/components/fields/Button.tsx",
     "docs/src/pages/components/field/ButtonDemoPage.tsx"
   ],
-  "version": "0.38.0",
+  "version": "0.39.0",
   "schemaVersion": "1.7"
 }

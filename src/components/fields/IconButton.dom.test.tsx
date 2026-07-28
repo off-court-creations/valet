@@ -1,13 +1,13 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/fields/IconButton.dom.test.tsx | valet
-// IconButton runtime contract in jsdom — caller style merges
-// instead of being clobbered (style < geometry < intent vars < sx)
-// and `as='a'` renders a real anchor with no `type` attribute
+// IconButton runtime contract in jsdom — style precedence,
+// polymorphic semantics, and the visible keyboard focus ring
 // ─────────────────────────────────────────────────────────────
 import { afterEach, describe, expect, it } from 'vitest';
 import React, { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { IconButton } from './IconButton';
+import * as sheet from '../../css/sheet';
 
 /* react-dom warns unless act usage is announced ----------------------- */
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -26,6 +26,21 @@ function renderStrict(node: React.ReactNode) {
   });
   return { root, container };
 }
+
+/** Flatten every injected rule's text (de-nested children included). */
+const allRuleTexts = () => {
+  const out: string[] = [];
+  const walk = (rules: CSSRuleList | undefined) => {
+    if (!rules) return;
+    for (const rule of Array.from(rules)) {
+      out.push(rule.cssText);
+      const nested = (rule as unknown as { cssRules?: CSSRuleList }).cssRules;
+      if (nested) walk(nested);
+    }
+  };
+  walk(sheet.getGlobalSheet()?.cssRules);
+  return out;
+};
 
 afterEach(() => {
   for (const { root, container } of roots.splice(0)) {
@@ -92,5 +107,25 @@ describe('IconButton (jsdom)', () => {
       />,
     );
     expect(container.querySelector('button')!.getAttribute('type')).toBe('button');
+  });
+
+  it('uses the valet focus-ring tokens for keyboard-visible focus', () => {
+    renderStrict(
+      <IconButton
+        aria-label='probe'
+        svg={PATH}
+      />,
+    );
+    const focusRule = allRuleTexts().find(
+      (text) => text.includes(':focus-visible:not(:disabled)') && text.includes('outline:'),
+    );
+
+    expect(focusRule).toContain('data-valet-navigation-focus');
+    expect(focusRule).toContain(':focus:not(:disabled)');
+    expect(focusRule).toContain('var(--valet-focus-width, 2px)');
+    expect(focusRule).toContain(
+      'var(--valet-focus-ring-color, var(--valet-intent-focus, currentColor))',
+    );
+    expect(focusRule).toContain('var(--valet-focus-offset, 2px)');
   });
 });

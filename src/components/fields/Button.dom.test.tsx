@@ -1,13 +1,13 @@
 // ─────────────────────────────────────────────────────────────
 // src/components/fields/Button.dom.test.tsx | valet
-// Button runtime contract in jsdom — caller style merges instead
-// of being clobbered (style < intent vars < sx) and `as='a'`
-// renders a real anchor with no `type` attribute
+// Button runtime contract in jsdom — style precedence, polymorphic
+// semantics, intent variables, and the visible keyboard focus ring
 // ─────────────────────────────────────────────────────────────
 import { afterEach, describe, expect, it } from 'vitest';
 import React, { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { Button } from './Button';
+import * as sheet from '../../css/sheet';
 
 /* String children mount <Typography>, which requires a <Surface> provider —
    element children pass straight through, keeping this suite Surface-free. */
@@ -29,6 +29,21 @@ function renderStrict(node: React.ReactNode) {
   });
   return { root, container };
 }
+
+/** Flatten every injected rule's text (de-nested children included). */
+const allRuleTexts = () => {
+  const out: string[] = [];
+  const walk = (rules: CSSRuleList | undefined) => {
+    if (!rules) return;
+    for (const rule of Array.from(rules)) {
+      out.push(rule.cssText);
+      const nested = (rule as unknown as { cssRules?: CSSRuleList }).cssRules;
+      if (nested) walk(nested);
+    }
+  };
+  walk(sheet.getGlobalSheet()?.cssRules);
+  return out;
+};
 
 afterEach(() => {
   for (const { root, container } of roots.splice(0)) {
@@ -88,6 +103,25 @@ describe('Button (jsdom)', () => {
       </Button>,
     );
     expect(container.querySelector('button')!.getAttribute('type')).toBe('button');
+  });
+
+  it('uses the valet focus-ring tokens for keyboard-visible focus', () => {
+    renderStrict(
+      <Button>
+        <span>Go</span>
+      </Button>,
+    );
+    const focusRule = allRuleTexts().find(
+      (text) => text.includes(':focus-visible:not(:disabled)') && text.includes('outline:'),
+    );
+
+    expect(focusRule).toContain('data-valet-navigation-focus');
+    expect(focusRule).toContain(':focus:not(:disabled)');
+    expect(focusRule).toContain('var(--valet-focus-width, 2px)');
+    expect(focusRule).toContain(
+      'var(--valet-focus-ring-color, var(--valet-intent-focus, currentColor))',
+    );
+    expect(focusRule).toContain('var(--valet-focus-offset, 2px)');
   });
 
   /* API-TYPES S13 — the intent-var contract moved to the shared

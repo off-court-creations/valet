@@ -396,5 +396,6 @@ describe('Tree theming + mobile', () => {
     expect(rule).toContain('touch-action: manipulation');
     expect(rule).toContain('@media (pointer: coarse)');
     expect(rule).toContain('--valet-tree-hit');
+    expect(rule).toContain('data-valet-navigation-focus');
   });
 });

@@ -33,6 +33,7 @@ import type { Presettable, SpacingProps, Sx } from '../../types';
 import { resolveSpace } from '../../utils/resolveSpace';
 import { CompactCtx, useCompact } from '../../system/compactContext';
 import { Typography } from '../primitives/Typography';
+import { NAVIGATION_FOCUS_SELECTOR } from '../../system/navigationFocus';
 import { useControlledState } from '../../hooks/useControlledState';
 
 /*───────────────────────────────────────────────────────────*/
@@ -187,7 +188,8 @@ const HeaderBtn = styled('button')<{
 
   ${({ $open, $highlight }) => $open && `background:${$highlight};`}
 
-  &:focus-visible {
+  &:focus-visible,
+  ${NAVIGATION_FOCUS_SELECTOR} {
     outline: var(--valet-focus-width, 2px) solid
       var(--valet-focus-ring-color, ${({ $primary }) => $primary});
     outline-offset: var(--valet-focus-offset, 2px);

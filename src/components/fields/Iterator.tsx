@@ -23,6 +23,7 @@ import type { DeepPartialStrings, ValetStrings } from '../../system/locale';
 import type { FieldBaseProps } from '../../types';
 import type { ChangeInfo, InputSource, OnValueChange, OnValueCommit } from '../../system/events';
 import type { Theme } from '../../system/themeStore';
+import { NAVIGATION_FOCUS_SELECTOR } from '../../system/navigationFocus';
 
 /*───────────────────────────────────────────────────────────*/
 export interface IteratorProps
@@ -99,7 +100,8 @@ const Field = styled('input')<{ theme: Theme; $w: string }>`
   @media (pointer: coarse) {
     min-height: var(--valet-iter-hit, 44px);
   }
-  &:focus-visible {
+  &:focus-visible,
+  ${NAVIGATION_FOCUS_SELECTOR} {
     outline: var(--valet-focus-width, 2px) solid
       var(--valet-focus-ring-color, ${({ theme }) => theme.colors.primary});
     outline-offset: var(--valet-focus-offset, 2px);

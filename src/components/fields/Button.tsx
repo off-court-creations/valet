@@ -15,6 +15,7 @@ import {
   type PolymorphicProps,
   type PolymorphicRef,
 } from '../../system/polymorphic';
+import { NAVIGATION_FOCUS_SELECTOR } from '../../system/navigationFocus';
 
 /*───────────────────────────────────────────────────────────*/
 export type ButtonVariant = 'filled' | 'outlined' | 'plain';
@@ -151,6 +152,13 @@ const Root = styled('button')<{
           ? 'filter: brightness(1.25);'
           : `background: ${$variant === 'outlined' ? $bg + '22' : 'transparent'}; color: ${$hoverLabel}; --valet-text-color: ${$hoverLabel};`}
     }
+  }
+
+  &:focus-visible:not(:disabled),
+  ${NAVIGATION_FOCUS_SELECTOR}:not(:disabled) {
+    outline: var(--valet-focus-width, 2px) solid
+      var(--valet-focus-ring-color, var(--valet-intent-focus, currentColor));
+    outline-offset: var(--valet-focus-offset, 2px);
   }
 
   &:active:not(:disabled) {
