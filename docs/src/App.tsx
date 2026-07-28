@@ -83,6 +83,7 @@ const ComponentStatusPage = page(() => import('./pages/getting-started/Component
 const RTLStatusPage = page(() => import('./pages/getting-started/RTLStatus'));
 const FontsPrivacyPage = page(() => import('./pages/getting-started/FontsPrivacy'));
 const EventsConceptPage = page(() => import('./pages/concepts/Events'));
+const DirectionalNavigationPage = page(() => import('./pages/concepts/DirectionalNavigation'));
 
 /*───────────────────────────────────────────────────────────*/
 export function App() {
@@ -144,6 +145,10 @@ export function App() {
         <Route
           path='/events'
           element={<EventsConceptPage />}
+        />
+        <Route
+          path='/directional-navigation'
+          element={<DirectionalNavigationPage />}
         />
         <Route
           path='/glossary'

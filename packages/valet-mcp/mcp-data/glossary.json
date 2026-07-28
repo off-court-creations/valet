@@ -86,6 +86,20 @@
       ]
     },
     {
+      "term": "Directional navigation",
+      "definition": "Device-neutral movement of real DOM focus from logical up, down, left, right, next, and previous intents. Applications map physical input; valet owns scoped focus movement, activation, and the navigation-focus marker.",
+      "category": "a11y",
+      "aliases": [
+        "useDirectionalNavigation",
+        "createDirectionalNavigation",
+        "navigation intents"
+      ],
+      "seeAlso": [
+        "accessibility",
+        "Surface"
+      ]
+    },
+    {
       "term": "MCP",
       "definition": "A small server and data pipeline that exposes machine-readable component facts (and glossary) to LLM agents via standardized tools.",
       "category": "mcp",
@@ -215,5 +229,5 @@
     }
   ],
   "version": "0.38.0",
-  "builtAt": "2026-07-03T01:10:26.638Z"
+  "builtAt": "2026-07-28T05:24:03.656Z"
 }

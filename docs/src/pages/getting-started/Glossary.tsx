@@ -62,6 +62,14 @@ export const GLOSSARY: GlossaryEntry[] = [
     seeAlso: ['Stack', 'Panel', 'styled'],
   },
   {
+    term: 'Directional navigation',
+    aliases: ['useDirectionalNavigation', 'createDirectionalNavigation', 'navigation intents'],
+    category: 'a11y',
+    definition:
+      'Device-neutral movement of real DOM focus from logical up, down, left, right, next, and previous intents. Applications map physical input; valet owns scoped focus movement, activation, and the navigation-focus marker.',
+    seeAlso: ['accessibility', 'Surface'],
+  },
+  {
     term: 'style preset',
     aliases: ['preset', 'definePreset'],
     category: 'css',

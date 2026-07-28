@@ -21,6 +21,7 @@ import { useTheme } from '../../system/themeStore';
 import { preset } from '../../css/stylePresets';
 import { computeIntentVars, makeMix } from '../../system/intentVars';
 import { useCompact } from '../../system/compactContext';
+import { NAVIGATION_FOCUS_SELECTOR } from '../../system/navigationFocus';
 import { useControlledState } from '../../hooks/useControlledState';
 import type { Presettable, SelectionProps, Sx } from '../../types';
 
@@ -139,7 +140,8 @@ const Row = styled('div')<{
     opacity: 0.5;
     cursor: not-allowed;
   }
-  &:focus-visible {
+  &:focus-visible,
+  ${NAVIGATION_FOCUS_SELECTOR} {
     outline: var(--valet-tree-outline, 2px) solid var(--valet-focus-ring-color, currentColor);
     outline-offset: var(--valet-tree-offset, 2px);
   }

@@ -14,6 +14,7 @@ import { Typography } from '../primitives/Typography';
 import { useCompact } from '../../system/compactContext';
 import { useComponentStrings } from '../../system/locale';
 import type { DeepPartialStrings, ValetStrings } from '../../system/locale';
+import { NAVIGATION_FOCUS_SELECTOR } from '../../system/navigationFocus';
 
 export type ChipSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type ChipVariant = 'filled' | 'outlined' | 'plain';
@@ -91,7 +92,8 @@ const Root = styled('div')<{
         ? `background: transparent; color: ${$bg}; box-shadow: inset 0 0 0 1px ${$bd};`
         : `background: transparent; color: ${$bg};`}
   opacity: ${({ $disabled }) => ($disabled ? 0.6 : 1)};
-  &:focus-visible {
+  &:focus-visible,
+  ${NAVIGATION_FOCUS_SELECTOR} {
     outline: 2px solid var(--valet-focus-ring, currentColor);
     outline-offset: 2px;
   }
@@ -129,7 +131,8 @@ const DeleteBtn = styled('button')<{ $fz: number }>`
   &:hover {
     opacity: 1;
   }
-  &:focus-visible {
+  &:focus-visible,
+  ${NAVIGATION_FOCUS_SELECTOR} {
     outline: 2px solid var(--valet-focus-ring-color, currentColor);
     outline-offset: 1px;
     opacity: 1;

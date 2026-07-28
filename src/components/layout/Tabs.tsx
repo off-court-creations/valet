@@ -32,6 +32,7 @@ import { withAlpha } from '../../helpers/color';
 import { valetError } from '../../system/devErrors';
 import { useControlledState } from '../../hooks/useControlledState';
 import { CompactCtx, useCompact } from '../../system/compactContext';
+import { NAVIGATION_FOCUS_SELECTOR } from '../../system/navigationFocus';
 
 /*───────────────────────────────────────────────────────────*/
 /* Context                                                   */
@@ -263,7 +264,8 @@ const TabBtn = styled('button')<{
   text-align: center;
   white-space: nowrap; /* keep labels on one line for reliable wrap behavior */
 
-  &:focus-visible {
+  &:focus-visible,
+  ${NAVIGATION_FOCUS_SELECTOR} {
     outline: var(--valet-focus-width, 2px) solid
       var(--valet-focus-ring-color, ${({ $primary }) => $primary});
     outline-offset: var(--valet-focus-offset, 2px);

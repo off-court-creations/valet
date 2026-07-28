@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Added
+
+- Directional navigation: `useDirectionalNavigation` and the framework-neutral `createDirectionalNavigation` controller move real DOM focus within an explicit scope for `up`, `down`, `left`, `right`, `next`, and `previous` intents, expose boolean handled results for application fallbacks, and activate the focused eligible control through its native `.click()` behavior. Physical-device polling, mappings, thresholds, and repeat timing remain application-owned.
+
+### Fixed
+
+- Accessibility: `Button` and `IconButton` now render a consistent `:focus-visible` outline using the shared `--valet-focus-width`, `--valet-focus-offset`, and `--valet-focus-ring-color` tokens, with the component intent focus colour as the standalone fallback.
+- Accessibility: valet focusable controls now mirror their existing keyboard focus visuals for device-neutral directional navigation, including visual input proxies and portalled content, while marker ownership and modality cleanup leave legitimate browser focus intact.
+
 ## [0.38.0] — 2026-07-02
 
 ### Changed

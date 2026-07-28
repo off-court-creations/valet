@@ -18,6 +18,7 @@ import { useTheme } from '../../system/themeStore';
 import { HLJS_LIGHT, HLJS_DARK } from '../../css/hljsThemes';
 import { preset } from '../../css/stylePresets';
 import type { Presettable } from '../../types';
+import { NAVIGATION_FOCUS_SELECTOR } from '../../system/navigationFocus';
 
 // Enable GFM features (tables, strikethrough, task lists, etc.)
 marked.setOptions({ gfm: true });
@@ -54,7 +55,8 @@ interface RenderCtx {
 const MdLink = styled('a')`
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
-  &:focus-visible {
+  &:focus-visible,
+  ${NAVIGATION_FOCUS_SELECTOR} {
     outline: 2px solid var(--valet-focus-ring-color, currentColor);
     outline-offset: 2px;
     border-radius: 2px;

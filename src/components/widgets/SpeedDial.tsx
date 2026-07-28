@@ -11,6 +11,7 @@ import { zVar } from '../../system/zIndex';
 import { useComponentStrings } from '../../system/locale';
 import type { DeepPartialStrings, ValetStrings } from '../../system/locale';
 import type { Presettable, Sx } from '../../types';
+import { NAVIGATION_FOCUS_SELECTOR } from '../../system/navigationFocus';
 
 /*───────────────────────────────────────────────────────────*/
 export interface SpeedDialAction {
@@ -88,7 +89,8 @@ const MainButton = styled('button')<{
 
   /* Visible keyboard focus ring (WCAG 2.4.7) — mirrors the IconButton
      focus-visible pattern instead of suppressing the outline. */
-  &:focus-visible {
+  &:focus-visible,
+  ${NAVIGATION_FOCUS_SELECTOR} {
     outline: var(--valet-focus-width, 2px) solid currentColor;
     outline-offset: var(--valet-focus-offset, 2px);
   }
@@ -132,7 +134,8 @@ const ActionFab = styled('button')<{
 
   /* Visible keyboard focus ring (WCAG 2.4.7) — mirrors the IconButton
      focus-visible pattern instead of suppressing the outline. */
-  &:focus-visible {
+  &:focus-visible,
+  ${NAVIGATION_FOCUS_SELECTOR} {
     outline: var(--valet-focus-width, 2px) solid currentColor;
     outline-offset: var(--valet-focus-offset, 2px);
   }

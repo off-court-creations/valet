@@ -33,6 +33,7 @@ import { useFormConfig } from './FormControl';
 import { computeIntentVars, makeMix } from '../../system/intentVars';
 import { warnOnce } from '../../system/devErrors';
 import type { Theme } from '../../system/themeStore';
+import { NAVIGATION_FOCUS_MATCH } from '../../system/navigationFocus';
 import type { FieldBaseProps } from '../../types';
 import type { ChangeInfo, InputSource, OnValueChange, OnValueCommit } from '../../system/events';
 
@@ -113,7 +114,8 @@ const Wrapper = styled('label')<WrapperProps>`
   touch-action: manipulation;
 
   /* Visible focus ring on the visual box when the input is keyboard-focused */
-  & input[type='checkbox']:focus-visible + [data-indicator] {
+  & input[type='checkbox']:focus-visible + [data-indicator],
+  & input[type='checkbox']${NAVIGATION_FOCUS_MATCH} + [data-indicator] {
     outline: var(--valet-checkbox-focus-w, 2px) solid var(--valet-intent-focus);
     outline-offset: var(--valet-checkbox-focus-off, 2px);
   }

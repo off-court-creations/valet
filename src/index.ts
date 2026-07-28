@@ -81,11 +81,21 @@ export * from './system/themeStore';
 export * from './system/fontStore';
 export * from './system/createInitialTheme';
 export * from './system/locale';
+export { createDirectionalNavigation } from './system/directionalNavigation';
+export type {
+  DirectionalNavigation,
+  DirectionalNavigationController,
+  DirectionalNavigationOptions,
+  DirectionalNavigationScope,
+  DirectionalNavigationScopeRef,
+  NavigationDirection,
+} from './system/directionalNavigation';
 export { registerHighlightLanguage } from './system/highlight';
 export { VALET_ZINDEX, zVar, zIndexVarName } from './system/zIndex';
 export type { ZIndexLayer } from './system/zIndex';
 export { DEFAULT_MODELS } from './components/widgets/LLMChat';
 export * from './hooks/useGoogleFonts';
+export { useDirectionalNavigation } from './hooks/useDirectionalNavigation';
 export type { Font, CustomFont } from './helpers/fontLoader';
 export type { Variant as TypographyVariant, WeightAlias } from './types/typography';
 export { inheritSurfaceFontVars } from './system/inheritSurfaceFontVars';

@@ -35,6 +35,7 @@ import { warnOnce } from '../../system/devErrors';
 import type { Theme } from '../../system/themeStore';
 import type { FieldBaseProps, Sx } from '../../types';
 import type { ChangeInfo, InputSource, OnValueChange, OnValueCommit } from '../../system/events';
+import { NAVIGATION_FOCUS_SELECTOR } from '../../system/navigationFocus';
 
 /*───────────────────────────────────────────────────────────────────────────*/
 /* Prop contracts                                                            */
@@ -142,7 +143,8 @@ const sharedFieldCSS = `
       border-color: var(--vt-hover-border);
     }
   }
-  &:focus-visible {
+  &:focus-visible,
+  ${NAVIGATION_FOCUS_SELECTOR} {
     outline: var(--valet-focus-width, 2px) solid var(--valet-intent-focus);
     outline-offset: var(--valet-focus-offset, 2px);
   }

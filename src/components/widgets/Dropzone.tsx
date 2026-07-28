@@ -21,6 +21,7 @@ import { preset } from '../../css/stylePresets';
 import { useComponentStrings } from '../../system/locale';
 import type { DeepPartialStrings, ValetStrings } from '../../system/locale';
 import type { Presettable, Sx } from '../../types';
+import { NAVIGATION_FOCUS_SELECTOR } from '../../system/navigationFocus';
 
 /*───────────────────────────────────────────────────────────*/
 export interface DropzoneProps
@@ -89,7 +90,8 @@ const DropArea = styled('div')`
   touch-action: manipulation;
   user-select: none;
   -webkit-user-select: none;
-  &:focus-visible {
+  &:focus-visible,
+  ${NAVIGATION_FOCUS_SELECTOR} {
     outline: var(--valet-focus-width, 2px) solid var(--valet-dz-focus, currentColor);
     outline-offset: 2px;
   }
@@ -109,7 +111,8 @@ const RemoveButton = styled('button')`
   border-radius: 4px;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
-  &:focus-visible {
+  &:focus-visible,
+  ${NAVIGATION_FOCUS_SELECTOR} {
     outline: var(--valet-focus-width, 2px) solid var(--valet-dz-focus, currentColor);
     outline-offset: 2px;
   }

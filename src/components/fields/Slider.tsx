@@ -36,6 +36,7 @@ import { warnOnce } from '../../system/devErrors';
 import { computeKeyStep } from './sliderMath';
 import type { FieldBaseProps } from '../../types';
 import type { ChangeInfo, InputSource, OnValueChange, OnValueCommit } from '../../system/events';
+import { NAVIGATION_FOCUS_SELECTOR } from '../../system/navigationFocus';
 
 /*───────────────────────────────────────────────────────────*/
 /* Size map                                                  */
@@ -129,7 +130,8 @@ const Thumb = styled('button')<{
     }
   }
 
-  &:focus-visible {
+  &:focus-visible,
+  ${NAVIGATION_FOCUS_SELECTOR} {
     box-shadow: 0 0 0 3px currentColor;
   }
   &:disabled {

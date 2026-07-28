@@ -23,6 +23,7 @@ import { makeMix } from '../../system/intentVars';
 import { useControlledState } from '../../hooks/useControlledState';
 import { useCompact } from '../../system/compactContext';
 import type { Presettable, SelectionProps, Sx } from '../../types';
+import { NAVIGATION_FOCUS_MATCH, NAVIGATION_FOCUS_SELECTOR } from '../../system/navigationFocus';
 
 const INTERACTIVE_ROW_SELECTOR =
   'a, button, input, textarea, select, label, summary, [role="button"], [role="link"], [role="checkbox"], [role="menuitem"], [role="switch"], [role="radio"]';
@@ -191,7 +192,8 @@ const Root = styled('table')<{
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
     }
-    & tbody tr:focus-visible {
+    & tbody tr:focus-visible,
+    & tbody tr${NAVIGATION_FOCUS_MATCH} {
       outline: var(--valet-focus-width, 2px) solid var(--valet-table-primary);
       outline-offset: calc(-1 * var(--valet-focus-offset, 2px));
     }
@@ -273,7 +275,8 @@ const SortButton = styled('button')<{
      (--valet-focus-width/-offset, as Tree/Tabs/TextField use). The old
      mouse-only th onClick gave keyboard users nothing — WCAG 2.4.7. The
      offset is pulled inside so the ring never clips at the cell edges. */
-  &:focus-visible {
+  &:focus-visible,
+  ${NAVIGATION_FOCUS_SELECTOR} {
     outline: var(--valet-focus-width, 2px) solid var(--valet-table-primary);
     outline-offset: calc(-1 * var(--valet-focus-offset, 2px));
   }
@@ -927,6 +930,9 @@ export function Table<T extends object>({
                          2.1.1): focusable + Enter/Space → the existing click
                          path (so the interactive-child guard still applies). */
                       tabIndex: 0,
+                      /* A clickable <tr> deliberately keeps implicit row semantics,
+                         so opt it into directional activation without inventing a role. */
+                      'data-valet-navigation-activate': 'true',
                       onKeyDown: (e: React.KeyboardEvent<HTMLTableRowElement>) => {
                         if (e.key === 'Enter' || e.key === ' ') {
                           e.preventDefault();
