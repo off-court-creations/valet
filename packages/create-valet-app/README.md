@@ -7,7 +7,7 @@
 
 Scaffold a modern React app powered by Vite, React Router, Zustand, and @archway/valet (UI + CSS‑in‑JS), with TypeScript by default.
 
-Node 18+ is required.
+Node 20+ is required.
 
 ## Quickstart
 

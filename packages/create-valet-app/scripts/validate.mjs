@@ -6,6 +6,10 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { spawn, spawnSync } from 'node:child_process';
+import {
+  assertInstalledValetPackage,
+  prepareValetDependency,
+} from '../../../scripts/release/cva-local-package.mjs';
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const CLI = path.join(ROOT, 'bin', 'create-valet-app.js');
@@ -15,6 +19,7 @@ const opts = {
   noPreview: args.includes('--no-preview'),
   only: null,
 };
+const localValetPackage = process.env.CVA_VALIDATE_VALET_PACKAGE?.trim() || null;
 for (let i = 0; i < args.length; i++) {
   if (args[i] === '--only') opts.only = args[i + 1];
 }
@@ -205,7 +210,7 @@ async function runScenario(baseDir, s) {
     appDir,
     '--template',
     s.template,
-    '--install',
+    '--no-install',
     s.mcp ? '--mcp' : '--no-mcp',
     ...s.flags,
   ];
@@ -217,6 +222,49 @@ async function runScenario(baseDir, s) {
     s.mcp ? { CVA_SKIP_GLOBAL_MCP: '1' } : {},
   );
   if (gen.code !== 0) return { id: s.id, ok: false, reason: 'generate', logs: gen.out + gen.err };
+
+  // A synchronized minor release cannot resolve its new template pin from the
+  // registry before the library is published. The release gate supplies a
+  // freshly packed local tarball here; ordinary validation keeps the generated
+  // semver range and exercises the registry exactly as before.
+  let expectedLocalVersion = null;
+  try {
+    const prepared = prepareValetDependency({
+      packageJsonPath: path.join(appDir, 'package.json'),
+      localPackagePath: localValetPackage,
+    });
+    if (prepared.localSpec) expectedLocalVersion = prepared.expectedVersion;
+  } catch (error) {
+    return {
+      id: s.id,
+      ok: false,
+      reason: 'dependency',
+      logs: error instanceof Error ? error.message : String(error),
+    };
+  }
+
+  logLine(`[validate] ${s.id} -> install`);
+  const installRes = await run('npm', ['install', '--no-audit', '--no-fund'], appDir);
+  if (installRes.code !== 0) {
+    return {
+      id: s.id,
+      ok: false,
+      reason: 'install',
+      logs: `${installRes.out}\n${installRes.err}`,
+    };
+  }
+  if (expectedLocalVersion) {
+    try {
+      assertInstalledValetPackage({ appDir, expectedVersion: expectedLocalVersion });
+    } catch (error) {
+      return {
+        id: s.id,
+        ok: false,
+        reason: 'installed-package',
+        logs: error instanceof Error ? error.message : String(error),
+      };
+    }
+  }
 
   // Post-generate file/content checks
   const checkRes = await postChecks(appDir, s);

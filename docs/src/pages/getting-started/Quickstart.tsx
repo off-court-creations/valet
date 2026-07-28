@@ -114,7 +114,7 @@ npm run typecheck`; // only typecheck exists in TS/hybrid; still mention
           <Stack gap={1.5}>
             <Typography variant='h3'>Scaffold the project</Typography>
             <Typography>
-              Run the CLI with Node 18+ (flags go after <code>--</code> when using{' '}
+              Run the CLI with Node 20+ (flags go after <code>--</code> when using{' '}
               <code>npm create</code>). Answer “Yes” to review options or “No” to accept defaults.
             </Typography>
             <CodeBlock

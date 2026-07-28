@@ -21,6 +21,7 @@ import {
   collectPins,
   checkPins,
   lockedValetVersion,
+  linkedValetVersion,
   checkLockfiles,
   main as pinsMain,
 } from './check-pins.mjs';
@@ -232,6 +233,28 @@ describe('lockedValetVersion', () => {
   });
 });
 
+describe('linkedValetVersion', () => {
+  it('reads the linked package snapshot version', () => {
+    expect(
+      linkedValetVersion({
+        packages: {
+          'node_modules/@archway/valet': { resolved: '..', link: true },
+          '..': { name: '@archway/valet', version: '0.39.0' },
+        },
+      }),
+    ).toBe('0.39.0');
+  });
+
+  it('returns null for a missing or non-link entry', () => {
+    expect(linkedValetVersion({ packages: {} })).toBeNull();
+    expect(
+      linkedValetVersion({
+        packages: { 'node_modules/@archway/valet': { version: '0.39.0' } },
+      }),
+    ).toBeNull();
+  });
+});
+
 describe('checkLockfiles', () => {
   it('passes when the lockfile resolves the root version', () => {
     const lockfiles = [{ label: 'docs', file: 'docs/package-lock.json', locked: '0.35.1' }];
@@ -247,6 +270,36 @@ describe('checkLockfiles', () => {
   it('flags a lockfile with no resolved valet entry', () => {
     const lockfiles = [{ label: 'docs', file: 'docs/package-lock.json', locked: null }];
     expect(checkLockfiles({ rootVersion: '0.35.1', lockfiles })[0]).toContain('no resolved');
+  });
+  it('validates a linked docs snapshot against the root version', () => {
+    expect(
+      checkLockfiles({
+        rootVersion: '0.39.0',
+        lockfiles: [
+          {
+            label: 'docs',
+            file: 'docs/package-lock.json',
+            locked: null,
+            linked: '0.39.0',
+            isLink: true,
+          },
+        ],
+      }),
+    ).toEqual([]);
+
+    const problems = checkLockfiles({
+      rootVersion: '0.39.0',
+      lockfiles: [
+        {
+          label: 'docs',
+          file: 'docs/package-lock.json',
+          locked: null,
+          linked: '0.38.0',
+          isLink: true,
+        },
+      ],
+    });
+    expect(problems[0]).toContain('links @archway/valet@0.38.0');
   });
 });
 

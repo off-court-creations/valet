@@ -89,7 +89,9 @@ Run from the repo root on a clean checkout of the branch you intend to release.
 git status --porcelain        # MUST print nothing
 git fetch --all --tags
 
-# 1.2 CI is green on the branch (development for a normal release).
+# 1.2 Baseline CI is green on the branch (development for a normal release).
+#     The exact prepared release SHA is pushed and watched in §4.0 before any
+#     package is published.
 gh run list --branch development --limit 1   # latest run conclusion == success
 
 # 1.3 Quality gates (these are exactly what CI runs, plus the release-only ones).
@@ -116,7 +118,9 @@ npm run mcp:server:build
 npm run mcp:server:selfcheck  # MCP_SELFCHECK=1 — index ≥ 50, glossary > 0, no placeholder samples
 
 # 1.7 create-valet-app end-to-end validation (NOT commented out anymore).
-npm run cva:validate
+#     Packs the local library and injects that tarball into generated apps, so
+#     a synchronized new minor is testable before it exists on npm.
+npm run cva:validate:release
 ```
 
 Notes on the gates:
@@ -131,6 +135,11 @@ Notes on the gates:
 - The `mcp-server` CI job and `mcp:server:selfcheck` resolve the committed
   `<pkg>/mcp-data` copy (true package root is the first bundled candidate;
   `shared.ts resolveBundledDir`).
+- `cva:validate:release` packs the current local library and runs all 13
+  scaffold scenarios against that tarball via the validation-only
+  `CVA_VALIDATE_VALET_PACKAGE` override. Plain `cva:validate` still exercises the
+  template's registry range and remains the scaffolder's `prepublishOnly`
+  check after the library is published.
 
 ---
 
@@ -168,11 +177,11 @@ The CHANGELOG is the source of truth for what each version shipped;
 > the 0.35.x releases. The `:patch|:minor|:major` variants are only for a
 > package versioning **independently** of the synchronized set.
 
-Pin skew is a **hard** failure at release (`check-pins.mjs`): `docs/` and the
-three CVA templates (`hybrid`/`js`/`ts`) must pin `@archway/valet` at `$NEW`,
-**and `docs/package-lock.json` must RESOLVE it** (a matching pin with a stale
-lockfile passes the pin check but breaks `npm ci` — it failed the Amplify docs
-deploy after 0.35.x).
+Pin skew is a **hard** failure at release (`check-pins.mjs`): the three CVA
+templates (`hybrid`/`js`/`ts`) must pin `@archway/valet` at `$NEW`. The docs
+consume the repository root through `file:..`; keep that link and synchronize
+its lockfile snapshot before the release gate. A stale docs lockfile breaks
+`npm ci` even though no registry lookup is needed.
 
 ```sh
 # 3.1 Bump ALL FOUR to the same version (no tag yet — we tag once at the end).
@@ -181,26 +190,22 @@ NEW=$(node -p "require('./package.json').version")
 ( cd packages/valet-mcp        && npm version "$NEW" --no-git-tag-version --allow-same-version )
 ( cd packages/create-valet-app && npm version "$NEW" --no-git-tag-version --allow-same-version )
 
-# 3.2 Update the docs pin and every CVA template pin to ^$NEW.
-#       docs/package.json
+# 3.2 Update every CVA template pin to ^$NEW, keep the docs dependency at
+#     file:.., and synchronize the docs lockfile's linked-root snapshot.
 #       packages/create-valet-app/templates/{hybrid,js,ts}/package.json
+npm --prefix docs install
 
 # 3.3 Move the CHANGELOG Unreleased section to [$NEW] (see §2), then:
 npm run release:check   # changelog + pins; the docs-lockfile half is checked too
 ```
 
-`release:check`'s lockfile gate will still flag `docs/package-lock.json` as
-stale here — that is expected and resolved in §4.1b, because the lockfile can
-only resolve `@archway/valet@$NEW` **after** valet is published. (On
-non-release branches CI runs `check-pins --warn`, so the stale lockfile only
-warns.)
-
 CVA templates also carry the `@fontsource` font deps and self-host theme config
 (`injectRemote:false`, `mode:'system'`, `persistMode:true`); bumping the valet
-pin is the moment to confirm the templates still install and `cva:validate`
-passes (§1.7). Note `cva:validate` is heavy (scaffolds + installs + builds +
-`vite preview` for 13 scenarios) and also runs inside `create-valet-app`'s
-`prepublishOnly`; if a `vite preview` step flakes, clear any stragglers with
+pin is the moment to confirm the templates still install and
+`cva:validate:release` passes (§1.7). The release variant is heavy (scaffolds +
+installs + builds + `vite preview` for 13 scenarios); plain `cva:validate`
+also runs inside `create-valet-app`'s `prepublishOnly` after valet is published.
+If a `vite preview` step flakes, clear any stragglers with
 `pkill -f "cva-validate.*vite preview"` and retry.
 
 ---
@@ -212,16 +217,34 @@ data and the templates bake in, so it goes first; docs deploy last.
 
 **All `npm publish` steps are [Ben] (or the CI release job once §0.3.3 lands).**
 
+### 4.0 — Push the prepared release candidate and wait for its CI **[Ben]**
+
+The version bumps, CHANGELOG move, regenerated corpus, and synchronized pins
+must already be committed on `development`. Push that exact commit and require
+its own CI run to pass before publishing anything:
+
+```sh
+git status --porcelain        # MUST print nothing
+RELEASE_SHA=$(git rev-parse HEAD)
+git push origin development
+
+RUN_ID=
+until [ -n "$RUN_ID" ]; do
+  RUN_ID=$(gh run list --workflow CI --commit "$RELEASE_SHA" --limit 1 \
+    --json databaseId --jq '.[0].databaseId // empty')
+  [ -n "$RUN_ID" ] || sleep 5
+done
+gh run watch "$RUN_ID" --exit-status
+```
+
+Do not continue if the watched run is not successful.
+
+### 4.1–4.4 — Publish and build
+
 ```sh
 # 4.1 valet (library). prepack runs `npm run build`; prepublishOnly (when set
 #     by the release integrator) re-runs the §1 gate. Publish from the root.
 npm publish --access public
-
-# 4.1b RESYNC the docs lockfile now that valet@$NEW is on the registry, then
-#      the hard pin+lockfile gate passes (this step was the 0.35.x Amplify gap).
-npm --prefix docs install
-node scripts/release/check-pins.mjs   # MUST pass (no --warn): pins AND lockfile
-git add docs/package-lock.json        # commit with the release (§5)
 
 # 4.2 valet-mcp — PLAIN (already at $NEW per §3.1). The wrapper rebuilds
 #     mcp-data (capturing the just-published valet version), schema-checks, and
@@ -232,26 +255,48 @@ npm run mcp:server:publish
 #     pack.test + cva:validate. Do NOT `npm version` here.
 ( cd packages/create-valet-app && npm publish --access public )
 
-# 4.4 docs. Pin + lockfile done (§3.2/§4.1b); ensure regenerated mcp-data is
-#     staged, then build. Production docs deploy on merge to `main` (Amplify),
-#     which runs `npm ci` in docs/ — hence the §4.1b lockfile resync is load-bearing.
+# 4.4 docs. Local pin + lockfile snapshot were committed in §3.2. Production
+#     deploy runs on merge to `main` (Amplify), which runs `npm ci` in docs/.
 npm --prefix docs run build
+```
+
+`mcp:server:publish` intentionally rebuilds the corpus and therefore refreshes
+four volatile `builtAt` fields. After the MCP publish succeeds, inspect those
+exact files:
+
+```sh
+git diff -- \
+  mcp-data/_meta.json \
+  mcp-data/glossary.json \
+  packages/valet-mcp/mcp-data/_meta.json \
+  packages/valet-mcp/mcp-data/glossary.json
+```
+
+If and only if the diff contains `builtAt` changes, restore those generated
+timestamps to the already-tested release commit, then require a clean tree.
+Do not restore or tag if any substantive corpus content changed:
+
+```sh
+git restore -- \
+  mcp-data/_meta.json \
+  mcp-data/glossary.json \
+  packages/valet-mcp/mcp-data/_meta.json \
+  packages/valet-mcp/mcp-data/glossary.json
+git status --porcelain        # MUST print nothing
 ```
 
 ---
 
-## 5. Tag, push, and deploy **[Ben]**
+## 5. Tag and deploy **[Ben]**
 
 ```sh
-# 5.1 Commit the version bumps, CHANGELOG move, regenerated mcp-data, and pins.
-git add -A
-git commit -m "release: v$NEW"
+# 5.1 Tag the exact CI-green release commit only after every package publish and
+#     registry verification succeeds. Use an annotated release tag.
+git status --porcelain        # MUST print nothing
+git tag -a "v$NEW" -m "release: v$NEW"
+git push origin "v$NEW"
 
-# 5.2 Tag the library release and push with tags.
-git tag "v$NEW"
-git push origin development --follow-tags
-
-# 5.3 Open a PR development → main; merging triggers the production docs build
+# 5.2 Open a PR development → main; merging triggers the production docs build
 #     (Amplify). main is branch-protected (§0.2) so CI must be green to merge.
 gh pr create --base main --head development --title "release: v$NEW" --fill
 ```

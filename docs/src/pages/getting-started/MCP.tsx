@@ -497,7 +497,7 @@ VALET_MCP_DATA_DIR=/absolute/path/to/valet/mcp-data valet-mcp`}
         </Typography>
         <Panel fullWidth>
           <Typography>
-            • Node 18+ required (20+ recommended).
+            • Node 20+ required.
             <br />• The server reads JSON from disk and communicates over stdio. It does not perform
             arbitrary file or network access.
           </Typography>

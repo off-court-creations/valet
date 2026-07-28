@@ -42,7 +42,7 @@ Registering the MCP server does not by itself install that file into a host's sk
 
 Docs: MCP & Introspection guide lives in `docs/src/pages/getting-started/MCP.tsx` and the live docs site. It covers tools, the workflow prompt, examples, best practices, and advanced flows.
 
-Requirements: Node 18+ (20+ recommended). Communicates over stdio.
+Requirements: Node 20+. Communicates over stdio.
 
 Troubleshooting: re‑run the selfcheck with `MCP_SELFCHECK=1 valet-mcp` — the component data ships bundled with the package, so there is no regeneration step. Note: the `validate_jsx` tool additionally needs `@archway/valet` installed alongside the server (it type‑checks snippets against valet's shipped types); every other tool works from the bundled snapshot.
 

@@ -21,8 +21,8 @@ release to stay supported.
 
 | Version                              | Supported          |
 | ------------------------------------ | ------------------ |
-| 0.36.x (latest published 0.x minor)  | :white_check_mark: |
-| < 0.36                               | :x:                |
+| 0.39.x (latest published 0.x minor)  | :white_check_mark: |
+| < 0.39                               | :x:                |
 
 This table tracks the latest published minor; when a new 0.x minor ships,
 support moves with it.

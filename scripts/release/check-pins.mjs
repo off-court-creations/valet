@@ -82,10 +82,19 @@ export function lockedValetVersion(lock) {
   return lock.dependencies?.[PKG_NAME]?.version ?? null;
 }
 
+/** Resolve the version snapshot behind an npm lockfile `link: true` entry. */
+export function linkedValetVersion(lock) {
+  if (!lock || typeof lock !== 'object') return null;
+  const entry = lock.packages?.[`node_modules/${PKG_NAME}`];
+  if (!entry?.link || typeof entry.resolved !== 'string') return null;
+  const target = entry.resolved.replace(/^file:/, '');
+  return lock.packages?.[target]?.version ?? null;
+}
+
 /**
  * Gather every package-lock.json that sits beside a pinned package.json
  * (today: docs — the templates ship no lockfile). Returns
- * [{ label, file, locked|null }].
+ * [{ label, file, locked|null, linked|null, isLink }].
  */
 export function collectLockfiles(root) {
   const out = [];
@@ -98,8 +107,9 @@ export function collectLockfiles(root) {
       file: rel,
       locked: lockedValetVersion(lock),
       // An in-repo `file:`/`link:` dep resolves to a local link (no published
-      // version in the lock) — flagged so the version check is skipped.
+      // version on the node_modules entry); verify its target snapshot instead.
       isLink: !!lock.packages?.[`node_modules/${PKG_NAME}`]?.link,
+      linked: linkedValetVersion(lock),
     });
   };
   add('docs', 'docs/package-lock.json');
@@ -113,8 +123,17 @@ export function collectLockfiles(root) {
 export function checkLockfiles({ rootVersion, lockfiles }) {
   const problems = [];
   for (const lf of lockfiles) {
-    // An in-repo link (docs `file:..`) has no published version to verify.
-    if (lf.isLink) continue;
+    if (lf.isLink) {
+      if (lf.linked === null) {
+        problems.push(`${lf.label}: ${lf.file} has no linked "${PKG_NAME}" version snapshot`);
+      } else if (lf.linked !== rootVersion) {
+        problems.push(
+          `${lf.label}: ${lf.file} links ${PKG_NAME}@${lf.linked} but the root package is ${rootVersion} — ` +
+            `run \`npm install\` in its directory to resync the lockfile (else \`npm ci\` fails)`,
+        );
+      }
+      continue;
+    }
     if (lf.locked === null) {
       problems.push(`${lf.label}: ${lf.file} has no resolved "${PKG_NAME}" entry`);
       continue;
