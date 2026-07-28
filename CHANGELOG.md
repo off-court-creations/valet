@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file. The format 
 ### Added
 
 - Directional navigation: `useDirectionalNavigation` and the framework-neutral `createDirectionalNavigation` controller move real DOM focus within an explicit scope for `up`, `down`, `left`, `right`, `next`, and `previous` intents, expose boolean handled results for application fallbacks, and activate the focused eligible control through its native `.click()` behavior. Physical-device polling, mappings, thresholds, and repeat timing remain application-owned.
+- MCP guidance: `@archway/valet-mcp` now ships the canonical `valet-directional-navigation` skill and exposes it through the `valet__build_directional_navigation` MCP prompt and `mcp://valet/skill/valet-directional-navigation` resource. MCP registration alone does not imply host filesystem-skill installation.
 
 ### Fixed
 

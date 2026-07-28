@@ -14,7 +14,7 @@ export const meta: DocMeta = {
     'Install, understand, and use the valet MCP for deep introspection: discover components, inspect typed props, search best practices, and keep data in sync for agent-assisted UI.',
   pageType: 'guide',
   prerequisites: ['overview', 'quickstart'],
-  tldr: 'Install @archway/valet-mcp (15 tools). In your MCP host, use list/search tools to discover, get_component to verify props (now deprecation-aware, with structured output), get_examples to copy usage, search_best_practices to follow guidance, and get_primer to align context. Before emitting valet JSX, type-check it with validate_jsx and self-correct. Keep mcp-data fresh.',
+  tldr: 'Install @archway/valet-mcp (15 tools plus a directional-navigation workflow prompt). In your MCP host, use list/search tools to discover, get_component to verify props, get_examples to copy usage, search_best_practices to follow guidance, and get_primer to align context. Before emitting valet JSX, type-check it with validate_jsx and self-correct. Keep mcp-data fresh.',
 };
 
 export default function MCPGuidePage() {
@@ -116,6 +116,39 @@ args = []`}
           each session with <code>valet__get_primer</code> so the agent aligns to valet’s mental
           model and semantics.
         </Typography>
+
+        <Typography
+          variant='h3'
+          weight='bold'
+        >
+          Directional-navigation workflow
+        </Typography>
+        <Panel
+          fullWidth
+          variant='outlined'
+          pad={2}
+        >
+          <Stack gap={1}>
+            <Typography>
+              MCP clients with prompt support can invoke{' '}
+              <code>valet__build_directional_navigation</code> for a focused workflow covering
+              external device adapters, DOM scopes, real-focus movement, activation, portals,
+              cleanup, and JSX validation.
+            </Typography>
+            <CodeBlock
+              code={`Prompt: valet__build_directional_navigation
+Resource: mcp://valet/skill/valet-directional-navigation
+Packaged file: skills/valet-directional-navigation/SKILL.md`}
+              ariaLabel='Copy directional navigation MCP workflow identifiers'
+            />
+            <Typography>
+              The prompt and resource are MCP-native access points to the same packaged guidance.
+              Registering the server does not automatically install the file into a host&apos;s
+              filesystem skill search path; copy or install it explicitly when that host supports
+              skills.
+            </Typography>
+          </Stack>
+        </Panel>
 
         <Typography
           variant='h3'

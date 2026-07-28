@@ -37,7 +37,7 @@ An MCP is a toolbox which AI chatbots and coding agents can use to learn things 
 
 Whether this is your first frontend or your 1000th, valet has a compelling X-factor. Valet has traditional docs, which experienced developers would benefit from reading, but the `@archway/valet-mcp` is better than any docs can be. 
 
-The MCP teaches AI valet's components and patterns from data generated out of this repo: fifteen tools covering component search, typed props and defaults, usage examples, best practices, and a glossary — plus `validate_jsx`, which type-checks a generated valet JSX snippet against the shipped `@archway/valet` types and reports structured diagnostics so an agent can catch invented props, wrong literal-union values, and deprecated aliases and self-correct before emitting code. From there, your agent can build beautiful and functional apps and experiences from your natural language requests. Deeper runtime integration — such as the planned Web Action Graph — is roadmap, not yet shipped.
+The MCP teaches AI valet's components and patterns from data generated out of this repo: fifteen tools covering component search, typed props and defaults, usage examples, best practices, and a glossary — including `validate_jsx`, which type-checks generated valet JSX against the shipped types. It also exposes the packaged `valet-directional-navigation` guidance through a workflow prompt and readable MCP resource. Registering the MCP server does not automatically install that file into a host's filesystem skill search path. From there, your agent can build beautiful and functional apps and experiences from your natural language requests. Deeper runtime integration — such as the planned Web Action Graph — is roadmap, not yet shipped.
 
 ## Tech Specs
 
@@ -98,7 +98,8 @@ published release and can fail.
 
 Use `create-valet-app` to make a modern web app. Use codex or Claude Code to provide natural language input. 
 
-If you have used codex or Claude Code before, `create-valet-app` will automatically install the `valet MCP` into your tools
+If you use Codex, `create-valet-app` can install and register the valet MCP after
+you explicitly approve the machine-wide setup step.
 
 Get started by running this command in your terminal with the folder name you want
 

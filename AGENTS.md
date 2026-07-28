@@ -105,6 +105,13 @@ What you get:
   `valet__define_term`, `valet__get_primer`), server/data metadata
   (`valet__get_info`, `valet__check_version_parity`), and JSX validation
   (`valet__validate_jsx`).
+- Workflow prompt (1): `valet__build_directional_navigation` guides agents
+  through the external-adapter boundary, scoped DOM focus, activation, portals,
+  cleanup, and JSX validation.
+- Packaged skill: the canonical `valet-directional-navigation` guidance is
+  readable as `mcp://valet/skill/valet-directional-navigation` and ships under
+  `skills/` in `@archway/valet-mcp`. Registering the server alone does not
+  install it into an MCP host's filesystem skill search path.
 - Data: generated into `mcp-data/` from TypeScript source and docs.
 - Server: optional MCP server at `packages/valet-mcp` for external LLM tools.
 
@@ -134,6 +141,10 @@ Typical flows:
   snippet is clean (no type errors and no deprecated aliases); otherwise read
   the `diagnostics[]` and fix each one. This is the one capability the corpus
   structurally cannot replace — it runs the real type system over your snippet.
+- Directional navigation: invoke the `valet__build_directional_navigation`
+  prompt (when the MCP host exposes prompts), or read
+  `mcp://valet/skill/valet-directional-navigation`, before building a menu for
+  gamepads, TV remotes, rotary controls, kiosks, or accessibility switches.
 
 Codex usage examples:
 

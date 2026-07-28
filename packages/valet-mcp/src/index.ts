@@ -31,6 +31,7 @@ import { registerSearchProps } from './tools/searchProps.js';
 import { registerSearchCssVars } from './tools/searchCssVars.js';
 import { registerSearchBestPractices } from './tools/searchBestPractices.js';
 import { registerValidateJsx } from './tools/validateJsx.js';
+import { registerDirectionalNavigationSkill } from './skills/directionalNavigation.js';
 const requireFromHere = createRequire(import.meta.url);
 const pkg = requireFromHere('../package.json') as { version?: string; name?: string };
 const MCP_VERSION = pkg.version ?? '0.0.0';
@@ -58,6 +59,7 @@ export async function createServer() {
   registerGetInfo(server);
   registerCheckVersionParity(server);
   registerValidateJsx(server);
+  registerDirectionalNavigationSkill(server);
 
   // adjust_theme tool removed
 

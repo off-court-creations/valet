@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// scripts/mcp/serverTools.test.mjs | valet (MCP Wave 2 — slices D2–D5)
+// scripts/mcp/serverTools.test.mjs | valet (server capabilities + output contracts)
 //
 // End-to-end server-output-contract tests for @archway/valet-mcp, driven
 // through a real MCP Client over an in-memory transport against the BUILT
@@ -66,7 +66,7 @@ function textOf(result) {
   return block ? block.text : '';
 }
 
-describe.skipIf(!distExists)('valet-mcp server output contract (D2–D5)', () => {
+describe.skipIf(!distExists)('valet-mcp server capabilities and output contracts', () => {
   let origCwd;
   let foreignCwd;
 
@@ -101,6 +101,43 @@ describe.skipIf(!distExists)('valet-mcp server output contract (D2–D5)', () =>
     expect(names).toContain('valet__validate_jsx');
     // 15 tools are registered in src/index.ts (14 + validate_jsx, Wave 2 D1).
     expect(names.length).toBe(15);
+  });
+
+  it('lists and resolves the directional-navigation workflow prompt', async () => {
+    const { client } = await makeClient();
+    const { prompts } = await client.listPrompts();
+    const prompt = prompts.find((item) => item.name === 'valet__build_directional_navigation');
+
+    expect(prompt).toMatchObject({
+      name: 'valet__build_directional_navigation',
+      title: 'Build directional navigation with valet',
+    });
+
+    const result = await client.getPrompt({ name: 'valet__build_directional_navigation' });
+    expect(result.messages).toHaveLength(1);
+    expect(result.messages[0].role).toBe('user');
+    expect(result.messages[0].content.type).toBe('text');
+    expect(result.messages[0].content.text).toContain('# Valet Directional Navigation');
+    expect(result.messages[0].content.text).toContain('valet__validate_jsx');
+  });
+
+  it('lists and reads the canonical directional-navigation skill resource', async () => {
+    const { client } = await makeClient();
+    const uri = 'mcp://valet/skill/valet-directional-navigation';
+    const { resources } = await client.listResources();
+    const skill = resources.find((resource) => resource.uri === uri);
+
+    expect(skill).toMatchObject({
+      uri,
+      name: 'valet-directional-navigation',
+      mimeType: 'text/markdown',
+    });
+
+    const result = await client.readResource({ uri });
+    expect(result.contents).toHaveLength(1);
+    expect(result.contents[0].mimeType).toBe('text/markdown');
+    expect(result.contents[0].text).toContain('name: valet-directional-navigation');
+    expect(result.contents[0].text).toContain('external adapter');
   });
 
   it('declares an outputSchema on the D2 start set', async () => {
